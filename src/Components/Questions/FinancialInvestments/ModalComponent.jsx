@@ -17,37 +17,6 @@ const ModalComponent = (props) => {
     let modalObject = props.modalObject;
     let setQuestionChange = props.setQuestionChange;
 
-    let turnBack = () => {
-        props.Question
-
-        switch (props.Question) {
-            case "income":
-                setQuestionChange("FinancialInvestments");
-                break;
-            case "Lifestyle":
-                setQuestionChange("income");
-                break;
-            case "Investment":
-                setQuestionChange("Lifestyle");
-                break;
-            case "SuperAndRetirement":
-                setQuestionChange("Investment");
-                break;
-            case "ProfessionalAdvisor":
-                setQuestionChange("SuperAndRetirement");
-                break;
-            case "SMSF":
-                setQuestionChange("ProfessionalAdvisor");
-                break;
-            case "InvestmentTrust":
-                setQuestionChange("SMSF");
-                break;
-
-            default:
-                break;
-        }
-    }
-
     useEffect(() => {
         // console.log("Ma chala a a a ", props.Question)
         // Scroll to the header of the modal whenever props.Question changes
@@ -60,7 +29,7 @@ const ModalComponent = (props) => {
     }, [props.setQuestionChange, props.Question]);
 
 
-    const xlTitles = ["Australian Shares", "Managed Funds", "Investment Bond", "Investment Loan", "Margin Loan", "Personal Loan", "Credit Card", "Home Loan", "Own a Family Home", "Investment Property Details", "Investment Property Loan", "Super Funds", "Account Based Pension", "invested in Annuities", "Will"]; // Add other titles that should use "xl" here
+    const xlTitles = ["Australian Shares", "Managed Funds", "Investment Bond", "Investment Loan", "Margin Loan", "Personal Loan", "Credit Card", "Home Loan", "Own a Family Home", "Holiday Home", "Holiday Home Loan", "Investment Property Details", "Investment Property Loan", "Super Funds", "Account Based Pension", "invested in Annuities", "Will", "Employement Income", "Centerlink Payments", "Sole Trader", "Partnership"]; // Add other titles that should use "xl" here
 
     const size = xlTitles.includes(props.modalObject.title) ? "xl" : "lg";
 
@@ -73,7 +42,7 @@ const ModalComponent = (props) => {
                 <Element id="modal-container">
                 </Element>
                 <Modal.Header closeButton>
-                    <Modal.Title>{props.modalObject.title}</Modal.Title>
+                    <Modal.Title>{props.modalObject.title === "Regular Living Expenses" ? props.modalObject.title2 : props.modalObject.title}</Modal.Title>
                 </Modal.Header>
 
 

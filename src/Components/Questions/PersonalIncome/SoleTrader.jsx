@@ -1,32 +1,32 @@
 import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
-import { Row, Table } from 'react-bootstrap';
+import { Button, InputGroup, Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { PatchAxios, PostAxios } from '../../../Assets/Api/Api';
+import { defaultUrl, QuestionDetail } from '../../../Store/Store';
+import { PatchAxios, PostAxios } from '../../Assets/Api/Api';
 
-const EstatePlanningPOA = (props) => {
+const SoleTrader = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
-    let POA = questionDetail.POA || {
+    let incomeFromSoleTrader = questionDetail.incomeFromSoleTrader || {
         client: [],
         partner: [],
         joint: [],
 
-    }; // Use an empty object as default if POA is undefined
+    }; // Use an empty object as default if incomeFromSoleTrader is undefined
 
 
-    let initialValues = POA[props.modalObject.Input].length ? { NumberOfMap: POA[props.modalObject.Input].length } : { NumberOfMap: "" };
+    let initialValues = incomeFromSoleTrader[props.modalObject.Input].length ? { NumberOfMap: incomeFromSoleTrader[props.modalObject.Input].length } : { NumberOfMap: "" };
 
     const [dynamicFields, setDynamicFields] = useState([]);
 
 
     useEffect(() => {
-        if (POA[props.modalObject.Input] && POA[props.modalObject.Input].length) {
+        if (incomeFromSoleTrader[props.modalObject.Input] && incomeFromSoleTrader[props.modalObject.Input].length) {
             let arr = []
 
-            for (let i = 0; i < POA[props.modalObject.Input].length; i++) {
+            for (let i = 0; i < incomeFromSoleTrader[props.modalObject.Input].length; i++) {
                 arr.push("");
             }
 
@@ -37,14 +37,16 @@ const EstatePlanningPOA = (props) => {
 
     const fillInitialValues = (setFieldValue) => {
 
-        if (POA[props.modalObject.Input] && POA[props.modalObject.Input].length) {
+        if (incomeFromSoleTrader[props.modalObject.Input] && incomeFromSoleTrader[props.modalObject.Input].length) {
 
-            POA[props.modalObject.Input].forEach((data, i) => {
+            incomeFromSoleTrader[props.modalObject.Input].forEach((data, i) => {
                 if (data) {
-                    setFieldValue(`POAType${i}`, data.POAType || '');
-                    setFieldValue(`yearSetUp${i}`, data.yearSetUp || '');
-                    setFieldValue(`POAName${i}`, data.POAName || '');
-                    setFieldValue(`relationshipStatus${i}`, data.relationshipStatus || '');
+                    setFieldValue(`businessName${i}`, data.businessName || '');
+                    setFieldValue(`ABN${i}`, data.ABN || '');
+                    setFieldValue(`businessAddress${i}`, data.businessAddress || '');
+                    setFieldValue(`netSoleTrader${i}`, data.netSoleTrader || '');
+                    setFieldValue(`goodWillBusinessValuation${i}`, data.goodWillBusinessValuation || '');
+
                 }
             });
         }
@@ -78,10 +80,11 @@ const EstatePlanningPOA = (props) => {
         // Iterate through each map entry and create a new object
         for (let i = 0; i < numberOfMaps; i++) {
             const newEntry = {
-                POAType: values[`POAType${i}`] || "",
-                yearSetUp: values[`yearSetUp${i}`] || "",
-                POAName: values[`POAName${i}`] || "",
-                relationshipStatus: values[`relationshipStatus${i}`] || "",
+                businessName: values[`businessName${i}`] || "",
+                ABN: values[`ABN${i}`] || "",
+                businessAddress: values[`businessAddress${i}`] || "",
+                netSoleTrader: values[`netSoleTrader${i}`] || "",
+                goodWillBusinessValuation: values[`goodWillBusinessValuation${i}`] || "",
             };
             newEntries.push(newEntry);
         }
@@ -99,26 +102,26 @@ const EstatePlanningPOA = (props) => {
         obj[DataOf] = newEntries
 
         // Calculate total currentBalance
-        obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.relationshipStatus, 0);
+        obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.annualAdvice, 0);
 
         console.log(obj, "final obj")
 
-        // Check if POA and the array at props.modalObject.Input exist
-        // const bankAccountArray = POA[props.modalObject.Input] || [];
-        const bankAccountArray = POA.clientFK || "";
+        // Check if incomeFromSoleTrader and the array at props.modalObject.Input exist
+        // const bankAccountArray = incomeFromSoleTrader[props.modalObject.Input] || [];
+        const bankAccountArray = incomeFromSoleTrader.clientFK || "";
 
         try {
             let res;
             if (!bankAccountArray) {
-                res = await PostAxios(`${DefaultUrl}/api/POA/Add`, obj);
+                res = await PostAxios(`${DefaultUrl}/api/incomeFromSoleTrader/Add`, obj);
             } else {
                 obj.collection = props.modalObject.Input
-                res = await PatchAxios(`${DefaultUrl}/api/POA/Update`, obj);
+                res = await PatchAxios(`${DefaultUrl}/api/incomeFromSoleTrader/Update`, obj);
             }
 
             if (res) {
                 console.log(res);
-                const updatedData = { ...questionDetail, POA: res };
+                const updatedData = { ...questionDetail, incomeFromSoleTrader: res };
                 setQuestionDetail(updatedData);
             }
 
@@ -130,7 +133,6 @@ const EstatePlanningPOA = (props) => {
             console.error("Error occurred while making API call:", error);
         }
     };
-
 
 
     return (
@@ -152,7 +154,7 @@ const EstatePlanningPOA = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='col-md-5'>
                                         <p className='text-end mt-1'>
-                                            How many Super Funds does {props.modalObject.Input} have:
+                                            How many {props.modalObject.title} does {props.modalObject.Input} have:
                                         </p>
                                     </div>
                                     <div className='col-md-2'>
@@ -170,10 +172,11 @@ const EstatePlanningPOA = (props) => {
                                                 <thead>
                                                     <tr>
                                                         <th onClick={() => { console.log(values) }}>No#</th>
-                                                        <th>POA Type</th>
-                                                        <th>Year Set up</th>
-                                                        <th>Name of POA</th>
-                                                        <th>Relationship Status</th>
+                                                        <th>Business Name</th>
+                                                        <th>ABN</th>
+                                                        <th>Business Address</th>
+                                                        <th>Net Sole Trader</th>
+                                                        <th>Goodwill/Business Valuation</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -182,44 +185,46 @@ const EstatePlanningPOA = (props) => {
                                                             <td>{1 + i}</td>
                                                             <td>
                                                                 <Field
-                                                                    as="Select"
-                                                                    placeholder="Fund Name"
-                                                                    id={`POAType${i}`}
-                                                                    name={`POAType${i}`}
-                                                                    className="form-select inputDesign"
-                                                                >
-                                                                    <option value={""}>Please Select</option>
-                                                                    <option value={"Enduring"}>Enduring</option>
-                                                                    <option value={"Medical"}>Medical</option>
-                                                                    <option value={"Financial"}>Financial</option>
-                                                                    <option value={"Limited"}>Limited</option>
-                                                                    <option value={"Other "}>Other </option>
-                                                                </Field>
+                                                                    type="text"
+                                                                    placeholder="Business Name"
+                                                                    id={`businessName${i}`}
+                                                                    name={`businessName${i}`}
+                                                                    className="form-control inputDesign"
+                                                                />
                                                             </td>
                                                             <td>
                                                                 <Field
                                                                     type="number"
-                                                                    placeholder="Year Set up"
-                                                                    id={`yearSetUp${i}`}
-                                                                    name={`yearSetUp${i}`}
+                                                                    placeholder="ABN"
+                                                                    id={`ABN${i}`}
+                                                                    name={`ABN${i}`}
                                                                     className="form-control inputDesign"
                                                                 />
                                                             </td>
                                                             <td>
                                                                 <Field
                                                                     type="text"
-                                                                    placeholder="Name of POA"
-                                                                    id={`POAName${i}`}
-                                                                    name={`POAName${i}`}
+                                                                    placeholder="Business Address"
+                                                                    id={`businessAddress${i}`}
+                                                                    name={`businessAddress${i}`}
                                                                     className="form-control inputDesign"
                                                                 />
                                                             </td>
                                                             <td>
                                                                 <Field
-                                                                    type="text"
-                                                                    placeholder="Relationship Status"
-                                                                    id={`relationshipStatus${i}`}
-                                                                    name={`relationshipStatus${i}`}
+                                                                    type="number"
+                                                                    placeholder="Net Sole Trader"
+                                                                    id={`netSoleTrader${i}`}
+                                                                    name={`netSoleTrader${i}`}
+                                                                    className="form-control inputDesign"
+                                                                />
+                                                            </td>
+                                                            <td>
+                                                                <Field
+                                                                    type="number"
+                                                                    placeholder="Goodwill/Business Valuation"
+                                                                    id={`goodWillBusinessValuation${i}`}
+                                                                    name={`goodWillBusinessValuation${i}`}
                                                                     className="form-control inputDesign"
                                                                 />
                                                             </td>
@@ -239,4 +244,4 @@ const EstatePlanningPOA = (props) => {
     );
 };
 
-export default EstatePlanningPOA;
+export default SoleTrader;

@@ -101,7 +101,8 @@ const EstatePlanningProfessionalAdviser = (props) => {
         obj[DataOf] = newEntries
 
         // Calculate total currentBalance
-        obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.annualAdvice, 0);
+        // obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.annualAdvice, 0);
+        obj[DataOf + "Total"] = newEntries.length;
 
         console.log(obj, "final obj")
 

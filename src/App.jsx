@@ -43,6 +43,8 @@ import QuestionsSMSF from "./Components/Questions/QuestoinsSMSF/QuestoinsSMSF";
 import QuestionsInvestmentTrust from "./Components/Questions/QuestionsInvestmentTrust/QuestionsInvestmentTrust";
 import EstatePlanning from "./Components/Questions/EstatePlanning/EstatePlanning";
 import AdditionalQueriesSuperAndRetirement from "./Components/Questions/AdditionalQueriesSuperAndRetirement/AdditionalQueriesSuperAndRetirement";
+import PersonalIncome from "./Components/Questions/PersonalIncome/PersonalIncome";
+import BusinessEntities from "./Components/Questions/BusinessEntities/BusinessEntities";
 
 
 function App() {
@@ -108,10 +110,12 @@ function App() {
                 <Route path="/SuperAndRetirement" element={<QuestionsNew><AdditionalQueriesSuperAndRetirement /></QuestionsNew>} />
                 <Route path="/EstatePlanning" element={<QuestionsNew><EstatePlanning /></QuestionsNew>} />
                 <Route path="/ProfessionalAdvisor" element={<QuestionsNew><AdditionalQueriesProfessionalAdvisor /></QuestionsNew>} />
+                <Route path="/PersonalIncome" element={<QuestionsNew><PersonalIncome /></QuestionsNew>} />
                 <Route path="/SMSF" element={<QuestionsNew><QuestionsSMSF /></QuestionsNew>} />
                 <Route path="/PersonalAssets" element={<QuestionsNew><AdditionalQueriesPersonalAssets /></QuestionsNew>} />
                 <Route path="/InvestmentTrust" element={<QuestionsNew><QuestionsInvestmentTrust /></QuestionsNew>} />
 
+                <Route path="/BusinessEntities" element={<QuestionsNew><BusinessEntities /></QuestionsNew>} />
 
 
 

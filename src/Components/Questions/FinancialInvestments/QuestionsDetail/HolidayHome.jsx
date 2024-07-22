@@ -77,6 +77,8 @@ const HolidayHome = (props) => {
         const numberOfMaps = parseInt(values.NumberOfMap, 10);
         const newEntries = [];
 
+        console.log(holidayHome, "holidayHome");
+
         // Iterate through each map entry and create a new object
         for (let i = 0; i < numberOfMaps; i++) {
             const newEntry = {
@@ -115,7 +117,8 @@ const HolidayHome = (props) => {
             if (!bankAccountArray) {
                 res = await PostAxios(`${DefaultUrl}/api/holidayHome/Add`, obj);
             } else {
-                obj.collection = props.modalObject.Input
+                obj.collection = props.modalObject.Input;
+                obj._id = holidayHome._id;
                 res = await PatchAxios(`${DefaultUrl}/api/holidayHome/Update`, obj);
             }
 
@@ -134,83 +137,6 @@ const HolidayHome = (props) => {
         }
     };
 
-    const options = [
-        "Adelaide Bank",
-        "Alliance Bank",
-        "AMP",
-        "ANZ",
-        "Arab Bank Australia",
-        "Australian Military Bank (ADCU)",
-        "Australian Mutual Bank",
-        "Australian Unity",
-        "Auswide Bank",
-        "AWA Alliance Bank",
-        "Bank Australia (bankmecu)",
-        "Bank First",
-        "Bank of Melbourne",
-        "Bank of Queensland (BOQ)",
-        "Bank of Sydney",
-        "BankSA",
-        "BankVic",
-        "Bankwest",
-        "BCU",
-        "BDCU Alliance Bank",
-        "Bendigo Bank",
-        "Beyond Bank",
-        "Border Bank",
-        "Circle Alliance Bank",
-        "Citi",
-        "Commonwealth Bank",
-        "Community First Bank",
-        "Credit Union SA",
-        "Defence Bank",
-        "Delphi Bank",
-        "Easy Street",
-        "First Choice Credit Union",
-        "First Option Bank",
-        "firstmac",
-        "G&C Mutual",
-        "Gateway Bank Ltd",
-        "Geelong Bank",
-        "Great Southern Bank",
-        "Greater Bank",
-        "Hay",
-        "Heartland Bank",
-        "Heritage Bank",
-        "Horizon Bank",
-        "HSBC Australia",
-        "Hume Bank",
-        "Illawarra Credit Union",
-        "IMB",
-        "ING",
-        "Judo Bank",
-        "Macquarie Bank",
-        "ME",
-        "MOVE Bank",
-        "MyState Bank",
-        "NAB",
-        "Newcastle Permanent",
-        "P&N Bank",
-        "People’s Choice CU",
-        "Policebank",
-        "Prospa",
-        "Qudos Bank",
-        "Rabobank",
-        "RACQ",
-        "RAMS",
-        "Regional Australia Bank",
-        "Rural Bank",
-        "Service One Alliance Bank",
-        "St.George",
-        "Suncorp Bank",
-        "Teachers Mutual Bank",
-        "Ubank",
-        "UniBank",
-        "Up Bank",
-        "Virgin Money",
-        "Westpac",
-        "Zeller"
-    ];
 
     let handleBlur = (setFieldValue, e) => {
         let value = parseFloat(e.target.value);
@@ -259,13 +185,10 @@ const HolidayHome = (props) => {
                                                     <tr>
                                                         <th>No#</th>
                                                         <th>Home Address & Postcode</th>
-                                                        <th>Current Value – link to URL below </th>
+                                                        <th>Current Value – <a href='https://www.property.com.au/' target='_blank' className='text-white'>Calculate Property</a> </th>
                                                         <th>Cost base /(Purchase Price)</th>
                                                         <th>Client Ownership</th>
                                                         <th>Partner Ownership</th>
-                                                        {/*
-                                                            <th>Deductible Loan Amount</th>
-                                                        */}
                                                     </tr>
                                                 </thead>
                                                 <tbody>

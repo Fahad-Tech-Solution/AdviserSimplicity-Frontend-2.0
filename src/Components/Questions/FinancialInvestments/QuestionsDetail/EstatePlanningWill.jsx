@@ -57,7 +57,7 @@ const EstatePlanningWill = (props) => {
                 if (data) {
                     setFieldValue(`yearSetUp${i}`, data.yearSetUp || '');
                     setFieldValue(`willsCurrent${i}`, data.willsCurrent || '');
-                    setFieldValue(`Executor${i}`, data.Executor || '');
+                    setFieldValue(`executor${i}`, data.executor || '');
                     setFieldValue(`enduringGuardianship${i}`, data.enduringGuardianship || '');
                     setFieldValue(`testamentaryTrust${i}`, data.testamentaryTrust || '');
                     setFieldValue(`estatePlanning${i}`, data.estatePlanning || '');
@@ -110,7 +110,7 @@ const EstatePlanningWill = (props) => {
             const newEntry = {
                 yearSetUp: values[`yearSetUp${i}`] || "",
                 willsCurrent: values[`willsCurrent${i}`] || "",
-                Executor: values[`Executor${i}`] || "",
+                executor: values[`executor${i}`] || "",
                 enduringGuardianship: values[`enduringGuardianship${i}`] || "",
                 testamentaryTrust: values[`testamentaryTrust${i}`] || "",
                 estatePlanning: values[`estatePlanning${i}`] || "",
@@ -131,7 +131,7 @@ const EstatePlanningWill = (props) => {
         obj[DataOf] = newEntries
 
         // Calculate total currentBalance
-        obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.annualAdvice, 0);
+        obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.estatePlanning, 0);
 
         console.log(obj, "final obj")
 
@@ -204,7 +204,7 @@ const EstatePlanningWill = (props) => {
                                                         <th onClick={() => { console.log(values) }}>No#</th>
                                                         <th>Year set up</th>
                                                         <th>Are Your Wills Current</th>
-                                                        <th>Executor/s</th>
+                                                        <th>executor/s</th>
                                                         <th>Enduring Guardianship</th>
                                                         <th>Testamentary Trust</th>
                                                         <th>Any specific estate planning requirements/needs?</th>
@@ -232,9 +232,9 @@ const EstatePlanningWill = (props) => {
                                                             <td>
                                                                 <Field
                                                                     type="text"
-                                                                    placeholder="Executor/s"
-                                                                    id={`Executor${i}`}
-                                                                    name={`Executor${i}`}
+                                                                    placeholder="executor/s"
+                                                                    id={`executor${i}`}
+                                                                    name={`executor${i}`}
                                                                     className="form-control inputDesign"
                                                                 />
                                                             </td>

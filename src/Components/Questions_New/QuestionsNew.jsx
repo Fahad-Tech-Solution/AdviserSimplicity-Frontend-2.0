@@ -20,8 +20,10 @@ const QuestionsNew = (props) => {
 
   let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
   let [QuestionChange, setQuestionChange] = useRecoilState(QuestionShift);
+
   let [flagState, setFlagState] = useState(false);
   let [flagState2, setFlagState2] = useState(true);
+
   let [modalObject, setModalObject] = useState({
     title: "Questions",
     Input: "Name"
@@ -40,7 +42,7 @@ const QuestionsNew = (props) => {
 
   let selectQuestionSet = (path) => {
     let cLocation = path.replace("/", "");
-    console.log(cLocation);
+    // console.log(cLocation);
     setQuestionChange(cLocation)
     fetchData();
   }
@@ -93,13 +95,6 @@ const QuestionsNew = (props) => {
 
   let HandleSubmit = () => {
 
-    // setFlagState2(true)
-
-    // if (!flagState2) {
-    //   setFlagState2(true)
-    //   return;
-    // }
-
     switch (QuestionChange) {
       case "FinancialInvestments":
         // Navigation("/PersonalAssets")
@@ -118,6 +113,12 @@ const QuestionsNew = (props) => {
         Navigation("/EstatePlanning")
         break;
       case "EstatePlanning":
+        Navigation("/PersonalIncome")
+        break;
+      case "PersonalIncome":
+        Navigation("/BusinessEntities")
+        break;
+      case "BusinessEntities":
         Navigation("/ProfessionalAdvisor")
         break;
       case "ProfessionalAdvisor":
@@ -165,8 +166,14 @@ const QuestionsNew = (props) => {
       case "EstatePlanning":
         Navigation("/SuperAndRetirement")
         break;
-      case "ProfessionalAdvisor":
+      case "PersonalIncome":
         Navigation("/EstatePlanning")
+        break;
+      case "BusinessEntities":
+        Navigation("/PersonalIncome")
+        break;
+      case "ProfessionalAdvisor":
+        Navigation("/BusinessEntities")
         break;
       case "SMSF":
         Navigation("/ProfessionalAdvisor")
@@ -234,9 +241,35 @@ const QuestionsNew = (props) => {
     },
     EstatePlanning: {
       Title: "Estate Planning & Professional Adviser",
+      apiArray: [
+        { url: `${DefaultUrl}/api/will/${localStorage.getItem("UserID")}`, key: 'will' },
+        { url: `${DefaultUrl}/api/POA/${localStorage.getItem("UserID")}`, key: 'POA' },
+        { url: `${DefaultUrl}/api/professionalAdviser/${localStorage.getItem("UserID")}`, key: 'professionalAdviser' },
+      ]
+    },
+    PersonalIncome: {
+      Title: "Personal Income and Expenses",
+      apiArray: [
+        { url: `${DefaultUrl}/api/incomeFromOwnBusiness/${localStorage.getItem("UserID")}`, key: 'incomeFromOwnBusiness' },
+        { url: `${DefaultUrl}/api/incomeFromSoleTrader/${localStorage.getItem("UserID")}`, key: 'incomeFromSoleTrader' },
+        { url: `${DefaultUrl}/api/incomeFromPartnership/${localStorage.getItem("UserID")}`, key: 'incomeFromPartnership' },
+        { url: `${DefaultUrl}/api/incomeFromCentrelink/${localStorage.getItem("UserID")}`, key: 'incomeFromCentrelink' },
+        { url: `${DefaultUrl}/api/incomeFromSuperPayment/${localStorage.getItem("UserID")}`, key: 'incomeFromSuperPayment' },
+        { url: `${DefaultUrl}/api/incomeFromOverseasPension/${localStorage.getItem("UserID")}`, key: 'incomeFromOverseasPension' },
+        { url: `${DefaultUrl}/api/incomeFromInheritance/${localStorage.getItem("UserID")}`, key: 'incomeFromInheritance' },
+        { url: `${DefaultUrl}/api/incomeFromLumpsumExpense/${localStorage.getItem("UserID")}`, key: 'incomeFromLumpsumExpense' },
+        { url: `${DefaultUrl}/api/incomeFromRegularLivingExpenses/${localStorage.getItem("UserID")}`, key: 'incomeFromRegularLivingExpenses' },
+      ]
+    },
+    BusinessEntities: {
+      Title: "Business Entities & Tax Structures",
+      apiArray: [
+        { url: `${DefaultUrl}/api/BusinessAsCompanyStructure/${localStorage.getItem("UserID")}`, key: 'BusinessAsCompanyStructure' },
+      ]
     },
     ProfessionalAdvisor: {
       Title: "Professional Advisor",
+      apiArray: []
     },
     SMSF: {
       Title: "Self Manged Super Fund ",

@@ -127,6 +127,7 @@ const HolidayHomeLoan = (props) => {
                 res = await PostAxios(`${DefaultUrl}/api/holidayHomeLoan/Add`, obj);
             } else {
                 obj.collection = props.modalObject.Input
+                obj._id = holidayHome._id;
                 res = await PatchAxios(`${DefaultUrl}/api/holidayHomeLoan/Update`, obj);
             }
 

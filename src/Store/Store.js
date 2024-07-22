@@ -56,6 +56,19 @@ export const CRState = atom({
         POA: "No",
         professionalAdviser: "No",
 
+               
+        incomeFromOwnBusiness:"No",
+        incomeFromSoleTrader:"No",
+        incomeFromPartnership:"No",
+        incomeFromCentrelink:"No",
+        incomeFromSuperPayment:"No",
+        incomeFromOverseasPension:"No",
+        incomeFromInheritance:"No",
+        incomeFromLumpsumExpense: "No",
+        incomeFromRegularLivingExpenses: "Yes", // this one should be yes always
+        
+        BusinessAsCompanyStructure:"No",
+
     },
 });
 
@@ -81,8 +94,8 @@ export const CurrentPage = atom({
 
 export const defaultUrl = atom({
     key: "defaultUrl",
-    default: "http://localhost:7000",
-    // default: "http://192.168.100.27:7000",
+    // default: "http://localhost:7000",
+    default: "http://192.168.100.27:7000",
     // default: "http://192.168.1.5:7000",
     // default: "",
 });
