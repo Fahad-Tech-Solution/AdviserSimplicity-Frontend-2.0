@@ -69,8 +69,8 @@ function PersonalDetailCards(props) {
                         </div>
                         <div className="col-6 mb-3">
                             <div className="d-flex align-items-center">
-                                {props.values.clientGender ? <BsGenderMale className="me-2" /> : <BsGenderFemale className="me-2" />}
-                                {props.values.clientGender ? 'Male' : 'Female'}
+                                {props.values.clientGender ? <BsGenderFemale className="me-2" /> : <BsGenderMale className="me-2" />}
+                                {props.values.clientGender ? 'Female' : 'Male'}
                             </div>
                         </div>
                         <div className="col-6 mb-3">
@@ -116,7 +116,7 @@ function PersonalDetailCards(props) {
 
             <div className="col-md-6">
                 {props.values.clientMaritalStatus !== "Single" && props.values.clientMaritalStatus !== "Widowed" &&
-                    <div className="card px-3 pt-4 border-0 PersonalDetails">
+                    <div className="card px-3 py-4 border-0 gap-3 PersonalDetails d-flex justify-content-center align-items-center">
                         <div className="row w-100">
                             <div className="col-6 mb-3">
                                 <div className="d-flex align-items-center">

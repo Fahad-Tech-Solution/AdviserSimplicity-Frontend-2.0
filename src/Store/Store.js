@@ -25,11 +25,11 @@ export const CRState = atom({
         //Financial Assets 
         QuestionsFlag: false,
 
+        bankAccountFinance: "No",
         termDepositsFinance: "No",
-        BankAccountFinance: "No",
-        australianSharesFinance: "No",
+        australianShareMarket: "No",
+        managedFund: "No",
         investmentBondFinance: "No",
-        managedFunds: "No",
         managedFundsLOC: "No",
         managedFundsMarginLoan: "No",
 
@@ -56,18 +56,54 @@ export const CRState = atom({
         POA: "No",
         professionalAdviser: "No",
 
-               
-        incomeFromOwnBusiness:"No",
-        incomeFromSoleTrader:"No",
-        incomeFromPartnership:"No",
-        incomeFromCentrelink:"No",
-        incomeFromSuperPayment:"No",
-        incomeFromOverseasPension:"No",
-        incomeFromInheritance:"No",
+
+        incomeFromOwnBusiness: "No",
+        incomeFromSoleTrader: "No",
+        incomeFromPartnership: "No",
+        incomeFromCentrelink: "No",
+        incomeFromSuperPayment: "No",
+        incomeFromOverseasPension: "No",
+        incomeFromInheritance: "No",
         incomeFromLumpsumExpense: "No",
         incomeFromRegularLivingExpenses: "Yes", // this one should be yes always
+
+        BusinessAsCompanyStructure: "No",
+        BusinessAsTrusts: "No",
+        BusinessAsSMSF: "No",
+        BusinessAsInvestmentTrust: "No",
+
+        SMSFBank:"Yes",
+        SMSFTermDeposits: "No",
+        SMSFAustralianShares: "No",
+        SMSFManagedFunds: "No",
+        SMSFInvestmentLoan: "No",
+        SMSFInvestmentProperties: "No",
+        numberOfSMSFInvestmentProperties: 0,
+        SMSFPensionPhase: "No",
+
+        //loop keys
+        // SMSFInvestmentPropertiesLoan
+        // SMSFInvestmentExpenses
+
+        SMSFDetails: "Yes", // this one should be yes always
+        SMSFAccumulationDetails: "Yes", // this one should be yes always
+
+        familyBank: "Yes", // this one should be yes always
         
-        BusinessAsCompanyStructure:"No",
+        familyTermDeposit: "No",
+        familyAustralianShare: "No",
+        familyMangedFunds: "No",
+        familyInvestmentHomeLoan: "No",
+        familyInvestmentProperties: "No",
+        numberOfFamilyInvestmentProperties: 0,
+        familyPensionPhase: "No",
+
+        //loop keys
+        // familyInvestmentPropertiesLoan
+        // familyInvestmentExpenses
+
+        familyDetails: "Yes", // this one should be yes always
+
 
     },
 });
@@ -95,6 +131,7 @@ export const CurrentPage = atom({
 export const defaultUrl = atom({
     key: "defaultUrl",
     // default: "http://localhost:7000",
+    // default: "http://192.168.100.11:7000",
     default: "http://192.168.100.27:7000",
     // default: "http://192.168.1.5:7000",
     // default: "",

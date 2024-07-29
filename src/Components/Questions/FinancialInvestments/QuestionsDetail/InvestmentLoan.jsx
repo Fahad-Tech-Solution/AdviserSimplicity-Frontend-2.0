@@ -10,7 +10,7 @@ const InvestmentLoan = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
-    let managedFundsLOC = questionDetail.managedFundsLOC || {
+    let managedFundsLOC = questionDetail[props.modalObject.key] || {
         client: [],
         partner: [],
         joint: [],
@@ -120,15 +120,15 @@ const InvestmentLoan = (props) => {
         try {
             let res;
             if (!bankAccountArray) {
-                res = await PostAxios(`${DefaultUrl}/api/managedFundsLOC/Add`, obj);
+                res = await PostAxios(`${DefaultUrl}/api/${props.modalObject.key}/Add`, obj);
             } else {
                 obj.collection = props.modalObject.Input
-                res = await PatchAxios(`${DefaultUrl}/api/managedFundsLOC/Update`, obj);
+                res = await PatchAxios(`${DefaultUrl}/api/${props.modalObject.key}/Update`, obj);
             }
 
             if (res) {
                 console.log(res);
-                const updatedData = { ...questionDetail, managedFundsLOC: res };
+                const updatedData = { ...questionDetail, [props.modalObject.key]: res };
                 setQuestionDetail(updatedData);
             }
 

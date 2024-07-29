@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "devHost": "vite --host 192.168.100.11",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
@@ -29,6 +30,7 @@
     "react-router-dom": "^6.24.0",
     "react-scripts": "^5.0.1",
     "react-scroll": "^1.9.0",
+    "react-select": "^5.8.0",
     "recoil": "^0.7.7",
     "web-vitals": "^4.2.1",
     "yup": "^1.4.0",

@@ -19,7 +19,7 @@ const InnerModal = (props) => {
     let setQuestionChange = props.setQuestionChange;
 
 
-    const xlTitles = ["Member Number & Details","Insurances Attached"]; // Add other titles that should use "xl" here
+    const xlTitles = ["Member Number & Details", "Insurances Attached", "Accumulations Benefits", "Pension Benefits", "Balance & Benefit Details"]; // Add other titles that should use "xl" here
 
     const size = xlTitles.includes(props.modalObject.title) ? "xl" : "lg";
 

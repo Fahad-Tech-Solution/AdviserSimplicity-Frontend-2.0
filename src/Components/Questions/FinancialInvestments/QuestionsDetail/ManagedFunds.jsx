@@ -18,7 +18,7 @@ const ManagedFunds = (props) => {
     let [modalObject, setModalObject] = useState({});
 
 
-    let managedFunds = questionDetail.managedFunds || {
+    let managedFunds = questionDetail[props.modalObject.key] || {
         client: [],
         partner: [],
         joint: [],
@@ -136,15 +136,15 @@ const ManagedFunds = (props) => {
         try {
             let res;
             if (!bankAccountArray) {
-                res = await PostAxios(`${DefaultUrl}/api/manageFund/Add`, obj);
+                res = await PostAxios(`${DefaultUrl}/api/${props.modalObject.key}/Add`, obj);
             } else {
                 obj.collection = props.modalObject.Input
-                res = await PatchAxios(`${DefaultUrl}/api/manageFund/Update`, obj);
+                res = await PatchAxios(`${DefaultUrl}/api/${props.modalObject.key}/Update`, obj);
             }
 
             if (res) {
                 console.log(res);
-                const updatedData = { ...questionDetail, managedFunds: res };
+                const updatedData = { ...questionDetail, [props.modalObject.key]: res };
                 setQuestionDetail(updatedData);
             }
 
@@ -292,7 +292,7 @@ const ManagedFunds = (props) => {
                                                             <td>{1 + i}</td>
                                                             <td>
                                                                 <Field
-                                                                    as="Select"
+                                                                    as="select"
                                                                     placeholder="Platform Name"
                                                                     id={`platformName${i}`}
                                                                     name={`platformName${i}`}
@@ -353,6 +353,7 @@ const ManagedFunds = (props) => {
                                                                     id={`loginInPage${i}`}
                                                                     name={`loginInPage${i}`}
                                                                     className="form-control inputDesign"
+                                                                    disabled
                                                                 />
                                                             </td>
                                                         </tr>)

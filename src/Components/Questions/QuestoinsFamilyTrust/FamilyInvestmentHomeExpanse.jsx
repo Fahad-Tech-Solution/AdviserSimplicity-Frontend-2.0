@@ -2,47 +2,47 @@ import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { PatchAxios, PostAxios } from '../../../Assets/Api/Api';
+import { defaultUrl, QuestionDetail } from '../../../Store/Store';
+import { PatchAxios, PostAxios } from '../../Assets/Api/Api';
 import axios from 'axios';
 
-const QuestionIncomeExpanse = (props) => {
+const FamilyInvestmentHomeExpanse = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
-  let incomeExpenses = questionDetail.incomeExpenses || {
+  let familyInvestmentExpenses = questionDetail.familyInvestmentExpenses[props.modalObject.index] || {
     client: [],
     partner: [],
     joint: [],
 
-  }; // Use an empty object as default if incomeExpenses is undefined
+  }; // Use an empty object as default if familyInvestmentExpenses is undefined
 
 
-  let initialValues = incomeExpenses[props.modalObject.Input].length ? { NumberOfMap: incomeExpenses[props.modalObject.Input].length } : { NumberOfMap: "" };
+  let initialValues = familyInvestmentExpenses[props.modalObject.Input].length ? { NumberOfMap: familyInvestmentExpenses[props.modalObject.Input].length } : { NumberOfMap: "" };
 
   const [dynamicFields, setDynamicFields] = useState([]);
 
-      
+
   useEffect(() => {
 
-    if (incomeExpenses[props.modalObject.Input] && incomeExpenses[props.modalObject.Input].length) {
+    if (familyInvestmentExpenses[props.modalObject.Input] && familyInvestmentExpenses[props.modalObject.Input].length) {
 
       let arr = []
 
-      for (let i = 0; i < incomeExpenses[props.modalObject.Input].length; i++) {
+      for (let i = 0; i < familyInvestmentExpenses[props.modalObject.Input].length; i++) {
         arr.push("");
       }
 
       setDynamicFields(arr);
 
     }
-}, [])
+  }, [])
 
   const fillInitialValues = (setFieldValue) => {
 
-    if (incomeExpenses[props.modalObject.Input] && incomeExpenses[props.modalObject.Input].length) {
+    if (familyInvestmentExpenses[props.modalObject.Input] && familyInvestmentExpenses[props.modalObject.Input].length) {
 
-      incomeExpenses[props.modalObject.Input].forEach((data, i) => {
+      familyInvestmentExpenses[props.modalObject.Input].forEach((data, i) => {
         if (data) {
           setFieldValue(`councilRates${i}`, data.councilRates || '');
           setFieldValue(`waterRates${i}`, data.waterRates || '');
@@ -124,22 +124,23 @@ const QuestionIncomeExpanse = (props) => {
 
     console.log(obj, "final obj")
 
-    // Check if incomeExpenses and the array at props.modalObject.Input exist
-    // const bankAccountArray = incomeExpenses[props.modalObject.Input] || [];
-    const bankAccountArray = incomeExpenses.clientFK || "";
+    // Check if familyInvestmentExpenses and the array at props.modalObject.Input exist
+    // const bankAccountArray = familyInvestmentExpenses[props.modalObject.Input] || [];
+    const bankAccountArray = familyInvestmentExpenses.clientFK || "";
 
     try {
       let res;
       if (!bankAccountArray) {
-        res = await PostAxios(`${DefaultUrl}/api/incomeExpenses/Add`, obj);
+        res = await PostAxios(`${DefaultUrl}/api/familyInvestmentExpenses/Add`, obj);
       } else {
         obj.collection = props.modalObject.Input
-        res = await PatchAxios(`${DefaultUrl}/api/incomeExpenses/Update`, obj);
+        obj._id = familyInvestmentExpenses._id;
+        res = await PatchAxios(`${DefaultUrl}/api/familyInvestmentExpenses/Update`, obj);
       }
 
       if (res) {
         console.log(res);
-        const updatedData = { ...questionDetail, incomeExpenses: res };
+        const updatedData = { ...questionDetail, familyInvestmentExpenses: res };
         setQuestionDetail(updatedData);
       }
 
@@ -273,4 +274,4 @@ const QuestionIncomeExpanse = (props) => {
   );
 };
 
-export default QuestionIncomeExpanse;
+export default FamilyInvestmentHomeExpanse;

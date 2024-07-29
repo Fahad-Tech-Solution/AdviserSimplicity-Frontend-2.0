@@ -4,7 +4,6 @@ import { Button, InputGroup, Row, Table } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
 import { PatchAxios, PostAxios } from "../../Assets/Api/Api";
-// import Select from "react-select";
 
 
 const CenterLinkPayments = (props) => {
@@ -57,7 +56,7 @@ const CenterLinkPayments = (props) => {
           setFieldValue(`fortnightlyPayment${i}`, data.fortnightlyPayment || "");
           setFieldValue(`annualPaymentAmount${i}`, data.annualPaymentAmount || "");
           setFieldValue(`centrelinkcards${i}`, data.centrelinkcards || "");
-       
+
         }
       });
     }
@@ -113,7 +112,7 @@ const CenterLinkPayments = (props) => {
     // Iterate through each map entry and create a new object
     for (let i = 0; i < numberOfMaps; i++) {
       const newEntry = {
-          cRN: values[`cRN${i}`] || "",
+        cRN: values[`cRN${i}`] || "",
         paymentType: values[`paymentType${i}`] || "",
         fortnightlyPayment: values[`fortnightlyPayment${i}`] || "",
         annualPaymentAmount: values[`annualPaymentAmount${i}`] || "",
@@ -286,6 +285,66 @@ const CenterLinkPayments = (props) => {
                                       );
                                     })}
                                   </Field>
+
+                                  <Select
+                                    className="Select mt-3"
+                                    options={options}
+                                    onChange={breadSelected}
+                                    styles={{
+                                      control: (baseStyles, state) => ({
+                                        ...baseStyles,
+                                        borderColor: "#174f78",
+                                        borderRadius: state.isFocused
+                                          ? "1.5rem 1.5rem 0rem 0rem"
+                                          : "4rem 4rem 4rem 4rem",
+                                        borderWidth: "2px",
+                                        '&:hover': {
+                                          borderColor: '#174f78', // Change the border color on hover
+                                        },
+                                        fontWeight: 'bold',
+                                        borderBottom: state.isFocused ? "none" : ""
+                                        // color: '#174f78',
+                                        // borderBottom :state.isFocused?"0px":"1px solid white",
+                                      }),
+                                      singleValue: (baseStyles) => ({
+                                        ...baseStyles,
+                                        color: '#174f78', // Change text color in control
+                                        fontWeight: 'bold', // Increase font weight in control
+                                      }),
+                                      menu: (baseStyles) => ({
+                                        ...baseStyles,
+                                        borderRadius: '0rem 0rem 1.5rem 1.5rem',
+                                        marginTop: 0,
+                                        borderColor: '#174f78',
+                                        borderWidth: "3px",
+                                        overflow: 'hidden', // Ensure menu stays within site menu
+                                        zIndex: 999, // Ensure menu stays above other elements
+                                      }),
+                                      menuList: (baseStyles) => ({
+                                        ...baseStyles,
+                                        padding: 0,
+                                        borderColor: '#174f78',
+                                        borderWidth: "3px",
+                                        borderStyle: 'solid',
+                                        borderRadius: '0rem 0rem 1.5rem 1.5rem',
+                                        borderTop: "none"
+                                      }),
+                                      option: (baseStyles, state) => ({
+                                        ...baseStyles,
+                                        backgroundColor: state.isSelected ? '#fbf8e9' : state.isFocused ? '#fbf8e9' : '#fff',
+                                        color: state.isSelected || state.isFocused ? '#174f78' : '#174f78',
+                                        fontWeight: state.isSelected || state.isFocused ? 'bold' : 'normal',
+                                        padding: '10px 20px',
+                                        '&:active': {
+                                          backgroundColor: '#174f78',
+                                          color: '#fff',
+                                        },
+                                      }),
+                                    }}
+
+                                  />
+
+
                                 </td>
                                 <td>
                                   {/* <InputGroup className="mb-3"> */}

@@ -32,7 +32,7 @@ const InvestmentBond = (props) => {
 
 
     useEffect(() => {
-   
+
         if (investmentBondFinance[props.modalObject.Input] && investmentBondFinance[props.modalObject.Input].length) {
 
             let arr = []
@@ -294,7 +294,7 @@ const InvestmentBond = (props) => {
                                                             <td>{1 + i}</td>
                                                             <td>
                                                                 <Field
-                                                                    as="Select"
+                                                                    as="select"
                                                                     placeholder="Platform Name"
                                                                     id={`platformName${i}`}
                                                                     name={`platformName${i}`}

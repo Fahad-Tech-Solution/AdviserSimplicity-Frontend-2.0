@@ -10,7 +10,7 @@ const AustralianShares = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
-    let australianSharesFinance = questionDetail.australianSharesFinance || {
+    let australianSharesFinance = questionDetail[props.modalObject.key] || {
         client: [],
         partner: [],
         joint: [],
@@ -165,15 +165,15 @@ const AustralianShares = (props) => {
         try {
             let res;
             if (!bankAccountArray) {
-                res = await PostAxios(`${DefaultUrl}/api/australianShareMarket/Add`, obj);
+                res = await PostAxios(`${DefaultUrl}/api/${props.modalObject.key}/Add`, obj);
             } else {
                 obj.collection = props.modalObject.Input
-                res = await PatchAxios(`${DefaultUrl}/api/australianShareMarket/Update`, obj);
+                res = await PatchAxios(`${DefaultUrl}/api/${props.modalObject.key}/Update`, obj);
             }
 
             if (res) {
                 console.log(res);
-                const updatedData = { ...questionDetail, australianSharesFinance: res };
+                const updatedData = { ...questionDetail, [props.modalObject.key]: res };
                 setQuestionDetail(updatedData);
             }
 

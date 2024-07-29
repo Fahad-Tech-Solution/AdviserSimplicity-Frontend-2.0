@@ -36,7 +36,7 @@ const AccountBasedPension = (props) => {
 
     const [dynamicFields, setDynamicFields] = useState([]);
 
-        
+
     useEffect(() => {
         if (accountBasedPensionIssues[props.modalObject.Input] && accountBasedPensionIssues[props.modalObject.Input].length) {
 
@@ -56,13 +56,20 @@ const AccountBasedPension = (props) => {
 
             accountBasedPensionIssues[props.modalObject.Input].forEach((data, i) => {
                 if (data) {
-                    setFieldValue(`platformName${i}`, data.platformName || '');
-                    setFieldValue(`accountNumber${i}`, data.accountNumber || '');
+                    setFieldValue(`fundName${i}`, data.fundName || '');
+                    setFieldValue(`memberNumber${i}`, data.memberNumber || '');
+                    setFieldValue(`memberArray${i}`, data.memberArray || '');
+                    setFieldValue(`balanceBenefitDetails${i}`, data.balanceBenefitDetails || '');
+                    setFieldValue(`balanceBenefitDetailsArray${i}`, data.balanceBenefitDetailsArray || '');
                     setFieldValue(`portfolioValue${i}`, data.portfolioValue || '');
                     setFieldValue(`portfolioArray${i}`, data.portfolioArray || '');
-                    setFieldValue(`totalPortfolioCost${i}`, data.totalPortfolioCost || '');
-                    setFieldValue(`serviceFee${i}`, data.serviceFee || '');
+                    setFieldValue(`pensionPayment${i}`, data.pensionPayment || '');
+                    setFieldValue(`pensionType${i}`, data.pensionType || '');
+                    setFieldValue(`nominatedBeneficiaries${i}`, data.nominatedBeneficiaries || '');
+                    setFieldValue(`beneficiariesArray${i}`, data.beneficiariesArray || '');
+                    setFieldValue(`annualAdvice${i}`, data.annualAdvice || '');
                     setFieldValue(`loginInPage${i}`, data.loginInPage || '');
+
                 }
             });
         }
@@ -111,7 +118,10 @@ const AccountBasedPension = (props) => {
         for (let i = 0; i < numberOfMaps; i++) {
             const newEntry = {
                 fundName: values[`fundName${i}`] || "",
+                memberNumber: values[`memberNumber${i}`] || "",
                 memberArray: values[`memberArray${i}`] || "",
+                balanceBenefitDetails: values[`balanceBenefitDetails${i}`] || "",
+                balanceBenefitDetailsArray: values[`balanceBenefitDetailsArray${i}`] || "",
                 portfolioValue: values[`portfolioValue${i}`] || "",
                 portfolioArray: values[`portfolioArray${i}`] || "",
                 pensionPayment: values[`pensionPayment${i}`] || "",
@@ -266,17 +276,18 @@ const AccountBasedPension = (props) => {
                             <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} >
                                 {
                                     modalObject.key === "portfolioArray" ? <PortfolioValue /> :
-                                        modalObject.key === "memberArray" ? <AccountBasedMemberNumber /> :
-                                            modalObject.key === "groupInsuranceArray" ? <GroupInsurance /> :
-                                                modalObject.key === "ContributionsArray" ? <Contributions /> :
-                                                    modalObject.key === "beneficiariesArray" ? <Beneficiaries /> : ""
+                                    modalObject.key === "memberArray" ? <AccountBasedMemberNumber /> :
+                                    modalObject.key === "balanceBenefitDetailsArray" ? <MemberNumber /> :
+                                    modalObject.key === "groupInsuranceArray" ? <GroupInsurance /> :
+                                    modalObject.key === "ContributionsArray" ? <Contributions /> :
+                                    modalObject.key === "beneficiariesArray" ? <Beneficiaries /> : ""
                                 }
                             </InnerModal>
                             <div className="col-md-12">
                                 <div className='row justify-content-center'>
                                     <div className='col-md-5'>
                                         <p className='text-end mt-1'>
-                                            How many Super Funds does {props.modalObject.Input} have:
+                                            How many Account Based Pension does {props.modalObject.Input} have:
                                         </p>
                                     </div>
                                     <div className='col-md-2'>
@@ -295,13 +306,14 @@ const AccountBasedPension = (props) => {
                                                     <tr>
                                                         <th onClick={() => { console.log(values) }}>No#</th>
                                                         <th>Fund Name</th>
-                                                        <th>Member Number & Details - have a ? explaining what info is in this box</th>
-                                                        <th>Portfolio Value – Need to have another pop</th>
+                                                        <th>Member Number</th>
+                                                        <th>Balance & Benefit Details</th>
+                                                        <th>Portfolio Value</th>
                                                         <th>Pension Payment</th>
                                                         <th>Pension Type</th>
                                                         <th>Nominated Beneficiaries</th>
-                                                        <th>Annual Advice Service Fee</th>
-                                                        <th>Login in Page </th>
+                                                        <th>Annual  Advice Service Fee</th>
+                                                        <th>Login in Page</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -310,7 +322,7 @@ const AccountBasedPension = (props) => {
                                                             <td>{1 + i}</td>
                                                             <td>
                                                                 <Field
-                                                                    as="Select"
+                                                                    as="select"
                                                                     placeholder="Fund Name"
                                                                     id={`fundName${i}`}
                                                                     name={`fundName${i}`}
@@ -331,7 +343,25 @@ const AccountBasedPension = (props) => {
                                                                         name={`memberNumber${i}`}
                                                                         className="form-control inputDesign"
                                                                     />
-                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Member Number & Details", "How many Member Number & Details do you have ?", "memberArray", "memberNumber", "totalPortfolioCost", values[`memberArray${i}`], i, values) }}>
+                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
+                                                                        handleInnerModal("Member Number & Details", "How many Member Number & Details do you have ?", "memberArray", "memberNumber", "totalPortfolioCost", values[`memberArray${i}`], i, values)
+                                                                    }}>
+                                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                                    </Button>
+                                                                </InputGroup>
+                                                            </td>
+                                                            <td>
+                                                                <InputGroup className="mb-3">
+                                                                    <Field
+                                                                        type="number"
+                                                                        placeholder="Balance & Benefit Details"
+                                                                        id={`balanceBenefitDetails${i}`}
+                                                                        name={`balanceBenefitDetails${i}`}
+                                                                        className="form-control inputDesign"
+                                                                    />
+                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
+                                                                        handleInnerModal("Balance & Benefit Details", "How many Benefit Details and Components do you have ?", "balanceBenefitDetailsArray", "balanceBenefitDetails", "", values[`balanceBenefitDetailsArray${i}`], i, values)
+                                                                    }}>
                                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                     </Button>
                                                                 </InputGroup>
@@ -349,7 +379,6 @@ const AccountBasedPension = (props) => {
                                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                     </Button>
                                                                 </InputGroup>
-
                                                             </td>
                                                             <td>
                                                                 <Field

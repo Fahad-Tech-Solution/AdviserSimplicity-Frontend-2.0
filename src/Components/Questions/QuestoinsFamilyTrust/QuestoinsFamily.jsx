@@ -11,7 +11,7 @@ import property from "../svgs/property-value.svg";
 
 import { useRecoilState } from "recoil";
 import { QuestionShift, CRState } from "../../../Store/Store";
-const QuestionsSMSF = (props) => {
+const QuestionsFamily = (props) => {
   let [QuestionChange, setQuestionChange] = useRecoilState(QuestionShift);
   let [CRObject, setCRObject] = useRecoilState(CRState);
 
@@ -25,7 +25,7 @@ const QuestionsSMSF = (props) => {
     setCRObject(values);
     localStorage.setItem("QuestionsState", JSON.stringify(values));
     props.setQuestionChange(false);
-    localStorage.setItem("Question", "InvestmentTrust");
+    localStorage.setItem("Question", "FamilyTrust");
 
   };
 
@@ -41,12 +41,12 @@ const QuestionsSMSF = (props) => {
           {({ values, handleChange }) => (
             <Form>
               <div className="col-md-12 text-center">
-                <h4 className="heading">Self Manged Super Fund </h4>
+                <h4 className="heading">Family Trust Investment</h4>
                 <div className="row my-3">
                   <div className="col-md-12 ">
                     <div className="mb-3">
                       <label className="form-label">
-                        Does your SMSF have any Money invested in Term Deposits?{" "}
+                        Does your Family Trust  have any Money invested in Term Deposits?{" "}
                       </label>
                       <div className="QuestionIcon ">
                         <img
@@ -60,30 +60,30 @@ const QuestionsSMSF = (props) => {
                         <div className="radiobutton">
                           <input
                             type="radio"
-                            name="SMSFTermDeposits"
+                            name="familyTermDeposit"
                             className="form-check-input"
-                            id="SMSFTermDeposits1"
+                            id="familyTermDeposit1"
                             value="No"
                             onChange={handleChange}
-                            checked={values.SMSFTermDeposits === "No"}
+                            checked={values.familyTermDeposit === "No"}
                           />
                           <label
-                            htmlFor="SMSFTermDeposits1"
+                            htmlFor="familyTermDeposit1"
                             className="label1"
                           >
                             <span>No</span>
                           </label>
                           <input
                             type="radio"
-                            name="SMSFTermDeposits"
-                            id="SMSFTermDeposits2"
+                            name="familyTermDeposit"
+                            id="familyTermDeposit2"
                             className="form-check-input"
                             value="Yes"
                             onChange={handleChange}
-                            checked={values.SMSFTermDeposits === "Yes"}
+                            checked={values.familyTermDeposit === "Yes"}
                           />
                           <label
-                            htmlFor="SMSFTermDeposits2"
+                            htmlFor="familyTermDeposit2"
                             className="label2"
                           >
                             <span>Yes</span>
@@ -99,7 +99,7 @@ const QuestionsSMSF = (props) => {
                   <div className="col-md-12 ">
                     <div className="mb-3">
                       <label className="form-label">
-                        Does  your SMSF have any Money invested Australian Shares?{" "}
+                        Does your Family Trust  have any Money invested Australian Shares?{" "}
                       </label>
                       <div className="QuestionIcon ">
                         <img
@@ -113,30 +113,30 @@ const QuestionsSMSF = (props) => {
                         <div className="radiobutton">
                           <input
                             type="radio"
-                            name="SMSFAustralianShares"
+                            name="familyAustralianShare"
                             className="form-check-input"
-                            id="SMSFAustralianShares1"
+                            id="familyAustralianShare1"
                             value="No"
                             onChange={handleChange}
-                            checked={values.SMSFAustralianShares === "No"}
+                            checked={values.familyAustralianShare === "No"}
                           />
                           <label
-                            htmlFor="SMSFAustralianShares1"
+                            htmlFor="familyAustralianShare1"
                             className="label1"
                           >
                             <span>No</span>
                           </label>
                           <input
                             type="radio"
-                            name="SMSFAustralianShares"
-                            id="SMSFAustralianShares2"
+                            name="familyAustralianShare"
+                            id="familyAustralianShare2"
                             className="form-check-input"
                             value="Yes"
                             onChange={handleChange}
-                            checked={values.SMSFAustralianShares === "Yes"}
+                            checked={values.familyAustralianShare === "Yes"}
                           />
                           <label
-                            htmlFor="SMSFAustralianShares2"
+                            htmlFor="familyAustralianShare2"
                             className="label2"
                           >
                             <span>Yes</span>
@@ -152,7 +152,7 @@ const QuestionsSMSF = (props) => {
                   <div className="col-md-12 ">
                     <div className="mb-3">
                       <label className="form-label">
-                        Do you SMSF have any Money invested in Managed Funds or via a Platform?{" "}
+                        Does your Family Trust have any Money invested   in Managed Funds or via a Platform?{" "}
                       </label>
                       <div className="QuestionIcon ">
                         <img
@@ -166,30 +166,30 @@ const QuestionsSMSF = (props) => {
                         <div className="radiobutton">
                           <input
                             type="radio"
-                            name="SMSFManagedFunds"
+                            name="familyMangedFunds"
                             className="form-check-input"
-                            id="SMSFManagedFunds1"
+                            id="familyMangedFunds1"
                             value="No"
                             onChange={handleChange}
-                            checked={values.SMSFManagedFunds === "No"}
+                            checked={values.familyMangedFunds === "No"}
                           />
                           <label
-                            htmlFor="SMSFManagedFunds1"
+                            htmlFor="familyMangedFunds1"
                             className="label1"
                           >
                             <span>No</span>
                           </label>
                           <input
                             type="radio"
-                            name="SMSFManagedFunds"
-                            id="SMSFManagedFunds2"
+                            name="familyMangedFunds"
+                            id="familyMangedFunds2"
                             className="form-check-input"
                             value="Yes"
                             onChange={handleChange}
-                            checked={values.SMSFManagedFunds === "Yes"}
+                            checked={values.familyMangedFunds === "Yes"}
                           />
                           <label
-                            htmlFor="SMSFManagedFunds2"
+                            htmlFor="familyMangedFunds2"
                             className="label2"
                           >
                             <span>Yes</span>
@@ -205,7 +205,7 @@ const QuestionsSMSF = (props) => {
                   <div className="col-md-12 ">
                     <div className="mb-3">
                       <label className="form-label">
-                        Does  your SMSF have an  Investment Loan (LOC)  attached to any of its investments?{" "}
+                        Does your Family Trust have any  Investment Loan (LOC)  attached to any of its investments?{" "}
                       </label>
                       <div className="QuestionIcon ">
                         <img
@@ -219,30 +219,30 @@ const QuestionsSMSF = (props) => {
                         <div className="radiobutton">
                           <input
                             type="radio"
-                            name="SMSFInvestmentLoan"
+                            name="familyInvestmentHomeLoan"
                             className="form-check-input"
-                            id="SMSFInvestmentLoan1"
+                            id="familyInvestmentHomeLoan1"
                             value="No"
                             onChange={handleChange}
-                            checked={values.SMSFInvestmentLoan === "No"}
+                            checked={values.familyInvestmentHomeLoan === "No"}
                           />
                           <label
-                            htmlFor="SMSFInvestmentLoan1"
+                            htmlFor="familyInvestmentHomeLoan1"
                             className="label1"
                           >
                             <span>No</span>
                           </label>
                           <input
                             type="radio"
-                            name="SMSFInvestmentLoan"
-                            id="SMSFInvestmentLoan2"
+                            name="familyInvestmentHomeLoan"
+                            id="familyInvestmentHomeLoan2"
                             className="form-check-input"
                             value="Yes"
                             onChange={handleChange}
-                            checked={values.SMSFInvestmentLoan === "Yes"}
+                            checked={values.familyInvestmentHomeLoan === "Yes"}
                           />
                           <label
-                            htmlFor="SMSFInvestmentLoan2"
+                            htmlFor="familyInvestmentHomeLoan2"
                             className="label2"
                           >
                             <span>Yes</span>
@@ -258,7 +258,7 @@ const QuestionsSMSF = (props) => {
                   <div className="col-md-12 ">
                     <div className="mb-3">
                       <label className="form-label">
-                        Does your SMSF have any investment Properties?{" "}
+                        Does your Family Trust have any investment Properties?{" "}
                       </label>
                       <div className="QuestionIcon ">
                         <img
@@ -272,30 +272,30 @@ const QuestionsSMSF = (props) => {
                         <div className="radiobutton">
                           <input
                             type="radio"
-                            name="SMSFInvestmentProperties"
+                            name="familyInvestmentProperties"
                             className="form-check-input"
-                            id="SMSFInvestmentProperties1"
+                            id="familyInvestmentProperties1"
                             value="No"
                             onChange={handleChange}
-                            checked={values.SMSFInvestmentProperties === "No"}
+                            checked={values.familyInvestmentProperties === "No"}
                           />
                           <label
-                            htmlFor="SMSFInvestmentProperties1"
+                            htmlFor="familyInvestmentProperties1"
                             className="label1"
                           >
                             <span>No</span>
                           </label>
                           <input
                             type="radio"
-                            name="SMSFInvestmentProperties"
-                            id="SMSFInvestmentProperties2"
+                            name="familyInvestmentProperties"
+                            id="familyInvestmentProperties2"
                             className="form-check-input"
                             value="Yes"
                             onChange={handleChange}
-                            checked={values.SMSFInvestmentProperties === "Yes"}
+                            checked={values.familyInvestmentProperties === "Yes"}
                           />
                           <label
-                            htmlFor="SMSFInvestmentProperties2"
+                            htmlFor="familyInvestmentProperties2"
                             className="label2"
                           >
                             <span>Yes</span>
@@ -307,7 +307,7 @@ const QuestionsSMSF = (props) => {
                   </div>
                 </div>
 
-                {values.SMSFInvestmentProperties === "Yes" &&
+                {values.familyInvestmentProperties === "Yes" &&
                   <div className="row my-3 justify-content-center">
                     <div className="col-md-12">
                       <div className="mb-3">
@@ -318,8 +318,8 @@ const QuestionsSMSF = (props) => {
                     </div>
                     <div className="col-md-5">
                       <Field
-                        name="numberOfSMSFInvestmentProperties"
-                        id="numberOfSMSFInvestmentProperties"
+                        name="numberOfFamilyInvestmentProperties"
+                        id="numberOfFamilyInvestmentProperties"
                         className="form-select inputDesign"
                         as="select"
                       >
@@ -335,58 +335,6 @@ const QuestionsSMSF = (props) => {
                 }
 
 
-                <div className="row my-3">
-                  <div className="col-md-12 ">
-                    <div className="mb-3">
-                      <label className="form-label">
-                        Does your SMSF have any money in Pension Phase?{" "}
-                      </label>
-                      <div className="QuestionIcon ">
-                        <img
-                          className="img-fluid "
-                          src={people}
-                          alt=""
-                        />
-                      </div>
-                      {/* switch button style */}
-                      <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter">
-                        <div className="radiobutton">
-                          <input
-                            type="radio"
-                            name="SMSFPensionPhase"
-                            className="form-check-input"
-                            id="SMSFPensionPhase1"
-                            value="No"
-                            onChange={handleChange}
-                            checked={values.SMSFPensionPhase === "No"}
-                          />
-                          <label
-                            htmlFor="SMSFPensionPhase1"
-                            className="label1"
-                          >
-                            <span>No</span>
-                          </label>
-                          <input
-                            type="radio"
-                            name="SMSFPensionPhase"
-                            id="SMSFPensionPhase2"
-                            className="form-check-input"
-                            value="Yes"
-                            onChange={handleChange}
-                            checked={values.SMSFPensionPhase === "Yes"}
-                          />
-                          <label
-                            htmlFor="SMSFPensionPhase2"
-                            className="label2"
-                          >
-                            <span>Yes</span>
-                          </label>
-                        </div>
-                      </div>
-                      {/* switch button style */}
-                    </div>
-                  </div>
-                </div>
 
                 <div className="row mt-2 d-none">
                   <div className="col-md-12">
@@ -422,4 +370,4 @@ const QuestionsSMSF = (props) => {
   );
 };
 
-export default QuestionsSMSF;
+export default QuestionsFamily;

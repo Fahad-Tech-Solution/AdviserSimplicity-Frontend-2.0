@@ -157,6 +157,7 @@ const Beneficiaries = (props) => {
                                                                         }}
                                                                     >
                                                                         <option value={""}>Select</option>
+                                                                        <option value={"Reversionary Beneficiary"}>Reversionary Beneficiary</option>
                                                                         <option value={"Binding (Non-Lapsing)"}>Binding (Non-Lapsing)</option>
                                                                         <option value={"Binding (Lapsing)"}>Binding (Lapsing)</option>
                                                                         <option value={"Non-Binding"}>Non-Binding </option>

@@ -102,7 +102,7 @@ const SoleTrader = (props) => {
         obj[DataOf] = newEntries
 
         // Calculate total currentBalance
-        obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.annualAdvice, 0);
+        obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.netSoleTrader, 0);
 
         console.log(obj, "final obj")
 

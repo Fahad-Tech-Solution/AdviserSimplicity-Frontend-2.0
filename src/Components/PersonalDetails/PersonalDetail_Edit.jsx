@@ -50,15 +50,6 @@ const PersonalDetail = () => {
   // let phonePattern = /^[1-9][0-9]{9}$/;  //? don't Remove it you might need it later
   // let postCodePattern = /^\d{4}$/;      //? don't Remove it you might need it later
 
-  const [show, setShow] = useState(false);
-
-
-  const [numOfChild, setNumOfChild] = useState(1);
-  const [ChildFlag, setChildFlag] = useState(0);
-  const [listOfChild, setListOfChild] = useState([]);
-
-  const [UpdateChild, setUpdateChild] = useState([]);
-  const [SubmitFlag, setSubmitFlag] = useState(false);
 
   const [PartnerData, setPartnerData] = useState([]);
   const [initialState, setInitialState] = useState({});
@@ -96,12 +87,19 @@ const PersonalDetail = () => {
 
         let status = clientFilterObj[0].clientMaritalStatus;
 
+
+        localStorage.setItem('UserID', clientFilterObj[0]._id)
+        localStorage.setItem('UserName', clientFilterObj[0].clientPreferredName)
+
+
         setFoundData(true);
         if (status === "Single" || status === "Widowed") {
+          localStorage.setItem('UserStatus', "Single")
           setIsPartnered(false);
           setInitialState({ ...clientFilterObj[0] });
         } else {
           setIsPartnered(true);
+          localStorage.setItem('UserStatus', "Married")
           // console.log("Partner True Ho Gaya ");
 
           // Partner Data Get
@@ -119,6 +117,8 @@ const PersonalDetail = () => {
             partnerFilterObj[0].partnerDOB = date;
 
             setPartnerData(partnerFilterObj[0]);
+
+            localStorage.setItem('PartnerName', partnerFilterObj[0].partnerPreferredName)
 
             // console.log("Partner Data:", partnerFilterObj[0]);
             setInitialState({ ...clientFilterObj[0], ...partnerFilterObj[0] });
@@ -362,8 +362,6 @@ const PersonalDetail = () => {
           res.data
           localStorage.setItem('UserID', res.data._id)
           console.log("Client Successfully Added!", res.data);
-
-
         });
 
       if (values.clientMaritalStatus !== "Single" && values.clientMaritalStatus !== "Widowed") {
@@ -379,7 +377,6 @@ const PersonalDetail = () => {
     console.log(Option);
     console.log(elem);
     if (Option === 1) {
-
       setClientAndPartnerTable(!ClientAndPartnerTable);
     } else if (Option === 2) {
       alert("DeleteFunctionality");

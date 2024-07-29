@@ -131,7 +131,7 @@ const EstatePlanningWill = (props) => {
         obj[DataOf] = newEntries
 
         // Calculate total currentBalance
-        obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.estatePlanning, 0);
+        obj[DataOf + "Total"] = newEntries.length;
 
         console.log(obj, "final obj")
 
@@ -184,7 +184,7 @@ const EstatePlanningWill = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='col-md-5'>
                                         <p className='text-end mt-1'>
-                                            How many Super Funds does {props.modalObject.Input} have:
+                                            How many {props.modalObject.title} does {props.modalObject.Input} have:
                                         </p>
                                     </div>
                                     <div className='col-md-2'>
@@ -204,7 +204,7 @@ const EstatePlanningWill = (props) => {
                                                         <th onClick={() => { console.log(values) }}>No#</th>
                                                         <th>Year set up</th>
                                                         <th>Are Your Wills Current</th>
-                                                        <th>executor/s</th>
+                                                        <th>Executor/s</th>
                                                         <th>Enduring Guardianship</th>
                                                         <th>Testamentary Trust</th>
                                                         <th>Any specific estate planning requirements/needs?</th>
@@ -232,7 +232,7 @@ const EstatePlanningWill = (props) => {
                                                             <td>
                                                                 <Field
                                                                     type="text"
-                                                                    placeholder="executor/s"
+                                                                    placeholder="Executor/s"
                                                                     id={`executor${i}`}
                                                                     name={`executor${i}`}
                                                                     className="form-control inputDesign"

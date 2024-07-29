@@ -29,7 +29,7 @@ const ModalComponent = (props) => {
     }, [props.setQuestionChange, props.Question]);
 
 
-    const xlTitles = ["Australian Shares", "Managed Funds", "Investment Bond", "Investment Loan", "Margin Loan", "Personal Loan", "Credit Card", "Home Loan", "Own a Family Home", "Holiday Home", "Holiday Home Loan", "Investment Property Details", "Investment Property Loan", "Super Funds", "Account Based Pension", "invested in Annuities", "Will", "Employement Income", "Centerlink Payments", "Sole Trader", "Partnership"]; // Add other titles that should use "xl" here
+    const xlTitles = ["Australian Shares", "Managed Funds", "Investment Bond", "Investment Loan", "Margin Loan", "Personal Loan", "Credit Card", "Home Loan", "Own a Family Home", "Holiday Home", "Holiday Home Loan", "Investment Property Details", "Investment Property Loan", "Super Funds", "Account Based Pension", "invested in Annuities", "Will", "Centerlink Payments", "Sole Trader", "Partnership", "SMSF Details", "Investment Home Loan", "Business as Company Structure", "Business as Trusts", "Family Trust Details"]; // Add other titles that should use "xl" here
 
     const size = xlTitles.includes(props.modalObject.title) ? "xl" : "lg";
 

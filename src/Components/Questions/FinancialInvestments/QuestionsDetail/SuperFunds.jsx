@@ -275,7 +275,7 @@ const SuperFunds = (props) => {
                             <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} >
                                 {
                                     modalObject.key === "portfolioArray" ? <PortfolioValue /> :
-                                        modalObject.key === "memberArray" ? <MemberNumber /> :
+                                        modalObject.key === "balanceBenefitDetailsArray" ? <MemberNumber /> :
                                             modalObject.key === "groupInsuranceArray" ? <GroupInsurance /> :
                                                 modalObject.key === "ContributionsArray" ? <Contributions /> :
                                                     modalObject.key === "beneficiariesArray" ? <Beneficiaries /> : ""
@@ -304,13 +304,15 @@ const SuperFunds = (props) => {
                                                     <tr>
                                                         <th onClick={() => { console.log(values) }}>No#</th>
                                                         <th>Fund Name</th>
-                                                        <th>Member Number & Details - have a ? explaining what info is in this box</th>
+                                                        <th>Member Number</th>
+                                                        <th>Balance & Benefit Details</th>
                                                         <th>Portfolio Value – Need to have another pop</th>
                                                         <th>Group Insurance Attached</th>
                                                         <th>Contributions</th>
                                                         <th>Nominated Beneficiaries</th>
                                                         <th>Annual Advice Service Fee</th>
                                                         <th>Login in Page </th>
+
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -319,7 +321,7 @@ const SuperFunds = (props) => {
                                                             <td>{1 + i}</td>
                                                             <td>
                                                                 <Field
-                                                                    as="Select"
+                                                                    as="select"
                                                                     placeholder="Fund Name"
                                                                     id={`fundName${i}`}
                                                                     name={`fundName${i}`}
@@ -332,7 +334,6 @@ const SuperFunds = (props) => {
                                                                 </Field>
                                                             </td>
                                                             <td>
-                                                                <InputGroup className="mb-3">
                                                                     <Field
                                                                         type="number"
                                                                         placeholder="Member Number & Details"
@@ -340,7 +341,17 @@ const SuperFunds = (props) => {
                                                                         name={`memberNumber${i}`}
                                                                         className="form-control inputDesign"
                                                                     />
-                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Member Number & Details", "How many Member Number & Details do you have ?", "memberArray", "memberNumber", "totalPortfolioCost", values[`memberArray${i}`], i, values) }}>
+                                                            </td>
+                                                            <td>
+                                                                <InputGroup className="mb-3">
+                                                                    <Field
+                                                                        type="number"
+                                                                        placeholder="Balance & Benefit Details"
+                                                                        id={`balanceBenefitDetails${i}`}
+                                                                        name={`balanceBenefitDetails${i}`}
+                                                                        className="form-control inputDesign"
+                                                                    />
+                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Balance & Benefit Details", "How many Benefit Details and Components do you have ?", "balanceBenefitDetailsArray", "balanceBenefitDetails", "", values[`balanceBenefitDetailsArray${i}`], i, values) }}>
                                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                     </Button>
                                                                 </InputGroup>

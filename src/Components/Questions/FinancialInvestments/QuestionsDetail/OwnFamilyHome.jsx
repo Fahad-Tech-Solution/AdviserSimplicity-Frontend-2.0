@@ -259,7 +259,7 @@ const OwnFamilyHome = (props) => {
                                                     <tr>
                                                         <th>No#</th>
                                                         <th>Home Address & Postcode</th>
-                                                        <th>Current Value – link to URL below </th>
+                                                        <th>Current Value – <a href='https://www.property.com.au/' target='_blank' className='text-white'>Calculate Property</a>  </th>
                                                         <th>Cost base /(Purchase Price)</th>
                                                         <th>Client Ownership</th>
                                                         <th>Partner Ownership</th>

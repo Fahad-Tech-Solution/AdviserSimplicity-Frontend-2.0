@@ -155,7 +155,7 @@ const EstatePlanningProfessionalAdviser = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='col-md-5'>
                                         <p className='text-end mt-1'>
-                                            How many Super Funds does {props.modalObject.Input} have:
+                                            How many {props.modalObject.title} does {props.modalObject.Input} have:
                                         </p>
                                     </div>
                                     <div className='col-md-2'>
@@ -186,7 +186,7 @@ const EstatePlanningProfessionalAdviser = (props) => {
                                                             <td>{1 + i}</td>
                                                             <td>
                                                                 <Field
-                                                                    as="Select"
+                                                                    as="select"
                                                                     placeholder="Fund Name"
                                                                     id={`POAType${i}`}
                                                                     name={`POAType${i}`}

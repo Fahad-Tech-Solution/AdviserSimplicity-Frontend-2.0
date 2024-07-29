@@ -9,7 +9,7 @@ const BankTermForm = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
-    let BankAccountFinance = questionDetail.BankAccountFinance || {
+    let BankAccountFinance = questionDetail[props.modalObject.key] || {
         client: [],
         partner: [],
         joint: [],
@@ -115,7 +115,7 @@ const BankTermForm = (props) => {
                     <td>{1 + i}</td>
                     <td>
                         <Field
-                            as="Select"
+                            as="select"
                             placeholder="Name of Institution"
                             id={`Institution${i}`}
                             name={`Institution${i}`}
@@ -211,15 +211,15 @@ const BankTermForm = (props) => {
         try {
             let res;
             if (!bankAccountArray) {
-                res = await PostAxios(`${DefaultUrl}/api/bankAccountFinance/Add`, obj);
+                res = await PostAxios(`${DefaultUrl}/api/${props.modalObject.key}/Add`, obj);
             } else {
                 obj.collection = props.modalObject.Input
-                res = await PatchAxios(`${DefaultUrl}/api/bankAccountFinance/Update`, obj);
+                res = await PatchAxios(`${DefaultUrl}/api/${props.modalObject.key}/Update`, obj);
             }
 
             if (res) {
                 console.log(res);
-                const updatedData = { ...questionDetail, BankAccountFinance: res };
+                const updatedData = { ...questionDetail, [props.modalObject.key]: res };
                 setQuestionDetail(updatedData);
             }
 

@@ -35,7 +35,7 @@ const InvestedAnnuities = (props) => {
 
     const [dynamicFields, setDynamicFields] = useState([]);
 
-    
+
     useEffect(() => {
 
         if (annuitiesIssues[props.modalObject.Input] && annuitiesIssues[props.modalObject.Input].length) {
@@ -280,7 +280,7 @@ const InvestedAnnuities = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='col-md-5'>
                                         <p className='text-end mt-1'>
-                                            How many Super Funds does {props.modalObject.Input} have:
+                                            How many Annuities does {props.modalObject.Input} have:
                                         </p>
                                     </div>
                                     <div className='col-md-2'>
@@ -315,7 +315,7 @@ const InvestedAnnuities = (props) => {
                                                             <td>{1 + i}</td>
                                                             <td>
                                                                 <Field
-                                                                    as="Select"
+                                                                    as="select"
                                                                     placeholder="Product Provider"
                                                                     id={`productProvider${i}`}
                                                                     name={`productProvider${i}`}

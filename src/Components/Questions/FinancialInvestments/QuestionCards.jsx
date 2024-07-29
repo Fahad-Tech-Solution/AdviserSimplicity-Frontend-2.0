@@ -50,15 +50,21 @@ import money from "../svgs/money-3.svg";
 import overseas from "../svgs/overseas.svg";
 import inheritance from "../svgs/inheritance.png";
 import moneyBag from "../svgs/money-bag-svgrepo-com.svg";
+import moneyBagPng from "../svgs/money-bag.png";
+
+
+
+import Business_building from "../svgs/building-small-svgrepo-com.svg";
+import Business_TeamHandshake from "../svgs/team_Handshake.png";
+import Questions_People from "../svgs/Questions_People.png";
 
 //Q set 8
-import Questions_SMSF from "../svgs/money-bag-svgrepo-com.svg";
-import Dollar_Chart from "../svgs/WhatsApp Image 2023-08-11 at 19.42.35.jpg";
+import people from "../svgs/Questions_People.png";
 import Questions_loan from "../svgs/loan.svg";
 import Questions_Bank from "../svgs/property-value.svg";
 
 //Q set 9
-import Questions_People from "../svgs/Questions_People.png";
+// import Questions_People from "../svgs/Questions_People.png";
 import QuestionMoney from "../svgs/QuestionMoney.jpg";
 
 
@@ -69,18 +75,15 @@ import { Card } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import ModalComponent from './ModalComponent';
-import ExampleForm from './QuestionsDetail/BankTermForm';
 import BankTermForm from './QuestionsDetail/BankTermForm';
-import { GetAxios, PatchAxios, PostAxios } from '../../Assets/Api/Api';
+import { PatchAxios, PostAxios } from '../../Assets/Api/Api';
 import TermDeposit from './QuestionsDetail/TermDeposit';
 
 
-import { json } from 'react-router-dom';
 import AustralianShares from './QuestionsDetail/AustralianShares';
 import ManagedFunds from './QuestionsDetail/ManagedFunds';
 import InvestmentLoan from './QuestionsDetail/InvestmentLoan';
 import InvestmentBond from './QuestionsDetail/InvestmentBond';
-import { Button } from 'bootstrap';
 import MarginLoan from './QuestionsDetail/MarginLoan';
 import PersonalLoan from './QuestionsDetail/PersonalLoan';
 import CreditCard from './QuestionsDetail/CreditCard';
@@ -106,6 +109,20 @@ import LifeTimeBeneFits from '../PersonalIncome/LifetimeBenefits';
 import OverseasPension from '../PersonalIncome/OverseasPension';
 import Inheritance from '../PersonalIncome/Inheritance';
 import LumpsumExpenses from '../PersonalIncome/LumpsumExpenses';
+import TradingCompany from '../BusinessEntities/TradingCompany';
+import TradingTrust from '../BusinessEntities/TradingTrust';
+import SMSFInvestmentProperty from '../QuestoinsSMSF/SMSFInvestmentProperty';
+import SMSFInvestmentPropertyModalComp from '../QuestoinsSMSF/SMSFInvestmentPropertyModalComp';
+import SMSFInvestmentHomeLoanComp from '../QuestoinsSMSF/SMSFInvestmentHomeLoanComp';
+import InvestmentHomeExpanse from '../QuestoinsSMSF/InvestmentHomeExpanse';
+import SmsfAccumulationDetails from '../QuestoinsSMSF/SmsfAccumulationDetails';
+import SmsfDetails from '../QuestoinsSMSF/SmsfDetails';
+import SmsfPensionAccount from '../QuestoinsSMSF/PensionAccount';
+import FamilyInvestmentProperty from '../QuestoinsFamilyTrust/FamilyInvestmentProperty';
+import FamilyDetails from '../QuestoinsFamilyTrust/FamilyDetails';
+import FamilyInvestmentPropertyModalComp from '../QuestoinsFamilyTrust/FamilyInvestmentPropertyModalComp';
+import FamilyInvestmentHomeLoanComp from '../QuestoinsFamilyTrust/FamilyInvestmentHomeLoanComp';
+import FamilyInvestmentHomeExpanse from '../QuestoinsFamilyTrust/FamilyInvestmentHomeExpanse';
 
 
 const QuestionCards = (props) => {
@@ -122,7 +139,7 @@ const QuestionCards = (props) => {
         FinancialInvestments: [
             {
                 title: "Bank Accounts",
-                key: "BankAccountFinance",
+                key: "bankAccountFinance",
                 img: BankImg
             },
             {
@@ -132,12 +149,12 @@ const QuestionCards = (props) => {
             },
             {
                 title: "Australian Shares",
-                key: "australianSharesFinance",
+                key: "australianShareMarket",
                 img: PortFolio
             },
             {
                 title: "Managed Funds",
-                key: "managedFunds",
+                key: "managedFund",
                 img: funds
             },
             {
@@ -234,7 +251,7 @@ const QuestionCards = (props) => {
                 img: piggybank2
             },
             {
-                title: "invested in Annuities",
+                title: "Invested in Annuities",
                 key: "annuitiesIssues",
                 img: calender
             },
@@ -302,7 +319,119 @@ const QuestionCards = (props) => {
             {
                 title: "Regular Living Expenses",
                 key: "incomeFromRegularLivingExpenses",
-                img: moneyBag
+                img: moneyBagPng
+            },
+
+        ],
+        BusinessEntities: [
+            {
+                title: "Business as Company Structure",
+                key: "BusinessAsCompanyStructure",
+                img: Business_building
+            },
+            {
+                title: "Business as Trusts",
+                key: "BusinessAsTrusts",
+                img: Business_TeamHandshake
+            },
+            // {
+            //     title: "Business as SMSF",
+            //     key: "BusinessAsSMSF",
+            //     img: Business_SMSF
+            // },
+            // {
+            //     title: "Business as Investment Trust",
+            //     key: "BusinessAsInvestmentTrust",
+            //     img: Questions_People
+            // },
+        ],
+        SMSF: [
+            {
+                title: "SMSF Details",
+                key: "SMSFDetails",
+                img: will
+            },
+            {
+                title: "SMSF Accumulation Details",
+                key: "SMSFAccumulationDetails",
+                img: property
+            },
+            {
+                title: "SMSF Bank Accounts",
+                key: "SMSFBank",
+                img: BankImg
+            },
+            {
+                title: "SMSF Term Deposits",
+                key: "SMSFTermDeposits",
+                img: TermImg
+            },
+            {
+                title: "SMSF Australian Shares",
+                key: "SMSFAustralianShares",
+                img: PortFolio
+            },
+            {
+                title: "SMSF Managed Funds",
+                key: "SMSFManagedFunds",
+                img: funds
+            },
+            {
+                title: "SMSF Investment Loan",
+                key: "SMSFInvestmentLoan",
+                img: analytics
+            },
+            {
+                title: "SMSF Investment Properties",
+                key: "SMSFInvestmentProperties",
+                img: people
+            },
+            {
+                title: "SMSF Pension Phase",
+                key: "SMSFPensionPhase",
+                img: calender
+            },
+        ],
+        FamilyTrust: [
+            {
+                title: "Family Trust Details",
+                key: "familyDetails",
+                img: will
+            },
+            {
+                title: "Family Trust Bank Accounts",
+                key: "familyBank",
+                img: BankImg
+            },
+            {
+                title: "Family Trust Term Deposits",
+                key: "familyTermDeposit",
+                img: TermImg
+            },
+            {
+                title: "Family Trust Australian Shares",
+                key: "familyAustralianShare",
+                img: PortFolio
+            },
+            {
+                title: "Family Trust Managed Funds",
+                key: "familyMangedFunds",
+                img: funds
+            },
+            {
+                title: "Family Trust Investment Loan",
+                key: "familyInvestmentHomeLoan",
+                img: analytics
+            },
+            {
+                title: "Family Trust Investment Property",
+                key: "familyInvestmentProperties",
+                img: people
+            },
+            {
+                title: "Family Trust Pension Phase",
+                key: "familyPensionPhase",
+                img: calender
             },
 
         ],
@@ -328,28 +457,7 @@ const QuestionCards = (props) => {
                 img: building
             },
         ],
-        SMSF: [
-            {
-                title: "Self Manged Super Fund",
-                key: "QuestionSMSF",
-                img: Questions_SMSF
-            },
-            {
-                title: "Investments such as Term Deposits, Shares or Managed Funds",
-                key: "TermSharesManaged",
-                img: Dollar_Chart
-            },
-            {
-                title: "Investment Loans",
-                key: "InvestmentLoans",
-                img: Questions_loan
-            },
-            {
-                title: "Direct Property",
-                key: "DirectProperty",
-                img: Questions_Bank
-            },
-        ],
+
         InvestmentTrust: [
             {
                 title: "Investment Trust",
@@ -382,14 +490,48 @@ const QuestionCards = (props) => {
 
     function countYesAttributes() {
         let a = []
-        arrayObj[props.Question].map((elem, index) => {
-            if (CRObject[elem.key] === "Yes") {
-                a.push("yes");
-                console.log("yes")
-            }
-        })
-        // console.log(a.length, " = a ki length ya hai ")
-        setArrayCount(a.length)
+        let lengthOfa = 0;
+        if (props.Question == "FamilyTrust") {
+            arrayObj[props.Question].map((elem, index) => {
+                if (CRObject[elem.key] === "Yes") {
+                    a.push("yes");
+                    console.log("yes")
+                }
+            })
+            lengthOfa = a.length - 1;
+            setArrayCount(lengthOfa + CRObject.numberOfFamilyInvestmentProperties)
+        }
+        else if (props.Question == "SMSF") {
+            arrayObj[props.Question].map((elem, index) => {
+                if (CRObject[elem.key] === "Yes") {
+                    a.push("yes");
+                    console.log("yes")
+                }
+            })
+            lengthOfa = a.length - 1;
+            setArrayCount(lengthOfa + CRObject.numberOfSMSFInvestmentProperties)
+        }
+        else if (props.Question == "Lifestyle") {
+            arrayObj[props.Question].map((elem, index) => {
+                if (CRObject[elem.key] === "Yes") {
+                    a.push("yes");
+                    console.log("yes")
+                }
+            })
+            lengthOfa = a.length - 1;
+            setArrayCount(lengthOfa + CRObject.numberOfHolidayHome)
+        }
+        else {
+            arrayObj[props.Question].map((elem, index) => {
+                if (CRObject[elem.key] === "Yes") {
+                    a.push("yes");
+                    console.log("yes")
+                }
+            })
+            // console.log(a.length, " = a ki length ya hai ")
+            setArrayCount(a.length)
+        }
+
     }
 
     let OpenModal = (title, Input) => {
@@ -400,7 +542,6 @@ const QuestionCards = (props) => {
         })
         setFlagState(true);
     }
-
     let OpenModalClient2 = (title, Input, title2) => {
         // alert(title + " ++ " + Input);
         setModalObject({
@@ -410,13 +551,21 @@ const QuestionCards = (props) => {
         })
         setFlagState(true);
     }
-
     let OpenModal2 = (title, Input, index) => {
         // alert(title + " ++ " + Input);
         setModalObject({
             title,
             Input,
             index
+        })
+        setFlagState(true);
+    }
+    let OpenReuseModal = (title, Input, key) => {
+        // alert(title + " ++ " + Input);
+        setModalObject({
+            title,
+            Input,
+            key
         })
         setFlagState(true);
     }
@@ -497,6 +646,7 @@ const QuestionCards = (props) => {
     const JointHidden = ["superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues", "will", "POA", "professionalAdviser", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "incomeFromInheritance", "incomeFromLumpsumExpense", "incomeFromRegularLivingExpenses"]; // Add other titles that should use "xl" here
     const singleClient = ["incomeFromRegularLivingExpenses"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
+    const reuseModal = ["bankAccountFinance", "termDepositsFinance", "australianShareMarket", "managedFund", "SMSFTermDeposits", "SMSFAustralianShares", "SMSFManagedFunds", "SMSFInvestmentLoan", "managedFundsLOC", "familyBank", "familyTermDeposit", "familyAustralianShare", "familyMangedFunds", "familyInvestmentHomeLoan", "SMSFBank",]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
     let handleSubmit = async (values) => {
         // alert("ma chal gaya")
@@ -550,29 +700,42 @@ const QuestionCards = (props) => {
     ]
 
     const componentMapping = {
-        "Bank Accounts": <BankTermForm />,
-        "Term Deposits": <TermDeposit />,
-        "Australian Shares": <AustralianShares />,
-        "Managed Funds": <ManagedFunds />,
+
+        //Financial Investments
+        "Bank Accounts": <BankTermForm />,              //reuse Component
+        "Term Deposits": <TermDeposit />,               //reuse Component
+        "Australian Shares": <AustralianShares />,      //reuse Component
+        "Managed Funds": <ManagedFunds />,              //reuse Component
         "Investment Bond": <InvestmentBond />,
-        "Investment Loan": <InvestmentLoan />,
+        "Investment Loan": <InvestmentLoan />,          //reuse Component
         "Margin Loan": <MarginLoan />,
+
+        //Personal Assets & Liabilities
         "Personal Loan": <PersonalLoan />,
         "Credit Card": <CreditCard />,
+
+        //property Home
         "Own a Family Home": <OwnFamilyHome />,
         "Home Loan": <HomeLoan />,
         "Holiday Home": <HolidayHome />,
         "Holiday Home Loan": <HolidayHomeLoan />,
+
+        //Investment Trust
         "Investment Property Details": <InvestmentPropertyDetails />,
         "Investment Property Loan": <InvestmentPropertyLoan />,
         "Income & Expenses": <QuestionIncomeExpanse />,
+
+        //Super and Requirement
         "Super Funds": <SuperFunds />,
         "Account Based Pension": <AccountBasedPension />,
-        "invested in Annuities": <InvestedAnnuities />,
+        "Invested in Annuities": <InvestedAnnuities />,
+
+        //estate Planing 
         "Will": <EstatePlanningWill />,
         "Power of Attorney": <EstatePlanningPOA />,
-        //Income and Expense
         "Professional Adviser": <EstatePlanningProfessionalAdviser />,
+
+        //Income and Expense
         "Employement Income": <EmploymentIncome />,
         "Centerlink Payments": <CenterLinkPayments />,
         "Sole Trader": <SoleTrader />,
@@ -582,11 +745,45 @@ const QuestionCards = (props) => {
         "Overseas Pension": <OverseasPension />,
         "Inheritance": <Inheritance />,
         "Lumpsum Expenses": <LumpsumExpenses />,
+
+        //Business
+        "Business as Company Structure": <TradingCompany />,
+        "Business as Trusts": <TradingTrust />,
+
+        //SMSF
+        "SMSF Bank Accounts": <BankTermForm />,         //reuse Component
+        "SMSF Term Deposits": <TermDeposit />,          //reuse Component
+        "SMSF Australian Shares": <AustralianShares />, //reuse Component
+        "SMSF Managed Funds": <ManagedFunds />,         //reuse Component
+        "SMSF Investment Loan": <InvestmentLoan />,     //reuse Component
+        //looping Question
+        "Investment Home": <SMSFInvestmentPropertyModalComp />,
+        "Investment Home Loan": <SMSFInvestmentHomeLoanComp />,
+        "Investment Home Expanse": <InvestmentHomeExpanse />,
+        //looping Question end
+        "SMSF Pension Phase": <SmsfPensionAccount />,               //reuse Component
+        "SMSF Details": <SmsfDetails />,                            //reuse Component
+        "SMSF Accumulation Details": <SmsfAccumulationDetails />,   //reuseComponent
+
+        "Family Trust Bank Accounts": <BankTermForm />,
+        "Family Trust Term Deposits": <TermDeposit />,
+        "Family Trust Australian Shares": <AustralianShares />,
+        "Family Trust Managed Funds": <ManagedFunds />,
+        "Family Trust Investment Loan": <InvestmentLoan />,
+        "Family Trust Details": <FamilyDetails />,
+
+        "Family Investment Home": <FamilyInvestmentPropertyModalComp />,
+        "Family Investment Home Loan": <FamilyInvestmentHomeLoanComp />,
+        "Family Investment Home Expanse": <FamilyInvestmentHomeExpanse />,
     };
 
     const ModalContent = (obj) => {
         return componentMapping[obj.title] || null;
     };
+
+
+
+
 
     return (
         <div className="container-fluid my-4 ">
@@ -601,6 +798,11 @@ const QuestionCards = (props) => {
                         const cardSwitch = CardForms.includes(elem.key) ? true : false;
                         const jointClass = JointHidden.includes(elem.key) ? "d-none" : "";
                         const singleSwitch = singleClient.includes(elem.key) ? true : false;
+                        const reuseSwitch = reuseModal.includes(elem.key) ? true : false;
+                        const SMSFInP = elem.key === "SMSFInvestmentProperties" ? true : false;
+                        const FamilyInP = elem.key === "familyInvestmentProperties" ? true : false;
+                        const PartnerClass = localStorage.getItem("UserStatus") === "Single" ? "d-none" : "";
+
 
                         if (cardSwitch) {
                             const getInitialValues = () => {
@@ -641,7 +843,7 @@ const QuestionCards = (props) => {
                                                             <label
                                                                 className=" d-block text-center"
                                                                 htmlFor={"client" + elem.key}
-                                                            >You</label>
+                                                            >{localStorage.getItem("UserName") || "You"}</label>
                                                         </div>
                                                     </div>
                                                     <Field
@@ -652,18 +854,18 @@ const QuestionCards = (props) => {
                                                         name={"client" + elem.key}
                                                     />
                                                     <div
-                                                        className="row justify-content-center align-items-center my-2"
+                                                        className={`row justify-content-center align-items-center my-2 ${PartnerClass}`}
                                                     >
                                                         <div className='col-12 p-0 '>
                                                             <label
                                                                 className=" d-block text-center"
                                                                 htmlFor={"partner" + elem.key}
-                                                            >Partner</label>
+                                                            >{localStorage.getItem("PartnerName") || "Partner"}</label>
                                                         </div>
                                                     </div>
                                                     <Field
                                                         type="number"
-                                                        className="form-control inputDesign "
+                                                        className={`form-control inputDesign ${PartnerClass}`}
                                                         id={"partner" + elem.key}
                                                         placeholder={"Partner " + elem.title}
                                                         name={"partner" + elem.key}
@@ -688,25 +890,26 @@ const QuestionCards = (props) => {
                                         <div className="QuestionIcon w-25">
                                             <img className="img-fluid" src={elem.img} alt="" />
                                         </div>
-                                        <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}</h5>
+                                        <h5 className='text-center' onClick={() => { console.log(questionDetail) }}>{elem.title}</h5>
                                         <div
                                             className="row justify-content-center align-items-center my-2"
                                         >
-                                            <div className='col-6 p-0 '>
-                                                <label
-                                                    className=" d-block text-end"
-                                                    htmlFor={"client" + elem.key}
-                                                >General Living</label>
-                                            </div>
-                                            <div className='col-6 px-1 '>
-                                                <label
-                                                    className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                                    onClick={() => { OpenModalClient2(elem.title, "client", "General Living") }}
-                                                >
-                                                    <div>
-                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                    </div>
-                                                </label>
+                                            <div className='col-12 p-0 '>
+                                                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                                    <label
+                                                        className=" d-block text-end"
+                                                        htmlFor={"client" + elem.key}
+                                                    >General Living</label>
+
+                                                    <label
+                                                        className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                                                        onClick={() => { OpenModalClient2(elem.title, "client", "General Living") }}
+                                                    >
+                                                        <div>
+                                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                        </div>
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                         <input type="number"
@@ -714,26 +917,27 @@ const QuestionCards = (props) => {
                                             id={"client" + elem.key}
                                             placeholder={"General Living Expenses"}
                                             name={"client" + elem.key}
-                                            value={questionDetail && questionDetail[elem.key]?.clientTotal ? questionDetail[elem.key].clientTotal : ""}
+                                            value={questionDetail && questionDetail?.generalLivingExpenses && questionDetail?.generalLivingExpenses?.generalLivingExpensesTotal ? questionDetail.generalLivingExpenses.generalLivingExpensesTotal : ""}
                                         />
                                         <div
                                             className="row justify-content-center align-items-center my-2"
                                         >
                                             <div className='col-6 p-0 '>
-                                                <label
-                                                    className=" d-block text-end"
-                                                    htmlFor={"client" + elem.key}
-                                                >Retirement Living</label>
-                                            </div>
-                                            <div className='col-6 px-1 '>
-                                                <label
-                                                    className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                                    onClick={() => { OpenModalClient2(elem.title, "client", "Retirement Living Expenses") }}
-                                                >
-                                                    <div>
-                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                    </div>
-                                                </label>
+                                                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                                    <label
+                                                        className=" d-block text-end"
+                                                        htmlFor={"client" + elem.key}
+                                                    >Retirement Living</label>
+
+                                                    <label
+                                                        className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                                                        onClick={() => { OpenModalClient2(elem.title, "client", "Retirement Living Expenses") }}
+                                                    >
+                                                        <div>
+                                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                        </div>
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                         <input type="number"
@@ -741,12 +945,117 @@ const QuestionCards = (props) => {
                                             id={"partner" + elem.key}
                                             placeholder={elem.title}
                                             name={"partner" + elem.key}
-                                            value={questionDetail && questionDetail[elem.key]?.partnerTotal ? questionDetail[elem.key].partnerTotal : ""}
+                                            value={questionDetail && questionDetail?.retirementLivingExpenses && questionDetail?.retirementLivingExpenses?.retirementLivingExpensesTotal ? questionDetail.retirementLivingExpenses.retirementLivingExpensesTotal : ""}
                                         />
                                     </Card>
                                 </div>
                             );
 
+                        }
+                        else if (reuseSwitch) {
+                            return (
+                                <div className={`col-md-${arrayCount % 2 == 0 ? '6' : '4'} mb-4`} key={index}>
+                                    <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
+                                        <div className="QuestionIcon w-25">
+                                            <img className="img-fluid" src={elem.img} alt="" />
+                                        </div>
+                                        <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}</h5>
+                                        <div
+                                            className="row justify-content-center align-items-center my-2"
+                                        >
+                                            <div className='col-12 p-0 '>
+                                                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                                    <label
+                                                        className=" d-block text-end"
+                                                        htmlFor={"client" + elem.key}
+                                                    >{localStorage.getItem("UserName") || "You"}</label>
+
+                                                    <label
+                                                        className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                                                        onClick={() => { OpenReuseModal(elem.title, "client", elem.key) }}
+                                                    >
+                                                        <div>
+                                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input type="number"
+                                            className="form-control inputDesign "
+                                            id={"client" + elem.key}
+                                            placeholder={elem.title}
+                                            name={"client" + elem.key}
+                                            value={questionDetail && questionDetail[elem.key]?.clientTotal ? questionDetail[elem.key].clientTotal : ""}
+                                        />
+                                        <div
+                                            className={`row justify-content-center align-items-center my-2 ${PartnerClass}`}
+                                        >
+                                            <div className='col-12 p-0 '>
+                                                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                                    <label
+                                                        className=" d-block text-end"
+                                                        htmlFor={"partner" + elem.key}
+                                                    >{localStorage.getItem("PartnerName") || "Partner"}</label>
+
+                                                    <label
+                                                        className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                                                        onClick={() => { OpenReuseModal(elem.title, "partner", elem.key) }}
+                                                    >
+                                                        <div>
+                                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input type="number"
+                                            className={`form-control inputDesign ${PartnerClass}`}
+                                            id={"partner" + elem.key}
+                                            placeholder={elem.title}
+                                            name={"partner" + elem.key}
+                                            value={questionDetail && questionDetail[elem.key]?.partnerTotal ? questionDetail[elem.key].partnerTotal : ""}
+                                        />
+
+                                        <div
+                                            className={`row justify-content-center align-items-center my-2  ${jointClass} ${PartnerClass}`}
+                                        >
+                                            <div className='col-6 p-0 '>
+                                                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                                    <label
+                                                        className=" d-block text-end"
+                                                        htmlFor={"joint" + elem.key}
+                                                    >{(localStorage.getItem("UserName") || "You") + " " + (localStorage.getItem("PartnerName") || "")}</label>
+
+                                                    <label
+                                                        className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                                                        onClick={() => { OpenReuseModal(elem.title, "joint", elem.key) }}
+                                                    >
+                                                        <div>
+                                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <input type="number"
+                                            className={`form-control inputDesign ${jointClass} ${PartnerClass}`}
+                                            id={"joint" + elem.key}
+                                            placeholder={elem.title}
+                                            name={"joint" + elem.key}
+                                            value={questionDetail && questionDetail[elem.key]?.jointTotal ? questionDetail[elem.key].jointTotal : ""}
+                                        />
+
+                                    </Card>
+                                </div>
+                            );
+                        }
+                        else if (SMSFInP) {
+                            return (<SMSFInvestmentProperty PartnerClass={PartnerClass} index={index} jointClass={jointClass} elem={elem} OpenModal={OpenModal2} homeArray={homeArray} arrayCount={arrayCount} />);
+                        }
+                        else if (FamilyInP) {
+                            return (<FamilyInvestmentProperty PartnerClass={PartnerClass} index={index} jointClass={jointClass} elem={elem} OpenModal={OpenModal2} homeArray={homeArray} arrayCount={arrayCount} />);
                         }
                         else {
                             return (
@@ -759,21 +1068,23 @@ const QuestionCards = (props) => {
                                         <div
                                             className="row justify-content-center align-items-center my-2"
                                         >
-                                            <div className='col-6 p-0 '>
-                                                <label
-                                                    className=" d-block text-end"
-                                                    htmlFor={"client" + elem.key}
-                                                >You</label>
-                                            </div>
-                                            <div className='col-6 px-1 '>
-                                                <label
-                                                    className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                                    onClick={() => { OpenModal(elem.title, "client") }}
-                                                >
-                                                    <div>
-                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                    </div>
-                                                </label>
+                                            <div className='col-12 p-0 '>
+                                                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+
+                                                    <label
+                                                        className=" d-block text-end"
+                                                        htmlFor={"client" + elem.key}
+                                                    >{localStorage.getItem("UserName") || "You"}</label>
+
+                                                    <label
+                                                        className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                                                        onClick={() => { OpenModal(elem.title, "client") }}
+                                                    >
+                                                        <div>
+                                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                        </div>
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                         <input type="number"
@@ -784,27 +1095,28 @@ const QuestionCards = (props) => {
                                             value={questionDetail && questionDetail[elem.key]?.clientTotal ? questionDetail[elem.key].clientTotal : ""}
                                         />
                                         <div
-                                            className="row justify-content-center align-items-center my-2"
+                                            className={`row justify-content-center align-items-center my-2 ${PartnerClass}`}
                                         >
-                                            <div className='col-6 p-0 '>
-                                                <label
-                                                    className=" d-block text-end"
-                                                    htmlFor={"partner" + elem.key}
-                                                >Partner</label>
-                                            </div>
-                                            <div className='col-6 px-1 '>
-                                                <label
-                                                    className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                                    onClick={() => { OpenModal(elem.title, "partner") }}
-                                                >
-                                                    <div>
-                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                    </div>
-                                                </label>
+                                            <div className='col-12 p-0 '>
+                                                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                                    <label
+                                                        className=" d-block text-end"
+                                                        htmlFor={"partner" + elem.key}
+                                                    >{localStorage.getItem("PartnerName") || "Partner"}</label>
+
+                                                    <label
+                                                        className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                                                        onClick={() => { OpenModal(elem.title, "partner") }}
+                                                    >
+                                                        <div>
+                                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                        </div>
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                         <input type="number"
-                                            className="form-control inputDesign "
+                                            className={`form-control inputDesign ${PartnerClass}`}
                                             id={"partner" + elem.key}
                                             placeholder={elem.title}
                                             name={"partner" + elem.key}
@@ -812,28 +1124,29 @@ const QuestionCards = (props) => {
                                         />
 
                                         <div
-                                            className={`row justify-content-center align-items-center my-2  ${jointClass}`}
+                                            className={`row justify-content-center align-items-center my-2  ${jointClass} ${PartnerClass}`}
                                         >
-                                            <div className='col-6 p-0 '>
-                                                <label
-                                                    className=" d-block text-end"
-                                                    htmlFor={"joint" + elem.key}
-                                                >Joint</label>
-                                            </div>
-                                            <div className='col-6 px-1 '>
-                                                <label
-                                                    className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                                    onClick={() => { OpenModal(elem.title, "joint") }}
-                                                >
-                                                    <div>
-                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                    </div>
-                                                </label>
+                                            <div className='col-12 p-0 '>
+                                                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                                    <label
+                                                        className=" d-block text-end"
+                                                        htmlFor={"joint" + elem.key}
+                                                    >{(localStorage.getItem("UserName") || "You") + " " + (localStorage.getItem("PartnerName") || "")}</label>
+
+                                                    <label
+                                                        className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                                                        onClick={() => { OpenModal(elem.title, "joint") }}
+                                                    >
+                                                        <div>
+                                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                        </div>
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
 
                                         <input type="number"
-                                            className={`form-control inputDesign ${jointClass}`}
+                                            className={`form-control inputDesign ${jointClass} ${PartnerClass}`}
                                             id={"joint" + elem.key}
                                             placeholder={elem.title}
                                             name={"joint" + elem.key}
@@ -849,9 +1162,7 @@ const QuestionCards = (props) => {
                     return null;
                 })}
 
-                {props.Question == "Lifestyle" && <HolyDayHome OpenModal={OpenModal2} homeArray={homeArray} arrayCount={arrayCount} questionDetail={questionDetail} />}
-
-
+                {props.Question == "Lifestyle" && <HolyDayHome JointHidden={JointHidden} OpenModal={OpenModal2} homeArray={homeArray} arrayCount={arrayCount} questionDetail={questionDetail} />}
             </div>
 
             <div className="row mt-2 d-none">
@@ -886,9 +1197,12 @@ const HolyDayHome = (props) => {
 
     let arrayOfHolidayHome = [];
 
+    const PartnerClass = localStorage.getItem("UserStatus") === "Single" ? "d-none" : "";
+
     for (let i = 0; i < loopIndex; i++) {
         arrayOfHolidayHome.push(
             props.homeArray.map((elem, index) => {
+                const jointClass = props.JointHidden.includes(elem.key) ? "d-none" : "";
                 return (
                     <div className={`col-md-${props.arrayCount % 2 == 0 ? '6' : '4'} mb-4`} key={i}>
                         <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
@@ -903,7 +1217,7 @@ const HolyDayHome = (props) => {
                                     <label
                                         className=" d-block text-end"
                                         htmlFor={"client" + elem.key}
-                                    >You</label>
+                                    >{localStorage.getItem("UserName") || "You"}</label>
                                 </div>
                                 <div className='col-6 px-1 '>
                                     <label
@@ -932,13 +1246,13 @@ const HolyDayHome = (props) => {
                                 }
                             />
                             <div
-                                className="row justify-content-center align-items-center my-2"
+                                className={`row justify-content-center align-items-center my-2 ${PartnerClass}`}
                             >
                                 <div className='col-6 p-0 '>
                                     <label
                                         className=" d-block text-end"
                                         htmlFor={"partner" + elem.key}
-                                    >Partner</label>
+                                    >{localStorage.getItem("PartnerName") || "Partner"}</label>
                                 </div>
                                 <div className='col-6 px-1 '>
                                     <label
@@ -952,7 +1266,7 @@ const HolyDayHome = (props) => {
                                 </div>
                             </div>
                             <input type="number"
-                                className="form-control inputDesign "
+                                className={`form-control inputDesign ${PartnerClass}`}
                                 id={"partner" + elem.key}
                                 placeholder={elem.title}
                                 name={"partner" + elem.key}
@@ -968,13 +1282,13 @@ const HolyDayHome = (props) => {
                             />
 
                             <div
-                                className={`row justify-content-center align-items-center my-2 `}
+                                className={`row justify-content-center align-items-center my-2 ${jointClass} ${PartnerClass}`}
                             >
                                 <div className='col-6 p-0 '>
                                     <label
                                         className=" d-block text-end"
                                         htmlFor={"joint" + elem.key}
-                                    >Joint</label>
+                                    >{(localStorage.getItem("UserName") || "You") + " " + (localStorage.getItem("PartnerName") || "")}</label>
                                 </div>
                                 <div className='col-6 px-1 '>
                                     <label
@@ -989,7 +1303,7 @@ const HolyDayHome = (props) => {
                             </div>
 
                             <input type="number"
-                                className={`form-control inputDesign`}
+                                className={`form-control inputDesign ${jointClass} ${PartnerClass}`}
                                 id={"joint" + elem.key}
                                 placeholder={elem.title}
                                 name={"joint" + elem.key}

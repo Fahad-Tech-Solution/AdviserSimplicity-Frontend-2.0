@@ -30,6 +30,7 @@ const MemberNumber = (props) => {
                 if (data) {
                     console.log(data.investmentOption)
                     setFieldValue(`fundType${i}`, data.fundType || '');
+                    setFieldValue(`currentBalance${i}`, data.currentBalance || '');
                     setFieldValue(`eligibleServiceDate${i}`, data.eligibleServiceDate || '');
                     setFieldValue(`commencementDate${i}`, data.commencementDate || '');
                     setFieldValue(`taxFreeComponent${i}`, data.taxFreeComponent || '');
@@ -73,6 +74,7 @@ const MemberNumber = (props) => {
             // alert("loop chala")
             const newEntry = {
                 fundType: values[`fundType${i}`] || "",
+                currentBalance: values[`currentBalance${i}`] || "",
                 eligibleServiceDate: values[`eligibleServiceDate${i}`] || "",
                 commencementDate: values[`commencementDate${i}`] || "",
                 taxFreeComponent: values[`taxFreeComponent${i}`] || "",
@@ -140,6 +142,7 @@ const MemberNumber = (props) => {
                                                     <tr>
                                                         <th>No#</th>
                                                         <th>Fund type</th>
+                                                        <th>Current Balance</th>
                                                         <th>Commencement Date</th>
                                                         <th>Eligible Service Date</th>
                                                         <th>Tax Free component</th>
@@ -160,6 +163,15 @@ const MemberNumber = (props) => {
                                                                         placeholder="Fund type"
                                                                         id={`fundType${i}`}
                                                                         name={`fundType${i}`}
+                                                                        className="form-control inputDesign"
+                                                                    />
+                                                                </td>
+                                                                <td>
+                                                                    <Field
+                                                                        type="number"
+                                                                        placeholder="current Balance"
+                                                                        id={`currentBalance${i}`}
+                                                                        name={`currentBalance${i}`}
                                                                         className="form-control inputDesign"
                                                                     />
                                                                 </td>

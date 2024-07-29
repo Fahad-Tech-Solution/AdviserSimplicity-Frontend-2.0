@@ -9,7 +9,7 @@ const TermDeposit = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
-    let termDepositsFinance = questionDetail.termDepositsFinance || {
+    let termDepositsFinance = questionDetail[props.modalObject.key] || {
         client: [],
         partner: [],
         joint: [],
@@ -115,13 +115,13 @@ const TermDeposit = (props) => {
                     <td>{1 + i}</td>
                     <td>
                         <Field
-                            as="Select"
+                            as="select"
                             placeholder="Name of Institution"
                             id={`Institution${i}`}
                             name={`Institution${i}`}
                             className="form-select inputDesign"
                         >
-                        <option value={""}>Please Select</option>
+                            <option value={""}>Please Select</option>
                             {options.map((elem, index) => {
                                 return (<option key={index} value={elem}>{elem}</option>)
                             })}
@@ -212,15 +212,15 @@ const TermDeposit = (props) => {
         try {
             let res;
             if (!bankAccountArray) {
-                res = await PostAxios(`${DefaultUrl}/api/termDeposit/Add`, obj);
+                res = await PostAxios(`${DefaultUrl}/api/${props.modalObject.key}/Add`, obj);
             } else {
                 obj.collection = props.modalObject.Input
-                res = await PatchAxios(`${DefaultUrl}/api/termDeposit/Update`, obj);
+                res = await PatchAxios(`${DefaultUrl}/api/${props.modalObject.key}/Update`, obj);
             }
 
             if (res) {
                 console.log(res);
-                const updatedData = { ...questionDetail, termDepositsFinance: res };
+                const updatedData = { ...questionDetail, [props.modalObject.key]: res };
                 setQuestionDetail(updatedData);
             }
 

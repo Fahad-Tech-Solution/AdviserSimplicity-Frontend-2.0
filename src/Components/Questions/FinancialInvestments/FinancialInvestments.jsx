@@ -69,28 +69,28 @@ const FinancialInvestments = (props) => {
                                             <div className="radiobutton">
                                                 <input
                                                     type="radio"
-                                                    name="BankAccountFinance"
-                                                    id="BankAccountFinance"
+                                                    name="bankAccountFinance"
+                                                    id="bankAccountFinance"
                                                     value="No"
                                                     onChange={handleChange}
-                                                    checked={values.BankAccountFinance === "No"}
+                                                    checked={values.bankAccountFinance === "No"}
                                                 />
                                                 <label
-                                                    htmlFor="BankAccountFinance"
+                                                    htmlFor="bankAccountFinance"
                                                     className="label1"
                                                 >
                                                     <span>No</span>
                                                 </label>
                                                 <input
                                                     type="radio"
-                                                    name="BankAccountFinance"
-                                                    id="BankAccountFinance2"
+                                                    name="bankAccountFinance"
+                                                    id="bankAccountFinance2"
                                                     value="Yes"
                                                     onChange={handleChange}
-                                                    checked={values.BankAccountFinance === "Yes"}
+                                                    checked={values.bankAccountFinance === "Yes"}
                                                 />
                                                 <label
-                                                    htmlFor="BankAccountFinance2"
+                                                    htmlFor="bankAccountFinance2"
                                                     className="label2"
                                                 >
                                                     <span>Yes</span>
@@ -166,28 +166,28 @@ const FinancialInvestments = (props) => {
                                             <div className="radiobutton">
                                                 <input
                                                     type="radio"
-                                                    name="australianSharesFinance"
-                                                    id="australianSharesFinance"
+                                                    name="australianShareMarket"
+                                                    id="australianShareMarket"
                                                     value="No"
                                                     onChange={handleChange}
-                                                    checked={values.australianSharesFinance === "No"}
+                                                    checked={values.australianShareMarket === "No"}
                                                 />
                                                 <label
-                                                    htmlFor="australianSharesFinance"
+                                                    htmlFor="australianShareMarket"
                                                     className="label1"
                                                 >
                                                     <span>No</span>
                                                 </label>
                                                 <input
                                                     type="radio"
-                                                    name="australianSharesFinance"
-                                                    id="australianSharesFinance2"
+                                                    name="australianShareMarket"
+                                                    id="australianShareMarket2"
                                                     value="Yes"
                                                     onChange={handleChange}
-                                                    checked={values.australianSharesFinance === "Yes"}
+                                                    checked={values.australianShareMarket === "Yes"}
                                                 />
                                                 <label
-                                                    htmlFor="australianSharesFinance2"
+                                                    htmlFor="australianShareMarket2"
                                                     className="label2"
                                                 >
                                                     <span>Yes</span>
@@ -215,28 +215,28 @@ const FinancialInvestments = (props) => {
                                             <div className="radiobutton">
                                                 <input
                                                     type="radio"
-                                                    name="managedFunds"
-                                                    id="managedFunds"
+                                                    name="managedFund"
+                                                    id="managedFund"
                                                     value="No"
                                                     onChange={handleChange}
-                                                    checked={values.managedFunds === "No"}
+                                                    checked={values.managedFund === "No"}
                                                 />
                                                 <label
-                                                    htmlFor="managedFunds"
+                                                    htmlFor="managedFund"
                                                     className="label1"
                                                 >
                                                     <span>No</span>
                                                 </label>
                                                 <input
                                                     type="radio"
-                                                    name="managedFunds"
-                                                    id="managedFunds2"
+                                                    name="managedFund"
+                                                    id="managedFund2"
                                                     value="Yes"
                                                     onChange={handleChange}
-                                                    checked={values.managedFunds === "Yes"}
+                                                    checked={values.managedFund === "Yes"}
                                                 />
                                                 <label
-                                                    htmlFor="managedFunds2"
+                                                    htmlFor="managedFund2"
                                                     className="label2"
                                                 >
                                                     <span>Yes</span>

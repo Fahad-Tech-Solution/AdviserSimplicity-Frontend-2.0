@@ -99,7 +99,8 @@ const EstatePlanningPOA = (props) => {
         obj[DataOf] = newEntries
 
         // Calculate total currentBalance
-        obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.relationshipStatus, 0);
+        // obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.relationshipStatus, 0);
+        obj[DataOf + "Total"] = newEntries.length;
 
         console.log(obj, "final obj")
 
@@ -152,7 +153,7 @@ const EstatePlanningPOA = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='col-md-5'>
                                         <p className='text-end mt-1'>
-                                            How many Super Funds does {props.modalObject.Input} have:
+                                            How many {props.modalObject.title} does {props.modalObject.Input} have:
                                         </p>
                                     </div>
                                     <div className='col-md-2'>
@@ -182,7 +183,7 @@ const EstatePlanningPOA = (props) => {
                                                             <td>{1 + i}</td>
                                                             <td>
                                                                 <Field
-                                                                    as="Select"
+                                                                    as="select"
                                                                     placeholder="Fund Name"
                                                                     id={`POAType${i}`}
                                                                     name={`POAType${i}`}
@@ -216,12 +217,18 @@ const EstatePlanningPOA = (props) => {
                                                             </td>
                                                             <td>
                                                                 <Field
-                                                                    type="text"
+                                                                    as="select"
                                                                     placeholder="Relationship Status"
                                                                     id={`relationshipStatus${i}`}
                                                                     name={`relationshipStatus${i}`}
-                                                                    className="form-control inputDesign"
-                                                                />
+                                                                    className="form-select inputDesign"
+                                                                >
+                                                                    <option value={""}>Please Select</option>
+                                                                    <option value={"Spouse/De-facto"}>Spouse/De-facto</option>
+                                                                    <option value={"Child"}>Child</option>
+                                                                    <option value={"Stepchild"}>Stepchild</option>
+                                                                    <option value={"Other "}>Other </option>
+                                                                </Field>
                                                             </td>
                                                         </tr>)
                                                     })}

@@ -45,6 +45,7 @@ import EstatePlanning from "./Components/Questions/EstatePlanning/EstatePlanning
 import AdditionalQueriesSuperAndRetirement from "./Components/Questions/AdditionalQueriesSuperAndRetirement/AdditionalQueriesSuperAndRetirement";
 import PersonalIncome from "./Components/Questions/PersonalIncome/PersonalIncome";
 import BusinessEntities from "./Components/Questions/BusinessEntities/BusinessEntities";
+import QuestionsFamily from "./Components/Questions/QuestoinsFamilyTrust/QuestoinsFamily";
 
 
 function App() {
@@ -111,12 +112,13 @@ function App() {
                 <Route path="/EstatePlanning" element={<QuestionsNew><EstatePlanning /></QuestionsNew>} />
                 <Route path="/ProfessionalAdvisor" element={<QuestionsNew><AdditionalQueriesProfessionalAdvisor /></QuestionsNew>} />
                 <Route path="/PersonalIncome" element={<QuestionsNew><PersonalIncome /></QuestionsNew>} />
-                <Route path="/SMSF" element={<QuestionsNew><QuestionsSMSF /></QuestionsNew>} />
                 <Route path="/PersonalAssets" element={<QuestionsNew><AdditionalQueriesPersonalAssets /></QuestionsNew>} />
-                <Route path="/InvestmentTrust" element={<QuestionsNew><QuestionsInvestmentTrust /></QuestionsNew>} />
-
+                <Route path="/InvestmentTrust" element={<QuestionsNew><QuestionsInvestmentTrust /></QuestionsNew>} />  {/* APi Integration Left */}
                 <Route path="/BusinessEntities" element={<QuestionsNew><BusinessEntities /></QuestionsNew>} />
-
+                <Route path="/SMSF" element={<QuestionsNew><QuestionsSMSF /></QuestionsNew>} />
+                
+                <Route path="/FamilyTrust" element={<QuestionsNew><QuestionsFamily/></QuestionsNew>} />
+                
 
 
                 <Route path="/Risk-Profile" element={<RiskProfile />} />
