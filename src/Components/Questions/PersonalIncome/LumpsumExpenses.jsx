@@ -20,6 +20,18 @@ const LumpsumExpenses = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
+  let [nameSet] = useState(() => {
+    if (props.modalObject.Input === "client") {
+      return (localStorage.getItem("UserName"))
+    }
+    else if (props.modalObject.Input === "partner") {
+      return (localStorage.getItem("PartnerName"))
+    }
+    else if (props.modalObject.Input === "joint") {
+      return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
+    }
+  })
+
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
 
@@ -62,8 +74,8 @@ const LumpsumExpenses = (props) => {
       incomeFromLumpsumExpense[props.modalObject.Input].forEach((data, i) => {
         if (data) {
           setFieldValue(`year${i}`, data.year || "");
-          setFieldValue(`amount${i}`, data.amount || "");      
-          setFieldValue(`expensesItem${i}`, data.expensesItem || "");      
+          setFieldValue(`amount${i}`, data.amount || "");
+          setFieldValue(`expensesItem${i}`, data.expensesItem || "");
         }
       });
     }
@@ -82,30 +94,6 @@ const LumpsumExpenses = (props) => {
     setDynamicFields(arr);
   };
 
-  let handleInnerModal = (
-    title,
-    question,
-    key,
-    mainKey,
-    key3,
-    editArray,
-    index,
-    values
-  ) => {
-    console.log(values);
-    setModalObject({
-      title,
-      question,
-      key,
-      mainKey,
-      key3,
-      editArray: editArray || [],
-      index,
-      values,
-    });
-    setFlagState(true);
-  };
-
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   let onSubmit = async (values) => {
@@ -119,7 +107,7 @@ const LumpsumExpenses = (props) => {
     // Iterate through each map entry and create a new object
     for (let i = 0; i < numberOfMaps; i++) {
       const newEntry = {
-          amount: values[`amount${i}`] || "",
+        amount: values[`amount${i}`] || "",
         expensesItem: values[`expensesItem${i}`] || "",
         year: values[`year${i}`] || "",
         // annualPaymentAmount: values[`annualPaymentAmount${i}`] || "",
@@ -185,32 +173,22 @@ const LumpsumExpenses = (props) => {
   };
 
   const options = [
-   "1 Year",
-   "2 Years",
-   "3 Years",
-   "4 Years",
-   "5 Years",
+    "1 Year",
+    "2 Years",
+    "3 Years",
+    "4 Years",
+    "5 Years",
   ];
   const options2 = [
-   "Motor Vehicle",
-   "Boat",
-   "Caravan",
-   "Other Lifestyle Assets",
-   "Home Renovations",
-   "Holiday",
-   "Other",
+    "Motor Vehicle",
+    "Boat",
+    "Caravan",
+    "Other Lifestyle Assets",
+    "Home Renovations",
+    "Holiday",
+    "Other",
   ];
-  const [selectedOptions, setSelectedOptions] = useState([]);
 
-  //   const options2 = [
-  //     { value: 'Pensioner Card', label: 'Pensioner Card' },
-  //     { value: 'Low Income Card', label: 'Low Income Card' },
-  //     { value: 'Commonwealth Seniors Card', label: 'Commonwealth Seniors Card' },
-  //     // Add more options as needed
-  //   ];
-  const handleChange1 = (selected) => {
-    setSelectedOptions(selected);
-  };
   return (
     <Formik
       initialValues={initialValues}
@@ -226,31 +204,11 @@ const LumpsumExpenses = (props) => {
         return (
           <Form>
             <Row>
-              <InnerModal
-                modalObject={modalObject}
-                setFieldValue={setFieldValue}
-                setFlagState={setFlagState}
-                flagState={flagState}
-              >
-                {modalObject.key === "annualPaymentAmount" ? (
-                  <PortfolioValue />
-                ) : modalObject.key === "memberArray" ? (
-                  <MemberNumber />
-                ) : modalObject.key === "groupInsuranceArray" ? (
-                  <GroupInsurance />
-                ) : modalObject.key === "ContributionsArray" ? (
-                  <Contributions />
-                ) : modalObject.key === "beneficiariesArray" ? (
-                  <Beneficiaries />
-                ) : (
-                  ""
-                )}
-              </InnerModal>
               <div className="col-md-12">
                 <div className="row justify-content-center">
                   <div className="col-md-5">
                     <p className="text-end mt-1">
-                      How many {props.modalObject.title} does {props.modalObject.Input} have:
+                      How many {props.modalObject.title} does {nameSet} have:
                     </p>
                   </div>
                   <div className="col-md-2">
@@ -285,7 +243,7 @@ const LumpsumExpenses = (props) => {
                               <tr key={i}>
                                 <td>{1 + i}</td>
                                 <td>
-                                <Field
+                                  <Field
                                     as="select"
                                     placeholder="Expenses Item"
                                     id={`expensesItem${i}`}

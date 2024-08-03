@@ -14,6 +14,20 @@ const InvestmentBond = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
+
+    let [nameSet] = useState(() => {
+        if (props.modalObject.Input === "client") {
+            return (localStorage.getItem("UserName"))
+        }
+        else if (props.modalObject.Input === "partner") {
+            return (localStorage.getItem("PartnerName"))
+        }
+        else if (props.modalObject.Input === "joint") {
+            return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
+        }
+    })
+
+
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
 
@@ -262,7 +276,7 @@ const InvestmentBond = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='col-md-5'>
                                         <p className='text-end mt-1'>
-                                            How many Platforms does {props.modalObject.Input} have:
+                                            How many Platforms does {nameSet} have:
                                         </p>
                                     </div>
                                     <div className='col-md-2'>
@@ -324,7 +338,7 @@ const InvestmentBond = (props) => {
                                                                         name={`portfolioValue${i}`}
                                                                         className="form-control inputDesign"
                                                                     />
-                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Portfolio Value", "How many Underlying Investments do you have ?", "portfolioArray", "portfolioValue", "totalPortfolioCost", values[`portfolioArray${i}`], i) }}>
+                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Portfolio Value", `How many Underlying Investments do ${nameSet} have ?`, "portfolioArray", "portfolioValue", "totalPortfolioCost", values[`portfolioArray${i}`], i) }}>
                                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                     </Button>
                                                                 </InputGroup>
@@ -355,6 +369,7 @@ const InvestmentBond = (props) => {
                                                                     id={`loginInPage${i}`}
                                                                     name={`loginInPage${i}`}
                                                                     className="form-control inputDesign"
+                                                                    disabled
                                                                 />
                                                             </td>
                                                         </tr>)

@@ -10,6 +10,19 @@ const CreditCard = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
+
+    let [nameSet] = useState(() => {
+        if (props.modalObject.Input === "client") {
+            return (localStorage.getItem("UserName"))
+        }
+        else if (props.modalObject.Input === "partner") {
+            return (localStorage.getItem("PartnerName"))
+        }
+        else if (props.modalObject.Input === "joint") {
+            return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
+        }
+    })
+
     let creditCards = questionDetail.creditCards || {
         client: [],
         partner: [],
@@ -247,7 +260,7 @@ const CreditCard = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='col-md-5'>
                                         <p className='text-end mt-1'>
-                                            How many {props.modalObject.title} does {props.modalObject.Input} have:
+                                            How many {props.modalObject.title} does {nameSet} have:
                                         </p>
                                     </div>
                                     <div className='col-md-2'>
@@ -357,7 +370,7 @@ const CreditCard = (props) => {
                                                                 </td>
                                                                 <td>
                                                                     <Field
-                                                                        type="text"
+                                                                        type="number"
                                                                         placeholder="Interest Rate (p.a)"
                                                                         id={`InterestRate${i}`}
                                                                         name={`InterestRate${i}`}

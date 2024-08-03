@@ -10,6 +10,18 @@ const FamilyDetails = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
+  let [nameSet] = useState(() => {
+    if (props.modalObject.Input === "client") {
+      return (localStorage.getItem("UserName"))
+    }
+    else if (props.modalObject.Input === "partner") {
+      return (localStorage.getItem("PartnerName"))
+    }
+    else if (props.modalObject.Input === "joint") {
+      return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
+    }
+  })
+
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
 
@@ -181,7 +193,9 @@ const FamilyDetails = (props) => {
     }
   };
 
-  const options = ["Account Based Pension ", "TTR"];
+  const options = ["Corporate",
+    "Individual"
+  ];
   const options2 = [
     "Pensioner Card ",
     "Low Income Card ",
@@ -219,7 +233,7 @@ const FamilyDetails = (props) => {
                   <div className="col-md-5">
                     <p className="text-end mt-1">
                       How many {props.modalObject.title} does{" "}
-                      {props.modalObject.Input} have:
+                      {nameSet} have:
                     </p>
                   </div>
                   <div className="col-md-2">
@@ -245,8 +259,8 @@ const FamilyDetails = (props) => {
                             </th>
                             <th>Trust Name</th>
                             <th>Trust Type</th>
-                            <th>ABN	Fund</th>
-                            <th>Address</th>
+                            <th>ABN</th>
+                            <th>Fund Address</th>
                             <th>Establishment Date</th>
                             <th>Trustee Type</th>
                             <th>Trustee Name</th>

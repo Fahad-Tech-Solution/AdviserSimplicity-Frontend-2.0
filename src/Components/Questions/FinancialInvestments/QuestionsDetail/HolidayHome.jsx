@@ -10,12 +10,23 @@ const HolidayHome = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
-    let holidayHome = questionDetail.holidayHome[props.modalObject.index] || {
-        client: [],
-        partner: [],
-        joint: [],
 
-    }; // Use an empty object as default if holidayHome is undefined
+    let [nameSet] = useState(() => {
+        if (props.modalObject.Input === "client") {
+            return (localStorage.getItem("UserName"))
+        }
+        else if (props.modalObject.Input === "partner") {
+            return (localStorage.getItem("PartnerName"))
+        }
+        else if (props.modalObject.Input === "joint") {
+            return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
+        }
+    })
+
+    let holidayHome = (questionDetail && questionDetail.holidayHome && Array.isArray(questionDetail.holidayHome) && props && props.modalObject && typeof props.modalObject.index === 'number')
+        ? questionDetail.holidayHome[props.modalObject.index] || { client: [], partner: [], joint: [] }
+        : { client: [], partner: [], joint: [] };
+    // Use an empty object as default if holidayHome is undefined
 
 
     let initialValues = holidayHome[props.modalObject.Input].length ? { NumberOfMap: holidayHome[props.modalObject.Input].length } : { NumberOfMap: "" };
@@ -166,7 +177,7 @@ const HolidayHome = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='col-md-5'>
                                         <p className='text-end mt-1'>
-                                            How many {props.modalObject.title} does {props.modalObject.Input} have:
+                                            How many {props.modalObject.title} does {nameSet} have:
                                         </p>
                                     </div>
                                     <div className='col-md-2'>
@@ -198,8 +209,8 @@ const HolidayHome = (props) => {
                                                                 <td>{1 + i}</td>
                                                                 <td>
                                                                     <Field
-                                                                        type="number"
-                                                                        placeholder="Home Address & Postcode "
+                                                                        type="text"
+                                                                        placeholder="Home Address & Postcode"
                                                                         id={`HomeAddress${i}`}
                                                                         name={`HomeAddress${i}`}
                                                                         className="form-control inputDesign"

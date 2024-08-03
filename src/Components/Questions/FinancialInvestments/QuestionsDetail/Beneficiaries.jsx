@@ -92,6 +92,11 @@ const Beneficiaries = (props) => {
         }
     };
 
+
+    let extraValue = ["Account Based Pension", "Invested in Annuities"]
+
+    let [autoClearValue, setAutoClearValue] = useState(false);
+
     return (
         <Formik
             initialValues={initialValues}
@@ -153,11 +158,24 @@ const Beneficiaries = (props) => {
                                                                                 setFieldValue(`beneficiaryName${i}`, "N/A");
                                                                                 setFieldValue(`relationshipStatus${i}`, "N/A");
                                                                                 setFieldValue(`shareBenefit${i}`, 100);
+                                                                                setAutoClearValue(true);
+                                                                            }
+                                                                            else {
+                                                                                if (autoClearValue) {
+                                                                                    setFieldValue(`beneficiaryName${i}`, "");
+                                                                                    setFieldValue(`relationshipStatus${i}`, "");
+                                                                                    setFieldValue(`shareBenefit${i}`, "");
+                                                                                    setAutoClearValue(false);
+                                                                                }
                                                                             }
                                                                         }}
                                                                     >
                                                                         <option value={""}>Select</option>
-                                                                        <option value={"Reversionary Beneficiary"}>Reversionary Beneficiary</option>
+
+                                                                        {extraValue.includes(props.modalObject.ParentModal) &&
+                                                                            <option value={"Reversionary Beneficiary"}>Reversionary Beneficiary</option>
+                                                                        }
+
                                                                         <option value={"Binding (Non-Lapsing)"}>Binding (Non-Lapsing)</option>
                                                                         <option value={"Binding (Lapsing)"}>Binding (Lapsing)</option>
                                                                         <option value={"Non-Binding"}>Non-Binding </option>

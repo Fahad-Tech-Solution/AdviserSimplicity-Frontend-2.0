@@ -1,32 +1,70 @@
 import { Field, Form, Formik } from "formik";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 
 import Questions_Home from "../svgs/home-svgrepo-com.svg";
 import loan from "../svgs/loan.svg";
 
-import { useRecoilState } from "recoil";
-import { QuestionShift, CRState } from "../../../Store/Store";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { QuestionShift, CRState, defaultUrl } from "../../../Store/Store";
+import { GetAxios, PatchAxios, PostAxios } from "../../Assets/Api/Api";
 
 const LifestyleAssetsAndDebt = (props) => {
 
-  let [QuestionChange, setQuestionChange] = useRecoilState(QuestionShift);
   let [CRObject, setCRObject] = useRecoilState(CRState);
 
-  let onSubmit = (values) => {
-    // console.log(values);
+  const [flagState, setFlagState] = useState(false);
 
-    if (props.flagState) {
-      props.setFlagState(false);
+  let DefaultUrl = useRecoilValue(defaultUrl)
+
+  const FetchQuestions = async () => {
+    try {
+      const res = await GetAxios(`${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`);
+      if (res) {
+        setCRObject(res);
+        setFlagState(true);
+      }
+    } catch (error) {
+      console.error("Error fetching questions:", error);
     }
+  };
 
+  useEffect(() => {
+    FetchQuestions();
+  }, []);
+
+  const handleResponse = (values) => {
     setCRObject(values);
     localStorage.setItem("QuestionsState", JSON.stringify(values));
     props.setQuestionChange(false);
-    localStorage.setItem("Question", "Investment");
-
-
+    localStorage.setItem("Question", "PersonalAssets");
   };
+
+  const onSubmit = async (values) => {
+    values.clientFK = localStorage.getItem("UserID");
+    try {
+      if (!flagState) {
+        const PostRes = await PostAxios(`${DefaultUrl}/api/questions/Add`, values);
+        if (PostRes) {
+          if (props.flagState) {
+            props.setFlagState(false);
+          }
+          handleResponse(values);
+        }
+      } else {
+        const PatchRes = await PatchAxios(`${DefaultUrl}/api/questions/Update/${localStorage.getItem("UserID")}`, values);
+        if (PatchRes) {
+          if (props.flagState) {
+            props.setFlagState(false);
+          }
+          handleResponse(values);
+        }
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
+
 
   return (
     <div className="container-fluid">
@@ -40,7 +78,7 @@ const LifestyleAssetsAndDebt = (props) => {
           {({ values, handleChange }) => (
             <Form>
               <div className="col-md-12 text-center">
-                <h4 className="heading">Lifestyle Assets and Debt</h4>
+                <h4 className="heading d-none">Lifestyle Assets and Debt</h4>
                 <div className="row my-3">
                   <div className="col-md-12">
                     <div className="mb-3">

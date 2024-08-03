@@ -2,13 +2,26 @@ import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { PatchAxios, PostAxios } from '../../../Assets/Api/Api';
+import { defaultUrl, QuestionDetail } from '../../../Store/Store';
+import { PatchAxios, PostAxios } from '../../Assets/Api/Api';
 
 
 const EstatePlanningProfessionalAdviser = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+
+
+    let [nameSet] = useState(() => {
+        if (props.modalObject.Input === "client") {
+            return (localStorage.getItem("UserName"))
+        }
+        else if (props.modalObject.Input === "partner") {
+            return (localStorage.getItem("PartnerName"))
+        }
+        else if (props.modalObject.Input === "joint") {
+            return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
+        }
+    })
 
     let professionalAdviser = questionDetail.professionalAdviser || {
         client: [],
@@ -155,7 +168,7 @@ const EstatePlanningProfessionalAdviser = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='col-md-5'>
                                         <p className='text-end mt-1'>
-                                            How many {props.modalObject.title} does {props.modalObject.Input} have:
+                                            How many {props.modalObject.title} does {nameSet} have:
                                         </p>
                                     </div>
                                     <div className='col-md-2'>

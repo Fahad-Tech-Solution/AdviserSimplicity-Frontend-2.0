@@ -12,6 +12,18 @@ const TradingCompany = (props) => {
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
 
+  let [nameSet] = useState(() => {
+    if (props.modalObject.Input === "client") {
+      return (localStorage.getItem("UserName"))
+    }
+    else if (props.modalObject.Input === "partner") {
+      return (localStorage.getItem("PartnerName"))
+    }
+    else if (props.modalObject.Input === "joint") {
+      return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
+    }
+  })
+
   let BusinessAsCompanyStructure = questionDetail.BusinessAsCompanyStructure || {
     client: [],
     partner: [],
@@ -153,6 +165,14 @@ const TradingCompany = (props) => {
     }
   };
 
+  let handleBlur = (setFieldValue, e) => {
+    let value = parseFloat(e.target.value);
+    if (!isNaN(value)) {
+      setFieldValue(e.target.id, value.toFixed(2));
+    } else {
+      setFieldValue(e.target.id, "");
+    }
+  };
 
 
   return (
@@ -174,7 +194,7 @@ const TradingCompany = (props) => {
                 <div className="row justify-content-center">
                   <div className="col-md-5">
                     <p className="text-end mt-1">
-                      How many {props.modalObject.title} does {props.modalObject.Input} have:
+                      How many {props.modalObject.title} does {nameSet} have:
                     </p>
                   </div>
                   <div className="col-md-2">
@@ -266,6 +286,7 @@ const TradingCompany = (props) => {
                                     id={`shareholding${i}`}
                                     name={`shareholding${i}`}
                                     className="form-control inputDesign"
+                                    onBlur={(e) => handleBlur(setFieldValue, e)}
                                   />
                                 </td>
                                 <td>

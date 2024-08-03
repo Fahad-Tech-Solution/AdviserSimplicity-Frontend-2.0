@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 
@@ -7,39 +7,65 @@ import Questions_loan from "../svgs/loan.svg";
 import Questions_Bank from "../svgs/property-value.svg";
 import QuestionMoney from "../svgs/QuestionMoney.jpg";
 
-import { useRecoilState } from "recoil";
-import { QuestionShift, CRState, StepState } from "../../../Store/Store";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { QuestionShift, CRState, StepState, defaultUrl } from "../../../Store/Store";
 
 import { NavLink, useNavigate } from "react-router-dom";
+import { PatchAxios, PostAxios } from "../../Assets/Api/Api";
 
 const QuestionsInvestmentTrust = (props) => {
+
   let [CRObject, setCRObject] = useRecoilState(CRState);
-  let [QuestionChange, setQuestionChange] = useRecoilState(QuestionShift);
-  let [Steps, setSteps] = useRecoilState(StepState);
 
-  let Navigation = useNavigate();
+  const [flagState, setFlagState] = useState(false);
 
-  let onSubmit = (values) => {
+  let DefaultUrl = useRecoilValue(defaultUrl)
 
-
-    if (props.flagState) {
-      props.setFlagState(false);
+  const FetchQuestions = async () => {
+    try {
+      const res = await GetAxios(`${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`);
+      if (res) {
+        setCRObject(res);
+        setFlagState(true);
+      }
+    } catch (error) {
+      console.error("Error fetching questions:", error);
     }
+  };
 
+  useEffect(() => {
+    FetchQuestions();
+  }, []);
 
+  const handleResponse = (values) => {
     setCRObject(values);
     localStorage.setItem("QuestionsState", JSON.stringify(values));
     props.setQuestionChange(false);
-    // setQuestionChange("QuestionCards");
-    // localStorage.setItem("Question", "QuestionCards");
-    
+    localStorage.setItem("Question", "PersonalAssets");
+  };
 
-    // setSteps(2);
-    // localStorage.setItem("Steps", 2);
-    // setCRObject(values);
-    // localStorage.setItem("QuestionsState", JSON.stringify(values));
-    // Navigation("/Business-Tax-Structure");
-    // localStorage.removeItem("Question");
+  const onSubmit = async (values) => {
+    try {
+      if (!flagState) {
+        const PostRes = await PostAxios(`${DefaultUrl}/api/questions/Add`, values);
+        if (PostRes) {
+          if (props.flagState) {
+            props.setFlagState(false);
+          }
+          handleResponse(values);
+        }
+      } else {
+        const PatchRes = await PatchAxios(`${DefaultUrl}/api/questions/Update/${localStorage.getItem("UserID")}`, values);
+        if (PatchRes) {
+          if (props.flagState) {
+            props.setFlagState(false);
+          }
+          handleResponse(values);
+        }
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
 
   return (
@@ -284,7 +310,7 @@ const QuestionsInvestmentTrust = (props) => {
                     <button
                       type="submit"
                       onClick={() => {
-                        
+
                       }}
                       className="float-end btn w-25  bgColor modalBtn"
                     >
@@ -292,7 +318,7 @@ const QuestionsInvestmentTrust = (props) => {
                     </button>
                     <button className="float-end btn w-25  btn-outline  backBtn mx-3"
                       onClick={() => {
-                        
+
                         setQuestionChange("SMSF")
                       }}
                     >

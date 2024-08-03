@@ -83,7 +83,9 @@ input[type="number"] {
   }
 
   .inputDesign {
-    max-width: 60%;
+    /* max-width: 60%;
+    margin: 0 auto; 
+    display: block; */
   }
   .LargeSheet {
     text-align: left !important;
@@ -933,20 +935,7 @@ input[type="checkbox"] + .femaleSmoking + .maleNonSmoking {
 }
 .PersonalDetails {
   background-color: #36b44718 !important;
-  /* display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center; */
 }
-
-/* .PersonalDetails div {
-  display: flex;
-  align-items: center;
-  border: 1px solid red;
-  width: 50%; 
-  box-sizing: border-box; 
-  padding: 10px; 
-} */
 
 .min-w-25 {
   min-width: 25% !important;
@@ -960,4 +949,17 @@ input[type="checkbox"] + .femaleSmoking + .maleNonSmoking {
   display: flex !important;
   justify-content: center;
   align-items: center;
+}
+
+/* komail React select custom css */
+.css-1u9des2-indicatorSeparator {
+  -webkit-align-self: stretch;
+  -ms-flex-item-align: stretch;
+  align-self: stretch;
+  width: 1px;
+  background-color: hsl(0, 0%, 80%);
+  margin-bottom: 8px;
+  margin-top: 8px;
+  box-sizing: border-box;
+  height: auto;
 }

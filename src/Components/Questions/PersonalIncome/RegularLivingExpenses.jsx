@@ -1824,7 +1824,7 @@ const RegularLivingExpenses = (props) => {
                               htmlFor="publicTransport"
                               className="form-label"
                             >
-                              public transport
+                              Public transport
                             </label>
                             <Field
                               type="number"
@@ -1983,7 +1983,7 @@ const RegularLivingExpenses = (props) => {
                               htmlFor="insurancePrivateHealth"
                               className="form-label"
                             >
-                              private Health
+                              Private Health
                             </label>
                             <Field
                               type="number"
@@ -2041,7 +2041,7 @@ const RegularLivingExpenses = (props) => {
                               htmlFor="insuranceLife"
                               className="form-label"
                             >
-                              life/TPD/Trauma
+                              Life/TPD/Trauma
                             </label>
                             <Field
                               type="number"

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./AdditionalQueries.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -13,25 +13,67 @@ import {
   faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 
-import { useRecoilState } from "recoil";
-import { QuestionShift, CRState } from "../../../Store/Store";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { QuestionShift, CRState, defaultUrl } from "../../../Store/Store";
 import { Form, Formik } from "formik";
+import { GetAxios, PatchAxios, PostAxios } from "../../Assets/Api/Api";
 const AdditionalQueriesProfessionalAdvisor = (props) => {
 
-  let [CRObject, setCRObject] = useRecoilState(CRState);
-  let [QuestionChange, setQuestionChange] = useRecoilState(QuestionShift);
-  let onSubmit = (values) => {
-    
-    if (props.flagState) {
-      props.setFlagState(false);
-    }
 
+  let [CRObject, setCRObject] = useRecoilState(CRState);
+
+  const [flagState, setFlagState] = useState(false);
+
+  let DefaultUrl = useRecoilValue(defaultUrl)
+
+  const FetchQuestions = async () => {
+    try {
+      const res = await GetAxios(`${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`);
+      if (res) {
+        setCRObject(res);
+        setFlagState(true);
+      }
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+    }
+  };
+
+  useEffect(() => {
+    FetchQuestions();
+  }, []);
+
+  const handleResponse = (values) => {
     setCRObject(values);
     localStorage.setItem("QuestionsState", JSON.stringify(values));
     props.setQuestionChange(false);
-    localStorage.setItem("Question", "SMSF");
-    
+    localStorage.setItem("Question", "PersonalAssets");
   };
+
+  const onSubmit = async (values) => {
+    try {
+      if (!flagState) {
+        const PostRes = await PostAxios(`${DefaultUrl}/api/questions/Add`, values);
+        if (PostRes) {
+          if (props.flagState) {
+            props.setFlagState(false);
+          }
+          handleResponse(values);
+        }
+      } else {
+        const PatchRes = await PatchAxios(`${DefaultUrl}/api/questions/Update/${localStorage.getItem("UserID")}`, values);
+        if (PatchRes) {
+          if (props.flagState) {
+            props.setFlagState(false);
+          }
+          handleResponse(values);
+        }
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
+
+
   return (
     <div className="container-fluid">
       <div className="row m-0">
@@ -254,7 +296,7 @@ const AdditionalQueriesProfessionalAdvisor = (props) => {
                 <div className="col-md-12">
                   <button
                     onClick={() => {
-                      
+
                     }}
                     type="submit"
                     className="float-end btn w-25  bgColor modalBtn"
@@ -264,7 +306,7 @@ const AdditionalQueriesProfessionalAdvisor = (props) => {
                   <button
                     type="button" className="float-end btn w-25  btn-outline  backBtn mx-3"
                     onClick={() => {
-                      
+
                       setQuestionChange("SuperAndRetirement")
                     }}
                   >

@@ -4,11 +4,25 @@ import { Button, InputGroup, Row, Table } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
 import { PatchAxios, PostAxios } from "../../Assets/Api/Api";
-
+import CreatableMultiSelectField from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 
 const CenterLinkPayments = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+
+  let [nameSet] = useState(() => {
+    if (props.modalObject.Input === "client") {
+      return localStorage.getItem("UserName");
+    } else if (props.modalObject.Input === "partner") {
+      return localStorage.getItem("PartnerName");
+    } else if (props.modalObject.Input === "joint") {
+      return (
+        localStorage.getItem("UserName") +
+        " & " +
+        localStorage.getItem("PartnerName")
+      );
+    }
+  });
 
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
@@ -53,10 +67,15 @@ const CenterLinkPayments = (props) => {
         if (data) {
           setFieldValue(`paymentType${i}`, data.paymentType || "");
           setFieldValue(`cRN${i}`, data.cRN || "");
-          setFieldValue(`fortnightlyPayment${i}`, data.fortnightlyPayment || "");
-          setFieldValue(`annualPaymentAmount${i}`, data.annualPaymentAmount || "");
+          setFieldValue(
+            `fortnightlyPayment${i}`,
+            data.fortnightlyPayment || ""
+          );
+          setFieldValue(
+            `annualPaymentAmount${i}`,
+            data.annualPaymentAmount || ""
+          );
           setFieldValue(`centrelinkcards${i}`, data.centrelinkcards || "");
-
         }
       });
     }
@@ -102,7 +121,6 @@ const CenterLinkPayments = (props) => {
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   let onSubmit = async (values) => {
-
     console.log(JSON.stringify(values));
     // return (false);
     // Extract the number of maps from the values
@@ -118,7 +136,6 @@ const CenterLinkPayments = (props) => {
         annualPaymentAmount: values[`annualPaymentAmount${i}`] || "",
         centrelinkcards: values[`centrelinkcards${i}`] || "",
         // centrelinkcards: values[`centrelinkcards${i}`] || "",
-
       };
       newEntries.push(newEntry);
     }
@@ -178,19 +195,19 @@ const CenterLinkPayments = (props) => {
   };
 
   const options = [
-    "Age Pension ",
-    "Disability Pension",
-    "Carer Payment ",
-    "Carer Allowance ",
-    "Jobseeker",
-    "Family Tax Benefit A ",
-    "Family Tax Benefit B",
-    "Rent Assistance ",
+    { value: "Age Pension", label: "Age Pension" },
+    { value: "Disability Pension", label: "Disability Pension" },
+    { value: "Carer Payment", label: "Carer Payment" },
+    { value: "Carer Allowance", label: "Carer Allowance" },
+    { value: "Jobseeker", label: "Jobseeker" },
+    { value: "Family Tax Benefit A", label: "Family Tax Benefit A" },
+    { value: "Family Tax Benefit B", label: "Family Tax Benefit B" },
+    { value: "Rent Assistance", label: "Rent Assistance" },
   ];
   const options2 = [
-    "Pensioner Card ",
-    "Low Income Card ",
-    "Commonwealth Seniors Card",
+    { value: "Pensioner Card", label: "Pensioner Card " },
+    { value: "Low Income Card", label: "Low Income Card " },
+    { value: "Commonwealth Seniors Card", label: "Commonwealth Seniors Card" },
   ];
   const [selectedOptions, setSelectedOptions] = useState([]);
 
@@ -222,7 +239,7 @@ const CenterLinkPayments = (props) => {
                 <div className="row justify-content-center">
                   <div className="col-md-5">
                     <p className="text-end mt-1">
-                      How many {props.modalObject.title} does {props.modalObject.Input} have:
+                      How many {props.modalObject.title} does {nameSet} have:
                     </p>
                   </div>
                   <div className="col-md-2">
@@ -270,115 +287,27 @@ const CenterLinkPayments = (props) => {
                                 </td>
                                 <td>
                                   <Field
-                                    as="select"
-                                    placeholder="Payment Type"
-                                    id={`paymentType${i}`}
                                     name={`paymentType${i}`}
-                                    className="form-select inputDesign"
-                                  >
-                                    <option value={""}>Please Select</option>
-                                    {options.map((elem, index) => {
-                                      return (
-                                        <option key={index} value={elem}>
-                                          {elem}
-                                        </option>
-                                      );
-                                    })}
-                                  </Field>
-
-                                  <Select
-                                    className="Select mt-3"
+                                    component={CreatableMultiSelectField}
+                                    label="Multi Select Field"
                                     options={options}
-                                    onChange={breadSelected}
-                                    styles={{
-                                      control: (baseStyles, state) => ({
-                                        ...baseStyles,
-                                        borderColor: "#174f78",
-                                        borderRadius: state.isFocused
-                                          ? "1.5rem 1.5rem 0rem 0rem"
-                                          : "4rem 4rem 4rem 4rem",
-                                        borderWidth: "2px",
-                                        '&:hover': {
-                                          borderColor: '#174f78', // Change the border color on hover
-                                        },
-                                        fontWeight: 'bold',
-                                        borderBottom: state.isFocused ? "none" : ""
-                                        // color: '#174f78',
-                                        // borderBottom :state.isFocused?"0px":"1px solid white",
-                                      }),
-                                      singleValue: (baseStyles) => ({
-                                        ...baseStyles,
-                                        color: '#174f78', // Change text color in control
-                                        fontWeight: 'bold', // Increase font weight in control
-                                      }),
-                                      menu: (baseStyles) => ({
-                                        ...baseStyles,
-                                        borderRadius: '0rem 0rem 1.5rem 1.5rem',
-                                        marginTop: 0,
-                                        borderColor: '#174f78',
-                                        borderWidth: "3px",
-                                        overflow: 'hidden', // Ensure menu stays within site menu
-                                        zIndex: 999, // Ensure menu stays above other elements
-                                      }),
-                                      menuList: (baseStyles) => ({
-                                        ...baseStyles,
-                                        padding: 0,
-                                        borderColor: '#174f78',
-                                        borderWidth: "3px",
-                                        borderStyle: 'solid',
-                                        borderRadius: '0rem 0rem 1.5rem 1.5rem',
-                                        borderTop: "none"
-                                      }),
-                                      option: (baseStyles, state) => ({
-                                        ...baseStyles,
-                                        backgroundColor: state.isSelected ? '#fbf8e9' : state.isFocused ? '#fbf8e9' : '#fff',
-                                        color: state.isSelected || state.isFocused ? '#174f78' : '#174f78',
-                                        fontWeight: state.isSelected || state.isFocused ? 'bold' : 'normal',
-                                        padding: '10px 20px',
-                                        '&:active': {
-                                          backgroundColor: '#174f78',
-                                          color: '#fff',
-                                        },
-                                      }),
-                                    }}
-
                                   />
-
-
                                 </td>
                                 <td>
-                                  {/* <InputGroup className="mb-3"> */}
                                   <Field
                                     type="number"
                                     placeholder="Fortnightly Payment"
                                     id={`fortnightlyPayment${i}`}
                                     name={`fortnightlyPayment${i}`}
                                     className="form-control inputDesign"
+                                    onChange={(e) => {
+                                      setFieldValue(`fortnightlyPayment${i}`, e.target.value);
+                                      setFieldValue(`annualPaymentAmount${i}`, e.target.value * 26 || 0)
+                                    }}
                                   />
-                                  {/* <Button
-                                      className="btn bgColor modalBtn border-0"
-                                      id="button-addon2"
-                                      onClick={() => {
-                                        handleInnerModal(
-                                          "Member Number & Details",
-                                          "How many Member Number & Details do you have ?",
-                                          "memberArray",
-                                          "CRN",
-                                          "totalPortfolioCost",
-                                          values[`memberArray${i}`],
-                                          i,
-                                          values
-                                        );
-                                      }}
-                                    >
-                                      <FontAwesomeIcon
-                                        icon={faArrowUpRightFromSquare}
-                                      />
-                                    </Button>
-                                  </InputGroup> */}
+
                                 </td>
                                 <td>
-                                  {/* <InputGroup className="mb-3"> */}
                                   <Field
                                     type="number"
                                     placeholder="Annual Payment Amount"
@@ -388,28 +317,12 @@ const CenterLinkPayments = (props) => {
                                   />
                                 </td>
                                 <td>
-                                  {/* <Select
-        isMulti
-        value={selectedOptions}
-        onChange={handleChange1}
-        options={options}
-      /> */}
                                   <Field
-                                    as="select"
-                                    placeholder="Centrelink Cards"
-                                    id={`centrelinkCards${i}`}
                                     name={`centrelinkcards${i}`}
-                                    className="form-select inputDesign"
-                                  >
-                                    <option value={""}>Please Select</option>
-                                    {options2.map((elem, index) => {
-                                      return (
-                                        <option key={index} value={elem}>
-                                          {elem}
-                                        </option>
-                                      );
-                                    })}
-                                  </Field>
+                                    component={CreatableMultiSelectField}
+                                    label="Multi Select Field"
+                                    options={options2}
+                                  />
                                 </td>
                               </tr>
                             );

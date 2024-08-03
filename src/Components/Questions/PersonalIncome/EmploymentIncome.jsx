@@ -12,6 +12,19 @@ const EmploymentIncome = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
+
+    let [nameSet] = useState(() => {
+        if (props.modalObject.Input === "client") {
+            return (localStorage.getItem("UserName"))
+        }
+        else if (props.modalObject.Input === "partner") {
+            return (localStorage.getItem("PartnerName"))
+        }
+        else if (props.modalObject.Input === "joint") {
+            return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
+        }
+    })
+
     let incomeFromOwnBusiness = questionDetail.incomeFromOwnBusiness || {
         client: {},
         partner: {},
@@ -162,7 +175,7 @@ const EmploymentIncome = (props) => {
                                                 htmlFor=""
                                                 className="form-label text-center"
                                             >
-                                                Client
+                                                {nameSet}
                                                 <div className="iconContainerLg">
                                                     <img
                                                         src={single}
@@ -178,7 +191,7 @@ const EmploymentIncome = (props) => {
                                                 htmlFor=""
                                                 className="form-label text-center"
                                             >
-                                                Partner
+                                                {nameSet}
                                                 <div className="iconContainerLg">
                                                     <img
                                                         src={couple}

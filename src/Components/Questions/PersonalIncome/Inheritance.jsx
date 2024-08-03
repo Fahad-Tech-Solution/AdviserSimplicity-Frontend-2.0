@@ -6,22 +6,21 @@ import { defaultUrl, QuestionDetail } from "../../../Store/Store";
 import { PatchAxios, PostAxios } from "../../Assets/Api/Api";
 // import Select from "react-select";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
-import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
-import PortfolioValue from "../FinancialInvestments/QuestionsDetail/PortfolioValue";
-import DynamicYesNo from "../FinancialInvestments/QuestionsDetail/DynamicYesNo";
-import MemberNumber from "../FinancialInvestments/QuestionsDetail/MemberNumber";
-import GroupInsurance from "../FinancialInvestments/QuestionsDetail/GroupInsurance";
-import Contributions from "../FinancialInvestments/QuestionsDetail/Contributions";
-import Beneficiaries from "../FinancialInvestments/QuestionsDetail/Beneficiaries";
-
 const Inheritance = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
-  let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
+  let [nameSet] = useState(() => {
+    if (props.modalObject.Input === "client") {
+      return (localStorage.getItem("UserName"))
+    }
+    else if (props.modalObject.Input === "partner") {
+      return (localStorage.getItem("PartnerName"))
+    }
+    else if (props.modalObject.Input === "joint") {
+      return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
+    }
+  })
 
   let incomeFromInheritance = questionDetail.incomeFromInheritance || {
     client: [],
@@ -62,8 +61,8 @@ const Inheritance = (props) => {
       incomeFromInheritance[props.modalObject.Input].forEach((data, i) => {
         if (data) {
           setFieldValue(`year${i}`, data.year || "");
-          setFieldValue(`description${i}`, data.description || "");      
-          setFieldValue(`amount${i}`, data.amount || "");      
+          setFieldValue(`description${i}`, data.description || "");
+          setFieldValue(`amount${i}`, data.amount || "");
         }
       });
     }
@@ -82,30 +81,6 @@ const Inheritance = (props) => {
     setDynamicFields(arr);
   };
 
-  let handleInnerModal = (
-    title,
-    question,
-    key,
-    mainKey,
-    key3,
-    editArray,
-    index,
-    values
-  ) => {
-    console.log(values);
-    setModalObject({
-      title,
-      question,
-      key,
-      mainKey,
-      key3,
-      editArray: editArray || [],
-      index,
-      values,
-    });
-    setFlagState(true);
-  };
-
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   let onSubmit = async (values) => {
@@ -119,12 +94,9 @@ const Inheritance = (props) => {
     // Iterate through each map entry and create a new object
     for (let i = 0; i < numberOfMaps; i++) {
       const newEntry = {
-          description: values[`description${i}`] || "",
+        description: values[`description${i}`] || "",
         year: values[`year${i}`] || "",
         amount: values[`amount${i}`] || "",
-        // annualPaymentAmount: values[`annualPaymentAmount${i}`] || "",
-        // centrelinkcards: values[`centrelinkcards${i}`] || "",
-        // centrelinkcards: values[`centrelinkcards${i}`] || "",
 
       };
       newEntries.push(newEntry);
@@ -185,28 +157,13 @@ const Inheritance = (props) => {
   };
 
   const options = [
-   "1 Year",
-   "2 Years",
-   "3 Years",
-   "4 Years",
-   "5 Years",
+    "1 Year",
+    "2 Years",
+    "3 Years",
+    "4 Years",
+    "5 Years",
   ];
-  const options2 = [
-    "Pensioner Card ",
-    "Low Income Card ",
-    "Commonwealth Seniors Card",
-  ];
-  const [selectedOptions, setSelectedOptions] = useState([]);
 
-  //   const options2 = [
-  //     { value: 'Pensioner Card', label: 'Pensioner Card' },
-  //     { value: 'Low Income Card', label: 'Low Income Card' },
-  //     { value: 'Commonwealth Seniors Card', label: 'Commonwealth Seniors Card' },
-  //     // Add more options as needed
-  //   ];
-  const handleChange1 = (selected) => {
-    setSelectedOptions(selected);
-  };
   return (
     <Formik
       initialValues={initialValues}
@@ -222,31 +179,11 @@ const Inheritance = (props) => {
         return (
           <Form>
             <Row>
-              <InnerModal
-                modalObject={modalObject}
-                setFieldValue={setFieldValue}
-                setFlagState={setFlagState}
-                flagState={flagState}
-              >
-                {modalObject.key === "annualPaymentAmount" ? (
-                  <PortfolioValue />
-                ) : modalObject.key === "memberArray" ? (
-                  <MemberNumber />
-                ) : modalObject.key === "groupInsuranceArray" ? (
-                  <GroupInsurance />
-                ) : modalObject.key === "ContributionsArray" ? (
-                  <Contributions />
-                ) : modalObject.key === "beneficiariesArray" ? (
-                  <Beneficiaries />
-                ) : (
-                  ""
-                )}
-              </InnerModal>
               <div className="col-md-12">
                 <div className="row justify-content-center">
                   <div className="col-md-5">
                     <p className="text-end mt-1">
-                      How many {props.modalObject.title} does {props.modalObject.Input} have:
+                      How many {props.modalObject.title} does {nameSet} have:
                     </p>
                   </div>
                   <div className="col-md-2">

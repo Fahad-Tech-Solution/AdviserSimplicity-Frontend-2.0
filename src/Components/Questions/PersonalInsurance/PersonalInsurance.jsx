@@ -1,0 +1,208 @@
+import { Form, Formik } from "formik";
+import React, { useEffect, useState } from "react";
+
+// import React from "react";
+
+// import "./AdditionalQueries.css";
+import LifeTPD from "../svgs/WhatsApp Image 2023-08-11 at 19.13.12.jpg";
+import incomeImg from "../svgs/asd.png";
+
+import { useRecoilState, useRecoilValue } from "recoil";
+import { QuestionShift, CRState, defaultUrl } from "../../../Store/Store";
+import { GetAxios, PatchAxios, PostAxios } from "../../Assets/Api/Api";
+
+const PersonalInsurance = (props) => {
+
+  let [CRObject, setCRObject] = useRecoilState(CRState);
+
+  const [flagState, setFlagState] = useState(false);
+
+  let DefaultUrl = useRecoilValue(defaultUrl)
+
+  const FetchQuestions = async () => {
+    try {
+      const res = await GetAxios(`${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`);
+      if (res) {
+        setCRObject(res);
+        setFlagState(true);
+      }
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+    }
+  };
+
+  useEffect(() => {
+    FetchQuestions();
+  }, []);
+
+  const handleResponse = (values) => {
+    setCRObject(values);
+    localStorage.setItem("QuestionsState", JSON.stringify(values));
+    props.setQuestionChange(false);
+    localStorage.setItem("Question", "PersonalAssets");
+  };
+
+  const onSubmit = async (values) => {
+    try {
+      if (!flagState) {
+        const PostRes = await PostAxios(`${DefaultUrl}/api/questions/Add`, values);
+        if (PostRes) {
+          if (props.flagState) {
+            props.setFlagState(false);
+          }
+          handleResponse(values);
+        }
+      } else {
+        const PatchRes = await PatchAxios(`${DefaultUrl}/api/questions/Update/${localStorage.getItem("UserID")}`, values);
+        if (PatchRes) {
+          if (props.flagState) {
+            props.setFlagState(false);
+          }
+          handleResponse(values);
+        }
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
+  };
+
+  return (
+    <div className="container-fluid">
+      <div className="row m-0">
+        <Formik
+          initialValues={CRObject}
+          onSubmit={onSubmit}
+          enableReinitialize
+          innerRef={props.formRef}
+        >
+          {({ values, handleChange, setFieldValue }) => (
+            <Form>
+              <div className="col-md-12 text-center">
+                <div className="row my-3">
+                  <div className="col-md-12">
+                    <div className="mb-3 ">
+                      <label htmlFor="" className="form-label">
+                        Do you have any Life, TPD or Trauma cover in place?
+                      </label>
+                      <div className="QuestionIcon">
+                        <img className="img-fluid" src={LifeTPD} alt="" />
+                      </div>
+                      {/* switch button style */}
+                      <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter ">
+                        <div className="radiobutton">
+                          <input
+                            type="radio"
+                            name="life"
+                            id="life"
+                            value="No"
+                            onChange={handleChange}
+                            checked={values.life === "No"}
+                          />
+                          <label
+                            htmlFor="life"
+                            className="label1"
+                            onClick={() => {
+                              setFieldValue("TPD", "No");
+                              setFieldValue("trauma", "No");
+                            }}
+                          >
+                            <span>No</span>
+                          </label>
+                          <input
+                            type="radio"
+                            name="life"
+                            id="life2"
+                            value="Yes"
+                            onChange={handleChange}
+                            checked={values.life === "Yes"}
+                          />
+                          <label
+                            htmlFor="life2"
+                            className="label2"
+                            onClick={() => {
+                              setFieldValue("TPD", "Yes");
+                              setFieldValue("trauma", "Yes");
+                            }}
+                          >
+                            <span>Yes</span>
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* switch button style */}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row my-3">
+                  <div className="col-md-12">
+                    <div className="mb-3 ">
+                      <label htmlFor="" className="form-label">
+                        Do you have any Income protection cover in place?
+                      </label>
+                      <div className="QuestionIcon">
+                        <img className="img-fluid" src={incomeImg} alt="" />
+                      </div>
+                      {/* switch button style */}
+                      <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter ">
+                        <div className="radiobutton">
+                          <input
+                            type="radio"
+                            name="incomeProtection"
+                            id="incomeProtection"
+                            value="No"
+                            onChange={handleChange}
+                            checked={values.incomeProtection === "No"}
+                          />
+                          <label htmlFor="incomeProtection" className="label1">
+                            <span>No</span>
+                          </label>
+                          <input
+                            type="radio"
+                            name="incomeProtection"
+                            id="incomeProtection2"
+                            value="Yes"
+                            onChange={handleChange}
+                            checked={values.incomeProtection === "Yes"}
+                          />
+                          <label
+                            htmlFor="incomeProtection2"
+                            className="label2"
+                          >
+                            <span>Yes</span>
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* switch button style */}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row mt-2 d-none">
+                  <div className="col-md-12">
+                    <button
+                      onClick={() => { }}
+                      type="submit"
+                      className="float-end btn w-25  bgColor modalBtn"
+                    >
+                      Next
+                    </button>
+                    <button
+                      onClick={() => { }}
+                      className="float-end btn w-25  btn-outline  backBtn mx-3 d-none"
+                    >
+                      Back
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </div>
+    </div>
+  );
+};
+
+export default PersonalInsurance;

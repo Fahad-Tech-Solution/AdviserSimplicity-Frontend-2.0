@@ -2,12 +2,120 @@ import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { PatchAxios, PostAxios } from '../../../Assets/Api/Api';
+import { defaultUrl, QuestionDetail } from '../../../Store/Store';
+import { PatchAxios, PostAxios } from '../../Assets/Api/Api';
+import CreatableSelect from 'react-select/creatable';
 
+const createOption = (label) => ({
+    label,
+    value: label.toLowerCase().replace(/\W/g, ''),
+});
+
+const defaultOptions = [
+    { value: 'spouse-de-facto', label: 'Spouse/De-facto' },
+    { value: 'child', label: 'Child' },
+    { value: 'stepchild', label: 'Stepchild' },
+    { value: 'other', label: 'Other' },
+];
+const CreatableSelectField = ({ field, form }) => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [options, setOptions] = useState(defaultOptions);
+    const [value, setValue] = useState(null);
+
+    const handleCreate = (inputValue) => {
+        setIsLoading(true);
+        setTimeout(() => {
+            const newOption = createOption(inputValue);
+            setIsLoading(false);
+            setOptions((prev) => [...prev, newOption]);
+            setValue(newOption);
+            form.setFieldValue(field.name, newOption.value);
+        }, 1000);
+    };
+    const customStyles = {
+        control: (provided, state) => ({
+          ...provided,
+          border: state.isFocused ? '2px solid #36b446' : '1px solid #36b446',
+          boxShadow: state.isFocused ? '0 0 0 0px #4CAF50' : 'none',
+          '&:hover': {
+            border: state.isFocused ? '2px solid #36b446' : '1px solid #36b446'
+          },
+          minHeight: '38px', // Set the minimum height
+          height: '38px' // Allow height to adjust based on content
+        }),
+        valueContainer: (provided) => ({
+          ...provided,
+          height: field.value && field.value.length > 0 ? 'auto' : '40px', // Adjust height based on selection
+          padding: '0 8px' // Adjust padding as needed
+        }),
+        input: (provided) => ({
+          ...provided,
+          margin: '0', // Ensure input has no margin
+          padding: '0' // Ensure input has no padding
+        }),
+        indicatorsContainer: (provided) => ({
+          ...provided,
+          height: '38px' // Ensure indicators container matches the control height
+        }),
+        menu: (provided) => ({
+          ...provided,
+          zIndex: 9999, // Ensure the menu is on top of other elements
+        }),
+        menuPortal: (provided) => ({
+          ...provided,
+          zIndex: 9999 // Ensure the menu portal is on top of other elements
+        })
+      };
+    return (
+        <CreatableSelect
+            isClearable
+            isDisabled={isLoading}
+            isLoading={isLoading}
+            onChange={(newValue) => {
+                setValue(newValue);
+                form.setFieldValue(field.name, newValue ? newValue.value : null);
+                console.log(newValue ? newValue.value : null);
+            }}
+            onCreateOption={handleCreate}
+            options={options}
+            value={options ? options.find((option) => option.value === field.value) : null}
+            styles={customStyles}
+            menuPortalTarget={document.body}
+        />
+    );
+};
 const EstatePlanningPOA = (props) => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [options, setOptions] = useState(defaultOptions);
+    const [value, setValue] = useState(null);
+
+    const handleCreate = (inputValue) => {
+        setIsLoading(true);
+        setTimeout(() => {
+            const newOption = createOption(inputValue);
+            setIsLoading(false);
+            setOptions((prev) => [...prev, newOption]);
+            setValue(newOption);
+            form.setFieldValue(field.name, newOption.value);
+        }, 1000);
+    };
+
+
+
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+
+    let [nameSet] = useState(() => {
+        if (props.modalObject.Input === "client") {
+            return (localStorage.getItem("UserName"))
+        }
+        else if (props.modalObject.Input === "partner") {
+            return (localStorage.getItem("PartnerName"))
+        }
+        else if (props.modalObject.Input === "joint") {
+            return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
+        }
+    })
 
     let POA = questionDetail.POA || {
         client: [],
@@ -153,7 +261,7 @@ const EstatePlanningPOA = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='col-md-5'>
                                         <p className='text-end mt-1'>
-                                            How many {props.modalObject.title} does {props.modalObject.Input} have:
+                                            How many {props.modalObject.title} does {nameSet} have:
                                         </p>
                                     </div>
                                     <div className='col-md-2'>
@@ -216,19 +324,7 @@ const EstatePlanningPOA = (props) => {
                                                                 />
                                                             </td>
                                                             <td>
-                                                                <Field
-                                                                    as="select"
-                                                                    placeholder="Relationship Status"
-                                                                    id={`relationshipStatus${i}`}
-                                                                    name={`relationshipStatus${i}`}
-                                                                    className="form-select inputDesign"
-                                                                >
-                                                                    <option value={""}>Please Select</option>
-                                                                    <option value={"Spouse/De-facto"}>Spouse/De-facto</option>
-                                                                    <option value={"Child"}>Child</option>
-                                                                    <option value={"Stepchild"}>Stepchild</option>
-                                                                    <option value={"Other "}>Other </option>
-                                                                </Field>
+                                                                <Field name={`relationshipStatus${i}`} component={CreatableSelectField} />
                                                             </td>
                                                         </tr>)
                                                     })}

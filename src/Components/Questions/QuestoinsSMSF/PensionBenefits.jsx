@@ -182,27 +182,13 @@ const PensionBenefits = (props) => {
                                 </td>
                                 <td>
                                   {" "}
-                                  <DatePicker
-                                    className="form-control inputDesign shadow"
-                                    showIcon
-                                    id={`originalPurchaseDate${i}`}
-                                    name={`originalPurchaseDate${i}`}
-                                    selected={values[`originalPurchaseDate${i}`]}
-                                    onChange={(date) =>
-                                      setFieldValue(
-                                        `originalPurchaseDate${i}`,
-                                        date
-                                      )
-                                    }
-                                    dateFormat="dd/MM/yyyy"
-                                    placeholderText="dd/mm/yyyy"
-                                    maxDate={new Date()}
-                                    showMonthDropdown
-                                    showYearDropdown
-                                    dropdownMode="select"
-                                    onBlur={handleBlur}
-                                    wrapperClassName="w-100"
-                                  />
+                                  <Field
+                                  type="number"
+                                  placeholder="Tax Free component"
+                                  id={`originalPurchaseDate${i}`}
+                                  name={`originalPurchaseDate${i}`}
+                                  className="form-control inputDesign"
+                                />
                                 </td>
                                 <td>
                                   {" "}

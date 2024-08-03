@@ -67,6 +67,10 @@ import Questions_Bank from "../svgs/property-value.svg";
 // import Questions_People from "../svgs/Questions_People.png";
 import QuestionMoney from "../svgs/QuestionMoney.jpg";
 
+import incomeImg from "../svgs/asd.png";
+import traumaImg from "../svgs/traumaimg.svg";
+import lifeImg from "../svgs/lifeimg.svg";
+import TPDImg from "../svgs/tpdimg.svg";
 
 
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -96,9 +100,11 @@ import SuperFunds from './QuestionsDetail/SuperFunds';
 import AccountBasedPension from './QuestionsDetail/AccountBasedPension';
 import InvestedAnnuities from './QuestionsDetail/InvestedAnnuities';
 import HolidayHome from './QuestionsDetail/HolidayHome';
-import EstatePlanningWill from './QuestionsDetail/EstatePlanningWill';
-import EstatePlanningPOA from './QuestionsDetail/EstatePlanningPOA';
-import EstatePlanningProfessionalAdviser from './QuestionsDetail/EstatePlanningProfessionalAdviser';
+
+import EstatePlanningWill from '../EstatePlanning/EstatePlanningWill';
+import EstatePlanningPOA from '../EstatePlanning/EstatePlanningPOA';
+import EstatePlanningProfessionalAdviser from '../EstatePlanning/EstatePlanningProfessionalAdviser';
+
 import HolidayHomeLoan from './QuestionsDetail/HolidayHomeLoan';
 import CenterLinkPayments from '../PersonalIncome/CenterLinkPayments';
 import EmploymentIncome from '../PersonalIncome/EmploymentIncome';
@@ -123,6 +129,11 @@ import FamilyDetails from '../QuestoinsFamilyTrust/FamilyDetails';
 import FamilyInvestmentPropertyModalComp from '../QuestoinsFamilyTrust/FamilyInvestmentPropertyModalComp';
 import FamilyInvestmentHomeLoanComp from '../QuestoinsFamilyTrust/FamilyInvestmentHomeLoanComp';
 import FamilyInvestmentHomeExpanse from '../QuestoinsFamilyTrust/FamilyInvestmentHomeExpanse';
+import PersonalInsuranceLife from '../PersonalInsurance/LifeInsurance';
+import PersonalInsuranceTPD from '../PersonalInsurance/TPD';
+import PersonalInsuranceTrauma from '../PersonalInsurance/Trauma';
+import IncomeProtection from '../PersonalInsurance/IncomeProtection';
+//new comment
 
 
 const QuestionCards = (props) => {
@@ -435,51 +446,28 @@ const QuestionCards = (props) => {
             },
 
         ],
-        ProfessionalAdvisor: [
+        PersonalInsurance: [
             {
-                title: "Personal Insurance cover",
-                key: "CoverOutsideIssuesradio",
-                img: umbrela
+                title: "Life Insurance",
+                key: "life",
+                img: lifeImg,
             },
             {
-                title: "Wills or Power of Attornies",
-                key: "PowerofAttorniesIssuesradio",
-                img: will
+                title: "TPD",
+                key: "TPD",
+                img: TPDImg,
             },
             {
-                title: "Professional Advisers",
-                key: "ProfessionalAdvisersIssuesradio",
-                img: advisor
+                title: "Trauma",
+                key: "trauma",
+                img: traumaImg,
             },
             {
-                title: "Business or Related Entities",
-                key: "RelatedEntitiesIssuesradio",
-                img: building
+                title: "Income Protection",
+                key: "incomeProtection",
+                img: incomeImg,
             },
-        ],
-
-        InvestmentTrust: [
-            {
-                title: "Investment Trust",
-                key: "InvestmentTrust",
-                img: Questions_People
-            },
-            {
-                title: "Term Deposits, Shares or Managed Funds",
-                key: "ITTermSharesManaged",
-                img: QuestionMoney
-            },
-            {
-                title: "Investment Loans",
-                key: "ITInvestmentLoans",
-                img: Questions_loan
-            },
-            {
-                title: "Direct Property",
-                key: "ITDirectProperty",
-                img: Questions_Bank
-            },
-        ],
+        ]
     }
 
     useEffect(() => {
@@ -495,7 +483,7 @@ const QuestionCards = (props) => {
             arrayObj[props.Question].map((elem, index) => {
                 if (CRObject[elem.key] === "Yes") {
                     a.push("yes");
-                    console.log("yes")
+                    // console.log("yes")
                 }
             })
             lengthOfa = a.length - 1;
@@ -505,7 +493,7 @@ const QuestionCards = (props) => {
             arrayObj[props.Question].map((elem, index) => {
                 if (CRObject[elem.key] === "Yes") {
                     a.push("yes");
-                    console.log("yes")
+                    // console.log("yes")
                 }
             })
             lengthOfa = a.length - 1;
@@ -515,7 +503,7 @@ const QuestionCards = (props) => {
             arrayObj[props.Question].map((elem, index) => {
                 if (CRObject[elem.key] === "Yes") {
                     a.push("yes");
-                    console.log("yes")
+                    // console.log("yes")
                 }
             })
             lengthOfa = a.length - 1;
@@ -525,10 +513,9 @@ const QuestionCards = (props) => {
             arrayObj[props.Question].map((elem, index) => {
                 if (CRObject[elem.key] === "Yes") {
                     a.push("yes");
-                    console.log("yes")
+                    // console.log("yes")
                 }
             })
-            // console.log(a.length, " = a ki length ya hai ")
             setArrayCount(a.length)
         }
 
@@ -571,87 +558,14 @@ const QuestionCards = (props) => {
     }
     let DefaultUrl = useRecoilValue(defaultUrl)
 
-    // async function fetchData() {
-    //     let updatedData = { ...questionDetail };
-    //     const userID = localStorage.getItem("UserID");
-
-    //     // List of API endpoints and corresponding keys in updatedData
-    //     const apiEndpoints = [
-    //         { url: `${DefaultUrl}/api/bankAccountFinance/${userID}`, key: 'BankAccountFinance' },
-    //         { url: `${DefaultUrl}/api/termDeposit/${userID}`, key: 'termDepositsFinance' },
-    //         { url: `${DefaultUrl}/api/australianShareMarket/${userID}`, key: 'australianSharesFinance' },
-    //         { url: `${DefaultUrl}/api/manageFund/${userID}`, key: 'managedFunds' },
-    //         { url: `${DefaultUrl}/api/investmentBondFinance/${userID}`, key: 'investmentBondFinance' },
-    //         { url: `${DefaultUrl}/api/managedFundsLOC/${userID}`, key: 'managedFundsLOC' },
-    //         { url: `${DefaultUrl}/api/managedFundsMarginLoan/${userID}`, key: 'managedFundsMarginLoan' },
-
-    //         { url: `${DefaultUrl}/api/car/${userID}`, key: 'cars' },
-    //         { url: `${DefaultUrl}/api/boat/${userID}`, key: 'boat' },
-    //         { url: `${DefaultUrl}/api/caravan/${userID}`, key: 'caravan' },
-    //         { url: `${DefaultUrl}/api/personalAssets/${userID}`, key: 'personalAssets' },
-    //         { url: `${DefaultUrl}/api/personalLoans/${userID}`, key: 'personalLoans' },
-    //         { url: `${DefaultUrl}/api/creditCards/${userID}`, key: 'creditCards' },
-
-    //         { url: `${DefaultUrl}/api/familyHome/${userID}`, key: 'familyHome' },
-    //         { url: `${DefaultUrl}/api/familyHomeLoan/${userID}`, key: 'familyHomeLoan' },
-    //         { url: `${DefaultUrl}/api/holidayHome/${userID}`, key: 'holidayHome' },
-    //         { url: `${DefaultUrl}/api/holidayHomeLoan/${userID}`, key: 'holidayHomeLoan' },
-
-    //         { url: `${DefaultUrl}/api/investmentPropertyDetails/${userID}`, key: 'investmentPropertyDetails' },
-    //         { url: `${DefaultUrl}/api/investmentPropertyLoan/${userID}`, key: 'investmentPropertyLoan' },
-    //         { url: `${DefaultUrl}/api/incomeExpenses/${userID}`, key: 'incomeExpenses' },
-
-    //         { url: `${DefaultUrl}/api/superAnnuationIssues/${userID}`, key: 'superAnnuationIssues' },
-    //         { url: `${DefaultUrl}/api/accountBasedPensionIssues/${userID}`, key: 'accountBasedPensionIssues' },
-    //         { url: `${DefaultUrl}/api/annuitiesIssues/${userID}`, key: 'annuitiesIssues' },
-    //     ];
-
-    //     // Default structure for finance data 1122
-    //     const defaultFinanceData = {
-    //         client: [],
-    //         partner: [],
-    //         joint: [],
-    //     };
-
-    //     try {
-    //         // Function to fetch data from an API and update the corresponding key in updatedData
-    //         const fetchAndUpdateData = async (endpoint) => {
-    //             try {
-    //                 const res = await GetAxios(endpoint.url);
-    //                 if (res) {
-    //                     // console.log(endpoint.key, res)
-    //                     updatedData = { ...updatedData, [endpoint.key]: res };
-    //                 } else {
-    //                     updatedData = { ...updatedData, [endpoint.key]: defaultFinanceData };
-    //                 }
-    //             } catch (error) {
-    //                 updatedData = { ...updatedData, [endpoint.key]: defaultFinanceData };
-    //                 console.error(`Error fetching data from ${endpoint.url}:`, error);
-    //             }
-    //         };
-
-    //         // Run all API calls concurrently
-    //         await Promise.all(apiEndpoints.map(fetchAndUpdateData));
-
-    //         // Update the state with the final updated data
-    //         setQuestionDetail(updatedData);
-
-    //     } catch (error) {
-    //         console.error("An error occurred:", error);
-    //         setQuestionDetail(updatedData); // Set the updated data in case of an error
-    //     }
-    // }
-
     const CardForms = ["cars", "boat", "caravan", "personalAssets"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
-    const JointHidden = ["superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues", "will", "POA", "professionalAdviser", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "incomeFromInheritance", "incomeFromLumpsumExpense", "incomeFromRegularLivingExpenses"]; // Add other titles that should use "xl" here
+    const JointHidden = ["superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues", "will", "POA", "professionalAdviser", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "incomeFromInheritance", "incomeFromLumpsumExpense", "incomeFromRegularLivingExpenses", "life", "TPD", "trauma", "incomeProtection"]; // Add other titles that should use "xl" here
     const singleClient = ["incomeFromRegularLivingExpenses"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
     const reuseModal = ["bankAccountFinance", "termDepositsFinance", "australianShareMarket", "managedFund", "SMSFTermDeposits", "SMSFAustralianShares", "SMSFManagedFunds", "SMSFInvestmentLoan", "managedFundsLOC", "familyBank", "familyTermDeposit", "familyAustralianShare", "familyMangedFunds", "familyInvestmentHomeLoan", "SMSFBank",]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
     let handleSubmit = async (values) => {
-        // alert("ma chal gaya")
-        console.log(values)
-
+        // console.log(values)
         let check = questionDetail && questionDetail[values.key]?.clientTotal
             ? true
             : false;
@@ -674,7 +588,7 @@ const QuestionCards = (props) => {
             }
 
             if (res) {
-                console.log(res);
+                // console.log(res);
                 const updatedData = { ...questionDetail };
                 updatedData[values.key] = res;
                 setQuestionDetail(updatedData);
@@ -775,11 +689,20 @@ const QuestionCards = (props) => {
         "Family Investment Home": <FamilyInvestmentPropertyModalComp />,
         "Family Investment Home Loan": <FamilyInvestmentHomeLoanComp />,
         "Family Investment Home Expanse": <FamilyInvestmentHomeExpanse />,
+
+
+        // Personal insurance
+        "Life Insurance": <PersonalInsuranceLife />, //reuseComponent
+        "TPD": <PersonalInsuranceTPD />, //reuseComponent
+        "Trauma": <PersonalInsuranceTrauma />, //reuseComponent
+        "Income Protection": <IncomeProtection />, //reuseComponent
+
     };
 
     const ModalContent = (obj) => {
         return componentMapping[obj.title] || null;
     };
+
 
 
 
@@ -1213,13 +1136,12 @@ const HolyDayHome = (props) => {
                             <div
                                 className="row justify-content-center align-items-center my-2"
                             >
-                                <div className='col-6 p-0 '>
+                                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                                     <label
                                         className=" d-block text-end"
                                         htmlFor={"client" + elem.key}
                                     >{localStorage.getItem("UserName") || "You"}</label>
-                                </div>
-                                <div className='col-6 px-1 '>
+
                                     <label
                                         className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
                                         onClick={() => { props.OpenModal(elem.title, "client", i) }}
@@ -1248,13 +1170,12 @@ const HolyDayHome = (props) => {
                             <div
                                 className={`row justify-content-center align-items-center my-2 ${PartnerClass}`}
                             >
-                                <div className='col-6 p-0 '>
+                                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                                     <label
                                         className=" d-block text-end"
                                         htmlFor={"partner" + elem.key}
                                     >{localStorage.getItem("PartnerName") || "Partner"}</label>
-                                </div>
-                                <div className='col-6 px-1 '>
+
                                     <label
                                         className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
                                         onClick={() => { props.OpenModal(elem.title, "partner", i) }}
@@ -1284,13 +1205,12 @@ const HolyDayHome = (props) => {
                             <div
                                 className={`row justify-content-center align-items-center my-2 ${jointClass} ${PartnerClass}`}
                             >
-                                <div className='col-6 p-0 '>
+                                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                                     <label
                                         className=" d-block text-end"
                                         htmlFor={"joint" + elem.key}
                                     >{(localStorage.getItem("UserName") || "You") + " " + (localStorage.getItem("PartnerName") || "")}</label>
-                                </div>
-                                <div className='col-6 px-1 '>
+
                                     <label
                                         className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
                                         onClick={() => { props.OpenModal(elem.title, "joint", i) }}

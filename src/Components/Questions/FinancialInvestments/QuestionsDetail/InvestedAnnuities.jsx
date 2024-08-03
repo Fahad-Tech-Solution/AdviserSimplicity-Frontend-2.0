@@ -19,6 +19,19 @@ const InvestedAnnuities = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
+
+    let [nameSet] = useState(() => {
+        if (props.modalObject.Input === "client") {
+            return (localStorage.getItem("UserName"))
+        }
+        else if (props.modalObject.Input === "partner") {
+            return (localStorage.getItem("PartnerName"))
+        }
+        else if (props.modalObject.Input === "joint") {
+            return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
+        }
+    })
+
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
 
@@ -88,6 +101,7 @@ const InvestedAnnuities = (props) => {
 
     let handleInnerModal = (title, question, key, mainKey, key3, editArray, index, values) => {
         console.log(values);
+        let ParentModal = props.modalObject.title;
         setModalObject({
             title,
             question,
@@ -96,7 +110,8 @@ const InvestedAnnuities = (props) => {
             key3,
             editArray: editArray || [],
             index,
-            values
+            values,
+            ParentModal
         })
         setFlagState(true);
     }
@@ -280,7 +295,7 @@ const InvestedAnnuities = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='col-md-5'>
                                         <p className='text-end mt-1'>
-                                            How many Annuities does {props.modalObject.Input} have:
+                                            How many Annuities does {nameSet} have:
                                         </p>
                                     </div>
                                     <div className='col-md-2'>
@@ -376,7 +391,7 @@ const InvestedAnnuities = (props) => {
                                                                 <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
                                                                     <DynamicYesNo name={`nominatedBeneficiaries${i}`} values={values} handleChange={handleChange} />
                                                                     {values[`nominatedBeneficiaries${i}`] === "Yes" &&
-                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Beneficiaries", "How many beneficiaries do you have?", "beneficiariesArray", "", "", values[`beneficiariesArray${i}`], i) }}>
+                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Beneficiaries", `How many beneficiaries do ${nameSet} have?`, "beneficiariesArray", "", "", values[`beneficiariesArray${i}`], i) }}>
                                                                             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                         </Button>
                                                                     }

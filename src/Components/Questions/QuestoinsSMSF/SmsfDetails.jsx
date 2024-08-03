@@ -20,6 +20,18 @@ const SmsfDetails = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
+  let [nameSet] = useState(() => {
+    if (props.modalObject.Input === "client") {
+      return (localStorage.getItem("UserName"))
+    }
+    else if (props.modalObject.Input === "partner") {
+      return (localStorage.getItem("PartnerName"))
+    }
+    else if (props.modalObject.Input === "joint") {
+      return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
+    }
+  })
+
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
 
@@ -212,7 +224,7 @@ const SmsfDetails = (props) => {
                   <div className="col-md-5">
                     <p className="text-end mt-1">
                       How many {props.modalObject.title} does{" "}
-                      {props.modalObject.Input} have:
+                      {nameSet} have:
                     </p>
                   </div>
                   <div className="col-md-2">
@@ -341,7 +353,7 @@ const SmsfDetails = (props) => {
                                 </td>
                                 <td>
                                   <Field
-                                    type="text"
+                                    type="number"
                                     placeholder="Fund and Audit Fees"
                                     id={`fundAndAuditFee${i}`}
                                     name={`fundAndAuditFee${i}`}

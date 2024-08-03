@@ -54,7 +54,7 @@ const SideBarrr = (props) => {
                       icon={faBars}
                       className=""
                       role="button"
-                      tabindex="0"
+                      tabIndex="0"
                       onClick={close}
                     />
                   </div>
@@ -64,7 +64,7 @@ const SideBarrr = (props) => {
               <h6
                 className="text-center my-3 d-block"
                 role="button"
-                tabindex="0"
+                tabIndex="0"
               >
                 <FontAwesomeIcon icon={faBars} onClick={open} />
               </h6>

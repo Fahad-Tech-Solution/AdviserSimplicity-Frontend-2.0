@@ -169,7 +169,7 @@ const MemberNumber = (props) => {
                                                                 <td>
                                                                     <Field
                                                                         type="number"
-                                                                        placeholder="current Balance"
+                                                                        placeholder="Current Balance"
                                                                         id={`currentBalance${i}`}
                                                                         name={`currentBalance${i}`}
                                                                         className="form-control inputDesign"

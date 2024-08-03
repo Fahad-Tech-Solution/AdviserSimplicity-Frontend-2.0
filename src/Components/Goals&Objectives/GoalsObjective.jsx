@@ -858,7 +858,7 @@ const APIHandler26 =(apiFun,api,obj,index)=>{
     <div className="container-fluid">
       <div className="row px-0 m-0">
         <div className="col-md-12">
-          <Card className="shadow py-4 px-4 my-5">
+          <div className=" pb-4 px-4 mb-5">
             <h3 className="text-center GreenColor">
               <b>Goals & Objectives</b>
             </h3>
@@ -1868,7 +1868,7 @@ const APIHandler26 =(apiFun,api,obj,index)=>{
             {/* Set up a Budget */}
 
             {/* Financial Advice */}
-          </Card>
+          </div>
         </div>
       </div>
     </div>

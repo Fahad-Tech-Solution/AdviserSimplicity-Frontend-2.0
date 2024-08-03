@@ -6,7 +6,7 @@ import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 
 import PersonalDetail_Edit from "./Components/PersonalDetails/PersonalDetail_Edit";
 import SideBar from "./Components/SideBar/SideBarrr";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+// import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Options from "./Components/Options";
 import RiskProfile from "./Components/RiskProfile/RiskProfile";
 import GoalsObjectives from "./Components/Goals&Objectives/GoalsObjective";
@@ -46,6 +46,9 @@ import AdditionalQueriesSuperAndRetirement from "./Components/Questions/Addition
 import PersonalIncome from "./Components/Questions/PersonalIncome/PersonalIncome";
 import BusinessEntities from "./Components/Questions/BusinessEntities/BusinessEntities";
 import QuestionsFamily from "./Components/Questions/QuestoinsFamilyTrust/QuestoinsFamily";
+import PersonalInsurance from "./Components/Questions/PersonalInsurance/PersonalInsurance";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import GoalsObjectiveNew from "./Components/Goals&Objectives/GoalsObjectiveNew";
 
 
 function App() {
@@ -86,7 +89,7 @@ function App() {
             {/* <Topbar SidebarSwitch={sideSwitchMenu} />*/}
             <Options opt={switchState} SidebarSwitch={sideSwitchMenu} />
 
-            <div className={`py-0 mx-0 mb-0 ${((CurrentP === '/') || (CurrentP === '/Goals-And-Objectives') || (CurrentP === '/Risk-Profile') || (CurrentP === '/All-Clients')) ? 'mainBody2' : 'mainBody'} `}>
+            <div className={`py-0 mx-0 mb-0 ${((CurrentP === '/') || (CurrentP === '/Risk-Profile') || (CurrentP === '/All-Clients')) ? 'mainBody2' : 'mainBody'} `}>
               <Routes>
 
                 <Route path="/" element={<Dashboard />} />
@@ -104,25 +107,23 @@ function App() {
 
                 {/* Questions ROUTING */}
                 <Route path="/Questions" element={<Questions />} />
-                <Route path="/FinancialInvestments" element={<QuestionsNew><FinancialInvestments /></QuestionsNew>} />
+                <Route path="/PersonalIncome" element={<QuestionsNew><PersonalIncome /></QuestionsNew>} />
                 <Route path="/PersonalAssets" element={<QuestionsNew><AdditionalQueriesPersonalAssets /></QuestionsNew>} />
+                <Route path="/FinancialInvestments" element={<QuestionsNew><FinancialInvestments /></QuestionsNew>} />
+                <Route path="/SuperAndRetirement" element={<QuestionsNew><AdditionalQueriesSuperAndRetirement /></QuestionsNew>} />
                 <Route path="/Lifestyle" element={<QuestionsNew><LifestyleAssetsAndDebt /></QuestionsNew>} />
                 <Route path="/Investment" element={<QuestionsNew><AdditionalQueriesInvestment /></QuestionsNew>} />
-                <Route path="/SuperAndRetirement" element={<QuestionsNew><AdditionalQueriesSuperAndRetirement /></QuestionsNew>} />
                 <Route path="/EstatePlanning" element={<QuestionsNew><EstatePlanning /></QuestionsNew>} />
                 <Route path="/ProfessionalAdvisor" element={<QuestionsNew><AdditionalQueriesProfessionalAdvisor /></QuestionsNew>} />
-                <Route path="/PersonalIncome" element={<QuestionsNew><PersonalIncome /></QuestionsNew>} />
                 <Route path="/PersonalAssets" element={<QuestionsNew><AdditionalQueriesPersonalAssets /></QuestionsNew>} />
                 <Route path="/InvestmentTrust" element={<QuestionsNew><QuestionsInvestmentTrust /></QuestionsNew>} />  {/* APi Integration Left */}
                 <Route path="/BusinessEntities" element={<QuestionsNew><BusinessEntities /></QuestionsNew>} />
                 <Route path="/SMSF" element={<QuestionsNew><QuestionsSMSF /></QuestionsNew>} />
-                
-                <Route path="/FamilyTrust" element={<QuestionsNew><QuestionsFamily/></QuestionsNew>} />
-                
-
+                <Route path="/FamilyTrust" element={<QuestionsNew><QuestionsFamily /></QuestionsNew>} />
+                <Route path="/PersonalInsurance" element={<QuestionsNew><PersonalInsurance /></QuestionsNew>} />  {/* APi Integration Left */}
 
                 <Route path="/Risk-Profile" element={<RiskProfile />} />
-                <Route path="/Goals-And-Objectives" element={<GoalsObjectives />} />
+                <Route path="/Goals-And-Objectives" element={<GoalsObjectiveNew />} />
 
                 {/* Cash-Flow ROUTING */}
                 <Route path="/Cash-Flow" element={<CashFlow />} />

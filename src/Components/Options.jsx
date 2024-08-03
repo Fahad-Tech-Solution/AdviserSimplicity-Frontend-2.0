@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import './options.css';
 
-import { useRecoilState } from "recoil";
-import { UserName, CurrentPage, OptionRender } from "../Store/Store";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { UserName, CurrentPage, OptionRender, CRState } from "../Store/Store";
 import { Breadcrumb, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faCircleUser, faMoon } from "@fortawesome/free-solid-svg-icons";
 import { ConfigProvider, Steps } from "antd";
 import { FaBriefcase, FaCheck, FaGift, FaKey, FaMoneyCheckDollar, FaUser } from "react-icons/fa6";
 import { FaHome, FaQuestionCircle } from "react-icons/fa";
-
+import { MdFamilyRestroom } from "react-icons/md";
 import { RiCoinsFill } from "react-icons/ri";
 
 function Options(props) {
@@ -18,9 +18,11 @@ function Options(props) {
   let [userName] = useRecoilState(UserName); // eslint-disable-line no-unused-vars
   let [CurrentP] = useRecoilState(CurrentPage);
   let [optRender, setOptRender] = useRecoilState(OptionRender);
+  let CRObject = useRecoilValue(CRState);
 
   let [leftPadding, setLeftPadding] = useState("18rem");
 
+  let [stepCompleted, setStepCompleted] = useState(8);
   useEffect(() => {
     if (props.SidebarSwitch === true) {
       // alert(props.SidebarSwitch );
@@ -35,84 +37,179 @@ function Options(props) {
   let location = useLocation();
 
   useEffect(() => {
-    console.log(location)
-  }, [location])
+    let cLocation = location.pathname.replace("/", "");
+    console.log(cLocation);
+    switch (cLocation) {
+      case "PersonalDetail":
+        setStepCompleted(8);
+        break;
+      case "PersonalIncome":
+        setStepCompleted(16);
+        setOptRender("Opt1")
+        break;
+      case "PersonalAssets":
+        setOptRender("Opt1")
+        setStepCompleted(24);
+        break;
+      case "FinancialInvestments":
+      case "SuperAndRetirement":
+        setStepCompleted(32);
+        setOptRender("Opt1")
+        break;
+      case "Lifestyle": //Property
+      case "Investment": //Property investment
+        setOptRender("Opt1")
+        setStepCompleted(40);
+        break;
+      case "EstatePlanning":
+        setOptRender("Opt1")
+        setStepCompleted(48);
+        break;
+      case "PersonalInsurance":
+        setOptRender("Opt2")
+        setStepCompleted(56);
+        break;
+      case "BusinessEntities":
+        setStepCompleted(64);
+        break;
+      case "SMSF":
+        setStepCompleted(72);
+        break;
+      case "FamilyTrust":
+        setStepCompleted(80);
+        break;
+      case "Goals-And-Objectives":
+        setStepCompleted(88);
+        break;
 
-
-  useEffect(() => {
-    if (localStorage.getItem('OptionRender')) {
-      setOptRender(localStorage.getItem('OptionRender'));
+      default:
+        setStepCompleted(0);
+        break;
     }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  }, [location])
 
   const itemsOpt1 = [
     {
       subTitle: 'Personal Details',
-      status: 'processing',
-      icon: <FaUser height={100} width={100} />,
+      status: stepCompleted < 8 ? "wait" : stepCompleted > 8 ? "finish" : 'processing',
+      icon: <span className="rounded-circle bgColorIncome2 text-light" style={{ height: "2rem", width: "6rem" }}><FaUser height={100} width={100} /></span>,
     },
     {
       subTitle: 'Personal Income and Expenses',
-      status: 'wait',
-      icon: <FaMoneyCheckDollar height={100} width={100} />,
-    },
-    {
-      subTitle: 'Personal Assets and Debt',
-      status: 'wait',
-      icon: <FaHome height={100} width={100} />,
-    },
-    {
-      subTitle: 'Financial Investments',
-      status: 'wait',
-      icon: <RiCoinsFill height={100} width={100} />,
-    },
-    {
-      subTitle: 'Property',
-      status: 'wait',
-      icon: <FaKey height={100} width={100} />,
-    },
-    {
-      subTitle: 'Estate Planning & Professional Advisers',
-      status: 'wait',
-      icon: <FaQuestionCircle height={100} width={100} />,
-    },
-    // {
-    //   subTitle: 'Investments',
-    //   status: 'wait',
-    //   icon: <FaHome height={100} width={100} />,
-    // }
-  ];
-
-  const itemsOpt2 = [
-    {
-      subTitle: 'Personal Insurance',
-      status: 'finish',
+      status: stepCompleted < 16 ? "wait" : stepCompleted > 16 ? "finish" : 'processing',
       icon: <span className="rounded-circle bgColorIncome2 text-light" style={{ height: "2rem", width: "6rem" }}><FaMoneyCheckDollar height={100} width={100} /></span>,
     },
     {
+      subTitle: 'Personal Assets and Debt',
+      status: stepCompleted < 24 ? "wait" : stepCompleted > 24 ? "finish" : 'processing',
+      icon: <span className="rounded-circle bgColorIncome2 text-light mx-auto" style={{ height: "2rem", width: "6rem" }}><FaHome height={100} width={100} /></span>,
+    },
+    {
+      subTitle: 'Financial Investments',
+      status: stepCompleted < 32 ? "wait" : stepCompleted > 32 ? "finish" : 'processing',
+      icon: <span className="rounded-circle bgColorIncome2 text-light mx-auto" style={{ height: "2rem", width: "6rem" }}> <RiCoinsFill height={100} width={100} /></span>,
+    },
+    {
+      subTitle: 'Property',
+      status: stepCompleted < 40 ? "wait" : stepCompleted > 40 ? "finish" : 'processing',
+      icon: <span className="rounded-circle bgColorIncome2 text-light mx-auto" style={{ height: "2rem", width: "6rem" }}><FaKey height={100} width={100} /></span>,
+    },
+    {
+      subTitle: 'Estate Planning & Professional Advisers',
+      status: stepCompleted < 48 ? "wait" : stepCompleted > 48 ? "finish" : 'processing',
+      icon: <span className="rounded-circle bgColorIncome2 text-light mx-auto" style={{ height: "2rem", width: "6rem" }}> <FaQuestionCircle height={100} width={100} /></span>,
+    },
+  ];
+
+  const itemsOpt2 = ((CRObject.BusinessAsSMSF === "Yes") && (CRObject.BusinessAsInvestmentTrust === "Yes")) ? [
+    {
+      subTitle: 'Personal Insurance',
+      status: stepCompleted < 56 ? "wait" : stepCompleted > 56 ? "finish" : 'processing',
+      icon: <span className="rounded-circle bgColorIncome2 text-light " style={{ height: "2rem", width: "6rem" }}><FaMoneyCheckDollar height={100} width={100} /></span>,
+    },
+    {
       subTitle: 'Business Entities',
-      status: 'wait',
-      icon: <span className="rounded-circle bgColorIncome2 text-light" style={{ height: "2rem", width: "6rem" }}><FaBriefcase height={100} width={100} /></span>,
+      status: stepCompleted < 64 ? "wait" : stepCompleted > 64 ? "finish" : 'processing',
+      icon: <span className="rounded-circle bgColorIncome2 text-light " style={{ height: "2rem", width: "6rem" }}><FaBriefcase height={100} width={100} /></span>,
     },
     {
       subTitle: 'SMSF',
-      status: 'wait',
-      icon: <span className="rounded-circle bgColorIncome2 text-light" style={{ height: "2rem", width: "6rem" }}><FaGift height={100} width={100} /></span>,
+      status: stepCompleted < 72 ? "wait" : stepCompleted > 72 ? "finish" : 'processing',
+      icon: <span className="rounded-circle bgColorIncome2 text-light " style={{ height: "2rem", width: "6rem" }}><FaGift height={100} width={100} /></span>,
     },
     {
       subTitle: 'Investment Trust',
-      status: 'wait',
-      icon: <span className="rounded-circle bgColorIncome2 text-light" style={{ height: "2rem", width: "6rem" }}><FaCheck height={100} width={100} /></span>,
+      status: stepCompleted < 80 ? "wait" : stepCompleted > 80 ? "finish" : 'processing',
+      icon: <span className="rounded-circle bgColorIncome2 text-light " style={{ height: "2rem", width: "6rem" }}><MdFamilyRestroom height={100} width={100} /></span>,
     },
     {
       subTitle: 'Goals and objectives section',
-      status: 'wait',
+      status: stepCompleted < 88 ? "wait" : stepCompleted > 88 ? "finish" : 'processing',
+      icon: <span className="rounded-circle bgColorIncome2 text-light" style={{ height: "2rem", width: "6rem" }}><FaCheck height={100} width={100} /></span>,
+    }
+  ] : (CRObject.BusinessAsSMSF === "Yes") ? [
+    {
+      subTitle: 'Personal Insurance',
+      status: stepCompleted < 56 ? "wait" : stepCompleted > 56 ? "finish" : 'processing',
+      icon: <span className="rounded-circle bgColorIncome2 text-light " style={{ height: "2rem", width: "6rem" }}><FaMoneyCheckDollar height={100} width={100} /></span>,
+    },
+    {
+      subTitle: 'Business Entities',
+      status: stepCompleted < 64 ? "wait" : stepCompleted > 64 ? "finish" : 'processing',
+      icon: <span className="rounded-circle bgColorIncome2 text-light " style={{ height: "2rem", width: "6rem" }}><FaBriefcase height={100} width={100} /></span>,
+    },
+    {
+      subTitle: 'SMSF',
+      status: stepCompleted < 72 ? "wait" : stepCompleted > 72 ? "finish" : 'processing',
+      icon: <span className="rounded-circle bgColorIncome2 text-light " style={{ height: "2rem", width: "6rem" }}><FaGift height={100} width={100} /></span>,
+    },
+    {
+      subTitle: 'Goals and objectives section',
+      status: stepCompleted < 80 ? "wait" : stepCompleted > 80 ? "finish" : 'processing',
+      icon: <span className="rounded-circle bgColorIncome2 text-light" style={{ height: "2rem", width: "6rem" }}><FaCheck height={100} width={100} /></span>,
+    }
+  ] : (CRObject.BusinessAsInvestmentTrust === "Yes") ? [
+    {
+      subTitle: 'Personal Insurance',
+      status: stepCompleted < 56 ? "wait" : stepCompleted > 56 ? "finish" : 'processing',
+      icon: <span className="rounded-circle bgColorIncome2 text-light " style={{ height: "2rem", width: "6rem" }}><FaMoneyCheckDollar height={100} width={100} /></span>,
+    },
+    {
+      subTitle: 'Business Entities',
+      status: stepCompleted < 64 ? "wait" : stepCompleted > 64 ? "finish" : 'processing',
+      icon: <span className="rounded-circle bgColorIncome2 text-light " style={{ height: "2rem", width: "6rem" }}><FaBriefcase height={100} width={100} /></span>,
+    },
+    {
+      subTitle: 'Investment Trust',
+      status: stepCompleted < 72 ? "wait" : stepCompleted > 72 ? "finish" : 'processing',
+      icon: <span className="rounded-circle bgColorIncome2 text-light " style={{ height: "2rem", width: "6rem" }}><MdFamilyRestroom height={100} width={100} /></span>,
+    },
+    {
+      subTitle: 'Goals and objectives section',
+      status: stepCompleted < 80 ? "wait" : stepCompleted > 80 ? "finish" : 'processing',
+      icon: <span className="rounded-circle bgColorIncome2 text-light" style={{ height: "2rem", width: "6rem" }}><FaCheck height={100} width={100} /></span>,
+    }
+  ] : [
+    {
+      subTitle: 'Personal Insurance',
+      status: stepCompleted < 56 ? "wait" : stepCompleted > 56 ? "finish" : 'processing',
+      icon: <span className="rounded-circle bgColorIncome2 text-light " style={{ height: "2rem", width: "6rem" }}><FaMoneyCheckDollar height={100} width={100} /></span>,
+    },
+    {
+      subTitle: 'Business Entities',
+      status: stepCompleted < 64 ? "wait" : stepCompleted > 64 ? "finish" : 'processing',
+      icon: <span className="rounded-circle bgColorIncome2 text-light " style={{ height: "2rem", width: "6rem" }}><FaBriefcase height={100} width={100} /></span>,
+    },
+    {
+      subTitle: 'Goals and objectives section',
+      status: stepCompleted < 72 ? "wait" : stepCompleted > 72 ? "finish" : 'processing',
       icon: <span className="rounded-circle bgColorIncome2 text-light" style={{ height: "2rem", width: "6rem" }}><FaCheck height={100} width={100} /></span>,
     }
   ];
 
 
-  if (['/', '/Goals-And-Objectives', '/Risk-Profile', '/All-Clients'].includes(CurrentP)) {
+  if (['/', '/Risk-Profile', '/All-Clients'].includes(CurrentP)) {
     return (
       <div className="container-fluid" id="OptionsBar" style={{ paddingLeft: leftPadding }}>
 
@@ -152,12 +249,14 @@ function Options(props) {
             <div className="row">
               <div className="col-md-12" style={{ padding: "10px 0px 0px 1.5px" }}>
                 <div className="row">
-                  <div className="col-md-12 " style={{ padding: "20px 20px 20px 20px" }}>
+                  <div className="col-md-12" style={{ padding: "20px 30px 20px 30px" }}>
                     <ConfigProvider
                       theme={{
                         components: {
                           Steps: {
-                            // iconSize: 20
+                            // iconSize: 40,
+                            // border: "2px"
+                            customIconFontSize: 30,
                           },
                         },
                         token: {
@@ -175,6 +274,7 @@ function Options(props) {
                         initial={0}
                         responsive={false}
                         status={"process"}
+
                       />
                     </ConfigProvider>
                   </div>
@@ -183,8 +283,6 @@ function Options(props) {
             </div>
           </div>
         </div>
-
-
       </div>
     );
   }

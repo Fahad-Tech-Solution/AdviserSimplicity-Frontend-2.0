@@ -80,8 +80,8 @@ const openNotificationSuccess = (type, placement, message, description) => {
         message: <span style={{ fontWeight: '600', padding: "1.5px 0px 0px 15px" }}>{message}</span>,
         description: description,
         placement,
-        duration: 2,
-        showProgress:true,
+        duration: 3,
+        showProgress: true,
         style: {
             padding: '10px',
             lineHeight: '1.5',

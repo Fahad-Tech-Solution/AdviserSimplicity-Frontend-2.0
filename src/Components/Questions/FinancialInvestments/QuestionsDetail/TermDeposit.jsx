@@ -9,6 +9,19 @@ const TermDeposit = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
+
+    let [nameSet] = useState(() => {
+        if (props.modalObject.Input === "client") {
+            return (localStorage.getItem("UserName"))
+        }
+        else if (props.modalObject.Input === "partner") {
+            return (localStorage.getItem("PartnerName"))
+        }
+        else if (props.modalObject.Input === "joint") {
+            return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
+        }
+    })
+
     let termDepositsFinance = questionDetail[props.modalObject.key] || {
         client: [],
         partner: [],
@@ -254,19 +267,21 @@ const TermDeposit = (props) => {
                         <Row>
                             <div className="col-md-12">
                                 <div className='row justify-content-center'>
-                                    <div className='col-md-7'>
-                                        <p className='text-end mt-1'>
-                                            How many {props.modalObject.title} does {props.modalObject.Input} have:
+
+                                    <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                        <p className='text-end mt-3'>
+                                            How many {props.modalObject.title} does {nameSet} have:
                                         </p>
-                                    </div>
-                                    <div className='col-md-3'>
-                                        <Field
-                                            type="number"
-                                            id="NumberOfMap"
-                                            name="NumberOfMap"
-                                            className="form-control inputDesign"
-                                            onChange={(e) => handleInput(e, setFieldValue)}
-                                        />
+                                        <div style={{ width: "15%" }}>
+
+                                            <Field
+                                                type="number"
+                                                id="NumberOfMap"
+                                                name="NumberOfMap"
+                                                className="form-control inputDesign"
+                                                onChange={(e) => handleInput(e, setFieldValue)}
+                                            />
+                                        </div>
                                     </div>
                                     {values.NumberOfMap && (
                                         <div className='mt-4'>

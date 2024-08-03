@@ -1,9 +1,5 @@
 import { Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react'
-
-// import React from "react";
-
-// import "./AdditionalQueries.css";
 import BankImg from "../svgs/bank.svg";
 import TermImg from "../svgs/Chart.jpg";
 import PortFolio from "../svgs/portfolio.svg";
@@ -11,33 +7,67 @@ import certificate from "../svgs/certificate.svg";
 import funds from "../svgs/funds.svg";
 import loan from "../svgs/loan.svg";
 import analytics from "../svgs/analytics.png";
-import Add from "../svgs/add-circle-solid-svgrepo-com.svg";
-import { useRecoilState } from "recoil";
-import { QuestionShift, CRState } from "../../../Store/Store";
-import { Element, scroller } from 'react-scroll';
+import { useRecoilState, useRecoilValue } from "recoil";
+import { CRState, defaultUrl } from "../../../Store/Store";
+import { GetAxios, PatchAxios, PostAxios } from '../../Assets/Api/Api';
 
 
 
 const FinancialInvestments = (props) => {
 
-    let [QuestionChange, setQuestionChange] = useRecoilState(QuestionShift);
+
     let [CRObject, setCRObject] = useRecoilState(CRState);
-    let [flagState, setFlagState] = useState(false);
 
+    const [flagState, setFlagState] = useState(false);
 
-    let onSubmit = (values) => {
+    let DefaultUrl = useRecoilValue(defaultUrl)
 
-        if (props.flagState) {
-            props.setFlagState(false);
+    const FetchQuestions = async () => {
+        try {
+            const res = await GetAxios(`${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`);
+            if (res) {
+                setCRObject(res);
+                setFlagState(true);
+            }
+        } catch (error) {
+            console.error("Error fetching questions:", error);
         }
+    };
 
+    useEffect(() => {
+        FetchQuestions();
+    }, []);
+
+    const handleResponse = (values) => {
         setCRObject(values);
         localStorage.setItem("QuestionsState", JSON.stringify(values));
         props.setQuestionChange(false);
         localStorage.setItem("Question", "PersonalAssets");
+    };
 
-        console.log("what to do");
-
+    const onSubmit = async (values) => {
+        values.clientFK = localStorage.getItem("UserID");
+        try {
+            if (!flagState) {
+                const PostRes = await PostAxios(`${DefaultUrl}/api/questions/Add`, values);
+                if (PostRes) {
+                    if (props.flagState) {
+                        props.setFlagState(false);
+                    }
+                    handleResponse(values);
+                }
+            } else {
+                const PatchRes = await PatchAxios(`${DefaultUrl}/api/questions/Update/${localStorage.getItem("UserID")}`, values);
+                if (PatchRes) {
+                    if (props.flagState) {
+                        props.setFlagState(false);
+                    }
+                    handleResponse(values);
+                }
+            }
+        } catch (error) {
+            console.error("Error submitting form:", error);
+        }
     };
 
 
@@ -53,8 +83,6 @@ const FinancialInvestments = (props) => {
                     {({ values, handleChange, setFieldValue }) => <Form>
 
                         <div className="col-md-12 text-center">
-
-
                             <div className="row my-3">
                                 <div className="col-md-12">
                                     <div className="mb-3 ">
@@ -156,7 +184,7 @@ const FinancialInvestments = (props) => {
                                 <div className="col-md-12">
                                     <div className="mb-3 ">
                                         <label htmlFor="" className="form-label">
-                                            Do you have any Money in Australian Shares?
+                                            Do you have any Money invested in Australian Shares?
                                         </label>
                                         <div className="QuestionIcon">
                                             <img className="img-fluid" src={PortFolio} alt="" />
@@ -205,7 +233,7 @@ const FinancialInvestments = (props) => {
                                 <div className="col-md-12">
                                     <div className="mb-3 ">
                                         <label htmlFor="" className="form-label">
-                                            Do you have any Money in Managed Funds?
+                                            Do you have any Money invested  Managed Funds or via a Platform?
                                         </label>
                                         <div className="QuestionIcon">
                                             <img className="img-fluid" src={funds} alt="" />

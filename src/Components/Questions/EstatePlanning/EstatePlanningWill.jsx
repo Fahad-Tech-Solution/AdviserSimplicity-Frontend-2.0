@@ -2,22 +2,35 @@ import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { Button, InputGroup, Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { PatchAxios, PostAxios } from '../../../Assets/Api/Api';
+import { defaultUrl, QuestionDetail } from '../../../Store/Store';
+import { PatchAxios, PostAxios } from '../../Assets/Api/Api';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
-import InnerModal from './InnerModal';
-import PortfolioValue from './PortfolioValue';
-import DynamicYesNo from './DynamicYesNo';
-import MemberNumber from './MemberNumber';
-import GroupInsurance from './GroupInsurance';
-import Contributions from './Contributions';
-import Beneficiaries from './Beneficiaries';
+import InnerModal from '../FinancialInvestments/QuestionsDetail/InnerModal';
+import PortfolioValue from '../FinancialInvestments/QuestionsDetail/PortfolioValue';
+import DynamicYesNo from '../FinancialInvestments/QuestionsDetail/DynamicYesNo';
+import MemberNumber from '../FinancialInvestments/QuestionsDetail/MemberNumber';
+import GroupInsurance from '../FinancialInvestments/QuestionsDetail/GroupInsurance';
+import Contributions from '../FinancialInvestments/QuestionsDetail/Contributions';
+import Beneficiaries from '../FinancialInvestments/QuestionsDetail/Beneficiaries';
 
 const EstatePlanningWill = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+
+
+    let [nameSet] = useState(() => {
+        if (props.modalObject.Input === "client") {
+            return (localStorage.getItem("UserName"))
+        }
+        else if (props.modalObject.Input === "partner") {
+            return (localStorage.getItem("PartnerName"))
+        }
+        else if (props.modalObject.Input === "joint") {
+            return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
+        }
+    })
 
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
@@ -184,7 +197,7 @@ const EstatePlanningWill = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='col-md-5'>
                                         <p className='text-end mt-1'>
-                                            How many {props.modalObject.title} does {props.modalObject.Input} have:
+                                            How many {props.modalObject.title} does {nameSet} have:
                                         </p>
                                     </div>
                                     <div className='col-md-2'>

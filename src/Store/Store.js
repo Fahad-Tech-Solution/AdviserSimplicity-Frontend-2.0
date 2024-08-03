@@ -24,6 +24,7 @@ export const CRState = atom({
     default: {
         //Financial Assets 
         QuestionsFlag: false,
+        clientFK:"",
 
         bankAccountFinance: "No",
         termDepositsFinance: "No",
@@ -42,7 +43,7 @@ export const CRState = atom({
 
         familyHome: "No",
         familyHomeLoan: "No",
-        numberOfHolidayHome: "",
+        numberOfHolidayHome: 0,
 
         investmentPropertyDetails: "No",
         investmentPropertyLoan: "No",
@@ -72,7 +73,7 @@ export const CRState = atom({
         BusinessAsSMSF: "No",
         BusinessAsInvestmentTrust: "No",
 
-        SMSFBank:"Yes",
+        SMSFBank: "Yes",
         SMSFTermDeposits: "No",
         SMSFAustralianShares: "No",
         SMSFManagedFunds: "No",
@@ -89,7 +90,7 @@ export const CRState = atom({
         SMSFAccumulationDetails: "Yes", // this one should be yes always
 
         familyBank: "Yes", // this one should be yes always
-        
+
         familyTermDeposit: "No",
         familyAustralianShare: "No",
         familyMangedFunds: "No",
@@ -104,6 +105,11 @@ export const CRState = atom({
 
         familyDetails: "Yes", // this one should be yes always
 
+
+        life: "No",
+        TPD: "No",
+        trauma: "No",
+        incomeProtection: "No",
 
     },
 });
@@ -131,10 +137,9 @@ export const CurrentPage = atom({
 export const defaultUrl = atom({
     key: "defaultUrl",
     // default: "http://localhost:7000",
-    // default: "http://192.168.100.11:7000",
-    default: "http://192.168.100.27:7000",
-    // default: "http://192.168.1.5:7000",
-    // default: "",
+    // default: "http://172.168.40.41:7000",
+    // default: "http://172.168.40.137:7000",
+    default: "",
 });
 
 export const allAPIs = atom({

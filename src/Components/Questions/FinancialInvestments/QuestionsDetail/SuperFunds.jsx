@@ -19,6 +19,18 @@ const SuperFunds = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
+    let [nameSet] = useState(() => {
+        if (props.modalObject.Input === "client") {
+            return (localStorage.getItem("UserName"))
+        }
+        else if (props.modalObject.Input === "partner") {
+            return (localStorage.getItem("PartnerName"))
+        }
+        else if (props.modalObject.Input === "joint") {
+            return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
+        }
+    })
+
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
 
@@ -35,7 +47,7 @@ const SuperFunds = (props) => {
 
     const [dynamicFields, setDynamicFields] = useState([]);
 
-        
+
     useEffect(() => {
         if (superAnnuationIssues[props.modalObject.Input] && superAnnuationIssues[props.modalObject.Input].length) {
             let arr = []
@@ -90,6 +102,7 @@ const SuperFunds = (props) => {
 
     let handleInnerModal = (title, question, key, mainKey, key3, editArray, index, values) => {
         console.log(values);
+        let ParentModal = props.modalObject.title
         setModalObject({
             title,
             question,
@@ -98,7 +111,8 @@ const SuperFunds = (props) => {
             key3,
             editArray: editArray || [],
             index,
-            values
+            values,
+            ParentModal
         })
         setFlagState(true);
     }
@@ -285,7 +299,7 @@ const SuperFunds = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='col-md-5'>
                                         <p className='text-end mt-1'>
-                                            How many Super Funds does {props.modalObject.Input} have:
+                                            How many Super Funds does {nameSet} have:
                                         </p>
                                     </div>
                                     <div className='col-md-2'>
@@ -334,13 +348,13 @@ const SuperFunds = (props) => {
                                                                 </Field>
                                                             </td>
                                                             <td>
-                                                                    <Field
-                                                                        type="number"
-                                                                        placeholder="Member Number & Details"
-                                                                        id={`memberNumber${i}`}
-                                                                        name={`memberNumber${i}`}
-                                                                        className="form-control inputDesign"
-                                                                    />
+                                                                <Field
+                                                                    type="number"
+                                                                    placeholder="Member Number & Details"
+                                                                    id={`memberNumber${i}`}
+                                                                    name={`memberNumber${i}`}
+                                                                    className="form-control inputDesign"
+                                                                />
                                                             </td>
                                                             <td>
                                                                 <InputGroup className="mb-3">
@@ -351,7 +365,7 @@ const SuperFunds = (props) => {
                                                                         name={`balanceBenefitDetails${i}`}
                                                                         className="form-control inputDesign"
                                                                     />
-                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Balance & Benefit Details", "How many Benefit Details and Components do you have ?", "balanceBenefitDetailsArray", "balanceBenefitDetails", "", values[`balanceBenefitDetailsArray${i}`], i, values) }}>
+                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Balance & Benefit Details", `How many Benefit Details and Components do ${nameSet} have ?`, "balanceBenefitDetailsArray", "balanceBenefitDetails", "", values[`balanceBenefitDetailsArray${i}`], i, values) }}>
                                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                     </Button>
                                                                 </InputGroup>
@@ -365,7 +379,7 @@ const SuperFunds = (props) => {
                                                                         name={`portfolioValue${i}`}
                                                                         className="form-control inputDesign"
                                                                     />
-                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Portfolio Value", "How many Underlying Investments do you have ?", "portfolioArray", "portfolioValue", "totalPortfolioCost", values[`portfolioArray${i}`], i) }}>
+                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Portfolio Value", `How many Underlying Investments do ${nameSet} have ?`, "portfolioArray", "portfolioValue", "totalPortfolioCost", values[`portfolioArray${i}`], i) }}>
                                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                     </Button>
                                                                 </InputGroup>
@@ -375,7 +389,7 @@ const SuperFunds = (props) => {
                                                                 <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
                                                                     <DynamicYesNo name={`groupInsurance${i}`} values={values} handleChange={handleChange} />
                                                                     {values[`groupInsurance${i}`] === "Yes" &&
-                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Insurances Attached", "How many Group Insurance you have?", "groupInsuranceArray", "", "", values[`groupInsuranceArray${i}`], i) }}>
+                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Insurances Attached", `How many Group Insurance ${nameSet} have?`, "groupInsuranceArray", "", "", values[`groupInsuranceArray${i}`], i) }}>
                                                                             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                         </Button>
                                                                     }
@@ -385,7 +399,7 @@ const SuperFunds = (props) => {
                                                                 <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
                                                                     <DynamicYesNo name={`contributions${i}`} values={values} handleChange={handleChange} />
                                                                     {values[`contributions${i}`] === "Yes" &&
-                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Contributions", "How many Contributions do you have ?", "ContributionsArray", "", "", values[`ContributionsArray${i}`], i) }}>
+                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Contributions", `How many Contributions do ${nameSet} have ?`, "ContributionsArray", "", "", values[`ContributionsArray${i}`], i) }}>
                                                                             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                         </Button>
                                                                     }
@@ -395,7 +409,7 @@ const SuperFunds = (props) => {
                                                                 <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
                                                                     <DynamicYesNo name={`nominatedBeneficiaries${i}`} values={values} handleChange={handleChange} />
                                                                     {values[`nominatedBeneficiaries${i}`] === "Yes" &&
-                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Beneficiaries", "How many beneficiaries do you have?", "beneficiariesArray", "", "", values[`beneficiariesArray${i}`], i) }}>
+                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Beneficiaries", `How many beneficiaries do ${nameSet} have?`, "beneficiariesArray", "", "", values[`beneficiariesArray${i}`], i) }}>
                                                                             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                         </Button>
                                                                     }

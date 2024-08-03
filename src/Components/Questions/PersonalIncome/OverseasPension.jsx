@@ -1,27 +1,28 @@
 import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
-import { Button, InputGroup, Row, Table } from "react-bootstrap";
+import { Row, Table } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
 import { PatchAxios, PostAxios } from "../../Assets/Api/Api";
 // import Select from "react-select";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
-import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
-import PortfolioValue from "../FinancialInvestments/QuestionsDetail/PortfolioValue";
-import DynamicYesNo from "../FinancialInvestments/QuestionsDetail/DynamicYesNo";
-import MemberNumber from "../FinancialInvestments/QuestionsDetail/MemberNumber";
-import GroupInsurance from "../FinancialInvestments/QuestionsDetail/GroupInsurance";
-import Contributions from "../FinancialInvestments/QuestionsDetail/Contributions";
-import Beneficiaries from "../FinancialInvestments/QuestionsDetail/Beneficiaries";
 
 const OverseasPension = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
-  let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
+  let [nameSet] = useState(() => {
+    if (props.modalObject.Input === "client") {
+      return (localStorage.getItem("UserName"))
+    }
+    else if (props.modalObject.Input === "partner") {
+      return (localStorage.getItem("PartnerName"))
+    }
+    else if (props.modalObject.Input === "joint") {
+      return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
+    }
+  })
+
 
   let incomeFromOverseasPension = questionDetail.incomeFromOverseasPension || {
     client: [],
@@ -62,7 +63,7 @@ const OverseasPension = (props) => {
       incomeFromOverseasPension[props.modalObject.Input].forEach((data, i) => {
         if (data) {
           setFieldValue(`incomePA${i}`, data.incomePA || "");
-          setFieldValue(`country${i}`, data.country || "");      
+          setFieldValue(`country${i}`, data.country || "");
         }
       });
     }
@@ -81,29 +82,6 @@ const OverseasPension = (props) => {
     setDynamicFields(arr);
   };
 
-  let handleInnerModal = (
-    title,
-    question,
-    key,
-    mainKey,
-    key3,
-    editArray,
-    index,
-    values
-  ) => {
-    console.log(values);
-    setModalObject({
-      title,
-      question,
-      key,
-      mainKey,
-      key3,
-      editArray: editArray || [],
-      index,
-      values,
-    });
-    setFlagState(true);
-  };
 
   let DefaultUrl = useRecoilValue(defaultUrl);
 
@@ -118,13 +96,8 @@ const OverseasPension = (props) => {
     // Iterate through each map entry and create a new object
     for (let i = 0; i < numberOfMaps; i++) {
       const newEntry = {
-          country: values[`country${i}`] || "",
+        country: values[`country${i}`] || "",
         incomePA: values[`incomePA${i}`] || "",
-        // fortnightlyPayment: values[`fortnightlyPayment${i}`] || "",
-        // annualPaymentAmount: values[`annualPaymentAmount${i}`] || "",
-        // centrelinkcards: values[`centrelinkcards${i}`] || "",
-        // centrelinkcards: values[`centrelinkcards${i}`] || "",
-
       };
       newEntries.push(newEntry);
     }
@@ -149,8 +122,6 @@ const OverseasPension = (props) => {
 
     console.log(obj, "final obj");
 
-    // Check if incomeFromOverseasPension and the array at props.modalObject.Input exist
-    // const bankAccountArray = incomeFromOverseasPension[props.modalObject.Input] || [];
     const bankAccountArray = incomeFromOverseasPension.clientFK || "";
 
     try {
@@ -183,32 +154,6 @@ const OverseasPension = (props) => {
     }
   };
 
-  const options = [
-    "Age Pension ",
-    "Disability Pension",
-    "Carer Payment ",
-    "Carer Allowance ",
-    "Jobseeker",
-    "Family Tax Benefit A ",
-    "Family Tax Benefit B",
-    "Rent Assistance ",
-  ];
-  const options2 = [
-    "Pensioner Card ",
-    "Low Income Card ",
-    "Commonwealth Seniors Card",
-  ];
-  const [selectedOptions, setSelectedOptions] = useState([]);
-
-  //   const options2 = [
-  //     { value: 'Pensioner Card', label: 'Pensioner Card' },
-  //     { value: 'Low Income Card', label: 'Low Income Card' },
-  //     { value: 'Commonwealth Seniors Card', label: 'Commonwealth Seniors Card' },
-  //     // Add more options as needed
-  //   ];
-  const handleChange1 = (selected) => {
-    setSelectedOptions(selected);
-  };
   return (
     <Formik
       initialValues={initialValues}
@@ -224,31 +169,11 @@ const OverseasPension = (props) => {
         return (
           <Form>
             <Row>
-              <InnerModal
-                modalObject={modalObject}
-                setFieldValue={setFieldValue}
-                setFlagState={setFlagState}
-                flagState={flagState}
-              >
-                {modalObject.key === "annualPaymentAmount" ? (
-                  <PortfolioValue />
-                ) : modalObject.key === "memberArray" ? (
-                  <MemberNumber />
-                ) : modalObject.key === "groupInsuranceArray" ? (
-                  <GroupInsurance />
-                ) : modalObject.key === "ContributionsArray" ? (
-                  <Contributions />
-                ) : modalObject.key === "beneficiariesArray" ? (
-                  <Beneficiaries />
-                ) : (
-                  ""
-                )}
-              </InnerModal>
               <div className="col-md-12">
                 <div className="row justify-content-center">
                   <div className="col-md-5">
                     <p className="text-end mt-1">
-                      How many {props.modalObject.title} does {props.modalObject.Input} have:
+                      How many {props.modalObject.title} does {nameSet} have:
                     </p>
                   </div>
                   <div className="col-md-2">
@@ -292,7 +217,7 @@ const OverseasPension = (props) => {
                                 </td>
                                 <td>
                                   <Field
-                                     type="number"
+                                    type="number"
                                     placeholder="Income p.a"
                                     id={`incomePA${i}`}
                                     name={`incomePA${i}`}

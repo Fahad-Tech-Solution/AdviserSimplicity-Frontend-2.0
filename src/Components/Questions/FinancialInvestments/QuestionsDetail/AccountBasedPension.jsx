@@ -20,6 +20,19 @@ const AccountBasedPension = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
+
+    let [nameSet] = useState(() => {
+        if (props.modalObject.Input === "client") {
+            return (localStorage.getItem("UserName"))
+        }
+        else if (props.modalObject.Input === "partner") {
+            return (localStorage.getItem("PartnerName"))
+        }
+        else if (props.modalObject.Input === "joint") {
+            return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
+        }
+    })
+
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
 
@@ -91,6 +104,7 @@ const AccountBasedPension = (props) => {
 
     let handleInnerModal = (title, question, key, mainKey, key3, editArray, index, values) => {
         console.log(values);
+        let ParentModal = props.modalObject.title
         setModalObject({
             title,
             question,
@@ -99,7 +113,8 @@ const AccountBasedPension = (props) => {
             key3,
             editArray: editArray || [],
             index,
-            values
+            values,
+            ParentModal
         })
         setFlagState(true);
     }
@@ -276,18 +291,18 @@ const AccountBasedPension = (props) => {
                             <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} >
                                 {
                                     modalObject.key === "portfolioArray" ? <PortfolioValue /> :
-                                    modalObject.key === "memberArray" ? <AccountBasedMemberNumber /> :
-                                    modalObject.key === "balanceBenefitDetailsArray" ? <MemberNumber /> :
-                                    modalObject.key === "groupInsuranceArray" ? <GroupInsurance /> :
-                                    modalObject.key === "ContributionsArray" ? <Contributions /> :
-                                    modalObject.key === "beneficiariesArray" ? <Beneficiaries /> : ""
+                                        modalObject.key === "memberArray" ? <AccountBasedMemberNumber /> :
+                                            modalObject.key === "balanceBenefitDetailsArray" ? <MemberNumber /> :
+                                                modalObject.key === "groupInsuranceArray" ? <GroupInsurance /> :
+                                                    modalObject.key === "ContributionsArray" ? <Contributions /> :
+                                                        modalObject.key === "beneficiariesArray" ? <Beneficiaries /> : ""
                                 }
                             </InnerModal>
                             <div className="col-md-12">
                                 <div className='row justify-content-center'>
                                     <div className='col-md-5'>
                                         <p className='text-end mt-1'>
-                                            How many Account Based Pension does {props.modalObject.Input} have:
+                                            How many Account Based Pension does {nameSet} have:
                                         </p>
                                     </div>
                                     <div className='col-md-2'>
@@ -344,7 +359,7 @@ const AccountBasedPension = (props) => {
                                                                         className="form-control inputDesign"
                                                                     />
                                                                     <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
-                                                                        handleInnerModal("Member Number & Details", "How many Member Number & Details do you have ?", "memberArray", "memberNumber", "totalPortfolioCost", values[`memberArray${i}`], i, values)
+                                                                        handleInnerModal("Member Number & Details", `How many Member Number & Details do ${nameSet} have ?`, "memberArray", "memberNumber", "totalPortfolioCost", values[`memberArray${i}`], i, values)
                                                                     }}>
                                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                     </Button>
@@ -360,7 +375,7 @@ const AccountBasedPension = (props) => {
                                                                         className="form-control inputDesign"
                                                                     />
                                                                     <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
-                                                                        handleInnerModal("Balance & Benefit Details", "How many Benefit Details and Components do you have ?", "balanceBenefitDetailsArray", "balanceBenefitDetails", "", values[`balanceBenefitDetailsArray${i}`], i, values)
+                                                                        handleInnerModal("Balance & Benefit Details", `How many Benefit Details and Components do ${nameSet} have ?`, "balanceBenefitDetailsArray", "balanceBenefitDetails", "", values[`balanceBenefitDetailsArray${i}`], i, values)
                                                                     }}>
                                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                     </Button>
@@ -375,7 +390,7 @@ const AccountBasedPension = (props) => {
                                                                         name={`portfolioValue${i}`}
                                                                         className="form-control inputDesign"
                                                                     />
-                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Portfolio Value", "How many Underlying Investments do you have ?", "portfolioArray", "portfolioValue", "totalPortfolioCost", values[`portfolioArray${i}`], i) }}>
+                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Portfolio Value", `How many Underlying Investments do ${nameSet} have ?`, "portfolioArray", "portfolioValue", "totalPortfolioCost", values[`portfolioArray${i}`], i) }}>
                                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                     </Button>
                                                                 </InputGroup>
@@ -402,7 +417,7 @@ const AccountBasedPension = (props) => {
                                                                 <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
                                                                     <DynamicYesNo name={`nominatedBeneficiaries${i}`} values={values} handleChange={handleChange} />
                                                                     {values[`nominatedBeneficiaries${i}`] === "Yes" &&
-                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Beneficiaries", "How many beneficiaries do you have?", "beneficiariesArray", "", "", values[`beneficiariesArray${i}`], i) }}>
+                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Beneficiaries", `How many beneficiaries do ${nameSet} have?`, "beneficiariesArray", "", "", values[`beneficiariesArray${i}`], i) }}>
                                                                             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                         </Button>
                                                                     }

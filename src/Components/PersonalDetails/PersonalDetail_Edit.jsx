@@ -25,6 +25,7 @@ import { QuestionShift, UserName, ClientName, PartnerName, defaultUrl } from "..
 import { Card } from "react-bootstrap";
 
 import PersonalDetailCards from "./PersonalDetailCards";
+import { openNotificationSuccess } from "../Assets/Api/Api";
 
 
 
@@ -62,7 +63,6 @@ const PersonalDetail = () => {
   let hashing = location.hash;
 
   useEffect(() => {
-
 
     // let email = localStorage.getItem("Email");
     let email = hashing.replace("#", "");
@@ -144,10 +144,9 @@ const PersonalDetail = () => {
   };
 
   let nextbuttonHandler = () => {
-    setQuestionChange("FinancialInvestments");
-    // Navigate("/Business-Tax-Structure");
-    Navigate("/FinancialInvestments");
-    // Navigate("/Questions");
+    
+    setQuestionChange("PersonalIncome");
+    Navigate("/PersonalIncome");
   };
 
   let partnerHandler = (value) => {
@@ -255,12 +254,11 @@ const PersonalDetail = () => {
   const onSubmit = (values, action) => {
 
     localStorage.setItem("Email", values.Email);
+    // localStorage.getItem("Email")
     setClientAndPartnerTable(!ClientAndPartnerTable);
     setButtonFlag("Update")
 
     console.log(JSON.stringify(values));
-
-
 
     let ClientDetails = {
       clientTitle: values.clientTitle,
@@ -296,7 +294,9 @@ const PersonalDetail = () => {
 
       Email: values.Email,
     };
+
     setClientData(ClientDetails);
+
     let PartnerDetails = {
       Email: values.Email,
       partnerTitle: values.partnerTitle,
@@ -342,6 +342,7 @@ const PersonalDetail = () => {
         )
         .then((res) => {
           console.log("Client Successfully Update!");
+          openNotificationSuccess("info", 'topRight', "Notification", "Client Successfully Update!")
         });
 
 
@@ -351,10 +352,13 @@ const PersonalDetail = () => {
             `${DefaultUrl}/api/Partner/Update-Partner/${ClientDetails.Email}`,
             PartnerDetails
           )
-          .then((res) => console.log("Partner Successfully Update!"));
+          .then((res) => {
+            console.log("Partner Successfully Update!")
+            openNotificationSuccess("info", 'topRight', "Notification", "Partner Successfully Update!")
+          });
+
         setPartnerData(PartnerDetails);
       }
-
     } else {
       axios
         .post(`${DefaultUrl}/api/Client/Add-Client`, ClientDetails)
@@ -362,16 +366,29 @@ const PersonalDetail = () => {
           res.data
           localStorage.setItem('UserID', res.data._id)
           console.log("Client Successfully Added!", res.data);
+
+          localStorage.setItem('UserName', ClientDetails.clientPreferredName)
+
+          openNotificationSuccess("info", 'topRight', "Notification", "Client Successfully Added!")
         });
 
       if (values.clientMaritalStatus !== "Single" && values.clientMaritalStatus !== "Widowed") {
         axios
           .post(`${DefaultUrl}/api/Partner/Add-Partner`, PartnerDetails)
-          .then((res) => console.log("Partner Successfully Added!"));
+          .then((res) => {
+            console.log("Partner Successfully Added!");
+            localStorage.setItem('PartnerName', PartnerDetails.partnerPreferredName)
+            openNotificationSuccess("info", 'topRight', "Notification", "Partner Successfully Added!")
+          });
         setPartnerData(PartnerDetails);
       }
+
     }
   };
+
+
+
+
 
   let MainTableSubmit = (Option, elem) => {
     console.log(Option);
@@ -1765,7 +1782,7 @@ const PersonalDetail = () => {
                       {/*  start Client contact details form */}
 
 
-                      <h4 className="heading ">
+                      <h4 className="heading  d-none">
                         Contact Details
                         {/* <div className="iconContainerLg">
                           <img className="img-fluid" src={phonebook} alt="" />
@@ -1773,8 +1790,8 @@ const PersonalDetail = () => {
                       </h4>
 
                       <div className="row">
-                        <div className="col-4"></div>
-                        <div className=" col-4 LargeSheet">
+                        <div className="col-4 d-none"></div>
+                        <div className=" col-4 LargeSheet d-none">
                           <label
                             htmlFor="clientTitle"
                             className="form-label  clientFS green mb-3 p-0"
@@ -1791,7 +1808,7 @@ const PersonalDetail = () => {
                         </div>
                         {values.clientMaritalStatus !== "Single" &&
                           values.clientMaritalStatus !== "Widowed" ? (
-                          <div className="col-4 LargeSheet">
+                          <div className="col-4 LargeSheet d-none">
                             <label
                               htmlFor="clientTitle"
                               className="form-label  clientFS green mb-3 p-0"
@@ -1807,7 +1824,7 @@ const PersonalDetail = () => {
                             </label>
                           </div>
                         ) : (
-                          <div className="col-4"></div>
+                          <div className="col-4 d-none "></div>
                         )}
                         <div className="col-4 mt-3">
                           <label
@@ -2144,7 +2161,7 @@ const PersonalDetail = () => {
                         {/*Client */}
                         <div className="col-4 mt-3">
                           <Field
-                            type="number"
+                            type="text"
                             className="form-control inputDesign shadow"
                             id="clientMobile"
                             placeholder="Mobile"
@@ -2165,7 +2182,7 @@ const PersonalDetail = () => {
                           values.clientMaritalStatus !== "Widowed" ? (
                           <div className="col-4 mt-3">
                             <Field
-                              type="number"
+                              type="text"
                               className="form-control inputDesign shadow"
                               name="partnerMobile"
                               placeholder="Mobile"
@@ -2193,7 +2210,7 @@ const PersonalDetail = () => {
                         {/*Client */}
                         <div className="col-4 mt-3">
                           <Field
-                            type="number"
+                            type="text"
                             className="form-control inputDesign shadow"
                             id="clientHomePhone"
                             placeholder="Home Phone"
@@ -2214,7 +2231,7 @@ const PersonalDetail = () => {
                           values.clientMaritalStatus !== "Widowed" ? (
                           <div className="col-4 mt-3">
                             <Field
-                              type="number"
+                              type="text"
                               className="form-control inputDesign shadow"
                               id="partnerHomePhone"
                               placeholder="Home Phone"
@@ -2243,7 +2260,7 @@ const PersonalDetail = () => {
                         {/*Client */}
                         <div className="col-4 mt-3">
                           <Field
-                            type="number"
+                            type="text"
                             className="form-control inputDesign shadow"
                             id="clientWorkPhone"
                             name="clientWorkPhone"
@@ -2261,7 +2278,7 @@ const PersonalDetail = () => {
                           values.clientMaritalStatus !== "Widowed" ? (
                           <div className="col-4 mt-3">
                             <Field
-                              type="number"
+                              type="text"
                               className="form-control inputDesign shadow"
                               id="partnerWorkPhone"
                               name="partnerWorkPhone"
@@ -2292,9 +2309,6 @@ const PersonalDetail = () => {
                             id="Email"
                             placeholder="abc@gmail.com"
                             name="Email"
-                            onBlur={() =>
-                              localStorage.setItem("Email", values.Email)
-                            }
                           />
                           <ErrorMessage
                             component="div"

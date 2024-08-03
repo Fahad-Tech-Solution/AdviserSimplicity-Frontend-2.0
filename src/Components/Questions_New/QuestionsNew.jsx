@@ -39,12 +39,28 @@ const QuestionsNew = (props) => {
 
   }, [location])
 
-  let selectQuestionSet = (path) => {
+  let selectQuestionSet = async (path) => {
     let cLocation = path.replace("/", "");
     console.log(cLocation);
     setQuestionChange(cLocation)
     fetchData();
+    FetchQuestions();
+
   }
+
+  let [CRObjectNoUse, setCRObject] = useRecoilState(CRState);
+
+  const FetchQuestions = async () => {
+    try {
+      const res = await GetAxios(`${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`);
+      if (res) {
+        setCRObject(res);
+      }
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+    }
+  };
+
 
   async function fetchData() {
     let updatedData = { ...questionDetail };
@@ -81,9 +97,6 @@ const QuestionsNew = (props) => {
 
       setQuestionDetail(updatedData);
 
-      // if (allSuccessful) {
-      //   setFlagState2(false);
-      // }
     } catch (error) {
       console.error("An error occurred:", error);
       setQuestionDetail(updatedData);
@@ -95,27 +108,30 @@ const QuestionsNew = (props) => {
   let HandleSubmit = () => {
 
     switch (QuestionChange) {
-      case "FinancialInvestments":
-        // Navigation("/PersonalAssets")
+
+      case "PersonalIncome":
         Navigation("/PersonalAssets")
         break;
       case "PersonalAssets":
-        Navigation("/Lifestyle")
+        Navigation("/FinancialInvestments")
         break;
-      case "Lifestyle":
-        Navigation("/Investment")
-        break;
-      case "Investment":
+      case "FinancialInvestments":
         Navigation("/SuperAndRetirement")
         break;
       case "SuperAndRetirement":
+        Navigation("/Lifestyle")
+        break;
+      case "Lifestyle": //Property
+        Navigation("/Investment")
+        break;
+      case "Investment": //Property investment
         Navigation("/EstatePlanning")
         break;
       case "EstatePlanning":
-        Navigation("/PersonalIncome")
+        Navigation("/PersonalInsurance")
         break;
-      case "PersonalIncome":
-        Navigation("/BusinessEntities")
+      case "PersonalInsurance":
+        Navigation("/BusinessEntities");
         break;
       case "BusinessEntities":
         if (CRObject.BusinessAsSMSF === "Yes") {
@@ -125,7 +141,7 @@ const QuestionsNew = (props) => {
           Navigation("/FamilyTrust")
         }
         else {
-          Navigation("/Business-Tax-Structure");
+          Navigation("/Goals-And-Objectives");
           localStorage.removeItem("Question");
         }
         break;
@@ -134,20 +150,15 @@ const QuestionsNew = (props) => {
           Navigation("/FamilyTrust")
         }
         else {
-          Navigation("/Business-Tax-Structure");
+          Navigation("/Goals-And-Objectives");
           localStorage.removeItem("Question");
         }
         break;
       case "FamilyTrust":
-        Navigation("/ProfessionalAdvisor")
-        break;
-      case "ProfessionalAdvisor":
-        Navigation("/InvestmentTrust")
-        break;
-      case "InvestmentTrust":
-        Navigation("/Business-Tax-Structure");
+        Navigation("/Goals-And-Objectives");
         localStorage.removeItem("Question");
         break;
+
 
       default:
         console.log("aywayn")
@@ -164,56 +175,44 @@ const QuestionsNew = (props) => {
     }
 
     switch (QuestionChange) {
-      case "FinancialInvestments":
+      case "PersonalIncome":
         Navigation("/PersonalDetail#" + localStorage.getItem("Email"));
         localStorage.removeItem("Question");
         break;
       case "PersonalAssets":
-        Navigation("/FinancialInvestments")
-        break;
-      case "Lifestyle":
-        Navigation("/PersonalAssets")
-        break;
-      case "Investment":
-        Navigation("/Lifestyle")
-        break;
-      case "SuperAndRetirement":
-        Navigation("/Investment")
-        break;
-      case "EstatePlanning":
-        Navigation("/SuperAndRetirement")
-        break;
-      case "PersonalIncome":
-        Navigation("/EstatePlanning")
-        break;
-      case "BusinessEntities":
         Navigation("/PersonalIncome")
         break;
+      case "FinancialInvestments":
+        Navigation("/PersonalAssets")
+        break;
+      case "SuperAndRetirement":
+        Navigation("/FinancialInvestments")
+        break;
+      case "Lifestyle": //Property
+        Navigation("/SuperAndRetirement")
+        break;
+      case "Investment": //Property investment
+        Navigation("/Lifestyle")
+        break;
+      case "EstatePlanning":
+        Navigation("/Investment")
+        break;
+      case "PersonalInsurance":
+        Navigation("/EstatePlanning");
+        break;
+      case "BusinessEntities":
+        Navigation("/PersonalInsurance");
+        break;
       case "SMSF":
-        Navigation("/BusinessEntities")
+        Navigation("/BusinessEntities");
         break;
       case "FamilyTrust":
-        // Navigation("/SMSF")
         if (CRObject.BusinessAsSMSF === "Yes") {
           Navigation("/SMSF")
         }
         else {
           Navigation("/BusinessEntities");
         }
-        break;
-      case "ProfessionalAdvisor":
-        if (CRObject.BusinessAsInvestmentTrust === "Yes") {
-          Navigation("/FamilyTrust")
-        }
-        else if (CRObject.BusinessAsSMSF === "Yes") {
-          Navigation("/SMSF")
-        }
-        else {
-          Navigation("/BusinessEntities");
-        }
-        break;
-      case "InvestmentTrust":
-        Navigation("/ProfessionalAdvisor")
         break;
 
       default:
@@ -336,13 +335,16 @@ const QuestionsNew = (props) => {
         { url: `${DefaultUrl}/api/familyInvestmentExpenses/${localStorage.getItem("UserID")}`, key: 'familyInvestmentExpenses' },
       ]
     },
-    ProfessionalAdvisor: {
-      Title: "Professional Advisor",
-      apiArray: []
+    PersonalInsurance: {
+      Title: "Personal Insurance",
+      apiArray: [
+        { url: `${DefaultUrl}/api/incomeProtection/${localStorage.getItem("UserID")}`, key: "incomeProtection", },
+        { url: `${DefaultUrl}/api/TPD/${localStorage.getItem("UserID")}`, key: "TPD", },
+        { url: `${DefaultUrl}/api/life/${localStorage.getItem("UserID")}`, key: "life", },
+        { url: `${DefaultUrl}/api/trauma/${localStorage.getItem("UserID")}`, key: "trauma", },
+      ],
     },
-    InvestmentTrust: {
-      Title: "InvestmentTrust",
-    },
+
   }
 
   return (
@@ -361,10 +363,6 @@ const QuestionsNew = (props) => {
               </div> :
               <QuestionCards Question={QuestionChange} />
             }
-
-            {/**
-              <div> "what to do" </div>
-                */}
 
             <ModalComponent setQuestionChange={setFlagState2} Question={QuestionChange} modalObject={modalObject} setFlagState={setFlagState} flagState={flagState}>
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Formik } from "formik";
 import * as Yup from "yup";
 
@@ -7,26 +7,65 @@ import Business_TeamHandshake from "../svgs/team_Handshake.png";
 import Business_SMSF from "../svgs/money-bag-svgrepo-com.svg";
 import Questions_People from "../svgs/Questions_People.png";
 
-import { useRecoilState } from "recoil";
-import { QuestionShift, CRState, StepState } from "../../../Store/Store";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { QuestionShift, CRState, StepState, defaultUrl } from "../../../Store/Store";
 
 import { NavLink, useNavigate } from "react-router-dom";
+import { GetAxios, PatchAxios, PostAxios } from "../../Assets/Api/Api";
 
 const BusinessEntities = (props) => {
+
     let [CRObject, setCRObject] = useRecoilState(CRState);
-    let [QuestionChange, setQuestionChange] = useRecoilState(QuestionShift);
 
+    const [flagState, setFlagState] = useState(false);
 
-    let onSubmit = (values) => {
+    let DefaultUrl = useRecoilValue(defaultUrl)
 
-        if (props.flagState) {
-            props.setFlagState(false);
+    const FetchQuestions = async () => {
+        try {
+            const res = await GetAxios(`${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`);
+            if (res) {
+                setCRObject(res);
+                setFlagState(true);
+            }
+        } catch (error) {
+            console.error("Error fetching questions:", error);
         }
+    };
 
+    useEffect(() => {
+        FetchQuestions();
+    }, []);
+
+    const handleResponse = (values) => {
         setCRObject(values);
         localStorage.setItem("QuestionsState", JSON.stringify(values));
         props.setQuestionChange(false);
+        localStorage.setItem("Question", "PersonalAssets");
+    };
 
+    const onSubmit = async (values) => {
+        try {
+            if (!flagState) {
+                const PostRes = await PostAxios(`${DefaultUrl}/api/questions/Add`, values);
+                if (PostRes) {
+                    if (props.flagState) {
+                        props.setFlagState(false);
+                    }
+                    handleResponse(values);
+                }
+            } else {
+                const PatchRes = await PatchAxios(`${DefaultUrl}/api/questions/Update/${localStorage.getItem("UserID")}`, values);
+                if (PatchRes) {
+                    if (props.flagState) {
+                        props.setFlagState(false);
+                    }
+                    handleResponse(values);
+                }
+            }
+        } catch (error) {
+            console.error("Error submitting form:", error);
+        }
     };
 
     return (
