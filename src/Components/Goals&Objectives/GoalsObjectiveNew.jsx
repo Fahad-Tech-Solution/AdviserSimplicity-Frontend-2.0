@@ -56,6 +56,7 @@ import calendar from "../Questions/svgs/calendar.png";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import InnerModal from '../Questions/FinancialInvestments/QuestionsDetail/InnerModal';
 import ModalComponent from '../Questions/FinancialInvestments/ModalComponent';
+import GoalsForm from './GoalsForm';
 
 const GoalsObjectiveNew = () => {
 
