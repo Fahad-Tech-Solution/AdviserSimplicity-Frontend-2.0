@@ -24,7 +24,7 @@ export const CRState = atom({
     default: {
         //Financial Assets 
         QuestionsFlag: false,
-        clientFK:"",
+        clientFK: "",
 
         bankAccountFinance: "No",
         termDepositsFinance: "No",
@@ -136,10 +136,10 @@ export const CurrentPage = atom({
 
 export const defaultUrl = atom({
     key: "defaultUrl",
-    // default: "http://localhost:7000",
+    default: "http://localhost:7000",
     // default: "http://172.168.40.41:7000",
     // default: "http://172.168.40.137:7000",
-    default: "",
+    // default: "",
 });
 
 export const allAPIs = atom({
@@ -163,5 +163,10 @@ export const PersonalDetailsData = atom({
 
 export const QuestionDetail = atom({
     key: "QuestionDetail",
+    default: {},
+});
+
+export const GoalsDetail = atom({
+    key: "GoalsDetail",
     default: {},
 });

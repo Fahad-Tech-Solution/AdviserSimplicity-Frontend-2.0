@@ -13,9 +13,6 @@ import { defaultUrl } from "../../Store/Store";
 
 const GoalsObjective = () => {
 
-  
-
-
   // Setup Modal Opt1
   const [show1, setShow1] = useState(false);
   const handleClose1 = () => setShow1(false);

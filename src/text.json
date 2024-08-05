@@ -69,7 +69,7 @@ planForRetirementGoal
 startFamilyGoal
 careGoal
 inheritanceGoal
-leaveInheritance
+leaveInheritanceGoal
 centreLinkEligibilityGoal
 familyTrustGoal
 SMSFGoal
@@ -79,13 +79,25 @@ investmentPortfolioGoal
 reviewInvestmentPortfolioGoal
 payLessTaxGoal
 financialAdviceGoal
-reviewSuper
-combinedSuperIntoOne
+reviewSuperGoal
+combinedSuperIntoOneGoal
 contributeMoneyIntoSuper
 retirementIncomeStreamGoal
-setSuperIncomeStream
-reviewPersonalInsuranceCover
+// setSuperIncomeStream
+// reviewPersonalInsuranceCover
 analysisOfPersonalInsuranceGoal
 retainCurrentPersonalInsurancesGoal
 reducePersonalInsuranceCoverGoal
 adviceOnSurplusIncomeGoal
+
+
+
+
+Debt Management
+Personal Insurance
+Budgeting & Cashflow
+Retirement Planning
+Superannuation
+Estate Planning
+Investments
+Other

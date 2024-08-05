@@ -1831,7 +1831,7 @@ const RegularLivingExpenses = (props) => {
                               className="form-control inputDesign shadow"
                               id="publicTransport"
                               name="publicTransport"
-                              placeholder="public transport"
+                              placeholder="Public transport"
                             />
                             <ErrorMessage
                               name="publicTransport"
@@ -1990,7 +1990,7 @@ const RegularLivingExpenses = (props) => {
                               className="form-control inputDesign shadow"
                               id="insurancePrivateHealth"
                               name="insurancePrivateHealth"
-                              placeholder="private Health"
+                              placeholder="Private Health"
                             />
                             <ErrorMessage
                               name="insurancePrivateHealth"
@@ -2048,7 +2048,7 @@ const RegularLivingExpenses = (props) => {
                               className="form-control inputDesign shadow"
                               id="insuranceLife"
                               name="insuranceLife"
-                              placeholder="life/TPD/Trauma"
+                              placeholder="Life/TPD/Trauma"
                             />
                             <ErrorMessage
                               name="insuranceLife"

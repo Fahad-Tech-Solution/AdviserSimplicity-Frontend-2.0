@@ -222,10 +222,10 @@ function Options(props) {
                 <div className="d-flex justify-content-between">
                   <div>
                     <Breadcrumb className="BreadcrumbCustom">
-                      <Breadcrumb.Item active linkAs={Link} linkProps={{ to: '/' }} className="p-0 m-0 DMFamily">Pages</Breadcrumb.Item>
-                      <Breadcrumb.Item active linkAs={Link} linkProps={{ to: '/' }} className="p-0 m-0 DMFamily">Home</Breadcrumb.Item>
+                      <Breadcrumb.Item active linkAs={Link} linkProps={{ to: '/' }} className="p-0 m-0 LeagueSpartanFamily">Pages</Breadcrumb.Item>
+                      <Breadcrumb.Item active linkAs={Link} linkProps={{ to: '/' }} className="p-0 m-0 LeagueSpartanFamilyartanFamily">Home</Breadcrumb.Item>
                     </Breadcrumb>
-                    <h5 className="Page DMFamily">Home</h5>
+                    <h5 className="Page LeagueSpartanFamily">Home</h5>
                   </div>
                   <div className="rightBlock">
                     <FontAwesomeIcon icon={faMoon} className="moon" />

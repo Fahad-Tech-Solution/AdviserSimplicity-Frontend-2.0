@@ -78,7 +78,7 @@ const SideBarrr = (props) => {
               onClick={() => { setCurrentP('/'); Navigate("/") }}
             >
               <li className=" py-0 pe-0" style={{ paddingLeft: sidebar ? "20px" : "0px" }}>
-                <FontAwesomeIcon icon={faHome} /> {sidebar ? <span className="ms-2 d-inline-block DMFamily SideItem_Size "> Dashboard </span> : ""}
+                <FontAwesomeIcon icon={faHome} /> {sidebar ? <span className="ms-2 d-inline-block LeagueSpartanFamily SideItem_Size "> Dashboard </span> : ""}
               </li>
             </ul>
 
@@ -91,7 +91,7 @@ const SideBarrr = (props) => {
                 <Accordion.Item eventKey="0">
                   <Accordion.Header >
                     <FontAwesomeIcon icon={faUser} className={`pr-2`} />
-                    &nbsp;&nbsp; {sidebar ? <span className="DMFamily SideItem_Size font-weight-bold p-0 m-0 w-auto">Discovery </span> : ""}
+                    &nbsp;&nbsp; {sidebar ? <span className="LeagueSpartanFamily SideItem_Size font-weight-bold p-0 m-0 w-auto">Discovery </span> : ""}
                   </Accordion.Header>
                   <Accordion.Body>
                     <div className={`w-100 px-3 Custom_hover ${CurrentP === '/All-Clients' && 'active'}`}
@@ -100,7 +100,7 @@ const SideBarrr = (props) => {
                     >
                       <NavLink
                         to="/All-Clients"
-                        className="py-1 DMFamily SideItem_Size"
+                        className="py-1 LeagueSpartanFamily SideItem_Size"
                       >
                         Financial Details
                       </NavLink>
@@ -110,7 +110,7 @@ const SideBarrr = (props) => {
                       onClick={(e) => { Navigate("/Goals-And-Objectives") }}
                       id="Goals"
                     >
-                      <NavLink to="/Goals-And-Objectives" className="py-1 DMFamily SideItem_Size">
+                      <NavLink to="/Goals-And-Objectives" className="py-1 LeagueSpartanFamily SideItem_Size">
                         Goals and Objectives
                       </NavLink>
                     </div>
@@ -119,7 +119,7 @@ const SideBarrr = (props) => {
                       onClick={() => { Navigate("/Risk-Profile") }}
                       id="Risk"
                     >
-                      <NavLink to="/Risk-Profile" className="py-1 DMFamily SideItem_Size">
+                      <NavLink to="/Risk-Profile" className="py-1 LeagueSpartanFamily SideItem_Size">
                         Risk Profile
                       </NavLink>
                     </div>
@@ -128,7 +128,7 @@ const SideBarrr = (props) => {
                       onClick={() => { setCurrentP('Wizard') }}
                       id="Wizard"
                     >
-                      <NavLink to="#Document" className="py-1 DMFamily SideItem_Size">
+                      <NavLink to="#Document" className="py-1 LeagueSpartanFamily SideItem_Size">
                         Document Wizard
                       </NavLink>
                     </div>
@@ -139,14 +139,14 @@ const SideBarrr = (props) => {
                     >
                       <NavLink
                         to="/PersonalDetail"
-                        className="py-1 DMFamily SideItem_Size"
+                        className="py-1 LeagueSpartanFamily SideItem_Size"
                       >
                         Add Client
                       </NavLink>
                     </div>
 
                     <div className="w-100 px-3 Custom_hover d-none">
-                      <NavLink href="/All-Clients" className="py-1 DMFamily SideItem_Size">
+                      <NavLink href="/All-Clients" className="py-1 LeagueSpartanFamily SideItem_Size">
                         Select Client
                       </NavLink>
                     </div>
@@ -165,7 +165,7 @@ const SideBarrr = (props) => {
               <Accordion className={`${sidebar ? "Custom_Accordion" : "removeLeftBar"} `} >
                 <Accordion.Item eventKey="0">
                   <Accordion.Header>
-                    <FontAwesomeIcon icon={faReceipt} />&nbsp; &nbsp; {sidebar ? <span className="DMFamily SideItem_Size font-weight-bold p-0 m-0 w-auto">Cash Flow</span> : ""}
+                    <FontAwesomeIcon icon={faReceipt} />&nbsp; &nbsp; {sidebar ? <span className="LeagueSpartanFamily SideItem_Size font-weight-bold p-0 m-0 w-auto">Cash Flow</span> : ""}
                   </Accordion.Header>
                   <Accordion.Body>
 
@@ -175,7 +175,7 @@ const SideBarrr = (props) => {
                     >
                       <NavLink
                         to="/Cash-Flow"
-                        className="py-1 DMFamily SideItem_Size "
+                        className="py-1 LeagueSpartanFamily SideItem_Size "
                       >
                         Cash Flow
                       </NavLink>
@@ -187,7 +187,7 @@ const SideBarrr = (props) => {
                       id="Scenario"
 
                     >
-                      <NavLink to="#Scenario" className="py-1 DMFamily SideItem_Size">
+                      <NavLink to="#Scenario" className="py-1 LeagueSpartanFamily SideItem_Size">
                         Scenario
                       </NavLink>
                     </div>
@@ -196,7 +196,7 @@ const SideBarrr = (props) => {
                       onClick={() => { setCurrentP('ManageTask') }}
                       id="ManageTask"
                     >
-                      <NavLink to="#ManageTask" className="py-1 DMFamily SideItem_Size">
+                      <NavLink to="#ManageTask" className="py-1 LeagueSpartanFamily SideItem_Size">
                         Manage Task
                       </NavLink>
                     </div>
@@ -205,7 +205,7 @@ const SideBarrr = (props) => {
                       onClick={() => { setCurrentP('ManageDocument') }}
                       id="ManageDocument"
                     >
-                      <NavLink to="#ManageDocument" className="py-1 DMFamily SideItem_Size">
+                      <NavLink to="#ManageDocument" className="py-1 LeagueSpartanFamily SideItem_Size">
                         Manage Document
                       </NavLink>
                     </div>
