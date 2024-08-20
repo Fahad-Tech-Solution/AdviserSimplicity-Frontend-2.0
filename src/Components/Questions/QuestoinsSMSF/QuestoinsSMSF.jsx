@@ -12,6 +12,8 @@ import property from "../svgs/property-value.svg";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { QuestionShift, CRState, defaultUrl } from "../../../Store/Store";
 import { GetAxios, PatchAxios, PostAxios } from "../../Assets/Api/Api";
+import { Image } from "react-bootstrap";
+import DynamicQuestionBlocks from "../../Assets/DynamicQuestionBlocks/DynamicQuestionBlocks";
 const QuestionsSMSF = (props) => {
 
   let [CRObject, setCRObject] = useRecoilState(CRState);
@@ -67,6 +69,49 @@ const QuestionsSMSF = (props) => {
     }
   };
 
+  let QuestionArray = [
+    {
+      title: "Does your SMSF have any Money invested in Term Deposits?",
+      img: TermImg,
+      key: "SMSFTermDeposits",
+    },
+    {
+      title: "Does  your SMSF have any Money invested Australian Shares?",
+      img: PortFolio,
+      key: "SMSFAustralianShares",
+    },
+    {
+      title: "Do you SMSF have any Money invested in Managed Funds or via a Platform?",
+      img: funds,
+      key: "SMSFManagedFunds",
+    },
+    {
+      title: "Does  your SMSF have an  Investment Loan (LOC)  attached to any of its investments?",
+      img: analytics,
+      key: "SMSFInvestmentLoan",
+    },
+    {
+      title: "Does your SMSF have any investment Properties?",
+      img: property,
+      key: "SMSFInvestmentProperties",
+    },
+    {
+      title: "Does your SMSF have any money in Pension Phase?",
+      img: people,
+      key: "SMSFPensionPhase",
+    },
+  ]
+  const QuestionClick = (index, elem, values, setFieldValue) => {
+    console.log("image clicked in goals", index, elem.key, values);
+    if (values[elem.key] == "No") {
+      setFieldValue(elem.key, "Yes");
+    }
+    if (values[elem.key] == "Yes") {
+      setFieldValue(elem.key, "No");
+    }
+  };
+
+
   return (
     <div className="container-fluid my-4">
       <div className="row m-0">
@@ -76,12 +121,17 @@ const QuestionsSMSF = (props) => {
           enableReinitialize
           innerRef={props.formRef}
         >
-          {({ values, handleChange }) => (
+          {({ values, handleChange, setFieldValue }) => (
             <Form>
               <div className="col-md-12 text-center">
                 <h4 className="heading d-none">Self Manged Super Fund </h4>
-                <div className="row my-3">
-                  <div className="col-md-12 ">
+
+                <div className="row my-3 justify-content-center">
+                  <DynamicQuestionBlocks QuestionArray={QuestionArray} QuestionClick={QuestionClick} values={values} setFieldValue={setFieldValue} />
+
+
+
+                  <div className="col-md-12 d-none">
                     <div className="mb-3">
                       <label className="form-label">
                         Does your SMSF have any Money invested in Term Deposits?{" "}
@@ -133,7 +183,7 @@ const QuestionsSMSF = (props) => {
                   </div>
                 </div>
 
-                <div className="row my-3">
+                <div className="row my-3 d-none">
                   <div className="col-md-12 ">
                     <div className="mb-3">
                       <label className="form-label">
@@ -186,7 +236,7 @@ const QuestionsSMSF = (props) => {
                   </div>
                 </div>
 
-                <div className="row my-3">
+                <div className="row my-3 d-none">
                   <div className="col-md-12 ">
                     <div className="mb-3">
                       <label className="form-label">
@@ -239,7 +289,7 @@ const QuestionsSMSF = (props) => {
                   </div>
                 </div>
 
-                <div className="row my-3">
+                <div className="row my-3 d-none">
                   <div className="col-md-12 ">
                     <div className="mb-3">
                       <label className="form-label">
@@ -292,7 +342,7 @@ const QuestionsSMSF = (props) => {
                   </div>
                 </div>
 
-                <div className="row my-3">
+                <div className="row my-3 d-none">
                   <div className="col-md-12 ">
                     <div className="mb-3">
                       <label className="form-label">
@@ -372,8 +422,7 @@ const QuestionsSMSF = (props) => {
                   </div>
                 }
 
-
-                <div className="row my-3">
+                <div className="row my-3 d-none">
                   <div className="col-md-12 ">
                     <div className="mb-3">
                       <label className="form-label">
@@ -450,6 +499,7 @@ const QuestionsSMSF = (props) => {
                     </button>
                   </div>
                 </div>
+
                 {/*end children details form */}
               </div>
             </Form>

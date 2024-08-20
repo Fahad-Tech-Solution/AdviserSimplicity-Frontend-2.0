@@ -36,10 +36,11 @@ const SmsfPensionAccount = (props) => {
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
 
-  let SMSFPensionPhase = questionDetail.SMSFPensionPhase || {
+  let SMSFPensionPhase = Object.keys(questionDetail.SMSFPensionPhase).length > 0 ? questionDetail.SMSFPensionPhase : {
     client: [],
     partner: [],
     joint: [],
+
   }; // Use an empty object as default if SMSFPensionPhase is undefined
 
   let initialValues = SMSFPensionPhase[props.modalObject.Input].length
@@ -239,7 +240,7 @@ const SmsfPensionAccount = (props) => {
                       type="number"
                       id="NumberOfMap"
                       name="NumberOfMap"
-                      className="form-control inputDesign"
+                      className="form-control inputDesignDoubleInput"
                       onChange={(e) => handleInput(e, setFieldValue)}
                     />
                   </div>
@@ -273,7 +274,7 @@ const SmsfPensionAccount = (props) => {
                                       placeholder="Pension Benefits"
                                       id={`pensionBenefits${i}`}
                                       name={`pensionBenefits${i}`}
-                                      className="form-control inputDesign"
+                                      className="form-control inputDesignDoubleInput"
                                     />
                                     <Button
                                       className="btn bgColor modalBtn border-0"
@@ -303,7 +304,7 @@ const SmsfPensionAccount = (props) => {
                                     placeholder="Pension Payment"
                                     id={`pensionPayment${i}`}
                                     name={`pensionPayment${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -313,7 +314,7 @@ const SmsfPensionAccount = (props) => {
                                     placeholder="Pension Type"
                                     id={`pensionType${i}`}
                                     name={`pensionType${i}`}
-                                    className="form-select inputDesign"
+                                    className="form-select inputDesignDoubleInput"
                                   >
                                     <option value={""}>Please Select</option>
                                     {options.map((elem, index) => {

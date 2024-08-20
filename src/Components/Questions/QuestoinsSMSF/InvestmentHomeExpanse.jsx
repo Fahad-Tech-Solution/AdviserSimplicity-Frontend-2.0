@@ -22,12 +22,9 @@ const InvestmentHomeExpanse = (props) => {
     }
   })
 
-  let SMSFInvestmentExpenses = questionDetail.SMSFInvestmentExpenses[props.modalObject.index] || {
-    client: [],
-    partner: [],
-    joint: [],
-
-  }; // Use an empty object as default if SMSFInvestmentExpenses is undefined
+  let SMSFInvestmentExpenses = (questionDetail && questionDetail.SMSFInvestmentExpenses && Array.isArray(questionDetail.SMSFInvestmentExpenses) && props && props.modalObject && typeof props.modalObject.index === 'number')
+    ? questionDetail.SMSFInvestmentExpenses[props.modalObject.index] || { client: [], partner: [], joint: [] }
+    : { client: [], partner: [], joint: [] };// Use an empty object as default if SMSFInvestmentExpenses is undefined
 
 
   let initialValues = SMSFInvestmentExpenses[props.modalObject.Input].length ? { NumberOfMap: SMSFInvestmentExpenses[props.modalObject.Input].length } : { NumberOfMap: "" };
@@ -193,7 +190,7 @@ const InvestmentHomeExpanse = (props) => {
                       type="number"
                       id="NumberOfMap"
                       name="NumberOfMap"
-                      className="form-control inputDesign"
+                      className="form-control inputDesignDoubleInput"
                       onChange={(e) => handleInput(e, setFieldValue)}
                     />
                   </div>
@@ -222,7 +219,7 @@ const InvestmentHomeExpanse = (props) => {
                                     placeholder="Council Rates"
                                     id={`councilRates${i}`}
                                     name={`councilRates${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -231,7 +228,7 @@ const InvestmentHomeExpanse = (props) => {
                                     placeholder="Water Rates"
                                     id={`waterRates${i}`}
                                     name={`waterRates${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -240,7 +237,7 @@ const InvestmentHomeExpanse = (props) => {
                                     placeholder="Land tax"
                                     id={`landTax${i}`}
                                     name={`landTax${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -249,7 +246,7 @@ const InvestmentHomeExpanse = (props) => {
                                     placeholder="Insurance/Body Corporate"
                                     id={`insuranceCorporate${i}`}
                                     name={`insuranceCorporate${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -258,7 +255,7 @@ const InvestmentHomeExpanse = (props) => {
                                     placeholder="Repairs and Maintenance"
                                     id={`repairsMaintenance${i}`}
                                     name={`repairsMaintenance${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -267,7 +264,7 @@ const InvestmentHomeExpanse = (props) => {
                                     placeholder="All Other"
                                     id={`allOther${i}`}
                                     name={`allOther${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                               </tr>)

@@ -23,12 +23,13 @@ const PersonalLoan = (props) => {
         }
     })
 
-    let personalLoans = questionDetail.personalLoans || {
+    let personalLoans = Object.keys(questionDetail.personalLoans).length > 0 ? questionDetail.personalLoans : {
         client: [],
         partner: [],
         joint: [],
 
-    }; // Use an empty object as default if personalLoans is undefined
+    };
+    // Use an empty object as default if personalLoans is undefined
 
 
     let initialValues = personalLoans[props.modalObject.Input].length ? { NumberOfMap: personalLoans[props.modalObject.Input].length } : { NumberOfMap: "" };
@@ -267,7 +268,7 @@ const PersonalLoan = (props) => {
                                             type="number"
                                             id="NumberOfMap"
                                             name="NumberOfMap"
-                                            className="form-control inputDesign"
+                                            className="form-control inputDesignDoubleInput"
                                             onChange={(e) => handleInput(e, setFieldValue)}
                                         />
                                     </div>
@@ -299,7 +300,7 @@ const PersonalLoan = (props) => {
                                                                         placeholder="Lender Current"
                                                                         id={`LenderCurrent${i}`}
                                                                         name={`LenderCurrent${i}`}
-                                                                        className="form-select inputDesign"
+                                                                        className="form-select inputDesignDoubleInput"
                                                                     >
                                                                         <option value={""}>Please Select</option>
                                                                         {options.map((elem, index) => {
@@ -313,7 +314,7 @@ const PersonalLoan = (props) => {
                                                                         placeholder="Loan Balance"
                                                                         id={`LoanBalance${i}`}
                                                                         name={`LoanBalance${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -322,7 +323,7 @@ const PersonalLoan = (props) => {
                                                                         placeholder="Lender Current"
                                                                         id={`LoanType${i}`}
                                                                         name={`LoanType${i}`}
-                                                                        className="form-select inputDesign"
+                                                                        className="form-select inputDesignDoubleInput"
                                                                     >
                                                                         <option value={""}>Please Select</option>
                                                                         <option value={"i/only"}>i/only</option>
@@ -335,7 +336,7 @@ const PersonalLoan = (props) => {
                                                                         placeholder="Repayments Amount"
                                                                         id={`RepaymentsAmount${i}`}
                                                                         name={`RepaymentsAmount${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -344,7 +345,7 @@ const PersonalLoan = (props) => {
                                                                         placeholder="Lender Current"
                                                                         id={`Frequency${i}`}
                                                                         name={`Frequency${i}`}
-                                                                        className="form-select inputDesign"
+                                                                        className="form-select inputDesignDoubleInput"
                                                                     >
                                                                         <option value={""}>Please Select</option>
                                                                         <option value={52}>Weekly (52)</option>
@@ -361,7 +362,7 @@ const PersonalLoan = (props) => {
                                                                         id={`AnnualRepayments${i}`}
                                                                         name={`AnnualRepayments${i}`}
                                                                         value={(values[`Frequency${i}`] || 0) * (values[`RepaymentsAmount${i}`] || 0)}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -371,7 +372,7 @@ const PersonalLoan = (props) => {
                                                                         id={`InterestRate${i}`}
                                                                         name={`InterestRate${i}`}
                                                                         onBlur={(e) => handleBlur(setFieldValue, e)}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -380,7 +381,7 @@ const PersonalLoan = (props) => {
                                                                         placeholder="Lender Current"
                                                                         id={`LoanTerm${i}`}
                                                                         name={`LoanTerm${i}`}
-                                                                        className="form-select inputDesign"
+                                                                        className="form-select inputDesignDoubleInput"
                                                                     >
                                                                         <option value={""}>Please Select</option>
                                                                         <option value={"abc"}>abc</option>
@@ -393,7 +394,7 @@ const PersonalLoan = (props) => {
                                                                         placeholder="Lender Current"
                                                                         id={`LoanTermRemaining${i}`}
                                                                         name={`LoanTermRemaining${i}`}
-                                                                        className="form-select inputDesign"
+                                                                        className="form-select inputDesignDoubleInput"
                                                                     >
                                                                         <option value={""}>Please Select</option>
                                                                         <option value={"abc"}>abc</option>

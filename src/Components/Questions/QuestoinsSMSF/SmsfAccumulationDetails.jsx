@@ -39,10 +39,11 @@ const SmsfAccumulationDetails = (props) => {
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
 
-  let SMSFAccumulationDetails = questionDetail.SMSFAccumulationDetails || {
+  let SMSFAccumulationDetails = Object.keys(questionDetail.SMSFAccumulationDetails).length > 0 ? questionDetail.SMSFAccumulationDetails : {
     client: [],
     partner: [],
     joint: [],
+
   }; // Use an empty object as default if SMSFAccumulationDetails is undefined
 
   let initialValues = SMSFAccumulationDetails[props.modalObject.Input].length
@@ -244,7 +245,7 @@ const SmsfAccumulationDetails = (props) => {
                       type="number"
                       id="NumberOfMap"
                       name="NumberOfMap"
-                      className="form-control inputDesign"
+                      className="form-control inputDesignDoubleInput"
                       onChange={(e) => handleInput(e, setFieldValue)}
                     />
                   </div>
@@ -277,7 +278,7 @@ const SmsfAccumulationDetails = (props) => {
                                       placeholder="Accumulation Benefits"
                                       id={`accumulationBenefits${i}`}
                                       name={`accumulationBenefits${i}`}
-                                      className="form-control inputDesign"
+                                      className="form-control inputDesignDoubleInput"
                                     />
                                     <Button
                                       className="btn bgColor modalBtn border-0"

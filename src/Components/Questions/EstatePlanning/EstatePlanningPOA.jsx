@@ -34,38 +34,38 @@ const CreatableSelectField = ({ field, form }) => {
     };
     const customStyles = {
         control: (provided, state) => ({
-          ...provided,
-          border: state.isFocused ? '2px solid #36b446' : '1px solid #36b446',
-          boxShadow: state.isFocused ? '0 0 0 0px #4CAF50' : 'none',
-          '&:hover': {
-            border: state.isFocused ? '2px solid #36b446' : '1px solid #36b446'
-          },
-          minHeight: '38px', // Set the minimum height
-          height: '38px' // Allow height to adjust based on content
+            ...provided,
+            border: state.isFocused ? '2px solid #36b446' : '1px solid #36b446',
+            boxShadow: state.isFocused ? '0 0 0 0px #4CAF50' : 'none',
+            '&:hover': {
+                border: state.isFocused ? '2px solid #36b446' : '1px solid #36b446'
+            },
+            minHeight: '38px', // Set the minimum height
+            height: '38px' // Allow height to adjust based on content
         }),
         valueContainer: (provided) => ({
-          ...provided,
-          height: field.value && field.value.length > 0 ? 'auto' : '40px', // Adjust height based on selection
-          padding: '0 8px' // Adjust padding as needed
+            ...provided,
+            height: field.value && field.value.length > 0 ? 'auto' : '40px', // Adjust height based on selection
+            padding: '0 8px' // Adjust padding as needed
         }),
         input: (provided) => ({
-          ...provided,
-          margin: '0', // Ensure input has no margin
-          padding: '0' // Ensure input has no padding
+            ...provided,
+            margin: '0', // Ensure input has no margin
+            padding: '0' // Ensure input has no padding
         }),
         indicatorsContainer: (provided) => ({
-          ...provided,
-          height: '38px' // Ensure indicators container matches the control height
+            ...provided,
+            height: '38px' // Ensure indicators container matches the control height
         }),
         menu: (provided) => ({
-          ...provided,
-          zIndex: 9999, // Ensure the menu is on top of other elements
+            ...provided,
+            zIndex: 9999, // Ensure the menu is on top of other elements
         }),
         menuPortal: (provided) => ({
-          ...provided,
-          zIndex: 9999 // Ensure the menu portal is on top of other elements
+            ...provided,
+            zIndex: 9999 // Ensure the menu portal is on top of other elements
         })
-      };
+    };
     return (
         <CreatableSelect
             isClearable
@@ -118,12 +118,12 @@ const EstatePlanningPOA = (props) => {
         }
     })
 
-    let POA = questionDetail.POA || {
+    let POA = Object.keys(questionDetail.POA).length > 0 ? questionDetail.POA : {
         client: [],
         partner: [],
         joint: [],
 
-    }; // Use an empty object as default if POA is undefined
+    };  // Use an empty object as default if POA is undefined
 
 
     let initialValues = POA[props.modalObject.Input].length ? { NumberOfMap: POA[props.modalObject.Input].length } : { NumberOfMap: "" };
@@ -270,7 +270,7 @@ const EstatePlanningPOA = (props) => {
                                             type="number"
                                             id="NumberOfMap"
                                             name="NumberOfMap"
-                                            className="form-control inputDesign"
+                                            className="form-control inputDesignDoubleInput"
                                             onChange={(e) => handleInput(e, setFieldValue)}
                                         />
                                     </div>
@@ -296,7 +296,7 @@ const EstatePlanningPOA = (props) => {
                                                                     placeholder="Fund Name"
                                                                     id={`POAType${i}`}
                                                                     name={`POAType${i}`}
-                                                                    className="form-select inputDesign"
+                                                                    className="form-select inputDesignDoubleInput"
                                                                 >
                                                                     <option value={""}>Please Select</option>
                                                                     <option value={"Enduring"}>Enduring</option>
@@ -312,7 +312,7 @@ const EstatePlanningPOA = (props) => {
                                                                     placeholder="Year Set up"
                                                                     id={`yearSetUp${i}`}
                                                                     name={`yearSetUp${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -321,7 +321,7 @@ const EstatePlanningPOA = (props) => {
                                                                     placeholder="Name of POA"
                                                                     id={`POAName${i}`}
                                                                     name={`POAName${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>

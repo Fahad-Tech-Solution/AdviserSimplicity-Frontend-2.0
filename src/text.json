@@ -1,103 +1,33 @@
-// Set up a budget *
-// Pay off Credit Card/Debt * 
-// Protect my Lifestyle & Family *  
-// Take a holiday *
-// Buy a Car *
-// Accumulate Emergency Fund *
-// Regular Savings Plan *
-// Buy a House *
-// Buy a boat *
-Buy a Carvan 
-// Upgrade Family Home *
-// Renovate Family Home  *
-// Downsize Family Home *
-// Buy an Investment Property *
-// Pay off Home Loan *
-// Start a Business *
-// Save for Children’s Education *
-// Plan for Retirement //*?
-// Start a Family *
-// Care for Ageing Family Member *
-// Receive an Inheritance *
-leave an inheritance
-// Eligibility to Centrelink *
-// Set up a Family Trust *
-// Set up an SMSF *
-// Save for a Wedding *
-// Estate Planning *
-// Set up an Investment Portfolio *
-// Review investment Portfolio *
-// Pay Less Tax * 
-// Ongoing Financial Advice *
-Review my Super
-Combine my Super into One
-Contribute money into super
-// Generate a Retirement Income Stream *
-Set up a Super income stream
-Review your Current Personal Insurance Cover
-Analysis of your Personal Insurance needs key: analysisOfPersonalInsuranceGoal
-Retain current Personal Insurances as is key: retainCurrentPersonalInsurancesGoal
-Reduce my Current Personal Insurance Cover key:  reducePersonalInsuranceCoverGoal
-Advice on Surplus income key: adviceOnSurplusIncomeGoal
+{
+  "joinedProfile": "Yes",
+  "question1": { "client": 2, "partner": 2 },
+  "question2": { "client": 1, "partner": 1 },
+  "question3": 1,
+  "question4": 1,
+  "question5": 1,
+  "question6": 1,
+  "question7": 1,
+  "question8": 1,
+  "riskDescription": "text",
+  "riskGoal": "text"
+}
 
 
-//Super Annotation Goal
-//All Super Annotation 
-//Contribute Super annotation
+"No risk and I don’t want my capital to go down at all even if I get a 0% return on my money.",
+"I prefer low risk and am comfortable allocating a small portion (up to 40%) of my money to the share market aiming for better returns than the cash rate.",
+"I am comfortable with a medium level of risk and have my money allocated with similar amounts between the share market and cash and fixed interest/term deposits.",
+"I would prefer to have my money invested in a well diversified portfolio which includes more than 600% to Australian and international shares and property with the balance to cash and fixed interest/term deposits.",
+"I would prefer to have a minimum of  80% of my money invested in   Australian and international shares, possibly up to 100% if needed, aiming for higher returns even if there are significant ups and downs and wild swings like recent market events such as  COVID (2020), or the Global Financial Crises (2008)  because I won't need the money for a long time (10 years minimum).",
 
 
 
 
-budgetGoal
-creditCardGoal
-familyLifeStyleGoal
-holidayGoal
-carGoal
-emergencyFundGoal
-regularSavingsGoal
-houseGoal
-boatGoal
-caravanGoal
-upgradeFamilyHomeGoal
-renovateFamilyHomeGoal
-downSizeFamilyHomeGoal
-investmentPropertyGoal
-homeLoanGoal
-businessGoal
-childrenEducationGoal
-planForRetirementGoal
-startFamilyGoal
-careGoal
-inheritanceGoal
-leaveInheritanceGoal
-centreLinkEligibilityGoal
-familyTrustGoal
-SMSFGoal
-weddingGoal
-estatePlanningGoal
-investmentPortfolioGoal
-reviewInvestmentPortfolioGoal
-payLessTaxGoal
-financialAdviceGoal
-reviewSuperGoal
-combinedSuperIntoOneGoal
-contributeMoneyIntoSuper
-retirementIncomeStreamGoal
-// setSuperIncomeStream
-// reviewPersonalInsuranceCover
-analysisOfPersonalInsuranceGoal
-retainCurrentPersonalInsurancesGoal
-reducePersonalInsuranceCoverGoal
-adviceOnSurplusIncomeGoal
 
-
-
-
-Debt Management
-Personal Insurance
-Budgeting & Cashflow
-Retirement Planning
-Superannuation
-Estate Planning
-Investments
-Other
+// Risk-safebox.svg
+// Risk-coin.png
+// Risk-loss-graph-finance-svgrepo-com.svg
+// Risk-grocery.png
+// Risk-contract-svgrepo-com.svg
+// Risk-innovation.png
+// Risk-bar-chart-finance-business.svg
+// Risk-chart-pie-chart.svg

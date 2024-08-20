@@ -24,10 +24,11 @@ const OverseasPension = (props) => {
   })
 
 
-  let incomeFromOverseasPension = questionDetail.incomeFromOverseasPension || {
+  let incomeFromOverseasPension = Object.keys(questionDetail.incomeFromOverseasPension).length > 0 ? questionDetail.incomeFromOverseasPension : {
     client: [],
     partner: [],
     joint: [],
+
   }; // Use an empty object as default if incomeFromOverseasPension is undefined
 
   let initialValues = incomeFromOverseasPension[props.modalObject.Input].length
@@ -181,7 +182,7 @@ const OverseasPension = (props) => {
                       type="number"
                       id="NumberOfMap"
                       name="NumberOfMap"
-                      className="form-control inputDesign"
+                      className="form-control inputDesignDoubleInput"
                       onChange={(e) => handleInput(e, setFieldValue)}
                     />
                   </div>
@@ -212,7 +213,7 @@ const OverseasPension = (props) => {
                                     placeholder="Country"
                                     id={`country${i}`}
                                     name={`country${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -221,7 +222,7 @@ const OverseasPension = (props) => {
                                     placeholder="Income p.a"
                                     id={`incomePA${i}`}
                                     name={`incomePA${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                   {/* </Field> */}
                                 </td>

@@ -22,10 +22,11 @@ const Inheritance = (props) => {
     }
   })
 
-  let incomeFromInheritance = questionDetail.incomeFromInheritance || {
+  let incomeFromInheritance = Object.keys(questionDetail.incomeFromInheritance).length > 0 ? questionDetail.incomeFromInheritance : {
     client: [],
     partner: [],
     joint: [],
+
   }; // Use an empty object as default if incomeFromInheritance is undefined
 
   let initialValues = incomeFromInheritance[props.modalObject.Input].length
@@ -191,7 +192,7 @@ const Inheritance = (props) => {
                       type="number"
                       id="NumberOfMap"
                       name="NumberOfMap"
-                      className="form-control inputDesign"
+                      className="form-control inputDesignDoubleInput"
                       onChange={(e) => handleInput(e, setFieldValue)}
                     />
                   </div>
@@ -223,7 +224,7 @@ const Inheritance = (props) => {
                                     placeholder="Description"
                                     id={`description${i}`}
                                     name={`description${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -232,7 +233,7 @@ const Inheritance = (props) => {
                                     placeholder="Amount"
                                     id={`amount${i}`}
                                     name={`amount${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -241,7 +242,7 @@ const Inheritance = (props) => {
                                     placeholder="Income p.a"
                                     id={`year${i}`}
                                     name={`year${i}`}
-                                    className="form-select inputDesign"
+                                    className="form-select inputDesignDoubleInput"
                                   >
                                     <option value={""}>Please Select</option>
                                     {options.map((elem, index) => {

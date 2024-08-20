@@ -10,7 +10,7 @@ const InvestmentPropertyDetails = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
-    
+
     let [nameSet] = useState(() => {
         if (props.modalObject.Input === "client") {
             return (localStorage.getItem("UserName"))
@@ -23,7 +23,7 @@ const InvestmentPropertyDetails = (props) => {
         }
     })
 
-    let investmentPropertyDetails = questionDetail.investmentPropertyDetails || {
+    let investmentPropertyDetails = Object.keys(questionDetail.investmentPropertyDetails).length > 0 ? questionDetail.investmentPropertyDetails : {
         client: [],
         partner: [],
         joint: [],
@@ -259,7 +259,7 @@ const InvestmentPropertyDetails = (props) => {
                                             type="number"
                                             id="NumberOfMap"
                                             name="NumberOfMap"
-                                            className="form-control inputDesign"
+                                            className="form-control inputDesignDoubleInput"
                                             onChange={(e) => handleInput(e, setFieldValue)}
                                         />
                                     </div>
@@ -290,7 +290,7 @@ const InvestmentPropertyDetails = (props) => {
                                                                         placeholder="Property Address & Postcode"
                                                                         id={`PropertyAddress${i}`}
                                                                         name={`PropertyAddress${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -299,7 +299,7 @@ const InvestmentPropertyDetails = (props) => {
                                                                         placeholder="Current Value – link to URL below "
                                                                         id={`CurrentValue${i}`}
                                                                         name={`CurrentValue${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -308,7 +308,7 @@ const InvestmentPropertyDetails = (props) => {
                                                                         placeholder="Cost base /(Purchase Price)"
                                                                         id={`CostBase${i}`}
                                                                         name={`CostBase${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -324,7 +324,7 @@ const InvestmentPropertyDetails = (props) => {
                                                                             setFieldValue(`ClientOwnership${i}`, (clientValue > 100 ? 100 : clientValue));
                                                                             setFieldValue(`PartnerOwnership${i}`, partnerValue.toFixed(2));
                                                                         }}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -340,7 +340,7 @@ const InvestmentPropertyDetails = (props) => {
                                                                             setFieldValue(`PartnerOwnership${i}`, (partnerValue > 100 ? 100 : partnerValue));
                                                                             setFieldValue(`ClientOwnership${i}`, clientValue.toFixed(2));
                                                                         }}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                             </tr>)

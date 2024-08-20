@@ -43,7 +43,8 @@ const QuestionsNew = (props) => {
     let cLocation = path.replace("/", "");
     console.log(cLocation);
     setQuestionChange(cLocation)
-    fetchData();
+    // fetchData();
+    fetchDataAllInOne();
     FetchQuestions();
 
   }
@@ -55,6 +56,18 @@ const QuestionsNew = (props) => {
       const res = await GetAxios(`${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`);
       if (res) {
         setCRObject(res);
+      }
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+    }
+  };
+
+  const fetchDataAllInOne = async () => {
+    try {
+      const res = await GetAxios(`${DefaultUrl}/api/dataOfAllSection/${localStorage.getItem("UserID")}`);
+      console.log(JSON.stringify(res), ":res of get all inner Question Data")
+      if (res) {
+        setQuestionDetail(res);
       }
     } catch (error) {
       console.error("Error fetching questions:", error);
@@ -240,7 +253,7 @@ const QuestionsNew = (props) => {
     PersonalAssets: {
       Title: "Personal Assets & Liabilities",
       apiArray: [
-        { url: `${DefaultUrl}/api/car/${localStorage.getItem("UserID")}`, key: 'cars' },
+        { url: `${DefaultUrl}/api/car/${localStorage.getItem("UserID")}`, key: 'car' },
         { url: `${DefaultUrl}/api/boat/${localStorage.getItem("UserID")}`, key: 'boat' },
         { url: `${DefaultUrl}/api/caravan/${localStorage.getItem("UserID")}`, key: 'caravan' },
         { url: `${DefaultUrl}/api/personalAssets/${localStorage.getItem("UserID")}`, key: 'personalAssets' },
@@ -348,15 +361,15 @@ const QuestionsNew = (props) => {
   }
 
   return (
-    <div className="container-fluid my-4 ">
+    <div className="container-fluid mb-4 ">
       <Element name="Empty"></Element>
       <div className="row m-0">
         <div className="col-md-12">
-          <div className="py-4 bg-white  borderOverAll  rounded text-center">
+          <div className="pb-4 bg-white  borderOverAll  rounded text-center">
 
             {flagState2 ?
               <div>
-                <h4 className="heading text-green" onClick={() => { console.log("object:", CRObject) }}> {obj[QuestionChange].Title} (Client, Partner, Joint)</h4>
+                <h4 className="heading text-green d-none" onClick={() => { console.log("object:", CRObject) }}> {obj[QuestionChange].Title} </h4>
                 <div className="QuestionIcon p-3 curser-pointer" onClick={() => setFlagState(true)}>
                   <img className="img-fluid min-w-25" src={Add} alt="" />
                 </div>
@@ -376,17 +389,17 @@ const QuestionsNew = (props) => {
 
             <div className="row mt-2">
               <div className="col-md-12">
-                <button
-                  onClick={HandleSubmit}
-                  className="float-end btn w-25  bgColor modalBtn"
-                >
-                  Next
-                </button>
 
                 <button
                   onClick={BackHandle}
-                  className="float-end btn w-25  btn-outline  backBtn mx-3">
+                  className="float-center btn w-25  btn-outline  backBtn mx-3">
                   Back
+                </button>
+                <button
+                  onClick={HandleSubmit}
+                  className="float-center btn w-25  bgColor modalBtn"
+                >
+                  Next
                 </button>
 
               </div>

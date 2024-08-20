@@ -24,7 +24,7 @@ const QuestionIncomeExpanse = (props) => {
     }
   })
 
-  let incomeExpenses = questionDetail.incomeExpenses || {
+  let incomeExpenses = Object.keys(questionDetail.incomeExpenses).length > 0 ? questionDetail.incomeExpenses : {
     client: [],
     partner: [],
     joint: [],
@@ -194,7 +194,7 @@ const QuestionIncomeExpanse = (props) => {
                       type="number"
                       id="NumberOfMap"
                       name="NumberOfMap"
-                      className="form-control inputDesign"
+                      className="form-control inputDesignDoubleInput"
                       onChange={(e) => handleInput(e, setFieldValue)}
                     />
                   </div>
@@ -223,7 +223,7 @@ const QuestionIncomeExpanse = (props) => {
                                     placeholder="Council Rates"
                                     id={`councilRates${i}`}
                                     name={`councilRates${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -232,7 +232,7 @@ const QuestionIncomeExpanse = (props) => {
                                     placeholder="Water Rates"
                                     id={`waterRates${i}`}
                                     name={`waterRates${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -241,7 +241,7 @@ const QuestionIncomeExpanse = (props) => {
                                     placeholder="Land tax"
                                     id={`landTax${i}`}
                                     name={`landTax${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -250,7 +250,7 @@ const QuestionIncomeExpanse = (props) => {
                                     placeholder="Insurance/Body Corporate"
                                     id={`insuranceCorporate${i}`}
                                     name={`insuranceCorporate${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -259,7 +259,7 @@ const QuestionIncomeExpanse = (props) => {
                                     placeholder="Repairs and Maintenance"
                                     id={`repairsMaintenance${i}`}
                                     name={`repairsMaintenance${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -268,7 +268,7 @@ const QuestionIncomeExpanse = (props) => {
                                     placeholder="All Other"
                                     id={`allOther${i}`}
                                     name={`allOther${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                               </tr>)

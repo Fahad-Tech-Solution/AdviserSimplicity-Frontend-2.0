@@ -51,12 +51,12 @@ const CreatableSelectField = ({ field, form }) => {
       '&:hover': {
         border: state.isFocused ? '2px solid #36b446' : '1px solid #36b446'
       },
-      minHeight: '38px', // Set the minimum height
-      height: '38px' // Allow height to adjust based on content
+      minHeight: '42px', // Set the minimum height
+      height: '42px' // Allow height to adjust based on content
     }),
     valueContainer: (provided) => ({
       ...provided,
-      height: field.value && field.value.length > 0 ? 'auto' : '40px', // Adjust height based on selection
+      height: field.value && field.value.length > 0 ? 'auto' : '44px', // Adjust height based on selection
       padding: '0 8px' // Adjust padding as needed
     }),
     input: (provided) => ({
@@ -66,7 +66,7 @@ const CreatableSelectField = ({ field, form }) => {
     }),
     indicatorsContainer: (provided) => ({
       ...provided,
-      height: '38px' // Ensure indicators container matches the control height
+      height: '42px' // Ensure indicators container matches the control height
     }),
     menu: (provided) => ({
       ...provided,
@@ -115,10 +115,11 @@ const LifeTimeBeneFits = (props) => {
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
 
-  let incomeFromSuperPayment = questionDetail.incomeFromSuperPayment || {
+  let incomeFromSuperPayment = Object.keys(questionDetail.incomeFromSuperPayment).length > 0 ? questionDetail.incomeFromSuperPayment : {
     client: [],
     partner: [],
     joint: [],
+
   }; // Use an empty object as default if incomeFromSuperPayment is undefined
 
   let initialValues = incomeFromSuperPayment[props.modalObject.Input].length
@@ -352,7 +353,7 @@ const LifeTimeBeneFits = (props) => {
                       type="number"
                       id="NumberOfMap"
                       name="NumberOfMap"
-                      className="form-control inputDesign"
+                      className="form-control inputDesignDoubleInput"
                       onChange={(e) => handleInput(e, setFieldValue)}
                     />
                   </div>
@@ -380,13 +381,13 @@ const LifeTimeBeneFits = (props) => {
                               <tr key={i}>
                                 <td>{1 + i}</td>
                                 <td>
-                                  <Field className="form-control inputDesign" name={`fundName${i}`} component={CreatableSelectField} />
+                                  <Field className="form-control inputDesignDoubleInput" name={`fundName${i}`} component={CreatableSelectField} />
                                   {/* <Field
                                     as="select"
                                     placeholder="Fund Name"
                                     id={`fundName${i}`}
                                     name={`fundName${i}`}
-                                    className="form-select inputDesign"
+                                    className="form-select inputDesignDoubleInput"
                                   >
                                     <option value={""}>Please Select</option>
                                     {options.map((elem, index) => {
@@ -405,7 +406,7 @@ const LifeTimeBeneFits = (props) => {
                                     placeholder="Income p.a"
                                     id={`incomePA${i}`}
                                     name={`incomePA${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -415,7 +416,7 @@ const LifeTimeBeneFits = (props) => {
                                     placeholder="Centrelink Deductible Amount"
                                     id={`centreLinkDeductibleAmount${i}`}
                                     name={`centreLinkDeductibleAmount${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>

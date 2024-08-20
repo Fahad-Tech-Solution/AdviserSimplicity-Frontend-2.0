@@ -37,12 +37,12 @@ const AccountBasedPension = (props) => {
     let [modalObject, setModalObject] = useState({});
 
 
-    let accountBasedPensionIssues = questionDetail.accountBasedPensionIssues || {
+    let accountBasedPensionIssues = Object.keys(questionDetail.accountBasedPensionIssues).length > 0 ? questionDetail.accountBasedPensionIssues : {
         client: [],
         partner: [],
         joint: [],
 
-    }; // Use an empty object as default if accountBasedPensionIssues is undefined
+    };  // Use an empty object as default if accountBasedPensionIssues is undefined
 
 
     let initialValues = accountBasedPensionIssues[props.modalObject.Input].length ? { NumberOfMap: accountBasedPensionIssues[props.modalObject.Input].length } : { NumberOfMap: "" };
@@ -310,7 +310,7 @@ const AccountBasedPension = (props) => {
                                             type="number"
                                             id="NumberOfMap"
                                             name="NumberOfMap"
-                                            className="form-control inputDesign"
+                                            className="form-control inputDesignDoubleInput"
                                             onChange={(e) => handleInput(e, setFieldValue)}
                                         />
                                     </div>
@@ -341,7 +341,7 @@ const AccountBasedPension = (props) => {
                                                                     placeholder="Fund Name"
                                                                     id={`fundName${i}`}
                                                                     name={`fundName${i}`}
-                                                                    className="form-select inputDesign"
+                                                                    className="form-select inputDesignDoubleInput"
                                                                 >
                                                                     <option value={""}>Please Select</option>
                                                                     {options.map((elem, index) => {
@@ -356,7 +356,7 @@ const AccountBasedPension = (props) => {
                                                                         placeholder="Member Number & Details"
                                                                         id={`memberNumber${i}`}
                                                                         name={`memberNumber${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                     <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
                                                                         handleInnerModal("Member Number & Details", `How many Member Number & Details do ${nameSet} have ?`, "memberArray", "memberNumber", "totalPortfolioCost", values[`memberArray${i}`], i, values)
@@ -372,7 +372,7 @@ const AccountBasedPension = (props) => {
                                                                         placeholder="Balance & Benefit Details"
                                                                         id={`balanceBenefitDetails${i}`}
                                                                         name={`balanceBenefitDetails${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                     <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
                                                                         handleInnerModal("Balance & Benefit Details", `How many Benefit Details and Components do ${nameSet} have ?`, "balanceBenefitDetailsArray", "balanceBenefitDetails", "", values[`balanceBenefitDetailsArray${i}`], i, values)
@@ -388,7 +388,7 @@ const AccountBasedPension = (props) => {
                                                                         placeholder="Portfolio Value"
                                                                         id={`portfolioValue${i}`}
                                                                         name={`portfolioValue${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                     <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Portfolio Value", `How many Underlying Investments do ${nameSet} have ?`, "portfolioArray", "portfolioValue", "totalPortfolioCost", values[`portfolioArray${i}`], i) }}>
                                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
@@ -401,7 +401,7 @@ const AccountBasedPension = (props) => {
                                                                     placeholder="Pension Payment"
                                                                     id={`pensionPayment${i}`}
                                                                     name={`pensionPayment${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -410,7 +410,7 @@ const AccountBasedPension = (props) => {
                                                                     placeholder="Pension Type"
                                                                     id={`pensionType${i}`}
                                                                     name={`pensionType${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -429,7 +429,7 @@ const AccountBasedPension = (props) => {
                                                                     placeholder="Annual Advice Service Fee"
                                                                     id={`annualAdvice${i}`}
                                                                     name={`annualAdvice${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -438,7 +438,7 @@ const AccountBasedPension = (props) => {
                                                                     placeholder="Login in Page"
                                                                     id={`loginInPage${i}`}
                                                                     name={`loginInPage${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                     disabled
                                                                     value={100}
                                                                 />

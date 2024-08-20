@@ -36,12 +36,11 @@ const InvestedAnnuities = (props) => {
     let [modalObject, setModalObject] = useState({});
 
 
-    let annuitiesIssues = questionDetail.annuitiesIssues || {
+    let annuitiesIssues = Object.keys(questionDetail.annuitiesIssues).length > 0 ? questionDetail.annuitiesIssues : {
         client: [],
         partner: [],
         joint: [],
-
-    }; // Use an empty object as default if annuitiesIssues is undefined
+    };  // Use an empty object as default if annuitiesIssues is undefined
 
 
     let initialValues = annuitiesIssues[props.modalObject.Input].length ? { NumberOfMap: annuitiesIssues[props.modalObject.Input].length } : { NumberOfMap: "" };
@@ -87,6 +86,7 @@ const InvestedAnnuities = (props) => {
 
     let handleInput = (e, setFieldValue) => {
         const value = e.target.value > 10 ? 10 : e.target.value;
+        
         setFieldValue(e.target.id, value);
 
         let arr = []
@@ -303,7 +303,7 @@ const InvestedAnnuities = (props) => {
                                             type="number"
                                             id="NumberOfMap"
                                             name="NumberOfMap"
-                                            className="form-control inputDesign"
+                                            className="form-control inputDesignDoubleInput"
                                             onChange={(e) => handleInput(e, setFieldValue)}
                                         />
                                     </div>
@@ -334,7 +334,7 @@ const InvestedAnnuities = (props) => {
                                                                     placeholder="Product Provider"
                                                                     id={`productProvider${i}`}
                                                                     name={`productProvider${i}`}
-                                                                    className="form-select inputDesign"
+                                                                    className="form-select inputDesignDoubleInput"
                                                                 >
                                                                     <option value={""}>Please Select</option>
                                                                     {options.map((elem, index) => {
@@ -348,7 +348,7 @@ const InvestedAnnuities = (props) => {
                                                                     placeholder="Account Number"
                                                                     id={`accountNumber${i}`}
                                                                     name={`accountNumber${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -357,7 +357,7 @@ const InvestedAnnuities = (props) => {
                                                                     placeholder="Return of Capital Value"
                                                                     id={`returnCapitalValue${i}`}
                                                                     name={`returnCapitalValue${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -366,7 +366,7 @@ const InvestedAnnuities = (props) => {
                                                                     placeholder="Annuity  Payment"
                                                                     id={`annuityPayment${i}`}
                                                                     name={`annuityPayment${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -375,7 +375,7 @@ const InvestedAnnuities = (props) => {
                                                                     placeholder="Annuity Type"
                                                                     id={`annuityType${i}`}
                                                                     name={`annuityType${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -384,7 +384,7 @@ const InvestedAnnuities = (props) => {
                                                                     placeholder="Term"
                                                                     id={`term${i}`}
                                                                     name={`term${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -403,7 +403,7 @@ const InvestedAnnuities = (props) => {
                                                                     placeholder="Annual Advice Service Fee"
                                                                     id={`annualAdvice${i}`}
                                                                     name={`annualAdvice${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -412,7 +412,7 @@ const InvestedAnnuities = (props) => {
                                                                     placeholder="Login in Page"
                                                                     id={`loginInPage${i}`}
                                                                     name={`loginInPage${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                     disabled
                                                                     value={100}
                                                                 />

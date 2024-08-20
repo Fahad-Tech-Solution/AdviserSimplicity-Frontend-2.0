@@ -47,10 +47,10 @@ const FamilyInvestmentProperty = (props) => {
                 return (
                     <div className={`col-md-${arrayCount % 2 == 0 ? '6' : '4'} mb-4`} key={index}>
                         <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
+                            <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key][i]) }}>{elem.title} {i + 1}</h5>
                             <div className="QuestionIcon w-25">
                                 <img className="img-fluid" src={elem.img} alt="" />
                             </div>
-                            <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key][i]) }}>{elem.title} {i + 1}</h5>
                             <div
                                 className="row justify-content-center align-items-center my-2"
                             >
@@ -73,7 +73,7 @@ const FamilyInvestmentProperty = (props) => {
                                     </div>
                                 </div>
                             </div>
-                            <input type="number"
+                            <input type="text"
                                 className="form-control inputDesign "
                                 id={"client" + elem.key}
                                 placeholder={elem.title}
@@ -83,7 +83,7 @@ const FamilyInvestmentProperty = (props) => {
                                     Array.isArray(questionDetail[elem.key]) &&
                                     questionDetail[elem.key][i] &&
                                     questionDetail[elem.key][i].clientTotal
-                                    ? questionDetail[elem.key][i].clientTotal
+                                    ? "$" + questionDetail[elem.key][i].clientTotal
                                     : ""}
                             />
                             <div
@@ -107,7 +107,7 @@ const FamilyInvestmentProperty = (props) => {
                                     </div>
                                 </div>
                             </div>
-                            <input type="number"
+                            <input type="text"
                                 className={`form-control inputDesign ${PartnerClass}`}
                                 id={"partner" + elem.key}
                                 placeholder={elem.title}
@@ -117,7 +117,7 @@ const FamilyInvestmentProperty = (props) => {
                                     Array.isArray(questionDetail[elem.key]) &&
                                     questionDetail[elem.key][i] &&
                                     questionDetail[elem.key][i].partnerTotal
-                                    ? questionDetail[elem.key][i].partnerTotal
+                                    ? "$" + questionDetail[elem.key][i].partnerTotal
                                     : ""}
                             />
 
@@ -143,7 +143,7 @@ const FamilyInvestmentProperty = (props) => {
                                 </div>
                             </div>
 
-                            <input type="number"
+                            <input type="text"
                                 className={`form-control inputDesign ${jointClass} ${PartnerClass}`}
                                 id={"joint" + elem.key}
                                 placeholder={elem.title}
@@ -153,7 +153,7 @@ const FamilyInvestmentProperty = (props) => {
                                     Array.isArray(questionDetail[elem.key]) &&
                                     questionDetail[elem.key][i] &&
                                     questionDetail[elem.key][i].jointTotal
-                                    ? questionDetail[elem.key][i].jointTotal
+                                    ? "$" + questionDetail[elem.key][i].jointTotal
                                     : ""}
                             />
 

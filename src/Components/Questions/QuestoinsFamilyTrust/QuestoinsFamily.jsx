@@ -12,6 +12,8 @@ import property from "../svgs/property-value.svg";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { QuestionShift, CRState, defaultUrl } from "../../../Store/Store";
 import { GetAxios, PatchAxios, PostAxios } from "../../Assets/Api/Api";
+import { Image } from "react-bootstrap";
+import DynamicQuestionBlocks from "../../Assets/DynamicQuestionBlocks/DynamicQuestionBlocks";
 const QuestionsFamily = (props) => {
 
   let [CRObject, setCRObject] = useRecoilState(CRState);
@@ -67,6 +69,43 @@ const QuestionsFamily = (props) => {
     }
   };
 
+  let QuestionArray = [
+    {
+      title: "Does your Family Trust  have any Money invested in Term Deposits?",
+      img: TermImg,
+      key: "familyTermDeposit",
+    },
+    {
+      title: "Does your Family Trust  have any Money invested Australian Shares?",
+      img: PortFolio,
+      key: "familyAustralianShare",
+    },
+    {
+      title: "Does your Family Trust have any Money invested   in Managed Funds or via a Platform?",
+      img: funds,
+      key: "familyMangedFunds",
+    },
+    {
+      title: "Does your Family Trust have any  Investment Loan (LOC)  attached to any of its investments?",
+      img: analytics,
+      key: "familyInvestmentHomeLoan",
+    },
+    {
+      title: "Does your Family Trust have any investment Properties?",
+      img: property,
+      key: "familyInvestmentProperties",
+    },
+  ]
+  const QuestionClick = (index, elem, values, setFieldValue) => {
+    console.log("image clicked in goals", index, elem.key, values);
+    if (values[elem.key] == "No") {
+      setFieldValue(elem.key, "Yes");
+    }
+    if (values[elem.key] == "Yes") {
+      setFieldValue(elem.key, "No");
+    }
+  };
+
   return (
     <div className="container-fluid my-4">
       <div className="row m-0">
@@ -76,12 +115,14 @@ const QuestionsFamily = (props) => {
           enableReinitialize
           innerRef={props.formRef}
         >
-          {({ values, handleChange }) => (
+          {({ values, handleChange, setFieldValue }) => (
             <Form>
               <div className="col-md-12 text-center">
                 <h4 className="heading d-none">Family Trust Investment</h4>
-                <div className="row my-3">
-                  <div className="col-md-12 ">
+                <div className="row my-3 justify-content-center">
+                  <DynamicQuestionBlocks QuestionArray={QuestionArray} QuestionClick={QuestionClick} values={values} setFieldValue={setFieldValue} />
+
+                  <div className="col-md-12  d-none">
                     <div className="mb-3">
                       <label className="form-label">
                         Does your Family Trust  have any Money invested in Term Deposits?{" "}
@@ -133,7 +174,7 @@ const QuestionsFamily = (props) => {
                   </div>
                 </div>
 
-                <div className="row my-3">
+                <div className="row my-3 d-none ">
                   <div className="col-md-12 ">
                     <div className="mb-3">
                       <label className="form-label">
@@ -186,7 +227,7 @@ const QuestionsFamily = (props) => {
                   </div>
                 </div>
 
-                <div className="row my-3">
+                <div className="row my-3 d-none">
                   <div className="col-md-12 ">
                     <div className="mb-3">
                       <label className="form-label">
@@ -239,7 +280,7 @@ const QuestionsFamily = (props) => {
                   </div>
                 </div>
 
-                <div className="row my-3">
+                <div className="row my-3 d-none">
                   <div className="col-md-12 ">
                     <div className="mb-3">
                       <label className="form-label">
@@ -292,7 +333,7 @@ const QuestionsFamily = (props) => {
                   </div>
                 </div>
 
-                <div className="row my-3">
+                <div className="row my-3 d-none">
                   <div className="col-md-12 ">
                     <div className="mb-3">
                       <label className="form-label">

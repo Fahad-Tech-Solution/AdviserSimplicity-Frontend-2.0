@@ -12,6 +12,8 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { CRState, defaultUrl } from "../../../Store/Store";
 import { Form, Formik } from "formik";
 import { GetAxios, PatchAxios, PostAxios } from "../../Assets/Api/Api";
+import { Image } from "react-bootstrap";
+import DynamicQuestionBlocks from "../../Assets/DynamicQuestionBlocks/DynamicQuestionBlocks";
 
 
 
@@ -36,7 +38,12 @@ const AdditionalQueriesPersonalAssets = (props) => {
     };
 
     useEffect(() => {
-        FetchQuestions();
+        if (CRObject._id) {
+            setFlagState(true);
+        }
+        else {
+            FetchQuestions();
+        }
     }, []);
 
     const handleResponse = (values) => {
@@ -71,7 +78,47 @@ const AdditionalQueriesPersonalAssets = (props) => {
         }
     };
 
-
+    let QuestionArray = [
+        {
+            title: "Do you have Cars?",
+            key: "car",
+            img: car,
+        },
+        {
+            title: "Do you have a Boat?",
+            key: "boat",
+            img: boat,
+        },
+        {
+            title: "Do you have a Caravan?",
+            key: "caravan",
+            img: trailer,
+        },
+        {
+            title: "Do you have any other Personal Assets?",
+            key: "personalAssets",
+            img: settingMoney,
+        },
+        {
+            title: "Do you have any Personal Loans?",
+            key: "personalLoans",
+            img: moneyGiving,
+        },
+        {
+            title: "Do you have any Credit Cards?",
+            key: "creditCards",
+            img: credit,
+        },
+    ]
+    const QuestionClick = (index, elem, values, setFieldValue) => {
+        console.log("image clicked in goals", index, elem.key, values);
+        if (values[elem.key] == "No") {
+            setFieldValue(elem.key, "Yes");
+        }
+        if (values[elem.key] == "Yes") {
+            setFieldValue(elem.key, "No");
+        }
+    };
 
     return (
         <div className="container-fluid">
@@ -82,13 +129,15 @@ const AdditionalQueriesPersonalAssets = (props) => {
                     enableReinitialize
                     innerRef={props.formRef}
                 >
-                    {({ values, handleChange }) => <Form>
+                    {({ values, handleChange, setFieldValue }) => <Form>
 
                         <div className="col-md-12 text-center">
                             <h4 className="heading d-none">Income</h4>
 
-                            <div className="row my-3">
-                                <div className="col-md-12">
+                            <div className="row my-3 justify-content-center">
+                                <DynamicQuestionBlocks QuestionArray={QuestionArray} QuestionClick={QuestionClick} values={values} setFieldValue={setFieldValue} />
+
+                                <div className="col-md-12 d-none">
                                     <div className="mb-3 ">
                                         <label htmlFor="" className="form-label">
                                             Do you have Cars?
@@ -101,28 +150,28 @@ const AdditionalQueriesPersonalAssets = (props) => {
                                             <div className="radiobutton">
                                                 <input
                                                     type="radio"
-                                                    name="cars"
-                                                    id="cars1"
+                                                    name="car"
+                                                    id="car1"
                                                     value="No"
                                                     onChange={handleChange}
-                                                    checked={values.cars === "No"}
+                                                    checked={values.car === "No"}
                                                 />
                                                 <label
-                                                    htmlFor="cars1"
+                                                    htmlFor="car1"
                                                     className="label1"
                                                 >
                                                     <span>No</span>
                                                 </label>
                                                 <input
                                                     type="radio"
-                                                    name="cars"
-                                                    id="cars2"
+                                                    name="car"
+                                                    id="car2"
                                                     value="Yes"
                                                     onChange={handleChange}
-                                                    checked={values.cars === "Yes"}
+                                                    checked={values.car === "Yes"}
                                                 />
                                                 <label
-                                                    htmlFor="cars2"
+                                                    htmlFor="car2"
                                                     className="label2"
                                                 >
                                                     <span>Yes</span>
@@ -135,7 +184,7 @@ const AdditionalQueriesPersonalAssets = (props) => {
                                 </div>
                             </div>
 
-                            <div className="row my-3">
+                            <div className="row my-3 d-none">
                                 <div className="col-md-12">
                                     <div className="mb-3">
                                         <label htmlFor="" className="form-label">
@@ -182,7 +231,7 @@ const AdditionalQueriesPersonalAssets = (props) => {
                                 </div>
                             </div>
 
-                            <div className="row my-3">
+                            <div className="row my-3 d-none">
                                 <div className="col-md-12">
                                     <div className="mb-3">
                                         <label htmlFor="" className="form-label">
@@ -229,7 +278,7 @@ const AdditionalQueriesPersonalAssets = (props) => {
                                 </div>
                             </div>
 
-                            <div className="row my-3">
+                            <div className="row my-3 d-none">
                                 <div className="col-md-12">
                                     <div className="mb-3">
                                         <label htmlFor="" className="form-label">
@@ -276,7 +325,7 @@ const AdditionalQueriesPersonalAssets = (props) => {
                                 </div>
                             </div>
 
-                            <div className="row my-3">
+                            <div className="row my-3 d-none">
                                 <div className="col-md-12">
                                     <div className="mb-3">
                                         <label htmlFor="" className="form-label">
@@ -323,7 +372,7 @@ const AdditionalQueriesPersonalAssets = (props) => {
                                 </div>
                             </div>
 
-                            <div className="row my-3">
+                            <div className="row my-3 d-none">
                                 <div className="col-md-12">
                                     <div className="mb-3">
                                         <label htmlFor="" className="form-label">

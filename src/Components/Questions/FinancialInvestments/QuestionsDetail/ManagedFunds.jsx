@@ -31,7 +31,7 @@ const ManagedFunds = (props) => {
     let [modalObject, setModalObject] = useState({});
 
 
-    let managedFunds = questionDetail[props.modalObject.key] || {
+    let managedFunds = Object.keys(questionDetail[props.modalObject.key]).length > 0 ? questionDetail[props.modalObject.key] : {
         client: [],
         partner: [],
         joint: [],
@@ -280,7 +280,7 @@ const ManagedFunds = (props) => {
                                                 type="number"
                                                 id="NumberOfMap"
                                                 name="NumberOfMap"
-                                                className="form-control inputDesign"
+                                                className="form-control inputDesignDoubleInput"
                                                 onChange={(e) => handleInput(e, setFieldValue)}
                                             />
                                         </div>
@@ -309,7 +309,7 @@ const ManagedFunds = (props) => {
                                                                     placeholder="Platform Name"
                                                                     id={`platformName${i}`}
                                                                     name={`platformName${i}`}
-                                                                    className="form-select inputDesign"
+                                                                    className="form-select inputDesignDoubleInput"
                                                                 >
                                                                     <option value={""}>Please Select</option>
                                                                     {options.map((elem, index) => {
@@ -323,7 +323,7 @@ const ManagedFunds = (props) => {
                                                                     placeholder="Account Number"
                                                                     id={`accountNumber${i}`}
                                                                     name={`accountNumber${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -333,7 +333,7 @@ const ManagedFunds = (props) => {
                                                                         placeholder="Share Price"
                                                                         id={`portfolioValue${i}`}
                                                                         name={`portfolioValue${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                     <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Portfolio Value", `How many Underlying Investments do ${nameSet} have ?`, "portfolioArray", "portfolioValue", "totalPortfolioCost", values[`portfolioArray${i}`], i) }}>
                                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
@@ -347,7 +347,7 @@ const ManagedFunds = (props) => {
                                                                     placeholder="Total Portfolio Cost"
                                                                     id={`totalPortfolioCost${i}`}
                                                                     name={`totalPortfolioCost${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -356,7 +356,7 @@ const ManagedFunds = (props) => {
                                                                     placeholder="Service Fee"
                                                                     id={`serviceFee${i}`}
                                                                     name={`serviceFee${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -365,7 +365,7 @@ const ManagedFunds = (props) => {
                                                                     placeholder="Login in Page"
                                                                     id={`loginInPage${i}`}
                                                                     name={`loginInPage${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                     disabled
                                                                 />
                                                             </td>

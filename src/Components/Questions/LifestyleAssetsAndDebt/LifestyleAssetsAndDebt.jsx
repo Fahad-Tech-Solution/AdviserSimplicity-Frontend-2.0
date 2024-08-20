@@ -8,6 +8,8 @@ import loan from "../svgs/loan.svg";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { QuestionShift, CRState, defaultUrl } from "../../../Store/Store";
 import { GetAxios, PatchAxios, PostAxios } from "../../Assets/Api/Api";
+import { Image } from "react-bootstrap";
+import DynamicQuestionBlocks from "../../Assets/DynamicQuestionBlocks/DynamicQuestionBlocks";
 
 const LifestyleAssetsAndDebt = (props) => {
 
@@ -65,6 +67,28 @@ const LifestyleAssetsAndDebt = (props) => {
     }
   };
 
+  let QuestionArray = [
+    {
+      title: "Do you own a Family Home?",
+      img: Questions_Home,
+      key: "familyHome",
+    },
+    {
+      title: "Do you own any investment Properties or Holiday homes in your own name?",
+      img: loan,
+      key: "familyHomeLoan",
+    },
+  ]
+  const QuestionClick = (index, elem, values, setFieldValue) => {
+    console.log("image clicked in goals", index, elem.key, values);
+    if (values[elem.key] == "No") {
+      setFieldValue(elem.key, "Yes");
+    }
+    if (values[elem.key] == "Yes") {
+      setFieldValue(elem.key, "No");
+    }
+  };
+
 
   return (
     <div className="container-fluid">
@@ -75,12 +99,15 @@ const LifestyleAssetsAndDebt = (props) => {
           enableReinitialize
           innerRef={props.formRef}
         >
-          {({ values, handleChange }) => (
+          {({ values, handleChange, setFieldValue }) => (
             <Form>
               <div className="col-md-12 text-center">
                 <h4 className="heading d-none">Lifestyle Assets and Debt</h4>
-                <div className="row my-3">
-                  <div className="col-md-12">
+                <div className="row my-3 justify-content-center">
+                  <DynamicQuestionBlocks QuestionArray={QuestionArray} QuestionClick={QuestionClick} values={values} setFieldValue={setFieldValue} />
+
+
+                  <div className="col-md-12 d-none">
                     <div className="mb-3">
                       <label className="form-label">
                         Do you own a Family Home?{" "}
@@ -126,7 +153,7 @@ const LifestyleAssetsAndDebt = (props) => {
                   </div>
                 </div>
 
-                <div className="row my-3">
+                <div className="row my-3 d-none">
                   <div className="col-md-12">
                     <div className="mb-3">
                       <label className="form-label">

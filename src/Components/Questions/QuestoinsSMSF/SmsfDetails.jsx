@@ -35,10 +35,11 @@ const SmsfDetails = (props) => {
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
 
-  let SMSFDetails = questionDetail.SMSFDetails || {
+  let SMSFDetails = Object.keys(questionDetail.SMSFDetails).length > 0 ? questionDetail.SMSFDetails : {
     client: [],
     partner: [],
     joint: [],
+
   }; // Use an empty object as default if SMSFDetails is undefined
 
   let initialValues = SMSFDetails[props.modalObject.Input].length
@@ -232,7 +233,7 @@ const SmsfDetails = (props) => {
                       type="number"
                       id="NumberOfMap"
                       name="NumberOfMap"
-                      className="form-control inputDesign"
+                      className="form-control inputDesignDoubleInput"
                       onChange={(e) => handleInput(e, setFieldValue)}
                     />
                   </div>
@@ -270,7 +271,7 @@ const SmsfDetails = (props) => {
                                     placeholder="Fund Name  "
                                     id={`fundName${i}`}
                                     name={`fundName${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
 
                                 </td>
@@ -280,7 +281,7 @@ const SmsfDetails = (props) => {
                                     placeholder="ABN"
                                     id={`aBN${i}`}
                                     name={`aBN${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -289,12 +290,12 @@ const SmsfDetails = (props) => {
                                     placeholder="Address"
                                     id={`Address${i}`}
                                     name={`Address${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
                                   <DatePicker
-                                    className="form-control inputDesign shadow"
+                                    className="form-control inputDesignDoubleInput DateInputPadding shadow"
                                     showIcon
                                     id={`pensionType${i}`}
                                     name={`pensionType${i}`}
@@ -321,7 +322,7 @@ const SmsfDetails = (props) => {
                                     placeholder="Trustee Type"
                                     id={`trusteeType${i}`}
                                     name={`trusteeType${i}`}
-                                    className="form-select inputDesign"
+                                    className="form-select inputDesignDoubleInput"
                                   >
                                     <option value={""}>Please Select</option>
                                     {options.map((elem, index) => {
@@ -339,7 +340,7 @@ const SmsfDetails = (props) => {
                                     placeholder="Trustee Name  "
                                     id={`trusteeName${i}`}
                                     name={`trusteeName${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -348,7 +349,7 @@ const SmsfDetails = (props) => {
                                     placeholder="Number of Accountants Name  "
                                     id={`noOfAccountant${i}`}
                                     name={`noOfAccountant${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -357,7 +358,7 @@ const SmsfDetails = (props) => {
                                     placeholder="Fund and Audit Fees"
                                     id={`fundAndAuditFee${i}`}
                                     name={`fundAndAuditFee${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                               </tr>

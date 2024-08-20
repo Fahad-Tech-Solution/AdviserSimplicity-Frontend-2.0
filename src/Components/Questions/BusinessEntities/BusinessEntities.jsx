@@ -12,6 +12,8 @@ import { QuestionShift, CRState, StepState, defaultUrl } from "../../../Store/St
 
 import { NavLink, useNavigate } from "react-router-dom";
 import { GetAxios, PatchAxios, PostAxios } from "../../Assets/Api/Api";
+import { Image } from "react-bootstrap";
+import DynamicQuestionBlocks from "../../Assets/DynamicQuestionBlocks/DynamicQuestionBlocks";
 
 const BusinessEntities = (props) => {
 
@@ -68,6 +70,39 @@ const BusinessEntities = (props) => {
         }
     };
 
+    let QuestionArray = [
+        {
+            title: "Are you Running a business  a Company Structure (Pty Ltd)?",
+            img: Business_building,
+            key: "BusinessAsCompanyStructure",
+        },
+        {
+            title: "Are you Running a business via a Trusts?",
+            img: Business_TeamHandshake,
+            key: "BusinessAsTrusts",
+        },
+        {
+            title: "Do you have a Self Manged Super Fund(SMSF)?",
+            img: Business_SMSF,
+            key: "BusinessAsSMSF",
+        },
+        {
+            title: "Do you have an Investment Trust?",
+            img: Questions_People,
+            key: "BusinessAsInvestmentTrust",
+        },
+    ]
+    const QuestionClick = (index, elem, values, setFieldValue) => {
+        console.log("image clicked in goals", index, elem.key, values);
+        if (values[elem.key] == "No") {
+            setFieldValue(elem.key, "Yes");
+        }
+        if (values[elem.key] == "Yes") {
+            setFieldValue(elem.key, "No");
+        }
+    };
+
+
     return (
         <div className="container-fluid my-4">
             <div className="row m-0">
@@ -77,12 +112,15 @@ const BusinessEntities = (props) => {
                     enableReinitialize
                     innerRef={props.formRef}
                 >
-                    {({ values, handleChange }) => (
+                    {({ values, handleChange, setFieldValue }) => (
                         <Form>
                             <div className="col-md-12 text-center">
                                 <h4 className="heading d-none">Investment Trust</h4>
-                                <div className="row my-3">
-                                    <div className="col-md-12 ">
+                                <div className="row my-3 justify-content-center">
+                                    <DynamicQuestionBlocks QuestionArray={QuestionArray} QuestionClick={QuestionClick} values={values} setFieldValue={setFieldValue} />
+
+
+                                    <div className="col-md-12 d-none">
                                         <div className="mb-3">
                                             <label className="form-label">
                                                 Are you Running a business  a Company Structure (Pty Ltd)?{" "}
@@ -134,7 +172,7 @@ const BusinessEntities = (props) => {
                                     </div>
                                 </div>
 
-                                <div className="row my-3">
+                                <div className="row my-3 d-none">
                                     <div className="col-md-12 ">
                                         <div className="mb-3">
                                             <label className="form-label">
@@ -187,7 +225,7 @@ const BusinessEntities = (props) => {
                                     </div>
                                 </div>
 
-                                <div className="row my-3">
+                                <div className="row my-3 d-none">
                                     <div className="col-md-12 ">
                                         <div className="mb-3">
                                             <label className="form-label">
@@ -240,7 +278,7 @@ const BusinessEntities = (props) => {
                                     </div>
                                 </div>
 
-                                <div className="row my-3">
+                                <div className="row my-3 d-none">
                                     <div className="col-md-12 ">
                                         <div className="mb-3">
                                             <label className="form-label">

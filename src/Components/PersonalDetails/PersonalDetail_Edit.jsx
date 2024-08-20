@@ -20,7 +20,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { useRecoilState, useRecoilValue } from "recoil";
-import { QuestionShift, UserName, ClientName, PartnerName, defaultUrl } from "../../Store/Store";
+import { QuestionShift, UserName, ClientName, PartnerName, defaultUrl, CRState } from "../../Store/Store";
 
 import { Card } from "react-bootstrap";
 
@@ -144,7 +144,7 @@ const PersonalDetail = () => {
   };
 
   let nextbuttonHandler = () => {
-    
+
     setQuestionChange("PersonalIncome");
     Navigate("/PersonalIncome");
   };
@@ -216,8 +216,8 @@ const PersonalDetail = () => {
     clientHomePhone: "",
     clientWorkPhone: "",
     Email: "",
-    clientGender: false,
-    clientSmoker: false,
+    clientGender: "male",
+    clientSmoker: "",
 
     // partner
     partnerTitle: "",
@@ -244,12 +244,13 @@ const PersonalDetail = () => {
     partnerTaxResidentRadio: "No",
     partnerPrivateHealthCoverRadio: "No",
     partnerHELPSDebtRadio: "No",
-    partnerGender: false,
-    partnerSmoker: false,
+    partnerGender: "male",
+    partnerSmoker: "",
 
     ChildrenDependantsRadio: "No",
   };
 
+  let [CRObject, setCRObject] = useRecoilState(CRState);
 
   const onSubmit = (values, action) => {
 
@@ -332,7 +333,7 @@ const PersonalDetail = () => {
       partnerEmail: values.partnerEmail,
     };
 
-    console.log("partner Ka Kea Mila Humko ", values.clientMaritalStatus !== "Single" && values.clientMaritalStatus !== "Widowed");
+    // console.log("partner Ka Kea Mila Humko ", values.clientMaritalStatus !== "Single" && values.clientMaritalStatus !== "Widowed");
     if (FoundData) {
 
       axios
@@ -383,12 +384,100 @@ const PersonalDetail = () => {
         setPartnerData(PartnerDetails);
       }
 
+      setCRObject({
+        //Financial Assets 
+        QuestionsFlag: false,
+        clientFK: "",
+
+        bankAccountFinance: "No",
+        termDepositsFinance: "No",
+        australianShareMarket: "No",
+        managedFund: "No",
+        investmentBondFinance: "No",
+        managedFundsLOC: "No",
+        managedFundsMarginLoan: "No",
+
+        car: "No",
+        boat: "No",
+        caravan: "No",
+        personalAssets: "No",
+        personalLoans: "No",
+        creditCards: "No",
+
+        familyHome: "No",
+        familyHomeLoan: "No",
+        numberOfHolidayHome: 0,
+
+        investmentPropertyDetails: "No",
+        investmentPropertyLoan: "No",
+        incomeExpenses: "No",
+
+        superAnnuationIssues: "No",
+        accountBasedPensionIssues: "No",
+        annuitiesIssues: "No",
+
+        will: "No",
+        POA: "No",
+        professionalAdviser: "No",
+
+
+        incomeFromOwnBusiness: "No",
+        incomeFromSoleTrader: "No",
+        incomeFromPartnership: "No",
+        incomeFromCentrelink: "No",
+        incomeFromSuperPayment: "No",
+        incomeFromOverseasPension: "No",
+        incomeFromInheritance: "No",
+        incomeFromLumpsumExpense: "No",
+        incomeFromRegularLivingExpenses: "Yes", // this one should be yes always
+
+        BusinessAsCompanyStructure: "No",
+        BusinessAsTrusts: "No",
+        BusinessAsSMSF: "No",
+        BusinessAsInvestmentTrust: "No",
+
+        SMSFBank: "Yes",
+        SMSFTermDeposits: "No",
+        SMSFAustralianShares: "No",
+        SMSFManagedFunds: "No",
+        SMSFInvestmentLoan: "No",
+        SMSFInvestmentProperties: "No",
+        numberOfSMSFInvestmentProperties: 0,
+        SMSFPensionPhase: "No",
+
+        //loop keys
+        // SMSFInvestmentPropertiesLoan
+        // SMSFInvestmentExpenses
+
+        SMSFDetails: "Yes", // this one should be yes always
+        SMSFAccumulationDetails: "Yes", // this one should be yes always
+
+        familyBank: "Yes", // this one should be yes always
+
+        familyTermDeposit: "No",
+        familyAustralianShare: "No",
+        familyMangedFunds: "No",
+        familyInvestmentHomeLoan: "No",
+        familyInvestmentProperties: "No",
+        numberOfFamilyInvestmentProperties: 0,
+        familyPensionPhase: "No",
+
+        //loop keys
+        // familyInvestmentPropertiesLoan
+        // familyInvestmentExpenses
+
+        familyDetails: "Yes", // this one should be yes always
+
+
+        life: "No",
+        TPD: "No",
+        trauma: "No",
+        incomeProtection: "No",
+
+      })
+
     }
   };
-
-
-
-
 
   let MainTableSubmit = (Option, elem) => {
     console.log(Option);
@@ -423,40 +512,44 @@ const PersonalDetail = () => {
                     {/* Client Personal Information */}
 
                     <div className="row ">
-                      <h3 className=" heading" onClick={() => { console.log(isPartnered) }}>Personal Information</h3>
+                      <h3 className=" heading d-none" onClick={() => { console.log(isPartnered) }}>Personal Information</h3>
 
                       <div className="col-4 "></div>
-                      <div className="LargeSheet col-4">
-                        <label
-                          htmlFor="clientTitle"
-                          className="form-label clientFS green mb-3 p-0"
-                        >
-                          Client
-                          <div className="iconContainerLg m-0 p-0">
-                            <img
-                              src={single}
-                              alt="single svg"
-                              className="w-50 "
-                            />
-                          </div>
-                        </label>
-                      </div>
-                      {values.clientMaritalStatus !== "Single" &&
-                        values.clientMaritalStatus !== "Widowed" ? (
-                        <div className="col-4 LargeSheet">
+                      <div className="col-4 LargeSheet">
+                        <div className="centerDiv">
                           <label
-                            htmlFor="clientTitle"
-                            className="form-label  clientFS green mb-3 p-0 "
+                            htmlFor="clientTitle LargeSheet"
+                            className="form-label clientFS green mb-3 p-0"
                           >
-                            Partner
-                            <div className="iconContainerLg">
+                            Client
+                            <div className="iconContainerLg m-0 p-0">
                               <img
-                                src={couple}
+                                src={single}
                                 alt="single svg"
                                 className="w-50 "
                               />
                             </div>
                           </label>
+                        </div>
+                      </div>
+                      {values.clientMaritalStatus !== "Single" &&
+                        values.clientMaritalStatus !== "Widowed" ? (
+                        <div className="col-4 LargeSheet">
+                          <div className="centerDiv">
+                            <label
+                              htmlFor="clientTitle"
+                              className="form-label  clientFS green mb-3 p-0 "
+                            >
+                              Partner
+                              <div className="iconContainerLg">
+                                <img
+                                  src={couple}
+                                  alt="single svg"
+                                  className="w-50 "
+                                />
+                              </div>
+                            </label>
+                          </div>
                         </div>
                       ) : (
                         <div className="col-4"></div>
@@ -476,7 +569,7 @@ const PersonalDetail = () => {
                       <div className="col-4 ">
                         <Field
                           id="clientTitle"
-                          className="form-select shadow  inputDesign"
+                          className="form-select   inputDesign"
                           as="select"
                           onChange={(e) =>
                             setFieldValue("clientTitle", e.target.value)
@@ -506,7 +599,7 @@ const PersonalDetail = () => {
                           <Field
                             as="select"
                             id="partnerTitle"
-                            className="form-select shadow  inputDesign"
+                            className="form-select   inputDesign"
                             name="partnerTitle"
                             onChange={(e) =>
                               setFieldValue("partnerTitle", e.target.value)
@@ -544,9 +637,9 @@ const PersonalDetail = () => {
                       <div className="col-4 mt-3">
                         <Field
                           type="text"
-                          className="form-control inputDesign shadow"
+                          className="form-control inputDesign "
                           id="clientSurname"
-                          placeholder="Surname"
+                          // placeholder="Surname"
                           name="clientSurname"
                           onBlur={() => {
                             let ClientName =
@@ -584,9 +677,9 @@ const PersonalDetail = () => {
                         <div className="col-4 mt-3">
                           <Field
                             type="text"
-                            className="form-control inputDesign shadow"
+                            className="form-control inputDesign "
                             id="partnerSurname"
-                            placeholder="Surname"
+                            // placeholder="Surname"
                             name="partnerSurname"
                             onBlur={() => {
                               let ClientName =
@@ -639,9 +732,9 @@ const PersonalDetail = () => {
                       <div className="col-4 mt-3">
                         <Field
                           type="text"
-                          className="form-control inputDesign shadow inputDesign"
+                          className="form-control inputDesign  inputDesign"
                           id="clientGivenName"
-                          placeholder="Given Name"
+                          // placeholder="Given Name"
                           name="clientGivenName"
                         />
                         <ErrorMessage
@@ -657,8 +750,8 @@ const PersonalDetail = () => {
                         <div className="col-4 mt-3">
                           <Field
                             type="text"
-                            className="form-control inputDesign shadow inputDesign"
-                            placeholder="Given Name"
+                            className="form-control inputDesign  inputDesign"
+                            // placeholder="Given Name"
                             id="clientGivenName"
                             name="partnerGivenName"
                           />
@@ -687,9 +780,9 @@ const PersonalDetail = () => {
                       <div className="col-4 mt-3">
                         <Field
                           type="text"
-                          className="form-control inputDesign shadow inputDesign"
+                          className="form-control inputDesign  inputDesign"
                           id="clientMiddleName"
-                          placeholder="Middle Name"
+                          // placeholder="Middle Name"
                           name="clientMiddleName"
                         />
                         <ErrorMessage
@@ -705,8 +798,8 @@ const PersonalDetail = () => {
                         <div className="col-4 mt-3">
                           <Field
                             type="text"
-                            className="form-control inputDesign shadow inputDesign"
-                            placeholder="Middle Name"
+                            className="form-control inputDesign  inputDesign"
+                            // placeholder="Middle Name"
                             id="partnerMiddleName"
                             name="partnerMiddleName"
                           />
@@ -735,9 +828,9 @@ const PersonalDetail = () => {
                       <div className="col-4 mt-3">
                         <Field
                           type="text"
-                          className="form-control inputDesign shadow"
+                          className="form-control inputDesign "
                           id="clientPreferredName"
-                          placeholder="Preferred Name"
+                          // placeholder="Preferred Name"
                           name="clientPreferredName"
                           onBlur={() => {
                             let ClientName =
@@ -776,9 +869,9 @@ const PersonalDetail = () => {
                         <div className="col-4 mt-3">
                           <Field
                             type="text"
-                            className="form-control inputDesign shadow"
+                            className="form-control inputDesign "
                             id="partnerPreferredName"
-                            placeholder="Preferred Name"
+                            // placeholder="Preferred Name"
                             name="partnerPreferredName"
                             onBlur={() => {
                               let ClientName =
@@ -819,16 +912,15 @@ const PersonalDetail = () => {
                       )}
 
                       {/*label Gender */}
-                      <div className="col-4 mt-3">
+                      <div className="col-4 my-3">
                         <label htmlFor="" className="form-label">
-                          {" "}
-                          Gender{" "}
+                          Gender
                         </label>
                       </div>
 
                       {/*Client */}
                       <div className="col-4 mt-3">
-                        <div className=" d-flex justify-content-start align-items-center w-100">
+                        {/* <div className=" d-flex justify-content-start align-items-center w-100">
 
                           <Field type="checkbox" name="clientGender" className="d-none" />
 
@@ -858,6 +950,52 @@ const PersonalDetail = () => {
                             />
                           </div>
 
+                        </div> */}
+                        <div className="form-check form-switch m-0 p-0 ">
+                          <div className="radiobutton">
+                            <input
+                              type="radio"
+                              name="clientGender"
+                              className="form-check-input"
+                              id="clientGender1"
+                              value="male"
+                              onChange={handleChange}
+                              checked={
+                                values.clientGender === "male"
+                              }
+                            />
+
+                            <label
+                              htmlFor="clientGender1"
+                              className="label1"
+                            >
+                              {/* <img
+                              className=""
+                              htmlFor="male"
+                              width={"20px"}
+                              src={female}
+                              alt=""
+                            /> */}
+                              <span>Male</span>
+                            </label>
+                            <input
+                              type="radio"
+                              name="clientGender"
+                              id="clientGender2"
+                              className="form-check-input"
+                              value="female"
+                              onChange={handleChange}
+                              checked={
+                                values.clientGender === "female"
+                              }
+                            />
+                            <label
+                              htmlFor="clientGender2"
+                              className="label2"
+                            >
+                              <span>Female</span>
+                            </label>
+                          </div>
                         </div>
                       </div>
 
@@ -865,7 +1003,7 @@ const PersonalDetail = () => {
                       {values.clientMaritalStatus !== "Single" &&
                         values.clientMaritalStatus !== "Widowed" ? (
                         <div className="col-4 mt-3">
-                          <div className="d-flex justify-content-start align-items-center w-100">
+                          {/* <div className="d-flex justify-content-start align-items-center w-100">
 
                             <Field type="checkbox" name="partnerGender" className="d-none checkBox" />
 
@@ -894,6 +1032,52 @@ const PersonalDetail = () => {
                                 alt=""
                               />
                             </div>
+                          </div> */}
+                          <div className="form-check form-switch m-0 p-0 ">
+                            <div className="radiobutton">
+                              <input
+                                type="radio"
+                                name="partnerGender"
+                                className="form-check-input"
+                                id="partnerGender1"
+                                value="male"
+                                onChange={handleChange}
+                                checked={
+                                  values.partnerGender === "male"
+                                }
+                              />
+
+                              <label
+                                htmlFor="partnerGender1"
+                                className="label1"
+                              >
+                                {/* <img
+                              className=""
+                              htmlFor="male"
+                              width={"20px"}
+                              src={female}
+                              alt=""
+                            /> */}
+                                <span>Male</span>
+                              </label>
+                              <input
+                                type="radio"
+                                name="partnerGender"
+                                id="partnerGender2"
+                                className="form-check-input"
+                                value="female"
+                                onChange={handleChange}
+                                checked={
+                                  values.partnerGender === "female"
+                                }
+                              />
+                              <label
+                                htmlFor="partnerGender2"
+                                className="label2"
+                              >
+                                <span>Female</span>
+                              </label>
+                            </div>
                           </div>
                         </div>
                       ) : (
@@ -910,10 +1094,10 @@ const PersonalDetail = () => {
 
                       {/*Client */}
                       <div className="col-4 mt-3">
-                        <div>
+                        <div className="DateIconParent">
                           <DatePicker
                             id="clientDOB"
-                            className="form-control inputDesign shadow"
+                            className="form-control inputDesign DateInputPadding "
                             selected={values.clientDOB}
                             onChange={(date) => {
                               setFieldValue("clientDOB", date);
@@ -922,7 +1106,7 @@ const PersonalDetail = () => {
                               setFieldValue("clientAge", age);
                             }}
                             dateFormat="dd/MM/yyyy"
-                            placeholderText="dd/mm/yyyy"
+                            // placeholderText="dd/mm/yyyy"
                             showYearDropdown
                             scrollableYearDropdown
                             onBlur={handleBlur}
@@ -931,6 +1115,7 @@ const PersonalDetail = () => {
                             showMonthDropdown
                             dropdownMode="select"
                             wrapperClassName="w-100"
+                            showIcon
                           />
                         </div>
                         <ErrorMessage
@@ -944,9 +1129,10 @@ const PersonalDetail = () => {
                       {values.clientMaritalStatus !== "Single" &&
                         values.clientMaritalStatus !== "Widowed" ? (
                         <div className="col-4 mt-3">
-                          <div>
+                          <div className="DateIconParent">
                             <DatePicker
-                              className="form-control inputDesign shadow"
+                              showIcon
+                              className="form-control inputDesign DateInputPadding"
                               selected={values.partnerDOB}
                               onChange={(date) => {
                                 setFieldValue("partnerDOB", date);
@@ -956,7 +1142,7 @@ const PersonalDetail = () => {
                                 console.log(values.partnerDOB);
                               }}
                               dateFormat="dd/MM/yyyy"
-                              placeholderText="dd/mm/yyyy"
+                              // placeholderText="dd/mm/yyyy"
                               showYearDropdown
                               scrollableYearDropdown
                               onBlur={handleBlur}
@@ -990,10 +1176,10 @@ const PersonalDetail = () => {
                       <div className="col-4 mt-3">
                         <Field
                           type="text"
-                          className="form-control inputDesign shadow"
+                          className="form-control inputDesign "
                           id="clientAge"
                           name="clientAge"
-                          placeholder="Age"
+                          // placeholder="Age"
                           readOnly
                           disabled
                         />
@@ -1010,10 +1196,10 @@ const PersonalDetail = () => {
                         <div className="col-4 mt-3">
                           <Field
                             type="text"
-                            className="form-control inputDesign shadow"
+                            className="form-control inputDesign "
                             id="partnerAge"
                             name="partnerAge"
-                            placeholder="Age"
+                            // placeholder="Age"
                             readOnly
                             disabled
                           />{" "}
@@ -1042,7 +1228,7 @@ const PersonalDetail = () => {
                         <Field
                           as="select"
                           id="clientMaritalStatus"
-                          className="form-select shadow  inputDesign"
+                          className="form-select   inputDesign"
                           onChange={(e) => {
                             setFieldValue(
                               "clientMaritalStatus",
@@ -1073,7 +1259,7 @@ const PersonalDetail = () => {
                           <Field
                             as="select"
                             id="partnerMaritalStatus"
-                            className="form-select shadow  inputDesign"
+                            className="form-select   inputDesign"
                             name="partnerMaritalStatus"
                           >
                             <option value="">Select</option>
@@ -1107,7 +1293,7 @@ const PersonalDetail = () => {
                         <Field
                           as="select"
                           id="clientEmploymentStatus"
-                          className="form-select shadow  inputDesign"
+                          className="form-select   inputDesign"
                           value={values.clientEmploymentStatus}
                           onChange={(e) =>
                             setFieldValue(
@@ -1155,7 +1341,7 @@ const PersonalDetail = () => {
                           <Field
                             as="select"
                             id="partnerEmploymentStatus"
-                            className="form-select shadow  inputDesign"
+                            className="form-select   inputDesign"
                             name="partnerEmploymentStatus"
                           >
                             <option value="">Select</option>
@@ -1207,9 +1393,9 @@ const PersonalDetail = () => {
                       <div className="col-4 mt-3">
                         <Field
                           type="text"
-                          className="form-control inputDesign shadow"
+                          className="form-control inputDesign "
                           id="clientOccupationID"
-                          placeholder="Occupation"
+                          // placeholder="Occupation"
                           name="clientOccupationID"
                         />
                         <ErrorMessage
@@ -1225,9 +1411,9 @@ const PersonalDetail = () => {
                         <div className="col-4 mt-3">
                           <Field
                             type="text"
-                            className="form-control inputDesign shadow"
+                            className="form-control inputDesign "
                             id="partnerOccupationID"
-                            placeholder="Occupation"
+                            // placeholder="Occupation"
                             name="partnerOccupationID"
                           />
                           <ErrorMessage
@@ -1253,7 +1439,7 @@ const PersonalDetail = () => {
                         <Field
                           as="select"
                           id="clientHealth"
-                          className="form-select shadow  inputDesign"
+                          className="form-select   inputDesign"
                           onChange={(e) =>
                             setFieldValue("clientHealth", e.target.value)
                           }
@@ -1279,7 +1465,7 @@ const PersonalDetail = () => {
                           <Field
                             as="select"
                             id="partnerHealth"
-                            className="form-select shadow  inputDesign"
+                            className="form-select   inputDesign"
                             name="partnerHealth"
                           >
                             <option value="">Select</option>
@@ -1305,7 +1491,7 @@ const PersonalDetail = () => {
 
                       {/*Client */}
                       <div className="col-4 mt-3">
-                        <div className=" d-flex justify-content-start align-items-center w-100">
+                        {/* <div className=" d-flex justify-content-start align-items-center w-100">
 
                           <Field type="checkbox" name="clientSmoker" className="d-none" />
 
@@ -1335,14 +1521,30 @@ const PersonalDetail = () => {
                             />
                           </div>
 
-                        </div>
+                        </div> */}
+                        <Field
+                          as="select"
+                          id="clientSmoker"
+                          className="form-select   inputDesign"
+                          name="clientSmoker"
+                        >
+                          <option value="">Select</option>
+                          <option value="smoker">Smoker</option>
+                          <option value="nonsmoker">Non-smoker</option>
+
+                        </Field>
+                        <ErrorMessage
+                          className="text-danger fw-bold"
+                          component="div"
+                          name="clientSmoker"
+                        />
                       </div>
 
                       {/*Partner */}
                       {values.clientMaritalStatus !== "Single" &&
                         values.clientMaritalStatus !== "Widowed" ? (
                         <div className="col-4 mt-3">
-                          <div className=" d-flex justify-content-start align-items-center w-100">
+                          {/* <div className=" d-flex justify-content-start align-items-center w-100">
 
                             <Field type="checkbox" name="partnerSmoker" className="d-none" />
 
@@ -1371,7 +1573,23 @@ const PersonalDetail = () => {
                                 alt=""
                               />
                             </div>
-                          </div>
+                          </div> */}
+                          <Field
+                            as="select"
+                            id="partnerSmoker"
+                            className="form-select   inputDesign"
+                            name="partnerSmoker"
+                          >
+                            <option value="">Select</option>
+                            <option value="smoker">Smoker</option>
+                            <option value="nonsmoker">Non-smoker</option>
+
+                          </Field>
+                          <ErrorMessage
+                            className="text-danger fw-bold"
+                            component="div"
+                            name="partnerSmoker"
+                          />
                         </div>
                       ) : (
                         <div className="col-4"></div>
@@ -1392,9 +1610,9 @@ const PersonalDetail = () => {
                       <div className="col-4 mt-3">
                         <Field
                           type="number"
-                          className="form-control inputDesign shadow"
+                          className="form-control inputDesign "
                           id="clientPlannedRetirementAge"
-                          placeholder="Planned Retirement Age"
+                          // placeholder="Planned Retirement Age"
                           onWheel={(event) => event.currentTarget.blur()}
                           onChange={(e) =>
                             setFieldValue(
@@ -1417,9 +1635,9 @@ const PersonalDetail = () => {
                         <div className="col-4 mt-3">
                           <Field
                             type="number"
-                            className="form-control inputDesign shadow"
+                            className="form-control inputDesign "
                             id="partnerPlannedRetirementAge"
-                            placeholder="Planned Retirement Age"
+                            // placeholder="Planned Retirement Age"
                             onWheel={(event) => event.currentTarget.blur()}
                             name="partnerPlannedRetirementAge"
                           />
@@ -1840,9 +2058,9 @@ const PersonalDetail = () => {
                         <div className="col-4 mt-3">
                           <Field
                             as="textarea"
-                            className="form-control inputDesign shadow inputDesign"
+                            className="form-control inputDesign  inputDesign"
                             id="clientHomeAddress"
-                            placeholder="Home Address"
+                            // placeholder="Home Address"
                             name="clientHomeAddress"
                           />
                           <ErrorMessage
@@ -1858,9 +2076,9 @@ const PersonalDetail = () => {
                           <div className="col-4 mt-3">
                             <Field
                               as="textarea"
-                              className="form-control inputDesign shadow inputDesign"
+                              className="form-control inputDesign  inputDesign"
                               id="partnerHomeAddress"
-                              placeholder="Home Address"
+                              // placeholder="Home Address"
                               name="partnerHomeAddress"
                               disabled={values.partnerSameAsClient}
                             />
@@ -1888,9 +2106,9 @@ const PersonalDetail = () => {
                         <div className="col-4 mt-3">
                           <Field
                             type="number"
-                            className="form-control inputDesign shadow"
+                            className="form-control inputDesign "
                             id="clientPostcode"
-                            placeholder="Postcode/Suburb"
+                            // placeholder="Postcode/Suburb"
                             name="clientPostcode"
                           />
                           <ErrorMessage
@@ -1906,9 +2124,9 @@ const PersonalDetail = () => {
                           <div className="col-4 mt-3">
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesign "
                               id="partnerPostcode"
-                              placeholder="Postcode/Suburb"
+                              // placeholder="Postcode/Suburb"
                               name="partnerPostcode"
                               disabled={values.partnerSameAsClient}
                             />
@@ -1927,8 +2145,8 @@ const PersonalDetail = () => {
                         </div>
 
                         {/*Client */}
-                        <div className="col-4 ">
-                          <div className="form-check mt-3">
+                        <div className="col-4 mt-3">
+                          <div className="centerDiv">
                             <Field
                               className="form-check-input newCheck"
                               type="checkbox"
@@ -1979,7 +2197,7 @@ const PersonalDetail = () => {
                             />
                             <div className="d-inline-block">
                               <label
-                                className=""
+                                className="ms-2"
                                 id="labelID"
                                 htmlFor="clientSameAsAbove"
                               >
@@ -1993,60 +2211,62 @@ const PersonalDetail = () => {
                         {values.clientMaritalStatus !== "Single" &&
                           values.clientMaritalStatus !== "Widowed" ? (
                           <div className="col-4 mt-3">
-                            <Field
-                              className="form-check-input"
-                              type="checkbox"
-                              id="partnerSameAsClient"
-                              name="partnerSameAsClient"
-                              checked={values.partnerSameAsClient}
-                              onChange={() => {
-                                if (!values.partnerSameAsClient) {
-                                  // copy values from homeAddress to otherAddress
-                                  setFieldValue(
-                                    "partnerHomeAddress",
-                                    values.clientHomeAddress
-                                  );
-                                  setFieldValue(
-                                    "partnerPostcode",
-                                    values.clientPostcode
-                                  );
-                                }
+                            <div className="centerDiv">
+                              <Field
+                                className="form-check-input"
+                                type="checkbox"
+                                id="partnerSameAsClient"
+                                name="partnerSameAsClient"
+                                checked={values.partnerSameAsClient}
+                                onChange={() => {
+                                  if (!values.partnerSameAsClient) {
+                                    // copy values from homeAddress to otherAddress
+                                    setFieldValue(
+                                      "partnerHomeAddress",
+                                      values.clientHomeAddress
+                                    );
+                                    setFieldValue(
+                                      "partnerPostcode",
+                                      values.clientPostcode
+                                    );
+                                  }
 
-                                if (values.partnerSameAsClient) {
-                                  setFieldValue("partnerHomeAddress", "");
-                                  setFieldValue("partnerPostcode", "");
-                                }
+                                  if (values.partnerSameAsClient) {
+                                    setFieldValue("partnerHomeAddress", "");
+                                    setFieldValue("partnerPostcode", "");
+                                  }
 
-                                if ((values.clientSameAsAbove === true) && (!values.partnerSameAsClient)) {
-                                  setFieldValue(
-                                    "partnerPostalAddress",
-                                    values.clientHomeAddress
-                                  );
-                                  setFieldValue(
-                                    "partnerPostalPostCode",
-                                    values.clientPostcode
-                                  );
-                                }
-                                else if ((values.clientSameAsAbove === false) || (values.partnerSameAsClient)) {
-                                  setFieldValue("partnerPostalAddress", "");
-                                  setFieldValue("partnerPostalPostCode", "");
-                                }
+                                  if ((values.clientSameAsAbove === true) && (!values.partnerSameAsClient)) {
+                                    setFieldValue(
+                                      "partnerPostalAddress",
+                                      values.clientHomeAddress
+                                    );
+                                    setFieldValue(
+                                      "partnerPostalPostCode",
+                                      values.clientPostcode
+                                    );
+                                  }
+                                  else if ((values.clientSameAsAbove === false) || (values.partnerSameAsClient)) {
+                                    setFieldValue("partnerPostalAddress", "");
+                                    setFieldValue("partnerPostalPostCode", "");
+                                  }
 
-                                // toggle sameAsHomeAddress checkbox
-                                setFieldValue(
-                                  "partnerSameAsClient",
-                                  !values.partnerSameAsClient
-                                );
-                              }}
-                            />
-                            <div className="d-inline-block">
-                              <label
-                                className=""
-                                id="labelID"
-                                htmlFor="partnerSameAsClient"
-                              >
-                                &nbsp;&nbsp;Same as Client
-                              </label>
+                                  // toggle sameAsHomeAddress checkbox
+                                  setFieldValue(
+                                    "partnerSameAsClient",
+                                    !values.partnerSameAsClient
+                                  );
+                                }}
+                              />
+                              <div className="d-inline-block">
+                                <label
+                                  className=""
+                                  id="labelID"
+                                  htmlFor="partnerSameAsClient"
+                                >
+                                  &nbsp;&nbsp;Same as Client address
+                                </label>
+                              </div>
                             </div>
                           </div>
                         ) : (
@@ -2067,9 +2287,9 @@ const PersonalDetail = () => {
                         <div className="col-4 mt-3">
                           <Field
                             type="text"
-                            className="form-control inputDesign shadow"
+                            className="form-control inputDesign "
                             id="clientPostalAddress"
-                            placeholder="Postal Address"
+                            // placeholder="Postal Address"
                             name="clientPostalAddress"
                             disabled={values.clientSameAsAbove}
                           />
@@ -2086,9 +2306,9 @@ const PersonalDetail = () => {
                           <div className="col-4 mt-3">
                             <Field
                               type="text"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesign "
                               id="partnerPostalAddress"
-                              placeholder="Postal Address"
+                              // placeholder="Postal Address"
                               name="partnerPostalAddress"
                               disabled={(values.clientSameAsAbove === true) && (values.partnerSameAsClient === true)}
                             />
@@ -2116,9 +2336,9 @@ const PersonalDetail = () => {
                         <div className="col-4 mt-3">
                           <Field
                             type="number"
-                            className="form-control inputDesign shadow"
+                            className="form-control inputDesign "
                             id="clientPostalPostCode"
-                            placeholder="Postcode/Suburb"
+                            // placeholder="Postcode/Suburb"
                             disabled={values.clientSameAsAbove}
                             name="clientPostalPostCode"
                           />
@@ -2135,9 +2355,9 @@ const PersonalDetail = () => {
                           <div className="col-4 mt-3">
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesign "
                               id="partnerPostalPostCode"
-                              placeholder="Postcode/Suburb"
+                              // placeholder="Postcode/Suburb"
                               disabled={(values.clientSameAsAbove === true) && (values.partnerSameAsClient === true)}
                               name="partnerPostalPostCode"
                             />
@@ -2162,9 +2382,9 @@ const PersonalDetail = () => {
                         <div className="col-4 mt-3">
                           <Field
                             type="text"
-                            className="form-control inputDesign shadow"
+                            className="form-control inputDesign "
                             id="clientMobile"
-                            placeholder="Mobile"
+                            // placeholder="Mobile"
                             onChange={(e) =>
                               setFieldValue("clientMobile", e.target.value)
                             }
@@ -2183,9 +2403,9 @@ const PersonalDetail = () => {
                           <div className="col-4 mt-3">
                             <Field
                               type="text"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesign "
                               name="partnerMobile"
-                              placeholder="Mobile"
+                            // placeholder="Mobile"
                             />
                             <ErrorMessage
                               component="div"
@@ -2211,9 +2431,9 @@ const PersonalDetail = () => {
                         <div className="col-4 mt-3">
                           <Field
                             type="text"
-                            className="form-control inputDesign shadow"
+                            className="form-control inputDesign "
                             id="clientHomePhone"
-                            placeholder="Home Phone"
+                            // placeholder="Home Phone"
                             onChange={(e) =>
                               setFieldValue("clientHomePhone", e.target.value)
                             }
@@ -2232,9 +2452,9 @@ const PersonalDetail = () => {
                           <div className="col-4 mt-3">
                             <Field
                               type="text"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesign "
                               id="partnerHomePhone"
-                              placeholder="Home Phone"
+                              // placeholder="Home Phone"
                               name="partnerHomePhone"
                             />
                             <ErrorMessage
@@ -2261,10 +2481,10 @@ const PersonalDetail = () => {
                         <div className="col-4 mt-3">
                           <Field
                             type="text"
-                            className="form-control inputDesign shadow"
+                            className="form-control inputDesign "
                             id="clientWorkPhone"
                             name="clientWorkPhone"
-                            placeholder="Work Phone"
+                          // placeholder="Work Phone"
                           />
                           <ErrorMessage
                             component="div"
@@ -2279,10 +2499,10 @@ const PersonalDetail = () => {
                           <div className="col-4 mt-3">
                             <Field
                               type="text"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesign "
                               id="partnerWorkPhone"
                               name="partnerWorkPhone"
-                              placeholder="Work Phone"
+                            // placeholder="Work Phone"
                             />
                             <ErrorMessage
                               component="div"
@@ -2305,9 +2525,9 @@ const PersonalDetail = () => {
                         <div className="col-4 mt-3">
                           <Field
                             type="email"
-                            className="form-control inputDesign shadow"
+                            className="form-control inputDesign "
                             id="Email"
-                            placeholder="abc@gmail.com"
+                            // placeholder="abc@gmail.com"
                             name="Email"
                           />
                           <ErrorMessage
@@ -2323,9 +2543,9 @@ const PersonalDetail = () => {
                           <div className="col-4 mt-3">
                             <Field
                               type="email"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesign "
                               name="partnerEmail"
-                              placeholder="abc@gmail.com"
+                            // placeholder="abc@gmail.com"
                             />
                             <ErrorMessage
                               component="div"
@@ -2342,7 +2562,7 @@ const PersonalDetail = () => {
                           <div className="d-flex flex-row justify-content-center align-items-center mt-4">
                             <button
                               type="submit"
-                              className=" btn w-50  bgColor modalBtn"
+                              className=" btn w-25  bgColor modalBtn"
                             // onClick={nextButtonHandler}
                             >
                               {buttonFlag}

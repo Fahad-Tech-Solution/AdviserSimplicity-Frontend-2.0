@@ -36,12 +36,12 @@ const EstatePlanningWill = (props) => {
     let [modalObject, setModalObject] = useState({});
 
 
-    let will = questionDetail.will || {
+    let will = Object.keys(questionDetail.will).length > 0 ? questionDetail.will : {
         client: [],
         partner: [],
         joint: [],
 
-    }; // Use an empty object as default if will is undefined
+    };  // Use an empty object as default if will is undefined
 
 
     let initialValues = will[props.modalObject.Input].length ? { NumberOfMap: will[props.modalObject.Input].length } : { NumberOfMap: "" };
@@ -205,7 +205,7 @@ const EstatePlanningWill = (props) => {
                                             type="number"
                                             id="NumberOfMap"
                                             name="NumberOfMap"
-                                            className="form-control inputDesign"
+                                            className="form-control inputDesignDoubleInput"
                                             onChange={(e) => handleInput(e, setFieldValue)}
                                         />
                                     </div>
@@ -233,7 +233,7 @@ const EstatePlanningWill = (props) => {
                                                                     placeholder="Year set up"
                                                                     id={`yearSetUp${i}`}
                                                                     name={`yearSetUp${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -248,7 +248,7 @@ const EstatePlanningWill = (props) => {
                                                                     placeholder="Executor/s"
                                                                     id={`executor${i}`}
                                                                     name={`executor${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -269,7 +269,7 @@ const EstatePlanningWill = (props) => {
                                                                     placeholder="Any specific estate planning requirements/needs?"
                                                                     id={`estatePlanning${i}`}
                                                                     name={`estatePlanning${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                         </tr>)

@@ -32,13 +32,12 @@ const LumpsumExpenses = (props) => {
     }
   })
 
-  let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
 
-  let incomeFromLumpsumExpense = questionDetail.incomeFromLumpsumExpense || {
+  let incomeFromLumpsumExpense = Object.keys(questionDetail.incomeFromLumpsumExpense).length > 0 ? questionDetail.incomeFromLumpsumExpense : {
     client: [],
     partner: [],
     joint: [],
+
   }; // Use an empty object as default if incomeFromLumpsumExpense is undefined
 
   let initialValues = incomeFromLumpsumExpense[props.modalObject.Input].length
@@ -216,7 +215,7 @@ const LumpsumExpenses = (props) => {
                       type="number"
                       id="NumberOfMap"
                       name="NumberOfMap"
-                      className="form-control inputDesign"
+                      className="form-control inputDesignDoubleInput"
                       onChange={(e) => handleInput(e, setFieldValue)}
                     />
                   </div>
@@ -248,7 +247,7 @@ const LumpsumExpenses = (props) => {
                                     placeholder="Expenses Item"
                                     id={`expensesItem${i}`}
                                     name={`expensesItem${i}`}
-                                    className="form-select inputDesign"
+                                    className="form-select inputDesignDoubleInput"
                                   >
                                     <option value={""}>Please Select</option>
                                     {options2.map((elem, index) => {
@@ -266,7 +265,7 @@ const LumpsumExpenses = (props) => {
                                     placeholder="Amount"
                                     id={`amount${i}`}
                                     name={`amount${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -275,7 +274,7 @@ const LumpsumExpenses = (props) => {
                                     placeholder="Year"
                                     id={`year${i}`}
                                     name={`year${i}`}
-                                    className="form-select inputDesign"
+                                    className="form-select inputDesignDoubleInput"
                                   >
                                     <option value={""}>Please Select</option>
                                     {options.map((elem, index) => {

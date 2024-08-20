@@ -26,9 +26,11 @@ const IncomeProtection = (props) => {
     setShow(true);
   };
 
-  let incomeProtection = questionDetail.incomeProtection || {
-    client: {},
-    partner: {},
+  let incomeProtection = Object.keys(questionDetail.incomeProtection).length > 0 ? questionDetail.incomeProtection : {
+    client: [],
+    partner: [],
+    joint: [],
+
   }; // Use an empty object as default if incomeProtection is undefined
 
   let initialValues1 = {
@@ -242,7 +244,9 @@ const IncomeProtection = (props) => {
       superLinked: values.superLinked,
       waitingPeriod: values.waitingPeriod,
       whoPaysThePremiums: values.whoPaysThePremiums,
-      SuperLinkedPolicy: modalObject1,
+
+      // SuperLinkedPolicy: modalObject1,
+      SuperLinkedPolicy: values.superLinked === "Yes" ? modalObject1 : undefined,
     };
 
     let Obj = {
@@ -330,33 +334,37 @@ const IncomeProtection = (props) => {
                         <div className="col-6"></div>
 
                         <div className="col-6">
-                          <label htmlFor="" className="form-label text-center">
-                            {nameSet}
-                            <div className="iconContainerLg">
-                              <img
-                                src={single}
-                                alt="single svg"
-                                className="w-50"
-                              />
-                            </div>
-                          </label>
-                        </div>
-
-                        {values.EMPOwner === "Partner" && (
-                          <div className="col-6">
-                            <label
-                              htmlFor=""
-                              className="form-label text-center"
-                            >
+                          <div className="centerDiv mb-3">
+                            <label htmlFor="" className="form-label text-center">
                               {nameSet}
                               <div className="iconContainerLg">
                                 <img
-                                  src={couple}
+                                  src={single}
                                   alt="single svg"
                                   className="w-50"
                                 />
                               </div>
                             </label>
+                          </div>
+                        </div>
+
+                        {values.EMPOwner === "Partner" && (
+                          <div className="col-6">
+                            <div className="centerDiv">
+                              <label
+                                htmlFor=""
+                                className="form-label text-center"
+                              >
+                                {nameSet}
+                                <div className="iconContainerLg">
+                                  <img
+                                    src={couple}
+                                    alt="single svg"
+                                    className="w-50"
+                                  />
+                                </div>
+                              </label>
+                            </div>
                           </div>
                         )}
                       </div>
@@ -499,7 +507,7 @@ const IncomeProtection = (props) => {
                         </div>
 
                         <div className="col-6">
-                          <div className="mb-3 w-50">
+                          <div className="centerDiv mb-3 w-50">
                             <DynamicYesNo
                               name={`smoker`}
                               values={values}
@@ -551,7 +559,7 @@ const IncomeProtection = (props) => {
                           <div className="mb-3">
                             <div>
                               <DatePicker
-                                className="form-control inputDesign shadow"
+                                className="form-control inputDesign shadow DateInputPadding"
                                 showIcon
                                 id="dateCommenced"
                                 name="dateCommenced"
@@ -722,7 +730,7 @@ const IncomeProtection = (props) => {
                         </div>
 
                         <div className="col-6">
-                          <div className="mb-3 w-50">
+                          <div className="centerDiv mb-3 w-50">
                             <DynamicYesNo
                               name={`occupationBenefitPeriod`}
                               values={values}
@@ -747,7 +755,7 @@ const IncomeProtection = (props) => {
                         </div>
 
                         <div className="col-6">
-                          <div className="mb-3 w-50">
+                          <div className="centerDiv mb-3 w-50">
                             <DynamicYesNo
                               name={`superContinuance`}
                               values={values}
@@ -986,7 +994,7 @@ const IncomeProtection = (props) => {
                         </div>
 
                         <div className="col-6">
-                          <div className="mb-3 w-50">
+                          <div className="centerDiv mb-3 w-50">
                             <DynamicYesNo
                               name={`accidentOption`}
                               values={values}
@@ -1011,7 +1019,7 @@ const IncomeProtection = (props) => {
                         </div>
 
                         <div className="col-6">
-                          <div className="mb-3 w-50">
+                          <div className="centerDiv mb-3 w-50">
                             <DynamicYesNo
                               name={`increasingClaimsOption`}
                               values={values}
@@ -1036,7 +1044,7 @@ const IncomeProtection = (props) => {
                         </div>
 
                         <div className="col-6">
-                          <div className="mb-3 w-50">
+                          <div className="centerDiv mb-3 w-50">
                             <DynamicYesNo
                               name={`superLinkedInner`}
                               values={values}
@@ -1062,7 +1070,7 @@ const IncomeProtection = (props) => {
                         </div>
 
                         <div className="col-6">
-                          <div className="mb-3 w-50">
+                          <div className="centerDiv mb-3 w-50">
                             <DynamicYesNo
                               name={`isTheBenefitIndexed`}
                               values={values}
@@ -1087,7 +1095,7 @@ const IncomeProtection = (props) => {
                         </div>
 
                         <div className="col-6">
-                          <div className="mb-3 w-50">
+                          <div className="centerDiv mb-3 w-50">
                             <DynamicYesNo
                               name={`retainThisPolicy`}
                               values={values}
@@ -1181,32 +1189,36 @@ const IncomeProtection = (props) => {
                     <div className="col-6"></div>
 
                     <div className="col-6">
-                      <label
-                        htmlFor=""
-                        className="form-label text-center"
-                        onClick={() => {
-                          console.log(incomeProtection);
-                        }}
-                      >
-                        {nameSet}
-                        <div className="iconContainerLg">
-                          <img src={single} alt="single svg" className="w-50" />
-                        </div>
-                      </label>
+                      <div className="centerDiv mb-3">
+                        <label
+                          htmlFor=""
+                          className="form-label text-center"
+                          onClick={() => {
+                            console.log(incomeProtection);
+                          }}
+                        >
+                          {nameSet}
+                          <div className="iconContainerLg">
+                            <img src={single} alt="single svg" className="w-50" />
+                          </div>
+                        </label>
+                      </div>
                     </div>
 
                     {values.EMPOwner === "Partner" && (
                       <div className="col-6">
-                        <label htmlFor="" className="form-label text-center">
-                          {nameSet}
-                          <div className="iconContainerLg">
-                            <img
-                              src={couple}
-                              alt="single svg"
-                              className="w-50"
-                            />
-                          </div>
-                        </label>
+                        <div className="centerDiv mb-3">
+                          <label htmlFor="" className="form-label text-center">
+                            {nameSet}
+                            <div className="iconContainerLg">
+                              <img
+                                src={couple}
+                                alt="single svg"
+                                className="w-50"
+                              />
+                            </div>
+                          </label>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -1344,7 +1356,7 @@ const IncomeProtection = (props) => {
                     </div>
 
                     <div className="col-6">
-                      <div className="mb-3 w-50">
+                      <div className="centerDiv mb-3 w-50">
                         <DynamicYesNo
                           name={`smoker`}
                           values={values}
@@ -1393,7 +1405,7 @@ const IncomeProtection = (props) => {
                       <div className="mb-3">
                         <div>
                           <DatePicker
-                            className="form-control inputDesign shadow"
+                            className="form-control inputDesign shadow DateInputPadding"
                             showIcon
                             id="dateCommenced"
                             name="dateCommenced"
@@ -1558,7 +1570,7 @@ const IncomeProtection = (props) => {
                     </div>
 
                     <div className="col-6">
-                      <div className="mb-3 w-50">
+                      <div className=" centerDiv mb-3 w-50">
                         <DynamicYesNo
                           name={`occupationBenefitPeriod`}
                           values={values}
@@ -1580,7 +1592,7 @@ const IncomeProtection = (props) => {
                     </div>
 
                     <div className="col-6">
-                      <div className="mb-3 w-50">
+                      <div className="centerDiv mb-3 w-50">
                         <DynamicYesNo
                           name={`superContinuance`}
                           values={values}
@@ -1796,7 +1808,7 @@ const IncomeProtection = (props) => {
                     </div>
 
                     <div className="col-6">
-                      <div className="mb-3 w-50">
+                      <div className="centerDiv mb-3 w-50">
                         <DynamicYesNo
                           name={`accidentOption`}
                           values={values}
@@ -1821,7 +1833,7 @@ const IncomeProtection = (props) => {
                     </div>
 
                     <div className="col-6">
-                      <div className="mb-3 w-50">
+                      <div className="centerDiv mb-3 w-50">
                         <DynamicYesNo
                           name={`increasingClaimsOption`}
                           values={values}
@@ -1847,7 +1859,7 @@ const IncomeProtection = (props) => {
                     </div>
 
                     <div className="col-6">
-                      <div className="mb-3 w-50">
+                      <div className="centerDiv mb-3 w-50">
                         <DynamicYesNo
                           name={`isTheBenefitIndexed`}
                           values={values}
@@ -1869,7 +1881,7 @@ const IncomeProtection = (props) => {
                     </div>
 
                     <div className="col-6">
-                      <div className="mb-3 w-50">
+                      <div className="centerDiv mb-3 w-50">
                         <DynamicYesNo
                           name={`retainThisPolicy`}
                           values={values}
@@ -1920,7 +1932,7 @@ const IncomeProtection = (props) => {
                     </div>
 
                     <div className="col-6">
-                      <div className="mb-3 w-50">
+                      <div className="centerDiv mb-3 w-50">
                         <DynamicYesNo
                           name={`superLinked`}
                           values={values}
@@ -1938,12 +1950,14 @@ const IncomeProtection = (props) => {
                     <div className="row mb-3">
                       <div className="col-6">Enter Details</div>
                       <div className="col-6">
-                        <Button
-                          className=" btn btn-primary bgColor modalBtn"
-                          onClick={() => handleShow(values)}
-                        >
-                          Enter Details
-                        </Button>
+                        <div className="centerDiv">
+                          <Button
+                            className=" btn btn-primary bgColor modalBtn"
+                            onClick={() => handleShow(values)}
+                          >
+                            Enter Details
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   )}

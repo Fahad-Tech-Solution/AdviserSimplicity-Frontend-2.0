@@ -22,12 +22,9 @@ const FamilyInvestmentPropertyModalComp = (props) => {
         }
     })
 
-    let familyInvestmentProperties = questionDetail.familyInvestmentProperties[props.modalObject.index] || {
-        client: [],
-        partner: [],
-        joint: [],
-
-    }; // Use an empty object as default if familyInvestmentProperties is undefined
+    let familyInvestmentProperties = (questionDetail && questionDetail.familyInvestmentProperties && Array.isArray(questionDetail.familyInvestmentProperties) && props && props.modalObject && typeof props.modalObject.index === 'number')
+        ? questionDetail.familyInvestmentProperties[props.modalObject.index] || { client: [], partner: [], joint: [] }
+        : { client: [], partner: [], joint: [] }; // Use an empty object as default if familyInvestmentProperties is undefined
 
     let initialValues = familyInvestmentProperties[props.modalObject.Input].length ? { NumberOfMap: familyInvestmentProperties[props.modalObject.Input].length } : { NumberOfMap: "" };
 
@@ -169,7 +166,7 @@ const FamilyInvestmentPropertyModalComp = (props) => {
                                             type="number"
                                             id="NumberOfMap"
                                             name="NumberOfMap"
-                                            className="form-control inputDesign"
+                                            className="form-control inputDesignDoubleInput"
                                             onChange={(e) => handleInput(e, setFieldValue)}
                                         />
                                     </div>
@@ -195,7 +192,7 @@ const FamilyInvestmentPropertyModalComp = (props) => {
                                                                         placeholder="Home Address & Postcode "
                                                                         id={`propertyAddress${i}`}
                                                                         name={`propertyAddress${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -204,7 +201,7 @@ const FamilyInvestmentPropertyModalComp = (props) => {
                                                                         placeholder="Current Value – link to URL below "
                                                                         id={`currentValue${i}`}
                                                                         name={`currentValue${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -213,7 +210,7 @@ const FamilyInvestmentPropertyModalComp = (props) => {
                                                                         placeholder="Cost base /(Purchase Price)"
                                                                         id={`costBase${i}`}
                                                                         name={`costBase${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                             </tr>)

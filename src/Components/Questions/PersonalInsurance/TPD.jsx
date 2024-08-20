@@ -27,9 +27,11 @@ const PersonalInsuranceTPD = (props) => {
     setShow(true);
   }
 
-  let TPD = questionDetail.TPD || {
-    client: {},
-    partner: {},
+  let TPD = Object.keys(questionDetail.TPD).length > 0 ? questionDetail.TPD : {
+    client: [],
+    partner: [],
+    joint: [],
+
   }; // Use an empty object as default if TPD is undefined
 
   const fillInitialValues = (setFieldValue) => {
@@ -191,7 +193,10 @@ const PersonalInsuranceTPD = (props) => {
       nameOfBeneficiaries: values.nameOfBeneficiaries,
       exclusionsLoadings: values.exclusionsLoadings,
 
-      SuperLinkedPolicy: modalObject1,
+      // SuperLinkedPolicy: modalObject1,
+
+      SuperLinkedPolicy: values.TPDDefinition === "Super Linked Policy (Own and Any)" ? modalObject1 : undefined,
+
     };
 
     let Obj = {
@@ -405,7 +410,7 @@ const PersonalInsuranceTPD = (props) => {
                     </div>
 
                     <div className="col-6">
-                      <div className="mb-3 w-50">
+                      <div className="centerDiv mb-3 w-50">
                         <DynamicYesNo
                           name={`smoker`}
                           values={values}
@@ -454,7 +459,7 @@ const PersonalInsuranceTPD = (props) => {
                       <div className="mb-3">
                         <div>
                           <DatePicker
-                            className="form-control inputDesign shadow"
+                            className="form-control inputDesign shadow DateInputPadding"
                             showIcon
                             id="dateCommenced"
                             name="dateCommenced"
@@ -776,7 +781,7 @@ const PersonalInsuranceTPD = (props) => {
                     </div>
 
                     <div className="col-6">
-                      <div className="mb-3 w-50">
+                      <div className="centerDiv mb-3 w-50">
                         <DynamicYesNo
                           name={`retainThisPolicy`}
                           values={values}
@@ -847,7 +852,7 @@ const PersonalInsuranceTPD = (props) => {
                     </div>
 
                     <div className="col-6">
-                      <div className="mb-3 w-50">
+                      <div className="centerDiv mb-3 w-50">
                         <DynamicYesNo
                           name={`indexedToCPI`}
                           values={values}
@@ -869,7 +874,7 @@ const PersonalInsuranceTPD = (props) => {
                     </div>
 
                     <div className="col-6">
-                      <div className="mb-3 w-50">
+                      <div className="centerDiv mb-3 w-50">
                         <DynamicYesNo
                           name={`continuationOption`}
                           values={values}
@@ -978,22 +983,26 @@ const PersonalInsuranceTPD = (props) => {
                     <div className="col-6"></div>
 
                     <div className="col-6">
-                      <label htmlFor="" className="form-label text-center">
-                        {nameSet}
-                        <div className="iconContainerLg">
-                          <img src={single} alt="single svg" className="w-50" />
-                        </div>
-                      </label>
+                      <div className="centerDiv mb-3">
+                        <label htmlFor="" className="form-label text-center">
+                          {nameSet}
+                          <div className="iconContainerLg">
+                            <img src={single} alt="single svg" className="w-50" />
+                          </div>
+                        </label>
+                      </div>
                     </div>
 
                     {values.EMPOwner === "Partner" && (
                       <div className="col-6">
-                        <label htmlFor="" className="form-label text-center">
-                          {nameSet}
-                          <div className="iconContainerLg">
-                            <img src={couple} alt="single svg" className="w-50" />
-                          </div>
-                        </label>
+                        <div className="centerDiv">
+                          <label htmlFor="" className="form-label text-center">
+                            {nameSet}
+                            <div className="iconContainerLg">
+                              <img src={couple} alt="single svg" className="w-50" />
+                            </div>
+                          </label>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -1129,7 +1138,7 @@ const PersonalInsuranceTPD = (props) => {
                     </div>
 
                     <div className="col-6">
-                      <div className="mb-3 w-50">
+                      <div className="centerDiv mb-3 w-50">
                         <DynamicYesNo
                           name={`smoker`}
                           values={values}
@@ -1178,7 +1187,7 @@ const PersonalInsuranceTPD = (props) => {
                       <div className="mb-3">
                         <div>
                           <DatePicker
-                            className="form-control inputDesign shadow"
+                            className="form-control inputDesign shadow DateInputPadding"
                             showIcon
                             id="dateCommenced"
                             name="dateCommenced"
@@ -1481,7 +1490,7 @@ const PersonalInsuranceTPD = (props) => {
                     </div>
 
                     <div className="col-6">
-                      <div className="mb-3 w-50">
+                      <div className="centerDiv mb-3 w-50">
                         <DynamicYesNo
                           name={`retainThisPolicy`}
                           values={values}
@@ -1522,14 +1531,16 @@ const PersonalInsuranceTPD = (props) => {
                   {values.TPDDefinition ===
                     "Super Linked Policy (Own and Any)" && (
                       <div className="row mb-3">
-                        <div className="col-6">Enter Details</div>
+                        <div className="col-6 fw-bold">Enter Details</div>
                         <div className="col-6">
-                          <Button
-                            className=" btn btn-primary bgColor modalBtn"
-                            onClick={() => handleShow(values)}
-                          >
-                            Enter Details
-                          </Button>
+                          <div className="centerDiv">
+                            <Button
+                              className=" btn btn-primary bgColor modalBtn"
+                              onClick={() => handleShow(values)}
+                            >
+                              Enter Details
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     )}
@@ -1562,7 +1573,7 @@ const PersonalInsuranceTPD = (props) => {
                     </div>
 
                     <div className="col-6">
-                      <div className="mb-3 w-50">
+                      <div className="centerDiv mb-3 w-50">
                         <DynamicYesNo
                           name={`indexedToCPI`}
                           values={values}
@@ -1584,7 +1595,7 @@ const PersonalInsuranceTPD = (props) => {
                     </div>
 
                     <div className="col-6">
-                      <div className="mb-3 w-50">
+                      <div className="centerDiv mb-3 w-50">
                         <DynamicYesNo
                           name={`continuationOption`}
                           values={values}
@@ -1675,14 +1686,17 @@ const PersonalInsuranceTPD = (props) => {
                   {values.TPDDefinition ===
                     "Super Linked Policy (Own and Any)" && (
                       <div className="row mb-3">
-                        <div className="col-6">Enter Details</div>
+                        <div className="col-6 fw-bold">Enter Details</div>
                         <div className="col-6">
-                          <Button
-                            className=" btn btn-primary bgColor modalBtn"
-                            onClick={() => handleShow(values)}
-                          >
-                            Enter Details
-                          </Button>
+
+                          <div className="centerDiv">
+                            <Button
+                              className=" btn btn-primary bgColor modalBtn"
+                              onClick={() => handleShow(values)}
+                            >
+                              Enter Details
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     )}

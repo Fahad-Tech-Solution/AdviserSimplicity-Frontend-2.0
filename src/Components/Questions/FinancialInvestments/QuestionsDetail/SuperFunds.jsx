@@ -35,12 +35,12 @@ const SuperFunds = (props) => {
     let [modalObject, setModalObject] = useState({});
 
 
-    let superAnnuationIssues = questionDetail.superAnnuationIssues || {
+    let superAnnuationIssues = Object.keys(questionDetail.superAnnuationIssues).length > 0 ? questionDetail.superAnnuationIssues : {
         client: [],
         partner: [],
         joint: [],
 
-    }; // Use an empty object as default if superAnnuationIssues is undefined
+    };  // Use an empty object as default if superAnnuationIssues is undefined
 
 
     let initialValues = superAnnuationIssues[props.modalObject.Input].length ? { NumberOfMap: superAnnuationIssues[props.modalObject.Input].length } : { NumberOfMap: "" };
@@ -307,7 +307,7 @@ const SuperFunds = (props) => {
                                             type="number"
                                             id="NumberOfMap"
                                             name="NumberOfMap"
-                                            className="form-control inputDesign"
+                                            className="form-control inputDesignDoubleInput"
                                             onChange={(e) => handleInput(e, setFieldValue)}
                                         />
                                     </div>
@@ -339,7 +339,7 @@ const SuperFunds = (props) => {
                                                                     placeholder="Fund Name"
                                                                     id={`fundName${i}`}
                                                                     name={`fundName${i}`}
-                                                                    className="form-select inputDesign"
+                                                                    className="form-select inputDesignDoubleInput"
                                                                 >
                                                                     <option value={""}>Please Select</option>
                                                                     {options.map((elem, index) => {
@@ -353,7 +353,7 @@ const SuperFunds = (props) => {
                                                                     placeholder="Member Number & Details"
                                                                     id={`memberNumber${i}`}
                                                                     name={`memberNumber${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -363,7 +363,7 @@ const SuperFunds = (props) => {
                                                                         placeholder="Balance & Benefit Details"
                                                                         id={`balanceBenefitDetails${i}`}
                                                                         name={`balanceBenefitDetails${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                     <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Balance & Benefit Details", `How many Benefit Details and Components do ${nameSet} have ?`, "balanceBenefitDetailsArray", "balanceBenefitDetails", "", values[`balanceBenefitDetailsArray${i}`], i, values) }}>
                                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
@@ -377,7 +377,7 @@ const SuperFunds = (props) => {
                                                                         placeholder="Portfolio Value"
                                                                         id={`portfolioValue${i}`}
                                                                         name={`portfolioValue${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                     <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Portfolio Value", `How many Underlying Investments do ${nameSet} have ?`, "portfolioArray", "portfolioValue", "totalPortfolioCost", values[`portfolioArray${i}`], i) }}>
                                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
@@ -421,7 +421,7 @@ const SuperFunds = (props) => {
                                                                     placeholder="Annual Advice Service Fee"
                                                                     id={`annualAdvice${i}`}
                                                                     name={`annualAdvice${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -430,7 +430,7 @@ const SuperFunds = (props) => {
                                                                     placeholder="Login in Page"
                                                                     id={`loginInPage${i}`}
                                                                     name={`loginInPage${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                     disabled
                                                                     value={100}
                                                                 />

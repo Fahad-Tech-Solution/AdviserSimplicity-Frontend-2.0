@@ -25,10 +25,11 @@ const FamilyDetails = (props) => {
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
 
-  let familyDetails = questionDetail.familyDetails || {
+  let familyDetails = Object.keys(questionDetail.familyDetails).length > 0 ? questionDetail.familyDetails : {
     client: [],
     partner: [],
     joint: [],
+
   }; // Use an empty object as default if familyDetails is undefined
 
   let initialValues = familyDetails[props.modalObject.Input].length
@@ -241,7 +242,7 @@ const FamilyDetails = (props) => {
                       type="number"
                       id="NumberOfMap"
                       name="NumberOfMap"
-                      className="form-control inputDesign"
+                      className="form-control inputDesignDoubleInput"
                       onChange={(e) => handleInput(e, setFieldValue)}
                     />
                   </div>
@@ -281,7 +282,7 @@ const FamilyDetails = (props) => {
                                     placeholder="Trust Name"
                                     id={`trustName${i}`}
                                     name={`trustName${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
 
 
@@ -292,7 +293,7 @@ const FamilyDetails = (props) => {
                                     placeholder="Trust Type"
                                     id={`trustType${i}`}
                                     name={`trustType${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
 
                                 </td>
@@ -302,7 +303,7 @@ const FamilyDetails = (props) => {
                                     placeholder="ABN"
                                     id={`ABN${i}`}
                                     name={`ABN${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -311,12 +312,12 @@ const FamilyDetails = (props) => {
                                     placeholder="Address"
                                     id={`Address${i}`}
                                     name={`Address${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
                                   <DatePicker
-                                    className="form-control inputDesign shadow"
+                                    className="form-control inputDesignDoubleInput shadow DateInputPadding"
                                     showIcon
                                     id={`establishmentDate${i}`}
                                     name={`establishmentDate${i}`}
@@ -343,7 +344,7 @@ const FamilyDetails = (props) => {
                                     placeholder="Trustee Type"
                                     id={`trusteeType${i}`}
                                     name={`trusteeType${i}`}
-                                    className="form-select inputDesign"
+                                    className="form-select inputDesignDoubleInput"
                                   >
                                     <option value={""}>Please Select</option>
                                     {options.map((elem, index) => {
@@ -361,7 +362,7 @@ const FamilyDetails = (props) => {
                                     placeholder="Trustee Name  "
                                     id={`trusteeName${i}`}
                                     name={`trusteeName${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -370,7 +371,7 @@ const FamilyDetails = (props) => {
                                     placeholder="Number of Accountants Name  "
                                     id={`noOfAccountant${i}`}
                                     name={`noOfAccountant${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -379,7 +380,7 @@ const FamilyDetails = (props) => {
                                     placeholder="Accountants Fees"
                                     id={`accountantsFee${i}`}
                                     name={`accountantsFee${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                               </tr>

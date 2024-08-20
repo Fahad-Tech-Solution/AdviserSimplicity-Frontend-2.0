@@ -24,7 +24,7 @@ const AustralianShares = (props) => {
         }
     })
 
-    let australianSharesFinance = questionDetail[props.modalObject.key] || {
+    let australianSharesFinance = Object.keys(questionDetail[props.modalObject.key]).length > 0 ? questionDetail[props.modalObject.key] : {
         client: [],
         partner: [],
         joint: [],
@@ -227,7 +227,7 @@ const AustralianShares = (props) => {
                                                 type="number"
                                                 id="NumberOfMap"
                                                 name="NumberOfMap"
-                                                className="form-control inputDesign"
+                                                className="form-control inputDesignDoubleInput"
                                                 onChange={(e) => handleInput(e, setFieldValue)}
                                             />
                                         </div>
@@ -256,7 +256,7 @@ const AustralianShares = (props) => {
                                                                     placeholder="Name of Institution"
                                                                     id={`ASXCode${i}`}
                                                                     name={`ASXCode${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                     onChange={(e) => { handleChange(e, setFieldValue, i) }}
                                                                 />
                                                             </td>
@@ -267,7 +267,7 @@ const AustralianShares = (props) => {
                                                                     id={`companyName${i}`}
                                                                     name={`companyName${i}`}
                                                                     disabled
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -277,7 +277,7 @@ const AustralianShares = (props) => {
                                                                     id={`sharePrice${i}`}
                                                                     disabled
                                                                     name={`sharePrice${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -286,7 +286,7 @@ const AustralianShares = (props) => {
                                                                     placeholder="Shares"
                                                                     id={`shares${i}`}
                                                                     name={`shares${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                     disabled={values[`sharePrice${i}`] ? false : true}
                                                                 />
                                                             </td>
@@ -296,7 +296,7 @@ const AustralianShares = (props) => {
                                                                     placeholder="Cost base"
                                                                     id={`costBase${i}`}
                                                                     name={`costBase${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                     disabled={values[`sharePrice${i}`] ? false : true}
                                                                 />
                                                             </td>
@@ -308,7 +308,7 @@ const AustralianShares = (props) => {
                                                                     name={`currentBalance${i}`}
                                                                     disabled
                                                                     value={((values[`costBase${i}`] || 0) + (values[`shares${i}`] || 0)) * (values[`sharePrice${i}`] || 0)}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                         </tr>)

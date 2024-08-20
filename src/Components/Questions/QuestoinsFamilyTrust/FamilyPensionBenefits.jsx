@@ -272,7 +272,7 @@ const FamilyPensionBenefits = (props) => {
                                 <td>{1 + i}</td>
                                 <td>
                                   <DatePicker
-                                    className="form-control inputDesign shadow"
+                                    className="form-control inputDesign shadow DateInputPadding"
                                     showIcon
                                     id={`commencementDate${i}`}
                                     name={`commencementDate${i}`}
@@ -293,7 +293,7 @@ const FamilyPensionBenefits = (props) => {
                                 <td>
                                   {" "}
                                   <DatePicker
-                                    className="form-control inputDesign shadow"
+                                    className="form-control inputDesign shadow DateInputPadding"
                                     showIcon
                                     id={`originalPurchaseDate${i}`}
                                     name={`originalPurchaseDate${i}`}
@@ -317,7 +317,7 @@ const FamilyPensionBenefits = (props) => {
                                 <td>
                                   {" "}
                                   <DatePicker
-                                    className="form-control inputDesign shadow"
+                                    className="form-control inputDesign shadow DateInputPadding"
                                     showIcon
                                     id={`eligibleServiceDate${i}`}
                                     name={`eligibleServiceDate${i}`}

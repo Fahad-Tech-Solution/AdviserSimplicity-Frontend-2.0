@@ -25,11 +25,12 @@ const EmploymentIncome = (props) => {
         }
     })
 
-    let incomeFromOwnBusiness = questionDetail.incomeFromOwnBusiness || {
-        client: {},
-        partner: {},
+    let incomeFromOwnBusiness = Object.keys(questionDetail.incomeFromOwnBusiness).length > 0 ? questionDetail.incomeFromOwnBusiness : {
+        client: [],
+        partner: [],
+        joint: [],
 
-    }; // Use an empty object as default if incomeFromOwnBusiness is undefined
+    };  // Use an empty object as default if incomeFromOwnBusiness is undefined
 
 
     let initialValues = {};
@@ -166,24 +167,26 @@ const EmploymentIncome = (props) => {
 
                                 {/* 1 row */}
 
-                                <div className="row">
+                                <div className="row mb-3">
                                     <div className="col-6"></div>
                                     {props.modalObject.Input === "client" ?
 
-                                        <div className="col-6">
-                                            <label
-                                                htmlFor=""
-                                                className="form-label text-center"
-                                            >
-                                                {nameSet}
-                                                <div className="iconContainerLg">
-                                                    <img
-                                                        src={single}
-                                                        alt="single svg"
-                                                        className="w-50 "
-                                                    />
-                                                </div>
-                                            </label>
+                                        <div className="col-6 ">
+                                            <div className="centerDiv">
+                                                <label
+                                                    htmlFor=""
+                                                    className="form-label text-center"
+                                                >
+                                                    {nameSet}
+                                                    <div className="iconContainerLg">
+                                                        <img
+                                                            src={single}
+                                                            alt="single svg"
+                                                            className="w-50 "
+                                                        />
+                                                    </div>
+                                                </label>
+                                            </div>
                                         </div>
                                         :
                                         <div className="col-6">
@@ -204,7 +207,7 @@ const EmploymentIncome = (props) => {
                                     }
                                 </div>
 
-                                <div className="row">
+                                <div className="row mb-2">
                                     <div className="col-6">
                                         <label
                                             htmlFor="EMPOccupation"
@@ -232,7 +235,7 @@ const EmploymentIncome = (props) => {
                                     </div>
                                 </div>
 
-                                <div className="row">
+                                <div className="row mb-2">
                                     <div className="col-6">
                                         <label
                                             htmlFor="EMPEmployment"
@@ -267,7 +270,7 @@ const EmploymentIncome = (props) => {
 
                                 </div>
 
-                                <div className="row">
+                                <div className="row mb-2">
                                     <div className="col-6">
                                         <label
                                             htmlFor="EMPName"
@@ -295,7 +298,7 @@ const EmploymentIncome = (props) => {
                                     </div>
                                 </div>
 
-                                <div className="row">
+                                <div className="row mb-2">
                                     <div className="col-6">
                                         <label
                                             htmlFor="EMPCommencement"
@@ -309,7 +312,7 @@ const EmploymentIncome = (props) => {
                                         <div className="mb-3">
                                             <div>
                                                 <DatePicker
-                                                    className="form-control inputDesign shadow"
+                                                    className="form-control inputDesign shadow DateInputPadding"
                                                     showIcon
                                                     id="EMPCommencement"
                                                     name="EMPCommencement"
@@ -336,7 +339,7 @@ const EmploymentIncome = (props) => {
                                     </div>
                                 </div>
 
-                                <div className="row">
+                                <div className="row mb-2">
                                     <div className="col-6">
                                         <label
                                             htmlFor="EMPHours"
@@ -365,7 +368,7 @@ const EmploymentIncome = (props) => {
 
                                 </div>
 
-                                <div className="row">
+                                <div className="row mb-2">
                                     <div className="col-6">
                                         <label
                                             htmlFor="EMPExcluding"
@@ -394,7 +397,7 @@ const EmploymentIncome = (props) => {
 
                                 </div>
 
-                                <div className="row">
+                                <div className="row mb-2">
                                     <div className="col-6">
                                         <label
                                             htmlFor="EMPSuperAnnuation"
@@ -405,13 +408,13 @@ const EmploymentIncome = (props) => {
                                     </div>
 
                                     <div className="col-6">
-                                        <div className="mb-3">
+                                        <div className=" centerDiv mb-3">
                                             <div className="row">
 
                                                 <div className="col-8">
                                                     <Field
                                                         type="number"
-                                                        className="form-control inputDesign shadow"
+                                                        className="form-control  inputDesignDoubleInput"
                                                         id="EMPSuperAnnuation"
                                                         placeholder="Superannuation Guarantee"
                                                         name="EMPSuperAnnuation"
@@ -428,7 +431,7 @@ const EmploymentIncome = (props) => {
                                                         as="select"
                                                         name="EMPSuperType"
                                                         id="EMPSuperType"
-                                                        className="form-select shadow  inputDesign"
+                                                        className="form-select   inputDesignDoubleInput"
                                                     >
                                                         <option value="">Select</option>
                                                         <option value="$">$</option>
@@ -446,7 +449,7 @@ const EmploymentIncome = (props) => {
                                     </div>
                                 </div>
 
-                                <div className="row">
+                                <div className="row mb-2">
                                     <div className="col-6">
                                         <label className="form-label">
                                             Does your Employer Offer Choice of Fund?
@@ -497,7 +500,7 @@ const EmploymentIncome = (props) => {
                                     </div>
                                 </div>
 
-                                <div className="row">
+                                <div className="row mb-2">
                                     <div className="col-6">
                                         <label className="form-label">
                                             Do you have the ability to salary sacrifice?
@@ -550,7 +553,7 @@ const EmploymentIncome = (props) => {
                                     </div>
                                 </div>
 
-                                <div className="row">
+                                <div className="row mb-2">
                                     <div className="col-6">
                                         <label
                                             htmlFor="EMPSalarySacrifice"
@@ -582,7 +585,7 @@ const EmploymentIncome = (props) => {
 
                                 </div>
 
-                                <div className="row">
+                                <div className="row mb-2">
                                     <div className="col-6">
                                         <label className="form-label">
                                             Do you make any after tax-contribution to super?
@@ -637,7 +640,7 @@ const EmploymentIncome = (props) => {
 
                                 </div>
 
-                                <div className="row">
+                                <div className="row mb-2">
                                     <div className="col-6">
                                         <label
                                             htmlFor="EMPTaxContribution"
@@ -670,7 +673,7 @@ const EmploymentIncome = (props) => {
 
                                 </div>
 
-                                <div className="row">
+                                <div className="row mb-2">
                                     <div className="col-6">
                                         <label className="form-label">
                                             Can your income vary significantly?
@@ -724,7 +727,7 @@ const EmploymentIncome = (props) => {
 
                                 </div>
 
-                                <div className="row">
+                                <div className="row mb-2">
                                     <div className="col-6">
                                         <label
                                             htmlFor="EMPUnusedSickLeave"
@@ -736,12 +739,12 @@ const EmploymentIncome = (props) => {
 
                                     <div className="col-6">
                                         {values.EMPSignificantlyradio === "Yes" ? (
-                                            <div className="mb-3">
+                                            <div className="mb-3 centerDiv">
                                                 <div className="row">
                                                     <div className="col-8">
                                                         <Field
                                                             type="number"
-                                                            className="form-control inputDesign shadow"
+                                                            className="form-control inputDesignDoubleInput shadow"
                                                             id="EMPUnusedSickLeave"
                                                             name="EMPUnusedSickLeave"
                                                             placeholder="Unused sick leave entitlements"
@@ -758,7 +761,7 @@ const EmploymentIncome = (props) => {
                                                             as="select"
                                                             id="EMPUnusedSickLeaveType"
                                                             name="EMPUnusedSickLeaveType"
-                                                            className="form-select shadow  inputDesign"
+                                                            className="form-select shadow inputDesignDoubleInput"
                                                         >
                                                             <option value="">Select</option>
                                                             <option value="days">Days</option>
@@ -781,7 +784,7 @@ const EmploymentIncome = (props) => {
 
                                 </div>
 
-                                <div className="row">
+                                <div className="row mb-2">
                                     <div className="col-6">
                                         <label
                                             htmlFor="EMPUnusedAnnual"
@@ -793,12 +796,12 @@ const EmploymentIncome = (props) => {
 
                                     <div className="col-6">
                                         {values.EMPSignificantlyradio === "Yes" ? (
-                                            <div className="mb-3">
+                                            <div className="mb-3 centerDiv">
                                                 <div className="row">
                                                     <div className="col-8">
                                                         <Field
                                                             type="number"
-                                                            className="form-control inputDesign shadow"
+                                                            className="form-control inputDesignDoubleInput shadow"
                                                             id="EMPUnusedAnnual"
                                                             name="EMPUnusedAnnual"
                                                             placeholder="Unused annual leave entitlements"
@@ -814,7 +817,7 @@ const EmploymentIncome = (props) => {
                                                             as="select"
                                                             id="EMPUnusedAnnualType"
                                                             name="EMPUnusedAnnualType"
-                                                            className="form-select shadow  inputDesign"
+                                                            className="form-select shadow  inputDesignDoubleInput"
                                                         >
                                                             <option value="">Select</option>
                                                             <option value="days">Days</option>
@@ -837,7 +840,7 @@ const EmploymentIncome = (props) => {
 
                                 </div>
 
-                                <div className="row">
+                                <div className="row mb-2">
                                     <div className="col-6">
                                         <label
                                             htmlFor="EMPUnusedlong"
@@ -849,12 +852,12 @@ const EmploymentIncome = (props) => {
 
                                     <div className="col-6">
                                         {values.EMPSignificantlyradio === "Yes" ? (
-                                            <div className="mb-3">
+                                            <div className="mb-3 centerDiv">
                                                 <div className="row">
                                                     <div className="col-8">
                                                         <Field
                                                             type="number"
-                                                            className="form-control inputDesign shadow"
+                                                            className="form-control inputDesignDoubleInput shadow"
                                                             id="EMPUnusedlong"
                                                             name="EMPUnusedlong"
                                                             placeholder="Unused long service leave entitlements"
@@ -871,7 +874,7 @@ const EmploymentIncome = (props) => {
                                                             as="select"
                                                             id="EMPUnusedlongType"
                                                             name="EMPUnusedlongType"
-                                                            className="form-select shadow  inputDesign"
+                                                            className="form-select shadow  inputDesignDoubleInput"
                                                         >
                                                             <option value="">Select</option>
                                                             <option value="days">Days</option>
@@ -944,7 +947,7 @@ const EmploymentIncome = (props) => {
 
                                 </div>
 
-                                <div className="row">
+                                <div className="row mb-2">
                                     <div className="col-6">
                                         <label
                                             htmlFor="EmployerFBTStatus"
@@ -1034,7 +1037,7 @@ const EmploymentIncome = (props) => {
 
                                 </div>
 
-                                <div className="row">
+                                <div className="row mb-2">
                                     <div className="col-6">
                                         <label
                                             htmlFor="EMPCostCar"
@@ -1111,7 +1114,7 @@ const EmploymentIncome = (props) => {
                                     </div>
                                 </div>
 
-                                <div className="row">
+                                <div className="row mb-3">
                                     <div className="col-6">
                                         <label
                                             htmlFor="EMPCarPackaged"
@@ -1194,7 +1197,7 @@ const EmploymentIncome = (props) => {
 
                                 </div>
 
-                                <div className="row">
+                                <div className="row mb-2">
                                     <div className="col-6">
                                         <label
                                             htmlFor="EMPAbilitytoSacrifice"

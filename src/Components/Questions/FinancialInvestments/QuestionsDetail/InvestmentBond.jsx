@@ -32,12 +32,15 @@ const InvestmentBond = (props) => {
     let [modalObject, setModalObject] = useState({});
 
 
-    let investmentBondFinance = questionDetail.investmentBondFinance || {
+    let investmentBondFinance = Object.keys(questionDetail.investmentBondFinance).length > 0 ? questionDetail.investmentBondFinance : {
         client: [],
         partner: [],
         joint: [],
 
-    }; // Use an empty object as default if investmentBondFinance is undefined
+    };
+    
+
+     // Use an empty object as default if investmentBondFinance is undefined
 
 
     let initialValues = investmentBondFinance[props.modalObject.Input].length ? { NumberOfMap: investmentBondFinance[props.modalObject.Input].length } : { NumberOfMap: "" };
@@ -284,7 +287,7 @@ const InvestmentBond = (props) => {
                                             type="number"
                                             id="NumberOfMap"
                                             name="NumberOfMap"
-                                            className="form-control inputDesign"
+                                            className="form-control inputDesignDoubleInput"
                                             onChange={(e) => handleInput(e, setFieldValue)}
                                         />
                                     </div>
@@ -312,7 +315,7 @@ const InvestmentBond = (props) => {
                                                                     placeholder="Platform Name"
                                                                     id={`platformName${i}`}
                                                                     name={`platformName${i}`}
-                                                                    className="form-select inputDesign"
+                                                                    className="form-select inputDesignDoubleInput"
                                                                 >
                                                                     <option value={""}>Please Select</option>
                                                                     {options.map((elem, index) => {
@@ -326,7 +329,7 @@ const InvestmentBond = (props) => {
                                                                     placeholder="Account Number"
                                                                     id={`accountNumber${i}`}
                                                                     name={`accountNumber${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -336,7 +339,7 @@ const InvestmentBond = (props) => {
                                                                         placeholder="Share Price"
                                                                         id={`portfolioValue${i}`}
                                                                         name={`portfolioValue${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                     <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Portfolio Value", `How many Underlying Investments do ${nameSet} have ?`, "portfolioArray", "portfolioValue", "totalPortfolioCost", values[`portfolioArray${i}`], i) }}>
                                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
@@ -350,7 +353,7 @@ const InvestmentBond = (props) => {
                                                                     placeholder="Total Portfolio Cost"
                                                                     id={`totalPortfolioCost${i}`}
                                                                     name={`totalPortfolioCost${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -359,7 +362,7 @@ const InvestmentBond = (props) => {
                                                                     placeholder="Service Fee"
                                                                     id={`serviceFee${i}`}
                                                                     name={`serviceFee${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -368,7 +371,7 @@ const InvestmentBond = (props) => {
                                                                     placeholder="Login in Page"
                                                                     id={`loginInPage${i}`}
                                                                     name={`loginInPage${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                     disabled
                                                                 />
                                                             </td>

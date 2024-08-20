@@ -23,11 +23,12 @@ const TradingTrust = (props) => {
     }
   })
 
-  let BusinessAsTrusts = questionDetail.BusinessAsTrusts || {
+  let BusinessAsTrusts = Object.keys(questionDetail.BusinessAsTrusts).length > 0 ? questionDetail.BusinessAsTrusts : {
     client: [],
     partner: [],
     joint: [],
-  }; // Use an empty object as default if BusinessAsTrusts is undefined
+
+  };// Use an empty object as default if BusinessAsTrusts is undefined
 
   let initialValues = BusinessAsTrusts[props.modalObject.Input].length
     ? { NumberOfMap: BusinessAsTrusts[props.modalObject.Input].length }
@@ -203,7 +204,7 @@ const TradingTrust = (props) => {
                       type="number"
                       id="NumberOfMap"
                       name="NumberOfMap"
-                      className="form-control inputDesign"
+                      className="form-control inputDesignDoubleInput"
                       onChange={(e) => handleInput(e, setFieldValue)}
                     />
                   </div>
@@ -241,7 +242,7 @@ const TradingTrust = (props) => {
                                     placeholder="Business Name"
                                     id={`businessName${i}`}
                                     name={`businessName${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -250,7 +251,7 @@ const TradingTrust = (props) => {
                                     placeholder="ABN"
                                     id={`aBN${i}`}
                                     name={`aBN${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -260,7 +261,7 @@ const TradingTrust = (props) => {
                                     placeholder="Business Address"
                                     id={`businessAddress${i}`}
                                     name={`businessAddress${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -270,7 +271,7 @@ const TradingTrust = (props) => {
                                     placeholder="Trustee Type"
                                     id={`trusteeType${i}`}
                                     name={`trusteeType${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   >
                                     <option value="">Please Select</option>
                                     <option value="Corporate">Corporate</option>
@@ -283,7 +284,7 @@ const TradingTrust = (props) => {
                                     placeholder="Trustee Name "
                                     id={`trusteeName${i}`}
                                     name={`trusteeName${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -292,7 +293,7 @@ const TradingTrust = (props) => {
                                     placeholder="Business Ownership  "
                                     id={`businessOwnership${i}`}
                                     name={`businessOwnership${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                     onBlur={(e) => handleBlur(setFieldValue, e)}
                                   />
                                 </td>
@@ -302,7 +303,7 @@ const TradingTrust = (props) => {
                                     placeholder="Distribution Received"
                                     id={`distributionReceived${i}`}
                                     name={`distributionReceived${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -311,7 +312,7 @@ const TradingTrust = (props) => {
                                     placeholder="Business Valuation"
                                     id={`businessValuation${i}`}
                                     name={`businessValuation${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                               </tr>

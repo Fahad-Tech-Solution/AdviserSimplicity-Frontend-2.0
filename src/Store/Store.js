@@ -34,7 +34,7 @@ export const CRState = atom({
         managedFundsLOC: "No",
         managedFundsMarginLoan: "No",
 
-        cars: "No",
+        car: "No",
         boat: "No",
         caravan: "No",
         personalAssets: "No",
@@ -136,9 +136,10 @@ export const CurrentPage = atom({
 
 export const defaultUrl = atom({
     key: "defaultUrl",
-    default: "http://localhost:7000",
-    // default: "http://172.168.40.41:7000",
+    // default: "http://localhost:7000",
+    default: "http://192.168.30.24:7000", // Usama bhai ventures-unit2-2g
     // default: "http://172.168.40.137:7000",
+    // default: "http://192.168.211.242:7000",
     // default: "",
 });
 
@@ -168,5 +169,60 @@ export const QuestionDetail = atom({
 
 export const GoalsDetail = atom({
     key: "GoalsDetail",
+    default: {},
+});
+
+
+export const GQState = atom({
+    key: "GQState",
+    default: {
+        clientFK: "",
+
+        "adviceOnSurplusIncomeGoal": "No",
+        "analysisOfPersonalInsuranceGoal": "No",
+        "boatGoal": "No",
+        "budgetGoal": "No",
+        "businessGoal": "No",
+        "carGoal": "No",
+        "caravanGoal": "No",
+        "careGoal": "No",
+        "centreLinkEligibilityGoal": "No",
+        "childrenEducationGoal": "No",
+        "combinedSuperIntoOneGoal": "No",
+        "contributeMoneyIntoSuperGoal": "No",
+        "creditCardGoal": "No",
+        "downSizeFamilyHomeGoal": "No",
+        "emergencyFundGoal": "No",
+        "estatePlanningGoal": "No",
+        "familyLifeStyleGoal": "No",
+        "familyTrustGoal": "No",
+        "financialAdviceGoal": "No",
+        "holidayGoal": "No",
+        "homeLoanGoal": "No",
+        "houseGoal": "No",
+        "retirementIncomeStreamGoal": "No",
+        "inheritanceGoal": "No",
+        "investmentPortfolioGoal": "No",
+        "investmentPropertyGoal": "No",
+        "leaveInheritanceGoal": "No",
+        "payLessTaxGoal": "No",
+        "reducePersonalInsuranceCoverGoal": "No",
+        "regularSavingsGoal": "No",
+        "renovateFamilyHomeGoal": "No",
+        "retainCurrentPersonalInsurancesGoal": "No",
+        "planForRetirementGoal": "No",
+        "reviewInvestmentPortfolioGoal": "No",
+        "reviewPersonalInsuranceCoverGoal": "No",
+        "reviewSuperGoal": "No",
+        "setSuperIncomeStreamGoal": "No",
+        "SMSFGoal": "No",
+        "startFamilyGoal": "No",
+        "upgradeFamilyHomeGoal": "No",
+        "weddingGoal": "No",
+    },
+});
+
+export const RiskQuestion = atom({
+    key: "RiskQuestion",
     default: {},
 });

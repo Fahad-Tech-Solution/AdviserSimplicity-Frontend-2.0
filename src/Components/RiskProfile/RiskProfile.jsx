@@ -34,6 +34,7 @@ const RiskProfile = () => {
   const [isJoined, setIsJoined] = useState("Yes");
 
   let Email = localStorage.getItem("Email");
+  
   useEffect(() => {
     axios
       .get(`${DefaultUrl}/api/Client-RiskProfile`)
@@ -247,7 +248,7 @@ const RiskProfile = () => {
   };
 
   return (
-    <>
+    <React.Fragment>
       <div className="container-fluid">
         <div className="row px-0 m-0">
           <div className="col-md-12">
@@ -1361,7 +1362,7 @@ const RiskProfile = () => {
           </div>
         </div>
       </div>
-    </>
+    </React.Fragment>
   );
 };
 

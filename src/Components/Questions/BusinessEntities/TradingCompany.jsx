@@ -24,10 +24,11 @@ const TradingCompany = (props) => {
     }
   })
 
-  let BusinessAsCompanyStructure = questionDetail.BusinessAsCompanyStructure || {
+  let BusinessAsCompanyStructure = Object.keys(questionDetail.BusinessAsCompanyStructure).length > 0 ? questionDetail.BusinessAsCompanyStructure : {
     client: [],
     partner: [],
     joint: [],
+
   }; // Use an empty object as default if BusinessAsCompanyStructure is undefined
 
   let initialValues = BusinessAsCompanyStructure[props.modalObject.Input].length
@@ -202,7 +203,7 @@ const TradingCompany = (props) => {
                       type="number"
                       id="NumberOfMap"
                       name="NumberOfMap"
-                      className="form-control inputDesign"
+                      className="form-control inputDesignDoubleInput"
                       onChange={(e) => handleInput(e, setFieldValue)}
                     />
                   </div>
@@ -240,7 +241,7 @@ const TradingCompany = (props) => {
                                     placeholder="Business Name"
                                     id={`businessName${i}`}
                                     name={`businessName${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -249,7 +250,7 @@ const TradingCompany = (props) => {
                                     placeholder="ABN/ACN"
                                     id={`aBNACN${i}`}
                                     name={`aBNACN${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -258,7 +259,7 @@ const TradingCompany = (props) => {
                                     placeholder="Business Address"
                                     id={`businessAddress${i}`}
                                     name={`businessAddress${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -267,7 +268,7 @@ const TradingCompany = (props) => {
                                     placeholder="Number of Directors"
                                     id={`numberOfDirectors${i}`}
                                     name={`numberOfDirectors${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -276,7 +277,7 @@ const TradingCompany = (props) => {
                                     placeholder="Directorship"
                                     id={`directorship${i}`}
                                     name={`directorship${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -285,7 +286,7 @@ const TradingCompany = (props) => {
                                     placeholder="Shareholding "
                                     id={`shareholding${i}`}
                                     name={`shareholding${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                     onBlur={(e) => handleBlur(setFieldValue, e)}
                                   />
                                 </td>
@@ -295,7 +296,7 @@ const TradingCompany = (props) => {
                                     placeholder="Dividend Received"
                                     id={`dividendReceived${i}`}
                                     name={`dividendReceived${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -304,7 +305,7 @@ const TradingCompany = (props) => {
                                     placeholder="Equity Position"
                                     id={`equityPosition${i}`}
                                     name={`equityPosition${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                               </tr>

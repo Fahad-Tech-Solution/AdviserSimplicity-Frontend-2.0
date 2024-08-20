@@ -17,13 +17,13 @@ const CreatableMultiSelectField = ({ options, field, form }) => {
       '&:hover': {
         border: state.isFocused ? '1px solid #4CAF50' : '1px solid #36b446'
       },
-      minHeight: '38px', // Set the minimum height
-      height: field.value && field.value.length > 0 ? 'auto' : '35px', // Set the height
+      minHeight: '42px', // Set the minimum height
+      height: field.value && field.value.length > 0 ? 'auto' : '42px', // Set the height
     }),
     valueContainer: (provided) => ({
       ...provided,
-      height: field.value && field.value.length > 0 ? 'auto' : '35px', // Ensure value container matches the control height
-      padding: '0 8px' // Adjust padding as needed
+      height: field.value && field.value.length > 0 ? 'auto' : '42px', // Ensure value container matches the control height
+      // padding: '0 8px' // Adjust padding as needed
     }),
     input: (provided) => ({
       ...provided,
@@ -32,7 +32,7 @@ const CreatableMultiSelectField = ({ options, field, form }) => {
     }),
     indicatorsContainer: (provided) => ({
       ...provided,
-      height: '40px' // Ensure indicators container matches the control height
+      height: '44px' // Ensure indicators container matches the control height
     }),
     menu: (provided) => ({
       ...provided,
@@ -48,7 +48,7 @@ const CreatableMultiSelectField = ({ options, field, form }) => {
     <Select
       isMulti
       name={field.name}
-      className='inputDesign'
+      className=''
       value={
         options
           ? options.filter(option =>

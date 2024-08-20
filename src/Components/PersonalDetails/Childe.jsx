@@ -446,7 +446,7 @@ const Childe = () => {
                                                             <div>
                                                                 <DatePicker
                                                                     id="childDoB"
-                                                                    className="form-control inputDesign shadow"
+                                                                    className="form-control inputDesign shadow DateInputPadding"
                                                                     selected={values.childDoB}
                                                                     onChange={(date) => {
                                                                         setFieldValue(

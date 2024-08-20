@@ -46,12 +46,12 @@ function PersonalDetailCards(props) {
         }
     }
 
-    return (<div className="py-4 bg-white  borderOverAll  rounded">
-        <h4 className="heading text-center">Personal Details</h4>
+    return (<div className="pb-4 bg-white  borderOverAll  rounded">
+        <h4 className="heading text-center d-none">Personal Details</h4>
         {
             /*  table  */
         }
-        <div className="row mt-3">
+        <div className="row">
             <div className={getClassName(props.values.clientMaritalStatus)}>
                 <div className="card px-3 py-4 border-0 gap-3 PersonalDetails d-flex justify-content-center align-items-center">
                     <div className="row w-100">
@@ -69,8 +69,8 @@ function PersonalDetailCards(props) {
                         </div>
                         <div className="col-6 mb-3">
                             <div className="d-flex align-items-center">
-                                {props.values.clientGender ? <BsGenderFemale className="me-2" /> : <BsGenderMale className="me-2" />}
-                                {props.values.clientGender ? 'Female' : 'Male'}
+                                {props.values.clientGender=="female" ? <BsGenderFemale className="me-2" /> : <BsGenderMale className="me-2" />}
+                                {props.values.clientGender=="female" ? 'Female' : 'Male'}
                             </div>
                         </div>
                         <div className="col-6 mb-3">
@@ -132,8 +132,8 @@ function PersonalDetailCards(props) {
                             </div>
                             <div className="col-6 mb-3">
                                 <div className="d-flex align-items-center">
-                                    {props.values.partnerGender ? <BsGenderFemale className="me-2" /> : <BsGenderMale className="me-2" />}
-                                    {props.values.partnerGender ? 'Female' : 'Male'}
+                                    {props.values.partnerGender=="female" ? <BsGenderFemale className="me-2" /> : <BsGenderMale className="me-2" />}
+                                    {props.values.partnerGender=="female" ? 'Female' : 'Male'}
                                 </div>
                             </div>
                             <div className="col-6 mb-3">

@@ -758,7 +758,7 @@ const PersonalDetails = () => {
                                                     <div className="col-4 mt-3">
                                                         <DatePicker
                                                             id="clientDOB"
-                                                            className="form-control inputDesign shadow w-100"
+                                                            className="form-control inputDesign shadow w-100 DateInputPadding"
                                                             selected={values.clientDOB}
                                                             onChange={(date) => {
                                                                 setFieldValue("clientDOB", date);
@@ -790,7 +790,7 @@ const PersonalDetails = () => {
                                                         <div className="col-4 mt-3">
                                                             <div>
                                                                 <DatePicker
-                                                                    className="form-control inputDesign shadow"
+                                                                    className="form-control inputDesign shadow DateInputPadding"
                                                                     selected={values.partnerDOB}
                                                                     onChange={(date) => {
                                                                         setFieldValue("partnerDOB", date);

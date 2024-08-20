@@ -22,12 +22,9 @@ const FamilyInvestmentHomeExpanse = (props) => {
     }
   })
 
-  let familyInvestmentExpenses = questionDetail.familyInvestmentExpenses[props.modalObject.index] || {
-    client: [],
-    partner: [],
-    joint: [],
-
-  }; // Use an empty object as default if familyInvestmentExpenses is undefined
+  let familyInvestmentExpenses = (questionDetail && questionDetail.familyInvestmentExpenses && Array.isArray(questionDetail.familyInvestmentExpenses) && props && props.modalObject && typeof props.modalObject.index === 'number')
+    ? questionDetail.familyInvestmentExpenses[props.modalObject.index] || { client: [], partner: [], joint: [] }
+    : { client: [], partner: [], joint: [] }; // Use an empty object as default if familyInvestmentExpenses is undefined
 
 
   let initialValues = familyInvestmentExpenses[props.modalObject.Input].length ? { NumberOfMap: familyInvestmentExpenses[props.modalObject.Input].length } : { NumberOfMap: "" };
@@ -193,7 +190,7 @@ const FamilyInvestmentHomeExpanse = (props) => {
                       type="number"
                       id="NumberOfMap"
                       name="NumberOfMap"
-                      className="form-control inputDesign"
+                      className="form-control inputDesignDoubleInput"
                       onChange={(e) => handleInput(e, setFieldValue)}
                     />
                   </div>
@@ -222,7 +219,7 @@ const FamilyInvestmentHomeExpanse = (props) => {
                                     placeholder="Council Rates"
                                     id={`councilRates${i}`}
                                     name={`councilRates${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -231,7 +228,7 @@ const FamilyInvestmentHomeExpanse = (props) => {
                                     placeholder="Water Rates"
                                     id={`waterRates${i}`}
                                     name={`waterRates${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -240,7 +237,7 @@ const FamilyInvestmentHomeExpanse = (props) => {
                                     placeholder="Land tax"
                                     id={`landTax${i}`}
                                     name={`landTax${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -249,7 +246,7 @@ const FamilyInvestmentHomeExpanse = (props) => {
                                     placeholder="Insurance/Body Corporate"
                                     id={`insuranceCorporate${i}`}
                                     name={`insuranceCorporate${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -258,7 +255,7 @@ const FamilyInvestmentHomeExpanse = (props) => {
                                     placeholder="Repairs and Maintenance"
                                     id={`repairsMaintenance${i}`}
                                     name={`repairsMaintenance${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -267,7 +264,7 @@ const FamilyInvestmentHomeExpanse = (props) => {
                                     placeholder="All Other"
                                     id={`allOther${i}`}
                                     name={`allOther${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                               </tr>)

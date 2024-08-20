@@ -49,6 +49,8 @@ import QuestionsFamily from "./Components/Questions/QuestoinsFamilyTrust/Questoi
 import PersonalInsurance from "./Components/Questions/PersonalInsurance/PersonalInsurance";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import GoalsObjectiveNew from "./Components/Goals&Objectives/GoalsObjectiveNew";
+import Contact from "./Components/ContactTest/Contact";
+import RiskProfileNew from "./Components/RiskProfile/RiskProfileNew";
 
 
 function App() {
@@ -73,6 +75,20 @@ function App() {
       setSidePadding('17rem');
     }
   }
+
+  let topMenuArray = ['/', '/Goals-And-Objectives', '/Risk-Profile', '/All-Clients',
+    '/Risk-Profile/',
+    "/Risk-Profile/Q2",
+    "/Risk-Profile/Q3",
+    "/Risk-Profile/Q4",
+    "/Risk-Profile/Q5",
+    "/Risk-Profile/Q6",
+    "/Risk-Profile/Q7",
+    "/Risk-Profile/Q8",
+  ]
+
+
+  
   return (
     <div className="container-fluid">
       <div className="row" >
@@ -89,7 +105,7 @@ function App() {
             {/* <Topbar SidebarSwitch={sideSwitchMenu} />*/}
             <Options opt={switchState} SidebarSwitch={sideSwitchMenu} />
 
-            <div className={`py-0 mx-0 mb-0 ${((CurrentP === '/') || (CurrentP === '/Risk-Profile') || (CurrentP === '/All-Clients')) ? 'mainBody2' : 'mainBody'} `}>
+            <div className={`py-0 mx-0 mb-0 ${topMenuArray.includes(CurrentP) ? 'mainBody2' : 'mainBody'} `}>
               <Routes>
 
                 <Route path="/" element={<Dashboard />} />
@@ -115,15 +131,21 @@ function App() {
                 <Route path="/Investment" element={<QuestionsNew><AdditionalQueriesInvestment /></QuestionsNew>} />
                 <Route path="/EstatePlanning" element={<QuestionsNew><EstatePlanning /></QuestionsNew>} />
                 <Route path="/ProfessionalAdvisor" element={<QuestionsNew><AdditionalQueriesProfessionalAdvisor /></QuestionsNew>} />
+
+                {/*
                 <Route path="/PersonalAssets" element={<QuestionsNew><AdditionalQueriesPersonalAssets /></QuestionsNew>} />
-                <Route path="/InvestmentTrust" element={<QuestionsNew><QuestionsInvestmentTrust /></QuestionsNew>} />  {/* APi Integration Left */}
+                <Route path="/InvestmentTrust" element={<QuestionsNew><QuestionsInvestmentTrust /></QuestionsNew>} />
+                <Route path="/TestMailWithPDF" element={<Contact />} />
+                */}
+
+                <Route path="/PersonalInsurance" element={<QuestionsNew><PersonalInsurance /></QuestionsNew>} />  {/* APi Integration Left */}
                 <Route path="/BusinessEntities" element={<QuestionsNew><BusinessEntities /></QuestionsNew>} />
                 <Route path="/SMSF" element={<QuestionsNew><QuestionsSMSF /></QuestionsNew>} />
                 <Route path="/FamilyTrust" element={<QuestionsNew><QuestionsFamily /></QuestionsNew>} />
-                <Route path="/PersonalInsurance" element={<QuestionsNew><PersonalInsurance /></QuestionsNew>} />  {/* APi Integration Left */}
 
-                <Route path="/Risk-Profile" element={<RiskProfile />} />
+                <Route path="/Risk-Profile/*" element={<RiskProfileNew />} />
                 <Route path="/Goals-And-Objectives" element={<GoalsObjectiveNew />} />
+
 
                 {/* Cash-Flow ROUTING */}
                 <Route path="/Cash-Flow" element={<CashFlow />} />

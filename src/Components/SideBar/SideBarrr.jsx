@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import Accordion from "react-bootstrap/Accordion";
 // import { useNavigate } from 'react-router-dom';
-
+import AdviserS from "../Assets/Adviser-Simpilicity.png";
+import AdviserS1 from "../Assets/Adviser-Simpilicity1.png";
+import AdviserSmini from "../Assets/Adviser-Simpilicity-mini.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHome,
@@ -44,12 +46,14 @@ const SideBarrr = (props) => {
             {sidebar ? (
               <div className="text-center mt-3">
                 <div className="logoText">
-
-                  <h5>
-                    ADVISER <span>Simplicity</span>
+                  <h5 className="px-5" onClick={close} role="button">
+                    <img src={AdviserS1} alt="Logo" width={"200px"} />
                   </h5>
+                  {/* <h5>
+                    ADVISER komail <span>Simplicity</span>
+                  </h5> */}
 
-                  <div>
+                  <div className="d-none">
                     <FontAwesomeIcon
                       icon={faBars}
                       className=""
@@ -66,7 +70,9 @@ const SideBarrr = (props) => {
                 role="button"
                 tabIndex="0"
               >
-                <FontAwesomeIcon icon={faBars} onClick={open} />
+                <img src={AdviserSmini} alt="Logo" width={"50px"} onClick={open} />
+
+                <FontAwesomeIcon icon={faBars} onClick={open} className="d-none" />
               </h6>
             )}
 
@@ -95,7 +101,7 @@ const SideBarrr = (props) => {
                   </Accordion.Header>
                   <Accordion.Body>
                     <div className={`w-100 px-3 Custom_hover ${CurrentP === '/All-Clients' && 'active'}`}
-                      onClick={() => { setOptRender("Opt1"); localStorage.setItem("OptionRender", "Opt1"); ; Navigate("/All-Clients") }}
+                      onClick={() => { setOptRender("Opt1"); localStorage.setItem("OptionRender", "Opt1");; Navigate("/All-Clients") }}
                       id="Financial"
                     >
                       <NavLink
@@ -134,7 +140,7 @@ const SideBarrr = (props) => {
                     </div>
 
                     <div className={`w-100 px-3 Custom_hover ${CurrentP === '/PersonalDetail' && 'active'}`}
-                      onClick={() => { setOptRender("Opt1"); localStorage.setItem("OptionRender", "Opt1");  Navigate("/PersonalDetail") }}
+                      onClick={() => { setOptRender("Opt1"); localStorage.setItem("OptionRender", "Opt1"); Navigate("/PersonalDetail") }}
                       id="Client"
                     >
                       <NavLink
@@ -170,7 +176,7 @@ const SideBarrr = (props) => {
                   <Accordion.Body>
 
                     <div className={`w-100 px-3 Custom_hover ${CurrentP === '/Cash-Flow' && 'active'}`}
-                      onClick={() => { setOptRender("Opt3"); localStorage.setItem("OptionRender", "Opt3");  Navigate("/Cash-Flow/#"+localStorage.getItem("UserID")); }}
+                      onClick={() => { setOptRender("Opt3"); localStorage.setItem("OptionRender", "Opt3"); Navigate("/Cash-Flow/#" + localStorage.getItem("UserID")); }}
                       id="cashFlow"
                     >
                       <NavLink

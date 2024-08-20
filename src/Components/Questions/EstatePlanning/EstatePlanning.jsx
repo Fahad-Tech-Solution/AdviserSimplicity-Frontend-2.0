@@ -18,6 +18,8 @@ import { Form, Formik } from "formik";
 import { GetAxios, PatchAxios, PostAxios } from "../../Assets/Api/Api";
 import { FaCircleQuestion } from "react-icons/fa6";
 import { Tooltip } from "antd";
+import { Image } from "react-bootstrap";
+import DynamicQuestionBlocks from "../../Assets/DynamicQuestionBlocks/DynamicQuestionBlocks";
 
 
 
@@ -76,6 +78,35 @@ const EstatePlanning = (props) => {
         }
     };
 
+
+    let QuestionArray = [
+        {
+            title: "Do you have a Will?",
+            img: will,
+            key: "will",
+        },
+        {
+            title: "Do you have a Power of Attorney in place?",
+            img: POA,
+            key: "POA",
+        },
+        {
+            title: "Do you have any Professional Advisers",
+            img: advisor,
+            key: "professionalAdviser",
+        },
+    ]
+
+    const QuestionClick = (index, elem, values, setFieldValue) => {
+        console.log("image clicked in goals", index, elem.key, values);
+        if (values[elem.key] == "No") {
+            setFieldValue(elem.key, "Yes");
+        }
+        if (values[elem.key] == "Yes") {
+            setFieldValue(elem.key, "No");
+        }
+    };
+
     return (
         <div className="container-fluid">
             <div className="row m-0">
@@ -85,189 +116,191 @@ const EstatePlanning = (props) => {
                     enableReinitialize
                     innerRef={props.formRef}
                 >
-                    {({ values, handleChange }) => <Form>
+                    {({ values, handleChange, setFieldValue }) => <Form>
                         <div className="col-md-12 text-center">
                             <h4 className="heading d-none">Estate Planning & Professional Adviser</h4>
 
-                            <div className="row my-3">
-                                <div className="col-md-12">
+                            <div className="row my-3 justify-content-center">
+                                <DynamicQuestionBlocks QuestionArray={QuestionArray} QuestionClick={QuestionClick} values={values} setFieldValue={setFieldValue} />
+
+                                <div className="col-md-12 d-none">
                                     <div className="mb-3">
                                         <label htmlFor="" className="form-label">
                                             Do you have a Will? &nbsp;
                                             <Tooltip placement="top" title={" When yes is selected for Partner for Wills and POA"}>
-                                            <FaCircleQuestion style={{ fontSize: '24px', cursor: 'pointer' }} />
-                                        </Tooltip>
-                                    </label>
-                                    <div className="QuestionIcon">
-                                        <img className="img-fluid" src={will} alt="" />
-                                    </div>
-                                    {/* health button style */}
-
-                                    <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter">
-                                        <div className="radiobutton ">
-                                            <input
-                                                type="radio"
-                                                name="will"
-                                                id="will"
-                                                value="No"
-                                                onChange={handleChange}
-                                                checked={values.will === "No"}
-                                            />
-                                            <label
-                                                htmlFor="will"
-                                                className="label1"
-                                            >
-                                                <span>No</span>
-                                            </label>
-                                            <input
-                                                type="radio"
-                                                name="will"
-                                                id="will2"
-                                                value="Yes"
-                                                onChange={handleChange}
-                                                checked={values.will === "Yes"}
-                                            />
-                                            <label
-                                                htmlFor="will2"
-                                                className="label2"
-                                            >
-                                                <span>Yes</span>
-                                            </label>
+                                                <FaCircleQuestion style={{ fontSize: '24px', cursor: 'pointer' }} />
+                                            </Tooltip>
+                                        </label>
+                                        <div className="QuestionIcon">
+                                            <img className="img-fluid" src={will} alt="" />
                                         </div>
-                                    </div>
+                                        {/* health button style */}
 
-                                    {/* health switch button style */}
+                                        <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter">
+                                            <div className="radiobutton ">
+                                                <input
+                                                    type="radio"
+                                                    name="will"
+                                                    id="will"
+                                                    value="No"
+                                                    onChange={handleChange}
+                                                    checked={values.will === "No"}
+                                                />
+                                                <label
+                                                    htmlFor="will"
+                                                    className="label1"
+                                                >
+                                                    <span>No</span>
+                                                </label>
+                                                <input
+                                                    type="radio"
+                                                    name="will"
+                                                    id="will2"
+                                                    value="Yes"
+                                                    onChange={handleChange}
+                                                    checked={values.will === "Yes"}
+                                                />
+                                                <label
+                                                    htmlFor="will2"
+                                                    className="label2"
+                                                >
+                                                    <span>Yes</span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        {/* health switch button style */}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="row my-3">
-                            <div className="col-md-12">
-                                <div className="mb-3">
-                                    <label htmlFor="" className="form-label">
-                                        Do you have a Power of Attorney in place?
-                                    </label>
-                                    <div className="QuestionIcon">
-                                        <img className="img-fluid" src={POA} alt="" />
-                                    </div>
-                                    {/* health button style */}
-
-                                    <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter">
-                                        <div className="radiobutton">
-                                            <input
-                                                type="radio"
-                                                name="POA"
-                                                id="POA"
-                                                value="No"
-                                                onChange={handleChange}
-                                                checked={values.POA === "No"}
-                                            />
-                                            <label
-                                                htmlFor="POA"
-                                                className="label1"
-                                            >
-                                                <span>No</span>
-                                            </label>
-                                            <input
-                                                type="radio"
-                                                name="POA"
-                                                id="POA2"
-                                                value="Yes"
-                                                onChange={handleChange}
-                                                checked={values.POA === "Yes"}
-                                            />
-                                            <label
-                                                htmlFor="POA2"
-                                                className="label2"
-                                            >
-                                                <span>Yes</span>
-                                            </label>
+                            <div className="row my-3 d-none">
+                                <div className="col-md-12">
+                                    <div className="mb-3">
+                                        <label htmlFor="" className="form-label">
+                                            Do you have a Power of Attorney in place?
+                                        </label>
+                                        <div className="QuestionIcon">
+                                            <img className="img-fluid" src={POA} alt="" />
                                         </div>
-                                    </div>
+                                        {/* health button style */}
 
-                                    {/* health switch button style */}
+                                        <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter">
+                                            <div className="radiobutton">
+                                                <input
+                                                    type="radio"
+                                                    name="POA"
+                                                    id="POA"
+                                                    value="No"
+                                                    onChange={handleChange}
+                                                    checked={values.POA === "No"}
+                                                />
+                                                <label
+                                                    htmlFor="POA"
+                                                    className="label1"
+                                                >
+                                                    <span>No</span>
+                                                </label>
+                                                <input
+                                                    type="radio"
+                                                    name="POA"
+                                                    id="POA2"
+                                                    value="Yes"
+                                                    onChange={handleChange}
+                                                    checked={values.POA === "Yes"}
+                                                />
+                                                <label
+                                                    htmlFor="POA2"
+                                                    className="label2"
+                                                >
+                                                    <span>Yes</span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        {/* health switch button style */}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="row my-3">
-                            <div className="col-md-12">
-                                <div className="mb-3">
-                                    <label htmlFor="" className="form-label">
-                                        Do you have any Professional Advisers
-                                    </label>
-                                    <div className="QuestionIcon">
-                                        <img className="img-fluid" src={advisor} alt="" />
-                                    </div>
-                                    {/* health button style */}
-
-                                    <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter ">
-                                        <div className="radiobutton">
-                                            <input
-                                                type="radio"
-                                                name="professionalAdviser"
-                                                id="professionalAdviser"
-                                                value="No"
-                                                onChange={handleChange}
-                                                checked={values.professionalAdviser === "No"}
-                                            />
-                                            <label
-                                                htmlFor="professionalAdvisers"
-                                                className="label1"
-                                            >
-                                                <span>No</span>
-                                            </label>
-                                            <input
-                                                type="radio"
-                                                name="professionalAdviser"
-                                                id="professionalAdviser2"
-                                                value="Yes"
-                                                onChange={handleChange}
-                                                checked={values.professionalAdviser === "Yes"}
-                                            />
-                                            <label
-                                                htmlFor="professionalAdviser2"
-                                                className="label2"
-                                            >
-                                                <span>Yes</span>
-                                            </label>
+                            <div className="row my-3 d-none">
+                                <div className="col-md-12">
+                                    <div className="mb-3">
+                                        <label htmlFor="" className="form-label">
+                                            Do you have any Professional Advisers
+                                        </label>
+                                        <div className="QuestionIcon">
+                                            <img className="img-fluid" src={advisor} alt="" />
                                         </div>
-                                    </div>
+                                        {/* health button style */}
 
-                                    {/* health switch button style */}
+                                        <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter ">
+                                            <div className="radiobutton">
+                                                <input
+                                                    type="radio"
+                                                    name="professionalAdviser"
+                                                    id="professionalAdviser"
+                                                    value="No"
+                                                    onChange={handleChange}
+                                                    checked={values.professionalAdviser === "No"}
+                                                />
+                                                <label
+                                                    htmlFor="professionalAdvisers"
+                                                    className="label1"
+                                                >
+                                                    <span>No</span>
+                                                </label>
+                                                <input
+                                                    type="radio"
+                                                    name="professionalAdviser"
+                                                    id="professionalAdviser2"
+                                                    value="Yes"
+                                                    onChange={handleChange}
+                                                    checked={values.professionalAdviser === "Yes"}
+                                                />
+                                                <label
+                                                    htmlFor="professionalAdviser2"
+                                                    className="label2"
+                                                >
+                                                    <span>Yes</span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        {/* health switch button style */}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
 
-                        <div className="row mt-2 d-none">
-                            <div className="col-md-12">
-                                <button
-                                    onClick={() => {
+                            <div className="row mt-2 d-none">
+                                <div className="col-md-12">
+                                    <button
+                                        onClick={() => {
 
-                                    }}
-                                    type="submit"
-                                    className="float-end btn w-25  bgColor modalBtn"
-                                >
-                                    Next
-                                </button>
-                                <button
-                                    type="button" className="float-end btn w-25  btn-outline  backBtn mx-3"
-                                    onClick={() => {
+                                        }}
+                                        type="submit"
+                                        className="float-end btn w-25  bgColor modalBtn"
+                                    >
+                                        Next
+                                    </button>
+                                    <button
+                                        type="button" className="float-end btn w-25  btn-outline  backBtn mx-3"
+                                        onClick={() => {
 
-                                        setQuestionChange("SuperAndRetirement")
-                                    }}
-                                >
-                                    Back
-                                </button>
+                                            setQuestionChange("SuperAndRetirement")
+                                        }}
+                                    >
+                                        Back
+                                    </button>
+                                </div>
                             </div>
-                        </div>
 
-                    </div>
+                        </div>
 
                     </Form>}
-            </Formik>
-        </div>
+                </Formik>
+            </div>
         </div >
     );
 };

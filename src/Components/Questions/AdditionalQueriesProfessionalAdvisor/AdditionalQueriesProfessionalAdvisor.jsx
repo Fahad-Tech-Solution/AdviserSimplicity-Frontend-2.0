@@ -17,6 +17,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { QuestionShift, CRState, defaultUrl } from "../../../Store/Store";
 import { Form, Formik } from "formik";
 import { GetAxios, PatchAxios, PostAxios } from "../../Assets/Api/Api";
+import DynamicQuestionBlocks from "../../Assets/DynamicQuestionBlocks/DynamicQuestionBlocks";
 const AdditionalQueriesProfessionalAdvisor = (props) => {
 
 
@@ -73,6 +74,40 @@ const AdditionalQueriesProfessionalAdvisor = (props) => {
     }
   };
 
+  let QuestionArray = [
+    {
+      title: "Do you have any personal Insurance cover (Retail Cover Outside and Inside Super) ?",
+      img: umbrela,
+      key: "CoverOutsideIssuesradio",
+    },
+    {
+      title: "Do you have Wills or Power of Attornies?",
+      img: will,
+      key: "PowerofAttorniesIssuesradio",
+    },
+    {
+      title: "Do you have any Professional Advisers",
+      img: advisor,
+      key: "ProfessionalAdvisersIssuesradio",
+    },
+    {
+      title: "Do you have any Business or Related Entities",
+      img: building,
+      key: "RelatedEntitiesIssuesradio",
+    },
+  ]
+  const QuestionClick = (index, elem, values, setFieldValue) => {
+    console.log("image clicked in goals", index, elem.key, values);
+    if (values[elem.key] == "No") {
+      setFieldValue(elem.key, "Yes");
+    }
+    if (values[elem.key] == "Yes") {
+      setFieldValue(elem.key, "No");
+    }
+  };
+
+
+
 
   return (
     <div className="container-fluid">
@@ -87,8 +122,10 @@ const AdditionalQueriesProfessionalAdvisor = (props) => {
             <div className="col-md-12 text-center">
               <h4 className="heading d-none">Professional Advisor</h4>
 
-              <div className="row my-3">
-                <div className="col-md-12">
+              <div className="row my-3 justify-content-center">
+                <DynamicQuestionBlocks QuestionArray={QuestionArray} QuestionClick={QuestionClick} values={values} setFieldValue={setFieldValue} />
+
+                <div className="col-md-12 d-none">
                   <div className="mb-3">
                     <label htmlFor="" className="form-label">
                       Do you have any personal Insurance cover (Retail Cover
@@ -137,7 +174,7 @@ const AdditionalQueriesProfessionalAdvisor = (props) => {
                 </div>
               </div>
 
-              <div className="row my-3">
+              <div className="row my-3 d-none">
                 <div className="col-md-12">
                   <div className="mb-3">
                     <label htmlFor="" className="form-label">
@@ -186,7 +223,7 @@ const AdditionalQueriesProfessionalAdvisor = (props) => {
                 </div>
               </div>
 
-              <div className="row my-3">
+              <div className="row my-3 d-none">
                 <div className="col-md-12">
                   <div className="mb-3">
                     <label htmlFor="" className="form-label">
@@ -235,7 +272,7 @@ const AdditionalQueriesProfessionalAdvisor = (props) => {
                 </div>
               </div>
 
-              <div className="row my-3">
+              <div className="row my-3 d-none">
                 <div className="col-md-12">
                   <div className="mb-3">
                     <label htmlFor="" className="form-label">

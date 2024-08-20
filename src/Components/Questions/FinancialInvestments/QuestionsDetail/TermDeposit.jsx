@@ -22,7 +22,7 @@ const TermDeposit = (props) => {
         }
     })
 
-    let termDepositsFinance = questionDetail[props.modalObject.key] || {
+    let termDepositsFinance = Object.keys(questionDetail[props.modalObject.key]).length > 0 ? questionDetail[props.modalObject.key] : {
         client: [],
         partner: [],
         joint: [],
@@ -132,7 +132,7 @@ const TermDeposit = (props) => {
                             placeholder="Name of Institution"
                             id={`Institution${i}`}
                             name={`Institution${i}`}
-                            className="form-select inputDesign"
+                            className="form-select inputDesignDoubleInput"
                         >
                             <option value={""}>Please Select</option>
                             {options.map((elem, index) => {
@@ -146,7 +146,7 @@ const TermDeposit = (props) => {
                             placeholder="Account number"
                             id={`accountNumber${i}`}
                             name={`accountNumber${i}`}
-                            className="form-control inputDesign"
+                            className="form-control inputDesignDoubleInput"
                         />
                     </td>
                     <td>
@@ -155,7 +155,7 @@ const TermDeposit = (props) => {
                             placeholder="Current Balance"
                             id={`currentBalance${i}`}
                             name={`currentBalance${i}`}
-                            className="form-control inputDesign"
+                            className="form-control inputDesignDoubleInput"
                         />
                     </td>
                 </tr>
@@ -278,7 +278,7 @@ const TermDeposit = (props) => {
                                                 type="number"
                                                 id="NumberOfMap"
                                                 name="NumberOfMap"
-                                                className="form-control inputDesign"
+                                                className="form-control inputDesignDoubleInput"
                                                 onChange={(e) => handleInput(e, setFieldValue)}
                                             />
                                         </div>

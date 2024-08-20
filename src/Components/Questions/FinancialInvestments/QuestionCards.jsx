@@ -188,7 +188,7 @@ const QuestionCards = (props) => {
         PersonalAssets: [
             {
                 title: "Car",
-                key: "cars",
+                key: "car",
                 api: "/car",
                 img: car
             },
@@ -558,7 +558,7 @@ const QuestionCards = (props) => {
     }
     let DefaultUrl = useRecoilValue(defaultUrl)
 
-    const CardForms = ["cars", "boat", "caravan", "personalAssets"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
+    const CardForms = ["car", "boat", "caravan", "personalAssets"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
     const JointHidden = ["superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues", "will", "POA", "professionalAdviser", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "incomeFromInheritance", "incomeFromLumpsumExpense", "incomeFromRegularLivingExpenses", "life", "TPD", "trauma", "incomeProtection"]; // Add other titles that should use "xl" here
     const singleClient = ["incomeFromRegularLivingExpenses"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
@@ -703,11 +703,6 @@ const QuestionCards = (props) => {
         return componentMapping[obj.title] || null;
     };
 
-
-
-
-
-
     return (
         <div className="container-fluid my-4 ">
 
@@ -748,10 +743,10 @@ const QuestionCards = (props) => {
                             return (
                                 <div className={`col-md-${arrayCount % 2 == 0 ? '6' : '4'} mb-4`} key={index}>
                                     <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
+                                        <h5 className='text-center' onClick={() => { console.log(questionDetail) }}>{elem.title}</h5>
                                         <div className="QuestionIcon w-25">
                                             <img className="img-fluid" src={elem.img} alt="" />
                                         </div>
-                                        <h5 className='text-center' onClick={() => { console.log(questionDetail) }}>{elem.title}</h5>
                                         <Formik
                                             initialValues={getInitialValues()}
                                             onSubmit={handleSubmit}
@@ -770,7 +765,7 @@ const QuestionCards = (props) => {
                                                         </div>
                                                     </div>
                                                     <Field
-                                                        type="number"
+                                                        type="text"
                                                         className="form-control inputDesign "
                                                         id={"client" + elem.key}
                                                         placeholder={"Client " + elem.title}
@@ -787,7 +782,7 @@ const QuestionCards = (props) => {
                                                         </div>
                                                     </div>
                                                     <Field
-                                                        type="number"
+                                                        type="text"
                                                         className={`form-control inputDesign ${PartnerClass}`}
                                                         id={"partner" + elem.key}
                                                         placeholder={"Partner " + elem.title}
@@ -810,10 +805,10 @@ const QuestionCards = (props) => {
                             return (
                                 <div className={`col-md-${arrayCount % 2 == 0 ? '6' : '4'} mb-4`} key={index}>
                                     <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
+                                        <h5 className='text-center' onClick={() => { console.log(questionDetail) }}>{elem.title}</h5>
                                         <div className="QuestionIcon w-25">
                                             <img className="img-fluid" src={elem.img} alt="" />
                                         </div>
-                                        <h5 className='text-center' onClick={() => { console.log(questionDetail) }}>{elem.title}</h5>
                                         <div
                                             className="row justify-content-center align-items-center my-2"
                                         >
@@ -835,12 +830,12 @@ const QuestionCards = (props) => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <input type="number"
+                                        <input type="text"
                                             className="form-control inputDesign "
                                             id={"client" + elem.key}
                                             placeholder={"General Living Expenses"}
                                             name={"client" + elem.key}
-                                            value={questionDetail && questionDetail?.generalLivingExpenses && questionDetail?.generalLivingExpenses?.generalLivingExpensesTotal ? questionDetail.generalLivingExpenses.generalLivingExpensesTotal : ""}
+                                            value={questionDetail && questionDetail?.generalLivingExpenses && questionDetail?.generalLivingExpenses?.generalLivingExpensesTotal ? "$" + questionDetail.generalLivingExpenses.generalLivingExpensesTotal : ""}
                                         />
                                         <div
                                             className="row justify-content-center align-items-center my-2"
@@ -863,12 +858,12 @@ const QuestionCards = (props) => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <input type="number"
+                                        <input type="text"
                                             className="form-control inputDesign "
                                             id={"partner" + elem.key}
                                             placeholder={elem.title}
                                             name={"partner" + elem.key}
-                                            value={questionDetail && questionDetail?.retirementLivingExpenses && questionDetail?.retirementLivingExpenses?.retirementLivingExpensesTotal ? questionDetail.retirementLivingExpenses.retirementLivingExpensesTotal : ""}
+                                            value={questionDetail && questionDetail?.retirementLivingExpenses && questionDetail?.retirementLivingExpenses?.retirementLivingExpensesTotal ? "$" + questionDetail.retirementLivingExpenses.retirementLivingExpensesTotal : ""}
                                         />
                                     </Card>
                                 </div>
@@ -879,10 +874,10 @@ const QuestionCards = (props) => {
                             return (
                                 <div className={`col-md-${arrayCount % 2 == 0 ? '6' : '4'} mb-4`} key={index}>
                                     <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
+                                        <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}</h5>
                                         <div className="QuestionIcon w-25">
                                             <img className="img-fluid" src={elem.img} alt="" />
                                         </div>
-                                        <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}</h5>
                                         <div
                                             className="row justify-content-center align-items-center my-2"
                                         >
@@ -904,12 +899,12 @@ const QuestionCards = (props) => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <input type="number"
+                                        <input type="text"
                                             className="form-control inputDesign "
                                             id={"client" + elem.key}
                                             placeholder={elem.title}
                                             name={"client" + elem.key}
-                                            value={questionDetail && questionDetail[elem.key]?.clientTotal ? questionDetail[elem.key].clientTotal : ""}
+                                            value={questionDetail && questionDetail[elem.key]?.clientTotal ? "$" + questionDetail[elem.key].clientTotal : ""}
                                         />
                                         <div
                                             className={`row justify-content-center align-items-center my-2 ${PartnerClass}`}
@@ -932,12 +927,12 @@ const QuestionCards = (props) => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <input type="number"
+                                        <input type="text"
                                             className={`form-control inputDesign ${PartnerClass}`}
                                             id={"partner" + elem.key}
                                             placeholder={elem.title}
                                             name={"partner" + elem.key}
-                                            value={questionDetail && questionDetail[elem.key]?.partnerTotal ? questionDetail[elem.key].partnerTotal : ""}
+                                            value={questionDetail && questionDetail[elem.key]?.partnerTotal ? "$" + questionDetail[elem.key].partnerTotal : ""}
                                         />
 
                                         <div
@@ -962,12 +957,12 @@ const QuestionCards = (props) => {
                                             </div>
                                         </div>
 
-                                        <input type="number"
+                                        <input type="text"
                                             className={`form-control inputDesign ${jointClass} ${PartnerClass}`}
                                             id={"joint" + elem.key}
                                             placeholder={elem.title}
                                             name={"joint" + elem.key}
-                                            value={questionDetail && questionDetail[elem.key]?.jointTotal ? questionDetail[elem.key].jointTotal : ""}
+                                            value={questionDetail && questionDetail[elem.key]?.jointTotal ? "$" + questionDetail[elem.key].jointTotal : ""}
                                         />
 
                                     </Card>
@@ -984,10 +979,10 @@ const QuestionCards = (props) => {
                             return (
                                 <div className={`col-md-${arrayCount % 2 == 0 ? '6' : '4'} mb-4`} key={index}>
                                     <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
+                                        <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}</h5>
                                         <div className="QuestionIcon w-25">
                                             <img className="img-fluid" src={elem.img} alt="" />
                                         </div>
-                                        <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}</h5>
                                         <div
                                             className="row justify-content-center align-items-center my-2"
                                         >
@@ -1010,12 +1005,12 @@ const QuestionCards = (props) => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <input type="number"
+                                        <input type="text"
                                             className="form-control inputDesign "
                                             id={"client" + elem.key}
                                             placeholder={elem.title}
                                             name={"client" + elem.key}
-                                            value={questionDetail && questionDetail[elem.key]?.clientTotal ? questionDetail[elem.key].clientTotal : ""}
+                                            value={questionDetail && questionDetail[elem.key]?.clientTotal ? "$" + questionDetail[elem.key].clientTotal : ""}
                                         />
                                         <div
                                             className={`row justify-content-center align-items-center my-2 ${PartnerClass}`}
@@ -1038,12 +1033,12 @@ const QuestionCards = (props) => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <input type="number"
+                                        <input type="text"
                                             className={`form-control inputDesign ${PartnerClass}`}
                                             id={"partner" + elem.key}
                                             placeholder={elem.title}
                                             name={"partner" + elem.key}
-                                            value={questionDetail && questionDetail[elem.key]?.partnerTotal ? questionDetail[elem.key].partnerTotal : ""}
+                                            value={questionDetail && questionDetail[elem.key]?.partnerTotal ? "$" + questionDetail[elem.key].partnerTotal : ""}
                                         />
 
                                         <div
@@ -1068,12 +1063,12 @@ const QuestionCards = (props) => {
                                             </div>
                                         </div>
 
-                                        <input type="number"
+                                        <input type="text"
                                             className={`form-control inputDesign ${jointClass} ${PartnerClass}`}
                                             id={"joint" + elem.key}
                                             placeholder={elem.title}
                                             name={"joint" + elem.key}
-                                            value={questionDetail && questionDetail[elem.key]?.jointTotal ? questionDetail[elem.key].jointTotal : ""}
+                                            value={questionDetail && questionDetail[elem.key]?.jointTotal ? "$" + questionDetail[elem.key].jointTotal : ""}
                                         />
 
                                     </Card>
@@ -1129,10 +1124,10 @@ const HolyDayHome = (props) => {
                 return (
                     <div className={`col-md-${props.arrayCount % 2 == 0 ? '6' : '4'} mb-4`} key={i}>
                         <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
+                            <h5 className='text-center' onClick={() => { console.log(props.questionDetail[elem.key]) }}>{elem.title} {parseFloat(i) + 1}</h5>
                             <div className="QuestionIcon w-25">
                                 <img className="img-fluid" src={elem.img} alt="" />
                             </div>
-                            <h5 className='text-center' onClick={() => { console.log(props.questionDetail[elem.key]) }}>{elem.title} {parseFloat(i) + 1}</h5>
                             <div
                                 className="row justify-content-center align-items-center my-2"
                             >
@@ -1152,7 +1147,7 @@ const HolyDayHome = (props) => {
                                     </label>
                                 </div>
                             </div>
-                            <input type="number"
+                            <input type="text"
                                 className="form-control inputDesign "
                                 id={"client" + elem.key}
                                 placeholder={elem.title}
@@ -1163,7 +1158,7 @@ const HolyDayHome = (props) => {
                                         Array.isArray(props.questionDetail[elem.key]) &&
                                         props.questionDetail[elem.key][i] &&
                                         props.questionDetail[elem.key][i].clientTotal
-                                        ? props.questionDetail[elem.key][i].clientTotal
+                                        ? "$" + props.questionDetail[elem.key][i].clientTotal
                                         : ""
                                 }
                             />
@@ -1186,7 +1181,7 @@ const HolyDayHome = (props) => {
                                     </label>
                                 </div>
                             </div>
-                            <input type="number"
+                            <input type="text"
                                 className={`form-control inputDesign ${PartnerClass}`}
                                 id={"partner" + elem.key}
                                 placeholder={elem.title}
@@ -1197,7 +1192,7 @@ const HolyDayHome = (props) => {
                                         Array.isArray(props.questionDetail[elem.key]) &&
                                         props.questionDetail[elem.key][i] &&
                                         props.questionDetail[elem.key][i].partnerTotal
-                                        ? props.questionDetail[elem.key][i].partnerTotal
+                                        ? "$" + props.questionDetail[elem.key][i].partnerTotal
                                         : ""
                                 }
                             />
@@ -1222,7 +1217,7 @@ const HolyDayHome = (props) => {
                                 </div>
                             </div>
 
-                            <input type="number"
+                            <input type="text"
                                 className={`form-control inputDesign ${jointClass} ${PartnerClass}`}
                                 id={"joint" + elem.key}
                                 placeholder={elem.title}
@@ -1233,7 +1228,7 @@ const HolyDayHome = (props) => {
                                         Array.isArray(props.questionDetail[elem.key]) &&
                                         props.questionDetail[elem.key][i] &&
                                         props.questionDetail[elem.key][i].jointTotal
-                                        ? props.questionDetail[elem.key][i].jointTotal
+                                        ? "$" + props.questionDetail[elem.key][i].jointTotal
                                         : ""
                                 }
 

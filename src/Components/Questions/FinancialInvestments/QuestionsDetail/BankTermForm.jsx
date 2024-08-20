@@ -21,12 +21,12 @@ const BankTermForm = (props) => {
         }
     })
 
-    let BankAccountFinance = questionDetail[props.modalObject.key] || {
+    let BankAccountFinance = Object.keys(questionDetail[props.modalObject.key]).length > 0 ? questionDetail[props.modalObject.key] : {
         client: [],
         partner: [],
         joint: [],
 
-    }; // Use an empty object as default if BankAccountFinance is undefined
+    };// Use an empty object as default if BankAccountFinance is undefined
 
 
     let initialValues = BankAccountFinance[props.modalObject.Input].length ? { NumberOfMap: BankAccountFinance[props.modalObject.Input].length } : { NumberOfMap: "" };
@@ -131,7 +131,7 @@ const BankTermForm = (props) => {
                             placeholder="Name of Institution"
                             id={`Institution${i}`}
                             name={`Institution${i}`}
-                            className="form-select inputDesign"
+                            className="form-select inputDesignDoubleInput"
                         >
                             <option value={""}>Please Select</option>
                             {options.map((elem, index) => {
@@ -145,7 +145,7 @@ const BankTermForm = (props) => {
                             placeholder="Account number"
                             id={`accountNumber${i}`}
                             name={`accountNumber${i}`}
-                            className="form-control inputDesign"
+                            className="form-control inputDesignDoubleInput"
                         />
                     </td>
                     <td>
@@ -154,7 +154,7 @@ const BankTermForm = (props) => {
                             placeholder="Current Balance"
                             id={`currentBalance${i}`}
                             name={`currentBalance${i}`}
-                            className="form-control inputDesign"
+                            className="form-control inputDesignDoubleInput"
                         />
                     </td>
                 </tr>
@@ -275,7 +275,7 @@ const BankTermForm = (props) => {
                                                 type="number"
                                                 id="NumberOfMap"
                                                 name="NumberOfMap"
-                                                className="form-control inputDesign"
+                                                className="form-control inputDesignDoubleInput"
                                                 onChange={(e) => handleInput(e, setFieldValue)}
                                             />
                                         </div>

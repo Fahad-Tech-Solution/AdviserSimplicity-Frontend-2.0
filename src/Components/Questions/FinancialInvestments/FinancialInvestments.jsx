@@ -10,6 +10,8 @@ import analytics from "../svgs/analytics.png";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { CRState, defaultUrl } from "../../../Store/Store";
 import { GetAxios, PatchAxios, PostAxios } from '../../Assets/Api/Api';
+import { Image } from 'react-bootstrap';
+import DynamicQuestionBlocks from '../../Assets/DynamicQuestionBlocks/DynamicQuestionBlocks';
 
 
 
@@ -35,7 +37,12 @@ const FinancialInvestments = (props) => {
     };
 
     useEffect(() => {
-        FetchQuestions();
+        if (CRObject._id) {
+            setFlagState(true);
+        }
+        else {
+            FetchQuestions();
+        }
     }, []);
 
     const handleResponse = (values) => {
@@ -70,6 +77,47 @@ const FinancialInvestments = (props) => {
         }
     };
 
+    let QuestionArray = [
+        {
+            title: "Do you have any Money in Bank Accounts?",
+            img: BankImg,
+            key: "bankAccountFinance",
+        },
+        {
+            title: "Do you have any Money invested in Term Deposits?",
+            img: TermImg,
+            key: "termDepositsFinance",
+        },
+        {
+            title: "Do you have any Money invested in Australian Shares?",
+            img: PortFolio,
+            key: "australianShareMarket",
+        },
+        {
+            title: "Do you have any Money invested  Managed Funds or via a Platform?",
+            img: funds,
+            key: "managedFund",
+        },
+        {
+            title: "Do you have a Investment Loan (LOC)  attached to your shares of Managed Funds?",
+            img: loan,
+            key: "managedFundsLOC",
+        },
+        {
+            title: "Do you have a Margin Loan attached to your shares of Managed Funds?",
+            img: analytics,
+            key: "managedFundsMarginLoan",
+        },
+    ]
+    const QuestionClick = (index, elem, values, setFieldValue) => {
+        console.log("image clicked in goals", index, elem.key, values);
+        if (values[elem.key] == "No") {
+            setFieldValue(elem.key, "Yes");
+        }
+        if (values[elem.key] == "Yes") {
+            setFieldValue(elem.key, "No");
+        }
+    };
 
     return (
         <div className="container-fluid">
@@ -83,8 +131,12 @@ const FinancialInvestments = (props) => {
                     {({ values, handleChange, setFieldValue }) => <Form>
 
                         <div className="col-md-12 text-center">
-                            <div className="row my-3">
-                                <div className="col-md-12">
+                            <div className="row my-3 justify-content-center">
+                                <DynamicQuestionBlocks QuestionArray={QuestionArray} QuestionClick={QuestionClick} values={values} setFieldValue={setFieldValue} />
+
+
+
+                                <div className="col-md-12 d-none">
                                     <div className="mb-3 ">
                                         <label htmlFor="" className="form-label">
                                             Do you have any Money in Bank Accounts?
@@ -131,7 +183,7 @@ const FinancialInvestments = (props) => {
                                 </div>
                             </div>
 
-                            <div className="row my-3">
+                            <div className="row my-3 d-none">
                                 <div className="col-md-12">
                                     <div className="mb-3 ">
                                         <label htmlFor="" className="form-label">
@@ -180,7 +232,7 @@ const FinancialInvestments = (props) => {
                             </div>
 
 
-                            <div className="row my-3">
+                            <div className="row my-3 d-none">
                                 <div className="col-md-12">
                                     <div className="mb-3 ">
                                         <label htmlFor="" className="form-label">
@@ -229,7 +281,7 @@ const FinancialInvestments = (props) => {
                             </div>
 
 
-                            <div className="row my-3">
+                            <div className="row my-3 d-none">
                                 <div className="col-md-12">
                                     <div className="mb-3 ">
                                         <label htmlFor="" className="form-label">
@@ -277,7 +329,7 @@ const FinancialInvestments = (props) => {
                                 </div>
                             </div>
 
-                            <div className="row my-3">
+                            <div className="row my-3 d-none">
                                 <div className="col-md-12">
                                     <div className="mb-3 ">
                                         <label htmlFor="" className="form-label">
@@ -325,7 +377,7 @@ const FinancialInvestments = (props) => {
                                 </div>
                             </div>
 
-                            <div className="row my-3">
+                            <div className="row my-3 d-none">
                                 <div className="col-md-12">
                                     <div className="mb-3 ">
                                         <label htmlFor="" className="form-label">
@@ -373,7 +425,7 @@ const FinancialInvestments = (props) => {
                                 </div>
                             </div>
 
-                            <div className="row my-3">
+                            <div className="row my-3 d-none">
                                 <div className="col-md-12">
                                     <div className="mb-3 ">
                                         <label htmlFor="" className="form-label">

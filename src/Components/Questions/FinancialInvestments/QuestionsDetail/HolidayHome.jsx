@@ -120,9 +120,8 @@ const HolidayHome = (props) => {
         console.log(obj, "final obj")
 
         // Check if holidayHome and the array at props.modalObject.Input exist
-        // const bankAccountArray = holidayHome[props.modalObject.Input] || [];
-        const bankAccountArray = holidayHome.clientFK || "";
 
+        const bankAccountArray = holidayHome.clientFK || "";
         try {
             let res;
             if (!bankAccountArray) {
@@ -185,7 +184,7 @@ const HolidayHome = (props) => {
                                             type="number"
                                             id="NumberOfMap"
                                             name="NumberOfMap"
-                                            className="form-control inputDesign"
+                                            className="form-control inputDesignDoubleInput"
                                             onChange={(e) => handleInput(e, setFieldValue)}
                                         />
                                     </div>
@@ -213,7 +212,7 @@ const HolidayHome = (props) => {
                                                                         placeholder="Home Address & Postcode"
                                                                         id={`HomeAddress${i}`}
                                                                         name={`HomeAddress${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -222,7 +221,7 @@ const HolidayHome = (props) => {
                                                                         placeholder="Current Value – link to URL below "
                                                                         id={`CurrentValue${i}`}
                                                                         name={`CurrentValue${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -231,7 +230,7 @@ const HolidayHome = (props) => {
                                                                         placeholder="Cost base /(Purchase Price)"
                                                                         id={`CostBase${i}`}
                                                                         name={`CostBase${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -247,7 +246,7 @@ const HolidayHome = (props) => {
                                                                             setFieldValue(`ClientOwnership${i}`, (clientValue > 100 ? 100 : clientValue));
                                                                             setFieldValue(`PartnerOwnership${i}`, partnerValue.toFixed(2));
                                                                         }}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -263,7 +262,7 @@ const HolidayHome = (props) => {
                                                                             setFieldValue(`PartnerOwnership${i}`, (partnerValue > 100 ? 100 : partnerValue));
                                                                             setFieldValue(`ClientOwnership${i}`, clientValue.toFixed(2));
                                                                         }}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                             </tr>)

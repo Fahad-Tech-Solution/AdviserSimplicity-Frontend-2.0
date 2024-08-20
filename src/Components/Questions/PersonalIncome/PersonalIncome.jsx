@@ -15,6 +15,8 @@ import moneyBag from "../svgs/money-bag-svgrepo-com.svg";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { QuestionShift, CRState, defaultUrl } from "../../../Store/Store";
 import { GetAxios, PatchAxios, PostAxios } from '../../Assets/Api/Api';
+import { Image } from 'react-bootstrap';
+import DynamicQuestionBlocks from '../../Assets/DynamicQuestionBlocks/DynamicQuestionBlocks';
 
 const PersonalIncome = (props) => {
 
@@ -38,7 +40,12 @@ const PersonalIncome = (props) => {
     };
 
     useEffect(() => {
-        FetchQuestions();
+        if (CRObject._id) {
+            setFlagState(true);
+        }
+        else {
+            FetchQuestions();
+        }
     }, []);
 
     const handleResponse = (values) => {
@@ -49,23 +56,25 @@ const PersonalIncome = (props) => {
     };
 
     const onSubmit = async (values) => {
-        values.clientFK = localStorage.getItem("UserID");
+        let obj = JSON.parse(JSON.stringify(values));
+        obj.clientFK = localStorage.getItem("UserID");
+
         try {
             if (!flagState) {
-                const PostRes = await PostAxios(`${DefaultUrl}/api/questions/Add`, values);
+                const PostRes = await PostAxios(`${DefaultUrl}/api/questions/Add`, obj);
                 if (PostRes) {
                     if (props.flagState) {
                         props.setFlagState(false);
                     }
-                    handleResponse(values);
+                    handleResponse(PostRes);
                 }
             } else {
-                const PatchRes = await PatchAxios(`${DefaultUrl}/api/questions/Update/${localStorage.getItem("UserID")}`, values);
+                const PatchRes = await PatchAxios(`${DefaultUrl}/api/questions/Update/${localStorage.getItem("UserID")}`, obj);
                 if (PatchRes) {
                     if (props.flagState) {
                         props.setFlagState(false);
                     }
-                    handleResponse(values);
+                    handleResponse(PatchRes);
                 }
             }
         } catch (error) {
@@ -73,6 +82,57 @@ const PersonalIncome = (props) => {
         }
     };
 
+    let QuestionArray = [
+        {
+            title: "Are you receiving any Overseas Pension?",
+            img: overseas,
+            key: "incomeFromOverseasPension",
+        },
+        {
+            title: "Are you recieving any Business Income as a Sole Trader?",
+            key: "incomeFromSoleTrader",
+            img: businessIncome,
+        },
+        {
+            title: "Are you receiving any Business Income from a Partnership?",
+            img: businessPartnership,
+            key: "incomeFromPartnership",
+        },
+        {
+            title: "Are you receiving any Centerlink Payments (including FTBA & B or any Health Care Cards)?",
+            img: Gears,
+            key: "incomeFromCentrelink",
+        },
+        {
+            title: "Are you receiving any other Regular Lifetime/Defined Benefit Super payments?",
+            img: money,
+            key: "incomeFromSuperPayment",
+        },
+        {
+            title: "Are you recieving any Income from employement (including from your own company)?",
+            key: "incomeFromOwnBusiness",
+            img: Businessman,
+        },
+        {
+            title: "Are you Expecting any Inheritance?",
+            img: inheritance,
+            key: "incomeFromInheritance",
+        },
+        {
+            title: "Do you have any one off Lumpsum Expenses?",
+            img: moneyBag,
+            key: "incomeFromLumpsumExpense",
+        },
+    ]
+    const QuestionClick = (index, elem, values, setFieldValue) => {
+        console.log("image clicked in goals", index, elem.key, values);
+        if (values[elem.key] == "No") {
+            setFieldValue(elem.key, "Yes");
+        }
+        if (values[elem.key] == "Yes") {
+            setFieldValue(elem.key, "No");
+        }
+    };
 
     return (
         <div className="container-fluid">
@@ -88,7 +148,9 @@ const PersonalIncome = (props) => {
                         <div className="col-md-12 text-center">
 
 
-                            <div className="row my-3">
+                            <div className="row my-3 justify-content-center">
+                                <DynamicQuestionBlocks QuestionArray={QuestionArray} QuestionClick={QuestionClick} values={values} setFieldValue={setFieldValue} />
+                                {/*
                                 <div className="col-md-12">
                                     <div className="mb-3 ">
                                         <label htmlFor="incomeFromOwnBusiness" className="form-label">
@@ -97,7 +159,6 @@ const PersonalIncome = (props) => {
                                         <div className="QuestionIcon">
                                             <img className="img-fluid" src={Businessman} alt="" />
                                         </div>
-                                        {/* switch button style */}
                                         <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter ">
                                             <div className="radiobutton">
                                                 <input
@@ -131,12 +192,12 @@ const PersonalIncome = (props) => {
                                             </div>
                                         </div>
 
-                                        {/* switch button style */}
                                     </div>
                                 </div>
+                                */}
                             </div>
 
-                            <div className="row my-3">
+                            <div className="row my-3 d-none">
                                 <div className="col-md-12">
                                     <div className="mb-3 ">
                                         <label htmlFor="" className="form-label">
@@ -185,7 +246,7 @@ const PersonalIncome = (props) => {
                             </div>
 
 
-                            <div className="row my-3">
+                            <div className="row my-3 d-none">
                                 <div className="col-md-12">
                                     <div className="mb-3 ">
                                         <label htmlFor="" className="form-label">
@@ -234,7 +295,7 @@ const PersonalIncome = (props) => {
                             </div>
 
 
-                            <div className="row my-3">
+                            <div className="row my-3 d-none">
                                 <div className="col-md-12">
                                     <div className="mb-3 ">
                                         <label htmlFor="" className="form-label">
@@ -282,7 +343,7 @@ const PersonalIncome = (props) => {
                                 </div>
                             </div>
 
-                            <div className="row my-3">
+                            <div className="row my-3 d-none">
                                 <div className="col-md-12">
                                     <div className="mb-3 ">
                                         <label htmlFor="" className="form-label">
@@ -330,7 +391,7 @@ const PersonalIncome = (props) => {
                                 </div>
                             </div>
 
-                            <div className="row my-3">
+                            <div className="row my-3 d-none">
                                 <div className="col-md-12">
                                     <div className="mb-3 ">
                                         <label htmlFor="" className="form-label">
@@ -378,7 +439,7 @@ const PersonalIncome = (props) => {
                                 </div>
                             </div>
 
-                            <div className="row my-3">
+                            <div className="row my-3 d-none">
                                 <div className="col-md-12">
                                     <div className="mb-3 ">
                                         <label htmlFor="" className="form-label">
@@ -425,7 +486,7 @@ const PersonalIncome = (props) => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="row my-3">
+                            <div className="row my-3 d-none">
                                 <div className="col-md-12">
                                     <div className="mb-3 ">
                                         <label htmlFor="" className="form-label">

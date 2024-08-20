@@ -12,6 +12,7 @@ import { QuestionShift, CRState, StepState, defaultUrl } from "../../../Store/St
 
 import { NavLink, useNavigate } from "react-router-dom";
 import { PatchAxios, PostAxios } from "../../Assets/Api/Api";
+import { Image } from "react-bootstrap";
 
 const QuestionsInvestmentTrust = (props) => {
 
@@ -68,6 +69,40 @@ const QuestionsInvestmentTrust = (props) => {
     }
   };
 
+
+  let QuestionArray = [
+    {
+      title: "Do you have an Investment Trust?",
+      img: Questions_People,
+      key: "InvestmentTrust",
+    },
+    {
+      title: "Does its own any Investments such as Term Deposits, Shares or Managed Funds?",
+      img: QuestionMoney,
+      key: "ITTermSharesManaged",
+    },
+    {
+      title: "Does its have any Investment Loans ?",
+      img: Questions_loan,
+      key: "ITInvestmentLoans",
+    },
+    {
+      title: "Does its own any Direct Property?",
+      img: Questions_Bank,
+      key: "ITDirectProperty",
+    },
+  ]
+  const QuestionClick = (index, elem, values, setFieldValue) => {
+    console.log("image clicked in goals", index, elem.key, values);
+    if (values[elem.key] == "No") {
+      setFieldValue(elem.key, "Yes");
+    }
+    if (values[elem.key] == "Yes") {
+      setFieldValue(elem.key, "No");
+    }
+  };
+
+
   return (
     <div className="container-fluid my-4">
       <div className="row m-0">
@@ -77,12 +112,38 @@ const QuestionsInvestmentTrust = (props) => {
           enableReinitialize
           innerRef={props.formRef}
         >
-          {({ values, handleChange }) => (
+          {({ values, handleChange, setFieldValue }) => (
             <Form>
               <div className="col-md-12 text-center">
                 <h4 className="heading d-none">Investment Trust</h4>
-                <div className="row my-3">
-                  <div className="col-md-12 ">
+
+                <div className="row my-3 justify-content-center">
+                  {QuestionArray.map((elem, index) => {
+                    return (
+                      <div className="col-md-4 px-2 pb-3 d-flex ">
+                        <div className=" flex-grow-1 d-flex">
+                          <div
+                            className={`${values[elem.key] == "Yes" ? "customBorder p-3" : "border p-3"
+                              }  flex-grow-1`}
+                            onClick={() =>
+                              QuestionClick(index, elem, values, setFieldValue)
+                            }
+                          >
+                            <div className="text-center">
+                              <div className="mx-auto" style={{ width: "20%" }}>
+                                <Image src={elem.img} fluid />
+                              </div>
+                            </div>
+                            <p htmlFor={elem.key} className="form-label">
+                              {elem.title}
+                            </p>
+                          </div>
+
+                        </div>
+                      </div>
+                    );
+                  })}
+                  <div className="col-md-12 d-none">
                     <div className="mb-3">
                       <label className="form-label">
                         Do you have an Investment Trust?{" "}
@@ -140,7 +201,7 @@ const QuestionsInvestmentTrust = (props) => {
                 </div>
 
                 {values.InvestmentTrust == "Yes" && (
-                  <div className="row my-3">
+                  <div className="row my-3 d-none">
                     <div className="col-md-12">
                       <div className="mb-3">
                         <label htmlFor="" className="form-label">
@@ -251,7 +312,7 @@ const QuestionsInvestmentTrust = (props) => {
                 )}
 
                 {values.InvestmentTrust == "Yes" && (
-                  <div className="row my-3">
+                  <div className="row my-3 d-none">
                     <div className="col-md-12">
                       <div className="mb-3">
                         <label htmlFor="" className="form-label">

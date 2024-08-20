@@ -174,7 +174,7 @@ const PersonalDetails_cashFlow = (Props) => {
                     <div>
                       <DatePicker
                         id="clientDOB"
-                        className="form-control inputDesign shadow"
+                        className="form-control inputDesign shadow DateInputPadding"
                         selected={values.clientDOB}
                         onChange={(date) => {
                           setFieldValue("clientDOB", date);
@@ -366,7 +366,7 @@ const PersonalDetails_cashFlow = (Props) => {
                     <div>
                       <DatePicker
                         id="partnerDOB"
-                        className="form-control inputDesign shadow"
+                        className="form-control inputDesign shadow DateInputPadding"
                         selected={values.partnerDOB}
                         onChange={(date) => {
                           setFieldValue("partnerDOB", date);

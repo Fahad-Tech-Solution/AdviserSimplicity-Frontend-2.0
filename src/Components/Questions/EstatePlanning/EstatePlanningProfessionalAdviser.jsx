@@ -23,12 +23,12 @@ const EstatePlanningProfessionalAdviser = (props) => {
         }
     })
 
-    let professionalAdviser = questionDetail.professionalAdviser || {
+    let professionalAdviser = Object.keys(questionDetail.professionalAdviser).length > 0 ? questionDetail.professionalAdviser : {
         client: [],
         partner: [],
         joint: [],
 
-    }; // Use an empty object as default if professionalAdviser is undefined
+    };  // Use an empty object as default if professionalAdviser is undefined
 
 
     let initialValues = professionalAdviser[props.modalObject.Input].length ? { NumberOfMap: professionalAdviser[props.modalObject.Input].length } : { NumberOfMap: "" };
@@ -176,7 +176,7 @@ const EstatePlanningProfessionalAdviser = (props) => {
                                             type="number"
                                             id="NumberOfMap"
                                             name="NumberOfMap"
-                                            className="form-control inputDesign"
+                                            className="form-control inputDesignDoubleInput"
                                             onChange={(e) => handleInput(e, setFieldValue)}
                                         />
                                     </div>
@@ -203,7 +203,7 @@ const EstatePlanningProfessionalAdviser = (props) => {
                                                                     placeholder="Fund Name"
                                                                     id={`POAType${i}`}
                                                                     name={`POAType${i}`}
-                                                                    className="form-select inputDesign"
+                                                                    className="form-select inputDesignDoubleInput"
                                                                 >
                                                                     <option value={""}>Please Select</option>
                                                                     <option value={"Accountant"}>Accountant</option>
@@ -219,7 +219,7 @@ const EstatePlanningProfessionalAdviser = (props) => {
                                                                     placeholder="Adviser Name"
                                                                     id={`adviserName${i}`}
                                                                     name={`adviserName${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -228,7 +228,7 @@ const EstatePlanningProfessionalAdviser = (props) => {
                                                                     placeholder="Company"
                                                                     id={`company${i}`}
                                                                     name={`company${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -237,7 +237,7 @@ const EstatePlanningProfessionalAdviser = (props) => {
                                                                     placeholder="Phone"
                                                                     id={`phone${i}`}
                                                                     name={`phone${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -246,7 +246,7 @@ const EstatePlanningProfessionalAdviser = (props) => {
                                                                     placeholder="Any specific estate planning requirements/needs?"
                                                                     id={`email${i}`}
                                                                     name={`email${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                         </tr>

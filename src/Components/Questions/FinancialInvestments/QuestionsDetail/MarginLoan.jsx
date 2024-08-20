@@ -10,7 +10,7 @@ const MarginLoan = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
-    
+
     let [nameSet] = useState(() => {
         if (props.modalObject.Input === "client") {
             return (localStorage.getItem("UserName"))
@@ -23,7 +23,7 @@ const MarginLoan = (props) => {
         }
     })
 
-    let managedFundsMarginLoan = questionDetail.managedFundsMarginLoan || {
+    let managedFundsMarginLoan = Object.keys(questionDetail.managedFundsMarginLoan).length > 0 ? questionDetail.managedFundsMarginLoan : {
         client: [],
         partner: [],
         joint: [],
@@ -263,7 +263,7 @@ const MarginLoan = (props) => {
                                             type="number"
                                             id="NumberOfMap"
                                             name="NumberOfMap"
-                                            className="form-control inputDesign"
+                                            className="form-control inputDesignDoubleInput"
                                             onChange={(e) => handleInput(e, setFieldValue)}
                                         />
                                     </div>
@@ -294,7 +294,7 @@ const MarginLoan = (props) => {
                                                                         placeholder="Lender Current"
                                                                         id={`LenderCurrent${i}`}
                                                                         name={`LenderCurrent${i}`}
-                                                                        className="form-select inputDesign"
+                                                                        className="form-select inputDesignDoubleInput"
                                                                     >
                                                                         <option value={""}>Please Select</option>
                                                                         {options.map((elem, index) => {
@@ -308,7 +308,7 @@ const MarginLoan = (props) => {
                                                                         placeholder="Loan Balance"
                                                                         id={`LoanBalance${i}`}
                                                                         name={`LoanBalance${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -321,7 +321,7 @@ const MarginLoan = (props) => {
                                                                             setFieldValue(`monthlyContribution${i}`, e.target.value);
                                                                             setFieldValue(`annualLoan${i}`, 12 * (e.target.value || 0));
                                                                         }}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -331,7 +331,7 @@ const MarginLoan = (props) => {
                                                                         id={`annualLoan${i}`}
                                                                         name={`annualLoan${i}`}
                                                                         disabled
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -341,7 +341,7 @@ const MarginLoan = (props) => {
                                                                         id={`InterestRate${i}`}
                                                                         name={`InterestRate${i}`}
                                                                         onBlur={(e) => handleBlur(setFieldValue, e)}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -350,7 +350,7 @@ const MarginLoan = (props) => {
                                                                         placeholder="Lender Current"
                                                                         id={`LoanTerm${i}`}
                                                                         name={`LoanTerm${i}`}
-                                                                        className="form-select inputDesign"
+                                                                        className="form-select inputDesignDoubleInput"
                                                                     >
                                                                         <option value={""}>Please Select</option>
                                                                         <option value={"abc"}>abc</option>
@@ -363,7 +363,7 @@ const MarginLoan = (props) => {
                                                                         placeholder="Lender Current"
                                                                         id={`LoanTermRemaining${i}`}
                                                                         name={`LoanTermRemaining${i}`}
-                                                                        className="form-select inputDesign"
+                                                                        className="form-select inputDesignDoubleInput"
                                                                     >
                                                                         <option value={""}>Please Select</option>
                                                                         <option value={"abc"}>abc</option>
@@ -377,7 +377,7 @@ const MarginLoan = (props) => {
                                                                         id={`DeductibleLoanAmount${i}`}
                                                                         name={`DeductibleLoanAmount${i}`}
                                                                         value={100}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                             </tr>)

@@ -1,14 +1,15 @@
 import { Field, Form, Formik } from 'formik'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Dropdown, Row, Table } from 'react-bootstrap';
 import CreatableReactSelect from './CreatableReactSelect';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { defaultUrl, GoalsDetail } from '../../Store/Store';
 import { PatchAxios, PostAxios } from '../Assets/Api/Api';
 
+import parse from 'html-react-parser';
+
 const GoalsForm = (props) => {
 
-    let [DynamicFields, setDynamicFields] = useState()
     const [rows, setRows] = useState(1); // Initialize state for rows
     const [showDropDown, setShowDropDown] = useState(false); // Initialize state for rows
 
@@ -30,8 +31,6 @@ const GoalsForm = (props) => {
         console.log(values);
         // return false;
 
-        let DataOf = props.modalObject.Input;
-
         // Create an object with additional fields
         let obj = values;
         if (!CurrentGoalData.clientFK) {
@@ -41,6 +40,14 @@ const GoalsForm = (props) => {
             obj.clientFK = CurrentGoalData.clientFK;
         }
 
+        if (obj.description === "") {
+            if (content) {
+                obj.description = content;
+            }
+            else if (formattedContentRef.current) {
+                obj.description = formattedContentRef.current.textContent;
+            }
+        }
         console.log(obj, "final obj")
 
         const ApiSwitch = CurrentGoalData.clientFK || "";
@@ -85,6 +92,8 @@ const GoalsForm = (props) => {
             setFieldValue(`when`, CurrentGoalData.when || '');
             setFieldValue(`estimatedValue`, CurrentGoalData.estimatedValue || '');
             setFieldValue(`description`, CurrentGoalData.description || '');
+            setContent(CurrentGoalData.description);
+            setRows(10)
         }
     };
 
@@ -105,31 +114,51 @@ const GoalsForm = (props) => {
     ]);
 
     let autoDescription = (e, setFieldValue, handleChange) => {
-
-        if (props.modalObject.whenScopeIs === e.target.value) {
-            let arrayData = props.modalObject.descriptionArray;
-            if (arrayData.length == 1) {
-                setFieldValue("description", arrayData[0].text);
-                setRows(10)
+        console.log(e.target.value)
+        if (e.target.value !== "") {
+            if (props.modalObject.whenScopeIs === e.target.value) {
+                let arrayData = props.modalObject.descriptionArray;
+                if (arrayData.length == 1) {
+                    setFieldValue("description", arrayData[0].text);
+                    setRows(10)
+                    setShowDropDown(false)
+                }
+                else {
+                    setShowDropDown(true)
+                }
+            } else {
+                setRows(1)
                 setShowDropDown(false)
+                setFieldValue("description", "");
             }
-            else {
-                setShowDropDown(true)
-            }
-        } else {
-            setRows(1)
-            setShowDropDown(false)
-            setFieldValue("description", "");
+
         }
         setFieldValue("scopeOfAdvice", e.target.value);
     }
-
-    let StoreText = (e, setFieldValue) => {
-        setFieldValue("description", e.text);
-        setShowDropDown(false)
-        setRows(10)
+    let RemoveSpan = (text) => {
+        const cleanedText = text.replace(/<span[^>]*>|<\/span>/g, '');
+        return (cleanedText);
     }
 
+    let StoreText = (e, setFieldValue) => {
+        // Remove <span> tags and their content
+        const cleanedText = e.text.replace(/<span[^>]*>|<\/span>/g, '');
+        setContent(e.text);
+        setFieldValue("description", cleanedText);
+        setShowDropDown(false);
+        setRows(10);
+    };
+
+    
+    const [content, setContent] = useState('');
+    const formattedContentRef = useRef(null);
+
+    // Sync textarea with formatted content
+    useEffect(() => {
+        if (formattedContentRef.current) {
+            formattedContentRef.current.innerHTML = content;
+        }
+    }, [content]);
 
     return (
         <Formik
@@ -153,7 +182,6 @@ const GoalsForm = (props) => {
                                             <th>Scope of Advice</th>
                                             <th onClick={() => { console.log(whenOptions) }}>When</th>
                                             <th>Estimated Value</th>
-                                            <th>Goal</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -163,7 +191,7 @@ const GoalsForm = (props) => {
                                                     as="select"
                                                     id={`scopeOfAdvice`}
                                                     name={`scopeOfAdvice`}
-                                                    className="form-select inputDesign"
+                                                    className="form-select inputDesignDoubleInput"
                                                     onChange={(e) => { autoDescription(e, setFieldValue, handleChange) }}
                                                 >
                                                     <option value={""}>Select</option>
@@ -175,6 +203,7 @@ const GoalsForm = (props) => {
                                                     <option value={"Personal Insurance"}>Personal Insurance </option>
                                                     <option value={"Superannuation"}>Superannuation </option>
                                                     <option value={"Retirement Planning"}>Retirement Planning</option>
+                                                    <option value={"Investments"}>Investments</option>
                                                     <option value={"Other"}>Other</option>
 
                                                 </Field>
@@ -193,35 +222,35 @@ const GoalsForm = (props) => {
                                                     placeholder="Estimated Value"
                                                     id={`estimatedValue`}
                                                     name={`estimatedValue`}
-                                                    className="form-control inputDesign"
+                                                    className="form-control inputDesignDoubleInput"
                                                 />
-                                            </td>
-                                            <td>
-                                                <div className='dropDownTd'>
-                                                    <Field
-                                                        as="textarea"
-                                                        type="text"
-                                                        placeholder="Description"
-                                                        id={`description`}
-                                                        name={`description`}
-                                                        className="form-control inputDesign"
-                                                        rows={rows}
-                                                    />
-                                                    {showDropDown &&
-                                                        <div className={`dropdown-arrow`}></div>
-                                                    }
-                                                </div>
-                                                <Dropdown show={showDropDown} style={{ position: 'absolute', top: '135px', left: "200px", right: "-50px" }}>
-                                                    <Dropdown.Menu className="super-colors" style={{ width: '90%' }}>
-                                                        {props.modalObject.descriptionArray.map((elem, index) => (
-                                                            <Dropdown.Item eventKey={index} onClick={() => { StoreText(elem, setFieldValue) }} className='text-wrap'>{elem.text}</Dropdown.Item>
-                                                        ))}
-                                                    </Dropdown.Menu>
-                                                </Dropdown>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </Table>
+                                {showDropDown ||
+                                    <div className='col-md-12 pe-3'>
+                                        <label htmlFor='description' className='fw-bold'>Description:</label>
+                                        <textarea className='goalsPara form-control inputDesignDoubleInput d-none' value={values.description} placeholder='Description'> </textarea>
+                                        <div className='formatted-content form-control inputDesignDoubleInput goalsPara'
+                                            ref={formattedContentRef} contentEditable
+                                            onInput={(e) => { setFieldValue("description", RemoveSpan(e.target.innerHTML)) }}
+                                            onChange={(e) => { setFieldValue("description", RemoveSpan(e.target.innerHTML)) }}
+                                        />
+                                    </div>
+                                }
+
+                                <Dropdown show={showDropDown} style={{ position: 'absolute', top: '172px', left: "0px", right: "0px" }}>
+                                    <Dropdown.Menu className="super-colors" style={{ width: '100%' }}>
+                                        <Dropdown.Item className='text-wrap'>Select One</Dropdown.Item>
+                                        {props.modalObject.descriptionArray.map((elem, index) => (
+                                            <>
+                                                <Dropdown.Divider />
+                                                <Dropdown.Item eventKey={index} onClick={() => { StoreText(elem, setFieldValue) }} className='text-wrap dropDownHover goalsPara'>{parse(elem.text)}</Dropdown.Item>
+                                            </>
+                                        ))}
+                                    </Dropdown.Menu>
+                                </Dropdown>
                             </div>
                         </Row>
                     </Form>

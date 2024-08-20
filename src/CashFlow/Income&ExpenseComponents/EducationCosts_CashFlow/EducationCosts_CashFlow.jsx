@@ -122,7 +122,7 @@ const EducationCosts_CashFlow = () => {
                             <div>
                             <DatePicker
                                 id="ChildDoBID"
-                                className="form-control inputDesign shadow"
+                                className="form-control inputDesign shadow DateInputPadding"
                                 selected={values.ChildDoBID}
                                 onChange={(date) => {
                                 setFieldValue("ChildDoBID", date);

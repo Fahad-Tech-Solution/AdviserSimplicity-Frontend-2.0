@@ -27,14 +27,11 @@ const RegularLivingExpenses = (props) => {
   const [open3, setOpen3] = useState(false);
   const [open4, setOpen4] = useState(false);
 
-  let regularLivingExpenses = questionDetail[apiKey] || {} // Use an empty object as default if regularLivingExpenses is undefined
-
+  let regularLivingExpenses = Object.keys(questionDetail[apiKey]).length > 0 ? questionDetail[apiKey] : {};
 
   let initialValues = {};
 
   const [dynamicFields, setDynamicFields] = useState([]);
-
-
 
   const fillInitialValues = (setFieldValue) => {
 
@@ -183,14 +180,14 @@ const RegularLivingExpenses = (props) => {
         return (
           <Form>
 
-            <div className="row text-light bgColorIncome py-2 my-1">
+            <div className="row text-light fw-bold bgColorIncome py-2 my-1">
               <div className="col-md-6">
-                <label className="form-label mb-0">Total Expense</label>
+                <label className=" mb-0">Total Expense</label>
               </div>
               <div className="col-md-6">
                 <label
                   id="HouseholdTotalValue"
-                  className="float-end form-label mb-0"
+                  className="float-end mb-0"
                 >
                   ${totalExpense.toFixed(2)}
                   <div className="iconContainer mx-1">
@@ -206,16 +203,16 @@ const RegularLivingExpenses = (props) => {
                 onClick={() => setOpen(!open)}
                 aria-controls=""
                 aria-expanded={open}
-                className="bgColorIncome   py-2 text-light"
+                className="bgColorIncome   py-2 text-light fw-bold"
               >
                 <div className="row">
                   <div className="col-md-6">
-                    <label className="form-label mb-0">Household</label>
+                    <label className=" mb-0 fw-bold">Household</label>
                   </div>
                   <div className="col-md-6">
                     <label
                       id="HouseholdTotalValue"
-                      className="float-end form-label mb-0"
+                      className="float-end mb-0"
                     >
                       ${totalHouseHold.toFixed(2)}
                       <div className="iconContainer mx-1">
@@ -444,7 +441,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="houseHoldRent"
                               placeholder="Rent"
                               name="houseHoldRent"
@@ -466,7 +463,7 @@ const RegularLivingExpenses = (props) => {
                             <Field
                               as="select"
                               id="houseHoldRentType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                               name="houseHoldRentType"
                             >
                               <option value="">Select</option>
@@ -500,7 +497,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="houseHoldElectricity"
                               placeholder="Electricity"
                               name="houseHoldElectricity"
@@ -525,7 +522,7 @@ const RegularLivingExpenses = (props) => {
                             <Field
                               as="select"
                               id="houseHoldElectricityType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                               name="houseHoldElectricityType"
                             >
                               <option value="">Select</option>
@@ -562,7 +559,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="houseHoldWaterRates"
                               placeholder="Water Rates"
                               name="houseHoldWaterRates"
@@ -587,7 +584,7 @@ const RegularLivingExpenses = (props) => {
                             <Field
                               as="select"
                               id="houseHoldWaterRatesType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                               name="houseHoldWaterRatesType"
                             >
                               <option value="">Select</option>
@@ -620,7 +617,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="houseHoldGas"
                               name="houseHoldGas"
                               placeholder="Gas"
@@ -645,7 +642,7 @@ const RegularLivingExpenses = (props) => {
                             <Field
                               as="select"
                               id="houseHoldGasType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                               name="houseHoldGasType"
                             >
                               <option value="">Select</option>
@@ -682,7 +679,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="houseHoldPhone"
                               placeholder="Phone"
                               name="houseHoldPhone"
@@ -708,7 +705,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               id="houseHoldPhoneType"
                               name="houseHoldPhoneType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -740,7 +737,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="houseHoldCouncilRates"
                               name="houseHoldCouncilRates"
                               placeholder="Council Rates"
@@ -765,7 +762,7 @@ const RegularLivingExpenses = (props) => {
                             <Field
                               as="select"
                               id="houseHoldCouncilRatesType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                               name="houseHoldCouncilRatesType"
                             >
                               <option value="">Select</option>
@@ -802,7 +799,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="houseHoldInternet"
                               name="houseHoldInternet"
                               placeholder="Internet"
@@ -829,7 +826,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               id="houseHoldInternetType"
                               name="houseHoldInternetType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -861,7 +858,7 @@ const RegularLivingExpenses = (props) => {
                             <Field
                               name="houseHoldOthers"
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="houseHoldOthers"
                               placeholder="Other"
                             />
@@ -886,7 +883,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               id="houseHoldOthersType"
                               name="houseHoldOthersType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -919,11 +916,11 @@ const RegularLivingExpenses = (props) => {
                 onClick={() => setOpen2(!open2)}
                 aria-controls=""
                 aria-expanded={open2}
-                className="bgColorIncome   py-2 text-light"
+                className="bgColorIncome py-2 text-light fw-bold"
               >
                 <div className="row ">
                   <div className="col-md-6">
-                    <label className="form-label mb-0">Personal</label>
+                    <label className=" mb-0">Personal</label>
                   </div>
                   <div className="col-md-6">
                     <label className="float-end mb-0">
@@ -953,7 +950,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               name="personalFood"
                               id="personalFood"
                               placeholder="Food"
@@ -979,7 +976,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               id="personalFoodType"
                               name="personalFoodType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -1011,7 +1008,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="personalClothing"
                               name="personalClothing"
                               placeholder="Clothing"
@@ -1037,7 +1034,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               name="personalClothingType"
                               id="personalClothingType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -1073,7 +1070,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               name="personalCigarettes"
                               id="personalCigarettes"
                               placeholder="Cigarettes"
@@ -1099,7 +1096,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               id="personalCigarettesType"
                               name="personalCigarettesType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -1131,7 +1128,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               name="personalAlcohol"
                               id="personalAlcohol"
                               placeholder="Alcohol"
@@ -1157,7 +1154,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               id="personalAlcoholType"
                               name="personalAlcoholType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -1194,7 +1191,7 @@ const RegularLivingExpenses = (props) => {
                             <Field
                               name="personalSubscriptionFees"
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="personalSubscriptionFees"
                               placeholder="Subscription Fees"
                             />
@@ -1219,7 +1216,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               id="personalSubscriptionFeesType"
                               name="personalSubscriptionFeesType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -1251,7 +1248,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="personalClubMemberships"
                               name="personalClubMemberships"
                               placeholder="Memberships & Clubs"
@@ -1277,7 +1274,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               id="personalClubMembershipsType"
                               name="personalClubMembershipsType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -1314,7 +1311,7 @@ const RegularLivingExpenses = (props) => {
                             <Field
                               name="personalOthers"
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="personalOthers"
                               placeholder="Other"
                             />
@@ -1339,7 +1336,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               id="personalOthersType"
                               name="personalOthersType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -1371,7 +1368,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               name="personalHolidays"
                               id="personalHolidays"
                               placeholder="Holidays"
@@ -1397,7 +1394,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               id="personalHolidaysType"
                               name="personalHolidaysType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -1433,7 +1430,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="personalDiningOut"
                               name="personalDiningOut"
                               placeholder="Dining Out"
@@ -1459,7 +1456,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               id="personalDiningOutType"
                               name="personalDiningOutType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -1491,7 +1488,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="personalMobilePhone"
                               name="personalMobilePhone"
                               placeholder="Mobile Phone"
@@ -1517,7 +1514,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               id="personalMobilePhoneType"
                               name="personalMobilePhoneType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -1553,7 +1550,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="personalMedicalExpenses"
                               name="personalMedicalExpenses"
                               placeholder="Medical Expenses"
@@ -1579,7 +1576,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               id="personalMedicalExpensesType"
                               name="personalMedicalExpensesType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -1612,16 +1609,16 @@ const RegularLivingExpenses = (props) => {
                 onClick={() => setOpen3(!open3)}
                 aria-controls=""
                 aria-expanded={open3}
-                className="bgColorIncome   py-2 text-light"
+                className="bgColorIncome fw-bold py-2 text-light"
               >
                 <div className="row">
                   <div className="col-md-6">
-                    <label className="form-label mb-0">Transport</label>
+                    <label className=" mb-0">Transport</label>
                   </div>
                   <div className="col-md-6">
                     <label
                       id="transportTotalValue"
-                      className="float-end form-label mb-0"
+                      className="float-end mb-0"
                     >
                       ${totalTransport.toFixed(2)}
                       <div className="iconContainer mx-1">
@@ -1650,7 +1647,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               name="transportPetrol"
                               id="transportPetrol"
                               placeholder="Petrol"
@@ -1676,7 +1673,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               id="transportPetrolType"
                               name="transportPetrolType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -1708,7 +1705,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="transportCarRepair"
                               name="transportCarRepair"
                               placeholder="Car Repairs & Maintenance"
@@ -1734,7 +1731,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               id="transportCarRepairType"
                               name="transportCarRepairType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -1770,7 +1767,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="transportCarRegistration"
                               name="transportCarRegistration"
                               placeholder="Car Registration"
@@ -1796,7 +1793,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               id="transportCarRegistrationType"
                               name="transportCarRegistrationType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -1828,7 +1825,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="publicTransport"
                               name="publicTransport"
                               placeholder="Public transport"
@@ -1854,7 +1851,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               id="publicTransportType"
                               name="publicTransportType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -1890,7 +1887,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="transportOthers"
                               name="transportOthers"
                               placeholder="Other"
@@ -1916,7 +1913,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               name="transportOthersType"
                               id="transportOthersType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -1949,16 +1946,16 @@ const RegularLivingExpenses = (props) => {
                 onClick={() => setOpen4(!open4)}
                 aria-controls=""
                 aria-expanded={open4}
-                className="bgColorIncome   py-2 text-light"
+                className="bgColorIncome fw-bold py-2 text-light"
               >
                 <div className="row">
                   <div className="col-md-6">
-                    <label className="form-label mb-0">Insurance</label>
+                    <label className=" mb-0">Insurance</label>
                   </div>
                   <div className="col-md-6">
                     <label
                       id="insuranceTotalValue"
-                      className="float-end form-label mb-0"
+                      className="float-end mb-0"
                     >
                       ${totalInsurance.toFixed(2)}
                       <div className="iconContainer mx-1">
@@ -1987,7 +1984,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="insurancePrivateHealth"
                               name="insurancePrivateHealth"
                               placeholder="Private Health"
@@ -2013,7 +2010,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               id="insurancePrivateHealthType"
                               name="insurancePrivateHealthType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -2045,7 +2042,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="insuranceLife"
                               name="insuranceLife"
                               placeholder="Life/TPD/Trauma"
@@ -2071,7 +2068,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               id="insuranceLifeType"
                               name="insuranceLifeType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -2109,7 +2106,7 @@ const RegularLivingExpenses = (props) => {
                             <Field
                               name="insuranceIncomeProtection"
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="insuranceIncomeProtection"
                               placeholder="Income Protection"
                             />
@@ -2134,7 +2131,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               id="insuranceIncomeProtectionType"
                               name="insuranceIncomeProtectionType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -2166,7 +2163,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="insuranceCar"
                               name="insuranceCar"
                               placeholder="Car"
@@ -2192,7 +2189,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               id="insuranceCarType"
                               name="insuranceCarType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -2228,7 +2225,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="insuranceHomeContents"
                               name="insuranceHomeContents"
                               placeholder="Home And Contents"
@@ -2254,7 +2251,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               id="insuranceHomeContentsType"
                               name="insuranceHomeContentsType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>
@@ -2285,7 +2282,7 @@ const RegularLivingExpenses = (props) => {
                             </label>
                             <Field
                               type="number"
-                              className="form-control inputDesign shadow"
+                              className="form-control inputDesignDoubleInput shadow"
                               id="insuranceOthers"
                               name="insuranceOthers"
                               placeholder="Other"
@@ -2311,7 +2308,7 @@ const RegularLivingExpenses = (props) => {
                               as="select"
                               id="insuranceOthersType"
                               name="insuranceOthersType"
-                              className="form-select shadow  inputDesign"
+                              className="form-select shadow  inputDesignDoubleInput"
                             >
                               <option value="">Select</option>
                               <option value={52}>Weekly</option>

@@ -27,10 +27,11 @@ const CenterLinkPayments = (props) => {
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
 
-  let incomeFromCentrelink = questionDetail.incomeFromCentrelink || {
+  let incomeFromCentrelink = Object.keys(questionDetail.incomeFromCentrelink).length > 0 ? questionDetail.incomeFromCentrelink : {
     client: [],
     partner: [],
     joint: [],
+
   }; // Use an empty object as default if incomeFromCentrelink is undefined
 
   let initialValues = incomeFromCentrelink[props.modalObject.Input].length
@@ -247,7 +248,7 @@ const CenterLinkPayments = (props) => {
                       type="number"
                       id="NumberOfMap"
                       name="NumberOfMap"
-                      className="form-control inputDesign"
+                      className="form-control inputDesignDoubleInput"
                       onChange={(e) => handleInput(e, setFieldValue)}
                     />
                   </div>
@@ -282,7 +283,7 @@ const CenterLinkPayments = (props) => {
                                     placeholder="CRN"
                                     id={`cRN${i}`}
                                     name={`cRN${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -299,7 +300,7 @@ const CenterLinkPayments = (props) => {
                                     placeholder="Fortnightly Payment"
                                     id={`fortnightlyPayment${i}`}
                                     name={`fortnightlyPayment${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                     onChange={(e) => {
                                       setFieldValue(`fortnightlyPayment${i}`, e.target.value);
                                       setFieldValue(`annualPaymentAmount${i}`, e.target.value * 26 || 0)
@@ -313,7 +314,7 @@ const CenterLinkPayments = (props) => {
                                     placeholder="Annual Payment Amount"
                                     id={`annualPaymentAmount${i}`}
                                     name={`annualPaymentAmount${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>

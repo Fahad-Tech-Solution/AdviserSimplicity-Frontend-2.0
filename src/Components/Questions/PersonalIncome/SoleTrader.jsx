@@ -22,7 +22,7 @@ const SoleTrader = (props) => {
         }
     })
 
-    let incomeFromSoleTrader = questionDetail.incomeFromSoleTrader || {
+    let incomeFromSoleTrader = Object.keys(questionDetail.incomeFromSoleTrader).length > 0 ? questionDetail.incomeFromSoleTrader : {
         client: [],
         partner: [],
         joint: [],
@@ -175,7 +175,7 @@ const SoleTrader = (props) => {
                                             type="number"
                                             id="NumberOfMap"
                                             name="NumberOfMap"
-                                            className="form-control inputDesign"
+                                            className="form-control inputDesignDoubleInput"
                                             onChange={(e) => handleInput(e, setFieldValue)}
                                         />
                                     </div>
@@ -202,7 +202,7 @@ const SoleTrader = (props) => {
                                                                     placeholder="Business Name"
                                                                     id={`businessName${i}`}
                                                                     name={`businessName${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -211,7 +211,7 @@ const SoleTrader = (props) => {
                                                                     placeholder="ABN"
                                                                     id={`ABN${i}`}
                                                                     name={`ABN${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -220,7 +220,7 @@ const SoleTrader = (props) => {
                                                                     placeholder="Business Address"
                                                                     id={`businessAddress${i}`}
                                                                     name={`businessAddress${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -229,7 +229,7 @@ const SoleTrader = (props) => {
                                                                     placeholder="Net Sole Trader"
                                                                     id={`netSoleTrader${i}`}
                                                                     name={`netSoleTrader${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -238,7 +238,7 @@ const SoleTrader = (props) => {
                                                                     placeholder="Goodwill/Business Valuation"
                                                                     id={`goodWillBusinessValuation${i}`}
                                                                     name={`goodWillBusinessValuation${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                         </tr>)

@@ -23,12 +23,12 @@ const OwnFamilyHome = (props) => {
         }
     })
 
-    let familyHome = questionDetail.familyHome || {
+    let familyHome = Object.keys(questionDetail.familyHome).length > 0 ? questionDetail.familyHome : {
         client: [],
         partner: [],
         joint: [],
 
-    }; // Use an empty object as default if familyHome is undefined
+    };// Use an empty object as default if familyHome is undefined
 
 
     let initialValues = familyHome[props.modalObject.Input].length ? { NumberOfMap: familyHome[props.modalObject.Input].length } : { NumberOfMap: "" };
@@ -261,7 +261,7 @@ const OwnFamilyHome = (props) => {
                                             type="number"
                                             id="NumberOfMap"
                                             name="NumberOfMap"
-                                            className="form-control inputDesign"
+                                            className="form-control inputDesignDoubleInput"
                                             onChange={(e) => handleInput(e, setFieldValue)}
                                         />
                                     </div>
@@ -292,7 +292,7 @@ const OwnFamilyHome = (props) => {
                                                                         placeholder="Home Address & Postcode "
                                                                         id={`HomeAddress${i}`}
                                                                         name={`HomeAddress${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -301,7 +301,7 @@ const OwnFamilyHome = (props) => {
                                                                         placeholder="Current Value – link to URL below "
                                                                         id={`CurrentValue${i}`}
                                                                         name={`CurrentValue${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -310,7 +310,7 @@ const OwnFamilyHome = (props) => {
                                                                         placeholder="Cost base /(Purchase Price)"
                                                                         id={`CostBase${i}`}
                                                                         name={`CostBase${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -326,7 +326,7 @@ const OwnFamilyHome = (props) => {
                                                                             setFieldValue(`ClientOwnership${i}`, (clientValue > 100 ? 100 : clientValue));
                                                                             setFieldValue(`PartnerOwnership${i}`, partnerValue.toFixed(2));
                                                                         }}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -342,7 +342,7 @@ const OwnFamilyHome = (props) => {
                                                                             setFieldValue(`PartnerOwnership${i}`, (partnerValue > 100 ? 100 : partnerValue));
                                                                             setFieldValue(`ClientOwnership${i}`, clientValue.toFixed(2));
                                                                         }}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                             </tr>)

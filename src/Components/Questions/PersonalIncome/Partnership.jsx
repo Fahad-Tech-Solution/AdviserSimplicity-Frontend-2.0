@@ -21,7 +21,7 @@ const Partnership = (props) => {
         }
     })
 
-    let incomeFromPartnership = questionDetail.incomeFromPartnership || {
+    let incomeFromPartnership = Object.keys(questionDetail.incomeFromPartnership).length > 0 ? questionDetail.incomeFromPartnership : {
         client: [],
         partner: [],
         joint: [],
@@ -186,7 +186,7 @@ const Partnership = (props) => {
                                             type="number"
                                             id="NumberOfMap"
                                             name="NumberOfMap"
-                                            className="form-control inputDesign"
+                                            className="form-control inputDesignDoubleInput"
                                             onChange={(e) => handleInput(e, setFieldValue)}
                                         />
                                     </div>
@@ -215,7 +215,7 @@ const Partnership = (props) => {
                                                                     placeholder="Business Name"
                                                                     id={`businessName${i}`}
                                                                     name={`businessName${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -224,7 +224,7 @@ const Partnership = (props) => {
                                                                     placeholder="ABN"
                                                                     id={`ABN${i}`}
                                                                     name={`ABN${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -233,7 +233,7 @@ const Partnership = (props) => {
                                                                     placeholder="Business Address"
                                                                     id={`businessAddress${i}`}
                                                                     name={`businessAddress${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -246,7 +246,7 @@ const Partnership = (props) => {
                                                                         setFieldValue(`totalNetPartnershipIncome${i}`, e.target.value);
                                                                         setFieldValue(`share${i}`, (e.target.value || 0) * (values[`sharePartnership${i}`] || 0))
                                                                     }}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -260,7 +260,7 @@ const Partnership = (props) => {
                                                                         setFieldValue(`share${i}`, (parseFloat(e.target.value).toFixed(2) || 0) * (values[`totalNetPartnershipIncome${i}`] || 0))
                                                                     }}
                                                                     onBlur={(e) => handleBlur(setFieldValue, e)}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -270,7 +270,7 @@ const Partnership = (props) => {
                                                                     id={`share${i}`}
                                                                     name={`share${i}`}
                                                                     disabled
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
@@ -279,7 +279,7 @@ const Partnership = (props) => {
                                                                     placeholder="Goodwill/Business Valuation"
                                                                     id={`goodWillBusinessValuation${i}`}
                                                                     name={`goodWillBusinessValuation${i}`}
-                                                                    className="form-control inputDesign"
+                                                                    className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                         </tr>)
