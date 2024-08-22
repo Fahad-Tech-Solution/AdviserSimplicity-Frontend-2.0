@@ -224,5 +224,17 @@ export const GQState = atom({
 
 export const RiskQuestion = atom({
     key: "RiskQuestion",
-    default: {},
+    default: {
+        joinedProfile: "No",
+        question1: { client: 1, partner: 1, },
+        question2: { client: 1, partner: 1, },
+        question3: { client: 1, partner: 1, },
+        question4: { client: 1, partner: 1, },
+        question5: { client: 1, partner: 1, },
+        question6: { client: 1, partner: 1, },
+        question7: { client: 1, partner: 1, },
+        question8: { client: 1, partner: 1, },
+        riskDescription: "text",
+        riskGoal: "text",
+    },
 });

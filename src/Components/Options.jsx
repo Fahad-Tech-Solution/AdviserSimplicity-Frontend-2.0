@@ -98,7 +98,7 @@ function Options(props) {
         break;
       default:
         let a = cLocation.split('/')[0];
-        setCurrentTabName(a.replace("-", " "));
+        setCurrentTabName(a.replaceAll("-", " "));
         break;
     }
 
@@ -393,7 +393,9 @@ function Options(props) {
     "/Risk-Profile/Q5",
     "/Risk-Profile/Q6",
     "/Risk-Profile/Q7",
-    "/Risk-Profile/Q8",]
+    "/Risk-Profile/Q8",
+    "/Risk-Profile-Cards",
+  ]
 
 
   if (topMenuArray.includes(CurrentP)) {
@@ -412,7 +414,7 @@ function Options(props) {
                       <Breadcrumb.Item active linkAs={Link} linkProps={{ to: '/' }} className="p-0 m-0 LeagueSpartanFamily">Dashboard</Breadcrumb.Item>
                       <Breadcrumb.Item active linkAs={Link} linkProps={{ to: '/' }} className="p-0 m-0 LeagueSpartanFamily">{currentPCLassSwitch}</Breadcrumb.Item>
                     </Breadcrumb>
-                    <h5 className="Page LeagueSpartanFamily">{currentTabName}</h5>
+                    <h5 className="Page LeagueSpartanFamily">{currentTabName || "Dashboard"}</h5>
                   </div>
                   <div className="rightBlock">
                     <FontAwesomeIcon icon={faMoon} className="moon" />

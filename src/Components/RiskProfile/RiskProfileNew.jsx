@@ -14,7 +14,7 @@ import Risk7 from "../Questions/svgs/Risk-bar-chart-finance-business.svg"
 import Risk8 from "../Questions/svgs/Risk-chart-pie-chart.svg"
 import ProgressBar from './ProgressBar/ProgressBar'
 import { FaArrowLeftLong, FaArrowRightLong } from 'react-icons/fa6'
-import { GetAxios, PostAxios } from '../Assets/Api/Api'
+import { GetAxios, PatchAxios, PostAxios } from '../Assets/Api/Api'
 import { defaultUrl, RiskQuestion } from '../../Store/Store'
 import { useRecoilState, useRecoilValue } from 'recoil'
 
@@ -33,16 +33,26 @@ const RiskProfileNew = () => {
     }, [])
 
 
-    let GetRiskData = async () => {
 
-        let res = await GetAxios(DefaultUrl + "/api/riskProfile/");
-        if (res) {
-            console.log(res);
-            setRiskQuestion(res);
-            
+    const GetRiskData = async () => {
+        try {
+            // Make the GET request to fetch risk data
+            const res = await GetAxios(`${DefaultUrl}/api/riskProfile/${localStorage.getItem("UserID")}`);
+
+            // Check if the response is successful and contains data
+            if (res && res._id) {
+                console.log('Risk Data:', res);
+                setRiskQuestion(res);  // Assuming response data contains the risk question
+            } else {
+                console.error('Unexpected response format:', res);
+            }
+        } catch (error) {
+            // Handle any errors during the API call
+            console.error('Error fetching risk data:', error);
+            setRiskQuestion(initialValues);
+            // Optionally, you might want to provide user feedback here
         }
-
-    }
+    };
 
 
 
@@ -56,24 +66,48 @@ const RiskProfileNew = () => {
         question6: { client: 1, partner: 1, },
         question7: { client: 1, partner: 1, },
         question8: { client: 1, partner: 1, },
-        riskDescription: "text",
-        riskGoal: "text",
-
+        riskDescription: { client: "1", partner: "1", },
+        riskGoal: { client: "Conservative", partner: "Conservative", },
     }
 
-    let onSubmit = async (values) => {
+    const onSubmit = async (values) => {
+        try {
+            console.log(JSON.stringify(values));
 
-        console.log(JSON.stringify(values));
+            const obj = { ...values, clientFK: localStorage.getItem("UserID") };
 
+            // Check if riskQuestion exists and has an ID
+            if (riskQuestion && Object.keys(riskQuestion).length > 0 && !riskQuestion._id) {
+                // POST request for adding new risk question
+                const res = await PostAxios(`${DefaultUrl}/api/riskProfile/Add`, obj);
 
-        let res = await PostAxios(DefaultUrl + "/api/riskProfile/Add", values);
-        if (res) {
-            console.log(res);
-            setRiskQuestion(res);
+                if (res && res._id) {
+                    console.log('Add Response:', res);
+                    setRiskQuestion(res);  // Assuming response data contains the updated risk question
+                    Nav("/Risk-Profile-Cards")
+                } else {
+                    console.error('Unexpected response format for Add:', res);
+                }
+            } else {
+                // PATCH request for updating existing risk question
+                obj._id = riskQuestion._id;
+                const res = await PatchAxios(`${DefaultUrl}/api/riskProfile/Update`, obj);
+
+                if (res && res._id) {
+                    console.log('Update Response:', res);
+                    setRiskQuestion(res);  // Assuming response data contains the updated risk question
+                    Nav("/Risk-Profile-Cards")
+                } else {
+                    console.error('Unexpected response format for Update:', res);
+                }
+            }
+        } catch (error) {
+            // Handle any errors during API calls
+            console.error('Error during API call:', error);
+            // Optionally, you might want to provide user feedback here
         }
+    };
 
-
-    }
     // let validationSchema = {}
 
     let QuestionArray = [
@@ -176,62 +210,107 @@ const RiskProfileNew = () => {
     let [BackButton, setBackButton] = useState(false);
 
 
+    // useEffect(() => {
+    //     if (loc.pathname === "/Risk-Profile/" || loc.pathname === "/Risk-Profile") {
+    //         setBackButton(false)
+    //     }
+    //     else {
+    //         setBackButton(true)
+    //     }
+    // }, [loc])
+
+    // const BackHandle = () => {
+    //     const currentPath = loc.pathname;
+
+    //     if (currentPath !== "/Risk-Profile") {
+    //         let route = loc.pathname === "/Risk-Profile" ? "/Risk-Profile/" : loc.pathname;
+
+    //         const currentIndex = QuestionArray.findIndex(q => "/Risk-Profile" + q.route === route);
+
+    //         if (currentIndex > 0) {
+    //             Nav("/Risk-Profile" + QuestionArray[currentIndex - 1].route);
+    //             setProgress((prevProgress) => {
+    //                 return currentIndex === 1 ? 10 : prevProgress - (90 / (QuestionArray.length - 1));
+    //             });
+    //             if (currentIndex == QuestionArray.length - 1) {
+    //                 // alert("anam")
+    //                 setSwitchBtn(false)
+    //             }
+    //         } else {
+    //             console.log('Already at the starting point');
+    //         }
+    //     } else {
+    //         console.log("Already at the starting point");
+    //     }
+    // };
+
+    // const HandleSubmit = () => {
+    //     let route = loc.pathname === "/Risk-Profile" ? "/Risk-Profile/" : loc.pathname;
+
+    //     const currentIndex = QuestionArray.findIndex(q => "/Risk-Profile" + q.route === route);
+
+    //     if (currentIndex < QuestionArray.length - 1) {
+    //         Nav("/Risk-Profile" + QuestionArray[currentIndex + 1].route);
+    //         setProgress((prevProgress) => prevProgress + (90 / (QuestionArray.length - 1)));
+    //         if (currentIndex == QuestionArray.length - 2) {
+    //             // alert("anam")
+    //             setSwitchBtn(true)
+    //         }
+    //     } else {
+    //         console.log('Form submitted or navigate to the summary page');
+    //         // Form.current.handleSubmit();
+    //     }
+
+    // };
+
+
     useEffect(() => {
-        if (loc.pathname === "/Risk-Profile/" || loc.pathname === "/Risk-Profile") {
-            setBackButton(false)
+        const currentPath = loc.pathname === "/Risk-Profile" ? "/Risk-Profile/" : loc.pathname;
+        const currentIndex = QuestionArray.findIndex(q => "/Risk-Profile" + q.route === currentPath);
+
+        if (currentIndex >= 0 && currentIndex < QuestionArray.length) {
+            let progressRate = (90 / (QuestionArray.length - 1)) * currentIndex;
+            setProgress((progressRate == 0 ? 10 : progressRate));
+            setSwitchBtn(currentIndex === QuestionArray.length - 1);
+
+            if (currentIndex == 0) {
+                setBackButton(false);
+            }
+            else {
+                setBackButton(true);
+            }
+
+
         }
-        else {
-            setBackButton(true)
-        }
-    }, [loc])
+
+    }, [loc]);
 
     const BackHandle = () => {
-        const currentPath = loc.pathname;
+        const currentPath = loc.pathname === "/Risk-Profile" ? "/Risk-Profile/" : loc.pathname;
+        const currentIndex = QuestionArray.findIndex(q => "/Risk-Profile" + q.route === currentPath);
 
-        if (currentPath !== "/Risk-Profile") {
-            let route = loc.pathname === "/Risk-Profile" ? "/Risk-Profile/" : loc.pathname;
-
-            const currentIndex = QuestionArray.findIndex(q => "/Risk-Profile" + q.route === route);
-
-            if (currentIndex > 0) {
-                Nav("/Risk-Profile" + QuestionArray[currentIndex - 1].route);
-                setProgress((prevProgress) => {
-                    return currentIndex === 1 ? 10 : prevProgress - (90 / (QuestionArray.length - 1));
-                });
-                if (currentIndex == QuestionArray.length - 1) {
-                    // alert("anam")
-                    setSwitchBtn(false)
-                }
-            } else {
-                console.log('Already at the starting point');
-            }
+        if (currentIndex > 0) {
+            Nav("/Risk-Profile" + QuestionArray[currentIndex - 1].route);
         } else {
-            console.log("Already at the starting point");
+            console.log('Already at the starting point');
         }
     };
 
     const HandleSubmit = () => {
-        let route = loc.pathname === "/Risk-Profile" ? "/Risk-Profile/" : loc.pathname;
-
-        const currentIndex = QuestionArray.findIndex(q => "/Risk-Profile" + q.route === route);
+        const currentPath = loc.pathname === "/Risk-Profile" ? "/Risk-Profile/" : loc.pathname;
+        const currentIndex = QuestionArray.findIndex(q => "/Risk-Profile" + q.route === currentPath);
 
         if (currentIndex < QuestionArray.length - 1) {
+            setBackButton(true)
             Nav("/Risk-Profile" + QuestionArray[currentIndex + 1].route);
-            setProgress((prevProgress) => prevProgress + (90 / (QuestionArray.length - 1)));
-            if (currentIndex == QuestionArray.length - 2) {
-                // alert("anam")
-                setSwitchBtn(true)
-            }
         } else {
             console.log('Form submitted or navigate to the summary page');
             // Form.current.handleSubmit();
         }
-
     };
 
-
-    let fillTheValues = ({ setFieldValue }) => {
-        if (riskQuestion && Object.keys(riskQuestion).length > 0) {
+    let fillTheValues = (setFieldValue) => {
+        if (riskQuestion && Object.keys(riskQuestion).length > 0 && riskQuestion._id) {
             setFieldValue("question1", riskQuestion.question1)
             setFieldValue("question2", riskQuestion.question2)
             setFieldValue("question3", riskQuestion.question3)

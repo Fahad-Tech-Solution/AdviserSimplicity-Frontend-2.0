@@ -51,6 +51,11 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import GoalsObjectiveNew from "./Components/Goals&Objectives/GoalsObjectiveNew";
 import Contact from "./Components/ContactTest/Contact";
 import RiskProfileNew from "./Components/RiskProfile/RiskProfileNew";
+import RiskProfileCards from "./Components/RiskProfile/RiskProfileCards";
+import LoginForm from "./Components/Auth/LoginForm";
+import Register from "./Components/Auth/Register";
+import ForgetPassword from "./Components/Auth/ForgetPassword";
+import VerifyEmail from "./Components/Auth/VerifyEmail";
 
 
 function App() {
@@ -85,10 +90,11 @@ function App() {
     "/Risk-Profile/Q6",
     "/Risk-Profile/Q7",
     "/Risk-Profile/Q8",
+    "/Risk-Profile-Cards"
   ]
 
 
-  
+
   return (
     <div className="container-fluid">
       <div className="row" >
@@ -107,8 +113,13 @@ function App() {
 
             <div className={`py-0 mx-0 mb-0 ${topMenuArray.includes(CurrentP) ? 'mainBody2' : 'mainBody'} `}>
               <Routes>
-
-                <Route path="/" element={<Dashboard />} />
+                
+                <Route path="/Login" element={<LoginForm />} />
+                <Route path="/Register" element={<Register />} />
+                <Route path="/VerifyEmail" element={<VerifyEmail />} />
+                <Route path="/ForgetPassword" element={<ForgetPassword />} />
+                
+                <Route path="/Dashboard" element={<Dashboard />} />
 
                 {/* Test Route For Dynamic Time Estimation */}
                 <Route path="/TestComp" element={<TestComp />} />
@@ -144,6 +155,7 @@ function App() {
                 <Route path="/FamilyTrust" element={<QuestionsNew><QuestionsFamily /></QuestionsNew>} />
 
                 <Route path="/Risk-Profile/*" element={<RiskProfileNew />} />
+                <Route path="/Risk-Profile-Cards/" element={<RiskProfileCards />} />
                 <Route path="/Goals-And-Objectives" element={<GoalsObjectiveNew />} />
 
 

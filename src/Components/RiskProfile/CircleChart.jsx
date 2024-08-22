@@ -24,7 +24,7 @@ const generateColors = (data) => {
 };
 
 
-const PaiChart = (props) => {
+const CircleChart = (props) => {
 
     ChartJS.defaults.font.family = 'PoppinsFamily'; // Apply font family globally
 
@@ -62,39 +62,11 @@ const PaiChart = (props) => {
 
     };
 
-    const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-
-    const options2 = {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'top',
-            },
-        },
-    };
-
-    // Replace with your actual data (remove if using faker directly)
-    const data2 = {
-        labels,
-        datasets: [
-            {
-                label: 'Users',
-                data: [10, 20, 30, 25, 40, 30, 70], // Replace with your desired values
-                borderColor: '#1e7034',
-                backgroundColor: '#1e7034',
-
-            }
-        ],
-    };
-
     return (
         <div className='w-100 d-flex justify-content-center flex-column align-items-center p-2'>
-            <h5 className='PoppinsFamily navy_Text'>{props.chartTitle}</h5>
-            {props.chartType == "Pie" && <Pie data={data} options={options} className='mb-1'/>}
-            {props.chartType == "Line" && <Line data={data2} options={options2}  />}
-
+            <Doughnut data={data} options={options} className='mb-1' />
         </div>
     )
 }
 
-export default PaiChart
+export default CircleChart
