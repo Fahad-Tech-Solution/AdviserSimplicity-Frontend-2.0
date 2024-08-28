@@ -6,13 +6,8 @@ import { differenceInYears } from "date-fns";
 
 // import * as Yup from "yup"; //? don't Remove it you might need it later
 import "yup-phone";
-import smoking from "./images/smoking.svg";
-import notsmoking from "./images/no-smoking.svg";
-
 import single from "../Svgs/single-2.svg";
 import couple from "../Svgs/couple-2.svg";
-import male from "./images/male.svg";
-import female from "./images/female.svg";
 import axios from "axios";
 
 import DatePicker from "react-datepicker";
@@ -20,9 +15,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { useRecoilState, useRecoilValue } from "recoil";
-import { QuestionShift, UserName, ClientName, PartnerName, defaultUrl, CRState } from "../../Store/Store";
+import { QuestionShift, UserName, ClientName, PartnerName, defaultUrl, CRState, StepsStatus } from "../../Store/Store";
 
-import { Card } from "react-bootstrap";
 
 import PersonalDetailCards from "./PersonalDetailCards";
 import { openNotificationSuccess } from "../Assets/Api/Api";
@@ -31,6 +25,9 @@ import { openNotificationSuccess } from "../Assets/Api/Api";
 
 const PersonalDetail = () => {
   let Navigate = useNavigate();
+
+  let [stepsStatus, setStepsStatus] = useRecoilState(StepsStatus); // eslint-disable-line no-unused-vars
+
 
   let DefaultUrl = useRecoilValue(defaultUrl)
 
@@ -146,6 +143,7 @@ const PersonalDetail = () => {
   let nextbuttonHandler = () => {
 
     setQuestionChange("PersonalIncome");
+    setStepsStatus(false);
     Navigate("/PersonalIncome");
   };
 
@@ -433,8 +431,8 @@ const PersonalDetail = () => {
 
         BusinessAsCompanyStructure: "No",
         BusinessAsTrusts: "No",
-        BusinessAsSMSF: "No",
-        BusinessAsInvestmentTrust: "No",
+        SMSFManagedFundsTab: "No",
+        businessAsInvestmentTab: "No",
 
         SMSFBank: "Yes",
         SMSFTermDeposits: "No",

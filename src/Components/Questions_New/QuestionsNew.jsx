@@ -41,11 +41,17 @@ const QuestionsNew = (props) => {
 
   let selectQuestionSet = async (path) => {
     let cLocation = path.replace("/", "");
-    console.log(cLocation);
+    console.log("Question Setting:", cLocation, CRObjectNoUse);
     setQuestionChange(cLocation)
     // fetchData();
-    fetchDataAllInOne();
-    FetchQuestions();
+
+    if (questionDetail && Object.keys(questionDetail).length < 0) {
+      fetchDataAllInOne();
+    }
+
+    if (!CRObjectNoUse?._id) {
+      FetchQuestions();
+    }
 
   }
 
@@ -147,10 +153,10 @@ const QuestionsNew = (props) => {
         Navigation("/BusinessEntities");
         break;
       case "BusinessEntities":
-        if (CRObject.BusinessAsSMSF === "Yes") {
+        if (CRObject.SMSFManagedFundsTab === "Yes") {
           Navigation("/SMSF")
         }
-        else if (CRObject.BusinessAsInvestmentTrust === "Yes") {
+        else if (CRObject.businessAsInvestmentTab === "Yes") {
           Navigation("/FamilyTrust")
         }
         else {
@@ -159,7 +165,7 @@ const QuestionsNew = (props) => {
         }
         break;
       case "SMSF":
-        if (CRObject.BusinessAsInvestmentTrust === "Yes") {
+        if (CRObject.businessAsInvestmentTab === "Yes") {
           Navigation("/FamilyTrust")
         }
         else {
@@ -190,7 +196,7 @@ const QuestionsNew = (props) => {
     switch (QuestionChange) {
       case "PersonalIncome":
         Navigation("/PersonalDetail#" + localStorage.getItem("Email"));
-        localStorage.removeItem("Question");
+        // localStorage.removeItem("Question");
         break;
       case "PersonalAssets":
         Navigation("/PersonalIncome")
@@ -220,7 +226,7 @@ const QuestionsNew = (props) => {
         Navigation("/BusinessEntities");
         break;
       case "FamilyTrust":
-        if (CRObject.BusinessAsSMSF === "Yes") {
+        if (CRObject.SMSFManagedFundsTab === "Yes") {
           Navigation("/SMSF")
         }
         else {
@@ -234,128 +240,43 @@ const QuestionsNew = (props) => {
     }
 
   }
+
   let DefaultUrl = useRecoilValue(defaultUrl)
 
   let obj = {
     FinancialInvestments: {
       Title: "Financial Investments",
-      apiArray: [
-        { url: `${DefaultUrl}/api/bankAccountFinance/${localStorage.getItem("UserID")}`, key: 'bankAccountFinance' },
-        { url: `${DefaultUrl}/api/termDepositsFinance/${localStorage.getItem("UserID")}`, key: 'termDepositsFinance' },
-        { url: `${DefaultUrl}/api/australianShareMarket/${localStorage.getItem("UserID")}`, key: 'australianShareMarket' },
-        { url: `${DefaultUrl}/api/managedFund/${localStorage.getItem("UserID")}`, key: 'managedFund' },
-
-        { url: `${DefaultUrl}/api/investmentBondFinance/${localStorage.getItem("UserID")}`, key: 'investmentBondFinance' },
-        { url: `${DefaultUrl}/api/managedFundsLOC/${localStorage.getItem("UserID")}`, key: 'managedFundsLOC' },
-        { url: `${DefaultUrl}/api/managedFundsMarginLoan/${localStorage.getItem("UserID")}`, key: 'managedFundsMarginLoan' },
-      ]
     },
     PersonalAssets: {
       Title: "Personal Assets & Liabilities",
-      apiArray: [
-        { url: `${DefaultUrl}/api/car/${localStorage.getItem("UserID")}`, key: 'car' },
-        { url: `${DefaultUrl}/api/boat/${localStorage.getItem("UserID")}`, key: 'boat' },
-        { url: `${DefaultUrl}/api/caravan/${localStorage.getItem("UserID")}`, key: 'caravan' },
-        { url: `${DefaultUrl}/api/personalAssets/${localStorage.getItem("UserID")}`, key: 'personalAssets' },
-        { url: `${DefaultUrl}/api/personalLoans/${localStorage.getItem("UserID")}`, key: 'personalLoans' },
-        { url: `${DefaultUrl}/api/creditCards/${localStorage.getItem("UserID")}`, key: 'creditCards' },
-      ]
     },
     Lifestyle: {
       Title: "Property",
-      apiArray: [
-        { url: `${DefaultUrl}/api/familyHome/${localStorage.getItem("UserID")}`, key: 'familyHome' },
-        { url: `${DefaultUrl}/api/familyHomeLoan/${localStorage.getItem("UserID")}`, key: 'familyHomeLoan' },
-        { url: `${DefaultUrl}/api/holidayHome/${localStorage.getItem("UserID")}`, key: 'holidayHome' },
-        { url: `${DefaultUrl}/api/holidayHomeLoan/${localStorage.getItem("UserID")}`, key: 'holidayHomeLoan' },
-      ]
     },
     Investment: {
       Title: "Investment",
-      apiArray: [
-        { url: `${DefaultUrl}/api/investmentPropertyDetails/${localStorage.getItem("UserID")}`, key: 'investmentPropertyDetails' },
-        { url: `${DefaultUrl}/api/investmentPropertyLoan/${localStorage.getItem("UserID")}`, key: 'investmentPropertyLoan' },
-        { url: `${DefaultUrl}/api/incomeExpenses/${localStorage.getItem("UserID")}`, key: 'incomeExpenses' },
-      ]
     },
     SuperAndRetirement: {
       Title: "Super and Retirement",
-      apiArray: [
-        { url: `${DefaultUrl}/api/superAnnuationIssues/${localStorage.getItem("UserID")}`, key: 'superAnnuationIssues' },
-        { url: `${DefaultUrl}/api/accountBasedPensionIssues/${localStorage.getItem("UserID")}`, key: 'accountBasedPensionIssues' },
-        { url: `${DefaultUrl}/api/annuitiesIssues/${localStorage.getItem("UserID")}`, key: 'annuitiesIssues' },
-      ]
     },
     EstatePlanning: {
       Title: "Estate Planning & Professional Adviser",
-      apiArray: [
-        { url: `${DefaultUrl}/api/will/${localStorage.getItem("UserID")}`, key: 'will' },
-        { url: `${DefaultUrl}/api/POA/${localStorage.getItem("UserID")}`, key: 'POA' },
-        { url: `${DefaultUrl}/api/professionalAdviser/${localStorage.getItem("UserID")}`, key: 'professionalAdviser' },
-      ]
     },
     PersonalIncome: {
       Title: "Personal Income and Expenses",
-      apiArray: [
-        { url: `${DefaultUrl}/api/incomeFromOwnBusiness/${localStorage.getItem("UserID")}`, key: 'incomeFromOwnBusiness' },
-        { url: `${DefaultUrl}/api/incomeFromSoleTrader/${localStorage.getItem("UserID")}`, key: 'incomeFromSoleTrader' },
-        { url: `${DefaultUrl}/api/incomeFromPartnership/${localStorage.getItem("UserID")}`, key: 'incomeFromPartnership' },
-        { url: `${DefaultUrl}/api/incomeFromCentrelink/${localStorage.getItem("UserID")}`, key: 'incomeFromCentrelink' },
-        { url: `${DefaultUrl}/api/incomeFromSuperPayment/${localStorage.getItem("UserID")}`, key: 'incomeFromSuperPayment' },
-        { url: `${DefaultUrl}/api/incomeFromOverseasPension/${localStorage.getItem("UserID")}`, key: 'incomeFromOverseasPension' },
-        { url: `${DefaultUrl}/api/incomeFromInheritance/${localStorage.getItem("UserID")}`, key: 'incomeFromInheritance' },
-        { url: `${DefaultUrl}/api/incomeFromLumpsumExpense/${localStorage.getItem("UserID")}`, key: 'incomeFromLumpsumExpense' },
-        { url: `${DefaultUrl}/api/generalLivingExpenses/${localStorage.getItem("UserID")}`, key: 'generalLivingExpenses' },
-        { url: `${DefaultUrl}/api/retirementLivingExpenses/${localStorage.getItem("UserID")}`, key: 'retirementLivingExpenses' },
-      ]
     },
     BusinessEntities: {
-      Title: "Business Entities & Tax Structures",
-      apiArray: [
-        { url: `${DefaultUrl}/api/BusinessAsCompanyStructure/${localStorage.getItem("UserID")}`, key: 'BusinessAsCompanyStructure' },
-        { url: `${DefaultUrl}/api/BusinessAsTrusts/${localStorage.getItem("UserID")}`, key: 'BusinessAsTrusts' },
-        { url: `${DefaultUrl}/api/BusinessAsSMSF/${localStorage.getItem("UserID")}`, key: 'BusinessAsSMSF' },
-        { url: `${DefaultUrl}/api/BusinessAsInvestmentTrust/${localStorage.getItem("UserID")}`, key: 'BusinessAsInvestmentTrust' },
-      ]
+      Title: "Business Entities & Tax Structures"
     },
     SMSF: {
       Title: "Self Manged Super Fund",
-      apiArray: [
-        { url: `${DefaultUrl}/api/SMSFDetails/${localStorage.getItem("UserID")}`, key: 'SMSFDetails' },
-        { url: `${DefaultUrl}/api/SMSFAccumulationDetails/${localStorage.getItem("UserID")}`, key: 'SMSFAccumulationDetails' },
-        { url: `${DefaultUrl}/api/SMSFBank/${localStorage.getItem("UserID")}`, key: 'SMSFBank' },
-        { url: `${DefaultUrl}/api/SMSFTermDeposits/${localStorage.getItem("UserID")}`, key: 'SMSFTermDeposits' },
-        { url: `${DefaultUrl}/api/SMSFAustralianShares/${localStorage.getItem("UserID")}`, key: 'SMSFAustralianShares' },
-        { url: `${DefaultUrl}/api/SMSFManagedFunds/${localStorage.getItem("UserID")}`, key: 'SMSFManagedFunds' },
-        { url: `${DefaultUrl}/api/SMSFInvestmentLoan/${localStorage.getItem("UserID")}`, key: 'SMSFInvestmentLoan' },
-        { url: `${DefaultUrl}/api/SMSFInvestmentProperties/${localStorage.getItem("UserID")}`, key: 'SMSFInvestmentProperties' },
-        { url: `${DefaultUrl}/api/SMSFInvestmentPropertiesLoan/${localStorage.getItem("UserID")}`, key: 'SMSFInvestmentPropertiesLoan' },
-        { url: `${DefaultUrl}/api/SMSFInvestmentExpenses/${localStorage.getItem("UserID")}`, key: 'SMSFInvestmentExpenses' },
-        { url: `${DefaultUrl}/api/SMSFPensionPhase/${localStorage.getItem("UserID")}`, key: 'SMSFPensionPhase' },
-      ]
     },
     FamilyTrust: {
       Title: "Family Trust",
-      apiArray: [
-        { url: `${DefaultUrl}/api/familyDetails/${localStorage.getItem("UserID")}`, key: 'familyDetails' },
-        { url: `${DefaultUrl}/api/familyBank/${localStorage.getItem("UserID")}`, key: 'familyBank' },
-        { url: `${DefaultUrl}/api/familyTermDeposit/${localStorage.getItem("UserID")}`, key: 'familyTermDeposit' },
-        { url: `${DefaultUrl}/api/familyAustralianShare/${localStorage.getItem("UserID")}`, key: 'familyAustralianShare' },
-        { url: `${DefaultUrl}/api/familyMangedFunds/${localStorage.getItem("UserID")}`, key: 'familyMangedFunds' },
-        { url: `${DefaultUrl}/api/familyInvestmentHomeLoan/${localStorage.getItem("UserID")}`, key: 'familyInvestmentHomeLoan' },
-        { url: `${DefaultUrl}/api/familyInvestmentProperties/${localStorage.getItem("UserID")}`, key: 'familyInvestmentProperties' },
-        { url: `${DefaultUrl}/api/familyInvestmentPropertiesLoan/${localStorage.getItem("UserID")}`, key: 'familyInvestmentPropertiesLoan' },
-        { url: `${DefaultUrl}/api/familyInvestmentExpenses/${localStorage.getItem("UserID")}`, key: 'familyInvestmentExpenses' },
-      ]
     },
     PersonalInsurance: {
       Title: "Personal Insurance",
-      apiArray: [
-        { url: `${DefaultUrl}/api/incomeProtection/${localStorage.getItem("UserID")}`, key: "incomeProtection", },
-        { url: `${DefaultUrl}/api/TPD/${localStorage.getItem("UserID")}`, key: "TPD", },
-        { url: `${DefaultUrl}/api/life/${localStorage.getItem("UserID")}`, key: "life", },
-        { url: `${DefaultUrl}/api/trauma/${localStorage.getItem("UserID")}`, key: "trauma", },
-      ],
+
     },
 
   }

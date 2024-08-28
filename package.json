@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "devHost": "vite --host 192.168.211.242",
+    "devHost": "vite --host 192.168.30.176",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
@@ -17,6 +17,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "antd": "^5.19.0",
+    "aos": "^2.3.4",
     "apexcharts": "^3.52.0",
     "axios": "^1.7.2",
     "bootstrap": "^5.3.3",

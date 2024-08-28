@@ -81,19 +81,9 @@ const BusinessEntities = (props) => {
             img: Business_TeamHandshake,
             key: "BusinessAsTrusts",
         },
-        {
-            title: "Do you have a Self Manged Super Fund(SMSF)?",
-            img: Business_SMSF,
-            key: "BusinessAsSMSF",
-        },
-        {
-            title: "Do you have an Investment Trust?",
-            img: Questions_People,
-            key: "BusinessAsInvestmentTrust",
-        },
     ]
     const QuestionClick = (index, elem, values, setFieldValue) => {
-        console.log("image clicked in goals", index, elem.key, values);
+        // console.log("image clicked in goals", index, elem.key, values);
         if (values[elem.key] == "No") {
             setFieldValue(elem.key, "Yes");
         }
@@ -243,30 +233,30 @@ const BusinessEntities = (props) => {
                                                 <div className="radiobutton">
                                                     <input
                                                         type="radio"
-                                                        name="BusinessAsSMSF"
+                                                        name="SMSFManagedFundsTab"
                                                         className="form-check-input"
-                                                        id="BusinessAsSMSF1"
+                                                        id="SMSFManagedFundsTab1"
                                                         value="No"
                                                         onChange={handleChange}
-                                                        checked={values.BusinessAsSMSF === "No"}
+                                                        checked={values.SMSFManagedFundsTab === "No"}
                                                     />
                                                     <label
-                                                        htmlFor="BusinessAsSMSF1"
+                                                        htmlFor="SMSFManagedFundsTab1"
                                                         className="label1"
                                                     >
                                                         <span>No</span>
                                                     </label>
                                                     <input
                                                         type="radio"
-                                                        name="BusinessAsSMSF"
-                                                        id="BusinessAsSMSF2"
+                                                        name="SMSFManagedFundsTab"
+                                                        id="SMSFManagedFundsTab2"
                                                         className="form-check-input"
                                                         value="Yes"
                                                         onChange={handleChange}
-                                                        checked={values.BusinessAsSMSF === "Yes"}
+                                                        checked={values.SMSFManagedFundsTab === "Yes"}
                                                     />
                                                     <label
-                                                        htmlFor="BusinessAsSMSF2"
+                                                        htmlFor="SMSFManagedFundsTab2"
                                                         className="label2"
                                                     >
                                                         <span>Yes</span>
@@ -296,30 +286,30 @@ const BusinessEntities = (props) => {
                                                 <div className="radiobutton">
                                                     <input
                                                         type="radio"
-                                                        name="BusinessAsInvestmentTrust"
+                                                        name="businessAsInvestmentTab"
                                                         className="form-check-input"
-                                                        id="BusinessAsInvestmentTrust1"
+                                                        id="businessAsInvestmentTab1"
                                                         value="No"
                                                         onChange={handleChange}
-                                                        checked={values.BusinessAsInvestmentTrust === "No"}
+                                                        checked={values.businessAsInvestmentTab === "No"}
                                                     />
                                                     <label
-                                                        htmlFor="BusinessAsInvestmentTrust1"
+                                                        htmlFor="businessAsInvestmentTab1"
                                                         className="label1"
                                                     >
                                                         <span>No</span>
                                                     </label>
                                                     <input
                                                         type="radio"
-                                                        name="BusinessAsInvestmentTrust"
-                                                        id="BusinessAsInvestmentTrust2"
+                                                        name="businessAsInvestmentTab"
+                                                        id="businessAsInvestmentTab2"
                                                         className="form-check-input"
                                                         value="Yes"
                                                         onChange={handleChange}
-                                                        checked={values.BusinessAsInvestmentTrust === "Yes"}
+                                                        checked={values.businessAsInvestmentTab === "Yes"}
                                                     />
                                                     <label
-                                                        htmlFor="BusinessAsInvestmentTrust2"
+                                                        htmlFor="businessAsInvestmentTab2"
                                                         className="label2"
                                                     >
                                                         <span>Yes</span>

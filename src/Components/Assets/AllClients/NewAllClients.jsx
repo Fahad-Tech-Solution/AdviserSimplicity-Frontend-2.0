@@ -16,6 +16,7 @@ const NewAllClients = (props) => {
         { Thead: "Email", key: "Email" },
         { Thead: "Operations", key: "Opt" },
     ];
+    
     const [Clients, setClients] = useState([]);
 
     useEffect(() => {

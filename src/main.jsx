@@ -6,13 +6,16 @@ import './index.css'
 
 import { RecoilRoot } from 'recoil';
 import { ConfigProvider, notification } from 'antd';
+import { BrowserRouter } from 'react-router-dom';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-      <ConfigProvider notify={notification}>
-        <RecoilRoot>
+    <ConfigProvider notify={notification}>
+      <RecoilRoot>
+        <BrowserRouter>
           <App />
-        </RecoilRoot>
-      </ConfigProvider>
+        </BrowserRouter>
+      </RecoilRoot>
+    </ConfigProvider>
   </React.StrictMode>,
 )

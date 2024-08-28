@@ -11,6 +11,9 @@ import ApexChart from './ApexChart'
 import ModalComponent from '../Questions/FinancialInvestments/ModalComponent'
 import RiskGoalForm from './RiskGoalForm'
 
+import single from "../Svgs/single-2.svg";
+import couple from "../Svgs/couple-2.svg";
+
 const RiskProfileCards = () => {
 
 
@@ -122,11 +125,18 @@ const RiskProfileCards = () => {
                                         <div className='col-md-6 my-3'>
                                             <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
                                                 <h5 className='text-center' onClick={() => { console.log(riskQuestion) }}>
-                                                    {localStorage.getItem("UserName") || "Client"}
+                                                    Client
+                                                    <div className="iconContainerLg m-0 p-0">
+                                                        <img
+                                                            src={single}
+                                                            alt="single svg"
+                                                            className="w-50 "
+                                                        />
+                                                    </div>
                                                 </h5>
 
                                                 <div className="d-flex justify-content-center align-items-stretch w-100" style={{ minHeight: "30vh" }}>
-                                                    <ApexChart data={[30, 20, 60, 15, 15, 10]} title={values.riskGoal.client} />
+                                                    <ApexChart data={[30, 20, 60, 15, 15, 15,]} title={values.riskGoal.client} />
                                                 </div>
                                                 <div className="row justify-content-center align-items-center my-2">
                                                     <div className='col-12 p-0 '>
@@ -135,7 +145,7 @@ const RiskProfileCards = () => {
                                                             <label
                                                                 className=" d-block text-end"
                                                                 htmlFor={"client"}
-                                                            >{values.riskGoal.client}</label>
+                                                            >  {localStorage.getItem("UserName") || "Client"} </label>
                                                             <label
                                                                 className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
                                                                 onClick={() => { OpenModal("Risk Goals", values, "client") }}
@@ -155,7 +165,14 @@ const RiskProfileCards = () => {
                                             <div className='col-md-6 my-3'>
                                                 <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
                                                     <h5 className='text-center' onClick={() => { console.log(riskQuestion) }}>
-                                                        {localStorage.getItem("UserName") || "Partner"}
+                                                        Partner
+                                                        <div className="iconContainerLg">
+                                                            <img
+                                                                src={couple}
+                                                                alt="single svg"
+                                                                className="w-50 "
+                                                            />
+                                                        </div>
                                                     </h5>
 
                                                     <div className="d-flex justify-content-center align-items-stretch w-100" style={{ minHeight: "30vh" }}>
@@ -168,7 +185,7 @@ const RiskProfileCards = () => {
                                                                 <label
                                                                     className=" d-block text-end"
                                                                     htmlFor={"partner"}
-                                                                >{values.riskGoal.partner}</label>
+                                                                >{localStorage.getItem("PartnerName") || "Partner"}</label>
                                                                 <label
                                                                     className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
                                                                     onClick={() => { OpenModal("Risk Goals", values, "partner") }}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from "react-router-dom";
-import InternetSVG from "../Assets/Svgs/"
+import InternetSVG from "../Questions/svgs/Enter OTP-pana.svg"
 
 import axios from 'axios';
 import { useFormik } from 'formik';
@@ -11,14 +11,14 @@ import { Card, Spin, Input as AntInput } from 'antd';
 
 import { Image, InputGroup, Form } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultApiUrl, LoggedInUserData, LoggedInUserTokenJwt } from '../../Atom';
-import LoginSVG from './LoginSVG';
-import { openNotificationSuccess } from '../../assets/Alert/Alert';
+
+import { openNotificationSuccess } from '../Assets/Api/Api';
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import { defaultUrl, LoggedInUserData, LoggedInUserTokenJwt } from '../../Store/Store';
 
 const ForgetPassword = () => {
     var navigate = useNavigate();
-    let defaultApi = useRecoilValue(defaultApiUrl);
+    let defaultApi = useRecoilValue(defaultUrl);
     let [loggedUser, setLoggedUser] = useRecoilState(LoggedInUserData);
     let [loggedUserToken, setLoggedUserToken] = useRecoilState(LoggedInUserTokenJwt)
 

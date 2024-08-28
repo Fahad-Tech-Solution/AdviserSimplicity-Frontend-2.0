@@ -3,15 +3,16 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import './options.css';
 
 import { useRecoilState, useRecoilValue } from "recoil";
-import { UserName, CurrentPage, OptionRender, CRState } from "../Store/Store";
+import { UserName, CurrentPage, OptionRender, CRState, StepsStatus } from "../Store/Store";
 import { Breadcrumb, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faCircleUser, faMoon } from "@fortawesome/free-solid-svg-icons";
 import { ConfigProvider, Steps } from "antd";
-import { FaBriefcase, FaCheck, FaGift, FaKey, FaMoneyCheckDollar, FaUser } from "react-icons/fa6";
+import { FaBriefcase, FaCheck, FaGift, FaKey, FaMoneyCheckDollar, FaPlus, FaUser } from "react-icons/fa6";
 import { FaHome, FaQuestionCircle } from "react-icons/fa";
 import { MdFamilyRestroom } from "react-icons/md";
 import { RiCoinsFill } from "react-icons/ri";
+import { content } from "../Content/Content";
 
 function Options(props) {
 
@@ -25,6 +26,13 @@ function Options(props) {
 
   let [stepCompleted, setStepCompleted] = useState(8);
   let [currentPCLassSwitch, setCurrentPCLassSwitch] = useState("PersonalDetail");
+
+
+  let [items, setItems] = useState([]);
+  let { itemsOpt } = content;
+
+  let stepsStatus = useRecoilValue(StepsStatus); // eslint-disable-line no-unused-vars
+
 
 
   useEffect(() => {
@@ -42,59 +50,68 @@ function Options(props) {
 
   useEffect(() => {
     let cLocation = location.pathname.replace("/", "");
-    console.log(cLocation);
+    console.log(location.pathname);
+
+    // alert(CurrentP);
+
+    let Opt = "Opt1"
+    let stepComplete = 0;
+
     setCurrentPCLassSwitch(cLocation.trim());
     switch (cLocation) {
+      case "ImportantQuestion":
+        stepComplete = 8;
+        break;
       case "PersonalDetail":
-        setStepCompleted(8);
+        stepComplete = 16;
         break;
       case "PersonalIncome":
-        setStepCompleted(16);
-        setOptRender("Opt1")
+        stepComplete = 24;
+        Opt = "Opt1"
         break;
       case "PersonalAssets":
-        setOptRender("Opt1")
-        setStepCompleted(24);
+        Opt = "Opt1"
+        stepComplete = 32;
         break;
       case "FinancialInvestments":
-        setStepCompleted(32);
-        setOptRender("Opt1")
+        stepComplete = 40;
+        Opt = "Opt1"
         break;
       case "SuperAndRetirement":
-        setStepCompleted(40);
-        setOptRender("Opt1")
+        stepComplete = 48;
+        Opt = "Opt1"
         break;
       case "Lifestyle": //Property
-        setOptRender("Opt1")
-        setStepCompleted(48);
+        Opt = "Opt1"
+        stepComplete = 56;
         break;
       case "Investment": //Property investment
-        setOptRender("Opt2")
-        setStepCompleted(56);
+        Opt = "Opt2"
+        stepComplete = 64;
         break;
       case "EstatePlanning":
-        setOptRender("Opt2")
-        setStepCompleted(64);
+        Opt = "Opt2"
+        stepComplete = 72;
         break;
       case "PersonalInsurance":
-        setOptRender("Opt2")
-        setStepCompleted(72);
+        Opt = "Opt2"
+        stepComplete = 80;
         break;
       case "BusinessEntities":
-        setOptRender("Opt2")
-        setStepCompleted(80);
+        Opt = "Opt2"
+        stepComplete = 88;
         break;
       case "SMSF":
-        setOptRender("Opt2")
-        setStepCompleted(88);
+        Opt = "Opt2"
+        stepComplete = 96;
         break;
       case "FamilyTrust":
-        setOptRender("Opt2")
-        setStepCompleted(96);
+        Opt = "Opt2"
+        stepComplete = 104;
         break;
       case "Goals-And-Objectives":
-        setOptRender("Opt2")
-        setStepCompleted(100);
+        Opt = "Opt2"
+        stepComplete = 112;
         break;
       default:
         let a = cLocation.split('/')[0];
@@ -102,290 +119,56 @@ function Options(props) {
         break;
     }
 
-  }, [location])
+    setOptRender(Opt)
+    setStepCompleted(stepComplete);
+
+    const itemsToRender = Opt === "Opt1" ? itemsOpt.slice(0, 7) : itemsOpt.slice(7, 14);
+
+    const updatedItems = itemsToRender.filter(item => item.condition(CRObject)).map(item => {
+      const isPersonalDetails = item.subTitle === 'Personal Details';
+      const currentEmail = localStorage.getItem("Email");
+      const iconMap = {
+        FaBriefcase, FaCheck, FaGift, FaKey, FaMoneyCheckDollar, FaUser, FaHome, FaQuestionCircle, MdFamilyRestroom, RiCoinsFill, FaPlus
+      };
+
+      const IconComponent = iconMap[item.icon] || FaUser; // Default to FaUser if not found
+      const isCurrentStep = cLocation === (isPersonalDetails ? "PersonalDetail" : item.route.replace("/", ""));
+
+      let Status = stepComplete < item.statusStep ? "wait" : stepComplete > item.statusStep ? "finish" : 'processing';
+
+      return {
+        ...item,
+        icon: (
+          <span
+            className={`rounded-circle text-light ${isCurrentStep ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
+            role="button"
+            onClick={() => handleStepClick(isPersonalDetails ? `/PersonalDetail#${currentEmail}` : item.route)}
+            style={{ height: "2rem", width: "6rem" }}
+          >
+            <IconComponent />
+          </span>
+        ),
+        status: Status,
+        subTitle: (<span style={{ color: isCurrentStep ? "#000" : "#808080", fontSize: "12px", width: "100%", fontWeight: isCurrentStep ? "600" : "500" }}> {item.subTitle} </span>)
+      };
+    });
+
+    setItems(updatedItems);
+
+  }, [location, CRObject])
 
   let Nev = useNavigate();
   let handleStepClick = (props) => {
-    Nev(props)
+    if (!stepsStatus) {
+      Nev(props)
+    }
   }
 
-  const itemsOpt1 = [
-    {
-      subTitle: 'Personal Details',
-      status: stepCompleted < 8 ? "wait" : stepCompleted > 8 ? "finish" : 'processing',
-      icon: <span
-        className={`rounded-circle text-light ${currentPCLassSwitch === "PersonalDetail" ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        role="button"
-        onClick={() => handleStepClick(`/PersonalDetail#${localStorage.getItem("Email")}`)}
-        style={{ height: "2rem", width: "6rem" }}><FaUser height={100} width={100} /></span>,
-    },
-    {
-      subTitle: 'Personal Income and Expenses',
-      status: stepCompleted < 16 ? "wait" : stepCompleted > 16 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/PersonalIncome`)}
-        className={`rounded-circle text-light ${currentPCLassSwitch === "PersonalIncome" ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}><FaMoneyCheckDollar height={100} width={100} /></span>,
-    },
-    {
-      subTitle: 'Personal Assets and Debt',
-      status: stepCompleted < 24 ? "wait" : stepCompleted > 24 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/PersonalAssets`)}
-        className={`rounded-circle text-light ${currentPCLassSwitch === "PersonalAssets" ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}><FaHome height={100} width={100} /></span>,
 
-    },
-    {
-      subTitle: 'Financial Investments',
-      status: stepCompleted < 32 ? "wait" : stepCompleted > 32 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/FinancialInvestments`)}
-        className={`rounded-circle text-light ${currentPCLassSwitch === "FinancialInvestments" ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}> <RiCoinsFill height={100} width={100} /></span>,
-
-    },
-    {
-      subTitle: 'Super and Retirement',
-      status: stepCompleted < 40 ? "wait" : stepCompleted > 40 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/SuperAndRetirement`)}
-        className={`rounded-circle text-light ${currentPCLassSwitch === "SuperAndRetirement" ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}> <RiCoinsFill height={100} width={100} /></span>,
-
-    },
-    {
-      subTitle: 'Property',
-      status: stepCompleted < 48 ? "wait" : stepCompleted > 48 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/Lifestyle`)}
-        className={`rounded-circle text-light ${currentPCLassSwitch === "Lifestyle" ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}><FaKey height={100} width={100} /></span>,
-
-    },
-
-  ];
-
-  const itemsOpt2 = ((CRObject.BusinessAsSMSF === "Yes") && (CRObject.BusinessAsInvestmentTrust === "Yes")) ? [
-    {
-      subTitle: 'Investment',
-      status: stepCompleted < 56 ? "wait" : stepCompleted > 56 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/Investment`)}
-        className={`rounded-circle text-light mx-auto ${currentPCLassSwitch === "Investment" ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}><FaKey height={100} width={100} /></span>,
-
-    },
-    {
-      subTitle: 'Estate Planning & Professional Advisers',
-      status: stepCompleted < 64 ? "wait" : stepCompleted > 64 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/EstatePlanning`)}
-        className={`rounded-circle text-light mx-auto ${currentPCLassSwitch === "EstatePlanning" ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}> <FaQuestionCircle height={100} width={100} /></span>,
-
-    },
-    {
-      subTitle: 'Personal Insurance',
-      status: stepCompleted < 72 ? "wait" : stepCompleted > 72 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/PersonalInsurance`)}
-        className={`rounded-circle text-light ${currentPCLassSwitch === "PersonalInsurance" ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}><FaMoneyCheckDollar height={100} width={100} /></span>,
-    },
-    {
-      subTitle: 'Business Entities',
-      status: stepCompleted < 80 ? "wait" : stepCompleted > 80 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/BusinessEntities`)}
-        className={`rounded-circle text-light ${currentPCLassSwitch === "BusinessEntities" ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}><FaBriefcase height={100} width={100} /></span>,
-    },
-    {
-      subTitle: 'SMSF',
-      status: stepCompleted < 88 ? "wait" : stepCompleted > 88 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/SMSF`)}
-        className={`rounded-circle text-light ${currentPCLassSwitch === "SMSF" ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}><FaGift height={100} width={100} /></span>,
-    },
-    {
-      subTitle: 'Investment Trust',
-      status: stepCompleted < 96 ? "wait" : stepCompleted > 96 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/FamilyTrust`)}
-        className={`rounded-circle text-light ${currentPCLassSwitch === "FamilyTrust" ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}><MdFamilyRestroom height={100} width={100} /></span>,
-    }
-    // {
-    //   subTitle: 'Goals and objectives section',
-    //   status: stepCompleted < 88 ? "wait" : stepCompleted > 88 ? "finish" : 'processing',
-    //   icon: <span  className={`rounded-circle text-light mx-auto ${currentPCLassSwitch === "Investment" ? "bgColorIncomeBlack" : "bgColorIncome2"}`} style={{ height: "2rem", width: "6rem" }}><FaCheck height={100} width={100} /></span>,
-    // }
-  ] : (CRObject.BusinessAsSMSF === "Yes") ? [
-    {
-      subTitle: 'Investment',
-      status: stepCompleted < 56 ? "wait" : stepCompleted > 56 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/Investment`)}
-        className={`rounded-circle text-light mx-auto ${currentPCLassSwitch === "Investment" ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}><FaKey height={100} width={100} /></span>,
-
-    },
-    {
-      subTitle: 'Estate Planning & Professional Advisers',
-      status: stepCompleted < 64 ? "wait" : stepCompleted > 64 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/EstatePlanning`)}
-        className={`rounded-circle text-light mx-auto ${currentPCLassSwitch === "EstatePlanning" ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}> <FaQuestionCircle height={100} width={100} /></span>,
-
-    },
-    {
-      subTitle: 'Personal Insurance',
-      status: stepCompleted < 72 ? "wait" : stepCompleted > 72 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/PersonalInsurance`)}
-        className={`rounded-circle text-light ${currentPCLassSwitch === "PersonalInsurance" ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}><FaMoneyCheckDollar height={100} width={100} /></span>,
-    },
-    {
-      subTitle: 'Business Entities',
-      status: stepCompleted < 80 ? "wait" : stepCompleted > 80 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/BusinessEntities`)}
-        className={`rounded-circle text-light ${currentPCLassSwitch === "BusinessEntities" ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}><FaBriefcase height={100} width={100} /></span>,
-    },
-    {
-      subTitle: 'SMSF',
-      status: stepCompleted < 88 ? "wait" : stepCompleted > 88 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/SMSF`)}
-        className={`rounded-circle text-light ${currentPCLassSwitch === "SMSF" ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}><FaGift height={100} width={100} /></span>,
-    }
-    // {FamilyTrust
-    //   subTitle: 'Goals and objectives section',stepCompleted > 96
-    //   status: stepCompleted < 80 ? "wait" : stepCompleted > 80 ? "finish" : 'processing',
-    //   icon: <span  className={`rounded-circle text-light mx-auto ${currentPCLassSwitch === "Investment" ? "bgColorIncomeBlack" : "bgColorIncome2"}`} style={{ height: "2rem", width: "6rem" }}><FaCheck height={100} width={100} /></span>,
-    // }
-  ] : (CRObject.BusinessAsInvestmentTrust === "Yes") ? [
-    {
-      subTitle: 'Investment',
-      status: stepCompleted < 56 ? "wait" : stepCompleted > 56 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/Investment`)}
-        className={`rounded-circle text-light mx-auto ${currentPCLassSwitch === "Investment" ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}><FaKey height={100} width={100} /></span>,
-
-    },
-    {
-      subTitle: 'Estate Planning & Professional Advisers',
-      status: stepCompleted < 64 ? "wait" : stepCompleted > 64 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/EstatePlanning`)}
-        className={`rounded-circle text-light mx-auto ${currentPCLassSwitch === "EstatePlanning" ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}> <FaQuestionCircle height={100} width={100} /></span>,
-
-    },
-    {
-      subTitle: 'Personal Insurance',
-      status: stepCompleted < 72 ? "wait" : stepCompleted > 72 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/PersonalInsurance`)}
-        className={`rounded-circle text-light ${currentPCLassSwitch === "PersonalInsurance" ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}><FaMoneyCheckDollar height={100} width={100} /></span>,
-    },
-    {
-      subTitle: 'Business Entities',
-      status: stepCompleted < 80 ? "wait" : stepCompleted > 80 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/BusinessEntities`)}
-        className={`rounded-circle text-light ${currentPCLassSwitch === "BusinessEntities" ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}><FaBriefcase height={100} width={100} /></span>,
-    },
-    {
-      subTitle: 'Investment Trust',
-      status: stepCompleted < 88 ? "wait" : stepCompleted > 88 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/FamilyTrust`)}
-        className={`rounded-circle text-light ${currentPCLassSwitch === "FamilyTrust" ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}><MdFamilyRestroom height={100} width={100} /></span>,
-    }
-    // {
-    //   subTitle: 'Goals and objectives section',
-    //   status: stepCompleted < 80 ? "wait" : stepCompleted > 80 ? "finish" : 'processing',
-    //   icon: <span  className={`rounded-circle text-light mx-auto ${currentPCLassSwitch === "Investment" ? "bgColorIncomeBlack" : "bgColorIncome2"}`} style={{ height: "2rem", width: "6rem" }}><FaCheck height={100} width={100} /></span>,
-    // }
-  ] : [
-    {
-      subTitle: 'Investment',
-      status: stepCompleted < 56 ? "wait" : stepCompleted > 56 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/Investment`)}
-        className={`rounded-circle text-light mx-auto ${stepCompleted >= 56 ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}><FaKey height={100} width={100} /></span>,
-
-    },
-    {
-      subTitle: 'Estate Planning & Professional Advisers',
-      status: stepCompleted < 64 ? "wait" : stepCompleted > 64 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/EstatePlanning`)}
-        className={`rounded-circle text-light mx-auto ${currentPCLassSwitch === "Investment" ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}> <FaQuestionCircle height={100} width={100} /></span>,
-
-    },
-    {
-      subTitle: 'Personal Insurance',
-      status: stepCompleted < 72 ? "wait" : stepCompleted > 72 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/PersonalInsurance`)}
-        className={`rounded-circle text-light ${stepCompleted >= 72 ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}><FaMoneyCheckDollar height={100} width={100} /></span>,
-    },
-    {
-      subTitle: 'Business Entities',
-      status: stepCompleted < 80 ? "wait" : stepCompleted > 80 ? "finish" : 'processing',
-      icon: <span
-        role="button"
-        onClick={() => handleStepClick(`/BusinessEntities`)}
-        className={`rounded-circle text-light ${stepCompleted >= 80 ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
-        style={{ height: "2rem", width: "6rem" }}><FaBriefcase height={100} width={100} /></span>,
-    }
-    // {88
-    //   subTitle: 'Goals and objectives section',888896
-    //   status: stepCompleted < 72 ? "wait" : stepCompleted > 72 ? "finish" : 'processing',9696
-    //   icon: <span  className={`rounded-circle text-light mx-auto ${currentPCLassSwitch === "Investment" ? "bgColorIncomeBlack" : "bgColorIncome2"}`} style={{ height: "2rem", width: "6rem" }}><FaCheck height={100} width={100} /></span>,
-    // }
-  ];
-
-  let topMenuArray = ['/', '/Risk-Profile', '/All-Clients',
+  let topMenuArray = [
+    '/',
+    '/Risk-Profile',
+    '/All-Clients',
     '/Risk-Profile/',
     "/Risk-Profile/Q2",
     "/Risk-Profile/Q3",
@@ -401,8 +184,6 @@ function Options(props) {
   if (topMenuArray.includes(CurrentP)) {
     return (
       <div className="container-fluid" id="OptionsBar" style={{ paddingLeft: leftPadding }}>
-
-
         <div className="container-fluid" style={{ marginLeft: "1.8rem" }}>
 
           <div className="row pe-4">
@@ -437,6 +218,7 @@ function Options(props) {
       </div>
     )
   }
+
   else {
     return (
       <div className="container-fluid ps-5" >
@@ -466,13 +248,15 @@ function Options(props) {
                     >
 
                       <Steps
-                        items={optRender === 'Opt1' ? itemsOpt1 : optRender === 'Opt2' ? itemsOpt2 : optRender === 'Opt3' ? itemsOpt1 : itemsOpt2}
+                        // items={optRender === 'Opt1' ? itemsOpt1 : optRender === 'Opt2' ? itemsOpt2 : optRender === 'Opt3' ? itemsOpt1 : itemsOpt2}
+                        items={items}
                         labelPlacement={"vertical"}
                         initial={0}
                         responsive={false}
                         status={"process"}
 
                       />
+
                     </ConfigProvider>
                   </div>
                 </div>

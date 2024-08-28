@@ -91,11 +91,11 @@ const Contact = () => {
 
             // Output the PDF as a Blob
             const pdfData = doc.output('blob');
-            return pdfData;
+            // return pdfData;
           
             // doc.save("ali")
-            // const url = URL.createObjectURL(pdfBlob);
-            // setPdfUrl(url);
+            const url = URL.createObjectURL(pdfData);
+            setPdfUrl(url);
             // console.log("Pdf is Created")
         };
     };

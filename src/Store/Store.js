@@ -70,8 +70,16 @@ export const CRState = atom({
 
         BusinessAsCompanyStructure: "No",
         BusinessAsTrusts: "No",
-        BusinessAsSMSF: "No",
-        BusinessAsInvestmentTrust: "No",
+
+        //keys which just controls rendering 
+        investmentPropertyTab: "No",
+        personalInsuranceTab: "No",
+        
+        // companyStructureBusinessTab: "No",
+        // trustStructureBusinessTab: "No",
+
+        SMSFManagedFundsTab: "No",
+        businessAsInvestmentTab: "No",
 
         SMSFBank: "Yes",
         SMSFTermDeposits: "No",
@@ -137,7 +145,8 @@ export const CurrentPage = atom({
 export const defaultUrl = atom({
     key: "defaultUrl",
     // default: "http://localhost:7000",
-    default: "http://192.168.30.24:7000", // Usama bhai ventures-unit2-2g
+    // default: "http://192.168.30.24:7000", // Usama bhai ventures-unit2-2g
+    default: "http://172.168.40.41:7000", // Usama bhai ventures-unit1-2g
     // default: "http://172.168.40.137:7000",
     // default: "http://192.168.211.242:7000",
     // default: "",
@@ -234,7 +243,23 @@ export const RiskQuestion = atom({
         question6: { client: 1, partner: 1, },
         question7: { client: 1, partner: 1, },
         question8: { client: 1, partner: 1, },
-        riskDescription: "text",
-        riskGoal: "text",
+        riskDescription: { client: "", partner: "", },
+        riskGoal: { client: "Conservative", partner: "Conservative", },
     },
+});
+
+
+export const LoggedInUserData = atom({
+    key: "LoggedInUserData",
+    default: "",
+});
+
+export const LoggedInUserTokenJwt = atom({
+    key: "LoggedInUserTokenJwt",
+    default: "",
+});
+
+export const StepsStatus = atom({
+    key: "StepsStatus",
+    default: false,
 });

@@ -347,12 +347,12 @@ const QuestionCards = (props) => {
             },
             // {
             //     title: "Business as SMSF",
-            //     key: "BusinessAsSMSF",
+            //     key: "SMSFManagedFundsTab",
             //     img: Business_SMSF
             // },
             // {
             //     title: "Business as Investment Trust",
-            //     key: "BusinessAsInvestmentTrust",
+            //     key: "businessAsInvestmentTab",
             //     img: Questions_People
             // },
         ],

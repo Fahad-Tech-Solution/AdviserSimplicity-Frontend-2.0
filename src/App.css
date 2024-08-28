@@ -679,7 +679,7 @@ h6 {
   font-weight: 400;
   color: #1b254b;
 }
-.Top_Nav .breadcrumb-item + .breadcrumb-item::before{
+.Top_Nav .breadcrumb-item + .breadcrumb-item::before {
   float: left;
   padding-right: 0px;
 }
@@ -1122,3 +1122,25 @@ label {
   border-radius: 25px;
   padding: 25px;
 }
+
+.ant-modal-confirm-title {
+  width: 100% !important;
+  /* align-items: start; */
+  justify-content: start;
+  padding-left: 5px;
+}
+
+.primary {
+  background-color: #36b446 !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.C-color {
+  color: #36b446 !important;
+
+  color: #c7c7c7;
+}
+
+
+

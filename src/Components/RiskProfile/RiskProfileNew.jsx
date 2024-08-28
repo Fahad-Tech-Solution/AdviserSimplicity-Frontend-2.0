@@ -66,7 +66,7 @@ const RiskProfileNew = () => {
         question6: { client: 1, partner: 1, },
         question7: { client: 1, partner: 1, },
         question8: { client: 1, partner: 1, },
-        riskDescription: { client: "1", partner: "1", },
+        riskDescription: { client: "", partner: "", },
         riskGoal: { client: "Conservative", partner: "Conservative", },
     }
 
@@ -122,7 +122,7 @@ const RiskProfileNew = () => {
             route: "/Q2",
             key: "question2",
             question: "Question 2: Your desired rate of return.  What annual rate of return do you expect your investments to achieve in order to satisfy your previously stated goals?",
-            choices: ["More than 10%", "5% - 10%", "More than 10%"],
+            choices: ["Less than 5%", "5% - 10%", "More than 10%"],
             imgUrl: Risk2,
         },
         {

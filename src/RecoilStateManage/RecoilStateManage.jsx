@@ -12,13 +12,6 @@ const RecoilStateManage = () => {
 
   let Navigate = useNavigate();
 
-  // useEffect(() => {
-  //   if (localStorage.getItem("QuestionsState")) {
-  //     setCRObject(JSON.parse(localStorage.getItem("QuestionsState")));
-  //   }
-  // }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-
   useEffect(() => {
 
     // Access the pathname from the location object

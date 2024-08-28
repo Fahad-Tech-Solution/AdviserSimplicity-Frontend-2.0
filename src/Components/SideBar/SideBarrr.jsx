@@ -15,12 +15,13 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { useRecoilState } from "recoil";
-import { CurrentPage, OptionRender } from "../../Store/Store";
+import { CurrentPage, OptionRender, StepsStatus } from "../../Store/Store";
 
 const SideBarrr = (props) => {
   //   let Navigate = useNavigate();
   let [optRender, setOptRender] = useRecoilState(OptionRender);   // eslint-disable-line no-unused-vars
   let [CurrentP, setCurrentP] = useRecoilState(CurrentPage); // eslint-disable-line no-unused-vars
+  let [stepsStatus, setStepsStatus] = useRecoilState(StepsStatus); // eslint-disable-line no-unused-vars
 
   let Navigate = useNavigate();
 
@@ -139,12 +140,22 @@ const SideBarrr = (props) => {
                       </NavLink>
                     </div>
 
-                    <div className={`w-100 px-3 Custom_hover ${CurrentP === '/PersonalDetail' && 'active'}`}
-                      onClick={() => { setOptRender("Opt1"); localStorage.setItem("OptionRender", "Opt1"); Navigate("/PersonalDetail") }}
+                    <div className={`w-100 px-3 Custom_hover ${CurrentP === '/ImportantQuestion' && 'active'}`}
+                      onClick={() => {
+                        localStorage.removeItem("Email");
+                        localStorage.removeItem("PartnerName");
+                        localStorage.removeItem("UserID");
+                        localStorage.removeItem("UserName");
+                        localStorage.removeItem("UserStatus");
+                        setStepsStatus(true);
+                        setOptRender("Opt1");
+                        localStorage.setItem("OptionRender", "Opt1");
+                        Navigate("/ImportantQuestion")
+                      }}
                       id="Client"
                     >
                       <NavLink
-                        to="/PersonalDetail"
+                        to="/ImportantQuestion"
                         className="py-1 LeagueSpartanFamily SideItem_Size"
                       >
                         Add Client
