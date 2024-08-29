@@ -135,10 +135,11 @@ function AuthRouts() {
                             <Route path="/BusinessEntities" element={<QuestionsNew><BusinessEntities /></QuestionsNew>} />
                             <Route path="/SMSF" element={<QuestionsNew><QuestionsSMSF /></QuestionsNew>} />
                             <Route path="/FamilyTrust" element={<QuestionsNew><QuestionsFamily /></QuestionsNew>} />
-
+                            
+                            <Route path="/Goals-And-Objectives" element={<GoalsObjectiveNew />} />
+                            
                             <Route path="/Risk-Profile/*" element={<RiskProfileNew />} />
                             <Route path="/Risk-Profile-Cards/" element={<RiskProfileCards />} />
-                            <Route path="/Goals-And-Objectives" element={<GoalsObjectiveNew />} />
 
                             <Route path="/PDF-Test" element={<Contact />} />
 

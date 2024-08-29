@@ -137,7 +137,7 @@ const AccumulationBenefits = (props) => {
                       type="number"
                       id="NumberOfMap"
                       name="NumberOfMap"
-                      className="form-control inputDesign"
+                      className="form-control inputDesignDoubleInput"
                       onChange={(e) => handleInput(e, setFieldValue)}
                     />
                   </div>
@@ -164,7 +164,7 @@ const AccumulationBenefits = (props) => {
                                 <td>{1 + i}</td>
                                 <td>
                                   <DatePicker
-                                    className="form-control inputDesign shadow DateInputPadding"
+                                    className="form-control inputDesignDoubleInput shadow DateInputPadding"
                                     showIcon
                                     id={`commencementDate${i}`}
                                     name={`commencementDate${i}`}
@@ -188,7 +188,7 @@ const AccumulationBenefits = (props) => {
                                 <td>
                                   {" "}
                                   <DatePicker
-                                    className="form-control inputDesign shadow DateInputPadding"
+                                    className="form-control inputDesignDoubleInput shadow DateInputPadding"
                                     showIcon
                                     id={`eligibleServiceDate${i}`}
                                     name={`eligibleServiceDate${i}`}
@@ -215,7 +215,7 @@ const AccumulationBenefits = (props) => {
                                     placeholder="Tax Free component"
                                     id={`taxFreeComponent${i}`}
                                     name={`taxFreeComponent${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -224,7 +224,7 @@ const AccumulationBenefits = (props) => {
                                     placeholder="Taxable component"
                                     id={`taxableComponent${i}`}
                                     name={`taxableComponent${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   //   disabled
                                   />
                                 </td>
@@ -234,7 +234,7 @@ const AccumulationBenefits = (props) => {
                                     placeholder="Restricted non preserved"
                                     id={`restrictedNonPreserved${i}`}
                                     name={`restrictedNonPreserved${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
                                 <td>
@@ -243,7 +243,7 @@ const AccumulationBenefits = (props) => {
                                     placeholder="Unrestricted non preserved"
                                     id={`unRestrictedNonPreserved${i}`}
                                     name={`unRestrictedNonPreserved${i}`}
-                                    className="form-control inputDesign"
+                                    className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
 
@@ -253,7 +253,7 @@ const AccumulationBenefits = (props) => {
                                     placeholder="Preserved amount"
                                     id={`preservedAmount${i}`}
                                     name={`preservedAmount${i}`}
-                                    className="form-select inputDesign"
+                                    className="form-select inputDesignDoubleInput"
                                   >
                                     <option value={""}>Please Select</option>
                                     {options.map((elem, index) => {

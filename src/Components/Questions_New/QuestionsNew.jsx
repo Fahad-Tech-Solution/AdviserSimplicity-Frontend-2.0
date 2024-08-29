@@ -14,6 +14,7 @@ import { Element, scroller } from 'react-scroll';
 import { useLocation, useNavigate } from "react-router-dom";
 import { GetAxios } from "../Assets/Api/Api";
 import QuestionCards from "../Questions/FinancialInvestments/QuestionCards";
+import { content } from "../../Content/Content";
 
 const QuestionsNew = (props) => {
 
@@ -31,21 +32,34 @@ const QuestionsNew = (props) => {
 
   let location = useLocation();
 
+  let { itemsOpt } = content;
+
   useEffect(() => {
 
     // console.log(location)
     selectQuestionSet(location.pathname)
-    setFlagState2(true);
+    if (location.pathname === "/BusinessEntities") {
+      // alert("ma chala")
+      setFlagState2(false);
+    }
+    else {
+      setFlagState2(true);
+    }
 
   }, [location])
 
   let selectQuestionSet = async (path) => {
     let cLocation = path.replace("/", "");
     console.log("Question Setting:", cLocation, CRObjectNoUse);
+
+
+
     setQuestionChange(cLocation)
     // fetchData();
 
-    if (questionDetail && Object.keys(questionDetail).length < 0) {
+    console.log("QuestionDetails Data condition :", Object.keys(questionDetail).length)
+
+    if (questionDetail && Object.keys(questionDetail).length <= 0) {
       fetchDataAllInOne();
     }
 
@@ -80,166 +94,68 @@ const QuestionsNew = (props) => {
     }
   };
 
-
-  async function fetchData() {
-    let updatedData = { ...questionDetail };
-    const userID = localStorage.getItem("UserID");
-
-    const apiEndpoints = obj[QuestionChange].apiArray;
-
-    const defaultFinanceData = {
-      client: [],
-      partner: [],
-      joint: [],
-    };
-
-    // let allSuccessful = true;
-
-    try {
-      const fetchAndUpdateData = async (endpoint) => {
-        try {
-          const res = await GetAxios(endpoint.url);
-          if (res) {
-            updatedData = { ...updatedData, [endpoint.key]: res };
-          } else {
-            updatedData = { ...updatedData, [endpoint.key]: defaultFinanceData };
-            // allSuccessful = false;
-          }
-        } catch (error) {
-          updatedData = { ...updatedData, [endpoint.key]: defaultFinanceData };
-          // allSuccessful = false;
-          console.error(`Error fetching data from ${endpoint.url}:`, error);
-        }
-      };
-
-      await Promise.all(apiEndpoints.map(fetchAndUpdateData));
-
-      setQuestionDetail(updatedData);
-
-    } catch (error) {
-      console.error("An error occurred:", error);
-      setQuestionDetail(updatedData);
-    }
-  }
-
   let Navigation = useNavigate();
 
-  let HandleSubmit = () => {
 
-    switch (QuestionChange) {
+  const HandleSubmit = () => {
+    // Find the current item index based on the QuestionChange state
+    const currentIndex = content.itemsOpt.findIndex(item => item.route === `/${QuestionChange}`);
+    // alert("Current Index :" + currentIndex);
+    // Find the next valid route by incrementing the index and checking the condition
+    let nextIndex = currentIndex + 1;
 
-      case "PersonalIncome":
-        Navigation("/PersonalAssets")
+    // console.log("Current Index :", itemsOpt[nextIndex]);
+    while (nextIndex < itemsOpt.length) {
+      const nextItem = itemsOpt[nextIndex];
+      if (nextItem.condition(CRObject)) {
+        // alert(nextItem.route);
+        Navigation(nextItem.route);
         break;
-      case "PersonalAssets":
-        Navigation("/FinancialInvestments")
-        break;
-      case "FinancialInvestments":
-        Navigation("/SuperAndRetirement")
-        break;
-      case "SuperAndRetirement":
-        Navigation("/Lifestyle")
-        break;
-      case "Lifestyle": //Property
-        Navigation("/Investment")
-        break;
-      case "Investment": //Property investment
-        Navigation("/EstatePlanning")
-        break;
-      case "EstatePlanning":
-        Navigation("/PersonalInsurance")
-        break;
-      case "PersonalInsurance":
-        Navigation("/BusinessEntities");
-        break;
-      case "BusinessEntities":
-        if (CRObject.SMSFManagedFundsTab === "Yes") {
-          Navigation("/SMSF")
-        }
-        else if (CRObject.businessAsInvestmentTab === "Yes") {
-          Navigation("/FamilyTrust")
-        }
-        else {
-          Navigation("/Goals-And-Objectives");
-          localStorage.removeItem("Question");
-        }
-        break;
-      case "SMSF":
-        if (CRObject.businessAsInvestmentTab === "Yes") {
-          Navigation("/FamilyTrust")
-        }
-        else {
-          Navigation("/Goals-And-Objectives");
-          localStorage.removeItem("Question");
-        }
-        break;
-      case "FamilyTrust":
-        Navigation("/Goals-And-Objectives");
-        localStorage.removeItem("Question");
-        break;
-
-
-      default:
-        console.log("aywayn")
-        break;
+      }
+      nextIndex++;
     }
 
-  }
+    // Handle case where no next route is found (end of the list)
+    if (nextIndex >= itemsOpt.length) {
 
-  let BackHandle = () => {
+      Navigation("/Goals-And-Objectives");
 
-    if (!flagState2) {
-      setFlagState2(true)
+
+      console.log("End of navigation, no further steps.");
+    }
+  };
+
+  const BackHandle = () => {
+    // Ensure flagState2 check is performed
+    if (location.pathname === "/BusinessEntities") {
+
+    }
+    else if (!flagState2) {
+      setFlagState2(true);
       return;
     }
 
-    switch (QuestionChange) {
-      case "PersonalIncome":
-        Navigation("/PersonalDetail#" + localStorage.getItem("Email"));
-        // localStorage.removeItem("Question");
-        break;
-      case "PersonalAssets":
-        Navigation("/PersonalIncome")
-        break;
-      case "FinancialInvestments":
-        Navigation("/PersonalAssets")
-        break;
-      case "SuperAndRetirement":
-        Navigation("/FinancialInvestments")
-        break;
-      case "Lifestyle": //Property
-        Navigation("/SuperAndRetirement")
-        break;
-      case "Investment": //Property investment
-        Navigation("/Lifestyle")
-        break;
-      case "EstatePlanning":
-        Navigation("/Investment")
-        break;
-      case "PersonalInsurance":
-        Navigation("/EstatePlanning");
-        break;
-      case "BusinessEntities":
-        Navigation("/PersonalInsurance");
-        break;
-      case "SMSF":
-        Navigation("/BusinessEntities");
-        break;
-      case "FamilyTrust":
-        if (CRObject.SMSFManagedFundsTab === "Yes") {
-          Navigation("/SMSF")
-        }
-        else {
-          Navigation("/BusinessEntities");
-        }
-        break;
+    // Find the current item index based on the QuestionChange state
+    const currentIndex = content.itemsOpt.findIndex(item => item.route === `/${QuestionChange}`);
 
-      default:
-        console.log("")
+    // Find the previous valid route by decrementing the index and checking the condition
+    let prevIndex = currentIndex - 1;
+    while (prevIndex >= 0) {
+      const prevItem = itemsOpt[prevIndex];
+      if (prevItem.condition(CRObject)) {
+        Navigation(prevItem.route);
         break;
+      }
+      prevIndex--;
     }
 
-  }
+    // Handle case where no previous route is found (start of the list)
+    if (prevIndex < 0) {
+      console.log("Beginning of navigation, no previous steps.");
+    }
+  };
+
+
 
   let DefaultUrl = useRecoilValue(defaultUrl)
 
@@ -306,11 +222,8 @@ const QuestionsNew = (props) => {
 
             </ModalComponent>
 
-
-
             <div className="row mt-2">
               <div className="col-md-12">
-
                 <button
                   onClick={BackHandle}
                   className="float-center btn w-25  btn-outline  backBtn mx-3">
@@ -322,7 +235,6 @@ const QuestionsNew = (props) => {
                 >
                   Next
                 </button>
-
               </div>
             </div>
           </div>

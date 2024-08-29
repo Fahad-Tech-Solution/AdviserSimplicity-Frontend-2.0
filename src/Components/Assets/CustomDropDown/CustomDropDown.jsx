@@ -9,12 +9,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { defaultUrl } from '../../../Store/Store';
-import { useRecoilValue } from 'recoil';
+import { defaultUrl, QuestionDetail, StepsStatus } from '../../../Store/Store';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 const CustomDropDown = (props) => {
 
   let DefaultUrl = useRecoilValue(defaultUrl)
+  let [stepsStatus, setStepsStatus] = useRecoilState(StepsStatus); // eslint-disable-line no-unused-vars
+  let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
 
   let View = props.View || false;
 
@@ -62,6 +64,8 @@ const CustomDropDown = (props) => {
   const handleEdit = () => {
     localStorage.setItem('UserID', props.Data._id)
     localStorage.setItem('Email', props.Data.Email)
+    setQuestionDetail({})
+    setStepsStatus(false);
     Navigate('/PersonalDetail#' + props.Data.Email);
   };
 

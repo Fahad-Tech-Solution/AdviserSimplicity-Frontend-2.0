@@ -93,7 +93,7 @@ const QuestionsInvestmentTrust = (props) => {
     },
   ]
   const QuestionClick = (index, elem, values, setFieldValue) => {
-    console.log("image clicked in goals", index, elem.key, values);
+    // console.log("image clicked in goals", index, elem.key, values);
     if (values[elem.key] == "No") {
       setFieldValue(elem.key, "Yes");
     }

@@ -37,6 +37,8 @@ const InvestmentPropertyDetails = (props) => {
 
 
     useEffect(() => {
+        console.log(questionDetail, "Questions")
+
         if (investmentPropertyDetails[props.modalObject.Input] && investmentPropertyDetails[props.modalObject.Input].length) {
 
             let arr = []

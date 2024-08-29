@@ -1,10 +1,8 @@
 import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { PatchAxios, PostAxios } from '../../../Assets/Api/Api';
-import DatePicker from 'react-datepicker';
+import { useRecoilValue } from 'recoil';
+import { defaultUrl, } from '../../../../Store/Store';
 
 const Beneficiaries = (props) => {
 
@@ -78,13 +76,7 @@ const Beneficiaries = (props) => {
         // Log the new entries to verify
         console.log(newEntries);
 
-        // let total = newEntries.reduce((total, entry) => total + entry.taxableComponent, 0);
-        // let total2 = newEntries.reduce((total, entry) => total + entry.preservedAmount, 0);
-
-
         props.setFieldValue(`${props.modalObject.key}${props.modalObject.index}`, newEntries)
-        // props.setFieldValue(`${props.modalObject.key3}${props.modalObject.index}`, total)
-        // props.setFieldValue(`${props.modalObject.mainKey}${props.modalObject.index}`, total + total2)
 
         // Reset the flag state if necessary
         if (props.flagState) {
@@ -205,12 +197,12 @@ const Beneficiaries = (props) => {
                                                                             <option value={"N/A"}>N/A</option>
                                                                         }
                                                                         {values[`nominationType${i}`] !== "Legal Personal Representative (Your Estate)" &&
-                                                                            <>
+                                                                            <React.Fragment>
                                                                                 <option value={"Spouse/De-facto"}>Spouse/De-facto</option>
                                                                                 <option value={"Child"}>Child</option>
                                                                                 <option value={"Financial Dependant "}>Financial Dependant </option>
                                                                                 <option value={"Interdependant "}>Interdependant </option>
-                                                                            </>
+                                                                            </React.Fragment>
                                                                         }
                                                                     </Field>
                                                                 </td>

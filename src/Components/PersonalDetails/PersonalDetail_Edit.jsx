@@ -367,6 +367,7 @@ const PersonalDetail = () => {
           console.log("Client Successfully Added!", res.data);
 
           localStorage.setItem('UserName', ClientDetails.clientPreferredName)
+          localStorage.setItem('UserStatus', "Single")
 
           openNotificationSuccess("info", 'topRight', "Notification", "Client Successfully Added!")
         });
@@ -377,6 +378,7 @@ const PersonalDetail = () => {
           .then((res) => {
             console.log("Partner Successfully Added!");
             localStorage.setItem('PartnerName', PartnerDetails.partnerPreferredName)
+            localStorage.setItem('UserStatus', "Married")
             openNotificationSuccess("info", 'topRight', "Notification", "Partner Successfully Added!")
           });
         setPartnerData(PartnerDetails);

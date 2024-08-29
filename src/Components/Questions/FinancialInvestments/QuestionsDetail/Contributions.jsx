@@ -1,10 +1,8 @@
 import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { PatchAxios, PostAxios } from '../../../Assets/Api/Api';
-import DatePicker from 'react-datepicker';
+import { useRecoilValue } from 'recoil';
+import { defaultUrl } from '../../../../Store/Store';
 
 const Contributions = (props) => {
 

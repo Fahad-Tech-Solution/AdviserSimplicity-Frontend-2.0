@@ -178,7 +178,7 @@ const MemberNumber = (props) => {
                                                                 <td>
                                                                     <div>
                                                                         <DatePicker
-                                                                            className="form-control inputDesign shadow DateInputPadding"
+                                                                            className="form-control inputDesignDoubleInput shadow DateInputPadding"
                                                                             showIcon
                                                                             id={`eligibleServiceDate${i}`}
                                                                             name={`eligibleServiceDate${i}`}
@@ -198,7 +198,7 @@ const MemberNumber = (props) => {
                                                                 <td>
                                                                     <div>
                                                                         <DatePicker
-                                                                            className="form-control inputDesign shadow DateInputPadding"
+                                                                            className="form-control inputDesignDoubleInput shadow DateInputPadding"
                                                                             showIcon
                                                                             id={`commencementDate${i}`}
                                                                             name={`commencementDate${i}`}
