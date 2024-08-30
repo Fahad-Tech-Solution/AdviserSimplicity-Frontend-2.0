@@ -16,7 +16,7 @@ import insuranceProtection from "../svgs/insuranceProtection.png";
 import propertyValue from "../svgs/property-value.svg";
 
 import { Form, Formik } from 'formik';
-import { PatchAxios } from '../../Assets/Api/Api';
+import { PatchAxios, PostAxios } from '../../Assets/Api/Api';
 
 const ImportantQuestion = () => {
 
@@ -95,66 +95,64 @@ const ImportantQuestion = () => {
         }
     };
 
+    const handleResponse = (values) => {
+        setCRObject(values);
+        localStorage.setItem("QuestionsState", JSON.stringify(values));
+        props.setQuestionChange(false);
+        localStorage.setItem("Question", "PersonalAssets");
+    };
+
     const onSubmit = async (values) => {
+        let obj = JSON.parse(JSON.stringify(values));
+        obj.clientFK = localStorage.getItem("UserID");
 
         try {
-            if (!CRObject?._id) {
-                setCRObject(values);
-                localStorage.setItem("QuestionsState", JSON.stringify(values));
-                Nav("/PersonalDetail")
-
+            if (!flagState) {
+                const PostRes = await PostAxios(`${DefaultUrl}/api/questions/Add`, obj);
+                if (PostRes) {
+                    if (props.flagState) {
+                        props.setFlagState(false);
+                    }
+                    handleResponse(PostRes);
+                }
             } else {
-                const PatchRes = await PatchAxios(`${DefaultUrl}/api/questions/Update/${localStorage.getItem("UserID")}`, values);
+                const PatchRes = await PatchAxios(`${DefaultUrl}/api/questions/Update/${localStorage.getItem("UserID")}`, obj);
                 if (PatchRes) {
-                    setCRObject(PatchRes);
-                    localStorage.setItem("QuestionsState", JSON.stringify(PatchRes));
-                    localStorage.setItem("Question", "ImportantQuestion");
-                    let Email = localStorage.getItem("Email");
-                    Nav("/PersonalDetail#" + Email)
+                    if (props.flagState) {
+                        props.setFlagState(false);
+                    }
+                    handleResponse(PatchRes);
                 }
             }
         } catch (error) {
             console.error("Error submitting form:", error);
         }
-
-    }
-
+    };
 
     return (
         <div>
-            <Modal size={"xl"} backdrop="static" keyboard={false} centered show={flagState} onHide={CloseModal}>
-                <Element id="modal-container">
-                </Element>
-                <Modal.Header closeButton>
-                    <Modal.Title>Questions</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Formik
-                        initialValues={CRObject}
-                        onSubmit={onSubmit}
-                        enableReinitialize
-                        innerRef={formRef}
-                    >
-                        {({ values, handleChange, setFieldValue }) => (
-                            <Form>
-                                <div className="col-md-12 text-center">
-                                    <div className="row my-3 justify-content-center">
-                                        <DynamicQuestionBlocks QuestionArray={QuestionArray} QuestionClick={QuestionClick} values={values} setFieldValue={setFieldValue} />
-                                    </div>
-                                </div>
-                            </Form>
-                        )}
-                    </Formik>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" style={{ width: "12.5%" }} onClick={CloseModal}>
-                        Close
-                    </Button>
-                    <button type='button' className='btn bgColor modalBtn' style={{ width: "12.5%" }} onClick={handleOk}>
-                        Submit
-                    </button>
-                </Modal.Footer>
-            </Modal>
+            <Formik
+                initialValues={CRObject}
+                onSubmit={onSubmit}
+                enableReinitialize
+                innerRef={formRef}
+            >
+                {({ values, handleChange, setFieldValue }) => (
+                    <Form>
+                        <div className="col-md-12 text-center">
+                            <div className="row my-3 justify-content-center">
+                                <DynamicQuestionBlocks QuestionArray={QuestionArray} QuestionClick={QuestionClick} values={values} setFieldValue={setFieldValue} />
+                            </div>
+                        </div>
+                    </Form>
+                )}
+            </Formik>
+            <Button variant="secondary" style={{ width: "12.5%" }} onClick={CloseModal}>
+                Back
+            </Button>
+            <button type='button' className='btn bgColor modalBtn' style={{ width: "12.5%" }} onClick={handleOk}>
+                Next
+            </button>
         </div>
     )
 }

@@ -59,55 +59,55 @@ function Options(props) {
 
     setCurrentPCLassSwitch(cLocation.trim());
     switch (cLocation) {
+      case "PersonalDetail":
+        stepComplete = 0;
+        break;
       case "ImportantQuestion":
         stepComplete = 8;
         break;
-      case "PersonalDetail":
-        stepComplete = 16;
-        break;
       case "PersonalIncome":
-        stepComplete = 24;
+        stepComplete = 16;
         Opt = "Opt1"
         break;
       case "PersonalAssets":
         Opt = "Opt1"
-        stepComplete = 32;
+        stepComplete = 24;
         break;
       case "FinancialInvestments":
-        stepComplete = 40;
+        stepComplete = 32;
         Opt = "Opt1"
         break;
       case "SuperAndRetirement":
-        stepComplete = 48;
+        stepComplete = 40;
         Opt = "Opt1"
         break;
       case "Lifestyle": //Property
         Opt = "Opt1"
-        stepComplete = 56;
+        stepComplete = 48;
         break;
       case "Investment": //Property investment
         Opt = "Opt2"
-        stepComplete = 64;
+        stepComplete = 56;
         break;
       case "EstatePlanning":
         Opt = "Opt2"
-        stepComplete = 72;
+        stepComplete = 64;
         break;
       case "PersonalInsurance":
         Opt = "Opt2"
-        stepComplete = 80;
+        stepComplete = 72;
         break;
       case "BusinessEntities":
         Opt = "Opt2"
-        stepComplete = 88;
+        stepComplete = 80;
         break;
       case "SMSF":
         Opt = "Opt2"
-        stepComplete = 96;
+        stepComplete = 88;
         break;
       case "FamilyTrust":
         Opt = "Opt2"
-        stepComplete = 104;
+        stepComplete = 96;
         break;
       case "Goals-And-Objectives":
         Opt = "Opt2"

@@ -24,8 +24,6 @@ import Dashboard from "../Components/Dashboard/Dashboard";
 
 import { CurrentPage } from "../Store/Store";
 import TestComp from "../Components/Assets/TestComp/TestComp";
-import PersonalDetails from "../Components/PersonalDetails/PersonalDetails";
-import HOCLoader from "../Components/Assets/Loader/HOCLoader";
 import QuestionsNew from "../Components/Questions_New/QuestionsNew";
 import FinancialInvestments from "../Components/Questions/FinancialInvestments/FinancialInvestments";
 import AdditionalQueriesPersonalAssets from "../Components/Questions/AdditionalQueriesPersonalAssets/AdditionalQueriesPersonalAssets";
@@ -47,6 +45,7 @@ import RiskProfileNew from "../Components/RiskProfile/RiskProfileNew";
 import RiskProfileCards from "../Components/RiskProfile/RiskProfileCards";
 import RecoilStateManage from "../RecoilStateManage/RecoilStateManage";
 import ImportantQuestion from "../Components/Questions/ImportantQuestion/ImportantQuestion";
+import PersonalDetailNew from "../Components/PersonalDetails/PersonalDetailNew";
 
 
 function AuthRouts() {
@@ -113,11 +112,16 @@ function AuthRouts() {
                             <Route path="/All-Clients" element={<AllClients />} />
                             <Route path="/View-Client" element={<ViewClient />} />
 
-                            <Route path="/ImportantQuestion" element={<ImportantQuestion />} />
 
                             {/* POST ROUTING */}
-                            <Route path="/PersonalDetail" element={<PersonalDetail_Edit />} />
-                            <Route path="/NewPersonalDetail" element={<HOCLoader><PersonalDetails /></HOCLoader>} />
+                            <Route path="/PersonalDetail" element={<PersonalDetailNew />} />
+                            <Route path="/PersonalDetailOld" element={<PersonalDetail_Edit />} />
+
+                            {/* POST ROUTING
+                                <Route path="/NewPersonalDetail" element={<HOCLoader><PersonalDetails /></HOCLoader>} />
+                                */}
+
+                            <Route path="/ImportantQuestion" element={<ImportantQuestion />} />
 
                             {/* Questions ROUTING */}
                             <Route path="/Questions" element={<Questions />} />
@@ -135,9 +139,9 @@ function AuthRouts() {
                             <Route path="/BusinessEntities" element={<QuestionsNew><BusinessEntities /></QuestionsNew>} />
                             <Route path="/SMSF" element={<QuestionsNew><QuestionsSMSF /></QuestionsNew>} />
                             <Route path="/FamilyTrust" element={<QuestionsNew><QuestionsFamily /></QuestionsNew>} />
-                            
+
                             <Route path="/Goals-And-Objectives" element={<GoalsObjectiveNew />} />
-                            
+
                             <Route path="/Risk-Profile/*" element={<RiskProfileNew />} />
                             <Route path="/Risk-Profile-Cards/" element={<RiskProfileCards />} />
 

@@ -120,7 +120,6 @@ const QuestionsNew = (props) => {
 
       Navigation("/Goals-And-Objectives");
 
-
       console.log("End of navigation, no further steps.");
     }
   };
@@ -143,7 +142,20 @@ const QuestionsNew = (props) => {
     while (prevIndex >= 0) {
       const prevItem = itemsOpt[prevIndex];
       if (prevItem.condition(CRObject)) {
-        Navigation(prevItem.route);
+        if (prevItem.route === "/PersonalDetail") {
+          
+          let Email = localStorage.getItem("Email");
+          if (Email) {
+            Navigation("/PersonalDetail#" + Email);
+          }
+          else {
+            Navigation("/PersonalDetail")
+          }
+        }
+        else {
+
+          Navigation(prevItem.route);
+        }
         break;
       }
       prevIndex--;

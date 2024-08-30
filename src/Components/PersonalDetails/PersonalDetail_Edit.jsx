@@ -3,9 +3,8 @@ import React, { useState, useEffect } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import { differenceInYears } from "date-fns";
 
-
-// import * as Yup from "yup"; //? don't Remove it you might need it later
 import "yup-phone";
+import * as Yup from 'yup';
 import single from "../Svgs/single-2.svg";
 import couple from "../Svgs/couple-2.svg";
 import axios from "axios";
@@ -17,20 +16,15 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { QuestionShift, UserName, ClientName, PartnerName, defaultUrl, CRState, StepsStatus } from "../../Store/Store";
 
-
 import PersonalDetailCards from "./PersonalDetailCards";
 import { openNotificationSuccess } from "../Assets/Api/Api";
-
-
 
 const PersonalDetail = () => {
   let Navigate = useNavigate();
 
   let [stepsStatus, setStepsStatus] = useRecoilState(StepsStatus); // eslint-disable-line no-unused-vars
 
-
   let DefaultUrl = useRecoilValue(defaultUrl)
-
 
   let [userName, setUserName] = useRecoilState(UserName);  // eslint-disable-line no-unused-vars
 
@@ -41,7 +35,7 @@ const PersonalDetail = () => {
 
   let [ClientData, setClientData] = useState([]);
 
-  const [isPartnered, setIsPartnered] = useState(false);
+  const [isPartnered, setIsPartnered] = useState(true);
   const [buttonFlag, setButtonFlag] = useState("Submit");
 
   // let letters = /^[a-zA-Z ]*$/;          //? don't Remove it you might need it later
@@ -144,7 +138,8 @@ const PersonalDetail = () => {
 
     setQuestionChange("PersonalIncome");
     setStepsStatus(false);
-    Navigate("/PersonalIncome");
+
+    Navigate("/ImportantQuestion");
   };
 
   let partnerHandler = (value) => {
@@ -187,7 +182,6 @@ const PersonalDetail = () => {
     }
   };
 
-
   const initialValues = {
     clientTitle: "",
     clientSurname: "",
@@ -215,7 +209,7 @@ const PersonalDetail = () => {
     clientWorkPhone: "",
     Email: "",
     clientGender: "male",
-    clientSmoker: "",
+    clientSmoker: "nonsmoker",
 
     // partner
     partnerTitle: "",
@@ -243,7 +237,7 @@ const PersonalDetail = () => {
     partnerPrivateHealthCoverRadio: "No",
     partnerHELPSDebtRadio: "No",
     partnerGender: "male",
-    partnerSmoker: "",
+    partnerSmoker: "nonsmoker",
 
     ChildrenDependantsRadio: "No",
   };
@@ -260,38 +254,35 @@ const PersonalDetail = () => {
     console.log(JSON.stringify(values));
 
     let ClientDetails = {
-      clientTitle: values.clientTitle,
-      clientSurname: values.clientSurname,
-      clientGivenName: values.clientGivenName,
-      clientMiddleName: values.clientMiddleName,
-      clientPreferredName: values.clientPreferredName,
-      clientGender: values.clientGender,
-      clientDOB: values.clientDOB,
-      clientAge: values.clientAge,
-      clientMaritalStatus: values.clientMaritalStatus,
-      clientEmploymentStatus: values.clientEmploymentStatus,
-      clientOccupationID: values.clientOccupationID,
-      clientHealth: values.clientHealth,
-      clientSmoker: values.clientSmoker,
-      clientPlannedRetirementAge: parseFloat(values.clientPlannedRetirementAge),
-
-      clientTaxResidentRadio: values.clientTaxResidentRadio,
-      clientPrivateHealthCoverRadio: values.clientPrivateHealthCoverRadio,
-      clientHELPSDebtRadio: values.clientHELPSDebtRadio,
-
-      clientSameAsAbove: values.clientSameAsAbove,
-
-      clientHomeAddress: values.clientHomeAddress,
-
-      clientPostcode: values.clientPostcode,
-      clientPostalAddress: values.clientPostalAddress,
-
-      clientPostalPostCode: values.clientPostalPostCode,
-      clientMobile: values.clientMobile,
-      clientHomePhone: values.clientHomePhone,
-      clientWorkPhone: values.clientWorkPhone,
-
-      Email: values.Email,
+      clientTitle: values.clientTitle ||  "Mr.",
+      clientGivenName: values.clientGivenName ||  "John",
+      clientSurname: values.clientSurname ||  "Doe",
+      clientPreferredName: values.clientPreferredName ||  "Johnny",
+      clientGender: values.clientGender ||  "Male",
+      clientDOB: values.clientDOB ||  "1990-01-01",
+      clientAge: values.clientAge ||  34,
+      clientMaritalStatus: values.clientMaritalStatus ||  "Single",
+      clientEmploymentStatus: values.clientEmploymentStatus ||  "Employed",
+      clientHealth: values.clientHealth ||  "Good",
+      clientSmoker: values.clientSmoker ||  "No",
+      clientPlannedRetirementAge: parseFloat(values.clientPlannedRetirementAge) ||  65,
+      clientHomeAddress: values.clientHomeAddress ||  "123 Main St",
+      clientPostcode: values.clientPostcode ||  12345,
+      clientHomePhone: values.clientHomePhone ||  "555-555-5555",
+      clientWorkPhone: values.clientWorkPhone ||  "555-555-5556",
+      clientMobile: values.clientMobile ||  "555-555-5557",
+     
+      Email: values.Email ,
+     
+      clientPostalAddress: values.clientPostalAddress ||  "123 Main St",
+      clientPostalPostCode: values.clientPostalPostCode ||  12345,
+      clientMiddleName: values.clientMiddleName ||  "Michael",
+      clientOccupationID: values.clientOccupationID ||  "OCC123",
+      clientTaxResidentRadio: values.clientTaxResidentRadio ||  "Yes",
+      clientPrivateHealthCoverRadio: values.clientPrivateHealthCoverRadio ||  "Yes",
+      clientHELPSDebtRadio: values.clientHELPSDebtRadio ||  "No",
+      clientSameAsAbove: values.clientSameAsAbove ||  true,
+    
     };
 
     setClientData(ClientDetails);
@@ -489,15 +480,20 @@ const PersonalDetail = () => {
     }
   };
 
+  let validationSchema = Yup.object({
+    Email: Yup.string()
+      .email('Invalid email format')
+      .required('Required'),
+    clientMaritalStatus: Yup.string().required('Marital status is required'),
+
+  })
 
   return (
-    <>
+    <React.Fragment>
       {/* --------------------------Start client Form-------------------- */}
       <Formik
         initialValues={FoundData ? initialState : initialValues}
-        // validationSchema={
-        //   isPartnered ? validationSchema : SinglevalidationSchema
-        // }
+        validationSchema={validationSchema}
         onSubmit={onSubmit}
         enableReinitialize
       >
@@ -559,7 +555,7 @@ const PersonalDetail = () => {
                       <div className="col-4">
                         <label
                           htmlFor="clientTitle"
-                          className="form-label d-block"
+                          className="form-label d-block mt-2"
                         >
                           Title
                         </label>
@@ -587,7 +583,7 @@ const PersonalDetail = () => {
                         </Field>
                         <ErrorMessage
                           component="div"
-                          className="text-danger fw-bold"
+                          className="text-danger "
                           name="clientTitle"
                         />
                       </div>
@@ -616,7 +612,7 @@ const PersonalDetail = () => {
                             <option value="Other">Other</option>
                           </Field>
                           <ErrorMessage
-                            className="text-danger fw-bold"
+                            className="text-danger "
                             component="div"
                             name="partnerTitle"
                           />
@@ -627,7 +623,7 @@ const PersonalDetail = () => {
 
                       {/* Lable Surname */}
                       <div className="col-4 mt-3">
-                        <label htmlFor="clientSurname" className="form-label">
+                        <label htmlFor="clientSurname" className="form-label mt-2">
                           {" "}
                           Surname{" "}
                         </label>
@@ -666,7 +662,7 @@ const PersonalDetail = () => {
                         />
                         <ErrorMessage
                           component="div"
-                          className="text-danger fw-bold"
+                          className="text-danger "
                           name="clientSurname"
                         />
                       </div>
@@ -708,7 +704,7 @@ const PersonalDetail = () => {
                             }}
                           />
                           <ErrorMessage
-                            className="text-danger fw-bold"
+                            className="text-danger "
                             component="div"
                             name="partnerSurname"
                           />
@@ -721,7 +717,7 @@ const PersonalDetail = () => {
                       <div className="col-4 mt-3">
                         <label
                           htmlFor="clientGivenName"
-                          className="form-label"
+                          className="form-label mt-2"
                         >
                           {" "}
                           Given Name{" "}
@@ -739,7 +735,7 @@ const PersonalDetail = () => {
                         />
                         <ErrorMessage
                           component="div"
-                          className="text-danger fw-bold"
+                          className="text-danger "
                           name="clientGivenName"
                         />
                       </div>
@@ -756,7 +752,7 @@ const PersonalDetail = () => {
                             name="partnerGivenName"
                           />
                           <ErrorMessage
-                            className="text-danger fw-bold"
+                            className="text-danger "
                             component="div"
                             name="partnerGivenName"
                           />
@@ -769,7 +765,7 @@ const PersonalDetail = () => {
                       <div className="col-4 mt-3">
                         <label
                           htmlFor="clientMiddleName"
-                          className="form-label"
+                          className="form-label mt-2"
                         >
                           {" "}
                           Middle Name{" "}
@@ -787,7 +783,7 @@ const PersonalDetail = () => {
                         />
                         <ErrorMessage
                           component="div"
-                          className="text-danger fw-bold"
+                          className="text-danger "
                           name="clientMiddleName"
                         />
                       </div>
@@ -804,7 +800,7 @@ const PersonalDetail = () => {
                             name="partnerMiddleName"
                           />
                           <ErrorMessage
-                            className="text-danger fw-bold"
+                            className="text-danger "
                             component="div"
                             name="partnerMiddleName"
                           />
@@ -817,7 +813,7 @@ const PersonalDetail = () => {
                       <div className="col-4 mt-3">
                         <label
                           htmlFor="clientPreferredName"
-                          className="form-label"
+                          className="form-label mt-2"
                         >
                           {" "}
                           Preferred Name{" "}
@@ -858,7 +854,7 @@ const PersonalDetail = () => {
                         />
                         <ErrorMessage
                           component="div"
-                          className="text-danger fw-bold"
+                          className="text-danger "
                           name="clientPreferredName"
                         />
                       </div>
@@ -902,7 +898,7 @@ const PersonalDetail = () => {
                             }}
                           />
                           <ErrorMessage
-                            className="text-danger fw-bold"
+                            className="text-danger "
                             component="div"
                             name="partnerPreferredName"
                           />
@@ -913,7 +909,7 @@ const PersonalDetail = () => {
 
                       {/*label Gender */}
                       <div className="col-4 my-3">
-                        <label htmlFor="" className="form-label">
+                        <label htmlFor="" className="form-label mt-2">
                           Gender
                         </label>
                       </div>
@@ -1086,7 +1082,7 @@ const PersonalDetail = () => {
 
                       {/*label Date of Birth  */}
                       <div className="col-4 mt-3">
-                        <label htmlFor="clientDOB" className="form-label">
+                        <label htmlFor="clientDOB" className="form-label mt-2">
                           {" "}
                           Date of Birth{" "}
                         </label>
@@ -1120,7 +1116,7 @@ const PersonalDetail = () => {
                         </div>
                         <ErrorMessage
                           component="div"
-                          className="text-danger fw-bold"
+                          className="text-danger "
                           name="clientDOB"
                         />
                       </div>
@@ -1156,7 +1152,7 @@ const PersonalDetail = () => {
                           </div>
                           <ErrorMessage
                             component="div"
-                            className="text-danger fw-bold"
+                            className="text-danger "
                             name="partnerDOB"
                           />
                         </div>
@@ -1166,7 +1162,7 @@ const PersonalDetail = () => {
 
                       {/*label Age */}
                       <div className="col-4 mt-3">
-                        <label htmlFor="clientAge" className="form-label">
+                        <label htmlFor="clientAge" className="form-label mt-2">
                           {" "}
                           Age{" "}
                         </label>
@@ -1185,7 +1181,7 @@ const PersonalDetail = () => {
                         />
                         <ErrorMessage
                           component="div"
-                          className="text-danger fw-bold"
+                          className="text-danger "
                           name="clientAge"
                         />
                       </div>
@@ -1204,7 +1200,7 @@ const PersonalDetail = () => {
                             disabled
                           />{" "}
                           <ErrorMessage
-                            className="text-danger fw-bold"
+                            className="text-danger "
                             component="div"
                             name="partnerAge"
                           />
@@ -1217,7 +1213,7 @@ const PersonalDetail = () => {
                       <div className="col-4 mt-3">
                         <label
                           htmlFor="clientMaritalStatus"
-                          className="form-label"
+                          className="form-label mt-2"
                         >
                           Marital Status
                         </label>
@@ -1247,7 +1243,7 @@ const PersonalDetail = () => {
                         </Field>
                         <ErrorMessage
                           component="div"
-                          className="text-danger fw-bold"
+                          className="text-danger"
                           name="clientMaritalStatus"
                         />
                       </div>
@@ -1268,7 +1264,7 @@ const PersonalDetail = () => {
                             <option value="De-facto">De-facto</option>
                           </Field>
                           <ErrorMessage
-                            className="text-danger fw-bold"
+                            className="text-danger "
                             component="div"
                             name="partnerMaritalStatus"
                           />
@@ -1281,7 +1277,7 @@ const PersonalDetail = () => {
                       <div className="col-4 mt-3">
                         <label
                           htmlFor="clientEmploymentStatus"
-                          className="form-label"
+                          className="form-label mt-2"
                         >
                           {" "}
                           Employment Status{" "}
@@ -1329,7 +1325,7 @@ const PersonalDetail = () => {
                         </Field>
                         <ErrorMessage
                           component="div"
-                          className="text-danger fw-bold"
+                          className="text-danger "
                           name="clientEmploymentStatus"
                         />
                       </div>
@@ -1370,7 +1366,7 @@ const PersonalDetail = () => {
                             <option value="Unemployed">Unemployed</option>
                           </Field>
                           <ErrorMessage
-                            className="text-danger fw-bold"
+                            className="text-danger "
                             component="div"
                             name="partnerEmploymentStatus"
                           />
@@ -1383,7 +1379,7 @@ const PersonalDetail = () => {
                       <div className="col-4 mt-3">
                         <label
                           htmlFor="clientOccupationID"
-                          className="form-label"
+                          className="form-label mt-2"
                         >
                           Occupation{" "}
                         </label>
@@ -1400,7 +1396,7 @@ const PersonalDetail = () => {
                         />
                         <ErrorMessage
                           component="div"
-                          className="text-danger fw-bold"
+                          className="text-danger "
                           name="clientOccupationID"
                         />
                       </div>
@@ -1417,7 +1413,7 @@ const PersonalDetail = () => {
                             name="partnerOccupationID"
                           />
                           <ErrorMessage
-                            className="text-danger fw-bold"
+                            className="text-danger "
                             component="div"
                             name="partnerOccupationID"
                           />
@@ -1426,180 +1422,12 @@ const PersonalDetail = () => {
                         <div className="col-4"></div>
                       )}
 
-                      {/* Lable Health */}
-                      <div className="col-4 mt-3">
-                        <label htmlFor="clientHealth" className="form-label">
-                          {" "}
-                          Health{" "}
-                        </label>
-                      </div>
-
-                      {/*Client */}
-                      <div className="col-4 mt-3">
-                        <Field
-                          as="select"
-                          id="clientHealth"
-                          className="form-select   inputDesign"
-                          onChange={(e) =>
-                            setFieldValue("clientHealth", e.target.value)
-                          }
-                          value={values.clientHealth}
-                        >
-                          <option value="">Select</option>
-                          <option value="excellent">Excellent</option>
-                          <option value="good">Good</option>
-                          <option value="average">Average</option>
-                          <option value="poor">Poor</option>
-                        </Field>
-                        <ErrorMessage
-                          component="div"
-                          className="text-danger fw-bold"
-                          name="clientHealth"
-                        />
-                      </div>
-
-                      {/*Partner */}
-                      {values.clientMaritalStatus !== "Single" &&
-                        values.clientMaritalStatus !== "Widowed" ? (
-                        <div className="col-4 mt-3">
-                          <Field
-                            as="select"
-                            id="partnerHealth"
-                            className="form-select   inputDesign"
-                            name="partnerHealth"
-                          >
-                            <option value="">Select</option>
-                            <option value="excellent">Excellent</option>
-                            <option value="good">Good</option>
-                            <option value="average">Average</option>
-                            <option value="poor">Poor</option>
-                          </Field>
-                          <ErrorMessage
-                            className="text-danger fw-bold"
-                            component="div"
-                            name="partnerHealth"
-                          />
-                        </div>
-                      ) : (
-                        <div className="col-4"></div>
-                      )}
-
-                      {/*Label Smoker */}
-                      <div className="col-4 mt-3">
-                        <label className="form-label">Smoker</label>
-                      </div>
-
-                      {/*Client */}
-                      <div className="col-4 mt-3">
-                        {/* <div className=" d-flex justify-content-start align-items-center w-100">
-
-                          <Field type="checkbox" name="clientSmoker" className="d-none" />
-
-                          <div
-                            id="YesSmokerID"
-                            className="femaleSmoking"
-                            onClick={() => setFieldValue('clientSmoker', true)}
-                          >
-                            <img
-                              className="img-fluid imgPerson w-100"
-                              htmlFor="YesSmokerID"
-                              src={smoking}
-                              alt="smoking"
-                            />
-                          </div>
-
-                          <div
-                            id="notSmokingID"
-                            className=" mx-2 maleNonSmoking"
-                            onClick={() => setFieldValue('clientSmoker', false)}
-                          >
-                            <img
-                              className=" img-fluid imgPerson w-100"
-                              htmlFor="notSmokingID"
-                              src={notsmoking}
-                              alt=""
-                            />
-                          </div>
-
-                        </div> */}
-                        <Field
-                          as="select"
-                          id="clientSmoker"
-                          className="form-select   inputDesign"
-                          name="clientSmoker"
-                        >
-                          <option value="">Select</option>
-                          <option value="smoker">Smoker</option>
-                          <option value="nonsmoker">Non-smoker</option>
-
-                        </Field>
-                        <ErrorMessage
-                          className="text-danger fw-bold"
-                          component="div"
-                          name="clientSmoker"
-                        />
-                      </div>
-
-                      {/*Partner */}
-                      {values.clientMaritalStatus !== "Single" &&
-                        values.clientMaritalStatus !== "Widowed" ? (
-                        <div className="col-4 mt-3">
-                          {/* <div className=" d-flex justify-content-start align-items-center w-100">
-
-                            <Field type="checkbox" name="partnerSmoker" className="d-none" />
-
-                            <div
-                              id="YesSmokerID"
-                              className="femaleSmoking "
-                              onClick={() => { setFieldValue('partnerSmoker', true) }}
-                            >
-                              <img
-                                className="img-fluid imgPerson w-100"
-                                htmlFor="YesSmokerID"
-                                src={smoking}
-                                alt="smoking"
-                              />
-                            </div>
-
-                            <div
-                              id="notSmokingID"
-                              className=" mx-2 maleNonSmoking"
-                              onClick={() => setFieldValue('partnerSmoker', false)}
-                            >
-                              <img
-                                className=" img-fluid imgPerson w-100"
-                                htmlFor="notSmokingID"
-                                src={notsmoking}
-                                alt=""
-                              />
-                            </div>
-                          </div> */}
-                          <Field
-                            as="select"
-                            id="partnerSmoker"
-                            className="form-select   inputDesign"
-                            name="partnerSmoker"
-                          >
-                            <option value="">Select</option>
-                            <option value="smoker">Smoker</option>
-                            <option value="nonsmoker">Non-smoker</option>
-
-                          </Field>
-                          <ErrorMessage
-                            className="text-danger fw-bold"
-                            component="div"
-                            name="partnerSmoker"
-                          />
-                        </div>
-                      ) : (
-                        <div className="col-4"></div>
-                      )}
 
                       {/*Label Planned*/}
                       <div className="col-4 mt-3">
                         <label
                           htmlFor="clientPlannedRetirementAge"
-                          className="form-label"
+                          className="form-label mt-2"
                         >
                           {" "}
                           Planned Retirement Age{" "}
@@ -1624,7 +1452,7 @@ const PersonalDetail = () => {
                         />
                         <ErrorMessage
                           component="div"
-                          className="text-danger fw-bold"
+                          className="text-danger "
                           name="clientPlannedRetirementAge"
                         />
                       </div>
@@ -1642,7 +1470,7 @@ const PersonalDetail = () => {
                             name="partnerPlannedRetirementAge"
                           />
                           <ErrorMessage
-                            className="text-danger fw-bold"
+                            className="text-danger "
                             component="div"
                             name="partnerPlannedRetirementAge"
                           />
@@ -1651,9 +1479,183 @@ const PersonalDetail = () => {
                         <div className="col-4"></div>
                       )}
 
+                      {/* Lable Health */}
+                      <div className="col-4 mt-3">
+                        <label htmlFor="clientHealth" className="form-label mt-2">
+                          {" "}
+                          Health{" "}
+                        </label>
+                      </div>
+
+                      {/*Client */}
+                      <div className="col-4 mt-3">
+                        <Field
+                          as="select"
+                          id="clientHealth"
+                          className="form-select   inputDesign"
+                          onChange={(e) =>
+                            setFieldValue("clientHealth", e.target.value)
+                          }
+                          value={values.clientHealth}
+                        >
+                          <option value="">Select</option>
+                          <option value="excellent">Excellent</option>
+                          <option value="good">Good</option>
+                          <option value="average">Average</option>
+                          <option value="poor">Poor</option>
+                        </Field>
+                        <ErrorMessage
+                          component="div"
+                          className="text-danger "
+                          name="clientHealth"
+                        />
+                      </div>
+
+                      {/*Partner */}
+                      {values.clientMaritalStatus !== "Single" &&
+                        values.clientMaritalStatus !== "Widowed" ? (
+                        <div className="col-4 mt-3">
+                          <Field
+                            as="select"
+                            id="partnerHealth"
+                            className="form-select   inputDesign"
+                            name="partnerHealth"
+                          >
+                            <option value="">Select</option>
+                            <option value="excellent">Excellent</option>
+                            <option value="good">Good</option>
+                            <option value="average">Average</option>
+                            <option value="poor">Poor</option>
+                          </Field>
+                          <ErrorMessage
+                            className="text-danger "
+                            component="div"
+                            name="partnerHealth"
+                          />
+                        </div>
+                      ) : (
+                        <div className="col-4"></div>
+                      )}
+
+                      {/*Label Smoker */}
+                      <div className="col-4 mt-3 ">
+                        <label className="form-label mt-2">Smoker</label>
+                      </div>
+
+                      {/*Client */}
+                      <div className="col-4 mt-3 ">
+
+                        <div className="mb-3">
+                          {/* switch button style */}
+                          <div className="form-check form-switch m-0 p-0 ">
+                            <div className="radiobutton">
+                              <input
+                                type="radio"
+                                name="clientSmoker"
+                                className="form-check-input"
+                                id="clientSmoker1"
+                                value="nonsmoker"
+                                onChange={handleChange}
+                                checked={
+                                  values.clientSmoker === "nonsmoker"
+                                }
+                              />
+                              <label
+                                htmlFor="clientSmoker1"
+                                className="label1"
+                              >
+                                <span>No</span>
+                              </label>
+                              <input
+                                type="radio"
+                                name="clientSmoker"
+                                id="clientSmoker2"
+                                className="form-check-input"
+                                value="smoker"
+                                onChange={handleChange}
+                                checked={
+                                  values.clientSmoker === "smoker"
+                                }
+                              />
+                              <label
+                                htmlFor="clientSmoker2"
+                                className="label2"
+                              >
+                                <span>Yes</span>
+                              </label>
+                            </div>
+                          </div>
+                          {/* switch button style */}
+                        </div>
+
+                        <ErrorMessage
+                          className="text-danger "
+                          component="div"
+                          name="clientSmoker"
+                        />
+                      </div>
+
+                      {/*Partner */}
+                      {values.clientMaritalStatus !== "Single" &&
+                        values.clientMaritalStatus !== "Widowed" ? (
+                        <div className="col-4 mt-3">
+
+                          <div className="mb-3">
+                            {/* switch button style */}
+                            <div className="form-check form-switch m-0 p-0 ">
+                              <div className="radiobutton">
+                                <input
+                                  type="radio"
+                                  name="partnerSmoker"
+                                  className="form-check-input"
+                                  id="partnerSmoker1"
+                                  value="nonsmoker"
+                                  onChange={handleChange}
+                                  checked={
+                                    values.partnerSmoker === "nonsmoker"
+                                  }
+                                />
+                                <label
+                                  htmlFor="partnerSmoker1"
+                                  className="label1"
+                                >
+                                  <span>No</span>
+                                </label>
+                                <input
+                                  type="radio"
+                                  name="partnerSmoker"
+                                  id="partnerSmoker2"
+                                  className="form-check-input"
+                                  value="smoker"
+                                  onChange={handleChange}
+                                  checked={
+                                    values.partnerSmoker === "smoker"
+                                  }
+                                />
+                                <label
+                                  htmlFor="partnerSmoker2"
+                                  className="label2"
+                                >
+                                  <span>Yes</span>
+                                </label>
+                              </div>
+                            </div>
+                            {/* switch button style */}
+                          </div>
+
+                          <ErrorMessage
+                            className="text-danger "
+                            component="div"
+                            name="partnerSmoker"
+                          />
+                        </div>
+                      ) : (
+                        <div className="col-4"></div>
+                      )}
+
                       {/* Tax Resident */}
                       <div className="col-4 mt-3">
-                        <label htmlFor="TaxResident" className="form-label">
+                        <label htmlFor="TaxResident" className="form-label mt-2">
                           {" "}
                           Tax Resident{" "}
                         </label>
@@ -1760,7 +1762,7 @@ const PersonalDetail = () => {
                       <div className="col-4 mt-3">
                         <label
                           htmlFor="PrivateHealthCover"
-                          className="form-label"
+                          className="form-label mt-2"
                         >
                           {" "}
                           Private Health Cover{" "}
@@ -1870,7 +1872,7 @@ const PersonalDetail = () => {
 
                       {/* HELPS DEBT   */}
                       <div className="col-4 mt-3">
-                        <label htmlFor="HELPSDebt" className="form-label">
+                        <label htmlFor="HELPSDebt" className="form-label mt-2">
                           {" "}
                           HELPS Debt{" "}
                         </label>
@@ -1995,20 +1997,8 @@ const PersonalDetail = () => {
               ClientAndPartnerTable ? (
                 <div className="container-fluid mt-4 ">
                   <div className="row m-0 px-0  ">
-                    <div className="col-md-2"></div>
                     <div className="col-md-12">
-                      {/*  start Client contact details form */}
-
-
-                      <h4 className="heading  d-none">
-                        Contact Details
-                        {/* <div className="iconContainerLg">
-                          <img className="img-fluid" src={phonebook} alt="" />
-                        </div> */}
-                      </h4>
-
                       <div className="row">
-                        <div className="col-4 d-none"></div>
                         <div className=" col-4 LargeSheet d-none">
                           <label
                             htmlFor="clientTitle"
@@ -2044,10 +2034,12 @@ const PersonalDetail = () => {
                         ) : (
                           <div className="col-4 d-none "></div>
                         )}
+
+
                         <div className="col-4 mt-3">
                           <label
                             htmlFor="clientHomeAddress"
-                            className="form-label"
+                            className="form-label mt-2"
                           >
                             {" "}
                             Home Address{" "}
@@ -2065,7 +2057,7 @@ const PersonalDetail = () => {
                           />
                           <ErrorMessage
                             component="div"
-                            className="text-danger fw-bold"
+                            className="text-danger "
                             name="clientHomeAddress"
                           />
                         </div>
@@ -2084,7 +2076,7 @@ const PersonalDetail = () => {
                             />
                             <ErrorMessage
                               component="div"
-                              className="text-danger fw-bold"
+                              className="text-danger "
                               name="partnerHomeAddress"
                             />
                           </div>
@@ -2095,7 +2087,7 @@ const PersonalDetail = () => {
                         <div className="col-4 mt-3">
                           <label
                             htmlFor="clientPostcode"
-                            className="form-label"
+                            className="form-label mt-2"
                           >
                             {" "}
                             Postcode/Suburb{" "}
@@ -2113,7 +2105,7 @@ const PersonalDetail = () => {
                           />
                           <ErrorMessage
                             component="div"
-                            className="text-danger fw-bold"
+                            className="text-danger "
                             name="clientPostcode"
                           />
                         </div>
@@ -2132,7 +2124,7 @@ const PersonalDetail = () => {
                             />
                             <ErrorMessage
                               component="div"
-                              className="text-danger fw-bold"
+                              className="text-danger "
                               name="partnerPostcode"
                             />
                           </div>
@@ -2141,7 +2133,7 @@ const PersonalDetail = () => {
                         )}
 
                         <div className="col-4 mt-3">
-                          <label className="form-label">Postal Address</label>
+                          <label className="form-label mt-2"></label>
                         </div>
 
                         {/*Client */}
@@ -2276,7 +2268,7 @@ const PersonalDetail = () => {
                         <div className="col-4 mt-3">
                           <label
                             htmlFor="clientPostalAddress"
-                            className="form-label"
+                            className="form-label mt-2"
                           >
                             {" "}
                             Postal Address{" "}
@@ -2295,7 +2287,7 @@ const PersonalDetail = () => {
                           />
                           <ErrorMessage
                             component="div"
-                            className="text-danger fw-bold"
+                            className="text-danger "
                             name="clientPostalAddress"
                           />
                         </div>
@@ -2314,7 +2306,7 @@ const PersonalDetail = () => {
                             />
                             <ErrorMessage
                               component="div"
-                              className="text-danger fw-bold"
+                              className="text-danger "
                               name="partnerPostalAddress"
                             />
                           </div>
@@ -2325,7 +2317,7 @@ const PersonalDetail = () => {
                         <div className="col-4 mt-3">
                           <label
                             htmlFor="clientPostcode"
-                            className="form-label"
+                            className="form-label mt-2"
                           >
                             {" "}
                             Postcode/Suburb{" "}
@@ -2344,7 +2336,7 @@ const PersonalDetail = () => {
                           />
                           <ErrorMessage
                             component="div"
-                            className="text-danger fw-bold"
+                            className="text-danger "
                             name="clientPostalPostCode"
                           />
                         </div>
@@ -2363,7 +2355,7 @@ const PersonalDetail = () => {
                             />
                             <ErrorMessage
                               component="div"
-                              className="text-danger fw-bold"
+                              className="text-danger "
                               name="partnerPostalPostCode"
                             />
                           </div>
@@ -2372,7 +2364,7 @@ const PersonalDetail = () => {
                         )}
 
                         <div className="col-4 mt-3">
-                          <label htmlFor="clientMobile" className="form-label">
+                          <label htmlFor="clientMobile" className="form-label mt-2">
                             {" "}
                             Mobile Number{" "}
                           </label>
@@ -2392,7 +2384,7 @@ const PersonalDetail = () => {
                           />
                           <ErrorMessage
                             component="div"
-                            className="text-danger fw-bold"
+                            className="text-danger "
                             name="clientMobile"
                           />
                         </div>
@@ -2409,7 +2401,7 @@ const PersonalDetail = () => {
                             />
                             <ErrorMessage
                               component="div"
-                              className="text-danger fw-bold"
+                              className="text-danger "
                               name="partnerMobile"
                             />
                           </div>
@@ -2420,7 +2412,7 @@ const PersonalDetail = () => {
                         <div className="col-4 mt-3">
                           <label
                             htmlFor="clientHomePhone"
-                            className="form-label"
+                            className="form-label mt-2"
                           >
                             {" "}
                             Home Phone{" "}
@@ -2441,7 +2433,7 @@ const PersonalDetail = () => {
                           />
                           <ErrorMessage
                             component="div"
-                            className="text-danger fw-bold"
+                            className="text-danger "
                             name="clientHomePhone"
                           />
                         </div>
@@ -2459,7 +2451,7 @@ const PersonalDetail = () => {
                             />
                             <ErrorMessage
                               component="div"
-                              className="text-danger fw-bold"
+                              className="text-danger "
                               name="partnerHomePhone"
                             />
                           </div>
@@ -2470,7 +2462,7 @@ const PersonalDetail = () => {
                         <div className="col-4 mt-3">
                           <label
                             htmlFor="clientWorkPhone"
-                            className="form-label"
+                            className="form-label mt-2"
                           >
                             {" "}
                             Work Phone{" "}
@@ -2488,7 +2480,7 @@ const PersonalDetail = () => {
                           />
                           <ErrorMessage
                             component="div"
-                            className="text-danger fw-bold"
+                            className="text-danger "
                             name="clientWorkPhone"
                           />
                         </div>
@@ -2506,7 +2498,7 @@ const PersonalDetail = () => {
                             />
                             <ErrorMessage
                               component="div"
-                              className="text-danger fw-bold"
+                              className="text-danger "
                               name="partnerWorkPhone"
                             />
                           </div>
@@ -2515,7 +2507,7 @@ const PersonalDetail = () => {
                         )}
 
                         <div className="col-4 mt-3">
-                          <label htmlFor="Email" className="form-label">
+                          <label htmlFor="Email" className="form-label mt-2">
                             {" "}
                             Email{" "}
                           </label>
@@ -2532,7 +2524,7 @@ const PersonalDetail = () => {
                           />
                           <ErrorMessage
                             component="div"
-                            className="text-danger fw-bold"
+                            className="text-danger"
                             name="Email"
                           />
                         </div>
@@ -2549,7 +2541,7 @@ const PersonalDetail = () => {
                             />
                             <ErrorMessage
                               component="div"
-                              className="text-danger fw-bold"
+                              className="text-danger"
                               name="partnerEmail"
                             />
                           </div>
@@ -2557,17 +2549,15 @@ const PersonalDetail = () => {
                           <div className="col-4"></div>
                         )}
                       </div>
-                      <div className="row mt-2 mb-4">
-                        <div className="col-md-12">
-                          <div className="d-flex flex-row justify-content-center align-items-center mt-4">
-                            <button
-                              type="submit"
-                              className=" btn w-25  bgColor modalBtn"
-                            // onClick={nextButtonHandler}
-                            >
-                              {buttonFlag}
-                            </button>
-                          </div>
+
+                      <div className="row justify-content-center mt-4 mb-4">
+                        <div className="col-md-4">
+                          <button
+                            type="submit"
+                            className=" btn w-100  bgColor modalBtn"
+                          >
+                            {buttonFlag}
+                          </button>
                         </div>
                       </div>
 
@@ -2582,7 +2572,7 @@ const PersonalDetail = () => {
           </Form>
         )}
       </Formik>
-    </>
+    </React.Fragment>
   );
 };
 

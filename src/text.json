@@ -1,41 +1,26 @@
-{
-  "joinedProfile": "Yes",
-  "question1": { "client": 2, "partner": 2 },
-  "question2": { "client": 1, "partner": 1 },
-  "question3": 1,
-  "question4": 1,
-  "question5": 1,
-  "question6": 1,
-  "question7": 1,
-  "question8": 1,
-  "riskDescription": "text",
-  "riskGoal": "text"
-}
-
-
-"No risk and I don’t want my capital to go down at all even if I get a 0% return on my money.",
-"I prefer low risk and am comfortable allocating a small portion (up to 40%) of my money to the share market aiming for better returns than the cash rate.",
-"I am comfortable with a medium level of risk and have my money allocated with similar amounts between the share market and cash and fixed interest/term deposits.",
-"I would prefer to have my money invested in a well diversified portfolio which includes more than 600% to Australian and international shares and property with the balance to cash and fixed interest/term deposits.",
-"I would prefer to have a minimum of  80% of my money invested in   Australian and international shares, possibly up to 100% if needed, aiming for higher returns even if there are significant ups and downs and wild swings like recent market events such as  COVID (2020), or the Global Financial Crises (2008)  because I won't need the money for a long time (10 years minimum).",
-
-
-Investment Properties 
-Personal Insurance
-A Company (Pty Ltd) Structure to run a business 
-A Trust Structure to run a business 
-A Self-Managed Super Fund
-An Investment Family Trust 
-
-
-
-
-
-// Risk-safebox.svg
-// Risk-coin.png
-// Risk-loss-graph-finance-svgrepo-com.svg
-// Risk-grocery.png
-// Risk-contract-svgrepo-com.svg
-// Risk-innovation.png
-// Risk-bar-chart-finance-business.svg
-// Risk-chart-pie-chart.svg
+"clientTitle": "Mr.",
+"clientGivenName": "John",
+"clientSurname": "Doe",
+"clientPreferredName": "Johnny",
+"clientGender": "Male",
+"clientDOB": "1990-01-01",
+"clientAge": 34,
+"clientMaritalStatus": "Single",
+"clientEmploymentStatus": "Employed",
+"clientHealth": "Good",
+"clientSmoker": "No",
+"clientPlannedRetirementAge": 65,
+"clientHomeAddress": "123 Main St",
+"clientPostcode": 12345,
+"clientHomePhone": "555-555-5555",
+"clientWorkPhone": "555-555-5556",
+"clientMobile": "555-555-5557",
+"Email": "john.doe@example.com",
+"clientPostalAddress": "123 Main St",
+"clientPostalPostCode": 12345,
+"clientMiddleName": "Michael",
+"clientOccupationID": "OCC123",
+"clientTaxResidentRadio": "Yes",
+"clientPrivateHealthCoverRadio": "Yes",
+"clientHELPSDebtRadio": "No",
+"clientSameAsAbove": true,

@@ -141,108 +141,23 @@ const SideBarrr = (props) => {
                       </NavLink>
                     </div>
 
-                    <div className={`w-100 px-3 Custom_hover ${CurrentP === '/ImportantQuestion' && 'active'}`}
+                    <div className={`w-100 px-3 Custom_hover ${CurrentP === '/PersonalDetail' && 'active'}`}
                       onClick={() => {
                         localStorage.removeItem("Email");
                         localStorage.removeItem("PartnerName");
                         localStorage.removeItem("UserID");
                         localStorage.removeItem("UserName");
                         localStorage.removeItem("UserStatus");
-                        setCRState({
-                          QuestionsFlag: false,
-                          clientFK: "",
-
-                          bankAccountFinance: "No",
-                          termDepositsFinance: "No",
-                          australianShareMarket: "No",
-                          managedFund: "No",
-                          investmentBondFinance: "No",
-                          managedFundsLOC: "No",
-                          managedFundsMarginLoan: "No",
-
-                          car: "No",
-                          boat: "No",
-                          caravan: "No",
-                          personalAssets: "No",
-                          personalLoans: "No",
-                          creditCards: "No",
-
-                          familyHome: "No",
-                          familyHomeLoan: "No",
-                          numberOfHolidayHome: 0,
-
-                          investmentPropertyDetails: "No",
-                          investmentPropertyLoan: "No",
-                          incomeExpenses: "No",
-
-                          superAnnuationIssues: "No",
-                          accountBasedPensionIssues: "No",
-                          annuitiesIssues: "No",
-
-                          will: "No",
-                          POA: "No",
-                          professionalAdviser: "No",
-
-
-                          incomeFromOwnBusiness: "No",
-                          incomeFromSoleTrader: "No",
-                          incomeFromPartnership: "No",
-                          incomeFromCentrelink: "No",
-                          incomeFromSuperPayment: "No",
-                          incomeFromOverseasPension: "No",
-                          incomeFromInheritance: "No",
-                          incomeFromLumpsumExpense: "No",
-                          incomeFromRegularLivingExpenses: "Yes",
-
-                          BusinessAsCompanyStructure: "No",
-                          BusinessAsTrusts: "No",
-
-                          investmentPropertyTab: "No",
-                          personalInsuranceTab: "No",
-
-                          SMSFManagedFundsTab: "No",
-                          businessAsInvestmentTab: "No",
-
-                          SMSFBank: "Yes",
-                          SMSFTermDeposits: "No",
-                          SMSFAustralianShares: "No",
-                          SMSFManagedFunds: "No",
-                          SMSFInvestmentLoan: "No",
-                          SMSFInvestmentProperties: "No",
-                          numberOfSMSFInvestmentProperties: 0,
-                          SMSFPensionPhase: "No",
-
-                          SMSFDetails: "Yes",
-                          SMSFAccumulationDetails: "Yes",
-
-                          familyBank: "Yes",
-
-                          familyTermDeposit: "No",
-                          familyAustralianShare: "No",
-                          familyMangedFunds: "No",
-                          familyInvestmentHomeLoan: "No",
-                          familyInvestmentProperties: "No",
-                          numberOfFamilyInvestmentProperties: 0,
-                          familyPensionPhase: "No",
-
-                          familyDetails: "Yes",
-
-
-                          life: "No",
-                          TPD: "No",
-                          trauma: "No",
-                          incomeProtection: "No",
-
-                        })
+                        setCRState()
                         setStepsStatus(true);
                         setOptRender("Opt1");
                         localStorage.setItem("OptionRender", "Opt1");
-                        Navigate("/ImportantQuestion")
+                        Navigate("/PersonalDetail")
                       }}
                       id="Client"
                     >
                       <NavLink
-                        to="/ImportantQuestion"
+                        to="/PersonalDetail"
                         className="py-1 LeagueSpartanFamily SideItem_Size"
                       >
                         Add Client
