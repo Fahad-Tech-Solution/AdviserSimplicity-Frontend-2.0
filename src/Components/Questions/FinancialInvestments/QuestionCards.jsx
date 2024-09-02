@@ -976,8 +976,11 @@ const QuestionCards = (props) => {
                             return (<FamilyInvestmentProperty PartnerClass={PartnerClass} index={index} jointClass={jointClass} elem={elem} OpenModal={OpenModal2} homeArray={homeArray} arrayCount={arrayCount} />);
                         }
                         else {
+                            // <div className={`col-md-${arrayCount % 2 == 0 ? '6' : '4'} mb-4`} key={index}>
+                            // ya hos sukta hai bad ma chnage karna para 
+                            
                             return (
-                                <div className={`col-md-${arrayCount % 2 == 0 ? '6' : '4'} mb-4`} key={index}>
+                                <div className={`col-md-3 mb-4`} key={index}>
                                     <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
                                         <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}</h5>
                                         <div className="QuestionIcon w-25">

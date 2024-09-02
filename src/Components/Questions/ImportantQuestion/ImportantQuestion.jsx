@@ -139,20 +139,38 @@ const ImportantQuestion = () => {
             >
                 {({ values, handleChange, setFieldValue }) => (
                     <Form>
-                        <div className="col-md-12 text-center">
-                            <div className="row my-3 justify-content-center">
-                                <DynamicQuestionBlocks QuestionArray={QuestionArray} QuestionClick={QuestionClick} values={values} setFieldValue={setFieldValue} />
+                        <div className="row px-5 mt-4">
+                            <div className="col-md-12 text-center ">
+                                <div className="row my-3 justify-content-center">
+                                    <DynamicQuestionBlocks QuestionArray={QuestionArray} QuestionClick={QuestionClick} values={values} setFieldValue={setFieldValue} />
+                                </div>
                             </div>
                         </div>
                     </Form>
                 )}
             </Formik>
-            <Button variant="secondary" style={{ width: "12.5%" }} onClick={CloseModal}>
-                Back
-            </Button>
-            <button type='button' className='btn bgColor modalBtn' style={{ width: "12.5%" }} onClick={handleOk}>
-                Next
-            </button>
+
+            <div className="row mt-2">
+                <div className="col-md-12">
+                    <div className='d-flex justify-content-center'>
+
+                        <button
+                            onClick={CloseModal}
+                            className="float-center btn w-25  btn-outline  backBtn mx-3">
+                            Back
+                        </button>
+                        <button
+                            onClick={handleOk}
+                            className="float-center btn w-25  bgColor modalBtn"
+                        >
+                            Next
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+
         </div>
     )
 }

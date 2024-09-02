@@ -117,7 +117,8 @@ input[type="number"] {
 }
 
 .QuestionIcon {
-  width: 10%;
+  /* width: 10%; */
+  max-width: 8%;
   margin: auto;
   margin-bottom: 1rem;
   margin-top: 1rem;
@@ -975,7 +976,10 @@ input[type="checkbox"] + .femaleSmoking + .maleNonSmoking {
   cursor: pointer;
 }
 .PersonalDetails {
-  background-color: #36b44718 !important;
+  /* background-color: #36b44718 !important; */
+
+  border: 1px solid #36b446 !important;
+  border-radius: 50px !important;
 }
 
 .min-w-25 {
@@ -1136,10 +1140,12 @@ label {
   font-weight: 600 !important;
 }
 
-.C-color {
-  color: #36b446 !important;
-
+.Fs-24 {
+  font-size: 20px;
 }
 
+.modalNumberWidth {
+  max-width: 7%;
+}
 
 

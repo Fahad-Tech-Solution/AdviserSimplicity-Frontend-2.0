@@ -6,7 +6,18 @@ import { IoIosMail } from "react-icons/io";
 import { FaBriefcase } from "react-icons/fa6";
 import { HiUsers } from "react-icons/hi";
 import single from "../Svgs/single-2.svg";
+import childimg from "./images/child.svg";
+import heterosexual from "./images/united-heterosexual-symbols-svgrepo-com.svg";
+import briefcase from "./images/briefcase-bag-svgrepo-com.svg";
+import email from "./images/email-notification-message-envelope-letter-chat-svgrepo-com.svg";
+import phone from "./images/phone-calling-svgrepo-com.svg";
+import address from "./images/map-pin-2-svgrepo-com.svg";
+import age from "./images/arrow-interface-multimedia-svgrepo-com.svg";
+import SVGMale from "./images/male-svgrepo-com.svg";
+import SVGFemale from "./images/female-svgrepo-com.svg";
 import couple from "../Svgs/couple-2.svg";
+
+// import { LuBaby } from "react-icons/lu";
 
 import {
     FaPhoneAlt,
@@ -17,6 +28,8 @@ import {
 
 
 function PersonalDetailCards(props) {
+
+    let { data } = props;
 
     function formatDate(dateString) {
         // Create a new Date object from the date string
@@ -46,67 +59,106 @@ function PersonalDetailCards(props) {
         }
     }
 
-    return (<div className="pb-4 bg-white  borderOverAll  rounded">
+    return (<div className="pb-4 bg-white  borderOverAll  rounded mt-3">
+
         <h4 className="heading text-center d-none">Personal Details</h4>
         {
             /*  table  */
         }
-        <div className="row">
-            <div className={getClassName(props.values.clientMaritalStatus)}>
-                <div className="card px-3 py-4 border-0 gap-3 PersonalDetails d-flex justify-content-center align-items-center">
+        <div className="row justify-content-center align-item-stretch">
+            <div className={getClassName(data.client.clientMaritalStatus)}>
+                <div className="card px-3 py-4 gap-3 PersonalDetails d-flex justify-content-center align-items-center">
                     <div className="row w-100">
+                        <div className='col-md-12'>
+                            <div className='d-flex justify-content-start align-item-start gap-3'>
+
+                                <h2>  {data.client.clientTitle} {data.client.clientGivenName} {data.client.clientSurname}</h2>
+                                <div>
+                                    <img src={single} alt="single svg" className="me-2" width={"26px"} />
+                                </div>
+                            </div>
+                        </div>
+
                         <div className="col-6 mb-3">
                             <div className="d-flex align-items-center">
-                                <img src={single} alt="single svg" className="me-2" width={"16px"} />
-                                {props.values.clientGivenName}
+                                <FaUser className="me-2 text-green" />
+                                {data.client.clientPreferredName}
                             </div>
                         </div>
                         <div className="col-6 mb-3">
                             <div className="d-flex align-items-center">
-                                <FaUser className="me-2" />
-                                {props.values.clientPreferredName}
+                                {/*
+                                    {data.client.clientGender == "female" ? <BsGenderFemale className="me-2 text-green" /> : <BsGenderMale className="me-2 text-green" />}
+                                    */}
+                                {data.client.clientGender == "female" ? <img src={SVGFemale} alt="single svg" className="me-2" width={"24px"} /> : <img src={SVGMale} alt="single svg" className="me-2" width={"24px"} />}
+                                {data.client.clientGender == "female" ? 'Female' : 'Male'}
                             </div>
                         </div>
                         <div className="col-6 mb-3">
                             <div className="d-flex align-items-center">
-                                {props.values.clientGender=="female" ? <BsGenderFemale className="me-2" /> : <BsGenderMale className="me-2" />}
-                                {props.values.clientGender=="female" ? 'Female' : 'Male'}
-                            </div>
-                        </div>
-                        <div className="col-6 mb-3">
-                            <div className="d-flex align-items-center">
+                                {/*
                                 <FaRedo className="me-2" />
-                                {formatDate(props.values.clientDOB) + " (" + props.values.clientAge + ")"}
+                                     */}
+                                <img src={age} alt="single svg" className="me-2" width={"24px"} />
+                                {formatDate(data.client.clientDOB) + " (" + data.client.clientAge + ")"}
                             </div>
                         </div>
                         <div className="col-6 mb-3">
                             <div className="d-flex align-items-center">
-                                <GiLinkedRings className="me-2" />
-                                {props.values.clientMaritalStatus}
+                                {/** 
+                                <GiLinkedRings className="me-2 text-green" />
+                            */}
+                                <img src={heterosexual} alt="single svg" className="me-2" width={"24px"} />
+
+                                {data.client.clientMaritalStatus}
                             </div>
                         </div>
                         <div className="col-6 mb-3">
                             <div className="d-flex align-items-center">
-                                <FaBriefcase className="me-2" />
-                                {props.values.clientEmploymentStatus}
+                                {/** */}
+
+                                {/** 
+                            <FaBriefcase className="me-2 " />
+                            */}
+                                <img src={briefcase} alt="single svg" className="me-2" width={"24px"} />
+                                {data.client.clientEmploymentStatus}
                             </div>
                         </div>
+                        {data.children.numberOfChildren !== 0 &&
+
+                            <div className="col-6 mb-3">
+                                <div className="d-flex align-items-center">
+                                    <img src={childimg} alt="single svg" className="me-2" width={"24px"} />
+                                    {data.children.numberOfChildren}
+                                </div>
+                            </div>
+                        }
                         <div className="col-12 mb-3">
                             <div className="d-flex align-items-center">
+                                {/*
                                 <FaRegAddressBook className="me-2" />
-                                {props.values.clientHomeAddress}
+                                */}
+                                <img src={address} alt="single svg" className="me-2" width={"30px"} />
+                                {data.client.clientHomeAddress}
                             </div>
                         </div>
                         <div className="col-12 mb-3">
                             <div className="d-flex align-items-center">
-                                <IoIosMail className="me-2" />
-                                {props.values.Email}
+                                {/*
+                                    <IoIosMail className="me-2 " />
+                                    */}
+                                <img src={email} alt="single svg" className="me-2" width={"24px"} />
+                                {data.client.Email}
                             </div>
                         </div>
                         <div className="col-6 mb-3">
                             <div className="d-flex align-items-center">
-                                <FaPhoneAlt className="me-2" />
-                                {props.values.clientMobile}
+                                {/*
+                                        <FaPhoneAlt className="me-2 text-green" />
+                                        */}
+                                <img src={phone} alt="single svg" className="me-2" width={"24px"} />
+
+                                {data.client.clientMobile}
                             </div>
                         </div>
                     </div>
@@ -115,78 +167,72 @@ function PersonalDetailCards(props) {
 
 
             <div className="col-md-6">
-                {props.values.clientMaritalStatus !== "Single" && props.values.clientMaritalStatus !== "Widowed" &&
-                    <div className="card px-3 py-4 border-0 gap-3 PersonalDetails d-flex justify-content-center align-items-center">
+                {data.client.clientMaritalStatus !== "Single" && data.client.clientMaritalStatus !== "Widowed" &&
+                    <div className="card px-3 py-4 gap-3 PersonalDetails d-flex justify-content-center align-items-center h-100">
                         <div className="row w-100">
+
+                            <div className='col-md-12'>
+                                <div className='d-flex justify-content-start align-item-start gap-3'>
+
+                                    <h2>  {data.partner.partnerTitle} {data.partner.partnerGivenName} {data.partner.partnerSurname}</h2>
+                                    <div>
+                                        <img src={couple} alt="single svg" className="me-2" width={"26px"} />
+                                    </div>
+                                </div>
+                            </div>
+
                             <div className="col-6 mb-3">
                                 <div className="d-flex align-items-center">
-                                    <img src={couple} alt="couple svg" className="me-2" width={"20px"} />
-                                    {props.values.partnerGivenName}
+                                    <HiUsers className="me-2 text-green Fs-24" />
+                                    {data.partner.partnerPreferredName}
                                 </div>
                             </div>
                             <div className="col-6 mb-3">
                                 <div className="d-flex align-items-center">
-                                    <HiUsers className="me-2" />
-                                    {props.values.partnerPreferredName}
+                                    {data.partner.partnerGender == "female" ? <BsGenderFemale className="me-2 text-green Fs-24" /> : <BsGenderMale className="me-2 text-green Fs-24" />}
+                                    {data.partner.partnerGender == "female" ? 'Female' : 'Male'}
                                 </div>
                             </div>
                             <div className="col-6 mb-3">
                                 <div className="d-flex align-items-center">
-                                    {props.values.partnerGender=="female" ? <BsGenderFemale className="me-2" /> : <BsGenderMale className="me-2" />}
-                                    {props.values.partnerGender=="female" ? 'Female' : 'Male'}
+                                    <FaRedo className="me-2 text-green Fs-24" />
+                                    {formatDate(data.partner.partnerDOB) + " (" + data.partner.partnerAge + ")"}
                                 </div>
                             </div>
                             <div className="col-6 mb-3">
                                 <div className="d-flex align-items-center">
-                                    <FaRedo className="me-2" />
-                                    {formatDate(props.values.partnerDOB) + " (" + props.values.partnerAge + ")"}
+                                    <GiLinkedRings className="me-2 text-green Fs-24" />
+                                    {data.partner.partnerMaritalStatus}
                                 </div>
                             </div>
                             <div className="col-6 mb-3">
                                 <div className="d-flex align-items-center">
-                                    <GiLinkedRings className="me-2" />
-                                    {props.values.partnerMaritalStatus}
-                                </div>
-                            </div>
-                            <div className="col-6 mb-3">
-                                <div className="d-flex align-items-center">
-                                    <FaBriefcase className="me-2" />
-                                    {props.values.partnerEmploymentStatus}
+                                    <FaBriefcase className="me-2 text-green Fs-24" />
+                                    {data.partner.partnerEmploymentStatus}
                                 </div>
                             </div>
                             <div className="col-12 mb-3">
                                 <div className="d-flex align-items-center">
-                                    <FaRegAddressBook className="me-2" />
-                                    {props.values.partnerHomeAddress}
+                                    <FaRegAddressBook className="me-2 text-green Fs-24" />
+                                    {data.partner.partnerHomeAddress}
                                 </div>
                             </div>
                             <div className="col-12 mb-3">
                                 <div className="d-flex align-items-center">
-                                    <IoIosMail className="me-2" />
-                                    {props.values.Email}
+                                    <IoIosMail className="me-2 text-green Fs-24" />
+                                    {data.partner.partnerEmail}
                                 </div>
                             </div>
                             <div className="col-6 mb-3">
                                 <div className="d-flex align-items-center">
-                                    <FaPhoneAlt className="me-2" />
-                                    {props.values.partnerMobile}
+                                    <FaPhoneAlt className="me-2 text-green Fs-24" />
+                                    {data.partner.partnerMobile}
                                 </div>
                             </div>
                         </div>
                     </div>
 
                 }
-            </div>
-        </div>
-
-        <div className="row mt-4">
-            <div className="col-md-12">
-                <button type="button" className="float-end btn w-25  bgColor modalBtn" onClick={props.nextbuttonHandler}>
-                    Next
-                </button>
-                <button type="button" className="float-end btn w-25  btn-outline backBtn mx-3" onClick={() => props.setClientAndPartnerTable(true)}>
-                    Back
-                </button>
             </div>
         </div>
 

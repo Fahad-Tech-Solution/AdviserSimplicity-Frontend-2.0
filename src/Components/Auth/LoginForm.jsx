@@ -80,7 +80,7 @@ const LoginForm = () => {
 
 
                         <div className='col-md-12'>
-                          <p><Link to='/ForgetPassword' className='C-color'>Forgot Password</Link></p>
+                          <p><Link to='/ForgetPassword' className='text-green'>Forgot Password</Link></p>
                         </div>
 
 
@@ -92,7 +92,7 @@ const LoginForm = () => {
 
 
                         <div className='col-md-12 mt-2'>
-                          <p>I don't have Account <Link to='/Register' className='C-color'>Register</Link></p>
+                          <p>I don't have Account <Link to='/Register' className='text-green'>Register</Link></p>
                         </div>
 
 

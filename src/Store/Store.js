@@ -74,7 +74,7 @@ export const CRState = atom({
         //keys which just controls rendering 
         investmentPropertyTab: "No",
         personalInsuranceTab: "No",
-        
+
         // companyStructureBusinessTab: "No",
         // trustStructureBusinessTab: "No",
 
@@ -144,9 +144,9 @@ export const CurrentPage = atom({
 
 export const defaultUrl = atom({
     key: "defaultUrl",
-    // default: "http://localhost:7000",
+    default: "http://localhost:7000",
     // default: "http://192.168.30.24:7000", // Usama bhai ventures-unit2-2g
-    default: "http://172.168.40.41:7000", // Usama bhai ventures-unit1-2g
+    // default: "http://172.168.40.41:7000", // Usama bhai ventures-unit1-2g
     // default: "http://172.168.40.137:7000",
     // default: "http://192.168.211.242:7000",
     // default: "",
@@ -164,11 +164,7 @@ export const allAPIs = atom({
 
 export const PersonalDetailsData = atom({
     key: "PersonalDetailsData",
-    default: {
-        Partner: {},
-        Client: {},
-        Child: []
-    },
+    default: {},
 });
 
 export const QuestionDetail = atom({
