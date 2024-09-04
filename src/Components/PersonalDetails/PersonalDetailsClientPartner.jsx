@@ -4,6 +4,7 @@ import single from "../Svgs/single-2.svg";
 import couple from "../Svgs/couple-2.svg";
 import { ErrorMessage, Field } from 'formik';
 import DatePicker from 'react-datepicker';
+import { differenceInYears } from "date-fns";
 
 
 const PersonalDetailsClientPartner = (props) => {
@@ -248,7 +249,7 @@ const PersonalDetailsClientPartner = (props) => {
                     {/*Client Input Age */}
                     <div className='col-6 mb-4'>
                         <Field
-                            type="text"
+                            type="number"
                             className="form-control inputDesign "
                             id="clientAge"
                             name="client.clientAge"
@@ -1108,7 +1109,7 @@ const PersonalDetailsClientPartner = (props) => {
                         {/*Partner Input Age */}
                         <div className='col-6 col-md-12  mb-4'>
                             <Field
-                                type="text"
+                                type="number"
                                 className="form-control inputDesign "
                                 id="partnerAge"
                                 name="partner.partnerAge"
@@ -1603,7 +1604,7 @@ const PersonalDetailsClientPartner = (props) => {
                         {/*Mobile Labels  Postal Address */}
                         <div className='col-6 col-md-12  mb-4 d-md-none d-block'>
                             <label
-                                htmlFor="partnerPostcode"
+                                htmlFor="partnerPostalPostCode"
                                 className="form-label mt-2"
                             >
                                 Postcode/Suburb
@@ -1628,7 +1629,7 @@ const PersonalDetailsClientPartner = (props) => {
 
                         {/*Mobile Labels Mobile Number */}
                         <div className='col-6 col-md-12  mb-4 d-md-none d-block'>
-                            <label htmlFor="pertnerMobile" className="form-label mt-2">
+                            <label htmlFor="partnerMobile" className="form-label mt-2">
                                 Mobile Number
                             </label>
                         </div>
@@ -1701,10 +1702,10 @@ const PersonalDetailsClientPartner = (props) => {
                         {/*Mobile Labels Work Phone */}
                         <div className='col-6 col-md-12  mb-4 d-md-none d-block'>
                             <label
-                                htmlFor="partnerWorkPhone"
+                                htmlFor="partnerEmail"
                                 className="form-label mt-2"
                             >
-                                Work Phone
+                                Email
                             </label>
                         </div>
 
@@ -1714,6 +1715,7 @@ const PersonalDetailsClientPartner = (props) => {
                                 type="email"
                                 className="form-control inputDesign "
                                 name="partner.partnerEmail"
+                                id="partnerEmail"
                             />
                             <ErrorMessage
                                 component="div"

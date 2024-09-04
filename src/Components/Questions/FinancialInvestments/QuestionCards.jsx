@@ -133,6 +133,7 @@ import PersonalInsuranceLife from '../PersonalInsurance/LifeInsurance';
 import PersonalInsuranceTPD from '../PersonalInsurance/TPD';
 import PersonalInsuranceTrauma from '../PersonalInsurance/Trauma';
 import IncomeProtection from '../PersonalInsurance/IncomeProtection';
+import CombinedSwitch from '../CombinedSwitch/CombinedSwitch';
 //new comment
 
 
@@ -561,6 +562,7 @@ const QuestionCards = (props) => {
     const CardForms = ["car", "boat", "caravan", "personalAssets"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
     const JointHidden = ["superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues", "will", "POA", "professionalAdviser", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "incomeFromInheritance", "incomeFromLumpsumExpense", "incomeFromRegularLivingExpenses", "life", "TPD", "trauma", "incomeProtection"]; // Add other titles that should use "xl" here
     const singleClient = ["incomeFromRegularLivingExpenses"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
+    const combinedArray = ["incomeFromOwnBusiness"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
     const reuseModal = ["bankAccountFinance", "termDepositsFinance", "australianShareMarket", "managedFund", "SMSFTermDeposits", "SMSFAustralianShares", "SMSFManagedFunds", "SMSFInvestmentLoan", "managedFundsLOC", "familyBank", "familyTermDeposit", "familyAustralianShare", "familyMangedFunds", "familyInvestmentHomeLoan", "SMSFBank",]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
@@ -710,13 +712,14 @@ const QuestionCards = (props) => {
                 {ModalContent(modalObject)}
             </ModalComponent>
 
-            <div className="row m-0 justify-content-center align-items-stretch">
+            <div className="row m-0 justify-content-start align-items-stretch">
                 {arrayObj[props.Question].map((elem, index) => {
                     if (CRObject[elem.key] === "Yes") {
                         const cardSwitch = CardForms.includes(elem.key) ? true : false;
                         const jointClass = JointHidden.includes(elem.key) ? "d-none" : "";
                         const singleSwitch = singleClient.includes(elem.key) ? true : false;
                         const reuseSwitch = reuseModal.includes(elem.key) ? true : false;
+                        const combinedSwitch = combinedArray.includes(elem.key) ? true : false;
                         const SMSFInP = elem.key === "SMSFInvestmentProperties" ? true : false;
                         const FamilyInP = elem.key === "familyInvestmentProperties" ? true : false;
                         const PartnerClass = localStorage.getItem("UserStatus") === "Single" ? "d-none" : "";
@@ -741,7 +744,7 @@ const QuestionCards = (props) => {
                             };
 
                             return (
-                                <div className={`col-md-${arrayCount % 2 == 0 ? '6' : '4'} mb-4`} key={index}>
+                                <div className={`col-md-3 mb-4`} key={index}>
                                     <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
                                         <h5 className='text-center' onClick={() => { console.log(questionDetail) }}>{elem.title}</h5>
                                         <div className="QuestionIcon w-25">
@@ -803,7 +806,7 @@ const QuestionCards = (props) => {
                         }
                         else if (singleSwitch) {
                             return (
-                                <div className={`col-md-${arrayCount % 2 == 0 ? '6' : '4'} mb-4`} key={index}>
+                                <div className={`col-md-3 mb-4`} key={index}>
                                     <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
                                         <h5 className='text-center' onClick={() => { console.log(questionDetail) }}>{elem.title}</h5>
                                         <div className="QuestionIcon w-25">
@@ -872,7 +875,7 @@ const QuestionCards = (props) => {
                         }
                         else if (reuseSwitch) {
                             return (
-                                <div className={`col-md-${arrayCount % 2 == 0 ? '6' : '4'} mb-4`} key={index}>
+                                <div className={`col-md-3 mb-4`} key={index}>
                                     <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
                                         <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}</h5>
                                         <div className="QuestionIcon w-25">
@@ -975,10 +978,13 @@ const QuestionCards = (props) => {
                         else if (FamilyInP) {
                             return (<FamilyInvestmentProperty PartnerClass={PartnerClass} index={index} jointClass={jointClass} elem={elem} OpenModal={OpenModal2} homeArray={homeArray} arrayCount={arrayCount} />);
                         }
+                        else if (combinedSwitch) {
+                            return (<CombinedSwitch PartnerClass={PartnerClass} index={index} jointClass={jointClass} elem={elem} OpenModal={OpenModal2} homeArray={homeArray} arrayCount={arrayCount} />);
+                        }
                         else {
                             // <div className={`col-md-${arrayCount % 2 == 0 ? '6' : '4'} mb-4`} key={index}>
                             // ya hos sukta hai bad ma chnage karna para 
-                            
+
                             return (
                                 <div className={`col-md-3 mb-4`} key={index}>
                                     <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
@@ -1125,7 +1131,7 @@ const HolyDayHome = (props) => {
             props.homeArray.map((elem, index) => {
                 const jointClass = props.JointHidden.includes(elem.key) ? "d-none" : "";
                 return (
-                    <div className={`col-md-${props.arrayCount % 2 == 0 ? '6' : '4'} mb-4`} key={i}>
+                    <div className={`col-md-3 mb-4`} key={i}>
                         <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
                             <h5 className='text-center' onClick={() => { console.log(props.questionDetail[elem.key]) }}>{elem.title} {parseFloat(i) + 1}</h5>
                             <div className="QuestionIcon w-25">

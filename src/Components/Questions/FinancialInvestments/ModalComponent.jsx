@@ -31,6 +31,7 @@ const ModalComponent = (props) => {
 
     const xlTitles = [
         "Questions",
+        "Employement Income",
         "Australian Shares",
         "Managed Funds",
         "Investment Bond",

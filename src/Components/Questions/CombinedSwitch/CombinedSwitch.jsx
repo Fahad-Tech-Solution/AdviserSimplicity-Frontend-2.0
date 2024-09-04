@@ -1,0 +1,105 @@
+import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from 'react'
+import { Card } from 'react-bootstrap';
+import { CRState, QuestionDetail } from '../../../Store/Store';
+import { useRecoilValue } from 'recoil';
+
+const CombinedSwitch = (props) => {
+    let { OpenModal, arrayCount, jointClass, PartnerClass, elem, index } = props;
+
+    let questionDetail = useRecoilValue(QuestionDetail);
+    let CRObject = useRecoilValue(CRState);
+
+    return (
+        <div className={`col-md-3 mb-4`} key={index}>
+            <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
+                <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}</h5>
+                <div className="QuestionIcon w-25">
+                    <img className="img-fluid" src={elem.img} alt="" />
+                </div>
+                <div
+                    className="row justify-content-center align-items-center my-2"
+                >
+                    <div className='col-12 p-0 '>
+                        <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+
+                            <label
+                                className=" d-block text-end"
+                                htmlFor={"client" + elem.key}
+                            >{localStorage.getItem("UserName") || "You"}</label>
+
+                            <label
+                                className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                                onClick={() => { OpenModal(elem.title, "client") }}
+                            >
+                                <div>
+                                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <input type="text"
+                    className="form-control inputDesign "
+                    id={"client" + elem.key}
+                    placeholder={elem.title}
+                    name={"client" + elem.key}
+                    value={questionDetail && questionDetail[elem.key]?.clientTotal ? "$" + questionDetail[elem.key].clientTotal : ""}
+                />
+                <div
+                    className={`row justify-content-center align-items-center my-2 ${PartnerClass}`}
+                >
+                    <div className='col-12 p-0 '>
+                        <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                            <label
+                                className=" d-block text-end"
+                                htmlFor={"partner" + elem.key}
+                            >{localStorage.getItem("PartnerName") || "Partner"}</label>
+                        </div>
+                    </div>
+                </div>
+                <input type="text"
+                    className={`form-control inputDesign ${PartnerClass}`}
+                    id={"partner" + elem.key}
+                    placeholder={elem.title}
+                    name={"partner" + elem.key}
+                    value={questionDetail && questionDetail[elem.key]?.partnerTotal ? "$" + questionDetail[elem.key].partnerTotal : ""}
+                />
+
+                <div
+                    className={`row justify-content-center align-items-center my-2  ${jointClass} ${PartnerClass}`}
+                >
+                    <div className='col-12 p-0 '>
+                        <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                            <label
+                                className=" d-block text-end"
+                                htmlFor={"joint" + elem.key}
+                            >{(localStorage.getItem("UserName") || "You") + " " + (localStorage.getItem("PartnerName") || "")}</label>
+
+                            <label
+                                className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                                onClick={() => { OpenModal(elem.title, "joint") }}
+                            >
+                                <div>
+                                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="text"
+                    className={`form-control inputDesign ${jointClass} ${PartnerClass}`}
+                    id={"joint" + elem.key}
+                    placeholder={elem.title}
+                    name={"joint" + elem.key}
+                    value={questionDetail && questionDetail[elem.key]?.jointTotal ? "$" + questionDetail[elem.key].jointTotal : ""}
+                />
+
+            </Card>
+        </div>
+    );
+}
+
+export default CombinedSwitch

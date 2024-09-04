@@ -15,7 +15,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { useRecoilState } from "recoil";
-import { CRState, CurrentPage, OptionRender, StepsStatus } from "../../Store/Store";
+import { CRState, CurrentPage, OptionRender, PersonalDetailsData, StepsStatus } from "../../Store/Store";
 
 const SideBarrr = (props) => {
   //   let Navigate = useNavigate();
@@ -23,6 +23,7 @@ const SideBarrr = (props) => {
   let [CurrentP, setCurrentP] = useRecoilState(CurrentPage); // eslint-disable-line no-unused-vars
   let [stepsStatus, setStepsStatus] = useRecoilState(StepsStatus); // eslint-disable-line no-unused-vars
   let [CRStateObj, setCRState] = useRecoilState(CRState); // eslint-disable-line no-unused-vars
+  let [PersonalDetailObj, setPersonalDetailObj] = useRecoilState(PersonalDetailsData);// eslint-disable-line no-unused-vars
 
   let Navigate = useNavigate();
 
@@ -151,7 +152,43 @@ const SideBarrr = (props) => {
                         setCRState()
                         setStepsStatus(true);
                         setOptRender("Opt1");
-                        localStorage.setItem("OptionRender", "Opt1");
+                        localStorage.setItem("OptionRender", "Opt1"); setPersonalDetailObj({
+                          "client": {
+                            "clientTitle": "Mr.",
+                            "clientGivenName": "John",
+                            "clientSurname": "Doe",
+                            "clientPreferredName": "Johnny",
+                            "clientGender": "Male",
+                            "clientDOB": "1990-01-01",
+                            "clientAge": 34,
+                            "clientMaritalStatus": "Single",
+                            "clientEmploymentStatus": "Employed",
+                            "clientHealth": "Good",
+                            "clientSmoker": "No",
+                            "clientPlannedRetirementAge": 65,
+                            "clientHomeAddress": "123 Main St",
+                            "clientPostcode": 12345,
+                            "clientHomePhone": "555-555-5555",
+                            "clientWorkPhone": "555-555-5556",
+                            "clientMobile": "555-555-5557",
+                            "Email": "john.doe@example.com",
+                            "clientPostalAddress": "123 Main St",
+                            "clientPostalPostCode": 12345,
+                            "clientMiddleName": "Michael",
+                            "clientOccupationID": "OCC123",
+                            "clientTaxResidentRadio": "Yes",
+                            "clientPrivateHealthCoverRadio": "Yes",
+                            "clientHELPSDebtRadio": "No",
+                            "clientSameAsAbove": true,
+                            "clientRetirement": "Comfortable",
+
+                          },
+                          "partner": {},
+                          "children": {
+                            "numberOfChildren": 0,
+                          },
+                          "haveAnyChildren": "No",
+                        })
                         Navigate("/PersonalDetail")
                       }}
                       id="Client"

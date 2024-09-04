@@ -126,7 +126,7 @@ function Options(props) {
 
     const updatedItems = itemsToRender.filter(item => item.condition(CRObject)).map(item => {
       const isPersonalDetails = item.subTitle === 'Personal Details';
-      const currentEmail = localStorage.getItem("Email");
+      const currentEmail = localStorage.getItem("UserID");
       const iconMap = {
         FaBriefcase, FaCheck, FaGift, FaKey, FaMoneyCheckDollar, FaUser, FaHome, FaQuestionCircle, MdFamilyRestroom, RiCoinsFill, FaPlus
       };
@@ -228,7 +228,7 @@ function Options(props) {
             <div className="row">
               <div className="col-md-12" style={{ padding: "10px 0px 0px 1.5px" }}>
                 <div className="row">
-                  <div className="col-md-12" style={{ padding: "20px 30px 0px 30px" }}>
+                  <div className="col-md-12 overflow-auto customScroll" style={{ padding: "20px 30px 0px 30px" }}>
                     <ConfigProvider
                       theme={{
                         components: {

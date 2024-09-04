@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { scroller, Element } from 'react-scroll';
 import DynamicQuestionBlocks from '../../Assets/DynamicQuestionBlocks/DynamicQuestionBlocks';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { CRState, defaultUrl } from '../../../Store/Store';
+import { CRState, defaultUrl, QuestionDetail } from '../../../Store/Store';
 
 import Business_SMSF from "../svgs/money-bag-svgrepo-com.svg";
 import Questions_People from "../svgs/Questions_People.png";
@@ -16,34 +16,173 @@ import insuranceProtection from "../svgs/insuranceProtection.png";
 import propertyValue from "../svgs/property-value.svg";
 
 import { Form, Formik } from 'formik';
-import { PatchAxios, PostAxios } from '../../Assets/Api/Api';
+import { GetAxios, openNotificationSuccess, PatchAxios, PostAxios } from '../../Assets/Api/Api';
 
 const ImportantQuestion = () => {
 
-    let [CRObject, setCRObject] = useRecoilState(CRState);
+    let [CRObjectNoUse, setCRObject] = useRecoilState(CRState);
+    let CRObject = useRecoilValue(CRState);
+    let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
 
     let DefaultUrl = useRecoilValue(defaultUrl)
 
-    const formRef = useRef(null);  // Create a ref to store the form instance
 
-    const handleOk = () => {
-        if (formRef.current) {
-            formRef.current.handleSubmit();  // Trigger Formik's handleSubmit
+    useEffect(() => {
+        // console.log("QuestionDetails Data condition :", Object.keys(questionDetail).length)
+
+
+
+        if (questionDetail && Object.keys(questionDetail).length <= 0) {
+            fetchDataAllInOne();
+        }
+
+        if (!CRObjectNoUse?._id) {
+            FetchQuestions();
+        }
+
+
+    }, [])
+
+    const FetchQuestions = async () => {
+        try {
+            const res = await GetAxios(`${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`);
+            if (res) {
+                setCRObject(res);
+            }
+        } catch (error) {
+            setCRObject({
+                //Financial Assets 
+                QuestionsFlag: false,
+                clientFK: "",
+
+                bankAccountFinance: "No",
+                termDepositsFinance: "No",
+                australianShareMarket: "No",
+                managedFund: "No",
+                investmentBondFinance: "No",
+                managedFundsLOC: "No",
+                managedFundsMarginLoan: "No",
+
+                car: "No",
+                boat: "No",
+                caravan: "No",
+                personalAssets: "No",
+                personalLoans: "No",
+                creditCards: "No",
+
+                familyHome: "No",
+                familyHomeLoan: "No",
+                numberOfHolidayHome: 0,
+
+                investmentPropertyDetails: "No",
+                investmentPropertyLoan: "No",
+                incomeExpenses: "No",
+
+                superAnnuationIssues: "No",
+                accountBasedPensionIssues: "No",
+                annuitiesIssues: "No",
+
+                will: "No",
+                POA: "No",
+                professionalAdviser: "No",
+
+
+                incomeFromOwnBusiness: "No",
+                incomeFromSoleTrader: "No",
+                incomeFromPartnership: "No",
+                incomeFromCentrelink: "No",
+                incomeFromSuperPayment: "No",
+                incomeFromOverseasPension: "No",
+                incomeFromInheritance: "No",
+                incomeFromLumpsumExpense: "No",
+                incomeFromRegularLivingExpenses: "Yes", // this one should be yes always
+
+                BusinessAsCompanyStructure: "No",
+                BusinessAsTrusts: "No",
+
+                //keys which just controls rendering 
+                investmentPropertyTab: "No",
+                personalInsuranceTab: "No",
+
+                // companyStructureBusinessTab: "No",
+                // trustStructureBusinessTab: "No",
+
+                SMSFManagedFundsTab: "No",
+                businessAsInvestmentTab: "No",
+
+                SMSFBank: "Yes",
+                SMSFTermDeposits: "No",
+                SMSFAustralianShares: "No",
+                SMSFManagedFunds: "No",
+                SMSFInvestmentLoan: "No",
+                SMSFInvestmentProperties: "No",
+                numberOfSMSFInvestmentProperties: 0,
+                SMSFPensionPhase: "No",
+
+                //loop keys
+                // SMSFInvestmentPropertiesLoan
+                // SMSFInvestmentExpenses
+
+                SMSFDetails: "Yes", // this one should be yes always
+                SMSFAccumulationDetails: "Yes", // this one should be yes always
+
+                familyBank: "Yes", // this one should be yes always
+
+                familyTermDeposit: "No",
+                familyAustralianShare: "No",
+                familyMangedFunds: "No",
+                familyInvestmentHomeLoan: "No",
+                familyInvestmentProperties: "No",
+                numberOfFamilyInvestmentProperties: 0,
+                familyPensionPhase: "No",
+
+                //loop keys
+                // familyInvestmentPropertiesLoan
+                // familyInvestmentExpenses
+
+                familyDetails: "Yes", // this one should be yes always
+
+
+                life: "No",
+                TPD: "No",
+                trauma: "No",
+                incomeProtection: "No",
+
+            })
+            console.error("Error fetching questions:", error);
         }
     };
 
-    let [flagState, setFlagState] = useState(true);
+    const fetchDataAllInOne = async () => {
+        try {
+            const res = await GetAxios(`${DefaultUrl}/api/dataOfAllSection/${localStorage.getItem("UserID")}`);
+            console.log(JSON.stringify(res), ":res of get all inner Question Data")
+            if (res) {
+                setQuestionDetail(res);
+                // setFlagState(true)
+            }
+        } catch (error) {
+            console.error("Error fetching questions:", error);
+        }
+    };
+
+
+
+    const formRef = useRef(null);  // Create a ref to store the form instance
+
+
+    // let [flagState, setFlagState] = useState(false);
 
 
     let Nav = useNavigate();
 
     let CloseModal = () => {
 
-        setFlagState(false)
-        let Email = localStorage.getItem("Email");
+        // setFlagState(false)
+        let id = localStorage.getItem("UserID");
 
-        if (Email) {
-            Nav("/PersonalDetail#" + Email);
+        if (id) {
+            Nav("/PersonalDetail#" + id);
         }
         else {
             Nav("/PersonalDetail")
@@ -86,7 +225,7 @@ const ImportantQuestion = () => {
 
     ]
     const QuestionClick = (index, elem, values, setFieldValue) => {
-        // // console.log("image clicked in goals", index, elem.key, values);
+
         if (values[elem.key] == "No") {
             setFieldValue(elem.key, "Yes");
         }
@@ -98,8 +237,8 @@ const ImportantQuestion = () => {
     const handleResponse = (values) => {
         setCRObject(values);
         localStorage.setItem("QuestionsState", JSON.stringify(values));
-        props.setQuestionChange(false);
         localStorage.setItem("Question", "PersonalAssets");
+        Nav("/PersonalIncome");
     };
 
     const onSubmit = async (values) => {
@@ -107,23 +246,23 @@ const ImportantQuestion = () => {
         obj.clientFK = localStorage.getItem("UserID");
 
         try {
-            if (!flagState) {
+            if (!CRObject?._id) {
                 const PostRes = await PostAxios(`${DefaultUrl}/api/questions/Add`, obj);
                 if (PostRes) {
-                    if (props.flagState) {
-                        props.setFlagState(false);
-                    }
+                    // setFlagState(true);
                     handleResponse(PostRes);
                 }
             } else {
                 const PatchRes = await PatchAxios(`${DefaultUrl}/api/questions/Update/${localStorage.getItem("UserID")}`, obj);
                 if (PatchRes) {
-                    if (props.flagState) {
-                        props.setFlagState(false);
-                    }
+                    // setFlagState(true);
                     handleResponse(PatchRes);
                 }
             }
+
+
+            // type, placement, message, description
+            openNotificationSuccess("success", 'topRight', "Notification", "User Data Successfully Saved!")
         } catch (error) {
             console.error("Error submitting form:", error);
         }
@@ -146,31 +285,28 @@ const ImportantQuestion = () => {
                                 </div>
                             </div>
                         </div>
+                        <div className="row mt-2">
+                            <div className="col-md-12">
+                                <div className='d-flex justify-content-center'>
+
+                                    <button
+                                        onClick={CloseModal}
+                                        type='button'
+                                        className="float-center btn w-25  btn-outline  backBtn mx-3">
+                                        Back
+                                    </button>
+                                    <button
+                                        type='submit'
+                                        className="float-center btn w-25  bgColor modalBtn"
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </Form>
                 )}
             </Formik>
-
-            <div className="row mt-2">
-                <div className="col-md-12">
-                    <div className='d-flex justify-content-center'>
-
-                        <button
-                            onClick={CloseModal}
-                            className="float-center btn w-25  btn-outline  backBtn mx-3">
-                            Back
-                        </button>
-                        <button
-                            onClick={handleOk}
-                            className="float-center btn w-25  bgColor modalBtn"
-                        >
-                            Next
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-
-
         </div>
     )
 }

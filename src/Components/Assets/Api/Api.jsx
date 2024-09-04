@@ -90,6 +90,27 @@ const openNotificationSuccess = (type, placement, message, description) => {
     });
 };
 
+const toCommaAndDollar = (x) =>
+    "$" +
+    Math.ceil(x)
+        .toFixed(0)
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-export { DeleteAxios, GetAxios, PostAxios, PutAxios, PatchAxios, DateHandler, openNotificationSuccess };
+const toNumericValue = (formattedValue) => {
+    if (formattedValue && typeof formattedValue === "string") {
+        return formattedValue.replace(/[$,]/g, "");
+    }
+    return "0";
+};
+
+
+let toPersentage = (x) => Math.ceil(x)
+    .toFixed(2)
+    .toString()
+    + "%";
+
+
+
+export { DeleteAxios, GetAxios, PostAxios, PutAxios, PatchAxios, DateHandler, openNotificationSuccess, toCommaAndDollar, toNumericValue, toPersentage };
 

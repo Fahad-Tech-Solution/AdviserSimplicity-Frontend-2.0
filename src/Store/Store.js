@@ -144,10 +144,10 @@ export const CurrentPage = atom({
 
 export const defaultUrl = atom({
     key: "defaultUrl",
-    default: "http://localhost:7000",
+    // default: "http://localhost:7000",
     // default: "http://192.168.30.24:7000", // Usama bhai ventures-unit2-2g
     // default: "http://172.168.40.41:7000", // Usama bhai ventures-unit1-2g
-    // default: "http://172.168.40.137:7000",
+    default: "http://172.168.40.137:7000",
     // default: "http://192.168.211.242:7000",
     // default: "",
 });
@@ -164,7 +164,50 @@ export const allAPIs = atom({
 
 export const PersonalDetailsData = atom({
     key: "PersonalDetailsData",
-    default: {},
+    default: {
+        "client": {
+            "clientTitle": "Mr.",
+            "clientGivenName": "John",
+            "clientSurname": "Doe",
+            "clientPreferredName": "Johnny",
+            "clientGender": "Male",
+            "clientDOB": "1990-01-01",
+            "clientAge": 34,
+            "clientMaritalStatus": "Single",
+            "clientEmploymentStatus": "Employed",
+            "clientHealth": "Good",
+            "clientSmoker": "No",
+            "clientPlannedRetirementAge": 65,
+            "clientHomeAddress": "123 Main St",
+            "clientPostcode": 12345,
+            "clientHomePhone": "555-555-5555",
+            "clientWorkPhone": "555-555-5556",
+            "clientMobile": "555-555-5557",
+            "Email": "john.doe@example.com",
+            "clientPostalAddress": "123 Main St",
+            "clientPostalPostCode": 12345,
+            "clientMiddleName": "Michael",
+            "clientOccupationID": "OCC123",
+            "clientTaxResidentRadio": "Yes",
+            "clientPrivateHealthCoverRadio": "Yes",
+            "clientHELPSDebtRadio": "No",
+            "clientSameAsAbove": true,
+            "clientRetirement": "Comfortable",
+
+        },
+        "partner": {
+        },
+        "children": {
+            "numberOfChildren": 2,
+        },
+        "haveAnyChildren": "No",
+    },
+});
+
+
+export const AllUsers = atom({
+    key: "AllUsers",
+    default: [],
 });
 
 export const QuestionDetail = atom({

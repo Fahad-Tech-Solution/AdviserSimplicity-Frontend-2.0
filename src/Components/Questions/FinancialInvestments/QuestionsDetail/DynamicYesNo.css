@@ -2,6 +2,7 @@
     background-color: white;
     height: 35px;
     width: 100%;
+    min-width: 100px;
     position: relative; /* Changed from absolute to relative */
     overflow: hidden;
     border: 1px solid #36b446 !important;

@@ -84,45 +84,45 @@ const PersonalIncome = (props) => {
 
     let QuestionArray = [
         {
-            title: "Are you receiving any Overseas Pension?",
+            title: "Overseas Pensions",
             img: overseas,
             key: "incomeFromOverseasPension",
         },
         {
-            title: "Are you recieving any Business Income as a Sole Trader?",
+            title: "Sole Trader Income",
             key: "incomeFromSoleTrader",
             img: businessIncome,
         },
         {
-            title: "Are you receiving any Business Income from a Partnership?",
+            title: "Partnership Income",
             img: businessPartnership,
             key: "incomeFromPartnership",
         },
         {
-            title: "Are you receiving any Centerlink Payments (including FTBA & B or any Health Care Cards)?",
+            title: "Centrelink Payments/Benefits",
             img: Gears,
             key: "incomeFromCentrelink",
         },
         {
-            title: "Are you receiving any other Regular Lifetime/Defined Benefit Super payments?",
+            title: "Lifetime/Defined Benefit Super Pensions",
             img: money,
             key: "incomeFromSuperPayment",
         },
         {
-            title: "Are you recieving any Income from employement (including from your own company)?",
+            title: "Employment Income",
             key: "incomeFromOwnBusiness",
             img: Businessman,
         },
-        {
-            title: "Are you Expecting any Inheritance?",
-            img: inheritance,
-            key: "incomeFromInheritance",
-        },
-        {
-            title: "Do you have any one off Lumpsum Expenses?",
-            img: moneyBag,
-            key: "incomeFromLumpsumExpense",
-        },
+        // {
+        //     title: "Are you Expecting any Inheritance?",
+        //     img: inheritance,
+        //     key: "incomeFromInheritance",
+        // },
+        // {
+        //     title: "Do you have any one off Lumpsum Expenses?",
+        //     img: moneyBag,
+        //     key: "incomeFromLumpsumExpense",
+        // },
     ]
     const QuestionClick = (index, elem, values, setFieldValue) => {
         // console.log("image clicked in goals", index, elem.key, values);
@@ -147,391 +147,8 @@ const PersonalIncome = (props) => {
 
                         <div className="col-md-12 text-center">
 
-
                             <div className="row my-3 justify-content-center">
                                 <DynamicQuestionBlocks QuestionArray={QuestionArray} QuestionClick={QuestionClick} values={values} setFieldValue={setFieldValue} />
-                                {/*
-                                <div className="col-md-12">
-                                    <div className="mb-3 ">
-                                        <label htmlFor="incomeFromOwnBusiness" className="form-label">
-                                            Are you recieving any Income from employement (including from your own company)?
-                                        </label>
-                                        <div className="QuestionIcon">
-                                            <img className="img-fluid" src={Businessman} alt="" />
-                                        </div>
-                                        <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter ">
-                                            <div className="radiobutton">
-                                                <input
-                                                    type="radio"
-                                                    name="incomeFromOwnBusiness"
-                                                    id="incomeFromOwnBusiness"
-                                                    value="No"
-                                                    onChange={handleChange}
-                                                    checked={values.incomeFromOwnBusiness === "No"}
-                                                />
-                                                <label
-                                                    htmlFor="incomeFromOwnBusiness"
-                                                    className="label1"
-                                                >
-                                                    <span>No</span>
-                                                </label>
-                                                <input
-                                                    type="radio"
-                                                    name="incomeFromOwnBusiness"
-                                                    id="incomeFromOwnBusiness2"
-                                                    value="Yes"
-                                                    onChange={handleChange}
-                                                    checked={values.incomeFromOwnBusiness === "Yes"}
-                                                />
-                                                <label
-                                                    htmlFor="incomeFromOwnBusiness2"
-                                                    className="label2"
-                                                >
-                                                    <span>Yes</span>
-                                                </label>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                                */}
-                            </div>
-
-                            <div className="row my-3 d-none">
-                                <div className="col-md-12">
-                                    <div className="mb-3 ">
-                                        <label htmlFor="" className="form-label">
-                                            Are you recieving any Business Income as a Sole Trader?
-                                        </label>
-                                        <div className="QuestionIcon">
-                                            <img className="img-fluid" src={businessIncome} alt="" />
-                                        </div>
-                                        {/* switch button style */}
-                                        <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter ">
-                                            <div className="radiobutton">
-                                                <input
-                                                    type="radio"
-                                                    name="incomeFromSoleTrader"
-                                                    id="incomeFromSoleTrader"
-                                                    value="No"
-                                                    onChange={handleChange}
-                                                    checked={values.incomeFromSoleTrader === "No"}
-                                                />
-                                                <label
-                                                    htmlFor="incomeFromSoleTrader"
-                                                    className="label1"
-                                                >
-                                                    <span>No</span>
-                                                </label>
-                                                <input
-                                                    type="radio"
-                                                    name="incomeFromSoleTrader"
-                                                    id="incomeFromSoleTrader2"
-                                                    value="Yes"
-                                                    onChange={handleChange}
-                                                    checked={values.incomeFromSoleTrader === "Yes"}
-                                                />
-                                                <label
-                                                    htmlFor="incomeFromSoleTrader2"
-                                                    className="label2"
-                                                >
-                                                    <span>Yes</span>
-                                                </label>
-                                            </div>
-                                        </div>
-
-                                        {/* switch button style */}
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div className="row my-3 d-none">
-                                <div className="col-md-12">
-                                    <div className="mb-3 ">
-                                        <label htmlFor="" className="form-label">
-                                            Are you receiving any Business Income from a Partnership?
-                                        </label>
-                                        <div className="QuestionIcon">
-                                            <img className="img-fluid" src={businessPartnership} alt="" />
-                                        </div>
-                                        {/* switch button style */}
-                                        <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter ">
-                                            <div className="radiobutton">
-                                                <input
-                                                    type="radio"
-                                                    name="incomeFromPartnership"
-                                                    id="incomeFromPartnership"
-                                                    value="No"
-                                                    onChange={handleChange}
-                                                    checked={values.incomeFromPartnership === "No"}
-                                                />
-                                                <label
-                                                    htmlFor="incomeFromPartnership"
-                                                    className="label1"
-                                                >
-                                                    <span>No</span>
-                                                </label>
-                                                <input
-                                                    type="radio"
-                                                    name="incomeFromPartnership"
-                                                    id="incomeFromPartnership2"
-                                                    value="Yes"
-                                                    onChange={handleChange}
-                                                    checked={values.incomeFromPartnership === "Yes"}
-                                                />
-                                                <label
-                                                    htmlFor="incomeFromPartnership2"
-                                                    className="label2"
-                                                >
-                                                    <span>Yes</span>
-                                                </label>
-                                            </div>
-                                        </div>
-
-                                        {/* switch button style */}
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div className="row my-3 d-none">
-                                <div className="col-md-12">
-                                    <div className="mb-3 ">
-                                        <label htmlFor="" className="form-label">
-                                            Are you receiving any Centerlink Payments (including FTBA & B or any Health Care Cards)?
-                                        </label>
-                                        <div className="QuestionIcon">
-                                            <img className="img-fluid" src={Gears} alt="" />
-                                        </div>
-                                        {/* switch button style */}
-                                        <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter ">
-                                            <div className="radiobutton">
-                                                <input
-                                                    type="radio"
-                                                    name="incomeFromCentrelink"
-                                                    id="incomeFromCentrelink"
-                                                    value="No"
-                                                    onChange={handleChange}
-                                                    checked={values.incomeFromCentrelink === "No"}
-                                                />
-                                                <label
-                                                    htmlFor="incomeFromCentrelink"
-                                                    className="label1"
-                                                >
-                                                    <span>No</span>
-                                                </label>
-                                                <input
-                                                    type="radio"
-                                                    name="incomeFromCentrelink"
-                                                    id="incomeFromCentrelink2"
-                                                    value="Yes"
-                                                    onChange={handleChange}
-                                                    checked={values.incomeFromCentrelink === "Yes"}
-                                                />
-                                                <label
-                                                    htmlFor="incomeFromCentrelink2"
-                                                    className="label2"
-                                                >
-                                                    <span>Yes</span>
-                                                </label>
-                                            </div>
-                                        </div>
-
-                                        {/* switch button style */}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="row my-3 d-none">
-                                <div className="col-md-12">
-                                    <div className="mb-3 ">
-                                        <label htmlFor="" className="form-label">
-                                            Are you receiving any other Regular Lifetime/Defined Benefit Super payments?
-                                        </label>
-                                        <div className="QuestionIcon">
-                                            <img className="img-fluid" src={money} alt="" />
-                                        </div>
-                                        {/* switch button style */}
-                                        <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter ">
-                                            <div className="radiobutton">
-                                                <input
-                                                    type="radio"
-                                                    name="incomeFromSuperPayment"
-                                                    id="incomeFromSuperPayment"
-                                                    value="No"
-                                                    onChange={handleChange}
-                                                    checked={values.incomeFromSuperPayment === "No"}
-                                                />
-                                                <label
-                                                    htmlFor="incomeFromSuperPayment"
-                                                    className="label1"
-                                                >
-                                                    <span>No</span>
-                                                </label>
-                                                <input
-                                                    type="radio"
-                                                    name="incomeFromSuperPayment"
-                                                    id="incomeFromSuperPayment2"
-                                                    value="Yes"
-                                                    onChange={handleChange}
-                                                    checked={values.incomeFromSuperPayment === "Yes"}
-                                                />
-                                                <label
-                                                    htmlFor="incomeFromSuperPayment2"
-                                                    className="label2"
-                                                >
-                                                    <span>Yes</span>
-                                                </label>
-                                            </div>
-                                        </div>
-
-                                        {/* switch button style */}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="row my-3 d-none">
-                                <div className="col-md-12">
-                                    <div className="mb-3 ">
-                                        <label htmlFor="" className="form-label">
-                                            Are you receiving any Overseas Pension?
-                                        </label>
-                                        <div className="QuestionIcon">
-                                            <img className="img-fluid" src={overseas} alt="" />
-                                        </div>
-                                        {/* switch button style */}
-                                        <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter ">
-                                            <div className="radiobutton">
-                                                <input
-                                                    type="radio"
-                                                    name="incomeFromOverseasPension"
-                                                    id="incomeFromOverseasPension"
-                                                    value="No"
-                                                    onChange={handleChange}
-                                                    checked={values.incomeFromOverseasPension === "No"}
-                                                />
-                                                <label
-                                                    htmlFor="incomeFromOverseasPension"
-                                                    className="label1"
-                                                >
-                                                    <span>No</span>
-                                                </label>
-                                                <input
-                                                    type="radio"
-                                                    name="incomeFromOverseasPension"
-                                                    id="incomeFromOverseasPension2"
-                                                    value="Yes"
-                                                    onChange={handleChange}
-                                                    checked={values.incomeFromOverseasPension === "Yes"}
-                                                />
-                                                <label
-                                                    htmlFor="incomeFromOverseasPension2"
-                                                    className="label2"
-                                                >
-                                                    <span>Yes</span>
-                                                </label>
-                                            </div>
-                                        </div>
-
-                                        {/* switch button style */}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="row my-3 d-none">
-                                <div className="col-md-12">
-                                    <div className="mb-3 ">
-                                        <label htmlFor="" className="form-label">
-                                            Are you Expecting any Inheritance?
-                                        </label>
-                                        <div className="QuestionIcon">
-                                            <img className="img-fluid" src={inheritance} alt="" />
-                                        </div>
-                                        {/* switch button style */}
-                                        <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter ">
-                                            <div className="radiobutton">
-                                                <input
-                                                    type="radio"
-                                                    name="incomeFromInheritance"
-                                                    id="incomeFromInheritance"
-                                                    value="No"
-                                                    onChange={handleChange}
-                                                    checked={values.incomeFromInheritance === "No"}
-                                                />
-                                                <label
-                                                    htmlFor="incomeFromInheritance"
-                                                    className="label1"
-                                                >
-                                                    <span>No</span>
-                                                </label>
-                                                <input
-                                                    type="radio"
-                                                    name="incomeFromInheritance"
-                                                    id="incomeFromInheritance2"
-                                                    value="Yes"
-                                                    onChange={handleChange}
-                                                    checked={values.incomeFromInheritance === "Yes"}
-                                                />
-                                                <label
-                                                    htmlFor="incomeFromInheritance2"
-                                                    className="label2"
-                                                >
-                                                    <span>Yes</span>
-                                                </label>
-                                            </div>
-                                        </div>
-
-                                        {/* switch button style */}
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="row my-3 d-none">
-                                <div className="col-md-12">
-                                    <div className="mb-3 ">
-                                        <label htmlFor="" className="form-label">
-                                            Do you have any one off Lumpsum Expenses?
-                                        </label>
-                                        <div className="QuestionIcon">
-                                            <img className="img-fluid" src={moneyBag} alt="" />
-                                        </div>
-                                        {/* switch button style */}
-                                        <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter ">
-                                            <div className="radiobutton">
-                                                <input
-                                                    type="radio"
-                                                    name="incomeFromLumpsumExpense"
-                                                    id="incomeFromLumpsumExpense"
-                                                    value="No"
-                                                    onChange={handleChange}
-                                                    checked={values.incomeFromLumpsumExpense === "No"}
-                                                />
-                                                <label
-                                                    htmlFor="incomeFromLumpsumExpense"
-                                                    className="label1"
-                                                >
-                                                    <span>No</span>
-                                                </label>
-                                                <input
-                                                    type="radio"
-                                                    name="incomeFromLumpsumExpense"
-                                                    id="incomeFromLumpsumExpense2"
-                                                    value="Yes"
-                                                    onChange={handleChange}
-                                                    checked={values.incomeFromLumpsumExpense === "Yes"}
-                                                />
-                                                <label
-                                                    htmlFor="incomeFromLumpsumExpense2"
-                                                    className="label2"
-                                                >
-                                                    <span>Yes</span>
-                                                </label>
-                                            </div>
-                                        </div>
-
-                                        {/* switch button style */}
-                                    </div>
-                                </div>
                             </div>
 
                             <div className="row mt-2 d-none">

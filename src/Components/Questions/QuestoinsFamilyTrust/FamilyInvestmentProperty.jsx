@@ -45,7 +45,7 @@ const FamilyInvestmentProperty = (props) => {
         arrayState.push(
             FamilyPropertySet.map((elem, index) => {
                 return (
-                    <div className={`col-md-${arrayCount % 2 == 0 ? '6' : '4'} mb-4`} key={index}>
+                    <div className={`col-md-3 mb-4`} key={index}>
                         <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
                             <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key][i]) }}>{elem.title} {i + 1}</h5>
                             <div className="QuestionIcon w-25">

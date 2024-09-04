@@ -9,14 +9,17 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { defaultUrl, QuestionDetail, StepsStatus } from '../../../Store/Store';
+import { AllUsers, defaultUrl, QuestionDetail, StepsStatus } from '../../../Store/Store';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { DeleteAxios, PatchAxios } from '../Api/Api';
 
 const CustomDropDown = (props) => {
 
   let DefaultUrl = useRecoilValue(defaultUrl)
   let [stepsStatus, setStepsStatus] = useRecoilState(StepsStatus); // eslint-disable-line no-unused-vars
   let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
+  const [personalDetail, setPersonalDetail] = useRecoilState(AllUsers);
+
 
   let View = props.View || false;
 
@@ -66,39 +69,33 @@ const CustomDropDown = (props) => {
     localStorage.setItem('Email', props.Data.Email)
     setQuestionDetail({})
     setStepsStatus(false);
-    Navigate('/PersonalDetail#' + props.Data.Email);
+    Navigate('/PersonalDetail#' + props.Data._id);
   };
 
 
   async function DeleteFun() {
+    try {
 
-    if (props.Data.clientMaritalStatus !== "Single" &&
-      props.Data.clientMaritalStatus !== "Widowed") {
-
-      axios.delete(DefaultUrl + "/api/Partner/Delete-Partner/" + props.Data.Email).then((res) => {
-        console.log("Partner Deleted");
-        if (res.data) {
-          // /api/Partner/Delete-Partner/guki@mailinator.com
-          axios.delete(DefaultUrl + "/api/Client/Delete-Client/" + props.Data._id).then((res) => {
-            if (res.data) {
-              console.log("All Client is Delete !");
-              window.location.reload();
-            }
-          })
-        }
-      })
+      let res = await PatchAxios(DefaultUrl + "/api/personalDetails/softDelete/" + props.Data._id);
+      if (res) {
+        console.log(res)
+        removeItemById(res._id)
+      }
     }
-    else {
-      axios.delete(DefaultUrl + "/api/Client/Delete-Client/" + props.Data._id).then((res) => {
-        if (res.data) {
-          console.log("All Client is Delete !");
-          window.location.reload();
-        }
-      })
+    catch (error) {
+      console.error("we Found an error in SoftDelete:", error);
     }
 
   }
 
+
+  const removeItemById = (idToRemove) => {
+
+    setPersonalDetail((prevData) =>
+      prevData.filter((item) => item._id !== idToRemove)
+    );
+
+  };
 
   return (
     <div>

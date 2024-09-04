@@ -1,33 +1,7 @@
-"clientTitle": "Mr.",
-"clientGivenName": "John",
-"clientSurname": "Doe",
-"clientPreferredName": "Johnny",
-"clientGender": "Male",
-"clientDOB": "1990-01-01",
-"clientAge": 34,
-"clientMaritalStatus": "Single",
-"clientEmploymentStatus": "Employed",
-"clientHealth": "Good",
-"clientSmoker": "No",
-"clientPlannedRetirementAge": 65,
-"clientHomeAddress": "123 Main St",
-"clientPostcode": 12345,
-"clientHomePhone": "555-555-5555",
-"clientWorkPhone": "555-555-5556",
-"clientMobile": "555-555-5557",
-"Email": "john.doe@example.com",
-"clientPostalAddress": "123 Main St",
-"clientPostalPostCode": 12345,
-"clientMiddleName": "Michael",
-"clientOccupationID": "OCC123",
-"clientTaxResidentRadio": "Yes",
-"clientPrivateHealthCoverRadio": "Yes",
-"clientHELPSDebtRadio": "No",
-"clientSameAsAbove": true,
-\
-Son
-Daughter 
-Step Son
-Step Daughter
-Other  
-
+Remuneration Type
+Amount	
+SGC
+Gross Salary
+SGC	
+Salary Sarifice Contributions	
+After Tax Contributions
