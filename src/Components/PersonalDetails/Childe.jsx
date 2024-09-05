@@ -104,9 +104,9 @@ const Childe = (props) => {
         }
     }
 
-    let validationSchema = Yup.object({
+    // let validationSchema = Yup.object({
 
-    });
+    // });
 
 
 
@@ -179,128 +179,126 @@ const Childe = (props) => {
 
                     <div className='row justify-content-center'>
                         <div className='col-md-10'>
-                            {ParentValues.haveAnyChildren === "Yes" &&
-                                <Formik
-                                    initialValues={initialValues}
-                                    onSubmit={onSubmit}
-                                    validationSchema={validationSchema}
-                                    innerRef={formRef}
-                                    enableReinitialize
-                                >
-                                    {({ values, setFieldValue, handleChange, errors, handleBlur }) => {
+                            <Formik
+                                initialValues={initialValues}
+                                onSubmit={onSubmit}
+                                // validationSchema={validationSchema}
+                                innerRef={formRef}
+                                enableReinitialize
+                            >
+                                {({ values, setFieldValue, handleChange, errors, handleBlur }) => {
 
 
-                                        return (
-                                            <Form>
-                                                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
-                                                    <p className='text-end mt-3'>
-                                                        How many children do you have:
-                                                    </p>
+                                    return (
+                                        <Form className={`${ParentValues.haveAnyChildren === "Yes" ? "d-block" : "d-none"}`}>
+                                            <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                                <p className='text-end mt-3'>
+                                                    How many children do you have:
+                                                </p>
 
-                                                    <div className='modalNumberWidth'>
-                                                        <Field
-                                                            type="number"
-                                                            id="numberOfChildren"
-                                                            name="numberOfChildren"
-                                                            className="form-control inputDesignDoubleInput"
-                                                            onChange={(e) => handleInput(e, setFieldValue)}
-                                                        />
-                                                    </div>
+                                                <div className='modalNumberWidth'>
+                                                    <Field
+                                                        type="number"
+                                                        id="numberOfChildren"
+                                                        name="numberOfChildren"
+                                                        className="form-control inputDesignDoubleInput"
+                                                        onChange={(e) => handleInput(e, setFieldValue)}
+                                                    />
                                                 </div>
+                                            </div>
 
 
-                                                {values.numberOfChildren && (
-                                                    <div className='mt-4'>
-                                                        <Table striped bordered responsive hover>
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>No#</th>
-                                                                    <th>Name</th>
-                                                                    <th>Dob</th>
-                                                                    <th>Gender</th>
-                                                                    <th>Add in relationship</th>
-                                                                    <th>Add in Is Child Depenant</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                {Array.from({ length: values.numberOfChildren }).map((elem, i) => {
-                                                                    return (<tr key={i}>
-                                                                        <td className='text-center pt-3'>{1 + i}</td>
-                                                                        <td>
-                                                                            <Field
-                                                                                placeholder="Enter Child Name"
-                                                                                id={`Name${i}`}
-                                                                                name={`Name${i}`}
-                                                                                type={"text"}
-                                                                                className="form-control inputDesignDoubleInput"
+                                            {values.numberOfChildren && (
+                                                <div className='mt-4'>
+                                                    <Table striped bordered responsive hover>
+                                                        <thead>
+                                                            <tr>
+                                                                <th>No#</th>
+                                                                <th>Name</th>
+                                                                <th>Dob</th>
+                                                                <th>Gender</th>
+                                                                <th>Add in relationship</th>
+                                                                <th>Add in Is Child Depenant</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {Array.from({ length: values.numberOfChildren }).map((elem, i) => {
+                                                                return (<tr key={i}>
+                                                                    <td className='text-center pt-3'>{1 + i}</td>
+                                                                    <td>
+                                                                        <Field
+                                                                            placeholder="Enter Child Name"
+                                                                            id={`Name${i}`}
+                                                                            name={`Name${i}`}
+                                                                            type={"text"}
+                                                                            className="form-control inputDesignDoubleInput"
+                                                                        />
+                                                                    </td>
+                                                                    <td>
+                                                                        <div>
+                                                                            <DatePicker
+                                                                                className="form-control inputDesignDoubleInput shadow DateInputPadding"
+                                                                                showIcon
+                                                                                id={`DOB${i}`}
+                                                                                name={`DOB${i}`}
+                                                                                selected={values[`DOB${i}`]}
+                                                                                onChange={(date) => setFieldValue(`DOB${i}`, date)}
+                                                                                dateFormat="dd/MM/yyyy"
+                                                                                // placeholderText="dd/mm/yyyy"
+                                                                                maxDate={new Date()}
+                                                                                showMonthDropdown
+                                                                                showYearDropdown
+                                                                                dropdownMode="select"
+                                                                                onBlur={handleBlur}
+                                                                                wrapperClassName="w-100"
                                                                             />
-                                                                        </td>
-                                                                        <td>
-                                                                            <div>
-                                                                                <DatePicker
-                                                                                    className="form-control inputDesignDoubleInput shadow DateInputPadding"
-                                                                                    showIcon
-                                                                                    id={`DOB${i}`}
-                                                                                    name={`DOB${i}`}
-                                                                                    selected={values[`DOB${i}`]}
-                                                                                    onChange={(date) => setFieldValue(`DOB${i}`, date)}
-                                                                                    dateFormat="dd/MM/yyyy"
-                                                                                    // placeholderText="dd/mm/yyyy"
-                                                                                    maxDate={new Date()}
-                                                                                    showMonthDropdown
-                                                                                    showYearDropdown
-                                                                                    dropdownMode="select"
-                                                                                    onBlur={handleBlur}
-                                                                                    wrapperClassName="w-100"
-                                                                                />
-                                                                            </div>
-                                                                        </td>
-                                                                        <td>
-                                                                            <Field
-                                                                                as="select"
-                                                                                id={`Gender${i}`}
-                                                                                name={`Gender${i}`}
-                                                                                className="form-select inputDesignDoubleInput"
-                                                                            >
-                                                                                <option value={""}>Select</option>
-                                                                                <option value={"Male"}>Male</option>
-                                                                                <option value={"Female"}>Female</option>
-                                                                                <option value={"Other"}>Other</option>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <Field
+                                                                            as="select"
+                                                                            id={`Gender${i}`}
+                                                                            name={`Gender${i}`}
+                                                                            className="form-select inputDesignDoubleInput"
+                                                                        >
+                                                                            <option value={""}>Select</option>
+                                                                            <option value={"Male"}>Male</option>
+                                                                            <option value={"Female"}>Female</option>
+                                                                            <option value={"Other"}>Other</option>
 
-                                                                            </Field>
-                                                                        </td>
-                                                                        <td>
-                                                                            <Field
-                                                                                as="select"
-                                                                                id={`relationship${i}`}
-                                                                                name={`relationship${i}`}
-                                                                                className="form-select inputDesignDoubleInput"
-                                                                            >
-                                                                                <option value={""}>Select</option>
-                                                                                <option value={"Son"}>Son</option>
-                                                                                <option value={"Daughter"}>Daughter</option>
-                                                                                <option value={"Step Son"}>Step Son</option>
-                                                                                <option value={"Step Daughter"}>Step Daughter</option>
-                                                                                <option value={"Other"}>Other</option>
+                                                                        </Field>
+                                                                    </td>
+                                                                    <td>
+                                                                        <Field
+                                                                            as="select"
+                                                                            id={`relationship${i}`}
+                                                                            name={`relationship${i}`}
+                                                                            className="form-select inputDesignDoubleInput"
+                                                                        >
+                                                                            <option value={""}>Select</option>
+                                                                            <option value={"Son"}>Son</option>
+                                                                            <option value={"Daughter"}>Daughter</option>
+                                                                            <option value={"Step Son"}>Step Son</option>
+                                                                            <option value={"Step Daughter"}>Step Daughter</option>
+                                                                            <option value={"Other"}>Other</option>
 
-                                                                            </Field>
-                                                                        </td>
-                                                                        <td>
-                                                                            <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
-                                                                                <DynamicYesNo name={`depenantChild${i}`} values={values} handleChange={handleChange} />
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>)
-                                                                })}
-                                                            </tbody>
-                                                        </Table>
-                                                    </div>
-                                                )}
+                                                                        </Field>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
+                                                                            <DynamicYesNo name={`depenantChild${i}`} values={values} handleChange={handleChange} />
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>)
+                                                            })}
+                                                        </tbody>
+                                                    </Table>
+                                                </div>
+                                            )}
 
-                                            </Form>)
-                                    }}
-                                </Formik>
-                            }
+                                        </Form>)
+                                }}
+                            </Formik>
                         </div>
                     </div>
                 </div>

@@ -13,7 +13,7 @@ const PersonalDetailsClientPartner = (props) => {
     let { client, partner } = values;
 
     return (
-        <div className='row mt-4 px-5'>
+        <div className='row mt-4 px-0 px-md-5'>
 
             <div className='col-md-8'>
                 <div className='row'>
@@ -672,12 +672,12 @@ const PersonalDetailsClientPartner = (props) => {
                     </div>
 
                     {/*Labels Private Same As */}
-                    <div className='col-6 mb-4'>
+                    <div className='col-6 d-none d-md-block mb-4'>
                         <label className="form-label mt-2"></label>
                     </div>
 
                     {/*Client Input Same As*/}
-                    <div className='col-6 mb-4'>
+                    <div className='col-md-6 mb-4'>
                         <div className="centerDiv">
                             <Field
                                 className="form-check-input newCheck"
@@ -1532,12 +1532,12 @@ const PersonalDetailsClientPartner = (props) => {
                         </div>
 
                         {/*Mobile Labels Same As */}
-                        <div className='col-6 col-md-12  mb-4 d-md-none d-block'>
+                        <div className='col-6 col-md-12  mb-4 d-none'>
                             <label className="form-label mt-2"></label>
                         </div>
 
                         {/*Partner Input  Same As */}
-                        <div className='col-6 col-md-12  mb-4 '>
+                        <div className='col-md-12  mb-4'>
                             <div className="centerDiv">
                                 <Field
                                     className="form-check-input"

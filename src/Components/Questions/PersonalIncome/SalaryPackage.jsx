@@ -7,163 +7,24 @@ import { toCommaAndDollar, toPersentage } from '../../Assets/Api/Api';
 
 const SalaryPackage = (props) => {
 
-    let { title, key, parentValues } = props.modalObject;
+    let { title, key, parentValues, parentKey } = props.modalObject;
 
     let initialValues = {}
 
-
-    const options = [
-        "Adelaide Bank",
-        "Alliance Bank",
-        "AMP",
-        "ANZ",
-        "Arab Bank Australia",
-        "Australian Military Bank (ADCU)",
-        "Australian Mutual Bank",
-        "Australian Unity",
-        "Auswide Bank",
-        "AWA Alliance Bank",
-        "Bank Australia (bankmecu)",
-        "Bank First",
-        "Bank of Melbourne",
-        "Bank of Queensland (BOQ)",
-        "Bank of Sydney",
-        "BankSA",
-        "BankVic",
-        "Bankwest",
-        "BCU",
-        "BDCU Alliance Bank",
-        "Bendigo Bank",
-        "Beyond Bank",
-        "Border Bank",
-        "Circle Alliance Bank",
-        "Citi",
-        "Commonwealth Bank",
-        "Community First Bank",
-        "Credit Union SA",
-        "Defence Bank",
-        "Delphi Bank",
-        "Easy Street",
-        "First Choice Credit Union",
-        "First Option Bank",
-        "firstmac",
-        "G&C Mutual",
-        "Gateway Bank Ltd",
-        "Geelong Bank",
-        "Great Southern Bank",
-        "Greater Bank",
-        "Hay",
-        "Heartland Bank",
-        "Heritage Bank",
-        "Horizon Bank",
-        "HSBC Australia",
-        "Hume Bank",
-        "Illawarra Credit Union",
-        "IMB",
-        "ING",
-        "Judo Bank",
-        "Macquarie Bank",
-        "ME",
-        "MOVE Bank",
-        "MyState Bank",
-        "NAB",
-        "Newcastle Permanent",
-        "P&N Bank",
-        "People’s Choice CU",
-        "Policebank",
-        "Prospa",
-        "Qudos Bank",
-        "Rabobank",
-        "RACQ",
-        "RAMS",
-        "Regional Australia Bank",
-        "Rural Bank",
-        "Service One Alliance Bank",
-        "St.George",
-        "Suncorp Bank",
-        "Teachers Mutual Bank",
-        "Ubank",
-        "UniBank",
-        "Up Bank",
-        "Virgin Money",
-        "Westpac",
-        "Zeller"
-    ];
-
-    const [dynamicFields, setDynamicFields] = useState([]);
-
-    const generateFields = (iteration) => {
-        const upTill = parseFloat(iteration);
-        const rows = [];
-
-        for (let i = 0; i < upTill; i++) {
-            rows.push(
-                <tr key={i}>
-                    <td>{1 + i}</td>
-                    <td>
-                        <Field
-                            as="select"
-                            id={`investmentOption`}
-                            name={`investmentOption`}
-                            className="form-select inputDesign"
-                        >
-                            <option value={""}>Please Select</option>
-                            {options.map((elem, index) => {
-                                return (<option key={index} value={elem}>{elem}</option>)
-                            })}
-                        </Field>
-                    </td>
-                    <td>
-                        <Field
-                            type="text"
-                            placeholder="Investment Code"
-                            id={`investmentCode`}
-                            name={`investmentCode`}
-                            className="form-control inputDesign"
-                            disabled
-                        />
-                    </td>
-                    <td>
-                        <Field
-                            type="number"
-                            placeholder="Investment Value"
-                            id={`investmentValue`}
-                            name={`investmentValue`}
-                            className="form-control inputDesign"
-                        />
-                    </td>
-                </tr>
-            );
-        }
-
-        setDynamicFields(rows);
-    };
-
     const fillInitialValues = (setFieldValue) => {
-
-        // if (props.modalObject.key.length) {
-        //     generateFields(props.modalObject.key.length)
-        // }
-
-        // // setTimeout(() => {
-
-        // if (props.modalObject.key) {
-        //     props.modalObject.key.forEach((data, i) => {
-        //         if (data) {
-        //             console.log(data.investmentOption)
-        //             setFieldValue(`investmentOption`, data.investmentOption || '');
-        //             setFieldValue(`investmentCode`, data.investmentCode || '');
-        //             setFieldValue(`investmentValue`, data.investmentValue || '');
-        //         }
-        //     });
-        // }
-        // }, 500);
-    };
-
-    let handleInput = (e, setFieldValue) => {
-        const value = e.target.value > 10 ? 10 : e.target.value;
-        setFieldValue(e.target.id, value);
-        generateFields(value);
+        // if (parentValues._id && parentValues?.key) {
+        console.log(JSON.stringify(parentValues));
+        if (parentValues?.[`${parentKey}`]?.[`${key}`] && Object.keys(parentValues?.[`${parentKey}`]?.[`${key}`]).length > 0) {
+            let Data = parentValues[`${parentKey}`][`${key}`];
+            console.log("incondition", JSON.stringify(Data));
+            setFieldValue("remunerationType", Data.remunerationType)
+            setFieldValue("Amount", Data.Amount)
+            setFieldValue("SGPercentage", Data.SGPercentage)
+            setFieldValue("GrossSalary", Data.GrossSalary)
+            setFieldValue("SGC", Data.SGC)
+            setFieldValue("salarySarificeContributions", Data.salarySarificeContributions)
+            setFieldValue("afterTaxContributions", Data.afterTaxContributions)
+        }
     };
 
     let DefaultUrl = useRecoilValue(defaultUrl)
@@ -172,36 +33,67 @@ const SalaryPackage = (props) => {
 
         console.log(values)
 
-        const newEntries = [];
-
-        let loopLength = parseFloat(values.NumberOfMap)
-
-        // Iterate through each map entry and create a new object
-        for (let i = 0; i < loopLength; i++) {
-            // alert("loop chala")
-            const newEntry = {
-                investmentOption: values[`investmentOption`] || "",
-                investmentCode: values[`investmentCode`] || "",
-                investmentValue: values[`investmentValue`] || "",
-            };
-            newEntries.push(newEntry);
+        let Obj = {
+            remunerationType: values.remunerationType,
+            Amount: values.Amount,
+            SGPercentage: values.SGPercentage,
+            GrossSalary: values.GrossSalary,
+            SGC: values.SGC,
+            salarySarificeContributions: values.salarySarificeContributions,
+            afterTaxContributions: values.afterTaxContributions,
         }
 
-        // Log the new entries to verify
-        console.log(newEntries);
-
-        let total = newEntries.reduce((total, entry) => total + entry.investmentValue, 0);
-
-
-        props.setFieldValue(`${props.modalObject.key}${props.modalObject.index}`, newEntries)
-        props.setFieldValue(`${props.modalObject.key3}${props.modalObject.index}`, total)
-        props.setFieldValue(`${props.modalObject.mainKey}${props.modalObject.index}`, total - 475721)
+        props.setFieldValue(`${parentKey}.${key}`, Obj);
 
         // Reset the flag state if necessary
         if (props.flagState) {
             props.setFlagState(false);
         }
     };
+
+    let FormulaSetting = (currentInput, values, setFieldValue) => {
+
+        let remunerationType = values.remunerationType;
+        let Amount = parseFloat(values.Amount.replace(/[^0-9.-]+/g, "")) || 0;
+        let SGPercentage = parseFloat(values.SGPercentage.replace(/[^0-9.-]+/g, "")) || 0;
+        let GrossSalary = values.GrossSalary;
+        let SGC = values.SGC;
+
+        switch (currentInput.name) {
+            case "remunerationType":
+                remunerationType = currentInput.value;
+                break;
+            case "Amount":
+                Amount = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, ""));
+                break;
+            default:
+                if (currentInput.value.replace(/[^0-9.-]+/g, "") > 100) {
+                    SGPercentage = 100;
+                }
+                else {
+                    SGPercentage = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, ""));
+                }
+                break;
+        }
+
+        if (remunerationType === "Gross Salary") {
+            GrossSalary = Amount;
+            SGC = (Amount * SGPercentage).toFixed(2);
+        }
+        else {
+            GrossSalary = (Amount / SGPercentage).toFixed(2);
+            SGC = (Amount - GrossSalary).toFixed(2);
+        }
+
+        console.log("FormulaSetting:", remunerationType, Amount, SGPercentage, GrossSalary, SGC);
+
+        setFieldValue("GrossSalary", GrossSalary);
+        setFieldValue("SGC", SGC);
+
+
+    }
+
+
 
 
     return (
@@ -242,6 +134,10 @@ const SalaryPackage = (props) => {
                                                             id={`remunerationType`}
                                                             name={`remunerationType`}
                                                             className="form-select inputDesign"
+                                                            onChange={(e) => {
+                                                                handleChange(e);
+                                                                FormulaSetting(e.target, values, setFieldValue);
+                                                            }}
                                                         >
                                                             <option value={""}>Select</option>
                                                             <option value={"Gross Salary"}>Gross Salary</option>
@@ -259,19 +155,28 @@ const SalaryPackage = (props) => {
                                                             onChange={(e) => {
                                                                 setFieldValue(e.target.name,
                                                                     toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                FormulaSetting(e.target, values, setFieldValue);
                                                             }}
                                                         />
                                                     </td>
                                                     <td style={{ minWidth: "100px" }}>
                                                         <Field
-                                                            type="number"
+                                                            type="text"
                                                             placeholder="Enter SG value"
                                                             id={`SGPercentage`}
                                                             name={`SGPercentage`}
                                                             className="form-control inputDesign"
                                                             onChange={(e) => {
-                                                                setFieldValue(e.target.name,
-                                                                    toPersentage(e.target.value));
+
+                                                                if (e.target.value.replace(/[^0-9.-]+/g, "") > 100) {
+                                                                    setFieldValue(e.target.name,
+                                                                        toPersentage(100));
+                                                                }
+                                                                else {
+                                                                    setFieldValue(e.target.name,
+                                                                        toPersentage(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                }
+                                                                FormulaSetting(e.target, values, setFieldValue);
                                                             }}
                                                         />
                                                     </td>
@@ -292,7 +197,7 @@ const SalaryPackage = (props) => {
                                                             type="text"
                                                             placeholder="SGC"
                                                             id={`SGC`}
-                                                            name={`investmentCode`}
+                                                            name={`SGC`}
                                                             className="form-control inputDesign"
                                                             disabled
                                                         />
@@ -304,6 +209,10 @@ const SalaryPackage = (props) => {
                                                             id={`salarySarificeContributions`}
                                                             name={`salarySarificeContributions`}
                                                             className="form-control inputDesign"
+                                                            onChange={(e) => {
+                                                                setFieldValue(e.target.name,
+                                                                    toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                            }}
                                                         />
                                                     </td>
                                                     <td>
@@ -313,6 +222,10 @@ const SalaryPackage = (props) => {
                                                             id={`afterTaxContributions`}
                                                             name={`afterTaxContributions`}
                                                             className="form-control inputDesign"
+                                                            onChange={(e) => {
+                                                                setFieldValue(e.target.name,
+                                                                    toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                            }}
                                                         />
                                                     </td>
                                                 </tr>

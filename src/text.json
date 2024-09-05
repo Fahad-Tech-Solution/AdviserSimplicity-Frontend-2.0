@@ -1,7 +1,91 @@
-Remuneration Type
-Amount	
-SGC
-Gross Salary
-SGC	
-Salary Sarifice Contributions	
-After Tax Contributions
+{
+  "clientFK": "66d6fb4d4bc07523cfc0aa42",
+  "client": {
+    "occupation": "Software Engineer",
+    "employmentStatus": "Full-time",
+    "nameOfCompany": "Tech Corp",
+    "startDate": "2023-01-15T00:00:00Z",
+    "hoursWorked": 40,
+    "choiceOfFund": "Super Fund A",
+    "SalaryPackageModal": {
+      "remunerationType": "Base Salary",
+      "amount": 80000,
+      "SG": 9.5,
+      "grossSalary": "80000",
+      "SGC": 7500,
+      "salarySacrificeContributions": 5000,
+      "afterTaxContributions": 2000
+    },
+    "salaryPackagingRadio": "Yes",
+    "SalaryPackagingModal": {
+      "employerFBTStatus": "FBT Exempt",
+      "creditCardMortgageRepayments": 1500,
+      "costBaseOfCar": 30000,
+      "FBTPaidByEmployer": "No",
+      "runningCostsOfCar": 4000
+    },
+    "LeaveEntitlementsRadio": "Yes",
+    "LeaveEntitlementsModal": {
+      "annualLeave": "Yes",
+      "annualLeaveAmount": 20,
+      "annualLeaveTime": "Days",
+      "sickLeave": "Yes",
+      "sickLeaveAmount": 10,
+      "sickLeaveTime": "Days",
+      "longServiceLeave": "No",
+      "longServiceLeaveAmount": 0,
+      "longServiceLeaveTime": "Days"
+    }
+  },
+  "partner": {
+    "occupation": "Software Engineer",
+    "employmentStatus": "Full-time",
+    "nameOfCompany": "Tech Corp",
+    "startDate": "2023-01-15T00:00:00Z",
+    "hoursWorked": 40,
+    "choiceOfFund": "Super Fund A",
+    "SalaryPackageModal": {
+      "remunerationType": "Base Salary",
+      "amount": 80000,
+      "SG": 9.5,
+      "grossSalary": "80000",
+      "SGC": 7500,
+      "salarySacrificeContributions": 5000,
+      "afterTaxContributions": 2000
+    },
+    "salaryPackagingRadio": "Yes",
+    "SalaryPackagingModal": {
+      "employerFBTStatus": "FBT Exempt",
+      "creditCardMortgageRepayments": 1500,
+      "costBaseOfCar": 30000,
+      "FBTPaidByEmployer": "No",
+      "runningCostsOfCar": 4000
+    },
+    "LeaveEntitlementsRadio": "Yes",
+    "LeaveEntitlementsModal": {
+
+      "annualLeave": "Yes",
+      "annualLeaveAmount": 20,
+      "annualLeaveTime": "Days",
+
+      "sickLeave": "Yes",
+      "sickLeaveAmount": 10,
+      "sickLeaveTime": "Days",
+
+      "longServiceLeave": "No",
+      "longServiceLeaveAmount": 0,
+      "longServiceLeaveTime": "Days"
+    }
+  },
+  "clientTotal": 80000,
+  "partnerTotal": 60000
+}
+
+
+
+Leave Type
+Amount
+Time
+Annual Leave
+Sick Leave
+Long Service Leave

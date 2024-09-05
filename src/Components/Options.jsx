@@ -221,7 +221,7 @@ function Options(props) {
 
   else {
     return (
-      <div className="container-fluid ps-5" >
+      <div className="container-fluid ps-md-5 ps-0" >
 
         <div className="row m-0 px-0 pt-0 ">
           <div className="col-md-12">
@@ -233,8 +233,6 @@ function Options(props) {
                       theme={{
                         components: {
                           Steps: {
-                            // iconSize: 40,
-                            // border: "2px"
                             customIconFontSize: 30,
                           },
                         },

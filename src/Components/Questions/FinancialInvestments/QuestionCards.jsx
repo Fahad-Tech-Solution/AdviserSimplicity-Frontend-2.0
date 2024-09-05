@@ -562,7 +562,8 @@ const QuestionCards = (props) => {
     const CardForms = ["car", "boat", "caravan", "personalAssets"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
     const JointHidden = ["superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues", "will", "POA", "professionalAdviser", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "incomeFromInheritance", "incomeFromLumpsumExpense", "incomeFromRegularLivingExpenses", "life", "TPD", "trauma", "incomeProtection"]; // Add other titles that should use "xl" here
     const singleClient = ["incomeFromRegularLivingExpenses"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
-    const combinedArray = ["incomeFromOwnBusiness"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
+  
+    const combinedArray = ["incomeFromOwnBusiness", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
     const reuseModal = ["bankAccountFinance", "termDepositsFinance", "australianShareMarket", "managedFund", "SMSFTermDeposits", "SMSFAustralianShares", "SMSFManagedFunds", "SMSFInvestmentLoan", "managedFundsLOC", "familyBank", "familyTermDeposit", "familyAustralianShare", "familyMangedFunds", "familyInvestmentHomeLoan", "SMSFBank",]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 

@@ -97,6 +97,7 @@ const toCommaAndDollar = (x) =>
         .toString()
         .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
+
 const toNumericValue = (formattedValue) => {
     if (formattedValue && typeof formattedValue === "string") {
         return formattedValue.replace(/[$,]/g, "");
@@ -106,11 +107,21 @@ const toNumericValue = (formattedValue) => {
 
 
 let toPersentage = (x) => Math.ceil(x)
-    .toFixed(2)
+    .toFixed(0)
     .toString()
     + "%";
 
+let RenderName = (Input) => {
+    if (Input === "client") {
+        return (localStorage.getItem("UserName"))
+    }
+    else if (Input === "partner") {
+        return (localStorage.getItem("PartnerName"))
+    }
+    else if (Input === "joint") {
+        return (localStorage.getItem("UserName") + " + " + localStorage.getItem("PartnerName"))
+    }
+}
 
-
-export { DeleteAxios, GetAxios, PostAxios, PutAxios, PatchAxios, DateHandler, openNotificationSuccess, toCommaAndDollar, toNumericValue, toPersentage };
+export { DeleteAxios, GetAxios, PostAxios, PutAxios, PatchAxios, DateHandler, openNotificationSuccess, toCommaAndDollar, toNumericValue, toPersentage, RenderName };
 
