@@ -3,29 +3,15 @@ import React, { useEffect, useState } from "react";
 import { Button, InputGroup, Row, Table } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { PatchAxios, PostAxios } from "../../Assets/Api/Api";
-import CreatableMultiSelectField from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import { PatchAxios, PostAxios, RenderName } from "../../Assets/Api/Api";
+import { CreatableMultiSelectField } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import DynamicTableRow from "../../Assets/Dynamic/DynamicTableRow";
 
 const CenterLinkPayments = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
-  let [nameSet] = useState(() => {
-    if (props.modalObject.Input === "client") {
-      return localStorage.getItem("UserName");
-    } else if (props.modalObject.Input === "partner") {
-      return localStorage.getItem("PartnerName");
-    } else if (props.modalObject.Input === "joint") {
-      return (
-        localStorage.getItem("UserName") +
-        " & " +
-        localStorage.getItem("PartnerName")
-      );
-    }
-  });
 
-  let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
 
   let incomeFromCentrelink = Object.keys(questionDetail.incomeFromCentrelink).length > 0 ? questionDetail.incomeFromCentrelink : {
     client: [],
@@ -34,30 +20,11 @@ const CenterLinkPayments = (props) => {
 
   }; // Use an empty object as default if incomeFromCentrelink is undefined
 
-  let initialValues = incomeFromCentrelink[props.modalObject.Input].length
-    ? { NumberOfMap: incomeFromCentrelink[props.modalObject.Input].length }
-    : { NumberOfMap: "" };
+  let initialValues = {
+    owner: "client"
+  };
 
-  const [dynamicFields, setDynamicFields] = useState([]);
-
-  useEffect(() => {
-    if (
-      incomeFromCentrelink[props.modalObject.Input] &&
-      incomeFromCentrelink[props.modalObject.Input].length
-    ) {
-      let arr = [];
-
-      for (
-        let i = 0;
-        i < incomeFromCentrelink[props.modalObject.Input].length;
-        i++
-      ) {
-        arr.push("");
-      }
-
-      setDynamicFields(arr);
-    }
-  }, []);
+  const [dynamicFields, setDynamicFields] = useState([""]);
 
   const fillInitialValues = (setFieldValue) => {
     if (
@@ -82,48 +49,14 @@ const CenterLinkPayments = (props) => {
     }
   };
 
-  let handleInput = (e, setFieldValue) => {
-    const value = e.target.value > 10 ? 10 : e.target.value;
-    setFieldValue(e.target.id, value);
-
-    let arr = [];
-
-    for (let i = 0; i < value; i++) {
-      arr.push("");
-    }
-
-    setDynamicFields(arr);
-  };
-
-  let handleInnerModal = (
-    title,
-    question,
-    key,
-    mainKey,
-    key3,
-    editArray,
-    index,
-    values
-  ) => {
-    console.log(values);
-    setModalObject({
-      title,
-      question,
-      key,
-      mainKey,
-      key3,
-      editArray: editArray || [],
-      index,
-      values,
-    });
-    setFlagState(true);
-  };
 
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   let onSubmit = async (values) => {
     console.log(JSON.stringify(values));
-    // return (false);
+    return (false);
+
+
     // Extract the number of maps from the values
     const numberOfMaps = parseInt(values.NumberOfMap, 10);
     const newEntries = [];
@@ -205,22 +138,22 @@ const CenterLinkPayments = (props) => {
     { value: "Family Tax Benefit B", label: "Family Tax Benefit B" },
     { value: "Rent Assistance", label: "Rent Assistance" },
   ];
+
   const options2 = [
     { value: "Pensioner Card", label: "Pensioner Card " },
     { value: "Low Income Card", label: "Low Income Card " },
     { value: "Commonwealth Seniors Card", label: "Commonwealth Seniors Card" },
   ];
-  const [selectedOptions, setSelectedOptions] = useState([]);
 
-  //   const options2 = [
-  //     { value: 'Pensioner Card', label: 'Pensioner Card' },
-  //     { value: 'Low Income Card', label: 'Low Income Card' },
-  //     { value: 'Commonwealth Seniors Card', label: 'Commonwealth Seniors Card' },
-  //     // Add more options as needed
-  //   ];
-  const handleChange1 = (selected) => {
-    setSelectedOptions(selected);
-  };
+  const rowConfig = [
+    { name: 'cRN', type: 'number', placeholder: 'CRN' },
+    { name: 'paymentType', type: 'select-creatableMulti', placeholder: 'Multi Select Field', options: options, styleSet: { width: "150px" }, },
+    { name: 'fortnightlyPayment', type: 'number-toComma', placeholder: 'Fortnightly Payment', styleSet: { width: "150px" }, },
+    { name: 'annualPaymentAmount', type: 'number-toComma', placeholder: 'Annual Payment Amount', styleSet: { width: "150px" }, },
+    { name: 'centrelinkcards', type: 'select-creatableMulti', placeholder: 'Multi Select Field', options: options2 },
+  ];
+
+
   return (
     <Formik
       initialValues={initialValues}
@@ -228,7 +161,7 @@ const CenterLinkPayments = (props) => {
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, setFieldValue, handleChange }) => {
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, [values.NumberOfMap]);
@@ -236,102 +169,87 @@ const CenterLinkPayments = (props) => {
         return (
           <Form>
             <Row>
+
+              <div className='col-md-12'>
+                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                  <label htmlFor='' className='text-end '>
+                    Owner
+                  </label>
+
+                  <div className='w-25'>
+                    <Field
+                      as="select"
+                      placeholder="Name of owner"
+                      id={`owner`}
+                      name={`owner`}
+                      className="form-select inputDesignDoubleInput"
+
+
+                    >
+                      <option value={""}>Select</option>
+                      <option value={"client"}>{RenderName("client")}</option>
+                      {localStorage.getItem("UserStatus") !== "Single" &&
+                        <React.Fragment>
+                          <option value={"partner"}>{RenderName("partner")}</option>
+                          {/*
+                            <option value={"joint"}> {"Joint (" + RenderName("joint") + ")"} </option>
+                            <option value={"client+partner+joint"}>{RenderName("client") + " , " + RenderName("partner") + " and Joint"} </option>
+                            */}
+                          <option value={"client+partner"}>{"Both (" + RenderName("client") + " , " + RenderName("partner") + ")"} </option>
+                        </React.Fragment>
+                      }
+                    </Field>
+                  </div>
+                </div>
+              </div>
+
               <div className="col-md-12">
                 <div className="row justify-content-center">
-                  <div className="col-md-5">
-                    <p className="text-end mt-1">
-                      How many {props.modalObject.title} does {nameSet} have:
-                    </p>
-                  </div>
-                  <div className="col-md-2">
-                    <Field
-                      type="number"
-                      id="NumberOfMap"
-                      name="NumberOfMap"
-                      className="form-control inputDesignDoubleInput"
-                      onChange={(e) => handleInput(e, setFieldValue)}
-                    />
-                  </div>
-                  {values.NumberOfMap && (
-                    <div className="mt-4">
-                      <Table striped bordered responsive hover>
-                        <thead>
-                          <tr>
-                            <th
-                              onClick={() => {
-                                console.log(values);
-                              }}
-                            >
-                              No#
-                            </th>
-                            <th>CRN</th>
-                            <th>Payment Type</th>
-                            <th>Fortnightly Payment</th>
-                            <th>Annual Payment Amount</th>
-                            <th>Centrelink Cards Held</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {dynamicFields.map((elem, i) => {
-                            return (
-                              <tr key={i}>
-                                <td>{1 + i}</td>
-                                <td>
-                                  {" "}
-                                  <Field
-                                    type="number"
-                                    placeholder="CRN"
-                                    id={`cRN${i}`}
-                                    name={`cRN${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    name={`paymentType${i}`}
-                                    component={CreatableMultiSelectField}
-                                    label="Multi Select Field"
-                                    options={options}
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="number"
-                                    placeholder="Fortnightly Payment"
-                                    id={`fortnightlyPayment${i}`}
-                                    name={`fortnightlyPayment${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                    onChange={(e) => {
-                                      setFieldValue(`fortnightlyPayment${i}`, e.target.value);
-                                      setFieldValue(`annualPaymentAmount${i}`, e.target.value * 26 || 0)
-                                    }}
-                                  />
+                  <div className="mt-4">
+                    <Table striped bordered responsive hover>
+                      <thead>
+                        <tr>
+                          <th
+                            onClick={() => {
+                              console.log(values);
+                            }}
+                          >
+                            Owner
+                          </th>
+                          <th>CRN</th>
+                          <th>Payment Type</th>
+                          <th>Fortnightly Payment</th>
+                          <th>Annual Payment Amount</th>
+                          <th>Centrelink Cards Held</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(values.owner === "client" || values.owner === "client+partner") &&
+                          <DynamicTableRow
+                            rowConfig={rowConfig}
+                            values={values}
+                            setFieldValue={setFieldValue}
+                            handleChange={handleChange}
+                            handleBlur={handleBlur}
+                            stakeHolder={"client."}
+                          />
+                        }
+                        {(values.owner === "partner" || values.owner === "client+partner") &&
+                          <DynamicTableRow
+                            rowConfig={rowConfig}
+                            values={values}
+                            setFieldValue={setFieldValue}
+                            handleChange={handleChange}
+                            handleBlur={handleBlur}
+                            stakeHolder={"partner."}
+                          />
+                        }
 
-                                </td>
-                                <td>
-                                  <Field
-                                    type="number"
-                                    placeholder="Annual Payment Amount"
-                                    id={`annualPaymentAmount${i}`}
-                                    name={`annualPaymentAmount${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    name={`centrelinkcards${i}`}
-                                    component={CreatableMultiSelectField}
-                                    label="Multi Select Field"
-                                    options={options2}
-                                  />
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </Table>
-                    </div>
-                  )}
+
+
+                      </tbody>
+                    </Table>
+                  </div>
                 </div>
               </div>
             </Row>

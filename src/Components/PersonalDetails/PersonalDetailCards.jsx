@@ -1,9 +1,5 @@
 import React, { useEffect } from 'react'
 
-import { BsGenderFemale, BsGenderMale } from "react-icons/bs";
-import { GiLinkedRings } from "react-icons/gi";
-import { IoIosMail } from "react-icons/io";
-import { FaBriefcase } from "react-icons/fa6";
 import { HiUsers } from "react-icons/hi";
 import single from "../Svgs/single-2.svg";
 import childimg from "./images/child.svg";
@@ -66,7 +62,7 @@ function PersonalDetailCards(props) {
 
     useEffect(() => {
         if (!data?.client) {
-        
+
         }
     }, [])
 
@@ -77,7 +73,7 @@ function PersonalDetailCards(props) {
 
         <div className="row justify-content-center align-item-stretch">
             <div className={getClassName(data.client.clientMaritalStatus)}>
-                <div className="card px-3 py-4 gap-3 PersonalDetails d-flex justify-content-center align-items-center">
+                <div className="card px-3 py-4 gap-3 PersonalDetails d-flex justify-content-center align-items-center h-100">
                     <div className="row w-100">
                         <div className='col-md-12'>
                             <div className='d-flex justify-content-start align-item-start gap-3'>

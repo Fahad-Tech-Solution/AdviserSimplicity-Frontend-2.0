@@ -7,7 +7,6 @@ const MyFormComponent = () => {
     { name: 'client.SGPercentage', type: 'number-toPercent', placeholder: 'Enter SG Value' },
     { name: 'Amount', type: 'number-toComma', placeholder: 'Investment Code' },
     { name: 'GrossSalary', type: 'text', placeholder: 'Gross Salary' },
-    { name: 'GrossSalary', type: 'number', placeholder: 'Gross Salary' },
     { name: 'startDate', type: 'date', placeholder: 'Start Date' },
     { name: 'remunerationType', type: 'select', options: [{ value: 'Gross Salary', label: 'Gross Salary' }, { value: 'Total Package', label: 'Total Package' }] },
     { name: 'client.ChoiceFund', type: 'yesno' },

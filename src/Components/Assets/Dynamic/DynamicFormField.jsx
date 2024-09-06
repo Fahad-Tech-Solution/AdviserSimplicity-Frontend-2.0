@@ -7,6 +7,7 @@ import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 import Button from "react-bootstrap/Button";
 import { toCommaAndDollar, toPersentage } from "../Api/Api";
 import DynamicYesNo from "../../Questions/FinancialInvestments/QuestionsDetail/DynamicYesNo";
+import { CreatableMultiSelectField } from "../../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 
 const DynamicFormField = ({
   fieldType,
@@ -18,14 +19,16 @@ const DynamicFormField = ({
   handleChange,
   handleBlur,
   handleInnerModal,
+  stakeHolder,
 }) => {
+
   switch (fieldType) {
     case "number":
       return (
         <Field
           type="number"
           placeholder={placeholder}
-          name={name}
+          name={stakeHolder + name}
           id={name}
           className="form-control inputDesign"
           onChange={(e) => handleChange(e)}
@@ -36,7 +39,7 @@ const DynamicFormField = ({
         <Field
           type="text"
           placeholder={placeholder}
-          name={name}
+          name={stakeHolder + name}
           id={name}
           className="form-control inputDesign"
           onChange={(e) => handleChange(e)}
@@ -48,13 +51,13 @@ const DynamicFormField = ({
         <Field
           type="text"
           placeholder={placeholder}
-          name={name}
+          name={stakeHolder + name}
           id={name}
           className="form-control inputDesign"
           onChange={(e) => {
             const value = e.target.value.replace(/[^0-9.-]+/g, "");
             setFieldValue(
-              name,
+              stakeHolder + name,
               value > 100 ? toPersentage(100) : toPersentage(value)
             );
           }}
@@ -66,12 +69,12 @@ const DynamicFormField = ({
         <Field
           type="text"
           placeholder={placeholder}
-          name={name}
+          name={stakeHolder + name}
           id={name}
           className="form-control inputDesign"
           onChange={(e) => {
             const value = e.target.value.replace(/[^0-9.-]+/g, "");
-            setFieldValue(name, toCommaAndDollar(value));
+            setFieldValue(stakeHolder + name, toCommaAndDollar(value));
           }}
         />
       );
@@ -87,13 +90,13 @@ const DynamicFormField = ({
           onBlur={handleBlur}
           showIcon
           id={name}
-          name={name}
+          name={stakeHolder + name}
         />
       );
 
     case "select":
       return (
-        <Field as="select" name={name} className="form-select inputDesign">
+        <Field as="select" name={stakeHolder + name} className="form-select inputDesign">
           <option value="">Select</option>
           {options.map((option) => (
             <option key={option.value} value={option.value}>
@@ -103,9 +106,19 @@ const DynamicFormField = ({
         </Field>
       );
 
+    case "select-creatableMulti":
+      return (
+        <Field
+          name={stakeHolder + name}
+          component={CreatableMultiSelectField}
+          label="Multi Select Field"
+          options={options}
+        />
+      );
+
     case "yesno":
       return (
-        <DynamicYesNo name={name} values={values} handleChange={handleChange} />
+        <DynamicYesNo name={stakeHolder + name} values={values} handleChange={handleChange} />
       );
 
     case "modal":

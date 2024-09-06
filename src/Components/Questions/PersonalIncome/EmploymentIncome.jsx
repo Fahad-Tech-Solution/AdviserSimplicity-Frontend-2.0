@@ -188,9 +188,11 @@ const EmploymentIncome = (props) => {
                                             {localStorage.getItem("UserStatus") !== "Single" &&
                                                 <React.Fragment>
                                                     <option value={"partner"}>{RenderName("partner")}</option>
-                                                    <option value={"joint"}> {"Joint (" + RenderName("joint") + ")"} </option>
+                                                    {/*
+                                                        <option value={"joint"}> {"Joint (" + RenderName("joint") + ")"} </option>
+                                                        <option value={"client+partner+joint"}>{RenderName("client") + " , " + RenderName("partner") + " and Joint"} </option>
+                                                        */}
                                                     <option value={"client+partner"}>{"Both (" + RenderName("client") + " , " + RenderName("partner") + ")"} </option>
-                                                    <option value={"client+partner+joint"}>{RenderName("client") + " , " + RenderName("partner") + " and Joint"} </option>
                                                 </React.Fragment>
                                             }
                                         </Field>

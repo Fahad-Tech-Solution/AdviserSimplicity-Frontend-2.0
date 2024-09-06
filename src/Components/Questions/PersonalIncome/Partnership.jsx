@@ -43,7 +43,6 @@ const Partnership = (props) => {
             }
 
             setDynamicFields(arr);
-
         }
     }, [])
 

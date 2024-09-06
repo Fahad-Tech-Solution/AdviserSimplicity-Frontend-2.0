@@ -63,7 +63,6 @@
     },
     "LeaveEntitlementsRadio": "Yes",
     "LeaveEntitlementsModal": {
-
       "annualLeave": "Yes",
       "annualLeaveAmount": 20,
       "annualLeaveTime": "Days",
@@ -78,14 +77,22 @@
     }
   },
   "clientTotal": 80000,
-  "partnerTotal": 60000
+  "partnerTotal": 60000,
+  "centerLInk": {
+    "owner": "client+partner",
+    "client": {
+      "fortnightlyPayment": "$2,322",
+      "annualPaymentAmount": "$23,223",
+      "paymentType": ["Age Pension"],
+      "centrelinkcards": ["Low Income Card"],
+      "cRN": 40
+    },
+    "partner": {
+      "cRN": 48,
+      "fortnightlyPayment": "$2,333",
+      "annualPaymentAmount": "$23,233",
+      "paymentType": ["Disability Pension"],
+      "centrelinkcards": ["Commonwealth Seniors Card"]
+    }
+  }
 }
-
-
-
-Leave Type
-Amount
-Time
-Annual Leave
-Sick Leave
-Long Service Leave

@@ -56,6 +56,7 @@ const SalaryPackage = (props) => {
         let remunerationType = values.remunerationType;
         let Amount = parseFloat(values.Amount.replace(/[^0-9.-]+/g, "")) || 0;
         let SGPercentage = parseFloat(values.SGPercentage.replace(/[^0-9.-]+/g, "")) || 0;
+        
         let GrossSalary = values.GrossSalary;
         let SGC = values.SGC;
 

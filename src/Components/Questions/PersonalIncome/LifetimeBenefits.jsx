@@ -15,86 +15,9 @@ import Contributions from "../FinancialInvestments/QuestionsDetail/Contributions
 import Beneficiaries from "../FinancialInvestments/QuestionsDetail/Beneficiaries";
 import CreatableSelect from 'react-select/creatable';
 
-const createOption = (label) => ({
-  label,
-  value: label.toLowerCase().replace(/\W/g, ''),
-});
 
-const defaultOptions = [
-  { value: 'ESS Super ', label: 'ESS Super ' },
-  { value: 'PSS ', label: 'PSS ' },
-  { value: 'CSC', label: 'CSC' },
-  { value: 'Uni Super ', label: 'Uni Super ' },
-  { value: 'Telstra ', label: 'Telstra ' },
-  { value: 'Other', label: 'Other' },
-];
-const CreatableSelectField = ({ field, form }) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [options, setOptions] = useState(defaultOptions);
-  const [value, setValue] = useState(null);
 
-  const handleCreate = (inputValue) => {
-    setIsLoading(true);
-    setTimeout(() => {
-      const newOption = createOption(inputValue);
-      setIsLoading(false);
-      setOptions((prev) => [...prev, newOption]);
-      setValue(newOption);
-      form.setFieldValue(field.name, newOption.value);
-    }, 1000);
-  };
-  const customStyles = {
-    control: (provided, state) => ({
-      ...provided,
-      border: state.isFocused ? '2px solid #36b446' : '1px solid #36b446',
-      boxShadow: state.isFocused ? '0 0 0 0px #4CAF50' : 'none',
-      '&:hover': {
-        border: state.isFocused ? '2px solid #36b446' : '1px solid #36b446'
-      },
-      minHeight: '42px', // Set the minimum height
-      height: '42px' // Allow height to adjust based on content
-    }),
-    valueContainer: (provided) => ({
-      ...provided,
-      height: field.value && field.value.length > 0 ? 'auto' : '44px', // Adjust height based on selection
-      padding: '0 8px' // Adjust padding as needed
-    }),
-    input: (provided) => ({
-      ...provided,
-      margin: '0', // Ensure input has no margin
-      padding: '0' // Ensure input has no padding
-    }),
-    indicatorsContainer: (provided) => ({
-      ...provided,
-      height: '42px' // Ensure indicators container matches the control height
-    }),
-    menu: (provided) => ({
-      ...provided,
-      zIndex: 9999, // Ensure the menu is on top of other elements
-    }),
-    menuPortal: (provided) => ({
-      ...provided,
-      zIndex: 9999 // Ensure the menu portal is on top of other elements
-    })
-  };
-  return (
-    <CreatableSelect
-      isClearable
-      isDisabled={isLoading}
-      isLoading={isLoading}
-      onChange={(newValue) => {
-        setValue(newValue);
-        form.setFieldValue(field.name, newValue ? newValue.value : null);
-        console.log(newValue ? newValue.value : null);
-      }}
-      onCreateOption={handleCreate}
-      options={options}
-      value={options ? options.find((option) => option.value === field.value) : null}
-      styles={customStyles}
-      menuPortalTarget={document.body}
-    />
-  );
-};
+
 const LifeTimeBeneFits = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
