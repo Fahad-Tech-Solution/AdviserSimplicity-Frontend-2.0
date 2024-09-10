@@ -205,7 +205,7 @@ const RegularLivingExpenses = (props) => {
     obj.clientFK = localStorage.getItem("UserID");
 
     // Calculate total currentBalance
-    obj[apiKey + "Total"] = totalExpense.toFixed(2);
+    obj[apiKey + "Total"] = toCommaAndDollar(totalExpense.toFixed(2));
 
     console.log(obj, "final obj");
 
@@ -743,16 +743,6 @@ const RegularLivingExpenses = (props) => {
                                   }
                                   disabled
                                 />
-                                {/* <label
-                                htmlFor={`${expense.id}Value`}
-                                className="form-label float-end"
-                              >
-                                $
-                                {(
-                                  (values[expense.id] || 0) *
-                                  (values[`${expense.id}Type`] || 0)
-                                ).toFixed(2)}
-                              </label> */}
                               </td>
                             </tr>
                           )
@@ -766,7 +756,7 @@ const RegularLivingExpenses = (props) => {
             {/* personal*/}
 
             {/* transport */}
-            <div className="row my-1 ">
+            <div className="row my-1 justify-content-center">
               <div
                 onClick={() => setOpen3(!open3)}
                 aria-controls=""
@@ -789,7 +779,7 @@ const RegularLivingExpenses = (props) => {
               </div>
               <div></div>
               <Collapse in={open3}>
-                <div className="row my-3">
+                <div className="row my-3 justify-content-center">
                   <div className="table-responsive m-0 p-0">
                     <Table striped bordered responsive hover>
                       <thead className="bgColorIncome text-light">
@@ -868,16 +858,7 @@ const RegularLivingExpenses = (props) => {
                                   value={totalValue}
                                   disabled
                                 />
-                                {/* <label
-                                htmlFor={`${expense.id}Value`}
-                                className="form-label float-end"
-                              >
-                                $
-                                {(
-                                  (values[expense.id] || 0) *
-                                  (values[`${expense.id}Type`] || 0)
-                                ).toFixed(2)}
-                              </label> */}
+
                               </td>
                             </tr>
                           );
@@ -888,10 +869,10 @@ const RegularLivingExpenses = (props) => {
                 </div>
               </Collapse>
             </div>
-            {/* transport   */}
+            {/* transport */}
 
             {/* insurance */}
-            <div className="row my-1">
+            <div className="row justify-content-center my-1">
               <div
                 onClick={() => setOpen4(!open4)}
                 aria-controls=""
@@ -914,8 +895,9 @@ const RegularLivingExpenses = (props) => {
               </div>
               <div></div>
               <Collapse in={open4}>
-                <div className="row  my-3">
-                  <div className="m-0 p-0">
+
+                <div className="row justify-content-center my-3">
+                  <div className=" m-0 p-0">
                     <Table striped bordered responsive hover>
                       <thead
                         className="bgColorIncome text-light"

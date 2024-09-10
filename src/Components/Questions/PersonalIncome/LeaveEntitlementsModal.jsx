@@ -156,7 +156,7 @@ const LeaveEntitlementsModal = (props) => {
                                                             placeholder="Investment Code"
                                                             id={`annualLeave`}
                                                             name={`annualLeave`}
-                                                            className="form-control inputDesign"
+                                                            className="form-control inputDesignDoubleInput"
                                                             disabled
                                                         />
                                                     </td>
@@ -166,7 +166,7 @@ const LeaveEntitlementsModal = (props) => {
                                                             placeholder="Investment Code"
                                                             id={`annualLeaveAmount`}
                                                             name={`annualLeaveAmount`}
-                                                            className="form-control inputDesign"
+                                                            className="form-control inputDesignDoubleInput"
                                                             onChange={(e) => {
                                                                 setFieldValue(e.target.name,
                                                                     toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
@@ -178,7 +178,7 @@ const LeaveEntitlementsModal = (props) => {
                                                             as="select"
                                                             id={`annualLeaveTime`}
                                                             name={`annualLeaveTime`}
-                                                            className="form-select inputDesign"
+                                                            className="form-select inputDesignDoubleInput"
                                                         >
                                                             <option value={""}>Select</option>
                                                             <option value={"Days"}>Days</option>
@@ -195,7 +195,7 @@ const LeaveEntitlementsModal = (props) => {
                                                             placeholder="Investment Code"
                                                             id={`sickLeave`}
                                                             name={`sickLeave`}
-                                                            className="form-control inputDesign"
+                                                            className="form-control inputDesignDoubleInput"
                                                             disabled
                                                         />
                                                     </td>
@@ -205,7 +205,7 @@ const LeaveEntitlementsModal = (props) => {
                                                             placeholder="Investment Code"
                                                             id={`sickLeaveAmount`}
                                                             name={`sickLeaveAmount`}
-                                                            className="form-control inputDesign"
+                                                            className="form-control inputDesignDoubleInput"
                                                             onChange={(e) => {
                                                                 setFieldValue(e.target.name,
                                                                     toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
@@ -217,7 +217,7 @@ const LeaveEntitlementsModal = (props) => {
                                                             as="select"
                                                             id={`sickLeaveTime`}
                                                             name={`sickLeaveTime`}
-                                                            className="form-select inputDesign"
+                                                            className="form-select inputDesignDoubleInput"
                                                         >
                                                             <option value={""}>Select</option>
                                                             <option value={"Days"}>Days</option>
@@ -234,7 +234,7 @@ const LeaveEntitlementsModal = (props) => {
                                                             placeholder="Investment Code"
                                                             id={`longServiceLeave`}
                                                             name={`longServiceLeave`}
-                                                            className="form-control inputDesign"
+                                                            className="form-control inputDesignDoubleInput"
                                                             disabled
                                                         />
                                                     </td>
@@ -244,7 +244,7 @@ const LeaveEntitlementsModal = (props) => {
                                                             placeholder="Investment Code"
                                                             id={`longServiceLeaveAmount`}
                                                             name={`longServiceLeaveAmount`}
-                                                            className="form-control inputDesign"
+                                                            className="form-control inputDesignDoubleInput"
                                                             onChange={(e) => {
                                                                 setFieldValue(e.target.name,
                                                                     toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
@@ -256,7 +256,7 @@ const LeaveEntitlementsModal = (props) => {
                                                             as="select"
                                                             id={`longServiceLeaveTime`}
                                                             name={`longServiceLeaveTime`}
-                                                            className="form-select inputDesign"
+                                                            className="form-select inputDesignDoubleInput"
                                                         >
                                                             <option value={""}>Select</option>
                                                             <option value={"Days"}>Days</option>

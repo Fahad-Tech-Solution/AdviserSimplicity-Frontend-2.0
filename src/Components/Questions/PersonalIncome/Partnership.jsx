@@ -1,9 +1,16 @@
-import { Field, Form, Formik } from 'formik';
-import React, { useEffect, useState } from 'react';
-import { Button, InputGroup, Row, Table } from 'react-bootstrap';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultUrl, QuestionDetail } from '../../../Store/Store';
-import { PatchAxios, PostAxios } from '../../Assets/Api/Api';
+import { Field, Form, Formik } from "formik";
+import React, { useEffect, useState } from "react";
+import { Button, InputGroup, Row, Table } from "react-bootstrap";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { defaultUrl, QuestionDetail } from "../../../Store/Store";
+import {
+    PatchAxios,
+    PostAxios,
+    RenderName,
+    toCommaAndDollar,
+    toNumericValue,
+} from "../../Assets/Api/Api";
+import DynamicTableRow from "../../Assets/Dynamic/DynamicTableRow";
 
 const Partnership = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
@@ -11,115 +18,118 @@ const Partnership = (props) => {
 
     let [nameSet] = useState(() => {
         if (props.modalObject.Input === "client") {
-            return (localStorage.getItem("UserName"))
+            return localStorage.getItem("UserName");
+        } else if (props.modalObject.Input === "partner") {
+            return localStorage.getItem("PartnerName");
+        } else if (props.modalObject.Input === "joint") {
+            return (
+                localStorage.getItem("UserName") +
+                " & " +
+                localStorage.getItem("PartnerName")
+            );
         }
-        else if (props.modalObject.Input === "partner") {
-            return (localStorage.getItem("PartnerName"))
-        }
-        else if (props.modalObject.Input === "joint") {
-            return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
-        }
-    })
+    });
 
-    let incomeFromPartnership = Object.keys(questionDetail.incomeFromPartnership).length > 0 ? questionDetail.incomeFromPartnership : {
-        client: [],
-        partner: [],
-        joint: [],
+    let incomeFromPartnership =
+        Object.keys(questionDetail.incomeFromPartnership).length > 0
+            ? questionDetail.incomeFromPartnership
+            : {
+                client: [],
+                partner: [],
+                joint: [],
+            }; // Use an empty object as default if incomeFromPartnership is undefined
 
-    }; // Use an empty object as default if incomeFromPartnership is undefined
-
-
-    let initialValues = incomeFromPartnership[props.modalObject.Input].length ? { NumberOfMap: incomeFromPartnership[props.modalObject.Input].length } : { NumberOfMap: "" };
+    let initialValues = {};
 
     const [dynamicFields, setDynamicFields] = useState([]);
 
-
     useEffect(() => {
-        if (incomeFromPartnership[props.modalObject.Input] && incomeFromPartnership[props.modalObject.Input].length) {
-            let arr = []
+        if (
+            incomeFromPartnership[props.modalObject.Input] &&
+            incomeFromPartnership[props.modalObject.Input].length
+        ) {
+            let arr = [];
 
-            for (let i = 0; i < incomeFromPartnership[props.modalObject.Input].length; i++) {
+            for (
+                let i = 0;
+                i < incomeFromPartnership[props.modalObject.Input].length;
+                i++
+            ) {
                 arr.push("");
             }
 
             setDynamicFields(arr);
         }
-    }, [])
+    }, []);
 
     const fillInitialValues = (setFieldValue) => {
+        let data = incomeFromPartnership;
+        console.log(data, "data");
+        if (incomeFromPartnership && incomeFromPartnership._id) {
+            if (data) {
 
-        if (incomeFromPartnership[props.modalObject.Input] && incomeFromPartnership[props.modalObject.Input].length) {
+                setFieldValue(`owner`, data.owner || "");
 
-            incomeFromPartnership[props.modalObject.Input].forEach((data, i) => {
-                if (data) {
-                    setFieldValue(`businessName${i}`, data.businessName || '');
-                    setFieldValue(`ABN${i}`, data.ABN || '');
-                    setFieldValue(`businessAddress${i}`, data.businessAddress || '');
-                    setFieldValue(`totalNetPartnershipIncome${i}`, data.totalNetPartnershipIncome || '');
-                    setFieldValue(`sharePartnership${i}`, data.sharePartnership || '');
-                    setFieldValue(`share${i}`, data.share || '');
-                    setFieldValue(`goodWillBusinessValuation${i}`, data.goodWillBusinessValuation || '');
+                if (data.owner === "client" || data.owner === "client+partner") {
+                    if (data?.client && Object.keys(data?.client).length) {
 
+                        setFieldValue(`client.businessName`, data.client.businessName || "");
+                        setFieldValue(`client.ABN`, data.client.ABN || "");
+                        setFieldValue(`client.businessAddress`, data.client.businessAddress || "");
+                        setFieldValue(`client.totalNetPartnershipIncome`, data.client.totalNetPartnershipIncome || "");
+                        setFieldValue(`client.shareOfPartnership`, data.client.shareOfPartnership || "");
+                        setFieldValue(`client.share`, data.client.share || "");
+                        setFieldValue(`client.goodWill`, data.client.goodWill || "");
+                    }
                 }
-            });
+                if (data.owner === "partner" || data.owner === "client+partner") {
+                    if (data?.partner && Object.keys(data?.partner).length) {
+                        setFieldValue(`partner.businessName`, data.partner.businessName || "");
+                        setFieldValue(`partner.ABN`, data.partner.ABN || "");
+                        setFieldValue(`partner.businessAddress`, data.partner.businessAddress || "");
+                        setFieldValue(`partner.totalNetPartnershipIncome`, data.partner.totalNetPartnershipIncome || "");
+                        setFieldValue(`partner.shareOfPartnership`, data.partner.shareOfPartnership || "");
+                        setFieldValue(`partner.share`, data.partner.share || "");
+                        setFieldValue(`partner.goodWill`, data.partner.goodWill || "");
+                    }
+                }
+            }
         }
     };
 
-    let handleInput = (e, setFieldValue) => {
-        const value = e.target.value > 10 ? 10 : e.target.value;
-        setFieldValue(e.target.id, value);
-
-        let arr = []
-
-        for (let i = 0; i < value; i++) {
-            arr.push("");
-        }
-
-        setDynamicFields(arr);
-
-    };
 
 
-    let DefaultUrl = useRecoilValue(defaultUrl)
-
+    let DefaultUrl = useRecoilValue(defaultUrl);
 
     let onSubmit = async (values) => {
-        // console.log(values);
+        console.log(values);
         // return (false);
-        // Extract the number of maps from the values
-        const numberOfMaps = parseInt(values.NumberOfMap, 10);
-        const newEntries = [];
-
-        // Iterate through each map entry and create a new object
-        for (let i = 0; i < numberOfMaps; i++) {
-            const newEntry = {
-                businessName: values[`businessName${i}`] || "",
-                ABN: values[`ABN${i}`] || "",
-                businessAddress: values[`businessAddress${i}`] || "",
-                totalNetPartnershipIncome: values[`totalNetPartnershipIncome${i}`] || "",
-                sharePartnership: values[`sharePartnership${i}`] || "",
-                share: values[`share${i}`] || "",
-                goodWillBusinessValuation: values[`goodWillBusinessValuation${i}`] || "",
-            };
-            newEntries.push(newEntry);
-        }
-
-        // Log the new entries to verify
-        console.log(newEntries);
-
-        let DataOf = props.modalObject.Input;
 
         // Create an object with additional fields
-        let obj = {
-            clientFK: localStorage.getItem("UserID"),
-        };
+        let obj = values;
+        obj.clientFK = localStorage.getItem("UserID");
 
-        obj[DataOf] = newEntries
+        if (values.owner === "client" || values.owner === "client+partner") {
+            obj.clientTotal = values.client.share;
+            console.log("Client total set");
+        } else {
+            obj.client = {};
+            obj.clientTotal = "";
+            console.log("Client data cleared");
+        }
 
-        // Calculate total currentBalance
-        obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.share, 0);
+        // Handle partner-related conditions
+        if (values.owner === "partner" || values.owner === "client+partner") {
+            obj.partnerTotal = values.partner.share;
+            console.log("Partner total set");
+        } else {
+            obj.partner = {};
+            obj.partnerTotal = "";
+            console.log("Partner data cleared");
+        }
 
-        console.log(obj, "final obj")
+        // console.log(obj, "final obj");
+        console.log(obj, "final obj");
 
         // Check if incomeFromPartnership and the array at props.modalObject.Input exist
         // const bankAccountArray = incomeFromPartnership[props.modalObject.Input] || [];
@@ -128,10 +138,16 @@ const Partnership = (props) => {
         try {
             let res;
             if (!bankAccountArray) {
-                res = await PostAxios(`${DefaultUrl}/api/incomeFromPartnership/Add`, obj);
+                res = await PostAxios(
+                    `${DefaultUrl}/api/incomeFromPartnership/Add`,
+                    obj
+                );
             } else {
-                obj.collection = props.modalObject.Input
-                res = await PatchAxios(`${DefaultUrl}/api/incomeFromPartnership/Update`, obj);
+                // obj.collection = props.modalObject.Input;
+                res = await PatchAxios(
+                    `${DefaultUrl}/api/incomeFromPartnership/Update`,
+                    obj
+                );
             }
 
             if (res) {
@@ -149,14 +165,72 @@ const Partnership = (props) => {
         }
     };
 
-    let handleBlur = (setFieldValue, e) => {
-        let value = parseFloat(e.target.value);
-        if (!isNaN(value)) {
-            setFieldValue(e.target.id, value.toFixed(2));
-        } else {
-            setFieldValue(e.target.id, "");
+    let Formula = (values, setFieldValue, currentInput, stakeHolder) => {
+        try {
+            // Removing periods in stakeholder name and logging current values
+            let stakeHolderKey = stakeHolder.replace(".", "");
+            let totalNetPartnershipIncome =
+                toNumericValue(values[stakeHolderKey]?.totalNetPartnershipIncome) || 0;
+
+            let shareOfPartnership =
+                parseFloat(values[stakeHolderKey]?.shareOfPartnership) || 0;
+
+            // Check the input name and assign the correct value
+            switch (currentInput.name) {
+                case `${stakeHolder}totalNetPartnershipIncome`:
+                    totalNetPartnershipIncome = toNumericValue(currentInput.value) || 0;
+                    break;
+                case `${stakeHolder}shareOfPartnership`:
+                    // Cap the share percentage at 100
+                    let percentageValue = parseFloat(
+                        currentInput.value.replace(/[^0-9.-]+/g, "")
+                    );
+                    shareOfPartnership = Math.min(percentageValue, 100) || 0;
+                    break;
+                default:
+                    console.warn("Unexpected input field");
+                    break;
+            }
+
+            // Calculate the amount based on the formula
+            let amount = (totalNetPartnershipIncome * shareOfPartnership) / 100;
+
+            // Format the amount and update the field value
+            setFieldValue(`${stakeHolder}share`, toCommaAndDollar(amount.toFixed(2))); // Ensure it rounds to two decimal places
+        } catch (error) {
+            console.error("Error in Formula function: ", error);
         }
     };
+
+    const rowConfig = [
+        { name: "businessName", type: "text", placeholder: "Business Name" },
+        { name: "ABN", type: "number", placeholder: "ABN" },
+        { name: "businessAddress", type: "text", placeholder: "Business Address" },
+        {
+            name: "totalNetPartnershipIncome",
+            type: "number-toComma",
+            placeholder: "Total Net Partnership Income",
+            callBack: true,
+            func: Formula,
+        },
+        {
+            name: "shareOfPartnership",
+            type: "number-toPercent",
+            placeholder: "Share Partnership",
+            callBack: true,
+            func: Formula,
+        },
+        {
+            name: "share",
+            type: "number-toComma",
+            placeholder: "Share ",
+        },
+        {
+            name: "goodWill",
+            type: "number-toComma",
+            placeholder: "Good Will Business Valuation ",
+        },
+    ];
 
     return (
         <Formik
@@ -165,124 +239,124 @@ const Partnership = (props) => {
             enableReinitialize
             innerRef={props.formRef}
         >
-            {({ values, setFieldValue, handleChange }) => {
+            {({ values, setFieldValue, handleChange, handleBlur }) => {
                 useEffect(() => {
                     fillInitialValues(setFieldValue);
-                }, [values.NumberOfMap]);
+                }, []);
 
                 return (
                     <Form>
                         <Row>
                             <div className="col-md-12">
-                                <div className='row justify-content-center'>
-                                    <div className='col-md-5'>
-                                        <p className='text-end mt-1'>
-                                            How many {props.modalObject.title} does {nameSet} have:
-                                        </p>
+                                <div className="row justify-content-center">
+                                    <div className="col-md-12">
+                                        <div className="d-flex justify-content-center align-items-center gap-4">
+                                            <label htmlFor="" className="text-end ">
+                                                Owner
+                                            </label>
+
+                                            <div className="w-25 ">
+                                                <Field
+                                                    as="select"
+                                                    placeholder="Name of owner"
+                                                    id={`owner`}
+                                                    name={`owner`}
+                                                    className="form-select inputDesignDoubleInput"
+                                                >
+                                                    <option value={""}>Select</option>
+                                                    <option value={"client"}>
+                                                        {"Only " + RenderName("client")}
+                                                    </option>
+                                                    {localStorage.getItem("UserStatus") !== "Single" && (
+                                                        <React.Fragment>
+                                                            <option value={"partner"}>
+                                                                {"Only " + RenderName("partner")}
+                                                            </option>
+                                                            <option value={"client+partner"}>
+                                                                {"Both (" +
+                                                                    RenderName("client") +
+                                                                    " , " +
+                                                                    RenderName("partner") +
+                                                                    ")"}
+                                                            </option>
+                                                        </React.Fragment>
+                                                    )}
+                                                </Field>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className='col-md-2'>
-                                        <Field
-                                            type="number"
-                                            id="NumberOfMap"
-                                            name="NumberOfMap"
-                                            className="form-control inputDesignDoubleInput"
-                                            onChange={(e) => handleInput(e, setFieldValue)}
-                                        />
-                                    </div>
-                                    {values.NumberOfMap && (
-                                        <div className='mt-4'>
+
+                                    {values.owner && (
+                                        <div className="mt-4">
                                             <Table striped bordered responsive hover>
                                                 <thead>
                                                     <tr>
-                                                        <th onClick={() => { console.log(values) }}>No#</th>
+                                                        <th
+                                                            onClick={() => {
+                                                                console.log(values);
+                                                            }}
+                                                        >
+                                                            Owner
+                                                        </th>
                                                         <th>Business Name</th>
                                                         <th>ABN</th>
                                                         <th>Business Address</th>
-                                                        <th>Total Net Partnership  income</th>
+                                                        <th>Total Net Partnership income</th>
                                                         <th>Share of Partnership %</th>
                                                         <th>Share</th>
                                                         <th>Goodwill/Business Valuation </th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {dynamicFields.map((elem, i) => {
-                                                        return (<tr key={i}>
-                                                            <td>{1 + i}</td>
-                                                            <td>
-                                                                <Field
-                                                                    type="text"
-                                                                    placeholder="Business Name"
-                                                                    id={`businessName${i}`}
-                                                                    name={`businessName${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <Field
-                                                                    type="number"
-                                                                    placeholder="ABN"
-                                                                    id={`ABN${i}`}
-                                                                    name={`ABN${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <Field
-                                                                    type="text"
-                                                                    placeholder="Business Address"
-                                                                    id={`businessAddress${i}`}
-                                                                    name={`businessAddress${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <Field
-                                                                    type="number"
-                                                                    placeholder="Total Net Partnership income"
-                                                                    id={`totalNetPartnershipIncome${i}`}
-                                                                    name={`totalNetPartnershipIncome${i}`}
-                                                                    onChange={(e) => {
-                                                                        setFieldValue(`totalNetPartnershipIncome${i}`, e.target.value);
-                                                                        setFieldValue(`share${i}`, (e.target.value || 0) * (values[`sharePartnership${i}`] || 0))
-                                                                    }}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <Field
-                                                                    type="number"
-                                                                    placeholder="Share of Partnership %"
-                                                                    id={`sharePartnership${i}`}
-                                                                    name={`sharePartnership${i}`}
-                                                                    onChange={(e) => {
-                                                                        setFieldValue(`sharePartnership${i}`, e.target.value);
-                                                                        setFieldValue(`share${i}`, (parseFloat(e.target.value).toFixed(2) || 0) * (values[`totalNetPartnershipIncome${i}`] || 0))
-                                                                    }}
-                                                                    onBlur={(e) => handleBlur(setFieldValue, e)}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <Field
-                                                                    type="number"
-                                                                    placeholder="Share%"
-                                                                    id={`share${i}`}
-                                                                    name={`share${i}`}
-                                                                    disabled
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <Field
-                                                                    type="number"
-                                                                    placeholder="Goodwill/Business Valuation"
-                                                                    id={`goodWillBusinessValuation${i}`}
-                                                                    name={`goodWillBusinessValuation${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                />
-                                                            </td>
-                                                        </tr>)
-                                                    })}
+                                                    {values.owner == "client" ? (
+                                                        <DynamicTableRow
+                                                            rowConfig={rowConfig}
+                                                            values={values}
+                                                            setFieldValue={setFieldValue}
+                                                            handleChange={handleChange}
+                                                            handleBlur={handleBlur}
+                                                            //  handleInnerModal={handleInnerModal}
+                                                            stakeHolder="client."
+                                                        />
+                                                    ) : (
+                                                        ""
+                                                    )}
+                                                    {values.owner == "partner" ? (
+                                                        <DynamicTableRow
+                                                            rowConfig={rowConfig}
+                                                            values={values}
+                                                            setFieldValue={setFieldValue}
+                                                            handleChange={handleChange}
+                                                            handleBlur={handleBlur}
+                                                            //  handleInnerModal={handleInnerModal}
+                                                            stakeHolder="partner."
+                                                        />
+                                                    ) : (
+                                                        ""
+                                                    )}
+                                                    {values.owner == "client+partner" ? (
+                                                        <>
+                                                            <DynamicTableRow
+                                                                rowConfig={rowConfig}
+                                                                values={values}
+                                                                setFieldValue={setFieldValue}
+                                                                handleChange={handleChange}
+                                                                handleBlur={handleBlur}
+                                                                //   handleInnerModal={handleInnerModal}
+                                                                stakeHolder="client."
+                                                            />
+                                                            <DynamicTableRow
+                                                                rowConfig={rowConfig}
+                                                                values={values}
+                                                                setFieldValue={setFieldValue}
+                                                                handleChange={handleChange}
+                                                                handleBlur={handleBlur}
+                                                                //   handleInnerModal={handleInnerModal}
+                                                                stakeHolder="partner."
+                                                            />
+                                                        </>
+                                                    ) : (""
+                                                    )}
                                                 </tbody>
                                             </Table>
                                         </div>

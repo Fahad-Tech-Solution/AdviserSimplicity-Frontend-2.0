@@ -18,6 +18,7 @@ const SalaryPackaging = (props) => {
         if (parentValues?.[`${parentKey}`]?.[`${key}`] && Object.keys(parentValues?.[`${parentKey}`]?.[`${key}`]).length > 0) {
             let Data = parentValues[`${parentKey}`][`${key}`];
             console.log("incondition", JSON.stringify(Data));
+
             setFieldValue("employerFBTStatus", Data.employerFBTStatus)
             setFieldValue("creditCardMortgageRepayments", Data.creditCardMortgageRepayments)
             setFieldValue("costBaseOfCar", Data.costBaseOfCar)
@@ -86,7 +87,7 @@ const SalaryPackaging = (props) => {
                                                             as="select"
                                                             id={`employerFBTStatus`}
                                                             name={`employerFBTStatus`}
-                                                            className="form-select inputDesign"
+                                                            className="form-select inputDesignDoubleInput"
                                                         >
                                                             <option value={""}>Select</option>
                                                             <option value={"Full FBT/Rebatable/Exempt (17K Cap)"}>Full FBT/Rebatable/Exempt (17K Cap)</option>
@@ -99,7 +100,7 @@ const SalaryPackaging = (props) => {
                                                             placeholder="Investment Code"
                                                             id={`creditCardMortgageRepayments`}
                                                             name={`creditCardMortgageRepayments`}
-                                                            className="form-control inputDesign"
+                                                            className="form-control inputDesignDoubleInput"
                                                             onChange={(e) => {
                                                                 setFieldValue(e.target.name,
                                                                     toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
@@ -112,7 +113,7 @@ const SalaryPackaging = (props) => {
                                                             placeholder="Investment Code"
                                                             id={`costBaseOfCar`}
                                                             name={`costBaseOfCar`}
-                                                            className="form-control inputDesign"
+                                                            className="form-control inputDesignDoubleInput"
                                                             onChange={(e) => {
                                                                 setFieldValue(e.target.name,
                                                                     toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
@@ -129,7 +130,7 @@ const SalaryPackaging = (props) => {
                                                             placeholder="Investment Code"
                                                             id={`runningCostsOfCar`}
                                                             name={`runningCostsOfCar`}
-                                                            className="form-control inputDesign"
+                                                            className="form-control inputDesignDoubleInput"
                                                             onChange={(e) => {
                                                                 setFieldValue(e.target.name,
                                                                     toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));

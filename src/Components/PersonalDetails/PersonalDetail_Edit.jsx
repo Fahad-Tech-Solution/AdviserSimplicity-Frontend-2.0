@@ -254,35 +254,35 @@ const PersonalDetail = () => {
     console.log(JSON.stringify(values));
 
     let ClientDetails = {
-      clientTitle: values.clientTitle ||  "Mr.",
-      clientGivenName: values.clientGivenName ||  "John",
-      clientSurname: values.clientSurname ||  "Doe",
-      clientPreferredName: values.clientPreferredName ||  "Johnny",
-      clientGender: values.clientGender ||  "Male",
-      clientDOB: values.clientDOB ||  "1990-01-01",
-      clientAge: values.clientAge ||  34,
-      clientMaritalStatus: values.clientMaritalStatus ||  "Single",
-      clientEmploymentStatus: values.clientEmploymentStatus ||  "Employed",
-      clientHealth: values.clientHealth ||  "Good",
-      clientSmoker: values.clientSmoker ||  "No",
-      clientPlannedRetirementAge: parseFloat(values.clientPlannedRetirementAge) ||  65,
-      clientHomeAddress: values.clientHomeAddress ||  "123 Main St",
-      clientPostcode: values.clientPostcode ||  12345,
-      clientHomePhone: values.clientHomePhone ||  "555-555-5555",
-      clientWorkPhone: values.clientWorkPhone ||  "555-555-5556",
-      clientMobile: values.clientMobile ||  "555-555-5557",
-     
-      Email: values.Email ,
-     
-      clientPostalAddress: values.clientPostalAddress ||  "123 Main St",
-      clientPostalPostCode: values.clientPostalPostCode ||  12345,
-      clientMiddleName: values.clientMiddleName ||  "Michael",
-      clientOccupationID: values.clientOccupationID ||  "OCC123",
-      clientTaxResidentRadio: values.clientTaxResidentRadio ||  "Yes",
-      clientPrivateHealthCoverRadio: values.clientPrivateHealthCoverRadio ||  "Yes",
-      clientHELPSDebtRadio: values.clientHELPSDebtRadio ||  "No",
-      clientSameAsAbove: values.clientSameAsAbove ||  true,
-    
+      clientTitle: values.clientTitle || "Mr.",
+      clientGivenName: values.clientGivenName || "John",
+      clientSurname: values.clientSurname || "Doe",
+      clientPreferredName: values.clientPreferredName || "Johnny",
+      clientGender: values.clientGender || "Male",
+      clientDOB: values.clientDOB || "1990-01-01",
+      clientAge: values.clientAge || 34,
+      clientMaritalStatus: values.clientMaritalStatus || "Single",
+      clientEmploymentStatus: values.clientEmploymentStatus || "Employed",
+      clientHealth: values.clientHealth || "Good",
+      clientSmoker: values.clientSmoker || "No",
+      clientPlannedRetirementAge: parseFloat(values.clientPlannedRetirementAge) || 65,
+      clientHomeAddress: values.clientHomeAddress || "123 Main St",
+      clientPostcode: values.clientPostcode || 12345,
+      clientHomePhone: values.clientHomePhone || "555-555-5555",
+      clientWorkPhone: values.clientWorkPhone || "555-555-5556",
+      clientMobile: values.clientMobile || "555-555-5557",
+
+      Email: values.Email,
+
+      clientPostalAddress: values.clientPostalAddress || "123 Main St",
+      clientPostalPostCode: values.clientPostalPostCode || 12345,
+      clientMiddleName: values.clientMiddleName || "Michael",
+      clientOccupationID: values.clientOccupationID || "OCC123",
+      clientTaxResidentRadio: values.clientTaxResidentRadio || "Yes",
+      clientPrivateHealthCoverRadio: values.clientPrivateHealthCoverRadio || "Yes",
+      clientHELPSDebtRadio: values.clientHELPSDebtRadio || "No",
+      clientSameAsAbove: values.clientSameAsAbove || true,
+
     };
 
     setClientData(ClientDetails);
@@ -391,6 +391,8 @@ const PersonalDetail = () => {
         car: "No",
         boat: "No",
         caravan: "No",
+        houseHold: "No",
+        otherAssets: "No",
         personalAssets: "No",
         personalLoans: "No",
         creditCards: "No",

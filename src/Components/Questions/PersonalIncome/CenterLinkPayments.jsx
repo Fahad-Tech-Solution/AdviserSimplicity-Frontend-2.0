@@ -28,24 +28,41 @@ const CenterLinkPayments = (props) => {
 
   const fillInitialValues = (setFieldValue) => {
     if (
-      incomeFromCentrelink[props.modalObject.Input] &&
-      incomeFromCentrelink[props.modalObject.Input].length
+      incomeFromCentrelink &&
+      incomeFromCentrelink._id
     ) {
-      incomeFromCentrelink[props.modalObject.Input].forEach((data, i) => {
-        if (data) {
-          setFieldValue(`paymentType${i}`, data.paymentType || "");
-          setFieldValue(`cRN${i}`, data.cRN || "");
-          setFieldValue(
-            `fortnightlyPayment${i}`,
-            data.fortnightlyPayment || ""
-          );
-          setFieldValue(
-            `annualPaymentAmount${i}`,
-            data.annualPaymentAmount || ""
-          );
-          setFieldValue(`centrelinkcards${i}`, data.centrelinkcards || "");
+
+
+      let data = incomeFromCentrelink
+
+      if (data) {
+
+        setFieldValue("owner", data.owner);
+        if (incomeFromCentrelink.owner === "client" || incomeFromCentrelink.owner === "client+partner") {
+
+          setFieldValue(`client.paymentType`, data.client.paymentType || "");
+          setFieldValue(`client.paymentType`, data.client.paymentType || "");
+          setFieldValue(`client.CRN`, data.client.CRN || "");
+          setFieldValue(`client.fortnightlyPayment`, data.client.fortnightlyPayment || "");
+          setFieldValue(`client.annualPaymentAmount`, data.client.annualPaymentAmount || "");
+          setFieldValue(`client.centrelinkCardsHeld`, data.client.centrelinkCardsHeld || "");
         }
-      });
+        if (incomeFromCentrelink.owner === "partner" || incomeFromCentrelink.owner === "client+partner") {
+
+          setFieldValue(`partner.paymentType`, data.partner.paymentType || "");
+          setFieldValue(`partner.paymentType`, data.partner.paymentType || "");
+          setFieldValue(`partner.CRN`, data.partner.CRN || "");
+          setFieldValue(`partner.fortnightlyPayment`, data.partner.fortnightlyPayment || "");
+          setFieldValue(`partner.annualPaymentAmount`, data.partner.annualPaymentAmount || "");
+          setFieldValue(`partner.centrelinkCardsHeld`, data.partner.centrelinkCardsHeld || "");
+        }
+
+
+
+
+
+      }
+
     }
   };
 
@@ -54,59 +71,30 @@ const CenterLinkPayments = (props) => {
 
   let onSubmit = async (values) => {
     console.log(JSON.stringify(values));
-    return (false);
+    // return (false);
 
+    let obj = values;
 
-    // Extract the number of maps from the values
-    const numberOfMaps = parseInt(values.NumberOfMap, 10);
-    const newEntries = [];
+    obj.clientFK = localStorage.getItem("UserID");
 
-    // Iterate through each map entry and create a new object
-    for (let i = 0; i < numberOfMaps; i++) {
-      const newEntry = {
-        cRN: values[`cRN${i}`] || "",
-        paymentType: values[`paymentType${i}`] || "",
-        fortnightlyPayment: values[`fortnightlyPayment${i}`] || "",
-        annualPaymentAmount: values[`annualPaymentAmount${i}`] || "",
-        centrelinkcards: values[`centrelinkcards${i}`] || "",
-        // centrelinkcards: values[`centrelinkcards${i}`] || "",
-      };
-      newEntries.push(newEntry);
+    if (incomeFromCentrelink.owner === "client" || incomeFromCentrelink.owner === "client+partner") {
+      obj.clientTotal = obj.client.annualPaymentAmount;
     }
 
-    // Log the new entries to verify
-    console.log(newEntries);
+    if (incomeFromCentrelink.owner === "partner" || incomeFromCentrelink.owner === "client+partner") {
+      obj.partnerTotal = obj.partner.annualPaymentAmount;
+    }
 
-    let DataOf = props.modalObject.Input;
-
-    // Create an object with additional fields
-    let obj = {
-      clientFK: localStorage.getItem("UserID"),
-    };
-
-    obj[DataOf] = newEntries;
-
-    // Calculate total currentBalance
-    obj[DataOf + "Total"] = newEntries.reduce(
-      (total, entry) => total + entry.annualPaymentAmount,
-      0
-    );
-
-    console.log(obj, "final obj");
-
-    // Check if incomeFromCentrelink and the array at props.modalObject.Input exist
-    // const bankAccountArray = incomeFromCentrelink[props.modalObject.Input] || [];
-    const bankAccountArray = incomeFromCentrelink.clientFK || "";
+    const GotData = incomeFromCentrelink.clientFK || "";
 
     try {
       let res;
-      if (!bankAccountArray) {
+      if (!GotData) {
         res = await PostAxios(
           `${DefaultUrl}/api/incomeFromCentrelink/Add`,
           obj
         );
       } else {
-        obj.collection = props.modalObject.Input;
         res = await PatchAxios(
           `${DefaultUrl}/api/incomeFromCentrelink/Update`,
           obj
@@ -146,11 +134,11 @@ const CenterLinkPayments = (props) => {
   ];
 
   const rowConfig = [
-    { name: 'cRN', type: 'number', placeholder: 'CRN' },
+    { name: 'CRN', type: 'text', placeholder: 'CRN' },
     { name: 'paymentType', type: 'select-creatableMulti', placeholder: 'Multi Select Field', options: options, styleSet: { width: "150px" }, },
     { name: 'fortnightlyPayment', type: 'number-toComma', placeholder: 'Fortnightly Payment', styleSet: { width: "150px" }, },
     { name: 'annualPaymentAmount', type: 'number-toComma', placeholder: 'Annual Payment Amount', styleSet: { width: "150px" }, },
-    { name: 'centrelinkcards', type: 'select-creatableMulti', placeholder: 'Multi Select Field', options: options2 },
+    { name: 'centrelinkCardsHeld', type: 'select-creatableMulti', placeholder: 'Multi Select Field', options: options2 },
   ];
 
 

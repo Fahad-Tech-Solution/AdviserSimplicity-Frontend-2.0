@@ -3,128 +3,74 @@ import React, { useEffect, useState } from "react";
 import { Row, Table } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { PatchAxios, PostAxios } from "../../Assets/Api/Api";
+import { PatchAxios, PostAxios, RenderName } from "../../Assets/Api/Api";
+import DynamicTableRow from "../../Assets/Dynamic/DynamicTableRow";
 // import Select from "react-select";
-
 
 const OverseasPension = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
-  let [nameSet] = useState(() => {
-    if (props.modalObject.Input === "client") {
-      return (localStorage.getItem("UserName"))
-    }
-    else if (props.modalObject.Input === "partner") {
-      return (localStorage.getItem("PartnerName"))
-    }
-    else if (props.modalObject.Input === "joint") {
-      return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
-    }
-  })
+  let incomeFromOverseasPension =
+    Object.keys(questionDetail.incomeFromOverseasPension).length > 0
+      ? questionDetail.incomeFromOverseasPension
+      : {
+        client: [],
+        partner: [],
+        joint: [],
+      }; // Use an empty object as default if incomeFromOverseasPension is undefined
 
-
-  let incomeFromOverseasPension = Object.keys(questionDetail.incomeFromOverseasPension).length > 0 ? questionDetail.incomeFromOverseasPension : {
-    client: [],
-    partner: [],
-    joint: [],
-
-  }; // Use an empty object as default if incomeFromOverseasPension is undefined
-
-  let initialValues = incomeFromOverseasPension[props.modalObject.Input].length
-    ? { NumberOfMap: incomeFromOverseasPension[props.modalObject.Input].length }
-    : { NumberOfMap: "" };
-
-  const [dynamicFields, setDynamicFields] = useState([]);
-
-  useEffect(() => {
-    if (
-      incomeFromOverseasPension[props.modalObject.Input] &&
-      incomeFromOverseasPension[props.modalObject.Input].length
-    ) {
-      let arr = [];
-
-      for (
-        let i = 0;
-        i < incomeFromOverseasPension[props.modalObject.Input].length;
-        i++
-      ) {
-        arr.push("");
-      }
-
-      setDynamicFields(arr);
-    }
-  }, []);
+  let initialValues = {};
 
   const fillInitialValues = (setFieldValue) => {
-    if (
-      incomeFromOverseasPension[props.modalObject.Input] &&
-      incomeFromOverseasPension[props.modalObject.Input].length
-    ) {
-      incomeFromOverseasPension[props.modalObject.Input].forEach((data, i) => {
-        if (data) {
-          setFieldValue(`incomePA${i}`, data.incomePA || "");
-          setFieldValue(`country${i}`, data.country || "");
-        }
-      });
+    console.log(incomeFromOverseasPension, "data");
+    let data = incomeFromOverseasPension || "";
+    if (incomeFromOverseasPension && incomeFromOverseasPension._id) {
+      if (data) {
+        setFieldValue(`owner`, data.owner || "");
+        setFieldValue(
+          `client.regularIncomePA`,
+          data.client.regularIncomePA || ""
+        );
+        setFieldValue(
+          `partner.regularIncomePA`,
+          data.partner.regularIncomePA || ""
+        );
+        setFieldValue(`client.country`, data.client.country || "");
+        setFieldValue(`partner.country`, data.partner.country || "");
+      }
     }
   };
-
-  let handleInput = (e, setFieldValue) => {
-    const value = e.target.value > 10 ? 10 : e.target.value;
-    setFieldValue(e.target.id, value);
-
-    let arr = [];
-
-    for (let i = 0; i < value; i++) {
-      arr.push("");
-    }
-
-    setDynamicFields(arr);
-  };
-
 
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   let onSubmit = async (values) => {
-
     console.log(JSON.stringify(values));
     // return (false);
-    // Extract the number of maps from the values
-    const numberOfMaps = parseInt(values.NumberOfMap, 10);
-    const newEntries = [];
 
-    // Iterate through each map entry and create a new object
-    for (let i = 0; i < numberOfMaps; i++) {
-      const newEntry = {
-        country: values[`country${i}`] || "",
-        incomePA: values[`incomePA${i}`] || "",
-      };
-      newEntries.push(newEntry);
+    let obj = values;
+    obj.clientFK = localStorage.getItem("UserID");
+    console.log(obj, "new Object");
+    if (values.owner === "client" || values.owner === "client+partner") {
+      obj.clientTotal = values.client.regularIncomePA;
+      console.log("Client total set");
+    } else {
+      obj.client = {};
+      obj.clientTotal = "";
+      console.log("Client data cleared");
     }
 
-    // Log the new entries to verify
-    console.log(newEntries);
-
-    let DataOf = props.modalObject.Input;
-
-    // Create an object with additional fields
-    let obj = {
-      clientFK: localStorage.getItem("UserID"),
-    };
-
-    obj[DataOf] = newEntries;
-
-    // Calculate total currentBalance
-    obj[DataOf + "Total"] = newEntries.reduce(
-      (total, entry) => total + entry.incomePA,
-      0
-    );
+    if (values.owner === "partner" || values.owner === "client+partner") {
+      obj.partnerTotal = values.partner.regularIncomePA;
+      console.log("Partner total set");
+    } else {
+      obj.partner = {};
+      obj.partnerTotal = "";
+      console.log("Partner data cleared");
+    }
 
     console.log(obj, "final obj");
-
     const bankAccountArray = incomeFromOverseasPension.clientFK || "";
-
     try {
       let res;
       if (!bankAccountArray) {
@@ -133,7 +79,7 @@ const OverseasPension = (props) => {
           obj
         );
       } else {
-        obj.collection = props.modalObject.Input;
+        // obj.collection = props.modalObject.Input;
         res = await PatchAxios(
           `${DefaultUrl}/api/incomeFromOverseasPension/Update`,
           obj
@@ -142,7 +88,10 @@ const OverseasPension = (props) => {
 
       if (res) {
         console.log(res);
-        const updatedData = { ...questionDetail, incomeFromOverseasPension: res };
+        const updatedData = {
+          ...questionDetail,
+          incomeFromOverseasPension: res,
+        };
         setQuestionDetail(updatedData);
       }
 
@@ -154,6 +103,16 @@ const OverseasPension = (props) => {
       console.error("Error occurred while making API call:", error);
     }
   };
+  
+  const rowConfig = [
+    { name: "country", type: "text", placeholder: "country" },
+    {
+      name: "regularIncomePA",
+      type: "number-toComma",
+      placeholder: "Regular IncomePA",
+    },
+    // { name: "businessAddress", type: "text", placeholder: "Business Address" },
+  ];
 
   return (
     <Formik
@@ -162,31 +121,56 @@ const OverseasPension = (props) => {
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, setFieldValue, handleChange }) => {
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
-        }, [values.NumberOfMap]);
+        }, []);
 
         return (
           <Form>
             <Row>
               <div className="col-md-12">
                 <div className="row justify-content-center">
-                  <div className="col-md-5">
-                    <p className="text-end mt-1">
-                      How many {props.modalObject.title} does {nameSet} have:
-                    </p>
+                  <div className="col-md-12">
+                    <div className="d-flex justify-content-center align-items-center gap-4">
+                      <label htmlFor="" className="text-end ">
+                        Owner
+                      </label>
+
+                      <div className="w-25 ">
+                        <Field
+                          as="select"
+                          placeholder="Name of owner"
+                          id={`owner`}
+                          name={`owner`}
+                          className="form-select inputDesignDoubleInput"
+                        >
+                          <option value={""}>Select</option>
+                          <option value={"client"}>
+                            {"Only " + RenderName("client")}
+                          </option>
+                          {localStorage.getItem("UserStatus") !== "Single" && (
+                            <React.Fragment>
+                              <option value={"partner"}>
+                                {"Only " + RenderName("partner")}
+                              </option>
+                              <option value={"client+partner"}>
+                                {"Both (" +
+                                  RenderName("client") +
+                                  " , " +
+                                  RenderName("partner") +
+                                  ")"}
+                              </option>
+                              {/* <option value={"joint"}>
+                                {"Joint (" + RenderName("joint") + ")"}
+                              </option> */}
+                            </React.Fragment>
+                          )}
+                        </Field>
+                      </div>
+                    </div>
                   </div>
-                  <div className="col-md-2">
-                    <Field
-                      type="number"
-                      id="NumberOfMap"
-                      name="NumberOfMap"
-                      className="form-control inputDesignDoubleInput"
-                      onChange={(e) => handleInput(e, setFieldValue)}
-                    />
-                  </div>
-                  {values.NumberOfMap && (
+                  {values.owner && (
                     <div className="mt-4">
                       <Table striped bordered responsive hover>
                         <thead>
@@ -196,39 +180,67 @@ const OverseasPension = (props) => {
                                 console.log(values);
                               }}
                             >
-                              No#
+                              Owner
                             </th>
                             <th>Country</th>
                             <th>Regular Income p.a</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {dynamicFields.map((elem, i) => {
-                            return (
-                              <tr key={i}>
-                                <td>{1 + i}</td>
-                                <td>
-                                  <Field
-                                    type="text"
-                                    placeholder="Country"
-                                    id={`country${i}`}
-                                    name={`country${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="number"
-                                    placeholder="Income p.a"
-                                    id={`incomePA${i}`}
-                                    name={`incomePA${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                  {/* </Field> */}
-                                </td>
-                              </tr>
-                            );
-                          })}
+                          {values.owner == "client" ? (
+                            <>
+                              <DynamicTableRow
+                                rowConfig={rowConfig}
+                                values={values}
+                                setFieldValue={setFieldValue}
+                                handleChange={handleChange}
+                                handleBlur={handleBlur}
+                                // handleInnerModal={handleInnerModal}
+                                stakeHolder="client."
+                              />
+                            </>
+                          ) : (
+                            ""
+                          )}
+                          {values.owner == "partner" ? (
+                            <>
+                              <DynamicTableRow
+                                rowConfig={rowConfig}
+                                values={values}
+                                setFieldValue={setFieldValue}
+                                handleChange={handleChange}
+                                handleBlur={handleBlur}
+                                // handleInnerModal={handleInnerModal}
+                                stakeHolder="partner."
+                              />
+                            </>
+                          ) : (
+                            ""
+                          )}
+                          {values.owner == "client+partner" ? (
+                            <>
+                              <DynamicTableRow
+                                rowConfig={rowConfig}
+                                values={values}
+                                setFieldValue={setFieldValue}
+                                handleChange={handleChange}
+                                handleBlur={handleBlur}
+                                // handleInnerModal={handleInnerModal}
+                                stakeHolder="client."
+                              />
+                              <DynamicTableRow
+                                rowConfig={rowConfig}
+                                values={values}
+                                setFieldValue={setFieldValue}
+                                handleChange={handleChange}
+                                handleBlur={handleBlur}
+                                // handleInnerModal={handleInnerModal}
+                                stakeHolder="partner."
+                              />
+                            </>
+                          ) : (
+                            ""
+                          )}
                         </tbody>
                       </Table>
                     </div>
@@ -244,3 +256,4 @@ const OverseasPension = (props) => {
 };
 
 export default OverseasPension;
+

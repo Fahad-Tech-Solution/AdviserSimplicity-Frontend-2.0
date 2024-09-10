@@ -83,7 +83,7 @@ const SMSFInvestmentProperty = (props) => {
                                     Array.isArray(questionDetail[elem.key]) &&
                                     questionDetail[elem.key][i] &&
                                     questionDetail[elem.key][i].clientTotal
-                                    ? "$" + questionDetail[elem.key][i].clientTotal
+                                    ?  questionDetail[elem.key][i].clientTotal
                                     : ""}
                             />
                             <div
@@ -117,7 +117,7 @@ const SMSFInvestmentProperty = (props) => {
                                     Array.isArray(questionDetail[elem.key]) &&
                                     questionDetail[elem.key][i] &&
                                     questionDetail[elem.key][i].partnerTotal
-                                    ? "$" + questionDetail[elem.key][i].partnerTotal
+                                    ?  questionDetail[elem.key][i].partnerTotal
                                     : ""}
                             />
 
@@ -153,7 +153,7 @@ const SMSFInvestmentProperty = (props) => {
                                     Array.isArray(questionDetail[elem.key]) &&
                                     questionDetail[elem.key][i] &&
                                     questionDetail[elem.key][i].jointTotal
-                                    ? "$" + questionDetail[elem.key][i].jointTotal
+                                    ?  questionDetail[elem.key][i].jointTotal
                                     : ""}
                             />
 

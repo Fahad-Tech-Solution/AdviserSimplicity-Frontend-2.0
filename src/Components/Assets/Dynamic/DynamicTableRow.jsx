@@ -20,7 +20,7 @@ const DynamicTableRow = ({
         <td>
           <th>{RenderName("partner")} </th>
         </td>
-      ) : stakeHolder == "joint" ? (
+      ) : stakeHolder == "joint." ? (
         <td>
           <th>{RenderName("client") + " + " + RenderName("partner")}</th>
         </td>
@@ -31,7 +31,7 @@ const DynamicTableRow = ({
         <td key={index}
           style={
             field?.styleSet ? field.styleSet : {}
-            
+
           }
         >
           <DynamicFormField

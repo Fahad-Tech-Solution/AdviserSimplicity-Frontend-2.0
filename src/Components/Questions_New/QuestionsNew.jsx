@@ -56,7 +56,6 @@ const QuestionsNew = (props) => {
 
     setQuestionChange(cLocation)
     // fetchData();
-
     console.log("QuestionDetails Data condition :", Object.keys(questionDetail).length)
 
     if (questionDetail && Object.keys(questionDetail).length <= 0) {
@@ -153,7 +152,6 @@ const QuestionsNew = (props) => {
           }
         }
         else {
-
           Navigation(prevItem.route);
         }
         break;

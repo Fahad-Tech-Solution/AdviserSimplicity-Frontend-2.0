@@ -34,50 +34,41 @@ const EmploymentIncome = (props) => {
 
     const fillInitialValues = (setFieldValue) => {
 
-        if (incomeFromOwnBusiness[props.modalObject.Input] && incomeFromOwnBusiness[props.modalObject.Input].EMPChoiceradio) {
+        if (incomeFromOwnBusiness && incomeFromOwnBusiness._id) {
 
-            // let data = incomeFromOwnBusiness[props.modalObject.Input]
+            setFieldValue("owner", incomeFromOwnBusiness.owner);
 
-            // setFieldValue("EMPChoiceradio", data.EMPChoiceradio || '');
-            // setFieldValue("EMPSacrificeradio", data.EMPSacrificeradio || '');
-            // setFieldValue("EMPcontributionradio", data.EMPcontributionradio || '');
-            // setFieldValue("EMPSignificantlyradio", data.EMPSignificantlyradio || '');
-            // setFieldValue("EMPCurrentlyRadio", data.EMPCurrentlyRadio || '');
-            // setFieldValue("EMPSalaryRadio", data.EMPSalaryRadio || '');
-            // setFieldValue("EMPFBTradio", data.EMPFBTradio || '');
-            // setFieldValue("EMPSalaryPackageRadio", data.EMPSalaryPackageRadio || '');
-            // setFieldValue("EMPOccupation", data.EMPOccupation || '');
-            // setFieldValue("EMPName", data.EMPName || '');
-            // setFieldValue("EMPCommencement", data.EMPCommencement || '');
-            // setFieldValue("EMPHours", data.EMPHours || '');
-            // setFieldValue("EMPExcluding", data.EMPExcluding || '');
-            // setFieldValue("EMPSuperAnnuation", data.EMPSuperAnnuation || '');
-            // setFieldValue("EMPEmployment", data.EMPEmployment || '');
-            // setFieldValue("EMPSuperType", data.EMPSuperType || '');
-            // setFieldValue("EMPUnusedSickLeaveType", data.EMPUnusedSickLeaveType || '');
-            // setFieldValue("EMPUnusedAnnualType", data.EMPUnusedAnnualType || '');
-            // setFieldValue("EMPUnusedlongType", data.EMPUnusedlongType || '');
-            // setFieldValue("EMPSalarySacrifice", data.EMPSalarySacrifice || '');
-            // setFieldValue("EMPTaxContribution", data.EMPTaxContribution || '');
-            // setFieldValue("EMPUnusedSickLeave", data.EMPUnusedSickLeave || '');
-            // setFieldValue("EMPUnusedAnnual", data.EMPUnusedAnnual || '');
-            // setFieldValue("EMPUnusedlong", data.EMPUnusedlong || '');
-            // setFieldValue("EMPFBTStatus", data.EMPFBTStatus || '');
-            // setFieldValue("EMPCostCar", data.EMPCostCar || '');
-            // setFieldValue("EMPCarPackaged", data.EMPCarPackaged || '');
-            // setFieldValue("EMPAbilitytoSacrifice", data.EMPAbilitytoSacrifice || '');
+            if (incomeFromOwnBusiness.owner === "client" || incomeFromOwnBusiness.owner === "client+partner") {
+                setFieldValue("client.occupation", incomeFromOwnBusiness.client.occupation)
+                setFieldValue("client.employmentStatus", incomeFromOwnBusiness.client.employmentStatus)
+                setFieldValue("client.nameOfCompany", incomeFromOwnBusiness.client.nameOfCompany)
+                setFieldValue("client.startDate", incomeFromOwnBusiness.client.startDate)
+                setFieldValue("client.hoursWorked", incomeFromOwnBusiness.client.hoursWorked)
+                setFieldValue("client.choiceOfFund", incomeFromOwnBusiness.client.choiceOfFund)
+                setFieldValue("client.SalaryPackageModal", incomeFromOwnBusiness.client.SalaryPackageModal)
+                setFieldValue("client.salaryPackagingRadio", incomeFromOwnBusiness.client.salaryPackagingRadio)
+                setFieldValue("client.SalaryPackagingModal", incomeFromOwnBusiness.client.SalaryPackagingModal)
+                setFieldValue("client.leaveEntitlementsRadio", incomeFromOwnBusiness.client.leaveEntitlementsRadio)
+                setFieldValue("client.LeaveEntitlementsModal", incomeFromOwnBusiness.client.LeaveEntitlementsModal)
+            }
 
+            if (incomeFromOwnBusiness.owner === "partner" || incomeFromOwnBusiness.owner === "client+partner") {
+                setFieldValue("partner.occupation", incomeFromOwnBusiness.partner.occupation)
+                setFieldValue("partner.employmentStatus", incomeFromOwnBusiness.partner.employmentStatus)
+                setFieldValue("partner.nameOfCompany", incomeFromOwnBusiness.partner.nameOfCompany)
+                setFieldValue("partner.startDate", incomeFromOwnBusiness.partner.startDate)
+                setFieldValue("partner.hoursWorked", incomeFromOwnBusiness.partner.hoursWorked)
+                setFieldValue("partner.choiceOfFund", incomeFromOwnBusiness.partner.choiceOfFund)
+                setFieldValue("partner.SalaryPackageModal", incomeFromOwnBusiness.partner.SalaryPackageModal)
+                setFieldValue("partner.salaryPackagingRadio", incomeFromOwnBusiness.partner.salaryPackagingRadio)
+                setFieldValue("partner.SalaryPackagingModal", incomeFromOwnBusiness.partner.SalaryPackagingModal)
+                setFieldValue("partner.leaveEntitlementsRadio", incomeFromOwnBusiness.partner.leaveEntitlementsRadio)
+                setFieldValue("partner.LeaveEntitlementsModal", incomeFromOwnBusiness.partner.LeaveEntitlementsModal)
+            }
 
         }
         else {
-            // setFieldValue("EMPChoiceradio", "No");
-            // setFieldValue("EMPSacrificeradio", "No");
-            // setFieldValue("EMPcontributionradio", "No");
-            // setFieldValue("EMPSignificantlyradio", "No");
-            // setFieldValue("EMPCurrentlyRadio", "No");
-            // setFieldValue("EMPSalaryRadio", "No");
-            // setFieldValue("EMPFBTradio", "No");
-            // setFieldValue("EMPSalaryPackageRadio", "No");
+
         }
 
     };
@@ -87,21 +78,24 @@ const EmploymentIncome = (props) => {
     let onSubmit = async (values) => {
         console.log(JSON.stringify(values));
 
-        return false;
+        // return false;
+        let obj = values;
 
-        // Create an object with additional fields
-        let obj = {
-            clientFK: localStorage.getItem("UserID"),
-        };
+        obj.clientFK = localStorage.getItem("UserID");
 
-        let DataOf = props.modalObject.Input;
+        if (incomeFromOwnBusiness.owner === "client" || incomeFromOwnBusiness.owner === "client+partner") {
+            obj.clientTotal = obj.client.SalaryPackageModal.grossSalary;
+        }
+        
+        if (incomeFromOwnBusiness.owner === "partner" || incomeFromOwnBusiness.owner === "client+partner") {
+            obj.partnerTotal = obj.partner.SalaryPackageModal.grossSalary;
+        }
 
-        obj[DataOf] = values;
 
-        obj[DataOf + "Total"] = values.EMPExcluding;
 
         try {
             let res;
+
             if (!questionDetail.incomeFromOwnBusiness || !questionDetail.incomeFromOwnBusiness.clientFK) {
                 res = await PostAxios(`${DefaultUrl}/api/incomeFromOwnBusiness/Add`, obj);
             } else {
@@ -131,12 +125,6 @@ const EmploymentIncome = (props) => {
         })
         setFlagState(true);
     }
-
-
-
-
-
-
 
     return (
         <Formik
@@ -265,7 +253,7 @@ const EmploymentIncome = (props) => {
                                                                 showIcon
                                                                 id={`startDate`}
                                                                 name={`client.startDate`}
-                                                                selected={values[`client.startDate`]}
+                                                                selected={values?.client?.startDate}
                                                                 onChange={(date) => setFieldValue(`client.startDate`, date)}
                                                                 dateFormat="dd/MM/yyyy"
                                                                 placeholderText="dd/mm/yyyy"
@@ -332,7 +320,7 @@ const EmploymentIncome = (props) => {
                                                     </td>
                                                     <td>
                                                         <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
-                                                            <DynamicYesNo name={`client.ChoiceFund`} values={values} handleChange={handleChange} />
+                                                            <DynamicYesNo name={`client.choiceOfFund`} values={values} handleChange={handleChange} />
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -384,7 +372,7 @@ const EmploymentIncome = (props) => {
                                                                 showIcon
                                                                 id={`startDate`}
                                                                 name={`partner.startDate`}
-                                                                selected={values[`partner.startDate`]}
+                                                                selected={values?.partner?.startDate}
                                                                 onChange={(date) => setFieldValue(`partner.startDate`, date)}
                                                                 dateFormat="dd/MM/yyyy"
                                                                 placeholderText="dd/mm/yyyy"
@@ -452,7 +440,7 @@ const EmploymentIncome = (props) => {
                                                     </td>
                                                     <td>
                                                         <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
-                                                            <DynamicYesNo id={"ChoiceFund"} name={`partner.ChoiceFund`} values={values} handleChange={handleChange} />
+                                                            <DynamicYesNo id={"choiceOfFund"} name={`partner.choiceOfFund`} values={values} handleChange={handleChange} />
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -573,7 +561,7 @@ const EmploymentIncome = (props) => {
                                                     </td>
                                                     <td>
                                                         <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
-                                                            <DynamicYesNo id={"ChoiceFund"} name={`joint.ChoiceFund`} values={values} handleChange={handleChange} />
+                                                            <DynamicYesNo id={"choiceOfFund"} name={`joint.choiceOfFund`} values={values} handleChange={handleChange} />
                                                         </div>
                                                     </td>
                                                 </tr>

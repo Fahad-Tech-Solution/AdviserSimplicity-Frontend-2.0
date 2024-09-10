@@ -8,6 +8,7 @@ import Button from "react-bootstrap/Button";
 import { toCommaAndDollar, toPersentage } from "../Api/Api";
 import DynamicYesNo from "../../Questions/FinancialInvestments/QuestionsDetail/DynamicYesNo";
 import { CreatableMultiSelectField } from "../../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import CreatableSelectField from "./DynamicCreatableSelect/CreatableSelectField";
 
 const DynamicFormField = ({
   fieldType,
@@ -113,6 +114,27 @@ const DynamicFormField = ({
           component={CreatableMultiSelectField}
           label="Multi Select Field"
           options={options}
+        />
+      );
+
+    case "select-multi":
+      return (
+        <Field
+          name={stakeHolder + name}
+          component={CreatableMultiSelectField}
+          label="Multi Select Field"
+          options={options}
+        />
+      );
+
+    case "select-creatable":
+      return (
+        <Field
+          name={stakeHolder + name}
+          component={CreatableSelectField}
+          defaultOptions={options}
+          placeholder="Select or create ..."
+          form={{ setFieldValue }}
         />
       );
 

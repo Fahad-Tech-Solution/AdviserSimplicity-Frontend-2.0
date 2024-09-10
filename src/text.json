@@ -1,98 +1,149 @@
-{
-  "clientFK": "66d6fb4d4bc07523cfc0aa42",
-  "client": {
-    "occupation": "Software Engineer",
-    "employmentStatus": "Full-time",
-    "nameOfCompany": "Tech Corp",
-    "startDate": "2023-01-15T00:00:00Z",
-    "hoursWorked": 40,
-    "choiceOfFund": "Super Fund A",
-    "SalaryPackageModal": {
-      "remunerationType": "Base Salary",
-      "amount": 80000,
-      "SG": 9.5,
-      "grossSalary": "80000",
-      "SGC": 7500,
-      "salarySacrificeContributions": 5000,
-      "afterTaxContributions": 2000
-    },
-    "salaryPackagingRadio": "Yes",
-    "SalaryPackagingModal": {
-      "employerFBTStatus": "FBT Exempt",
-      "creditCardMortgageRepayments": 1500,
-      "costBaseOfCar": 30000,
-      "FBTPaidByEmployer": "No",
-      "runningCostsOfCar": 4000
-    },
-    "LeaveEntitlementsRadio": "Yes",
-    "LeaveEntitlementsModal": {
-      "annualLeave": "Yes",
-      "annualLeaveAmount": 20,
-      "annualLeaveTime": "Days",
-      "sickLeave": "Yes",
-      "sickLeaveAmount": 10,
-      "sickLeaveTime": "Days",
-      "longServiceLeave": "No",
-      "longServiceLeaveAmount": 0,
-      "longServiceLeaveTime": "Days"
-    }
-  },
-  "partner": {
-    "occupation": "Software Engineer",
-    "employmentStatus": "Full-time",
-    "nameOfCompany": "Tech Corp",
-    "startDate": "2023-01-15T00:00:00Z",
-    "hoursWorked": 40,
-    "choiceOfFund": "Super Fund A",
-    "SalaryPackageModal": {
-      "remunerationType": "Base Salary",
-      "amount": 80000,
-      "SG": 9.5,
-      "grossSalary": "80000",
-      "SGC": 7500,
-      "salarySacrificeContributions": 5000,
-      "afterTaxContributions": 2000
-    },
-    "salaryPackagingRadio": "Yes",
-    "SalaryPackagingModal": {
-      "employerFBTStatus": "FBT Exempt",
-      "creditCardMortgageRepayments": 1500,
-      "costBaseOfCar": 30000,
-      "FBTPaidByEmployer": "No",
-      "runningCostsOfCar": 4000
-    },
-    "LeaveEntitlementsRadio": "Yes",
-    "LeaveEntitlementsModal": {
-      "annualLeave": "Yes",
-      "annualLeaveAmount": 20,
-      "annualLeaveTime": "Days",
-
-      "sickLeave": "Yes",
-      "sickLeaveAmount": 10,
-      "sickLeaveTime": "Days",
-
-      "longServiceLeave": "No",
-      "longServiceLeaveAmount": 0,
-      "longServiceLeaveTime": "Days"
-    }
-  },
-  "clientTotal": 80000,
-  "partnerTotal": 60000,
-  "centerLInk": {
-    "owner": "client+partner",
-    "client": {
-      "fortnightlyPayment": "$2,322",
-      "annualPaymentAmount": "$23,223",
-      "paymentType": ["Age Pension"],
-      "centrelinkcards": ["Low Income Card"],
-      "cRN": 40
-    },
-    "partner": {
-      "cRN": 48,
-      "fortnightlyPayment": "$2,333",
-      "annualPaymentAmount": "$23,233",
-      "paymentType": ["Disability Pension"],
-      "centrelinkcards": ["Commonwealth Seniors Card"]
-    }
-  }
-}
+BusinessAsCompanyStructure: "Yes"
+​
+BusinessAsInvestmentTrust: "No"
+​
+BusinessAsSMSF: "No"
+​
+BusinessAsTrusts: "Yes"
+​
+POA: "No"
+​
+QuestionsFlag: false
+​
+SMSFAccumulationDetails: "Yes"
+​
+SMSFAustralianShares: "No"
+​
+SMSFBank: "Yes"
+​
+SMSFDetails: "Yes"
+​
+SMSFInvestmentExpenses: "Yes"
+​
+SMSFInvestmentLoan: "No"
+​
+SMSFInvestmentProperties: "No"
+​
+SMSFInvestmentPropertiesLoan: "Yes"
+​
+SMSFManagedFunds: "No"
+​
+SMSFManagedFundsTab: "Yes"
+​
+SMSFPensionPhase: "No"
+​
+SMSFTermDeposits: "No"
+​
+TPD: "No"
+​
+__v: 0
+​
+_id: "66dea73798dde507ee2f0e47"
+​
+accountBasedPensionIssues: "No"
+​
+annuitiesIssues: "No"
+​
+australianShareMarket: "No"
+​
+bankAccountFinance: "No"
+​
+boat: "Yes"
+​
+businessAsInvestmentTab: "Yes"
+​
+car: "Yes"
+​
+caravan: "Yes"
+​
+clientFK: "66d7ec9e2ea62d419aca48ef"
+​
+creditCards: "Yes"
+​
+familyAustralianShare: "Yes"
+​
+familyBank: "Yes"
+​
+familyDetails: "Yes"
+​
+familyHome: "Yes"
+​
+familyHomeLoan: "Yes"
+​
+familyInvestmentExpenses: "Yes"
+​
+familyInvestmentHomeLoan: "Yes"
+​
+familyInvestmentProperties: "No"
+​
+familyInvestmentPropertiesLoan: "Yes"
+​
+familyMangedFunds: "Yes"
+​
+familyPensionPhase: "No"
+​
+familyTermDeposit: "No"
+​
+holidayHome: "Yes"
+​
+holidayHomeLoan: "Yes"
+​
+incomeExpenses: "No"
+​
+incomeFromCentrelink: "Yes"
+​
+incomeFromInheritance: "No"
+​
+incomeFromLumpsumExpense: "No"
+​
+incomeFromOverseasPension: "Yes"
+​
+incomeFromOwnBusiness: "Yes"
+​
+incomeFromPartnership: "Yes"
+​
+incomeFromRegularLivingExpenses: "Yes"
+​
+incomeFromSoleTrader: "Yes"
+​
+incomeFromSuperPayment: "Yes"
+​
+incomeProtection: "Yes"
+​
+investmentBondFinance: "No"
+​
+investmentPropertyDetails: "No"
+​
+investmentPropertyLoan: "No"
+​
+investmentPropertyTab: "Yes"
+​
+life: "Yes"
+​
+managedFund: "No"
+​
+managedFundsLOC: "No"
+​
+managedFundsMarginLoan: "No"
+​
+numberOfFamilyInvestmentProperties: 5
+​
+numberOfHolidayHome: 10
+​
+numberOfSMSFInvestmentProperties: 0
+​
+personalAssets: "Yes"
+​
+personalInsuranceTab: "Yes"
+​
+personalLoans: "Yes"
+​
+professionalAdviser: "No"
+​
+superAnnuationIssues: "No"
+​
+termDepositsFinance: "No"
+​
+trauma: "No"
+​
+will: "No"

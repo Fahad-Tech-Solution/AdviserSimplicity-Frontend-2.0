@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "./AdditionalQueries.css";
+
 import car from "../svgs/car.svg";
 import boat from "../svgs/boat.svg";
 import trailer from "../svgs/trailer-caravan.svg";
 import settingMoney from "../svgs/settingMoney.svg";
+import houseHold from "../svgs/upgradeHome.png";
+import otherAssets from "../svgs/funds.svg";
+
 import moneyGiving from "../svgs/moneyGiving.png";
 import credit from "../svgs/credit-card-refund-svgrepo-com.svg";
 
@@ -85,6 +89,11 @@ const AdditionalQueriesPersonalAssets = (props) => {
             img: car,
         },
         {
+            title: "Do you have a House Hold?",
+            key: "houseHold",
+            img: houseHold,
+        },
+        {
             title: "Do you have a Boat?",
             key: "boat",
             img: boat,
@@ -94,9 +103,14 @@ const AdditionalQueriesPersonalAssets = (props) => {
             key: "caravan",
             img: trailer,
         },
+        // {
+        //     title: "Do you have any other Personal Assets?",
+        //     key: "personalAssets",
+        //     img: settingMoney,
+        // },
         {
-            title: "Do you have any other Personal Assets?",
-            key: "personalAssets",
+            title: "Do you have a Other Assets?",
+            key: "otherAssets",
             img: settingMoney,
         },
         {
@@ -110,12 +124,13 @@ const AdditionalQueriesPersonalAssets = (props) => {
             img: credit,
         },
     ]
+
     const QuestionClick = (index, elem, values, setFieldValue) => {
         // console.log("image clicked in goals", index, elem.key, values);
         if (values[elem.key] == "No") {
             setFieldValue(elem.key, "Yes");
         }
-        if (values[elem.key] == "Yes") {
+        else {
             setFieldValue(elem.key, "No");
         }
     };

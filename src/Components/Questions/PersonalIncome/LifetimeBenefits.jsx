@@ -3,176 +3,124 @@ import React, { useEffect, useState } from "react";
 import { Button, InputGroup, Row, Table } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { PatchAxios, PostAxios } from "../../Assets/Api/Api";
-// import Select from "react-select";
+import {
+  PatchAxios,
+  PostAxios,
+  RenderName,
+  toCommaAndDollar,
+  toNumericValue,
+} from "../../Assets/Api/Api";
 
-import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
-import PortfolioValue from "../FinancialInvestments/QuestionsDetail/PortfolioValue";
-import DynamicYesNo from "../FinancialInvestments/QuestionsDetail/DynamicYesNo";
-import MemberNumber from "../FinancialInvestments/QuestionsDetail/MemberNumber";
-import GroupInsurance from "../FinancialInvestments/QuestionsDetail/GroupInsurance";
-import Contributions from "../FinancialInvestments/QuestionsDetail/Contributions";
-import Beneficiaries from "../FinancialInvestments/QuestionsDetail/Beneficiaries";
-import CreatableSelect from 'react-select/creatable';
-
-
-
+import DynamicTableRow from "../../Assets/Dynamic/DynamicTableRow";
 
 const LifeTimeBeneFits = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
-
   let [nameSet] = useState(() => {
     if (props.modalObject.Input === "client") {
-      return (localStorage.getItem("UserName"))
+      return localStorage.getItem("UserName");
+    } else if (props.modalObject.Input === "partner") {
+      return localStorage.getItem("PartnerName");
+    } else if (props.modalObject.Input === "joint") {
+      return (
+        localStorage.getItem("UserName") +
+        " & " +
+        localStorage.getItem("PartnerName")
+      );
     }
-    else if (props.modalObject.Input === "partner") {
-      return (localStorage.getItem("PartnerName"))
-    }
-    else if (props.modalObject.Input === "joint") {
-      return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
-    }
-  })
+  });
 
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
 
-  let incomeFromSuperPayment = Object.keys(questionDetail.incomeFromSuperPayment).length > 0 ? questionDetail.incomeFromSuperPayment : {
-    client: [],
-    partner: [],
-    joint: [],
+  let incomeFromSuperPayment =
+    Object.keys(questionDetail.incomeFromSuperPayment).length > 0
+      ? questionDetail.incomeFromSuperPayment
+      : {
+        client: [],
+        partner: [],
+        joint: [],
+      }; // Use an empty object as default if incomeFromSuperPayment is undefined
 
-  }; // Use an empty object as default if incomeFromSuperPayment is undefined
-
-  let initialValues = incomeFromSuperPayment[props.modalObject.Input].length
-    ? { NumberOfMap: incomeFromSuperPayment[props.modalObject.Input].length }
-    : { NumberOfMap: "" };
+  let initialValues = {};
 
   const [dynamicFields, setDynamicFields] = useState([]);
 
-  useEffect(() => {
-    if (
-      incomeFromSuperPayment[props.modalObject.Input] &&
-      incomeFromSuperPayment[props.modalObject.Input].length
-    ) {
-      let arr = [];
-
-      for (
-        let i = 0;
-        i < incomeFromSuperPayment[props.modalObject.Input].length;
-        i++
-      ) {
-        arr.push("");
-      }
-
-      setDynamicFields(arr);
-    }
-  }, []);
+  useEffect(() => { }, []);
 
   const fillInitialValues = (setFieldValue) => {
-    if (
-      incomeFromSuperPayment[props.modalObject.Input] &&
-      incomeFromSuperPayment[props.modalObject.Input].length
-    ) {
-      incomeFromSuperPayment[props.modalObject.Input].forEach((data, i) => {
-        if (data) {
-          setFieldValue(`fundName${i}`, data.fundName || "");
-          setFieldValue(`incomePA${i}`, data.incomePA || "");
-          setFieldValue(
-            `centreLinkDeductibleAmount${i}`,
-            data.centreLinkDeductibleAmount || ""
-          );
-          setFieldValue(
-            `pensionTaxFee${i}`,
-            data.pensionTaxFee || ""
-          );
-          setFieldValue(`centrelinkcards${i}`, data.centrelinkcards || "");
-        }
-      });
+    console.log(incomeFromSuperPayment, "data");
+    let data = incomeFromSuperPayment;
+    if (incomeFromSuperPayment && incomeFromSuperPayment._id) {
+      if (data) {
+        setFieldValue(`owner`, data.owner || "");
+        setFieldValue(`client.fundName`, data.client.fundName || "");
+        setFieldValue(`partner.fundName`, data.partner.fundName || "");
+        setFieldValue(
+          `client.regularIncomePerFortnight`,
+          data.client.regularIncomePerFortnight || ""
+        );
+        setFieldValue(
+          `partner.regularIncomePerFortnight`,
+          data.partner.regularIncomePerFortnight || ""
+        );
+        setFieldValue(
+          `client.regularIncomePA`,
+          data.client.regularIncomePA || ""
+        );
+        setFieldValue(
+          `partner.regularIncomePA`,
+          data.partner.regularIncomePA || ""
+        );
+        setFieldValue(
+          `client.centrelinkDeductibleAmount`,
+          data.client.centrelinkDeductibleAmount || ""
+        );
+        setFieldValue(
+          `partner.centrelinkDeductibleAmount`,
+          data.partner.centrelinkDeductibleAmount || ""
+        );
+        setFieldValue(`client.isPension`, data.client.isPension || "");
+        setFieldValue(`partner.isPension`, data.partner.isPension || "");
+      }
     }
-  };
-
-  let handleInput = (e, setFieldValue) => {
-    const value = e.target.value > 10 ? 10 : e.target.value;
-    setFieldValue(e.target.id, value);
-
-    let arr = [];
-
-    for (let i = 0; i < value; i++) {
-      arr.push("");
-    }
-
-    setDynamicFields(arr);
-  };
-
-  let handleInnerModal = (
-    title,
-    question,
-    key,
-    mainKey,
-    key3,
-    editArray,
-    index,
-    values
-  ) => {
-    console.log(values);
-    setModalObject({
-      title,
-      question,
-      key,
-      mainKey,
-      key3,
-      editArray: editArray || [],
-      index,
-      values,
-    });
-    setFlagState(true);
   };
 
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   let onSubmit = async (values) => {
-    console.log(JSON.stringify(values));
+    // console.log(JSON.stringify(values));
     // return (false);
-    // Extract the number of maps from the values
-    const numberOfMaps = parseInt(values.NumberOfMap, 10);
-    const newEntries = [];
 
-    // Iterate through each map entry and create a new object
-    for (let i = 0; i < numberOfMaps; i++) {
-      const newEntry = {
-        incomePA: values[`incomePA${i}`] || "",
-        fundName: values[`fundName${i}`] || "",
-        centreLinkDeductibleAmount: values[`centreLinkDeductibleAmount${i}`] || "",
-        pensionTaxFee: values[`pensionTaxFee${i}`] || "",
-        // centrelinkcards: values[`centrelinkcards${i}`] || "",
-      };
-      newEntries.push(newEntry);
+    console.log(values);
+
+    let obj = values;
+    obj.clientFK = localStorage.getItem("UserID");
+
+    console.log(obj, "Objext");
+
+    if (values.owner === "client" || values.owner === "client+partner") {
+      obj.clientTotal = values.client.regularIncomePA;
+      console.log("Client total set");
+    } else {
+      obj.client = {};
+      obj.clientTotal = "";
+      console.log("Client data cleared");
     }
 
-    // Log the new entries to verify
-    console.log(newEntries);
-
-    let DataOf = props.modalObject.Input;
-
-    // Create an object with additional fields
-    let obj = {
-      clientFK: localStorage.getItem("UserID"),
-    };
-
-    obj[DataOf] = newEntries;
-
-    // Calculate total currentBalance
-    obj[DataOf + "Total"] = newEntries.reduce(
-      (total, entry) => total + entry.centreLinkDeductibleAmount,
-      0
-    );
+    // Handle partner-related conditions
+    if (values.owner === "partner" || values.owner === "client+partner") {
+      obj.partnerTotal = values.partner.regularIncomePA;
+      console.log("Partner total set");
+    } else {
+      obj.partner = {};
+      obj.partnerTotal = "";
+      console.log("Partner data cleared");
+    }
 
     console.log(obj, "final obj");
 
-    // Check if incomeFromSuperPayment and the array at props.modalObject.Input exist
-    // const bankAccountArray = incomeFromSuperPayment[props.modalObject.Input] || [];
     const bankAccountArray = incomeFromSuperPayment.clientFK || "";
 
     try {
@@ -183,7 +131,7 @@ const LifeTimeBeneFits = (props) => {
           obj
         );
       } else {
-        obj.collection = props.modalObject.Input;
+        // obj.collection = props.modalObject.Input;
         res = await PatchAxios(
           `${DefaultUrl}/api/incomeFromSuperPayment/Update`,
           obj
@@ -206,29 +154,65 @@ const LifeTimeBeneFits = (props) => {
   };
 
   const options = [
-    "ESS Super ",
-    "PSS ",
-    "CSC",
-    "Uni Super ",
-    "Telstra ",
-    "Other",
+    { value: "ESS Super", label: "ESS Super" },
+    { value: "PSS", label: "PSS" },
+    { value: "CSC", label: "CSC" },
+    { value: "Uni Super", label: "Uni Super" },
+    { value: "Telstra", label: "Telstra" },
+    { value: "Other", label: "Other" },
   ];
-  const options2 = [
-    "Pensioner Card ",
-    "Low Income Card ",
-    "Commonwealth Seniors Card",
-  ];
-  const [selectedOptions, setSelectedOptions] = useState([]);
+  const Formula = (values, setFieldValue, currentInput, stakeHolder) => {
+    // alert(values);
+    // console.log(values);
+    try {
+      let stakeHolderKey = stakeHolder.replace(".", "");
+      let IncomePF =
+        toNumericValue(values[stakeHolderKey]?.regularIncomePerFortnight) || 0;
+      switch (currentInput.name) {
+        case `${stakeHolder}regularIncomePerFortnight`:
+          IncomePF = toNumericValue(currentInput.value) || 0;
+          break;
+        default:
+          console.warn("Unexpected input field");
+          break;
+      }
 
-  //   const options2 = [
-  //     { value: 'Pensioner Card', label: 'Pensioner Card' },
-  //     { value: 'Low Income Card', label: 'Low Income Card' },
-  //     { value: 'Commonwealth Seniors Card', label: 'Commonwealth Seniors Card' },
-  //     // Add more options as needed
-  //   ];
-  const handleChange1 = (selected) => {
-    setSelectedOptions(selected);
+      let amount = IncomePF * 26;
+      setFieldValue(`${stakeHolder}regularIncomePA`, toCommaAndDollar(amount));
+    } catch (error) {
+      console.error("Error in Formula function: ", error);
+    }
   };
+  const rowConfig = [
+    {
+      name: "fundName",
+      type: "select-creatable",
+      options: options,
+      styleSet: { width: "220px" },
+    },
+    {
+      name: "regularIncomePerFortnight",
+      type: "number-toComma",
+      placeholder: "Regular Income  per fortnight",
+      callBack: true,
+      func: Formula,
+    },
+    {
+      name: "regularIncomePA",
+      type: "number-toComma",
+      placeholder: "Income P.A",
+    },
+    {
+      name: "centrelinkDeductibleAmount",
+      type: "number-toComma",
+      placeholder: "CentreLink Deductible Amount",
+    },
+    {
+      name: "isPension",
+      type: "yesno",
+      placeholder: "CentreLink Deductible Amount",
+    },
+  ];
   return (
     <Formik
       initialValues={initialValues}
@@ -236,51 +220,56 @@ const LifeTimeBeneFits = (props) => {
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, setFieldValue, handleChange }) => {
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
-        }, [values.NumberOfMap]);
+        }, []);
 
         return (
           <Form>
             <Row>
-              <InnerModal
-                modalObject={modalObject}
-                setFieldValue={setFieldValue}
-                setFlagState={setFlagState}
-                flagState={flagState}
-              >
-                {modalObject.key === "pensionTaxFee" ? (
-                  <PortfolioValue />
-                ) : modalObject.key === "memberArray" ? (
-                  <MemberNumber />
-                ) : modalObject.key === "groupInsuranceArray" ? (
-                  <GroupInsurance />
-                ) : modalObject.key === "ContributionsArray" ? (
-                  <Contributions />
-                ) : modalObject.key === "beneficiariesArray" ? (
-                  <Beneficiaries />
-                ) : (
-                  ""
-                )}
-              </InnerModal>
               <div className="col-md-12">
                 <div className="row justify-content-center">
-                  <div className="col-md-5">
-                    <p className="text-end mt-1">
-                      How many {props.modalObject.title} does {nameSet} have:
-                    </p>
+                  <div className="col-md-12">
+                    <div className="d-flex justify-content-center align-items-center gap-4">
+                      <label htmlFor="" className="text-end ">
+                        Owner
+                      </label>
+
+                      <div className="w-25 ">
+                        <Field
+                          as="select"
+                          placeholder="Name of owner"
+                          id={`owner`}
+                          name={`owner`}
+                          className="form-select inputDesignDoubleInput"
+                        >
+                          <option value={""}>Select</option>
+                          <option value={"client"}>
+                            {"Only " + RenderName("client")}
+                          </option>
+                          {localStorage.getItem("UserStatus") !== "Single" && (
+                            <React.Fragment>
+                              <option value={"partner"}>
+                                {"Only " + RenderName("partner")}
+                              </option>
+                              <option value={"client+partner"}>
+                                {"Both (" +
+                                  RenderName("client") +
+                                  " , " +
+                                  RenderName("partner") +
+                                  ")"}
+                              </option>
+                              {/* <option value={"joint"}>
+                                {"Joint (" + RenderName("joint") + ")"}
+                              </option> */}
+                            </React.Fragment>
+                          )}
+                        </Field>
+                      </div>
+                    </div>
                   </div>
-                  <div className="col-md-2">
-                    <Field
-                      type="number"
-                      id="NumberOfMap"
-                      name="NumberOfMap"
-                      className="form-control inputDesignDoubleInput"
-                      onChange={(e) => handleInput(e, setFieldValue)}
-                    />
-                  </div>
-                  {values.NumberOfMap && (
+                  {values.owner && (
                     <div className="mt-4">
                       <Table striped bordered responsive hover>
                         <thead>
@@ -290,71 +279,70 @@ const LifeTimeBeneFits = (props) => {
                                 console.log(values);
                               }}
                             >
-                              No#
+                              Owner
                             </th>
                             <th>Fund Name</th>
+                            <th>Regular Income per Fortnight</th>
                             <th>Regular Income p.a </th>
                             <th>Centrelink Deductible Amount</th>
                             <th>Is Pension Tax Fee</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {dynamicFields.map((elem, i) => {
-                            return (
-                              <tr key={i}>
-                                <td>{1 + i}</td>
-                                <td>
-                                  <Field className="form-control inputDesignDoubleInput" name={`fundName${i}`} component={CreatableSelectField} />
-                                  {/* <Field
-                                    as="select"
-                                    placeholder="Fund Name"
-                                    id={`fundName${i}`}
-                                    name={`fundName${i}`}
-                                    className="form-select inputDesignDoubleInput"
-                                  >
-                                    <option value={""}>Please Select</option>
-                                    {options.map((elem, index) => {
-                                      return (
-                                        <option key={index} value={elem}>
-                                          {elem}
-                                        </option>
-                                      );
-                                    })}
-                                  </Field> */}
-                                </td>
-                                <td>
-                                  {" "}
-                                  <Field
-                                    type="number"
-                                    placeholder="Income p.a"
-                                    id={`incomePA${i}`}
-                                    name={`incomePA${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                                <td>
-                                  {/* <InputGroup className="mb-3"> */}
-                                  <Field
-                                    type="number"
-                                    placeholder="Centrelink Deductible Amount"
-                                    id={`centreLinkDeductibleAmount${i}`}
-                                    name={`centreLinkDeductibleAmount${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                                <td>
-                                  {/* <InputGroup className="mb-3"> */}
-                                  <div className="d-flex flex-column justify-content-center align-items-center gap-2">
-                                    <DynamicYesNo
-                                      name={`pensionTaxFee${i}`}
-                                      values={values}
-                                      handleChange={handleChange}
-                                    />
-                                  </div>
-                                </td>
-                              </tr>
-                            );
-                          })}
+                          {values.owner == "client" ? (
+                            <>
+                              <DynamicTableRow
+                                rowConfig={rowConfig}
+                                values={values}
+                                setFieldValue={setFieldValue}
+                                handleChange={handleChange}
+                                handleBlur={handleBlur}
+                                // handleInnerModal={handleInnerModal}
+                                stakeHolder="client."
+                              />
+                            </>
+                          ) : (
+                            ""
+                          )}
+                          {values.owner == "partner" ? (
+                            <>
+                              <DynamicTableRow
+                                rowConfig={rowConfig}
+                                values={values}
+                                setFieldValue={setFieldValue}
+                                handleChange={handleChange}
+                                handleBlur={handleBlur}
+                                // handleInnerModal={handleInnerModal}
+                                stakeHolder="partner."
+                              />
+                            </>
+                          ) : (
+                            ""
+                          )}
+                          {values.owner == "client+partner" ? (
+                            <>
+                              <DynamicTableRow
+                                rowConfig={rowConfig}
+                                values={values}
+                                setFieldValue={setFieldValue}
+                                handleChange={handleChange}
+                                handleBlur={handleBlur}
+                                // handleInnerModal={handleInnerModal}
+                                stakeHolder="client."
+                              />
+                              <DynamicTableRow
+                                rowConfig={rowConfig}
+                                values={values}
+                                setFieldValue={setFieldValue}
+                                handleChange={handleChange}
+                                handleBlur={handleBlur}
+                                // handleInnerModal={handleInnerModal}
+                                stakeHolder="partner."
+                              />
+                            </>
+                          ) : (
+                            ""
+                          )}
                         </tbody>
                       </Table>
                     </div>

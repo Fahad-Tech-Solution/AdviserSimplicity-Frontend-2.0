@@ -21,6 +21,8 @@ import credit from "../svgs/credit-card-refund-svgrepo-com.svg";
 
 
 //Q set 3
+import houseHold from "../svgs/upgradeHome.png";
+import otherAssets from "../svgs/funds.svg";
 import Questions_Home from "../svgs/home-svgrepo-com.svg";
 
 //Q set 4
@@ -35,11 +37,9 @@ import calender from "../svgs/calendar.png";
 
 
 //Q set 6
-import umbrela from "../svgs/WhatsApp Image 2023-08-11 at 19.13.12.jpg";
 import will from "../svgs/page-with-curl-svgrepo-com.svg";
 import POA from "../svgs/conversation-person-svgrepo-com.svg";
 import advisor from "../svgs/online-interview-male-svgrepo-com.svg";
-import building from "../svgs/building-small-svgrepo-com.svg";
 
 // Q set 7
 import Businessman from "../svgs/businessman.svg";
@@ -56,16 +56,9 @@ import moneyBagPng from "../svgs/money-bag.png";
 
 import Business_building from "../svgs/building-small-svgrepo-com.svg";
 import Business_TeamHandshake from "../svgs/team_Handshake.png";
-import Questions_People from "../svgs/Questions_People.png";
 
 //Q set 8
 import people from "../svgs/Questions_People.png";
-import Questions_loan from "../svgs/loan.svg";
-import Questions_Bank from "../svgs/property-value.svg";
-
-//Q set 9
-// import Questions_People from "../svgs/Questions_People.png";
-import QuestionMoney from "../svgs/QuestionMoney.jpg";
 
 import incomeImg from "../svgs/asd.png";
 import traumaImg from "../svgs/traumaimg.svg";
@@ -75,12 +68,12 @@ import TPDImg from "../svgs/tpdimg.svg";
 
 import { useRecoilState, useRecoilValue } from "recoil";
 import { QuestionShift, CRState, defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { Card } from 'react-bootstrap';
+import { Button, Card, InputGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import ModalComponent from './ModalComponent';
 import BankTermForm from './QuestionsDetail/BankTermForm';
-import { PatchAxios, PostAxios } from '../../Assets/Api/Api';
+import { openNotificationSuccess, PatchAxios, PostAxios, toCommaAndDollar } from '../../Assets/Api/Api';
 import TermDeposit from './QuestionsDetail/TermDeposit';
 
 
@@ -134,8 +127,11 @@ import PersonalInsuranceTPD from '../PersonalInsurance/TPD';
 import PersonalInsuranceTrauma from '../PersonalInsurance/Trauma';
 import IncomeProtection from '../PersonalInsurance/IncomeProtection';
 import CombinedSwitch from '../CombinedSwitch/CombinedSwitch';
+
 //new comment
 
+import { FaRegSave } from "react-icons/fa";
+import AssetInfo from '../AdditionalQueriesPersonalAssets/AssetInfo';
 
 const QuestionCards = (props) => {
 
@@ -145,7 +141,7 @@ const QuestionCards = (props) => {
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
     let [arrayCount, setArrayCount] = useState();
-    let [lifeStyle, setLifeStyle] = useState(false);
+
 
     let arrayObj = {
         FinancialInvestments: [
@@ -194,6 +190,12 @@ const QuestionCards = (props) => {
                 img: car
             },
             {
+                title: "House hold",
+                key: "houseHold",
+                api: "/houseHold",
+                img: houseHold
+            },
+            {
                 title: "Boat",
                 key: "boat",
                 api: "/boat",
@@ -206,11 +208,17 @@ const QuestionCards = (props) => {
                 img: trailer
             },
             {
-                title: "Personal Assets",
-                key: "personalAssets",
+                title: "Other Assets",
+                key: "otherAssets",
                 api: "/personalAssets",
                 img: settingMoney
             },
+            // {
+            //     title: "Personal Assets",
+            //     key: "personalAssets",
+            //     api: "/personalAssets",
+            //     img: settingMoney
+            // },
             {
                 title: "Personal Loan",
                 key: "personalLoans",
@@ -559,11 +567,11 @@ const QuestionCards = (props) => {
     }
     let DefaultUrl = useRecoilValue(defaultUrl)
 
-    const CardForms = ["car", "boat", "caravan", "personalAssets"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
+    // const CardForms = ["car", "boat", "caravan", "personalAssets"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
     const JointHidden = ["superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues", "will", "POA", "professionalAdviser", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "incomeFromInheritance", "incomeFromLumpsumExpense", "incomeFromRegularLivingExpenses", "life", "TPD", "trauma", "incomeProtection"]; // Add other titles that should use "xl" here
     const singleClient = ["incomeFromRegularLivingExpenses"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
-  
-    const combinedArray = ["incomeFromOwnBusiness", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
+
+    const combinedArray = ["incomeFromOwnBusiness", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "car", "boat", "caravan", "personalAssets", "houseHold", "otherAssets"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
     const reuseModal = ["bankAccountFinance", "termDepositsFinance", "australianShareMarket", "managedFund", "SMSFTermDeposits", "SMSFAustralianShares", "SMSFManagedFunds", "SMSFInvestmentLoan", "managedFundsLOC", "familyBank", "familyTermDeposit", "familyAustralianShare", "familyMangedFunds", "familyInvestmentHomeLoan", "SMSFBank",]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
@@ -618,6 +626,27 @@ const QuestionCards = (props) => {
 
     const componentMapping = {
 
+        //Income and Expense
+        "Employement Income": <EmploymentIncome />,
+        "Centerlink Payments": <CenterLinkPayments />,
+        "Sole Trader": <SoleTrader />,
+        "Partnership": <Partnership />,
+        "Regular Living Expenses": <RegularLivingExpenses />,
+        "LifeTime Benefits": <LifeTimeBeneFits />,
+        "Overseas Pension": <OverseasPension />,
+        "Inheritance": <Inheritance />,
+        "Lumpsum Expenses": <LumpsumExpenses />,
+
+        //Personal Assets & Liabilities
+        "Car": <AssetInfo />,
+        "Boat": <AssetInfo />,
+        "Caravan": <AssetInfo />,
+        "Personal Assets": <AssetInfo />,
+        "House hold": <AssetInfo />,
+        "Other Assets": <AssetInfo />,
+        "Personal Loan": <PersonalLoan />,
+        "Credit Card": <CreditCard />,
+
         //Financial Investments
         "Bank Accounts": <BankTermForm />,              //reuse Component
         "Term Deposits": <TermDeposit />,               //reuse Component
@@ -626,10 +655,6 @@ const QuestionCards = (props) => {
         "Investment Bond": <InvestmentBond />,
         "Investment Loan": <InvestmentLoan />,          //reuse Component
         "Margin Loan": <MarginLoan />,
-
-        //Personal Assets & Liabilities
-        "Personal Loan": <PersonalLoan />,
-        "Credit Card": <CreditCard />,
 
         //property Home
         "Own a Family Home": <OwnFamilyHome />,
@@ -651,17 +676,6 @@ const QuestionCards = (props) => {
         "Will": <EstatePlanningWill />,
         "Power of Attorney": <EstatePlanningPOA />,
         "Professional Adviser": <EstatePlanningProfessionalAdviser />,
-
-        //Income and Expense
-        "Employement Income": <EmploymentIncome />,
-        "Centerlink Payments": <CenterLinkPayments />,
-        "Sole Trader": <SoleTrader />,
-        "Partnership": <Partnership />,
-        "Regular Living Expenses": <RegularLivingExpenses />,
-        "LifeTime Benefits": <LifeTimeBeneFits />,
-        "Overseas Pension": <OverseasPension />,
-        "Inheritance": <Inheritance />,
-        "Lumpsum Expenses": <LumpsumExpenses />,
 
         //Business
         "Business as Company Structure": <TradingCompany />,
@@ -693,7 +707,6 @@ const QuestionCards = (props) => {
         "Family Investment Home Loan": <FamilyInvestmentHomeLoanComp />,
         "Family Investment Home Expanse": <FamilyInvestmentHomeExpanse />,
 
-
         // Personal insurance
         "Life Insurance": <PersonalInsuranceLife />, //reuseComponent
         "TPD": <PersonalInsuranceTPD />, //reuseComponent
@@ -706,6 +719,65 @@ const QuestionCards = (props) => {
         return componentMapping[obj.title] || null;
     };
 
+
+    const getInitialValuesRegularIncome = () => {
+        let initialValues = {};
+
+
+        if (questionDetail?.retirementLivingExpenses && questionDetail?.retirementLivingExpenses?._id) {
+            // Ensure questionDetail and its nested properties are defined before accessing them
+            const data = questionDetail.retirementLivingExpenses;
+
+            // Check if data is defined and has a property `retirementLivingExpense`
+            if (data && data._id) {
+                initialValues = data;
+            }
+        }
+
+        // console.log("asda", initialValues,);
+
+        return initialValues;
+    };
+
+
+    let handleSubmitRegularIncome = async (values) => {
+        console.log(values)
+
+
+        let check = questionDetail && questionDetail?.retirementLivingExpenses?._id ? true : false;
+
+        let obj = {
+            retirementLivingExpense: values.retirementLivingExpense,
+            clientFK: localStorage.getItem("UserID"),
+        }
+
+        try {
+            let res;
+
+            if (!check) {
+                res = await PostAxios(`${DefaultUrl}/api/retirementLivingExpenses/Add`, obj);
+            } else {
+
+                obj._id = questionDetail.retirementLivingExpenses._id;
+
+                res = await PatchAxios(`${DefaultUrl}/api/retirementLivingExpenses/Update`, obj);
+            }
+
+            if (res) {
+                console.log(res);
+                const updatedData = { ...questionDetail };
+                updatedData["retirementLivingExpenses"] = res;
+                setQuestionDetail(updatedData);
+            }
+
+            // type, placement, message, description
+            openNotificationSuccess("success", 'topRight', "Notification", "Regular Income Data Successfully Saved!")
+
+        } catch (error) {
+            console.error("Error occurred while making API call:", error);
+        }
+    }
+
     return (
         <div className="container-fluid my-4 ">
 
@@ -716,96 +788,17 @@ const QuestionCards = (props) => {
             <div className="row m-0 justify-content-start align-items-stretch">
                 {arrayObj[props.Question].map((elem, index) => {
                     if (CRObject[elem.key] === "Yes") {
-                        const cardSwitch = CardForms.includes(elem.key) ? true : false;
+                        // const cardSwitch = CardForms.includes(elem.key) ? true : false;
                         const jointClass = JointHidden.includes(elem.key) ? "d-none" : "";
                         const singleSwitch = singleClient.includes(elem.key) ? true : false;
                         const reuseSwitch = reuseModal.includes(elem.key) ? true : false;
                         const combinedSwitch = combinedArray.includes(elem.key) ? true : false;
+
                         const SMSFInP = elem.key === "SMSFInvestmentProperties" ? true : false;
                         const FamilyInP = elem.key === "familyInvestmentProperties" ? true : false;
                         const PartnerClass = localStorage.getItem("UserStatus") === "Single" ? "d-none" : "";
 
-
-                        if (cardSwitch) {
-                            const getInitialValues = () => {
-                                let initialValues = {};
-
-                                initialValues[`client${elem.key}`] = questionDetail && questionDetail[elem.key]?.clientTotal
-                                    ? questionDetail[elem.key].clientTotal
-                                    : "";
-
-                                initialValues[`partner${elem.key}`] = questionDetail && questionDetail[elem.key]?.partnerTotal
-                                    ? questionDetail[elem.key].partnerTotal
-                                    : "";
-
-                                initialValues[`api`] = elem.api;
-                                initialValues[`key`] = elem.key;
-
-                                return initialValues;
-                            };
-
-                            return (
-                                <div className={`col-md-3 mb-4`} key={index}>
-                                    <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
-                                        <h5 className='text-center' onClick={() => { console.log(questionDetail) }}>{elem.title}</h5>
-                                        <div className="QuestionIcon w-25">
-                                            <img className="img-fluid" src={elem.img} alt="" />
-                                        </div>
-                                        <Formik
-                                            initialValues={getInitialValues()}
-                                            onSubmit={handleSubmit}
-                                            enableReinitialize
-                                        >
-                                            {({ values }) => {
-                                                return (<Form>
-                                                    <div
-                                                        className="row justify-content-center align-items-center my-2"
-                                                    >
-                                                        <div className='col-12 p-0 '>
-                                                            <label
-                                                                className=" d-block text-center"
-                                                                htmlFor={"client" + elem.key}
-                                                            >{localStorage.getItem("UserName") || "You"}</label>
-                                                        </div>
-                                                    </div>
-                                                    <Field
-                                                        type="text"
-                                                        className="form-control inputDesign "
-                                                        id={"client" + elem.key}
-                                                        placeholder={"Client " + elem.title}
-                                                        name={"client" + elem.key}
-                                                    />
-                                                    <div
-                                                        className={`row justify-content-center align-items-center my-2 ${PartnerClass}`}
-                                                    >
-                                                        <div className='col-12 p-0 '>
-                                                            <label
-                                                                className=" d-block text-center"
-                                                                htmlFor={"partner" + elem.key}
-                                                            >{localStorage.getItem("PartnerName") || "Partner"}</label>
-                                                        </div>
-                                                    </div>
-                                                    <Field
-                                                        type="text"
-                                                        className={`form-control inputDesign ${PartnerClass}`}
-                                                        id={"partner" + elem.key}
-                                                        placeholder={"Partner " + elem.title}
-                                                        name={"partner" + elem.key}
-                                                    />
-                                                    <button type='submit' className='btn bgColor modalBtn w-100 mt-4'>
-                                                        {questionDetail && questionDetail[elem.key]?.clientTotal
-                                                            ? "Update"
-                                                            : "Save"}
-                                                    </button>
-                                                </Form>)
-                                            }}
-
-                                        </Formik>
-                                    </Card>
-                                </div>
-                            );
-                        }
-                        else if (singleSwitch) {
+                        if (singleSwitch) {
                             return (
                                 <div className={`col-md-3 mb-4`} key={index}>
                                     <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
@@ -839,36 +832,46 @@ const QuestionCards = (props) => {
                                             id={"client" + elem.key}
                                             placeholder={"General Living Expenses"}
                                             name={"client" + elem.key}
-                                            value={questionDetail && questionDetail?.generalLivingExpenses && questionDetail?.generalLivingExpenses?.generalLivingExpensesTotal ? "$" + questionDetail.generalLivingExpenses.generalLivingExpensesTotal : ""}
+                                            value={questionDetail && questionDetail?.generalLivingExpenses && questionDetail?.generalLivingExpenses?.generalLivingExpensesTotal ? questionDetail.generalLivingExpenses.generalLivingExpensesTotal : ""}
                                         />
                                         <div
                                             className="row justify-content-center align-items-center my-2"
                                         >
-                                            <div className='col-6 p-0 '>
+                                            <div className='col-12 p-0 '>
                                                 <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                                                     <label
-                                                        className=" d-block text-end"
-                                                        htmlFor={"client" + elem.key}
+                                                        className=" d-block"
+                                                        htmlFor={"retirementLivingExpense"}
                                                     >Retirement Living</label>
-
-                                                    <label
-                                                        className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                                        onClick={() => { OpenModalClient2(elem.title, "client", "Retirement Living Expenses") }}
-                                                    >
-                                                        <div>
-                                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                        </div>
-                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
-                                        <input type="text"
-                                            className="form-control inputDesign "
-                                            id={"partner" + elem.key}
-                                            placeholder={elem.title}
-                                            name={"partner" + elem.key}
-                                            value={questionDetail && questionDetail?.retirementLivingExpenses && questionDetail?.retirementLivingExpenses?.retirementLivingExpensesTotal ? "$" + questionDetail.retirementLivingExpenses.retirementLivingExpensesTotal : ""}
-                                        />
+                                        <Formik
+                                            initialValues={getInitialValuesRegularIncome()}
+                                            onSubmit={handleSubmitRegularIncome}
+                                            enableReinitialize
+                                        >
+                                            {({ values, setFieldValue }) => {
+                                                return (<Form>
+                                                    <InputGroup>
+                                                        <Field type="text"
+                                                            className="form-control inputDesign"
+                                                            id={"retirementLivingExpense"}
+                                                            placeholder={elem.title}
+                                                            name={"retirementLivingExpense"}
+                                                            onChange={(e) => {
+                                                                setFieldValue(e.target.name,
+                                                                    toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                            }}
+                                                        />
+                                                        <Button type="submit" className='btn bgColor modalBtn border-0' >
+                                                            <FaRegSave />
+                                                        </Button>
+                                                    </InputGroup>
+                                                </Form>)
+                                            }}
+                                        </Formik>
+
                                     </Card>
                                 </div>
                             );
@@ -908,7 +911,7 @@ const QuestionCards = (props) => {
                                             id={"client" + elem.key}
                                             placeholder={elem.title}
                                             name={"client" + elem.key}
-                                            value={questionDetail && questionDetail[elem.key]?.clientTotal ? "$" + questionDetail[elem.key].clientTotal : ""}
+                                            value={questionDetail && questionDetail[elem.key]?.clientTotal ? questionDetail[elem.key].clientTotal : ""}
                                         />
                                         <div
                                             className={`row justify-content-center align-items-center my-2 ${PartnerClass}`}
@@ -936,7 +939,7 @@ const QuestionCards = (props) => {
                                             id={"partner" + elem.key}
                                             placeholder={elem.title}
                                             name={"partner" + elem.key}
-                                            value={questionDetail && questionDetail[elem.key]?.partnerTotal ? "$" + questionDetail[elem.key].partnerTotal : ""}
+                                            value={questionDetail && questionDetail[elem.key]?.partnerTotal ? questionDetail[elem.key].partnerTotal : ""}
                                         />
 
                                         <div
@@ -966,7 +969,7 @@ const QuestionCards = (props) => {
                                             id={"joint" + elem.key}
                                             placeholder={elem.title}
                                             name={"joint" + elem.key}
-                                            value={questionDetail && questionDetail[elem.key]?.jointTotal ? "$" + questionDetail[elem.key].jointTotal : ""}
+                                            value={questionDetail && questionDetail[elem.key]?.jointTotal ? questionDetail[elem.key].jointTotal : ""}
                                         />
 
                                     </Card>
@@ -1020,7 +1023,7 @@ const QuestionCards = (props) => {
                                             id={"client" + elem.key}
                                             placeholder={elem.title}
                                             name={"client" + elem.key}
-                                            value={questionDetail && questionDetail[elem.key]?.clientTotal ? "$" + questionDetail[elem.key].clientTotal : ""}
+                                            value={questionDetail && questionDetail[elem.key]?.clientTotal ? questionDetail[elem.key].clientTotal : ""}
                                         />
                                         <div
                                             className={`row justify-content-center align-items-center my-2 ${PartnerClass}`}
@@ -1048,7 +1051,7 @@ const QuestionCards = (props) => {
                                             id={"partner" + elem.key}
                                             placeholder={elem.title}
                                             name={"partner" + elem.key}
-                                            value={questionDetail && questionDetail[elem.key]?.partnerTotal ? "$" + questionDetail[elem.key].partnerTotal : ""}
+                                            value={questionDetail && questionDetail[elem.key]?.partnerTotal ? questionDetail[elem.key].partnerTotal : ""}
                                         />
 
                                         <div
@@ -1078,7 +1081,7 @@ const QuestionCards = (props) => {
                                             id={"joint" + elem.key}
                                             placeholder={elem.title}
                                             name={"joint" + elem.key}
-                                            value={questionDetail && questionDetail[elem.key]?.jointTotal ? "$" + questionDetail[elem.key].jointTotal : ""}
+                                            value={questionDetail && questionDetail[elem.key]?.jointTotal ? questionDetail[elem.key].jointTotal : ""}
                                         />
 
                                     </Card>
@@ -1168,7 +1171,7 @@ const HolyDayHome = (props) => {
                                         Array.isArray(props.questionDetail[elem.key]) &&
                                         props.questionDetail[elem.key][i] &&
                                         props.questionDetail[elem.key][i].clientTotal
-                                        ? "$" + props.questionDetail[elem.key][i].clientTotal
+                                        ? props.questionDetail[elem.key][i].clientTotal
                                         : ""
                                 }
                             />
@@ -1202,7 +1205,7 @@ const HolyDayHome = (props) => {
                                         Array.isArray(props.questionDetail[elem.key]) &&
                                         props.questionDetail[elem.key][i] &&
                                         props.questionDetail[elem.key][i].partnerTotal
-                                        ? "$" + props.questionDetail[elem.key][i].partnerTotal
+                                        ? props.questionDetail[elem.key][i].partnerTotal
                                         : ""
                                 }
                             />
@@ -1238,7 +1241,7 @@ const HolyDayHome = (props) => {
                                         Array.isArray(props.questionDetail[elem.key]) &&
                                         props.questionDetail[elem.key][i] &&
                                         props.questionDetail[elem.key][i].jointTotal
-                                        ? "$" + props.questionDetail[elem.key][i].jointTotal
+                                        ? props.questionDetail[elem.key][i].jointTotal
                                         : ""
                                 }
 

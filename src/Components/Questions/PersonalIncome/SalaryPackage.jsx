@@ -18,11 +18,11 @@ const SalaryPackage = (props) => {
             let Data = parentValues[`${parentKey}`][`${key}`];
             console.log("incondition", JSON.stringify(Data));
             setFieldValue("remunerationType", Data.remunerationType)
-            setFieldValue("Amount", Data.Amount)
-            setFieldValue("SGPercentage", Data.SGPercentage)
-            setFieldValue("GrossSalary", Data.GrossSalary)
+            setFieldValue("amount", Data.amount)
+            setFieldValue("SG", Data.SG)
+            setFieldValue("grossSalary", Data.grossSalary)
             setFieldValue("SGC", Data.SGC)
-            setFieldValue("salarySarificeContributions", Data.salarySarificeContributions)
+            setFieldValue("salarySacrificeContributions", Data.salarySacrificeContributions)
             setFieldValue("afterTaxContributions", Data.afterTaxContributions)
         }
     };
@@ -35,11 +35,11 @@ const SalaryPackage = (props) => {
 
         let Obj = {
             remunerationType: values.remunerationType,
-            Amount: values.Amount,
-            SGPercentage: values.SGPercentage,
-            GrossSalary: values.GrossSalary,
+            amount: values.amount,
+            SG: values.SG,
+            grossSalary: values.grossSalary,
             SGC: values.SGC,
-            salarySarificeContributions: values.salarySarificeContributions,
+            salarySacrificeContributions: values.salarySacrificeContributions,
             afterTaxContributions: values.afterTaxContributions,
         }
 
@@ -54,44 +54,49 @@ const SalaryPackage = (props) => {
     let FormulaSetting = (currentInput, values, setFieldValue) => {
 
         let remunerationType = values.remunerationType;
-        let Amount = parseFloat(values.Amount.replace(/[^0-9.-]+/g, "")) || 0;
-        let SGPercentage = parseFloat(values.SGPercentage.replace(/[^0-9.-]+/g, "")) || 0;
-        
-        let GrossSalary = values.GrossSalary;
+        let amount = parseFloat(values.amount.replace(/[^0-9.-]+/g, "")) || 0;
+        let SG = parseFloat(values.SG.replace(/[^0-9.-]+/g, "")) || 0;
+
+        let grossSalary = values.grossSalary;
         let SGC = values.SGC;
 
         switch (currentInput.name) {
             case "remunerationType":
                 remunerationType = currentInput.value;
                 break;
-            case "Amount":
-                Amount = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, ""));
+            case "amount":
+                amount = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, ""));
                 break;
             default:
                 if (currentInput.value.replace(/[^0-9.-]+/g, "") > 100) {
-                    SGPercentage = 100;
+                    SG = 100;
                 }
                 else {
-                    SGPercentage = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, ""));
+                    SG = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, ""));
                 }
                 break;
         }
 
         if (remunerationType === "Gross Salary") {
-            GrossSalary = Amount;
-            SGC = (Amount * SGPercentage).toFixed(2);
+            grossSalary = amount || 0;
+            SGC = (amount * (SG / 100)).toFixed(2) || 0;
         }
         else {
-            GrossSalary = (Amount / SGPercentage).toFixed(2);
-            SGC = (Amount - GrossSalary).toFixed(2);
+
+            grossSalary = (amount / (1 + (SG / 100))).toFixed(2) || 0;
+            SGC = (amount - grossSalary).toFixed(2) || 0;
         }
 
-        console.log("FormulaSetting:", remunerationType, Amount, SGPercentage, GrossSalary, SGC);
+        console.log("FormulaSetting:", remunerationType, amount, SG, grossSalary, SGC);
 
-        setFieldValue("GrossSalary", GrossSalary);
-        setFieldValue("SGC", SGC);
-
-
+        if (remunerationType === "Gross Salary") {
+            setFieldValue("grossSalary", toCommaAndDollar(grossSalary) || "0$");
+            setFieldValue("SGC", parseFloat(SGC).toFixed(2) + "%" || "0%");
+        }
+        else {
+            setFieldValue("grossSalary", toCommaAndDollar(grossSalary) || "0$");
+            setFieldValue("SGC", parseFloat(SGC).toFixed(2) + "%" || "0%");
+        }
     }
 
 
@@ -119,7 +124,7 @@ const SalaryPackage = (props) => {
                                             <thead>
                                                 <tr>
                                                     <th>Remuneration Type</th>
-                                                    <th>Amount	</th>
+                                                    <th>amount	</th>
                                                     <th>SG</th>
                                                     <th>Gross Salary</th>
                                                     <th>SGC	</th>
@@ -134,7 +139,7 @@ const SalaryPackage = (props) => {
                                                             as="select"
                                                             id={`remunerationType`}
                                                             name={`remunerationType`}
-                                                            className="form-select inputDesign"
+                                                            className="form-select inputDesignDoubleInput"
                                                             onChange={(e) => {
                                                                 handleChange(e);
                                                                 FormulaSetting(e.target, values, setFieldValue);
@@ -149,10 +154,10 @@ const SalaryPackage = (props) => {
                                                     <td style={{ minWidth: "100px" }}>
                                                         <Field
                                                             type="text"
-                                                            placeholder="Investment Code"
-                                                            id={`Amount`}
-                                                            name={`Amount`}
-                                                            className="form-control inputDesign"
+                                                            placeholder="Amount Code"
+                                                            id={`amount`}
+                                                            name={`amount`}
+                                                            className="form-control inputDesignDoubleInput"
                                                             onChange={(e) => {
                                                                 setFieldValue(e.target.name,
                                                                     toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
@@ -163,10 +168,10 @@ const SalaryPackage = (props) => {
                                                     <td style={{ minWidth: "100px" }}>
                                                         <Field
                                                             type="text"
-                                                            placeholder="Enter SG value"
-                                                            id={`SGPercentage`}
-                                                            name={`SGPercentage`}
-                                                            className="form-control inputDesign"
+                                                            placeholder="Enter SG Percentage value"
+                                                            id={`SG`}
+                                                            name={`SG`}
+                                                            className="form-control inputDesignDoubleInput"
                                                             onChange={(e) => {
 
                                                                 if (e.target.value.replace(/[^0-9.-]+/g, "") > 100) {
@@ -186,9 +191,9 @@ const SalaryPackage = (props) => {
                                                         <Field
                                                             type="text"
                                                             placeholder="Gross Salary"
-                                                            id={`GrossSalary`}
-                                                            name={`GrossSalary`}
-                                                            className="form-control inputDesign"
+                                                            id={`grossSalary`}
+                                                            name={`grossSalary`}
+                                                            className="form-control inputDesignDoubleInput"
                                                             disabled
                                                         />
                                                     </td>
@@ -199,7 +204,7 @@ const SalaryPackage = (props) => {
                                                             placeholder="SGC"
                                                             id={`SGC`}
                                                             name={`SGC`}
-                                                            className="form-control inputDesign"
+                                                            className="form-control inputDesignDoubleInput"
                                                             disabled
                                                         />
                                                     </td>
@@ -207,9 +212,9 @@ const SalaryPackage = (props) => {
                                                         <Field
                                                             type="text"
                                                             placeholder="Salary Sarifice Contributions"
-                                                            id={`salarySarificeContributions`}
-                                                            name={`salarySarificeContributions`}
-                                                            className="form-control inputDesign"
+                                                            id={`salarySacrificeContributions`}
+                                                            name={`salarySacrificeContributions`}
+                                                            className="form-control inputDesignDoubleInput"
                                                             onChange={(e) => {
                                                                 setFieldValue(e.target.name,
                                                                     toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
@@ -222,7 +227,7 @@ const SalaryPackage = (props) => {
                                                             placeholder="After Tax Contributions"
                                                             id={`afterTaxContributions`}
                                                             name={`afterTaxContributions`}
-                                                            className="form-control inputDesign"
+                                                            className="form-control inputDesignDoubleInput"
                                                             onChange={(e) => {
                                                                 setFieldValue(e.target.name,
                                                                     toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
