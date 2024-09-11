@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { PatchAxios, PostAxios } from '../../../Assets/Api/Api';
-import axios from 'axios';
+import { handleInputChange, PatchAxios, PostAxios, toCommaAndDollar, handleInputFocus, handleInputKeyDown, handleInputBlur, toPercentage } from '../../../Assets/Api/Api';
+
 
 const PersonalLoan = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
@@ -100,7 +100,7 @@ const PersonalLoan = (props) => {
                 LoanType: values[`LoanType${i}`] || "",
                 RepaymentsAmount: values[`RepaymentsAmount${i}`] || "",
                 Frequency: values[`Frequency${i}`] || "",
-                AnnualRepayments: ((values[`RepaymentsAmount${i}`] || 0) * (values[`Frequency${i}`] || 0)) || "",
+                AnnualRepayments: values[`AnnualRepayments${i}`] || "",
                 InterestRate: values[`InterestRate${i}`] || "",
                 LoanTerm: values[`LoanTerm${i}`] || "",
                 LoanTermRemaining: values[`LoanTermRemaining${i}`] || "",
@@ -122,12 +122,10 @@ const PersonalLoan = (props) => {
         obj[DataOf] = newEntries
 
         // Calculate total currentBalance
-        obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.AnnualRepayments, 0);
+        obj[DataOf + "Total"] = toCommaAndDollar(newEntries.reduce((total, entry) => total + parseFloat(entry.AnnualRepayments.replace(/[^0-9.-]+/g, "")), 0));
 
         console.log(obj, "final obj")
 
-        // Check if personalLoans and the array at props.modalObject.Input exist
-        // const bankAccountArray = personalLoans[props.modalObject.Input] || [];
         const bankAccountArray = personalLoans.clientFK || "";
 
         try {
@@ -232,14 +230,41 @@ const PersonalLoan = (props) => {
         "Zeller"
     ];
 
-    let handleBlur = (setFieldValue, e) => {
-        let value = parseFloat(e.target.value);
-        if (!isNaN(value)) {
-            setFieldValue(e.target.id, value.toFixed(2));
-        } else {
-            setFieldValue(e.target.id, "");
+    const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
+        value: (i + 1).toString(),
+        label: ("Year " + (i + 1)).toString(),
+    }))
+
+
+    let AnnualFormula = (values, setFieldValue, currentInput, index) => {
+
+        let RepaymentsAmount = parseFloat(values[`RepaymentsAmount${index}`].replace(/[^0-9.-]+/g, ""));
+        let Frequency = values[`Frequency${index}`];
+        let AnnualRepayments = values[`AnnualRepayments${index}`];
+
+        switch (currentInput.name.replace(/[0-9]/g, "")) {
+            case "RepaymentsAmount":
+                RepaymentsAmount = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
+                break;
+            case "Frequency":
+                Frequency = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
+                break;
+            default:
+                console.log("wrong Input")
+                break;
         }
-    };
+
+        AnnualRepayments = Frequency * RepaymentsAmount;
+
+        console.log(RepaymentsAmount, Frequency, AnnualRepayments,);
+
+        setFieldValue(`AnnualRepayments${index}`, toCommaAndDollar(AnnualRepayments))
+
+
+    }
+
+    let FormulaSetting = () => { }
+
 
     return (
         <Formik
@@ -279,7 +304,7 @@ const PersonalLoan = (props) => {
                                                     <tr>
                                                         <th>No#</th>
                                                         <th>Lender </th>
-                                                        <th>Current Loan Balance</th>
+                                                        <th>Loan Balance</th>
                                                         <th>Loan Type</th>
                                                         <th>Repayments Amount</th>
                                                         <th>Frequency</th>
@@ -294,7 +319,7 @@ const PersonalLoan = (props) => {
                                                         return (
                                                             <tr key={i}>
                                                                 <td>{1 + i}</td>
-                                                                <td>
+                                                                <td style={{ width: "150px" }}>
                                                                     <Field
                                                                         as="select"
                                                                         placeholder="Lender Current"
@@ -308,13 +333,16 @@ const PersonalLoan = (props) => {
                                                                         })}
                                                                     </Field>
                                                                 </td>
-                                                                <td>
+                                                                <td style={{ width: "150px" }}>
                                                                     <Field
-                                                                        type="number"
+                                                                        type="text"
                                                                         placeholder="Loan Balance"
                                                                         id={`LoanBalance${i}`}
                                                                         name={`LoanBalance${i}`}
                                                                         className="form-control inputDesignDoubleInput"
+                                                                        onChange={(e) => {
+                                                                            setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")))
+                                                                        }}
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -332,46 +360,57 @@ const PersonalLoan = (props) => {
                                                                 </td>
                                                                 <td>
                                                                     <Field
-                                                                        type="number"
+                                                                        type="text"
                                                                         placeholder="Repayments Amount"
                                                                         id={`RepaymentsAmount${i}`}
                                                                         name={`RepaymentsAmount${i}`}
                                                                         className="form-control inputDesignDoubleInput"
+                                                                        onChange={(e) => {
+                                                                            setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")))
+                                                                            AnnualFormula(values, setFieldValue, e.target, i);
+                                                                        }}
                                                                     />
                                                                 </td>
-                                                                <td>
+                                                                <td style={{ width: "150px" }}>
                                                                     <Field
                                                                         as="select"
                                                                         placeholder="Lender Current"
                                                                         id={`Frequency${i}`}
                                                                         name={`Frequency${i}`}
                                                                         className="form-select inputDesignDoubleInput"
+                                                                        onChange={(e) => {
+                                                                            setFieldValue(e.target.name, e.target.value)
+                                                                            AnnualFormula(values, setFieldValue, e.target, i);
+                                                                        }}
                                                                     >
                                                                         <option value={""}>Please Select</option>
-                                                                        <option value={52}>Weekly (52)</option>
-                                                                        <option value={26}>Fortnightly (26)</option>
-                                                                        <option value={12}>Monthly (12)</option>
-                                                                        <option value={1}>Annually (1)</option>
+                                                                        <option value={52}>Weekly </option>
+                                                                        <option value={26}>Fortnightly </option>
+                                                                        <option value={12}>Monthly </option>
+                                                                        <option value={1}>Annually </option>
 
                                                                     </Field>
                                                                 </td>
                                                                 <td>
                                                                     <Field
-                                                                        type="number"
+                                                                        type="text"
                                                                         placeholder="Annual Repayments"
                                                                         id={`AnnualRepayments${i}`}
                                                                         name={`AnnualRepayments${i}`}
-                                                                        value={(values[`Frequency${i}`] || 0) * (values[`RepaymentsAmount${i}`] || 0)}
                                                                         className="form-control inputDesignDoubleInput"
+                                                                        disabled
                                                                     />
                                                                 </td>
-                                                                <td>
+                                                                <td style={{ width: "150px" }}>
                                                                     <Field
-                                                                        type="number"
+                                                                        type="text"
                                                                         placeholder="Interest Rate (p.a)"
                                                                         id={`InterestRate${i}`}
                                                                         name={`InterestRate${i}`}
-                                                                        onBlur={(e) => handleBlur(setFieldValue, e)}
+                                                                        onChange={(e) => handleInputChange(e, setFieldValue, FormulaSetting, values)}
+                                                                        onFocus={(e) => handleInputFocus(e, setFieldValue)}
+                                                                        onKeyDown={(e) => handleInputKeyDown(e)}
+                                                                        onBlur={(e) => handleInputBlur(e, setFieldValue, toPercentage, FormulaSetting, values)}
                                                                         className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
@@ -384,8 +423,11 @@ const PersonalLoan = (props) => {
                                                                         className="form-select inputDesignDoubleInput"
                                                                     >
                                                                         <option value={""}>Please Select</option>
-                                                                        <option value={"abc"}>abc</option>
-
+                                                                        {loanTermOptions.map((option) => (
+                                                                            <option key={option.value} value={option.value}>
+                                                                                {option.label}
+                                                                            </option>
+                                                                        ))}
                                                                     </Field>
                                                                 </td>
                                                                 <td>
@@ -397,8 +439,11 @@ const PersonalLoan = (props) => {
                                                                         className="form-select inputDesignDoubleInput"
                                                                     >
                                                                         <option value={""}>Please Select</option>
-                                                                        <option value={"abc"}>abc</option>
-
+                                                                        {loanTermOptions.map((option) => (
+                                                                            <option key={option.value} value={option.value}>
+                                                                                {option.label}
+                                                                            </option>
+                                                                        ))}
                                                                     </Field>
                                                                 </td>
                                                             </tr>)

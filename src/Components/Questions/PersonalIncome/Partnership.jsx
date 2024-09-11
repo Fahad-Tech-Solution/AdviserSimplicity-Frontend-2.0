@@ -15,20 +15,8 @@ import DynamicTableRow from "../../Assets/Dynamic/DynamicTableRow";
 const Partnership = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+    let [UserStatus] = useState(localStorage.getItem('UserStatus'));
 
-    let [nameSet] = useState(() => {
-        if (props.modalObject.Input === "client") {
-            return localStorage.getItem("UserName");
-        } else if (props.modalObject.Input === "partner") {
-            return localStorage.getItem("PartnerName");
-        } else if (props.modalObject.Input === "joint") {
-            return (
-                localStorage.getItem("UserName") +
-                " & " +
-                localStorage.getItem("PartnerName")
-            );
-        }
-    });
 
     let incomeFromPartnership =
         Object.keys(questionDetail.incomeFromPartnership).length > 0
@@ -41,26 +29,6 @@ const Partnership = (props) => {
 
     let initialValues = {};
 
-    const [dynamicFields, setDynamicFields] = useState([]);
-
-    useEffect(() => {
-        if (
-            incomeFromPartnership[props.modalObject.Input] &&
-            incomeFromPartnership[props.modalObject.Input].length
-        ) {
-            let arr = [];
-
-            for (
-                let i = 0;
-                i < incomeFromPartnership[props.modalObject.Input].length;
-                i++
-            ) {
-                arr.push("");
-            }
-
-            setDynamicFields(arr);
-        }
-    }, []);
 
     const fillInitialValues = (setFieldValue) => {
         let data = incomeFromPartnership;
@@ -82,7 +50,7 @@ const Partnership = (props) => {
                         setFieldValue(`client.goodWill`, data.client.goodWill || "");
                     }
                 }
-                if (data.owner === "partner" || data.owner === "client+partner") {
+                if ((data.owner === "partner" || data.owner === "client+partner") && (UserStatus === "Married")) {
                     if (data?.partner && Object.keys(data?.partner).length) {
                         setFieldValue(`partner.businessName`, data.partner.businessName || "");
                         setFieldValue(`partner.ABN`, data.partner.ABN || "");
@@ -119,7 +87,7 @@ const Partnership = (props) => {
         }
 
         // Handle partner-related conditions
-        if (values.owner === "partner" || values.owner === "client+partner") {
+        if ((values.owner === "partner" || values.owner === "client+partner") && (UserStatus === "Married")) {
             obj.partnerTotal = values.partner.share;
             console.log("Partner total set");
         } else {
@@ -345,15 +313,17 @@ const Partnership = (props) => {
                                                                 //   handleInnerModal={handleInnerModal}
                                                                 stakeHolder="client."
                                                             />
-                                                            <DynamicTableRow
-                                                                rowConfig={rowConfig}
-                                                                values={values}
-                                                                setFieldValue={setFieldValue}
-                                                                handleChange={handleChange}
-                                                                handleBlur={handleBlur}
-                                                                //   handleInnerModal={handleInnerModal}
-                                                                stakeHolder="partner."
-                                                            />
+                                                            {UserStatus === "Married" &&
+                                                                <DynamicTableRow
+                                                                    rowConfig={rowConfig}
+                                                                    values={values}
+                                                                    setFieldValue={setFieldValue}
+                                                                    handleChange={handleChange}
+                                                                    handleBlur={handleBlur}
+                                                                    //   handleInnerModal={handleInnerModal}
+                                                                    stakeHolder="partner."
+                                                                />
+                                                            }
                                                         </>
                                                     ) : (""
                                                     )}

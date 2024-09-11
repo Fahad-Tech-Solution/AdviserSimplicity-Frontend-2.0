@@ -3,7 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { defaultUrl, QuestionDetail } from '../../../Store/Store';
-import { toCommaAndDollar, toPersentage } from '../../Assets/Api/Api';
+import {
+    handleInputChange,
+    handleInputFocus,
+    handleInputKeyDown,
+    handleInputBlur,
+    toCommaAndDollar,
+    toPercentage
+} from '../../Assets/Api/Api';
 
 const SalaryPackage = (props) => {
 
@@ -51,53 +58,53 @@ const SalaryPackage = (props) => {
         }
     };
 
-    let FormulaSetting = (currentInput, values, setFieldValue) => {
+    const FormulaSetting = (values, setFieldValue, currentInput, stakholder) => {
+
+        // console.log(values, setFieldValue, currentInput, stakholder)
 
         let remunerationType = values.remunerationType;
         let amount = parseFloat(values.amount.replace(/[^0-9.-]+/g, "")) || 0;
         let SG = parseFloat(values.SG.replace(/[^0-9.-]+/g, "")) || 0;
 
-        let grossSalary = values.grossSalary;
-        let SGC = values.SGC;
+        let grossSalary = 0;
+        let SGC = 0;
 
         switch (currentInput.name) {
             case "remunerationType":
                 remunerationType = currentInput.value;
                 break;
             case "amount":
-                amount = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, ""));
+                amount = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
                 break;
             default:
-                if (currentInput.value.replace(/[^0-9.-]+/g, "") > 100) {
-                    SG = 100;
-                }
-                else {
-                    SG = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, ""));
-                }
+                SG = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
+                SG = SG > 100 ? 100 : SG; // Cap SG at 100
                 break;
         }
 
         if (remunerationType === "Gross Salary") {
             grossSalary = amount || 0;
-            SGC = (amount * (SG / 100)).toFixed(2) || 0;
+            SGC = (amount * (SG / 100)).toFixed(2);
+        } else {
+            grossSalary = (amount / (1 + (SG / 100))).toFixed(2);
+            SGC = (amount - grossSalary).toFixed(2);
         }
-        else {
 
-            grossSalary = (amount / (1 + (SG / 100))).toFixed(2) || 0;
-            SGC = (amount - grossSalary).toFixed(2) || 0;
-        }
+        // Ensure that SGC and grossSalary are valid numbers
+        const validGrossSalary = !isNaN(parseFloat(grossSalary)) ? toCommaAndDollar(grossSalary) : "0$";
+        const validSGC = !isNaN(parseFloat(SGC)) ? parseFloat(SGC).toFixed(2) + "%" : "0%";
 
         console.log("FormulaSetting:", remunerationType, amount, SG, grossSalary, SGC);
 
         if (remunerationType === "Gross Salary") {
-            setFieldValue("grossSalary", toCommaAndDollar(grossSalary) || "0$");
-            setFieldValue("SGC", parseFloat(SGC).toFixed(2) + "%" || "0%");
-        }
-        else {
-            setFieldValue("grossSalary", toCommaAndDollar(grossSalary) || "0$");
-            setFieldValue("SGC", parseFloat(SGC).toFixed(2) + "%" || "0%");
+            setFieldValue("grossSalary", validGrossSalary);
+            setFieldValue("SGC", validSGC);
+        } else {
+            setFieldValue("grossSalary", validGrossSalary);
+            setFieldValue("SGC", validSGC);
         }
     }
+
 
 
 
@@ -124,7 +131,7 @@ const SalaryPackage = (props) => {
                                             <thead>
                                                 <tr>
                                                     <th>Remuneration Type</th>
-                                                    <th>amount	</th>
+                                                    <th>Amount</th>
                                                     <th>SG</th>
                                                     <th>Gross Salary</th>
                                                     <th>SGC	</th>
@@ -142,7 +149,7 @@ const SalaryPackage = (props) => {
                                                             className="form-select inputDesignDoubleInput"
                                                             onChange={(e) => {
                                                                 handleChange(e);
-                                                                FormulaSetting(e.target, values, setFieldValue);
+                                                                FormulaSetting(values, setFieldValue, e.target);
                                                             }}
                                                         >
                                                             <option value={""}>Select</option>
@@ -161,7 +168,7 @@ const SalaryPackage = (props) => {
                                                             onChange={(e) => {
                                                                 setFieldValue(e.target.name,
                                                                     toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                                                FormulaSetting(e.target, values, setFieldValue);
+                                                                FormulaSetting(values, setFieldValue, e.target);
                                                             }}
                                                         />
                                                     </td>
@@ -169,21 +176,13 @@ const SalaryPackage = (props) => {
                                                         <Field
                                                             type="text"
                                                             placeholder="Enter SG Percentage value"
-                                                            id={`SG`}
-                                                            name={`SG`}
+                                                            id="SG"
+                                                            name="SG"
                                                             className="form-control inputDesignDoubleInput"
-                                                            onChange={(e) => {
-
-                                                                if (e.target.value.replace(/[^0-9.-]+/g, "") > 100) {
-                                                                    setFieldValue(e.target.name,
-                                                                        toPersentage(100));
-                                                                }
-                                                                else {
-                                                                    setFieldValue(e.target.name,
-                                                                        toPersentage(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                                                }
-                                                                FormulaSetting(e.target, values, setFieldValue);
-                                                            }}
+                                                            onChange={(e) => handleInputChange(e, setFieldValue, FormulaSetting, values)}
+                                                            onFocus={(e) => handleInputFocus(e, setFieldValue)}
+                                                            onKeyDown={(e) => handleInputKeyDown(e)}
+                                                            onBlur={(e) => handleInputBlur(e, setFieldValue, toPercentage, FormulaSetting, values)}
                                                         />
                                                     </td>
 

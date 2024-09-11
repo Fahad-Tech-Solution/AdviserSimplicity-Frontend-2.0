@@ -1,5 +1,7 @@
+import { Tooltip } from 'antd';
 import React from 'react';
 import { Image } from 'react-bootstrap';
+import { FaCircleQuestion } from 'react-icons/fa6';
 
 const DynamicQuestionBlocks = (props) => {
     const { QuestionArray, QuestionClick, values, setFieldValue } = props;
@@ -24,7 +26,13 @@ const DynamicQuestionBlocks = (props) => {
                                         </div>
                                     </div>
                                     <p htmlFor={elem.key} className="form-label-Questions">
-                                        {elem.title}
+                                        {elem.title}&nbsp;&nbsp;
+
+                                        {elem?.info ?
+                                            <Tooltip placement="top" title={elem.info}>
+                                                <FaCircleQuestion style={{ fontSize: '18px', cursor: 'pointer' }} />
+                                            </Tooltip> : ""
+                                        }
                                     </p>
                                 </div>
                             </div>

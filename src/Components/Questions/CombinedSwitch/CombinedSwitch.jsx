@@ -24,14 +24,14 @@ const CombinedSwitch = (props) => {
                         <img className="img-fluid" src={elem.img} alt="" />
                     </div>
                     <div
-                        className={`row justify-content-center align-items-center my-2  ${jointClass} ${PartnerClass}`}
+                        className={`row justify-content-center align-items-center my-2`}
                     >
                         <div className='col-12 p-0 '>
                             <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                                 <label
                                     className="d-block"
                                     htmlFor={"joint" + elem.key}
-                                >{(localStorage.getItem("UserName") || "You") + " & " + (localStorage.getItem("PartnerName") || "")}</label>
+                                >{(localStorage.getItem("UserName") || "You")} {(localStorage.getItem('UserStatus') === "Married" && ( " & " + (localStorage.getItem("PartnerName") || "")))} </label>
 
                                 <label
                                     className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
@@ -46,7 +46,7 @@ const CombinedSwitch = (props) => {
                     </div>
 
                     <input type="text"
-                        className={`form-control inputDesign ${jointClass} ${PartnerClass}`}
+                        className={`form-control inputDesign`}
                         id={"joint" + elem.key}
                         placeholder={elem.title}
                         name={"joint" + elem.key}

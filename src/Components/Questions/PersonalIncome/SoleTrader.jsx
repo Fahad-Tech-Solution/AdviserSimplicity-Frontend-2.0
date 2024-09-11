@@ -12,19 +12,7 @@ const SoleTrader = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
-    let [nameSet] = useState(() => {
-        if (props.modalObject.Input === "client") {
-            return localStorage.getItem("UserName");
-        } else if (props.modalObject.Input === "partner") {
-            return localStorage.getItem("PartnerName");
-        } else if (props.modalObject.Input === "joint") {
-            return (
-                localStorage.getItem("UserName") +
-                " & " +
-                localStorage.getItem("PartnerName")
-            );
-        }
-    });
+    let [UserStatus] = useState(localStorage.getItem('UserStatus'));
 
     let incomeFromSoleTrader =
         Object.keys(questionDetail.incomeFromSoleTrader).length > 0
@@ -34,29 +22,8 @@ const SoleTrader = (props) => {
                 partner: [],
                 joint: [],
             }; // Use an empty object as default if incomeFromSoleTrader is undefined
+
     let initialValues = {};
-    //   let initialValues = incomeFromSoleTrader[props.modalObject.Input].length
-    //     ? { NumberOfMap: incomeFromSoleTrader[props.modalObject.Input].length }
-    //     : { NumberOfMap: "1" };
-
-    const [dynamicFields, setDynamicFields] = useState([""]);
-
-    useEffect(() => {
-        // if (
-        //   incomeFromSoleTrader[props.modalObject.Input] &&
-        //   incomeFromSoleTrader[props.modalObject.Input].length
-        // ) {
-        //   let arr = [];
-        //   for (
-        //     let i = 0;
-        //     i < incomeFromSoleTrader[props.modalObject.Input].length;
-        //     i++
-        //   ) {
-        //     arr.push("");
-        //   }
-        //   setDynamicFields(arr);
-        // }
-    }, []);
 
     const fillInitialValues = (setFieldValue) => {
 
@@ -79,7 +46,7 @@ const SoleTrader = (props) => {
                     }
                 }
 
-                if (data.owner === "partner" || data.owner === "client+partner") {
+                if ((data.owner === "partner" || data.owner === "client+partner") && (UserStatus === "Married")) {
                     if (data?.partner && Object.keys(data?.partner).length) {
                         setFieldValue(`partner.businessName`, data.partner.businessName || "");
                         setFieldValue(`partner.ABN`, data.partner.ABN || "");
@@ -94,19 +61,6 @@ const SoleTrader = (props) => {
             }
         }
     };
-
-    // let handleInput = (e, setFieldValue) => {
-    //   const value = e.target.value > 2 ? 2 : e.target.value;
-    //   setFieldValue(e.target.id, value);
-
-    //   let arr = [];
-
-    //   for (let i = 0; i < value; i++) {
-    //     arr.push("");
-    //   }
-
-    //   setDynamicFields(arr);
-    // };
 
     let DefaultUrl = useRecoilValue(defaultUrl);
 
@@ -126,7 +80,7 @@ const SoleTrader = (props) => {
         }
 
         // Handle partner-related conditions
-        if (values.owner === "partner" || values.owner === "client+partner") {
+        if ((values.owner === "partner" || values.owner === "client+partner") && (UserStatus === "Married")) {
             obj.partnerTotal = values.partner.netBusinessIncome;
             console.log("Partner total set");
         } else {
@@ -170,19 +124,12 @@ const SoleTrader = (props) => {
             console.error("Error occurred while making API call:", error);
         }
     };
-    //   const newRow = (value, setFieldValue) => {
-    //     setFieldValue("NumberOfMap", value);
-    //     let arr = [];
 
-    //     for (let i = 0; i < value; i++) {
-    //       arr.push("");
-    //     }
-
-    //     setDynamicFields(arr);
-    //   };
     const handleInnerModal = (name, values) => {
         console.log("Opening modal for:", name, values);
     };
+
+
     const rowConfig = [
         { name: "businessName", type: "text", placeholder: "Business Name" },
         { name: "ABN", type: "number", placeholder: "ABN" },
@@ -195,25 +142,11 @@ const SoleTrader = (props) => {
         {
             name: "goodWill",
             type: "number-toComma",
-            placeholder: "goodWill Business Valuation",
+            placeholder: "GoodWill Business Valuation",
         },
-        // {
-        //   name: "client.SGPercentage",
-        //   type: "number-toPercent",
-        //   placeholder: "Enter SG Value",
-        // },
-        // { name: "startDate", type: "date", placeholder: "Start Date" },
-        // {
-        //   name: "remunerationType",
-        //   type: "select",
-        //   options: [
-        //     { value: "Gross Salary", label: "Gross Salary" },
-        //     { value: "Total Package", label: "Total Package" },
-        //   ],
-        // },
-        // { name: "client.ChoiceFund", type: "yesno" },
-        // { name: "modalButton", type: "modal" },
     ];
+
+
     return (
         <Formik
             initialValues={initialValues}
@@ -231,11 +164,6 @@ const SoleTrader = (props) => {
                         <Row>
                             <div className="col-md-12">
                                 <div className="row justify-content-center">
-                                    {/* <div className='col-md-5'>
-                                        <p className='text-end mt-1'>
-                                            How many {props.modalObject.title} does {nameSet} have:
-                                        </p>
-                                    </div> */}
                                     <div className="col-md-12">
                                         <div className="d-flex justify-content-center align-items-center gap-4">
                                             <label htmlFor="" className="text-end ">
@@ -266,9 +194,6 @@ const SoleTrader = (props) => {
                                                                     RenderName("partner") +
                                                                     ")"}
                                                             </option>
-                                                            {/* <option value={"joint"}>
-                                {"Joint (" + RenderName("joint") + ")"}
-                              </option> */}
                                                         </React.Fragment>
                                                     )}
                                                 </Field>
@@ -332,15 +257,18 @@ const SoleTrader = (props) => {
                                                                 handleInnerModal={handleInnerModal}
                                                                 stakeHolder="client."
                                                             />
-                                                            <DynamicTableRow
-                                                                rowConfig={rowConfig}
-                                                                values={values}
-                                                                setFieldValue={setFieldValue}
-                                                                handleChange={handleChange}
-                                                                handleBlur={handleBlur}
-                                                                handleInnerModal={handleInnerModal}
-                                                                stakeHolder="partner."
-                                                            />
+                                                            {UserStatus === "Married" &&
+
+                                                                <DynamicTableRow
+                                                                    rowConfig={rowConfig}
+                                                                    values={values}
+                                                                    setFieldValue={setFieldValue}
+                                                                    handleChange={handleChange}
+                                                                    handleBlur={handleBlur}
+                                                                    handleInnerModal={handleInnerModal}
+                                                                    stakeHolder="partner."
+                                                                />
+                                                            }
                                                         </>
                                                     ) : (
 

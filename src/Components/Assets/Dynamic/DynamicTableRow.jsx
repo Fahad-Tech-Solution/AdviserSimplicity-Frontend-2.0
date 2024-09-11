@@ -22,7 +22,8 @@ const DynamicTableRow = ({
         </td>
       ) : stakeHolder == "joint." ? (
         <td>
-          <th>{RenderName("client") + " + " + RenderName("partner")}</th>
+          <th>{RenderName("client")}
+            {(localStorage.getItem('UserStatus') === "Married" && (" + " + RenderName("partner")))}</th>
         </td>
       ) : (
         ""
@@ -45,6 +46,7 @@ const DynamicTableRow = ({
             handleBlur={handleBlur}
             handleInnerModal={handleInnerModal}
             stakeHolder={stakeHolder}
+            all={field}
           />
         </td>
       ))}

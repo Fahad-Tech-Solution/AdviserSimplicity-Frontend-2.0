@@ -10,6 +10,9 @@ const AssetInfo = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
+    let [UserStatus] = useState(localStorage.getItem('UserStatus'));
+
+
     let superAnnuationIssues = Object.keys(questionDetail.superAnnuationIssues).length > 0 ? questionDetail.superAnnuationIssues : {
         client: [],
         partner: [],
@@ -18,9 +21,9 @@ const AssetInfo = (props) => {
     };  // Use an empty object as default if superAnnuationIssues is undefined
 
 
-    let initialValues = { owner: "client" };
+    let initialValues = { owner: "" };
 
-    const [dynamicFields, setDynamicFields] = useState([]);
+
 
     const fillInitialValues = (setFieldValue) => {
 
@@ -179,9 +182,9 @@ const AssetInfo = (props) => {
                                                             <option value={"partner"}>{RenderName("partner")}</option>
                                                             <option value={"client+partner"}>{"Both (" + RenderName("client") + " , " + RenderName("partner") + ")"} </option>
                                                             {/*
-                                                        <option value={"client+partner+joint"}>{RenderName("client") + " , " + RenderName("partner") + " and Joint"} </option>
-                                                        <option value={"joint"}> {"Joint (" + RenderName("joint") + ")"} </option>
-                                                        */}
+                                                                <option value={"client+partner+joint"}>{RenderName("client") + " , " + RenderName("partner") + " and Joint"} </option>
+                                                                <option value={"joint"}> {"Joint (" + RenderName("joint") + ")"} </option>
+                                                            */}
 
                                                         </React.Fragment>
                                                     }
@@ -191,60 +194,62 @@ const AssetInfo = (props) => {
                                 </div>
 
 
-
-                                <div className='row justify-content-center'>
-                                    <div className='mt-4'>
-                                        <Table striped bordered responsive hover>
-                                            <thead>
-                                                <tr>
-                                                    <th onClick={() => { console.log(values) }}>Owner</th>
-                                                    {props.modalObject.title === "Car" &&
-                                                        <th>Model of Car</th>
+                                {values.owner !== "" &&
+                                    <div className='row justify-content-center'>
+                                        <div className='mt-4'>
+                                            <Table striped bordered responsive hover>
+                                                <thead>
+                                                    <tr>
+                                                        <th onClick={() => { console.log(values) }}>Owner</th>
+                                                        {props.modalObject.title === "Car" &&
+                                                            <th>Model of Car</th>
+                                                        }
+                                                        {props.modalObject.title === "Other Assets" &&
+                                                            <th>Discription</th>
+                                                        }
+                                                        <th>Current Value</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {(values.owner === "client" || values.owner === "client+partner" || values.owner === "client+partner+joint") &&
+                                                        <DynamicTableRow
+                                                            rowConfig={rowConfig}
+                                                            values={values}
+                                                            setFieldValue={setFieldValue}
+                                                            handleChange={handleChange}
+                                                            handleBlur={handleBlur}
+                                                            stakeHolder={"client."}
+                                                        />
                                                     }
-                                                    {props.modalObject.title === "Other Assets" &&
-                                                        <th>Discription</th>
+                                                    {((values.owner === "partner" || values.owner === "client+partner" || values.owner === "client+partner+joint") && (UserStatus === "Married")) &&
+                                                        <DynamicTableRow
+                                                            rowConfig={rowConfig}
+                                                            values={values}
+                                                            setFieldValue={setFieldValue}
+                                                            handleChange={handleChange}
+                                                            handleBlur={handleBlur}
+                                                            stakeHolder={"partner."}
+                                                        />
                                                     }
-                                                    <th>Current Value</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {(values.owner === "client" || values.owner === "client+partner" || values.owner === "client+partner+joint") &&
-                                                    <DynamicTableRow
-                                                        rowConfig={rowConfig}
-                                                        values={values}
-                                                        setFieldValue={setFieldValue}
-                                                        handleChange={handleChange}
-                                                        handleBlur={handleBlur}
-                                                        stakeHolder={"client."}
-                                                    />
-                                                }
-                                                {(values.owner === "partner" || values.owner === "client+partner" || values.owner === "client+partner+joint") &&
-                                                    <DynamicTableRow
-                                                        rowConfig={rowConfig}
-                                                        values={values}
-                                                        setFieldValue={setFieldValue}
-                                                        handleChange={handleChange}
-                                                        handleBlur={handleBlur}
-                                                        stakeHolder={"partner."}
-                                                    />
-                                                }
 
-                                                {(values.owner === "joint" || values.owner === "client+partner+joint") &&
-                                                    <DynamicTableRow
-                                                        rowConfig={rowConfig}
-                                                        values={values}
-                                                        setFieldValue={setFieldValue}
-                                                        handleChange={handleChange}
-                                                        handleBlur={handleBlur}
-                                                        stakeHolder={"joint."}
-                                                    />
-                                                }
+                                                    {(values.owner === "joint" || values.owner === "client+partner+joint") &&
+                                                        <DynamicTableRow
+                                                            rowConfig={rowConfig}
+                                                            values={values}
+                                                            setFieldValue={setFieldValue}
+                                                            handleChange={handleChange}
+                                                            handleBlur={handleBlur}
+                                                            stakeHolder={"joint."}
+                                                        />
+                                                    }
 
-                                            </tbody>
-                                        </Table>
+                                                </tbody>
+                                            </Table>
+                                        </div>
+
                                     </div>
+                                }
 
-                                </div>
                             </div>
                         </Row>
                     </Form>

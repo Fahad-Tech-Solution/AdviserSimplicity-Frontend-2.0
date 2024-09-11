@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { defaultUrl, QuestionDetail } from '../../../Store/Store';
-import { toCommaAndDollar, toPersentage } from '../../Assets/Api/Api';
+import { toCommaAndDollar, toPercentage } from '../../Assets/Api/Api';
 import DynamicYesNo from '../FinancialInvestments/QuestionsDetail/DynamicYesNo';
 
 const SalaryPackaging = (props) => {
@@ -97,7 +97,7 @@ const SalaryPackaging = (props) => {
                                                     <td style={{ minWidth: "100px" }}>
                                                         <Field
                                                             type="text"
-                                                            placeholder="Investment Code"
+                                                            placeholder="Credit Card/Mortgage Repayments"
                                                             id={`creditCardMortgageRepayments`}
                                                             name={`creditCardMortgageRepayments`}
                                                             className="form-control inputDesignDoubleInput"
@@ -110,7 +110,7 @@ const SalaryPackaging = (props) => {
                                                     <td style={{ minWidth: "100px" }}>
                                                         <Field
                                                             type="text"
-                                                            placeholder="Investment Code"
+                                                            placeholder="Cost Base of Car"
                                                             id={`costBaseOfCar`}
                                                             name={`costBaseOfCar`}
                                                             className="form-control inputDesignDoubleInput"
@@ -127,7 +127,7 @@ const SalaryPackaging = (props) => {
                                                     <td style={{ minWidth: "100px" }}>
                                                         <Field
                                                             type="text"
-                                                            placeholder="Investment Code"
+                                                            placeholder="Running Costs of Car"
                                                             id={`runningCostsOfCar`}
                                                             name={`runningCostsOfCar`}
                                                             className="form-control inputDesignDoubleInput"

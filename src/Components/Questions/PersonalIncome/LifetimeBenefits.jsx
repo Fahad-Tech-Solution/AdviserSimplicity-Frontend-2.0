@@ -17,22 +17,8 @@ const LifeTimeBeneFits = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
-  let [nameSet] = useState(() => {
-    if (props.modalObject.Input === "client") {
-      return localStorage.getItem("UserName");
-    } else if (props.modalObject.Input === "partner") {
-      return localStorage.getItem("PartnerName");
-    } else if (props.modalObject.Input === "joint") {
-      return (
-        localStorage.getItem("UserName") +
-        " & " +
-        localStorage.getItem("PartnerName")
-      );
-    }
-  });
 
-  let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
+  let [UserStatus] = useState(localStorage.getItem('UserStatus'));
 
   let incomeFromSuperPayment =
     Object.keys(questionDetail.incomeFromSuperPayment).length > 0
@@ -45,9 +31,6 @@ const LifeTimeBeneFits = (props) => {
 
   let initialValues = {};
 
-  const [dynamicFields, setDynamicFields] = useState([]);
-
-  useEffect(() => { }, []);
 
   const fillInitialValues = (setFieldValue) => {
     console.log(incomeFromSuperPayment, "data");
@@ -56,33 +39,17 @@ const LifeTimeBeneFits = (props) => {
       if (data) {
         setFieldValue(`owner`, data.owner || "");
         setFieldValue(`client.fundName`, data.client.fundName || "");
-        setFieldValue(`partner.fundName`, data.partner.fundName || "");
-        setFieldValue(
-          `client.regularIncomePerFortnight`,
-          data.client.regularIncomePerFortnight || ""
-        );
-        setFieldValue(
-          `partner.regularIncomePerFortnight`,
-          data.partner.regularIncomePerFortnight || ""
-        );
-        setFieldValue(
-          `client.regularIncomePA`,
-          data.client.regularIncomePA || ""
-        );
-        setFieldValue(
-          `partner.regularIncomePA`,
-          data.partner.regularIncomePA || ""
-        );
-        setFieldValue(
-          `client.centrelinkDeductibleAmount`,
-          data.client.centrelinkDeductibleAmount || ""
-        );
-        setFieldValue(
-          `partner.centrelinkDeductibleAmount`,
-          data.partner.centrelinkDeductibleAmount || ""
-        );
+        setFieldValue(`client.regularIncomePerFortnight`, data.client.regularIncomePerFortnight || "");
         setFieldValue(`client.isPension`, data.client.isPension || "");
-        setFieldValue(`partner.isPension`, data.partner.isPension || "");
+        setFieldValue(`client.regularIncomePA`, data.client.regularIncomePA || "");
+        setFieldValue(`client.centrelinkDeductibleAmount`, data.client.centrelinkDeductibleAmount || "");
+        if (UserStatus === "Married") {
+          setFieldValue(`partner.regularIncomePA`, data.partner.regularIncomePA || "");
+          setFieldValue(`partner.regularIncomePerFortnight`, data.partner.regularIncomePerFortnight || "");
+          setFieldValue(`partner.centrelinkDeductibleAmount`, data.partner.centrelinkDeductibleAmount || "");
+          setFieldValue(`partner.fundName`, data.partner.fundName || "");
+          setFieldValue(`partner.isPension`, data.partner.isPension || "");
+        }
       }
     }
   };
@@ -110,7 +77,7 @@ const LifeTimeBeneFits = (props) => {
     }
 
     // Handle partner-related conditions
-    if (values.owner === "partner" || values.owner === "client+partner") {
+    if ((values.owner === "partner" || values.owner === "client+partner") && (UserStatus === "Married")) {
       obj.partnerTotal = values.partner.regularIncomePA;
       console.log("Partner total set");
     } else {
@@ -201,6 +168,7 @@ const LifeTimeBeneFits = (props) => {
       name: "regularIncomePA",
       type: "number-toComma",
       placeholder: "Income P.A",
+      disabled: true,
     },
     {
       name: "centrelinkDeductibleAmount",
@@ -330,15 +298,17 @@ const LifeTimeBeneFits = (props) => {
                                 // handleInnerModal={handleInnerModal}
                                 stakeHolder="client."
                               />
-                              <DynamicTableRow
-                                rowConfig={rowConfig}
-                                values={values}
-                                setFieldValue={setFieldValue}
-                                handleChange={handleChange}
-                                handleBlur={handleBlur}
-                                // handleInnerModal={handleInnerModal}
-                                stakeHolder="partner."
-                              />
+                              {UserStatus === "Married" &&
+                                <DynamicTableRow
+                                  rowConfig={rowConfig}
+                                  values={values}
+                                  setFieldValue={setFieldValue}
+                                  handleChange={handleChange}
+                                  handleBlur={handleBlur}
+                                  // handleInnerModal={handleInnerModal}
+                                  stakeHolder="partner."
+                                />
+                              }
                             </>
                           ) : (
                             ""

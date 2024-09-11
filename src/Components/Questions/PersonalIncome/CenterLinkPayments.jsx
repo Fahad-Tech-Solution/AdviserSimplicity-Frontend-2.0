@@ -11,6 +11,8 @@ const CenterLinkPayments = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
+  let [UserStatus] = useState(localStorage.getItem('UserStatus'));
+
 
 
   let incomeFromCentrelink = Object.keys(questionDetail.incomeFromCentrelink).length > 0 ? questionDetail.incomeFromCentrelink : {
@@ -21,10 +23,8 @@ const CenterLinkPayments = (props) => {
   }; // Use an empty object as default if incomeFromCentrelink is undefined
 
   let initialValues = {
-    owner: "client"
+    owner: ""
   };
-
-  const [dynamicFields, setDynamicFields] = useState([""]);
 
   const fillInitialValues = (setFieldValue) => {
     if (
@@ -47,7 +47,7 @@ const CenterLinkPayments = (props) => {
           setFieldValue(`client.annualPaymentAmount`, data.client.annualPaymentAmount || "");
           setFieldValue(`client.centrelinkCardsHeld`, data.client.centrelinkCardsHeld || "");
         }
-        if (incomeFromCentrelink.owner === "partner" || incomeFromCentrelink.owner === "client+partner") {
+        if ((incomeFromCentrelink.owner === "partner" || incomeFromCentrelink.owner === "client+partner") && (UserStatus === "Married")) {
 
           setFieldValue(`partner.paymentType`, data.partner.paymentType || "");
           setFieldValue(`partner.paymentType`, data.partner.paymentType || "");
@@ -56,13 +56,7 @@ const CenterLinkPayments = (props) => {
           setFieldValue(`partner.annualPaymentAmount`, data.partner.annualPaymentAmount || "");
           setFieldValue(`partner.centrelinkCardsHeld`, data.partner.centrelinkCardsHeld || "");
         }
-
-
-
-
-
       }
-
     }
   };
 
@@ -77,12 +71,17 @@ const CenterLinkPayments = (props) => {
 
     obj.clientFK = localStorage.getItem("UserID");
 
-    if (incomeFromCentrelink.owner === "client" || incomeFromCentrelink.owner === "client+partner") {
+    if (obj.owner === "client" || obj.owner === "client+partner") {
       obj.clientTotal = obj.client.annualPaymentAmount;
     }
 
-    if (incomeFromCentrelink.owner === "partner" || incomeFromCentrelink.owner === "client+partner") {
+    if (obj.owner === "partner" || obj.owner === "client+partner") {
       obj.partnerTotal = obj.partner.annualPaymentAmount;
+    }
+
+    if (UserStatus !== "Married") {
+      obj.partnerTotal = "";
+      obj.partner = {};
     }
 
     const GotData = incomeFromCentrelink.clientFK || "";
@@ -190,56 +189,59 @@ const CenterLinkPayments = (props) => {
                   </div>
                 </div>
               </div>
+              {values.owner !== "" &&
 
-              <div className="col-md-12">
-                <div className="row justify-content-center">
-                  <div className="mt-4">
-                    <Table striped bordered responsive hover>
-                      <thead>
-                        <tr>
-                          <th
-                            onClick={() => {
-                              console.log(values);
-                            }}
-                          >
-                            Owner
-                          </th>
-                          <th>CRN</th>
-                          <th>Payment Type</th>
-                          <th>Fortnightly Payment</th>
-                          <th>Annual Payment Amount</th>
-                          <th>Centrelink Cards Held</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {(values.owner === "client" || values.owner === "client+partner") &&
-                          <DynamicTableRow
-                            rowConfig={rowConfig}
-                            values={values}
-                            setFieldValue={setFieldValue}
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                            stakeHolder={"client."}
-                          />
-                        }
-                        {(values.owner === "partner" || values.owner === "client+partner") &&
-                          <DynamicTableRow
-                            rowConfig={rowConfig}
-                            values={values}
-                            setFieldValue={setFieldValue}
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                            stakeHolder={"partner."}
-                          />
-                        }
+                <div className="col-md-12">
+                  <div className="row justify-content-center">
+                    <div className="mt-4">
+                      <Table striped bordered responsive hover>
+                        <thead>
+                          <tr>
+                            <th
+                              onClick={() => {
+                                console.log(values);
+                              }}
+                            >
+                              Owner
+                            </th>
+                            <th>CRN</th>
+                            <th>Payment Type</th>
+                            <th>Fortnightly Payment</th>
+                            <th>Annual Payment Amount</th>
+                            <th>Centrelink Cards Held</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {(values.owner === "client" || values.owner === "client+partner") &&
+                            <DynamicTableRow
+                              rowConfig={rowConfig}
+                              values={values}
+                              setFieldValue={setFieldValue}
+                              handleChange={handleChange}
+                              handleBlur={handleBlur}
+                              stakeHolder={"client."}
+                            />
+                          }
+                          {((values.owner === "partner" || values.owner === "client+partner") && (UserStatus === "Married")) &&
+                            <DynamicTableRow
+                              rowConfig={rowConfig}
+                              values={values}
+                              setFieldValue={setFieldValue}
+                              handleChange={handleChange}
+                              handleBlur={handleBlur}
+                              stakeHolder={"partner."}
+                            />
+                          }
 
 
 
-                      </tbody>
-                    </Table>
+                        </tbody>
+                      </Table>
+                    </div>
                   </div>
                 </div>
-              </div>
+              }
+
             </Row>
           </Form>
         );

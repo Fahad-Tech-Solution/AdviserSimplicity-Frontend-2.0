@@ -102,6 +102,7 @@ const PersonalIncome = (props) => {
             title: "Centrelink Payments/Benefits",
             img: Gears,
             key: "incomeFromCentrelink",
+            info:"This includes Family Tax Benefit (A&B) Payments and any Centrelink Cards"
         },
         {
             title: "Lifetime/Defined Benefit Super Pensions",

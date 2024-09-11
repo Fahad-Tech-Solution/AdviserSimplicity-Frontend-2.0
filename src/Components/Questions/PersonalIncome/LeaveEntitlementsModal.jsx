@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { defaultUrl, QuestionDetail } from '../../../Store/Store';
-import { toCommaAndDollar, toPersentage } from '../../Assets/Api/Api';
+import { toCommaAndDollar, toPercentage } from '../../Assets/Api/Api';
 
 const LeaveEntitlementsModal = (props) => {
 
@@ -153,7 +153,7 @@ const LeaveEntitlementsModal = (props) => {
                                                     <td>
                                                         <Field
                                                             type="text"
-                                                            placeholder="Investment Code"
+                                                            placeholder="Leave Type"
                                                             id={`annualLeave`}
                                                             name={`annualLeave`}
                                                             className="form-control inputDesignDoubleInput"
@@ -163,7 +163,7 @@ const LeaveEntitlementsModal = (props) => {
                                                     <td>
                                                         <Field
                                                             type="text"
-                                                            placeholder="Investment Code"
+                                                            placeholder="Amount"
                                                             id={`annualLeaveAmount`}
                                                             name={`annualLeaveAmount`}
                                                             className="form-control inputDesignDoubleInput"
@@ -192,7 +192,7 @@ const LeaveEntitlementsModal = (props) => {
                                                     <td>
                                                         <Field
                                                             type="text"
-                                                            placeholder="Investment Code"
+                                                            placeholder="Leave Type"
                                                             id={`sickLeave`}
                                                             name={`sickLeave`}
                                                             className="form-control inputDesignDoubleInput"
@@ -202,7 +202,7 @@ const LeaveEntitlementsModal = (props) => {
                                                     <td>
                                                         <Field
                                                             type="text"
-                                                            placeholder="Investment Code"
+                                                            placeholder="Amount"
                                                             id={`sickLeaveAmount`}
                                                             name={`sickLeaveAmount`}
                                                             className="form-control inputDesignDoubleInput"
@@ -231,7 +231,7 @@ const LeaveEntitlementsModal = (props) => {
                                                     <td>
                                                         <Field
                                                             type="text"
-                                                            placeholder="Investment Code"
+                                                            placeholder="Leave Type"
                                                             id={`longServiceLeave`}
                                                             name={`longServiceLeave`}
                                                             className="form-control inputDesignDoubleInput"
@@ -241,7 +241,7 @@ const LeaveEntitlementsModal = (props) => {
                                                     <td>
                                                         <Field
                                                             type="text"
-                                                            placeholder="Investment Code"
+                                                            placeholder="Amount"
                                                             id={`longServiceLeaveAmount`}
                                                             name={`longServiceLeaveAmount`}
                                                             className="form-control inputDesignDoubleInput"

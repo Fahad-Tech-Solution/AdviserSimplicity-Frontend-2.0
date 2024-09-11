@@ -21,7 +21,7 @@ import credit from "../svgs/credit-card-refund-svgrepo-com.svg";
 
 
 //Q set 3
-import houseHold from "../svgs/upgradeHome.png";
+import houseHold from "../svgs/warehouse-.svg";
 import otherAssets from "../svgs/funds.svg";
 import Questions_Home from "../svgs/home-svgrepo-com.svg";
 
@@ -132,6 +132,7 @@ import CombinedSwitch from '../CombinedSwitch/CombinedSwitch';
 
 import { FaRegSave } from "react-icons/fa";
 import AssetInfo from '../AdditionalQueriesPersonalAssets/AssetInfo';
+import TowInOneSwitch from '../AdditionalQueriesPersonalAssets/TowInOneSwitch';
 
 const QuestionCards = (props) => {
 
@@ -219,16 +220,17 @@ const QuestionCards = (props) => {
             //     api: "/personalAssets",
             //     img: settingMoney
             // },
+            // {
+            //     title: "Credit Card",
+            //     key: "creditCards",
+            //     img: credit
+            // },
             {
-                title: "Personal Loan",
+                title: "Personal Debt",
                 key: "personalLoans",
                 img: moneyGiving
             },
-            {
-                title: "Credit Card",
-                key: "creditCards",
-                img: credit
-            },
+
         ],
         Lifestyle: [
             {
@@ -573,6 +575,8 @@ const QuestionCards = (props) => {
 
     const combinedArray = ["incomeFromOwnBusiness", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "car", "boat", "caravan", "personalAssets", "houseHold", "otherAssets"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
+    const towInOne = ["personalLoans"];
+
     const reuseModal = ["bankAccountFinance", "termDepositsFinance", "australianShareMarket", "managedFund", "SMSFTermDeposits", "SMSFAustralianShares", "SMSFManagedFunds", "SMSFInvestmentLoan", "managedFundsLOC", "familyBank", "familyTermDeposit", "familyAustralianShare", "familyMangedFunds", "familyInvestmentHomeLoan", "SMSFBank",]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
     let handleSubmit = async (values) => {
@@ -646,6 +650,7 @@ const QuestionCards = (props) => {
         "Other Assets": <AssetInfo />,
         "Personal Loan": <PersonalLoan />,
         "Credit Card": <CreditCard />,
+
 
         //Financial Investments
         "Bank Accounts": <BankTermForm />,              //reuse Component
@@ -788,11 +793,13 @@ const QuestionCards = (props) => {
             <div className="row m-0 justify-content-start align-items-stretch">
                 {arrayObj[props.Question].map((elem, index) => {
                     if (CRObject[elem.key] === "Yes") {
+
                         // const cardSwitch = CardForms.includes(elem.key) ? true : false;
                         const jointClass = JointHidden.includes(elem.key) ? "d-none" : "";
                         const singleSwitch = singleClient.includes(elem.key) ? true : false;
                         const reuseSwitch = reuseModal.includes(elem.key) ? true : false;
                         const combinedSwitch = combinedArray.includes(elem.key) ? true : false;
+                        const TowInSwitch = towInOne.includes(elem.key) ? true : false;
 
                         const SMSFInP = elem.key === "SMSFInvestmentProperties" ? true : false;
                         const FamilyInP = elem.key === "familyInvestmentProperties" ? true : false;
@@ -853,9 +860,9 @@ const QuestionCards = (props) => {
                                         >
                                             {({ values, setFieldValue }) => {
                                                 return (<Form>
-                                                    <InputGroup>
+                                                    <InputGroup className="inputDesign p-0">
                                                         <Field type="text"
-                                                            className="form-control inputDesign"
+                                                            className="form-control inputDesignDoubleInput"
                                                             id={"retirementLivingExpense"}
                                                             placeholder={elem.title}
                                                             name={"retirementLivingExpense"}
@@ -984,6 +991,9 @@ const QuestionCards = (props) => {
                         }
                         else if (combinedSwitch) {
                             return (<CombinedSwitch PartnerClass={PartnerClass} index={index} jointClass={jointClass} elem={elem} OpenModal={OpenModal2} homeArray={homeArray} arrayCount={arrayCount} />);
+                        }
+                        else if (TowInSwitch) {
+                            return (<TowInOneSwitch PartnerClass={PartnerClass} index={index} jointClass={jointClass} elem={elem} OpenModal={OpenModal2} homeArray={homeArray} arrayCount={arrayCount} />);
                         }
                         else {
                             // <div className={`col-md-${arrayCount % 2 == 0 ? '6' : '4'} mb-4`} key={index}>

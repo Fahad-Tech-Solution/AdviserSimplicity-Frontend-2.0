@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 // import DynamicYesNo from './DynamicYesNo';
 import Button from "react-bootstrap/Button";
-import { toCommaAndDollar, toPersentage } from "../Api/Api";
+import { toCommaAndDollar, toPercentage, handleInputChange, handleInputFocus, handleInputKeyDown, handleInputBlur, } from "../Api/Api";
 import DynamicYesNo from "../../Questions/FinancialInvestments/QuestionsDetail/DynamicYesNo";
 import { CreatableMultiSelectField } from "../../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import CreatableSelectField from "./DynamicCreatableSelect/CreatableSelectField";
@@ -21,6 +21,7 @@ const DynamicFormField = ({
   handleBlur,
   handleInnerModal,
   stakeHolder,
+  all,
 }) => {
 
   switch (fieldType) {
@@ -33,6 +34,7 @@ const DynamicFormField = ({
           id={name}
           className="form-control inputDesign"
           onChange={(e) => handleChange(e)}
+          disabled={all?.disabled ? all.disabled : false}
         />
       );
     case "text":
@@ -44,10 +46,20 @@ const DynamicFormField = ({
           id={name}
           className="form-control inputDesign"
           onChange={(e) => handleChange(e)}
+          disabled={all?.disabled ? all.disabled : false}
         />
       );
 
     case "number-toPercent":
+
+      let FormulaSetting = () => { };
+
+      if (all.callBack) {
+        // alert(all.callBack);
+        FormulaSetting = all.func;
+      }
+
+
       return (
         <Field
           type="text"
@@ -55,13 +67,11 @@ const DynamicFormField = ({
           name={stakeHolder + name}
           id={name}
           className="form-control inputDesign"
-          onChange={(e) => {
-            const value = e.target.value.replace(/[^0-9.-]+/g, "");
-            setFieldValue(
-              stakeHolder + name,
-              value > 100 ? toPersentage(100) : toPersentage(value)
-            );
-          }}
+          onChange={(e) => handleInputChange(e, setFieldValue, FormulaSetting, values, stakeHolder)}
+          onFocus={(e) => handleInputFocus(e, setFieldValue)}
+          onKeyDown={(e) => handleInputKeyDown(e)}
+          onBlur={(e) => handleInputBlur(e, setFieldValue, toPercentage, FormulaSetting, values, stakeHolder)}
+          disabled={all?.disabled ? all.disabled : false}
         />
       );
 
@@ -76,7 +86,11 @@ const DynamicFormField = ({
           onChange={(e) => {
             const value = e.target.value.replace(/[^0-9.-]+/g, "");
             setFieldValue(stakeHolder + name, toCommaAndDollar(value));
+            if (all.callBack) {
+              all.func(values, setFieldValue, e.target, stakeHolder);
+            }
           }}
+          disabled={all?.disabled ? all.disabled : false}
         />
       );
 
@@ -92,12 +106,15 @@ const DynamicFormField = ({
           showIcon
           id={name}
           name={stakeHolder + name}
+          disabled={all?.disabled ? all.disabled : false}
         />
       );
 
     case "select":
       return (
-        <Field as="select" name={stakeHolder + name} className="form-select inputDesign">
+        <Field as="select" name={stakeHolder + name} className="form-select inputDesign"
+          disabled={all?.disabled ? all.disabled : false}
+        >
           <option value="">Select</option>
           {options.map((option) => (
             <option key={option.value} value={option.value}>
@@ -114,6 +131,7 @@ const DynamicFormField = ({
           component={CreatableMultiSelectField}
           label="Multi Select Field"
           options={options}
+          disabled={all?.disabled ? all.disabled : false}
         />
       );
 
@@ -124,6 +142,7 @@ const DynamicFormField = ({
           component={CreatableMultiSelectField}
           label="Multi Select Field"
           options={options}
+          disabled={all?.disabled ? all.disabled : false}
         />
       );
 
@@ -135,6 +154,7 @@ const DynamicFormField = ({
           defaultOptions={options}
           placeholder="Select or create ..."
           form={{ setFieldValue }}
+          disabled={all?.disabled ? all.disabled : false}
         />
       );
 

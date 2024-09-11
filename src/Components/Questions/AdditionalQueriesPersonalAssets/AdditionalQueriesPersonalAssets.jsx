@@ -5,7 +5,7 @@ import car from "../svgs/car.svg";
 import boat from "../svgs/boat.svg";
 import trailer from "../svgs/trailer-caravan.svg";
 import settingMoney from "../svgs/settingMoney.svg";
-import houseHold from "../svgs/upgradeHome.png";
+import houseHold from "../svgs/warehouse-.svg";
 import otherAssets from "../svgs/funds.svg";
 
 import moneyGiving from "../svgs/moneyGiving.png";
@@ -84,22 +84,22 @@ const AdditionalQueriesPersonalAssets = (props) => {
 
     let QuestionArray = [
         {
-            title: "Do you have Cars?",
+            title: "Cars",
             key: "car",
             img: car,
         },
         {
-            title: "Do you have a House Hold?",
+            title: "Household",
             key: "houseHold",
             img: houseHold,
         },
         {
-            title: "Do you have a Boat?",
+            title: "Boat",
             key: "boat",
             img: boat,
         },
         {
-            title: "Do you have a Caravan?",
+            title: "Caravan",
             key: "caravan",
             img: trailer,
         },
@@ -109,20 +109,21 @@ const AdditionalQueriesPersonalAssets = (props) => {
         //     img: settingMoney,
         // },
         {
-            title: "Do you have a Other Assets?",
+            title: "Other Assets",
             key: "otherAssets",
             img: settingMoney,
         },
         {
-            title: "Do you have any Personal Loans?",
+            title: "Personal Debt",
             key: "personalLoans",
             img: moneyGiving,
+            info: "Information that this includes Credit Cards or Personal Loans"
         },
-        {
-            title: "Do you have any Credit Cards?",
-            key: "creditCards",
-            img: credit,
-        },
+        // {
+        //     title: "Do you have any Credit Cards?",
+        //     key: "creditCards",
+        //     img: credit,
+        // },
     ]
 
     const QuestionClick = (index, elem, values, setFieldValue) => {
