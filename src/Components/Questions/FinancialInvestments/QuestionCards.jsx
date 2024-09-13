@@ -84,8 +84,8 @@ import InvestmentBond from './QuestionsDetail/InvestmentBond';
 import MarginLoan from './QuestionsDetail/MarginLoan';
 import PersonalLoan from './QuestionsDetail/PersonalLoan';
 import CreditCard from './QuestionsDetail/CreditCard';
-import HomeLoan from './QuestionsDetail/HomeLoan';
-import OwnFamilyHome from './QuestionsDetail/OwnFamilyHome';
+// import HomeLoan from './QuestionsDetail/HomeLoan';
+// import OwnFamilyHome from './QuestionsDetail/OwnFamilyHome';
 import InvestmentPropertyDetails from './QuestionsDetail/InvestmentPropertyDetails';
 import InvestmentPropertyLoan from './QuestionsDetail/InvestmentPropertyLoan';
 import QuestionIncomeExpanse from './QuestionsDetail/QuestionIncomeExpanse';
@@ -133,6 +133,7 @@ import CombinedSwitch from '../CombinedSwitch/CombinedSwitch';
 import { FaRegSave } from "react-icons/fa";
 import AssetInfo from '../AdditionalQueriesPersonalAssets/AssetInfo';
 import TowInOneSwitch from '../AdditionalQueriesPersonalAssets/TowInOneSwitch';
+import OwnFamilyHome from '../AdditionalQueriesPersonalAssets/OwnFamilyHome';
 
 const QuestionCards = (props) => {
 
@@ -184,6 +185,11 @@ const QuestionCards = (props) => {
 
         ],
         PersonalAssets: [
+            {
+                title: "Own a Family Home",
+                key: "familyHome",
+                img: Questions_Home,
+            },
             {
                 title: "Car",
                 key: "car",
@@ -573,7 +579,7 @@ const QuestionCards = (props) => {
     const JointHidden = ["superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues", "will", "POA", "professionalAdviser", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "incomeFromInheritance", "incomeFromLumpsumExpense", "incomeFromRegularLivingExpenses", "life", "TPD", "trauma", "incomeProtection"]; // Add other titles that should use "xl" here
     const singleClient = ["incomeFromRegularLivingExpenses"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
-    const combinedArray = ["incomeFromOwnBusiness", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "car", "boat", "caravan", "personalAssets", "houseHold", "otherAssets"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
+    const combinedArray = ["incomeFromOwnBusiness", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "car", "boat", "caravan", "personalAssets", "houseHold", "otherAssets", "familyHome"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
     const towInOne = ["personalLoans"];
 
@@ -642,6 +648,7 @@ const QuestionCards = (props) => {
         "Lumpsum Expenses": <LumpsumExpenses />,
 
         //Personal Assets & Liabilities
+        "Own a Family Home": <OwnFamilyHome />,
         "Car": <AssetInfo />,
         "Boat": <AssetInfo />,
         "Caravan": <AssetInfo />,
@@ -662,8 +669,8 @@ const QuestionCards = (props) => {
         "Margin Loan": <MarginLoan />,
 
         //property Home
-        "Own a Family Home": <OwnFamilyHome />,
-        "Home Loan": <HomeLoan />,
+        // "Own a Family Home": <OwnFamilyHome />,
+        // "Home Loan": <HomeLoan />,
         "Holiday Home": <HolidayHome />,
         "Holiday Home Loan": <HolidayHomeLoan />,
 

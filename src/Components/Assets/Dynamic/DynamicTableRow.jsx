@@ -28,28 +28,31 @@ const DynamicTableRow = ({
       ) : (
         ""
       )}
-      {rowConfig.map((field, index) => (
-        <td key={index}
-          style={
-            field?.styleSet ? field.styleSet : {}
+      {rowConfig.map((field, index) => {
+        return (
+          <td key={index}
+            style={
+              field?.styleSet ? field.styleSet : {}
+            }
+          >
 
-          }
-        >
-          <DynamicFormField
-            fieldType={field.type}
-            name={field.name}
-            placeholder={field.placeholder}
-            options={field.options}
-            values={values}
-            setFieldValue={setFieldValue}
-            handleChange={handleChange}
-            handleBlur={handleBlur}
-            handleInnerModal={handleInnerModal}
-            stakeHolder={stakeHolder}
-            all={field}
-          />
-        </td>
-      ))}
+            <DynamicFormField
+              fieldType={field.type}
+              name={field.name}
+              placeholder={field.placeholder}
+              options={field.options}
+              values={values}
+              setFieldValue={setFieldValue}
+              handleChange={handleChange}
+              handleBlur={handleBlur}
+              handleInnerModal={handleInnerModal}
+              stakeHolder={stakeHolder}
+              innerModalTitle={field.innerModalTitle}
+              all={field}
+            />
+          </td>
+        )
+      })}
     </tr>
   );
 };

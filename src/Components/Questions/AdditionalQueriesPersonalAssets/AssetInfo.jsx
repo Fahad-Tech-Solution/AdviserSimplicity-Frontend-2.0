@@ -12,107 +12,119 @@ const AssetInfo = (props) => {
 
     let [UserStatus] = useState(localStorage.getItem('UserStatus'));
 
-
-    let superAnnuationIssues = Object.keys(questionDetail.superAnnuationIssues).length > 0 ? questionDetail.superAnnuationIssues : {
-        client: [],
-        partner: [],
-        joint: [],
-
-    };  // Use an empty object as default if superAnnuationIssues is undefined
-
-
     let initialValues = { owner: "" };
 
-
-
     const fillInitialValues = (setFieldValue) => {
+        console.log(props.modalObject, "kuch Chala");
 
-        if (superAnnuationIssues[props.modalObject.Input] && superAnnuationIssues[props.modalObject.Input].length) {
+        if (questionDetail[props.modalObject.index] && Object.keys(questionDetail[props.modalObject.index]).length >= 0) {
+            // console.log(questionDetail[props.modalObject.index], "State Ma Data");
 
-            superAnnuationIssues[props.modalObject.Input].forEach((data, i) => {
-                if (data) {
-                    setFieldValue(`fundName${i}`, data.fundName || '');
-                    setFieldValue(`memberNumber${i}`, data.memberNumber || '');
-                    setFieldValue(`memberArray${i}`, data.memberArray || '');
-                    setFieldValue(`portfolioValue${i}`, data.portfolioValue || '');
-                    setFieldValue(`portfolioArray${i}`, data.portfolioArray || '');
-                    setFieldValue(`groupInsurance${i}`, data.groupInsurance || '');
-                    setFieldValue(`groupInsuranceArray${i}`, data.groupInsuranceArray || '');
-                    setFieldValue(`contributions${i}`, data.contributions || '');
-                    setFieldValue(`ContributionsArray${i}`, data.ContributionsArray || '');
-                    setFieldValue(`nominatedBeneficiaries${i}`, data.nominatedBeneficiaries || '');
-                    setFieldValue(`beneficiariesArray${i}`, data.beneficiariesArray || '');
-                    setFieldValue(`annualAdvice${i}`, data.annualAdvice || '');
-                    setFieldValue(`loginInPage${i}`, data.loginInPage || '');
+            let data = questionDetail[props.modalObject.index];
 
+            if (data) {
+                setFieldValue(`owner`, data.owner || "");
+
+                if (data.owner === "client" || data.owner === "client+partner") {
+                    if (data?.client && Object.keys(data?.client).length) {
+
+                        setFieldValue(`client.currentValue`, data.client.currentValue || "");
+
+                        if (props.modalObject.index === "car") {
+                            setFieldValue(`client.modelOfCar`, data.client.modelOfCar || "");
+                        }
+                        else if (props.modalObject.index === "otherAssets") {
+                            setFieldValue(`client.description`, data.client.description || "");
+                        }
+
+                    }
                 }
-            });
+
+                if (data.owner === "partner" || data.owner === "client+partner") {
+                    if (data?.partner && Object.keys(data?.partner).length) {
+
+                        setFieldValue(`partner.currentValue`, data.partner.currentValue || "");
+
+                        if (props.modalObject.index === "car") {
+                            setFieldValue(`partner.modelOfCar`, data.partner.modelOfCar || "");
+                        }
+                        else if (props.modalObject.index === "otherAssets") {
+                            setFieldValue(`partner.description`, data.partner.description || "");
+                        }
+                    }
+                }
+
+                if (data.owner === "joint") {
+                    if (data?.joint && Object.keys(data?.joint).length) {
+
+                        setFieldValue(`joint.currentValue`, data.joint.currentValue || "");
+
+                        if (props.modalObject.index === "car") {
+                            setFieldValue(`joint.modelOfCar`, data.joint.modelOfCar || "");
+                        }
+                        else if (props.modalObject.index === "otherAssets") {
+                            setFieldValue(`joint.description`, data.joint.description || "");
+                        }
+                    }
+                }
+
+
+
+            }
+
+
         }
+
+
+
     };
+
+
 
     let DefaultUrl = useRecoilValue(defaultUrl)
 
-
     let onSubmit = async (values) => {
+        // let onlyJoint = ["Boat", "Caravan", "House hold"];
         // console.log(values);
         // return (false);
-        // Extract the number of maps from the values
-        const numberOfMaps = parseInt(values.NumberOfMap, 10);
-        const newEntries = [];
 
-        // Iterate through each map entry and create a new object
-        for (let i = 0; i < numberOfMaps; i++) {
-            const newEntry = {
-                fundName: values[`fundName${i}`] || "",
-                memberNumber: values[`memberNumber${i}`] || "",
-                memberArray: values[`memberArray${i}`] || "",
-                portfolioValue: values[`portfolioValue${i}`] || "",
-                portfolioArray: values[`portfolioArray${i}`] || "",
-                groupInsurance: values[`groupInsurance${i}`] || "",
-                groupInsuranceArray: values[`groupInsuranceArray${i}`] || "",
-                contributions: values[`contributions${i}`] || "",
-                ContributionsArray: values[`ContributionsArray${i}`] || "",
-                nominatedBeneficiaries: values[`nominatedBeneficiaries${i}`] || "",
-                beneficiariesArray: values[`beneficiariesArray${i}`] || "",
-                annualAdvice: values[`annualAdvice${i}`] || "",
-                loginInPage: values[`loginInPage${i}`] || "",
-            };
-            newEntries.push(newEntry);
+        let obj = values;
+        obj.clientFK = localStorage.getItem("UserID");
+
+
+
+        if (values.owner === "client" || values.owner === "client+partner") {
+            obj.clientTotal = obj.client.currentValue;
+        }
+        if (values.owner === "partner" || values.owner === "client+partner") {
+            obj.partnerTotal = obj.partner.currentValue;
+        }
+        if (values.owner === "joint") {
+            obj.jointTotal = obj.joint.currentValue;
         }
 
-        // Log the new entries to verify
-        console.log(newEntries);
 
-        let DataOf = props.modalObject.Input;
+        if (UserStatus !== "Married") {
+            obj.partnerTotal = "";
+            obj.partner = {};
+        }
 
-        // Create an object with additional fields
-        let obj = {
-            clientFK: localStorage.getItem("UserID"),
-        };
-
-        obj[DataOf] = newEntries
-
-        // Calculate total currentBalance
-        obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.annualAdvice, 0);
 
         console.log(obj, "final obj")
 
-        // Check if superAnnuationIssues and the array at props.modalObject.Input exist
-        // const bankAccountArray = superAnnuationIssues[props.modalObject.Input] || [];
-        const bankAccountArray = superAnnuationIssues.clientFK || "";
+        const bankAccountArray = questionDetail[props.modalObject.index]._id || "";
 
         try {
             let res;
             if (!bankAccountArray) {
-                res = await PostAxios(`${DefaultUrl}/api/superAnnuationIssues/Add`, obj);
+                res = await PostAxios(`${DefaultUrl}/api/${props.modalObject.index}/Add`, obj);
             } else {
-                obj.collection = props.modalObject.Input
-                res = await PatchAxios(`${DefaultUrl}/api/superAnnuationIssues/Update`, obj);
+                res = await PatchAxios(`${DefaultUrl}/api/${props.modalObject.index}/Update`, obj);
             }
 
             if (res) {
                 console.log(res);
-                const updatedData = { ...questionDetail, superAnnuationIssues: res };
+                const updatedData = { ...questionDetail, [props.modalObject.index]: res };
                 setQuestionDetail(updatedData);
             }
 
@@ -128,15 +140,19 @@ const AssetInfo = (props) => {
 
     const rowConfig = (props.modalObject.title === "Car") ? [
         { name: 'modelOfCar', type: 'text', placeholder: 'Model of Car', styleSet: { width: "33%" }, },
-        { name: 'annualPaymentAmount', type: 'number-toComma', placeholder: 'Annual Payment Amount', styleSet: { width: "33%" }, },
+        { name: 'currentValue', type: 'number-toComma', placeholder: 'Annual Payment Amount', styleSet: { width: "33%" }, },
     ] : (props.modalObject.title === "Other Assets") ? [
-        { name: 'discription', type: 'text', placeholder: 'Discription', styleSet: { width: "33%" }, },
-        { name: 'annualPaymentAmount', type: 'number-toComma', placeholder: 'Annual Payment Amount', styleSet: { width: "33%" }, },
+        { name: 'description', type: 'text', placeholder: 'Discription', styleSet: { width: "33%" }, },
+        { name: 'currentValue', type: 'number-toComma', placeholder: 'Annual Payment Amount', styleSet: { width: "33%" }, },
     ] : [
-        { name: 'annualPaymentAmount', type: 'number-toComma', placeholder: 'Annual Payment Amount', styleSet: { width: "50%" }, },
+        { name: 'currentValue', type: 'number-toComma', placeholder: 'Annual Payment Amount', styleSet: { width: "50%" }, },
     ]
 
     let onlyJoint = ["Boat", "Caravan", "House hold"];
+
+
+
+
 
 
     return (
@@ -205,7 +221,7 @@ const AssetInfo = (props) => {
                                                             <th>Model of Car</th>
                                                         }
                                                         {props.modalObject.title === "Other Assets" &&
-                                                            <th>Discription</th>
+                                                            <th>Description</th>
                                                         }
                                                         <th>Current Value</th>
                                                     </tr>

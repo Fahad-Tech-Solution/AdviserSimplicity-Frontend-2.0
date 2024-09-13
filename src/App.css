@@ -1200,3 +1200,23 @@ label {
 .customScroll::-moz-scrollbar-track {
   background: #dcdcdc; /* Track background */
 }
+.AdminSideBar {
+  height: 100vh;
+}
+.AdminSideBar .customeSideHead:hover {
+  background-color: unset;
+
+}
+.AdminSideBar span {
+  all: unset;
+}
+
+.AdminSideBar .ant-menu .ant-menu-submenu {
+  /* background-color: red !important; */
+  margin-top: 0px !important;
+  padding: 0px !important;
+}
+
+.AdminSideBar .ant-menu {
+  height: 100%;
+}

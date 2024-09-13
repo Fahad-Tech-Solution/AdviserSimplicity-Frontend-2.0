@@ -7,6 +7,7 @@ import trailer from "../svgs/trailer-caravan.svg";
 import settingMoney from "../svgs/settingMoney.svg";
 import houseHold from "../svgs/warehouse-.svg";
 import otherAssets from "../svgs/funds.svg";
+import Questions_Home from "../svgs/home-svgrepo-com.svg";
 
 import moneyGiving from "../svgs/moneyGiving.png";
 import credit from "../svgs/credit-card-refund-svgrepo-com.svg";
@@ -83,6 +84,12 @@ const AdditionalQueriesPersonalAssets = (props) => {
     };
 
     let QuestionArray = [
+
+        {
+            title: "Family Home",
+            img: Questions_Home,
+            key: "familyHome",
+        },
         {
             title: "Cars",
             key: "car",

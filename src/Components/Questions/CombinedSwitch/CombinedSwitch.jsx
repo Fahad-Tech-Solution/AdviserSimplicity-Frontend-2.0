@@ -31,11 +31,11 @@ const CombinedSwitch = (props) => {
                                 <label
                                     className="d-block"
                                     htmlFor={"joint" + elem.key}
-                                >{(localStorage.getItem("UserName") || "You")} {(localStorage.getItem('UserStatus') === "Married" && ( " & " + (localStorage.getItem("PartnerName") || "")))} </label>
+                                >{(localStorage.getItem("UserName") || "You")} {(localStorage.getItem('UserStatus') === "Married" && (" & " + (localStorage.getItem("PartnerName") || "")))} </label>
 
                                 <label
                                     className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                    onClick={() => { OpenModal(elem.title, "client") }}
+                                    onClick={() => { OpenModal(elem.title, "client", elem.key) }}
                                 >
                                     <div>
                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
@@ -78,7 +78,7 @@ const CombinedSwitch = (props) => {
 
                                 <label
                                     className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                    onClick={() => { OpenModal(elem.title, "client") }}
+                                    onClick={() => { OpenModal(elem.title, "client", elem.key) }}
                                 >
                                     <div>
                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />

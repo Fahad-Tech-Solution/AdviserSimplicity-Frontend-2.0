@@ -11,6 +11,8 @@ import Register from "./Components/Auth/Register";
 import ForgetPassword from "./Components/Auth/ForgetPassword";
 import VerifyEmail from "./Components/Auth/VerifyEmail";
 import AuthRouts from "./MultiRoutes/AuthRouts";
+import SuperAdminRouts from "./MultiRoutes/SuperAdminRouts";
+
 import Aos from "aos";
 import "aos/dist/aos.css";
 
@@ -32,6 +34,7 @@ function App() {
         <Route path="/Register" element={<Register />} />
         <Route path="/VerifyEmail" element={<VerifyEmail />} />
         <Route path="/ForgetPassword" element={<ForgetPassword />} />
+        <Route path="/SuperAdmin/*" element={<SuperAdminRouts />} />
         <Route path="/*" element={<AuthRouts />} />
       </Routes>
     </div>

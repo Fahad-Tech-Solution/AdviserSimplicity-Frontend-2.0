@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import InternetSVG from "../Questions/svgs/Mobile login-pana.svg"
+import InternetSVG2 from "../Questions/svgs/Telecommuting-pana.svg"
 
 import axios from 'axios';
 import * as Yup from 'yup';
@@ -19,14 +20,27 @@ const LoginForm = () => {
   let [loggedUser, setLoggedUser] = useRecoilState(LoggedInUserData);
   let [loggedUserToken, setLoggedUserToken] = useRecoilState(LoggedInUserTokenJwt)
 
+  let [SuperAdminFlag, seSuperAdminFlag] = useState(false);
+
+
   let initialValues = {
     email: "",
     password: ""
   }
 
+  let location = useLocation()
+  useEffect(() => {
+    if (location.pathname === "/SuperAdmin/Login") {
+      seSuperAdminFlag(true);
+    }
+  }, [location])
+
+
+
+
   let onSubmit = () => { }
 
-  
+
   let validationSchema = Yup.object({
     email: Yup.string()
       .email('Invalid email format')
@@ -48,7 +62,7 @@ const LoginForm = () => {
                 return (<Form>
                   <div className="row align-items-stretch">
                     <div className="col-md-6">
-                      <Image src={InternetSVG} alt='Loginimg' fluid />
+                      <Image src={SuperAdminFlag ? InternetSVG2 : InternetSVG} alt='Loginimg' fluid />
                     </div>
                     <div className="col-md-6">
                       <div className='d-flex flex-column w-100 h-100 justify-content-center align-items-center'>

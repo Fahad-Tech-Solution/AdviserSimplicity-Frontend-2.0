@@ -22,7 +22,8 @@ const InnerModal = (props) => {
     const xlTitles = ["Member Number & Details",
         "Insurances Attached", "Accumulations Benefits",
         "Pension Benefits", "Balance & Benefit Details",
-        "Salary Package"
+        "Salary Package",
+        "Home Loan"
     ]; // Add other titles that should use "xl" here
 
     const size = xlTitles.includes(props.modalObject.title) ? "xl" : "lg";
