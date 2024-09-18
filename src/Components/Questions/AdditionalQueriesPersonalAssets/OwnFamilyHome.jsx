@@ -51,8 +51,8 @@ const OwnFamilyHome = (props) => {
             setFieldValue(`loanAttached`, familyHome.loanAttached || "");
             setFieldValue(`HomeLoanModal`, familyHome.HomeLoanModal || "");
 
-            setFieldValue(`loanAmount`, familyHome.HomeLoanModal.loanBalance || "");
             setFieldValue(`annualRepayments`, familyHome.HomeLoanModal.annualRepayments || "");
+            setFieldValue(`loanAmount`, familyHome.HomeLoanModal.loanBalance || "");
 
 
         }

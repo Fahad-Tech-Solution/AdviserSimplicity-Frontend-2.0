@@ -57,11 +57,74 @@ const CombinedSwitch = (props) => {
             </div>
         );
     }
+    else if (elem.title === "Own a Family Home") {
+        return (
+            <div className={`col-md-3 mb-4`} key={index}>
+
+                <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
+                    <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}
+                    </h5>
+                    <div className="QuestionIcon w-25">
+                        <img className="img-fluid" src={elem.img} alt="" />
+                    </div>
+                    <div
+                        className="row justify-content-center align-items-center my-2"
+                    >
+                        <div className='col-12 p-0 '>
+                            <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+
+                                <label
+                                    className=" d-block text-end"
+                                    htmlFor={"client" + elem.key}
+                                >Market Value</label>
+                                <label
+                                    className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                                    onClick={() => { OpenModal(elem.title, "client", elem.key) }}
+                                >
+                                    <div>
+                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="text"
+                        className="form-control inputDesign "
+                        id={"client" + elem.key}
+                        placeholder={elem.title}
+                        name={"client" + elem.key}
+                        value={questionDetail && questionDetail[elem.key]?.HomeLoanModal?.annualRepayments ? questionDetail[elem.key].HomeLoanModal.annualRepayments : ""}
+                    />
+                    <div
+                        className={`row justify-content-center align-items-center my-2`}
+                    >
+                        <div className='col-12 p-0 '>
+                            <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                <label
+                                    className=" d-block text-end"
+                                    htmlFor={"partner" + elem.key}
+                                >Loan Balance </label>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="text"
+                        className={`form-control inputDesign`}
+                        id={"partner" + elem.key}
+                        placeholder={elem.title}
+                        name={"partner" + elem.key}
+                        value={questionDetail && questionDetail[elem.key]?.HomeLoanModal?.loanBalance ? questionDetail[elem.key].HomeLoanModal.loanBalance : ""}
+                    />
+                </Card>
+            </div>
+        );
+    }
     else {
         return (
             <div className={`col-md-3 mb-4`} key={index}>
+
                 <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
-                    <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}</h5>
+                    <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}
+                    </h5>
                     <div className="QuestionIcon w-25">
                         <img className="img-fluid" src={elem.img} alt="" />
                     </div>

@@ -93,8 +93,8 @@ function PersonalDetailCards(props) {
                         </div>
                         <div className="col-6 mb-3">
                             <div className="d-flex align-items-center">
-                                {data.client.clientGender == "female" ? <img src={SVGFemale} alt="single svg" className="me-2" width={"24px"} /> : <img src={SVGMale} alt="single svg" className="me-2" width={"24px"} />}
-                                {data.client.clientGender == "female" ? 'Female' : 'Male'}
+                                {data.client.clientGender == "Female" ? <img src={SVGFemale} alt="single svg" className="me-2" width={"24px"} /> : <img src={SVGMale} alt="single svg" className="me-2" width={"24px"} />}
+                                {data.client.clientGender == "Female" ? 'Female' : 'Male'}
                             </div>
                         </div>
                         <div className="col-6 mb-3">
@@ -180,8 +180,8 @@ function PersonalDetailCards(props) {
                             </div>
                             <div className="col-6 mb-3">
                                 <div className="d-flex align-items-center">
-                                    {data.client.clientGender == "female" ? <img src={SVGFemale} alt="single svg" className="me-2" width={"24px"} /> : <img src={SVGMale} alt="single svg" className="me-2" width={"24px"} />}
-                                    {data.partner.partnerGender == "female" ? 'Female' : 'Male'}
+                                    {data.client.clientGender == "Female" ? <img src={SVGFemale} alt="single svg" className="me-2" width={"24px"} /> : <img src={SVGMale} alt="single svg" className="me-2" width={"24px"} />}
+                                    {data.partner.partnerGender == "Female" ? 'Female' : 'Male'}
                                 </div>
                             </div>
                             <div className="col-6 mb-3">

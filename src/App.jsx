@@ -34,6 +34,7 @@ function App() {
         <Route path="/Register" element={<Register />} />
         <Route path="/VerifyEmail" element={<VerifyEmail />} />
         <Route path="/ForgetPassword" element={<ForgetPassword />} />
+        
         <Route path="/SuperAdmin/*" element={<SuperAdminRouts />} />
         <Route path="/*" element={<AuthRouts />} />
       </Routes>

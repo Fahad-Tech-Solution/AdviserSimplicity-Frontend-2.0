@@ -3,36 +3,50 @@ import { Button, Menu } from 'antd';
 import { MdMailOutline, MdOutlineControlCamera, MdOutlineDesktopWindows, MdPieChartOutlined } from 'react-icons/md';
 import { RiAppsLine, RiMenu2Fill, RiMenuFill } from 'react-icons/ri';
 import AdviserS1 from "../Assets/Adviser-Simpilicity1.png";
+import AdviserSmini from "../Assets/Adviser-Simpilicity-mini.png";
 
 const { SubMenu } = Menu;
 
-const AdminSideBar = () => {
-    const [collapsed, setCollapsed] = useState(false);
+const AdminSideBar = (props) => {
 
-    const toggleCollapsed = () => {
-        setCollapsed(!collapsed);
-    };
+    const sidebarWidth = props.collapsed ? '80px' : '250px'; // Change these values as needed
+
 
     return (
         <div
-            style={{
-                width: 256,
-            }}
             className='AdminSideBar'
-
+            style={{
+                width: sidebarWidth, // Apply dynamic width based on collapsed state
+                transition: 'width 0.3s', // Smooth transition for width change
+            }}
         >
-
             <Menu
                 mode="inline"
-                inlineCollapsed={collapsed}
+                inlineCollapsed={props.collapsed}
             >
                 {/* Custom Option 1 */}
-                <Menu.Item className='customeSideHead' key="1" style={{ height: "5rem" }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', }}>
-                        <h5 onClick={close} role="button">
-                            <img src={AdviserS1} alt="Logo" width={"170px"} />
-                        </h5>
-                    </div>
+                <Menu.Item
+                    disabled
+                    className='customeSideHead'
+                    key="1"
+                    style={{ height: "5rem" }}
+                    title={props.collapsed ? "Logo" : null}  // Disable tooltip when not collapsed
+                >
+                    {props.collapsed ?
+                        <div className='mt-3' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
+                            <h5 role="button" className='' >
+                                <img src={AdviserSmini} alt="Logo" width={"50px"} />
+                            </h5>
+                        </div>
+
+                        :
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', }}>
+                            <h5 role="button">
+                                <img src={AdviserS1} alt="Logo" width={"170px"} />
+                            </h5>
+                        </div>
+                    }
+
                 </Menu.Item>
 
                 <Menu.Item key="2" icon={<MdOutlineDesktopWindows />}>
@@ -53,7 +67,7 @@ const AdminSideBar = () => {
                 <SubMenu key="sub2" icon={<RiAppsLine />} title="Navigation Two">
                     <Menu.Item key="9">Option 9</Menu.Item>
                     <Menu.Item key="10">Option 10</Menu.Item>
-                    <SubMenu key="sub3" title="Submenu">
+                    <SubMenu className='subSubMenu' key="sub3" title="Submenu">
                         <Menu.Item key="11">Option 11</Menu.Item>
                         <Menu.Item key="12">Option 12</Menu.Item>
                     </SubMenu>

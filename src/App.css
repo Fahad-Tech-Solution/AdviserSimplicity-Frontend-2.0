@@ -735,7 +735,9 @@ h6 {
 .modalBtn {
   color: white !important;
   background-color: #36b446 !important;
+  border-color: #36b446 !important;
   &&:is(:hover, :focus, :active) {
+    border-color: #265527 !important;
     background-color: #265527 !important;
   }
 }
@@ -1186,6 +1188,7 @@ label {
 .customScroll {
   scrollbar-width: thin; /* Thin scrollbar */
   scrollbar-color: #36b446 #dcdcdc; /* Thumb color and track color */
+  height: 7.5rem !important;
 }
 
 .customScroll::-moz-scrollbar {
@@ -1202,10 +1205,12 @@ label {
 }
 .AdminSideBar {
   height: 100vh;
+  position: sticky;
+  top: 0px;
+  left: 0px;
 }
 .AdminSideBar .customeSideHead:hover {
   background-color: unset;
-
 }
 .AdminSideBar span {
   all: unset;
@@ -1217,6 +1222,35 @@ label {
   padding: 0px !important;
 }
 
+.subSubMenu {
+  /* background-color: red !important; */
+  margin-top: 0px !important;
+  padding: 0px !important;
+}
+
 .AdminSideBar .ant-menu {
   height: 100%;
+}
+
+.superAdminAccordian .accordion-button {
+  background-color: #36b446 !important;
+  color: #ffffff !important;
+  font-weight: 700;
+
+  &&:is(:hover, :focus, :active) {
+    box-shadow: none !important;
+  }
+}
+.superAdminAccordian .accordion {
+  --bs-accordion-btn-active-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M2 5L8 11L14 5'/%3e%3c/svg%3e") !important;
+  --bs-accordion-btn-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M2 5L8 11L14 5'/%3e%3c/svg%3e") !important;
+}
+
+.superAdminAccordian .customCard {
+  padding: 15px;
+  background-color: #28d73f2a;
+  color: black;
+  min-height: 7rem !important;
+  border-radius: 12px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
 }
