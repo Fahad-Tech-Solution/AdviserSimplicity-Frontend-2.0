@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { PatchAxios, PostAxios } from '../../../Assets/Api/Api';
+import { PatchAxios, PostAxios, toCommaAndDollar } from '../../../Assets/Api/Api';
 
 const BankTermForm = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
@@ -21,23 +21,11 @@ const BankTermForm = (props) => {
         }
     })
 
-    let BankAccountFinance = Object.keys(questionDetail[props.modalObject.key]).length > 0 ? questionDetail[props.modalObject.key] : {
-        client: [],
-        partner: [],
-        joint: [],
 
-    };// Use an empty object as default if BankAccountFinance is undefined
-
-
-    let initialValues = BankAccountFinance[props.modalObject.Input].length ? { NumberOfMap: BankAccountFinance[props.modalObject.Input].length } : { NumberOfMap: "" };
+    let initialValues = { NumberOfMap: "" };
 
     const [dynamicFields, setDynamicFields] = useState([]);
 
-    useEffect(() => {
-        if (initialValues.NumberOfMap) {
-            generateFields(initialValues.NumberOfMap);
-        }
-    }, [initialValues.NumberOfMap]);
 
     const options = [
         "Adelaide Bank",
@@ -117,56 +105,10 @@ const BankTermForm = (props) => {
         "Zeller"
     ];
 
-    const generateFields = (iteration) => {
-        const upTill = parseFloat(iteration);
-        const rows = [];
-
-        for (let i = 0; i < upTill; i++) {
-            rows.push(
-                <tr key={i}>
-                    <td>{1 + i}</td>
-                    <td>
-                        <Field
-                            as="select"
-                            placeholder="Name of Institution"
-                            id={`Institution${i}`}
-                            name={`Institution${i}`}
-                            className="form-select inputDesignDoubleInput"
-                        >
-                            <option value={""}>Please Select</option>
-                            {options.map((elem, index) => {
-                                return (<option key={index} value={elem}>{elem}</option>)
-                            })}
-                        </Field>
-                    </td>
-                    <td>
-                        <Field
-                            type="text"
-                            placeholder="Account number"
-                            id={`accountNumber${i}`}
-                            name={`accountNumber${i}`}
-                            className="form-control inputDesignDoubleInput"
-                        />
-                    </td>
-                    <td>
-                        <Field
-                            type="number"
-                            placeholder="Current Balance"
-                            id={`currentBalance${i}`}
-                            name={`currentBalance${i}`}
-                            className="form-control inputDesignDoubleInput"
-                        />
-                    </td>
-                </tr>
-            );
-        }
-
-        setDynamicFields(rows);
-    };
-
     const fillInitialValues = (setFieldValue) => {
-        if (BankAccountFinance[props.modalObject.Input] && BankAccountFinance[props.modalObject.Input].length) {
-            BankAccountFinance[props.modalObject.Input].forEach((data, i) => {
+        if (props.modalObject.values[props.modalObject.Input] && props.modalObject.values[props.modalObject.Input].length > 0) {
+            setFieldValue(`NumberOfMap`, props.modalObject.values[props.modalObject.Input].length || '');
+            props.modalObject.values[props.modalObject.Input].forEach((data, i) => {
                 if (data) {
                     setFieldValue(`Institution${i}`, data.Institution || '');
                     setFieldValue(`accountNumber${i}`, data.accountNumber || '');
@@ -179,7 +121,6 @@ const BankTermForm = (props) => {
     let handleInput = (e, setFieldValue) => {
         const value = e.target.value > 10 ? 10 : e.target.value;
         setFieldValue(e.target.id, value);
-        generateFields(value);
     };
 
     let DefaultUrl = useRecoilValue(defaultUrl)
@@ -199,51 +140,18 @@ const BankTermForm = (props) => {
             newEntries.push(newEntry);
         }
 
-        // Log the new entries to verify
-        console.log(newEntries);
-
         let DataOf = props.modalObject.Input;
 
-        // Create an object with additional fields
-        let obj = {
-            clientFK: localStorage.getItem("UserID"),
-        };
+        props.setFieldValue(DataOf, newEntries);
 
-        obj[DataOf] = newEntries
+        let total = newEntries.reduce((total, entry) => total + parseFloat((entry.currentBalance).replace(/[^0-9.-]+/g, "")), 0);
 
-        // Calculate total currentBalance
-        obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.currentBalance, 0);
+        props.setFieldValue(DataOf + "Total", toCommaAndDollar(total));
 
-        console.log(obj, "final obj")
-
-        // Check if BankAccountFinance and the array at props.modalObject.Input exist
-        // const bankAccountArray = BankAccountFinance[props.modalObject.Input] || [];
-        const bankAccountArray = BankAccountFinance.clientFK || "";
-
-        try {
-            let res;
-            if (!bankAccountArray) {
-                res = await PostAxios(`${DefaultUrl}/api/${props.modalObject.key}/Add`, obj);
-            } else {
-                obj.collection = props.modalObject.Input
-                res = await PatchAxios(`${DefaultUrl}/api/${props.modalObject.key}/Update`, obj);
-            }
-
-            if (res) {
-                console.log(res);
-                const updatedData = { ...questionDetail, [props.modalObject.key]: res };
-                setQuestionDetail(updatedData);
-            }
-
-            // Reset the flag state if necessary
-            if (props.flagState) {
-                props.setFlagState(false);
-            }
-
-        } catch (error) {
-            console.error("Error occurred while making API call:", error);
+        // Reset the flag state if necessary
+        if (props.flagState) {
+            props.setFlagState(false);
         }
-
 
     };
 
@@ -256,9 +164,10 @@ const BankTermForm = (props) => {
             innerRef={props.formRef}
         >
             {({ values, handleChange, setFieldValue }) => {
+
                 useEffect(() => {
                     fillInitialValues(setFieldValue);
-                }, [values.NumberOfMap]);
+                }, []);
 
                 return (
                     <Form>
@@ -293,7 +202,46 @@ const BankTermForm = (props) => {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {dynamicFields}
+                                                    {Array.from({ length: values.NumberOfMap }).map((_, i) => (
+                                                        <tr key={i}>
+                                                            <td>{1 + i}</td>
+                                                            <td>
+                                                                <Field
+                                                                    as="select"
+                                                                    placeholder="Name of Institution"
+                                                                    id={`Institution${i}`}
+                                                                    name={`Institution${i}`}
+                                                                    className="form-select inputDesignDoubleInput"
+                                                                >
+                                                                    <option value={""}>Please Select</option>
+                                                                    {options.map((elem, index) => {
+                                                                        return (<option key={index} value={elem}>{elem}</option>)
+                                                                    })}
+                                                                </Field>
+                                                            </td>
+                                                            <td>
+                                                                <Field
+                                                                    type="text"
+                                                                    placeholder="Account number"
+                                                                    id={`accountNumber${i}`}
+                                                                    name={`accountNumber${i}`}
+                                                                    className="form-control inputDesignDoubleInput"
+                                                                />
+                                                            </td>
+                                                            <td>
+                                                                <Field
+                                                                    type="text"
+                                                                    placeholder="Current Balance"
+                                                                    id={`currentBalance${i}`}
+                                                                    name={`currentBalance${i}`}
+                                                                    className="form-control inputDesignDoubleInput"
+                                                                    onChange={(e) => {
+                                                                        setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                    }}
+                                                                />
+                                                            </td>
+                                                        </tr>
+                                                    ))}
                                                 </tbody>
                                             </Table>
                                         </div>

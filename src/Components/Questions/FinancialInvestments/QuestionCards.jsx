@@ -134,6 +134,7 @@ import { FaRegSave } from "react-icons/fa";
 import AssetInfo from '../AdditionalQueriesPersonalAssets/AssetInfo';
 import TowInOneSwitch from '../AdditionalQueriesPersonalAssets/TowInOneSwitch';
 import OwnFamilyHome from '../AdditionalQueriesPersonalAssets/OwnFamilyHome';
+import MiddleWare from './MiddleWare';
 
 const QuestionCards = (props) => {
 
@@ -146,44 +147,7 @@ const QuestionCards = (props) => {
 
 
     let arrayObj = {
-        FinancialInvestments: [
-            {
-                title: "Bank Accounts",
-                key: "bankAccountFinance",
-                img: BankImg
-            },
-            {
-                title: "Term Deposits",
-                key: "termDepositsFinance",
-                img: TermImg
-            },
-            {
-                title: "Australian Shares",
-                key: "australianShareMarket",
-                img: PortFolio
-            },
-            {
-                title: "Managed Funds",
-                key: "managedFund",
-                img: funds
-            },
-            {
-                title: "Investment Bond",
-                key: "investmentBondFinance",
-                img: certificate
-            },
-            {
-                title: "Investment Loan",
-                key: "managedFundsLOC",
-                img: loan
-            },
-            {
-                title: "Margin Loan",
-                key: "managedFundsMarginLoan",
-                img: analytics
-            },
 
-        ],
         PersonalAssets: [
             {
                 title: "Own a Family Home",
@@ -250,22 +214,65 @@ const QuestionCards = (props) => {
                 img: loan
             },
         ],
-        Investment: [
+        FinancialInvestments: [
+            {
+                title: "Bank Accounts",
+                key: "bankAccountFinance",
+                img: BankImg
+            },
+            {
+                title: "Term Deposits",
+                key: "termDepositsFinance",
+                img: TermImg
+            },
+            {
+                title: "Australian Shares",
+                key: "australianShareMarket",
+                img: PortFolio
+            },
+            {
+                title: "Managed Funds",
+                key: "managedFund",
+                img: funds
+            },
+            {
+                title: "Investment Bond",
+                key: "investmentBondFinance",
+                img: certificate
+            },
+            {
+                title: "Investment Loan",
+                key: "managedFundsLOC",
+                img: loan
+            },
+            {
+                title: "Margin Loan",
+                key: "managedFundsMarginLoan",
+                img: analytics
+            },
+            //SuperAndRetirement
+            {
+                title: "Super Funds",
+                key: "superAnnuationIssues",
+                img: piggybank1
+            },
+            {
+                title: "Account Based Pension",
+                key: "accountBasedPensionIssues",
+                img: piggybank2
+            },
+            {
+                title: "Invested in Annuities",
+                key: "annuitiesIssues",
+                img: calender
+            },
+            // Investment
             {
                 title: "Investment Property Details",
                 key: "investmentPropertyDetails",
                 img: property
             },
-            {
-                title: "Investment Property Loan",
-                key: "investmentPropertyLoan",
-                img: loan
-            },
-            {
-                title: "Income & Expenses",
-                key: "incomeExpenses",
-                img: rent
-            },
+
         ],
         SuperAndRetirement: [
             {
@@ -284,6 +291,23 @@ const QuestionCards = (props) => {
                 img: calender
             },
 
+        ],
+        Investment: [
+            {
+                title: "Investment Property Details",
+                key: "investmentPropertyDetails",
+                img: property
+            },
+            {
+                title: "Investment Property Loan",
+                key: "investmentPropertyLoan",
+                img: loan
+            },
+            {
+                title: "Income & Expenses",
+                key: "incomeExpenses",
+                img: rent
+            },
         ],
         EstatePlanning: [
             {
@@ -579,47 +603,11 @@ const QuestionCards = (props) => {
     const JointHidden = ["superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues", "will", "POA", "professionalAdviser", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "incomeFromInheritance", "incomeFromLumpsumExpense", "incomeFromRegularLivingExpenses", "life", "TPD", "trauma", "incomeProtection"]; // Add other titles that should use "xl" here
     const singleClient = ["incomeFromRegularLivingExpenses"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
-    const combinedArray = ["incomeFromOwnBusiness", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "car", "boat", "caravan", "personalAssets", "houseHold", "otherAssets", "familyHome"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
+    const combinedArray = ["incomeFromOwnBusiness", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "car", "boat", "caravan", "personalAssets", "houseHold", "otherAssets", "familyHome", "investmentBondFinance", "managedFundsMarginLoan", "superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues", "investmentPropertyDetails"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
     const towInOne = ["personalLoans"];
 
     const reuseModal = ["bankAccountFinance", "termDepositsFinance", "australianShareMarket", "managedFund", "SMSFTermDeposits", "SMSFAustralianShares", "SMSFManagedFunds", "SMSFInvestmentLoan", "managedFundsLOC", "familyBank", "familyTermDeposit", "familyAustralianShare", "familyMangedFunds", "familyInvestmentHomeLoan", "SMSFBank",]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
-
-    let handleSubmit = async (values) => {
-        // console.log(values)
-        let check = questionDetail && questionDetail[values.key]?.clientTotal
-            ? true
-            : false;
-
-        let obj = {
-            clientTotal: values[`client${values.key}`] || 0,
-            partnerTotal: values[`partner${values.key}`] || 0,
-            clientFK: localStorage.getItem("UserID"),
-        }
-
-        // console.log(obj, "obj");
-        try {
-            let res;
-
-            if (!check) {
-                res = await PostAxios(`${DefaultUrl}/api${values.api}/Add`, obj);
-            } else {
-                // obj.collection = 
-                res = await PatchAxios(`${DefaultUrl}/api${values.api}/Update`, obj);
-            }
-
-            if (res) {
-                // console.log(res);
-                const updatedData = { ...questionDetail };
-                updatedData[values.key] = res;
-                setQuestionDetail(updatedData);
-            }
-
-        } catch (error) {
-            console.error("Error occurred while making API call:", error);
-        }
-
-    }
 
     let homeArray = [
         {
@@ -660,13 +648,21 @@ const QuestionCards = (props) => {
 
 
         //Financial Investments
-        "Bank Accounts": <BankTermForm />,              //reuse Component
-        "Term Deposits": <TermDeposit />,               //reuse Component
+        "Bank Accounts": <MiddleWare />,              //reuse Component
+        "Term Deposits": <MiddleWare />,               //reuse Component
         "Australian Shares": <AustralianShares />,      //reuse Component
         "Managed Funds": <ManagedFunds />,              //reuse Component
         "Investment Bond": <InvestmentBond />,
         "Investment Loan": <InvestmentLoan />,          //reuse Component
         "Margin Loan": <MarginLoan />,
+        //Following 4 have combined in Financial Investment
+        //Super and Requirement
+        "Super Funds": <SuperFunds />,
+        "Account Based Pension": <AccountBasedPension />,
+        "Invested in Annuities": <InvestedAnnuities />,
+        //Investment Trust
+        "Investment Property Details": <InvestmentPropertyDetails />,
+
 
         //property Home
         // "Own a Family Home": <OwnFamilyHome />,
@@ -675,14 +671,10 @@ const QuestionCards = (props) => {
         "Holiday Home Loan": <HolidayHomeLoan />,
 
         //Investment Trust
-        "Investment Property Details": <InvestmentPropertyDetails />,
         "Investment Property Loan": <InvestmentPropertyLoan />,
         "Income & Expenses": <QuestionIncomeExpanse />,
 
-        //Super and Requirement
-        "Super Funds": <SuperFunds />,
-        "Account Based Pension": <AccountBasedPension />,
-        "Invested in Annuities": <InvestedAnnuities />,
+
 
         //estate Planing 
         "Will": <EstatePlanningWill />,
@@ -936,15 +928,6 @@ const QuestionCards = (props) => {
                                                         className=" d-block text-end"
                                                         htmlFor={"partner" + elem.key}
                                                     >{localStorage.getItem("PartnerName") || "Partner"}</label>
-
-                                                    <label
-                                                        className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                                        onClick={() => { OpenReuseModal(elem.title, "partner", elem.key) }}
-                                                    >
-                                                        <div>
-                                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                        </div>
-                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
@@ -959,21 +942,12 @@ const QuestionCards = (props) => {
                                         <div
                                             className={`row justify-content-center align-items-center my-2  ${jointClass} ${PartnerClass}`}
                                         >
-                                            <div className='col-6 p-0 '>
-                                                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                            <div className='col-12 p-0 '>
+                                                <div className='d-flex flex-row justify-content-center align-items-center gap-2 '>
                                                     <label
-                                                        className=" d-block text-end"
+                                                        className=" d-block text-center w-100"
                                                         htmlFor={"joint" + elem.key}
                                                     >{(localStorage.getItem("UserName") || "You") + " " + (localStorage.getItem("PartnerName") || "")}</label>
-
-                                                    <label
-                                                        className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                                        onClick={() => { OpenReuseModal(elem.title, "joint", elem.key) }}
-                                                    >
-                                                        <div>
-                                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                        </div>
-                                                    </label>
                                                 </div>
                                             </div>
                                         </div>

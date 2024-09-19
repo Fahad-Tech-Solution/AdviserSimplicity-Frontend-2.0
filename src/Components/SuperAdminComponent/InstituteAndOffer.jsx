@@ -18,7 +18,7 @@ import { FaPlus } from 'react-icons/fa';
 import { HiOutlinePlus } from 'react-icons/hi';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { BankDetail, defaultUrl } from '../../Store/Store';
-import { GetAxios } from '../Assets/Api/Api';
+import { GetAxios, openNotificationSuccess, PatchAxios } from '../Assets/Api/Api';
 
 
 const InstituteAndOffer = () => {
@@ -37,7 +37,7 @@ const InstituteAndOffer = () => {
         try {
             const res = await GetAxios(`${DefaultUrl}/api/offer/`);
             if (res) {
-                console.log(res)
+                console.log(JSON.stringify(res))
                 setBankDetailObj(res)
             }
         } catch (error) {
@@ -74,6 +74,78 @@ const InstituteAndOffer = () => {
         });
         setFlagState(true);
     }
+
+
+    let DeleteOffer = async (elem, operation, Offerindex, OfferElem) => {
+        console.log(OfferElem);
+        // return (false)
+        try {
+            let data = await PatchAxios(DefaultUrl + "/api/offer/Delete", OfferElem)
+
+            if (data) {
+
+                let index = bankDetailObj.findIndex(
+                    (item) => item._id === elem._id
+                );
+
+                let Obj = JSON.parse(JSON.stringify(bankDetailObj));
+
+                Obj[index].arrayOfOffers.splice(Offerindex, 1);
+
+                setBankDetailObj(Obj);
+
+                let type = "success";
+                let placement = "topRight"
+                let message = "Offer Deleted"
+                let description = "Offer is Delete successfull"
+                openNotificationSuccess(type, placement, message, description)
+            }
+        }
+        catch (error) {
+            console.log(error);
+            let type = "error";
+            let placement = "topRight"
+            let message = "Error Notification"
+            let description = "Some thing went wrong Please Try Later"
+            openNotificationSuccess(type, placement, message, description)
+        }
+
+
+    }
+
+    let DeleteBank = async (elem, operation, index) => {
+        console.log(elem);
+        // return (false)
+        try {
+            let res = await PatchAxios(DefaultUrl + "/api/institute/Delete", elem)
+
+            if (res) {
+
+                let Obj = JSON.parse(JSON.stringify(bankDetailObj));
+
+                let Data = Obj.filter((item) => item._id !== elem._id)
+
+                setBankDetailObj(Data);
+
+                let type = "success";
+                let placement = "topRight"
+                let message = "Institute Deleted"
+                let description = "Institute is Delete successfull"
+                openNotificationSuccess(type, placement, message, description)
+            }
+        }
+        catch (error) {
+            console.log(error);
+            let type = "error";
+            let placement = "topRight"
+            let message = "Error Notification"
+            let description = "Some thing went wrong Please Try Later"
+            openNotificationSuccess(type, placement, message, description)
+        }
+
+
+    }
+
 
 
     return (
@@ -116,6 +188,12 @@ const InstituteAndOffer = () => {
                                                                     />
                                                                 </Tooltip>
                                                             </h4>
+
+                                                            <Tooltip placement="top" title={"Delete"}>
+                                                                <RiDeleteBinLine style={{ color: "red", fontSize: '18px', cursor: 'pointer', float: "right" }}
+                                                                    onClick={() => { DeleteBank(elem, "delete", index) }}
+                                                                />
+                                                            </Tooltip>
                                                         </div>
                                                     </div>
 
@@ -135,8 +213,9 @@ const InstituteAndOffer = () => {
                                                             <thead>
                                                                 <tr>
                                                                     <th>No#</th>
-                                                                    <th>Offer Code</th>
-                                                                    <th>Offer Name</th>
+                                                                    <th>Code</th>
+                                                                    <th>Name</th>
+                                                                    <th>Additional Details</th>
                                                                     <th>Options</th>
                                                                 </tr>
                                                             </thead>
@@ -152,6 +231,7 @@ const InstituteAndOffer = () => {
                                                                         <td>{Offerindex + 1}</td>
                                                                         <td>{OfferElem.code}</td>
                                                                         <td>{OfferElem.name}</td>
+                                                                        <td>{OfferElem.additionalDetails}</td>
                                                                         <td>
                                                                             <Tooltip placement="top" title={"Edit"}>
                                                                                 <BiSolidEdit
@@ -163,7 +243,9 @@ const InstituteAndOffer = () => {
                                                                             /
                                                                             &nbsp;&nbsp;
                                                                             <Tooltip placement="top" title={"Delete"}>
-                                                                                <RiDeleteBinLine style={{ color: "red", fontSize: '18px', cursor: 'pointer' }} />
+                                                                                <RiDeleteBinLine style={{ color: "red", fontSize: '18px', cursor: 'pointer' }}
+                                                                                    onClick={() => { DeleteOffer(elem, "delete", Offerindex, OfferElem) }}
+                                                                                />
                                                                             </Tooltip>
 
                                                                         </td>

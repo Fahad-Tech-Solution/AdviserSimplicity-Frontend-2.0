@@ -9,6 +9,7 @@ import { toPercentage, handleInputChange, handleInputFocus, handleInputKeyDown, 
 import DynamicYesNo from "../../Questions/FinancialInvestments/QuestionsDetail/DynamicYesNo";
 import { CreatableMultiSelectField } from "../../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import CreatableSelectField from "./DynamicCreatableSelect/CreatableSelectField";
+import { InputGroup } from "react-bootstrap";
 
 const DynamicFormField = ({
   fieldType,
@@ -40,6 +41,7 @@ const DynamicFormField = ({
           disabled={all?.disabled ? all.disabled : false}
         />
       );
+
     case "text":
       return (
         <Field
@@ -98,6 +100,37 @@ const DynamicFormField = ({
           disabled={all?.disabled ? all.disabled : false}
         />
       );
+
+    case "number-toComma-Modal":
+      return (
+
+        <InputGroup>
+          <Field
+            type="text"
+            placeholder={placeholder}
+            name={stakeHolder ? stakeHolder + name : name}
+            id={name}
+            className="form-control inputDesignDoubleInput"
+            onChange={(e) => {
+              const value = e.target.value.replace(/[^0-9.-]+/g, "");
+              setFieldValue(stakeHolder ? stakeHolder + name : name, toCommaAndDollar(value));
+
+              if (all.callBack) {
+                all.func(values, setFieldValue, e.target, stakeHolder);
+              }
+            }}
+            disabled={all?.disabled ? all.disabled : false}
+          />
+
+          <Button className='btn bgColor modalBtn border-0' id="button-addon2"
+            onClick={() => { all.func(innerModalTitle, values, all.key) }}
+          >
+            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+          </Button>
+        </InputGroup>
+
+      );
+
 
     case "date":
       return (

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { BankDetail, defaultUrl, QuestionDetail } from '../../Store/Store';
-import { PatchAxios, PostAxios } from '../Assets/Api/Api';
+import { openNotificationSuccess, PatchAxios, PostAxios } from '../Assets/Api/Api';
 
 const InsittuteFom = (props) => {
 
@@ -48,57 +48,85 @@ const InsittuteFom = (props) => {
 
         console.log(haveData, bankDetailObj, "ma kea karo", values)
 
-        if (!haveData) {
-            res = await PostAxios(
-                `${DefaultUrl}/api/institute/Add`,
-                values
-            );
-            ApiChali = "Post"
-        } else {
-            values._id = haveData;
-
-            res = await PatchAxios(
-                `${DefaultUrl}/api/institute/Update`,
-                values
-            );
-            ApiChali = "patch"
-        }
+        try {
 
 
-        if (res) {
-            console.log(res);
-            let Obj;
-            if (ApiChali == "Post") {
 
-                Obj = res
+            if (!haveData) {
+                res = await PostAxios(
+                    `${DefaultUrl}/api/institute/Add`,
+                    values
+                );
+                ApiChali = "Post"
+            } else {
+                values._id = haveData;
 
-                Obj.arrayOfOffers = [];
+                res = await PatchAxios(
+                    `${DefaultUrl}/api/institute/Update`,
+                    values
+                );
+                ApiChali = "patch"
+            }
 
-                console.log(Obj)
 
-                setBankDetailObj((prevUsersData) => [...prevUsersData, Obj]);
+            if (res) {
+                console.log(res);
+                let Obj;
+                if (ApiChali == "Post") {
+
+                    Obj = res
+
+                    Obj.arrayOfOffers = [];
+
+                    console.log(Obj)
+
+                    setBankDetailObj((prevUsersData) => [...prevUsersData, Obj]);
+                }
+                else {
+
+                    Obj = JSON.parse(JSON.stringify(bankDetailObj));
+
+                    const updatedIndex = bankDetailObj.findIndex(
+                        (item) => item._id === res._id
+                    );
+
+                    Obj[updatedIndex].name = res.name;
+
+                    console.log(Obj)
+
+                    setBankDetailObj(Obj);
+                }
+            }
+
+            // Reset the flag state if necessary
+            if (props.flagState) {
+                props.setFlagState(false);
+            }
+
+            let type = "success";
+            let placement = "topRight"
+            let message = "Success Notification"
+            let description = "Institute is Added successfull"
+            openNotificationSuccess(type, placement, message, description);
+
+        } catch (error) {
+            console.log("error aya:", error?.response?.status, error?.response?.data);
+            if (error?.response?.status == 400) {
+                let type = "error";
+                let placement = "topRight"
+                let message = "Error Notification"
+                let description = error.response.data
+                openNotificationSuccess(type, placement, message, description)
             }
             else {
-
-                Obj = JSON.parse(JSON.stringify(bankDetailObj));
-
-                const updatedIndex = bankDetailObj.findIndex(
-                    (item) => item._id === res._id
-                );
-
-                Obj[updatedIndex].name = res.name;
-
-                console.log(Obj)
-
-                setBankDetailObj(Obj);
-
+                let type = "error";
+                let placement = "topRight"
+                let message = "Error Notification"
+                let description = "Some thing went wrong Please try again later"
+                openNotificationSuccess(type, placement, message, description)
             }
         }
 
-        // Reset the flag state if necessary
-        if (props.flagState) {
-            props.setFlagState(false);
-        }
 
     };
 

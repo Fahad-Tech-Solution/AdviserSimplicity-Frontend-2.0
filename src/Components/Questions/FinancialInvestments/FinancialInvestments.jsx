@@ -7,6 +7,13 @@ import certificate from "../svgs/certificate.svg";
 import funds from "../svgs/funds.svg";
 import loan from "../svgs/loan.svg";
 import analytics from "../svgs/analytics.png";
+// Super Anutes 
+import piggybank1 from "../svgs/piggy-bank.svg";
+import piggybank2 from "../svgs/piggy-bank-new.svg";
+import calender from "../svgs/calendar.png";
+// Investment 
+import property from "../svgs/property-value.svg";
+
 import { useRecoilState, useRecoilValue } from "recoil";
 import { CRState, defaultUrl } from "../../../Store/Store";
 import { GetAxios, PatchAxios, PostAxios } from '../../Assets/Api/Api';
@@ -79,35 +86,65 @@ const FinancialInvestments = (props) => {
 
     let QuestionArray = [
         {
-            title: "Do you have any Money in Bank Accounts?",
+            title: "Bank Accounts",
             img: BankImg,
             key: "bankAccountFinance",
         },
         {
-            title: "Do you have any Money invested in Term Deposits?",
+            title: "Term Deposits",
             img: TermImg,
             key: "termDepositsFinance",
         },
         {
-            title: "Do you have any Money invested in Australian Shares?",
+            title: "Australian Shares/ETFs",
             img: PortFolio,
             key: "australianShareMarket",
         },
         {
-            title: "Do you have any Money invested  Managed Funds or via a Platform?",
+            title: "Platform Investments",
             img: funds,
             key: "managedFund",
         },
         {
-            title: "Do you have a Investment Loan (LOC)  attached to your shares of Managed Funds?",
+            title: "Investment Bonds",
             img: loan,
             key: "managedFundsLOC",
         },
         {
-            title: "Do you have a Margin Loan attached to your shares of Managed Funds?",
+            title: "Investment Loans ",
+            img: certificate,
+            key: "investmentBondFinance",
+        },
+        {
+            title: "Margin Loans",
             img: analytics,
             key: "managedFundsMarginLoan",
         },
+
+        // Questions of SMS 
+        {
+            title: "Superannuation",
+            img: piggybank1,
+            key: "superAnnuationIssues",
+        },
+        {
+            title: "Account Based Pensions",
+            img: piggybank2,
+            key: "accountBasedPensionIssues",
+        },
+        {
+            title: "Annuities",
+            img: calender,
+            key: "annuitiesIssues",
+        },
+
+        // One Question of Investment
+        {
+            title: "Investment Properties",
+            img: property,
+            key: "investmentPropertyDetails",
+        },
+
     ]
     const QuestionClick = (index, elem, values, setFieldValue) => {
         // console.log("image clicked in goals", index, elem.key, values);
