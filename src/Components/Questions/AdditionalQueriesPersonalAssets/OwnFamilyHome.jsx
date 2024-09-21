@@ -45,7 +45,9 @@ const OwnFamilyHome = (props) => {
         if (familyHome && familyHome._id) {
 
             setFieldValue(`currentValue`, familyHome.currentValue || "");
+
             setFieldValue(`costBase`, familyHome.costBase || "");
+
             setFieldValue(`clientOwnership`, familyHome.clientOwnership || "");
             setFieldValue(`partnerOwnership`, familyHome.partnerOwnership || "");
             setFieldValue(`loanAttached`, familyHome.loanAttached || "");
@@ -182,8 +184,11 @@ const OwnFamilyHome = (props) => {
             {({ values, setFieldValue, handleChange, handleBlur }) => {
                 useEffect(() => {
                     setDis(values.loanAttached)
-                    fillInitialValues(setFieldValue);
                 }, [values]);
+
+                useEffect(() => {
+                    fillInitialValues(setFieldValue);
+                }, []);
                 return (
                     <Form>
                         <Row>

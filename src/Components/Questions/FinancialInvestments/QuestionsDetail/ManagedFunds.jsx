@@ -1,10 +1,9 @@
 import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { Button, InputGroup, Row, Table } from 'react-bootstrap';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { PatchAxios, PostAxios } from '../../../Assets/Api/Api';
-import axios from 'axios';
+import { useRecoilValue } from 'recoil';
+import { BankDetail, defaultUrl, QuestionDetail } from '../../../../Store/Store';
+import { toCommaAndDollar } from '../../../Assets/Api/Api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import InnerModal from './InnerModal';
@@ -12,7 +11,7 @@ import PortfolioValue from './PortfolioValue';
 
 const ManagedFunds = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
-    let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+    let bankDetailObj = useRecoilValue(BankDetail)
 
 
     let [nameSet] = useState(() => {
@@ -31,7 +30,7 @@ const ManagedFunds = (props) => {
     let [modalObject, setModalObject] = useState({});
 
 
-    let managedFunds = Object.keys(questionDetail[props.modalObject.key]).length > 0 ? questionDetail[props.modalObject.key] : {
+    let managedFunds = Object.keys(questionDetail[props.modalObject.key] || {}).length > 0 ? questionDetail[props.modalObject.key] : {
         client: [],
         partner: [],
         joint: [],
@@ -39,7 +38,7 @@ const ManagedFunds = (props) => {
     }; // Use an empty object as default if managedFunds is undefined
 
 
-    let initialValues = managedFunds[props.modalObject.Input].length ? { NumberOfMap: managedFunds[props.modalObject.Input].length } : { NumberOfMap: "" };
+    let initialValues = { NumberOfMap: "" };
 
     const [dynamicFields, setDynamicFields] = useState([]);
 
@@ -54,28 +53,33 @@ const ManagedFunds = (props) => {
 
             setDynamicFields(arr);
         }
+
+
+
     }, [])
 
     const fillInitialValues = (setFieldValue) => {
 
         if (managedFunds[props.modalObject.Input] && managedFunds[props.modalObject.Input].length) {
-
+            setFieldValue(`NumberOfMap`, managedFunds[props.modalObject.Input].length || '');
             managedFunds[props.modalObject.Input].forEach((data, i) => {
                 if (data) {
+
+                    console.log(data.platformName);
                     setFieldValue(`platformName${i}`, data.platformName || '');
+
                     setFieldValue(`accountNumber${i}`, data.accountNumber || '');
                     setFieldValue(`portfolioValue${i}`, data.portfolioValue || '');
                     setFieldValue(`portfolioArray${i}`, data.portfolioArray || '');
                     setFieldValue(`totalPortfolioCost${i}`, data.totalPortfolioCost || '');
                     setFieldValue(`serviceFee${i}`, data.serviceFee || '');
-                    setFieldValue(`loginInPage${i}`, data.loginInPage || '');
                 }
             });
         }
     };
 
     let handleInput = (e, setFieldValue) => {
-        const value = e.target.value > 10 ? 10 : e.target.value;
+        const value = e.target.value > 5 ? 5 : e.target.value;
         setFieldValue(e.target.id, value);
 
         let arr = []
@@ -88,7 +92,7 @@ const ManagedFunds = (props) => {
 
     };
 
-    let handleInnerModal = (title, question, key, mainKey, key3, editArray, index) => {
+    let handleInnerModal = (title, question, key, mainKey, key3, editArray, index, values) => {
         setModalObject({
             title,
             question,
@@ -97,6 +101,7 @@ const ManagedFunds = (props) => {
             key3,
             editArray: editArray || [],
             index,
+            values
         })
         setFlagState(true);
     }
@@ -130,124 +135,23 @@ const ManagedFunds = (props) => {
 
         let DataOf = props.modalObject.Input;
 
-        // Create an object with additional fields
-        let obj = {
-            clientFK: localStorage.getItem("UserID"),
-        };
+        props.setFieldValue(DataOf, newEntries);
 
-        obj[DataOf] = newEntries
+        let total = newEntries.reduce((total, entry) => total + parseFloat((entry.portfolioValue).replace(/[^0-9.-]+/g, "")), 0);
+        let totalCostBase = newEntries.reduce((total, entry) => total + parseFloat((entry.totalPortfolioCost).replace(/[^0-9.-]+/g, "")), 0);
 
-        // Calculate total currentBalance
-        obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.totalPortfolioCost, 0);
+        props.setFieldValue(DataOf + "Total", toCommaAndDollar(total));
+        props.setFieldValue(DataOf + "CostBaseTemp", toCommaAndDollar(totalCostBase));
 
-        console.log(obj, "final obj")
+        console.log(newEntries, "final obj")
 
-        // Check if managedFunds and the array at props.modalObject.Input exist
-        // const bankAccountArray = managedFunds[props.modalObject.Input] || [];
-        const bankAccountArray = managedFunds.clientFK || "";
 
-        try {
-            let res;
-            if (!bankAccountArray) {
-                res = await PostAxios(`${DefaultUrl}/api/${props.modalObject.key}/Add`, obj);
-            } else {
-                obj.collection = props.modalObject.Input
-                res = await PatchAxios(`${DefaultUrl}/api/${props.modalObject.key}/Update`, obj);
-            }
-
-            if (res) {
-                console.log(res);
-                const updatedData = { ...questionDetail, [props.modalObject.key]: res };
-                setQuestionDetail(updatedData);
-            }
-
-            // Reset the flag state if necessary
-            if (props.flagState) {
-                props.setFlagState(false);
-            }
-        } catch (error) {
-            console.error("Error occurred while making API call:", error);
+        // Reset the flag state if necessary
+        if (props.flagState) {
+            props.setFlagState(false);
         }
+
     };
-
-    const options = [
-        "Adelaide Bank",
-        "Alliance Bank",
-        "AMP",
-        "ANZ",
-        "Arab Bank Australia",
-        "Australian Military Bank (ADCU)",
-        "Australian Mutual Bank",
-        "Australian Unity",
-        "Auswide Bank",
-        "AWA Alliance Bank",
-        "Bank Australia (bankmecu)",
-        "Bank First",
-        "Bank of Melbourne",
-        "Bank of Queensland (BOQ)",
-        "Bank of Sydney",
-        "BankSA",
-        "BankVic",
-        "Bankwest",
-        "BCU",
-        "BDCU Alliance Bank",
-        "Bendigo Bank",
-        "Beyond Bank",
-        "Border Bank",
-        "Circle Alliance Bank",
-        "Citi",
-        "Commonwealth Bank",
-        "Community First Bank",
-        "Credit Union SA",
-        "Defence Bank",
-        "Delphi Bank",
-        "Easy Street",
-        "First Choice Credit Union",
-        "First Option Bank",
-        "firstmac",
-        "G&C Mutual",
-        "Gateway Bank Ltd",
-        "Geelong Bank",
-        "Great Southern Bank",
-        "Greater Bank",
-        "Hay",
-        "Heartland Bank",
-        "Heritage Bank",
-        "Horizon Bank",
-        "HSBC Australia",
-        "Hume Bank",
-        "Illawarra Credit Union",
-        "IMB",
-        "ING",
-        "Judo Bank",
-        "Macquarie Bank",
-        "ME",
-        "MOVE Bank",
-        "MyState Bank",
-        "NAB",
-        "Newcastle Permanent",
-        "P&N Bank",
-        "People’s Choice CU",
-        "Policebank",
-        "Prospa",
-        "Qudos Bank",
-        "Rabobank",
-        "RACQ",
-        "RAMS",
-        "Regional Australia Bank",
-        "Rural Bank",
-        "Service One Alliance Bank",
-        "St.George",
-        "Suncorp Bank",
-        "Teachers Mutual Bank",
-        "Ubank",
-        "UniBank",
-        "Up Bank",
-        "Virgin Money",
-        "Westpac",
-        "Zeller"
-    ];
-
 
     return (
         <Formik
@@ -259,7 +163,7 @@ const ManagedFunds = (props) => {
             {({ values, setFieldValue }) => {
                 useEffect(() => {
                     fillInitialValues(setFieldValue);
-                }, [values.NumberOfMap]);
+                }, []);
 
                 return (
                     <Form>
@@ -293,10 +197,9 @@ const ManagedFunds = (props) => {
                                                         <th>No#</th>
                                                         <th>Platform Name</th>
                                                         <th>Account Number </th>
-                                                        <th>Portfolio Value – Need to have another pop</th>
-                                                        <th>Total Portfolio Cost Base </th>
+                                                        <th>Portfolio Value</th>
+                                                        <th>Portfolio Cost Base</th>
                                                         <th>Annual Advice Service Fee </th>
-                                                        <th>Login in Page</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -312,12 +215,12 @@ const ManagedFunds = (props) => {
                                                                     className="form-select inputDesignDoubleInput"
                                                                 >
                                                                     <option value={""}>Please Select</option>
-                                                                    {options.map((elem, index) => {
-                                                                        return (<option key={index} value={elem}>{elem}</option>)
+                                                                    {bankDetailObj.map((elem, index) => {
+                                                                        return (<option key={index} value={elem._id}>{elem.name}</option>)
                                                                     })}
                                                                 </Field>
                                                             </td>
-                                                            <td>
+                                                            <td style={{ minWidth: "160px" }}>
                                                                 <Field
                                                                     type="number"
                                                                     placeholder="Account Number"
@@ -329,44 +232,61 @@ const ManagedFunds = (props) => {
                                                             <td>
                                                                 <InputGroup className="mb-3">
                                                                     <Field
-                                                                        type="number"
-                                                                        placeholder="Share Price"
+                                                                        type="text"
+                                                                        placeholder="Portfolio Value"
                                                                         id={`portfolioValue${i}`}
                                                                         name={`portfolioValue${i}`}
                                                                         className="form-control inputDesignDoubleInput"
+                                                                        onChange={(e) => {
+                                                                            setFieldValue(e.target.name,
+                                                                                toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                        }}
                                                                     />
-                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Portfolio Value", `How many Underlying Investments do ${nameSet} have ?`, "portfolioArray", "portfolioValue", "totalPortfolioCost", values[`portfolioArray${i}`], i) }}>
+                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2"
+                                                                        onClick={() => {
+
+                                                                            let name = "";
+                                                                            bankDetailObj.map((elem, index) => {
+
+                                                                                if (elem._id === values[`platformName${i}`]) {
+                                                                                    name = elem.name
+                                                                                }
+
+                                                                            });
+
+                                                                            handleInnerModal(name + "_Portfolio Value",
+                                                                                `How many Underlying Investments do ${nameSet} have ?`,
+                                                                                "portfolioArray", "portfolioValue", "totalPortfolioCost",
+                                                                                values[`portfolioArray${i}`], i, values)
+                                                                        }}>
                                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                     </Button>
                                                                 </InputGroup>
-
                                                             </td>
                                                             <td>
                                                                 <Field
-                                                                    type="number"
+                                                                    type="text"
                                                                     placeholder="Total Portfolio Cost"
                                                                     id={`totalPortfolioCost${i}`}
                                                                     name={`totalPortfolioCost${i}`}
                                                                     className="form-control inputDesignDoubleInput"
+                                                                    onChange={(e) => {
+                                                                        setFieldValue(e.target.name,
+                                                                            toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                    }}
                                                                 />
                                                             </td>
                                                             <td>
                                                                 <Field
-                                                                    type="number"
+                                                                    type="text"
                                                                     placeholder="Service Fee"
                                                                     id={`serviceFee${i}`}
                                                                     name={`serviceFee${i}`}
                                                                     className="form-control inputDesignDoubleInput"
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <Field
-                                                                    type="number"
-                                                                    placeholder="Login in Page"
-                                                                    id={`loginInPage${i}`}
-                                                                    name={`loginInPage${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                    disabled
+                                                                    onChange={(e) => {
+                                                                        setFieldValue(e.target.name,
+                                                                            toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                    }}
                                                                 />
                                                             </td>
                                                         </tr>)

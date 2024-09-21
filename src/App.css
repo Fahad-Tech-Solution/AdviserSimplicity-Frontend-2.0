@@ -1252,5 +1252,22 @@ label {
   color: black;
   min-height: 7rem !important;
   border-radius: 12px;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
+    rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+}
+
+.CustomPaginantion .ant-pagination-item {
+  /* background-color: red !important; */
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;
+}
+
+.CustomPaginantion .ant-pagination-prev {
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;
+}
+
+.CustomPaginantion .ant-pagination-next {
+  padding: 0px 0px 0px 0px;
+  margin: 0px 0px 0px 0px;
 }

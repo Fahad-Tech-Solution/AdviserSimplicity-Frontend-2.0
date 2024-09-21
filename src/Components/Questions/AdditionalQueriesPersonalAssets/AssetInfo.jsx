@@ -18,7 +18,7 @@ const AssetInfo = (props) => {
         console.log(props.modalObject, "kuch Chala");
 
         if (questionDetail[props.modalObject.index] && Object.keys(questionDetail[props.modalObject.index]).length >= 0) {
-            // console.log(questionDetail[props.modalObject.index], "State Ma Data");
+            // console.log(questionDetail[props.modalObject.index], "State Ma Data", props.modalObject.index);
 
             let data = questionDetail[props.modalObject.index];
 
@@ -84,26 +84,38 @@ const AssetInfo = (props) => {
     let DefaultUrl = useRecoilValue(defaultUrl)
 
     let onSubmit = async (values) => {
-        // let onlyJoint = ["Boat", "Caravan", "House hold"];
-        // console.log(values);
-        // return (false);
 
         let obj = values;
         obj.clientFK = localStorage.getItem("UserID");
 
+        if (props.modalObject.title === "Car" || props.modalObject.title === "Other Assets") {
 
+            if (values.owner === "client" || values.owner === "client+partner") {
+                obj.clientTotal = obj.client.currentValue;
+            } else {
+                obj.clientTotal = "";
+                obj.client = {};
+            }
 
-        if (values.owner === "client" || values.owner === "client+partner") {
-            obj.clientTotal = obj.client.currentValue;
+            if (values.owner === "partner" || values.owner === "client+partner") {
+                obj.partnerTotal = obj.partner.currentValue;
+            } else {
+                obj.partnerTotal = "";
+                obj.partner = {};
+            }
+
         }
-        if (values.owner === "partner" || values.owner === "client+partner") {
-            obj.partnerTotal = obj.partner.currentValue;
-        }
-        if (values.owner === "joint") {
-            obj.jointTotal = obj.joint.currentValue;
-        }
+        else {
 
+            if (values.owner === "joint") {
+                obj.jointTotal = obj.joint.currentValue;
+            }
+            else {
+                obj.jointTotal = "";
+                obj.joint = {};
+            }
 
+        }
         if (UserStatus !== "Married") {
             obj.partnerTotal = "";
             obj.partner = {};

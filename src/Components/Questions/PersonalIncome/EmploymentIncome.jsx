@@ -92,9 +92,17 @@ const EmploymentIncome = (props) => {
         if (values.owner === "client" || values.owner === "client+partner") {
             obj.clientTotal = obj.client.SalaryPackageModal.grossSalary;
         }
+        else {
+            obj.clientTotal = "";
+            obj.client = {};
+        }
 
         if (values.owner === "partner" || values.owner === "client+partner") {
             obj.partnerTotal = obj.partner.SalaryPackageModal.grossSalary;
+        }
+        else {
+            obj.partnerTotal = "";
+            obj.partner = {};
         }
 
         if (userStatus !== "Married") {

@@ -37,19 +37,36 @@ const LifeTimeBeneFits = (props) => {
     let data = incomeFromSuperPayment;
     if (incomeFromSuperPayment && incomeFromSuperPayment._id) {
       if (data) {
+
         setFieldValue(`owner`, data.owner || "");
-        setFieldValue(`client.fundName`, data.client.fundName || "");
-        setFieldValue(`client.regularIncomePerFortnight`, data.client.regularIncomePerFortnight || "");
-        setFieldValue(`client.isPension`, data.client.isPension || "");
-        setFieldValue(`client.regularIncomePA`, data.client.regularIncomePA || "");
-        setFieldValue(`client.centrelinkDeductibleAmount`, data.client.centrelinkDeductibleAmount || "");
-        if (UserStatus === "Married") {
-          setFieldValue(`partner.regularIncomePA`, data.partner.regularIncomePA || "");
-          setFieldValue(`partner.regularIncomePerFortnight`, data.partner.regularIncomePerFortnight || "");
-          setFieldValue(`partner.centrelinkDeductibleAmount`, data.partner.centrelinkDeductibleAmount || "");
-          setFieldValue(`partner.fundName`, data.partner.fundName || "");
-          setFieldValue(`partner.isPension`, data.partner.isPension || "");
+
+        if (data.owner === "client" || data.owner === "client+partner") {
+          if (data?.client && Object.keys(data?.client).length) {
+
+            setFieldValue(`client.fundName`, data.client.fundName || "");
+            setFieldValue(`client.regularIncomePerFortnight`, data.client.regularIncomePerFortnight || "");
+            setFieldValue(`client.isPension`, data.client.isPension || "");
+            setFieldValue(`client.regularIncomePA`, data.client.regularIncomePA || "");
+            setFieldValue(`client.centrelinkDeductibleAmount`, data.client.centrelinkDeductibleAmount || "");
+
+          }
         }
+
+        if (UserStatus === "Married") {
+
+          if (data.owner === "partner" || data.owner === "client+partner") {
+            if (data?.partner && Object.keys(data?.partner).length) {
+
+              setFieldValue(`partner.regularIncomePA`, data.partner.regularIncomePA || "");
+              setFieldValue(`partner.regularIncomePerFortnight`, data.partner.regularIncomePerFortnight || "");
+              setFieldValue(`partner.centrelinkDeductibleAmount`, data.partner.centrelinkDeductibleAmount || "");
+              setFieldValue(`partner.fundName`, data.partner.fundName || "");
+              setFieldValue(`partner.isPension`, data.partner.isPension || "");
+
+            }
+          }
+        }
+
       }
     }
   };

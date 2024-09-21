@@ -47,6 +47,7 @@ const CenterLinkPayments = (props) => {
           setFieldValue(`client.annualPaymentAmount`, data.client.annualPaymentAmount || "");
           setFieldValue(`client.centrelinkCardsHeld`, data.client.centrelinkCardsHeld || "");
         }
+
         if ((incomeFromCentrelink.owner === "partner" || incomeFromCentrelink.owner === "client+partner") && (UserStatus === "Married")) {
 
           setFieldValue(`partner.paymentType`, data.partner.paymentType || "");
@@ -56,6 +57,7 @@ const CenterLinkPayments = (props) => {
           setFieldValue(`partner.annualPaymentAmount`, data.partner.annualPaymentAmount || "");
           setFieldValue(`partner.centrelinkCardsHeld`, data.partner.centrelinkCardsHeld || "");
         }
+
       }
     }
   };
@@ -74,9 +76,17 @@ const CenterLinkPayments = (props) => {
     if (obj.owner === "client" || obj.owner === "client+partner") {
       obj.clientTotal = obj.client.annualPaymentAmount;
     }
+    else {
+      obj.clientTotal = "";
+      obj.client = {};
+    }
 
     if (obj.owner === "partner" || obj.owner === "client+partner") {
       obj.partnerTotal = obj.partner.annualPaymentAmount;
+    }
+    else {
+      obj.partnerTotal = "";
+      obj.partner = {};
     }
 
     if (UserStatus !== "Married") {

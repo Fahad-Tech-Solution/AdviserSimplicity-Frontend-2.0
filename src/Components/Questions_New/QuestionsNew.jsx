@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { useRecoilState, useRecoilValue } from "recoil";
-import { CRState, defaultUrl, QuestionDetail, QuestionShift } from "../../Store/Store";
+import { BankDetail, CRState, defaultUrl, QuestionDetail, QuestionShift } from "../../Store/Store";
 import './Questions.css'
 
 // import QuestionCards from "./FinancialInvestments/QuestionCards";
@@ -55,7 +55,7 @@ const QuestionsNew = (props) => {
 
 
     setQuestionChange(cLocation)
-    // fetchData();
+
     console.log("QuestionDetails Data condition :", Object.keys(questionDetail).length)
 
     if (questionDetail && Object.keys(questionDetail).length <= 0) {
@@ -66,9 +66,26 @@ const QuestionsNew = (props) => {
       FetchQuestions();
     }
 
+    if (!bankDetailObj2?._id) {
+      fetchData();
+    }
+
   }
 
   let [CRObjectNoUse, setCRObject] = useRecoilState(CRState);
+  let [bankDetailObj2, setBankDetailObj] = useRecoilState(BankDetail);
+
+  async function fetchData() {
+    try {
+      const res = await GetAxios(`${DefaultUrl}/api/offer/`);
+      if (res) {
+        // console.log(JSON.stringify(res))
+        setBankDetailObj(res)
+      }
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+    }
+  }
 
   const FetchQuestions = async () => {
     try {
@@ -84,7 +101,7 @@ const QuestionsNew = (props) => {
   const fetchDataAllInOne = async () => {
     try {
       const res = await GetAxios(`${DefaultUrl}/api/dataOfAllSection/${localStorage.getItem("UserID")}`);
-      console.log(JSON.stringify(res), ":res of get all inner Question Data")
+      // console.log(JSON.stringify(res), ":res of get all inner Question Data")
       if (res) {
         setQuestionDetail(res);
       }
@@ -142,7 +159,7 @@ const QuestionsNew = (props) => {
       const prevItem = itemsOpt[prevIndex];
       if (prevItem.condition(CRObject)) {
         if (prevItem.route === "/PersonalDetail") {
-          
+
           let Email = localStorage.getItem("Email");
           if (Email) {
             Navigation("/PersonalDetail#" + Email);

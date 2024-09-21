@@ -603,11 +603,11 @@ const QuestionCards = (props) => {
     const JointHidden = ["superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues", "will", "POA", "professionalAdviser", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "incomeFromInheritance", "incomeFromLumpsumExpense", "incomeFromRegularLivingExpenses", "life", "TPD", "trauma", "incomeProtection"]; // Add other titles that should use "xl" here
     const singleClient = ["incomeFromRegularLivingExpenses"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
-    const combinedArray = ["incomeFromOwnBusiness", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "car", "boat", "caravan", "personalAssets", "houseHold", "otherAssets", "familyHome", "investmentBondFinance", "managedFundsMarginLoan", "superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues", "investmentPropertyDetails"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
+    const combinedArray = ["incomeFromOwnBusiness", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "car", "boat", "caravan", "personalAssets", "houseHold", "otherAssets", "familyHome", "investmentBondFinance", "managedFundsMarginLoan", "superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues", "investmentPropertyDetails", "managedFundsLOC"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
     const towInOne = ["personalLoans"];
 
-    const reuseModal = ["bankAccountFinance", "termDepositsFinance", "australianShareMarket", "managedFund", "SMSFTermDeposits", "SMSFAustralianShares", "SMSFManagedFunds", "SMSFInvestmentLoan", "managedFundsLOC", "familyBank", "familyTermDeposit", "familyAustralianShare", "familyMangedFunds", "familyInvestmentHomeLoan", "SMSFBank",]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
+    const reuseModal = ["bankAccountFinance", "termDepositsFinance", "australianShareMarket", "managedFund", , "investmentBondFinance", "SMSFTermDeposits", "SMSFAustralianShares", "SMSFManagedFunds", "SMSFInvestmentLoan", "familyBank", "familyTermDeposit", "familyAustralianShare", "familyMangedFunds", "familyInvestmentHomeLoan", "SMSFBank",]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
     let homeArray = [
         {
@@ -650,9 +650,9 @@ const QuestionCards = (props) => {
         //Financial Investments
         "Bank Accounts": <MiddleWare />,              //reuse Component
         "Term Deposits": <MiddleWare />,               //reuse Component
-        "Australian Shares": <AustralianShares />,      //reuse Component
-        "Managed Funds": <ManagedFunds />,              //reuse Component
-        "Investment Bond": <InvestmentBond />,
+        "Australian Shares": <MiddleWare />,      //reuse Component
+        "Managed Funds": <MiddleWare />,              //reuse Component
+        "Investment Bond": <MiddleWare />,
         "Investment Loan": <InvestmentLoan />,          //reuse Component
         "Margin Loan": <MarginLoan />,
         //Following 4 have combined in Financial Investment
@@ -775,7 +775,7 @@ const QuestionCards = (props) => {
             }
 
             // type, placement, message, description
-            openNotificationSuccess("success", 'topRight', "Notification", "Regular Income Data Successfully Saved!")
+            openNotificationSuccess("success", 'topRight', "Notification", "Retirement Living Data Successfully Saved!")
 
         } catch (error) {
             console.error("Error occurred while making API call:", error);

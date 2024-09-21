@@ -192,6 +192,7 @@ const Partnership = (props) => {
             name: "share",
             type: "number-toComma",
             placeholder: "Share ",
+            disabled: true
         },
         {
             name: "goodWill",

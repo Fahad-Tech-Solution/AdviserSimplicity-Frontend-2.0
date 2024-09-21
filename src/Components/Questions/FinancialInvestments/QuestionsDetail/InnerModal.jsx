@@ -22,8 +22,7 @@ const InnerModal = (props) => {
     const xlTitles = ["Member Number & Details",
         "Insurances Attached", "Accumulations Benefits",
         "Pension Benefits", "Balance & Benefit Details",
-        "Salary Package",
-        "Home Loan",
+        "Salary Package", "Home Loan", "Australian Shares Detail", "Managed Funds Detail",
         // "Bank Accounts Detail"
     ]; // Add other titles that should use "xl" here
 

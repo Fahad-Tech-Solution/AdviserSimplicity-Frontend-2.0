@@ -2,14 +2,17 @@ import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { PatchAxios, PostAxios } from '../../../Assets/Api/Api';
+import { BankDetail, defaultUrl, QuestionDetail } from '../../../../Store/Store';
+import { PatchAxios, PostAxios, RenderName, toCommaAndDollar } from '../../../Assets/Api/Api';
 import axios from 'axios';
+import DynamicTableRow from '../../../Assets/Dynamic/DynamicTableRow';
 
 const InvestmentLoan = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+    let bankDetailObj = useRecoilValue(BankDetail)
 
+    let [UserStatus] = useState(localStorage.getItem('UserStatus'));
 
     let [nameSet] = useState(() => {
         if (props.modalObject.Input === "client") {
@@ -24,7 +27,7 @@ const InvestmentLoan = (props) => {
     })
 
 
-    let managedFundsLOC = Object.keys(questionDetail[props.modalObject.key]).length > 0 ? questionDetail[props.modalObject.key] : {
+    let managedFundsLOC = Object.keys(questionDetail[props.modalObject.index] || {}).length > 0 ? questionDetail[props.modalObject.index] : {
         client: [],
         partner: [],
         joint: [],
@@ -32,7 +35,7 @@ const InvestmentLoan = (props) => {
     }; // Use an empty object as default if managedFundsLOC is undefined
 
 
-    let initialValues = managedFundsLOC[props.modalObject.Input].length ? { NumberOfMap: managedFundsLOC[props.modalObject.Input].length } : { NumberOfMap: "" };
+    let initialValues = { owner: "", };
 
     const [dynamicFields, setDynamicFields] = useState([]);
 
@@ -52,78 +55,120 @@ const InvestmentLoan = (props) => {
 
     const fillInitialValues = (setFieldValue) => {
 
-        if (managedFundsLOC[props.modalObject.Input] && managedFundsLOC[props.modalObject.Input].length) {
+        console.log(managedFundsLOC)
 
-            managedFundsLOC[props.modalObject.Input].forEach((data, i) => {
-                if (data) {
-                    setFieldValue(`LenderCurrent${i}`, data.LenderCurrent || '');
-                    setFieldValue(`LoanBalance${i}`, data.LoanBalance || '');
-                    setFieldValue(`LoanType${i}`, data.LoanType || '');
-                    setFieldValue(`RepaymentsAmount${i}`, data.RepaymentsAmount || '');
-                    setFieldValue(`Frequency${i}`, data.Frequency || '');
-                    setFieldValue(`AnnualRepayments${i}`, data.AnnualRepayments || '');
-                    setFieldValue(`InterestRate${i}`, data.InterestRate || '');
-                    setFieldValue(`LoanTerm${i}`, data.LoanTerm || '');
-                    setFieldValue(`LoanTermRemaining${i}`, data.LoanTermRemaining || '');
-                    setFieldValue(`DeductibleLoanAmount${i}`, data.DeductibleLoanAmount || '');
+        if (managedFundsLOC && managedFundsLOC._id) {
+
+            setFieldValue(`owner`, managedFundsLOC.owner || "");
+
+            if (managedFundsLOC.owner === "client" || managedFundsLOC.owner === "client+partner" || managedFundsLOC.owner === "client+partner+joint") {
+                if (managedFundsLOC?.client && Object.keys(managedFundsLOC?.client).length) {
+
+                    setFieldValue(`client.lender`, managedFundsLOC.client.lender || "");
+                    setFieldValue(`client.loanBalance`, managedFundsLOC.client.loanBalance || "");
+                    setFieldValue(`client.loanType`, managedFundsLOC.client.loanType || "");
+                    setFieldValue(`client.repaymentsAmount`, managedFundsLOC.client.repaymentsAmount || "");
+                    setFieldValue(`client.frequency`, managedFundsLOC.client.frequency || "");
+                    setFieldValue(`client.annualRepayments`, managedFundsLOC.client.annualRepayments || "");
+                    setFieldValue(`client.interestRate`, managedFundsLOC.client.interestRate || "");
+                    setFieldValue(`client.loanTerm`, managedFundsLOC.client.loanTerm || "");
+                    setFieldValue(`client.loanTermRemaining`, managedFundsLOC.client.loanTermRemaining || "");
+                    setFieldValue(`client.deductibleLoanAmount`, managedFundsLOC.client.deductibleLoanAmount || "");
                 }
-            });
+            }
+
+            if (UserStatus === "Married") {
+
+                if (managedFundsLOC.owner === "partner" || managedFundsLOC.owner === "client+partner" || managedFundsLOC.owner === "client+partner+joint") {
+                    if (managedFundsLOC?.partner && Object.keys(managedFundsLOC?.partner).length) {
+
+                        setFieldValue(`partner.lender`, managedFundsLOC.partner.lender || "");
+                        setFieldValue(`partner.loanBalance`, managedFundsLOC.partner.loanBalance || "");
+                        setFieldValue(`partner.loanType`, managedFundsLOC.partner.loanType || "");
+                        setFieldValue(`partner.repaymentsAmount`, managedFundsLOC.partner.repaymentsAmount || "");
+                        setFieldValue(`partner.frequency`, managedFundsLOC.partner.frequency || "");
+                        setFieldValue(`partner.annualRepayments`, managedFundsLOC.partner.annualRepayments || "");
+                        setFieldValue(`partner.interestRate`, managedFundsLOC.partner.interestRate || "");
+                        setFieldValue(`partner.loanTerm`, managedFundsLOC.partner.loanTerm || "");
+                        setFieldValue(`partner.loanTermRemaining`, managedFundsLOC.partner.loanTermRemaining || "");
+                        setFieldValue(`partner.deductibleLoanAmount`, managedFundsLOC.partner.deductibleLoanAmount || "");
+
+                    }
+                }
+
+                if (managedFundsLOC.owner === "joint" || managedFundsLOC.owner === "client+partner+joint") {
+                    if (managedFundsLOC?.joint && Object.keys(managedFundsLOC?.joint).length) {
+
+                        setFieldValue(`joint.lender`, managedFundsLOC.joint.lender || "");
+                        setFieldValue(`joint.loanBalance`, managedFundsLOC.joint.loanBalance || "");
+                        setFieldValue(`joint.loanType`, managedFundsLOC.joint.loanType || "");
+                        setFieldValue(`joint.repaymentsAmount`, managedFundsLOC.joint.repaymentsAmount || "");
+                        setFieldValue(`joint.frequency`, managedFundsLOC.joint.frequency || "");
+                        setFieldValue(`joint.annualRepayments`, managedFundsLOC.joint.annualRepayments || "");
+                        setFieldValue(`joint.interestRate`, managedFundsLOC.joint.interestRate || "");
+                        setFieldValue(`joint.loanTerm`, managedFundsLOC.joint.loanTerm || "");
+                        setFieldValue(`joint.loanTermRemaining`, managedFundsLOC.joint.loanTermRemaining || "");
+                        setFieldValue(`joint.deductibleLoanAmount`, managedFundsLOC.joint.deductibleLoanAmount || "");
+
+                    }
+                }
+            }
         }
     };
 
-    let handleInput = (e, setFieldValue) => {
-        const value = e.target.value > 2 ? 2 : e.target.value;
-        setFieldValue(e.target.id, value);
-
-        let arr = []
-
-        for (let i = 0; i < value; i++) {
-            arr.push("");
-        }
-
-        setDynamicFields(arr);
-
-    };
 
     let DefaultUrl = useRecoilValue(defaultUrl)
 
 
     let onSubmit = async (values) => {
-        // Extract the number of maps from the values
-        const numberOfMaps = parseInt(values.NumberOfMap, 10);
-        const newEntries = [];
 
-        // Iterate through each map entry and create a new object
-        for (let i = 0; i < numberOfMaps; i++) {
-            const newEntry = {
-                LenderCurrent: values[`LenderCurrent${i}`] || "",
-                LoanBalance: values[`LoanBalance${i}`] || "",
-                LoanType: values[`LoanType${i}`] || "",
-                RepaymentsAmount: values[`RepaymentsAmount${i}`] || "",
-                Frequency: values[`Frequency${i}`] || "",
-                AnnualRepayments: ((values[`RepaymentsAmount${i}`] || 0) * (values[`Frequency${i}`] || 0)) || "",
-                InterestRate: values[`InterestRate${i}`] || "",
-                LoanTerm: values[`LoanTerm${i}`] || "",
-                LoanTermRemaining: values[`LoanTermRemaining${i}`] || "",
-                DeductibleLoanAmount: values[`DeductibleLoanAmount${i}`] || "",
-            };
-            newEntries.push(newEntry);
+        let obj = values;
+        obj.clientFK = localStorage.getItem("UserID");
+
+        let fiftyPercent;
+
+        try {
+            // Safely parse the value after removing non-numeric characters
+            let annualRepayments = parseFloat(obj.joint.annualRepayments.replace(/[^0-9.-]+/g, ""));
+
+            // Check if the parsed value is a valid number
+            if (isNaN(annualRepayments) || annualRepayments === undefined) {
+                fiftyPercent = 0; // Set to 0 if invalid
+            } else {
+                fiftyPercent = annualRepayments / 2; // Calculate fifty percent if valid
+            }
+        } catch (error) {
+            // Handle any unexpected errors
+            console.error("Error calculating fiftyPercent:", error);
+            fiftyPercent = 0; // Set to 0 in case of error
         }
 
-        // Log the new entries to verify
-        console.log(newEntries);
 
-        let DataOf = props.modalObject.Input;
+        if (values.owner === "client" || values.owner === "client+partner" || values.owner === "client+partner+joint") {
+            obj.clientTotal = toCommaAndDollar(parseFloat(obj.client.annualRepayments.replace(/[^0-9.-]+/g, "")) + fiftyPercent);
+        } else if (values.owner === "joint") {
+            obj.clientTotal = toCommaAndDollar(fiftyPercent);
 
-        // Create an object with additional fields
-        let obj = {
-            clientFK: localStorage.getItem("UserID"),
-        };
+        } else {
+            obj.clientTotal = "";
+            obj.client = {};
+        }
 
-        obj[DataOf] = newEntries
+        if (values.owner === "partner" || values.owner === "client+partner" || values.owner === "client+partner+joint") {
+            obj.partnerTotal = toCommaAndDollar(parseFloat(obj.partner.annualRepayments.replace(/[^0-9.-]+/g, "")) + fiftyPercent);
+        } else if (values.owner === "joint") {
+            obj.partnerTotal = toCommaAndDollar(fiftyPercent);
 
-        // Calculate total currentBalance
-        obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.AnnualRepayments, 0);
+        } else {
+            obj.partnerTotal = "";
+            obj.partner = {};
+        }
+
+        if (UserStatus !== "Married") {
+            obj.partnerTotal = "";
+            obj.partner = {};
+        }
+
 
         console.log(obj, "final obj")
 
@@ -134,15 +179,15 @@ const InvestmentLoan = (props) => {
         try {
             let res;
             if (!bankAccountArray) {
-                res = await PostAxios(`${DefaultUrl}/api/${props.modalObject.key}/Add`, obj);
+                res = await PostAxios(`${DefaultUrl}/api/${props.modalObject.index}/Add`, obj);
             } else {
-                obj.collection = props.modalObject.Input
-                res = await PatchAxios(`${DefaultUrl}/api/${props.modalObject.key}/Update`, obj);
+                // obj.collection = props.modalObject.Input
+                res = await PatchAxios(`${DefaultUrl}/api/${props.modalObject.index}/Update`, obj);
             }
 
             if (res) {
                 console.log(res);
-                const updatedData = { ...questionDetail, [props.modalObject.key]: res };
+                const updatedData = { ...questionDetail, [props.modalObject.index]: res };
                 setQuestionDetail(updatedData);
             }
 
@@ -155,91 +200,45 @@ const InvestmentLoan = (props) => {
         }
     };
 
-    const options = [
-        "Adelaide Bank",
-        "Alliance Bank",
-        "AMP",
-        "ANZ",
-        "Arab Bank Australia",
-        "Australian Military Bank (ADCU)",
-        "Australian Mutual Bank",
-        "Australian Unity",
-        "Auswide Bank",
-        "AWA Alliance Bank",
-        "Bank Australia (bankmecu)",
-        "Bank First",
-        "Bank of Melbourne",
-        "Bank of Queensland (BOQ)",
-        "Bank of Sydney",
-        "BankSA",
-        "BankVic",
-        "Bankwest",
-        "BCU",
-        "BDCU Alliance Bank",
-        "Bendigo Bank",
-        "Beyond Bank",
-        "Border Bank",
-        "Circle Alliance Bank",
-        "Citi",
-        "Commonwealth Bank",
-        "Community First Bank",
-        "Credit Union SA",
-        "Defence Bank",
-        "Delphi Bank",
-        "Easy Street",
-        "First Choice Credit Union",
-        "First Option Bank",
-        "firstmac",
-        "G&C Mutual",
-        "Gateway Bank Ltd",
-        "Geelong Bank",
-        "Great Southern Bank",
-        "Greater Bank",
-        "Hay",
-        "Heartland Bank",
-        "Heritage Bank",
-        "Horizon Bank",
-        "HSBC Australia",
-        "Hume Bank",
-        "Illawarra Credit Union",
-        "IMB",
-        "ING",
-        "Judo Bank",
-        "Macquarie Bank",
-        "ME",
-        "MOVE Bank",
-        "MyState Bank",
-        "NAB",
-        "Newcastle Permanent",
-        "P&N Bank",
-        "People’s Choice CU",
-        "Policebank",
-        "Prospa",
-        "Qudos Bank",
-        "Rabobank",
-        "RACQ",
-        "RAMS",
-        "Regional Australia Bank",
-        "Rural Bank",
-        "Service One Alliance Bank",
-        "St.George",
-        "Suncorp Bank",
-        "Teachers Mutual Bank",
-        "Ubank",
-        "UniBank",
-        "Up Bank",
-        "Virgin Money",
-        "Westpac",
-        "Zeller"
-    ];
+    let optionsLender = [
+        { value: "i/only", label: "i/only" },
+        { value: "P&I", label: "P&I" },
+    ]
+    let optionsFrequency = [
+        { value: 52, label: "Weekly" },
+        { value: 26, label: "Fortnightly" },
+        { value: 12, label: "Monthly" },
+        { value: 1, label: "Annually" },
+    ]
 
-    let handleBlur = (setFieldValue, e) => {
-        let value = parseFloat(e.target.value);
-        if (!isNaN(value)) {
-            setFieldValue(e.target.id, value.toFixed(2));
-        } else {
-            setFieldValue(e.target.id, "");
+    const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
+        value: (i + 1).toString(),
+        label: ("Year " + (i + 1)).toString(),
+    }))
+
+    const rowConfig = [
+        { name: 'lender', type: 'select', options: generateOptions(), placeholder: 'Lender', styleSet: { width: "5rem" }, },
+        { name: 'loanBalance', type: 'number-toComma', placeholder: 'Loan Balance', },
+        { name: 'loanType', type: 'select', options: optionsLender, placeholder: 'Loan Type', },
+        { name: 'repaymentsAmount', type: 'number-toComma', placeholder: 'Repayments Amount', },
+        { name: 'frequency', type: 'select', options: optionsFrequency, placeholder: 'Frequency', },
+        { name: 'annualRepayments', type: 'number-toComma', placeholder: 'Annual Repayments', },
+        { name: 'interestRate', type: 'number-toPercent', placeholder: 'Interest Rate', },
+        { name: 'loanTerm', type: 'select', options: loanTermOptions, placeholder: 'Loan Term', },
+        { name: 'loanTermRemaining', type: 'select', options: loanTermOptions, placeholder: 'Loan Term Remaining', },
+        { name: 'deductibleLoanAmount', type: 'number-toPercent', placeholder: 'Deductible Loan Amount', },
+    ]
+
+
+    function generateOptions() {
+        const InstituteOptions = [];
+
+        if (Array.isArray(bankDetailObj) && bankDetailObj.length > 0) {
+            bankDetailObj.forEach((elem) => {
+                InstituteOptions.push({ value: elem._id, label: elem.name });
+            });
         }
+        return InstituteOptions;
     };
 
     return (
@@ -249,172 +248,100 @@ const InvestmentLoan = (props) => {
             enableReinitialize
             innerRef={props.formRef}
         >
-            {({ values, setFieldValue }) => {
+            {({ values, setFieldValue, handleChange, handleBlur }) => {
                 useEffect(() => {
                     fillInitialValues(setFieldValue);
-                }, [values.NumberOfMap]);
+                }, []);
 
                 return (
                     <Form>
                         <Row>
                             <div className="col-md-12">
                                 <div className='row justify-content-center'>
-                                    <div className='col-md-5'>
-                                        <p className='text-end mt-1'>
-                                            How many {props.modalObject.title} does {nameSet} have:
-                                        </p>
+                                    <div className='col-md-12'>
+
+                                        <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                            <label htmlFor='' className='text-end '>
+                                                Owner
+                                            </label>
+
+                                            <div className='w-25'>
+                                                <Field
+                                                    as="select"
+                                                    placeholder="Name of owner"
+                                                    id={`owner`}
+                                                    name={`owner`}
+                                                    className="form-select inputDesignDoubleInput"
+                                                >
+                                                    <option value={""}>Select</option>
+
+                                                    <option value={"client"}>  {RenderName("client")} </option>
+
+                                                    {localStorage.getItem("UserStatus") !== "Single" &&
+                                                        <React.Fragment>
+
+                                                            <option value={"partner"}>{RenderName("partner")}</option>
+                                                            <option value={"client+partner"}>{"Both (" + RenderName("client") + " , " + RenderName("partner") + ")"} </option>
+                                                            <option value={"joint"}>{RenderName("joint")}</option>
+                                                            <option value={"client+partner+joint"}>{RenderName("client") + " , " + RenderName("partner") + " & joint"} </option>
+
+                                                        </React.Fragment>
+                                                    }
+                                                </Field>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className='col-md-2'>
-                                        <Field
-                                            type="number"
-                                            id="NumberOfMap"
-                                            name="NumberOfMap"
-                                            className="form-control inputDesignDoubleInput"
-                                            onChange={(e) => handleInput(e, setFieldValue)}
-                                        />
-                                    </div>
-                                    {values.NumberOfMap && (
+                                    {values.owner !== "" && (
                                         <div className='mt-4'>
                                             <Table striped bordered responsive hover>
                                                 <thead>
                                                     <tr>
-                                                        <th>No#</th>
-                                                        <th>Lender </th>
-                                                        <th>Current Loan Balance</th>
+                                                        <th>Owner</th>
+                                                        <th>Lender</th>
+                                                        <th>Loan Balance</th>
                                                         <th>Loan Type</th>
                                                         <th>Repayments Amount</th>
                                                         <th>Frequency</th>
                                                         <th>Annual Repayments</th>
                                                         <th>Interest Rate (p.a)</th>
-                                                        <th>Loan Term </th>
-                                                        <th>Loan Term Remaining  </th>
+                                                        <th>Loan Term</th>
+                                                        <th>Loan Term Remaining</th>
                                                         <th>Deductible Loan Amount</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {dynamicFields.map((elem, i) => {
-                                                        return (
-                                                            <tr key={i}>
-                                                                <td>{1 + i}</td>
-                                                                <td>
-                                                                    <Field
-                                                                        as="select"
-                                                                        placeholder="Lender Current"
-                                                                        id={`LenderCurrent${i}`}
-                                                                        name={`LenderCurrent${i}`}
-                                                                        className="form-select inputDesignDoubleInput"
-                                                                    >
-                                                                        <option value={""}>Please Select</option>
-                                                                        {options.map((elem, index) => {
-                                                                            return (<option key={index} value={elem}>{elem}</option>)
-                                                                        })}
-                                                                    </Field>
-                                                                </td>
-                                                                <td>
-                                                                    <Field
-                                                                        type="number"
-                                                                        placeholder="Loan Balance"
-                                                                        id={`LoanBalance${i}`}
-                                                                        name={`LoanBalance${i}`}
-                                                                        className="form-control inputDesignDoubleInput"
-                                                                    />
-                                                                </td>
-                                                                <td>
-                                                                    <Field
-                                                                        as="select"
-                                                                        placeholder="Lender Current"
-                                                                        id={`LoanType${i}`}
-                                                                        name={`LoanType${i}`}
-                                                                        className="form-select inputDesignDoubleInput"
-                                                                    >
-                                                                        <option value={""}>Please Select</option>
-                                                                        <option value={"i/only"}>i/only</option>
-                                                                        <option value={"P&I"}>P&I</option>
-                                                                    </Field>
-                                                                </td>
-                                                                <td>
-                                                                    <Field
-                                                                        type="number"
-                                                                        placeholder="Repayments Amount"
-                                                                        id={`RepaymentsAmount${i}`}
-                                                                        name={`RepaymentsAmount${i}`}
-                                                                        className="form-control inputDesignDoubleInput"
-                                                                    />
-                                                                </td>
-                                                                <td>
-                                                                    <Field
-                                                                        as="select"
-                                                                        placeholder="Lender Current"
-                                                                        id={`Frequency${i}`}
-                                                                        name={`Frequency${i}`}
-                                                                        className="form-select inputDesignDoubleInput"
-                                                                    >
-                                                                        <option value={""}>Please Select</option>
-                                                                        <option value={52}>Weekly (52)</option>
-                                                                        <option value={26}>Fortnightly (26)</option>
-                                                                        <option value={12}>Monthly (12)</option>
-                                                                        <option value={1}>Annually (1)</option>
 
-                                                                    </Field>
-                                                                </td>
-                                                                <td>
-                                                                    <Field
-                                                                        type="number"
-                                                                        placeholder="Annual Repayments"
-                                                                        id={`AnnualRepayments${i}`}
-                                                                        name={`AnnualRepayments${i}`}
-                                                                        value={(values[`Frequency${i}`] || 0) * (values[`RepaymentsAmount${i}`] || 0)}
-                                                                        className="form-control inputDesignDoubleInput"
-                                                                    />
-                                                                </td>
-                                                                <td>
-                                                                    <Field
-                                                                        type="number"
-                                                                        placeholder="Interest Rate (p.a)"
-                                                                        id={`InterestRate${i}`}
-                                                                        name={`InterestRate${i}`}
-                                                                        onBlur={(e) => handleBlur(setFieldValue, e)}
-                                                                        className="form-control inputDesignDoubleInput"
-                                                                    />
-                                                                </td>
-                                                                <td>
-                                                                    <Field
-                                                                        as="select"
-                                                                        placeholder="Lender Current"
-                                                                        id={`LoanTerm${i}`}
-                                                                        name={`LoanTerm${i}`}
-                                                                        className="form-select inputDesignDoubleInput"
-                                                                    >
-                                                                        <option value={""}>Please Select</option>
-                                                                        <option value={"abc"}>abc</option>
+                                                    {(values.owner === "client" || values.owner === "client+partner" || values.owner === "client+partner+joint") &&
+                                                        <DynamicTableRow
+                                                            rowConfig={rowConfig}
+                                                            values={values}
+                                                            setFieldValue={setFieldValue}
+                                                            handleChange={handleChange}
+                                                            handleBlur={handleBlur}
+                                                            stakeHolder={"client."}
+                                                        />
+                                                    }
+                                                    {((values.owner === "partner" || values.owner === "client+partner" || values.owner === "client+partner+joint") && (UserStatus === "Married")) &&
+                                                        <DynamicTableRow
+                                                            rowConfig={rowConfig}
+                                                            values={values}
+                                                            setFieldValue={setFieldValue}
+                                                            handleChange={handleChange}
+                                                            handleBlur={handleBlur}
+                                                            stakeHolder={"partner."}
+                                                        />
+                                                    }
 
-                                                                    </Field>
-                                                                </td>
-                                                                <td>
-                                                                    <Field
-                                                                        as="select"
-                                                                        placeholder="Lender Current"
-                                                                        id={`LoanTermRemaining${i}`}
-                                                                        name={`LoanTermRemaining${i}`}
-                                                                        className="form-select inputDesignDoubleInput"
-                                                                    >
-                                                                        <option value={""}>Please Select</option>
-                                                                        <option value={"abc"}>abc</option>
-
-                                                                    </Field>
-                                                                </td>
-                                                                <td>
-                                                                    <Field
-                                                                        type="number"
-                                                                        placeholder="Deductible Loan Amount"
-                                                                        id={`DeductibleLoanAmount${i}`}
-                                                                        name={`DeductibleLoanAmount${i}`}
-                                                                        value={100}
-                                                                        className="form-control inputDesignDoubleInput"
-                                                                    />
-                                                                </td>
-                                                            </tr>)
-                                                    })}
+                                                    {(values.owner === "joint" || values.owner === "client+partner+joint") &&
+                                                        <DynamicTableRow
+                                                            rowConfig={rowConfig}
+                                                            values={values}
+                                                            setFieldValue={setFieldValue}
+                                                            handleChange={handleChange}
+                                                            handleBlur={handleBlur}
+                                                            stakeHolder={"joint."}
+                                                        />
+                                                    }
                                                 </tbody>
                                             </Table>
                                         </div>

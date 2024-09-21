@@ -1,13 +1,14 @@
 import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { PatchAxios, PostAxios, toCommaAndDollar } from '../../../Assets/Api/Api';
+import { toCommaAndDollar } from '../../../Assets/Api/Api';
+import { BankDetail } from '../../../../Store/Store';
+import { useRecoilValue } from 'recoil';
 
 const BankTermForm = (props) => {
-    let questionDetail = useRecoilValue(QuestionDetail);
-    let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+
+    let bankDetailObj = useRecoilValue(BankDetail)
+
 
     let [nameSet] = useState(() => {
         if (props.modalObject.Input === "client") {
@@ -23,8 +24,6 @@ const BankTermForm = (props) => {
 
 
     let initialValues = { NumberOfMap: "" };
-
-    const [dynamicFields, setDynamicFields] = useState([]);
 
 
     const options = [
@@ -123,7 +122,6 @@ const BankTermForm = (props) => {
         setFieldValue(e.target.id, value);
     };
 
-    let DefaultUrl = useRecoilValue(defaultUrl)
 
     let onSubmit = async (values) => {
         // Extract the number of maps from the values
@@ -214,8 +212,8 @@ const BankTermForm = (props) => {
                                                                     className="form-select inputDesignDoubleInput"
                                                                 >
                                                                     <option value={""}>Please Select</option>
-                                                                    {options.map((elem, index) => {
-                                                                        return (<option key={index} value={elem}>{elem}</option>)
+                                                                    {bankDetailObj.map((elem, index) => {
+                                                                        return (<option key={index} value={elem._id}>{elem.name}</option>)
                                                                     })}
                                                                 </Field>
                                                             </td>

@@ -1,158 +1,118 @@
 import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { PatchAxios, PostAxios } from '../../../Assets/Api/Api';
+import { useRecoilValue } from 'recoil';
+import { BankDetail, defaultUrl } from '../../../../Store/Store';
+import { toCommaAndDollar } from '../../../Assets/Api/Api';
+import { Pagination } from 'antd';
+import { SimpleSelectField } from './CreatableMultiSelectField';
 
 const PortfolioValue = (props) => {
 
 
     let initialValues = props.modalObject.editArray.length ? { NumberOfMap: props.modalObject.editArray.length } : { NumberOfMap: "" };
+    let bankDetailObj = useRecoilValue(BankDetail);
 
 
-    const options = [
-        "Adelaide Bank",
-        "Alliance Bank",
-        "AMP",
-        "ANZ",
-        "Arab Bank Australia",
-        "Australian Military Bank (ADCU)",
-        "Australian Mutual Bank",
-        "Australian Unity",
-        "Auswide Bank",
-        "AWA Alliance Bank",
-        "Bank Australia (bankmecu)",
-        "Bank First",
-        "Bank of Melbourne",
-        "Bank of Queensland (BOQ)",
-        "Bank of Sydney",
-        "BankSA",
-        "BankVic",
-        "Bankwest",
-        "BCU",
-        "BDCU Alliance Bank",
-        "Bendigo Bank",
-        "Beyond Bank",
-        "Border Bank",
-        "Circle Alliance Bank",
-        "Citi",
-        "Commonwealth Bank",
-        "Community First Bank",
-        "Credit Union SA",
-        "Defence Bank",
-        "Delphi Bank",
-        "Easy Street",
-        "First Choice Credit Union",
-        "First Option Bank",
-        "firstmac",
-        "G&C Mutual",
-        "Gateway Bank Ltd",
-        "Geelong Bank",
-        "Great Southern Bank",
-        "Greater Bank",
-        "Hay",
-        "Heartland Bank",
-        "Heritage Bank",
-        "Horizon Bank",
-        "HSBC Australia",
-        "Hume Bank",
-        "Illawarra Credit Union",
-        "IMB",
-        "ING",
-        "Judo Bank",
-        "Macquarie Bank",
-        "ME",
-        "MOVE Bank",
-        "MyState Bank",
-        "NAB",
-        "Newcastle Permanent",
-        "P&N Bank",
-        "People’s Choice CU",
-        "Policebank",
-        "Prospa",
-        "Qudos Bank",
-        "Rabobank",
-        "RACQ",
-        "RAMS",
-        "Regional Australia Bank",
-        "Rural Bank",
-        "Service One Alliance Bank",
-        "St.George",
-        "Suncorp Bank",
-        "Teachers Mutual Bank",
-        "Ubank",
-        "UniBank",
-        "Up Bank",
-        "Virgin Money",
-        "Westpac",
-        "Zeller"
-    ];
-
-    // useEffect(() => {
-    //     if (initialValues.NumberOfMap) {
-    //         generateFields(initialValues.NumberOfMap);
-    //     }
-    // }, [initialValues.NumberOfMap]);
+    // const options = [
+    //     "Adelaide Bank",
+    //     "Alliance Bank",
+    //     "AMP",
+    //     "ANZ",
+    //     "Arab Bank Australia",
+    //     "Australian Military Bank (ADCU)",
+    //     "Australian Mutual Bank",
+    //     "Australian Unity",
+    //     "Auswide Bank",
+    //     "AWA Alliance Bank",
+    //     "Bank Australia (bankmecu)",
+    //     "Bank First",
+    //     "Bank of Melbourne",
+    //     "Bank of Queensland (BOQ)",
+    //     "Bank of Sydney",
+    //     "BankSA",
+    //     "BankVic",
+    //     "Bankwest",
+    //     "BCU",
+    //     "BDCU Alliance Bank",
+    //     "Bendigo Bank",
+    //     "Beyond Bank",
+    //     "Border Bank",
+    //     "Circle Alliance Bank",
+    //     "Citi",
+    //     "Commonwealth Bank",
+    //     "Community First Bank",
+    //     "Credit Union SA",
+    //     "Defence Bank",
+    //     "Delphi Bank",
+    //     "Easy Street",
+    //     "First Choice Credit Union",
+    //     "First Option Bank",
+    //     "firstmac",
+    //     "G&C Mutual",
+    //     "Gateway Bank Ltd",
+    //     "Geelong Bank",
+    //     "Great Southern Bank",
+    //     "Greater Bank",
+    //     "Hay",
+    //     "Heartland Bank",
+    //     "Heritage Bank",
+    //     "Horizon Bank",
+    //     "HSBC Australia",
+    //     "Hume Bank",
+    //     "Illawarra Credit Union",
+    //     "IMB",
+    //     "ING",
+    //     "Judo Bank",
+    //     "Macquarie Bank",
+    //     "ME",
+    //     "MOVE Bank",
+    //     "MyState Bank",
+    //     "NAB",
+    //     "Newcastle Permanent",
+    //     "P&N Bank",
+    //     "People’s Choice CU",
+    //     "Policebank",
+    //     "Prospa",
+    //     "Qudos Bank",
+    //     "Rabobank",
+    //     "RACQ",
+    //     "RAMS",
+    //     "Regional Australia Bank",
+    //     "Rural Bank",
+    //     "Service One Alliance Bank",
+    //     "St.George",
+    //     "Suncorp Bank",
+    //     "Teachers Mutual Bank",
+    //     "Ubank",
+    //     "UniBank",
+    //     "Up Bank",
+    //     "Virgin Money",
+    //     "Westpac",
+    //     "Zeller"
+    // ];
 
     const [dynamicFields, setDynamicFields] = useState([]);
-
-    const generateFields = (iteration) => {
-        const upTill = parseFloat(iteration);
-        const rows = [];
-
-        for (let i = 0; i < upTill; i++) {
-            rows.push(
-                <tr key={i}>
-                    <td>{1 + i}</td>
-                    <td>
-                        <Field
-                            as="select"
-                            id={`investmentOption${i}`}
-                            name={`investmentOption${i}`}
-                            className="form-select inputDesign"
-                        >
-                            <option value={""}>Please Select</option>
-                            {options.map((elem, index) => {
-                                return (<option key={index} value={elem}>{elem}</option>)
-                            })}
-                        </Field>
-                    </td>
-                    <td>
-                        <Field
-                            type="text"
-                            placeholder="Investment Code"
-                            id={`investmentCode${i}`}
-                            name={`investmentCode${i}`}
-                            className="form-control inputDesign"
-                            disabled
-                        />
-                    </td>
-                    <td>
-                        <Field
-                            type="number"
-                            placeholder="Investment Value"
-                            id={`investmentValue${i}`}
-                            name={`investmentValue${i}`}
-                            className="form-control inputDesign"
-                        />
-                    </td>
-                </tr>
-            );
-        }
-
-        setDynamicFields(rows);
-    };
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 10;
 
     const fillInitialValues = (setFieldValue) => {
 
-        if (props.modalObject.editArray.length) {
-            generateFields(props.modalObject.editArray.length)
+
+
+        let arr = []
+
+        for (let index = 0; index < props.modalObject.editArray.length; index++) {
+
+            arr.push("")
+
         }
 
-        // setTimeout(() => {
+        setDynamicFields(arr)
 
         if (props.modalObject.editArray) {
+            setFieldValue(`NumberOfMap`, props.modalObject.editArray.length || '');
+
             props.modalObject.editArray.forEach((data, i) => {
                 if (data) {
                     console.log(data.investmentOption)
@@ -162,13 +122,24 @@ const PortfolioValue = (props) => {
                 }
             });
         }
-        // }, 500);
     };
 
     let handleInput = (e, setFieldValue) => {
-        const value = e.target.value > 10 ? 10 : e.target.value;
+        const value = e.target.value > 50 ? 50 : e.target.value;
         setFieldValue(e.target.id, value);
-        generateFields(value);
+
+        let arr = []
+
+        for (let index = 0; index < value; index++) {
+
+            arr.push("")
+
+        }
+
+        setDynamicFields(arr)
+
+
+        // generateFields(value);
     };
 
     let DefaultUrl = useRecoilValue(defaultUrl)
@@ -195,12 +166,13 @@ const PortfolioValue = (props) => {
         // Log the new entries to verify
         console.log(newEntries);
 
-        let total = newEntries.reduce((total, entry) => total + entry.investmentValue, 0);
+        let total = newEntries.reduce((total, entry) => total + parseFloat((entry.investmentValue).replace(/[^0-9.-]+/g, "")), 0);
 
 
         props.setFieldValue(`${props.modalObject.key}${props.modalObject.index}`, newEntries)
-        props.setFieldValue(`${props.modalObject.key3}${props.modalObject.index}`, total)
-        props.setFieldValue(`${props.modalObject.mainKey}${props.modalObject.index}`, total - 475721)
+        // props.setFieldValue(`${props.modalObject.key3}${props.modalObject.index}`, toCommaAndDollar(total))
+        // props.setFieldValue(`${props.modalObject.mainKey}${props.modalObject.index}`, toCommaAndDollar(total - 475721))
+        props.setFieldValue(`${props.modalObject.mainKey}${props.modalObject.index}`, toCommaAndDollar(total))
 
         // Reset the flag state if necessary
         if (props.flagState) {
@@ -208,6 +180,125 @@ const PortfolioValue = (props) => {
         }
     };
 
+
+    const generateOptions = (bankDetailObj, platformName) => {
+        const InstituteOptions = [];
+
+        if (Array.isArray(bankDetailObj) && bankDetailObj.length > 0) {
+            bankDetailObj.forEach((elem) => {
+                // Check if the platform name matches
+                if (platformName === elem._id) {
+                    // Add the main option for the element
+                    // InstituteOptions.push({ value: elem._id, label: `${elem.name} (${elem.arrayOfOffers.length} offers)` });
+
+                    // Add InstituteOptions from arrayOfOffers if available
+                    if (Array.isArray(elem.arrayOfOffers) && elem.arrayOfOffers.length > 0) {
+                        elem.arrayOfOffers.forEach((offerElem) => {
+                            InstituteOptions.push({ value: offerElem._id, label: `${offerElem.name} (${offerElem.code})` });
+                        });
+                    }
+                }
+            });
+        }
+
+
+        // console.log(InstituteOptions, bankDetailObj, platformName, "data")
+
+        return InstituteOptions;
+    };
+
+
+    let getCodeForOption = (SelectedOffer, platformName) => {
+        let code = "";
+        if (Array.isArray(bankDetailObj) && bankDetailObj.length > 0) {
+            bankDetailObj.forEach((elem) => {
+                // Check if the platform name matches
+                if (platformName === elem._id) {
+                    // Add the main option for the element
+                    // InstituteOptions.push({ value: elem._id, label: `${elem.name} (${elem.arrayOfOffers.length} offers)` });
+
+                    // Add InstituteOptions from arrayOfOffers if available
+                    if (Array.isArray(elem.arrayOfOffers) && elem.arrayOfOffers.length > 0) {
+                        elem.arrayOfOffers.forEach((offerElem) => {
+                            // InstituteOptions.push({ value: offerElem.name, label: offerElem.name });
+                            if (SelectedOffer == offerElem._id) {
+                                code = offerElem.code
+                            }
+
+                        });
+                    }
+                }
+            });
+        }
+
+        return code;
+    }
+
+    const renderRows = (currentPage, setFieldValue, values, handleChange) => {
+        const pageSize = 10;
+        const startIndex = (currentPage - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+
+        return dynamicFields.map((_, i) => {
+            if (i >= startIndex && i < endIndex) {
+                return (
+                    <tr key={i}>
+                        <td>{1 + i}</td>
+                        <td style={{ width: "35%" }}>
+
+                            <Field
+                                name={`investmentOption${i}`}
+                                component={SimpleSelectField}
+                                label="Multi Select Field"
+                                options={generateOptions(bankDetailObj, props.modalObject.values[`platformName${props.modalObject.index}`])}
+                                onChange={(selectedOption) => {
+
+                                    const code = getCodeForOption(selectedOption.value, props.modalObject.values[`platformName${props.modalObject.index}`]);
+                                    // Custom function on change
+                                    console.log(`Selected option: ${selectedOption.value}`, "code is :", code);
+                                    // Run additional logic or actions
+
+                                    setFieldValue(`investmentOption${i}`, selectedOption.value)
+
+                                    setFieldValue(`investmentCode${i}`, code)
+
+                                }}
+                            />
+
+                        </td>
+                        <td style={{ width: "150px" }}>
+                            <Field
+                                type="text"
+                                placeholder="Investment Code"
+                                id={`investmentCode${i}`}
+                                name={`investmentCode${i}`}
+                                className="form-control inputDesign"
+                                disabled
+                            />
+                        </td>
+                        <td>
+                            <Field
+                                type="text"
+                                placeholder="Investment Value"
+                                id={`investmentValue${i}`}
+                                name={`investmentValue${i}`}
+                                className="form-control inputDesign"
+                                onChange={(e) => {
+                                    setFieldValue(e.target.name,
+                                        toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                }}
+                            />
+                        </td>
+                    </tr>
+                );
+            }
+            return null;
+        });
+    };
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
 
     return (
         <Formik
@@ -219,7 +310,7 @@ const PortfolioValue = (props) => {
             {({ values, handleChange, setFieldValue }) => {
                 useEffect(() => {
                     fillInitialValues(setFieldValue);
-                }, [values.NumberOfMap]);
+                }, []);
 
                 return (
                     <Form>
@@ -252,9 +343,23 @@ const PortfolioValue = (props) => {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {dynamicFields}
+                                                    {renderRows(currentPage, setFieldValue, values, handleChange)}
                                                 </tbody>
                                             </Table>
+
+                                            {dynamicFields.length >= 10 && (
+                                                <div className='w-100 CustomPaginantion d-flex justify-content-center'>
+                                                    <Pagination
+                                                        align="start"
+                                                        defaultCurrent={1}
+                                                        current={currentPage}
+                                                        total={dynamicFields.length}
+                                                        pageSize={pageSize}
+                                                        onChange={handlePageChange}
+                                                        showSizeChanger={false} // Optional, you can allow page size change if needed
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </div>

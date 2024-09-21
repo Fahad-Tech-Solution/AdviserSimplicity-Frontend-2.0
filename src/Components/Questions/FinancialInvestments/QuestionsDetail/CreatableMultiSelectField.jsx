@@ -66,8 +66,6 @@ const CreatableMultiSelectField = ({ options, field, form }) => {
   );
 };
 
-
-
 const createOption = (label) => ({
   label,
   value: label.toLowerCase().replace(/\W/g, ''),
@@ -81,6 +79,7 @@ const defaultOptions = [
   { value: 'Telstra ', label: 'Telstra ' },
   { value: 'Other', label: 'Other' },
 ];
+
 const CreatableSelectField = ({ field, form }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [options, setOptions] = useState(defaultOptions);
@@ -149,5 +148,62 @@ const CreatableSelectField = ({ field, form }) => {
   );
 };
 
+const SimpleSelectField = ({ options, field, form, onChange }) => {
+  const handleChange = (selectedOption) => {
+    // Update form value
+    form.setFieldValue(field.name, selectedOption ? selectedOption.value : '');
 
-export { CreatableMultiSelectField, CreatableSelectField };
+    // Run custom onChange if provided
+    if (onChange) {
+      onChange(selectedOption);
+    }
+  };
+
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      border: state.isFocused ? '1px solid #36b446' : '1px solid #36b446',
+      boxShadow: state.isFocused ? '0 0 0 0px #36b446' : 'none',
+      '&:hover': {
+        border: state.isFocused ? '1px solid #4CAF50' : '1px solid #36b446'
+      },
+      minHeight: '42px',
+      height: '42px',
+    }),
+    valueContainer: (provided) => ({
+      ...provided,
+      height: '42px',
+    }),
+    input: (provided) => ({
+      ...provided,
+      margin: '0',
+      padding: '0'
+    }),
+    indicatorsContainer: (provided) => ({
+      ...provided,
+      height: '44px'
+    }),
+    menu: (provided) => ({
+      ...provided,
+      zIndex: 9999,
+    }),
+    menuPortal: (provided) => ({
+      ...provided,
+      zIndex: 9999
+    })
+  };
+
+  return (
+    <Select
+      name={field.name}
+      value={options ? options.find(option => option.value === field.value) || null : null}
+      onChange={handleChange}
+      options={options}
+      styles={customStyles}
+      menuPortalTarget={document.body}
+    />
+  );
+};
+
+
+export { CreatableMultiSelectField, CreatableSelectField, SimpleSelectField };

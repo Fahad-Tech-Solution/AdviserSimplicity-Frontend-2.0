@@ -3,11 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { defaultUrl, QuestionDetail } from '../../../Store/Store';
-import { PatchAxios, PostAxios } from '../../Assets/Api/Api';
+import { PatchAxios, PostAxios, toCommaAndDollar } from '../../Assets/Api/Api';
 import DynamicTableRow from '../../Assets/Dynamic/DynamicTableRow';
 import InnerModal from './QuestionsDetail/InnerModal';
 import BankTermForm from './QuestionsDetail/BankTermForm';
 import TermDeposit from './QuestionsDetail/TermDeposit';
+import AustralianShares from './QuestionsDetail/AustralianShares';
+import ManagedFunds from './QuestionsDetail/ManagedFunds';
 
 const MiddleWare = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
@@ -16,11 +18,15 @@ const MiddleWare = (props) => {
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
 
-    let BankAccountFinance = Object.keys(questionDetail[props.modalObject.key]).length > 0 ? questionDetail[props.modalObject.key] : {
-        client: [],
-        partner: [],
-        joint: [],
 
+    let switchArray = ["Australian Shares", "Managed Funds", "Investment Bond"]
+
+    let attrebuteSet = switchArray.includes(props.modalObject.title) ? true : false;
+
+    let BankAccountFinance = Object.keys(questionDetail[props.modalObject.key] || {}).length > 0 ? questionDetail[props.modalObject.key] : {
+        client: [],
+        joint: [],
+        partner: [],
     };// Use an empty object as default if BankAccountFinance is undefined
 
 
@@ -34,16 +40,50 @@ const MiddleWare = (props) => {
     const fillInitialValues = (setFieldValue) => {
         console.log(questionDetail[props.modalObject.key], props.modalObject.key, props.modalObject.title);
         if (BankAccountFinance.clientFK && BankAccountFinance._id) {
+
             setFieldValue("client", BankAccountFinance.client)
             setFieldValue("clientTotal", BankAccountFinance.clientTotal)
+            if (props.modalObject.title != "Australian Shares") {
+                if (attrebuteSet) {
+                    let totalCostBase = BankAccountFinance.client.reduce((total, entry) => total + parseFloat((entry.totalPortfolioCost).replace(/[^0-9.-]+/g, "")), 0);
+                    setFieldValue("clientCostBaseTemp", toCommaAndDollar(totalCostBase))
+                }
+            }
+            else {
+                let totalCostBase = BankAccountFinance.client.reduce((total, entry) => total + parseFloat((entry.costBase).replace(/[^0-9.-]+/g, "")), 0);
+                setFieldValue("clientCostBaseTemp", toCommaAndDollar(totalCostBase))
+            }
+
 
             if (localStorage.getItem('UserStatus') === "Married") {
 
                 setFieldValue("partner", BankAccountFinance.partner)
                 setFieldValue("joint", BankAccountFinance.joint)
+
                 setFieldValue("partnerTotal", BankAccountFinance.partnerTotal)
                 setFieldValue("jointTotal", BankAccountFinance.jointTotal)
+
+                if (props.modalObject.title != "Australian Shares") {
+                    if (attrebuteSet) {
+                        let totalCostBase = BankAccountFinance.partner.reduce((total, entry) => total + parseFloat((entry.totalPortfolioCost).replace(/[^0-9.-]+/g, "")), 0);
+                        setFieldValue("partnerCostBaseTemp", toCommaAndDollar(totalCostBase))
+
+                        totalCostBase = BankAccountFinance.joint.reduce((total, entry) => total + parseFloat((entry.totalPortfolioCost).replace(/[^0-9.-]+/g, "")), 0);
+                        setFieldValue("jointCostBaseTemp", toCommaAndDollar(totalCostBase))
+                    }
+                }
+                else {
+                    let totalCostBase = BankAccountFinance.partner.reduce((total, entry) => total + parseFloat((entry.costBase).replace(/[^0-9.-]+/g, "")), 0);
+                    setFieldValue("partnerCostBaseTemp", toCommaAndDollar(totalCostBase))
+
+                    totalCostBase = BankAccountFinance.joint.reduce((total, entry) => total + parseFloat((entry.costBase).replace(/[^0-9.-]+/g, "")), 0);
+                    setFieldValue("jointCostBaseTemp", toCommaAndDollar(totalCostBase))
+                }
             }
+
+
+
+
         }
     };
 
@@ -57,6 +97,12 @@ const MiddleWare = (props) => {
         // return false
 
         let obj = values;
+
+        if (attrebuteSet) {
+            values.clientCostBaseTemp = undefined;
+            values.partnerCostBaseTemp = undefined;
+            values.jointCostBaseTemp = undefined;
+        }
 
         obj.clientFK = localStorage.getItem("UserID");
 
@@ -92,44 +138,90 @@ const MiddleWare = (props) => {
 
     };
 
-    const rowConfig = [
-        { type: "plainText", text: "client", styleSet: { width: "50%" }, },
-        {
-            name: 'clientTotal',
-            type: 'number-toComma-Modal',
-            placeholder: 'Current Balance',
-            callBackModal: true,
-            func: OpenInnerModal,
-            key: "client",
-            innerModalTitle: props.modalObject.title + " Detail"
-        },
-    ];
 
-    const rowConfigPartner = [
-        { type: "plainText", text: "partner", styleSet: { width: "50%" }, },
-        {
-            name: 'partnerTotal',
-            type: 'number-toComma-Modal',
-            placeholder: 'Current Balance',
-            callBackModal: true,
-            func: OpenInnerModal,
-            key: "partner",
-            innerModalTitle: props.modalObject.title + " Detail"
-        },
-    ];
 
-    const rowConfigJoint = [
-        { type: "plainText", text: "joint", styleSet: { width: "50%" }, },
-        {
-            name: 'jointTotal',
-            type: 'number-toComma-Modal',
-            placeholder: 'Current Balance',
-            callBackModal: true,
-            func: OpenInnerModal,
-            key: "joint",
-            innerModalTitle: props.modalObject.title + " Detail"
-        },
-    ];
+
+
+    const rowConfig = attrebuteSet ?
+        [
+            { type: "plainText", text: "client", styleSet: { width: "50%" }, },
+            {
+                name: 'clientTotal',
+                type: 'number-toComma-Modal',
+                placeholder: 'Current Balance',
+                callBackModal: true,
+                func: OpenInnerModal,
+                key: "client",
+                innerModalTitle: props.modalObject.title + " Detail"
+            },
+            { name: 'clientCostBaseTemp', type: 'number-toComma', disabled: true, placeholder: 'Cost Base', styleSet: { width: "25%" }, },
+        ]
+        : [
+            { type: "plainText", text: "client", styleSet: { width: "50%" }, },
+            {
+                name: 'clientTotal',
+                type: 'number-toComma-Modal',
+                placeholder: 'Current Balance',
+                callBackModal: true,
+                func: OpenInnerModal,
+                key: "client",
+                innerModalTitle: props.modalObject.title + " Detail"
+            },
+        ];
+
+    const rowConfigPartner = attrebuteSet ?
+        [
+            { type: "plainText", text: "partner", styleSet: { width: "50%" }, },
+            {
+                name: 'partnerTotal',
+                type: 'number-toComma-Modal',
+                placeholder: 'Current Balance',
+                callBackModal: true,
+                func: OpenInnerModal,
+                key: "partner",
+                innerModalTitle: props.modalObject.title + " Detail"
+            },
+            { name: 'partnerCostBaseTemp', type: 'number-toComma', disabled: true, placeholder: 'Cost Base', styleSet: { width: "25%" }, },
+        ]
+        : [
+            { type: "plainText", text: "partner", styleSet: { width: "50%" }, },
+            {
+                name: 'partnerTotal',
+                type: 'number-toComma-Modal',
+                placeholder: 'Current Balance',
+                callBackModal: true,
+                func: OpenInnerModal,
+                key: "partner",
+                innerModalTitle: props.modalObject.title + " Detail"
+            },
+        ];
+
+    const rowConfigJoint = attrebuteSet ?
+        [
+            { type: "plainText", text: "joint", styleSet: { width: "50%" }, },
+            {
+                name: 'jointTotal',
+                type: 'number-toComma-Modal',
+                placeholder: 'Current Balance',
+                callBackModal: true,
+                func: OpenInnerModal,
+                key: "joint",
+                innerModalTitle: props.modalObject.title + " Detail"
+            },
+            { name: 'jointCostBaseTemp', type: 'number-toComma', disabled: true, placeholder: 'Cost Base', styleSet: { width: "25%" }, },
+        ]
+        : [
+            { type: "plainText", text: "joint", styleSet: { width: "50%" }, },
+            {
+                name: 'jointTotal',
+                type: 'number-toComma-Modal',
+                placeholder: 'Current Balance',
+                callBackModal: true,
+                func: OpenInnerModal,
+                key: "joint",
+                innerModalTitle: props.modalObject.title + " Detail"
+            },
+        ];
 
     async function OpenInnerModal(title, values, key) {
         console.log(title, values, key);
@@ -164,7 +256,10 @@ const MiddleWare = (props) => {
                                 <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} >
                                     {
                                         modalObject.title === "Bank Accounts Detail" ? <BankTermForm /> :
-                                            modalObject.title === "Term Deposits Detail" ? <BankTermForm /> : ""   //Called Same For Term Deposit Becuse Api is Here and in that Modal All attrebutes and Functionalities are Same
+                                            modalObject.title === "Term Deposits Detail" ? <BankTermForm /> :   //Called Same For Term Deposit Becuse Api is Here and in that Modal All attrebutes and Functionalities are Same
+                                                modalObject.title === "Australian Shares Detail" ? <AustralianShares /> :
+                                                    modalObject.title === "Managed Funds Detail" ? <ManagedFunds /> :
+                                                        modalObject.title === "Investment Bond Detail" ? <ManagedFunds /> : ""
                                     }
                                 </InnerModal>
 
@@ -175,6 +270,10 @@ const MiddleWare = (props) => {
                                                 <tr>
                                                     <th>Owner</th>
                                                     <th>Current Balance</th>
+                                                    {
+                                                        attrebuteSet &&
+                                                        <th>Cost Base</th>
+                                                    }
                                                 </tr>
                                             </thead>
                                             <tbody>

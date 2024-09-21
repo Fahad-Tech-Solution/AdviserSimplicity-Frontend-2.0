@@ -35,12 +35,24 @@ const OverseasPension = (props) => {
       if (data) {
         setFieldValue(`owner`, data.owner || "");
 
-        setFieldValue(`client.regularIncomePA`, data.client.regularIncomePA || "");
-        setFieldValue(`client.country`, data.client.country || "");
+        if (data.owner === "client" || data.owner === "client+partner") {
+          if (data?.client && Object.keys(data?.client).length) {
+
+            setFieldValue(`client.regularIncomePA`, data.client.regularIncomePA || "");
+            setFieldValue(`client.country`, data.client.country || "");
+
+          }
+        }
 
         if (UserStatus === "Married") {
-          setFieldValue(`partner.regularIncomePA`, data.partner.regularIncomePA || "");
-          setFieldValue(`partner.country`, data.partner.country || "");
+
+          if (data.owner === "partner" || data.owner === "client+partner") {
+            if (data?.partner && Object.keys(data?.partner).length) {
+
+              setFieldValue(`partner.regularIncomePA`, data.partner.regularIncomePA || "");
+              setFieldValue(`partner.country`, data.partner.country || "");
+            }
+          }
         }
 
       }

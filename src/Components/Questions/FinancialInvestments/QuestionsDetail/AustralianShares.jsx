@@ -3,8 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { PatchAxios, PostAxios } from '../../../Assets/Api/Api';
+import { PatchAxios, PostAxios, toCommaAndDollar } from '../../../Assets/Api/Api';
 import axios from 'axios';
+import { Pagination } from 'antd';
 
 const AustralianShares = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
@@ -29,7 +30,10 @@ const AustralianShares = (props) => {
         partner: [],
         joint: [],
 
-    }; // Use an empty object as default if australianSharesFinance is undefined
+    };
+
+
+    // Use an empty object as default if australianSharesFinance is undefined
     useEffect(() => {
         if (australianSharesFinance[props.modalObject.Input] && australianSharesFinance[props.modalObject.Input].length) {
             let arr = []
@@ -42,13 +46,17 @@ const AustralianShares = (props) => {
     }, [])
 
 
-    let initialValues = australianSharesFinance[props.modalObject.Input].length ? { NumberOfMap: australianSharesFinance[props.modalObject.Input].length } : { NumberOfMap: "" };
+    let initialValues = { NumberOfMap: "" };
 
     const [dynamicFields, setDynamicFields] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 10; // Number of rows per page
+
 
     const fillInitialValues = (setFieldValue) => {
 
         if (australianSharesFinance[props.modalObject.Input] && australianSharesFinance[props.modalObject.Input].length) {
+            setFieldValue(`NumberOfMap`, australianSharesFinance[props.modalObject.Input].length || '');
 
             australianSharesFinance[props.modalObject.Input].forEach((data, i) => {
                 if (data) {
@@ -64,7 +72,8 @@ const AustralianShares = (props) => {
     };
 
     let handleInput = (e, setFieldValue) => {
-        const value = e.target.value > 10 ? 10 : e.target.value;
+
+        const value = e.target.value > 50 ? 50 : e.target.value;
         setFieldValue(e.target.id, value);
 
         let arr = []
@@ -74,7 +83,7 @@ const AustralianShares = (props) => {
         }
 
         setDynamicFields(arr);
-
+        setCurrentPage(1);
     };
 
     let handleChange = async (e, setFieldValue, i) => {
@@ -103,7 +112,7 @@ const AustralianShares = (props) => {
 
                 if (ASX_Company) {
                     setFieldValue(`companyName${i}`, ASX_Company.longName || "");
-                    setFieldValue(`sharePrice${i}`, ASX_Company.regularMarketPrice || 0);
+                    setFieldValue(`sharePrice${i}`, "$" + ASX_Company.regularMarketPrice || 0);
                     // alert(input.value);
                 } else {
                     clearFields(setFieldValue, i);
@@ -150,7 +159,10 @@ const AustralianShares = (props) => {
                 sharePrice: values[`sharePrice${i}`] || "",
                 shares: values[`shares${i}`] || "",
                 costBase: values[`costBase${i}`] || "",
-                currentBalance: ((values[`costBase${i}`] || 0) + (values[`shares${i}`] || 0)) * (values[`sharePrice${i}`] || 0) || "",
+                currentBalance: toCommaAndDollar((
+                    (parseFloat((values[`costBase${i}`] || "0").toString().replace(/[^0-9.-]+/g, "")) || 0) +
+                    (parseFloat(values[`shares${i}`]) || 0)
+                ) * (parseFloat((values[`sharePrice${i}`] || "0").toString().replace(/[^0-9.-]+/g, "")) || 0)),
             };
             newEntries.push(newEntry);
         }
@@ -160,44 +172,120 @@ const AustralianShares = (props) => {
 
         let DataOf = props.modalObject.Input;
 
-        // Create an object with additional fields
-        let obj = {
-            clientFK: localStorage.getItem("UserID"),
-        };
+        props.setFieldValue(DataOf, newEntries);
 
-        obj[DataOf] = newEntries
+        let total = newEntries.reduce((total, entry) => total + parseFloat((entry.currentBalance).replace(/[^0-9.-]+/g, "")), 0);
+        let totalCostBase = newEntries.reduce((total, entry) => total + parseFloat((entry.costBase).replace(/[^0-9.-]+/g, "")), 0);
 
-        // Calculate total currentBalance
-        obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.currentBalance, 0);
+        props.setFieldValue(DataOf + "Total", toCommaAndDollar(total));
+        props.setFieldValue(DataOf + "CostBaseTemp", toCommaAndDollar(totalCostBase));
 
-        console.log(obj, "final obj")
+        console.log(newEntries, "final obj")
 
-        // Check if australianSharesFinance and the array at props.modalObject.Input exist
-        // const bankAccountArray = australianSharesFinance[props.modalObject.Input] || [];
-        const bankAccountArray = australianSharesFinance.clientFK || "";
-
-        try {
-            let res;
-            if (!bankAccountArray) {
-                res = await PostAxios(`${DefaultUrl}/api/${props.modalObject.key}/Add`, obj);
-            } else {
-                obj.collection = props.modalObject.Input
-                res = await PatchAxios(`${DefaultUrl}/api/${props.modalObject.key}/Update`, obj);
-            }
-
-            if (res) {
-                console.log(res);
-                const updatedData = { ...questionDetail, [props.modalObject.key]: res };
-                setQuestionDetail(updatedData);
-            }
-
-            // Reset the flag state if necessary
-            if (props.flagState) {
-                props.setFlagState(false);
-            }
-        } catch (error) {
-            console.error("Error occurred while making API call:", error);
+        // Reset the flag state if necessary
+        if (props.flagState) {
+            props.setFlagState(false);
         }
+    };
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
+
+
+    const renderRows = (currentPage, setFieldValue, values, handleChange) => {
+        const pageSize = 10;
+        const startIndex = (currentPage - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+
+        return dynamicFields.map((_, i) => {
+            if (i >= startIndex && i < endIndex) {
+                return (
+                    <tr key={i}>
+                        <td>{1 + i}</td>
+                        <td>
+                            <Field
+                                type="text"
+                                placeholder="Name of Institution"
+                                id={`ASXCode${i}`}
+                                name={`ASXCode${i}`}
+                                className="form-control inputDesignDoubleInput"
+                                onChange={(e) => handleChange(e, setFieldValue, i)}
+                            />
+                        </td>
+                        <td>
+                            <Field
+                                type="text"
+                                placeholder="Company Name"
+                                id={`companyName${i}`}
+                                name={`companyName${i}`}
+                                disabled
+                                className="form-control inputDesignDoubleInput"
+                            />
+                        </td>
+                        <td>
+                            <Field
+                                type="text"
+                                placeholder="Share Price"
+                                id={`sharePrice${i}`}
+                                name={`sharePrice${i}`}
+                                disabled
+                                className="form-control inputDesignDoubleInput"
+                            />
+                        </td>
+                        <td>
+                            <Field
+                                type="number"
+                                placeholder="Shares"
+                                id={`shares${i}`}
+                                name={`shares${i}`}
+                                className="form-control inputDesignDoubleInput"
+                                disabled={!values[`sharePrice${i}`]}
+                                onChange={(e) => {
+                                    if (e.target.value > 1000) {
+                                        setFieldValue(e.target.name, 1000)
+                                    }
+                                    else {
+                                        setFieldValue(e.target.name, e.target.value)
+                                    }
+                                }}
+                            />
+                        </td>
+                        <td>
+                            <Field
+                                type="text"
+                                placeholder="Cost base"
+                                id={`costBase${i}`}
+                                name={`costBase${i}`}
+                                className="form-control inputDesignDoubleInput"
+                                disabled={!values[`sharePrice${i}`]}
+                                onChange={(e) => {
+
+                                    setFieldValue(e.target.name,
+                                        toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                }}
+                            />
+                        </td>
+                        <td>
+                            <Field
+                                type="text"
+                                placeholder="Current Balance"
+                                id={`currentBalance${i}`}
+                                name={`currentBalance${i}`}
+                                disabled
+                                value={toCommaAndDollar((
+                                    (parseFloat((values[`costBase${i}`] || "0").toString().replace(/[^0-9.-]+/g, "")) || 0) +
+                                    (parseFloat(values[`shares${i}`]) || 0)
+                                ) * (parseFloat((values[`sharePrice${i}`] || "0").toString().replace(/[^0-9.-]+/g, "")) || 0))}
+
+                                className="form-control inputDesignDoubleInput"
+                            />
+                        </td>
+                    </tr>
+                );
+            }
+            return null;
+        });
     };
 
 
@@ -211,7 +299,7 @@ const AustralianShares = (props) => {
             {({ values, setFieldValue }) => {
                 useEffect(() => {
                     fillInitialValues(setFieldValue);
-                }, [values.NumberOfMap]);
+                }, []);
 
                 return (
                     <Form>
@@ -247,74 +335,23 @@ const AustralianShares = (props) => {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {dynamicFields.map((elem, i) => {
-                                                        return (<tr key={i}>
-                                                            <td>{1 + i}</td>
-                                                            <td>
-                                                                <Field
-                                                                    type="text"
-                                                                    placeholder="Name of Institution"
-                                                                    id={`ASXCode${i}`}
-                                                                    name={`ASXCode${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                    onChange={(e) => { handleChange(e, setFieldValue, i) }}
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <Field
-                                                                    type="text"
-                                                                    placeholder="Company Name"
-                                                                    id={`companyName${i}`}
-                                                                    name={`companyName${i}`}
-                                                                    disabled
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <Field
-                                                                    type="number"
-                                                                    placeholder="Share Price"
-                                                                    id={`sharePrice${i}`}
-                                                                    disabled
-                                                                    name={`sharePrice${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <Field
-                                                                    type="number"
-                                                                    placeholder="Shares"
-                                                                    id={`shares${i}`}
-                                                                    name={`shares${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                    disabled={values[`sharePrice${i}`] ? false : true}
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <Field
-                                                                    type="number"
-                                                                    placeholder="Cost base"
-                                                                    id={`costBase${i}`}
-                                                                    name={`costBase${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                    disabled={values[`sharePrice${i}`] ? false : true}
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <Field
-                                                                    type="number"
-                                                                    placeholder="Current Balance"
-                                                                    id={`currentBalance${i}`}
-                                                                    name={`currentBalance${i}`}
-                                                                    disabled
-                                                                    value={((values[`costBase${i}`] || 0) + (values[`shares${i}`] || 0)) * (values[`sharePrice${i}`] || 0)}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                />
-                                                            </td>
-                                                        </tr>)
-                                                    })}
+                                                    {renderRows(currentPage, setFieldValue, values, handleChange)}
                                                 </tbody>
                                             </Table>
+                                            {/* Ant Design Pagination Component */}
+                                            {dynamicFields.length >= 10 && (
+                                                <div className='w-100 CustomPaginantion d-flex justify-content-center'>
+                                                    <Pagination
+                                                        align="start"
+                                                        defaultCurrent={1}
+                                                        current={currentPage}
+                                                        total={dynamicFields.length}
+                                                        pageSize={pageSize}
+                                                        onChange={handlePageChange}
+                                                        showSizeChanger={false} // Optional, you can allow page size change if needed
+                                                    />
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </div>
