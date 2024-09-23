@@ -15,7 +15,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { useRecoilState } from "recoil";
-import { CRState, CurrentPage, OptionRender, PersonalDetailsData, StepsStatus } from "../../Store/Store";
+import { CRState, CurrentPage, OptionRender, PersonalDetailsData, QuestionDetail, StepsStatus } from "../../Store/Store";
 
 const SideBarrr = (props) => {
   //   let Navigate = useNavigate();
@@ -24,6 +24,9 @@ const SideBarrr = (props) => {
   let [stepsStatus, setStepsStatus] = useRecoilState(StepsStatus); // eslint-disable-line no-unused-vars
   let [CRStateObj, setCRState] = useRecoilState(CRState); // eslint-disable-line no-unused-vars
   let [PersonalDetailObj, setPersonalDetailObj] = useRecoilState(PersonalDetailsData);// eslint-disable-line no-unused-vars
+
+  let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);// eslint-disable-line no-unused-vars
+
 
   let Navigate = useNavigate();
 
@@ -189,6 +192,8 @@ const SideBarrr = (props) => {
                           },
                           "haveAnyChildren": "No",
                         })
+
+                        setQuestionDetail({});
                         Navigate("/PersonalDetail")
                       }}
                       id="Client"

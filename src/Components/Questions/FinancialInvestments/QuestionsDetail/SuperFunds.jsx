@@ -2,8 +2,8 @@ import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { Button, InputGroup, Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { PatchAxios, PostAxios } from '../../../Assets/Api/Api';
+import { BankDetail, defaultUrl, QuestionDetail } from '../../../../Store/Store';
+import { openNotificationSuccess, PatchAxios, PostAxios, toCommaAndDollar } from '../../../Assets/Api/Api';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
@@ -18,6 +18,7 @@ import Beneficiaries from './Beneficiaries';
 const SuperFunds = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+    let bankDetailObj = useRecoilValue(BankDetail);
 
     let [nameSet] = useState(() => {
         if (props.modalObject.Input === "client") {
@@ -35,7 +36,7 @@ const SuperFunds = (props) => {
     let [modalObject, setModalObject] = useState({});
 
 
-    let superAnnuationIssues = Object.keys(questionDetail.superAnnuationIssues).length > 0 ? questionDetail.superAnnuationIssues : {
+    let superAnnuationIssues = Object.keys(questionDetail.superAnnuationIssues || {}).length > 0 ? questionDetail.superAnnuationIssues : {
         client: [],
         partner: [],
         joint: [],
@@ -164,8 +165,6 @@ const SuperFunds = (props) => {
 
         console.log(obj, "final obj")
 
-        // Check if superAnnuationIssues and the array at props.modalObject.Input exist
-        // const bankAccountArray = superAnnuationIssues[props.modalObject.Input] || [];
         const bankAccountArray = superAnnuationIssues.clientFK || "";
 
         try {
@@ -191,84 +190,6 @@ const SuperFunds = (props) => {
             console.error("Error occurred while making API call:", error);
         }
     };
-
-    const options = [
-        "Adelaide Bank",
-        "Alliance Bank",
-        "AMP",
-        "ANZ",
-        "Arab Bank Australia",
-        "Australian Military Bank (ADCU)",
-        "Australian Mutual Bank",
-        "Australian Unity",
-        "Auswide Bank",
-        "AWA Alliance Bank",
-        "Bank Australia (bankmecu)",
-        "Bank First",
-        "Bank of Melbourne",
-        "Bank of Queensland (BOQ)",
-        "Bank of Sydney",
-        "BankSA",
-        "BankVic",
-        "Bankwest",
-        "BCU",
-        "BDCU Alliance Bank",
-        "Bendigo Bank",
-        "Beyond Bank",
-        "Border Bank",
-        "Circle Alliance Bank",
-        "Citi",
-        "Commonwealth Bank",
-        "Community First Bank",
-        "Credit Union SA",
-        "Defence Bank",
-        "Delphi Bank",
-        "Easy Street",
-        "First Choice Credit Union",
-        "First Option Bank",
-        "firstmac",
-        "G&C Mutual",
-        "Gateway Bank Ltd",
-        "Geelong Bank",
-        "Great Southern Bank",
-        "Greater Bank",
-        "Hay",
-        "Heartland Bank",
-        "Heritage Bank",
-        "Horizon Bank",
-        "HSBC Australia",
-        "Hume Bank",
-        "Illawarra Credit Union",
-        "IMB",
-        "ING",
-        "Judo Bank",
-        "Macquarie Bank",
-        "ME",
-        "MOVE Bank",
-        "MyState Bank",
-        "NAB",
-        "Newcastle Permanent",
-        "P&N Bank",
-        "People’s Choice CU",
-        "Policebank",
-        "Prospa",
-        "Qudos Bank",
-        "Rabobank",
-        "RACQ",
-        "RAMS",
-        "Regional Australia Bank",
-        "Rural Bank",
-        "Service One Alliance Bank",
-        "St.George",
-        "Suncorp Bank",
-        "Teachers Mutual Bank",
-        "Ubank",
-        "UniBank",
-        "Up Bank",
-        "Virgin Money",
-        "Westpac",
-        "Zeller"
-    ];
 
 
     return (
@@ -316,16 +237,15 @@ const SuperFunds = (props) => {
                                             <Table striped bordered responsive hover>
                                                 <thead>
                                                     <tr>
+
                                                         <th onClick={() => { console.log(values) }}>No#</th>
                                                         <th>Fund Name</th>
                                                         <th>Member Number</th>
-                                                        <th>Balance & Benefit Details</th>
-                                                        <th>Portfolio Value – Need to have another pop</th>
-                                                        <th>Group Insurance Attached</th>
+                                                        <th>Balance</th>
+                                                        <th>Group Insurance Attached </th>
                                                         <th>Contributions</th>
                                                         <th>Nominated Beneficiaries</th>
                                                         <th>Annual Advice Service Fee</th>
-                                                        <th>Login in Page </th>
 
                                                     </tr>
                                                 </thead>
@@ -336,14 +256,14 @@ const SuperFunds = (props) => {
                                                             <td>
                                                                 <Field
                                                                     as="select"
-                                                                    placeholder="Fund Name"
+                                                                    placeholder="Platform Name"
                                                                     id={`fundName${i}`}
                                                                     name={`fundName${i}`}
                                                                     className="form-select inputDesignDoubleInput"
                                                                 >
                                                                     <option value={""}>Please Select</option>
-                                                                    {options.map((elem, index) => {
-                                                                        return (<option key={index} value={elem}>{elem}</option>)
+                                                                    {bankDetailObj.map((elem, index) => {
+                                                                        return (<option key={index} value={elem._id}>{elem.name}</option>)
                                                                     })}
                                                                 </Field>
                                                             </td>
@@ -359,37 +279,59 @@ const SuperFunds = (props) => {
                                                             <td>
                                                                 <InputGroup className="mb-3">
                                                                     <Field
-                                                                        type="number"
+                                                                        type="text"
                                                                         placeholder="Balance & Benefit Details"
                                                                         id={`balanceBenefitDetails${i}`}
                                                                         name={`balanceBenefitDetails${i}`}
                                                                         className="form-control inputDesignDoubleInput"
                                                                     />
-                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Balance & Benefit Details", `How many Benefit Details and Components do ${nameSet} have ?`, "balanceBenefitDetailsArray", "balanceBenefitDetails", "", values[`balanceBenefitDetailsArray${i}`], i, values) }}>
-                                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                                    </Button>
-                                                                </InputGroup>
-                                                            </td>
-                                                            <td>
-                                                                <InputGroup className="mb-3">
-                                                                    <Field
-                                                                        type="number"
-                                                                        placeholder="Portfolio Value"
-                                                                        id={`portfolioValue${i}`}
-                                                                        name={`portfolioValue${i}`}
-                                                                        className="form-control inputDesignDoubleInput"
-                                                                    />
-                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Portfolio Value", `How many Underlying Investments do ${nameSet} have ?`, "portfolioArray", "portfolioValue", "totalPortfolioCost", values[`portfolioArray${i}`], i) }}>
-                                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                                    </Button>
-                                                                </InputGroup>
+                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
+                                                                        if (values[`fundName${i}`]) {
+                                                                            let name = "";
+                                                                            bankDetailObj.map((elem, index) => {
 
+                                                                                if (elem._id === values[`fundName${i}`]) {
+                                                                                    name = elem.name
+                                                                                }
+
+                                                                            });
+
+                                                                            handleInnerModal(name + "_Balance & Benefit Details",
+                                                                                `How many Benefit Details and Components do ${nameSet} have ?`,
+                                                                                "balanceBenefitDetailsArray", "balanceBenefitDetails", "",
+                                                                                values[`balanceBenefitDetailsArray${i}`], i, values)
+                                                                        }
+                                                                        else {
+                                                                            // type, placement, message, description
+                                                                            openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
+                                                                        }
+                                                                    }}>
+                                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                                    </Button>
+                                                                </InputGroup>
                                                             </td>
                                                             <td>
                                                                 <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
                                                                     <DynamicYesNo name={`groupInsurance${i}`} values={values} handleChange={handleChange} />
                                                                     {values[`groupInsurance${i}`] === "Yes" &&
-                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Insurances Attached", `How many Group Insurance ${nameSet} have?`, "groupInsuranceArray", "", "", values[`groupInsuranceArray${i}`], i) }}>
+                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
+                                                                            if (values[`fundName${i}`]) {
+                                                                                let name = "";
+                                                                                bankDetailObj.map((elem, index) => {
+
+                                                                                    if (elem._id === values[`fundName${i}`]) {
+                                                                                        name = elem.name
+                                                                                    }
+
+                                                                                });
+                                                                                handleInnerModal(name + "_Insurances", `How many Group Insurance ${nameSet} have?`, "groupInsuranceArray", "", "", values[`groupInsuranceArray${i}`], i, values)
+
+                                                                            }
+                                                                            else {
+                                                                                // type, placement, message, description
+                                                                                openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
+                                                                            }
+                                                                        }}>
                                                                             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                         </Button>
                                                                     }
@@ -399,7 +341,24 @@ const SuperFunds = (props) => {
                                                                 <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
                                                                     <DynamicYesNo name={`contributions${i}`} values={values} handleChange={handleChange} />
                                                                     {values[`contributions${i}`] === "Yes" &&
-                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Contributions", `How many Contributions do ${nameSet} have ?`, "ContributionsArray", "", "", values[`ContributionsArray${i}`], i) }}>
+                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
+                                                                            if (values[`fundName${i}`]) {
+                                                                                let name = "";
+                                                                                bankDetailObj.map((elem, index) => {
+
+                                                                                    if (elem._id === values[`fundName${i}`]) {
+                                                                                        name = elem.name
+                                                                                    }
+
+                                                                                });
+                                                                                handleInnerModal(name + "_Contributions", `How many Contributions do ${nameSet} have ?`, "ContributionsArray", "", "", values[`ContributionsArray${i}`], i)
+
+                                                                            }
+                                                                            else {
+                                                                                // type, placement, message, description
+                                                                                openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
+                                                                            }
+                                                                        }}>
                                                                             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                         </Button>
                                                                     }
@@ -409,7 +368,24 @@ const SuperFunds = (props) => {
                                                                 <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
                                                                     <DynamicYesNo name={`nominatedBeneficiaries${i}`} values={values} handleChange={handleChange} />
                                                                     {values[`nominatedBeneficiaries${i}`] === "Yes" &&
-                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Beneficiaries", `How many beneficiaries do ${nameSet} have?`, "beneficiariesArray", "", "", values[`beneficiariesArray${i}`], i) }}>
+                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
+                                                                            if (values[`fundName${i}`]) {
+                                                                                let name = "";
+                                                                                bankDetailObj.map((elem, index) => {
+
+                                                                                    if (elem._id === values[`fundName${i}`]) {
+                                                                                        name = elem.name
+                                                                                    }
+
+                                                                                });
+
+                                                                                handleInnerModal(name + "_Beneficiaries", `How many beneficiaries do ${nameSet} have?`, "beneficiariesArray", "", "", values[`beneficiariesArray${i}`], i)
+                                                                            }
+                                                                            else {
+                                                                                // type, placement, message, description
+                                                                                openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
+                                                                            }
+                                                                        }}>
                                                                             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                         </Button>
                                                                     }
@@ -417,22 +393,15 @@ const SuperFunds = (props) => {
                                                             </td>
                                                             <td>
                                                                 <Field
-                                                                    type="number"
+                                                                    type="text"
                                                                     placeholder="Annual Advice Service Fee"
                                                                     id={`annualAdvice${i}`}
                                                                     name={`annualAdvice${i}`}
                                                                     className="form-control inputDesignDoubleInput"
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <Field
-                                                                    type="number"
-                                                                    placeholder="Login in Page"
-                                                                    id={`loginInPage${i}`}
-                                                                    name={`loginInPage${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                    disabled
-                                                                    value={100}
+                                                                    onChange={(e) => {
+                                                                        setFieldValue(e.target.name,
+                                                                            toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                    }}
                                                                 />
                                                             </td>
                                                         </tr>)

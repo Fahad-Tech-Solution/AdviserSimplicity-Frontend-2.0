@@ -144,7 +144,7 @@ const BankTermForm = (props) => {
 
         let total = newEntries.reduce((total, entry) => total + parseFloat((entry.currentBalance).replace(/[^0-9.-]+/g, "")), 0);
 
-        props.setFieldValue(DataOf + "Total", toCommaAndDollar(total));
+        props.setFieldValue(DataOf + "CurrentBalance", toCommaAndDollar(total));
 
         // Reset the flag state if necessary
         if (props.flagState) {

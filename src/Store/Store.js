@@ -147,13 +147,15 @@ export const CurrentPage = atom({
 
 export const defaultUrl = atom({
     key: "defaultUrl",
+    
     // default: "http://localhost:7000",
-    default: "http://192.168.30.24:7000", // Usama bhai ventures-unit2-2g
+    // default: "http://192.168.30.24:7000", // Usama bhai ventures-unit2-2g
     // default: "http://172.168.40.41:7000", // Usama bhai ventures-unit1-2g
     // default: "http://172.168.40.137:7000",
     // default: "http://192.168.211.242:7000",
     // default: "http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com:7000",
-    // default: "",
+
+    default: "",
 });
 
 export const allAPIs = atom({

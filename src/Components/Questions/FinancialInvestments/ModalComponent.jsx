@@ -45,7 +45,7 @@ const ModalComponent = (props) => {
         "Holiday Home Loan",
         "Investment Property Details",
         "Investment Property Loan",
-        "Super Funds",
+        // "Super Funds",
         "Account Based Pension",
         "invested in Annuities",
         "Will",

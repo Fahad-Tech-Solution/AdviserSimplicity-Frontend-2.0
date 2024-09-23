@@ -66,7 +66,6 @@ const ImportantQuestion = () => {
                 car: "No",
                 boat: "No",
                 caravan: "No",
-                personalAssets: "No",
                 houseHold: "No",
                 otherAssets: "No",
 

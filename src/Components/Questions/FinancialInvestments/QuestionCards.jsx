@@ -657,7 +657,7 @@ const QuestionCards = (props) => {
         "Margin Loan": <MarginLoan />,
         //Following 4 have combined in Financial Investment
         //Super and Requirement
-        "Super Funds": <SuperFunds />,
+        "Super Funds": <MiddleWare />,
         "Account Based Pension": <AccountBasedPension />,
         "Invested in Annuities": <InvestedAnnuities />,
         //Investment Trust
@@ -937,27 +937,6 @@ const QuestionCards = (props) => {
                                             placeholder={elem.title}
                                             name={"partner" + elem.key}
                                             value={questionDetail && questionDetail[elem.key]?.partnerTotal ? questionDetail[elem.key].partnerTotal : ""}
-                                        />
-
-                                        <div
-                                            className={`row justify-content-center align-items-center my-2  ${jointClass} ${PartnerClass}`}
-                                        >
-                                            <div className='col-12 p-0 '>
-                                                <div className='d-flex flex-row justify-content-center align-items-center gap-2 '>
-                                                    <label
-                                                        className=" d-block text-center w-100"
-                                                        htmlFor={"joint" + elem.key}
-                                                    >{(localStorage.getItem("UserName") || "You") + " " + (localStorage.getItem("PartnerName") || "")}</label>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <input type="text"
-                                            className={`form-control inputDesign ${jointClass} ${PartnerClass}`}
-                                            id={"joint" + elem.key}
-                                            placeholder={elem.title}
-                                            name={"joint" + elem.key}
-                                            value={questionDetail && questionDetail[elem.key]?.jointTotal ? questionDetail[elem.key].jointTotal : ""}
                                         />
 
                                     </Card>

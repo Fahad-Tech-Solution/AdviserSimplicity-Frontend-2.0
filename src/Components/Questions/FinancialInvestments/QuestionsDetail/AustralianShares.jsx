@@ -177,7 +177,7 @@ const AustralianShares = (props) => {
         let total = newEntries.reduce((total, entry) => total + parseFloat((entry.currentBalance).replace(/[^0-9.-]+/g, "")), 0);
         let totalCostBase = newEntries.reduce((total, entry) => total + parseFloat((entry.costBase).replace(/[^0-9.-]+/g, "")), 0);
 
-        props.setFieldValue(DataOf + "Total", toCommaAndDollar(total));
+        props.setFieldValue(DataOf + "CurrentBalance", toCommaAndDollar(total));
         props.setFieldValue(DataOf + "CostBaseTemp", toCommaAndDollar(totalCostBase));
 
         console.log(newEntries, "final obj")

@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilValue } from 'recoil';
 import { defaultUrl, } from '../../../../Store/Store';
+import DatePicker from 'react-datepicker';
+import { handleInputBlur, handleInputChange, handleInputFocus, handleInputKeyDown, toPercentage } from '../../../Assets/Api/Api';
 
 const Beneficiaries = (props) => {
 
@@ -27,6 +29,7 @@ const Beneficiaries = (props) => {
                 if (data) {
                     console.log(data.investmentOption)
                     setFieldValue(`nominationType${i}`, data.nominationType || '');
+                    setFieldValue(`DOB${i}`, data.DOB || '');
                     setFieldValue(`beneficiaryName${i}`, data.beneficiaryName || '');
                     setFieldValue(`relationshipStatus${i}`, data.relationshipStatus || '');
                     setFieldValue(`shareBenefit${i}`, data.shareBenefit || '');
@@ -66,6 +69,7 @@ const Beneficiaries = (props) => {
             // alert("loop chala")
             const newEntry = {
                 nominationType: values[`nominationType${i}`] || "",
+                DOB: values[`DOB${i}`] || "",
                 beneficiaryName: values[`beneficiaryName${i}`] || "",
                 relationshipStatus: values[`relationshipStatus${i}`] || "",
                 shareBenefit: values[`shareBenefit${i}`] || "",
@@ -88,6 +92,11 @@ const Beneficiaries = (props) => {
     let extraValue = ["Account Based Pension", "Invested in Annuities"]
 
     let [autoClearValue, setAutoClearValue] = useState(false);
+
+
+    let FormulaSetting = () => {
+
+    }
 
     return (
         <Formik
@@ -127,6 +136,7 @@ const Beneficiaries = (props) => {
                                                     <tr>
                                                         <th>No#</th>
                                                         <th>Nomination Type</th>
+                                                        <th>DOB</th>
                                                         <th>Beneficiary Name</th>
                                                         <th>Relationship Status</th>
                                                         <th>Share of Benefit</th>
@@ -174,6 +184,26 @@ const Beneficiaries = (props) => {
                                                                         <option value={"Legal Personal Representative (Your Estate)"}>Legal Personal Representative (Your Estate)</option>
                                                                     </Field>
                                                                 </td>
+                                                                <td style={{ minWidth: "150px" }}>
+                                                                    <div>
+                                                                        <DatePicker
+                                                                            className="form-control inputDesignDoubleInput shadow DateInputPadding"
+                                                                            showIcon
+                                                                            id={`DOB${i}`}
+                                                                            name={`DOB${i}`}
+                                                                            selected={values[`DOB${i}`]}
+                                                                            onChange={(date) => setFieldValue(`DOB${i}`, date)}
+                                                                            dateFormat="dd/MM/yyyy"
+                                                                            placeholderText="dd/mm/yyyy"
+                                                                            maxDate={new Date()}
+                                                                            showMonthDropdown
+                                                                            showYearDropdown
+                                                                            dropdownMode="select"
+                                                                            onBlur={handleBlur}
+                                                                            wrapperClassName="w-100"
+                                                                        />
+                                                                    </div>
+                                                                </td>
                                                                 <td>
                                                                     <Field
                                                                         type="text"
@@ -208,15 +238,16 @@ const Beneficiaries = (props) => {
                                                                 </td>
                                                                 <td>
                                                                     <Field
-                                                                        type="number"
+                                                                        type="text"
                                                                         placeholder="Share of Benefit"
                                                                         id={`shareBenefit${i}`}
                                                                         name={`shareBenefit${i}`}
                                                                         className="form-control inputDesign"
                                                                         disabled={values[`nominationType${i}`] == "Legal Personal Representative (Your Estate)"}
-                                                                        onChange={(e) => {
-                                                                            setFieldValue(`shareBenefit${i}`, e.target.value > 100 ? 100 : e.target.value);
-                                                                        }}
+                                                                        onChange={(e) => handleInputChange(e, setFieldValue, FormulaSetting, values)}
+                                                                        onFocus={(e) => handleInputFocus(e, setFieldValue)}
+                                                                        onKeyDown={(e) => handleInputKeyDown(e)}
+                                                                        onBlur={(e) => handleInputBlur(e, setFieldValue, toPercentage, FormulaSetting, values)}
                                                                     />
                                                                 </td>
 

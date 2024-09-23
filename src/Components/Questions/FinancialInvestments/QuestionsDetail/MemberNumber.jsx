@@ -2,15 +2,17 @@ import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { PatchAxios, PostAxios } from '../../../Assets/Api/Api';
+import { BankDetail, defaultUrl, QuestionDetail } from '../../../../Store/Store';
+import { PatchAxios, PostAxios, toCommaAndDollar } from '../../../Assets/Api/Api';
 import DatePicker from 'react-datepicker';
+import { SimpleSelectField } from './CreatableMultiSelectField';
 
 const MemberNumber = (props) => {
 
 
     let initialValues = { NumberOfMap: 1 };
 
+    let bankDetailObj = useRecoilValue(BankDetail);
 
     const [dynamicFields, setDynamicFields] = useState([]);
 
@@ -30,7 +32,7 @@ const MemberNumber = (props) => {
                 if (data) {
                     console.log(data.investmentOption)
                     setFieldValue(`fundType${i}`, data.fundType || '');
-                    setFieldValue(`currentBalance${i}`, data.currentBalance || '');
+                    setFieldValue(`portfolioValue${i}`, data.portfolioValue || '');
                     setFieldValue(`eligibleServiceDate${i}`, data.eligibleServiceDate || '');
                     setFieldValue(`commencementDate${i}`, data.commencementDate || '');
                     setFieldValue(`taxFreeComponent${i}`, data.taxFreeComponent || '');
@@ -74,7 +76,7 @@ const MemberNumber = (props) => {
             // alert("loop chala")
             const newEntry = {
                 fundType: values[`fundType${i}`] || "",
-                currentBalance: values[`currentBalance${i}`] || "",
+                portfolioValue: values[`portfolioValue${i}`] || "",
                 eligibleServiceDate: values[`eligibleServiceDate${i}`] || "",
                 commencementDate: values[`commencementDate${i}`] || "",
                 taxFreeComponent: values[`taxFreeComponent${i}`] || "",
@@ -89,18 +91,46 @@ const MemberNumber = (props) => {
         // Log the new entries to verify
         console.log(newEntries);
 
-        let total = newEntries.reduce((total, entry) => total + entry.taxableComponent, 0);
-        let total2 = newEntries.reduce((total, entry) => total + entry.preservedAmount, 0);
+        let total = newEntries.reduce((total, entry) => total + (parseFloat(entry.taxableComponent.replace(/[^0-9.-]+/g, "")) || 0), 0);
+        let total2 = newEntries.reduce((total, entry) => total + (parseFloat(entry.preservedAmount.replace(/[^0-9.-]+/g, "")) || 0), 0);
 
 
         props.setFieldValue(`${props.modalObject.key}${props.modalObject.index}`, newEntries)
         // props.setFieldValue(`${props.modalObject.key3}${props.modalObject.index}`, total)
-        props.setFieldValue(`${props.modalObject.mainKey}${props.modalObject.index}`, total + total2)
+        props.setFieldValue(`${props.modalObject.mainKey}${props.modalObject.index}`, toCommaAndDollar(total + total2))
 
         // Reset the flag state if necessary
         if (props.flagState) {
             props.setFlagState(false);
         }
+    };
+
+
+
+    const generateOptions = (bankDetailObj, platformName) => {
+        const InstituteOptions = [];
+
+        if (Array.isArray(bankDetailObj) && bankDetailObj.length > 0) {
+            bankDetailObj.forEach((elem) => {
+                // Check if the platform name matches
+                if (platformName === elem._id) {
+                    // Add the main option for the element
+                    // InstituteOptions.push({ value: elem._id, label: `${elem.name} (${elem.arrayOfOffers.length} offers)` });
+
+                    // Add InstituteOptions from arrayOfOffers if available
+                    if (Array.isArray(elem.arrayOfOffers) && elem.arrayOfOffers.length > 0) {
+                        elem.arrayOfOffers.forEach((offerElem) => {
+                            InstituteOptions.push({ value: offerElem._id, label: `${offerElem.name} (${offerElem.code})` });
+                        });
+                    }
+                }
+            });
+        }
+
+
+        // console.log(InstituteOptions, bankDetailObj, platformName, "data")
+
+        return InstituteOptions;
     };
 
 
@@ -142,7 +172,7 @@ const MemberNumber = (props) => {
                                                     <tr>
                                                         <th>No#</th>
                                                         <th>Fund type</th>
-                                                        <th>Current Balance</th>
+                                                        <th>Portfolio Value</th>
                                                         <th>Commencement Date</th>
                                                         <th>Eligible Service Date</th>
                                                         <th>Tax Free component</th>
@@ -157,25 +187,30 @@ const MemberNumber = (props) => {
                                                         return (
                                                             <tr key={i}>
                                                                 <td>{1 + i}</td>
-                                                                <td>
+                                                                <td style={{ minWidth: "150px" }}>
                                                                     <Field
-                                                                        type="number"
-                                                                        placeholder="Fund type"
-                                                                        id={`fundType${i}`}
                                                                         name={`fundType${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        component={SimpleSelectField}
+                                                                        label="Multi Select Field"
+                                                                        options={generateOptions(bankDetailObj, props.modalObject.values[`fundName${props.modalObject.index}`])}
+                                                                        onChange={(selectedOption) => { setFieldValue(`investmentOption${i}`, selectedOption.value) }}
                                                                     />
                                                                 </td>
-                                                                <td>
+                                                                <td style={{ minWidth: "90px" }}>
                                                                     <Field
-                                                                        type="number"
-                                                                        placeholder="Current Balance"
-                                                                        id={`currentBalance${i}`}
-                                                                        name={`currentBalance${i}`}
+                                                                        type="text"
+                                                                        placeholder="Portfolio Value"
+                                                                        id={`portfolioValue${i}`}
+                                                                        name={`portfolioValue${i}`}
                                                                         className="form-control inputDesign"
+                                                                        onChange={(e) => {
+
+                                                                            setFieldValue(`portfolioValue${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                            setFieldValue(`taxableComponent${i}`, toCommaAndDollar(parseFloat(e.target.value.replace(/[^0-9.-]+/g, "") || 0) - (parseFloat(values[`taxFreeComponent${i}`].replace(/[^0-9.-]+/g, "")) || 0)));
+                                                                        }}
                                                                     />
                                                                 </td>
-                                                                <td>
+                                                                <td style={{ minWidth: "150px" }}>
                                                                     <div>
                                                                         <DatePicker
                                                                             className="form-control inputDesignDoubleInput shadow DateInputPadding"
@@ -195,7 +230,7 @@ const MemberNumber = (props) => {
                                                                         />
                                                                     </div>
                                                                 </td>
-                                                                <td>
+                                                                <td style={{ minWidth: "150px" }}>
                                                                     <div>
                                                                         <DatePicker
                                                                             className="form-control inputDesignDoubleInput shadow DateInputPadding"
@@ -217,20 +252,20 @@ const MemberNumber = (props) => {
                                                                 </td>
                                                                 <td>
                                                                     <Field
-                                                                        type="number"
+                                                                        type="text"
                                                                         placeholder="Tax Free component"
                                                                         id={`taxFreeComponent${i}`}
                                                                         name={`taxFreeComponent${i}`}
                                                                         onChange={(e) => {
-                                                                            setFieldValue(`taxFreeComponent${i}`, e.target.value);
-                                                                            setFieldValue(`taxableComponent${i}`, (props.modalObject.values[`portfolioValue${props.modalObject.index}`] || 0) - e.target.value);
+                                                                            setFieldValue(`taxFreeComponent${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                            setFieldValue(`taxableComponent${i}`, toCommaAndDollar((parseFloat(values[`portfolioValue${i}`].replace(/[^0-9.-]+/g, "")) || 0) - parseFloat(e.target.value.replace(/[^0-9.-]+/g, "") || 0)));
                                                                         }}
                                                                         className="form-control inputDesign"
                                                                     />
                                                                 </td>
                                                                 <td>
                                                                     <Field
-                                                                        type="number"
+                                                                        type="text"
                                                                         placeholder="Taxable component"
                                                                         id={`taxableComponent${i}`}
                                                                         name={`taxableComponent${i}`}
@@ -240,33 +275,33 @@ const MemberNumber = (props) => {
                                                                 </td>
                                                                 <td>
                                                                     <Field
-                                                                        type="number"
+                                                                        type="text"
                                                                         placeholder="Restricted non preserved"
                                                                         id={`restrictedNonPreserved${i}`}
                                                                         name={`restrictedNonPreserved${i}`}
                                                                         className="form-control inputDesign"
                                                                         onChange={(e) => {
-                                                                            setFieldValue(`restrictedNonPreserved${i}`, e.target.value);
-                                                                            setFieldValue(`preservedAmount${i}`, (props.modalObject.values[`portfolioValue${props.modalObject.index}`] || 0) - e.target.value - (values[`unrestrictedNonPreserved${i}`] || 0));
+                                                                            setFieldValue(`restrictedNonPreserved${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                            setFieldValue(`preservedAmount${i}`, toCommaAndDollar((parseFloat(values[`portfolioValue${i}`].replace(/[^0-9.-]+/g, "")) || 0) - parseFloat(e.target.value.replace(/[^0-9.-]+/g, "") || 0) - ((parseFloat(values[`unrestrictedNonPreserved${i}`].replace(/[^0-9.-]+/g, ""))) || 0)));
                                                                         }}
                                                                     />
                                                                 </td>
                                                                 <td>
                                                                     <Field
-                                                                        type="number"
+                                                                        type="text"
                                                                         placeholder="Unrestricted non preserved"
                                                                         id={`unrestrictedNonPreserved${i}`}
                                                                         name={`unrestrictedNonPreserved${i}`}
                                                                         className="form-control inputDesign"
                                                                         onChange={(e) => {
-                                                                            setFieldValue(`unrestrictedNonPreserved${i}`, e.target.value);
-                                                                            setFieldValue(`preservedAmount${i}`, (props.modalObject.values[`portfolioValue${props.modalObject.index}`] || 0) - e.target.value - (values[`restrictedNonPreserved${i}`] || 0));
+                                                                            setFieldValue(`unrestrictedNonPreserved${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                            setFieldValue(`preservedAmount${i}`, toCommaAndDollar((parseFloat(values[`portfolioValue${i}`].replace(/[^0-9.-]+/g, "")) || 0) - parseFloat(e.target.value.replace(/[^0-9.-]+/g, "") || 0) - ((parseFloat(values[`restrictedNonPreserved${i}`].replace(/[^0-9.-]+/g, ""))) || 0)));
                                                                         }}
                                                                     />
                                                                 </td>
                                                                 <td>
                                                                     <Field
-                                                                        type="number"
+                                                                        type="text"
                                                                         disabled
                                                                         placeholder="Preserved amount"
                                                                         id={`preservedAmount${i}`}

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, InputGroup, Row, Table } from 'react-bootstrap';
 import { useRecoilValue } from 'recoil';
 import { BankDetail, defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { toCommaAndDollar } from '../../../Assets/Api/Api';
+import { openNotificationSuccess, toCommaAndDollar } from '../../../Assets/Api/Api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import InnerModal from './InnerModal';
@@ -140,7 +140,7 @@ const ManagedFunds = (props) => {
         let total = newEntries.reduce((total, entry) => total + parseFloat((entry.portfolioValue).replace(/[^0-9.-]+/g, "")), 0);
         let totalCostBase = newEntries.reduce((total, entry) => total + parseFloat((entry.totalPortfolioCost).replace(/[^0-9.-]+/g, "")), 0);
 
-        props.setFieldValue(DataOf + "Total", toCommaAndDollar(total));
+        props.setFieldValue(DataOf + "CurrentBalance", toCommaAndDollar(total));
         props.setFieldValue(DataOf + "CostBaseTemp", toCommaAndDollar(totalCostBase));
 
         console.log(newEntries, "final obj")
@@ -245,19 +245,25 @@ const ManagedFunds = (props) => {
                                                                     <Button className='btn bgColor modalBtn border-0' id="button-addon2"
                                                                         onClick={() => {
 
-                                                                            let name = "";
-                                                                            bankDetailObj.map((elem, index) => {
+                                                                            if (values[`platformName${i}`]) {
+                                                                                let name = "";
+                                                                                bankDetailObj.map((elem, index) => {
 
-                                                                                if (elem._id === values[`platformName${i}`]) {
-                                                                                    name = elem.name
-                                                                                }
+                                                                                    if (elem._id === values[`platformName${i}`]) {
+                                                                                        name = elem.name
+                                                                                    }
 
-                                                                            });
+                                                                                });
 
-                                                                            handleInnerModal(name + "_Portfolio Value",
-                                                                                `How many Underlying Investments do ${nameSet} have ?`,
-                                                                                "portfolioArray", "portfolioValue", "totalPortfolioCost",
-                                                                                values[`portfolioArray${i}`], i, values)
+                                                                                handleInnerModal(name + "_Portfolio Value",
+                                                                                    `How many Underlying Investments do ${nameSet} have ?`,
+                                                                                    "portfolioArray", "portfolioValue", "totalPortfolioCost",
+                                                                                    values[`portfolioArray${i}`], i, values)
+                                                                            }
+                                                                            else {
+                                                                                // type, placement, message, description
+                                                                                openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Platform Name First")
+                                                                            }
                                                                         }}>
                                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                     </Button>

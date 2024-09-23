@@ -3,8 +3,6 @@ import React, { useEffect, useState } from "react";
 
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 
-import Dashboard from "./Components/Dashboard/Dashboard";
-
 import { Route, Routes } from "react-router-dom";
 import LoginForm from "./Components/Auth/LoginForm";
 import Register from "./Components/Auth/Register";

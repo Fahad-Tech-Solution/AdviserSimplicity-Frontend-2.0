@@ -3,11 +3,12 @@ import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilValue } from 'recoil';
 import { defaultUrl } from '../../../../Store/Store';
+import { toCommaAndDollar } from '../../../Assets/Api/Api';
 
 const Contributions = (props) => {
 
 
-    let initialValues = props.modalObject.editArray.length ? { NumberOfMap: props.modalObject.editArray.length } : { NumberOfMap: "" };
+    let initialValues = { NumberOfMap: "10" };
 
     const [dynamicFields, setDynamicFields] = useState([]);
 
@@ -107,12 +108,12 @@ const Contributions = (props) => {
                         <Row>
                             <div className="col-md-12">
                                 <div className='row justify-content-center'>
-                                    <div className='col-md-7'>
+                                    <div className='col-md-7 d-none'>
                                         <p className='text-end mt-1'>
                                             {props.modalObject.question}
                                         </p>
                                     </div>
-                                    <div className='col-md-3'>
+                                    <div className='col-md-3 d-none'>
                                         <Field
                                             type="number"
                                             id="NumberOfMap"
@@ -136,7 +137,7 @@ const Contributions = (props) => {
                                                 </thead>
                                                 <tbody>
                                                     {dynamicFields.map((elem, i) => {
-                                                        const startYear = 2019 + i;
+                                                        const startYear = 2020 + i;
                                                         const endYear = startYear + 1;
                                                         const yearRange = `${startYear}/${endYear}`;
 
@@ -146,33 +147,33 @@ const Contributions = (props) => {
                                                                 <td>{yearRange}</td> {/* Displaying the year range */}
                                                                 <td>
                                                                     <Field
-                                                                        type="number"
+                                                                        type="text"
                                                                         placeholder="Employer Contributions"
                                                                         id={`employerContributions${i}`}
                                                                         name={`employerContributions${i}`}
                                                                         className="form-control inputDesign"
                                                                         onChange={(e) => {
-                                                                            setFieldValue(`employerContributions${i}`, e.target.value);
-                                                                            setFieldValue(`totalConcessional${i}`, (parseFloat(values[`concessional${i}`]) || 0) + parseFloat(e.target.value));
+                                                                            setFieldValue(`employerContributions${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                            setFieldValue(`totalConcessional${i}`, toCommaAndDollar((parseFloat(values[`concessional${i}`].replace(/[^0-9.-]+/g, "") || 0)) + parseFloat(e.target.value.replace(/[^0-9.-]+/g, "") || 0)));
                                                                         }}
                                                                     />
                                                                 </td>
                                                                 <td>
                                                                     <Field
-                                                                        type="number"
+                                                                        type="text"
                                                                         placeholder="Concessional (Include. Salary Sac)"
                                                                         id={`concessional${i}`}
                                                                         name={`concessional${i}`}
                                                                         className="form-control inputDesign"
                                                                         onChange={(e) => {
-                                                                            setFieldValue(`concessional${i}`, e.target.value);
-                                                                            setFieldValue(`totalConcessional${i}`, (parseFloat(values[`employerContributions${i}`]) || 0) + parseFloat(e.target.value));
+                                                                            setFieldValue(`concessional${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                            setFieldValue(`totalConcessional${i}`, toCommaAndDollar(parseFloat(values[`employerContributions${i}`].replace(/[^0-9.-]+/g, "") || 0) + parseFloat(e.target.value.replace(/[^0-9.-]+/g, "") || 0)));
                                                                         }}
                                                                     />
                                                                 </td>
                                                                 <td>
                                                                     <Field
-                                                                        type="number"
+                                                                        type="text"
                                                                         placeholder="Total Concessional Contributions"
                                                                         id={`totalConcessional${i}`}
                                                                         name={`totalConcessional${i}`}
@@ -182,11 +183,15 @@ const Contributions = (props) => {
                                                                 </td>
                                                                 <td>
                                                                     <Field
-                                                                        type="number"
+                                                                        type="text"
                                                                         placeholder="Non-Concessional Contributions"
                                                                         id={`nonConcessionalContributions${i}`}
                                                                         name={`nonConcessionalContributions${i}`}
                                                                         className="form-control inputDesign"
+                                                                        onChange={(e) => {
+                                                                            setFieldValue(e.target.name,
+                                                                                toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                        }}
                                                                     />
                                                                 </td>
 

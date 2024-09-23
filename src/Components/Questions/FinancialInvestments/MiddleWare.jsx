@@ -7,9 +7,10 @@ import { PatchAxios, PostAxios, toCommaAndDollar } from '../../Assets/Api/Api';
 import DynamicTableRow from '../../Assets/Dynamic/DynamicTableRow';
 import InnerModal from './QuestionsDetail/InnerModal';
 import BankTermForm from './QuestionsDetail/BankTermForm';
-import TermDeposit from './QuestionsDetail/TermDeposit';
+
 import AustralianShares from './QuestionsDetail/AustralianShares';
 import ManagedFunds from './QuestionsDetail/ManagedFunds';
+import SuperFunds from './QuestionsDetail/SuperFunds';
 
 const MiddleWare = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
@@ -23,6 +24,11 @@ const MiddleWare = (props) => {
 
     let attrebuteSet = switchArray.includes(props.modalObject.title) ? true : false;
 
+
+    let clientPartnerArray = ["Super Funds"]
+
+    let clientPartnerOnly = clientPartnerArray.includes(props.modalObject.title) ? true : false;
+
     let BankAccountFinance = Object.keys(questionDetail[props.modalObject.key] || {}).length > 0 ? questionDetail[props.modalObject.key] : {
         client: [],
         joint: [],
@@ -31,9 +37,9 @@ const MiddleWare = (props) => {
 
 
     let initialValues = {
-        clientTotal: "",
-        partnerTotal: "",
-        jointTotal: ""
+        clientCurrentBalance: "",
+        partnerCurrentBalance: "",
+        jointCurrentBalance: ""
     };
 
 
@@ -42,7 +48,8 @@ const MiddleWare = (props) => {
         if (BankAccountFinance.clientFK && BankAccountFinance._id) {
 
             setFieldValue("client", BankAccountFinance.client)
-            setFieldValue("clientTotal", BankAccountFinance.clientTotal)
+            setFieldValue("clientCurrentBalance", BankAccountFinance.clientCurrentBalance)
+
             if (props.modalObject.title != "Australian Shares") {
                 if (attrebuteSet) {
                     let totalCostBase = BankAccountFinance.client.reduce((total, entry) => total + parseFloat((entry.totalPortfolioCost).replace(/[^0-9.-]+/g, "")), 0);
@@ -60,8 +67,8 @@ const MiddleWare = (props) => {
                 setFieldValue("partner", BankAccountFinance.partner)
                 setFieldValue("joint", BankAccountFinance.joint)
 
-                setFieldValue("partnerTotal", BankAccountFinance.partnerTotal)
-                setFieldValue("jointTotal", BankAccountFinance.jointTotal)
+                setFieldValue("partnerCurrentBalance", BankAccountFinance.partnerCurrentBalance)
+                setFieldValue("jointCurrentBalance", BankAccountFinance.jointCurrentBalance)
 
                 if (props.modalObject.title != "Australian Shares") {
                     if (attrebuteSet) {
@@ -80,9 +87,6 @@ const MiddleWare = (props) => {
                     setFieldValue("jointCostBaseTemp", toCommaAndDollar(totalCostBase))
                 }
             }
-
-
-
 
         }
     };
@@ -106,10 +110,44 @@ const MiddleWare = (props) => {
 
         obj.clientFK = localStorage.getItem("UserID");
 
+
+        if (obj.jointCurrentBalance && obj.jointCurrentBalance !== undefined && obj.jointCurrentBalance !== null && parseFloat(obj.jointCurrentBalance.replace(/[^0-9.-]+/g, "")) !== 0) {
+            let fiftyPercent = 0;
+
+            try {
+                // Safely parse the value after removing non-numeric characters
+                let jointCurrentBalance = parseFloat(obj.jointCurrentBalance.replace(/[^0-9.-]+/g, ""));
+
+                // Check if the parsed value is a valid number
+                if (isNaN(jointCurrentBalance) || jointCurrentBalance === undefined) {
+                    fiftyPercent = 0; // Set to 0 if invalid
+                } else {
+                    fiftyPercent = jointCurrentBalance / 2; // Calculate fifty percent if valid
+                }
+            } catch (error) {
+                // Handle any unexpected errors
+                console.error("Error calculating fiftyPercent:", error);
+                fiftyPercent = 0; // Set to 0 in case of error
+            }
+
+
+            if (fiftyPercent === 0) {
+                obj.clientTotal = obj.clientCurrentBalance;
+                obj.partnerTotal = obj.partnerCurrentBalance;
+            }
+            else {
+                obj.clientTotal = toCommaAndDollar((parseFloat(obj.clientCurrentBalance.replace(/[^0-9.-]+/g, "")) || 0) + fiftyPercent)
+                obj.partnerTotal = toCommaAndDollar((parseFloat(obj.partnerCurrentBalance.replace(/[^0-9.-]+/g, "")) || 0) + fiftyPercent)
+            }
+
+        }
+        else {
+            obj.clientTotal = obj.clientCurrentBalance || "$0";
+            obj.partnerTotal = obj.partnerCurrentBalance || "$0";
+        }
+
         console.log(obj, "final obj")
 
-        // Check if BankAccountFinance and the array at props.modalObject.Input exist
-        // const bankAccountArray = BankAccountFinance[props.modalObject.Input] || [];
         const bankAccountArray = BankAccountFinance.clientFK || "";
 
         try {
@@ -146,7 +184,7 @@ const MiddleWare = (props) => {
         [
             { type: "plainText", text: "client", styleSet: { width: "50%" }, },
             {
-                name: 'clientTotal',
+                name: 'clientCurrentBalance',
                 type: 'number-toComma-Modal',
                 placeholder: 'Current Balance',
                 callBackModal: true,
@@ -159,7 +197,7 @@ const MiddleWare = (props) => {
         : [
             { type: "plainText", text: "client", styleSet: { width: "50%" }, },
             {
-                name: 'clientTotal',
+                name: 'clientCurrentBalance',
                 type: 'number-toComma-Modal',
                 placeholder: 'Current Balance',
                 callBackModal: true,
@@ -173,7 +211,7 @@ const MiddleWare = (props) => {
         [
             { type: "plainText", text: "partner", styleSet: { width: "50%" }, },
             {
-                name: 'partnerTotal',
+                name: 'partnerCurrentBalance',
                 type: 'number-toComma-Modal',
                 placeholder: 'Current Balance',
                 callBackModal: true,
@@ -186,7 +224,7 @@ const MiddleWare = (props) => {
         : [
             { type: "plainText", text: "partner", styleSet: { width: "50%" }, },
             {
-                name: 'partnerTotal',
+                name: 'partnerCurrentBalance',
                 type: 'number-toComma-Modal',
                 placeholder: 'Current Balance',
                 callBackModal: true,
@@ -200,7 +238,7 @@ const MiddleWare = (props) => {
         [
             { type: "plainText", text: "joint", styleSet: { width: "50%" }, },
             {
-                name: 'jointTotal',
+                name: 'jointCurrentBalance',
                 type: 'number-toComma-Modal',
                 placeholder: 'Current Balance',
                 callBackModal: true,
@@ -213,7 +251,7 @@ const MiddleWare = (props) => {
         : [
             { type: "plainText", text: "joint", styleSet: { width: "50%" }, },
             {
-                name: 'jointTotal',
+                name: 'jointCurrentBalance',
                 type: 'number-toComma-Modal',
                 placeholder: 'Current Balance',
                 callBackModal: true,
@@ -259,7 +297,8 @@ const MiddleWare = (props) => {
                                             modalObject.title === "Term Deposits Detail" ? <BankTermForm /> :   //Called Same For Term Deposit Becuse Api is Here and in that Modal All attrebutes and Functionalities are Same
                                                 modalObject.title === "Australian Shares Detail" ? <AustralianShares /> :
                                                     modalObject.title === "Managed Funds Detail" ? <ManagedFunds /> :
-                                                        modalObject.title === "Investment Bond Detail" ? <ManagedFunds /> : ""
+                                                        modalObject.title === "Investment Bond Detail" ? <ManagedFunds /> :
+                                                            modalObject.title === "Super Funds Detail" ? <SuperFunds /> : ""
                                     }
                                 </InnerModal>
 
@@ -293,13 +332,15 @@ const MiddleWare = (props) => {
                                                             handleChange={handleChange}
                                                             handleBlur={handleBlur}
                                                         />
-                                                        <DynamicTableRow
-                                                            rowConfig={rowConfigJoint}
-                                                            values={values}
-                                                            setFieldValue={setFieldValue}
-                                                            handleChange={handleChange}
-                                                            handleBlur={handleBlur}
-                                                        />
+                                                        {!clientPartnerOnly &&
+                                                            <DynamicTableRow
+                                                                rowConfig={rowConfigJoint}
+                                                                values={values}
+                                                                setFieldValue={setFieldValue}
+                                                                handleChange={handleChange}
+                                                                handleBlur={handleBlur}
+                                                            />
+                                                        }
                                                     </React.Fragment>
                                                 }
                                             </tbody>

@@ -23,15 +23,24 @@ const InnerModal = (props) => {
         "Insurances Attached", "Accumulations Benefits",
         "Pension Benefits", "Balance & Benefit Details",
         "Salary Package", "Home Loan", "Australian Shares Detail", "Managed Funds Detail",
+        "Super Funds Detail",
+        "Investment Bond Detail"
         // "Bank Accounts Detail"
     ]; // Add other titles that should use "xl" here
 
-    const size = xlTitles.includes(props.modalObject.title) ? "xl" : "lg";
+    const xlKeys = ["balanceBenefitDetailsArray",
+        "groupInsuranceArray"
+        // "Bank Accounts Detail"
+    ]; // Add other titles that should use "xl" here
+
+
+
+
+    const size = xlTitles.includes(props.modalObject.title) ? "xl" : xlKeys.includes(props.modalObject.key) ? "xl" : "lg";
 
     return (
         <div>
             <Modal size={size} backdrop="static" keyboard={false} centered show={props.flagState} onHide={() => { props.setFlagState(false) }}>
-
                 <Element id="modal-container">
                 </Element>
                 <Modal.Header closeButton>
