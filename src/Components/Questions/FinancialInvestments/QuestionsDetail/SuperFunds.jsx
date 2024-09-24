@@ -70,17 +70,12 @@ const SuperFunds = (props) => {
                 if (data) {
                     setFieldValue(`fundName${i}`, data.fundName || '');
                     setFieldValue(`memberNumber${i}`, data.memberNumber || '');
-                    setFieldValue(`memberArray${i}`, data.memberArray || '');
-                    setFieldValue(`portfolioValue${i}`, data.portfolioValue || '');
-                    setFieldValue(`portfolioArray${i}`, data.portfolioArray || '');
-                    setFieldValue(`groupInsurance${i}`, data.groupInsurance || '');
+                    setFieldValue(`balanceBenefitDetails${i}`, data.balanceBenefitDetails || '');
+                    setFieldValue(`balanceBenefitDetailsArray${i}`, data.balanceBenefitDetailsArray || '');
                     setFieldValue(`groupInsuranceArray${i}`, data.groupInsuranceArray || '');
-                    setFieldValue(`contributions${i}`, data.contributions || '');
                     setFieldValue(`ContributionsArray${i}`, data.ContributionsArray || '');
-                    setFieldValue(`nominatedBeneficiaries${i}`, data.nominatedBeneficiaries || '');
                     setFieldValue(`beneficiariesArray${i}`, data.beneficiariesArray || '');
                     setFieldValue(`annualAdvice${i}`, data.annualAdvice || '');
-                    setFieldValue(`loginInPage${i}`, data.loginInPage || '');
 
                 }
             });
@@ -133,17 +128,12 @@ const SuperFunds = (props) => {
             const newEntry = {
                 fundName: values[`fundName${i}`] || "",
                 memberNumber: values[`memberNumber${i}`] || "",
-                memberArray: values[`memberArray${i}`] || "",
-                portfolioValue: values[`portfolioValue${i}`] || "",
-                portfolioArray: values[`portfolioArray${i}`] || "",
-                groupInsurance: values[`groupInsurance${i}`] || "",
+                balanceBenefitDetails: values[`balanceBenefitDetails${i}`] || "",
+                balanceBenefitDetailsArray: values[`balanceBenefitDetailsArray${i}`] || "",
                 groupInsuranceArray: values[`groupInsuranceArray${i}`] || "",
-                contributions: values[`contributions${i}`] || "",
                 ContributionsArray: values[`ContributionsArray${i}`] || "",
-                nominatedBeneficiaries: values[`nominatedBeneficiaries${i}`] || "",
                 beneficiariesArray: values[`beneficiariesArray${i}`] || "",
                 annualAdvice: values[`annualAdvice${i}`] || "",
-                loginInPage: values[`loginInPage${i}`] || "",
             };
             newEntries.push(newEntry);
         }
@@ -153,41 +143,15 @@ const SuperFunds = (props) => {
 
         let DataOf = props.modalObject.Input;
 
-        // Create an object with additional fields
-        let obj = {
-            clientFK: localStorage.getItem("UserID"),
-        };
+        props.setFieldValue(DataOf, newEntries);
 
-        obj[DataOf] = newEntries
+        let total = newEntries.reduce((total, entry) => total + parseFloat((entry.annualAdvice).replace(/[^0-9.-]+/g, "")), 0);
 
-        // Calculate total currentBalance
-        obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.annualAdvice, 0);
+        props.setFieldValue(DataOf + "CurrentBalance", toCommaAndDollar(total));
 
-        console.log(obj, "final obj")
-
-        const bankAccountArray = superAnnuationIssues.clientFK || "";
-
-        try {
-            let res;
-            if (!bankAccountArray) {
-                res = await PostAxios(`${DefaultUrl}/api/superAnnuationIssues/Add`, obj);
-            } else {
-                obj.collection = props.modalObject.Input
-                res = await PatchAxios(`${DefaultUrl}/api/superAnnuationIssues/Update`, obj);
-            }
-
-            if (res) {
-                console.log(res);
-                const updatedData = { ...questionDetail, superAnnuationIssues: res };
-                setQuestionDetail(updatedData);
-            }
-
-            // Reset the flag state if necessary
-            if (props.flagState) {
-                props.setFlagState(false);
-            }
-        } catch (error) {
-            console.error("Error occurred while making API call:", error);
+        // Reset the flag state if necessary
+        if (props.flagState) {
+            props.setFlagState(false);
         }
     };
 
@@ -284,6 +248,10 @@ const SuperFunds = (props) => {
                                                                         id={`balanceBenefitDetails${i}`}
                                                                         name={`balanceBenefitDetails${i}`}
                                                                         className="form-control inputDesignDoubleInput"
+                                                                        onChange={(e) => {
+                                                                            setFieldValue(e.target.name,
+                                                                                toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                        }}
                                                                     />
                                                                     <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
                                                                         if (values[`fundName${i}`]) {

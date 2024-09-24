@@ -2,8 +2,8 @@ import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { Button, InputGroup, Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { PatchAxios, PostAxios } from '../../../Assets/Api/Api';
+import { BankDetail, defaultUrl, QuestionDetail } from '../../../../Store/Store';
+import { openNotificationSuccess, PatchAxios, PostAxios, toCommaAndDollar } from '../../../Assets/Api/Api';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
@@ -18,6 +18,7 @@ import Beneficiaries from './Beneficiaries';
 const InvestedAnnuities = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+    let bankDetailObj = useRecoilValue(BankDetail);
 
 
     let [nameSet] = useState(() => {
@@ -71,14 +72,15 @@ const InvestedAnnuities = (props) => {
                 if (data) {
                     setFieldValue(`productProvider${i}`, data.productProvider || '');
                     setFieldValue(`accountNumber${i}`, data.accountNumber || '');
+                    setFieldValue(`sourceFunds${i}`, data.sourceFunds || '');
+                    setFieldValue(`originalInvestmentAmount${i}`, data.originalInvestmentAmount || '');
                     setFieldValue(`returnCapitalValue${i}`, data.returnCapitalValue || '');
-                    setFieldValue(`annuityPayment${i}`, data.annuityPayment || '');
+                    setFieldValue(`annualAnnuityPayment${i}`, data.annualAnnuityPayment || '');
                     setFieldValue(`annuityType${i}`, data.annuityType || '');
                     setFieldValue(`term${i}`, data.term || '');
-                    setFieldValue(`nominatedBeneficiaries${i}`, data.nominatedBeneficiaries || '');
+                    setFieldValue(`yearsMaturity${i}`, data.yearsMaturity || '');
                     setFieldValue(`beneficiariesArray${i}`, data.beneficiariesArray || '');
                     setFieldValue(`annualAdvice${i}`, data.annualAdvice || '');
-                    setFieldValue(`loginInPage${i}`, data.loginInPage || '');
                 }
             });
         }
@@ -86,7 +88,7 @@ const InvestedAnnuities = (props) => {
 
     let handleInput = (e, setFieldValue) => {
         const value = e.target.value > 10 ? 10 : e.target.value;
-        
+
         setFieldValue(e.target.id, value);
 
         let arr = []
@@ -131,14 +133,15 @@ const InvestedAnnuities = (props) => {
             const newEntry = {
                 productProvider: values[`productProvider${i}`] || "",
                 accountNumber: values[`accountNumber${i}`] || "",
+                sourceFunds: values[`sourceFunds${i}`] || "",
+                originalInvestmentAmount: values[`originalInvestmentAmount${i}`] || "",
                 returnCapitalValue: values[`returnCapitalValue${i}`] || "",
-                annuityPayment: values[`annuityPayment${i}`] || "",
+                annualAnnuityPayment: values[`annualAnnuityPayment${i}`] || "",
                 annuityType: values[`annuityType${i}`] || "",
                 term: values[`term${i}`] || "",
-                nominatedBeneficiaries: values[`nominatedBeneficiaries${i}`] || "",
+                yearsMaturity: values[`yearsMaturity${i}`] || "",
                 beneficiariesArray: values[`beneficiariesArray${i}`] || "",
                 annualAdvice: values[`annualAdvice${i}`] || "",
-                loginInPage: values[`loginInPage${i}`] || "",
             };
             newEntries.push(newEntry);
         }
@@ -148,124 +151,18 @@ const InvestedAnnuities = (props) => {
 
         let DataOf = props.modalObject.Input;
 
-        // Create an object with additional fields
-        let obj = {
-            clientFK: localStorage.getItem("UserID"),
-        };
+        props.setFieldValue(DataOf, newEntries);
 
-        obj[DataOf] = newEntries
+        let total = newEntries.reduce((total, entry) => total + parseFloat((entry.originalInvestmentAmount).replace(/[^0-9.-]+/g, "")), 0);
 
-        // Calculate total currentBalance
-        obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.term, 0);
+        props.setFieldValue(DataOf + "CurrentBalance", toCommaAndDollar(total));
 
-        console.log(obj, "final obj")
-
-        // Check if annuitiesIssues and the array at props.modalObject.Input exist
-        // const bankAccountArray = annuitiesIssues[props.modalObject.Input] || [];
-        const bankAccountArray = annuitiesIssues.clientFK || "";
-
-        try {
-            let res;
-            if (!bankAccountArray) {
-                res = await PostAxios(`${DefaultUrl}/api/annuitiesIssues/Add`, obj);
-            } else {
-                obj.collection = props.modalObject.Input
-                res = await PatchAxios(`${DefaultUrl}/api/annuitiesIssues/Update`, obj);
-            }
-
-            if (res) {
-                console.log(res);
-                const updatedData = { ...questionDetail, annuitiesIssues: res };
-                setQuestionDetail(updatedData);
-            }
-
-            // Reset the flag state if necessary
-            if (props.flagState) {
-                props.setFlagState(false);
-            }
-        } catch (error) {
-            console.error("Error occurred while making API call:", error);
+        // Reset the flag state if necessary
+        if (props.flagState) {
+            props.setFlagState(false);
         }
+
     };
-
-    const options = [
-        "Adelaide Bank",
-        "Alliance Bank",
-        "AMP",
-        "ANZ",
-        "Arab Bank Australia",
-        "Australian Military Bank (ADCU)",
-        "Australian Mutual Bank",
-        "Australian Unity",
-        "Auswide Bank",
-        "AWA Alliance Bank",
-        "Bank Australia (bankmecu)",
-        "Bank First",
-        "Bank of Melbourne",
-        "Bank of Queensland (BOQ)",
-        "Bank of Sydney",
-        "BankSA",
-        "BankVic",
-        "Bankwest",
-        "BCU",
-        "BDCU Alliance Bank",
-        "Bendigo Bank",
-        "Beyond Bank",
-        "Border Bank",
-        "Circle Alliance Bank",
-        "Citi",
-        "Commonwealth Bank",
-        "Community First Bank",
-        "Credit Union SA",
-        "Defence Bank",
-        "Delphi Bank",
-        "Easy Street",
-        "First Choice Credit Union",
-        "First Option Bank",
-        "firstmac",
-        "G&C Mutual",
-        "Gateway Bank Ltd",
-        "Geelong Bank",
-        "Great Southern Bank",
-        "Greater Bank",
-        "Hay",
-        "Heartland Bank",
-        "Heritage Bank",
-        "Horizon Bank",
-        "HSBC Australia",
-        "Hume Bank",
-        "Illawarra Credit Union",
-        "IMB",
-        "ING",
-        "Judo Bank",
-        "Macquarie Bank",
-        "ME",
-        "MOVE Bank",
-        "MyState Bank",
-        "NAB",
-        "Newcastle Permanent",
-        "P&N Bank",
-        "People’s Choice CU",
-        "Policebank",
-        "Prospa",
-        "Qudos Bank",
-        "Rabobank",
-        "RACQ",
-        "RAMS",
-        "Regional Australia Bank",
-        "Rural Bank",
-        "Service One Alliance Bank",
-        "St.George",
-        "Suncorp Bank",
-        "Teachers Mutual Bank",
-        "Ubank",
-        "UniBank",
-        "Up Bank",
-        "Virgin Money",
-        "Westpac",
-        "Zeller"
-    ];
-
 
     return (
         <Formik
@@ -315,13 +212,15 @@ const InvestedAnnuities = (props) => {
                                                         <th onClick={() => { console.log(values) }}>No#</th>
                                                         <th>Product Provider</th>
                                                         <th>Account Number</th>
+                                                        <th>Source of Funds</th>
+                                                        <th>Original Investment Amount</th>
                                                         <th>Return of Capital Value</th>
-                                                        <th>Annuity  Payment</th>
+                                                        <th>Annual Annuity Payment</th>
                                                         <th>Annuity Type</th>
                                                         <th>Term</th>
+                                                        <th>Years to Maturity</th>
                                                         <th>Nominated Beneficiaries</th>
-                                                        <th>Annual  Advice Service Fee</th>
-                                                        <th>Login in Page</th>
+                                                        <th>Annual Advice Service Fee </th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -337,13 +236,14 @@ const InvestedAnnuities = (props) => {
                                                                     className="form-select inputDesignDoubleInput"
                                                                 >
                                                                     <option value={""}>Please Select</option>
-                                                                    {options.map((elem, index) => {
-                                                                        return (<option key={index} value={elem}>{elem}</option>)
+                                                                    {bankDetailObj.map((elem, index) => {
+                                                                        return (<option key={index} value={elem._id}>{elem.name}</option>)
                                                                     })}
                                                                 </Field>
                                                             </td>
                                                             <td>
                                                                 <Field
+                                                                    style={{ minWidth: "100px" }}
                                                                     type="number"
                                                                     placeholder="Account Number"
                                                                     id={`accountNumber${i}`}
@@ -353,33 +253,74 @@ const InvestedAnnuities = (props) => {
                                                             </td>
                                                             <td>
                                                                 <Field
+                                                                    style={{ minWidth: "100px" }}
                                                                     type="number"
-                                                                    placeholder="Return of Capital Value"
-                                                                    id={`returnCapitalValue${i}`}
-                                                                    name={`returnCapitalValue${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <Field
-                                                                    type="number"
-                                                                    placeholder="Annuity  Payment"
-                                                                    id={`annuityPayment${i}`}
-                                                                    name={`annuityPayment${i}`}
+                                                                    placeholder="Source of Funds"
+                                                                    id={`sourceFunds${i}`}
+                                                                    name={`sourceFunds${i}`}
                                                                     className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
                                                             <td>
                                                                 <Field
                                                                     type="text"
-                                                                    placeholder="Annuity Type"
-                                                                    id={`annuityType${i}`}
-                                                                    name={`annuityType${i}`}
+                                                                    style={{ minWidth: "100px" }}
+                                                                    placeholder="Original Investment Amount"
+                                                                    id={`originalInvestmentAmount${i}`}
+                                                                    name={`originalInvestmentAmount${i}`}
                                                                     className="form-control inputDesignDoubleInput"
+                                                                    onChange={(e) => {
+                                                                        setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                    }}
                                                                 />
                                                             </td>
                                                             <td>
                                                                 <Field
+                                                                    style={{ minWidth: "100px" }}
+                                                                    type="text"
+                                                                    placeholder="Return of Capital Value"
+                                                                    id={`returnCapitalValue${i}`}
+                                                                    name={`returnCapitalValue${i}`}
+                                                                    className="form-control inputDesignDoubleInput"
+                                                                    onChange={(e) => {
+                                                                        setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                    }}
+                                                                />
+                                                            </td>
+                                                            <td>
+                                                                <Field
+                                                                    style={{ minWidth: "100px" }}
+                                                                    type="text"
+                                                                    as={"select"}
+                                                                    placeholder="Annual Annuity Payment"
+                                                                    id={`annualAnnuityPayment${i}`}
+                                                                    name={`annualAnnuityPayment${i}`}
+                                                                    className="form-select inputDesignDoubleInput"
+                                                                >
+                                                                    <option value={""}>Select</option>
+                                                                    <option value={"Weekly"}>Weekly</option>
+                                                                    <option value={"Fortnightly"}>Fortnightly</option>
+                                                                    <option value={"Monthly"}>Monthly</option>
+                                                                    <option value={"Quarterly"}>Quarterly </option>
+                                                                    <option value={"6 Monthly"}>6 Monthly </option>
+                                                                    <option value={"Annually"}>Annually </option>
+                                                                </Field>
+                                                            </td>
+                                                            <td>
+                                                                <Field
+                                                                    style={{ minWidth: "100px" }}
+                                                                    type="text"
+                                                                    placeholder="Annuity Type"
+                                                                    id={`annuityType${i}`}
+                                                                    name={`annuityType${i}`}
+                                                                    value="Fixed Term Lifetime"
+                                                                    className="form-control inputDesignDoubleInput"
+                                                                    disabled
+                                                                />
+                                                            </td>
+                                                            <td>
+                                                                <Field
+                                                                    style={{ minWidth: "100px" }}
                                                                     type="number"
                                                                     placeholder="Term"
                                                                     id={`term${i}`}
@@ -388,10 +329,36 @@ const InvestedAnnuities = (props) => {
                                                                 />
                                                             </td>
                                                             <td>
+                                                                <Field
+                                                                    style={{ minWidth: "100px" }}
+                                                                    type="number"
+                                                                    placeholder="Years to Maturity"
+                                                                    id={`yearsMaturity${i}`}
+                                                                    name={`yearsMaturity${i}`}
+                                                                    className="form-control inputDesignDoubleInput"
+                                                                />
+                                                            </td>
+                                                            <td>
                                                                 <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
                                                                     <DynamicYesNo name={`nominatedBeneficiaries${i}`} values={values} handleChange={handleChange} />
                                                                     {values[`nominatedBeneficiaries${i}`] === "Yes" &&
-                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Beneficiaries", `How many beneficiaries do ${nameSet} have?`, "beneficiariesArray", "", "", values[`beneficiariesArray${i}`], i) }}>
+                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
+                                                                            if (values[`productProvider${i}`]) {
+                                                                                let name = "";
+                                                                                bankDetailObj.map((elem, index) => {
+
+                                                                                    if (elem._id === values[`productProvider${i}`]) {
+                                                                                        name = elem.name
+                                                                                    }
+
+                                                                                });
+                                                                                handleInnerModal(name + "_Beneficiaries", `How many beneficiaries do ${nameSet} have?`, "beneficiariesArray", "", "", values[`beneficiariesArray${i}`], i)
+                                                                            }
+                                                                            else {
+                                                                                // type, placement, message, description
+                                                                                openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
+                                                                            }
+                                                                        }}>
                                                                             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                         </Button>
                                                                     }
@@ -404,17 +371,6 @@ const InvestedAnnuities = (props) => {
                                                                     id={`annualAdvice${i}`}
                                                                     name={`annualAdvice${i}`}
                                                                     className="form-control inputDesignDoubleInput"
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <Field
-                                                                    type="number"
-                                                                    placeholder="Login in Page"
-                                                                    id={`loginInPage${i}`}
-                                                                    name={`loginInPage${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                    disabled
-                                                                    value={100}
                                                                 />
                                                             </td>
                                                         </tr>)

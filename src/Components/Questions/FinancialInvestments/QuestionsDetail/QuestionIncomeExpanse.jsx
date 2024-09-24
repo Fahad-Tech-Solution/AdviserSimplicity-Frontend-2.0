@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { PatchAxios, PostAxios } from '../../../Assets/Api/Api';
+import { PatchAxios, PostAxios, toCommaAndDollar } from '../../../Assets/Api/Api';
 import axios from 'axios';
 
 const QuestionIncomeExpanse = (props) => {
@@ -24,49 +24,14 @@ const QuestionIncomeExpanse = (props) => {
     }
   })
 
-  let incomeExpenses = Object.keys(questionDetail.incomeExpenses).length > 0 ? questionDetail.incomeExpenses : {
-    client: [],
-    partner: [],
-    joint: [],
-
-  }; // Use an empty object as default if incomeExpenses is undefined
 
 
-  let initialValues = incomeExpenses[props.modalObject.Input].length ? { NumberOfMap: incomeExpenses[props.modalObject.Input].length } : { NumberOfMap: "" };
+  let initialValues = props.modalObject.editArray.length ? { NumberOfMap: props.modalObject.editArray.length } : { NumberOfMap: "" };
 
   const [dynamicFields, setDynamicFields] = useState([]);
 
 
-  useEffect(() => {
-
-    if (incomeExpenses[props.modalObject.Input] && incomeExpenses[props.modalObject.Input].length) {
-
-      let arr = []
-
-      for (let i = 0; i < incomeExpenses[props.modalObject.Input].length; i++) {
-        arr.push("");
-      }
-
-      setDynamicFields(arr);
-
-    }
-  }, [])
-
   const fillInitialValues = (setFieldValue) => {
-
-    if (incomeExpenses[props.modalObject.Input] && incomeExpenses[props.modalObject.Input].length) {
-
-      incomeExpenses[props.modalObject.Input].forEach((data, i) => {
-        if (data) {
-          setFieldValue(`councilRates${i}`, data.councilRates || '');
-          setFieldValue(`waterRates${i}`, data.waterRates || '');
-          setFieldValue(`landTax${i}`, data.landTax || '');
-          setFieldValue(`insuranceCorporate${i}`, data.insuranceCorporate || '');
-          setFieldValue(`repairsMaintenance${i}`, data.repairsMaintenance || '');
-          setFieldValue(`allOther${i}`, data.allOther || '');
-        }
-      });
-    }
   };
 
   let handleInput = (e, setFieldValue) => {
@@ -122,47 +87,9 @@ const QuestionIncomeExpanse = (props) => {
 
     let DataOf = props.modalObject.Input;
 
-    // Create an object with additional fields
-    let obj = {
-      clientFK: localStorage.getItem("UserID"),
-    };
-
-    obj[DataOf] = newEntries
-
-
-    // Use reduce to sum all values in sumOfAll and save it in variable a
-    obj[DataOf + "Total"] = sumOfAll.reduce((acc, curr) => acc + curr, 0);
-
-    // Calculate total currentBalance
-    // obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.AnnualRepayments, 0);
-
-    console.log(obj, "final obj")
-
-    // Check if incomeExpenses and the array at props.modalObject.Input exist
-    // const bankAccountArray = incomeExpenses[props.modalObject.Input] || [];
-    const bankAccountArray = incomeExpenses.clientFK || "";
-
-    try {
-      let res;
-      if (!bankAccountArray) {
-        res = await PostAxios(`${DefaultUrl}/api/incomeExpenses/Add`, obj);
-      } else {
-        obj.collection = props.modalObject.Input
-        res = await PatchAxios(`${DefaultUrl}/api/incomeExpenses/Update`, obj);
-      }
-
-      if (res) {
-        console.log(res);
-        const updatedData = { ...questionDetail, incomeExpenses: res };
-        setQuestionDetail(updatedData);
-      }
-
-      // Reset the flag state if necessary
-      if (props.flagState) {
-        props.setFlagState(false);
-      }
-    } catch (error) {
-      console.error("Error occurred while making API call:", error);
+    // Reset the flag state if necessary
+    if (props.flagState) {
+      props.setFlagState(false);
     }
   };
 
@@ -191,7 +118,7 @@ const QuestionIncomeExpanse = (props) => {
                   </div>
                   <div className='col-md-2'>
                     <Field
-                      type="number"
+                      type="text"
                       id="NumberOfMap"
                       name="NumberOfMap"
                       className="form-control inputDesignDoubleInput"
@@ -205,11 +132,11 @@ const QuestionIncomeExpanse = (props) => {
                           <tr>
                             <th>No#</th>
                             <th>Council Rates</th>
-                            <th>Water Rates</th>
-                            <th>Land tax</th>
+                            <th>Water Rates	Land tax </th>
                             <th>Insurance/Body Corporate</th>
                             <th>Repairs and Maintenance</th>
                             <th>All Other</th>
+                            <th>Total Expenses</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -219,56 +146,80 @@ const QuestionIncomeExpanse = (props) => {
                                 <td>{1 + i}</td>
                                 <td>
                                   <Field
-                                    type="number"
+                                    type="text"
                                     placeholder="Council Rates"
                                     id={`councilRates${i}`}
                                     name={`councilRates${i}`}
                                     className="form-control inputDesignDoubleInput"
+                                    onChange={(e) => {
+                                      setFieldValue(e.target.name,
+                                        toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                    }}
                                   />
                                 </td>
                                 <td>
                                   <Field
-                                    type="number"
+                                    type="text"
                                     placeholder="Water Rates"
                                     id={`waterRates${i}`}
                                     name={`waterRates${i}`}
                                     className="form-control inputDesignDoubleInput"
+                                    onChange={(e) => {
+                                      setFieldValue(e.target.name,
+                                        toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                    }}
                                   />
                                 </td>
                                 <td>
                                   <Field
-                                    type="number"
+                                    type="text"
                                     placeholder="Land tax"
                                     id={`landTax${i}`}
                                     name={`landTax${i}`}
                                     className="form-control inputDesignDoubleInput"
+                                    onChange={(e) => {
+                                      setFieldValue(e.target.name,
+                                        toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                    }}
                                   />
                                 </td>
                                 <td>
                                   <Field
-                                    type="number"
+                                    type="text"
                                     placeholder="Insurance/Body Corporate"
                                     id={`insuranceCorporate${i}`}
                                     name={`insuranceCorporate${i}`}
                                     className="form-control inputDesignDoubleInput"
+                                    onChange={(e) => {
+                                      setFieldValue(e.target.name,
+                                        toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                    }}
                                   />
                                 </td>
                                 <td>
                                   <Field
-                                    type="number"
+                                    type="text"
                                     placeholder="Repairs and Maintenance"
                                     id={`repairsMaintenance${i}`}
                                     name={`repairsMaintenance${i}`}
                                     className="form-control inputDesignDoubleInput"
+                                    onChange={(e) => {
+                                      setFieldValue(e.target.name,
+                                        toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                    }}
                                   />
                                 </td>
                                 <td>
                                   <Field
-                                    type="number"
+                                    type="text"
                                     placeholder="All Other"
                                     id={`allOther${i}`}
                                     name={`allOther${i}`}
                                     className="form-control inputDesignDoubleInput"
+                                    onChange={(e) => {
+                                      setFieldValue(e.target.name,
+                                        toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                    }}
                                   />
                                 </td>
                               </tr>)

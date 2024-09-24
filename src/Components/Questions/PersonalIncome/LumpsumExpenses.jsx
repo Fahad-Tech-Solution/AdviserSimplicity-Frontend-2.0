@@ -6,16 +6,6 @@ import { defaultUrl, QuestionDetail } from "../../../Store/Store";
 import { PatchAxios, PostAxios } from "../../Assets/Api/Api";
 // import Select from "react-select";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
-import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
-import PortfolioValue from "../FinancialInvestments/QuestionsDetail/PortfolioValue";
-import DynamicYesNo from "../FinancialInvestments/QuestionsDetail/DynamicYesNo";
-import MemberNumber from "../FinancialInvestments/QuestionsDetail/MemberNumber";
-import GroupInsurance from "../FinancialInvestments/QuestionsDetail/GroupInsurance";
-import Contributions from "../FinancialInvestments/QuestionsDetail/Contributions";
-import Beneficiaries from "../FinancialInvestments/QuestionsDetail/Beneficiaries";
-
 const LumpsumExpenses = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);

@@ -80,7 +80,6 @@ import TermDeposit from './QuestionsDetail/TermDeposit';
 import AustralianShares from './QuestionsDetail/AustralianShares';
 import ManagedFunds from './QuestionsDetail/ManagedFunds';
 import InvestmentLoan from './QuestionsDetail/InvestmentLoan';
-import InvestmentBond from './QuestionsDetail/InvestmentBond';
 import MarginLoan from './QuestionsDetail/MarginLoan';
 import PersonalLoan from './QuestionsDetail/PersonalLoan';
 import CreditCard from './QuestionsDetail/CreditCard';
@@ -89,9 +88,6 @@ import CreditCard from './QuestionsDetail/CreditCard';
 import InvestmentPropertyDetails from './QuestionsDetail/InvestmentPropertyDetails';
 import InvestmentPropertyLoan from './QuestionsDetail/InvestmentPropertyLoan';
 import QuestionIncomeExpanse from './QuestionsDetail/QuestionIncomeExpanse';
-import SuperFunds from './QuestionsDetail/SuperFunds';
-import AccountBasedPension from './QuestionsDetail/AccountBasedPension';
-import InvestedAnnuities from './QuestionsDetail/InvestedAnnuities';
 import HolidayHome from './QuestionsDetail/HolidayHome';
 
 import EstatePlanningWill from '../EstatePlanning/EstatePlanningWill';
@@ -140,6 +136,7 @@ const QuestionCards = (props) => {
 
     let [QuestionChange, setQuestionChange] = useRecoilState(QuestionShift);
     let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
+
     let CRObject = useRecoilValue(CRState);
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
@@ -603,11 +600,11 @@ const QuestionCards = (props) => {
     const JointHidden = ["superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues", "will", "POA", "professionalAdviser", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "incomeFromInheritance", "incomeFromLumpsumExpense", "incomeFromRegularLivingExpenses", "life", "TPD", "trauma", "incomeProtection"]; // Add other titles that should use "xl" here
     const singleClient = ["incomeFromRegularLivingExpenses"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
-    const combinedArray = ["incomeFromOwnBusiness", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "car", "boat", "caravan", "personalAssets", "houseHold", "otherAssets", "familyHome", "investmentBondFinance", "managedFundsMarginLoan", "superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues", "investmentPropertyDetails", "managedFundsLOC"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
+    const combinedArray = ["incomeFromOwnBusiness", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "car", "boat", "caravan", "personalAssets", "houseHold", "otherAssets", "familyHome", "investmentBondFinance", "managedFundsMarginLoan", "managedFundsLOC"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
     const towInOne = ["personalLoans"];
 
-    const reuseModal = ["bankAccountFinance", "termDepositsFinance", "australianShareMarket", "managedFund", , "investmentBondFinance", "SMSFTermDeposits", "SMSFAustralianShares", "SMSFManagedFunds", "SMSFInvestmentLoan", "familyBank", "familyTermDeposit", "familyAustralianShare", "familyMangedFunds", "familyInvestmentHomeLoan", "SMSFBank",]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
+    const reuseModal = ["bankAccountFinance", "termDepositsFinance", "australianShareMarket", "managedFund", , "investmentBondFinance", "SMSFTermDeposits", "SMSFAustralianShares", "SMSFManagedFunds", "SMSFInvestmentLoan", "familyBank", "familyTermDeposit", "familyAustralianShare", "familyMangedFunds", "familyInvestmentHomeLoan", "SMSFBank", "superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues", "investmentPropertyDetails",]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
     let homeArray = [
         {
@@ -658,8 +655,8 @@ const QuestionCards = (props) => {
         //Following 4 have combined in Financial Investment
         //Super and Requirement
         "Super Funds": <MiddleWare />,
-        "Account Based Pension": <AccountBasedPension />,
-        "Invested in Annuities": <InvestedAnnuities />,
+        "Account Based Pension": <MiddleWare />,
+        "Invested in Annuities": <MiddleWare />,
         //Investment Trust
         "Investment Property Details": <InvestmentPropertyDetails />,
 
@@ -671,8 +668,8 @@ const QuestionCards = (props) => {
         "Holiday Home Loan": <HolidayHomeLoan />,
 
         //Investment Trust
-        "Investment Property Loan": <InvestmentPropertyLoan />,
-        "Income & Expenses": <QuestionIncomeExpanse />,
+        // "Investment Property Loan": <InvestmentPropertyLoan />,  //it became inner Modal of Investment Property Details
+        // "Income & Expenses": <QuestionIncomeExpanse />,  //it became inner Modal of Investment Property Details
 
 
 

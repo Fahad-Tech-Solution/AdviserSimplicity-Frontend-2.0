@@ -2,8 +2,8 @@ import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { Button, InputGroup, Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { PatchAxios, PostAxios } from '../../../Assets/Api/Api';
+import { BankDetail, defaultUrl, QuestionDetail } from '../../../../Store/Store';
+import { openNotificationSuccess, PatchAxios, PostAxios, toCommaAndDollar } from '../../../Assets/Api/Api';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
@@ -15,10 +15,14 @@ import GroupInsurance from './GroupInsurance';
 import Contributions from './Contributions';
 import Beneficiaries from './Beneficiaries';
 import AccountBasedMemberNumber from './AccountBasedMemberNumber';
+import { Tooltip } from 'antd';
+import { FaCircleQuestion } from 'react-icons/fa6';
+import AccountBasedBalance from '../AccountBasedBalance';
 
 const AccountBasedPension = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+    let bankDetailObj = useRecoilValue(BankDetail);
 
 
     let [nameSet] = useState(() => {
@@ -71,17 +75,12 @@ const AccountBasedPension = (props) => {
                 if (data) {
                     setFieldValue(`fundName${i}`, data.fundName || '');
                     setFieldValue(`memberNumber${i}`, data.memberNumber || '');
-                    setFieldValue(`memberArray${i}`, data.memberArray || '');
                     setFieldValue(`balanceBenefitDetails${i}`, data.balanceBenefitDetails || '');
                     setFieldValue(`balanceBenefitDetailsArray${i}`, data.balanceBenefitDetailsArray || '');
-                    setFieldValue(`portfolioValue${i}`, data.portfolioValue || '');
-                    setFieldValue(`portfolioArray${i}`, data.portfolioArray || '');
                     setFieldValue(`pensionPayment${i}`, data.pensionPayment || '');
-                    setFieldValue(`pensionType${i}`, data.pensionType || '');
                     setFieldValue(`nominatedBeneficiaries${i}`, data.nominatedBeneficiaries || '');
                     setFieldValue(`beneficiariesArray${i}`, data.beneficiariesArray || '');
                     setFieldValue(`annualAdvice${i}`, data.annualAdvice || '');
-                    setFieldValue(`loginInPage${i}`, data.loginInPage || '');
 
                 }
             });
@@ -134,17 +133,12 @@ const AccountBasedPension = (props) => {
             const newEntry = {
                 fundName: values[`fundName${i}`] || "",
                 memberNumber: values[`memberNumber${i}`] || "",
-                memberArray: values[`memberArray${i}`] || "",
                 balanceBenefitDetails: values[`balanceBenefitDetails${i}`] || "",
                 balanceBenefitDetailsArray: values[`balanceBenefitDetailsArray${i}`] || "",
-                portfolioValue: values[`portfolioValue${i}`] || "",
-                portfolioArray: values[`portfolioArray${i}`] || "",
                 pensionPayment: values[`pensionPayment${i}`] || "",
-                pensionType: values[`pensionType${i}`] || "",
                 nominatedBeneficiaries: values[`nominatedBeneficiaries${i}`] || "",
                 beneficiariesArray: values[`beneficiariesArray${i}`] || "",
                 annualAdvice: values[`annualAdvice${i}`] || "",
-                loginInPage: values[`loginInPage${i}`] || "",
             };
             newEntries.push(newEntry);
         }
@@ -154,123 +148,19 @@ const AccountBasedPension = (props) => {
 
         let DataOf = props.modalObject.Input;
 
-        // Create an object with additional fields
-        let obj = {
-            clientFK: localStorage.getItem("UserID"),
-        };
+        props.setFieldValue(DataOf, newEntries);
 
-        obj[DataOf] = newEntries
+        let total = newEntries.reduce((total, entry) => total + parseFloat((entry.annualAdvice).replace(/[^0-9.-]+/g, "")), 0);
 
-        // Calculate total currentBalance
-        obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.annualAdvice, 0);
+        props.setFieldValue(DataOf + "CurrentBalance", toCommaAndDollar(total));
 
-        console.log(obj, "final obj")
-
-        // Check if accountBasedPensionIssues and the array at props.modalObject.Input exist
-        // const bankAccountArray = accountBasedPensionIssues[props.modalObject.Input] || [];
-        const bankAccountArray = accountBasedPensionIssues.clientFK || "";
-
-        try {
-            let res;
-            if (!bankAccountArray) {
-                res = await PostAxios(`${DefaultUrl}/api/accountBasedPensionIssues/Add`, obj);
-            } else {
-                obj.collection = props.modalObject.Input
-                res = await PatchAxios(`${DefaultUrl}/api/accountBasedPensionIssues/Update`, obj);
-            }
-
-            if (res) {
-                console.log(res);
-                const updatedData = { ...questionDetail, accountBasedPensionIssues: res };
-                setQuestionDetail(updatedData);
-            }
-
-            // Reset the flag state if necessary
-            if (props.flagState) {
-                props.setFlagState(false);
-            }
-        } catch (error) {
-            console.error("Error occurred while making API call:", error);
+        // Reset the flag state if necessary
+        if (props.flagState) {
+            props.setFlagState(false);
         }
     };
 
-    const options = [
-        "Adelaide Bank",
-        "Alliance Bank",
-        "AMP",
-        "ANZ",
-        "Arab Bank Australia",
-        "Australian Military Bank (ADCU)",
-        "Australian Mutual Bank",
-        "Australian Unity",
-        "Auswide Bank",
-        "AWA Alliance Bank",
-        "Bank Australia (bankmecu)",
-        "Bank First",
-        "Bank of Melbourne",
-        "Bank of Queensland (BOQ)",
-        "Bank of Sydney",
-        "BankSA",
-        "BankVic",
-        "Bankwest",
-        "BCU",
-        "BDCU Alliance Bank",
-        "Bendigo Bank",
-        "Beyond Bank",
-        "Border Bank",
-        "Circle Alliance Bank",
-        "Citi",
-        "Commonwealth Bank",
-        "Community First Bank",
-        "Credit Union SA",
-        "Defence Bank",
-        "Delphi Bank",
-        "Easy Street",
-        "First Choice Credit Union",
-        "First Option Bank",
-        "firstmac",
-        "G&C Mutual",
-        "Gateway Bank Ltd",
-        "Geelong Bank",
-        "Great Southern Bank",
-        "Greater Bank",
-        "Hay",
-        "Heartland Bank",
-        "Heritage Bank",
-        "Horizon Bank",
-        "HSBC Australia",
-        "Hume Bank",
-        "Illawarra Credit Union",
-        "IMB",
-        "ING",
-        "Judo Bank",
-        "Macquarie Bank",
-        "ME",
-        "MOVE Bank",
-        "MyState Bank",
-        "NAB",
-        "Newcastle Permanent",
-        "P&N Bank",
-        "People’s Choice CU",
-        "Policebank",
-        "Prospa",
-        "Qudos Bank",
-        "Rabobank",
-        "RACQ",
-        "RAMS",
-        "Regional Australia Bank",
-        "Rural Bank",
-        "Service One Alliance Bank",
-        "St.George",
-        "Suncorp Bank",
-        "Teachers Mutual Bank",
-        "Ubank",
-        "UniBank",
-        "Up Bank",
-        "Virgin Money",
-        "Westpac",
-        "Zeller"
-    ];
+
 
 
     return (
@@ -290,12 +180,8 @@ const AccountBasedPension = (props) => {
                         <Row>
                             <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} >
                                 {
-                                    modalObject.key === "portfolioArray" ? <PortfolioValue /> :
-                                        modalObject.key === "memberArray" ? <AccountBasedMemberNumber /> :
-                                            modalObject.key === "balanceBenefitDetailsArray" ? <MemberNumber /> :
-                                                modalObject.key === "groupInsuranceArray" ? <GroupInsurance /> :
-                                                    modalObject.key === "ContributionsArray" ? <Contributions /> :
-                                                        modalObject.key === "beneficiariesArray" ? <Beneficiaries /> : ""
+                                    modalObject.key === "balanceBenefitDetailsArray" ? <AccountBasedBalance /> :   // is ko change karna hai
+                                        modalObject.key === "beneficiariesArray" ? <Beneficiaries /> : ""  // is ko change karna hai
                                 }
                             </InnerModal>
                             <div className="col-md-12">
@@ -322,13 +208,14 @@ const AccountBasedPension = (props) => {
                                                         <th onClick={() => { console.log(values) }}>No#</th>
                                                         <th>Fund Name</th>
                                                         <th>Member Number</th>
-                                                        <th>Balance & Benefit Details</th>
-                                                        <th>Portfolio Value</th>
-                                                        <th>Pension Payment</th>
-                                                        <th>Pension Type</th>
+                                                        <th>Balance &nbsp;
+                                                            <Tooltip placement="top" title={"Enter in the Underlying investments, Tax and Preserved Components by clicking into onto the green option"}>
+                                                                <FaCircleQuestion style={{ fontSize: '18px', cursor: 'pointer' }} />
+                                                            </Tooltip>
+                                                        </th>
+                                                        <th>Annual Pension Payment</th>
                                                         <th>Nominated Beneficiaries</th>
-                                                        <th>Annual  Advice Service Fee</th>
-                                                        <th>Login in Page</th>
+                                                        <th>Annual Advice Service Fee</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -344,80 +231,83 @@ const AccountBasedPension = (props) => {
                                                                     className="form-select inputDesignDoubleInput"
                                                                 >
                                                                     <option value={""}>Please Select</option>
-                                                                    {options.map((elem, index) => {
-                                                                        return (<option key={index} value={elem}>{elem}</option>)
+                                                                    {bankDetailObj.map((elem, index) => {
+                                                                        return (<option key={index} value={elem._id}>{elem.name}</option>)
                                                                     })}
                                                                 </Field>
                                                             </td>
                                                             <td>
-                                                                <InputGroup className="mb-3">
-                                                                    <Field
-                                                                        type="number"
-                                                                        placeholder="Member Number & Details"
-                                                                        id={`memberNumber${i}`}
-                                                                        name={`memberNumber${i}`}
-                                                                        className="form-control inputDesignDoubleInput"
-                                                                    />
-                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
-                                                                        handleInnerModal("Member Number & Details", `How many Member Number & Details do ${nameSet} have ?`, "memberArray", "memberNumber", "totalPortfolioCost", values[`memberArray${i}`], i, values)
-                                                                    }}>
-                                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                                    </Button>
-                                                                </InputGroup>
+                                                                <Field
+                                                                    type="number"
+                                                                    placeholder="Member Number & Details"
+                                                                    id={`memberNumber${i}`}
+                                                                    name={`memberNumber${i}`}
+                                                                    className="form-control inputDesignDoubleInput"
+                                                                />
                                                             </td>
                                                             <td>
                                                                 <InputGroup className="mb-3">
                                                                     <Field
-                                                                        type="number"
+                                                                        type="text"
                                                                         placeholder="Balance & Benefit Details"
                                                                         id={`balanceBenefitDetails${i}`}
                                                                         name={`balanceBenefitDetails${i}`}
                                                                         className="form-control inputDesignDoubleInput"
                                                                     />
                                                                     <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
-                                                                        handleInnerModal("Balance & Benefit Details", `How many Benefit Details and Components do ${nameSet} have ?`, "balanceBenefitDetailsArray", "balanceBenefitDetails", "", values[`balanceBenefitDetailsArray${i}`], i, values)
+                                                                        if (values[`fundName${i}`]) {
+                                                                            let name = "";
+                                                                            bankDetailObj.map((elem, index) => {
+
+                                                                                if (elem._id === values[`fundName${i}`]) {
+                                                                                    name = elem.name
+                                                                                }
+
+                                                                            });
+                                                                            handleInnerModal(name + "_Balance & Benefit Details", `How many Benefit Details and Components do ${nameSet} have ?`, "balanceBenefitDetailsArray", "balanceBenefitDetails", "", values[`balanceBenefitDetailsArray${i}`], i, values)
+                                                                        }
+                                                                        else {
+                                                                            // type, placement, message, description
+                                                                            openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
+                                                                        }
                                                                     }}>
                                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                     </Button>
                                                                 </InputGroup>
                                                             </td>
                                                             <td>
-                                                                <InputGroup className="mb-3">
-                                                                    <Field
-                                                                        type="number"
-                                                                        placeholder="Portfolio Value"
-                                                                        id={`portfolioValue${i}`}
-                                                                        name={`portfolioValue${i}`}
-                                                                        className="form-control inputDesignDoubleInput"
-                                                                    />
-                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Portfolio Value", `How many Underlying Investments do ${nameSet} have ?`, "portfolioArray", "portfolioValue", "totalPortfolioCost", values[`portfolioArray${i}`], i) }}>
-                                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                                    </Button>
-                                                                </InputGroup>
-                                                            </td>
-                                                            <td>
                                                                 <Field
-                                                                    type="number"
+                                                                    type="text"
                                                                     placeholder="Pension Payment"
                                                                     id={`pensionPayment${i}`}
                                                                     name={`pensionPayment${i}`}
                                                                     className="form-control inputDesignDoubleInput"
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <Field
-                                                                    type="number"
-                                                                    placeholder="Pension Type"
-                                                                    id={`pensionType${i}`}
-                                                                    name={`pensionType${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
+                                                                    onChange={(e) => {
+                                                                        setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                    }}
                                                                 />
                                                             </td>
                                                             <td>
                                                                 <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
                                                                     <DynamicYesNo name={`nominatedBeneficiaries${i}`} values={values} handleChange={handleChange} />
                                                                     {values[`nominatedBeneficiaries${i}`] === "Yes" &&
-                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Beneficiaries", `How many beneficiaries do ${nameSet} have?`, "beneficiariesArray", "", "", values[`beneficiariesArray${i}`], i) }}>
+                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
+                                                                            if (values[`fundName${i}`]) {
+                                                                                let name = "";
+                                                                                bankDetailObj.map((elem, index) => {
+
+                                                                                    if (elem._id === values[`fundName${i}`]) {
+                                                                                        name = elem.name
+                                                                                    }
+
+                                                                                });
+                                                                                handleInnerModal(name + "_Beneficiaries", `How many beneficiaries do ${nameSet} have?`, "beneficiariesArray", "", "", values[`beneficiariesArray${i}`], i)
+                                                                            }
+                                                                            else {
+                                                                                // type, placement, message, description
+                                                                                openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
+                                                                            }
+                                                                        }}>
                                                                             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                         </Button>
                                                                     }
@@ -425,22 +315,14 @@ const AccountBasedPension = (props) => {
                                                             </td>
                                                             <td>
                                                                 <Field
-                                                                    type="number"
+                                                                    type="text"
                                                                     placeholder="Annual Advice Service Fee"
                                                                     id={`annualAdvice${i}`}
                                                                     name={`annualAdvice${i}`}
                                                                     className="form-control inputDesignDoubleInput"
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <Field
-                                                                    type="number"
-                                                                    placeholder="Login in Page"
-                                                                    id={`loginInPage${i}`}
-                                                                    name={`loginInPage${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                    disabled
-                                                                    value={100}
+                                                                    onChange={(e) => {
+                                                                        setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                    }}
                                                                 />
                                                             </td>
                                                         </tr>)

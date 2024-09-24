@@ -24,7 +24,10 @@ const InnerModal = (props) => {
         "Pension Benefits", "Balance & Benefit Details",
         "Salary Package", "Home Loan", "Australian Shares Detail", "Managed Funds Detail",
         "Super Funds Detail",
-        "Investment Bond Detail"
+        "Investment Bond Detail",
+        "Account Based Pension Detail",
+        "Invested in Annuities Detail",
+        "Property Loan Details"
         // "Bank Accounts Detail"
     ]; // Add other titles that should use "xl" here
 

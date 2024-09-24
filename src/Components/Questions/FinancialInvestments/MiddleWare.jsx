@@ -11,6 +11,8 @@ import BankTermForm from './QuestionsDetail/BankTermForm';
 import AustralianShares from './QuestionsDetail/AustralianShares';
 import ManagedFunds from './QuestionsDetail/ManagedFunds';
 import SuperFunds from './QuestionsDetail/SuperFunds';
+import AccountBasedPension from './QuestionsDetail/AccountBasedPension';
+import InvestedAnnuities from './QuestionsDetail/InvestedAnnuities';
 
 const MiddleWare = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
@@ -25,7 +27,7 @@ const MiddleWare = (props) => {
     let attrebuteSet = switchArray.includes(props.modalObject.title) ? true : false;
 
 
-    let clientPartnerArray = ["Super Funds"]
+    let clientPartnerArray = ["Super Funds", "Account Based Pension", "Invested in Annuities"];
 
     let clientPartnerOnly = clientPartnerArray.includes(props.modalObject.title) ? true : false;
 
@@ -145,6 +147,12 @@ const MiddleWare = (props) => {
             obj.clientTotal = obj.clientCurrentBalance || "$0";
             obj.partnerTotal = obj.partnerCurrentBalance || "$0";
         }
+
+
+        if (clientPartnerOnly) {
+            obj.jointCurrentBalance = undefined;
+        }
+
 
         console.log(obj, "final obj")
 
@@ -272,6 +280,23 @@ const MiddleWare = (props) => {
         setFlagState(true);
     }
 
+    const componentMapping = {
+
+        "Bank Accounts Detail": <BankTermForm />,
+        "Term Deposits Detail": <BankTermForm />,
+        "Australian Shares Detail": <AustralianShares />,
+        "Managed Funds Detail": <ManagedFunds />,
+        "Investment Bond Detail": <ManagedFunds />,
+        "Super Funds Detail": <SuperFunds />,
+        "Account Based Pension Detail": <AccountBasedPension />,
+        "Invested in Annuities Detail": <InvestedAnnuities />,
+
+    };
+
+    const ModalContent = (obj) => {
+        return componentMapping[obj.title] || null;
+    };
+
 
     return (
         <Formik
@@ -292,14 +317,7 @@ const MiddleWare = (props) => {
                             <div className="col-md-12">
 
                                 <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} >
-                                    {
-                                        modalObject.title === "Bank Accounts Detail" ? <BankTermForm /> :
-                                            modalObject.title === "Term Deposits Detail" ? <BankTermForm /> :   //Called Same For Term Deposit Becuse Api is Here and in that Modal All attrebutes and Functionalities are Same
-                                                modalObject.title === "Australian Shares Detail" ? <AustralianShares /> :
-                                                    modalObject.title === "Managed Funds Detail" ? <ManagedFunds /> :
-                                                        modalObject.title === "Investment Bond Detail" ? <ManagedFunds /> :
-                                                            modalObject.title === "Super Funds Detail" ? <SuperFunds /> : ""
-                                    }
+                                    {ModalContent(modalObject)}
                                 </InnerModal>
 
                                 <div className='row justify-content-center'>

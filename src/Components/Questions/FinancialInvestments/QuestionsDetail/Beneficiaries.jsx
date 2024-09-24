@@ -159,7 +159,7 @@ const Beneficiaries = (props) => {
                                                                             if (e.target.value === "Legal Personal Representative (Your Estate)") {
                                                                                 setFieldValue(`beneficiaryName${i}`, "N/A");
                                                                                 setFieldValue(`relationshipStatus${i}`, "N/A");
-                                                                                setFieldValue(`shareBenefit${i}`, 100);
+                                                                                setFieldValue(`shareBenefit${i}`, "100.00%");
                                                                                 setAutoClearValue(true);
                                                                             }
                                                                             else {
@@ -201,6 +201,7 @@ const Beneficiaries = (props) => {
                                                                             dropdownMode="select"
                                                                             onBlur={handleBlur}
                                                                             wrapperClassName="w-100"
+                                                                            disabled={values[`nominationType${i}`] == "Legal Personal Representative (Your Estate)"}
                                                                         />
                                                                     </div>
                                                                 </td>

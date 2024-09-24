@@ -1,14 +1,23 @@
 import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
-import { Row, Table } from 'react-bootstrap';
+import { Button, InputGroup, Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { PatchAxios, PostAxios } from '../../../Assets/Api/Api';
+import { handleInputBlur, handleInputChange, handleInputFocus, handleInputKeyDown, openNotificationSuccess, PatchAxios, PostAxios, toCommaAndDollar, toPercentage } from '../../../Assets/Api/Api';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
+import InnerModal from './InnerModal';
+import InvestmentPropertyLoan from './InvestmentPropertyLoan';
+import QuestionIncomeExpanse from './QuestionIncomeExpanse';
 
 const InvestmentPropertyDetails = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+
+
+    let [flagState, setFlagState] = useState(false);
+    let [modalObject, setModalObject] = useState({});
 
 
     let [nameSet] = useState(() => {
@@ -69,7 +78,7 @@ const InvestmentPropertyDetails = (props) => {
     };
 
     let handleInput = (e, setFieldValue) => {
-        const value = e.target.value > 2 ? 2 : e.target.value;
+        const value = e.target.value > 10 ? 10 : e.target.value;
         setFieldValue(e.target.id, value);
 
         let arr = []
@@ -234,6 +243,65 @@ const InvestmentPropertyDetails = (props) => {
         }
     };
 
+
+    let FormulaSetting = (values, setFieldValue, currentInput, stakeHolder) => {
+
+        // Extract integer index from the input name
+        let index = currentInput.name.match(/\d+/);
+
+        if (index) {
+            index = index[0]; // Extract the first match from the array
+
+            // Safely parse and set default to 0 if values are undefined or invalid
+            let ClientOwnership = values["ClientOwnership" + index] ? parseFloat(values["ClientOwnership" + index].replace(/[^0-9.-]+/g, "")) : 0;
+            let PartnerOwnership = values["PartnerOwnership" + index] ? parseFloat(values["PartnerOwnership" + index].replace(/[^0-9.-]+/g, "")) : 0;
+
+
+            // Update values based on the current input name
+            switch (currentInput.name) {
+                case `ClientOwnership${index}`:
+                    ClientOwnership = parseFloat((currentInput.value || 0).replace(/[^0-9.-]+/g, "")) || 0; // Default to 0 if invalid
+
+                    PartnerOwnership = 100 - (ClientOwnership > 100 ? 100 : ClientOwnership);
+
+                    setFieldValue(`PartnerOwnership${index}`, toPercentage(isNaN(PartnerOwnership) ? 0 : PartnerOwnership));
+
+                    break;
+                case `PartnerOwnership${index}`:
+                    PartnerOwnership = parseFloat((currentInput.value || 0).replace(/[^0-9.-]+/g, "")) || 0; // Default to 0 if invalid
+
+                    ClientOwnership = 100 - (PartnerOwnership > 100 ? 100 : PartnerOwnership);
+
+                    setFieldValue(`ClientOwnership${index}`, toPercentage(isNaN(ClientOwnership) ? 0 : ClientOwnership));
+                    break;
+                default:
+                    console.log("No matching input found for the case");
+                    break;
+            }
+
+        } else {
+            console.error("No valid index found in currentInput.name");
+        }
+    };
+
+
+    let handleInnerModal = (title, question, key, mainKey, key3, editArray, index, values) => {
+        console.log(values);
+        let ParentModal = props.modalObject.title
+        setModalObject({
+            title,
+            question,
+            key,
+            mainKey,
+            key3,
+            editArray: editArray || [],
+            index,
+            values,
+            ParentModal
+        })
+        setFlagState(true);
+    }
+
     return (
         <Formik
             initialValues={initialValues}
@@ -265,20 +333,31 @@ const InvestmentPropertyDetails = (props) => {
                                             onChange={(e) => handleInput(e, setFieldValue)}
                                         />
                                     </div>
+
+
+                                    <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} >
+                                        {
+                                            modalObject.key === "propertyLoanDetailsArray" ? <InvestmentPropertyLoan /> :
+                                                modalObject.key === "expensesArray" ? <QuestionIncomeExpanse /> : ""
+                                        }
+                                    </InnerModal>
+
+
+
                                     {values.NumberOfMap && (
                                         <div className='mt-4'>
                                             <Table striped bordered responsive hover>
                                                 <thead>
                                                     <tr>
                                                         <th>No#</th>
-                                                        <th>Property  Address & Postcode</th>
-                                                        <th>Current Value - <a href='https://www.property.com.au/' target='_blank' className='text-white'>Calculate Property</a>  </th>
-                                                        <th>Cost base /(Purchase Price)</th>
+                                                        <th>Property Adress</th>
+                                                        <th>Current Value - <a href='https://www.property.com.au/' target='_blank' className='text-white'>Calculate Property</a></th>
+                                                        <th>Cost base</th>
                                                         <th>Client Ownership</th>
                                                         <th>Partner Ownership</th>
-                                                        {/*
-                                                            <th>Deductible Loan Amount</th>
-                                                        */}
+                                                        <th>Loan Balance</th>
+                                                        <th>Weekly Rental Income</th>
+                                                        <th>Expenses</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -297,53 +376,118 @@ const InvestmentPropertyDetails = (props) => {
                                                                 </td>
                                                                 <td>
                                                                     <Field
-                                                                        type="number"
+                                                                        type="text"
                                                                         placeholder="Current Value – link to URL below "
                                                                         id={`CurrentValue${i}`}
                                                                         name={`CurrentValue${i}`}
                                                                         className="form-control inputDesignDoubleInput"
+                                                                        onChange={(e) => {
+                                                                            setFieldValue(e.target.name,
+                                                                                toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                        }}
                                                                     />
                                                                 </td>
                                                                 <td>
                                                                     <Field
-                                                                        type="number"
+                                                                        type="text"
                                                                         placeholder="Cost base /(Purchase Price)"
                                                                         id={`CostBase${i}`}
                                                                         name={`CostBase${i}`}
                                                                         className="form-control inputDesignDoubleInput"
+                                                                        onChange={(e) => {
+                                                                            setFieldValue(e.target.name,
+                                                                                toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                        }}
                                                                     />
                                                                 </td>
                                                                 <td>
                                                                     <Field
-                                                                        type="number"
-                                                                        placeholder="Client Ownership"
+                                                                        type="text"
+                                                                        s placeholder="Client Ownership"
                                                                         id={`ClientOwnership${i}`}
                                                                         name={`ClientOwnership${i}`}
-                                                                        onBlur={(e) => handleBlur(setFieldValue, e)}
-                                                                        onChange={(e) => {
-                                                                            const clientValue = parseFloat(e.target.value, 10);
-                                                                            const partnerValue = Math.min(100, Math.max(0, 100 - clientValue));
-                                                                            setFieldValue(`ClientOwnership${i}`, (clientValue > 100 ? 100 : clientValue));
-                                                                            setFieldValue(`PartnerOwnership${i}`, partnerValue.toFixed(2));
-                                                                        }}
+                                                                        onChange={(e) => handleInputChange(e, setFieldValue, FormulaSetting, values)}
+                                                                        onFocus={(e) => handleInputFocus(e, setFieldValue)}
+                                                                        onKeyDown={(e) => handleInputKeyDown(e)}
+                                                                        onBlur={(e) => handleInputBlur(e, setFieldValue, toPercentage, FormulaSetting, values)}
                                                                         className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
                                                                     <Field
-                                                                        type="number"
-                                                                        placeholder="Partner Ownership"
+                                                                        type="text"
+                                                                        s placeholder="Partner Ownership"
                                                                         id={`PartnerOwnership${i}`}
                                                                         name={`PartnerOwnership${i}`}
-                                                                        onBlur={(e) => handleBlur(setFieldValue, e)}
-                                                                        onChange={(e) => {
-                                                                            const partnerValue = parseFloat(e.target.value, 10);
-                                                                            const clientValue = Math.min(100, Math.max(0, 100 - partnerValue));
-                                                                            setFieldValue(`PartnerOwnership${i}`, (partnerValue > 100 ? 100 : partnerValue));
-                                                                            setFieldValue(`ClientOwnership${i}`, clientValue.toFixed(2));
-                                                                        }}
+                                                                        onChange={(e) => handleInputChange(e, setFieldValue, FormulaSetting, values)}
+                                                                        onFocus={(e) => handleInputFocus(e, setFieldValue)}
+                                                                        onKeyDown={(e) => handleInputKeyDown(e)}
+                                                                        onBlur={(e) => handleInputBlur(e, setFieldValue, toPercentage, FormulaSetting, values)}
                                                                         className="form-control inputDesignDoubleInput"
                                                                     />
+                                                                </td>
+                                                                <td>
+                                                                    <InputGroup className="mb-3">
+                                                                        <Field
+                                                                            type="text"
+                                                                            placeholder="Loan Balance"
+                                                                            id={`propertyLoanBalance${i}`}
+                                                                            name={`propertyLoanBalance${i}`}
+                                                                            className="form-control inputDesignDoubleInput"
+                                                                            onChange={(e) => {
+                                                                                setFieldValue(e.target.name,
+                                                                                    toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                            }}
+                                                                        />
+                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
+
+                                                                            handleInnerModal("Property Loan Details", "",
+                                                                                "propertyLoanDetailsArray",
+                                                                                "propertyLoanBalance", "",
+                                                                                values[`propertyLoanDetailsArray${i}`], i, values)
+
+                                                                        }}>
+                                                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                                        </Button>
+                                                                    </InputGroup>
+                                                                </td>
+                                                                <td>
+                                                                    <Field
+                                                                        type="text"
+                                                                        placeholder="Weekly Rental Income "
+                                                                        id={`weeklyRentalIncome${i}`}
+                                                                        name={`weeklyRentalIncome${i}`}
+                                                                        className="form-control inputDesignDoubleInput"
+                                                                        onChange={(e) => {
+                                                                            setFieldValue(e.target.name,
+                                                                                toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                        }}
+                                                                    />
+                                                                </td>
+                                                                <td>
+                                                                    <InputGroup className="mb-3">
+                                                                        <Field
+                                                                            type="text"
+                                                                            placeholder="Expenses"
+                                                                            id={`expenses${i}`}
+                                                                            name={`expenses${i}`}
+                                                                            className="form-control inputDesignDoubleInput"
+                                                                            onChange={(e) => {
+                                                                                setFieldValue(e.target.name,
+                                                                                    toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                            }}
+                                                                        />
+                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
+
+                                                                            handleInnerModal("Property Loan Details", "",
+                                                                                "expensesArray",
+                                                                                "expenses", "",
+                                                                                values[`expensesArray${i}`], i, values)
+
+                                                                        }}>
+                                                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                                        </Button>
+                                                                    </InputGroup>
                                                                 </td>
                                                             </tr>)
                                                     })}
