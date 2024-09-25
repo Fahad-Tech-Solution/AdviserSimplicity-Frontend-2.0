@@ -44,10 +44,10 @@ const ManagedFunds = (props) => {
 
 
     useEffect(() => {
-        if (managedFunds[props.modalObject.Input] && managedFunds[props.modalObject.Input].length) {
+        if (props.modalObject.values[props.modalObject.Input] && props.modalObject.values[props.modalObject.Input].length) {
             let arr = []
 
-            for (let i = 0; i < managedFunds[props.modalObject.Input].length; i++) {
+            for (let i = 0; i < props.modalObject.values[props.modalObject.Input].length; i++) {
                 arr.push("");
             }
 
@@ -60,20 +60,23 @@ const ManagedFunds = (props) => {
 
     const fillInitialValues = (setFieldValue) => {
 
-        if (managedFunds[props.modalObject.Input] && managedFunds[props.modalObject.Input].length) {
-            setFieldValue(`NumberOfMap`, managedFunds[props.modalObject.Input].length || '');
-            managedFunds[props.modalObject.Input].forEach((data, i) => {
-                if (data) {
+        if (props.modalObject.values[props.modalObject.Input] && props.modalObject.values[props.modalObject.Input].length > 0) {
+            setFieldValue(`NumberOfMap`, props.modalObject.values[props.modalObject.Input].length || '');
 
-                    console.log(data.platformName);
-                    setFieldValue(`platformName${i}`, data.platformName || '');
 
-                    setFieldValue(`accountNumber${i}`, data.accountNumber || '');
-                    setFieldValue(`portfolioValue${i}`, data.portfolioValue || '');
-                    setFieldValue(`portfolioArray${i}`, data.portfolioArray || '');
-                    setFieldValue(`totalPortfolioCost${i}`, data.totalPortfolioCost || '');
-                    setFieldValue(`serviceFee${i}`, data.serviceFee || '');
-                }
+            let FoundArray = props.modalObject.values[props.modalObject.Input];
+            // alert(FoundArray.length)
+            FoundArray.forEach((data, i) => {
+
+                console.log(data.platformName);
+                setFieldValue(`platformName${i}`, data.platformName || '');
+
+                setFieldValue(`accountNumber${i}`, data.accountNumber || '');
+                setFieldValue(`portfolioValue${i}`, data.portfolioValue || '');
+                setFieldValue(`portfolioArray${i}`, data.portfolioArray || '');
+                setFieldValue(`totalPortfolioCost${i}`, data.totalPortfolioCost || '');
+                setFieldValue(`serviceFee${i}`, data.serviceFee || '');
+
             });
         }
     };

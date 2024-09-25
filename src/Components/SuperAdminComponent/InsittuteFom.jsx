@@ -150,7 +150,7 @@ const InsittuteFom = (props) => {
                             <div className="col-md-12">
                                 <div className='row justify-content-between'>
                                     <div className='col-md-6 pt-2'>
-                                        <label htmlFor='name' className='form-label'>Bank Name</label>
+                                        <label htmlFor='name' className='form-label'>Platform Name</label>
                                     </div>
                                     <div className='col-md-4'>
                                         <Field type="text" name="name" id="name" className="form-control inputDesign" />

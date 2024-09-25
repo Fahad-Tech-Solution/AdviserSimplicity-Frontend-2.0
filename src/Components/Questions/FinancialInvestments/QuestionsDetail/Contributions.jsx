@@ -118,7 +118,7 @@ const Contributions = (props) => {
                                             type="number"
                                             id="NumberOfMap"
                                             name="NumberOfMap"
-                                            className="form-control inputDesign"
+                                            className="form-control inputDesignDoubleInput"
                                             onChange={(e) => handleInput(e, setFieldValue)}
                                         />
                                     </div>
@@ -151,7 +151,7 @@ const Contributions = (props) => {
                                                                         placeholder="Employer Contributions"
                                                                         id={`employerContributions${i}`}
                                                                         name={`employerContributions${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                         onChange={(e) => {
                                                                             setFieldValue(`employerContributions${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
                                                                             setFieldValue(`totalConcessional${i}`, toCommaAndDollar((parseFloat(values[`concessional${i}`].replace(/[^0-9.-]+/g, "") || 0)) + parseFloat(e.target.value.replace(/[^0-9.-]+/g, "") || 0)));
@@ -164,7 +164,7 @@ const Contributions = (props) => {
                                                                         placeholder="Concessional (Include. Salary Sac)"
                                                                         id={`concessional${i}`}
                                                                         name={`concessional${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                         onChange={(e) => {
                                                                             setFieldValue(`concessional${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
                                                                             setFieldValue(`totalConcessional${i}`, toCommaAndDollar(parseFloat(values[`employerContributions${i}`].replace(/[^0-9.-]+/g, "") || 0) + parseFloat(e.target.value.replace(/[^0-9.-]+/g, "") || 0)));
@@ -177,7 +177,7 @@ const Contributions = (props) => {
                                                                         placeholder="Total Concessional Contributions"
                                                                         id={`totalConcessional${i}`}
                                                                         name={`totalConcessional${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                         disabled
                                                                     />
                                                                 </td>
@@ -187,7 +187,7 @@ const Contributions = (props) => {
                                                                         placeholder="Non-Concessional Contributions"
                                                                         id={`nonConcessionalContributions${i}`}
                                                                         name={`nonConcessionalContributions${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                         onChange={(e) => {
                                                                             setFieldValue(e.target.name,
                                                                                 toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));

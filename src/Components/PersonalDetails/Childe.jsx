@@ -217,8 +217,8 @@ const Childe = (props) => {
                                                                 <th>Name</th>
                                                                 <th>Dob</th>
                                                                 <th>Gender</th>
-                                                                <th>Add in relationship</th>
-                                                                <th>Add in Is Child Depenant</th>
+                                                                <th>Add in Relationship</th>
+                                                                <th>Add in is Child Depenant</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>

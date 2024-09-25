@@ -224,6 +224,16 @@ const QuestionsNew = (props) => {
 
   }
 
+  // {flagState2 ?
+  //   <div>
+  //     <h4 className="heading text-green d-none" onClick={() => { console.log("object:", CRObject) }}> {obj[QuestionChange].Title} </h4>
+  //     <div className="QuestionIcon p-3 curser-pointer" onClick={() => setFlagState(true)}>
+  //       <img className="img-fluid min-w-25" src={Add} alt="" />
+  //     </div>
+  //   </div> :
+  //   <QuestionCards Question={QuestionChange} />
+  // }
+
   return (
     <div className="container-fluid mb-4 ">
       <Element name="Empty"></Element>
@@ -231,15 +241,15 @@ const QuestionsNew = (props) => {
         <div className="col-md-12">
           <div className="pb-4 bg-white  borderOverAll  rounded text-center">
 
-            {flagState2 ?
-              <div>
-                <h4 className="heading text-green d-none" onClick={() => { console.log("object:", CRObject) }}> {obj[QuestionChange].Title} </h4>
-                <div className="QuestionIcon p-3 curser-pointer" onClick={() => setFlagState(true)}>
-                  <img className="img-fluid min-w-25" src={Add} alt="" />
-                </div>
-              </div> :
-              <QuestionCards Question={QuestionChange} />
-            }
+            <div>
+              <h4 className="heading text-green d-none" onClick={() => { console.log("object:", CRObject) }}> {obj[QuestionChange].Title} </h4>
+              <div className="QuestionIcon p-3 curser-pointer" onClick={() => setFlagState(true)}>
+                <img className="img-fluid min-w-25" src={Add} alt="" />
+              </div>
+            </div>
+
+            <QuestionCards Question={QuestionChange} />
+
 
             <ModalComponent setQuestionChange={setFlagState2} Question={QuestionChange} modalObject={modalObject} setFlagState={setFlagState} flagState={flagState}>
 

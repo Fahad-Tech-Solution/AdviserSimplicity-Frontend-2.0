@@ -50,23 +50,24 @@ const SuperFunds = (props) => {
 
 
     useEffect(() => {
-        if (superAnnuationIssues[props.modalObject.Input] && superAnnuationIssues[props.modalObject.Input].length) {
+        if (props.modalObject.values[props.modalObject.Input] && props.modalObject.values[props.modalObject.Input].length) {
             let arr = []
 
-            for (let i = 0; i < superAnnuationIssues[props.modalObject.Input].length; i++) {
+            for (let i = 0; i < props.modalObject.values[props.modalObject.Input].length; i++) {
                 arr.push("");
             }
-
             setDynamicFields(arr);
-
         }
     }, [])
 
     const fillInitialValues = (setFieldValue) => {
 
-        if (superAnnuationIssues[props.modalObject.Input] && superAnnuationIssues[props.modalObject.Input].length) {
+        if (props.modalObject.values[props.modalObject.Input] && props.modalObject.values[props.modalObject.Input].length > 0) {
+            setFieldValue(`NumberOfMap`, props.modalObject.values[props.modalObject.Input].length || '');
 
-            superAnnuationIssues[props.modalObject.Input].forEach((data, i) => {
+            let FoundArray = props.modalObject.values[props.modalObject.Input];
+            // alert(FoundArray.length)
+            FoundArray.forEach((data, i) => {
                 if (data) {
                     setFieldValue(`fundName${i}`, data.fundName || '');
                     setFieldValue(`memberNumber${i}`, data.memberNumber || '');
@@ -166,7 +167,7 @@ const SuperFunds = (props) => {
             {({ values, setFieldValue, handleChange }) => {
                 useEffect(() => {
                     fillInitialValues(setFieldValue);
-                }, [values.NumberOfMap]);
+                }, []);
 
                 return (
                     <Form>

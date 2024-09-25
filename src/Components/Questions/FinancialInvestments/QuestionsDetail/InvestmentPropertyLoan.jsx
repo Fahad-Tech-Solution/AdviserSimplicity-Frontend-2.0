@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { handleInputBlur, handleInputChange, handleInputFocus, handleInputKeyDown, PatchAxios, PostAxios, toPercentage } from '../../../Assets/Api/Api';
+import { handleInputBlur, handleInputChange, handleInputFocus, handleInputKeyDown, PatchAxios, PostAxios, toCommaAndDollar, toPercentage } from '../../../Assets/Api/Api';
 import axios from 'axios';
 
 const InvestmentPropertyLoan = (props) => {
@@ -29,7 +29,30 @@ const InvestmentPropertyLoan = (props) => {
 
 
     const fillInitialValues = (setFieldValue) => {
+        let arr = []
+        if (props.modalObject.editArray.length) {
+            for (let i = 0; i < props.modalObject.editArray.length; i++) {
+                arr.push("");
+            }
 
+            setDynamicFields(arr);
+
+            props.modalObject.editArray.map((data, index) => {
+                setFieldValue(`LenderCurrent${index}`, data.LenderCurrent);
+                setFieldValue(`LoanBalance${index}`, data.LoanBalance);
+                setFieldValue(`LoanType${index}`, data.LoanType);
+                setFieldValue(`RepaymentsAmount${index}`, data.RepaymentsAmount);
+                setFieldValue(`Frequency${index}`, data.Frequency);
+                setFieldValue(`AnnualRepayments${index}`, data.AnnualRepayments);
+                setFieldValue(`InterestRate${index}`, data.InterestRate);
+                setFieldValue(`LoanTerm${index}`, data.LoanTerm);
+                setFieldValue(`LoanTermRemaining${index}`, data.LoanTermRemaining);
+                setFieldValue(`DeductibleLoanAmount${index}`, data.DeductibleLoanAmount);
+            })
+
+
+
+        }
 
     };
 
@@ -63,7 +86,7 @@ const InvestmentPropertyLoan = (props) => {
                 LoanType: values[`LoanType${i}`] || "",
                 RepaymentsAmount: values[`RepaymentsAmount${i}`] || "",
                 Frequency: values[`Frequency${i}`] || "",
-                AnnualRepayments: ((values[`RepaymentsAmount${i}`] || 0) * (values[`Frequency${i}`] || 0)) || "",
+                AnnualRepayments: values[`AnnualRepayments${i}`] || "",
                 InterestRate: values[`InterestRate${i}`] || "",
                 LoanTerm: values[`LoanTerm${i}`] || "",
                 LoanTermRemaining: values[`LoanTermRemaining${i}`] || "",
@@ -75,19 +98,15 @@ const InvestmentPropertyLoan = (props) => {
         // Log the new entries to verify
         console.log(newEntries);
 
-        let DataOf = props.modalObject.Input;
+        let total = newEntries.reduce((total, entry) => total + (parseFloat(entry.AnnualRepayments.replace(/[^0-9.-]+/g, "")) || 0), 0);
 
-        // Create an object with additional fields
-        let obj = {
-            clientFK: localStorage.getItem("UserID"),
-        };
 
-        obj[DataOf] = newEntries
+        props.setFieldValue(`${props.modalObject.key}${props.modalObject.index}`, newEntries)
+        // props.setFieldValue(`${props.modalObject.key3}${props.modalObject.index}`, total)
+        props.setFieldValue(`${props.modalObject.mainKey}${props.modalObject.index}`, toCommaAndDollar(total))
 
-        // Calculate total currentBalance
-        obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.AnnualRepayments, 0);
 
-        console.log(obj, "final obj")
+
 
 
 
@@ -181,14 +200,7 @@ const InvestmentPropertyLoan = (props) => {
         label: ("Year " + (i + 1)).toString(),
     }))
 
-    let handleBlur = (setFieldValue, e) => {
-        let value = parseFloat(e.target.value);
-        if (!isNaN(value)) {
-            setFieldValue(e.target.id, value.toFixed(2));
-        } else {
-            setFieldValue(e.target.id, "");
-        }
-    };
+
 
     let FormulaSetting = () => {
 
@@ -299,6 +311,13 @@ const InvestmentPropertyLoan = (props) => {
                                                                         onChange={(e) => {
                                                                             setFieldValue(e.target.name,
                                                                                 toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+
+                                                                            let frequency = values[`Frequency${i}`] || 0;
+                                                                            let RepaymentsAmount = parseFloat(e.target.value.replace(/[^0-9.-]+/g, "")) || 0;
+
+                                                                            setFieldValue(`AnnualRepayments${i}`, toCommaAndDollar(RepaymentsAmount * frequency));
+
+
                                                                         }}
                                                                     />
                                                                 </td>
@@ -311,6 +330,14 @@ const InvestmentPropertyLoan = (props) => {
                                                                         id={`Frequency${i}`}
                                                                         name={`Frequency${i}`}
                                                                         className="form-select inputDesignDoubleInput"
+                                                                        onChange={(e) => {
+                                                                            setFieldValue(`Frequency${i}`, e.target.value);
+
+                                                                            let frequency = e.target.value;
+                                                                            let RepaymentsAmount = parseFloat(values[`RepaymentsAmount${i}`].replace(/[^0-9.-]+/g, ""));
+
+                                                                            setFieldValue(`AnnualRepayments${i}`, toCommaAndDollar(RepaymentsAmount * frequency));
+                                                                        }}
                                                                     >
                                                                         <option value={""}>Please Select</option>
                                                                         <option value={52}>Weekly </option>
@@ -322,11 +349,11 @@ const InvestmentPropertyLoan = (props) => {
                                                                 </td>
                                                                 <td>
                                                                     <Field
-                                                                        type="number"
+                                                                        type="text"
                                                                         placeholder="Annual Repayments"
                                                                         id={`AnnualRepayments${i}`}
                                                                         name={`AnnualRepayments${i}`}
-                                                                        // value={(values[`Frequency${i}`] || 0) * (values[`RepaymentsAmount${i}`] || 0)}
+                                                                        disabled
                                                                         className="form-control inputDesignDoubleInput"
                                                                         onChange={(e) => {
                                                                             setFieldValue(e.target.name,
@@ -382,7 +409,7 @@ const InvestmentPropertyLoan = (props) => {
                                                                 </td>
                                                                 <td>
                                                                     <Field
-                                                                        type="number"
+                                                                        type="text"
                                                                         placeholder="Deductible Loan Amount"
                                                                         id={`DeductibleLoanAmount${i}`}
                                                                         name={`DeductibleLoanAmount${i}`}

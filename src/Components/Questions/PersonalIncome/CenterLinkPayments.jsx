@@ -143,7 +143,7 @@ const CenterLinkPayments = (props) => {
   ];
 
   const rowConfig = [
-    { name: 'CRN', type: 'text', placeholder: 'CRN' },
+    { name: 'CRN', type: 'number', placeholder: 'CRN' },
     { name: 'paymentType', type: 'select-creatableMulti', placeholder: 'Multi Select Field', options: options, styleSet: { width: "150px" }, },
     { name: 'fortnightlyPayment', type: 'number-toComma', placeholder: 'Fortnightly Payment', styleSet: { width: "150px" }, },
     { name: 'annualPaymentAmount', type: 'number-toComma', placeholder: 'Annual Payment Amount', styleSet: { width: "150px" }, },
@@ -232,6 +232,7 @@ const CenterLinkPayments = (props) => {
                               stakeHolder={"client."}
                             />
                           }
+                          
                           {((values.owner === "partner" || values.owner === "client+partner") && (UserStatus === "Married")) &&
                             <DynamicTableRow
                               rowConfig={rowConfig}
@@ -242,8 +243,6 @@ const CenterLinkPayments = (props) => {
                               stakeHolder={"partner."}
                             />
                           }
-
-
 
                         </tbody>
                       </Table>

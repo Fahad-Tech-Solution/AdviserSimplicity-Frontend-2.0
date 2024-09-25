@@ -56,7 +56,7 @@ const InstituteAndOffer = () => {
 
     let OpenOffer = (elem, oppration, index) => {
         setModalObject({
-            title: elem.name + " Offer",
+            title: elem.name + " Investment",
             fullBank: elem,
             oppration,
             index
@@ -96,8 +96,8 @@ const InstituteAndOffer = () => {
 
                 let type = "success";
                 let placement = "topRight"
-                let message = "Offer Deleted"
-                let description = "Offer is Delete successfull"
+                let message = "Investment Deleted"
+                let description = "Investment is Delete successfull"
                 openNotificationSuccess(type, placement, message, description)
             }
         }
@@ -222,7 +222,7 @@ const InstituteAndOffer = () => {
                                                             <tbody>
                                                                 {elem.arrayOfOffers.length <= 0 &&
                                                                     <tr>
-                                                                        <td colSpan={4}>No Offer Added</td>
+                                                                        <td colSpan={4}>No Investment Added</td>
                                                                     </tr>
                                                                 }
 

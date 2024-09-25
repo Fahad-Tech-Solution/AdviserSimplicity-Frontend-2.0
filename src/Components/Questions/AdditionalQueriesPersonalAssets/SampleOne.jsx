@@ -5,23 +5,13 @@ import { Card } from 'react-bootstrap';
 import { CRState, QuestionDetail } from '../../../Store/Store';
 import { useRecoilValue } from 'recoil';
 
-const TowInOneSwitch = (props) => {
+const SampleOne = (props) => {
     let { OpenModal, arrayCount, jointClass, PartnerClass, elem, index } = props;
 
     let questionDetail = useRecoilValue(QuestionDetail);
     let CRObject = useRecoilValue(CRState);
 
     let sets = {
-        "personalLoans": [
-            {
-                title: "Credit Card",
-                key: "creditCards",
-            },
-            {
-                title: "Personal Loan",
-                key: "personalLoans",
-            }
-        ],
         "investmentPropertyDetails": [
             {
                 title: "Total  Market Value",
@@ -61,20 +51,22 @@ const TowInOneSwitch = (props) => {
                                             className=" d-block text-end"
                                             htmlFor={"client" + elem.key}
                                         >{setsElem.title}</label>
+                                        {setsIndex == 0 &&
 
-                                        <label
-                                            className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                            onClick={() => {
+                                            <label
+                                                className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                                                onClick={() => {
 
-                                                let Firstargument = setsElem.defaultSetting === "2innerValues" ? elem.title : setsElem.title;
+                                                    let Firstargument = setsElem.defaultSetting === "2innerValues" ? elem.title : setsElem.title;
 
-                                                OpenModal(Firstargument, "client")
-                                            }}
-                                        >
-                                            <div>
-                                                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                            </div>
-                                        </label>
+                                                    OpenModal(Firstargument, "client")
+                                                }}
+                                            >
+                                                <div>
+                                                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                </div>
+                                            </label>
+                                        }
 
                                     </div>
                                 </div>
@@ -98,4 +90,4 @@ const TowInOneSwitch = (props) => {
 
 }
 
-export default TowInOneSwitch
+export default SampleOne

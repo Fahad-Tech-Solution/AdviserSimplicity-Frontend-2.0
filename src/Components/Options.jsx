@@ -77,41 +77,41 @@ function Options(props) {
         stepComplete = 32;
         Opt = "Opt1"
         break;
-      case "SuperAndRetirement":
-        stepComplete = 40;
-        Opt = "Opt1"
-        break;
-      case "Lifestyle": //Property
-        Opt = "Opt1"
-        stepComplete = 48;
-        break;
-      case "Investment": //Property investment
-        Opt = "Opt2"
-        stepComplete = 56;
-        break;
+      // case "SuperAndRetirement":
+      //   stepComplete = 40;
+      //   Opt = "Opt1"
+      //   break;
+      // case "Lifestyle": //Property
+      //   Opt = "Opt1"
+      //   stepComplete = 48;
+      //   break;
+      // case "Investment": //Property investment
+      //   Opt = "Opt2"
+      //   stepComplete = 56;
+      //   break;
       case "EstatePlanning":
-        Opt = "Opt2"
-        stepComplete = 64;
+        // Opt = "Opt2"
+        stepComplete = 40;
         break;
       case "PersonalInsurance":
-        Opt = "Opt2"
-        stepComplete = 72;
+        // Opt = "Opt2"
+        stepComplete = 48;
         break;
       case "BusinessEntities":
         Opt = "Opt2"
-        stepComplete = 80;
+        stepComplete = 56;
         break;
       case "SMSF":
         Opt = "Opt2"
-        stepComplete = 88;
+        stepComplete = 64;
         break;
       case "FamilyTrust":
         Opt = "Opt2"
-        stepComplete = 96;
+        stepComplete = 72;
         break;
       case "Goals-And-Objectives":
         Opt = "Opt2"
-        stepComplete = 112;
+        stepComplete = 80;
         break;
       default:
         let a = cLocation.split('/')[0];

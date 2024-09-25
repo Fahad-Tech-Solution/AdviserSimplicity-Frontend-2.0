@@ -95,7 +95,7 @@ const GroupInsurance = (props) => {
                                                             placeholder="Life Cover"
                                                             id={`lifeCover`}
                                                             name={`lifeCover`}
-                                                            className="form-control inputDesign"
+                                                            className="form-control inputDesignDoubleInput"
                                                             onChange={(e) => {
                                                                 setFieldValue(e.target.name,
                                                                     toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
@@ -108,7 +108,7 @@ const GroupInsurance = (props) => {
                                                             placeholder="TPD Cover"
                                                             id={`TPDCover`}
                                                             name={`TPDCover`}
-                                                            className="form-control inputDesign"
+                                                            className="form-control inputDesignDoubleInput"
                                                             onChange={(e) => {
                                                                 setFieldValue(e.target.name,
                                                                     toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
@@ -121,7 +121,7 @@ const GroupInsurance = (props) => {
                                                             placeholder="Cover type"
                                                             id={`coverType`}
                                                             name={`coverType`}
-                                                            className="form-control inputDesign"
+                                                            className="form-control inputDesignDoubleInput"
                                                             value={"Unitised Fixed"}
                                                             disabled
                                                         />
@@ -132,7 +132,7 @@ const GroupInsurance = (props) => {
                                                             placeholder="Cost p.a."
                                                             id={`cost`}
                                                             name={`cost`}
-                                                            className="form-control inputDesign"
+                                                            className="form-control inputDesignDoubleInput"
                                                             onChange={(e) => {
                                                                 setFieldValue(e.target.name,
                                                                     toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
@@ -145,7 +145,7 @@ const GroupInsurance = (props) => {
                                                             placeholder="Monthly Income Protection"
                                                             id={`monthlyIncome`}
                                                             name={`monthlyIncome`}
-                                                            className="form-control inputDesign"
+                                                            className="form-control inputDesignDoubleInput"
                                                             onChange={(e) => {
                                                                 setFieldValue(e.target.name,
                                                                     toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
@@ -157,7 +157,7 @@ const GroupInsurance = (props) => {
                                                             as="select"
                                                             id={`waitingPeriod`}
                                                             name={`waitingPeriod`}
-                                                            className="form-select inputDesign"
+                                                            className="form-select inputDesignDoubleInput"
                                                         >
                                                             <option value={30}>30 Days</option>
                                                             <option value={60}>60Days </option>
@@ -171,7 +171,7 @@ const GroupInsurance = (props) => {
                                                             as="select"
                                                             id={`BenefitPeriod`}
                                                             name={`BenefitPeriod`}
-                                                            className="form-select inputDesign"
+                                                            className="form-select inputDesignDoubleInput"
                                                         >
                                                             <option value={"2 Years"}>2 Years</option>
                                                             <option value={"5 years "}>5 years </option>
@@ -187,7 +187,7 @@ const GroupInsurance = (props) => {
                                                             placeholder="Cover type"
                                                             id={`coverType2`}
                                                             name={`coverType2`}
-                                                            className="form-control inputDesign"
+                                                            className="form-control inputDesignDoubleInput"
                                                             value={"Unitised Fixed"}
                                                             disabled
                                                         />
@@ -198,7 +198,7 @@ const GroupInsurance = (props) => {
                                                             placeholder="Cost p.a."
                                                             id={`cost2`}
                                                             name={`cost2`}
-                                                            className="form-control inputDesign"
+                                                            className="form-control inputDesignDoubleInput"
                                                             onChange={(e) => {
                                                                 setFieldValue(e.target.name,
                                                                     toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
@@ -227,7 +227,7 @@ export default GroupInsurance;
 //                             as="select"
 //                             id={`investmentOption`}
 //                             name={`investmentOption`}
-//                             className="form-select inputDesign"
+//                             className="form-select inputDesignDoubleInput"
 //                         >
 //                             <option value={""}>Please Select</option>
 //                             {options.map((elem, index) => {
@@ -241,7 +241,7 @@ export default GroupInsurance;
 //                             placeholder="Investment Code"
 //                             id={`investmentCode`}
 //                             name={`investmentCode`}
-//                             className="form-control inputDesign"
+//                             className="form-control inputDesignDoubleInput"
 //                             disabled
 //                         />
 //                     </td>

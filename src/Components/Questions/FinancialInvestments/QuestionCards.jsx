@@ -131,6 +131,7 @@ import AssetInfo from '../AdditionalQueriesPersonalAssets/AssetInfo';
 import TowInOneSwitch from '../AdditionalQueriesPersonalAssets/TowInOneSwitch';
 import OwnFamilyHome from '../AdditionalQueriesPersonalAssets/OwnFamilyHome';
 import MiddleWare from './MiddleWare';
+import SampleOne from '../AdditionalQueriesPersonalAssets/SampleOne';
 
 const QuestionCards = (props) => {
 
@@ -603,8 +604,9 @@ const QuestionCards = (props) => {
     const combinedArray = ["incomeFromOwnBusiness", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "car", "boat", "caravan", "personalAssets", "houseHold", "otherAssets", "familyHome", "investmentBondFinance", "managedFundsMarginLoan", "managedFundsLOC"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
     const towInOne = ["personalLoans"];
+    const sampleOne = ["investmentPropertyDetails"];
 
-    const reuseModal = ["bankAccountFinance", "termDepositsFinance", "australianShareMarket", "managedFund", , "investmentBondFinance", "SMSFTermDeposits", "SMSFAustralianShares", "SMSFManagedFunds", "SMSFInvestmentLoan", "familyBank", "familyTermDeposit", "familyAustralianShare", "familyMangedFunds", "familyInvestmentHomeLoan", "SMSFBank", "superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues", "investmentPropertyDetails",]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
+    const reuseModal = ["bankAccountFinance", "termDepositsFinance", "australianShareMarket", "managedFund", , "investmentBondFinance", "SMSFTermDeposits", "SMSFAustralianShares", "SMSFManagedFunds", "SMSFInvestmentLoan", "familyBank", "familyTermDeposit", "familyAustralianShare", "familyMangedFunds", "familyInvestmentHomeLoan", "SMSFBank", "superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues",]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
     let homeArray = [
         {
@@ -796,6 +798,7 @@ const QuestionCards = (props) => {
                         const reuseSwitch = reuseModal.includes(elem.key) ? true : false;
                         const combinedSwitch = combinedArray.includes(elem.key) ? true : false;
                         const TowInSwitch = towInOne.includes(elem.key) ? true : false;
+                        const SampleOneSwitch = sampleOne.includes(elem.key) ? true : false;
 
                         const SMSFInP = elem.key === "SMSFInvestmentProperties" ? true : false;
                         const FamilyInP = elem.key === "familyInvestmentProperties" ? true : false;
@@ -951,6 +954,9 @@ const QuestionCards = (props) => {
                         }
                         else if (TowInSwitch) {
                             return (<TowInOneSwitch PartnerClass={PartnerClass} index={index} jointClass={jointClass} elem={elem} OpenModal={OpenModal2} homeArray={homeArray} arrayCount={arrayCount} />);
+                        }
+                        else if (SampleOneSwitch) {
+                            return (<SampleOne PartnerClass={PartnerClass} index={index} jointClass={jointClass} elem={elem} OpenModal={OpenModal2} homeArray={homeArray} arrayCount={arrayCount} />);
                         }
                         else {
                             // <div className={`col-md-${arrayCount % 2 == 0 ? '6' : '4'} mb-4`} key={index}>

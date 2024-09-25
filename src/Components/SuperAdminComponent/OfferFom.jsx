@@ -104,8 +104,8 @@ const OfferFom = (props) => {
 
             let type = "success";
             let placement = "topRight"
-            let message = "Offer Notification"
-            let description = "Offer is Added successfull"
+            let message = "Investment Notification"
+            let description = "Investment is Added successfull"
             openNotificationSuccess(type, placement, message, description)
 
 

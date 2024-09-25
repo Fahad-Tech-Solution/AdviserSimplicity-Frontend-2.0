@@ -37,61 +37,61 @@ export const content = {
             route: '/FinancialInvestments',
             condition: (CRObject) => true // Always true, as this step is always needed.
         },
-        {
-            subTitle: 'Super and Retirement',
-            statusStep: 40,
-            icon: 'RiCoinsFill',
-            route: '/SuperAndRetirement',
-            condition: (CRObject) => true // Always true, as this step is always needed.
-        },
-        {
-            subTitle: 'Property',
-            statusStep: 48,
-            icon: 'FaKey',
-            route: '/Lifestyle',
-            condition: (CRObject) => true // Always true, as this step is always needed.
-        },
-        {
-            subTitle: 'Investment',
-            statusStep: 56,
-            icon: 'FaKey',
-            route: '/Investment',
-            condition: (CRObject) => CRObject.investmentPropertyTab === "Yes"
-        },
+        // {
+        //     subTitle: 'Super and Retirement',
+        //     statusStep: 40,
+        //     icon: 'RiCoinsFill',
+        //     route: '/SuperAndRetirement',
+        //     condition: (CRObject) => true // Always true, as this step is always needed.
+        // },
+        // {
+        //     subTitle: 'Property',
+        //     statusStep: 48,
+        //     icon: 'FaKey',
+        //     route: '/Lifestyle',
+        //     condition: (CRObject) => true // Always true, as this step is always needed.
+        // },
+        // {
+        //     subTitle: 'Investment',
+        //     statusStep: 56,
+        //     icon: 'FaKey',
+        //     route: '/Investment',
+        //     condition: (CRObject) => CRObject.investmentPropertyTab === "Yes"
+        // },
         {
             subTitle: 'Estate Planning & Professional Advisers',
-            statusStep: 64,
+            statusStep: 40,
             icon: 'FaQuestionCircle',
             route: '/EstatePlanning',
             condition: (CRObject) => true
         },
         {
             subTitle: 'Personal Insurance',
-            statusStep: 72,
+            statusStep: 48,
             icon: 'FaMoneyCheckDollar',
             route: '/PersonalInsurance',
-            condition: (CRObject) => CRObject.personalInsuranceTab === "Yes"
+            condition: (CRObject) => CRObject?.personalInsuranceTab === "Yes"
         },
         {
             subTitle: 'Business Entities',
-            statusStep: 80,
+            statusStep: 56,
             icon: 'FaBriefcase',
             route: '/BusinessEntities',
-            condition: (CRObject) => CRObject.BusinessAsCompanyStructure === "Yes" || CRObject.BusinessAsTrusts === "Yes"
+            condition: (CRObject) => CRObject?.BusinessAsCompanyStructure === "Yes" || CRObject?.BusinessAsTrusts === "Yes"
         },
         {
             subTitle: 'SMSF',
-            statusStep: 88,
+            statusStep: 64,
             icon: 'FaGift',
             route: '/SMSF',
-            condition: (CRObject) => CRObject.SMSFManagedFundsTab === "Yes"
+            condition: (CRObject) => CRObject?.SMSFManagedFundsTab === "Yes"
         },
         {
             subTitle: 'Investment Trust',
-            statusStep: 96,
+            statusStep: 72,
             icon: 'MdFamilyRestroom',
             route: '/FamilyTrust',
-            condition: (CRObject) => CRObject.businessAsInvestmentTab === "Yes"
+            condition: (CRObject) => CRObject?.businessAsInvestmentTab === "Yes"
         },
     ]
 }

@@ -7,9 +7,9 @@ import { Link } from 'react-router-dom'
 const AdminTopMenu = (props) => {
 
 
-    let [currentPCLassSwitch, setCurrentPCLassSwitch] = useState("Admin Panal");
+    let [currentPCLassSwitch, setCurrentPCLassSwitch] = useState("Admin Panel");
 
-    let [currentTabName, setCurrentTabName] = useState("Admin Panal");
+    let [currentTabName, setCurrentTabName] = useState("Admin Panel");
 
     return (
         <div className="container-fluid position-relative" id="OptionsBar">

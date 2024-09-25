@@ -527,7 +527,7 @@ const EmploymentIncome = (props) => {
                                                         </td>
                                                         <td>
                                                             <Field
-                                                                type="text"
+                                                                type="number"
                                                                 placeholder="Hours Worked"
                                                                 id={`hoursWorked`}
                                                                 name={`joint.hoursWorked`}

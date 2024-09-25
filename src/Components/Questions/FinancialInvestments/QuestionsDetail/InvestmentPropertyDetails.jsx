@@ -15,10 +15,8 @@ const InvestmentPropertyDetails = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
-
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
-
 
     let [nameSet] = useState(() => {
         if (props.modalObject.Input === "client") {
@@ -39,11 +37,9 @@ const InvestmentPropertyDetails = (props) => {
 
     }; // Use an empty object as default if investmentPropertyDetails is undefined
 
-
     let initialValues = investmentPropertyDetails[props.modalObject.Input].length ? { NumberOfMap: investmentPropertyDetails[props.modalObject.Input].length } : { NumberOfMap: "" };
 
     const [dynamicFields, setDynamicFields] = useState([]);
-
 
     useEffect(() => {
         console.log(questionDetail, "Questions")
@@ -72,6 +68,11 @@ const InvestmentPropertyDetails = (props) => {
                     setFieldValue(`CostBase${i}`, data.CostBase || '');
                     setFieldValue(`ClientOwnership${i}`, data.ClientOwnership || '');
                     setFieldValue(`PartnerOwnership${i}`, data.PartnerOwnership || '');
+                    setFieldValue(`propertyLoanBalance${i}`, data.propertyLoanBalance || '');
+                    setFieldValue(`propertyLoanDetailsArray${i}`, data.propertyLoanDetailsArray || '');
+                    setFieldValue(`weeklyRentalIncome${i}`, data.weeklyRentalIncome || '');
+                    setFieldValue(`expenses${i}`, data.expenses || '');
+                    setFieldValue(`expensesArray${i}`, data.expensesArray || '');
                 }
             });
         }
@@ -93,7 +94,6 @@ const InvestmentPropertyDetails = (props) => {
 
     let DefaultUrl = useRecoilValue(defaultUrl)
 
-
     let onSubmit = async (values) => {
         // Extract the number of maps from the values
         const numberOfMaps = parseInt(values.NumberOfMap, 10);
@@ -107,6 +107,12 @@ const InvestmentPropertyDetails = (props) => {
                 CostBase: values[`CostBase${i}`] || "",
                 ClientOwnership: values[`ClientOwnership${i}`] || "",
                 PartnerOwnership: values[`PartnerOwnership${i}`] || "",
+                propertyLoanBalance: values[`propertyLoanBalance${i}`] || "",
+                propertyLoanDetailsArray: values[`propertyLoanDetailsArray${i}`] || "",
+                weeklyRentalIncome: values[`weeklyRentalIncome${i}`] || "",
+                expenses: values[`expenses${i}`] || "",
+                expensesArray: values[`expensesArray${i}`] || "",
+
             };
             newEntries.push(newEntry);
         }
@@ -124,7 +130,8 @@ const InvestmentPropertyDetails = (props) => {
         obj[DataOf] = newEntries
 
         // Calculate total currentBalance
-        obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.CostBase, 0);
+        obj["clientTotal"] = toCommaAndDollar(newEntries.reduce((total, entry) => total + parseFloat((entry.propertyLoanBalance).replace(/[^0-9.-]+/g, "")) || 0, 0));
+        obj["partnerTotal"] = toCommaAndDollar(newEntries.reduce((total, entry) => total + parseFloat((entry.expenses).replace(/[^0-9.-]+/g, "")) || 0, 0));
 
         console.log(obj, "final obj")
 
@@ -155,94 +162,6 @@ const InvestmentPropertyDetails = (props) => {
             console.error("Error occurred while making API call:", error);
         }
     };
-
-    const options = [
-        "Adelaide Bank",
-        "Alliance Bank",
-        "AMP",
-        "ANZ",
-        "Arab Bank Australia",
-        "Australian Military Bank (ADCU)",
-        "Australian Mutual Bank",
-        "Australian Unity",
-        "Auswide Bank",
-        "AWA Alliance Bank",
-        "Bank Australia (bankmecu)",
-        "Bank First",
-        "Bank of Melbourne",
-        "Bank of Queensland (BOQ)",
-        "Bank of Sydney",
-        "BankSA",
-        "BankVic",
-        "Bankwest",
-        "BCU",
-        "BDCU Alliance Bank",
-        "Bendigo Bank",
-        "Beyond Bank",
-        "Border Bank",
-        "Circle Alliance Bank",
-        "Citi",
-        "Commonwealth Bank",
-        "Community First Bank",
-        "Credit Union SA",
-        "Defence Bank",
-        "Delphi Bank",
-        "Easy Street",
-        "First Choice Credit Union",
-        "First Option Bank",
-        "firstmac",
-        "G&C Mutual",
-        "Gateway Bank Ltd",
-        "Geelong Bank",
-        "Great Southern Bank",
-        "Greater Bank",
-        "Hay",
-        "Heartland Bank",
-        "Heritage Bank",
-        "Horizon Bank",
-        "HSBC Australia",
-        "Hume Bank",
-        "Illawarra Credit Union",
-        "IMB",
-        "ING",
-        "Judo Bank",
-        "Macquarie Bank",
-        "ME",
-        "MOVE Bank",
-        "MyState Bank",
-        "NAB",
-        "Newcastle Permanent",
-        "P&N Bank",
-        "People’s Choice CU",
-        "Policebank",
-        "Prospa",
-        "Qudos Bank",
-        "Rabobank",
-        "RACQ",
-        "RAMS",
-        "Regional Australia Bank",
-        "Rural Bank",
-        "Service One Alliance Bank",
-        "St.George",
-        "Suncorp Bank",
-        "Teachers Mutual Bank",
-        "Ubank",
-        "UniBank",
-        "Up Bank",
-        "Virgin Money",
-        "Westpac",
-        "Zeller"
-    ];
-
-    let handleBlur = (setFieldValue, e) => {
-        let value = parseFloat(e.target.value);
-        if (!isNaN(value)) {
-            setFieldValue(e.target.id, value.toFixed(2));
-        } else {
-            setFieldValue(e.target.id, "");
-        }
-    };
-
 
     let FormulaSetting = (values, setFieldValue, currentInput, stakeHolder) => {
 
@@ -283,7 +202,6 @@ const InvestmentPropertyDetails = (props) => {
             console.error("No valid index found in currentInput.name");
         }
     };
-
 
     let handleInnerModal = (title, question, key, mainKey, key3, editArray, index, values) => {
         console.log(values);
@@ -341,7 +259,6 @@ const InvestmentPropertyDetails = (props) => {
                                                 modalObject.key === "expensesArray" ? <QuestionIncomeExpanse /> : ""
                                         }
                                     </InnerModal>
-
 
 
                                     {values.NumberOfMap && (

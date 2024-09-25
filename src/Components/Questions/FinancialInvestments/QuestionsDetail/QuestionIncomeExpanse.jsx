@@ -24,14 +24,33 @@ const QuestionIncomeExpanse = (props) => {
     }
   })
 
-
-
   let initialValues = props.modalObject.editArray.length ? { NumberOfMap: props.modalObject.editArray.length } : { NumberOfMap: "" };
 
   const [dynamicFields, setDynamicFields] = useState([]);
 
 
   const fillInitialValues = (setFieldValue) => {
+    let arr = []
+    if (props.modalObject.editArray.length) {
+      for (let i = 0; i < props.modalObject.editArray.length; i++) {
+        arr.push("");
+      }
+
+      setDynamicFields(arr);
+
+      props.modalObject.editArray.map((data, index) => {
+        setFieldValue(`councilRates${index}`, data.councilRates)
+        setFieldValue(`waterRates${index}`, data.waterRates)
+        setFieldValue(`landTax${index}`, data.landTax)
+        setFieldValue(`insuranceCorporate${index}`, data.insuranceCorporate)
+        setFieldValue(`repairsMaintenance${index}`, data.repairsMaintenance)
+        setFieldValue(`allOther${index}`, data.allOther)
+      })
+
+
+
+    }
+
   };
 
   let handleInput = (e, setFieldValue) => {
@@ -55,7 +74,6 @@ const QuestionIncomeExpanse = (props) => {
     // Extract the number of maps from the values
     const numberOfMaps = parseInt(values.NumberOfMap, 10);
     const newEntries = [];
-    let sumOfAll = [];
 
 
     // Iterate through each map entry and create a new object
@@ -69,29 +87,61 @@ const QuestionIncomeExpanse = (props) => {
         allOther: values[`allOther${i}`] || "",
       };
       newEntries.push(newEntry);
-      // Calculate the sum of all attributes for the current entry
-      const sum =
-        parseFloat(newEntry.councilRates) +
-        parseFloat(newEntry.waterRates) +
-        parseFloat(newEntry.landTax) +
-        parseFloat(newEntry.insuranceCorporate) +
-        parseFloat(newEntry.repairsMaintenance) +
-        parseFloat(newEntry.allOther);
-
-      // Push the sum into the sumOfAll array
-      sumOfAll.push(sum);
     }
 
     // Log the new entries to verify
     console.log(newEntries);
 
-    let DataOf = props.modalObject.Input;
+    let total = newEntries.reduce((total, entry) => total + (parseFloat(entry.allOther.replace(/[^0-9.-]+/g, "")) || 0), 0);
+
+
+    props.setFieldValue(`${props.modalObject.key}${props.modalObject.index}`, newEntries)
+    // props.setFieldValue(`${props.modalObject.key3}${props.modalObject.index}`, total)
+    props.setFieldValue(`${props.modalObject.mainKey}${props.modalObject.index}`, toCommaAndDollar(total))
+
+
 
     // Reset the flag state if necessary
     if (props.flagState) {
       props.setFlagState(false);
     }
   };
+
+
+  let FormulaSetting = (values, setFieldValue, currentInput, index) => {
+
+    let councilRates = parseFloat((values[`councilRates${index}`] || 0).replace(/[^0-9.-]+/g, "")) || 0;
+    let waterRates = parseFloat((values[`waterRates${index}`] || 0).replace(/[^0-9.-]+/g, "")) || 0;
+    let landTax = parseFloat((values[`landTax${index}`] || 0).replace(/[^0-9.-]+/g, "")) || 0;
+    let insuranceCorporate = parseFloat((values[`insuranceCorporate${index}`] || 0).replace(/[^0-9.-]+/g, "")) || 0;
+    let repairsMaintenance = parseFloat((values[`repairsMaintenance${index}`] || 0).replace(/[^0-9.-]+/g, "")) || 0;
+    let allOther = 0;
+
+    switch (currentInput.name) {
+      case `councilRates${index}`:
+        councilRates = parseFloat((currentInput.value).replace(/[^0-9.-]+/g, "")) || 0
+        break;
+      case `waterRates${index}`:
+        waterRates = parseFloat((currentInput.value).replace(/[^0-9.-]+/g, "")) || 0
+        break;
+      case `landTax${index}`:
+        landTax = parseFloat((currentInput.value).replace(/[^0-9.-]+/g, "")) || 0
+        break;
+      case `insuranceCorporate${index}`:
+        insuranceCorporate = parseFloat((currentInput.value).replace(/[^0-9.-]+/g, "")) || 0
+        break;
+      case `repairsMaintenance${index}`:
+        repairsMaintenance = parseFloat((currentInput.value).replace(/[^0-9.-]+/g, "")) || 0
+        break;
+      default:
+        console.log("no  input ")
+        break;
+    }
+
+    allOther = councilRates + waterRates + landTax + insuranceCorporate + repairsMaintenance;
+
+    setFieldValue(`allOther${index}`, toCommaAndDollar(allOther || 0));
+  }
 
 
   return (
@@ -104,7 +154,7 @@ const QuestionIncomeExpanse = (props) => {
       {({ values, setFieldValue }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
-        }, [values.NumberOfMap]);
+        }, []);
 
         return (
           <Form>
@@ -154,6 +204,7 @@ const QuestionIncomeExpanse = (props) => {
                                     onChange={(e) => {
                                       setFieldValue(e.target.name,
                                         toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                      FormulaSetting(values, setFieldValue, e.target, i)
                                     }}
                                   />
                                 </td>
@@ -167,6 +218,8 @@ const QuestionIncomeExpanse = (props) => {
                                     onChange={(e) => {
                                       setFieldValue(e.target.name,
                                         toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                      FormulaSetting(values, setFieldValue, e.target, i)
+
                                     }}
                                   />
                                 </td>
@@ -180,6 +233,8 @@ const QuestionIncomeExpanse = (props) => {
                                     onChange={(e) => {
                                       setFieldValue(e.target.name,
                                         toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                      FormulaSetting(values, setFieldValue, e.target, i)
+
                                     }}
                                   />
                                 </td>
@@ -193,6 +248,8 @@ const QuestionIncomeExpanse = (props) => {
                                     onChange={(e) => {
                                       setFieldValue(e.target.name,
                                         toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                      FormulaSetting(values, setFieldValue, e.target, i)
+
                                     }}
                                   />
                                 </td>
@@ -206,12 +263,15 @@ const QuestionIncomeExpanse = (props) => {
                                     onChange={(e) => {
                                       setFieldValue(e.target.name,
                                         toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                      FormulaSetting(values, setFieldValue, e.target, i)
+
                                     }}
                                   />
                                 </td>
                                 <td>
                                   <Field
                                     type="text"
+                                    disabled
                                     placeholder="All Other"
                                     id={`allOther${i}`}
                                     name={`allOther${i}`}

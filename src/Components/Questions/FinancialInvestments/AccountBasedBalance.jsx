@@ -205,7 +205,7 @@ const AccountBasedBalance = (props) => {
                                             type="number"
                                             id="NumberOfMap"
                                             name="NumberOfMap"
-                                            className="form-control inputDesign"
+                                            className="form-control inputDesignDoubleInput"
                                             onChange={(e) => handleInput(e, setFieldValue)}
                                         />
                                     </div>
@@ -247,7 +247,7 @@ const AccountBasedBalance = (props) => {
                                                                         placeholder="Portfolio Value"
                                                                         id={`portfolioValue${i}`}
                                                                         name={`portfolioValue${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                         onChange={(e) => {
 
                                                                             setFieldValue(`portfolioValue${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
@@ -306,7 +306,7 @@ const AccountBasedBalance = (props) => {
                                                                         onFocus={(e) => handleInputFocus(e, setFieldValue)}
                                                                         onKeyDown={(e) => handleInputKeyDown(e)}
                                                                         onBlur={(e) => handleInputBlur(e, setFieldValue, toPercentage, FormulaSetting, values)}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -319,7 +319,7 @@ const AccountBasedBalance = (props) => {
                                                                             setFieldValue(`taxFreeComponent${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
                                                                             setFieldValue(`taxableComponent${i}`, toCommaAndDollar((parseFloat(values[`portfolioValue${i}`].replace(/[^0-9.-]+/g, "")) || 0) - parseFloat(e.target.value.replace(/[^0-9.-]+/g, "") || 0)));
                                                                         }}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                         disabled
                                                                     />
                                                                 </td>
@@ -330,7 +330,7 @@ const AccountBasedBalance = (props) => {
                                                                         id={`taxableComponent${i}`}
                                                                         name={`taxableComponent${i}`}
                                                                         disabled
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -339,7 +339,7 @@ const AccountBasedBalance = (props) => {
                                                                         placeholder="Unrestricted non preserved"
                                                                         id={`unrestrictedNonPreserved${i}`}
                                                                         name={`unrestrictedNonPreserved${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                         disabled
                                                                     />
                                                                 </td>
@@ -349,7 +349,7 @@ const AccountBasedBalance = (props) => {
                                                                         placeholder="Restricted non preserved"
                                                                         id={`restrictedNonPreserved${i}`}
                                                                         name={`restrictedNonPreserved${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
 
                                                                         onChange={(e) => {
                                                                             setFieldValue(`restrictedNonPreserved${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
@@ -363,7 +363,7 @@ const AccountBasedBalance = (props) => {
                                                                         placeholder="Preserved amount"
                                                                         id={`preservedAmount${i}`}
                                                                         name={`preservedAmount${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                         onChange={(e) => {
                                                                             // alert("ss")
                                                                             setFieldValue(`preservedAmount${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));

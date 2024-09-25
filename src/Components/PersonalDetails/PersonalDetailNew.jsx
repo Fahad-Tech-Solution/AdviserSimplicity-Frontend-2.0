@@ -180,13 +180,6 @@ const PersonalDetailNew = () => {
                 .email('Invalid email format')
                 .required('Required'),
         }),
-        // partner: Yup.object({
-        //     partnerEmail: Yup.string()
-        //         .email('Invalid email format')
-        //         .required('Required'),
-        //     partnerMaritalStatus: Yup.string()
-        //         .required('Marital status is required'),
-        // }),
         haveAnyChildren: Yup.string()
             .oneOf(['Yes', 'No'], 'Please select Yes or No')
             .required('This field is required'),
@@ -248,7 +241,6 @@ const PersonalDetailNew = () => {
                 let res;
                 if (!FoundId) {
 
-
                     checkAndReplaceEmptyData(obj.client);
 
                     checkAndReplaceEmptyData(obj.partner);
@@ -285,8 +277,16 @@ const PersonalDetailNew = () => {
                 }
 
             } catch (error) {
-                console.error("Error occurred while making API call:", error);
-                openNotificationSuccess("error", 'topRight', "Notification", "Something when wrrong please check data again!")
+
+                console.error("Error occurred while making API call:", error?.response);
+
+                if (error?.response?.status == 409) {
+                    if (error?.response?.data?.message) {
+                        openNotificationSuccess("error", 'topRight', "Notification", error.response.data.message)
+                    }
+                } else {
+                    openNotificationSuccess("error", 'topRight', "Notification", "Something when wrrong please check data again!")
+                }
 
             }
 

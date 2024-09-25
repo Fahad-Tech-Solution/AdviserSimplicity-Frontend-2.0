@@ -125,7 +125,7 @@ const Beneficiaries = (props) => {
                                             type="number"
                                             id="NumberOfMap"
                                             name="NumberOfMap"
-                                            className="form-control inputDesign"
+                                            className="form-control inputDesignDoubleInput"
                                             onChange={(e) => handleInput(e, setFieldValue)}
                                         />
                                     </div>
@@ -153,7 +153,7 @@ const Beneficiaries = (props) => {
                                                                         as="select"
                                                                         id={`nominationType${i}`}
                                                                         name={`nominationType${i}`}
-                                                                        className="form-select inputDesign"
+                                                                        className="form-select inputDesignDoubleInput"
                                                                         onChange={(e) => {
                                                                             setFieldValue(`nominationType${i}`, e.target.value);
                                                                             if (e.target.value === "Legal Personal Representative (Your Estate)") {
@@ -211,7 +211,7 @@ const Beneficiaries = (props) => {
                                                                         placeholder="Beneficiary Name"
                                                                         id={`beneficiaryName${i}`}
                                                                         name={`beneficiaryName${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                         disabled={values[`nominationType${i}`] == "Legal Personal Representative (Your Estate)"}
                                                                     />
                                                                 </td>
@@ -220,7 +220,7 @@ const Beneficiaries = (props) => {
                                                                         as="select"
                                                                         id={`relationshipStatus${i}`}
                                                                         name={`relationshipStatus${i}`}
-                                                                        className="form-select inputDesign"
+                                                                        className="form-select inputDesignDoubleInput"
                                                                     >
                                                                         <option value={""}>Select</option>
                                                                         {values[`nominationType${i}`] === "Legal Personal Representative (Your Estate)" &&
@@ -243,7 +243,7 @@ const Beneficiaries = (props) => {
                                                                         placeholder="Share of Benefit"
                                                                         id={`shareBenefit${i}`}
                                                                         name={`shareBenefit${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                         disabled={values[`nominationType${i}`] == "Legal Personal Representative (Your Estate)"}
                                                                         onChange={(e) => handleInputChange(e, setFieldValue, FormulaSetting, values)}
                                                                         onFocus={(e) => handleInputFocus(e, setFieldValue)}

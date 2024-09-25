@@ -272,7 +272,7 @@ const PortfolioValue = (props) => {
                                 placeholder="Investment Code"
                                 id={`investmentCode${i}`}
                                 name={`investmentCode${i}`}
-                                className="form-control inputDesign"
+                                className="form-control inputDesignDoubleInput"
                                 disabled
                             />
                         </td>
@@ -282,7 +282,7 @@ const PortfolioValue = (props) => {
                                 placeholder="Investment Value"
                                 id={`investmentValue${i}`}
                                 name={`investmentValue${i}`}
-                                className="form-control inputDesign"
+                                className="form-control inputDesignDoubleInput"
                                 onChange={(e) => {
                                     setFieldValue(e.target.name,
                                         toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
@@ -327,7 +327,7 @@ const PortfolioValue = (props) => {
                                             type="number"
                                             id="NumberOfMap"
                                             name="NumberOfMap"
-                                            className="form-control inputDesign"
+                                            className="form-control inputDesignDoubleInput"
                                             onChange={(e) => handleInput(e, setFieldValue)}
                                         />
                                     </div>

@@ -1,27 +1,23 @@
 import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { Button, InputGroup, Row, Table } from 'react-bootstrap';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { BankDetail, defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { openNotificationSuccess, PatchAxios, PostAxios, toCommaAndDollar } from '../../../Assets/Api/Api';
-import axios from 'axios';
+import { openNotificationSuccess, toCommaAndDollar } from '../../../Assets/Api/Api';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import InnerModal from './InnerModal';
-import PortfolioValue from './PortfolioValue';
 import DynamicYesNo from './DynamicYesNo';
-import MemberNumber from './MemberNumber';
-import GroupInsurance from './GroupInsurance';
-import Contributions from './Contributions';
 import Beneficiaries from './Beneficiaries';
-import AccountBasedMemberNumber from './AccountBasedMemberNumber';
 import { Tooltip } from 'antd';
 import { FaCircleQuestion } from 'react-icons/fa6';
 import AccountBasedBalance from '../AccountBasedBalance';
 
 const AccountBasedPension = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
-    let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+
+
     let bankDetailObj = useRecoilValue(BankDetail);
 
 
@@ -55,23 +51,24 @@ const AccountBasedPension = (props) => {
 
 
     useEffect(() => {
-        if (accountBasedPensionIssues[props.modalObject.Input] && accountBasedPensionIssues[props.modalObject.Input].length) {
-
+        if (props.modalObject.values[props.modalObject.Input] && props.modalObject.values[props.modalObject.Input].length) {
             let arr = []
 
-            for (let i = 0; i < accountBasedPensionIssues[props.modalObject.Input].length; i++) {
+            for (let i = 0; i < props.modalObject.values[props.modalObject.Input].length; i++) {
                 arr.push("");
             }
-
             setDynamicFields(arr);
-
         }
     }, [])
+
     const fillInitialValues = (setFieldValue) => {
 
-        if (accountBasedPensionIssues[props.modalObject.Input] && accountBasedPensionIssues[props.modalObject.Input].length) {
+        if (props.modalObject.values[props.modalObject.Input] && props.modalObject.values[props.modalObject.Input].length > 0) {
+            setFieldValue(`NumberOfMap`, props.modalObject.values[props.modalObject.Input].length || '');
 
-            accountBasedPensionIssues[props.modalObject.Input].forEach((data, i) => {
+            let FoundArray = props.modalObject.values[props.modalObject.Input];
+            // alert(FoundArray.length)
+            FoundArray.forEach((data, i) => {
                 if (data) {
                     setFieldValue(`fundName${i}`, data.fundName || '');
                     setFieldValue(`memberNumber${i}`, data.memberNumber || '');
@@ -173,7 +170,7 @@ const AccountBasedPension = (props) => {
             {({ values, setFieldValue, handleChange }) => {
                 useEffect(() => {
                     fillInitialValues(setFieldValue);
-                }, [values.NumberOfMap]);
+                }, []);
 
                 return (
                     <Form>

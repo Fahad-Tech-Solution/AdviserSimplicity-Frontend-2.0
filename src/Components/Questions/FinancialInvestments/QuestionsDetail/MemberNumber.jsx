@@ -161,7 +161,7 @@ const MemberNumber = (props) => {
                                             type="number"
                                             id="NumberOfMap"
                                             name="NumberOfMap"
-                                            className="form-control inputDesign"
+                                            className="form-control inputDesignDoubleInput"
                                             onChange={(e) => handleInput(e, setFieldValue)}
                                         />
                                     </div>
@@ -202,7 +202,7 @@ const MemberNumber = (props) => {
                                                                         placeholder="Portfolio Value"
                                                                         id={`portfolioValue${i}`}
                                                                         name={`portfolioValue${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                         onChange={(e) => {
 
                                                                             setFieldValue(`portfolioValue${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
@@ -260,7 +260,7 @@ const MemberNumber = (props) => {
                                                                             setFieldValue(`taxFreeComponent${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
                                                                             setFieldValue(`taxableComponent${i}`, toCommaAndDollar((parseFloat(values[`portfolioValue${i}`].replace(/[^0-9.-]+/g, "")) || 0) - parseFloat(e.target.value.replace(/[^0-9.-]+/g, "") || 0)));
                                                                         }}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -270,7 +270,7 @@ const MemberNumber = (props) => {
                                                                         id={`taxableComponent${i}`}
                                                                         name={`taxableComponent${i}`}
                                                                         disabled
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -279,7 +279,7 @@ const MemberNumber = (props) => {
                                                                         placeholder="Restricted non preserved"
                                                                         id={`restrictedNonPreserved${i}`}
                                                                         name={`restrictedNonPreserved${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                         onChange={(e) => {
                                                                             setFieldValue(`restrictedNonPreserved${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
                                                                             setFieldValue(`preservedAmount${i}`, toCommaAndDollar((parseFloat(values[`portfolioValue${i}`].replace(/[^0-9.-]+/g, "")) || 0) - parseFloat(e.target.value.replace(/[^0-9.-]+/g, "") || 0) - ((parseFloat(values[`unrestrictedNonPreserved${i}`].replace(/[^0-9.-]+/g, ""))) || 0)));
@@ -292,7 +292,7 @@ const MemberNumber = (props) => {
                                                                         placeholder="Unrestricted non preserved"
                                                                         id={`unrestrictedNonPreserved${i}`}
                                                                         name={`unrestrictedNonPreserved${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                         onChange={(e) => {
                                                                             setFieldValue(`unrestrictedNonPreserved${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
                                                                             setFieldValue(`preservedAmount${i}`, toCommaAndDollar((parseFloat(values[`portfolioValue${i}`].replace(/[^0-9.-]+/g, "")) || 0) - parseFloat(e.target.value.replace(/[^0-9.-]+/g, "") || 0) - ((parseFloat(values[`restrictedNonPreserved${i}`].replace(/[^0-9.-]+/g, ""))) || 0)));
@@ -306,7 +306,7 @@ const MemberNumber = (props) => {
                                                                         placeholder="Preserved amount"
                                                                         id={`preservedAmount${i}`}
                                                                         name={`preservedAmount${i}`}
-                                                                        className="form-control inputDesign"
+                                                                        className="form-control inputDesignDoubleInput"
                                                                     />
                                                                 </td>
                                                             </tr>)

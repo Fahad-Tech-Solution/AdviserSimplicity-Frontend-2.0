@@ -35,10 +35,10 @@ const AustralianShares = (props) => {
 
     // Use an empty object as default if australianSharesFinance is undefined
     useEffect(() => {
-        if (australianSharesFinance[props.modalObject.Input] && australianSharesFinance[props.modalObject.Input].length) {
+        if (props.modalObject.values[props.modalObject.Input] && props.modalObject.values[props.modalObject.Input].length) {
             let arr = []
 
-            for (let i = 0; i < australianSharesFinance[props.modalObject.Input].length; i++) {
+            for (let i = 0; i < props.modalObject.values[props.modalObject.Input].length; i++) {
                 arr.push("");
             }
             setDynamicFields(arr);
@@ -55,18 +55,20 @@ const AustralianShares = (props) => {
 
     const fillInitialValues = (setFieldValue) => {
 
-        if (australianSharesFinance[props.modalObject.Input] && australianSharesFinance[props.modalObject.Input].length) {
-            setFieldValue(`NumberOfMap`, australianSharesFinance[props.modalObject.Input].length || '');
+        if (props.modalObject.values[props.modalObject.Input] && props.modalObject.values[props.modalObject.Input].length > 0) {
+            setFieldValue(`NumberOfMap`, props.modalObject.values[props.modalObject.Input].length || '');
 
-            australianSharesFinance[props.modalObject.Input].forEach((data, i) => {
-                if (data) {
-                    setFieldValue(`ASXCode${i}`, data.ASXCode || '');
-                    setFieldValue(`companyName${i}`, data.companyName || '');
-                    setFieldValue(`sharePrice${i}`, data.sharePrice || '');
-                    setFieldValue(`shares${i}`, data.shares || '');
-                    setFieldValue(`costBase${i}`, data.costBase || '');
-                    setFieldValue(`currentBalance${i}`, data.currentBalance || '');
-                }
+            let FoundArray = props.modalObject.values[props.modalObject.Input];
+            // alert(FoundArray.length)
+            FoundArray.forEach((data, i) => {
+
+                setFieldValue(`ASXCode${i}`, data.ASXCode || '');
+                setFieldValue(`companyName${i}`, data.companyName || '');
+                setFieldValue(`sharePrice${i}`, data.sharePrice || '');
+                setFieldValue(`shares${i}`, data.shares || '');
+                setFieldValue(`costBase${i}`, data.costBase || '');
+                setFieldValue(`currentBalance${i}`, data.currentBalance || '');
+
             });
         }
     };
