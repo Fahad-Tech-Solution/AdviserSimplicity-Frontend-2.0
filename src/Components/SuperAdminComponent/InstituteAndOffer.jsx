@@ -160,7 +160,7 @@ const InstituteAndOffer = () => {
 
                 <div className='col-md-12'>
                     <div>
-                        <h2 className='text-center text-green'>Institutes and Offers</h2>
+                        <h2 className='text-center text-green'>Platform and Investment</h2>
                         <div className="QuestionIcon p-3 curser-pointer" onClick={() => { OpenInstitute("new") }}
                         >
                             <img className="img-fluid min-w-25" src={Add} alt="" />
@@ -177,7 +177,7 @@ const InstituteAndOffer = () => {
                                             <Accordion.Header>{elem.name}</Accordion.Header>
                                             <Accordion.Body>
                                                 <div className='row'>
-                                                    <div className='col-md-6'>
+                                                    <div className='col-md-4'>
                                                         <div className='customCard'>
                                                             <h4 className='d-flex  justify-content-between'>{elem.name}
 
@@ -189,19 +189,28 @@ const InstituteAndOffer = () => {
                                                                 </Tooltip>
                                                             </h4>
 
-                                                            <Tooltip placement="top" title={"Delete"}>
-                                                                <RiDeleteBinLine style={{ color: "red", fontSize: '18px', cursor: 'pointer', float: "right" }}
-                                                                    onClick={() => { DeleteBank(elem, "delete", index) }}
-                                                                />
-                                                            </Tooltip>
+                                                            <h4 className='d-flex  justify-content-between'> Total Investments {elem.arrayOfOffers.length}
+
+                                                                <Tooltip placement="top" title={"Delete"}>
+                                                                    <RiDeleteBinLine style={{ color: "red", fontSize: '18px', cursor: 'pointer', }}
+                                                                        onClick={() => { DeleteBank(elem, "delete", index) }}
+                                                                    />
+                                                                </Tooltip>
+                                                            </h4>
                                                         </div>
+                                                    </div>
+
+                                                    <div className='col-md-4'>
+
+                                                    </div>
+                                                    <div className='col-md-4'>
+                                                        <Button type='submit' className='w-100 bgColor modalBtn m-0' onClick={() => { OpenOffer(elem, "new") }}>  <HiOutlinePlus style={{ fontSize: '18px', margin: "0px 0px 3px 0px" }} /> Add New Investment</Button>
                                                     </div>
 
                                                     <div className='col-md-12 mt-3'>
                                                         <div className='row justify-content-between '>
-                                                            <div className='col-md-6'><h2 className='m-0 p-0'>Offers</h2></div>
+                                                            <div className='col-md-6'><h2 className='m-0 p-0'>Investment</h2></div>
                                                             <div className='col-md-2'>
-                                                                <Button type='submit' className='w-100 bgColor modalBtn m-0' onClick={() => { OpenOffer(elem, "new") }}>  <HiOutlinePlus style={{ fontSize: '18px', margin: "0px 0px 3px 0px" }} /> Add New Offers</Button>
                                                             </div>
                                                         </div>
                                                     </div>
