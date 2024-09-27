@@ -16,7 +16,7 @@ import {
 import { useRecoilState, useRecoilValue } from "recoil";
 import { QuestionShift, CRState, defaultUrl } from "../../../Store/Store";
 import { Form, Formik } from "formik";
-import { GetAxios, PatchAxios, PostAxios } from "../../Assets/Api/Api";
+import { GetAxios, openNotificationSuccess, PatchAxios, PostAxios } from "../../Assets/Api/Api";
 import DynamicQuestionBlocks from "../../Assets/DynamicQuestionBlocks/DynamicQuestionBlocks";
 const AdditionalQueriesProfessionalAdvisor = (props) => {
 
@@ -69,8 +69,10 @@ const AdditionalQueriesProfessionalAdvisor = (props) => {
           handleResponse(values);
         }
       }
+      openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
     } catch (error) {
       console.error("Error submitting form:", error);
+      openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
     }
   };
 

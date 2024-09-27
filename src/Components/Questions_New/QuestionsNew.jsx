@@ -77,7 +77,7 @@ const QuestionsNew = (props) => {
 
   async function fetchData() {
     try {
-      const res = await GetAxios(`${DefaultUrl}/api/offer/`);
+      const res = await GetAxios(`${DefaultUrl}/api/investmentoffer/`);
       if (res) {
         // console.log(JSON.stringify(res))
         setBankDetailObj(res)

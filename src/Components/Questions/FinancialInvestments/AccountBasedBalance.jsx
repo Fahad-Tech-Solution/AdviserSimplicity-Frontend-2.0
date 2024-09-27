@@ -122,7 +122,7 @@ const AccountBasedBalance = (props) => {
                     // Add InstituteOptions from arrayOfOffers if available
                     if (Array.isArray(elem.arrayOfOffers) && elem.arrayOfOffers.length > 0) {
                         elem.arrayOfOffers.forEach((offerElem) => {
-                            InstituteOptions.push({ value: offerElem._id, label: `${offerElem.name} (${offerElem.code})` });
+                            InstituteOptions.push({ value: offerElem._id, label: `${offerElem.investmentName} (${offerElem.investmentCode})` });
                         });
                     }
                 }

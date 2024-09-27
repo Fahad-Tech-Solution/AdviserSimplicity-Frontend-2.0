@@ -14,7 +14,7 @@ import moneyBag from "../svgs/money-bag-svgrepo-com.svg";
 
 import { useRecoilState, useRecoilValue } from "recoil";
 import { QuestionShift, CRState, defaultUrl } from "../../../Store/Store";
-import { GetAxios, PatchAxios, PostAxios } from '../../Assets/Api/Api';
+import { GetAxios, openNotificationSuccess, PatchAxios, PostAxios } from '../../Assets/Api/Api';
 import { Image } from 'react-bootstrap';
 import DynamicQuestionBlocks from '../../Assets/DynamicQuestionBlocks/DynamicQuestionBlocks';
 
@@ -77,8 +77,10 @@ const PersonalIncome = (props) => {
                     handleResponse(PatchRes);
                 }
             }
+            openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
         } catch (error) {
             console.error("Error submitting form:", error);
+            openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
         }
     };
 
@@ -102,7 +104,7 @@ const PersonalIncome = (props) => {
             title: "Centrelink Payments/Benefits",
             img: Gears,
             key: "incomeFromCentrelink",
-            info:"This includes Family Tax Benefit (A&B) Payments and any Centrelink Cards"
+            info: "This includes Family Tax Benefit (A&B) Payments and any Centrelink Cards"
         },
         {
             title: "Lifetime/Defined Benefit Super Pensions",

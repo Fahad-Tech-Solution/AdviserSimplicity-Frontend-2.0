@@ -1,6 +1,6 @@
 import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
-import { Button, Row, Table } from 'react-bootstrap';
+import { Button, InputGroup, Row, Table } from 'react-bootstrap';
 import { useRecoilValue } from 'recoil';
 import { BankDetail, defaultUrl, QuestionDetail } from '../../../../Store/Store';
 import { openNotificationSuccess, toCommaAndDollar } from '../../../Assets/Api/Api';
@@ -14,6 +14,7 @@ import MemberNumber from './MemberNumber';
 import GroupInsurance from './GroupInsurance';
 import Contributions from './Contributions';
 import Beneficiaries from './Beneficiaries';
+import AnnualPensionPaymentInnerModal from './AnnualPensionPaymentInnerModal';
 
 const InvestedAnnuities = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
@@ -75,10 +76,12 @@ const InvestedAnnuities = (props) => {
                     setFieldValue(`originalInvestmentAmount${i}`, data.originalInvestmentAmount || '');
                     setFieldValue(`returnCapitalValue${i}`, data.returnCapitalValue || '');
                     setFieldValue(`annualAnnuityPayment${i}`, data.annualAnnuityPayment || '');
+                    setFieldValue(`annualPensionPaymentArray${i}`, data.annualPensionPaymentArray || '');
                     setFieldValue(`annuityType${i}`, data.annuityType || '');
                     setFieldValue(`term${i}`, data.term || '');
                     setFieldValue(`yearsMaturity${i}`, data.yearsMaturity || '');
                     setFieldValue(`beneficiariesArray${i}`, data.beneficiariesArray || '');
+                    setFieldValue(`nominatedBeneficiaries${i}`, data.nominatedBeneficiaries || '');
                     setFieldValue(`annualAdvice${i}`, data.annualAdvice || '');
                 }
             });
@@ -136,12 +139,16 @@ const InvestedAnnuities = (props) => {
                 originalInvestmentAmount: values[`originalInvestmentAmount${i}`] || "",
                 returnCapitalValue: values[`returnCapitalValue${i}`] || "",
                 annualAnnuityPayment: values[`annualAnnuityPayment${i}`] || "",
+                annualPensionPaymentArray: values[`annualPensionPaymentArray${i}`] || "",
                 annuityType: values[`annuityType${i}`] || "",
                 term: values[`term${i}`] || "",
                 yearsMaturity: values[`yearsMaturity${i}`] || "",
+                nominatedBeneficiaries: values[`nominatedBeneficiaries${i}`] || "",
                 beneficiariesArray: values[`beneficiariesArray${i}`] || "",
                 annualAdvice: values[`annualAdvice${i}`] || "",
             };
+
+
             newEntries.push(newEntry);
         }
 
@@ -184,7 +191,9 @@ const InvestedAnnuities = (props) => {
                                         modalObject.key === "memberArray" ? <MemberNumber /> :
                                             modalObject.key === "groupInsuranceArray" ? <GroupInsurance /> :
                                                 modalObject.key === "ContributionsArray" ? <Contributions /> :
-                                                    modalObject.key === "beneficiariesArray" ? <Beneficiaries /> : ""
+                                                    modalObject.key === "beneficiariesArray" ? <Beneficiaries /> :
+                                                        modalObject.key === "annualPensionPaymentArray" ? <AnnualPensionPaymentInnerModal /> : ""
+
                                 }
                             </InnerModal>
                             <div className="col-md-12">
@@ -236,7 +245,7 @@ const InvestedAnnuities = (props) => {
                                                                 >
                                                                     <option value={""}>Please Select</option>
                                                                     {bankDetailObj.map((elem, index) => {
-                                                                        return (<option key={index} value={elem._id}>{elem.name}</option>)
+                                                                        return (<option key={index} value={elem._id}>{elem.platformName}</option>)
                                                                     })}
                                                                 </Field>
                                                             </td>
@@ -287,23 +296,37 @@ const InvestedAnnuities = (props) => {
                                                                 />
                                                             </td>
                                                             <td>
-                                                                <Field
-                                                                    style={{ minWidth: "100px" }}
-                                                                    type="text"
-                                                                    as={"select"}
-                                                                    placeholder="Annual Annuity Payment"
-                                                                    id={`annualAnnuityPayment${i}`}
-                                                                    name={`annualAnnuityPayment${i}`}
-                                                                    className="form-select inputDesignDoubleInput"
-                                                                >
-                                                                    <option value={""}>Select</option>
-                                                                    <option value={"Weekly"}>Weekly</option>
-                                                                    <option value={"Fortnightly"}>Fortnightly</option>
-                                                                    <option value={"Monthly"}>Monthly</option>
-                                                                    <option value={"Quarterly"}>Quarterly </option>
-                                                                    <option value={"6 Monthly"}>6 Monthly </option>
-                                                                    <option value={"Annually"}>Annually </option>
-                                                                </Field>
+                                                                <InputGroup className="mb-3" style={{ width: "150px" }}>
+                                                                    <Field
+                                                                        type="text"
+                                                                        placeholder="Pension Payment"
+                                                                        id={`annualAnnuityPayment${i}`}
+                                                                        name={`annualAnnuityPayment${i}`}
+                                                                        className="form-control inputDesignDoubleInput"
+                                                                        onChange={(e) => {
+                                                                            setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                        }}
+                                                                    />
+                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
+                                                                        if (values[`productProvider${i}`]) {
+                                                                            let name = "";
+                                                                            bankDetailObj.map((elem, index) => {
+
+                                                                                if (elem._id === values[`productProvider${i}`]) {
+                                                                                    name = elem.platformName
+                                                                                }
+
+                                                                            });
+                                                                            handleInnerModal(name + "_Annual Pension Payment", '', "annualPensionPaymentArray", "annualAnnuityPayment", "", values[`annualPensionPaymentArray${i}`], i, values)
+                                                                        }
+                                                                        else {
+                                                                            // type, placement, message, description
+                                                                            openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
+                                                                        }
+                                                                    }}>
+                                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                                    </Button>
+                                                                </InputGroup>
                                                             </td>
                                                             <td>
                                                                 <Field
@@ -312,10 +335,20 @@ const InvestedAnnuities = (props) => {
                                                                     placeholder="Annuity Type"
                                                                     id={`annuityType${i}`}
                                                                     name={`annuityType${i}`}
-                                                                    value="Fixed Term Lifetime"
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                    disabled
-                                                                />
+                                                                    as="select"
+                                                                    className="form-select inputDesignDoubleInput"
+                                                                    onChange={(e) => {
+                                                                        setFieldValue(e.target.name, e.target.value);
+                                                                        if (e.target.value === "Lifetime") {
+                                                                            setFieldValue(`term${i}`, "");
+                                                                            setFieldValue(`yearsMaturity${i}`, "");
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    <option value="">Select</option>
+                                                                    <option value="Fixed Term">Fixed Term</option>
+                                                                    <option value="Lifetime">Lifetime</option>
+                                                                </Field>
                                                             </td>
                                                             <td>
                                                                 <Field
@@ -325,6 +358,7 @@ const InvestedAnnuities = (props) => {
                                                                     id={`term${i}`}
                                                                     name={`term${i}`}
                                                                     className="form-control inputDesignDoubleInput"
+                                                                    disabled={values[`annuityType${i}`] == "Lifetime"}
                                                                 />
                                                             </td>
                                                             <td>
@@ -332,6 +366,7 @@ const InvestedAnnuities = (props) => {
                                                                     style={{ minWidth: "100px" }}
                                                                     type="number"
                                                                     placeholder="Years to Maturity"
+                                                                    disabled={values[`annuityType${i}`] == "Lifetime"}
                                                                     id={`yearsMaturity${i}`}
                                                                     name={`yearsMaturity${i}`}
                                                                     className="form-control inputDesignDoubleInput"
@@ -347,7 +382,7 @@ const InvestedAnnuities = (props) => {
                                                                                 bankDetailObj.map((elem, index) => {
 
                                                                                     if (elem._id === values[`productProvider${i}`]) {
-                                                                                        name = elem.name
+                                                                                        name = elem.platformName
                                                                                     }
 
                                                                                 });

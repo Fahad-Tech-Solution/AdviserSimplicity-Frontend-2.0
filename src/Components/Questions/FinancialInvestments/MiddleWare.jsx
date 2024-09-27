@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { defaultUrl, QuestionDetail } from '../../../Store/Store';
-import { PatchAxios, PostAxios, toCommaAndDollar } from '../../Assets/Api/Api';
+import { openNotificationSuccess, PatchAxios, PostAxios, toCommaAndDollar } from '../../Assets/Api/Api';
 import DynamicTableRow from '../../Assets/Dynamic/DynamicTableRow';
 import InnerModal from './QuestionsDetail/InnerModal';
 import BankTermForm from './QuestionsDetail/BankTermForm';
@@ -177,9 +177,11 @@ const MiddleWare = (props) => {
             if (props.flagState) {
                 props.setFlagState(false);
             }
+            openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
 
         } catch (error) {
             console.error("Error occurred while making API call:", error);
+            openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
         }
 
     };

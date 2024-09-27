@@ -4,6 +4,7 @@ import { Button, InputGroup, Row, Table } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
 import {
+  openNotificationSuccess,
   PatchAxios,
   PostAxios,
   RenderName,
@@ -127,6 +128,7 @@ const LifeTimeBeneFits = (props) => {
         const updatedData = { ...questionDetail, incomeFromSuperPayment: res };
         setQuestionDetail(updatedData);
       }
+      openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
 
       // Reset the flag state if necessary
       if (props.flagState) {
@@ -134,6 +136,7 @@ const LifeTimeBeneFits = (props) => {
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
+      openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
     }
   };
 

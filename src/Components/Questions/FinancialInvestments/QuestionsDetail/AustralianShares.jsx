@@ -237,7 +237,7 @@ const AustralianShares = (props) => {
                         </td>
                         <td>
                             <Field
-                                type="number"
+                                type="text"
                                 placeholder="Shares"
                                 id={`shares${i}`}
                                 name={`shares${i}`}
@@ -245,10 +245,10 @@ const AustralianShares = (props) => {
                                 disabled={!values[`sharePrice${i}`]}
                                 onChange={(e) => {
                                     if (e.target.value > 1000) {
-                                        setFieldValue(e.target.name, 1000)
+                                        setFieldValue(e.target.name, "1,000")
                                     }
                                     else {
-                                        setFieldValue(e.target.name, e.target.value)
+                                        setFieldValue(e.target.name, parseFloat((e.target.value).toString().replace(/[^0-9.-]+/g, "")))
                                     }
                                 }}
                             />

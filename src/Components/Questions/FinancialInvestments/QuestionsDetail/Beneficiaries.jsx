@@ -1,4 +1,4 @@
-import { Field, Form, Formik } from 'formik';
+import { ErrorMessage, Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilValue } from 'recoil';
@@ -201,7 +201,6 @@ const Beneficiaries = (props) => {
                                                                             dropdownMode="select"
                                                                             onBlur={handleBlur}
                                                                             wrapperClassName="w-100"
-                                                                            disabled={values[`nominationType${i}`] == "Legal Personal Representative (Your Estate)"}
                                                                         />
                                                                     </div>
                                                                 </td>
@@ -250,6 +249,10 @@ const Beneficiaries = (props) => {
                                                                         onKeyDown={(e) => handleInputKeyDown(e)}
                                                                         onBlur={(e) => handleInputBlur(e, setFieldValue, toPercentage, FormulaSetting, values)}
                                                                     />
+                                                                    {parseFloat((values[`shareBenefit${i}`] || "100$").replace(/[^0-9.-]+/g, "")) < 100 &&
+
+                                                                        <p style={{ textAlign: "left", fontSize: "13px" }} className="text-danger mt-2 fw-bold">Share of Benefit must be 100%</p>
+                                                                    }
                                                                 </td>
 
                                                             </tr>)

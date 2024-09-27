@@ -3,14 +3,107 @@ import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { BankDetail, defaultUrl, QuestionDetail } from '../../Store/Store';
-import { openNotificationSuccess, PatchAxios, PostAxios } from '../Assets/Api/Api';
+import { GetAxios, openNotificationSuccess, PatchAxios, PostAxios } from '../Assets/Api/Api';
+
+import { ConfigProvider, message, Upload } from 'antd';
+import { FaInbox } from 'react-icons/fa';
+
+const DropBox = (props) => {
+    const { Dragger } = Upload;
+
+    const { fileList, setFileList } = props // State to store uploaded files
+
+    const DraggerProps = {
+        name: 'file',
+        multiple: false,
+        fileList, // This ensures the state-managed file list is displayed below the drop area
+        beforeUpload: (file) => {
+            // Validate file type: CSV or Excel only
+            const isCSV = file.type === 'text/csv';
+            const isExcel =
+                file.type === 'application/vnd.ms-excel' || // XLS
+                file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; // XLSX
+
+            if (!isCSV && !isExcel) {
+                alert("You can only upload CSV or Excel files!")
+                // openNotificationSuccess("error", "topRight", "Error Notification", "You can only upload CSV or Excel files!");
+                return Upload.LIST_IGNORE; // Ignore the file if it's not valid
+            }
+
+            if (fileList.length >= 1) {
+                alert("You can only upload one file at a time");
+            }
+            else {
+                setFileList(prev => [...prev, file]);
+            }
+
+            // Store the file in the state
+            return false; // Prevent automatic upload
+        },
+
+        onRemove: (file) => {
+            // Handle file removal
+            setFileList(prev => prev.filter(item => item.uid !== file.uid));
+        },
+
+        onDrop: (e) => {
+            console.log('Dropped files', e.dataTransfer.files);
+        },
+
+        listType: 'text', // Display the file list below the drop area
+    };
+
+
+
+    return (
+        <ConfigProvider
+            theme={{
+                token: {
+                    /* here is your global tokens */
+                    colorPrimary: "#36b446"
+                },
+            }}
+        >
+            <Dragger {...DraggerProps}>
+                <p className="ant-upload-drag-icon">
+                    <FaInbox />
+                </p>
+                <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                <p className="ant-upload-hint">
+                    Support for a single or bulk upload. Strictly prohibited from uploading company data or other
+                    banned files.
+                </p>
+            </Dragger>
+
+        </ConfigProvider>
+    )
+}
+
+
+
+
 
 const OfferFom = (props) => {
 
 
+
+    let [CSV, setCSV] = useState(false)
+
+
+    useEffect(() => {
+        if (props.modalObject.oppration === "CSV") {
+            setCSV(true)
+        }
+
+    }, [])
+
+
+    const [fileList, setFileList] = useState([]); // State to store uploaded files
+
+
     let initialValues = {
-        name: "",
-        code: "",
+        investmentName: "",
+        investmentCode: "",
     };
 
 
@@ -18,9 +111,8 @@ const OfferFom = (props) => {
         if (props.modalObject.oppration === "edit" && props.modalObject?.fullBank?.arrayOfOffers.length > 0) {
             //Check _id First
 
-            setFieldValue("name", props.modalObject.fullBank.arrayOfOffers[props.modalObject.index].name || "")
-            setFieldValue("code", props.modalObject.fullBank.arrayOfOffers[props.modalObject.index].code || "")
-            setFieldValue("additionalDetails", props.modalObject.fullBank.arrayOfOffers[props.modalObject.index].additionalDetails || "")
+            setFieldValue("investmentName", props.modalObject.fullBank.arrayOfOffers[props.modalObject.index].investmentName || "")
+            setFieldValue("investmentCode", props.modalObject.fullBank.arrayOfOffers[props.modalObject.index].investmentCode || "")
 
         }
     };
@@ -31,35 +123,50 @@ const OfferFom = (props) => {
 
     let onSubmit = async (values) => {
 
-        let haveData = false;
-
-        if (props.modalObject.oppration === "edit") {
-
-            haveData = true;
-        }
+        let haveData = props.modalObject.oppration === "edit" ? true : false;
 
         let ApiChali = ""
         let res;
 
         console.log(haveData, bankDetailObj, "ma kea karo", props.modalObject.fullBank.arrayOfOffers[props.modalObject.index])
 
-        values.instituteFK = props.modalObject.fullBank._id
+        values.platformFK = props.modalObject.fullBank._id
+        console.log(values, "all Values")
 
         try {
 
             if (!haveData) {
-                res = await PostAxios(
-                    `${DefaultUrl}/api/offer/Add`,
-                    values
-                );
-                ApiChali = "Post"
+
+                if (props.modalObject.oppration === "CSV") {
+
+                    const formData = new FormData();
+                    formData.append("file", fileList[0]);
+                    formData.append("platformFK", props.modalObject.fullBank._id);
+
+
+                    res = await PostAxios(
+                        `${DefaultUrl}/api/investmentCSV/upload`,
+                        formData
+                    );
+                    ApiChali = "CSV Post"
+
+                } else {
+                    res = await PostAxios(
+                        `${DefaultUrl}/api/investmentoffer/Add`,
+                        values
+                    );
+                    ApiChali = "Post"
+                }
+
+
+
             } else {
                 values._id = props.modalObject.fullBank.arrayOfOffers[props.modalObject.index]._id;
 
                 console.log(values)
 
                 res = await PatchAxios(
-                    `${DefaultUrl}/api/offer/Update`,
+                    `${DefaultUrl}/api/investmentoffer/Update`,
                     values
                 );
                 ApiChali = "patch"
@@ -81,6 +188,10 @@ const OfferFom = (props) => {
 
                     setBankDetailObj(Obj);
 
+                }
+                else if (ApiChali === "CSV Post") {
+                    // alert("kuch karo")
+                    fetchData();
                 }
                 else {
                     let index = bankDetailObj.findIndex(
@@ -132,6 +243,19 @@ const OfferFom = (props) => {
     };
 
 
+    async function fetchData() {
+        try {
+            const res = await GetAxios(`${DefaultUrl}/api/investmentoffer/`);
+            if (res) {
+                console.log(JSON.stringify(res))
+                setBankDetailObj(res)
+            }
+        } catch (error) {
+            console.error("Error fetching questions:", error);
+        }
+    }
+
+
     return (
         <Formik
             initialValues={initialValues}
@@ -148,41 +272,36 @@ const OfferFom = (props) => {
                 return (
                     <Form>
                         <Row>
-                            <div className="col-md-12">
-                                <div className='row justify-content-between'>
+                            {CSV ?
 
-                                    <div className='col-md-6 pt-2'>
-                                        <label htmlFor='name' className='form-label'>Name</label>
-                                    </div>
-                                    <div className='col-md-4'>
-                                        <Field type="text" name="name" id="name" className="form-control inputDesign" />
-                                        <ErrorMessage name='name' component={"div"} className='text-danger' />
-                                    </div>
-
+                                <div className='col-md-12 upload-container'>
+                                    <DropBox fileList={fileList}
+                                        setFileList={setFileList} setFieldValue={setFieldValue} />
                                 </div>
-                                <div className='row justify-content-between mt-2'>
+                                :
 
-                                    <div className='col-md-6 pt-2'>
-                                        <label htmlFor='code' className='form-label'>Code</label>
+                                <div className="col-md-12">
+                                    <div className='row justify-content-between'>
+                                        <div className='col-md-6 pt-2'>
+                                            <label htmlFor='investmentName' className='form-label'>Investment Name</label>
+                                        </div>
+                                        <div className='col-md-4'>
+                                            <Field type="text" name="investmentName" id="investmentName" className="form-control inputDesign" />
+                                            <ErrorMessage name='investmentName' component={"div"} className='text-danger' />
+                                        </div>
                                     </div>
-                                    <div className='col-md-4'>
-                                        <Field type="text" name="code" id="code" className="form-control inputDesign" />
-                                        <ErrorMessage name='code' component={"div"} className='text-danger' />
+                                    <div className='row justify-content-between mt-2'>
+                                        <div className='col-md-6 pt-2'>
+                                            <label htmlFor='investmentCode' className='form-label'>Investment Code</label>
+                                        </div>
+                                        <div className='col-md-4'>
+                                            <Field type="text" name="investmentCode" id="investmentCode" className="form-control inputDesign" />
+                                            <ErrorMessage name='investmentCode' component={"div"} className='text-danger' />
+                                        </div>
                                     </div>
-
                                 </div>
-                                <div className='row justify-content-between mt-2'>
+                            }
 
-                                    <div className='col-md-6 pt-2'>
-                                        <label htmlFor='additionalDetails' className='form-label'>Additional Detials</label>
-                                    </div>
-                                    <div className='col-md-4'>
-                                        <Field type="text" as="textarea" name="additionalDetails" id="additionalDetails" className="form-control inputDesign" />
-                                        <ErrorMessage name='additionalDetails' component={"div"} className='text-danger' />
-                                    </div>
-
-                                </div>
-                            </div>
                         </Row>
                     </Form>
                 );

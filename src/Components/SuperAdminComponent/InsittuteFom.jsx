@@ -12,7 +12,7 @@ const InsittuteFom = (props) => {
 
     let { modalObject } = props || {};
 
-    let initialValues = { name: "" };
+    let initialValues = { platformName: "" };
 
 
     const fillInitialValues = (setFieldValue) => {
@@ -20,7 +20,7 @@ const InsittuteFom = (props) => {
         if (modalObject?.operation === "edit") {
             // if (modalObject?.data && Object.keys(modalObject?.data).length > 0 && modalObject.data?._id) {
             if (modalObject?.data && Object.keys(modalObject?.data).length > 0) {
-                setFieldValue("name", modalObject.data.name);
+                setFieldValue("platformName", modalObject.data.platformName);
             }
         }
 
@@ -45,7 +45,6 @@ const InsittuteFom = (props) => {
         let ApiChali = ""
         let res;
 
-
         console.log(haveData, bankDetailObj, "ma kea karo", values)
 
         try {
@@ -54,7 +53,7 @@ const InsittuteFom = (props) => {
 
             if (!haveData) {
                 res = await PostAxios(
-                    `${DefaultUrl}/api/institute/Add`,
+                    `${DefaultUrl}/api/platform/Add`,
                     values
                 );
                 ApiChali = "Post"
@@ -62,7 +61,7 @@ const InsittuteFom = (props) => {
                 values._id = haveData;
 
                 res = await PatchAxios(
-                    `${DefaultUrl}/api/institute/Update`,
+                    `${DefaultUrl}/api/platform/Update`,
                     values
                 );
                 ApiChali = "patch"
@@ -90,7 +89,7 @@ const InsittuteFom = (props) => {
                         (item) => item._id === res._id
                     );
 
-                    Obj[updatedIndex].name = res.name;
+                    Obj[updatedIndex].platformName = res.platformName;
 
                     console.log(Obj)
 
@@ -106,7 +105,7 @@ const InsittuteFom = (props) => {
             let type = "success";
             let placement = "topRight"
             let message = "Success Notification"
-            let description = "Institute is Added successfull"
+            let description = "Platform is Added successfull"
             openNotificationSuccess(type, placement, message, description);
 
         } catch (error) {
@@ -150,11 +149,11 @@ const InsittuteFom = (props) => {
                             <div className="col-md-12">
                                 <div className='row justify-content-between'>
                                     <div className='col-md-6 pt-2'>
-                                        <label htmlFor='name' className='form-label'>Platform Name</label>
+                                        <label htmlFor='platformName' className='form-label'>Platform Name</label>
                                     </div>
                                     <div className='col-md-4'>
-                                        <Field type="text" name="name" id="name" className="form-control inputDesign" />
-                                        <ErrorMessage name='name' component={"div"} className='text-danger' />
+                                        <Field type="text" name="platformName" id="platformName" className="form-control inputDesign" />
+                                        <ErrorMessage name='platformName' component={"div"} className='text-danger' />
                                     </div>
                                 </div>
                             </div>

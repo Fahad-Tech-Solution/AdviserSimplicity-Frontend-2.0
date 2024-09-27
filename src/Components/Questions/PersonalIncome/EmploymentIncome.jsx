@@ -2,7 +2,7 @@ import { ErrorMessage, Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { defaultUrl, QuestionDetail } from '../../../Store/Store';
-import { PatchAxios, PostAxios, RenderName } from '../../Assets/Api/Api';
+import { openNotificationSuccess, PatchAxios, PostAxios, RenderName } from '../../Assets/Api/Api';
 import DatePicker from 'react-datepicker';
 
 import { Button, Table } from 'react-bootstrap';
@@ -127,12 +127,14 @@ const EmploymentIncome = (props) => {
                 setQuestionDetail(updatedData);
             }
 
+            openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
             // Reset the flag state if necessary
             if (props.flagState) {
                 props.setFlagState(false);
             }
         } catch (error) {
             console.error("Error occurred while making API call:", error);
+            openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
         }
     };
 
@@ -287,7 +289,7 @@ const EmploymentIncome = (props) => {
                                                         </td>
                                                         <td>
                                                             <Field
-                                                                type="text"
+                                                                type="number"
                                                                 placeholder="Hours Worked"
                                                                 id={`hoursWorked`}
                                                                 name={`client.hoursWorked`}
@@ -406,7 +408,7 @@ const EmploymentIncome = (props) => {
                                                         </td>
                                                         <td>
                                                             <Field
-                                                                type="text"
+                                                                type="number"
                                                                 placeholder="Hours Worked"
                                                                 id={`hoursWorked`}
                                                                 name={`partner.hoursWorked`}

@@ -2,7 +2,7 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { PatchAxios, PostAxios, toCommaAndDollar, toNumericValue } from "../../Assets/Api/Api";
+import { openNotificationSuccess, PatchAxios, PostAxios, toCommaAndDollar, toNumericValue } from "../../Assets/Api/Api";
 
 import moneyBag from "../svgs/moneyBag.svg";
 import down from "../svgs/down.svg";
@@ -226,12 +226,14 @@ const RegularLivingExpenses = (props) => {
         setQuestionDetail(updatedData);
       }
 
+      openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
       // Reset the flag state if necessary
       if (props.flagState) {
         props.setFlagState(false);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
+      openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
     }
   };
   const expenseTypes = [

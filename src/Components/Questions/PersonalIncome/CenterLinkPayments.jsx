@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Button, InputGroup, Row, Table } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { PatchAxios, PostAxios, RenderName } from "../../Assets/Api/Api";
+import { openNotificationSuccess, PatchAxios, PostAxios, RenderName } from "../../Assets/Api/Api";
 import { CreatableMultiSelectField } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import DynamicTableRow from "../../Assets/Dynamic/DynamicTableRow";
 
@@ -116,12 +116,14 @@ const CenterLinkPayments = (props) => {
         setQuestionDetail(updatedData);
       }
 
+      openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
       // Reset the flag state if necessary
       if (props.flagState) {
         props.setFlagState(false);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
+      openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
     }
   };
 
@@ -232,7 +234,7 @@ const CenterLinkPayments = (props) => {
                               stakeHolder={"client."}
                             />
                           }
-                          
+
                           {((values.owner === "partner" || values.owner === "client+partner") && (UserStatus === "Married")) &&
                             <DynamicTableRow
                               rowConfig={rowConfig}

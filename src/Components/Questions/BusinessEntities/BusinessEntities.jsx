@@ -11,7 +11,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { QuestionShift, CRState, StepState, defaultUrl } from "../../../Store/Store";
 
 import { NavLink, useNavigate } from "react-router-dom";
-import { GetAxios, PatchAxios, PostAxios } from "../../Assets/Api/Api";
+import { GetAxios, openNotificationSuccess, PatchAxios, PostAxios } from "../../Assets/Api/Api";
 import { Image } from "react-bootstrap";
 import DynamicQuestionBlocks from "../../Assets/DynamicQuestionBlocks/DynamicQuestionBlocks";
 
@@ -65,8 +65,10 @@ const BusinessEntities = (props) => {
                     handleResponse(values);
                 }
             }
+            openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
         } catch (error) {
             console.error("Error submitting form:", error);
+            openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
         }
     };
 

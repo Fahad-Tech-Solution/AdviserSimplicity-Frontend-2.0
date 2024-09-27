@@ -159,6 +159,8 @@ const SimpleSelectField = ({ options, field, form, onChange }) => {
     }
   };
 
+  
+
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
@@ -201,6 +203,7 @@ const SimpleSelectField = ({ options, field, form, onChange }) => {
       options={options}
       styles={customStyles}
       menuPortalTarget={document.body}
+      isClearable
     />
   );
 };

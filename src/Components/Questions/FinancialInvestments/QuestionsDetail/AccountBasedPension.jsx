@@ -13,6 +13,7 @@ import Beneficiaries from './Beneficiaries';
 import { Tooltip } from 'antd';
 import { FaCircleQuestion } from 'react-icons/fa6';
 import AccountBasedBalance from '../AccountBasedBalance';
+import AnnualPensionPaymentInnerModal from './AnnualPensionPaymentInnerModal';
 
 const AccountBasedPension = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
@@ -75,6 +76,7 @@ const AccountBasedPension = (props) => {
                     setFieldValue(`balanceBenefitDetails${i}`, data.balanceBenefitDetails || '');
                     setFieldValue(`balanceBenefitDetailsArray${i}`, data.balanceBenefitDetailsArray || '');
                     setFieldValue(`pensionPayment${i}`, data.pensionPayment || '');
+                    setFieldValue(`annualPensionPaymentArray${i}`, data.annualPensionPaymentArray || '');
                     setFieldValue(`nominatedBeneficiaries${i}`, data.nominatedBeneficiaries || '');
                     setFieldValue(`beneficiariesArray${i}`, data.beneficiariesArray || '');
                     setFieldValue(`annualAdvice${i}`, data.annualAdvice || '');
@@ -133,6 +135,7 @@ const AccountBasedPension = (props) => {
                 balanceBenefitDetails: values[`balanceBenefitDetails${i}`] || "",
                 balanceBenefitDetailsArray: values[`balanceBenefitDetailsArray${i}`] || "",
                 pensionPayment: values[`pensionPayment${i}`] || "",
+                annualPensionPaymentArray: values[`annualPensionPaymentArray${i}`] || "",
                 nominatedBeneficiaries: values[`nominatedBeneficiaries${i}`] || "",
                 beneficiariesArray: values[`beneficiariesArray${i}`] || "",
                 annualAdvice: values[`annualAdvice${i}`] || "",
@@ -147,7 +150,7 @@ const AccountBasedPension = (props) => {
 
         props.setFieldValue(DataOf, newEntries);
 
-        let total = newEntries.reduce((total, entry) => total + parseFloat((entry.annualAdvice).replace(/[^0-9.-]+/g, "")), 0);
+        let total = newEntries.reduce((total, entry) => total + parseFloat((entry.pensionPayment).replace(/[^0-9.-]+/g, "")), 0);
 
         props.setFieldValue(DataOf + "CurrentBalance", toCommaAndDollar(total));
 
@@ -178,7 +181,8 @@ const AccountBasedPension = (props) => {
                             <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} >
                                 {
                                     modalObject.key === "balanceBenefitDetailsArray" ? <AccountBasedBalance /> :   // is ko change karna hai
-                                        modalObject.key === "beneficiariesArray" ? <Beneficiaries /> : ""  // is ko change karna hai
+                                        modalObject.key === "beneficiariesArray" ? <Beneficiaries /> :   // is ko change karna hai
+                                            modalObject.key === "annualPensionPaymentArray" ? <AnnualPensionPaymentInnerModal /> : ""
                                 }
                             </InnerModal>
                             <div className="col-md-12">
@@ -229,7 +233,7 @@ const AccountBasedPension = (props) => {
                                                                 >
                                                                     <option value={""}>Please Select</option>
                                                                     {bankDetailObj.map((elem, index) => {
-                                                                        return (<option key={index} value={elem._id}>{elem.name}</option>)
+                                                                        return (<option key={index} value={elem._id}>{elem.platformName}</option>)
                                                                     })}
                                                                 </Field>
                                                             </td>
@@ -250,6 +254,9 @@ const AccountBasedPension = (props) => {
                                                                         id={`balanceBenefitDetails${i}`}
                                                                         name={`balanceBenefitDetails${i}`}
                                                                         className="form-control inputDesignDoubleInput"
+                                                                        onChange={(e) => {
+                                                                            setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                        }}
                                                                     />
                                                                     <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
                                                                         if (values[`fundName${i}`]) {
@@ -257,7 +264,7 @@ const AccountBasedPension = (props) => {
                                                                             bankDetailObj.map((elem, index) => {
 
                                                                                 if (elem._id === values[`fundName${i}`]) {
-                                                                                    name = elem.name
+                                                                                    name = elem.platformName
                                                                                 }
 
                                                                             });
@@ -273,16 +280,37 @@ const AccountBasedPension = (props) => {
                                                                 </InputGroup>
                                                             </td>
                                                             <td>
-                                                                <Field
-                                                                    type="text"
-                                                                    placeholder="Pension Payment"
-                                                                    id={`pensionPayment${i}`}
-                                                                    name={`pensionPayment${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                    onChange={(e) => {
-                                                                        setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                                                    }}
-                                                                />
+                                                                <InputGroup className="mb-3">
+                                                                    <Field
+                                                                        type="text"
+                                                                        placeholder="Pension Payment"
+                                                                        id={`pensionPayment${i}`}
+                                                                        name={`pensionPayment${i}`}
+                                                                        className="form-control inputDesignDoubleInput"
+                                                                        onChange={(e) => {
+                                                                            setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                        }}
+                                                                    />
+                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
+                                                                        if (values[`fundName${i}`]) {
+                                                                            let name = "";
+                                                                            bankDetailObj.map((elem, index) => {
+
+                                                                                if (elem._id === values[`fundName${i}`]) {
+                                                                                    name = elem.platformName
+                                                                                }
+
+                                                                            });
+                                                                            handleInnerModal(name + "_Annual Pension Payment", '', "annualPensionPaymentArray", "pensionPayment", "", values[`annualPensionPaymentArray${i}`], i, values)
+                                                                        }
+                                                                        else {
+                                                                            // type, placement, message, description
+                                                                            openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
+                                                                        }
+                                                                    }}>
+                                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                                    </Button>
+                                                                </InputGroup>
                                                             </td>
                                                             <td>
                                                                 <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
@@ -294,7 +322,7 @@ const AccountBasedPension = (props) => {
                                                                                 bankDetailObj.map((elem, index) => {
 
                                                                                     if (elem._id === values[`fundName${i}`]) {
-                                                                                        name = elem.name
+                                                                                        name = elem.platformName
                                                                                     }
 
                                                                                 });

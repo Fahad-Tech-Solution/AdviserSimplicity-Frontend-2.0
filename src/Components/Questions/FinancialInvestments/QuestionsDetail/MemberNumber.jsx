@@ -120,7 +120,7 @@ const MemberNumber = (props) => {
                     // Add InstituteOptions from arrayOfOffers if available
                     if (Array.isArray(elem.arrayOfOffers) && elem.arrayOfOffers.length > 0) {
                         elem.arrayOfOffers.forEach((offerElem) => {
-                            InstituteOptions.push({ value: offerElem._id, label: `${offerElem.name} (${offerElem.code})` });
+                            InstituteOptions.push({ value: offerElem._id, label: `${offerElem.investmentName} (${offerElem.investmentCode})` });
                         });
                     }
                 }
@@ -196,8 +196,9 @@ const MemberNumber = (props) => {
                                                                         onChange={(selectedOption) => { setFieldValue(`investmentOption${i}`, selectedOption.value) }}
                                                                     />
                                                                 </td>
-                                                                <td style={{ minWidth: "90px" }}>
+                                                                <td>
                                                                     <Field
+                                                                        style={{ minWidth: "90px" }}
                                                                         type="text"
                                                                         placeholder="Portfolio Value"
                                                                         id={`portfolioValue${i}`}

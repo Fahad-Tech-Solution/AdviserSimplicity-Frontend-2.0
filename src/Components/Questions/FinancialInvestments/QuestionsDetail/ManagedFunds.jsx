@@ -219,7 +219,7 @@ const ManagedFunds = (props) => {
                                                                 >
                                                                     <option value={""}>Please Select</option>
                                                                     {bankDetailObj.map((elem, index) => {
-                                                                        return (<option key={index} value={elem._id}>{elem.name}</option>)
+                                                                        return (<option key={index} value={elem._id}>{elem.platformName}</option>)
                                                                     })}
                                                                 </Field>
                                                             </td>
@@ -253,7 +253,7 @@ const ManagedFunds = (props) => {
                                                                                 bankDetailObj.map((elem, index) => {
 
                                                                                     if (elem._id === values[`platformName${i}`]) {
-                                                                                        name = elem.name
+                                                                                        name = elem.platformName
                                                                                     }
 
                                                                                 });

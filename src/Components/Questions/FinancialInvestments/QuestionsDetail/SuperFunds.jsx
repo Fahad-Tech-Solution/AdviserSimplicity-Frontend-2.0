@@ -1,10 +1,9 @@
 import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
-import { Button, InputGroup, Row, Table } from 'react-bootstrap';
+import { Button, InputGroup, Row, Table, } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { BankDetail, defaultUrl, QuestionDetail } from '../../../../Store/Store';
 import { openNotificationSuccess, PatchAxios, PostAxios, toCommaAndDollar } from '../../../Assets/Api/Api';
-import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import InnerModal from './InnerModal';
@@ -14,6 +13,8 @@ import MemberNumber from './MemberNumber';
 import GroupInsurance from './GroupInsurance';
 import Contributions from './Contributions';
 import Beneficiaries from './Beneficiaries';
+import { FaCircleQuestion } from 'react-icons/fa6';
+import { Tooltip } from 'antd';
 
 const SuperFunds = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
@@ -73,6 +74,9 @@ const SuperFunds = (props) => {
                     setFieldValue(`memberNumber${i}`, data.memberNumber || '');
                     setFieldValue(`balanceBenefitDetails${i}`, data.balanceBenefitDetails || '');
                     setFieldValue(`balanceBenefitDetailsArray${i}`, data.balanceBenefitDetailsArray || '');
+                    setFieldValue(`groupInsurance${i}`, data.groupInsurance || '');
+                    setFieldValue(`contributions${i}`, data.contributions || '');
+                    setFieldValue(`nominatedBeneficiaries${i}`, data.nominatedBeneficiaries || '');
                     setFieldValue(`groupInsuranceArray${i}`, data.groupInsuranceArray || '');
                     setFieldValue(`ContributionsArray${i}`, data.ContributionsArray || '');
                     setFieldValue(`beneficiariesArray${i}`, data.beneficiariesArray || '');
@@ -131,6 +135,9 @@ const SuperFunds = (props) => {
                 memberNumber: values[`memberNumber${i}`] || "",
                 balanceBenefitDetails: values[`balanceBenefitDetails${i}`] || "",
                 balanceBenefitDetailsArray: values[`balanceBenefitDetailsArray${i}`] || "",
+                groupInsurance: values[`groupInsurance${i}`] || "",
+                contributions: values[`contributions${i}`] || "",
+                nominatedBeneficiaries: values[`nominatedBeneficiaries${i}`] || "",
                 groupInsuranceArray: values[`groupInsuranceArray${i}`] || "",
                 ContributionsArray: values[`ContributionsArray${i}`] || "",
                 beneficiariesArray: values[`beneficiariesArray${i}`] || "",
@@ -206,7 +213,11 @@ const SuperFunds = (props) => {
                                                         <th onClick={() => { console.log(values) }}>No#</th>
                                                         <th>Fund Name</th>
                                                         <th>Member Number</th>
-                                                        <th>Balance</th>
+                                                        <th>Balance &nbsp;
+                                                            <Tooltip placement="top" title={"Enter in the Underlying investments, Tax and Preserved Components by clicking into onto the green option"}>
+                                                                <FaCircleQuestion style={{ fontSize: '18px', cursor: 'pointer' }} />
+                                                            </Tooltip>
+                                                        </th>
                                                         <th>Group Insurance Attached </th>
                                                         <th>Contributions</th>
                                                         <th>Nominated Beneficiaries</th>
@@ -228,7 +239,7 @@ const SuperFunds = (props) => {
                                                                 >
                                                                     <option value={""}>Please Select</option>
                                                                     {bankDetailObj.map((elem, index) => {
-                                                                        return (<option key={index} value={elem._id}>{elem.name}</option>)
+                                                                        return (<option key={index} value={elem._id}>{elem.platformName}</option>)
                                                                     })}
                                                                 </Field>
                                                             </td>
@@ -260,7 +271,7 @@ const SuperFunds = (props) => {
                                                                             bankDetailObj.map((elem, index) => {
 
                                                                                 if (elem._id === values[`fundName${i}`]) {
-                                                                                    name = elem.name
+                                                                                    name = elem.platformName
                                                                                 }
 
                                                                             });
@@ -289,7 +300,7 @@ const SuperFunds = (props) => {
                                                                                 bankDetailObj.map((elem, index) => {
 
                                                                                     if (elem._id === values[`fundName${i}`]) {
-                                                                                        name = elem.name
+                                                                                        name = elem.platformName
                                                                                     }
 
                                                                                 });
@@ -316,7 +327,7 @@ const SuperFunds = (props) => {
                                                                                 bankDetailObj.map((elem, index) => {
 
                                                                                     if (elem._id === values[`fundName${i}`]) {
-                                                                                        name = elem.name
+                                                                                        name = elem.platformName
                                                                                     }
 
                                                                                 });
@@ -343,7 +354,7 @@ const SuperFunds = (props) => {
                                                                                 bankDetailObj.map((elem, index) => {
 
                                                                                     if (elem._id === values[`fundName${i}`]) {
-                                                                                        name = elem.name
+                                                                                        name = elem.platformName
                                                                                     }
 
                                                                                 });

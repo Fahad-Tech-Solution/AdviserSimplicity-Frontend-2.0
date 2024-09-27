@@ -115,32 +115,36 @@ const QuestionIncomeExpanse = (props) => {
     let landTax = parseFloat((values[`landTax${index}`] || 0).replace(/[^0-9.-]+/g, "")) || 0;
     let insuranceCorporate = parseFloat((values[`insuranceCorporate${index}`] || 0).replace(/[^0-9.-]+/g, "")) || 0;
     let repairsMaintenance = parseFloat((values[`repairsMaintenance${index}`] || 0).replace(/[^0-9.-]+/g, "")) || 0;
-    let allOther = 0;
+    let allOther = parseFloat((values[`allOther${index}`] || 0).replace(/[^0-9.-]+/g, "")) || 0;;
+    let totalExpance = 0;
 
     switch (currentInput.name) {
       case `councilRates${index}`:
-        councilRates = parseFloat((currentInput.value).replace(/[^0-9.-]+/g, "")) || 0
+        councilRates = parseFloat((currentInput.value || 0).replace(/[^0-9.-]+/g, "")) || 0
         break;
       case `waterRates${index}`:
-        waterRates = parseFloat((currentInput.value).replace(/[^0-9.-]+/g, "")) || 0
+        waterRates = parseFloat((currentInput.value || 0).replace(/[^0-9.-]+/g, "")) || 0
         break;
       case `landTax${index}`:
-        landTax = parseFloat((currentInput.value).replace(/[^0-9.-]+/g, "")) || 0
+        landTax = parseFloat((currentInput.value || 0).replace(/[^0-9.-]+/g, "")) || 0
         break;
       case `insuranceCorporate${index}`:
-        insuranceCorporate = parseFloat((currentInput.value).replace(/[^0-9.-]+/g, "")) || 0
+        insuranceCorporate = parseFloat((currentInput.value || 0).replace(/[^0-9.-]+/g, "")) || 0
         break;
       case `repairsMaintenance${index}`:
-        repairsMaintenance = parseFloat((currentInput.value).replace(/[^0-9.-]+/g, "")) || 0
+        repairsMaintenance = parseFloat((currentInput.value || 0).replace(/[^0-9.-]+/g, "")) || 0
+        break;
+      case `allOther${index}`:
+        allOther = parseFloat((currentInput.value || 0).replace(/[^0-9.-]+/g, "")) || 0
         break;
       default:
-        console.log("no  input ")
+        console.log("no input")
         break;
     }
 
-    allOther = councilRates + waterRates + landTax + insuranceCorporate + repairsMaintenance;
+    totalExpance = councilRates + waterRates + landTax + insuranceCorporate + repairsMaintenance + allOther;
 
-    setFieldValue(`allOther${index}`, toCommaAndDollar(allOther || 0));
+    setFieldValue(`totalExpance${index}`, toCommaAndDollar(totalExpance || 0));
   }
 
 
@@ -182,7 +186,8 @@ const QuestionIncomeExpanse = (props) => {
                           <tr>
                             <th>No#</th>
                             <th>Council Rates</th>
-                            <th>Water Rates	Land tax </th>
+                            <th>Water Rates</th>
+                            <th>Land tax </th>
                             <th>Insurance/Body Corporate</th>
                             <th>Repairs and Maintenance</th>
                             <th>All Other</th>
@@ -271,10 +276,25 @@ const QuestionIncomeExpanse = (props) => {
                                 <td>
                                   <Field
                                     type="text"
-                                    disabled
+                                    // disabled
                                     placeholder="All Other"
                                     id={`allOther${i}`}
                                     name={`allOther${i}`}
+                                    className="form-control inputDesignDoubleInput"
+                                    onChange={(e) => {
+                                      setFieldValue(e.target.name,
+                                        toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                      FormulaSetting(values, setFieldValue, e.target, i)
+                                    }}
+                                  />
+                                </td>
+                                <td>
+                                  <Field
+                                    type="text"
+                                    disabled
+                                    placeholder="Total Expance"
+                                    id={`totalExpance${i}`}
+                                    name={`totalExpance${i}`}
                                     className="form-control inputDesignDoubleInput"
                                     onChange={(e) => {
                                       setFieldValue(e.target.name,

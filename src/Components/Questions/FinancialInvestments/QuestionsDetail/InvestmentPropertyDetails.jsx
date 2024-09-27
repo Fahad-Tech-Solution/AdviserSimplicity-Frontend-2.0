@@ -10,6 +10,7 @@ import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import InnerModal from './InnerModal';
 import InvestmentPropertyLoan from './InvestmentPropertyLoan';
 import QuestionIncomeExpanse from './QuestionIncomeExpanse';
+import { FaRegBuilding } from 'react-icons/fa6';
 
 const InvestmentPropertyDetails = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
@@ -154,12 +155,14 @@ const InvestmentPropertyDetails = (props) => {
                 setQuestionDetail(updatedData);
             }
 
+            openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
             // Reset the flag state if necessary
             if (props.flagState) {
                 props.setFlagState(false);
             }
         } catch (error) {
             console.error("Error occurred while making API call:", error);
+            openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
         }
     };
 
@@ -268,7 +271,7 @@ const InvestmentPropertyDetails = (props) => {
                                                     <tr>
                                                         <th>No#</th>
                                                         <th>Property Adress</th>
-                                                        <th>Current Value - <a href='https://www.property.com.au/' target='_blank' className='text-white'>Calculate Property</a></th>
+                                                        <th>Current Value - <a href='https://www.property.com.au/' target='_blank' className='text-white'><FaRegBuilding /></a></th>
                                                         <th>Cost base</th>
                                                         <th>Client Ownership</th>
                                                         <th>Partner Ownership</th>
@@ -396,7 +399,7 @@ const InvestmentPropertyDetails = (props) => {
                                                                         />
                                                                         <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
 
-                                                                            handleInnerModal("Property Loan Details", "",
+                                                                            handleInnerModal("Expense Details", "",
                                                                                 "expensesArray",
                                                                                 "expenses", "",
                                                                                 values[`expensesArray${i}`], i, values)

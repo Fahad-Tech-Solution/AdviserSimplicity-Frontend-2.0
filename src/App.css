@@ -999,6 +999,16 @@ input[type="checkbox"] + .femaleSmoking + .maleNonSmoking {
 .ant-notification-notice-icon {
   width: 35px !important;
 }
+.ant-notification-notice-message {
+  text-align: left !important;
+}
+.ant-notification-notice-message span {
+  width: 90% !important;
+  /* border: 1px solid red; */
+  text-align: left !important;
+  margin: 0px !important;
+  justify-content: left !important;
+}
 
 .QuestionYesNoCenter {
   text-align: center;
@@ -1246,11 +1256,22 @@ label {
   --bs-accordion-btn-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M2 5L8 11L14 5'/%3e%3c/svg%3e") !important;
 }
 
+.superAdminAccordian .CSVBtn {
+  border: 2px dashed lightgray;
+  color: gray !important;
+  background-color: transparent !important;
+  &&:is(:hover, :focus, :active) {
+    border: 2px dashed #36b446;
+    color: #36b446 !important;
+    background-color: transparent !important;
+  }
+}
+
 .superAdminAccordian .customCard {
   padding: 15px;
   background-color: #28d73f2a;
   color: black;
-  min-height: 7rem !important;
+  /* min-height: 7rem !important; */
   border-radius: 12px;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
     rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
@@ -1270,4 +1291,38 @@ label {
 .CustomPaginantion .ant-pagination-next {
   padding: 0px 0px 0px 0px;
   margin: 0px 0px 0px 0px;
+}
+
+.upload-container span {
+  height: auto !important;
+  width: auto !important;
+  justify-content: start !important;
+}
+.upload-container .ant-upload-wrapper {
+  width: 100%;
+  min-height: 10rem;
+  flex-direction: column;
+}
+.upload-container .ant-upload-wrapper .ant-upload-list-item-actions .anticon {
+  color: #000 !important;
+}
+.upload-container .ant-upload-wrapper .ant-upload-list {
+  width: 100%;
+}
+
+.upload-container {
+  width: 100%;
+  min-height: 10rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.upload-container .ant-upload {
+  height: 100%;
+}
+
+.upload-container .ant-upload-drag-icon {
+  margin-bottom: 16px;
 }

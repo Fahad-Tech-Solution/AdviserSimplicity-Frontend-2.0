@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { BankDetail, defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { PatchAxios, PostAxios, RenderName, toCommaAndDollar } from '../../../Assets/Api/Api';
+import { openNotificationSuccess, PatchAxios, PostAxios, RenderName, toCommaAndDollar } from '../../../Assets/Api/Api';
 import axios from 'axios';
 import DynamicTableRow from '../../../Assets/Dynamic/DynamicTableRow';
 
@@ -137,6 +137,7 @@ const InvestmentLoan = (props) => {
             } else {
                 fiftyPercent = annualRepayments / 2; // Calculate fifty percent if valid
             }
+
         } catch (error) {
             // Handle any unexpected errors
             console.error("Error calculating fiftyPercent:", error);
@@ -190,13 +191,14 @@ const InvestmentLoan = (props) => {
                 const updatedData = { ...questionDetail, [props.modalObject.index]: res };
                 setQuestionDetail(updatedData);
             }
-
+            openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
             // Reset the flag state if necessary
             if (props.flagState) {
                 props.setFlagState(false);
             }
         } catch (error) {
             console.error("Error occurred while making API call:", error);
+            openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
         }
     };
 
@@ -235,7 +237,7 @@ const InvestmentLoan = (props) => {
 
         if (Array.isArray(bankDetailObj) && bankDetailObj.length > 0) {
             bankDetailObj.forEach((elem) => {
-                InstituteOptions.push({ value: elem._id, label: elem.name });
+                InstituteOptions.push({ value: elem._id, label: elem.platformName });
             });
         }
         return InstituteOptions;
