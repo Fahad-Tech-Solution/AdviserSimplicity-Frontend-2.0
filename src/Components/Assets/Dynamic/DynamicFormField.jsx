@@ -37,7 +37,12 @@ const DynamicFormField = ({
           id={name}
 
           className="form-control inputDesignDoubleInput"
-          onChange={(e) => handleChange(e)}
+          onChange={(e) => {
+            handleChange(e);
+            if (all.callBack) {
+              all.func(values, setFieldValue, e.target, stakeHolder);
+            }
+          }}
           disabled={all?.disabled ? all.disabled : false}
         />
       );
@@ -50,7 +55,12 @@ const DynamicFormField = ({
           name={stakeHolder ? stakeHolder + name : name}
           id={name}
           className="form-control inputDesignDoubleInput"
-          onChange={(e) => handleChange(e)}
+          onChange={(e) => {
+            handleChange(e);
+            if (all.callBack) {
+              all.func(values, setFieldValue, e.target, stakeHolder);
+            }
+          }}
           disabled={all?.disabled ? all.disabled : false}
         />
       );
@@ -137,7 +147,12 @@ const DynamicFormField = ({
         <DatePicker
           className="form-control inputDesignDoubleInput shadow DateInputPadding"
           selected={values[name]}
-          onChange={(date) => setFieldValue(name, date)}
+          onChange={(date) => {
+            setFieldValue(name, date);
+            if (all.callBack) {
+              all.func(values, setFieldValue, e.target, stakeHolder);
+            }
+          }}
           dateFormat="dd/MM/yyyy"
           placeholderText={placeholder}
           onBlur={handleBlur}
@@ -152,6 +167,12 @@ const DynamicFormField = ({
       return (
         <Field as="select" name={stakeHolder ? stakeHolder + name : name} className="form-select inputDesignDoubleInput"
           disabled={all?.disabled ? all.disabled : false}
+          onChange={(e) => {
+            handleChange(e);
+            if (all.callBack) {
+              all.func(values, setFieldValue, e.target, stakeHolder);
+            }
+          }}
         >
           <option value="">Select</option>
           {options.map((option) => (

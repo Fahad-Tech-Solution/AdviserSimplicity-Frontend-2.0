@@ -309,17 +309,17 @@ const QuestionCards = (props) => {
         ],
         EstatePlanning: [
             {
-                title: "Will",
+                title: "Wills",
                 key: "will",
                 img: will
             },
             {
-                title: "Power of Attorney",
+                title: "Power of Attorneys",
                 key: "POA",
                 img: POA
             },
             {
-                title: "Professional Adviser",
+                title: "Professional Advisers",
                 key: "professionalAdviser",
                 img: advisor
             },
@@ -601,7 +601,7 @@ const QuestionCards = (props) => {
     const JointHidden = ["superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues", "will", "POA", "professionalAdviser", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "incomeFromInheritance", "incomeFromLumpsumExpense", "incomeFromRegularLivingExpenses", "life", "TPD", "trauma", "incomeProtection"]; // Add other titles that should use "xl" here
     const singleClient = ["incomeFromRegularLivingExpenses"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
-    const combinedArray = ["incomeFromOwnBusiness", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "car", "boat", "caravan", "personalAssets", "houseHold", "otherAssets", "familyHome", "investmentBondFinance", "managedFundsMarginLoan", "managedFundsLOC"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
+    const combinedArray = ["incomeFromOwnBusiness", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "car", "boat", "caravan", "personalAssets", "houseHold", "otherAssets", "familyHome", "investmentBondFinance", "managedFundsMarginLoan", "managedFundsLOC", "will", "POA", "professionalAdviser",]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
     const towInOne = ["personalLoans"];
     const sampleOne = ["investmentPropertyDetails"];
@@ -662,7 +662,6 @@ const QuestionCards = (props) => {
         //Investment Trust
         "Investment Property Details": <InvestmentPropertyDetails />,
 
-
         //property Home
         // "Own a Family Home": <OwnFamilyHome />,
         // "Home Loan": <HomeLoan />,
@@ -673,12 +672,10 @@ const QuestionCards = (props) => {
         // "Investment Property Loan": <InvestmentPropertyLoan />,  //it became inner Modal of Investment Property Details
         // "Income & Expenses": <QuestionIncomeExpanse />,  //it became inner Modal of Investment Property Details
 
-
-
         //estate Planing 
-        "Will": <EstatePlanningWill />,
-        "Power of Attorney": <EstatePlanningPOA />,
-        "Professional Adviser": <EstatePlanningProfessionalAdviser />,
+        "Wills": <EstatePlanningWill />,
+        "Power of Attorneys": <EstatePlanningPOA />,
+        "Professional Advisers": <EstatePlanningProfessionalAdviser />,
 
         //Business
         "Business as Company Structure": <TradingCompany />,
@@ -722,7 +719,6 @@ const QuestionCards = (props) => {
         return componentMapping[obj.title] || null;
     };
 
-
     const getInitialValuesRegularIncome = () => {
         let initialValues = {};
 
@@ -742,10 +738,8 @@ const QuestionCards = (props) => {
         return initialValues;
     };
 
-
     let handleSubmitRegularIncome = async (values) => {
         console.log(values)
-
 
         let check = questionDetail && questionDetail?.retirementLivingExpenses?._id ? true : false;
 
@@ -760,9 +754,7 @@ const QuestionCards = (props) => {
             if (!check) {
                 res = await PostAxios(`${DefaultUrl}/api/retirementLivingExpenses/Add`, obj);
             } else {
-
                 obj._id = questionDetail.retirementLivingExpenses._id;
-
                 res = await PatchAxios(`${DefaultUrl}/api/retirementLivingExpenses/Update`, obj);
             }
 
@@ -772,12 +764,12 @@ const QuestionCards = (props) => {
                 updatedData["retirementLivingExpenses"] = res;
                 setQuestionDetail(updatedData);
             }
-
             // type, placement, message, description
             openNotificationSuccess("success", 'topRight', "Notification", "Retirement Living Data Successfully Saved!")
 
         } catch (error) {
             console.error("Error occurred while making API call:", error);
+            openNotificationSuccess("error", 'topRight', "Error Notification", "Retirement Living Data is not Saved! Please Try Again.")
         }
     }
 

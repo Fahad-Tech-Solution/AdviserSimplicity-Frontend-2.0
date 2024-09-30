@@ -212,13 +212,10 @@ function Options(props) {
   }
   else if (['/Goals-And-Objectives'].includes(CurrentP)) {
     return (
-
       <div>
-
       </div>
     )
   }
-
   else {
     return (
       <div className="container-fluid ps-md-5 ps-0" >

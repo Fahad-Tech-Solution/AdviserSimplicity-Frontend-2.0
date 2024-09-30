@@ -1,19 +1,10 @@
 import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
-import { Button, InputGroup, Row, Table } from 'react-bootstrap';
+import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { defaultUrl, QuestionDetail } from '../../../Store/Store';
 import { PatchAxios, PostAxios } from '../../Assets/Api/Api';
-import axios from 'axios';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
-import InnerModal from '../FinancialInvestments/QuestionsDetail/InnerModal';
-import PortfolioValue from '../FinancialInvestments/QuestionsDetail/PortfolioValue';
 import DynamicYesNo from '../FinancialInvestments/QuestionsDetail/DynamicYesNo';
-import MemberNumber from '../FinancialInvestments/QuestionsDetail/MemberNumber';
-import GroupInsurance from '../FinancialInvestments/QuestionsDetail/GroupInsurance';
-import Contributions from '../FinancialInvestments/QuestionsDetail/Contributions';
-import Beneficiaries from '../FinancialInvestments/QuestionsDetail/Beneficiaries';
 
 const EstatePlanningWill = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
@@ -36,7 +27,7 @@ const EstatePlanningWill = (props) => {
     let [modalObject, setModalObject] = useState({});
 
 
-    let will = Object.keys(questionDetail.will).length > 0 ? questionDetail.will : {
+    let will = Object.keys(questionDetail.will || {}).length > 0 ? questionDetail.will : {
         client: [],
         partner: [],
         joint: [],

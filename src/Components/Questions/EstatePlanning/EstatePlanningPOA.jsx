@@ -3,8 +3,12 @@ import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { defaultUrl, QuestionDetail } from '../../../Store/Store';
-import { PatchAxios, PostAxios } from '../../Assets/Api/Api';
+import { PatchAxios, PostAxios, RenderName } from '../../Assets/Api/Api';
 import CreatableSelect from 'react-select/creatable';
+import DatePicker from 'react-datepicker';
+import { Tooltip } from 'antd';
+import { FaCircleQuestion } from 'react-icons/fa6';
+import DynamicTableRow from '../../Assets/Dynamic/DynamicTableRow';
 
 const createOption = (label) => ({
     label,
@@ -86,39 +90,17 @@ const CreatableSelectField = ({ field, form }) => {
 };
 
 const EstatePlanningPOA = (props) => {
+
     const [isLoading, setIsLoading] = useState(false);
     const [options, setOptions] = useState(defaultOptions);
     const [value, setValue] = useState(null);
 
-    const handleCreate = (inputValue) => {
-        setIsLoading(true);
-        setTimeout(() => {
-            const newOption = createOption(inputValue);
-            setIsLoading(false);
-            setOptions((prev) => [...prev, newOption]);
-            setValue(newOption);
-            form.setFieldValue(field.name, newOption.value);
-        }, 1000);
-    };
-
-
+    let [UserStatus] = useState(localStorage.getItem('UserStatus'));
 
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
-    let [nameSet] = useState(() => {
-        if (props.modalObject.Input === "client") {
-            return (localStorage.getItem("UserName"))
-        }
-        else if (props.modalObject.Input === "partner") {
-            return (localStorage.getItem("PartnerName"))
-        }
-        else if (props.modalObject.Input === "joint") {
-            return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
-        }
-    })
-
-    let POA = Object.keys(questionDetail.POA).length > 0 ? questionDetail.POA : {
+    let POA = Object.keys(questionDetail.POA || {}).length > 0 ? questionDetail.POA : {
         client: [],
         partner: [],
         joint: [],
@@ -126,7 +108,7 @@ const EstatePlanningPOA = (props) => {
     };  // Use an empty object as default if POA is undefined
 
 
-    let initialValues = POA[props.modalObject.Input].length ? { NumberOfMap: POA[props.modalObject.Input].length } : { NumberOfMap: "" };
+    let initialValues = { owner: "" };
 
     const [dynamicFields, setDynamicFields] = useState([]);
 
@@ -220,10 +202,10 @@ const EstatePlanningPOA = (props) => {
         try {
             let res;
             if (!bankAccountArray) {
-                res = await PostAxios(`${DefaultUrl}/api/POA/Add`, obj);
+                res = await PostAxios(`${DefaultUrl}/api/${props.modalObject.Index}/Add`, obj);
             } else {
                 obj.collection = props.modalObject.Input
-                res = await PatchAxios(`${DefaultUrl}/api/POA/Update`, obj);
+                res = await PatchAxios(`${DefaultUrl}/api/${props.modalObject.Index}/Update`, obj);
             }
 
             if (res) {
@@ -243,6 +225,113 @@ const EstatePlanningPOA = (props) => {
 
 
 
+
+    let TBodyRender = (values, setFieldValue, handleChange, handleBlur) => {
+        const optionsArray = [
+            { value: "Enduring", label: "Enduring" },
+            { value: "Financial & Personal", label: "Financial & Personal" },
+            { value: "Medical Decision Maker", label: "Medical Decision Maker" },
+            { value: "Limited", label: "Limited" },
+            { value: "Other", label: "Other" }
+        ]
+
+        const relationshipStatusOptionsArray = [
+            { value: 'spouse-de-facto', label: 'Spouse/De-facto' },
+            { value: 'child', label: 'Child' },
+            { value: 'stepchild', label: 'Stepchild' },
+            { value: 'other', label: 'Other' },
+        ];
+
+        let storeInPartner = (values, setFieldValue, currentInput, stakeHolder) => {
+
+            if (values.owner === "together") {
+
+                let POAType = values.client.POAType;
+                let yearSetUp = values.client.yearSetUp;
+                let POAName = values.client.POAName;
+                let DOB = values.client.DOB;
+                let relationshipStatus = values.client.relationshipStatus;
+
+                switch (currentInput.name) {
+                    case "client.POAType":
+                        POAType = currentInput.value
+                        break;
+                    case "client.yearSetUp":
+
+                        yearSetUp = currentInput.value
+                        break;
+                    case "client.POAName":
+
+                        POAName = currentInput.value
+                        break;
+                    case "client.DOB":
+
+                        DOB = currentInput.value
+                        break;
+                    case "client.relationshipStatus":
+
+                        relationshipStatus = currentInput.value
+                        break;
+
+                    default:
+                        console.log("noting selected")
+                        break;
+                }
+
+                console.log(currentInput.name);
+
+                setFieldValue("partner.POAType", POAType || "")
+                setFieldValue("partner.yearSetUp", yearSetUp || "")
+                setFieldValue("partner.POAName", POAName || "")
+                setFieldValue("partner.DOB", DOB || "")
+                setFieldValue("partner.relationshipStatus", relationshipStatus || "")
+            }
+        }
+
+        const rowConfig = [
+            { name: 'POAType', callBack: true, func: storeInPartner, type: 'select', options: optionsArray, placeholder: 'POA Type', styleSet: { width: "15rem" }, },
+            { name: 'yearSetUp', callBack: true, func: storeInPartner, type: 'number', placeholder: 'Year Set up', },
+            { name: 'POAName', callBack: true, func: storeInPartner, type: 'text', placeholder: 'Name of POA', },
+            { name: 'DOB', callBack: true, func: storeInPartner, type: 'date', placeholder: 'dd/mm/yyyy', },
+            { name: 'relationshipStatus', callBack: true, func: storeInPartner, type: 'select-creatableMulti', options: relationshipStatusOptionsArray, placeholder: 'Relationship Status', },
+        ]
+        const rowConfig2 = [
+            { name: 'POAType', type: 'select', disabled: values.owner === "together", options: optionsArray, placeholder: 'POA Type', styleSet: { width: "15rem" }, },
+            { name: 'yearSetUp', type: 'number', disabled: values.owner === "together", placeholder: 'Year Set up', },
+            { name: 'POAName', type: 'text', disabled: values.owner === "together", placeholder: 'Name of POA', },
+            { name: 'DOB', type: 'date', disabled: values.owner === "together", placeholder: 'dd/mm/yyyy', },
+            { name: 'relationshipStatus', disabled: values.owner === "together", type: 'select-creatableMulti', options: relationshipStatusOptionsArray, placeholder: 'Relationship Status', styleSet: { width: "15rem" }, },
+        ]
+
+        return (
+            <React.Fragment>
+                {(values.owner === "client" || values.owner === "client+partner" || values.owner === "together") &&
+                    <DynamicTableRow
+                        rowConfig={rowConfig}
+                        values={values}
+                        setFieldValue={setFieldValue}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                        stakeHolder={"client."}
+                    />
+                }
+                {((values.owner === "partner" || values.owner === "client+partner" || values.owner === "together") && (UserStatus === "Married")) &&
+                    <DynamicTableRow
+                        rowConfig={rowConfig2}
+                        values={values}
+                        setFieldValue={setFieldValue}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                        stakeHolder={"partner."}
+                    />
+                }
+            </React.Fragment>
+        )
+
+
+    }
+
+
     return (
         <Formik
             initialValues={initialValues}
@@ -250,7 +339,7 @@ const EstatePlanningPOA = (props) => {
             enableReinitialize
             innerRef={props.formRef}
         >
-            {({ values, setFieldValue, handleChange }) => {
+            {({ values, setFieldValue, handleChange, handleBlur }) => {
                 useEffect(() => {
                     fillInitialValues(setFieldValue);
                 }, [values.NumberOfMap]);
@@ -260,21 +349,49 @@ const EstatePlanningPOA = (props) => {
                         <Row>
                             <div className="col-md-12">
                                 <div className='row justify-content-center'>
-                                    <div className='col-md-5'>
-                                        <p className='text-end mt-1'>
-                                            How many {props.modalObject.title} does {nameSet} have:
-                                        </p>
+                                    <div className='col-md-12'>
+
+                                        <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                            <label htmlFor='' className='text-end '>
+                                                Owner
+                                            </label>
+
+                                            <div className='w-25'>
+                                                <Field
+                                                    as="select"
+                                                    placeholder="Name of owner"
+                                                    id={`owner`}
+                                                    name={`owner`}
+                                                    className="form-select inputDesignDoubleInput"
+                                                >
+                                                    <option value={""}>Select</option>
+
+                                                    <option value={"client"}>  {RenderName("client")} </option>
+
+                                                    {localStorage.getItem("UserStatus") !== "Single" &&
+                                                        <React.Fragment>
+
+                                                            <option value={"partner"}>{RenderName("partner")}</option>
+                                                            <option value={"client+partner"}>{"Both (" + RenderName("client") + " , " + RenderName("partner") + ")"} </option>
+                                                            <option value={"together"}>{"Together (" + RenderName("client") + " , " + RenderName("partner") + ")"} </option>
+
+                                                        </React.Fragment>
+                                                    }
+                                                </Field>
+                                            </div>
+                                            {values.owner === "togeather" &&
+
+                                                <label htmlFor='' className='text-end '>
+                                                    <Tooltip placement="top" title={"When yes is selected for Partner for Wills  and POA have an option to copy details from Client Answers for Will  and POA this will apply for when client and partner have a Will together."}>
+                                                        <FaCircleQuestion style={{ fontSize: '18px', cursor: 'pointer' }} />
+                                                    </Tooltip>
+                                                </label>
+                                            }
+
+                                        </div>
                                     </div>
-                                    <div className='col-md-2'>
-                                        <Field
-                                            type="number"
-                                            id="NumberOfMap"
-                                            name="NumberOfMap"
-                                            className="form-control inputDesignDoubleInput"
-                                            onChange={(e) => handleInput(e, setFieldValue)}
-                                        />
-                                    </div>
-                                    {values.NumberOfMap && (
+
+                                    {values.owner !== "" && (
                                         <div className='mt-4'>
                                             <Table striped bordered responsive hover>
                                                 <thead>
@@ -283,52 +400,12 @@ const EstatePlanningPOA = (props) => {
                                                         <th>POA Type</th>
                                                         <th>Year Set up</th>
                                                         <th>Name of POA</th>
+                                                        <th>DOB</th>
                                                         <th>Relationship Status</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {dynamicFields.map((elem, i) => {
-                                                        return (<tr key={i}>
-                                                            <td>{1 + i}</td>
-                                                            <td>
-                                                                <Field
-                                                                    as="select"
-                                                                    placeholder="Fund Name"
-                                                                    id={`POAType${i}`}
-                                                                    name={`POAType${i}`}
-                                                                    className="form-select inputDesignDoubleInput"
-                                                                >
-                                                                    <option value={""}>Please Select</option>
-                                                                    <option value={"Enduring"}>Enduring</option>
-                                                                    <option value={"Medical"}>Medical</option>
-                                                                    <option value={"Financial"}>Financial</option>
-                                                                    <option value={"Limited"}>Limited</option>
-                                                                    <option value={"Other "}>Other </option>
-                                                                </Field>
-                                                            </td>
-                                                            <td>
-                                                                <Field
-                                                                    type="number"
-                                                                    placeholder="Year Set up"
-                                                                    id={`yearSetUp${i}`}
-                                                                    name={`yearSetUp${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <Field
-                                                                    type="text"
-                                                                    placeholder="Name of POA"
-                                                                    id={`POAName${i}`}
-                                                                    name={`POAName${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <Field name={`relationshipStatus${i}`} component={CreatableSelectField} />
-                                                            </td>
-                                                        </tr>)
-                                                    })}
+                                                    {TBodyRender(values, setFieldValue, handleChange, handleBlur)}
                                                 </tbody>
                                             </Table>
                                         </div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import Select from 'react-select/creatable';
 
-const CreatableMultiSelectField = ({ options, field, form }) => {
+const CreatableMultiSelectField = ({ options, field, form, disabled }) => {
   const handleChange = (selectedOptions) => {
     form.setFieldValue(
       field.name,
@@ -17,6 +17,8 @@ const CreatableMultiSelectField = ({ options, field, form }) => {
       '&:hover': {
         border: state.isFocused ? '1px solid #4CAF50' : '1px solid #36b446'
       },
+      backgroundColor: disabled ? '#f0f0f0' : 'white', // Change background when disabled
+      pointerEvents: disabled ? 'none' : 'auto', // Disable interaction
       minHeight: '42px', // Set the minimum height
       height: field.value && field.value.length > 0 ? 'auto' : '42px', // Set the height
     }),
@@ -62,6 +64,7 @@ const CreatableMultiSelectField = ({ options, field, form }) => {
       options={options}
       styles={customStyles}
       menuPortalTarget={document.body}
+      isDisabled={disabled}
     />
   );
 };
@@ -159,7 +162,7 @@ const SimpleSelectField = ({ options, field, form, onChange }) => {
     }
   };
 
-  
+
 
   const customStyles = {
     control: (provided, state) => ({

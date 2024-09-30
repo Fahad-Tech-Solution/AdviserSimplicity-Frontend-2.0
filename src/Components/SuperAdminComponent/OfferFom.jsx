@@ -191,6 +191,8 @@ const OfferFom = (props) => {
                 }
                 else if (ApiChali === "CSV Post") {
                     // alert("kuch karo")
+
+
                     fetchData();
                 }
                 else {
@@ -216,8 +218,9 @@ const OfferFom = (props) => {
             let type = "success";
             let placement = "topRight"
             let message = "Investment Notification"
-            let description = "Investment is Added successfull"
+            let description = res.message ? res.message : "Investment is Added successfull";
             openNotificationSuccess(type, placement, message, description)
+
 
 
         } catch (error) {

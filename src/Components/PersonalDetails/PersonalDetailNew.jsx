@@ -142,7 +142,6 @@ const PersonalDetailNew = () => {
 
     }, []);
 
-
     async function GetApiFunction(id) {
         try {
             let res = await GetAxios(`${DefaultUrl}/api/personalDetails/getUserById/${id}`);
@@ -169,7 +168,6 @@ const PersonalDetailNew = () => {
             console.error("Error occurred while making API call:", error);
         }
     }
-
 
     let Nav = useNavigate();
 
@@ -301,8 +299,6 @@ const PersonalDetailNew = () => {
 
     };
 
-
-
     const StoreData = (setFieldValue) => {
         try {
             const data = PersonalDetailObj || {};
@@ -349,15 +345,12 @@ const PersonalDetailNew = () => {
         }
     };
 
-
     let submitChiled = () => {
         if (formRefOfChield.current) {
             formRefOfChield.current.handleSubmit();  // Trigger Formik's handleSubmit
         }
     }
-
-
-
+    
     return (
         <Formik
             initialValues={initialValues}

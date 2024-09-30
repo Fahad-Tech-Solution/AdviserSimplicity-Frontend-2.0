@@ -104,9 +104,13 @@ const Childe = (props) => {
         }
     }
 
-    // let validationSchema = Yup.object({
+    let validationSchema = Yup.object({
+            
+        
 
-    // });
+
+
+    });
 
 
 
@@ -182,7 +186,7 @@ const Childe = (props) => {
                             <Formik
                                 initialValues={initialValues}
                                 onSubmit={onSubmit}
-                                // validationSchema={validationSchema}
+                                validationSchema={validationSchema}
                                 innerRef={formRef}
                                 enableReinitialize
                             >
@@ -283,6 +287,7 @@ const Childe = (props) => {
                                                                             <option value={"Other"}>Other</option>
 
                                                                         </Field>
+                                                                    
                                                                     </td>
                                                                     <td>
                                                                         <div className='d-flex flex-column justify-content-center align-items-center gap-2'>

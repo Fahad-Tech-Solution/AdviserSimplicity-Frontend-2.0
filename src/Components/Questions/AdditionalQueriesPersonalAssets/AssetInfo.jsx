@@ -67,19 +67,9 @@ const AssetInfo = (props) => {
                         }
                     }
                 }
-
-
-
             }
-
-
         }
-
-
-
     };
-
-
 
     let DefaultUrl = useRecoilValue(defaultUrl)
 
@@ -120,8 +110,7 @@ const AssetInfo = (props) => {
             obj.partnerTotal = "";
             obj.partner = {};
         }
-
-
+        
         console.log(obj, "final obj")
 
         const bankAccountArray = questionDetail[props.modalObject.index]._id || "";

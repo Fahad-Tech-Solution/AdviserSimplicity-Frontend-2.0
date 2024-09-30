@@ -24,14 +24,12 @@ const SideBarrr = (props) => {
   let [stepsStatus, setStepsStatus] = useRecoilState(StepsStatus); // eslint-disable-line no-unused-vars
   let [CRStateObj, setCRState] = useRecoilState(CRState); // eslint-disable-line no-unused-vars
   let [PersonalDetailObj, setPersonalDetailObj] = useRecoilState(PersonalDetailsData);// eslint-disable-line no-unused-vars
-
   let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);// eslint-disable-line no-unused-vars
-
 
   let Navigate = useNavigate();
 
-  const [sidebarWidth, setSidebarWidth] = useState("313px"); // Initial width of the sidebar
-  const [sidebar, setSidebar] = useState(true); // Initial width of the sidebar
+  const [sidebarWidth, setSidebarWidth] = useState("100px"); // Initial width of the sidebar
+  const [sidebar, setSidebar] = useState(false); // Initial width of the sidebar
 
   let close = () => {
     setSidebarWidth("100px");
@@ -101,7 +99,7 @@ const SideBarrr = (props) => {
             >
               <Accordion className={`${sidebar ? "Custom_Accordion" : "removeLeftBar"}`} >
                 <Accordion.Item eventKey="0">
-                  <Accordion.Header >
+                  <Accordion.Header>
                     <FontAwesomeIcon icon={faUser} className={`pr-2`} />
                     &nbsp;&nbsp; {sidebar ? <span className="LeagueSpartanFamily SideItem_Size font-weight-bold p-0 m-0 w-auto">Discovery </span> : ""}
                   </Accordion.Header>

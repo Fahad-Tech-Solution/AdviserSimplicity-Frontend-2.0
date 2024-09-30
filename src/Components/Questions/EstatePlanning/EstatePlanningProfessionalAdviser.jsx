@@ -186,7 +186,7 @@ const EstatePlanningProfessionalAdviser = (props) => {
                                                 <thead>
                                                     <tr>
                                                         <th onClick={() => { console.log(values) }}>No#</th>
-                                                        <th>POA Type</th>
+                                                        <th>Adviser Type</th>
                                                         <th>Adviser Name</th>
                                                         <th>Company</th>
                                                         <th>Phone</th>

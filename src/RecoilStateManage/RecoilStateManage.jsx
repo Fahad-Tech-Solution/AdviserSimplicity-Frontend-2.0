@@ -17,11 +17,15 @@ const RecoilStateManage = () => {
     // Access the pathname from the location object
     const currentRoute = location.pathname;
 
+    // console.log("location Data", location, "currentRoute =", currentRoute, "CurrentP=", CurrentP);
+
     let localRoute = localStorage.getItem("route");
 
-    if (currentRoute !== "/") {
-      if (CurrentP === "/") {
-        if (localRoute && localRoute !== "/") {
+    if (currentRoute !== "/") {  // it dashboard route 
+
+      if (CurrentP === "/") {  // it stored dashboard router
+
+        if (localRoute && localRoute !== "/") { //
           Navigate(localRoute);
           setCurrentP(localRoute);
         }
@@ -29,6 +33,7 @@ const RecoilStateManage = () => {
           localStorage.setItem("route", currentRoute);
           setCurrentP(currentRoute);
         }
+
       } else {
         localStorage.setItem("route", currentRoute);
         setCurrentP(currentRoute);

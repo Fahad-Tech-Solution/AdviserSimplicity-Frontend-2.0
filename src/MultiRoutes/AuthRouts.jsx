@@ -50,10 +50,10 @@ import PersonalDetailNew from "../Components/PersonalDetails/PersonalDetailNew";
 
 function AuthRouts() {
 
-    const [switchState, setSwitchState] = useState("false");
-    const [sideSwitchMenu, setSideSwitchMenu] = useState(false);
+    const [switchState, setSwitchState] = useState("true");
+    const [sideSwitchMenu, setSideSwitchMenu] = useState(true);
     // const [side, setSide] = useState(false);
-    const [sidePadding, setSidePadding] = useState('17rem');
+    const [sidePadding, setSidePadding] = useState('4rem');
 
     let [CurrentP] = useRecoilState(CurrentPage);
 
