@@ -1,2 +1,27 @@
-Regular amount
-Frequency 
+{
+  "client": {
+    "POAType": "",
+    "yearSetUp": "",
+    "POAName": "",
+    "DOB": "",
+    "relationshipStatus": ""
+  },
+  "partner": {
+    "yearSetUp": 4500,
+
+    "willsCurrent": "15000",
+
+    "executor": "Toyota Corolla",
+
+    "enduringGuardianship": "15000",
+
+    "testamentaryTrust": "Toyota Corolla",
+
+    "estatePlanning": "15000",
+
+    "estatePlanningRadio": "Toyota Corolla"
+  },
+  "owner":"",
+  "clientTotal":"",
+  "partnerTotal":""
+}

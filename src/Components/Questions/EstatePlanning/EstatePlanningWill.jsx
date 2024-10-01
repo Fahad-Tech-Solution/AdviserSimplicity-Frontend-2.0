@@ -3,29 +3,21 @@ import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { defaultUrl, QuestionDetail } from '../../../Store/Store';
-import { PatchAxios, PostAxios } from '../../Assets/Api/Api';
+import { PatchAxios, PostAxios, RenderName } from '../../Assets/Api/Api';
 import DynamicYesNo from '../FinancialInvestments/QuestionsDetail/DynamicYesNo';
+import DynamicTableRow from '../../Assets/Dynamic/DynamicTableRow';
+import { Tooltip } from 'antd';
+import { FaCircleQuestion } from 'react-icons/fa6';
+import InnerModal from '../FinancialInvestments/QuestionsDetail/InnerModal';
+import DynamicDescription from './DynamicDescription';
 
 const EstatePlanningWill = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
-
-
-    let [nameSet] = useState(() => {
-        if (props.modalObject.Input === "client") {
-            return (localStorage.getItem("UserName"))
-        }
-        else if (props.modalObject.Input === "partner") {
-            return (localStorage.getItem("PartnerName"))
-        }
-        else if (props.modalObject.Input === "joint") {
-            return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
-        }
-    })
+    let [UserStatus] = useState(localStorage.getItem('UserStatus'));
 
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
-
 
     let will = Object.keys(questionDetail.will || {}).length > 0 ? questionDetail.will : {
         client: [],
@@ -34,108 +26,76 @@ const EstatePlanningWill = (props) => {
 
     };  // Use an empty object as default if will is undefined
 
-
-    let initialValues = will[props.modalObject.Input].length ? { NumberOfMap: will[props.modalObject.Input].length } : { NumberOfMap: "" };
-
-    const [dynamicFields, setDynamicFields] = useState([]);
-
-
-    useEffect(() => {
-        if (will[props.modalObject.Input] && will[props.modalObject.Input].length) {
-            let arr = []
-
-            for (let i = 0; i < will[props.modalObject.Input].length; i++) {
-                arr.push("");
-            }
-
-            setDynamicFields(arr);
-
-        }
-    }, [])
+    let initialValues = { owner: "" };
 
     const fillInitialValues = (setFieldValue) => {
+        console.log(will);
+        if (will && will.clientFK) {
+            setFieldValue("owner", will.owner)
+            if (will.owner === "client" || will.owner === "client+partner" || will.owner === "together") {
 
-        if (will[props.modalObject.Input] && will[props.modalObject.Input].length) {
+                setFieldValue("client.yearSetUp", will.client.yearSetUp)
+                setFieldValue("client.willsCurrent", will.client.willsCurrent)
+                setFieldValue("client.executor", will.client.executor)
+                setFieldValue("client.enduringGuardianship", will.client.enduringGuardianship)
+                setFieldValue("client.testamentaryTrust", will.client.testamentaryTrust)
+                setFieldValue("client.estatePlanningRadio", will.client.estatePlanningRadio)
+                setFieldValue("client.estatePlanning", will.client.estatePlanning)
 
-            will[props.modalObject.Input].forEach((data, i) => {
-                if (data) {
-                    setFieldValue(`yearSetUp${i}`, data.yearSetUp || '');
-                    setFieldValue(`willsCurrent${i}`, data.willsCurrent || '');
-                    setFieldValue(`executor${i}`, data.executor || '');
-                    setFieldValue(`enduringGuardianship${i}`, data.enduringGuardianship || '');
-                    setFieldValue(`testamentaryTrust${i}`, data.testamentaryTrust || '');
-                    setFieldValue(`estatePlanning${i}`, data.estatePlanning || '');
-                }
-            });
+            }
+            if (will.owner === "partner" || will.owner === "client+partner" || will.owner === "together") {
+                setFieldValue("partner.yearSetUp", will.partner.yearSetUp)
+                setFieldValue("partner.willsCurrent", will.partner.willsCurrent)
+                setFieldValue("partner.executor", will.partner.executor)
+                setFieldValue("partner.enduringGuardianship", will.partner.enduringGuardianship)
+                setFieldValue("partner.testamentaryTrust", will.partner.testamentaryTrust)
+                setFieldValue("partner.estatePlanningRadio", will.partner.estatePlanningRadio)
+                setFieldValue("partner.estatePlanning", will.partner.estatePlanning)
+            }
+
         }
     };
 
-    let handleInput = (e, setFieldValue) => {
-        const value = e.target.value > 10 ? 10 : e.target.value;
-        setFieldValue(e.target.id, value);
-
-        let arr = []
-
-        for (let i = 0; i < value; i++) {
-            arr.push("");
-        }
-
-        setDynamicFields(arr);
-
-    };
-
-    let handleInnerModal = (title, question, key, mainKey, key3, editArray, index, values) => {
-        console.log(values);
+    let handleInnerModal = (title, values, key, stackHolder) => {
         setModalObject({
-            title,
-            question,
-            key,
-            mainKey,
-            key3,
-            editArray: editArray || [],
-            index,
-            values
+            title, values, key, stackHolder
         })
         setFlagState(true);
     }
 
     let DefaultUrl = useRecoilValue(defaultUrl)
 
-
     let onSubmit = async (values) => {
-        // console.log(values);
+        console.log(values);
         // return (false);
-        // Extract the number of maps from the values
-        const numberOfMaps = parseInt(values.NumberOfMap, 10);
-        const newEntries = [];
-
-        // Iterate through each map entry and create a new object
-        for (let i = 0; i < numberOfMaps; i++) {
-            const newEntry = {
-                yearSetUp: values[`yearSetUp${i}`] || "",
-                willsCurrent: values[`willsCurrent${i}`] || "",
-                executor: values[`executor${i}`] || "",
-                enduringGuardianship: values[`enduringGuardianship${i}`] || "",
-                testamentaryTrust: values[`testamentaryTrust${i}`] || "",
-                estatePlanning: values[`estatePlanning${i}`] || "",
-            };
-            newEntries.push(newEntry);
-        }
-
-        // Log the new entries to verify
-        console.log(newEntries);
 
         let DataOf = props.modalObject.Input;
 
         // Create an object with additional fields
-        let obj = {
-            clientFK: localStorage.getItem("UserID"),
-        };
+        let obj = values;
 
-        obj[DataOf] = newEntries
+        obj.clientFK = localStorage.getItem("UserID");
 
-        // Calculate total currentBalance
-        obj[DataOf + "Total"] = newEntries.length;
+
+        if (values.owner === "client" || values.owner === "client+partner" || values.owner === "together") {
+            obj.clientTotal = obj.client.yearSetUp.toString();
+        } else {
+            obj.clientTotal = "";
+            obj.client = {};
+        }
+
+        if (values.owner === "partner" || values.owner === "client+partner" || values.owner === "together") {
+            obj.partnerTotal = obj.partner.yearSetUp.toString();
+
+        } else {
+            obj.partnerTotal = "";
+            obj.partner = {};
+        }
+
+        if (UserStatus !== "Married") {
+            obj.partnerTotal = "";
+            obj.partner = {};
+        }
 
         console.log(obj, "final obj")
 
@@ -148,7 +108,6 @@ const EstatePlanningWill = (props) => {
             if (!bankAccountArray) {
                 res = await PostAxios(`${DefaultUrl}/api/will/Add`, obj);
             } else {
-                obj.collection = props.modalObject.Input
                 res = await PatchAxios(`${DefaultUrl}/api/will/Update`, obj);
             }
 
@@ -167,7 +126,74 @@ const EstatePlanningWill = (props) => {
         }
     };
 
+    let TBodyRender = (values, setFieldValue, handleChange, handleBlur, handleInnerModal) => {
 
+        let storeInPartner = (values, setFieldValue, currentInput, stakeHolder) => {
+            // console.log(values, setFieldValue, currentInput, stakeHolder)
+            if (values.owner === "together") {
+
+                let yearSetUp = "";
+
+                switch (currentInput.name) {
+                    case "client.yearSetUp":
+                        yearSetUp = currentInput.value
+                        break;
+                    default:
+                        console.log("noting selected")
+                        break;
+                }
+
+                setFieldValue("partner.yearSetUp", yearSetUp || "")
+            }
+        }
+
+        const rowConfig = [
+
+            { name: 'yearSetUp', callBack: true, func: storeInPartner, type: 'number', placeholder: 'Year Set up', },
+            { name: 'willsCurrent', type: 'yesno', },
+            { name: 'executor', callBack: true, func: handleInnerModal, type: 'modal', placeholder: 'Executor', innerModalTitle: "Executor", key: "executor" },
+            { name: 'enduringGuardianship', type: 'yesno', },
+            { name: 'testamentaryTrust', type: 'yesno', },
+            { name: 'estatePlanningRadio', callBack: true, func: handleInnerModal, type: 'yesnoModal', innerModalTitle: "Estate Planning", key: "estatePlanning" },
+        ]
+        const rowConfig2 = [
+            { disabled: values.owner === "together", name: 'yearSetUp', type: 'number', placeholder: 'Year set up', },
+            { disabled: values.owner === "together", name: 'willsCurrent', type: 'yesno', },
+            { disabled: values.owner === "together", name: 'executor', callBack: true, func: handleInnerModal, type: 'modal', placeholder: 'Executor/s', innerModalTitle: "Executor", key: "executor" },
+            { disabled: values.owner === "together", name: 'enduringGuardianship', type: 'yesno', },
+            { disabled: values.owner === "together", name: 'testamentaryTrust', type: 'yesno', },
+            { disabled: values.owner === "together", name: 'estatePlanningRadio', callBack: true, func: handleInnerModal, type: 'yesnoModal', innerModalTitle: "Estate Planning", key: "estatePlanning" },
+        ]
+
+        return (
+            <React.Fragment>
+                {(values.owner === "client" || values.owner === "client+partner" || values.owner === "together") &&
+                    <DynamicTableRow
+                        rowConfig={rowConfig}
+                        values={values}
+                        setFieldValue={setFieldValue}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                        handleInnerModal={handleInnerModal}
+                        stakeHolder={"client."}
+                    />
+                }
+                {((values.owner === "partner" || values.owner === "client+partner" || values.owner === "together") && (UserStatus === "Married")) &&
+                    <DynamicTableRow
+                        rowConfig={rowConfig2}
+                        values={values}
+                        setFieldValue={setFieldValue}
+                        handleInnerModal={handleInnerModal}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                        stakeHolder={"partner."}
+                    />
+                }
+            </React.Fragment>
+        )
+
+
+    }
 
     return (
         <Formik
@@ -176,7 +202,7 @@ const EstatePlanningWill = (props) => {
             enableReinitialize
             innerRef={props.formRef}
         >
-            {({ values, setFieldValue, handleChange }) => {
+            {({ values, setFieldValue, handleChange, handleBlur }) => {
                 useEffect(() => {
                     fillInitialValues(setFieldValue);
                 }, [values.NumberOfMap]);
@@ -186,21 +212,65 @@ const EstatePlanningWill = (props) => {
                         <Row>
                             <div className="col-md-12">
                                 <div className='row justify-content-center'>
-                                    <div className='col-md-5'>
-                                        <p className='text-end mt-1'>
-                                            How many {props.modalObject.title} does {nameSet} have:
-                                        </p>
+
+                                    <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} >
+                                        {
+                                            modalObject.key === "executor" ? <DynamicDescription /> :
+                                                modalObject.key === "estatePlanning" ? <DynamicDescription /> : ""
+                                        }
+                                    </InnerModal>
+
+                                    <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                        <label htmlFor='' className='text-end '>
+                                            Owner
+                                        </label>
+
+                                        <div className='w-25'>
+                                            <Field
+                                                as="select"
+                                                placeholder="Name of owner"
+                                                id={`owner`}
+                                                name={`owner`}
+                                                className="form-select inputDesignDoubleInput"
+                                                onChange={(e) => {
+                                                    setFieldValue(e.target.name, e.target.value)
+
+
+                                                    if (e.target.value === "together") {
+
+                                                        setFieldValue("partner.POAType", values?.client.POAType || "")
+                                                        setFieldValue("partner.yearSetUp", values?.client.yearSetUp || "")
+                                                        setFieldValue("partner.POAName", values?.client.POAName || "")
+                                                        setFieldValue("partner.DOB", values?.client.DOB || "")
+                                                        setFieldValue("partner.relationshipStatus", values?.client.relationshipStatus || "")
+                                                    }
+                                                }}
+                                            >
+                                                <option value={""}>Select</option>
+
+                                                <option value={"client"}>  {RenderName("client")} </option>
+
+                                                {localStorage.getItem("UserStatus") !== "Single" &&
+                                                    <React.Fragment>
+
+                                                        <option value={"partner"}>{RenderName("partner")}</option>
+                                                        <option value={"client+partner"}>{"Both (" + RenderName("client") + " , " + RenderName("partner") + ")"} </option>
+                                                        <option value={"together"}>{"Together (" + RenderName("client") + " , " + RenderName("partner") + ")"} </option>
+
+                                                    </React.Fragment>
+                                                }
+                                            </Field>
+                                        </div>
+                                        {values.owner === "together" &&
+                                            <label htmlFor='' className='text-end '>
+                                                <Tooltip placement="top" title={"When yes is selected for Partner for Wills  and POA have an option to copy details from Client Answers for Will  and POA this will apply for when client and partner have a Will together."}>
+                                                    <FaCircleQuestion style={{ fontSize: '18px', cursor: 'pointer' }} />
+                                                </Tooltip>
+                                            </label>
+                                        }
                                     </div>
-                                    <div className='col-md-2'>
-                                        <Field
-                                            type="number"
-                                            id="NumberOfMap"
-                                            name="NumberOfMap"
-                                            className="form-control inputDesignDoubleInput"
-                                            onChange={(e) => handleInput(e, setFieldValue)}
-                                        />
-                                    </div>
-                                    {values.NumberOfMap && (
+
+                                    {values.owner !== "" && (
                                         <div className='mt-4'>
                                             <Table striped bordered responsive hover>
                                                 <thead>
@@ -208,63 +278,14 @@ const EstatePlanningWill = (props) => {
                                                         <th onClick={() => { console.log(values) }}>No#</th>
                                                         <th>Year set up</th>
                                                         <th>Are Your Wills Current</th>
-                                                        <th>Executor/s</th>
+                                                        <th>Executor</th>
                                                         <th>Enduring Guardianship</th>
                                                         <th>Testamentary Trust</th>
                                                         <th>Any specific estate planning requirements/needs?</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {dynamicFields.map((elem, i) => {
-                                                        return (<tr key={i}>
-                                                            <td>{1 + i}</td>
-                                                            <td>
-                                                                <Field
-                                                                    type="number"
-                                                                    placeholder="Year set up"
-                                                                    id={`yearSetUp${i}`}
-                                                                    name={`yearSetUp${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
-                                                                    <DynamicYesNo name={`willsCurrent${i}`} values={values} handleChange={handleChange} />
-
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <Field
-                                                                    type="text"
-                                                                    placeholder="Executor/s"
-                                                                    id={`executor${i}`}
-                                                                    name={`executor${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                />
-                                                            </td>
-                                                            <td>
-                                                                <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
-                                                                    <DynamicYesNo name={`enduringGuardianship${i}`} values={values} handleChange={handleChange} />
-
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
-                                                                    <DynamicYesNo name={`testamentaryTrust${i}`} values={values} handleChange={handleChange} />
-
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <Field
-                                                                    type="test"
-                                                                    placeholder="Any specific estate planning requirements/needs?"
-                                                                    id={`estatePlanning${i}`}
-                                                                    name={`estatePlanning${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                />
-                                                            </td>
-                                                        </tr>)
-                                                    })}
+                                                    {TBodyRender(values, setFieldValue, handleChange, handleBlur, handleInnerModal)}
                                                 </tbody>
                                             </Table>
                                         </div>

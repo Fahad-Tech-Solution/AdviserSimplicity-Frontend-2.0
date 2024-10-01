@@ -1,12 +1,22 @@
 import React from 'react';
 import Select from 'react-select/creatable';
 
-const CreatableMultiSelectField = ({ options, field, form, disabled }) => {
+const CreatableMultiSelectField = ({ options, field, form, disabled, onChange }) => {
   const handleChange = (selectedOptions) => {
     form.setFieldValue(
       field.name,
       selectedOptions ? selectedOptions.map(option => option.value) : []
     );
+
+    if (onChange) {
+      let obj = {
+        target: {
+          name: field.name,
+          value: selectedOptions
+        }
+      }
+      onChange(obj);
+    }
   };
 
   const customStyles = {
@@ -83,7 +93,7 @@ const defaultOptions = [
   { value: 'Other', label: 'Other' },
 ];
 
-const CreatableSelectField = ({ field, form }) => {
+const CreatableSelectField = ({ field, form, disabled }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [options, setOptions] = useState(defaultOptions);
   const [value, setValue] = useState(null);
@@ -106,6 +116,8 @@ const CreatableSelectField = ({ field, form }) => {
       '&:hover': {
         border: state.isFocused ? '2px solid #36b446' : '1px solid #36b446'
       },
+      backgroundColor: disabled ? '#f0f0f0' : 'white', // Change background when disabled
+      pointerEvents: disabled ? 'none' : 'auto', // Disable interaction
       minHeight: '42px', // Set the minimum height
       height: '42px' // Allow height to adjust based on content
     }),
@@ -135,7 +147,7 @@ const CreatableSelectField = ({ field, form }) => {
   return (
     <Select
       isClearable
-      isDisabled={isLoading}
+      isDisabled={isLoading ? isLoading : disabled}
       isLoading={isLoading}
       onChange={(newValue) => {
         setValue(newValue);

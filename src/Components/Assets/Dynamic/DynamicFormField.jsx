@@ -35,10 +35,10 @@ const DynamicFormField = ({
           placeholder={placeholder}
           name={stakeHolder ? stakeHolder + name : name}
           id={name}
-
           className="form-control inputDesignDoubleInput"
           onChange={(e) => {
             handleChange(e);
+            // console.log(all.callBack, all.func)
             if (all.callBack) {
               all.func(values, setFieldValue, e.target, stakeHolder);
             }
@@ -146,21 +146,43 @@ const DynamicFormField = ({
       return (
         <DatePicker
           className="form-control inputDesignDoubleInput shadow DateInputPadding"
-          selected={values[name]}
+          // Correctly handle selected date value
+          selected={
+            stakeHolder
+              ? (values?.[stakeHolder?.replace(".", "")]?.[name] || "")
+              : (values?.[name] || "")
+          }
+
+
           onChange={(date) => {
-            setFieldValue(name, date);
+            const fieldName = stakeHolder ? stakeHolder + name : name; // Determine correct field name
+
+            // console.log(fieldName);
+            // Set the selected date in form
+            setFieldValue(fieldName, date);
+
+            // If you need to simulate an event and pass it to a callback
+            let e = {
+              target: {
+                name: fieldName, // Use correct field name
+                value: date // The selected date value
+              }
+            };
+
+            // Call the callback if provided
             if (all.callBack) {
-              all.func(values, setFieldValue, e.target, stakeHolder);
+              all.func(values, setFieldValue, e.target, stakeHolder); // Pass the event-like object
             }
           }}
           dateFormat="dd/MM/yyyy"
           placeholderText={placeholder}
-          onBlur={handleBlur}
+          onBlur={handleBlur} // Handle blur as needed
           showIcon
           id={name}
           name={stakeHolder ? stakeHolder + name : name}
-          disabled={all?.disabled ? all.disabled : false}
+          disabled={all?.disabled ? all.disabled : false} // Disable input based on props
         />
+
       );
 
     case "select":
@@ -191,6 +213,12 @@ const DynamicFormField = ({
           label="Multi Select Field"
           options={options}
           disabled={all?.disabled ? all.disabled : false}
+          onChange={(e) => {
+            console.log(e)
+            if (all.callBack) {
+              all.func(values, setFieldValue, e.target, stakeHolder);
+            }
+          }}
         />
       );
 
@@ -230,14 +258,14 @@ const DynamicFormField = ({
             values={values}
             handleChange={handleChange}
           />
-          {values[stakeHolder ? stakeHolder + name : name] === "Yes" && (
+          {values[stakeHolder ? stakeHolder.slice(0, -1) : name]?.[name] === "Yes" && (
             <div className="d-flex justify-content-center align-items-center pt-2">
               <Button
                 className="btn bgColor modalBtn border-0"
                 id="button-addon2"
                 onClick={() => {
                   if (all.callBack) {
-                    all.func(innerModalTitle, values, all.key);
+                    all.func(innerModalTitle, values, all.key, stakeHolder);
                   }
                 }}
               >
@@ -250,12 +278,14 @@ const DynamicFormField = ({
 
     case "modal":
       return (
-        <Button
-          className="btn bgColor modalBtn border-0"
-          onClick={() => handleInnerModal(name, values)}
-        >
-          <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-        </Button>
+        <div className="d-flex justify-content-center align-items-center ">
+          <Button
+            className="btn bgColor modalBtn border-0"
+            onClick={() => handleInnerModal(innerModalTitle, values, all.key, stakeHolder)}
+          >
+            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+          </Button>
+        </div>
       );
 
     default:

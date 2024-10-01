@@ -10,90 +10,8 @@ import { Tooltip } from 'antd';
 import { FaCircleQuestion } from 'react-icons/fa6';
 import DynamicTableRow from '../../Assets/Dynamic/DynamicTableRow';
 
-const createOption = (label) => ({
-    label,
-    value: label.toLowerCase().replace(/\W/g, ''),
-});
-
-const defaultOptions = [
-    { value: 'spouse-de-facto', label: 'Spouse/De-facto' },
-    { value: 'child', label: 'Child' },
-    { value: 'stepchild', label: 'Stepchild' },
-    { value: 'other', label: 'Other' },
-];
-const CreatableSelectField = ({ field, form }) => {
-    const [isLoading, setIsLoading] = useState(false);
-    const [options, setOptions] = useState(defaultOptions);
-    const [value, setValue] = useState(null);
-
-    const handleCreate = (inputValue) => {
-        setIsLoading(true);
-        setTimeout(() => {
-            const newOption = createOption(inputValue);
-            setIsLoading(false);
-            setOptions((prev) => [...prev, newOption]);
-            setValue(newOption);
-            form.setFieldValue(field.name, newOption.value);
-        }, 1000);
-    };
-    const customStyles = {
-        control: (provided, state) => ({
-            ...provided,
-            border: state.isFocused ? '2px solid #36b446' : '1px solid #36b446',
-            boxShadow: state.isFocused ? '0 0 0 0px #4CAF50' : 'none',
-            '&:hover': {
-                border: state.isFocused ? '2px solid #36b446' : '1px solid #36b446'
-            },
-            minHeight: '38px', // Set the minimum height
-            height: '38px' // Allow height to adjust based on content
-        }),
-        valueContainer: (provided) => ({
-            ...provided,
-            height: field.value && field.value.length > 0 ? 'auto' : '40px', // Adjust height based on selection
-            padding: '0 8px' // Adjust padding as needed
-        }),
-        input: (provided) => ({
-            ...provided,
-            margin: '0', // Ensure input has no margin
-            padding: '0' // Ensure input has no padding
-        }),
-        indicatorsContainer: (provided) => ({
-            ...provided,
-            height: '38px' // Ensure indicators container matches the control height
-        }),
-        menu: (provided) => ({
-            ...provided,
-            zIndex: 9999, // Ensure the menu is on top of other elements
-        }),
-        menuPortal: (provided) => ({
-            ...provided,
-            zIndex: 9999 // Ensure the menu portal is on top of other elements
-        })
-    };
-    return (
-        <CreatableSelect
-            isClearable
-            isDisabled={isLoading}
-            isLoading={isLoading}
-            onChange={(newValue) => {
-                setValue(newValue);
-                form.setFieldValue(field.name, newValue ? newValue.value : null);
-                console.log(newValue ? newValue.value : null);
-            }}
-            onCreateOption={handleCreate}
-            options={options}
-            value={options ? options.find((option) => option.value === field.value) : null}
-            styles={customStyles}
-            menuPortalTarget={document.body}
-        />
-    );
-};
-
 const EstatePlanningPOA = (props) => {
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [options, setOptions] = useState(defaultOptions);
-    const [value, setValue] = useState(null);
 
     let [UserStatus] = useState(localStorage.getItem('UserStatus'));
 
@@ -108,51 +26,44 @@ const EstatePlanningPOA = (props) => {
     };  // Use an empty object as default if POA is undefined
 
 
-    let initialValues = { owner: "" };
-
-    const [dynamicFields, setDynamicFields] = useState([]);
-
-
-    useEffect(() => {
-        if (POA[props.modalObject.Input] && POA[props.modalObject.Input].length) {
-            let arr = []
-
-            for (let i = 0; i < POA[props.modalObject.Input].length; i++) {
-                arr.push("");
-            }
-
-            setDynamicFields(arr);
-
-        }
-    }, [])
-
-    const fillInitialValues = (setFieldValue) => {
-
-        if (POA[props.modalObject.Input] && POA[props.modalObject.Input].length) {
-
-            POA[props.modalObject.Input].forEach((data, i) => {
-                if (data) {
-                    setFieldValue(`POAType${i}`, data.POAType || '');
-                    setFieldValue(`yearSetUp${i}`, data.yearSetUp || '');
-                    setFieldValue(`POAName${i}`, data.POAName || '');
-                    setFieldValue(`relationshipStatus${i}`, data.relationshipStatus || '');
-                }
-            });
+    let initialValues = {
+        owner: "",
+        client: {
+            POAType: "",
+            yearSetUp: "",
+            POAName: "",
+            DOB: "",
+            relationshipStatus: "",
+        },
+        partner: {
+            POAType: "",
+            yearSetUp: "",
+            POAName: "",
+            DOB: "",
+            relationshipStatus: "",
         }
     };
 
-    let handleInput = (e, setFieldValue) => {
-        const value = e.target.value > 10 ? 10 : e.target.value;
-        setFieldValue(e.target.id, value);
+    const fillInitialValues = (setFieldValue) => {
 
-        let arr = []
+        if (POA && POA.clientFK) {
+            setFieldValue("owner", POA.owner)
+            if (POA.owner === "client" || POA.owner === "client+partner" || POA.owner === "together") {
+                setFieldValue("client.POAType", POA.client.POAType)
+                setFieldValue("client.yearSetUp", POA.client.yearSetUp)
+                setFieldValue("client.POAName", POA.client.POAName)
+                setFieldValue("client.DOB", POA.client.DOB)
+                setFieldValue("client.relationshipStatus", POA.client.relationshipStatus)
+            }
+            if (POA.owner === "partner" || POA.owner === "client+partner" || POA.owner === "together") {
+                setFieldValue("partner.POAType", POA.partner.POAType)
+                setFieldValue("partner.yearSetUp", POA.partner.yearSetUp)
+                setFieldValue("partner.POAName", POA.partner.POAName)
+                setFieldValue("partner.DOB", POA.partner.DOB)
+                setFieldValue("partner.relationshipStatus", POA.partner.relationshipStatus)
+            }
 
-        for (let i = 0; i < value; i++) {
-            arr.push("");
         }
-
-        setDynamicFields(arr);
-
     };
 
 
@@ -160,38 +71,36 @@ const EstatePlanningPOA = (props) => {
 
 
     let onSubmit = async (values) => {
-        // console.log(values);
+        console.log(values, "Test karo yar");
         // return (false);
-        // Extract the number of maps from the values
-        const numberOfMaps = parseInt(values.NumberOfMap, 10);
-        const newEntries = [];
 
-        // Iterate through each map entry and create a new object
-        for (let i = 0; i < numberOfMaps; i++) {
-            const newEntry = {
-                POAType: values[`POAType${i}`] || "",
-                yearSetUp: values[`yearSetUp${i}`] || "",
-                POAName: values[`POAName${i}`] || "",
-                relationshipStatus: values[`relationshipStatus${i}`] || "",
-            };
-            newEntries.push(newEntry);
-        }
-
-        // Log the new entries to verify
-        console.log(newEntries);
 
         let DataOf = props.modalObject.Input;
 
         // Create an object with additional fields
-        let obj = {
-            clientFK: localStorage.getItem("UserID"),
-        };
+        let obj = values;
 
-        obj[DataOf] = newEntries
+        obj.clientFK = localStorage.getItem("UserID");
 
-        // Calculate total currentBalance
-        // obj[DataOf + "Total"] = newEntries.reduce((total, entry) => total + entry.relationshipStatus, 0);
-        obj[DataOf + "Total"] = newEntries.length;
+
+        if (values.owner === "client" || values.owner === "client+partner" || values.owner === "together") {
+            obj.clientTotal = obj.client.POAName.toString();
+        } else {
+            obj.clientTotal = "";
+            obj.client = {};
+        }
+
+        if (values.owner === "partner" || values.owner === "client+partner" || values.owner === "together") {
+            obj.partnerTotal = obj.partner.POAName.toString();
+        } else {
+            obj.partnerTotal = "";
+            obj.partner = {};
+        }
+
+        if (UserStatus !== "Married") {
+            obj.partnerTotal = "";
+            obj.partner = {};
+        }
 
         console.log(obj, "final obj")
 
@@ -202,10 +111,9 @@ const EstatePlanningPOA = (props) => {
         try {
             let res;
             if (!bankAccountArray) {
-                res = await PostAxios(`${DefaultUrl}/api/${props.modalObject.Index}/Add`, obj);
+                res = await PostAxios(`${DefaultUrl}/api/POA/Add`, obj);
             } else {
-                obj.collection = props.modalObject.Input
-                res = await PatchAxios(`${DefaultUrl}/api/${props.modalObject.Index}/Update`, obj);
+                res = await PatchAxios(`${DefaultUrl}/api/POA/Update`, obj);
             }
 
             if (res) {
@@ -222,9 +130,6 @@ const EstatePlanningPOA = (props) => {
             console.error("Error occurred while making API call:", error);
         }
     };
-
-
-
 
     let TBodyRender = (values, setFieldValue, handleChange, handleBlur) => {
         const optionsArray = [
@@ -246,39 +151,35 @@ const EstatePlanningPOA = (props) => {
 
             if (values.owner === "together") {
 
-                let POAType = values.client.POAType;
-                let yearSetUp = values.client.yearSetUp;
-                let POAName = values.client.POAName;
-                let DOB = values.client.DOB;
-                let relationshipStatus = values.client.relationshipStatus;
+                let POAType = values.client.POAType || "";
+                let yearSetUp = values.client.yearSetUp || "";
+                let POAName = values.client.POAName || "";
+                let DOB = values.client.DOB || "";
+                let relationshipStatus = values.client.relationshipStatus || "";
 
                 switch (currentInput.name) {
                     case "client.POAType":
                         POAType = currentInput.value
                         break;
                     case "client.yearSetUp":
-
                         yearSetUp = currentInput.value
                         break;
                     case "client.POAName":
-
                         POAName = currentInput.value
                         break;
                     case "client.DOB":
-
                         DOB = currentInput.value
                         break;
                     case "client.relationshipStatus":
-
-                        relationshipStatus = currentInput.value
+                        const valuesArray = currentInput.value.map(item => item.value);
+                        relationshipStatus = valuesArray
                         break;
-
                     default:
                         console.log("noting selected")
                         break;
                 }
 
-                console.log(currentInput.name);
+                // console.log(currentInput.name, currentInput.value);
 
                 setFieldValue("partner.POAType", POAType || "")
                 setFieldValue("partner.yearSetUp", yearSetUp || "")
@@ -342,7 +243,7 @@ const EstatePlanningPOA = (props) => {
             {({ values, setFieldValue, handleChange, handleBlur }) => {
                 useEffect(() => {
                     fillInitialValues(setFieldValue);
-                }, [values.NumberOfMap]);
+                }, []);
 
                 return (
                     <Form>
@@ -363,6 +264,19 @@ const EstatePlanningPOA = (props) => {
                                                     id={`owner`}
                                                     name={`owner`}
                                                     className="form-select inputDesignDoubleInput"
+                                                    onChange={(e) => {
+                                                        setFieldValue(e.target.name, e.target.value)
+
+
+                                                        if (e.target.value === "together") {
+
+                                                            setFieldValue("partner.POAType", values?.client.POAType || "")
+                                                            setFieldValue("partner.yearSetUp", values?.client.yearSetUp || "")
+                                                            setFieldValue("partner.POAName", values?.client.POAName || "")
+                                                            setFieldValue("partner.DOB", values?.client.DOB || "")
+                                                            setFieldValue("partner.relationshipStatus", values?.client.relationshipStatus || "")
+                                                        }
+                                                    }}
                                                 >
                                                     <option value={""}>Select</option>
 
@@ -379,7 +293,7 @@ const EstatePlanningPOA = (props) => {
                                                     }
                                                 </Field>
                                             </div>
-                                            {values.owner === "togeather" &&
+                                            {values.owner === "together" &&
 
                                                 <label htmlFor='' className='text-end '>
                                                     <Tooltip placement="top" title={"When yes is selected for Partner for Wills  and POA have an option to copy details from Client Answers for Will  and POA this will apply for when client and partner have a Will together."}>
