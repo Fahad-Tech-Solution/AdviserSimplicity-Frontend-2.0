@@ -133,7 +133,9 @@ const ApexChart = (props) => {
     tooltip: {
       enabled: false
     },
+    
     labels: props.labels || ['Low', 'Moderately Low', 'Moderate', 'Moderately high', "High", "Very High"],  // Add labels to the options
+
   });
 
 

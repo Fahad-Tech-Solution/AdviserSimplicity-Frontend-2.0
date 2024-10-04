@@ -8,10 +8,10 @@ import { Breadcrumb, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faCircleUser, faMoon } from "@fortawesome/free-solid-svg-icons";
 import { ConfigProvider, Steps } from "antd";
-import { FaBriefcase, FaCheck, FaGift, FaKey, FaMoneyCheckDollar, FaPlus, FaUser } from "react-icons/fa6";
+import { FaBriefcase, FaCheck, FaGift, FaKey, FaMoneyCheckDollar, FaMoneyBillWave, FaPlus, FaUser, FaChartLine, FaTriangleExclamation, FaGraduationCap, FaChartPie } from "react-icons/fa6";
 import { FaHome, FaQuestionCircle } from "react-icons/fa";
-import { MdFamilyRestroom } from "react-icons/md";
-import { RiCoinsFill } from "react-icons/ri";
+import { MdFamilyRestroom, MdWaterDrop, MdOutlineBalance, MdOutlineTimeline } from "react-icons/md";
+import { RiCoinsFill, RiDiscountPercentFill } from "react-icons/ri";
 import { content } from "../Content/Content";
 
 function Options(props) {
@@ -30,6 +30,7 @@ function Options(props) {
 
   let [items, setItems] = useState([]);
   let { itemsOpt } = content;
+  let { itemsQuestion } = content;
 
   let stepsStatus = useRecoilValue(StepsStatus); // eslint-disable-line no-unused-vars
 
@@ -58,6 +59,7 @@ function Options(props) {
     let stepComplete = 0;
 
     setCurrentPCLassSwitch(cLocation.trim());
+
     switch (cLocation) {
       case "PersonalDetail":
         stepComplete = 0;
@@ -113,6 +115,38 @@ function Options(props) {
         Opt = "Opt2"
         stepComplete = 80;
         break;
+      case 'Risk-Profile/Q1':
+        Opt = "Opt3"
+        stepComplete = 12;
+        break
+      case "Risk-Profile/Q2":
+        Opt = "Opt3"
+        stepComplete = 24;
+        break
+      case "Risk-Profile/Q3":
+        Opt = "Opt3"
+        stepComplete = 36;
+        break
+      case "Risk-Profile/Q4":
+        Opt = "Opt3"
+        stepComplete = 48;
+        break
+      case "Risk-Profile/Q5":
+        Opt = "Opt3"
+        stepComplete = 62;
+        break
+      case "Risk-Profile/Q6":
+        Opt = "Opt3"
+        stepComplete = 74;
+        break
+      case "Risk-Profile/Q7":
+        Opt = "Opt3"
+        stepComplete = 86;
+        break
+      case "Risk-Profile/Q8":
+        Opt = "Opt3"
+        stepComplete = 98;
+        break
       default:
         let a = cLocation.split('/')[0];
         setCurrentTabName(a.replaceAll("-", " "));
@@ -122,13 +156,17 @@ function Options(props) {
     setOptRender(Opt)
     setStepCompleted(stepComplete);
 
-    const itemsToRender = Opt === "Opt1" ? itemsOpt.slice(0, 7) : itemsOpt.slice(7, 14);
 
-    const updatedItems = itemsToRender.filter(item => item.condition(CRObject)).map(item => {
+    const itemsToRender = Opt === "Opt3" ? itemsQuestion : Opt === "Opt1" ? itemsOpt.slice(0, 7) : itemsOpt.slice(7, 14);
+
+    let conditionCheck = Opt === "Opt3" ? true : CRObject
+
+    const updatedItems = itemsToRender.filter(item => item.condition(conditionCheck)).map(item => {
       const isPersonalDetails = item.subTitle === 'Personal Details';
       const currentEmail = localStorage.getItem("UserID");
       const iconMap = {
-        FaBriefcase, FaCheck, FaGift, FaKey, FaMoneyCheckDollar, FaUser, FaHome, FaQuestionCircle, MdFamilyRestroom, RiCoinsFill, FaPlus
+        FaBriefcase, FaCheck, FaGift, FaKey, FaMoneyCheckDollar, FaUser, FaHome, FaQuestionCircle, MdFamilyRestroom, RiCoinsFill, FaPlus, FaChartLine,
+        MdWaterDrop, FaTriangleExclamation, RiDiscountPercentFill, MdOutlineBalance, FaGraduationCap, FaChartPie, MdOutlineTimeline, FaMoneyBillWave
       };
 
       const IconComponent = iconMap[item.icon] || FaUser; // Default to FaUser if not found
@@ -164,21 +202,20 @@ function Options(props) {
     }
   }
 
+  let NoTopBarArray = [
+    '/Goals-And-Objectives',
+    '/Risk-Profile',
+    '/Risk-Profile/',
+    "/Risk-Profile-Cards",
+  ]
 
   let topMenuArray = [
     '/',
-    '/Risk-Profile',
     '/All-Clients',
-    '/Risk-Profile/',
-    "/Risk-Profile/Q2",
-    "/Risk-Profile/Q3",
-    "/Risk-Profile/Q4",
-    "/Risk-Profile/Q5",
-    "/Risk-Profile/Q6",
-    "/Risk-Profile/Q7",
-    "/Risk-Profile/Q8",
-    "/Risk-Profile-Cards",
   ]
+
+
+
 
 
   if (topMenuArray.includes(CurrentP)) {
@@ -210,7 +247,7 @@ function Options(props) {
       </div>
     )
   }
-  else if (['/Goals-And-Objectives'].includes(CurrentP)) {
+  else if (NoTopBarArray.includes(CurrentP)) {
     return (
       <div>
       </div>

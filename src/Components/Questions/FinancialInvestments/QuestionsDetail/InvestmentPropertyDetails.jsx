@@ -80,6 +80,7 @@ const InvestmentPropertyDetails = (props) => {
     };
 
     let handleInput = (e, setFieldValue) => {
+        
         const value = e.target.value > 10 ? 10 : e.target.value;
         setFieldValue(e.target.id, value);
 

@@ -1,18 +1,23 @@
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React, { useEffect, useState } from 'react'
-import { Card } from 'react-bootstrap'
+import { Button, Card, InputGroup } from 'react-bootstrap'
 import { defaultUrl, RiskQuestion } from '../../Store/Store'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { GetAxios } from '../Assets/Api/Api'
 import { Field, Form, Formik } from 'formik'
-import CircleChart from './CircleChart'
+
 import ApexChart from './ApexChart'
 import ModalComponent from '../Questions/FinancialInvestments/ModalComponent'
 import RiskGoalForm from './RiskGoalForm'
 
 import single from "../Svgs/single-2.svg";
 import couple from "../Svgs/couple-2.svg";
+import { content } from '../../Content/Content'
+import parse from 'html-react-parser';
+import { FiPlus } from 'react-icons/fi'
+import DynamicDescription from '../Questions/EstatePlanning/DynamicDescription'
+
 
 const RiskProfileCards = () => {
 
@@ -21,6 +26,8 @@ const RiskProfileCards = () => {
     let [riskQuestion, setRiskQuestion] = useRecoilState(RiskQuestion);
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
+
+    let { RiskGoals } = content;
 
 
     useEffect(() => {
@@ -89,14 +96,25 @@ const RiskProfileCards = () => {
         }
     }
 
-    let OpenModal = (title, values, innerKey) => {
+    let OpenModal = (title, values, innerKey, stackHolder) => {
         // alert(title + " ++ " + Input);
         setModalObject({
             title,
             values,
-            innerKey
+            innerKey,
+            stackHolder
         })
         setFlagState(true);
+    }
+
+    let SelectedDiscription = (selectedValue) => {
+
+        const currentIndex = RiskGoals.findIndex(q => q.value === selectedValue);
+        // alert(selectedValue)
+        if (currentIndex) {
+            let { des } = RiskGoals[currentIndex] || "";
+            return (parse(des || ""))
+        }
     }
 
     return (
@@ -104,7 +122,11 @@ const RiskProfileCards = () => {
 
             {/*  modal */}
             <ModalComponent modalObject={modalObject} setFlagState={setFlagState} flagState={flagState}>
-                <RiskGoalForm />
+                {
+                    modalObject.title == "Risk Goals" ? <RiskGoalForm /> :
+                        modalObject.title == "Add Note" ? <DynamicDescription /> : ""
+
+                }
             </ModalComponent>
             {/*  modal */}
 
@@ -157,7 +179,28 @@ const RiskProfileCards = () => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <Field id="ClientData" name={"riskGoal.client"} className="form-control inputDesign" />
+                                                <Field id="ClientData" name={"riskGoal.client"} disabled className="form-control inputDesign text-center" />
+                                                <div className="row justify-content-center align-items-center my-2">
+                                                    <div className='col-12 text-center'>
+                                                        {SelectedDiscription(values.riskGoal.client)}
+                                                    </div>
+                                                    <div className='col-md-12 text-center mt-2'>
+                                                        <InputGroup>
+                                                            <Button className='btn bgColor modalBtn border-0' id="button-addon2"
+                                                                onClick={() => { OpenModal("Add Note", values, "client", "client") }}
+                                                            >
+                                                                <FiPlus />
+                                                            </Button>
+                                                            <Field id="ClientData" name={"riskGoal.client"} className="form-control inputDesign text-center" placeholder={"Add Note"} />
+                                                        </InputGroup>
+                                                    </div>
+                                                    <div className='col-md-12 text-center mt-2'>
+                                                        <Field type="checkbox" id="ClienthappyWithResult" name={"happyWithResult.client"} className="form-check-input newCheck" />
+                                                        <div className='d-inline-block ms-2'>
+                                                            <label htmlFor='ClienthappyWithResult'>Please confirm that you are happy with the risk result </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </Card>
                                         </div>
                                         {values.joinedProfile === "No" &&
@@ -197,7 +240,28 @@ const RiskProfileCards = () => {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <Field id="partnerData" name={"riskGoal.partner"} className="form-control inputDesign" />
+                                                    <Field id="partnerData" name={"riskGoal.partner"} disabled className="form-control inputDesign text-center" />
+                                                    <div className="row justify-content-center align-items-center my-2">
+                                                        <div className='col-12 text-center'>
+                                                            {SelectedDiscription(values.riskGoal.partner)}
+                                                        </div>
+                                                        <div className='col-md-12 text-center mt-2'>
+                                                            <InputGroup>
+                                                                <Button className='btn bgColor modalBtn border-0' id="button-addon2"
+                                                                    onClick={() => { OpenModal("Add Note", values, "partner", "partner") }}
+                                                                >
+                                                                    <FiPlus />
+                                                                </Button>
+                                                                <Field id="ClientData" name={"addNoteDescription.partner"} className="form-control inputDesign text-center" placeholder={"Add Note"} />
+                                                            </InputGroup>
+                                                        </div>
+                                                        <div className='col-md-12 text-center mt-2'>
+                                                            <Field type="checkbox" id="partnerhappyWithResult" name={"happyWithResult.partner"} className="form-check-input newCheck" />
+                                                            <div className='d-inline-block ms-2'>
+                                                                <label htmlFor='partnerhappyWithResult'>Please confirm that you are happy with the risk result </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </Card>
                                             </div>
 

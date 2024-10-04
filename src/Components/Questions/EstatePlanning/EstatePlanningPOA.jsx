@@ -144,6 +144,8 @@ const EstatePlanningPOA = (props) => {
             { value: 'spouse-de-facto', label: 'Spouse/De-facto' },
             { value: 'child', label: 'Child' },
             { value: 'stepchild', label: 'Stepchild' },
+            { value: 'neice', label: 'Neice' },
+            { value: 'nephew', label: 'Nephew' },
             { value: 'other', label: 'Other' },
         ];
 

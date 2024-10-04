@@ -237,12 +237,12 @@ const EstatePlanningWill = (props) => {
 
 
                                                     if (e.target.value === "together") {
-
-                                                        setFieldValue("partner.POAType", values?.client.POAType || "")
                                                         setFieldValue("partner.yearSetUp", values?.client.yearSetUp || "")
-                                                        setFieldValue("partner.POAName", values?.client.POAName || "")
-                                                        setFieldValue("partner.DOB", values?.client.DOB || "")
-                                                        setFieldValue("partner.relationshipStatus", values?.client.relationshipStatus || "")
+                                                        setFieldValue("partner.willsCurrent", values?.client.willsCurrent || "")
+                                                        setFieldValue("partner.executor", values?.client.executor || "")
+                                                        setFieldValue("partner.enduringGuardianship", values?.client.enduringGuardianship || "")
+                                                        setFieldValue("partner.testamentaryTrust", values?.client.testamentaryTrust || "")
+                                                        setFieldValue("partner.estatePlanningRadio", values?.client.estatePlanningRadio || "")
                                                     }
                                                 }}
                                             >

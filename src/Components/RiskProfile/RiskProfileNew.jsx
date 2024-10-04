@@ -4,6 +4,8 @@ import DynamicYesNo from '../Questions/FinancialInvestments/QuestionsDetail/Dyna
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import RiskQuestion1 from './RiskQuestion1'
 
+// import "./riskProfile.css"
+
 import Risk1 from "../Questions/svgs/Risk-safebox.svg"
 import Risk2 from "../Questions/svgs/Risk-coin.png"
 import Risk3 from "../Questions/svgs/Risk-loss-graph-finance-svgrepo-com.svg"
@@ -12,11 +14,14 @@ import Risk5 from "../Questions/svgs/Risk-contract-svgrepo-com.svg"
 import Risk6 from "../Questions/svgs/Risk-innovation.png"
 import Risk7 from "../Questions/svgs/Risk-bar-chart-finance-business.svg"
 import Risk8 from "../Questions/svgs/Risk-chart-pie-chart.svg"
+import RiskReward from "../Questions/svgs/RiskReward.png"
 import ProgressBar from './ProgressBar/ProgressBar'
+
 import { FaArrowLeftLong, FaArrowRightLong } from 'react-icons/fa6'
 import { GetAxios, PatchAxios, PostAxios } from '../Assets/Api/Api'
 import { defaultUrl, RiskQuestion } from '../../Store/Store'
 import { useRecoilState, useRecoilValue } from 'recoil'
+import { Image } from 'react-bootstrap'
 
 
 const RiskProfileNew = () => {
@@ -27,6 +32,7 @@ const RiskProfileNew = () => {
     let [Progress, setProgress] = useState(10);
     let [SwitchBtn, setSwitchBtn] = useState(false);
     // let Form = useRef(null);
+    let [mainBoard, setMainBoard] = useState(false);
 
     useEffect(() => {
         GetRiskData();
@@ -113,22 +119,29 @@ const RiskProfileNew = () => {
     let QuestionArray = [
         {
             route: "/",
+            key: "LandingPage",
+            question: "",
+            choices: ["Less than one year", "1 – 3 years", "3 – 5 years", "More than 5 years"],
+            imgUrl: RiskReward,
+        },
+        {
+            route: "/Q1",
             key: "question1",
-            question: "Question 1: Accessibility of your Funds - Desired Liquidity. Based on your stated goals, how long do you envisage these funds can be invested before you require access to them?",
+            question: "<div className='d-inline-block text-green'>Question 1: Accessibility of your Funds - Desired Liquidity.</div> Based on your stated goals, how long do you envisage these funds can be invested before you require access to them?",
             choices: ["Less than one year", "1 – 3 years", "3 – 5 years", "More than 5 years"],
             imgUrl: Risk1,
         },
         {
             route: "/Q2",
             key: "question2",
-            question: "Question 2: Your desired rate of return.  What annual rate of return do you expect your investments to achieve in order to satisfy your previously stated goals?",
+            question: "<div className='d-inline-block text-green'>Question 2: Your desired rate of return.</div> What annual rate of return do you expect your investments to achieve in order to satisfy your previously stated goals?",
             choices: ["Less than 5%", "5% - 10%", "More than 10%"],
             imgUrl: Risk2,
         },
         {
             route: "/Q3",
             key: "question3",
-            question: "Question 3: Your attitude to Capital Risk. Which response best describes your attitude toward investing?",
+            question: "<div className='d-inline-block text-green'>Question 3: Your attitude to Capital Risk.</div> Which response best describes your attitude toward investing?",
             choices: [
                 "The safety of my capital is of primary importance to me. I am happier to achieve a lower rate of return rather than risk any significant loss of my capital.",
                 "I would like the value of my capital to remain relatively stable but it is important that my investments meet my income requirements.",
@@ -140,7 +153,7 @@ const RiskProfileNew = () => {
         {
             route: "/Q4",
             key: "question4",
-            question: "Question 4: Your concerns about inflation: How concerned are you with your savings being eroded due to inflation and the rising costs of necessities  such as groceries, utilities, and healthcare.",
+            question: "<div className='d-inline-block text-green'>Question 4: Your concerns about inflation.</div>  How concerned are you with your savings being eroded due to inflation and the rising costs of necessities such as groceries, utilities, and healthcare.",
             choices: [
                 "Not concerned",
                 "Slightly concerned",
@@ -153,7 +166,7 @@ const RiskProfileNew = () => {
         {
             route: "/Q5",
             key: "question5",
-            question: "Question 5: Your concerns about Legislative Risk. Investors often arrange their finances in order  to qualify for government benefits and / or tax advantages. However, potential changes in the law risk leaving them worse off after those rearrangements have been made.  Would you still rearrange your investments to qualify for these benefits, despite the risks of being worse off?",
+            question: "<div className='d-inline-block text-green'>Question 5: Your concerns about Legislative Risk.</div> Investors often arrange their finances in order to qualify for government benefits and / or tax advantages. However, potential changes in the law risk leaving them worse off after those rearrangements have been made. Would you still rearrange your investments to qualify for these benefits, despite the risks of being worse off?",
             choices: [
                 "No, I wouldn't do it if there's a risk, I'd be worse off.",
                 "I would only do it if there is a slight risk I would be worse off.",
@@ -165,7 +178,7 @@ const RiskProfileNew = () => {
         {
             route: "/Q6",
             key: "question6",
-            question: "Question 6: Your investment knowledge & experience. How familiar are you with Investment Markets?",
+            question: "<div className='d-inline-block text-green'>Question 6: Your investment knowledge & experience.</div> How familiar are you with Investment Markets?",
             choices: [
                 "I don’t understand anything about investment markets.",
                 "I have a basic understanding of investment markets. I know they go up and down but I'm not sure about the reasons behind these fluctuations.",
@@ -178,7 +191,7 @@ const RiskProfileNew = () => {
         {
             route: "/Q7",
             key: "question7",
-            question: "Question 7: Your concern about volatility - The changes in how much money your investments make, and the chance of losing money. If you invested $100,000 a year ago and you find out today it's worth $80,000, how would you feel?",
+            question: "<div className='d-inline-block text-green'>Question 7: Your concern about volatility - The changes in how much money your investments make, and the chance of losing money. <h5 className='d-inline p-0 m-0 fw-bold text-black'>If you invested $100,000 a year ago and you find out today it's worth $80,000, how would you feel?<div></div>",
             choices: [
                 "I would panic and sell my investment and then put the remaining amount in cash.",
                 "I would feel nervous, and I might consider moving some or all of my money to a safer option.",
@@ -190,7 +203,7 @@ const RiskProfileNew = () => {
         {
             route: "/Q8",
             key: "question8",
-            question: "Question 8: Your investment preferences – Asset allocation. What level of investment risk are you comfortable with?",
+            question: "<div className='d-inline-block text-green'>Question 8: Your investment preferences – Asset allocation.</div> What level of investment risk are you comfortable with?.",
             choices: [
                 "No risk and I don’t want my capital to go down at all even if I get a 0% return on my money.",
                 "I prefer low risk and am comfortable allocating a small portion (up to 40%) of my money to the share market aiming for better returns than the cash rate.",
@@ -209,61 +222,6 @@ const RiskProfileNew = () => {
 
     let [BackButton, setBackButton] = useState(false);
 
-
-    // useEffect(() => {
-    //     if (loc.pathname === "/Risk-Profile/" || loc.pathname === "/Risk-Profile") {
-    //         setBackButton(false)
-    //     }
-    //     else {
-    //         setBackButton(true)
-    //     }
-    // }, [loc])
-
-    // const BackHandle = () => {
-    //     const currentPath = loc.pathname;
-
-    //     if (currentPath !== "/Risk-Profile") {
-    //         let route = loc.pathname === "/Risk-Profile" ? "/Risk-Profile/" : loc.pathname;
-
-    //         const currentIndex = QuestionArray.findIndex(q => "/Risk-Profile" + q.route === route);
-
-    //         if (currentIndex > 0) {
-    //             Nav("/Risk-Profile" + QuestionArray[currentIndex - 1].route);
-    //             setProgress((prevProgress) => {
-    //                 return currentIndex === 1 ? 10 : prevProgress - (90 / (QuestionArray.length - 1));
-    //             });
-    //             if (currentIndex == QuestionArray.length - 1) {
-    //                 // alert("anam")
-    //                 setSwitchBtn(false)
-    //             }
-    //         } else {
-    //             console.log('Already at the starting point');
-    //         }
-    //     } else {
-    //         console.log("Already at the starting point");
-    //     }
-    // };
-
-    // const HandleSubmit = () => {
-    //     let route = loc.pathname === "/Risk-Profile" ? "/Risk-Profile/" : loc.pathname;
-
-    //     const currentIndex = QuestionArray.findIndex(q => "/Risk-Profile" + q.route === route);
-
-    //     if (currentIndex < QuestionArray.length - 1) {
-    //         Nav("/Risk-Profile" + QuestionArray[currentIndex + 1].route);
-    //         setProgress((prevProgress) => prevProgress + (90 / (QuestionArray.length - 1)));
-    //         if (currentIndex == QuestionArray.length - 2) {
-    //             // alert("anam")
-    //             setSwitchBtn(true)
-    //         }
-    //     } else {
-    //         console.log('Form submitted or navigate to the summary page');
-    //         // Form.current.handleSubmit();
-    //     }
-
-    // };
-
-
     useEffect(() => {
         const currentPath = loc.pathname === "/Risk-Profile" ? "/Risk-Profile/" : loc.pathname;
         const currentIndex = QuestionArray.findIndex(q => "/Risk-Profile" + q.route === currentPath);
@@ -275,9 +233,11 @@ const RiskProfileNew = () => {
 
             if (currentIndex == 0) {
                 setBackButton(false);
+                setMainBoard(false)
             }
             else {
                 setBackButton(true);
+                setMainBoard(true)
             }
 
 
@@ -286,7 +246,9 @@ const RiskProfileNew = () => {
     }, [loc]);
 
     const BackHandle = () => {
+
         const currentPath = loc.pathname === "/Risk-Profile" ? "/Risk-Profile/" : loc.pathname;
+
         const currentIndex = QuestionArray.findIndex(q => "/Risk-Profile" + q.route === currentPath);
 
         if (currentIndex > 0) {
@@ -294,9 +256,12 @@ const RiskProfileNew = () => {
         } else {
             console.log('Already at the starting point');
         }
+
     };
 
     const HandleSubmit = () => {
+        //yahan kuch karo ga taka first time ma Data Sheet show ho
+
         const currentPath = loc.pathname === "/Risk-Profile" ? "/Risk-Profile/" : loc.pathname;
         const currentIndex = QuestionArray.findIndex(q => "/Risk-Profile" + q.route === currentPath);
 
@@ -307,6 +272,8 @@ const RiskProfileNew = () => {
             console.log('Form submitted or navigate to the summary page');
             // Form.current.handleSubmit();
         }
+
+
     };
 
     let fillTheValues = (setFieldValue) => {
@@ -340,39 +307,22 @@ const RiskProfileNew = () => {
 
                         return (<Form>
                             <div className="col-md-12">
-                                <div className='mb-5'>
-                                    <ProgressBar progress={Progress} /> {/* Here 50 is the progress percentage */}
-                                </div>
-
-
-                                <h3 className="text-center mainHeading d-none" onClick={() => { console.log(JSON.stringify(values)) }}>
-                                    <b>Risk Profile</b>
-                                </h3>
-
-                                {/* question  */}
-                                <div className="mb-3">
-                                    <label className="form-label w-100 text-center">Joined Profile?</label>
-                                    {/* switch button style */}
-                                    <div className='d-flex justify-content-center mt-3'>
-                                        <div className="w-25">
-                                            <DynamicYesNo name={`joinedProfile`} values={values} handleChange={handleChange} />
-                                        </div>
-                                    </div>
-                                </div>
 
                                 <Routes>
-                                    {QuestionArray.map((elem, index) => (
-                                        <Route
-                                            key={index}
-                                            path={elem.route}
-                                            element={<RiskQuestion1 Obj={{ setValues, values, setFieldValue, handleChange }}
-                                                QuestionProps={elem} />}
-                                        />
-                                    ))}
+                                    {QuestionArray.map((elem, index) => {
+                                        return (
+                                            <Route
+                                                key={index}
+                                                path={elem.route}
+                                                element={<RiskQuestion1 Obj={{ setValues, values, setFieldValue, handleChange }}
+                                                    QuestionProps={elem} />}
+                                            />
+                                        )
+                                    })}
                                 </Routes>
 
 
-                                <div className={`row  ${BackButton ? "justify-content-between" : "justify-content-end"} my-3`}>
+                                <div className={`row  ${BackButton ? "justify-content-between" : mainBoard === false ? "justify-content-center" : "justify-content-end"} my-3`}>
                                     {BackButton &&
                                         <div className='col-md-2'>
                                             <button
@@ -383,16 +333,23 @@ const RiskProfileNew = () => {
                                             </button>
                                         </div>
                                     }
-                                    <div className='col-md-2'>
+
+                                    <div className={mainBoard === false ? "col-md-4" : 'col-md-2'}>
                                         {!SwitchBtn &&
                                             <button
                                                 type='button'
                                                 onClick={HandleSubmit}
                                                 className="float-center btn w-100  bgColor modalBtn  d-flex justify-content-center align-items-center gap-1"
                                             >
-                                                Next <FaArrowRightLong />
+                                                {mainBoard === false ?
+                                                    <React.Fragment> Submit </React.Fragment>
+                                                    :
+                                                    <React.Fragment>Next <FaArrowRightLong /></React.Fragment>
+                                                }
+
                                             </button>
                                         }
+
                                         {SwitchBtn &&
                                             <button
                                                 type='Submit'
@@ -401,9 +358,9 @@ const RiskProfileNew = () => {
                                                 Submit
                                             </button>
                                         }
+
                                     </div>
                                 </div>
-
                             </div>
                         </Form>);
                     }}

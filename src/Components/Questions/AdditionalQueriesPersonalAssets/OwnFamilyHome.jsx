@@ -14,6 +14,7 @@ import DynamicTableRow from "../../Assets/Dynamic/DynamicTableRow";
 import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
 
 import HomeLoan from "./HomeLoan";
+import { object } from "yup";
 
 
 const OwnFamilyHome = (props) => {
@@ -53,8 +54,8 @@ const OwnFamilyHome = (props) => {
             setFieldValue(`loanAttached`, familyHome.loanAttached || "");
             setFieldValue(`HomeLoanModal`, familyHome.HomeLoanModal || "");
 
-            setFieldValue(`annualRepayments`, familyHome.HomeLoanModal.annualRepayments || "");
-            setFieldValue(`loanAmount`, familyHome.HomeLoanModal.loanBalance || "");
+            setFieldValue(`loanAmount`, familyHome?.HomeLoanModal?.loanBalance || "");
+            setFieldValue(`annualRepayments`, familyHome?.HomeLoanModal?.annualRepayments || "");
 
 
         }
@@ -73,7 +74,7 @@ const OwnFamilyHome = (props) => {
             partnerOwnership: values.partnerOwnership,
             loanAttached: values.loanAttached,
 
-            HomeLoanModal: values.HomeLoanModal,
+            HomeLoanModal: values.loanAttached === "Yes" ? (Object.keys(values.HomeLoanModal).length > 0 ? values.HomeLoanModal : undefined) : undefined,
             // loanAmount: values.loanAmount,
             // annualRepayments: values.annualRepayments,
 

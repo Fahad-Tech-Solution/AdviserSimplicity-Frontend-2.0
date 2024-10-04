@@ -45,6 +45,7 @@ const QuestionIncomeExpanse = (props) => {
         setFieldValue(`insuranceCorporate${index}`, data.insuranceCorporate)
         setFieldValue(`repairsMaintenance${index}`, data.repairsMaintenance)
         setFieldValue(`allOther${index}`, data.allOther)
+        setFieldValue(`totalExpance${index}`, data.totalExpance)
       })
 
 
@@ -54,7 +55,8 @@ const QuestionIncomeExpanse = (props) => {
   };
 
   let handleInput = (e, setFieldValue) => {
-    const value = e.target.value > 2 ? 2 : e.target.value;
+
+    const value = e.target.value.replace(/[^0-9.-]+/g, "") > 2 ? 2 : e.target.value.replace(/[^0-9.-]+/g, "");
     setFieldValue(e.target.id, value);
 
     let arr = []
@@ -85,6 +87,7 @@ const QuestionIncomeExpanse = (props) => {
         insuranceCorporate: values[`insuranceCorporate${i}`] || "",
         repairsMaintenance: values[`repairsMaintenance${i}`] || "",
         allOther: values[`allOther${i}`] || "",
+        totalExpance: values[`totalExpance${i}`] || "",
       };
       newEntries.push(newEntry);
     }
@@ -92,7 +95,7 @@ const QuestionIncomeExpanse = (props) => {
     // Log the new entries to verify
     console.log(newEntries);
 
-    let total = newEntries.reduce((total, entry) => total + (parseFloat(entry.allOther.replace(/[^0-9.-]+/g, "")) || 0), 0);
+    let total = newEntries.reduce((total, entry) => total + (parseFloat(entry.totalExpance.replace(/[^0-9.-]+/g, "")) || 0), 0);
 
 
     props.setFieldValue(`${props.modalObject.key}${props.modalObject.index}`, newEntries)

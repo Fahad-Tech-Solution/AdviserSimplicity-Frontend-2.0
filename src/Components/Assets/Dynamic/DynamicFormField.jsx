@@ -258,7 +258,7 @@ const DynamicFormField = ({
             values={values}
             handleChange={handleChange}
           />
-          {values[stakeHolder ? stakeHolder.slice(0, -1) : name]?.[name] === "Yes" && (
+          {(stakeHolder ? values?.[stakeHolder.slice(0, -1)]?.[name] : values?.[name]) === "Yes" && (
             <div className="d-flex justify-content-center align-items-center pt-2">
               <Button
                 className="btn bgColor modalBtn border-0"

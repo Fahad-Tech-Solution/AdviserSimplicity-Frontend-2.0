@@ -71,16 +71,18 @@ function AuthRouts() {
         }
     }
 
-    let topMenuArray = ['/', '/Goals-And-Objectives', '/Risk-Profile', '/All-Clients',
-        '/Risk-Profile/',
-        "/Risk-Profile/Q2",
-        "/Risk-Profile/Q3",
-        "/Risk-Profile/Q4",
-        "/Risk-Profile/Q5",
-        "/Risk-Profile/Q6",
-        "/Risk-Profile/Q7",
-        "/Risk-Profile/Q8",
-        "/Risk-Profile-Cards"
+    let topMenuArray = ['/', '/Goals-And-Objectives',
+        // '/Risk-Profile',
+        '/All-Clients',
+        // '/Risk-Profile/',
+        // "/Risk-Profile/Q2",
+        // "/Risk-Profile/Q3",
+        // "/Risk-Profile/Q4",
+        // "/Risk-Profile/Q5",
+        // "/Risk-Profile/Q6",
+        // "/Risk-Profile/Q7",
+        // "/Risk-Profile/Q8",
+        // "/Risk-Profile-Cards"
     ]
 
 
