@@ -13,6 +13,8 @@ import ManagedFunds from './QuestionsDetail/ManagedFunds';
 import SuperFunds from './QuestionsDetail/SuperFunds';
 import AccountBasedPension from './QuestionsDetail/AccountBasedPension';
 import InvestedAnnuities from './QuestionsDetail/InvestedAnnuities';
+import TradingCompany from '../BusinessEntities/TradingCompany';
+import TradingTrust from '../BusinessEntities/TradingTrust';
 
 const MiddleWare = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
@@ -27,7 +29,7 @@ const MiddleWare = (props) => {
     let attrebuteSet = switchArray.includes(props.modalObject.title) ? true : false;
 
 
-    let clientPartnerArray = ["Super Funds", "Account Based Pension", "Invested in Annuities"];
+    let clientPartnerArray = ["Super Funds", "Account Based Pension", "Invested in Annuities", "Business as Company Structure", "Business as Trusts"];
 
     let clientPartnerOnly = clientPartnerArray.includes(props.modalObject.title) ? true : false;
 
@@ -292,6 +294,8 @@ const MiddleWare = (props) => {
         "Super Funds Detail": <SuperFunds />,
         "Account Based Pension Detail": <AccountBasedPension />,
         "Invested in Annuities Detail": <InvestedAnnuities />,
+        "Business as Company Structure Detail": <TradingCompany />,
+        "Business as Trusts Detail": <TradingTrust />,
 
     };
 

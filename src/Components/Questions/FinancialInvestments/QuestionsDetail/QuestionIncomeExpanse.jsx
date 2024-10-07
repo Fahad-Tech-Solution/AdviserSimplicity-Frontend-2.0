@@ -109,46 +109,51 @@ const QuestionIncomeExpanse = (props) => {
       props.setFlagState(false);
     }
   };
-
-
   let FormulaSetting = (values, setFieldValue, currentInput, index) => {
+    const cleanNumber = (input) => {
+      // Ensure the input is a string, then apply replace and parseFloat
+      return parseFloat(String(input || "").replace(/[^0-9.-]+/g, "")) || 0;
+    };
 
-    let councilRates = parseFloat((values[`councilRates${index}`] || 0).replace(/[^0-9.-]+/g, "")) || 0;
-    let waterRates = parseFloat((values[`waterRates${index}`] || 0).replace(/[^0-9.-]+/g, "")) || 0;
-    let landTax = parseFloat((values[`landTax${index}`] || 0).replace(/[^0-9.-]+/g, "")) || 0;
-    let insuranceCorporate = parseFloat((values[`insuranceCorporate${index}`] || 0).replace(/[^0-9.-]+/g, "")) || 0;
-    let repairsMaintenance = parseFloat((values[`repairsMaintenance${index}`] || 0).replace(/[^0-9.-]+/g, "")) || 0;
-    let allOther = parseFloat((values[`allOther${index}`] || 0).replace(/[^0-9.-]+/g, "")) || 0;;
-    let totalExpance = 0;
+    // Initialize variables using the cleanNumber function
+    let councilRates = cleanNumber(values[`councilRates${index}`]);
+    let waterRates = cleanNumber(values[`waterRates${index}`]);
+    let landTax = cleanNumber(values[`landTax${index}`]);
+    let insuranceCorporate = cleanNumber(values[`insuranceCorporate${index}`]);
+    let repairsMaintenance = cleanNumber(values[`repairsMaintenance${index}`]);
+    let allOther = cleanNumber(values[`allOther${index}`]);
 
+    // Switch to handle the specific current input
     switch (currentInput.name) {
       case `councilRates${index}`:
-        councilRates = parseFloat((currentInput.value || 0).replace(/[^0-9.-]+/g, "")) || 0
+        councilRates = cleanNumber(currentInput.value);
         break;
       case `waterRates${index}`:
-        waterRates = parseFloat((currentInput.value || 0).replace(/[^0-9.-]+/g, "")) || 0
+        waterRates = cleanNumber(currentInput.value);
         break;
       case `landTax${index}`:
-        landTax = parseFloat((currentInput.value || 0).replace(/[^0-9.-]+/g, "")) || 0
+        landTax = cleanNumber(currentInput.value);
         break;
       case `insuranceCorporate${index}`:
-        insuranceCorporate = parseFloat((currentInput.value || 0).replace(/[^0-9.-]+/g, "")) || 0
+        insuranceCorporate = cleanNumber(currentInput.value);
         break;
       case `repairsMaintenance${index}`:
-        repairsMaintenance = parseFloat((currentInput.value || 0).replace(/[^0-9.-]+/g, "")) || 0
+        repairsMaintenance = cleanNumber(currentInput.value);
         break;
       case `allOther${index}`:
-        allOther = parseFloat((currentInput.value || 0).replace(/[^0-9.-]+/g, "")) || 0
+        allOther = cleanNumber(currentInput.value);
         break;
       default:
-        console.log("no input")
+        console.log("No matching input field");
         break;
     }
 
-    totalExpance = councilRates + waterRates + landTax + insuranceCorporate + repairsMaintenance + allOther;
+    // Calculate the total expense
+    let totalExpance = councilRates + waterRates + landTax + insuranceCorporate + repairsMaintenance + allOther;
 
+    // Set the totalExpance field, ensuring that it's formatted properly
     setFieldValue(`totalExpance${index}`, toCommaAndDollar(totalExpance || 0));
-  }
+  };
 
 
   return (

@@ -80,7 +80,7 @@ const InvestmentPropertyDetails = (props) => {
     };
 
     let handleInput = (e, setFieldValue) => {
-        
+
         const value = e.target.value > 10 ? 10 : e.target.value;
         setFieldValue(e.target.id, value);
 
@@ -132,8 +132,8 @@ const InvestmentPropertyDetails = (props) => {
         obj[DataOf] = newEntries
 
         // Calculate total currentBalance
-        obj["clientTotal"] = toCommaAndDollar(newEntries.reduce((total, entry) => total + parseFloat((entry.propertyLoanBalance).replace(/[^0-9.-]+/g, "")) || 0, 0));
-        obj["partnerTotal"] = toCommaAndDollar(newEntries.reduce((total, entry) => total + parseFloat((entry.expenses).replace(/[^0-9.-]+/g, "")) || 0, 0));
+        obj["clientTotal"] = toCommaAndDollar(newEntries.reduce((total, entry) => total + parseFloat((entry.CurrentValue).replace(/[^0-9.-]+/g, "")) || 0, 0));
+        obj["partnerTotal"] = toCommaAndDollar(newEntries.reduce((total, entry) => total + parseFloat((entry.propertyLoanBalance).replace(/[^0-9.-]+/g, "")) || 0, 0));
 
         console.log(obj, "final obj")
 

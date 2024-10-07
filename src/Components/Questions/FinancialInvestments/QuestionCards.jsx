@@ -606,7 +606,7 @@ const QuestionCards = (props) => {
     const towInOne = ["personalLoans"];
     const sampleOne = ["investmentPropertyDetails"];
 
-    const reuseModal = ["bankAccountFinance", "termDepositsFinance", "australianShareMarket", "managedFund", , "investmentBondFinance", "SMSFTermDeposits", "SMSFAustralianShares", "SMSFManagedFunds", "SMSFInvestmentLoan", "familyBank", "familyTermDeposit", "familyAustralianShare", "familyMangedFunds", "familyInvestmentHomeLoan", "SMSFBank", "superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues",]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
+    const reuseModal = ["bankAccountFinance", "termDepositsFinance", "australianShareMarket", "managedFund", "investmentBondFinance", "SMSFTermDeposits", "SMSFAustralianShares", "SMSFManagedFunds", "SMSFInvestmentLoan", "familyBank", "familyTermDeposit", "familyAustralianShare", "familyMangedFunds", "familyInvestmentHomeLoan", "SMSFBank", "superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues", "BusinessAsCompanyStructure", "BusinessAsTrusts"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
     let homeArray = [
         {
@@ -678,8 +678,8 @@ const QuestionCards = (props) => {
         "Professional Advisers": <EstatePlanningProfessionalAdviser />,
 
         //Business
-        "Business as Company Structure": <TradingCompany />,
-        "Business as Trusts": <TradingTrust />,
+        "Business as Company Structure": <MiddleWare />,
+        "Business as Trusts": <MiddleWare />,
 
         //SMSF
         "SMSF Bank Accounts": <BankTermForm />,         //reuse Component

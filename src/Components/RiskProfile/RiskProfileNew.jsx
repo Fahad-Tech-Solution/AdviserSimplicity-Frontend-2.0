@@ -47,7 +47,7 @@ const RiskProfileNew = () => {
 
             // Check if the response is successful and contains data
             if (res && res._id) {
-                console.log('Risk Data:', res);
+                // console.log('Risk Data:', res);
                 setRiskQuestion(res);  // Assuming response data contains the risk question
             } else {
                 console.error('Unexpected response format:', res);

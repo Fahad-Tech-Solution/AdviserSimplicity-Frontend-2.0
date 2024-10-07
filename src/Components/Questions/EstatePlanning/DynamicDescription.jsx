@@ -7,7 +7,7 @@ const DynamicDescription = (props) => {
     let initialValues = { description: "" };
 
     const fillInitialValues = (setFieldValue) => {
-
+        console.log(props.modalObject.values, props.modalObject.key)
         if (props.modalObject.values?.[props.modalObject.stackHolder.replace(".", "")]?.[props.modalObject.key]) {
             setFieldValue("description", props.modalObject.values?.[props.modalObject.stackHolder.replace(".", "")]?.[props.modalObject.key])
         }
@@ -16,7 +16,7 @@ const DynamicDescription = (props) => {
 
     let onSubmit = async (values) => {
 
-        console.log(values)
+
 
         props.setFieldValue(`${props.modalObject.stackHolder}${props.modalObject.key}`, values.description)
 

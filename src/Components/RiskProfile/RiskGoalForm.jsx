@@ -50,7 +50,7 @@ const RiskGoalForm = (props) => {
             // functionality of Confirmation
 
             setModalObject({
-                title: "You are Trying change Risk Goal",
+                title: "",
                 values
             })
 
@@ -120,14 +120,14 @@ const RiskGoalForm = (props) => {
                                         <div className="row">
                                             <div className="col-md-12">
                                                 <label className="d-block" htmlFor={"riskDescription"}>
-                                                    Please provide a description for why you are changing your plan:
+                                                    Please provide a reason/description of why you are changing the Risk Profile:
                                                 </label>
                                                 <Field
                                                     as="textarea"
                                                     placeholder={"Enter your reason here..."}
                                                     id="riskDescription"
                                                     name={`riskDescription.${props.modalObject.innerKey}`}
-                                                    className="form-control inputDesign mt-3"
+                                                    className="form-control inputDesignDoubleInput mt-3"
                                                 />
                                             </div>
                                         </div>

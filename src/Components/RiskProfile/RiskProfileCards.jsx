@@ -8,7 +8,7 @@ import { GetAxios } from '../Assets/Api/Api'
 import { Field, Form, Formik } from 'formik'
 
 import ApexChart from './ApexChart'
-import ModalComponent from '../Questions/FinancialInvestments/ModalComponent'
+import InnerModal from '../Questions/FinancialInvestments/QuestionsDetail/InnerModal'
 import RiskGoalForm from './RiskGoalForm'
 
 import single from "../Svgs/single-2.svg";
@@ -17,6 +17,8 @@ import { content } from '../../Content/Content'
 import parse from 'html-react-parser';
 import { FiPlus } from 'react-icons/fi'
 import DynamicDescription from '../Questions/EstatePlanning/DynamicDescription'
+import RiskTermsAndConditions from './RiskTermsAndConditions'
+import RechartsPieChart from './RechartsPieChart'
 
 
 const RiskProfileCards = () => {
@@ -49,7 +51,6 @@ const RiskProfileCards = () => {
         question8: { client: 1, partner: 1, },
         riskDescription: { client: "1", partner: "1", },
         riskGoal: { client: "1", partner: "1", },
-
     }
 
 
@@ -96,40 +97,30 @@ const RiskProfileCards = () => {
         }
     }
 
-    let OpenModal = (title, values, innerKey, stackHolder) => {
+    let OpenModal = (title, values, innerKey, stackHolder, key) => {
         // alert(title + " ++ " + Input);
         setModalObject({
             title,
             values,
             innerKey,
-            stackHolder
+            stackHolder,
+            key
         })
         setFlagState(true);
     }
 
     let SelectedDiscription = (selectedValue) => {
 
-        const currentIndex = RiskGoals.findIndex(q => q.value === selectedValue);
-        // alert(selectedValue)
-        if (currentIndex) {
-            let { des } = RiskGoals[currentIndex] || "";
-            return (parse(des || ""))
-        }
+        const currentIndex = RiskGoals.findIndex(q => q.value === selectedValue) ;
+        console.log(currentIndex, selectedValue, RiskGoals[currentIndex].des)
+        // if (currentIndex) {
+        let { des } = RiskGoals[currentIndex] || "";
+        return (parse(des || ""))
+        // }
     }
 
     return (
         <div className="container-fluid pt-3">
-
-            {/*  modal */}
-            <ModalComponent modalObject={modalObject} setFlagState={setFlagState} flagState={flagState}>
-                {
-                    modalObject.title == "Risk Goals" ? <RiskGoalForm /> :
-                        modalObject.title == "Add Note" ? <DynamicDescription /> : ""
-
-                }
-            </ModalComponent>
-            {/*  modal */}
-
             <div className="row px-0 m-0 ">
                 <Formik
                     initialValues={initialValues}
@@ -143,6 +134,20 @@ const RiskProfileCards = () => {
                         return (
                             <div className='col-md-12'>
                                 <Form>
+
+                                    {/*  modal */}
+                                    <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState}>
+                                        {
+                                            modalObject.title == "Risk Goals" ? <RiskGoalForm /> :
+                                                modalObject.title == "Add Note" ? <DynamicDescription /> :
+                                                    modalObject.title == "Terms and Conditions" ? <RiskTermsAndConditions /> : ""
+
+                                        }
+                                    </InnerModal>
+                                    {/*  modal */}
+
+
+
                                     <div className='row justify-content-center align-items-center'>
                                         <div className='col-md-6 my-3'>
                                             <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
@@ -156,10 +161,17 @@ const RiskProfileCards = () => {
                                                         />
                                                     </div>
                                                 </h5>
+                                                {/*
+                                                    <div className="d-flex justify-content-center align-items-stretch w-100 d-none" style={{ minHeight: "30vh" }}>
+                                                    <ApexChart data={[30, 20, 60, 15, 15, 15,]} title={values.riskGoal.client} />
+                                                    </div>
+                                                    */}
+
 
                                                 <div className="d-flex justify-content-center align-items-stretch w-100" style={{ minHeight: "30vh" }}>
-                                                    <ApexChart data={[30, 20, 60, 15, 15, 15,]} title={values.riskGoal.client} />
+                                                    <RechartsPieChart data={[30, 20, 60, 15, 15, 15,]} title={values.riskGoal.client} />
                                                 </div>
+
                                                 <div className="row justify-content-center align-items-center my-2">
                                                     <div className='col-12 p-0 '>
                                                         <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
@@ -187,17 +199,22 @@ const RiskProfileCards = () => {
                                                     <div className='col-md-12 text-center mt-2'>
                                                         <InputGroup>
                                                             <Button className='btn bgColor modalBtn border-0' id="button-addon2"
-                                                                onClick={() => { OpenModal("Add Note", values, "client", "client") }}
+                                                                onClick={() => { OpenModal("Add Note", values, "client", "addNoteDescription.", "client",) }}
                                                             >
                                                                 <FiPlus />
                                                             </Button>
-                                                            <Field id="ClientData" name={"riskGoal.client"} className="form-control inputDesign text-center" placeholder={"Add Note"} />
+                                                            <Field id="ClientData" name={"addNoteDescription.client"} className="form-control inputDesign text-center" placeholder={"Add Note"} />
                                                         </InputGroup>
                                                     </div>
                                                     <div className='col-md-12 text-center mt-2'>
                                                         <Field type="checkbox" id="ClienthappyWithResult" name={"happyWithResult.client"} className="form-check-input newCheck" />
                                                         <div className='d-inline-block ms-2'>
                                                             <label htmlFor='ClienthappyWithResult'>Please confirm that you are happy with the risk result </label>
+                                                        </div>
+                                                    </div>
+                                                    <div className='col-md-12 text-center mt-2'>
+                                                        <div className='d-inline-block ms-2 text-muted'>
+                                                            <a href='#' className='text-reset' onClick={(e) => OpenModal("Terms and Conditions", values, "client", "client")}>Terms & Conditions</a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -217,9 +234,13 @@ const RiskProfileCards = () => {
                                                             />
                                                         </div>
                                                     </h5>
-
-                                                    <div className="d-flex justify-content-center align-items-stretch w-100" style={{ minHeight: "30vh" }}>
+                                                    {/*
+                                                        <div className="d-flex justify-content-center align-items-stretch w-100" style={{ minHeight: "30vh" }}>
                                                         <ApexChart data={[30, 20, 60, 15, 15, 10]} title={values.riskGoal.partner} />
+                                                        </div>
+                                                        */}
+                                                    <div className="d-flex justify-content-center align-items-stretch w-100" style={{ minHeight: "30vh" }}>
+                                                        <RechartsPieChart data={[30, 20, 60, 15, 15, 10]} title={values.riskGoal.partner} />
                                                     </div>
                                                     <div className="row justify-content-center align-items-center my-2">
                                                         <div className='col-12 p-0 '>
@@ -248,23 +269,29 @@ const RiskProfileCards = () => {
                                                         <div className='col-md-12 text-center mt-2'>
                                                             <InputGroup>
                                                                 <Button className='btn bgColor modalBtn border-0' id="button-addon2"
-                                                                    onClick={() => { OpenModal("Add Note", values, "partner", "partner") }}
+                                                                    onClick={() => { OpenModal("Add Note", values, "partner", "addNoteDescription.", "partner",) }}
                                                                 >
                                                                     <FiPlus />
                                                                 </Button>
-                                                                <Field id="ClientData" name={"addNoteDescription.partner"} className="form-control inputDesign text-center" placeholder={"Add Note"} />
+                                                                <Field id="PartnerData" name={"addNoteDescription.partner"} className="form-control inputDesign text-center" placeholder={"Add Note"} />
                                                             </InputGroup>
                                                         </div>
                                                         <div className='col-md-12 text-center mt-2'>
-                                                            <Field type="checkbox" id="partnerhappyWithResult" name={"happyWithResult.partner"} className="form-check-input newCheck" />
+                                                            <Field type="checkbox" id="partnerhappyWithResult"
+                                                                onChange={(e) => OpenModal("Terms and Conditions", values, "partner", "partner")}
+                                                                name={"happyWithResult.partner"} className="form-check-input newCheck" />
                                                             <div className='d-inline-block ms-2'>
                                                                 <label htmlFor='partnerhappyWithResult'>Please confirm that you are happy with the risk result </label>
+                                                            </div>
+                                                        </div>
+                                                        <div className='col-md-12 text-center mt-2'>
+                                                            <div className='d-inline-block ms-2 text-muted'>
+                                                                <a href='#' className='text-reset' onClick={(e) => OpenModal("Terms and Conditions", values, "client", "client")}>Terms & Conditions</a>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </Card>
                                             </div>
-
                                         }
                                     </div>
                                 </Form>
