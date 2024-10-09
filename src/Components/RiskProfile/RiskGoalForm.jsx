@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, RiskQuestion } from "../../Store/Store";
 import { Field, Form, Formik } from "formik";
-import { PatchAxios, PostAxios } from "../Assets/Api/Api";
+import { openNotificationSuccess, PatchAxios, PostAxios } from "../Assets/Api/Api";
 import { Button, Image, Modal, Row } from "react-bootstrap";
 
 import parse from 'html-react-parser';
@@ -25,7 +25,7 @@ const RiskGoalForm = (props) => {
 
     const onSubmit = async (values) => {
 
-        if ((values.riskGoal[props.modalObject.innerKey] === riskQuestion.riskGoal[props.modalObject.innerKey]) || ReasonSelection === true) {
+        if ((values[props.modalObject.innerKey].riskGoal === riskQuestion[props.modalObject.innerKey].riskGoal) || ReasonSelection === true) {
 
             let obj = JSON.parse(JSON.stringify(values));
 
@@ -36,47 +36,44 @@ const RiskGoalForm = (props) => {
             try {
                 const PatchRes = await PatchAxios(`${DefaultUrl}/api/riskProfile/Update`, obj);
                 if (PatchRes) {
+
+                    openNotificationSuccess("success", "topRight", "Success Notification", "Data of Risk Profile is Saved");
+                    setRiskQuestion(PatchRes);
+                    
                     if (props.flagState) {
                         props.setFlagState(false);
                     }
-                    setRiskQuestion(PatchRes);
                 }
 
             } catch (error) {
                 console.error("Error submitting form:", error);
+                openNotificationSuccess("error", "topRight", "Error Notification", "Data of Risk Profile is not Saved Please! try again");
             }
         }
         else {
-            // functionality of Confirmation
-
             setModalObject({
                 title: "",
                 values
             })
-
             setFlagState(true)
-
         }
 
     };
 
     let handleOk = () => {
-
-        // alert("ma chala")
         setReasonSelection(true);
         setFlagState(false)
-
     }
 
 
 
     const goalsClick = (index, elem, setFieldValue) => {
-        setFieldValue(`riskGoal.${props.modalObject.innerKey}`, elem.value);
+        setFieldValue(`${props.modalObject.innerKey}.riskGoal`, elem.value);
         setDisc(elem.des);
     };
 
     useEffect(() => {
-        let dec = printTitleIfMatch(riskQuestion.riskGoal[props.modalObject.innerKey])
+        let dec = printTitleIfMatch(riskQuestion[props.modalObject.innerKey].riskGoal)
         // alert("data  :" + riskQuestion[props.modalObject.innerKey]);
         setDisc(dec);
     }, [])
@@ -126,7 +123,7 @@ const RiskGoalForm = (props) => {
                                                     as="textarea"
                                                     placeholder={"Enter your reason here..."}
                                                     id="riskDescription"
-                                                    name={`riskDescription.${props.modalObject.innerKey}`}
+                                                    name={`${props.modalObject.innerKey}.riskDescription`}
                                                     className="form-control inputDesignDoubleInput mt-3"
                                                 />
                                             </div>
@@ -153,7 +150,7 @@ const RiskGoalForm = (props) => {
                                             <div className="col-md-4 px-2 pb-3 d-flex ">
                                                 <div className="flex-grow-1 d-flex">
                                                     <div
-                                                        className={`${values.riskGoal[props.modalObject.innerKey] == elem.value ? "customBorder p-3" : "border p-3"} 
+                                                        className={`${values[`${props.modalObject.innerKey}`].riskGoal == elem.value ? "customBorder p-3" : "border p-3"} 
                                                              flex-grow-1`}
                                                         onClick={() =>
                                                             goalsClick(index, elem, setFieldValue)
@@ -179,7 +176,8 @@ const RiskGoalForm = (props) => {
                                 </Row>
                             </div>
                         </Form>
-                    )}
+                    )
+                    }
                 </Formik>
             </div>
         </div>

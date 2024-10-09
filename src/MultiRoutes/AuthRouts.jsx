@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import PersonalDetail_Edit from "../Components/PersonalDetails/PersonalDetail_Edit";
 import SideBar from "../Components/SideBar/SideBarrr";
 
+import { Route, Routes } from "react-router-dom";
+
 import Options from "../Components/Options";
 
 import AllClients from "../GetComponents/AllClients";
@@ -23,6 +25,7 @@ import { useRecoilState } from "recoil";
 import Dashboard from "../Components/Dashboard/Dashboard";
 
 import { CurrentPage } from "../Store/Store";
+
 import TestComp from "../Components/Assets/TestComp/TestComp";
 import QuestionsNew from "../Components/Questions_New/QuestionsNew";
 import FinancialInvestments from "../Components/Questions/FinancialInvestments/FinancialInvestments";
@@ -31,22 +34,21 @@ import LifestyleAssetsAndDebt from "../Components/Questions/LifestyleAssetsAndDe
 import AdditionalQueriesInvestment from "../Components/Questions/AdditionalQueriesInvestment/AdditionalQueriesInvestment";
 import AdditionalQueriesProfessionalAdvisor from "../Components/Questions/AdditionalQueriesProfessionalAdvisor/AdditionalQueriesProfessionalAdvisor";
 import QuestionsSMSF from "../Components/Questions/QuestoinsSMSF/QuestoinsSMSF";
-import QuestionsInvestmentTrust from "../Components/Questions/QuestionsInvestmentTrust/QuestionsInvestmentTrust";
+import QuestionsInvestmentTrust from "../Components/Questions/QuestionsInvestmentTrust/QuestionsInvestmentTrust"; // Check where it is appearing
 import EstatePlanning from "../Components/Questions/EstatePlanning/EstatePlanning";
 import AdditionalQueriesSuperAndRetirement from "../Components/Questions/AdditionalQueriesSuperAndRetirement/AdditionalQueriesSuperAndRetirement";
 import PersonalIncome from "../Components/Questions/PersonalIncome/PersonalIncome";
 import BusinessEntities from "../Components/Questions/BusinessEntities/BusinessEntities";
 import QuestionsFamily from "../Components/Questions/QuestoinsFamilyTrust/QuestoinsFamily";
 import PersonalInsurance from "../Components/Questions/PersonalInsurance/PersonalInsurance";
-import { Route, Routes } from "react-router-dom";
 import GoalsObjectiveNew from "../Components/Goals&Objectives/GoalsObjectiveNew";
-import Contact from "../Components/ContactTest/Contact";
 import RiskProfileNew from "../Components/RiskProfile/RiskProfileNew";
 import RiskProfileCards from "../Components/RiskProfile/RiskProfileCards";
 import RecoilStateManage from "../RecoilStateManage/RecoilStateManage";
 import ImportantQuestion from "../Components/Questions/ImportantQuestion/ImportantQuestion";
 import PersonalDetailNew from "../Components/PersonalDetails/PersonalDetailNew";
 
+import Contact from "../Components/ContactTest/Contact";
 
 function AuthRouts() {
 
@@ -72,17 +74,7 @@ function AuthRouts() {
     }
 
     let topMenuArray = ['/', '/Goals-And-Objectives',
-        // '/Risk-Profile',
         '/All-Clients',
-        // '/Risk-Profile/',
-        // "/Risk-Profile/Q2",
-        // "/Risk-Profile/Q3",
-        // "/Risk-Profile/Q4",
-        // "/Risk-Profile/Q5",
-        // "/Risk-Profile/Q6",
-        // "/Risk-Profile/Q7",
-        // "/Risk-Profile/Q8",
-        // "/Risk-Profile-Cards"
     ]
 
 

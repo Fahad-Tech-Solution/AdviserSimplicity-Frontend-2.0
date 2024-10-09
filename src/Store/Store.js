@@ -150,13 +150,15 @@ export const defaultUrl = atom({
 
     // default: "http://localhost:7000",
 
-    // default: "http://192.168.30.24:7000", // Usama bhai ventures-unit2-2g
-    // default: "http://172.168.40.41:7000", // Usama bhai ventures-unit1-2g
+    // default: "http://192.168.1.54:7000", // Usama bhai AUSU
+    // default: "http://192.168.1.120:7000", // Usama bhai GrowWorkf1
+    // default: "http://192.168.14.244:7000", // Usama bhai mara Mobile k sath
+    // default: "http://192.168.227.244:7000", // Usama bhai Fahad bhai k sath
     // default: "http://172.168.40.137:7000",
     // default: "http://192.168.211.242:7000",
-    default: "http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com:7000",
+    // default: "http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com:7000",
 
-    // default: "",
+    default: "",
 });
 
 export const allAPIs = atom({
@@ -278,17 +280,42 @@ export const GQState = atom({
 export const RiskQuestion = atom({
     key: "RiskQuestion",
     default: {
-        joinedProfile: "No",
-        question1: { client: 1, partner: 1, },
-        question2: { client: 1, partner: 1, },
-        question3: { client: 1, partner: 1, },
-        question4: { client: 1, partner: 1, },
-        question5: { client: 1, partner: 1, },
-        question6: { client: 1, partner: 1, },
-        question7: { client: 1, partner: 1, },
-        question8: { client: 1, partner: 1, },
-        riskDescription: { client: "", partner: "", },
-        riskGoal: { client: "Conservative", partner: "Conservative", },
+        "client": {
+            "question1": 1,
+            "question2": 1,
+            "question3": 1,
+            "question4": 1,
+            "question5": 1,
+            "question6": 1,
+            "question7": 1,
+            "question8": 1,
+            "riskGoal": "Conservative",
+            "riskDescription": "",
+            "happyWithResult": false,
+            "confirmRiskProfileCheck1": false,
+            "confirmRiskProfileCheck2": false,
+            "confirmRiskProfileCheck3": false,
+            "addNoteDescription": ""
+        },
+        "partner": {
+            "question1": 1,
+            "question2": 1,
+            "question3": 1,
+            "question4": 1,
+            "question5": 1,
+            "question6": 1,
+            "question7": 1,
+            "question8": 1,
+            "riskGoal": "Conservative",
+            "riskDescription": "",
+            "happyWithResult": false,
+            "confirmRiskProfileCheck1": false,
+            "confirmRiskProfileCheck2": false,
+            "confirmRiskProfileCheck3": false,
+            "addNoteDescription": ""
+        },
+        "joinedProfile": "No",
+        "currentQuestion": "5"
     },
 });
 

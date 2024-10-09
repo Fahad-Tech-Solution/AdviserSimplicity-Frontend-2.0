@@ -1123,6 +1123,12 @@ input::placeholder {
   min-width: 6rem !important;
   box-shadow: none !important;
 }
+
+.no-right-radius {
+  border-top-right-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+}
+
 .shadow {
   box-shadow: none !important;
 }
@@ -1326,3 +1332,5 @@ label {
 .upload-container .ant-upload-drag-icon {
   margin-bottom: 16px;
 }
+
+

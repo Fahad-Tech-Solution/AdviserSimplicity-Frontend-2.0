@@ -30,7 +30,7 @@ const InnerModal = (props) => {
         "Property Loan Details",
         "Risk Goals",
         "Business as Company Structure Detail",
-        "Business as Trusts Detail"
+        "Business as Trusts",
 
         // "Bank Accounts Detail"
     ]; // Add other titles that should use "xl" here

@@ -210,11 +210,11 @@ const ImportantQuestion = () => {
             img: Business_building,
             key: "BusinessAsCompanyStructure",
         },
-        {
-            title: "A Trust Structure to run a business ",
-            img: Business_TeamHandshake,
-            key: "BusinessAsTrusts",
-        },
+        // {
+        //     title: "A Trust Structure to run a business ",
+        //     img: Business_TeamHandshake,
+        //     key: "BusinessAsTrusts",
+        // },
         {
             title: "A Self-Managed Super Fund",
             img: Business_SMSF,

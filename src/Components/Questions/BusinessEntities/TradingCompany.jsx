@@ -7,12 +7,17 @@ import { handleInputBlur, handleInputChange, handleInputFocus, handleInputKeyDow
 import DynamicYesNo from "../FinancialInvestments/QuestionsDetail/DynamicYesNo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
+import TradingTrust from "./TradingTrust";
+import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
 // import Select from "react-select";
 
 
 const TradingCompany = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+
+  let [flagState, setFlagState] = useState(false);
+  let [modalObject, setModalObject] = useState({});
 
 
   let [nameSet] = useState(() => {
@@ -27,56 +32,33 @@ const TradingCompany = (props) => {
     }
   })
 
-  let BusinessAsCompanyStructure = Object.keys(questionDetail.BusinessAsCompanyStructure).length > 0 ? questionDetail.BusinessAsCompanyStructure : {
-    client: [],
-    partner: [],
-    joint: [],
-
-  }; // Use an empty object as default if BusinessAsCompanyStructure is undefined
-
-  let initialValues = BusinessAsCompanyStructure[props.modalObject.Input].length
-    ? { NumberOfMap: BusinessAsCompanyStructure[props.modalObject.Input].length }
-    : { NumberOfMap: "" };
+  let initialValues = { NumberOfMap: "" };
 
   const [dynamicFields, setDynamicFields] = useState([]);
 
-  useEffect(() => {
-    if (
-      BusinessAsCompanyStructure[props.modalObject.Input] &&
-      BusinessAsCompanyStructure[props.modalObject.Input].length
-    ) {
-      let arr = [];
-
-      for (
-        let i = 0;
-        i < BusinessAsCompanyStructure[props.modalObject.Input].length;
-        i++
-      ) {
-        arr.push("");
-      }
-
-      setDynamicFields(arr);
-    }
-  }, []);
-
   const fillInitialValues = (setFieldValue) => {
-    if (
-      BusinessAsCompanyStructure[props.modalObject.Input] &&
-      BusinessAsCompanyStructure[props.modalObject.Input].length
-    ) {
-      BusinessAsCompanyStructure[props.modalObject.Input].forEach((data, i) => {
-        if (data) {
-          setFieldValue(`aBNACN${i}`, data.aBNACN || "");
-          setFieldValue(`businessName${i}`, data.businessName || "");
-          setFieldValue(`businessAddress${i}`, data.businessAddress || "");
-          setFieldValue(`numberOfDirectors${i}`, data.numberOfDirectors || "");
-          setFieldValue(`directorship${i}`, data.directorship || "");
-          setFieldValue(`shareholding${i}`, data.shareholding || "");
-          setFieldValue(`dividendReceived${i}`, data.dividendReceived || "");
-          setFieldValue(`equityPosition${i}`, data.equityPosition || "");
-        }
-      });
+    console.log("Values", props.modalObject.values[props.modalObject.Input])
+
+    if (props.modalObject?.values[props.modalObject.Input] && props.modalObject.values[props.modalObject.Input].length > 0) {
+      setFieldValue("NumberOfMap", props.modalObject.values[props.modalObject.Input].length);
+
+      let data = props.modalObject.values[props.modalObject.Input];
+
+      data.map((elem, i) => {
+        setFieldValue("businessName" + i, elem.businessName);
+        setFieldValue("aBNACN" + i, elem.aBNACN);
+        setFieldValue("businessAddress" + i, elem.businessAddress);
+        setFieldValue("numberOfDirectors" + i, elem.numberOfDirectors);
+        setFieldValue("directorship" + i, elem.directorship);
+        setFieldValue("shareholding" + i, elem.shareholding);
+        setFieldValue("dividendReceived" + i, elem.dividendReceived);
+        setFieldValue("equityPosition" + i, elem.equityPosition);
+        setFieldValue("equityPositionArray" + i, elem.equityPositionArray);
+      })
+
     }
+
+
   };
 
   let handleInput = (e, setFieldValue) => {
@@ -112,25 +94,22 @@ const TradingCompany = (props) => {
         shareholding: values[`shareholding${i}`] || "",
         dividendReceived: values[`dividendReceived${i}`] || "",
         equityPosition: values[`equityPosition${i}`] || "",
-
+        equityPositionArray: values[`equityPositionArray${i}`] || "",
       };
       newEntries.push(newEntry);
     }
 
+
     // Log the new entries to verify
-    console.log(newEntries);
 
     let DataOf = props.modalObject.Input;
 
-    // Create an object with additional fields
-    let obj = {
-      clientFK: localStorage.getItem("UserID"),
-    };
-
-    obj[DataOf] = newEntries;
+    console.log(newEntries, DataOf, values);
 
     // Calculate total currentBalance
     let total = newEntries.reduce((total, entry) => total + parseFloat((entry.equityPosition).replace(/[^0-9.-]+/g, "")), 0);
+
+    props.setFieldValue(DataOf, newEntries);
 
     props.setFieldValue(DataOf + "CurrentBalance", toCommaAndDollar(total));
 
@@ -140,10 +119,17 @@ const TradingCompany = (props) => {
 
   };
 
-  let FormulaSetting = () => {
+  let FormulaSetting = () => { }
 
+  let handleInnerModal = (title, key, mainKey, values) => {
+    setModalObject({
+      title,
+      key,
+      mainKey,
+      values
+    })
+    setFlagState(true);
   }
-
 
   return (
     <Formik
@@ -160,9 +146,14 @@ const TradingCompany = (props) => {
         return (
           <Form>
             <Row>
+
+              <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} >
+                {
+                  modalObject.title === "Business as Trusts" ? <TradingTrust /> : ""
+                }
+              </InnerModal>
+
               <div className="col-md-12">
-
-
                 <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                   <label htmlFor='' className=''>
                     How many {props.modalObject.title} does {nameSet} have:
@@ -203,7 +194,7 @@ const TradingCompany = (props) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {dynamicFields.map((elem, i) => {
+                          {Array.from({ length: values.NumberOfMap }).map((_, i) => {
                             return (
                               <tr key={i}>
                                 <td>{1 + i}</td>
@@ -254,7 +245,7 @@ const TradingCompany = (props) => {
                                 <td>
                                   <Field
                                     type="text"
-                                    placeholder="Shareholding "
+                                    placeholder="Shareholding"
                                     id={`shareholding${i}`}
                                     name={`shareholding${i}`}
                                     className="form-control inputDesignDoubleInput"
@@ -291,6 +282,7 @@ const TradingCompany = (props) => {
                                       }}
                                     />
                                     <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
+                                      handleInnerModal("Business as Trusts", `equityPositionArray${i}`, `equityPosition${i}`, values)
                                     }}>
                                       <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                     </Button>

@@ -379,11 +379,11 @@ const QuestionCards = (props) => {
                 key: "BusinessAsCompanyStructure",
                 img: Business_building
             },
-            {
-                title: "Business as Trusts",
-                key: "BusinessAsTrusts",
-                img: Business_TeamHandshake
-            },
+            // {
+            //     title: "Business as Trusts",
+            //     key: "BusinessAsTrusts",
+            //     img: Business_TeamHandshake
+            // },
             // {
             //     title: "Business as SMSF",
             //     key: "SMSFManagedFundsTab",

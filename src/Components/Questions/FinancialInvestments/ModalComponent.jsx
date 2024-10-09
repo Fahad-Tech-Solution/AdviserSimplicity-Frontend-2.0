@@ -58,7 +58,7 @@ const ModalComponent = (props) => {
         "SMSF Investment Loan",
         "Investment Home Loan",
         // "Business as Company Structure",
-        "Business as Trusts",
+        // "Business as Trusts",
         "Family Trust Details",
         "Family Trust Investment Loan",
         "Goals and Objectives Questions",

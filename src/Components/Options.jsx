@@ -57,6 +57,7 @@ function Options(props) {
 
     let Opt = "Opt1"
     let stepComplete = 0;
+    let Risk = false;
 
     setCurrentPCLassSwitch(cLocation.trim());
 
@@ -118,34 +119,42 @@ function Options(props) {
       case 'Risk-Profile/Q1':
         Opt = "Opt3"
         stepComplete = 12;
+        Risk = true;
         break
       case "Risk-Profile/Q2":
         Opt = "Opt3"
         stepComplete = 24;
+        Risk = true;
         break
       case "Risk-Profile/Q3":
         Opt = "Opt3"
         stepComplete = 36;
+        Risk = true;
         break
       case "Risk-Profile/Q4":
         Opt = "Opt3"
         stepComplete = 48;
+        Risk = true;
         break
       case "Risk-Profile/Q5":
         Opt = "Opt3"
         stepComplete = 62;
+        Risk = true;
         break
       case "Risk-Profile/Q6":
         Opt = "Opt3"
         stepComplete = 74;
+        Risk = true;
         break
       case "Risk-Profile/Q7":
         Opt = "Opt3"
         stepComplete = 86;
+        Risk = true;
         break
       case "Risk-Profile/Q8":
         Opt = "Opt3"
         stepComplete = 98;
+        Risk = true;
         break
       default:
         let a = cLocation.split('/')[0];
@@ -180,7 +189,14 @@ function Options(props) {
           <span
             className={`rounded-circle text-light ${isCurrentStep ? "bgColorIncomeBlack" : "bgColorIncome2"}`}
             role="button"
-            onClick={() => handleStepClick(isPersonalDetails ? `/PersonalDetail#${currentEmail}` : item.route)}
+            onClick={() => {
+              if (Risk) {
+                handleStepClick(`/Risk-Profile${item.route}`)
+              }
+              else {
+                handleStepClick(isPersonalDetails ? `/PersonalDetail#${currentEmail}` : item.route)
+              }
+            }}
             style={{ height: "2rem", width: "6rem" }}
           >
             <IconComponent />

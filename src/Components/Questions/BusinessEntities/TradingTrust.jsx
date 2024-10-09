@@ -1,15 +1,19 @@
 import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
-import { Row, Table } from "react-bootstrap";
+import { Button, InputGroup, Modal, Row, Table } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { PatchAxios, PostAxios } from "../../Assets/Api/Api";
+import { handleInputBlur, handleInputChange, handleInputFocus, handleInputKeyDown, PatchAxios, PostAxios, toCommaAndDollar, toPercentage } from "../../Assets/Api/Api";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 // import Select from "react-select";
 
 
 const TradingTrust = (props) => {
-  let questionDetail = useRecoilValue(QuestionDetail);
-  let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+
+  let [flagState, setFlagState] = useState(false);
+  let [modalObject, setModalObject] = useState({});
+
 
   let [nameSet] = useState(() => {
     if (props.modalObject.Input === "client") {
@@ -23,69 +27,55 @@ const TradingTrust = (props) => {
     }
   })
 
-  let BusinessAsTrusts = Object.keys(questionDetail.BusinessAsTrusts).length > 0 ? questionDetail.BusinessAsTrusts : {
-    client: [],
-    partner: [],
-    joint: [],
+  // Use an empty object as default if BusinessAsTrusts is undefined
 
-  };// Use an empty object as default if BusinessAsTrusts is undefined
-
-  let initialValues = BusinessAsTrusts[props.modalObject.Input].length
-    ? { NumberOfMap: BusinessAsTrusts[props.modalObject.Input].length }
-    : { NumberOfMap: "" };
-
-  const [dynamicFields, setDynamicFields] = useState([]);
-
-  useEffect(() => {
-    if (
-      BusinessAsTrusts[props.modalObject.Input] &&
-      BusinessAsTrusts[props.modalObject.Input].length
-    ) {
-      let arr = [];
-
-      for (
-        let i = 0;
-        i < BusinessAsTrusts[props.modalObject.Input].length;
-        i++
-      ) {
-        arr.push("");
-      }
-
-      setDynamicFields(arr);
-    }
-  }, []);
+  let initialValues = { NumberOfMap: "" };
 
   const fillInitialValues = (setFieldValue) => {
-    if (
-      BusinessAsTrusts[props.modalObject.Input] &&
-      BusinessAsTrusts[props.modalObject.Input].length
-    ) {
-      BusinessAsTrusts[props.modalObject.Input].forEach((data, i) => {
-        if (data) {
-          setFieldValue(`aBN${i}`, data.aBN || "");
-          setFieldValue(`businessName${i}`, data.businessName || "");
-          setFieldValue(`businessAddress${i}`, data.businessAddress || "");
-          setFieldValue(`trusteeType${i}`, data.trusteeType || "");
-          setFieldValue(`trusteeName${i}`, data.trusteeName || "");
-          setFieldValue(`businessOwnership${i}`, data.businessOwnership || "");
-          setFieldValue(`distributionReceived${i}`, data.distributionReceived || "");
-          setFieldValue(`businessValuation${i}`, data.businessValuation || "");
+
+    console.log(props.modalObject.values[props.modalObject.key], props.modalObject.key);
+
+    if (props.modalObject.values[props.modalObject.key] && props.modalObject.values[props.modalObject.key].length > 0) {
+
+      let Data = props.modalObject.values[props.modalObject.key]
+
+      setFieldValue("NumberOfMap", Data.length);
+
+      Data.map((elem, i) => {
+        setFieldValue("businessName" + i, elem.businessName);
+        setFieldValue("aBN" + i, elem.aBN);
+        setFieldValue("businessAddress" + i, elem.businessAddress);
+        setFieldValue("trusteeType" + i, elem.trusteeType);
+        setFieldValue("trusteeName" + i, elem.trusteeName);
+        setFieldValue("aNC" + i, elem.aNC);
+        setFieldValue("businessOwnership" + i, elem.businessOwnership);
+        setFieldValue("distributionReceived" + i, elem.distributionReceived);
+        setFieldValue("businessValuation" + i, elem.businessValuation);
+
+        if (elem.trusteeType === "Corporate") {
+          setFieldValue("NumberOfDirectors" + i, elem.NumberOfDirectors);
+
+          console.log(elem.directorsNames, "asdasd");
+
+          elem.directorsNames.map((dirElem, index) => {
+            console.log(dirElem.directorName, "alskdla");
+            setFieldValue("directorName" + index, dirElem.directorName);
+          })
         }
-      });
+
+      })
+
+
     }
+
+
+
+
   };
 
-  let handleInput = (e, setFieldValue) => {
-    const value = e.target.value > 10 ? 10 : e.target.value;
+  let handleInput = (e, setFieldValue, limit) => {
+    const value = e.target.value > limit ? limit : e.target.value;
     setFieldValue(e.target.id, value);
-
-    let arr = [];
-
-    for (let i = 0; i < value; i++) {
-      arr.push("");
-    }
-
-    setDynamicFields(arr);
   };
 
   let DefaultUrl = useRecoilValue(defaultUrl);
@@ -106,76 +96,59 @@ const TradingTrust = (props) => {
         businessAddress: values[`businessAddress${i}`] || "",
         trusteeType: values[`trusteeType${i}`] || "",
         trusteeName: values[`trusteeName${i}`] || "",
+        aNC: values[`aNC${i}`] || "",
         businessOwnership: values[`businessOwnership${i}`] || "",
         distributionReceived: values[`distributionReceived${i}`] || "",
         businessValuation: values[`businessValuation${i}`] || "",
-        // businessValuation: values[`businessValuation${i}`] || "",
-
       };
+
+      if (values[`trusteeType${i}`] === "Corporate") {
+
+        let NumberOfDirectors = values[`NumberOfDirectors${i}`];
+
+        let directorsNames = []
+
+        for (let j = 0; j < parseFloat(NumberOfDirectors); j++) {
+          let newDirector = {
+            directorName: values[`directorName${j}`]
+          }
+          directorsNames.push(newDirector);
+        }
+
+        newEntry.NumberOfDirectors = NumberOfDirectors;
+        newEntry.directorsNames = directorsNames;
+      }
+
       newEntries.push(newEntry);
     }
 
     // Log the new entries to verify
     console.log(newEntries);
 
-    let DataOf = props.modalObject.Input;
-
-    // Create an object with additional fields
-    let obj = {
-      clientFK: localStorage.getItem("UserID"),
-    };
-
-    obj[DataOf] = newEntries;
-
     // Calculate total currentBalance
-    obj[DataOf + "Total"] = newEntries.reduce(
-      (total, entry) => total + entry.distributionReceived,
-      0
-    );
+    let total = newEntries.reduce((total, entry) => total + parseFloat((entry.businessValuation).replace(/[^0-9.-]+/g, "")), 0);
 
-    console.log(obj, "final obj");
+    props.setFieldValue(props.modalObject.key, newEntries);
+    props.setFieldValue(props.modalObject.mainKey, toCommaAndDollar(total));
 
-    const bankAccountArray = BusinessAsTrusts.clientFK || "";
-
-    try {
-      let res;
-      if (!bankAccountArray) {
-        res = await PostAxios(
-          `${DefaultUrl}/api/BusinessAsTrusts/Add`,
-          obj
-        );
-      } else {
-        obj.collection = props.modalObject.Input;
-        res = await PatchAxios(
-          `${DefaultUrl}/api/BusinessAsTrusts/Update`,
-          obj
-        );
-      }
-
-      if (res) {
-        console.log(res);
-        const updatedData = { ...questionDetail, BusinessAsTrusts: res };
-        setQuestionDetail(updatedData);
-      }
-
-      // Reset the flag state if necessary
-      if (props.flagState) {
-        props.setFlagState(false);
-      }
-    } catch (error) {
-      console.error("Error occurred while making API call:", error);
+    // Reset the flag state if necessary
+    if (props.flagState) {
+      props.setFlagState(false);
     }
+
   };
 
+  let FormulaSetting = () => { }
 
-  let handleBlur = (setFieldValue, e) => {
-    let value = parseFloat(e.target.value);
-    if (!isNaN(value)) {
-      setFieldValue(e.target.id, value.toFixed(2));
-    } else {
-      setFieldValue(e.target.id, "");
-    }
-  };
+  let handleInnerModal = (title, key, mainKey, values) => {
+    setModalObject({
+      title,
+      key,
+      mainKey,
+      values
+    })
+    setFlagState(true);
+  }
 
   return (
     <Formik
@@ -187,27 +160,30 @@ const TradingTrust = (props) => {
       {({ values, setFieldValue, handleChange }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
-        }, [values.NumberOfMap]);
+        }, []);
 
         return (
           <Form>
             <Row>
               <div className="col-md-12">
-                <div className="row justify-content-center">
-                  <div className="col-md-5">
-                    <p className="text-end mt-1">
-                      How many {props.modalObject.title} does {nameSet} have:
-                    </p>
-                  </div>
-                  <div className="col-md-2">
+
+                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                  <label htmlFor='' className=''>
+                    How many {props.modalObject.title} does {nameSet} have:
+                  </label>
+
+                  <div style={{ width: "10%" }} >
                     <Field
                       type="number"
                       id="NumberOfMap"
                       name="NumberOfMap"
                       className="form-control inputDesignDoubleInput"
-                      onChange={(e) => handleInput(e, setFieldValue)}
+                      onChange={(e) => handleInput(e, setFieldValue, 10)}
                     />
                   </div>
+                </div>
+
+                <div className="row justify-content-center">
                   {values.NumberOfMap && (
                     <div className="mt-4">
                       <Table striped bordered responsive hover>
@@ -225,104 +201,235 @@ const TradingTrust = (props) => {
                             <th>Business Address</th>
                             <th>Trustee Type</th>
                             <th>Trustee Name</th>
+                            <th>ACN</th>
                             <th>Business Ownership</th>
                             <th>Distribution Received</th>
                             <th>Business Valuation</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {dynamicFields.map((elem, i) => {
-                            return (
-                              <tr key={i}>
-                                <td>{1 + i}</td>
-                                <td>
-                                  {" "}
-                                  <Field
-                                    type="text"
-                                    placeholder="Business Name"
-                                    id={`businessName${i}`}
-                                    name={`businessName${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="number"
-                                    placeholder="ABN"
-                                    id={`aBN${i}`}
-                                    name={`aBN${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                                <td>
+                          {Array.from({ length: values.NumberOfMap }).map((_, i) => (
+                            <tr key={i}>
+                              <td>{1 + i}</td>
+                              <td>
+                                {" "}
+                                <Field
+                                  type="text"
+                                  placeholder="Business Name"
+                                  id={`businessName${i}`}
+                                  name={`businessName${i}`}
+                                  className="form-control inputDesignDoubleInput"
+                                />
+                              </td>
+                              <td>
+                                <Field
+                                  type="number"
+                                  placeholder="ABN"
+                                  id={`aBN${i}`}
+                                  name={`aBN${i}`}
+                                  className="form-control inputDesignDoubleInput"
+                                />
+                              </td>
+                              <td>
 
-                                  <Field
-                                    type="text"
-                                    placeholder="Business Address"
-                                    id={`businessAddress${i}`}
-                                    name={`businessAddress${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                                <td>
-
+                                <Field
+                                  type="text"
+                                  placeholder="Business Address"
+                                  id={`businessAddress${i}`}
+                                  name={`businessAddress${i}`}
+                                  className="form-control inputDesignDoubleInput"
+                                />
+                              </td>
+                              <td>
+                                <InputGroup className="mb-3" style={{ width: "150px" }}>
                                   <Field
                                     as="select"
                                     placeholder="Trustee Type"
                                     id={`trusteeType${i}`}
                                     name={`trusteeType${i}`}
-                                    className="form-control inputDesignDoubleInput"
+                                    className={`form-select inputDesignDoubleInput ${values[`trusteeType${i}`] === "Corporate" ? "no-right-radius" : ""
+                                      }`}
+                                    onChange={(e) => {
+                                      setFieldValue(e.target.name, e.target.value);
+                                      if (e.target.value !== "Corporate") {
+
+                                        setFieldValue("", "");
+                                        if (values.NumberOfDirectors) {
+                                          Array.from({ length: values.NumberOfDirectors }).map((_, i) => {
+                                            setFieldValue(`directorName${i}`, "");
+                                          })
+                                          setFieldValue("NumberOfDirectors", "");
+                                        }
+                                      }
+                                    }}
                                   >
                                     <option value="">Please Select</option>
                                     <option value="Corporate">Corporate</option>
                                     <option value="Individual">Individual</option>
                                   </Field>
-                                </td>
-                                <td>
-                                  <Field
-                                    type="text"
-                                    placeholder="Trustee Name "
-                                    id={`trusteeName${i}`}
-                                    name={`trusteeName${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="number"
-                                    placeholder="Business Ownership  "
-                                    id={`businessOwnership${i}`}
-                                    name={`businessOwnership${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                    onBlur={(e) => handleBlur(setFieldValue, e)}
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="number"
-                                    placeholder="Distribution Received"
-                                    id={`distributionReceived${i}`}
-                                    name={`distributionReceived${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="number"
-                                    placeholder="Business Valuation"
-                                    id={`businessValuation${i}`}
-                                    name={`businessValuation${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                              </tr>
-                            );
-                          })}
+                                  {values[`trusteeType${i}`] === "Corporate" && (
+                                    <Button
+                                      className="btn bgColor modalBtn border-0"
+                                      id="button-addon2"
+                                      onClick={() =>
+                                        handleInnerModal(
+                                          "Business as Trusts",
+                                          "equityPositionArray",
+                                          "equityPosition",
+                                          values
+                                        )
+                                      }
+                                    >
+                                      <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                    </Button>
+                                  )}
+                                </InputGroup>
+                              </td>
+
+                              <td>
+                                <Field
+                                  type="text"
+                                  placeholder="Trustee Name"
+                                  id={`trusteeName${i}`}
+                                  name={`trusteeName${i}`}
+                                  className="form-control inputDesignDoubleInput"
+                                />
+                              </td>
+                              <td>
+                                <Field
+                                  type="number"
+                                  placeholder="aNC"
+                                  id={`aNC${i}`}
+                                  name={`aNC${i}`}
+                                  className="form-control inputDesignDoubleInput"
+                                />
+                              </td>
+                              <td>
+                                <Field
+                                  type="text"
+                                  placeholder="Business Ownership"
+                                  id={`businessOwnership${i}`}
+                                  name={`businessOwnership${i}`}
+                                  className="form-control inputDesignDoubleInput"
+                                  onChange={(e) => handleInputChange(e, setFieldValue, FormulaSetting, values)}
+                                  onFocus={(e) => handleInputFocus(e, setFieldValue)}
+                                  onKeyDown={(e) => handleInputKeyDown(e)}
+                                  onBlur={(e) => handleInputBlur(e, setFieldValue, toPercentage, FormulaSetting, values)}
+                                />
+                              </td>
+                              <td>
+                                <Field
+                                  type="number"
+                                  placeholder="Distribution Received"
+                                  id={`distributionReceived${i}`}
+                                  name={`distributionReceived${i}`}
+                                  className="form-control inputDesignDoubleInput"
+                                />
+                              </td>
+                              <td>
+                                <Field
+                                  type="text"
+                                  placeholder="Business Valuation"
+                                  id={`businessValuation${i}`}
+                                  name={`businessValuation${i}`}
+                                  className="form-control inputDesignDoubleInput"
+                                  onChange={(e) => {
+                                    setFieldValue(e.target.name,
+                                      toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                  }}
+                                />
+                              </td>
+
+                              <Modal centered size={"md"} show={flagState} onHide={() => setFlagState(false)}>
+                                <Modal.Header closeButton>
+                                  <Modal.Title>Directors</Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body className="px-4">
+                                  <div className="col-md-12">
+                                    <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                      <label htmlFor='' className=''>
+                                        How many directors does the Corporate Trustee have :
+                                      </label>
+
+                                      <div style={{ width: "40%" }} >
+                                        <Field
+                                          type="number"
+                                          id={`NumberOfDirectors${i}`}
+                                          name={`NumberOfDirectors${i}`}
+                                          className="form-control inputDesignDoubleInput"
+                                          onChange={(e) => handleInput(e, setFieldValue, 4)}
+                                        />
+                                      </div>
+                                    </div>
+
+
+                                    <div className="row justify-content-center">
+                                      {values[`NumberOfDirectors${i}`] && (
+                                        <div className="mt-4 ">
+                                          <Table striped bordered responsive hover>
+                                            <thead>
+                                              <tr>
+                                                <th
+                                                  onClick={() => {
+                                                    console.log(values);
+                                                  }}
+                                                >
+                                                  No#
+                                                </th>
+                                                <th>Director Name</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              {Array.from({ length: values[`NumberOfDirectors${i}`] }).map((_, index) => (
+                                                <tr key={index}>
+                                                  <td>
+                                                    {index + 1}
+                                                  </td>
+                                                  <td>
+                                                    {" "}
+                                                    <Field
+                                                      type="text"
+                                                      placeholder="Director Name"
+                                                      id={`directorName${index}`}
+                                                      name={`directorName${index}`}
+                                                      className="form-control inputDesignDoubleInput"
+                                                    />
+                                                  </td>
+                                                </tr>
+                                              ))
+                                              }
+                                            </tbody>
+                                          </Table>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                </Modal.Body>
+                                <Modal.Footer>
+                                  <Button variant="secondary" onClick={() => {
+                                    setFlagState(false);
+                                    Array.from({ length: values.NumberOfDirectors }).map((_, i) => {
+                                      setFieldValue(`directorName${i}`, "");
+                                    })
+                                    setFieldValue("NumberOfDirectors", "");
+                                  }}>
+                                    Close
+                                  </Button>
+                                  <Button type='button' className='btn bgColor modalBtn' onClick={() => setFlagState(false)}>
+                                    Submit
+                                  </Button>
+                                </Modal.Footer>
+                              </Modal>
+
+                            </tr>
+                          ))
+                          }
                         </tbody>
                       </Table>
                     </div>
                   )}
                 </div>
+
               </div>
             </Row>
           </Form>

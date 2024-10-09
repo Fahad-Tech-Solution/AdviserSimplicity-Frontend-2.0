@@ -13,19 +13,15 @@ const RiskQuestion1 = (props) => {
     const { choices = [] } = props.QuestionProps;
 
     const handleRadioChange = (type, index) => {
+        // alert(type + "--" + key)
         // Determine if the current question is a simple value or an object
-        const isSimpleValue = typeof values[key] === 'number';
+        const isSimpleValue = typeof values[`${type}.${key}`] === 'number';
 
         // Update the state accordingly
         if (isSimpleValue) {
-            setFieldValue(key, {
-                [type]: index,
-            });
+            setFieldValue(`${type}.${key}`, index);
         } else {
-            setFieldValue(key, {
-                ...values[key], // Retain existing client/partner values
-                [type]: index,  // Update the specific client/partner value
-            });
+            setFieldValue(`${type}.${key}`, index,);
         }
     };
 
@@ -100,9 +96,9 @@ const RiskQuestion1 = (props) => {
                                         className="mx-2"
                                         type="radio"
                                         id={`client-${index}`}
-                                        name={`${key}.client`}
+                                        name={`client.${key}`}
                                         value={index}
-                                        checked={values[key]?.client === index}
+                                        checked={values?.client?.[key] === index}
                                         onChange={() => handleRadioChange('client', index)}
                                     />
                                     {elem}
@@ -128,9 +124,9 @@ const RiskQuestion1 = (props) => {
                                         className="mx-2"
                                         type="radio"
                                         id={`partner-${index}`}
-                                        name={`${key}.partner`}
+                                        name={`partner.${key}`}
                                         value={index}
-                                        checked={values[key]?.partner === index}
+                                        checked={values?.partner?.[key] === index}
                                         onChange={() => handleRadioChange('partner', index)}
                                     />
                                     {elem}

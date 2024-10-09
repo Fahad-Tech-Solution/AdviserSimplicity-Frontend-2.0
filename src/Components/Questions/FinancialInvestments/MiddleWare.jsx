@@ -49,6 +49,7 @@ const MiddleWare = (props) => {
 
     const fillInitialValues = (setFieldValue) => {
         console.log(questionDetail[props.modalObject.key], props.modalObject.key, props.modalObject.title);
+        
         if (BankAccountFinance.clientFK && BankAccountFinance._id) {
 
             setFieldValue("client", BankAccountFinance.client)

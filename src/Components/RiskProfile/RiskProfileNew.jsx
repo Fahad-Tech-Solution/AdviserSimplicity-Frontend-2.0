@@ -18,7 +18,7 @@ import RiskReward from "../Questions/svgs/RiskReward.png"
 import ProgressBar from './ProgressBar/ProgressBar'
 
 import { FaArrowLeftLong, FaArrowRightLong } from 'react-icons/fa6'
-import { GetAxios, PatchAxios, PostAxios } from '../Assets/Api/Api'
+import { GetAxios, openNotificationSuccess, PatchAxios, PostAxios } from '../Assets/Api/Api'
 import { defaultUrl, RiskQuestion } from '../../Store/Store'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { Image } from 'react-bootstrap'
@@ -34,11 +34,21 @@ const RiskProfileNew = () => {
     // let Form = useRef(null);
     let [mainBoard, setMainBoard] = useState(false);
 
+    let renderOnce = 1;
+
     useEffect(() => {
-        GetRiskData();
+        if (localStorage.getItem("UserID")) {
+            GetRiskData();
+        }
+        else {
+            if (renderOnce == 1) {
+                renderOnce = 2;
+                openNotificationSuccess("info", "topRight", "Info Notification", "Please! select a user first");
+                Nav("/");
+            }
+        }
+
     }, [])
-
-
 
     const GetRiskData = async () => {
         try {
@@ -60,20 +70,43 @@ const RiskProfileNew = () => {
         }
     };
 
-
-
     let initialValues = {
-        joinedProfile: "No",
-        question1: { client: 1, partner: 1, },
-        question2: { client: 1, partner: 1, },
-        question3: { client: 1, partner: 1, },
-        question4: { client: 1, partner: 1, },
-        question5: { client: 1, partner: 1, },
-        question6: { client: 1, partner: 1, },
-        question7: { client: 1, partner: 1, },
-        question8: { client: 1, partner: 1, },
-        riskDescription: { client: "", partner: "", },
-        riskGoal: { client: "Conservative", partner: "Conservative", },
+        "client": {
+            "question1": 1,
+            "question2": 1,
+            "question3": 1,
+            "question4": 1,
+            "question5": 1,
+            "question6": 1,
+            "question7": 1,
+            "question8": 1,
+            "riskGoal": "Conservative",
+            "riskDescription": "",
+            "happyWithResult": false,
+            "confirmRiskProfileCheck1": false,
+            "confirmRiskProfileCheck2": false,
+            "confirmRiskProfileCheck3": false,
+            "addNoteDescription": ""
+        },
+        "partner": {
+            "question1": 1,
+            "question2": 1,
+            "question3": 1,
+            "question4": 1,
+            "question5": 1,
+            "question6": 1,
+            "question7": 1,
+            "question8": 1,
+            "riskGoal": "Conservative",
+            "riskDescription": "",
+            "happyWithResult": false,
+            "confirmRiskProfileCheck1": false,
+            "confirmRiskProfileCheck2": false,
+            "confirmRiskProfileCheck3": false,
+            "addNoteDescription": ""
+        },
+        "joinedProfile": "No",
+        "currentQuestion": "5"
     }
 
     const onSubmit = async (values) => {
@@ -102,9 +135,11 @@ const RiskProfileNew = () => {
                 if (res && res._id) {
                     console.log('Update Response:', res);
                     setRiskQuestion(res);  // Assuming response data contains the updated risk question
+                    openNotificationSuccess("success", "topRight", "Success Notification", "Data of Risk Profile is Saved");
                     Nav("/Risk-Profile-Cards")
                 } else {
                     console.error('Unexpected response format for Update:', res);
+                    openNotificationSuccess("error", "topRight", "Error Notification", "Data of Risk Profile is not Saved Please! try again");
                 }
             }
         } catch (error) {
@@ -215,10 +250,8 @@ const RiskProfileNew = () => {
         }
     ]
 
-
     let Nav = useNavigate();
     let loc = useLocation();
-
 
     let [BackButton, setBackButton] = useState(false);
 
@@ -239,8 +272,6 @@ const RiskProfileNew = () => {
                 setBackButton(true);
                 setMainBoard(true)
             }
-
-
         }
 
     }, [loc]);
@@ -321,7 +352,6 @@ const RiskProfileNew = () => {
                                     })}
                                 </Routes>
 
-
                                 <div className={`row  ${BackButton ? "justify-content-between" : mainBoard === false ? "justify-content-center" : "justify-content-end"} my-3`}>
                                     {BackButton &&
                                         <div className='col-md-2'>
@@ -364,10 +394,7 @@ const RiskProfileNew = () => {
                             </div>
                         </Form>);
                     }}
-
                 </Formik>
-
-
             </div>
         </div>
     )
