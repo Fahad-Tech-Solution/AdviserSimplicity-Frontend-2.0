@@ -109,6 +109,7 @@ const ModalComponent = (props) => {
         "Family Investment Home",
         "Family Investment Home Loan",
         "Family Investment Home Expanse",
+        "Life Insurance",
         // "Risk Goals"
 
     ]; // Add other titles that should use "xl" here

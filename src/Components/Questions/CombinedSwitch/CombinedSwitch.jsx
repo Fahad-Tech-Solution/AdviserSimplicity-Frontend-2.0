@@ -93,7 +93,7 @@ const CombinedSwitch = (props) => {
                         id={"client" + elem.key}
                         placeholder={elem.title}
                         name={"client" + elem.key}
-                        value={questionDetail && questionDetail[elem.key]?.HomeLoanModal?.annualRepayments ? questionDetail[elem.key].HomeLoanModal.annualRepayments : ""}
+                        value={questionDetail && questionDetail[elem.key]?.currentValue ? questionDetail[elem.key].currentValue : ""}
                     />
                     <div
                         className={`row justify-content-center align-items-center my-2`}

@@ -832,6 +832,10 @@ input[type="checkbox"] + .femaleSmoking + .maleNonSmoking {
   }
 }
 
+.font-Montserrat {
+  font-family: "Montserrat", sans-serif !important;
+}
+
 /* Child Data */
 .childBtn .childBtn-item {
   all: unset;
@@ -1084,6 +1088,11 @@ input[type="checkbox"] + .femaleSmoking + .maleNonSmoking {
     display: block;
   }
 
+  .cardInputGroup {
+    max-width: 60%;
+    /* border: 2px solid red; */
+  }
+
   .submitPadding {
     padding: 0px 7.9% !important;
   }
@@ -1332,5 +1341,3 @@ label {
 .upload-container .ant-upload-drag-icon {
   margin-bottom: 16px;
 }
-
-

@@ -141,7 +141,7 @@ const TradingCompany = (props) => {
       {({ values, setFieldValue, handleChange }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
-        }, [values.NumberOfMap]);
+        }, []);
 
         return (
           <Form>

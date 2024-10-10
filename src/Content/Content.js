@@ -137,14 +137,14 @@ export const content = {
             condition: (CRObject) => true // Always true, as this step is always needed.
         },
         {
-            subTitle: 'investment knowledge',
+            subTitle: 'Investment knowledge',
             statusStep: 74,
             icon: 'FaGraduationCap',
             route: '/Q6',
             condition: (CRObject) => true // Always true, as this step is always needed.
         },
         {
-            subTitle: 'volatility',
+            subTitle: 'Volatility',
             statusStep: 86,
             icon: 'MdOutlineTimeline',
             route: '/Q7',

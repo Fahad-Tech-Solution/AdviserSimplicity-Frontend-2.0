@@ -76,11 +76,11 @@ const PersonalInsurance = (props) => {
       img: LifeTPD,
       key: "life",
     },
-    {
-      title: "Do you have any Income protection cover in place?",
-      img: incomeImg,
-      key: "incomeProtection",
-    },
+    // {
+    //   title: "Do you have any Income protection cover in place?",
+    //   img: incomeImg,
+    //   key: "incomeProtection",
+    // },
   ]
   const QuestionClick = (index, elem, values, setFieldValue) => {
     // console.log("image clicked in goals", index, elem.key, values);
@@ -106,108 +106,8 @@ const PersonalInsurance = (props) => {
             <Form>
               <div className="col-md-12 text-center">
 
-
                 <div className="row my-3 justify-content-center">
                   <DynamicQuestionBlocks QuestionArray={QuestionArray} QuestionClick={QuestionClick} values={values} setFieldValue={setFieldValue} />
-
-                  <div className="col-md-12 d-none">
-                    <div className="mb-3 ">
-                      <label htmlFor="" className="form-label">
-                        Do you have any Life, TPD or Trauma cover in place?
-                      </label>
-                      <div className="QuestionIcon">
-                        <img className="img-fluid" src={LifeTPD} alt="" />
-                      </div>
-                      {/* switch button style */}
-                      <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter ">
-                        <div className="radiobutton">
-                          <input
-                            type="radio"
-                            name="life"
-                            id="life"
-                            value="No"
-                            onChange={handleChange}
-                            checked={values.life === "No"}
-                          />
-                          <label
-                            htmlFor="life"
-                            className="label1"
-                            onClick={() => {
-                              setFieldValue("TPD", "No");
-                              setFieldValue("trauma", "No");
-                            }}
-                          >
-                            <span>No</span>
-                          </label>
-                          <input
-                            type="radio"
-                            name="life"
-                            id="life2"
-                            value="Yes"
-                            onChange={handleChange}
-                            checked={values.life === "Yes"}
-                          />
-                          <label
-                            htmlFor="life2"
-                            className="label2"
-                            onClick={() => {
-                              setFieldValue("TPD", "Yes");
-                              setFieldValue("trauma", "Yes");
-                            }}
-                          >
-                            <span>Yes</span>
-                          </label>
-                        </div>
-                      </div>
-
-                      {/* switch button style */}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="row my-3 d-none">
-                  <div className="col-md-12">
-                    <div className="mb-3 ">
-                      <label htmlFor="" className="form-label">
-                        Do you have any Income protection cover in place?
-                      </label>
-                      <div className="QuestionIcon">
-                        <img className="img-fluid" src={incomeImg} alt="" />
-                      </div>
-                      {/* switch button style */}
-                      <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter ">
-                        <div className="radiobutton">
-                          <input
-                            type="radio"
-                            name="incomeProtection"
-                            id="incomeProtection"
-                            value="No"
-                            onChange={handleChange}
-                            checked={values.incomeProtection === "No"}
-                          />
-                          <label htmlFor="incomeProtection" className="label1">
-                            <span>No</span>
-                          </label>
-                          <input
-                            type="radio"
-                            name="incomeProtection"
-                            id="incomeProtection2"
-                            value="Yes"
-                            onChange={handleChange}
-                            checked={values.incomeProtection === "Yes"}
-                          />
-                          <label
-                            htmlFor="incomeProtection2"
-                            className="label2"
-                          >
-                            <span>Yes</span>
-                          </label>
-                        </div>
-                      </div>
-
-                      {/* switch button style */}
-                    </div>
-                  </div>
                 </div>
 
                 <div className="row mt-2 d-none">

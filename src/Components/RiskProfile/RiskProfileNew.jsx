@@ -22,14 +22,23 @@ import { GetAxios, openNotificationSuccess, PatchAxios, PostAxios } from '../Ass
 import { defaultUrl, RiskQuestion } from '../../Store/Store'
 import { useRecoilState, useRecoilValue } from 'recoil'
 import { Image } from 'react-bootstrap'
+import RiskProfileCards from './RiskProfileCards'
 
+import "yup-phone";
+import * as Yup from 'yup';
 
 const RiskProfileNew = () => {
 
     let DefaultUrl = useRecoilValue(defaultUrl)
     let [riskQuestion, setRiskQuestion] = useRecoilState(RiskQuestion);
 
+    let [UserStatus] = useState(localStorage.getItem('UserStatus'));
+
     let [Progress, setProgress] = useState(10);
+    let [confirmFlag, setConfirmFlag] = useState({
+        client: false,
+        partner: false
+    });
     let [SwitchBtn, setSwitchBtn] = useState(false);
     // let Form = useRef(null);
     let [mainBoard, setMainBoard] = useState(false);
@@ -59,6 +68,8 @@ const RiskProfileNew = () => {
             if (res && res._id) {
                 // console.log('Risk Data:', res);
                 setRiskQuestion(res);  // Assuming response data contains the risk question
+                Nav("/Risk-Profile/Cards")
+
             } else {
                 console.error('Unexpected response format:', res);
             }
@@ -118,25 +129,52 @@ const RiskProfileNew = () => {
             // Check if riskQuestion exists and has an ID
             if (riskQuestion && Object.keys(riskQuestion).length > 0 && !riskQuestion._id) {
                 // POST request for adding new risk question
+
+                if (!confirmFlag.client) {
+                    obj.client.riskDescription = "";
+                    obj.client.riskGoal = "";
+                    obj.client.addNoteDescription = "";
+                }
+
+                if (!confirmFlag.partner) {
+                    obj.partner.riskDescription = "";
+                    obj.partner.riskGoal = "";
+                    obj.partner.addNoteDescription = "";
+                }
+
                 const res = await PostAxios(`${DefaultUrl}/api/riskProfile/Add`, obj);
 
                 if (res && res._id) {
                     console.log('Add Response:', res);
                     setRiskQuestion(res);  // Assuming response data contains the updated risk question
-                    Nav("/Risk-Profile-Cards")
+                    // Nav("/Risk-Profile/Cards")
                 } else {
                     console.error('Unexpected response format for Add:', res);
                 }
             } else {
                 // PATCH request for updating existing risk question
                 obj._id = riskQuestion._id;
+
+                if (!confirmFlag.client) {
+                    obj.client.riskDescription = riskQuestion.client.riskDescription;
+                    obj.client.riskGoal = riskQuestion.client.riskGoal;
+                    obj.client.addNoteDescription = riskQuestion.client.addNoteDescription;
+                }
+
+                if (!confirmFlag.partner) {
+                    obj.partner.riskDescription = riskQuestion.partner.riskDescription;
+                    obj.partner.riskGoal = riskQuestion.partner.riskGoal;
+                    obj.partner.addNoteDescription = riskQuestion.partner.addNoteDescription;
+                }
+
+
                 const res = await PatchAxios(`${DefaultUrl}/api/riskProfile/Update`, obj);
 
                 if (res && res._id) {
                     console.log('Update Response:', res);
                     setRiskQuestion(res);  // Assuming response data contains the updated risk question
                     openNotificationSuccess("success", "topRight", "Success Notification", "Data of Risk Profile is Saved");
-                    Nav("/Risk-Profile-Cards")
+                    // Nav("/Risk-Profile/Cards")
                 } else {
                     console.error('Unexpected response format for Update:', res);
                     openNotificationSuccess("error", "topRight", "Error Notification", "Data of Risk Profile is not Saved Please! try again");
@@ -226,7 +264,7 @@ const RiskProfileNew = () => {
         {
             route: "/Q7",
             key: "question7",
-            question: "<div className='d-inline-block text-green'>Question 7: Your concern about volatility - The changes in how much money your investments make, and the chance of losing money. <h5 className='d-inline p-0 m-0 fw-bold text-black'>If you invested $100,000 a year ago and you find out today it's worth $80,000, how would you feel?<div></div>",
+            question: "<div className='d-inline-block text-green'>Question 7: Your concern about volatility - The changes in how much money your investments make, and the chance of losing money. <h5 className='d-inline p-0 m-0 fw-bold text-black font-Montserrat'>If you invested $100,000 a year ago and you find out today it's worth $80,000 how would you feel?<div></div>",
             choices: [
                 "I would panic and sell my investment and then put the remaining amount in cash.",
                 "I would feel nervous, and I might consider moving some or all of my money to a safer option.",
@@ -238,7 +276,7 @@ const RiskProfileNew = () => {
         {
             route: "/Q8",
             key: "question8",
-            question: "<div className='d-inline-block text-green'>Question 8: Your investment preferences – Asset allocation.</div> What level of investment risk are you comfortable with?.",
+            question: "<div className='d-inline-block text-green'>Question 8: Your investment preferences – Asset allocation.</div> What level of investment risk are you comfortable with?",
             choices: [
                 "No risk and I don’t want my capital to go down at all even if I get a 0% return on my money.",
                 "I prefer low risk and am comfortable allocating a small portion (up to 40%) of my money to the share market aiming for better returns than the cash rate.",
@@ -247,7 +285,16 @@ const RiskProfileNew = () => {
                 "I would prefer to have a minimum of  80% of my money invested in   Australian and international shares, possibly up to 100% if needed, aiming for higher returns even if there are significant ups and downs and wild swings like recent market events such as  COVID (2020), or the Global Financial Crises (2008)  because I won't need the money for a long time (10 years minimum).",
             ],
             imgUrl: Risk8,
-        }
+        },
+        {
+            route: "/Cards",
+            key: "cardSet",
+            question: "",
+            choices: [
+                "No risk and I don’t want my capital to go down at all even if I get a 0% return on my money.",
+            ],
+            imgUrl: Risk8,
+        },
     ]
 
     let Nav = useNavigate();
@@ -309,19 +356,105 @@ const RiskProfileNew = () => {
 
     let fillTheValues = (setFieldValue) => {
         if (riskQuestion && Object.keys(riskQuestion).length > 0 && riskQuestion._id) {
-            setFieldValue("question1", riskQuestion.question1)
-            setFieldValue("question2", riskQuestion.question2)
-            setFieldValue("question3", riskQuestion.question3)
-            setFieldValue("question4", riskQuestion.question4)
-            setFieldValue("question5", riskQuestion.question5)
-            setFieldValue("question6", riskQuestion.question6)
-            setFieldValue("question7", riskQuestion.question7)
-            setFieldValue("question8", riskQuestion.question8)
-            setFieldValue("riskGoal", riskQuestion.riskGoal)
-            setFieldValue("riskDescription", riskQuestion.riskDescription)
+
+            let data = riskQuestion;
+
             setFieldValue("joinedProfile", riskQuestion.joinedProfile)
+
+            if (data.client) {
+                setFieldValue("client.question1", data.client.question1)
+                setFieldValue("client.question2", data.client.question2)
+                setFieldValue("client.question3", data.client.question3)
+                setFieldValue("client.question4", data.client.question4)
+                setFieldValue("client.question5", data.client.question5)
+                setFieldValue("client.question6", data.client.question6)
+                setFieldValue("client.question7", data.client.question7)
+                setFieldValue("client.question8", data.client.question8)
+                setFieldValue("client.riskGoal", data.client.riskGoal)
+                setFieldValue("client.riskDescription", data.client.riskDescription)
+                setFieldValue("client.happyWithResult", data.client.happyWithResult)
+                setFieldValue("client.confirmRiskProfileCheck1", data.client.confirmRiskProfileCheck1)
+                setFieldValue("client.confirmRiskProfileCheck2", data.client.confirmRiskProfileCheck2)
+                setFieldValue("client.confirmRiskProfileCheck3", data.client.confirmRiskProfileCheck3)
+                setFieldValue("client.addNoteDescription", data.client.addNoteDescription)
+
+
+            }
+
+            if (riskQuestion.joinedProfile == "No" && data.partner) {
+
+                setFieldValue("partner.question1", data.partner.question1)
+                setFieldValue("partner.question2", data.partner.question2)
+                setFieldValue("partner.question3", data.partner.question3)
+                setFieldValue("partner.question4", data.partner.question4)
+                setFieldValue("partner.question5", data.partner.question5)
+                setFieldValue("partner.question6", data.partner.question6)
+                setFieldValue("partner.question7", data.partner.question7)
+                setFieldValue("partner.question8", data.partner.question8)
+
+                setFieldValue("partner.riskGoal", data.partner.riskGoal)
+                setFieldValue("partner.riskDescription", data.partner.riskDescription)
+
+                setFieldValue("partner.happyWithResult", data.partner.happyWithResult)
+                setFieldValue("partner.confirmRiskProfileCheck1", data.partner.confirmRiskProfileCheck1)
+                setFieldValue("partner.confirmRiskProfileCheck2", data.partner.confirmRiskProfileCheck2)
+                setFieldValue("partner.confirmRiskProfileCheck3", data.partner.confirmRiskProfileCheck3)
+                setFieldValue("partner.addNoteDescription", data.partner.addNoteDescription)
+            }
+
+
+            console.log(riskQuestion, ":riskQuestion");
         }
     }
+
+    const validationSchema = UserStatus !== "Married" ?
+        Yup.object({
+            client: Yup.object({
+                happyWithResult: Yup.boolean()
+                    .oneOf([true], 'Client must be happy with the result')
+                    .required('Required'),
+                confirmRiskProfileCheck1: Yup.boolean()
+                    .oneOf([true], 'Client must confirm Risk Profile Check 1')
+                    .required('Required'),
+                confirmRiskProfileCheck2: Yup.boolean()
+                    .oneOf([true], 'Client must confirm Risk Profile Check 2')
+                    .required('Required'),
+                confirmRiskProfileCheck3: Yup.boolean()
+                    .oneOf([true], 'Client must confirm Risk Profile Check 3')
+                    .required('Required'),
+            }),
+        })
+
+        : Yup.object({
+            client: Yup.object({
+                happyWithResult: Yup.boolean()
+                    .oneOf([true], 'Client must be happy with the result')
+                    .required('Required'),
+                confirmRiskProfileCheck1: Yup.boolean()
+                    .oneOf([true], 'Client must confirm Risk Profile Check 1')
+                    .required('Required'),
+                confirmRiskProfileCheck2: Yup.boolean()
+                    .oneOf([true], 'Client must confirm Risk Profile Check 2')
+                    .required('Required'),
+                confirmRiskProfileCheck3: Yup.boolean()
+                    .oneOf([true], 'Client must confirm Risk Profile Check 3')
+                    .required('Required'),
+            }),
+            partner: Yup.object({
+                happyWithResult: Yup.boolean()
+                    .oneOf([true], 'Partner must be happy with the result')
+                    .required('Required'),
+                confirmRiskProfileCheck1: Yup.boolean()
+                    .oneOf([true], 'Partner must confirm Risk Profile Check 1')
+                    .required('Required'),
+                confirmRiskProfileCheck2: Yup.boolean()
+                    .oneOf([true], 'Partner must confirm Risk Profile Check 2')
+                    .required('Required'),
+                confirmRiskProfileCheck3: Yup.boolean()
+                    .oneOf([true], 'Partner must confirm Risk Profile Check 3')
+                    .required('Required'),
+            }),
+        })
 
     return (
         <div className="container-fluid pt-3">
@@ -329,6 +462,7 @@ const RiskProfileNew = () => {
                 <Formik
                     initialValues={initialValues}
                     onSubmit={onSubmit}
+                    validationSchema={validationSchema}
                     enableReinitialize
                 >
                     {({ setValues, values, setFieldValue, handleChange }) => {
@@ -341,14 +475,26 @@ const RiskProfileNew = () => {
 
                                 <Routes>
                                     {QuestionArray.map((elem, index) => {
-                                        return (
-                                            <Route
-                                                key={index}
-                                                path={elem.route}
-                                                element={<RiskQuestion1 Obj={{ setValues, values, setFieldValue, handleChange }}
-                                                    QuestionProps={elem} />}
-                                            />
-                                        )
+                                        if (elem.key === "cardSet") {
+                                            return (
+                                                <Route
+                                                    key={index}
+                                                    path={elem.route}
+                                                    element={<RiskProfileCards Obj={{ setValues, values, setFieldValue, handleChange, confirmFlag, setConfirmFlag }}
+                                                        QuestionProps={elem} />}
+                                                />
+                                            )
+                                        }
+                                        else {
+                                            return (
+                                                <Route
+                                                    key={index}
+                                                    path={elem.route}
+                                                    element={<RiskQuestion1 Obj={{ setValues, values, setFieldValue, handleChange }}
+                                                        QuestionProps={elem} />}
+                                                />
+                                            )
+                                        }
                                     })}
                                 </Routes>
 

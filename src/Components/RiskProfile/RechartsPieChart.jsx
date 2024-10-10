@@ -92,7 +92,7 @@ const RechartsPieChart = (props) => {
         break;
       case "Moderately Conservative":
 
-        return [25.5, 25.5, 5, 0, 25, 10, 15];
+        return [22.5, 22.5, 5, 0, 25, 10, 15];
         break;
       case "Balanced":
         return [31.5, 31.5, 7, 0, 14, 7, 9];

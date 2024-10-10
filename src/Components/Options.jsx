@@ -34,8 +34,6 @@ function Options(props) {
 
   let stepsStatus = useRecoilValue(StepsStatus); // eslint-disable-line no-unused-vars
 
-
-
   useEffect(() => {
     if (props.SidebarSwitch === true) {
       // alert(props.SidebarSwitch );
@@ -171,6 +169,7 @@ function Options(props) {
     let conditionCheck = Opt === "Opt3" ? true : CRObject
 
     const updatedItems = itemsToRender.filter(item => item.condition(conditionCheck)).map(item => {
+
       const isPersonalDetails = item.subTitle === 'Personal Details';
       const currentEmail = localStorage.getItem("UserID");
       const iconMap = {
@@ -179,7 +178,11 @@ function Options(props) {
       };
 
       const IconComponent = iconMap[item.icon] || FaUser; // Default to FaUser if not found
-      const isCurrentStep = cLocation === (isPersonalDetails ? "PersonalDetail" : item.route.replace("/", ""));
+      let isCurrentStep = cLocation === (isPersonalDetails ? "PersonalDetail" : item.route.replace("/", ""));
+
+      if (Opt === "Opt3") {
+        isCurrentStep = cLocation.replace("Risk-Profile/", "") === (isPersonalDetails ? "PersonalDetail" : item.route.replace("/", ""));
+      }
 
       let Status = stepComplete < item.statusStep ? "wait" : stepComplete > item.statusStep ? "finish" : 'processing';
 
@@ -223,6 +226,8 @@ function Options(props) {
     '/Risk-Profile',
     '/Risk-Profile/',
     "/Risk-Profile-Cards",
+    "/Risk-Profile/Cards"
+
   ]
 
   let topMenuArray = [

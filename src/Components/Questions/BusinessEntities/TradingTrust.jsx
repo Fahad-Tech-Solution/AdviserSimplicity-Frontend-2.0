@@ -9,6 +9,134 @@ import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 // import Select from "react-select";
 
 
+
+function InnerDirectors(props) {
+
+
+  let innerinitialValues = { NumberOfDirectors: "" };
+
+  let handleInnerSubmit = (values) => {
+
+    console.log(values);
+
+    let newEntries = [];
+
+    for (let i = 0; i < parseFloat(values.NumberOfDirectors); i++) {
+      const newEntry = {
+        directorName: values[`directorName${i}`] || "",
+      };
+
+      newEntries.push(newEntry);
+    }
+
+
+
+    props.setFieldValue("NumberOfDirectors" + props.modalObject.index, parseFloat(values.NumberOfDirectors))
+    props.setFieldValue("directorsNames" + props.modalObject.index, newEntries)
+
+
+    if (props.flagState) {
+      props.setFlagState(false);
+    }
+
+  }
+  let handleInput = (e, setFieldValue, limit) => {
+    const value = e.target.value > limit ? limit : e.target.value;
+    setFieldValue(e.target.id, value);
+  };
+
+  let innerfillInitialValues = (setFieldValue) => {
+
+    console.log(props.modalObject.values, props.modalObject.values[`directorsNames${props.modalObject.index}`])
+    setFieldValue("NumberOfDirectors", props.modalObject.values[`NumberOfDirectors${props.modalObject.index}`])
+
+    let director = props.modalObject.values[`directorsNames${props.modalObject.index}`] || [];
+
+    director.forEach((element, index) => {
+
+      setFieldValue("directorName" + index, element.directorName);
+    });
+
+  }
+
+
+  return (<Modal centered size={"md"} show={props.flagState} onHide={() => props.setFlagState(false)}>
+    <Modal.Header closeButton>
+      <Modal.Title>Directors</Modal.Title>
+    </Modal.Header>
+    <Formik initialValues={innerinitialValues} onSubmit={handleInnerSubmit} enableReinitialize>
+      {({
+        values,
+        setFieldValue,
+        handleChange
+      }) => {
+        useEffect(() => {
+          innerfillInitialValues(setFieldValue);
+        }, []);
+        return <Form>
+          <Modal.Body className="px-4">
+            <div className="col-md-12">
+              <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                <label htmlFor='' className=''>
+                  How many directors does the Corporate Trustee have :
+                </label>
+
+                <div style={{
+                  width: "40%"
+                }}>
+                  <Field type="number" id={`NumberOfDirectors`} name={`NumberOfDirectors`} className="form-control inputDesignDoubleInput" onChange={e => handleInput(e, setFieldValue, 4)} />
+                </div>
+              </div>
+
+
+              <div className="row justify-content-center">
+                {values.NumberOfDirectors && <div className="mt-4">
+                  <Table striped bordered responsive hover>
+                    <thead>
+                      <tr>
+                        <th onClick={() => {
+                          console.log(values);
+                        }}>
+                          No#
+                        </th>
+                        <th>Director Name</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Array.from({
+                        length: values.NumberOfDirectors
+                      }).map((_, index) => <tr key={index}>
+                        <td>
+                          {index + 1}
+                        </td>
+                        <td>
+                          {" "}
+                          <Field type="text" placeholder="Director Name" id={`directorName${index}`} name={`directorName${index}`} className="form-control inputDesignDoubleInput" />
+                        </td>
+                      </tr>)}
+                    </tbody>
+                  </Table>
+                </div>}
+              </div>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => {
+              props.setFlagState(false);
+            }}>
+              Close
+            </Button>
+            <Button type='submit' className='btn bgColor modalBtn'>
+              Submit
+            </Button>
+          </Modal.Footer>
+        </Form>;
+      }}
+    </Formik>
+  </Modal>);
+}
+
+
 const TradingTrust = (props) => {
 
   let [flagState, setFlagState] = useState(false);
@@ -53,14 +181,10 @@ const TradingTrust = (props) => {
         setFieldValue("businessValuation" + i, elem.businessValuation);
 
         if (elem.trusteeType === "Corporate") {
+
           setFieldValue("NumberOfDirectors" + i, elem.NumberOfDirectors);
+          setFieldValue("directorsNames" + i, elem.directorsNames);
 
-          console.log(elem.directorsNames, "asdasd");
-
-          elem.directorsNames.map((dirElem, index) => {
-            console.log(dirElem.directorName, "alskdla");
-            setFieldValue("directorName" + index, dirElem.directorName);
-          })
         }
 
       })
@@ -104,19 +228,8 @@ const TradingTrust = (props) => {
 
       if (values[`trusteeType${i}`] === "Corporate") {
 
-        let NumberOfDirectors = values[`NumberOfDirectors${i}`];
-
-        let directorsNames = []
-
-        for (let j = 0; j < parseFloat(NumberOfDirectors); j++) {
-          let newDirector = {
-            directorName: values[`directorName${j}`]
-          }
-          directorsNames.push(newDirector);
-        }
-
-        newEntry.NumberOfDirectors = NumberOfDirectors;
-        newEntry.directorsNames = directorsNames;
+        newEntry.NumberOfDirectors = values[`NumberOfDirectors${i}`];
+        newEntry.directorsNames = values[`directorsNames${i}`];
       }
 
       newEntries.push(newEntry);
@@ -140,15 +253,17 @@ const TradingTrust = (props) => {
 
   let FormulaSetting = () => { }
 
-  let handleInnerModal = (title, key, mainKey, values) => {
+  let handleInnerModal = (title, key, mainKey, values, index) => {
     setModalObject({
       title,
       key,
       mainKey,
-      values
+      values,
+      index
     })
     setFlagState(true);
   }
+
 
   return (
     <Formik
@@ -276,7 +391,8 @@ const TradingTrust = (props) => {
                                           "Business as Trusts",
                                           "equityPositionArray",
                                           "equityPosition",
-                                          values
+                                          values,
+                                          i
                                         )
                                       }
                                     >
@@ -298,7 +414,7 @@ const TradingTrust = (props) => {
                               <td>
                                 <Field
                                   type="number"
-                                  placeholder="aNC"
+                                  placeholder="ANC"
                                   id={`aNC${i}`}
                                   name={`aNC${i}`}
                                   className="form-control inputDesignDoubleInput"
@@ -339,88 +455,6 @@ const TradingTrust = (props) => {
                                   }}
                                 />
                               </td>
-
-                              <Modal centered size={"md"} show={flagState} onHide={() => setFlagState(false)}>
-                                <Modal.Header closeButton>
-                                  <Modal.Title>Directors</Modal.Title>
-                                </Modal.Header>
-                                <Modal.Body className="px-4">
-                                  <div className="col-md-12">
-                                    <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
-                                      <label htmlFor='' className=''>
-                                        How many directors does the Corporate Trustee have :
-                                      </label>
-
-                                      <div style={{ width: "40%" }} >
-                                        <Field
-                                          type="number"
-                                          id={`NumberOfDirectors${i}`}
-                                          name={`NumberOfDirectors${i}`}
-                                          className="form-control inputDesignDoubleInput"
-                                          onChange={(e) => handleInput(e, setFieldValue, 4)}
-                                        />
-                                      </div>
-                                    </div>
-
-
-                                    <div className="row justify-content-center">
-                                      {values[`NumberOfDirectors${i}`] && (
-                                        <div className="mt-4 ">
-                                          <Table striped bordered responsive hover>
-                                            <thead>
-                                              <tr>
-                                                <th
-                                                  onClick={() => {
-                                                    console.log(values);
-                                                  }}
-                                                >
-                                                  No#
-                                                </th>
-                                                <th>Director Name</th>
-                                              </tr>
-                                            </thead>
-                                            <tbody>
-                                              {Array.from({ length: values[`NumberOfDirectors${i}`] }).map((_, index) => (
-                                                <tr key={index}>
-                                                  <td>
-                                                    {index + 1}
-                                                  </td>
-                                                  <td>
-                                                    {" "}
-                                                    <Field
-                                                      type="text"
-                                                      placeholder="Director Name"
-                                                      id={`directorName${index}`}
-                                                      name={`directorName${index}`}
-                                                      className="form-control inputDesignDoubleInput"
-                                                    />
-                                                  </td>
-                                                </tr>
-                                              ))
-                                              }
-                                            </tbody>
-                                          </Table>
-                                        </div>
-                                      )}
-                                    </div>
-                                  </div>
-                                </Modal.Body>
-                                <Modal.Footer>
-                                  <Button variant="secondary" onClick={() => {
-                                    setFlagState(false);
-                                    Array.from({ length: values.NumberOfDirectors }).map((_, i) => {
-                                      setFieldValue(`directorName${i}`, "");
-                                    })
-                                    setFieldValue("NumberOfDirectors", "");
-                                  }}>
-                                    Close
-                                  </Button>
-                                  <Button type='button' className='btn bgColor modalBtn' onClick={() => setFlagState(false)}>
-                                    Submit
-                                  </Button>
-                                </Modal.Footer>
-                              </Modal>
-
                             </tr>
                           ))
                           }
@@ -429,6 +463,8 @@ const TradingTrust = (props) => {
                     </div>
                   )}
                 </div>
+
+                <InnerDirectors setFieldValue={setFieldValue} flagState={flagState} setFlagState={setFlagState} modalObject={modalObject}></InnerDirectors>
 
               </div>
             </Row>

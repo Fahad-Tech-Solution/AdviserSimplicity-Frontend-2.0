@@ -25,37 +25,15 @@ const RiskGoalForm = (props) => {
 
     const onSubmit = async (values) => {
 
-        if ((values[props.modalObject.innerKey].riskGoal === riskQuestion[props.modalObject.innerKey].riskGoal) || ReasonSelection === true) {
 
-            let obj = JSON.parse(JSON.stringify(values));
+        console.log(JSON.stringify(values))
 
-            obj.clientFK = localStorage.getItem("UserID") || "";
 
-            console.log(obj, "FinalOBject");
+        props.setFieldValue(`${props.modalObject.innerKey}.riskGoal`, values[`${props.modalObject.innerKey}`].riskGoal);
+        props.setFieldValue(`${props.modalObject.innerKey}.riskDescription`, values[`${props.modalObject.innerKey}`].riskDescription);
 
-            try {
-                const PatchRes = await PatchAxios(`${DefaultUrl}/api/riskProfile/Update`, obj);
-                if (PatchRes) {
-
-                    openNotificationSuccess("success", "topRight", "Success Notification", "Data of Risk Profile is Saved");
-                    setRiskQuestion(PatchRes);
-                    
-                    if (props.flagState) {
-                        props.setFlagState(false);
-                    }
-                }
-
-            } catch (error) {
-                console.error("Error submitting form:", error);
-                openNotificationSuccess("error", "topRight", "Error Notification", "Data of Risk Profile is not Saved Please! try again");
-            }
-        }
-        else {
-            setModalObject({
-                title: "",
-                values
-            })
-            setFlagState(true)
+        if (props.flagState) {
+            props.setFlagState(false);
         }
 
     };
@@ -65,27 +43,42 @@ const RiskGoalForm = (props) => {
         setFlagState(false)
     }
 
+    const goalsClick = (index, elem, setFieldValue, values) => {
+
+        if (elem.value !== values[props.modalObject.innerKey].riskGoal) {
+            setFlagState(true)
+        }
 
 
-    const goalsClick = (index, elem, setFieldValue) => {
         setFieldValue(`${props.modalObject.innerKey}.riskGoal`, elem.value);
         setDisc(elem.des);
+
+
     };
 
-    useEffect(() => {
-        let dec = printTitleIfMatch(riskQuestion[props.modalObject.innerKey].riskGoal)
-        // alert("data  :" + riskQuestion[props.modalObject.innerKey]);
-        setDisc(dec);
-    }, [])
+    // useEffect(() => {
+    //     let dec = printTitleIfMatch(riskQuestion[props.modalObject.innerKey].riskGoal)
+    //     // alert("data  :" + riskQuestion[props.modalObject.innerKey]);
+    //     setDisc(dec);
+    // }, [])
 
 
     const printTitleIfMatch = (valueToMatch) => {
         const match = RiskGoals.find(obj => obj.value === valueToMatch);
-        return match ? match.des : "Default Title";
+        return match ? match.des : "";
     };
 
 
+    let fillTheValues = (setFieldValue) => {
+        let Data = props.modalObject.values;
 
+        setFieldValue(`${props.modalObject.innerKey}.riskGoal`, Data[`${props.modalObject.innerKey}`].riskGoal)
+        setFieldValue(`${props.modalObject.innerKey}.riskDescription`, Data[`${props.modalObject.innerKey}`].riskDescription)
+
+        let dec = printTitleIfMatch(Data[`${props.modalObject.innerKey}`].riskGoal)
+        // alert("data  :" + riskQuestion[props.modalObject.innerKey]);
+        setDisc(dec);
+    }
 
 
     return (
@@ -97,86 +90,92 @@ const RiskGoalForm = (props) => {
                     enableReinitialize
                     innerRef={props.formRef}
                 >
-                    {({ values, handleChange, setFieldValue }) => (
-                        <Form>
-                            <div className="col-md-12 text-center">
+                    {({ values, handleChange, setFieldValue }) => {
+                        useEffect(() => {
+                            fillTheValues(setFieldValue);
+                        }, [])
+
+                        return (
+                            <Form>
+                                <div className="col-md-12 text-center">
 
 
-                                <Modal
-                                    size={"lg"}
-                                    backdrop="static"
-                                    keyboard={false}
-                                    centered
-                                    show={flagState}
-                                    onHide={() => setFlagState(false)}
-                                >
-                                    <Modal.Header closeButton>
-                                        <Modal.Title>{modalObject.title}</Modal.Title>
-                                    </Modal.Header>
-                                    <Modal.Body>
-                                        <div className="row">
-                                            <div className="col-md-12">
-                                                <label className="d-block" htmlFor={"riskDescription"}>
-                                                    Please provide a reason/description of why you are changing the Risk Profile:
-                                                </label>
-                                                <Field
-                                                    as="textarea"
-                                                    placeholder={"Enter your reason here..."}
-                                                    id="riskDescription"
-                                                    name={`${props.modalObject.innerKey}.riskDescription`}
-                                                    className="form-control inputDesignDoubleInput mt-3"
-                                                />
-                                            </div>
-                                        </div>
-                                    </Modal.Body>
-                                    <Modal.Footer>
-                                        <Button variant="secondary" onClick={() => setFlagState(false)}>
-                                            Close
-                                        </Button>
-                                        <button
-                                            onClick={handleOk}
-                                            type="button"
-                                            className='btn bgColor modalBtn'
-                                        >
-                                            Submit
-                                        </button>
-                                    </Modal.Footer>
-                                </Modal>
-
-
-                                <Row className="justify-content-center">
-                                    {RiskGoals.map((elem, index) => {
-                                        return (
-                                            <div className="col-md-4 px-2 pb-3 d-flex ">
-                                                <div className="flex-grow-1 d-flex">
-                                                    <div
-                                                        className={`${values[`${props.modalObject.innerKey}`].riskGoal == elem.value ? "customBorder p-3" : "border p-3"} 
-                                                             flex-grow-1`}
-                                                        onClick={() =>
-                                                            goalsClick(index, elem, setFieldValue)
-                                                        }
-                                                    >
-                                                        <div className="text-center">
-                                                            <div className="mx-auto" style={{ width: "40%" }}>
-                                                                <Image src={elem.img} fluid />
-                                                            </div>
-                                                        </div>
-                                                        <label htmlFor={elem.key} className="form-label">
-                                                            {elem.title}
-                                                        </label>
-                                                    </div>
-
+                                    <Modal
+                                        size={"lg"}
+                                        backdrop="static"
+                                        keyboard={false}
+                                        centered
+                                        show={flagState}
+                                        onHide={() => setFlagState(false)}
+                                    >
+                                        <Modal.Header closeButton>
+                                            <Modal.Title>{modalObject.title}</Modal.Title>
+                                        </Modal.Header>
+                                        <Modal.Body>
+                                            <div className="row">
+                                                <div className="col-md-12">
+                                                    <label className="d-block" htmlFor={"riskDescription"}>
+                                                        Please provide a reason/description of why you are changing the Risk Profile:
+                                                    </label>
+                                                    <Field
+                                                        as="textarea"
+                                                        placeholder={"Enter your reason here..."}
+                                                        id="riskDescription"
+                                                        name={`${props.modalObject.innerKey}.riskDescription`}
+                                                        className="form-control inputDesignDoubleInput mt-3"
+                                                    />
                                                 </div>
                                             </div>
-                                        );
-                                    })}
-                                    <div className="col-md-12">
-                                        {parse(disc)}
-                                    </div>
-                                </Row>
-                            </div>
-                        </Form>
-                    )
+                                        </Modal.Body>
+                                        <Modal.Footer>
+                                            <Button variant="secondary" onClick={() => setFlagState(false)}>
+                                                Close
+                                            </Button>
+                                            <button
+                                                onClick={handleOk}
+                                                type="button"
+                                                className='btn bgColor modalBtn'
+                                            >
+                                                Submit
+                                            </button>
+                                        </Modal.Footer>
+                                    </Modal>
+
+
+                                    <Row className="justify-content-center">
+                                        {RiskGoals.map((elem, index) => {
+                                            return (
+                                                <div className="col-md-4 px-2 pb-3 d-flex ">
+                                                    <div className="flex-grow-1 d-flex">
+                                                        <div
+                                                            className={`${values[`${props.modalObject.innerKey}`].riskGoal == elem.value ? "customBorder p-3" : "border p-3"} 
+                                                             flex-grow-1`}
+                                                            onClick={() =>
+                                                                goalsClick(index, elem, setFieldValue, values)
+                                                            }
+                                                        >
+                                                            <div className="text-center">
+                                                                <div className="mx-auto" style={{ width: "40%" }}>
+                                                                    <Image src={elem.img} fluid />
+                                                                </div>
+                                                            </div>
+                                                            <label htmlFor={elem.key} className="form-label">
+                                                                {elem.title}
+                                                            </label>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                        <div className="col-md-12">
+                                            {parse(disc)}
+                                        </div>
+                                    </Row>
+                                </div>
+                            </Form>
+                        )
+                    }
                     }
                 </Formik>
             </div>

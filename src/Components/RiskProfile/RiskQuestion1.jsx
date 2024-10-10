@@ -8,7 +8,7 @@ import PartnerPic from "../Svgs/couple-2.svg"
 import DynamicYesNo from '../Questions/FinancialInvestments/QuestionsDetail/DynamicYesNo';
 
 const RiskQuestion1 = (props) => {
-    const { setFieldValue, values, handleChange } = props.Obj;
+    const { setFieldValue, values, handleChange, } = props.Obj;
     const { question, key, imgUrl } = props.QuestionProps;
     const { choices = [] } = props.QuestionProps;
 
