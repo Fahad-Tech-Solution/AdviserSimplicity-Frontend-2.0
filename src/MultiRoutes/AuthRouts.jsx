@@ -137,7 +137,9 @@ function AuthRouts() {
                             <Route path="/Goals-And-Objectives" element={<GoalsObjectiveNew />} />
 
                             <Route path="/Risk-Profile/*" element={<RiskProfileNew />} />
-                            <Route path="/Risk-Profile-Cards/" element={<RiskProfileCards />} />
+                            {/*
+                                <Route path="/Risk-Profile-Cards/" element={<RiskProfileCards />} />
+                                */}
 
                             <Route path="/PDF-Test" element={<Contact />} />
 

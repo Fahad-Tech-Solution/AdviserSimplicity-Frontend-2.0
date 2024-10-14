@@ -18,7 +18,7 @@ const CombinedSwitch = (props) => {
     if (onlyJoint.includes(elem.title)) {
         return (
             <div className={`col-md-3 mb-4`} key={index}>
-                <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
+                <Card className="py-4 shadow borderOverAll GoalsobjectiveCard" style={{ borderRadius: "20px", height: "100%" }}>
                     <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}</h5>
                     <div className="QuestionIcon w-25">
                         <img className="img-fluid" src={elem.img} alt="" />
@@ -27,7 +27,7 @@ const CombinedSwitch = (props) => {
                         className={`row justify-content-center align-items-center my-2`}
                     >
                         <div className='col-12 p-0 '>
-                            <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                            <div className='d-flex flex-column-reverse justify-content-center align-items-center gap-2'>
                                 <label
                                     className="d-block"
                                     htmlFor={"joint" + elem.key}
@@ -61,7 +61,7 @@ const CombinedSwitch = (props) => {
         return (
             <div className={`col-md-3 mb-4`} key={index}>
 
-                <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
+                <Card className="py-4 shadow borderOverAll GoalsobjectiveCard" style={{ borderRadius: "20px", height: "100%" }}>
                     <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}
                     </h5>
                     <div className="QuestionIcon w-25">
@@ -71,10 +71,10 @@ const CombinedSwitch = (props) => {
                         className="row justify-content-center align-items-center my-2"
                     >
                         <div className='col-12 p-0 '>
-                            <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                            <div className='d-flex flex-column-reverse justify-content-center align-items-center gap-2'>
 
                                 <label
-                                    className=" d-block text-end"
+                                    className=" d-block "
                                     htmlFor={"client" + elem.key}
                                 >Market Value</label>
                                 <label
@@ -99,9 +99,9 @@ const CombinedSwitch = (props) => {
                         className={`row justify-content-center align-items-center my-2`}
                     >
                         <div className='col-12 p-0 '>
-                            <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                            <div className='d-flex flex-column-reverse justify-content-center align-items-center gap-2'>
                                 <label
-                                    className=" d-block text-end"
+                                    className=" d-block "
                                     htmlFor={"partner" + elem.key}
                                 >Loan Balance </label>
                             </div>
@@ -122,7 +122,7 @@ const CombinedSwitch = (props) => {
         return (
             <div className={`col-md-3 mb-4`} key={index}>
 
-                <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
+                <Card className="py-4 shadow borderOverAll GoalsobjectiveCard" style={{ borderRadius: "20px", height: "100%" }}>
                     <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}
                     </h5>
                     <div className="QuestionIcon w-25">
@@ -132,10 +132,10 @@ const CombinedSwitch = (props) => {
                         className="row justify-content-center align-items-center my-2"
                     >
                         <div className='col-12 p-0 '>
-                            <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                            <div className='d-flex flex-column-reverse justify-content-center align-items-center gap-2'>
 
                                 <label
-                                    className=" d-block text-end"
+                                    className=" d-block "
                                     htmlFor={"client" + elem.key}
                                 >{localStorage.getItem("UserName") || "You"}</label>
 
@@ -161,9 +161,9 @@ const CombinedSwitch = (props) => {
                         className={`row justify-content-center align-items-center my-2 ${PartnerClass}`}
                     >
                         <div className='col-12 p-0 '>
-                            <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                            <div className='d-flex flex-column-reverse justify-content-center align-items-center gap-2'>
                                 <label
-                                    className=" d-block text-end"
+                                    className=" d-block "
                                     htmlFor={"partner" + elem.key}
                                 >{localStorage.getItem("PartnerName") || "Partner"}</label>
                             </div>

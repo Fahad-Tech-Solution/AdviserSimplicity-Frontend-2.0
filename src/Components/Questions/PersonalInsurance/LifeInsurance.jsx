@@ -2,12 +2,16 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { PatchAxios, PostAxios, RenderName } from "../../Assets/Api/Api";
-import { Button, Table } from "react-bootstrap";
+import { PatchAxios, PostAxios, RenderName, toCommaAndDollar } from "../../Assets/Api/Api";
+import { Button, InputGroup, Table } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 import DynamicYesNo from "../FinancialInvestments/QuestionsDetail/DynamicYesNo";
+import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
+import PremiumsDetails from "./PremiumsDetails";
+import Beneficiaries from "../FinancialInvestments/QuestionsDetail/Beneficiaries";
+import NewLoadingExclusion from "./NewLoadingExclusion";
 
 
 const PersonalInsuranceLife = (props) => {
@@ -17,11 +21,14 @@ const PersonalInsuranceLife = (props) => {
 
   let [UserStatus] = useState(localStorage.getItem('UserStatus'));
 
-
   let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
-  let [modalObject1, setModalObject1] = useState({});
-  const [show, setShow] = useState(false);
+
+  let [modalObject, setModalObject] = useState({
+    title: "",
+    key: "",
+    values: "",
+  });
+
 
   let life = Object.keys(questionDetail.life).length > 0 ? questionDetail.life : {
     client: [],
@@ -71,7 +78,7 @@ const PersonalInsuranceLife = (props) => {
       nameOfBeneficiaries: values.nameOfBeneficiaries,
       exclusionsLoadings: values.exclusionsLoadings,
 
-      SuperLinkedPolicy: values.TPDDefinition === "Super Linked Policy (Own and Any)" ? modalObject1 : undefined,
+
     };
 
     let Obj = {
@@ -112,23 +119,37 @@ const PersonalInsuranceLife = (props) => {
     }
   };
 
-  let [nameSet] = useState(() => {
-    if (props.modalObject.Input === "client") {
-      return (localStorage.getItem("UserName"))
-    }
-    else if (props.modalObject.Input === "partner") {
-      return (localStorage.getItem("PartnerName"))
-    }
-    else if (props.modalObject.Input === "joint") {
-      return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
-    }
-  })
-
   let handleInput = (e, setFieldValue) => {
     const value = e.target.value > 10 ? 10 : e.target.value;
     setFieldValue(e.target.id, value);
   };
 
+
+  let handleInnerModal = (title, question, key, values, editArray, index) => {
+    // alert("asdasd");
+    setModalObject({
+      title,
+      question,
+      key,
+      values,
+      editArray: editArray || [],
+      index
+    });
+    setFlagState(true);
+  }
+
+  const componentMapping = {
+
+    "loadingExclusion": <NewLoadingExclusion />,
+    "premiumsDetails": <PremiumsDetails />,
+    "beneficiariesArray": <Beneficiaries />
+
+  };
+
+
+  const ModalContent = (obj) => {
+    return componentMapping[obj.key.replace] || null;
+  };
 
   return (
     <div>
@@ -145,6 +166,29 @@ const PersonalInsuranceLife = (props) => {
           }, []);
           return (
             <Form>
+
+              <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} >
+                {ModalContent(modalObject)}
+                {
+                  // Declare your variable and logic outside of the JSX block
+                  (() => {
+                    let maKeaBtao = modalObject.key.replace(/[0-9]/g, '');
+
+                    if (maKeaBtao) {
+                      return (
+                        maKeaBtao === "loadingExclusion" ? <NewLoadingExclusion /> :
+                          maKeaBtao === "premiumsDetails" ? <PremiumsDetails /> :
+                            maKeaBtao === "beneficiariesArray" ? <Beneficiaries /> : null
+                      );
+                    }
+
+                    return null; // Return null if no match
+                  })()
+                }
+
+              </InnerModal>
+
+
               <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                 <label htmlFor='' className=''>
                   How many {props.modalObject.title} does {RenderName("client")} {UserStatus === "Married" && `and ${RenderName("partner")}`}  have:
@@ -191,7 +235,6 @@ const PersonalInsuranceLife = (props) => {
                           return (
                             <tr key={i}>
                               <td>{1 + i}</td>
-
                               <td>
                                 <Field
                                   as="select"
@@ -264,7 +307,6 @@ const PersonalInsuranceLife = (props) => {
                                   <option value={"Family Trust"}>Family Trust</option>
                                 </Field>
                               </td>
-
                               <td>
                                 <div style={{ minWidth: "100px" }}>
                                   <DatePicker
@@ -286,22 +328,81 @@ const PersonalInsuranceLife = (props) => {
                                 </div>
                               </td>
 
-                              <td></td>
-                              <td></td>
-                              <td></td>
+                              <td>
+                                <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
+                                  <Button className='btn bgColor modalBtn border-0' id="button-addon2"
+                                    onClick={() => {
+                                      handleInnerModal(
+                                        "Loading / Exclusion",
+                                        "loadingExclusion",
+                                        values)
+                                    }}>
+                                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                  </Button>
+                                </div>
+                              </td>
+                              <td>
+                                <Field
+                                  as="select"
+                                  id={`owner${i}`}
+                                  name={`owner${i}`}
+                                  className="form-select inputDesignDoubleInput"
+                                >
+                                  <option value={""}>Select</option>
+                                  <option value={"Stepped"}>Stepped</option>
+                                  <option value={"Smoker"}>Smoker</option>
+                                  <option value={"Own Occupation"}>Own Occupation</option>
+                                  <option value={"Own Occupation Entire Period"}>Own Occupation Entire Period</option>
+                                  <option value={"Any Occupation"}>Any Occupation</option>
+                                  <option value={"Indexed to CPI"}>Indexed to CPI</option>
+                                  <option value={"Continuation option"}>Continuation option</option>
+                                  <option value={"Trauma Plus"}>Trauma Plus</option>
+                                  <option value={"Agreed"}>Agreed</option>
+                                  <option value={"Indemnity"}>Indemnity</option>
+                                  <option value={"Super continuance"}>Super continuance</option>
+                                  <option value={"Accident option"}>Accident option</option>
+                                  <option value={"Increasing claims option"}>Increasing claims option</option>
+                                  <option value={"Superlinked"}>Superlinked</option>
+                                </Field>
+                              </td>
+                              <td>
+                                <InputGroup>
+                                  <Field
+                                    type="text"
+                                    placeholder="Premiums p.a"
+                                    id={`premiums${i}`}
+                                    name={`premiums${i}`}
+                                    className="form-control inputDesignDoubleInput"
+                                    onChange={(e) => {
+                                      setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")))
+                                    }}
+                                  />
+                                  <Button className='btn bgColor modalBtn border-0' id="button-addon2"
+                                    onClick={() => {
+                                      let name = ((values[`lifeInsured${i}`] === undefined) || (values[`lifeInsured${i}`] === null) || (values[`lifeInsured${i}`] === null)) ? RenderName("client")
+                                        : values[`lifeInsured${i}`] === "client+partner" ? RenderName("client") + " & " + RenderName("partner") : RenderName(values[`lifeInsured${i}`])
+
+                                      handleInnerModal(name + "_Premiums p.a", `How many Premiums p.a do ${name} have?`, `premiumsDetails`, values, values[`premiumsDetails${i}`], i)
+                                    }}>
+                                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                  </Button>
+                                </InputGroup>
+
+                              </td>
                               <td>
                                 <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
                                   <DynamicYesNo name={`loadingExclusion${i}`} values={values} handleChange={handleChange} />
                                   {values[`loadingExclusion${i}`] === "Yes" &&
-                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2"
-                                      onClick={() => {
-                                        handleInnerModal(
-                                          "Loading / Exclusion",
-                                          "loadingExclusionModal",
-                                          values, "client")
-                                      }}>
-                                      <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                    </Button>
+                                    <div className="w-100 ">
+                                      <Field
+                                        type="text"
+                                        placeholder="Loading / Exclusion"
+                                        id={`loadingExclusionValue${i}`}
+                                        name={`loadingExclusionValue${i}`}
+                                        className="form-control inputDesignDoubleInput"
+
+                                      />
+                                    </div>
                                   }
                                 </div>
                               </td>
@@ -310,10 +411,11 @@ const PersonalInsuranceLife = (props) => {
                                 {values[`beneficiary${i}`] === "Yes" &&
                                   <Button className='btn bgColor modalBtn border-0' id="button-addon2"
                                     onClick={() => {
-                                      handleInnerModal(
-                                        "Salary Packaging",
-                                        "beneficiaryModal",
-                                        values, "client")
+                                      let name = ((values[`lifeInsured${i}`] === undefined) || (values[`lifeInsured${i}`] === null) || (values[`lifeInsured${i}`] === null)) ? RenderName("client")
+                                        : values[`lifeInsured${i}`] === "client+partner" ? RenderName("client") + " & " + RenderName("partner") : RenderName(values[`lifeInsured${i}`]);
+
+                                      handleInnerModal(name + "_Beneficiaries", `How many beneficiaries do ${name} have?`, `beneficiariesArray`, values, values[`beneficiariesArray${i}`], i)
+
                                     }}>
                                     <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                   </Button>
@@ -329,6 +431,10 @@ const PersonalInsuranceLife = (props) => {
                   </div>
                 )}
               </div>
+
+
+
+
 
             </Form>
           )

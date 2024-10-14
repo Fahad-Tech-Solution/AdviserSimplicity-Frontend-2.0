@@ -799,7 +799,7 @@ const QuestionCards = (props) => {
                         if (singleSwitch) {
                             return (
                                 <div className={`col-md-3 mb-4`} key={index}>
-                                    <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
+                                    <Card className="py-4 shadow borderOverAll GoalsobjectiveCard" style={{ borderRadius: "20px", height: "100%" }}>
                                         <h5 className='text-center' onClick={() => { console.log(questionDetail) }}>{elem.title}</h5>
                                         <div className="QuestionIcon w-25">
                                             <img className="img-fluid" src={elem.img} alt="" />
@@ -808,9 +808,9 @@ const QuestionCards = (props) => {
                                             className="row justify-content-center align-items-center my-2"
                                         >
                                             <div className='col-12 p-0 '>
-                                                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                                <div className='d-flex flex-column-reverse justify-content-center align-items-center gap-2'>
                                                     <label
-                                                        className=" d-block text-end"
+                                                        className=" d-block "
                                                         htmlFor={"client" + elem.key}
                                                     >General Living</label>
 
@@ -836,7 +836,7 @@ const QuestionCards = (props) => {
                                             className="row justify-content-center align-items-center my-2"
                                         >
                                             <div className='col-12 p-0 '>
-                                                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                                <div className='d-flex flex-column-reverse justify-content-center align-items-center gap-2'>
                                                     <label
                                                         className=" d-block"
                                                         htmlFor={"retirementLivingExpense"}
@@ -878,7 +878,7 @@ const QuestionCards = (props) => {
                         else if (reuseSwitch) {
                             return (
                                 <div className={`col-md-3 mb-4`} key={index}>
-                                    <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
+                                    <Card className="py-4 shadow borderOverAll GoalsobjectiveCard" style={{ borderRadius: "20px", height: "100%" }}>
                                         <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}</h5>
                                         <div className="QuestionIcon w-25">
                                             <img className="img-fluid" src={elem.img} alt="" />
@@ -887,9 +887,9 @@ const QuestionCards = (props) => {
                                             className="row justify-content-center align-items-center my-2"
                                         >
                                             <div className='col-12 p-0 '>
-                                                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                                <div className='d-flex flex-column-reverse justify-content-center align-items-center gap-2'>
                                                     <label
-                                                        className=" d-block text-end"
+                                                        className=" d-block "
                                                         htmlFor={"client" + elem.key}
                                                     >{localStorage.getItem("UserName") || "You"}</label>
 
@@ -915,9 +915,9 @@ const QuestionCards = (props) => {
                                             className={`row justify-content-center align-items-center my-2 ${PartnerClass}`}
                                         >
                                             <div className='col-12 p-0 '>
-                                                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                                <div className='d-flex flex-column-reverse justify-content-center align-items-center gap-2'>
                                                     <label
-                                                        className=" d-block text-end"
+                                                        className=" d-block "
                                                         htmlFor={"partner" + elem.key}
                                                     >{localStorage.getItem("PartnerName") || "Partner"}</label>
                                                 </div>
@@ -956,7 +956,7 @@ const QuestionCards = (props) => {
 
                             return (
                                 <div className={`col-md-3 mb-4`} key={index}>
-                                    <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
+                                    <Card className="py-4 shadow borderOverAll GoalsobjectiveCard" style={{ borderRadius: "20px", height: "100%" }}>
                                         <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}</h5>
                                         <div className="QuestionIcon w-25">
                                             <img className="img-fluid" src={elem.img} alt="" />
@@ -965,10 +965,11 @@ const QuestionCards = (props) => {
                                             className="row justify-content-center align-items-center my-2"
                                         >
                                             <div className='col-12 p-0 '>
+
                                                 <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
 
                                                     <label
-                                                        className=" d-block text-end"
+                                                        className=" d-block "
                                                         htmlFor={"client" + elem.key}
                                                     >{localStorage.getItem("UserName") || "You"}</label>
 
@@ -996,7 +997,7 @@ const QuestionCards = (props) => {
                                             <div className='col-12 p-0 '>
                                                 <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                                                     <label
-                                                        className=" d-block text-end"
+                                                        className=" d-block "
                                                         htmlFor={"partner" + elem.key}
                                                     >{localStorage.getItem("PartnerName") || "Partner"}</label>
 
@@ -1025,7 +1026,7 @@ const QuestionCards = (props) => {
                                             <div className='col-12 p-0 '>
                                                 <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                                                     <label
-                                                        className=" d-block text-end"
+                                                        className=" d-block "
                                                         htmlFor={"joint" + elem.key}
                                                     >{(localStorage.getItem("UserName") || "You") + " " + (localStorage.getItem("PartnerName") || "")}</label>
 
@@ -1057,8 +1058,6 @@ const QuestionCards = (props) => {
                     }
                     return null;
                 })}
-
-                {props.Question == "Lifestyle" && <HolyDayHome JointHidden={JointHidden} OpenModal={OpenModal2} homeArray={homeArray} arrayCount={arrayCount} questionDetail={questionDetail} />}
             </div>
 
             <div className="row mt-2 d-none">
@@ -1085,142 +1084,5 @@ const QuestionCards = (props) => {
         </div>
     );
 }
-
-
-const HolyDayHome = (props) => {
-    let CRObject = useRecoilValue(CRState);
-    let loopIndex = CRObject.numberOfHolidayHome || 0;
-
-    let arrayOfHolidayHome = [];
-
-    const PartnerClass = localStorage.getItem("UserStatus") === "Single" ? "d-none" : "";
-
-    for (let i = 0; i < loopIndex; i++) {
-        arrayOfHolidayHome.push(
-            props.homeArray.map((elem, index) => {
-                const jointClass = props.JointHidden.includes(elem.key) ? "d-none" : "";
-                return (
-                    <div className={`col-md-3 mb-4`} key={i}>
-                        <Card className="py-4 shadow borderOverAll" style={{ borderRadius: "20px", height: "100%" }}>
-                            <h5 className='text-center' onClick={() => { console.log(props.questionDetail[elem.key]) }}>{elem.title} {parseFloat(i) + 1}</h5>
-                            <div className="QuestionIcon w-25">
-                                <img className="img-fluid" src={elem.img} alt="" />
-                            </div>
-                            <div
-                                className="row justify-content-center align-items-center my-2"
-                            >
-                                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
-                                    <label
-                                        className=" d-block text-end"
-                                        htmlFor={"client" + elem.key}
-                                    >{localStorage.getItem("UserName") || "You"}</label>
-
-                                    <label
-                                        className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                        onClick={() => { props.OpenModal(elem.title, "client", i) }}
-                                    >
-                                        <div>
-                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-                            <input type="text"
-                                className="form-control inputDesign "
-                                id={"client" + elem.key}
-                                placeholder={elem.title}
-                                name={"client" + elem.key}
-                                value={
-                                    props.questionDetail &&
-                                        props.questionDetail[elem.key] &&
-                                        Array.isArray(props.questionDetail[elem.key]) &&
-                                        props.questionDetail[elem.key][i] &&
-                                        props.questionDetail[elem.key][i].clientTotal
-                                        ? props.questionDetail[elem.key][i].clientTotal
-                                        : ""
-                                }
-                            />
-                            <div
-                                className={`row justify-content-center align-items-center my-2 ${PartnerClass}`}
-                            >
-                                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
-                                    <label
-                                        className=" d-block text-end"
-                                        htmlFor={"partner" + elem.key}
-                                    >{localStorage.getItem("PartnerName") || "Partner"}</label>
-
-                                    <label
-                                        className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                        onClick={() => { props.OpenModal(elem.title, "partner", i) }}
-                                    >
-                                        <div>
-                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-                            <input type="text"
-                                className={`form-control inputDesign ${PartnerClass}`}
-                                id={"partner" + elem.key}
-                                placeholder={elem.title}
-                                name={"partner" + elem.key}
-                                value={
-                                    props.questionDetail &&
-                                        props.questionDetail[elem.key] &&
-                                        Array.isArray(props.questionDetail[elem.key]) &&
-                                        props.questionDetail[elem.key][i] &&
-                                        props.questionDetail[elem.key][i].partnerTotal
-                                        ? props.questionDetail[elem.key][i].partnerTotal
-                                        : ""
-                                }
-                            />
-
-                            <div
-                                className={`row justify-content-center align-items-center my-2 ${jointClass} ${PartnerClass}`}
-                            >
-                                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
-                                    <label
-                                        className=" d-block text-end"
-                                        htmlFor={"joint" + elem.key}
-                                    >{(localStorage.getItem("UserName") || "You") + " " + (localStorage.getItem("PartnerName") || "")}</label>
-
-                                    <label
-                                        className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                        onClick={() => { props.OpenModal(elem.title, "joint", i) }}
-                                    >
-                                        <div>
-                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <input type="text"
-                                className={`form-control inputDesign ${jointClass} ${PartnerClass}`}
-                                id={"joint" + elem.key}
-                                placeholder={elem.title}
-                                name={"joint" + elem.key}
-                                value={
-                                    props.questionDetail &&
-                                        props.questionDetail[elem.key] &&
-                                        Array.isArray(props.questionDetail[elem.key]) &&
-                                        props.questionDetail[elem.key][i] &&
-                                        props.questionDetail[elem.key][i].jointTotal
-                                        ? props.questionDetail[elem.key][i].jointTotal
-                                        : ""
-                                }
-
-                            />
-
-                        </Card>
-                    </div>
-                )
-            })
-        );
-
-    }
-
-    return <>{arrayOfHolidayHome}</>;
-};
 
 export default QuestionCards

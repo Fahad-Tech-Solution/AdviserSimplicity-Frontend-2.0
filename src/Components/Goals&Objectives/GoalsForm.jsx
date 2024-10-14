@@ -4,7 +4,7 @@ import { Dropdown, Row, Table } from 'react-bootstrap';
 import CreatableReactSelect from './CreatableReactSelect';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { defaultUrl, GoalsDetail } from '../../Store/Store';
-import { PatchAxios, PostAxios } from '../Assets/Api/Api';
+import { PatchAxios, PostAxios, toCommaAndDollar } from '../Assets/Api/Api';
 
 import parse from 'html-react-parser';
 
@@ -14,6 +14,7 @@ const GoalsForm = (props) => {
     const [showDropDown, setShowDropDown] = useState(false); // Initialize state for rows
 
     let goalsDetail = useRecoilValue(GoalsDetail)
+
     let [goalsDetailState, setGoalsDetail] = useRecoilState(GoalsDetail)
     let DefaultUrl = useRecoilValue(defaultUrl)
 
@@ -48,6 +49,9 @@ const GoalsForm = (props) => {
                 obj.description = formattedContentRef.current.textContent;
             }
         }
+
+        obj.description = RemoveSpan(obj.description);
+
         console.log(obj, "final obj")
 
         const ApiSwitch = CurrentGoalData.clientFK || "";
@@ -100,7 +104,6 @@ const GoalsForm = (props) => {
     const [whenOptions, setWhenOptions] = useState([
         { value: "Now", label: "Now" },
         { value: "Ongoing", label: "Ongoing" },
-        { value: "Now & Ongoing", label: "Now & Ongoing" },
         { value: "Year 1", label: "Year 1" },
         { value: "Year 2", label: "Year 2" },
         { value: "Year 3", label: "Year 3" },
@@ -114,12 +117,13 @@ const GoalsForm = (props) => {
     ]);
 
     let autoDescription = (e, setFieldValue, handleChange) => {
-        console.log(e.target.value)
         if (e.target.value !== "") {
-            if (props.modalObject.whenScopeIs === e.target.value) {
+            // alert("i12" + (props.modalObject.whenScopeIs.trim() + "--" + e.target.value.trim()))
+            if (props.modalObject.whenScopeIs.trim() === e.target.value.trim()) {
                 let arrayData = props.modalObject.descriptionArray;
                 if (arrayData.length == 1) {
                     setFieldValue("description", arrayData[0].text);
+                    StoreText(arrayData[0], setFieldValue);
                     setRows(10)
                     setShowDropDown(false)
                 }
@@ -133,23 +137,26 @@ const GoalsForm = (props) => {
             }
 
         }
+
         setFieldValue("scopeOfAdvice", e.target.value);
     }
     let RemoveSpan = (text) => {
-        const cleanedText = text.replace(/<span[^>]*>|<\/span>/g, '');
+        let cleanedText = text.replace(/<span[^>]*>|<\/span>/g, '');
+        cleanedText = cleanedText.replace(/<strong[^>]*>|<\/strong>/g, '');
         return (cleanedText);
     }
 
     let StoreText = (e, setFieldValue) => {
         // Remove <span> tags and their content
-        const cleanedText = e.text.replace(/<span[^>]*>|<\/span>/g, '');
+        // const cleanedText = e.text.replace(/<span[^>]*>|<\/span>/g, '');
+        const cleanedText = e.text;
         setContent(e.text);
         setFieldValue("description", cleanedText);
         setShowDropDown(false);
         setRows(10);
     };
 
-    
+
     const [content, setContent] = useState('');
     const formattedContentRef = useRef(null);
 
@@ -196,15 +203,15 @@ const GoalsForm = (props) => {
                                                 >
                                                     <option value={""}>Select</option>
                                                     <option value={"Age Care"}>Age Care</option>
-                                                    <option value={"Budgeting & Cashflow"}>Budgeting & Cashflow</option>
-                                                    <option value={"Business Structure"}>Business Structure </option>
+                                                    <option value={"Cashflow"}>Cashflow </option>
+                                                    <option value={"Centrelink"}>Centrelink </option>
                                                     <option value={"Debt Management"}>Debt Management </option>
-                                                    <option value={"Estate Planning"}>Estate Planning</option>
-                                                    <option value={"Personal Insurance"}>Personal Insurance </option>
-                                                    <option value={"Superannuation"}>Superannuation </option>
-                                                    <option value={"Retirement Planning"}>Retirement Planning</option>
+                                                    <option value={"Estate Planning"}>Estate Planning </option>
                                                     <option value={"Investments"}>Investments</option>
-                                                    <option value={"Other"}>Other</option>
+                                                    <option value={"Other"}>Other </option>
+                                                    <option value={"Personal Insurance"}>Personal Insurance </option>
+                                                    <option value={"Retirement Planning"}>Retirement Planning </option>
+                                                    <option value={"Superannuation"}>Superannuation</option>
 
                                                 </Field>
                                             </td>
@@ -218,11 +225,14 @@ const GoalsForm = (props) => {
                                             </td>
                                             <td>
                                                 <Field
-                                                    type="number"
+                                                    type="text"
                                                     placeholder="Estimated Value"
                                                     id={`estimatedValue`}
                                                     name={`estimatedValue`}
                                                     className="form-control inputDesignDoubleInput"
+                                                    onChange={(e) => {
+                                                        setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")))
+                                                    }}
                                                 />
                                             </td>
                                         </tr>
@@ -233,7 +243,8 @@ const GoalsForm = (props) => {
                                         <label htmlFor='description' className='fw-bold'>Description:</label>
                                         <textarea className='goalsPara form-control inputDesignDoubleInput d-none' value={values.description} placeholder='Description'> </textarea>
                                         <div className='formatted-content form-control inputDesignDoubleInput goalsPara'
-                                            ref={formattedContentRef} contentEditable
+                                            ref={formattedContentRef}
+                                            contentEditable
                                             onInput={(e) => { setFieldValue("description", RemoveSpan(e.target.innerHTML)) }}
                                             onChange={(e) => { setFieldValue("description", RemoveSpan(e.target.innerHTML)) }}
                                         />

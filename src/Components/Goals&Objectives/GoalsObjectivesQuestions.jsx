@@ -1,12 +1,15 @@
 import React, { useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, GQState } from "../../Store/Store";
-import { Form, Formik } from "formik";
+import { Field, Form, Formik } from "formik";
 import { PatchAxios, PostAxios } from "../Assets/Api/Api";
 import { Image, Row } from "react-bootstrap";
+import { CreatableMultiSelectField } from "../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 
 const GoalsObjectivesQuestions = (props) => {
+
   let [GQObject, setGQObject] = useRecoilState(GQState);
+
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   const handleResponse = (values) => {
@@ -55,6 +58,22 @@ const GoalsObjectivesQuestions = (props) => {
       setFieldValue(elem.key, "No");
     }
   };
+
+  const options = [
+    { value: "", label: "Select" },
+    { value: "All Areas", label: "All Areas" },
+    { value: "Age Care", label: "Age Care" },
+    { value: "Cashflow", label: "Cashflow" },
+    { value: "Centrelink", label: "Centrelink" },
+    { value: "Debt Management", label: "Debt Management" },
+    { value: "Estate Planning", label: "Estate Planning" },
+    { value: "Investment", label: "Investment" },
+    { value: "Other", label: "Other" },
+    { value: "Personal Insurance", label: "Personal Insurance" },
+    { value: "Retirement Planning", label: "Retirement Planning" },
+    { value: "Superannuation", label: "Superannuation" }
+  ];
+
   return (
     <div className="container-fluid">
       <div className="row m-0">
@@ -67,31 +86,79 @@ const GoalsObjectivesQuestions = (props) => {
           {({ values, handleChange, setFieldValue }) => (
             <Form>
               <div className="col-md-12 text-center">
+                <div className='d-flex flex-row justify-content-center align-items-center gap-2 my-3'>
+                  <label htmlFor='' className=''>
+                    Choose a Financial Plans:
+                  </label>
+
+                  <div style={{ minWidth: "30%" }} >
+                    <Field
+                      name={`scope`}
+                      component={CreatableMultiSelectField}
+                      label="Multi Select Field"
+                      options={options}
+                    />
+                  </div>
+                </div>
+
                 <Row className="justify-content-center">
-                  {props.modalObject.allGoals.map((elem, index) => {
-                    return (
-                      <div className="col-md-4 px-2 pb-3 d-flex ">
-                        <div className=" flex-grow-1 d-flex">
-                          <div
-                            className={`${values[elem.key] == "Yes" ? "customBorder p-3" : "border p-3"
-                              }  flex-grow-1`}
-                            onClick={() =>
-                              goalsClick(index, elem, values, setFieldValue)
-                            }
-                          >
-                            <div className="text-center">
-                              <div className="mx-auto" style={{ width: "20%" }}>
-                                <Image src={elem.img} fluid />
+
+                  {Object.entries(props.modalObject.allGoals).map(([category, goals]) => {
+                    return (<React.Fragment>
+                      {goals.map((elem, index) => {
+                        if (values.scope && values.scope.length > 0 && values.scope.includes("All Areas")) {
+                          return (
+                            <div className="col-md-4 px-2 pb-3 d-flex ">
+                              <div className=" flex-grow-1 d-flex">
+                                <div
+                                  className={`${values[elem.key] == "Yes" ? "customBorder p-3" : "border p-3"
+                                    }  flex-grow-1`}
+                                  onClick={() =>
+                                    goalsClick(index, elem, values, setFieldValue)
+                                  }
+                                >
+                                  <div className="text-center">
+                                    <div className="mx-auto" style={{ width: "20%" }}>
+                                      <Image src={elem.img} fluid />
+                                    </div>
+                                  </div>
+                                  <label htmlFor={elem.key} className="form-label">
+                                    {elem.title}
+                                  </label>
+                                </div>
+
                               </div>
                             </div>
-                            <label htmlFor={elem.key} className="form-label">
-                              {elem.title}
-                            </label>
-                          </div>
-                         
-                        </div>
-                      </div>
-                    );
+                          );
+                        }
+                        else if (values.scope && values.scope.length > 0 && values.scope.includes(elem.scopeOfAdvice)) {
+                          return (
+                            <div className="col-md-4 px-2 pb-3 d-flex ">
+                              <div className=" flex-grow-1 d-flex">
+                                <div
+                                  className={`${values[elem.key] == "Yes" ? "customBorder p-3" : "border p-3"
+                                    }  flex-grow-1`}
+                                  onClick={() =>
+                                    goalsClick(index, elem, values, setFieldValue)
+                                  }
+                                >
+                                  <div className="text-center">
+                                    <div className="mx-auto" style={{ width: "20%" }}>
+                                      <Image src={elem.img} fluid />
+                                    </div>
+                                  </div>
+                                  <label htmlFor={elem.key} className="form-label">
+                                    {elem.title}
+                                  </label>
+                                </div>
+
+                              </div>
+                            </div>
+                          );
+                        }
+                      })}
+                    </React.Fragment>)
+
                   })}
                 </Row>
               </div>
