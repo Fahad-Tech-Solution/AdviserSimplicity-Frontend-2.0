@@ -219,7 +219,7 @@ const GoalsObjectiveNew = () => {
                 whenScopeIs: "Cashflow",
                 descriptionArray: [
                     {
-                        text: "<span>We/I</span> would like to renovate <span>my/our</span> home and want to allow an amount of $XX.000 to do this.    We/I will use the funds I/we have sitting in cash/in super/from the inheritance/other. "
+                        text: "<span>We/I</span> would like to renovate <span>my/our</span> home and want to allow an amount of <span>$XX.000</span> to do this. <span>We/I</span> will use the funds <span>I/we have sitting in cash/in super/from the inheritance/other</span>. "
                     }
                 ],
                 scopeOfAdvice: "Cashflow",
@@ -249,7 +249,7 @@ const GoalsObjectiveNew = () => {
                 key: "centreLinkEligibilityGoal",
                 img: gearsGear,
                 modalBtn: "label",
-                whenScopeIs: "Retirement Planning",
+                whenScopeIs: "Centrelink",
                 descriptionArray: [
                     { text: "<span>We/I</span>  would like to know if <span>We/I</span> will get any Age pension entitlements now that <span>We/I</span> had reached age pension age. It would be great if <span>We/I</span> could get a small amount of age pension and this would give <span>us/me</span> the Pension Card. <span>We/I</span> really want the benefits that come with the cards such as cheaper medicine, and other discounts on <span>our/my</span> bills such as Council and Water rates, utilities (Gas and Electricity) and <span>our/my</span> Car registration." },
                     { text: "<span>We/I</span> like to know if <span>we/I am/are</span> entitled to any health care cards from Centrelink because <span>I/we are/am</span> paying too much on <span>our/my</span> regular medication on a monthly basis." },
@@ -277,7 +277,7 @@ const GoalsObjectiveNew = () => {
                 modalBtn: "label",
                 whenScopeIs: "Debt Management",
                 descriptionArray: [
-                    { text: "<span>I/We</span> would like Reduce <span>our/my</span> current personal <span>loan/credit</span> cards as soon as possible /ahead of retirement." },
+                    { text: "<span>I/We</span> would like Reduce <span>our/my</span> current <span>personal loan/credit cards as soon as possible /ahead of retirement.</span>" },
                     { text: "<span>I/We</span> want to know how much <span>I/We</span> need  to pay off <span>our/my personal loan/credit cards</span> each month so <span>I/we can be debt free in retirement/pay it off in the next XX Years</span>" },
                 ],
                 scopeOfAdvice: "Debt Management",
@@ -289,7 +289,7 @@ const GoalsObjectiveNew = () => {
                 key: "estatePlanningGoal",
                 img: will,
                 modalBtn: "label",
-                whenScopeIs: "Estate Planning",
+                whenScopeIs: "",
                 descriptionArray: [],
                 scopeOfAdvice: "Estate Planning",
             },
@@ -410,7 +410,7 @@ const GoalsObjectiveNew = () => {
                 whenScopeIs: "Personal Insurance",
                 descriptionArray: [
                     { text: "<span>I/We</span> want  to make sure in  the event <span>we/I were/was</span>  to  die prematurely or <span>are/am</span> unable to work due to sickness, injury or every again that <span>our/my</span> family will be protected financially. <span>I/We</span> would like to consider all types of personal insurance cover. <span>I/We are  able/happy to  spend up to $XX0 per month from our/my  own  personal cashflow and were possible we would like to have any insurance cover funded an paid through our/my super.</span> <strong>(Full Insurance review)</strong>." },
-                    { text: "<span>I/We</span> would specifically like to take out Life cover of <span>$XXX,XXX</span> and TPD of <span>$XXX,XXX</span> to make sure that <span>our/my</span> family is protected if <span>I/we</span> to die or become total and permanently disabled. <span>This would also us/me to pay off our /my current home loan/debts and be debt free.    Where possible I/we would like to have these premiums funded via super.</span> <strong>(Life and TPD cover)</strong>" },
+                    { text: "<span>I/We</span> would specifically like to take out <span>Life cover of $XXX,XXX and TPD of $XXX,XXX</span> to make sure <span>that our/my</span> family is protected if <span>I/we to</span> die or become total and permanently disabled. <span>This would also us/me to pay off our /my current home loan/debts and be debt free. Where possible I/we would like to have these premiums funded via super.</span> <strong>(Life and TPD cover)</strong>" },
                     { text: "<span>I/We</span> want to make sure <span>if I/we</span> suffered a medical event such as a cancer or a heart attack  that <span>we/I</span> could receive a lumpsum payout of <span>$XXX,XXX</span> to help out financially while <span>I/we</span> focus on <span>my/our  recovery/so my  spouse could take time off work if needed to look after me  so this wouldn’t affect us  financially while I recovered</span><strong>(Trauma cover)</strong>" },
                     { text: "<span>I/We</span> want to make sure that <span>my/our</span> income is protected in the event <span>I/we am/are</span> unable to work due to an injury or became sick so <span>we/I</span> can receive a regular income during this period to help <span>us/me</span> pay <span>my/our  home loan repayments and all other bills. Where possible I/we would like to have these premiums funded via super</span>  <strong>(Income protection only)</strong>" },
                 ],
@@ -456,7 +456,7 @@ const GoalsObjectiveNew = () => {
                 modalBtn: "label",
                 whenScopeIs: "Personal Insurance",
                 descriptionArray: [
-                    { text: "<span>We/I</span> would like to Reduce <span>our/my Life cover down to $XXX, XXX and   TPD to $XXX,XXX</span> so <span>we/I can</span> reduce the premiums down as they are now starting to get costly. <span>Given our/my current</span> financial situation now <span>I/we don’t</span>  need this level of cover anymore </span> as this was taken out a long time ago when our/my situation was different and the kids were younger.</span>  <strong>(Reduce Life and TPD)</strong>" },
+                    { text: "<span>We/I</span> would like to Reduce <span>our/my Life cover down to $XXX, XXX and   TPD to $XXX,XXX</span> so <span>we/I can</span> reduce the premiums down as they are now starting to get costly. <span>Given our/my current</span> financial situation now <span>I/we don’t</span>  need this level of cover anymore <span>as this was taken out a long time ago when our/my situation was different and the kids were younger.</span>  <strong>(Reduce Life and TPD)</strong>" },
                     { text: "<span>We/I</span> would like to Reduce <span>our/my</span> Trauma cover down to <span>$XXX,XXX</span> so <span>we/I</span> can reduce the premiums down as they are now starting to get costly. <strong>( Reduce Trauma cover)</strong>" },
                     { text: "<span>We/I</span> would like to change the the waiting period on  <span>my/our</span>  income protection policy with <span>Name of Provider</span> to a <span>XX</span> Day waiting period to help reduce the cost of these premiums.<span> We/I currently have over XX days in Sick/Annual Leave/Long Service Leave available that I/we  could use  if  I/we wasn’t/weren’t  able to work during this period.</span> <strong>(Reduce Waiting Period on Income protection)</strong>." },
                 ],
@@ -678,7 +678,7 @@ const GoalsObjectiveNew = () => {
                                                 <h5 className='text-center mt-2 capitalize' onClick={() => { console.log(goalsDetail[goal.key]) }}>
                                                     {goal.title}
                                                 </h5>
-                                                <div className="QuestionIcon w-25">
+                                                <div className="QuestionIcon CardImg">
                                                     <img className="img-fluid" src={goal.img} alt="" />
                                                 </div>
                                                 <div className='d-flex justify-content-center align-items-center gap-3 d-none'>

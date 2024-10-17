@@ -203,6 +203,7 @@ const Beneficiaries = (props) => {
                                                                             showYearDropdown
                                                                             dropdownMode="select"
                                                                             onBlur={handleBlur}
+                                                                            disabled={values[`nominationType${i}`] == "Legal Personal Representative (Your Estate)"}
                                                                             wrapperClassName="w-100"
                                                                         />
                                                                     </div>

@@ -49,6 +49,7 @@ import ImportantQuestion from "../Components/Questions/ImportantQuestion/Importa
 import PersonalDetailNew from "../Components/PersonalDetails/PersonalDetailNew";
 
 import Contact from "../Components/ContactTest/Contact";
+import PersonalInsuranceLife from "../Components/Questions/PersonalInsurance/LifeInsurance";
 
 function AuthRouts() {
 
@@ -129,7 +130,7 @@ function AuthRouts() {
                             <Route path="/ProfessionalAdvisor" element={<QuestionsNew><AdditionalQueriesProfessionalAdvisor /></QuestionsNew>} />
 
                             {/* APi Integration Left */}
-                            <Route path="/PersonalInsurance" element={<QuestionsNew><PersonalInsurance /></QuestionsNew>} />
+                            <Route path="/PersonalInsurance" element={<QuestionsNew><PersonalInsuranceLife /></QuestionsNew>} />
                             <Route path="/BusinessEntities" element={<QuestionsNew><BusinessEntities /></QuestionsNew>} />
                             <Route path="/SMSF" element={<QuestionsNew><QuestionsSMSF /></QuestionsNew>} />
                             <Route path="/FamilyTrust" element={<QuestionsNew><QuestionsFamily /></QuestionsNew>} />

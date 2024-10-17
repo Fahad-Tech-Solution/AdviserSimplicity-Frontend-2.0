@@ -117,10 +117,10 @@ export const CRState = atom({
         familyDetails: "Yes", // this one should be yes always
 
 
-        life: "No",
-        TPD: "No",
-        trauma: "No",
-        incomeProtection: "No",
+        life: "Yes",
+        TPD: "Yes",
+        trauma: "Yes",
+        incomeProtection: "Yes",
 
     },
 });
@@ -150,13 +150,13 @@ export const defaultUrl = atom({
 
     // default: "http://localhost:7000",
 
-    // default: "http://192.168.1.54:7000", // Usama bhai AUSU
-    // default: "http://192.168.3.9:7000", // Usama bhai growWork_Beta
-    // default: "http://192.168.14.244:7000", // Usama bhai mara Mobile k sath
+    // default: "http://192.168.1.54:7000",    // Usama bhai AUSU
+    // default: "http://192.168.3.9:7000",     // Usama bhai growWork_Beta
+    // default: "http://192.168.14.244:7000",  // Usama bhai mara Mobile k sath
     // default: "http://192.168.227.244:7000", // Usama bhai Fahad bhai k sath
     // default: "http://192.168.3.4:7000",
     // default: "http://192.168.211.242:7000",
-    default: "http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com:7000",  // Live Linkdin 
+    default: "http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com:7000",  // Live link 
 
     // default: "",
 });

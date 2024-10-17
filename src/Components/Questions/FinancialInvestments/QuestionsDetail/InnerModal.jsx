@@ -36,7 +36,9 @@ const InnerModal = (props) => {
     ]; // Add other titles that should use "xl" here
 
     const xlKeys = ["balanceBenefitDetailsArray",
-        "groupInsuranceArray"
+        "groupInsuranceArray",
+        "premiumsDetails",
+        "sumInsured"
         // "Bank Accounts Detail"
     ]; // Add other titles that should use "xl" here
 

@@ -4,7 +4,7 @@ import { Dropdown, Row, Table } from 'react-bootstrap';
 import CreatableReactSelect from './CreatableReactSelect';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { defaultUrl, GoalsDetail } from '../../Store/Store';
-import { PatchAxios, PostAxios, toCommaAndDollar } from '../Assets/Api/Api';
+import { openNotificationSuccess, PatchAxios, PostAxios, toCommaAndDollar } from '../Assets/Api/Api';
 
 import parse from 'html-react-parser';
 
@@ -70,13 +70,14 @@ const GoalsForm = (props) => {
                 const updatedData = { ...goalsDetail, [props.modalObject.key]: res };
                 setGoalsDetail(updatedData);
             }
-
+            openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
             // Reset the flag state if necessary
             if (props.flagState) {
                 props.setFlagState(false);
             }
         } catch (error) {
             console.error("Error occurred while making API call:", error);
+            openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
         }
     }
 
@@ -193,7 +194,7 @@ const GoalsForm = (props) => {
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>
+                                            <td style={{ maxWidth: "150px" }}>
                                                 <Field
                                                     as="select"
                                                     id={`scopeOfAdvice`}
@@ -223,7 +224,7 @@ const GoalsForm = (props) => {
                                                     optionsGiven={whenOptions}
                                                 />
                                             </td>
-                                            <td>
+                                            <td style={{ maxWidth: "100px" }}>
                                                 <Field
                                                     type="text"
                                                     placeholder="Estimated Value"

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
 import { PatchAxios, PostAxios, RenderName, toCommaAndDollar } from "../../Assets/Api/Api";
-import { Button, InputGroup, Table } from "react-bootstrap";
+import { Button, InputGroup, Modal, Table } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
@@ -22,6 +22,7 @@ const PersonalInsuranceLife = (props) => {
   let [UserStatus] = useState(localStorage.getItem('UserStatus'));
 
   let [flagState, setFlagState] = useState(false);
+  let [showModal, setShowModal] = useState(false);
 
   let [modalObject, setModalObject] = useState({
     title: "",
@@ -30,7 +31,7 @@ const PersonalInsuranceLife = (props) => {
   });
 
 
-  let life = Object.keys(questionDetail.life).length > 0 ? questionDetail.life : {
+  let personalInsurance = Object.keys(questionDetail.personalInsurance).length > 0 ? questionDetail.personalInsurance : {
     client: [],
     partner: [],
     joint: [],
@@ -38,7 +39,30 @@ const PersonalInsuranceLife = (props) => {
   }; // Use an empty object as default if life is undefined
 
   const fillInitialValues = (setFieldValue) => {
+    // console.log(personalInsurance);
 
+    let Data = personalInsurance;
+
+    if (Data?.PersonalInsurance) {
+      setFieldValue("NumberOfMap", personalInsurance.numberOfPersonalInsurance);
+
+      personalInsurance.PersonalInsurance.forEach((entry, index) => {
+        // alert(entry.lifeInsured);
+        setFieldValue("lifeInsured" + index, entry.lifeInsured);
+        setFieldValue("provider" + index, entry.provider);
+        setFieldValue("policyNo" + index, entry.policyNo);
+        setFieldValue("owner" + index, entry.owner);
+        setFieldValue("startDate" + index, entry.startDate);
+        setFieldValue("sumInsured" + index, entry.sumInsured);
+        setFieldValue("sumInsuredSum" + index, entry.sumInsuredSum);
+        setFieldValue("premiums" + index, entry.premiums);
+        setFieldValue("premiumsDetails" + index, entry.premiumsDetails);
+        setFieldValue("loadingExclusion" + index, entry.loadingExclusion);
+        setFieldValue("loadingExclusionValue" + index, entry.loadingExclusionValue);
+        setFieldValue("beneficiary" + index, entry.beneficiary);
+        setFieldValue("beneficiariesArray" + index, entry.beneficiariesArray);
+      })
+    }
   };
 
   let initialValues = {
@@ -47,66 +71,178 @@ const PersonalInsuranceLife = (props) => {
 
 
   let onSubmit = async (values) => {
-    console.log(JSON.stringify(values));
-    return false;
-    // Create an object with additional fields
-    let DataOf = props.modalObject.Input;
+    console.log(JSON.stringify(values), "Console Values");
+
+    const newEntries = [];
+
+    let loopLength = parseFloat(values.NumberOfMap)
+
+    // Iterate through each map entry and create a new object
+    for (let i = 0; i < loopLength; i++) {
+      const newEntry = {
+        lifeInsured: values[`lifeInsured${i}`] || "",
+        provider: values[`provider${i}`] || "",
+        policyNo: values[`policyNo${i}`] || "",
+        owner: values[`owner${i}`] || "",
+        startDate: values[`startDate${i}`] || "",
+        sumInsuredSum: values[`sumInsuredSum${i}`] || "",
+        sumInsured: values[`sumInsured${i}`] || "",
+        premiums: values[`premiums${i}`] || "",
+        premiumsDetails: values[`premiumsDetails${i}`] || "",
+        loadingExclusion: values[`loadingExclusion${i}`] || "",
+        loadingExclusionValue: values[`loadingExclusionValue${i}`] || "",
+        beneficiary: values[`beneficiary${i}`] || "",
+        beneficiariesArray: values[`beneficiariesArray${i}`] || "",
+      };
+      newEntries.push(newEntry);
+    }
+
+    console.log(newEntries, "Console newEntries");
+
+    // return false;
+
+    let Obj = {};
+    Obj.PersonalInsurance = newEntries;
+    Obj.numberOfPersonalInsurance = newEntries.length;
+    Obj.clientFK = localStorage.getItem("UserID");
+
+
+    let clientArray = [];
+    let partnerArray = [];
+    let bothArray = [];
+
+    newEntries.forEach(entry => {
+      if (entry.lifeInsured = "client") {
+        clientArray.push(entry);
+      }
+      if (entry.lifeInsured = "partner") {
+        partnerArray.push(entry);
+      }
+      if (entry.lifeInsured = "client+partner") {
+        bothArray.push(entry);
+      }
+    });
+
+    console.log("Client Array:", clientArray);
+    console.log("Partner Array:", partnerArray);
+    console.log("both Array:", bothArray);
 
     let obj = {
-      owner: values.owner,
-      lifeInsured: values.lifeInsured,
-      insuranceCompany: values.insuranceCompany,
-      // annualCostOfPremiums: values.annualCostOfPremiums,
-      productName: values.productName,
-      smoker: values.smoker,
-      policyNumber: values.policyNumber,
-      dateCommenced: values.dateCommenced,
-      renewalMonth: values.renewalMonth,
-      lifeCoverSumInsured: values.lifeCoverSumInsured,
-      TPDCoverSumInsured: values.TPDCoverSumInsured,
-      traumaCoverSumInsured: values.traumaCoverSumInsured,
-      paymentFrequency: values.paymentFrequency,
-      costOfPremium: values.costOfPremium,
-      // annualcostOfPremium: values.CostOfPremium,
-      whoPaysThePremiums: values.whoPaysThePremiums,
-      commissionRate: values.commissionRate,
-      retainThisPolicy: values.retainThisPolicy,
-      TPDDefinition: values.TPDDefinition,
-      premiumType: values.premiumType,
-      indexedToCPI: values.indexedToCPI,
-      continuationOption: values.continuationOption,
-      nameOfBeneficiaries: values.nameOfBeneficiaries,
-      exclusionsLoadings: values.exclusionsLoadings,
+      "clientLifeInsuranceTotal": 0,
+      "clientTPDTotal": 0,
+      "clientTraumaTotal": 0,
+      "clientIncomeProtectionTotal": 0,
 
-
+      "partnerLifeInsuranceTotal": 0,
+      "partnerTPDTotal": 0,
+      "partnerTraumaTotal": 0,
+      "partnerIncomeProtectionTotal": 0
     };
 
-    let Obj = {
-      clientFK: localStorage.getItem("UserID"),
-    };
-    let num = obj.paymentFrequency == "Monthly" ? 12 : 1;
-    Obj[DataOf + "Total"] = obj.costOfPremium * num;
-    Obj[DataOf] = obj;
-    console.log(Obj);
+    clientArray.forEach(entry => {
+      // console.log(entry.sumInsured.coverType, entry.premiums);
+
+      let premiumValue = parseFloat(entry.premiums.replace(/[^0-9.-]+/g, ""));
+
+      let sumInsuredArray = entry.sumInsured;
+      sumInsuredArray.forEach(SumData => {
+
+        if (SumData.coverType === "Life") {
+          obj.clientLifeInsuranceTotal += premiumValue;
+        }
+        else if (SumData.coverType === "TPD") {
+          obj.clientTPDTotal += premiumValue;
+        }
+        else if (SumData.coverType === "Trauma") {
+          obj.clientTraumaTotal += premiumValue;
+        }
+        else if (SumData.coverType === "Income protection") {
+          obj.clientIncomeProtectionTotal += premiumValue;
+        }
+
+      })
+
+    });
+
+    partnerArray.forEach(entry => {
+      // console.log(entry.sumInsured.coverType, entry.premiums);
+
+      let premiumValue = parseFloat(entry.premiums.replace(/[^0-9.-]+/g, ""));
+
+      let sumInsuredArray = entry.sumInsured;
+      sumInsuredArray.forEach(SumData => {
+
+        if (SumData.coverType === "Life") {
+          obj.partnerLifeInsuranceTotal += premiumValue;
+        }
+        else if (SumData.coverType === "TPD") {
+          obj.partnerTPDTotal += premiumValue;
+        }
+        else if (SumData.coverType === "Trauma") {
+          obj.partnerTraumaTotal += premiumValue;
+        }
+        else if (SumData.coverType === "Income protection") {
+          obj.partnerIncomeProtectionTotal += premiumValue;
+        }
+
+      })
+
+    });
+
+    bothArray.forEach(entry => {
+      // console.log(entry.sumInsured.coverType, entry.premiums);
+
+      let premiumValue = (parseFloat(entry.premiums.replace(/[^0-9.-]+/g, "")) / 2);
+
+      let sumInsuredArray = entry.sumInsured;
+      sumInsuredArray.forEach(SumData => {
+
+        if (SumData.coverType === "Life") {
+          obj.clientLifeInsuranceTotal += premiumValue;
+          obj.partnerLifeInsuranceTotal += premiumValue;
+        }
+        else if (SumData.coverType === "TPD") {
+          obj.clientTPDTotal += premiumValue;
+          obj.partnerTPDTotal += premiumValue;
+        }
+        else if (SumData.coverType === "Trauma") {
+          obj.clientTraumaTotal += premiumValue;
+          obj.partnerTraumaTotal += premiumValue;
+        }
+        else if (SumData.coverType === "Income protection") {
+          obj.clientIncomeProtectionTotal += premiumValue;
+          obj.partnerIncomeProtectionTotal += premiumValue;
+        }
+      })
+    });
+
+    console.log(obj, "Submit ka console Form k ");
+
+    Obj.clientLifeInsuranceTotal = toCommaAndDollar(obj.clientLifeInsuranceTotal);
+    Obj.clientTPDTotal = toCommaAndDollar(obj.clientTPDTotal);
+    Obj.clientTraumaTotal = toCommaAndDollar(obj.clientTraumaTotal);
+    Obj.clientIncomeProtectionTotal = toCommaAndDollar(obj.clientIncomeProtectionTotal);
+
+    Obj.partnerLifeInsuranceTotal = toCommaAndDollar(obj.partnerLifeInsuranceTotal);
+    Obj.partnerTPDTotal = toCommaAndDollar(obj.partnerTPDTotal);
+    Obj.partnerTraumaTotal = toCommaAndDollar(obj.partnerTraumaTotal);
+    Obj.partnerIncomeProtectionTotal = toCommaAndDollar(obj.partnerIncomeProtectionTotal);
+
+    const bankAccountArray = personalInsurance.clientFK || "";  // No need to default to empty string
+    console.log(JSON.stringify(Obj), bankAccountArray);
+
 
     try {
       let res;
-      if (
-        !questionDetail.life ||
-        !questionDetail.life.clientFK
-      ) {
-        res = await PostAxios(`${DefaultUrl}/api/life/Add`, Obj);
+      if (bankAccountArray == "") {  // Check if it's truthy and not an empty string
+        res = await PostAxios(`${DefaultUrl}/api/personalInsurance/Add`, Obj);
       } else {
-        Obj.collection = props.modalObject.Input;
-        res = await PatchAxios(
-          `${DefaultUrl}/api/life/Update`,
-          Obj
-        );
+        res = await PatchAxios(`${DefaultUrl}/api/personalInsurance/Update`, Obj);
       }
 
       if (res) {
         console.log(res);
-        const updatedData = { ...questionDetail, life: res };
+        const updatedData = { ...questionDetail, personalInsurance: res };
         setQuestionDetail(updatedData);
       }
 
@@ -114,6 +250,7 @@ const PersonalInsuranceLife = (props) => {
       if (props.flagState) {
         props.setFlagState(false);
       }
+
     } catch (error) {
       console.error("Error occurred while making API call:", error);
     }
@@ -140,7 +277,7 @@ const PersonalInsuranceLife = (props) => {
 
   const componentMapping = {
 
-    "loadingExclusion": <NewLoadingExclusion />,
+    "sumInsured": <NewLoadingExclusion />,
     "premiumsDetails": <PremiumsDetails />,
     "beneficiariesArray": <Beneficiaries />
 
@@ -148,7 +285,8 @@ const PersonalInsuranceLife = (props) => {
 
 
   const ModalContent = (obj) => {
-    return componentMapping[obj.key.replace] || null;
+    let maKeaBtao = obj.key;
+    return componentMapping[maKeaBtao] || null;
   };
 
   return (
@@ -169,23 +307,6 @@ const PersonalInsuranceLife = (props) => {
 
               <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} >
                 {ModalContent(modalObject)}
-                {
-                  // Declare your variable and logic outside of the JSX block
-                  (() => {
-                    let maKeaBtao = modalObject.key.replace(/[0-9]/g, '');
-
-                    if (maKeaBtao) {
-                      return (
-                        maKeaBtao === "loadingExclusion" ? <NewLoadingExclusion /> :
-                          maKeaBtao === "premiumsDetails" ? <PremiumsDetails /> :
-                            maKeaBtao === "beneficiariesArray" ? <Beneficiaries /> : null
-                      );
-                    }
-
-                    return null; // Return null if no match
-                  })()
-                }
-
               </InnerModal>
 
 
@@ -224,7 +345,6 @@ const PersonalInsuranceLife = (props) => {
                           <th>Owner</th>
                           <th>Start Date</th>
                           <th>Sum Insured</th>
-                          <th>Features</th>
                           <th>Premiums p.a</th>
                           <th>Loading/Exclusion</th>
                           <th>Beneficiary</th>
@@ -242,6 +362,10 @@ const PersonalInsuranceLife = (props) => {
                                   id={`lifeInsured${i}`}
                                   name={`lifeInsured${i}`}
                                   className="form-select inputDesignDoubleInput"
+                                  onChange={(e) => {
+                                    setFieldValue(e.target.name, e.target.value);
+                                    // alert(e.target.value)
+                                  }}
                                 >
                                   <option value={""}>Select</option>
                                   <option value={"client"}>{RenderName("client")}</option>
@@ -330,40 +454,32 @@ const PersonalInsuranceLife = (props) => {
 
                               <td>
                                 <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
-                                  <Button className='btn bgColor modalBtn border-0' id="button-addon2"
-                                    onClick={() => {
-                                      handleInnerModal(
-                                        "Loading / Exclusion",
-                                        "loadingExclusion",
-                                        values)
-                                    }}>
-                                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                  </Button>
+
+                                  <InputGroup>
+                                    <Field
+                                      type="text"
+                                      placeholder="sumInsuredSum"
+                                      id={`sumInsuredSum${i}`}
+                                      name={`sumInsuredSum${i}`}
+                                      className="form-control inputDesignDoubleInput"
+                                      onChange={(e) => {
+                                        setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")))
+                                      }}
+                                    />
+                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2"
+                                      onClick={() => {
+                                        let name = ((values[`lifeInsured${i}`] === undefined) || (values[`lifeInsured${i}`] === null) || (values[`lifeInsured${i}`] === null)) ? RenderName("client")
+                                          : values[`lifeInsured${i}`] === "client+partner" ? RenderName("client") + " & " + RenderName("partner") : RenderName(values[`lifeInsured${i}`])
+
+                                        handleInnerModal(name + "_Sum Insured", `how many Policies do ${name} have?`, `sumInsured`, values, values[`sumInsured${i}`], i)
+                                      }}>
+                                      <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                    </Button>
+                                  </InputGroup>
+
+
+
                                 </div>
-                              </td>
-                              <td>
-                                <Field
-                                  as="select"
-                                  id={`owner${i}`}
-                                  name={`owner${i}`}
-                                  className="form-select inputDesignDoubleInput"
-                                >
-                                  <option value={""}>Select</option>
-                                  <option value={"Stepped"}>Stepped</option>
-                                  <option value={"Smoker"}>Smoker</option>
-                                  <option value={"Own Occupation"}>Own Occupation</option>
-                                  <option value={"Own Occupation Entire Period"}>Own Occupation Entire Period</option>
-                                  <option value={"Any Occupation"}>Any Occupation</option>
-                                  <option value={"Indexed to CPI"}>Indexed to CPI</option>
-                                  <option value={"Continuation option"}>Continuation option</option>
-                                  <option value={"Trauma Plus"}>Trauma Plus</option>
-                                  <option value={"Agreed"}>Agreed</option>
-                                  <option value={"Indemnity"}>Indemnity</option>
-                                  <option value={"Super continuance"}>Super continuance</option>
-                                  <option value={"Accident option"}>Accident option</option>
-                                  <option value={"Increasing claims option"}>Increasing claims option</option>
-                                  <option value={"Superlinked"}>Superlinked</option>
-                                </Field>
                               </td>
                               <td>
                                 <InputGroup>
@@ -382,7 +498,7 @@ const PersonalInsuranceLife = (props) => {
                                       let name = ((values[`lifeInsured${i}`] === undefined) || (values[`lifeInsured${i}`] === null) || (values[`lifeInsured${i}`] === null)) ? RenderName("client")
                                         : values[`lifeInsured${i}`] === "client+partner" ? RenderName("client") + " & " + RenderName("partner") : RenderName(values[`lifeInsured${i}`])
 
-                                      handleInnerModal(name + "_Premiums p.a", `How many Premiums p.a do ${name} have?`, `premiumsDetails`, values, values[`premiumsDetails${i}`], i)
+                                      handleInnerModal(name + "_Premiums p.a", ``, `premiumsDetails`, values, values[`premiumsDetails${i}`], i)
                                     }}>
                                     <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                   </Button>
@@ -431,10 +547,6 @@ const PersonalInsuranceLife = (props) => {
                   </div>
                 )}
               </div>
-
-
-
-
 
             </Form>
           )

@@ -43,7 +43,7 @@ const TowInOneSwitch = (props) => {
         <div className={`col-md-3 mb-4`} key={index}>
             <Card className="py-4 shadow borderOverAll GoalsobjectiveCard" style={{ borderRadius: "20px", height: "100%" }}>
                 <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}</h5>
-                <div className="QuestionIcon w-25">
+                <div className="QuestionIcon CardImg">
                     <img className="img-fluid" src={elem.img} alt="" />
                 </div>
                 {sets[elem.key].map((setsElem, setsIndex) => {

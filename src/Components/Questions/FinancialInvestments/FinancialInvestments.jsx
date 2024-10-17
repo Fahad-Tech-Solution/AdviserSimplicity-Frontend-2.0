@@ -17,7 +17,7 @@ import property from "../svgs/property-value.svg";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { CRState, defaultUrl } from "../../../Store/Store";
 import { GetAxios, openNotificationSuccess, PatchAxios, PostAxios } from '../../Assets/Api/Api';
-import { Image } from 'react-bootstrap';
+
 import DynamicQuestionBlocks from '../../Assets/DynamicQuestionBlocks/DynamicQuestionBlocks';
 
 
@@ -112,17 +112,6 @@ const FinancialInvestments = (props) => {
             img: loan,
             key: "managedFundsLOC",
         },
-        {
-            title: "Investment Loans ",
-            img: certificate,
-            key: "investmentBondFinance",
-        },
-        {
-            title: "Margin Loans",
-            img: analytics,
-            key: "managedFundsMarginLoan",
-        },
-
         // Questions of SMS 
         {
             title: "Superannuation",
@@ -139,13 +128,27 @@ const FinancialInvestments = (props) => {
             img: calender,
             key: "annuitiesIssues",
         },
-
         // One Question of Investment
         {
             title: "Investment Properties",
             img: property,
             key: "investmentPropertyDetails",
         },
+        {
+            title: "Investment Loans",
+            img: certificate,
+            key: "investmentBondFinance",
+        },
+        {
+            title: "Margin Loans",
+            img: analytics,
+            key: "managedFundsMarginLoan",
+        },
+
+        // Questions of SMS 
+
+
+
 
     ]
     const QuestionClick = (index, elem, values, setFieldValue) => {

@@ -462,10 +462,10 @@ const PersonalDetail = () => {
         familyDetails: "Yes", // this one should be yes always
 
 
-        life: "No",
-        TPD: "No",
-        trauma: "No",
-        incomeProtection: "No",
+        life: "Yes",
+        TPD: "Yes",
+        trauma: "Yes",
+        incomeProtection: "Yes",
 
       })
 

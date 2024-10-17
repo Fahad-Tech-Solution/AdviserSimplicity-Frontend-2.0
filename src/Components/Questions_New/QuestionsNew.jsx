@@ -50,13 +50,13 @@ const QuestionsNew = (props) => {
 
   let selectQuestionSet = async (path) => {
     let cLocation = path.replace("/", "");
-    console.log("Question Setting:", cLocation, CRObjectNoUse);
+    // console.log("Question Setting:", cLocation, CRObjectNoUse);
 
 
 
     setQuestionChange(cLocation)
 
-    console.log("QuestionDetails Data condition :", Object.keys(questionDetail).length)
+    // console.log("QuestionDetails Data condition :", Object.keys(questionDetail).length)
 
     if (questionDetail && Object.keys(questionDetail).length <= 0) {
       fetchDataAllInOne();
@@ -224,15 +224,6 @@ const QuestionsNew = (props) => {
 
   }
 
-  // {flagState2 ?
-  //   <div>
-  //     <h4 className="heading text-green d-none" onClick={() => { console.log("object:", CRObject) }}> {obj[QuestionChange].Title} </h4>
-  //     <div className="QuestionIcon p-3 curser-pointer" onClick={() => setFlagState(true)}>
-  //       <img className="img-fluid min-w-25" src={Add} alt="" />
-  //     </div>
-  //   </div> :
-  //   <QuestionCards Question={QuestionChange} />
-  // }
 
   return (
     <div className="container-fluid mb-4 ">
@@ -243,7 +234,21 @@ const QuestionsNew = (props) => {
 
             <div>
               <h4 className="heading text-green d-none" onClick={() => { console.log("object:", CRObject) }}> {obj[QuestionChange].Title} </h4>
-              <div className="QuestionIcon p-3 curser-pointer" onClick={() => setFlagState(true)}>
+              <div className="QuestionIcon p-3 curser-pointer" onClick={() => {
+                setFlagState(true);
+                if (obj[QuestionChange].Title === "Personal Insurance") {
+                  setModalObject({
+                    title: "Personal Insurance",
+                    Input: "Name"
+                  })
+                }
+                else {
+                  setModalObject({
+                    title: "Questions",
+                    Input: "Name"
+                  })
+                }
+              }}>
                 <img className="img-fluid min-w-25" src={Add} alt="" />
               </div>
             </div>

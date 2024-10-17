@@ -1076,20 +1076,20 @@ input[type="checkbox"] + .femaleSmoking + .maleNonSmoking {
 
 @media only screen and (min-width: 1440px) {
   .centerDiv {
-    max-width: 60%;
+    max-width: 33%;
     margin: 0 auto;
     display: block;
     /* border: 2px solid red; */
   }
 
   .inputDesign {
-    max-width: 60%;
+    max-width: 33%;
     margin: 0 auto;
     display: block;
   }
 
   .cardInputGroup {
-    max-width: 60%;
+    max-width: 33%;
     /* border: 2px solid red; */
   }
 
@@ -1344,4 +1344,14 @@ label {
 
 .GoalsobjectiveCard input {
   text-align: center !important;
+}
+
+.modal-90w.modal-dialog {
+  max-width: 95vw !important; /* 90% of the viewport width */
+  margin-left: 2.5% !important;
+}
+
+
+.CardImg{
+  width: 35%;
 }

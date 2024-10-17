@@ -109,19 +109,21 @@ const ModalComponent = (props) => {
         "Family Investment Home",
         "Family Investment Home Loan",
         "Family Investment Home Expanse",
-        "Life Insurance",
+        // "Life Insurance",
         // "Risk Goals"
 
     ]; // Add other titles that should use "xl" here
 
-    const size = xlTitles.includes(props.modalObject.title) ? "xl" : "lg";
+    let fullTitles = ["Life Insurance", "Personal Insurance"]
+
+    const size = fullTitles.includes(props.modalObject.title) ? "xxl" : xlTitles.includes(props.modalObject.title) ? "xl" : "lg";
 
 
 
     return (
         <div>
 
-            <Modal size={size} backdrop="static" keyboard={false} centered show={props.flagState} onHide={() => { props.setFlagState(false) }}>
+            <Modal dialogClassName={size === "xxl" && "modal-90w"} size={size === "xxl" ? "" : size} backdrop="static" keyboard={false} centered show={props.flagState} onHide={() => { props.setFlagState(false) }}>
                 <Element id="modal-container">
                 </Element>
                 <Modal.Header closeButton>

@@ -132,6 +132,7 @@ import TowInOneSwitch from '../AdditionalQueriesPersonalAssets/TowInOneSwitch';
 import OwnFamilyHome from '../AdditionalQueriesPersonalAssets/OwnFamilyHome';
 import MiddleWare from './MiddleWare';
 import SampleOne from '../AdditionalQueriesPersonalAssets/SampleOne';
+import PersonalInsuranceRenderCard from './QuestionsDetail/PersonalInsuranceRenderCard';
 
 const QuestionCards = (props) => {
 
@@ -238,16 +239,6 @@ const QuestionCards = (props) => {
                 key: "investmentBondFinance",
                 img: certificate
             },
-            {
-                title: "Investment Loan",
-                key: "managedFundsLOC",
-                img: loan
-            },
-            {
-                title: "Margin Loan",
-                key: "managedFundsMarginLoan",
-                img: analytics
-            },
             //SuperAndRetirement
             {
                 title: "Super Funds",
@@ -270,6 +261,17 @@ const QuestionCards = (props) => {
                 key: "investmentPropertyDetails",
                 img: property
             },
+            {
+                title: "Investment Loan",
+                key: "managedFundsLOC",
+                img: loan
+            },
+            {
+                title: "Margin Loan",
+                key: "managedFundsMarginLoan",
+                img: analytics
+            },
+
 
         ],
         SuperAndRetirement: [
@@ -491,27 +493,12 @@ const QuestionCards = (props) => {
                 key: "life",
                 img: lifeImg,
             },
-            {
-                title: "TPD",
-                key: "TPD",
-                img: TPDImg,
-            },
-            {
-                title: "Trauma",
-                key: "trauma",
-                img: traumaImg,
-            },
-            {
-                title: "Income Protection",
-                key: "incomeProtection",
-                img: incomeImg,
-            },
         ]
     }
 
     useEffect(() => {
         countYesAttributes();
-
+        // alert("ma chala"+props.Question);
         // fetchData();
     }, [CRObject])
 
@@ -607,6 +594,8 @@ const QuestionCards = (props) => {
     const sampleOne = ["investmentPropertyDetails"];
 
     const reuseModal = ["bankAccountFinance", "termDepositsFinance", "australianShareMarket", "managedFund", "investmentBondFinance", "SMSFTermDeposits", "SMSFAustralianShares", "SMSFManagedFunds", "SMSFInvestmentLoan", "familyBank", "familyTermDeposit", "familyAustralianShare", "familyMangedFunds", "familyInvestmentHomeLoan", "SMSFBank", "superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues", "BusinessAsCompanyStructure", "BusinessAsTrusts"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
+
+    const conditionalRender = ["life", "TPD", "trauma", "incomeProtection"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
     let homeArray = [
         {
@@ -708,10 +697,13 @@ const QuestionCards = (props) => {
         "Family Investment Home Expanse": <FamilyInvestmentHomeExpanse />,
 
         // Personal insurance
-        "Life Insurance": <PersonalInsuranceLife />, //reuseComponent
-        "TPD": <PersonalInsuranceTPD />, //reuseComponent
-        "Trauma": <PersonalInsuranceTrauma />, //reuseComponent
-        "Income Protection": <IncomeProtection />, //reuseComponent
+        "Personal Insurance": <PersonalInsuranceLife />, //reuseComponent
+        // all following modals are know in ^ this one Modal   {
+        // "Life Insurance": <PersonalInsuranceLife />, //reuseComponent
+        // "TPD": <PersonalInsuranceLife />, //reuseComponent
+        // "Trauma": <PersonalInsuranceLife />, //reuseComponent
+        // "Income Protection": <PersonalInsuranceLife />, //reuseComponent
+        // }
 
     };
 
@@ -781,6 +773,7 @@ const QuestionCards = (props) => {
             </ModalComponent>
 
             <div className="row m-0 justify-content-start align-items-stretch">
+
                 {arrayObj[props.Question].map((elem, index) => {
                     if (CRObject[elem.key] === "Yes") {
 
@@ -791,7 +784,8 @@ const QuestionCards = (props) => {
                         const combinedSwitch = combinedArray.includes(elem.key) ? true : false;
                         const TowInSwitch = towInOne.includes(elem.key) ? true : false;
                         const SampleOneSwitch = sampleOne.includes(elem.key) ? true : false;
-
+                        const PersonalInsuranceRender = conditionalRender.includes(elem.key) ? true : false;
+                        // console.log(PersonalInsuranceRender)
                         const SMSFInP = elem.key === "SMSFInvestmentProperties" ? true : false;
                         const FamilyInP = elem.key === "familyInvestmentProperties" ? true : false;
                         const PartnerClass = localStorage.getItem("UserStatus") === "Single" ? "d-none" : "";
@@ -801,7 +795,7 @@ const QuestionCards = (props) => {
                                 <div className={`col-md-3 mb-4`} key={index}>
                                     <Card className="py-4 shadow borderOverAll GoalsobjectiveCard" style={{ borderRadius: "20px", height: "100%" }}>
                                         <h5 className='text-center' onClick={() => { console.log(questionDetail) }}>{elem.title}</h5>
-                                        <div className="QuestionIcon w-25">
+                                        <div className="QuestionIcon CardImg">
                                             <img className="img-fluid" src={elem.img} alt="" />
                                         </div>
                                         <div
@@ -875,12 +869,16 @@ const QuestionCards = (props) => {
                             );
 
                         }
+                        else if (PersonalInsuranceRender) {
+
+                            return (<PersonalInsuranceRenderCard PartnerClass={PartnerClass} index={index} jointClass={jointClass} elem={elem} OpenModal={OpenModal2} homeArray={homeArray} arrayCount={arrayCount} />)
+                        }
                         else if (reuseSwitch) {
                             return (
                                 <div className={`col-md-3 mb-4`} key={index}>
                                     <Card className="py-4 shadow borderOverAll GoalsobjectiveCard" style={{ borderRadius: "20px", height: "100%" }}>
                                         <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}</h5>
-                                        <div className="QuestionIcon w-25">
+                                        <div className="QuestionIcon CardImg">
                                             <img className="img-fluid" src={elem.img} alt="" />
                                         </div>
                                         <div
@@ -930,7 +928,6 @@ const QuestionCards = (props) => {
                                             name={"partner" + elem.key}
                                             value={questionDetail && questionDetail[elem.key]?.partnerTotal ? questionDetail[elem.key].partnerTotal : ""}
                                         />
-
                                     </Card>
                                 </div>
                             );
@@ -950,6 +947,7 @@ const QuestionCards = (props) => {
                         else if (SampleOneSwitch) {
                             return (<SampleOne PartnerClass={PartnerClass} index={index} jointClass={jointClass} elem={elem} OpenModal={OpenModal2} homeArray={homeArray} arrayCount={arrayCount} />);
                         }
+
                         else {
                             // <div className={`col-md-${arrayCount % 2 == 0 ? '6' : '4'} mb-4`} key={index}>
                             // ya hos sukta hai bad ma chnage karna para 
@@ -958,7 +956,7 @@ const QuestionCards = (props) => {
                                 <div className={`col-md-3 mb-4`} key={index}>
                                     <Card className="py-4 shadow borderOverAll GoalsobjectiveCard" style={{ borderRadius: "20px", height: "100%" }}>
                                         <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}</h5>
-                                        <div className="QuestionIcon w-25">
+                                        <div className="QuestionIcon CardImg">
                                             <img className="img-fluid" src={elem.img} alt="" />
                                         </div>
                                         <div
