@@ -146,6 +146,13 @@ const BankTermForm = (props) => {
 
         props.setFieldValue(DataOf + "CurrentBalance", toCommaAndDollar(total));
 
+        props.modalObject.setShowError(prevState => ({
+            ...prevState,
+            [`${DataOf + "CurrentBalance"}Error`]: false,
+            [`${DataOf + "CurrentBalance"}Message`]: "",
+
+        }))
+
         // Reset the flag state if necessary
         if (props.flagState) {
             props.setFlagState(false);

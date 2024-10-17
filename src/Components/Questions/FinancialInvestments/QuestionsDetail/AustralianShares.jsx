@@ -182,6 +182,17 @@ const AustralianShares = (props) => {
         props.setFieldValue(DataOf + "CurrentBalance", toCommaAndDollar(total));
         props.setFieldValue(DataOf + "CostBaseTemp", toCommaAndDollar(totalCostBase));
 
+
+        props.modalObject.setShowError(prevState => ({
+            ...prevState,
+            [`${DataOf + "CurrentBalance"}Error`]: false,
+            [`${DataOf + "CurrentBalance"}Message`]: "",
+            [`${DataOf + "CostBaseTemp"}Error`]: false,
+            [`${DataOf + "CostBaseTemp"}Message`]: "",
+
+        }))
+
+
         console.log(newEntries, "final obj")
 
         // Reset the flag state if necessary

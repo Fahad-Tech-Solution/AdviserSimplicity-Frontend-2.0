@@ -23,6 +23,7 @@ const MiddleWare = (props) => {
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
 
+    let [ShowError, setShowError] = useState({});
 
     let switchArray = ["Australian Shares", "Managed Funds", "Investment Bond"]
 
@@ -49,16 +50,28 @@ const MiddleWare = (props) => {
 
     const fillInitialValues = (setFieldValue) => {
         console.log(questionDetail[props.modalObject.key], props.modalObject.key, props.modalObject.title);
-        
+
         if (BankAccountFinance.clientFK && BankAccountFinance._id) {
 
             setFieldValue("client", BankAccountFinance.client)
             setFieldValue("clientCurrentBalance", BankAccountFinance.clientCurrentBalance)
 
+            let obj = {
+                name: "clientCurrentBalance",
+                value: BankAccountFinance.clientCurrentBalance
+            }
+
+            checkValues(BankAccountFinance, setFieldValue, obj, "");
+
             if (props.modalObject.title != "Australian Shares") {
                 if (attrebuteSet) {
                     let totalCostBase = BankAccountFinance.client.reduce((total, entry) => total + parseFloat((entry.totalPortfolioCost).replace(/[^0-9.-]+/g, "")), 0);
                     setFieldValue("clientCostBaseTemp", toCommaAndDollar(totalCostBase))
+                    let obj = {
+                        name: "clientCostBaseTemp",
+                        value: BankAccountFinance.clientCostBaseTemp
+                    }
+                    checkValues(BankAccountFinance, setFieldValue, obj, "");
                 }
             }
             else {
@@ -66,14 +79,28 @@ const MiddleWare = (props) => {
                 setFieldValue("clientCostBaseTemp", toCommaAndDollar(totalCostBase))
             }
 
-
             if (localStorage.getItem('UserStatus') === "Married") {
 
                 setFieldValue("partner", BankAccountFinance.partner)
                 setFieldValue("joint", BankAccountFinance.joint)
 
+
                 setFieldValue("partnerCurrentBalance", BankAccountFinance.partnerCurrentBalance)
                 setFieldValue("jointCurrentBalance", BankAccountFinance.jointCurrentBalance)
+
+                let obj = {
+                    name: "partnerCurrentBalance",
+                    value: BankAccountFinance.partnerCurrentBalance
+                }
+
+                checkValues(BankAccountFinance, setFieldValue, obj, "");
+
+                obj = {
+                    name: "jointCurrentBalance",
+                    value: BankAccountFinance.jointCurrentBalance
+                }
+
+                checkValues(BankAccountFinance, setFieldValue, obj, "");
 
                 if (props.modalObject.title != "Australian Shares") {
                     if (attrebuteSet) {
@@ -190,6 +217,93 @@ const MiddleWare = (props) => {
     };
 
 
+    let checkValues = async (values, setFieldValue, currentInput, stakeHolder) => {
+        console.log(values, setFieldValue, currentInput, stakeHolder);
+
+        let client = values.client || [];
+        // let clientCurrentBalance = values.clientCurrentBalance || "";
+
+        let partner = values.partner || [];
+        // let partnerCurrentBalance = values.partnerCurrentBalance || "";
+
+        let joint = values.joint || [];
+        // let jointCurrentBalance = values.jointCurrentBalance || "";
+
+        let CheckState = "";
+        let ExpectedTotal = "";
+        let fromWith = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, ""));
+
+        switch (currentInput.name) {
+            case "clientCurrentBalance":
+                CheckState = "client"
+                ExpectedTotal = await CheckExpectedTotal(props.modalObject.title, client, currentInput.name, CheckState)
+                break;
+
+            case "partnerCurrentBalance":
+                CheckState = "partner"
+                ExpectedTotal = await CheckExpectedTotal(props.modalObject.title, partner, currentInput.name, CheckState)
+                break;
+
+            case "jointCurrentBalance":
+                CheckState = "joint"
+                ExpectedTotal = await CheckExpectedTotal(props.modalObject.title, joint, currentInput.name, CheckState)
+                break;
+            case "clientCostBaseTemp":
+                CheckState = "client"
+                ExpectedTotal = await CheckExpectedTotal(props.modalObject.title, joint, currentInput.name, CheckState)
+                break;
+
+            case "partnerCostBaseTemp":
+                CheckState = "partner"
+                ExpectedTotal = await CheckExpectedTotal(props.modalObject.title, partner, currentInput.name, CheckState)
+                break;
+
+            case "jointCostBaseTemp":
+                CheckState = "joint"
+                ExpectedTotal = await CheckExpectedTotal(props.modalObject.title, joint, currentInput.name, CheckState)
+                break;
+            default:
+                break;
+        }
+
+        console.log(ExpectedTotal, fromWith);
+        if (ExpectedTotal !== fromWith) {
+            setShowError(prevState => ({
+                ...prevState,
+                [`${currentInput.name}Error`]: true,
+                [`${currentInput.name}Message`]: "Total must me equal to sum of all current balance filled in the popup the sum is " + toCommaAndDollar(ExpectedTotal),
+            }));
+        }
+        else {
+            setShowError(prevState => ({
+                ...prevState,
+                [`${currentInput.name}Error`]: false,
+                [`${currentInput.name}Message`]: "",
+            }));
+        }
+
+    }
+    let CheckExpectedTotal = (ModalTitle, thisArray, currentInput, CheckState) => {
+
+        if (thisArray.length > 0) {
+            switch (ModalTitle) {
+                case "Bank Accounts":
+                case "Term Deposits":
+                    return (thisArray.reduce((total, entry) => total + parseFloat((entry.currentBalance).replace(/[^0-9.-]+/g, "")), 0))
+                    break;
+                case "Australian Shares":
+                    if (currentInput.name === `${CheckState}CurrentBalance`) {
+                        return (thisArray.reduce((total, entry) => total + parseFloat((entry.currentBalance).replace(/[^0-9.-]+/g, "")), 0))
+                    }
+                    else {
+                        return (thisArray.reduce((total, entry) => total + parseFloat((entry.costBase).replace(/[^0-9.-]+/g, "")), 0))
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
 
 
@@ -200,12 +314,16 @@ const MiddleWare = (props) => {
                 name: 'clientCurrentBalance',
                 type: 'number-toComma-Modal',
                 placeholder: 'Current Balance',
+                extraClass: ShowError.clientCurrentBalanceError ? "is-invalid" : "",
+                invalidMessage: ShowError.clientCurrentBalanceError ? ShowError.clientCurrentBalanceMessage : "",
+                callBack: true,
+                inputChangeFunc: checkValues,
                 callBackModal: true,
                 func: OpenInnerModal,
                 key: "client",
                 innerModalTitle: props.modalObject.title + " Detail"
             },
-            { name: 'clientCostBaseTemp', type: 'number-toComma', disabled: true, placeholder: 'Cost Base', styleSet: { width: "25%" }, },
+            { name: 'clientCostBaseTemp', type: 'number-toComma', placeholder: 'Cost Base', styleSet: { width: "25%" }, },
         ]
         : [
             { type: "plainText", text: "client", styleSet: { width: "50%" }, },
@@ -213,8 +331,12 @@ const MiddleWare = (props) => {
                 name: 'clientCurrentBalance',
                 type: 'number-toComma-Modal',
                 placeholder: 'Current Balance',
+                extraClass: ShowError.clientCurrentBalanceError ? "is-invalid" : "",
+                invalidMessage: ShowError.clientCurrentBalanceError ? ShowError.clientCurrentBalanceMessage : "",
                 callBackModal: true,
                 func: OpenInnerModal,
+                callBack: true,
+                inputChangeFunc: checkValues,
                 key: "client",
                 innerModalTitle: props.modalObject.title + " Detail"
             },
@@ -227,12 +349,16 @@ const MiddleWare = (props) => {
                 name: 'partnerCurrentBalance',
                 type: 'number-toComma-Modal',
                 placeholder: 'Current Balance',
+                extraClass: ShowError.partnerCurrentBalanceError ? "is-invalid" : "",
+                invalidMessage: ShowError.partnerCurrentBalanceError ? ShowError.partnerCurrentBalanceMessage : "",
+                callBack: true,
+                inputChangeFunc: checkValues,
                 callBackModal: true,
                 func: OpenInnerModal,
                 key: "partner",
                 innerModalTitle: props.modalObject.title + " Detail"
             },
-            { name: 'partnerCostBaseTemp', type: 'number-toComma', disabled: true, placeholder: 'Cost Base', styleSet: { width: "25%" }, },
+            { name: 'partnerCostBaseTemp', type: 'number-toComma', placeholder: 'Cost Base', styleSet: { width: "25%" }, },
         ]
         : [
             { type: "plainText", text: "partner", styleSet: { width: "50%" }, },
@@ -242,6 +368,10 @@ const MiddleWare = (props) => {
                 placeholder: 'Current Balance',
                 callBackModal: true,
                 func: OpenInnerModal,
+                extraClass: ShowError.partnerCurrentBalanceError ? "is-invalid" : "",
+                invalidMessage: ShowError.partnerCurrentBalanceError ? ShowError.partnerCurrentBalanceMessage : "",
+                callBack: true,
+                inputChangeFunc: checkValues,
                 key: "partner",
                 innerModalTitle: props.modalObject.title + " Detail"
             },
@@ -256,10 +386,14 @@ const MiddleWare = (props) => {
                 placeholder: 'Current Balance',
                 callBackModal: true,
                 func: OpenInnerModal,
+                extraClass: ShowError.jointCurrentBalanceError ? "is-invalid" : "",
+                invalidMessage: ShowError.jointCurrentBalanceError ? ShowError.jointCurrentBalanceMessage : "",
+                callBack: true,
+                inputChangeFunc: checkValues,
                 key: "joint",
                 innerModalTitle: props.modalObject.title + " Detail"
             },
-            { name: 'jointCostBaseTemp', type: 'number-toComma', disabled: true, placeholder: 'Cost Base', styleSet: { width: "25%" }, },
+            { name: 'jointCostBaseTemp', type: 'number-toComma', placeholder: 'Cost Base', styleSet: { width: "25%" }, },
         ]
         : [
             { type: "plainText", text: "joint", styleSet: { width: "50%" }, },
@@ -269,6 +403,10 @@ const MiddleWare = (props) => {
                 placeholder: 'Current Balance',
                 callBackModal: true,
                 func: OpenInnerModal,
+                extraClass: ShowError.jointCurrentBalanceError ? "is-invalid" : "",
+                invalidMessage: ShowError.jointCurrentBalanceError ? ShowError.jointCurrentBalanceMessage : "",
+                callBack: true,
+                inputChangeFunc: checkValues,
                 key: "joint",
                 innerModalTitle: props.modalObject.title + " Detail"
             },
@@ -280,7 +418,9 @@ const MiddleWare = (props) => {
             title,
             Input: key,
             key: props.modalObject.key,
-            values
+            values,
+            ShowError,
+            setShowError,
         });
         setFlagState(true);
     }
@@ -316,7 +456,7 @@ const MiddleWare = (props) => {
 
                 useEffect(() => {
                     fillInitialValues(setFieldValue);
-                }, [values.NumberOfMap]);
+                }, []);
 
                 return (
                     <Form>
