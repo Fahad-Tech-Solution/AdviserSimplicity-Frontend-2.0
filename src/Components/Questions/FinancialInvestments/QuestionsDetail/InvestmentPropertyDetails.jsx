@@ -241,19 +241,20 @@ const InvestmentPropertyDetails = (props) => {
                         <Row>
                             <div className="col-md-12">
                                 <div className='row justify-content-center'>
-                                    <div className='col-md-5'>
-                                        <p className='text-end mt-1'>
+                                    <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                        <p className='text-end mt-3'>
                                             How many {props.modalObject.title} does {nameSet} have:
                                         </p>
-                                    </div>
-                                    <div className='col-md-2'>
-                                        <Field
-                                            type="number"
-                                            id="NumberOfMap"
-                                            name="NumberOfMap"
-                                            className="form-control inputDesignDoubleInput"
-                                            onChange={(e) => handleInput(e, setFieldValue)}
-                                        />
+
+                                        <div style={{ width: "8%" }}>
+                                            <Field
+                                                type="number"
+                                                id="NumberOfMap"
+                                                name="NumberOfMap"
+                                                className="form-control inputDesignDoubleInput"
+                                                onChange={(e) => handleInput(e, setFieldValue)}
+                                            />
+                                        </div>
                                     </div>
 
 
@@ -355,6 +356,7 @@ const InvestmentPropertyDetails = (props) => {
                                                                             id={`propertyLoanBalance${i}`}
                                                                             name={`propertyLoanBalance${i}`}
                                                                             className="form-control inputDesignDoubleInput"
+                                                                            disabled
                                                                             onChange={(e) => {
                                                                                 setFieldValue(e.target.name,
                                                                                     toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
@@ -393,6 +395,7 @@ const InvestmentPropertyDetails = (props) => {
                                                                             id={`expenses${i}`}
                                                                             name={`expenses${i}`}
                                                                             className="form-control inputDesignDoubleInput"
+                                                                            disabled
                                                                             onChange={(e) => {
                                                                                 setFieldValue(e.target.name,
                                                                                     toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));

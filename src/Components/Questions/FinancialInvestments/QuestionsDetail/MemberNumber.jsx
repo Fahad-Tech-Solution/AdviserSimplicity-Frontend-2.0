@@ -1,14 +1,32 @@
 import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
-import { Row, Table } from 'react-bootstrap';
+import { Button, InputGroup, Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { BankDetail, defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { PatchAxios, PostAxios, toCommaAndDollar } from '../../../Assets/Api/Api';
+import { PatchAxios, PostAxios, RenderName, toCommaAndDollar } from '../../../Assets/Api/Api';
 import DatePicker from 'react-datepicker';
 import { SimpleSelectField } from './CreatableMultiSelectField';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
+import InnerModal from './InnerModal';
+import PortfolioValue from './PortfolioValue';
 
 const MemberNumber = (props) => {
 
+    let [flagState, setFlagState] = useState(false);
+    let [modalObject, setModalObject] = useState({});
+
+    const [title, setTitle] = useState(() => {
+        // let head = props.modalObject.title;
+        let currentTitle = props.modalObject.title;
+
+        // Check if the title contains an underscore
+        if (currentTitle.includes('_')) {
+            currentTitle = (currentTitle.split('_'))[0];
+        }
+
+        return currentTitle
+    });
 
     let initialValues = { NumberOfMap: 1 };
 
@@ -33,6 +51,7 @@ const MemberNumber = (props) => {
                     console.log(data.investmentOption)
                     setFieldValue(`fundType${i}`, data.fundType || '');
                     setFieldValue(`portfolioValue${i}`, data.portfolioValue || '');
+                    setFieldValue(`portfolioArray${i}`, data.portfolioArray || '');
                     setFieldValue(`eligibleServiceDate${i}`, data.eligibleServiceDate || '');
                     setFieldValue(`commencementDate${i}`, data.commencementDate || '');
                     setFieldValue(`taxFreeComponent${i}`, data.taxFreeComponent || '');
@@ -77,6 +96,7 @@ const MemberNumber = (props) => {
             const newEntry = {
                 fundType: values[`fundType${i}`] || "",
                 portfolioValue: values[`portfolioValue${i}`] || "",
+                portfolioArray: values[`portfolioArray${i}`] || "",
                 eligibleServiceDate: values[`eligibleServiceDate${i}`] || "",
                 commencementDate: values[`commencementDate${i}`] || "",
                 taxFreeComponent: values[`taxFreeComponent${i}`] || "",
@@ -107,32 +127,28 @@ const MemberNumber = (props) => {
 
 
 
-    const generateOptions = (bankDetailObj, platformName) => {
-        const InstituteOptions = [];
-
-        if (Array.isArray(bankDetailObj) && bankDetailObj.length > 0) {
-            bankDetailObj.forEach((elem) => {
-                // Check if the platform name matches
-                if (platformName === elem._id) {
-                    // Add the main option for the element
-                    // InstituteOptions.push({ value: elem._id, label: `${elem.name} (${elem.arrayOfOffers.length} offers)` });
-
-                    // Add InstituteOptions from arrayOfOffers if available
-                    if (Array.isArray(elem.arrayOfOffers) && elem.arrayOfOffers.length > 0) {
-                        elem.arrayOfOffers.forEach((offerElem) => {
-                            InstituteOptions.push({ value: offerElem._id, label: `${offerElem.investmentName} (${offerElem.investmentCode})` });
-                        });
-                    }
-                }
-            });
-        }
+    let optionFundType = [
+        { value: "Accumulation", label: "Accumulation" },
+        { value: "Defined Benefit", label: "Defined Benefit" },
+    ]
 
 
-        // console.log(InstituteOptions, bankDetailObj, platformName, "data")
-
-        return InstituteOptions;
-    };
-
+    let handleInnerModal = (title, question, key, mainKey, key3, editArray, index, values) => {
+        console.log(values);
+        let ParentModal = props.modalObject.title
+        setModalObject({
+            title,
+            question,
+            key,
+            mainKey,
+            key3,
+            editArray: editArray || [],
+            index,
+            values,
+            ParentModal
+        })
+        setFlagState(true);
+    }
 
     return (
         <Formik
@@ -149,6 +165,13 @@ const MemberNumber = (props) => {
                 return (
                     <Form>
                         <Row>
+
+                            <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} >
+                                {
+                                    modalObject.key === "portfolioArray" ? <PortfolioValue /> : ""
+                                }
+                            </InnerModal>
+
                             <div className="col-md-12">
                                 <div className='row justify-content-center'>
                                     <div className='col-md-7 d-none'>
@@ -187,29 +210,41 @@ const MemberNumber = (props) => {
                                                         return (
                                                             <tr key={i}>
                                                                 <td>{1 + i}</td>
-                                                                <td style={{ minWidth: "150px" }}>
+                                                                <td style={{ minWidth: "15rem" }}>
                                                                     <Field
                                                                         name={`fundType${i}`}
                                                                         component={SimpleSelectField}
                                                                         label="Multi Select Field"
-                                                                        options={generateOptions(bankDetailObj, props.modalObject.values[`fundName${props.modalObject.index}`])}
+                                                                        options={optionFundType}
                                                                         onChange={(selectedOption) => { setFieldValue(`investmentOption${i}`, selectedOption.value) }}
                                                                     />
                                                                 </td>
-                                                                <td>
-                                                                    <Field
-                                                                        style={{ minWidth: "90px" }}
-                                                                        type="text"
-                                                                        placeholder="Portfolio Value"
-                                                                        id={`portfolioValue${i}`}
-                                                                        name={`portfolioValue${i}`}
-                                                                        className="form-control inputDesignDoubleInput"
-                                                                        onChange={(e) => {
+                                                                <td style={{ minWidth: "8rem" }}>
+                                                                    <InputGroup className="mb-3">
+                                                                        <Field
+                                                                            type="text"
+                                                                            placeholder="Portfolio Value"
+                                                                            id={`portfolioValue${i}`}
+                                                                            name={`portfolioValue${i}`}
+                                                                            className="form-control inputDesignDoubleInput"
+                                                                            onChange={(e) => {
 
-                                                                            setFieldValue(`portfolioValue${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                                                            setFieldValue(`taxableComponent${i}`, toCommaAndDollar(parseFloat(e.target.value.replace(/[^0-9.-]+/g, "") || 0) - (parseFloat(values[`taxFreeComponent${i}`].replace(/[^0-9.-]+/g, "")) || 0)));
-                                                                        }}
-                                                                    />
+                                                                                setFieldValue(`portfolioValue${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                                setFieldValue(`taxableComponent${i}`, toCommaAndDollar(parseFloat(e.target.value.replace(/[^0-9.-]+/g, "") || 0) - (parseFloat(values[`taxFreeComponent${i}`].replace(/[^0-9.-]+/g, "")) || 0)));
+
+                                                                            }}
+                                                                        />
+                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
+
+                                                                            handleInnerModal(title + "_Portfolio Value",
+                                                                                `How many Portfolios do ${title} have ?`,
+                                                                                "portfolioArray", "portfolioValue", "",
+                                                                                values[`portfolioArray${i}`], i, values)
+
+                                                                        }}>
+                                                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                                        </Button>
+                                                                    </InputGroup>
                                                                 </td>
                                                                 <td style={{ minWidth: "150px" }}>
                                                                     <div>

@@ -2,7 +2,7 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { PatchAxios, PostAxios, RenderName, toCommaAndDollar } from "../../Assets/Api/Api";
+import { openNotificationSuccess, PatchAxios, PostAxios, RenderName, toCommaAndDollar } from "../../Assets/Api/Api";
 import { Button, InputGroup, Modal, Table } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -71,15 +71,19 @@ const PersonalInsuranceLife = (props) => {
 
 
   let onSubmit = async (values) => {
-    console.log(JSON.stringify(values), "Console Values");
+    // console.log(JSON.stringify(values), "Console Values");
 
-    const newEntries = [];
+    let newEntries = [];
 
     let loopLength = parseFloat(values.NumberOfMap)
 
+    // alert(loopLength)
+
     // Iterate through each map entry and create a new object
     for (let i = 0; i < loopLength; i++) {
-      const newEntry = {
+      let newEntry = {};
+
+      newEntry = {
         lifeInsured: values[`lifeInsured${i}`] || "",
         provider: values[`provider${i}`] || "",
         policyNo: values[`policyNo${i}`] || "",
@@ -94,12 +98,15 @@ const PersonalInsuranceLife = (props) => {
         beneficiary: values[`beneficiary${i}`] || "",
         beneficiariesArray: values[`beneficiariesArray${i}`] || "",
       };
+      // console.log(newEntry, "Console newEntry");
+      // console.log(newEntries, "before Push");
       newEntries.push(newEntry);
+      // console.log(newEntries, "after Push");
+
     }
 
-    console.log(newEntries, "Console newEntries");
+    // console.log(newEntries, "Console newEntries");
 
-    // return false;
 
     let Obj = {};
     Obj.PersonalInsurance = newEntries;
@@ -112,20 +119,20 @@ const PersonalInsuranceLife = (props) => {
     let bothArray = [];
 
     newEntries.forEach(entry => {
-      if (entry.lifeInsured = "client") {
+      if (entry.lifeInsured === "client") {
         clientArray.push(entry);
       }
-      if (entry.lifeInsured = "partner") {
+      if (entry.lifeInsured === "partner") {
         partnerArray.push(entry);
       }
-      if (entry.lifeInsured = "client+partner") {
+      if (entry.lifeInsured === "client+partner") {
         bothArray.push(entry);
       }
     });
 
-    console.log("Client Array:", clientArray);
-    console.log("Partner Array:", partnerArray);
-    console.log("both Array:", bothArray);
+    // console.log("Client Array:", clientArray);
+    // console.log("Partner Array:", partnerArray);
+    // console.log("both Array:", bothArray);
 
     let obj = {
       "clientLifeInsuranceTotal": 0,
@@ -216,7 +223,7 @@ const PersonalInsuranceLife = (props) => {
       })
     });
 
-    console.log(obj, "Submit ka console Form k ");
+    // console.log(obj, "Submit ka console Form k ");
 
     Obj.clientLifeInsuranceTotal = toCommaAndDollar(obj.clientLifeInsuranceTotal);
     Obj.clientTPDTotal = toCommaAndDollar(obj.clientTPDTotal);
@@ -230,7 +237,6 @@ const PersonalInsuranceLife = (props) => {
 
     const bankAccountArray = personalInsurance.clientFK || "";  // No need to default to empty string
     console.log(JSON.stringify(Obj), bankAccountArray);
-
 
     try {
       let res;
@@ -246,6 +252,7 @@ const PersonalInsuranceLife = (props) => {
         setQuestionDetail(updatedData);
       }
 
+      openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
       // Reset the flag state if necessary
       if (props.flagState) {
         props.setFlagState(false);
@@ -253,6 +260,7 @@ const PersonalInsuranceLife = (props) => {
 
     } catch (error) {
       console.error("Error occurred while making API call:", error);
+      openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
     }
   };
 

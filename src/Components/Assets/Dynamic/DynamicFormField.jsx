@@ -92,23 +92,28 @@ const DynamicFormField = ({
 
     case "number-toComma":
       return (
-        <Field
-          type="text"
-          placeholder={placeholder}
-          name={stakeHolder ? stakeHolder + name : name}
-          id={name}
-          className="form-control inputDesignDoubleInput"
-          onChange={(e) => {
-            const value = e.target.value.replace(/[^0-9.-]+/g, "");
-            setFieldValue(stakeHolder ? stakeHolder + name : name, toCommaAndDollar(value));
+        <React.Fragment>
+          <Field
+            type="text"
+            placeholder={placeholder}
+            name={stakeHolder ? stakeHolder + name : name}
+            id={name}
+            className={`form-control inputDesignDoubleInput ${all.extraClass}`}
+            onChange={(e) => {
+              const value = e.target.value.replace(/[^0-9.-]+/g, "");
+              setFieldValue(stakeHolder ? stakeHolder + name : name, toCommaAndDollar(value));
 
-            if (all.callBack) {
-              all.func(values, setFieldValue, e.target, stakeHolder);
-            }
+              if (all.callBack) {
+                all.func(values, setFieldValue, e.target, stakeHolder);
+              }
 
-          }}
-          disabled={all?.disabled ? all.disabled : false}
-        />
+            }}
+            disabled={all?.disabled ? all.disabled : false}
+          />
+          <div class="invalid-feedback">
+            {all.invalidMessage}
+          </div>
+        </React.Fragment>
       );
 
     case "number-toComma-Modal":
@@ -145,7 +150,6 @@ const DynamicFormField = ({
           </div>
         </React.Fragment>
       );
-
 
     case "date":
       return (
@@ -188,6 +192,48 @@ const DynamicFormField = ({
           disabled={all?.disabled ? all.disabled : false} // Disable input based on props
         />
 
+      );
+
+    case "number-toComma-and-MultiSelect":
+      return (
+
+        <React.Fragment>
+          <InputGroup className="mb-3">
+            <Field
+              type="text"
+              placeholder={placeholder}
+              name={stakeHolder ? stakeHolder + name : name}
+              id={name}
+              className={`form-control inputDesignDoubleInput ${all.extraClass}`}
+              onChange={(e) => {
+                const value = e.target.value.replace(/[^0-9.-]+/g, "");
+                setFieldValue(stakeHolder ? stakeHolder + name : name, toCommaAndDollar(value));
+
+                if (all.callBack) {
+                  all.func(values, setFieldValue, e.target, stakeHolder);
+                }
+              }}
+              disabled={all?.disabled ? all.disabled : false}
+            />
+
+            <Field
+              as="select"
+              placeholder={all.placeholder2}
+              id={all.name2}
+              name={stakeHolder ? stakeHolder + all.name2 : all.name2}
+              className="form-select inputDesignDoubleInput customInputGroupSelect"
+            >
+              <option value={""}>Select</option>
+              <option value={52}>Weekly</option>
+              <option value={12}>Monthly</option>
+              <option value={1}>Year</option>
+            </Field>
+
+          </InputGroup>
+          <div class="invalid-feedback">
+            {all.invalidMessage}
+          </div>
+        </React.Fragment>
       );
 
     case "select":

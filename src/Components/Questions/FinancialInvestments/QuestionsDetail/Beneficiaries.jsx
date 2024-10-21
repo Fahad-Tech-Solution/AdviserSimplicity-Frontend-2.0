@@ -14,6 +14,18 @@ const Beneficiaries = (props) => {
 
     const [dynamicFields, setDynamicFields] = useState([]);
 
+    const [title, setTitle] = useState(() => {
+        // let head = props.modalObject.title;
+        let currentTitle = props.modalObject.ParentModal;
+        // Check if the title contains an underscore
+        if (currentTitle.includes('_')) {
+            currentTitle = (currentTitle.split('_'))[1];
+        }
+        // alert(currentTitle)
+
+        return currentTitle
+    });
+
     const fillInitialValues = (setFieldValue, loopValue) => {
         console.log(props)
 
@@ -92,7 +104,7 @@ const Beneficiaries = (props) => {
     };
 
 
-    let extraValue = ["Account Based Pension", "Invested in Annuities"]
+    let extraValue = ["Account Based Pension Detail", "Annuities Detail"]
 
     let [autoClearValue, setAutoClearValue] = useState(false);
 
@@ -118,20 +130,22 @@ const Beneficiaries = (props) => {
                         <Row>
                             <div className="col-md-12">
                                 <div className='row justify-content-center'>
-                                    <div className='col-md-7'>
-                                        <p className='text-end mt-1'>
+                                    <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                        <p className='text-end mt-3'>
                                             {props.modalObject.question}
                                         </p>
+
+                                        <div style={{ width: "8%" }}>
+                                            <Field
+                                                type="number"
+                                                id="NumberOfMap"
+                                                name="NumberOfMap"
+                                                className="form-control inputDesignDoubleInput"
+                                                onChange={(e) => handleInput(e, setFieldValue)}
+                                            />
+                                        </div>
                                     </div>
-                                    <div className='col-md-3'>
-                                        <Field
-                                            type="number"
-                                            id="NumberOfMap"
-                                            name="NumberOfMap"
-                                            className="form-control inputDesignDoubleInput"
-                                            onChange={(e) => handleInput(e, setFieldValue)}
-                                        />
-                                    </div>
+
                                     {values.NumberOfMap && (
                                         <div className='mt-4'>
                                             <Table striped bordered responsive hover>
@@ -159,11 +173,22 @@ const Beneficiaries = (props) => {
                                                                         className="form-select inputDesignDoubleInput"
                                                                         onChange={(e) => {
                                                                             setFieldValue(`nominationType${i}`, e.target.value);
-                                                                            if (e.target.value === "Legal Personal Representative (Your Estate)") {
+                                                                            if ((e.target.value === "Legal Personal Representative (Your Estate)")) {
+                                                                                // Loop through all entries once and set values for all applicable fields
+
+                                                                                for (let innerIndex = 0; innerIndex < values.NumberOfMap; innerIndex++) {
+                                                                                    setFieldValue(`nominationType${innerIndex}`, e.target.value);
+                                                                                    setFieldValue(`beneficiaryName${innerIndex}`, "N/A");
+                                                                                    setFieldValue(`relationshipStatus${innerIndex}`, "N/A");
+                                                                                    setFieldValue(`shareBenefit${innerIndex}`, "100.00%");
+                                                                                    setAutoClearValue(true);
+                                                                                }
+
+                                                                            }
+                                                                            else if (e.target.value === "Reversionary Beneficiary") {
                                                                                 setFieldValue(`beneficiaryName${i}`, "N/A");
                                                                                 setFieldValue(`relationshipStatus${i}`, "N/A");
                                                                                 setFieldValue(`shareBenefit${i}`, "100.00%");
-                                                                                setAutoClearValue(true);
                                                                             }
                                                                             else {
                                                                                 if (autoClearValue) {
@@ -176,8 +201,8 @@ const Beneficiaries = (props) => {
                                                                         }}
                                                                     >
                                                                         <option value={""}>Select</option>
-
-                                                                        {extraValue.includes(props.modalObject.ParentModal) &&
+                                                                        {title}
+                                                                        {extraValue.includes(title) &&
                                                                             <option value={"Reversionary Beneficiary"}>Reversionary Beneficiary</option>
                                                                         }
 
@@ -203,7 +228,7 @@ const Beneficiaries = (props) => {
                                                                             showYearDropdown
                                                                             dropdownMode="select"
                                                                             onBlur={handleBlur}
-                                                                            disabled={values[`nominationType${i}`] == "Legal Personal Representative (Your Estate)"}
+                                                                            disabled={values[`nominationType${i}`] == "Legal Personal Representative (Your Estate)" || values[`nominationType${i}`] == "Reversionary Beneficiary"}
                                                                             wrapperClassName="w-100"
                                                                         />
                                                                     </div>
@@ -215,7 +240,7 @@ const Beneficiaries = (props) => {
                                                                         id={`beneficiaryName${i}`}
                                                                         name={`beneficiaryName${i}`}
                                                                         className="form-control inputDesignDoubleInput"
-                                                                        disabled={values[`nominationType${i}`] == "Legal Personal Representative (Your Estate)"}
+                                                                        disabled={values[`nominationType${i}`] == "Legal Personal Representative (Your Estate)" || values[`nominationType${i}`] == "Reversionary Beneficiary"}
                                                                     />
                                                                 </td>
                                                                 <td>
@@ -226,18 +251,20 @@ const Beneficiaries = (props) => {
                                                                         className="form-select inputDesignDoubleInput"
                                                                     >
                                                                         <option value={""}>Select</option>
-                                                                        {values[`nominationType${i}`] === "Legal Personal Representative (Your Estate)" &&
+                                                                        {
+                                                                            (values[`nominationType${i}`] === "Legal Personal Representative (Your Estate)" ||
+                                                                                values[`nominationType${i}`] === "Reversionary Beneficiary") ? (
+                                                                                <option value={"N/A"}>N/A</option>
+                                                                            ) : (
+                                                                                <React.Fragment>
+                                                                                    <option value={"Spouse/De-facto"}>Spouse/De-facto</option>
+                                                                                    <option value={"Child"}>Child</option>
+                                                                                    <option value={"Financial Dependant"}>Financial Dependant</option>
+                                                                                    <option value={"Interdependant"}>Interdependant</option>
+                                                                                </React.Fragment>
+                                                                            )
+                                                                        }
 
-                                                                            <option value={"N/A"}>N/A</option>
-                                                                        }
-                                                                        {values[`nominationType${i}`] !== "Legal Personal Representative (Your Estate)" &&
-                                                                            <React.Fragment>
-                                                                                <option value={"Spouse/De-facto"}>Spouse/De-facto</option>
-                                                                                <option value={"Child"}>Child</option>
-                                                                                <option value={"Financial Dependant "}>Financial Dependant </option>
-                                                                                <option value={"Interdependant "}>Interdependant </option>
-                                                                            </React.Fragment>
-                                                                        }
                                                                     </Field>
                                                                 </td>
                                                                 <td>
@@ -247,7 +274,7 @@ const Beneficiaries = (props) => {
                                                                         id={`shareBenefit${i}`}
                                                                         name={`shareBenefit${i}`}
                                                                         className="form-control inputDesignDoubleInput"
-                                                                        disabled={values[`nominationType${i}`] == "Legal Personal Representative (Your Estate)"}
+                                                                        disabled={(values[`nominationType${i}`] == "Legal Personal Representative (Your Estate)") || (values[`nominationType${i}`] == "Reversionary Beneficiary")}
                                                                         onChange={(e) => handleInputChange(e, setFieldValue, FormulaSetting, values)}
                                                                         onFocus={(e) => handleInputFocus(e, setFieldValue)}
                                                                         onKeyDown={(e) => handleInputKeyDown(e)}
@@ -271,7 +298,7 @@ const Beneficiaries = (props) => {
                     </Form>
                 );
             }}
-        </Formik>
+        </Formik >
     );
 };
 

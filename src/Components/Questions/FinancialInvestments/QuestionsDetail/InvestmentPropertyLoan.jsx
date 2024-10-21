@@ -24,7 +24,7 @@ const InvestmentPropertyLoan = (props) => {
     })
 
 
-    let initialValues = props.modalObject.editArray.length ? { NumberOfMap: props.modalObject.editArray.length } : { NumberOfMap: "" };
+    let initialValues = { NumberOfMap: "1" };
     const [dynamicFields, setDynamicFields] = useState([]);
 
 
@@ -216,19 +216,19 @@ const InvestmentPropertyLoan = (props) => {
             {({ values, setFieldValue }) => {
                 useEffect(() => {
                     fillInitialValues(setFieldValue);
-                }, [values.NumberOfMap]);
+                }, []);
 
                 return (
                     <Form>
                         <Row>
                             <div className="col-md-12">
                                 <div className='row justify-content-center'>
-                                    <div className='col-md-5'>
+                                    <div className='col-md-5 d-none'>
                                         <p className='text-end mt-1'>
                                             How many {props.modalObject.title} does {nameSet} have:
                                         </p>
                                     </div>
-                                    <div className='col-md-2'>
+                                    <div className='col-md-2 d-none'>
                                         <Field
                                             type="number"
                                             id="NumberOfMap"

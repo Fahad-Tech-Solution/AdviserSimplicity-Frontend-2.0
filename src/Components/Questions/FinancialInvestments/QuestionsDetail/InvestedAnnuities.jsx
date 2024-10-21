@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, InputGroup, Row, Table } from 'react-bootstrap';
 import { useRecoilValue } from 'recoil';
 import { BankDetail, defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { openNotificationSuccess, toCommaAndDollar } from '../../../Assets/Api/Api';
+import { openNotificationSuccess, RenderName, toCommaAndDollar } from '../../../Assets/Api/Api';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
@@ -163,12 +163,24 @@ const InvestedAnnuities = (props) => {
 
         props.setFieldValue(DataOf + "CurrentBalance", toCommaAndDollar(total));
 
+
+        props.modalObject.setShowError(prevState => ({
+            ...prevState,
+            [`${DataOf + "CurrentBalance"}Error`]: false,
+            [`${DataOf + "CurrentBalance"}Message`]: "",
+        }))
+
         // Reset the flag state if necessary
         if (props.flagState) {
             props.setFlagState(false);
         }
 
     };
+
+    const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
+        value: (i + 1).toString(),
+        label: ("Year " + (i + 1)).toString(),
+    }))
 
     return (
         <Formik
@@ -198,19 +210,20 @@ const InvestedAnnuities = (props) => {
                             </InnerModal>
                             <div className="col-md-12">
                                 <div className='row justify-content-center'>
-                                    <div className='col-md-5'>
-                                        <p className='text-end mt-1'>
+                                    <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                        <p className='text-end mt-3'>
                                             How many Annuities does {nameSet} have:
                                         </p>
-                                    </div>
-                                    <div className='col-md-2'>
-                                        <Field
-                                            type="number"
-                                            id="NumberOfMap"
-                                            name="NumberOfMap"
-                                            className="form-control inputDesignDoubleInput"
-                                            onChange={(e) => handleInput(e, setFieldValue)}
-                                        />
+
+                                        <div style={{ width: "8%" }}>
+                                            <Field
+                                                type="number"
+                                                id="NumberOfMap"
+                                                name="NumberOfMap"
+                                                className="form-control inputDesignDoubleInput"
+                                                onChange={(e) => handleInput(e, setFieldValue)}
+                                            />
+                                        </div>
                                     </div>
                                     {values.NumberOfMap && (
                                         <div className='mt-4'>
@@ -262,12 +275,17 @@ const InvestedAnnuities = (props) => {
                                                             <td>
                                                                 <Field
                                                                     style={{ minWidth: "100px" }}
-                                                                    type="number"
                                                                     placeholder="Source of Funds"
                                                                     id={`sourceFunds${i}`}
+                                                                    as="select"
                                                                     name={`sourceFunds${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                />
+                                                                    className="form-select inputDesignDoubleInput"
+                                                                >
+                                                                    <option value="">Select</option>
+                                                                    <option value="Ordinary">Ordinary</option>
+                                                                    <option value="Super">Super</option>
+                                                                </Field>
+
                                                             </td>
                                                             <td>
                                                                 <Field
@@ -308,21 +326,21 @@ const InvestedAnnuities = (props) => {
                                                                         }}
                                                                     />
                                                                     <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
-                                                                        if (values[`productProvider${i}`]) {
-                                                                            let name = "";
-                                                                            bankDetailObj.map((elem, index) => {
+                                                                        // if (values[`productProvider${i}`]) {
+                                                                        let name = RenderName(props.modalObject.Input);
+                                                                        //     bankDetailObj.map((elem, index) => {
 
-                                                                                if (elem._id === values[`productProvider${i}`]) {
-                                                                                    name = elem.platformName
-                                                                                }
+                                                                        //         if (elem._id === values[`productProvider${i}`]) {
+                                                                        //             name = elem.platformName
+                                                                        //         }
 
-                                                                            });
-                                                                            handleInnerModal(name + "_Annual Pension Payment", '', "annualPensionPaymentArray", "annualAnnuityPayment", "", values[`annualPensionPaymentArray${i}`], i, values)
-                                                                        }
-                                                                        else {
-                                                                            // type, placement, message, description
-                                                                            openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
-                                                                        }
+                                                                        //     });
+                                                                        handleInnerModal(name + "_Annual Pension Payment", '', "annualPensionPaymentArray", "annualAnnuityPayment", "", values[`annualPensionPaymentArray${i}`], i, values)
+                                                                        // }
+                                                                        // else {
+                                                                        //     // type, placement, message, description
+                                                                        //     openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
+                                                                        // }
                                                                     }}>
                                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                     </Button>
@@ -347,51 +365,85 @@ const InvestedAnnuities = (props) => {
                                                                 >
                                                                     <option value="">Select</option>
                                                                     <option value="Fixed Term">Fixed Term</option>
-                                                                    <option value="Lifetime">Lifetime</option>
+                                                                    <option value="Lifetime">Life Time</option>
                                                                 </Field>
                                                             </td>
                                                             <td>
-                                                                <Field
-                                                                    style={{ minWidth: "100px" }}
-                                                                    type="number"
-                                                                    placeholder="Term"
-                                                                    id={`term${i}`}
-                                                                    name={`term${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                    disabled={values[`annuityType${i}`] == "Lifetime"}
-                                                                />
+                                                                {values[`annuityType${i}`] !== "Fixed Term" &&
+                                                                    <Field
+                                                                        style={{ minWidth: "100px" }}
+                                                                        type="number"
+                                                                        placeholder="Term"
+                                                                        id={`term${i}`}
+                                                                        name={`term${i}`}
+                                                                        className="form-control inputDesignDoubleInput"
+                                                                        disabled={values[`annuityType${i}`] == "Lifetime"}
+                                                                    />}
+                                                                {values[`annuityType${i}`] === "Fixed Term" &&
+                                                                    <Field
+                                                                        placeholder="Term"
+                                                                        id={`term${i}`}
+                                                                        name={`term${i}`}
+                                                                        as="select"
+                                                                        className="form-select inputDesignDoubleInput"
+                                                                    >
+                                                                        <option value="">Select</option>
+                                                                        {loanTermOptions.map((option) => (
+                                                                            <option key={option.value} value={option.value}>
+                                                                                {option.label}
+                                                                            </option>
+                                                                        ))}
+                                                                    </Field>
+                                                                }
                                                             </td>
                                                             <td>
-                                                                <Field
-                                                                    style={{ minWidth: "100px" }}
-                                                                    type="number"
-                                                                    placeholder="Years to Maturity"
-                                                                    disabled={values[`annuityType${i}`] == "Lifetime"}
-                                                                    id={`yearsMaturity${i}`}
-                                                                    name={`yearsMaturity${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                />
+                                                                {values[`annuityType${i}`] !== "Fixed Term" &&
+                                                                    <Field
+                                                                        style={{ minWidth: "100px" }}
+                                                                        type="number"
+                                                                        placeholder="Years to Maturity"
+                                                                        disabled={values[`annuityType${i}`] == "Lifetime"}
+                                                                        id={`yearsMaturity${i}`}
+                                                                        name={`yearsMaturity${i}`}
+                                                                        className="form-control inputDesignDoubleInput"
+                                                                    />}
+                                                                {values[`annuityType${i}`] === "Fixed Term" &&
+                                                                    <Field
+                                                                        placeholder="Years to Maturity"
+                                                                        id={`yearsMaturity${i}`}
+                                                                        name={`yearsMaturity${i}`}
+                                                                        as="select"
+                                                                        className="form-select inputDesignDoubleInput"
+                                                                    >
+                                                                        <option value="">Select</option>
+                                                                        {loanTermOptions.map((option) => (
+                                                                            <option key={option.value} value={option.value}>
+                                                                                {option.label}
+                                                                            </option>
+                                                                        ))}
+                                                                    </Field>
+                                                                }
                                                             </td>
                                                             <td>
                                                                 <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
                                                                     <DynamicYesNo name={`nominatedBeneficiaries${i}`} values={values} handleChange={handleChange} />
                                                                     {values[`nominatedBeneficiaries${i}`] === "Yes" &&
                                                                         <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
-                                                                            if (values[`productProvider${i}`]) {
-                                                                                let name = "";
-                                                                                bankDetailObj.map((elem, index) => {
+                                                                            // if (values[`productProvider${i}`]) {
+                                                                            let name = RenderName(props.modalObject.Input);
+                                                                            //     bankDetailObj.map((elem, index) => {
 
-                                                                                    if (elem._id === values[`productProvider${i}`]) {
-                                                                                        name = elem.platformName
-                                                                                    }
+                                                                            //         if (elem._id === values[`productProvider${i}`]) {
+                                                                            //             name = elem.platformName
+                                                                            //         }
 
-                                                                                });
-                                                                                handleInnerModal(name + "_Beneficiaries", `How many beneficiaries do ${nameSet} have?`, "beneficiariesArray", "", "", values[`beneficiariesArray${i}`], i)
-                                                                            }
-                                                                            else {
-                                                                                // type, placement, message, description
-                                                                                openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
-                                                                            }
+                                                                            //     });
+                                                                            handleInnerModal(name + "_Beneficiaries", `How many beneficiaries do ${nameSet} have?`, "beneficiariesArray", "", "", values[`beneficiariesArray${i}`], i)
+                                                                            // }
+                                                                            // else {
+                                                                            //     // type, placement, message, description
+                                                                            //     openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
+                                                                            // }
                                                                         }}>
                                                                             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                         </Button>

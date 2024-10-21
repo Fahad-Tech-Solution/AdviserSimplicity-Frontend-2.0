@@ -8,7 +8,17 @@ import { useRecoilValue } from 'recoil';
 const BankTermForm = (props) => {
 
     let bankDetailObj = useRecoilValue(BankDetail)
+    const [title, setTitle] = useState(() => {
+        // let head = props.modalObject.title;
+        let currentTitle = props.modalObject.title;
 
+        // Check if the title contains an underscore
+        if (currentTitle.includes('_')) {
+            currentTitle = (currentTitle.split('_').slice(1))[0];
+        }
+
+        return currentTitle
+    });
 
     let [nameSet] = useState(() => {
         if (props.modalObject.Input === "client") {
@@ -161,6 +171,9 @@ const BankTermForm = (props) => {
     };
 
 
+
+
+
     return (
         <Formik
             initialValues={initialValues}
@@ -181,7 +194,7 @@ const BankTermForm = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                                         <p className='text-end mt-3'>
-                                            How many {props.modalObject.title} does {nameSet} have:
+                                            How many {title} does {nameSet} have:
                                         </p>
 
                                         <div className='w-25'>

@@ -13,6 +13,19 @@ const ManagedFunds = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let bankDetailObj = useRecoilValue(BankDetail)
 
+        const [title, setTitle] = useState(() => {
+        // let head = props.modalObject.title;
+        let currentTitle = props.modalObject.title;
+
+        // Check if the title contains an underscore
+        if (currentTitle.includes('_')) {
+            currentTitle = (currentTitle.split('_').slice(1))[0];
+        }
+
+        return currentTitle
+    });
+
+    let [ShowError, setShowError] = useState({});
 
     let [nameSet] = useState(() => {
         if (props.modalObject.Input === "client") {
@@ -28,15 +41,6 @@ const ManagedFunds = (props) => {
 
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
-
-
-    let managedFunds = Object.keys(questionDetail[props.modalObject.key] || {}).length > 0 ? questionDetail[props.modalObject.key] : {
-        client: [],
-        partner: [],
-        joint: [],
-
-    }; // Use an empty object as default if managedFunds is undefined
-
 
     let initialValues = { NumberOfMap: "" };
 
@@ -76,6 +80,7 @@ const ManagedFunds = (props) => {
                 setFieldValue(`portfolioArray${i}`, data.portfolioArray || '');
                 setFieldValue(`totalPortfolioCost${i}`, data.totalPortfolioCost || '');
                 setFieldValue(`serviceFee${i}`, data.serviceFee || '');
+                setFieldValue(`serviceFeeType${i}`, data.serviceFeeType || '');
 
             });
         }
@@ -128,7 +133,7 @@ const ManagedFunds = (props) => {
                 portfolioArray: values[`portfolioArray${i}`] || "",
                 totalPortfolioCost: values[`totalPortfolioCost${i}`] || "",
                 serviceFee: values[`serviceFee${i}`] || "",
-                loginInPage: values[`loginInPage${i}`] || "",
+                serviceFeeType: values[`serviceFeeType${i}`] || "",
             };
             newEntries.push(newEntry);
         }
@@ -140,7 +145,7 @@ const ManagedFunds = (props) => {
 
         props.setFieldValue(DataOf, newEntries);
 
-        let total = newEntries.reduce((total, entry) => total + parseFloat((entry.portfolioValue).replace(/[^0-9.-]+/g, "")), 0);
+        let total = newEntries.reduce((total, entry) => total + (parseFloat((entry.serviceFee).replace(/[^0-9.-]+/g, "")) * parseFloat((entry.serviceFeeType))), 0);
         let totalCostBase = newEntries.reduce((total, entry) => total + parseFloat((entry.totalPortfolioCost).replace(/[^0-9.-]+/g, "")), 0);
 
         props.setFieldValue(DataOf + "CurrentBalance", toCommaAndDollar(total));
@@ -149,12 +154,53 @@ const ManagedFunds = (props) => {
         console.log(newEntries, "final obj")
 
 
+        props.modalObject.setShowError(prevState => ({
+            ...prevState,
+            [`${DataOf + "CurrentBalance"}Error`]: false,
+            [`${DataOf + "CurrentBalance"}Message`]: "",
+            [`${DataOf + "CostBaseTemp"}Error`]: false,
+            [`${DataOf + "CostBaseTemp"}Message`]: "",
+
+        }))
+
         // Reset the flag state if necessary
         if (props.flagState) {
             props.setFlagState(false);
         }
 
     };
+
+
+    let CheckInputValue = (values, setFieldValue, currentInput, index) => {
+        // console.log(values, setFieldValue, currentInput);
+
+
+        let portfolioArray = values[`portfolioArray${index}`];
+
+        let ExpectedSum = portfolioArray.reduce((total, entry) => total + parseFloat((entry.investmentValue).replace(/[^0-9.-]+/g, "")), 0);
+        let data = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, ""));
+
+        console.log(ExpectedSum, data, currentInput.name, ShowError)
+
+        if (ExpectedSum !== data) {
+            setShowError(prevState => ({
+                ...prevState,
+                [`${currentInput.name}Error`]: true,
+                [`${currentInput.name}Message`]: "Total must be equal to the sum of all Investment value filled in the popup. The sum is " + toCommaAndDollar(ExpectedSum),
+            }));
+        }
+        else {
+            setShowError(prevState => ({
+                ...prevState,
+                [`${currentInput.name}Error`]: false,
+                [`${currentInput.name}Message`]: "",
+            }));
+        }
+
+
+    }
+
+
 
     return (
         <Formik
@@ -209,7 +255,7 @@ const ManagedFunds = (props) => {
                                                     {dynamicFields.map((elem, i) => {
                                                         return (<tr key={i}>
                                                             <td>{1 + i}</td>
-                                                            <td>
+                                                            <td style={{ minWidth: "250px" }}>
                                                                 <Field
                                                                     as="select"
                                                                     placeholder="Platform Name"
@@ -223,7 +269,7 @@ const ManagedFunds = (props) => {
                                                                     })}
                                                                 </Field>
                                                             </td>
-                                                            <td style={{ minWidth: "160px" }}>
+                                                            <td style={{ width: "230px" }}>
                                                                 <Field
                                                                     type="number"
                                                                     placeholder="Account Number"
@@ -232,17 +278,18 @@ const ManagedFunds = (props) => {
                                                                     className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
-                                                            <td>
-                                                                <InputGroup className="mb-3">
+                                                            <td style={{ width: "200px" }}>
+                                                                <InputGroup className={`mb-3 ${ShowError[`portfolioValue${i}Error`] === true ? "is-invalid" : ""}`}>
                                                                     <Field
                                                                         type="text"
                                                                         placeholder="Portfolio Value"
                                                                         id={`portfolioValue${i}`}
                                                                         name={`portfolioValue${i}`}
-                                                                        className="form-control inputDesignDoubleInput"
+                                                                        className={`form-control inputDesignDoubleInput ${ShowError[`portfolioValue${i}Error`] === true ? "is-invalid" : ""}`}
                                                                         onChange={(e) => {
                                                                             setFieldValue(e.target.name,
                                                                                 toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                            CheckInputValue(values, setFieldValue, e.target, i)
                                                                         }}
                                                                     />
                                                                     <Button className='btn bgColor modalBtn border-0' id="button-addon2"
@@ -271,8 +318,11 @@ const ManagedFunds = (props) => {
                                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                     </Button>
                                                                 </InputGroup>
+                                                                <div class="invalid-feedback">
+                                                                    {ShowError[`portfolioValue${i}Message`]}
+                                                                </div>
                                                             </td>
-                                                            <td>
+                                                            <td style={{ width: "200px" }}>
                                                                 <Field
                                                                     type="text"
                                                                     placeholder="Total Portfolio Cost"
@@ -285,18 +335,33 @@ const ManagedFunds = (props) => {
                                                                     }}
                                                                 />
                                                             </td>
-                                                            <td>
-                                                                <Field
-                                                                    type="text"
-                                                                    placeholder="Service Fee"
-                                                                    id={`serviceFee${i}`}
-                                                                    name={`serviceFee${i}`}
-                                                                    className="form-control inputDesignDoubleInput"
-                                                                    onChange={(e) => {
-                                                                        setFieldValue(e.target.name,
-                                                                            toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                                                    }}
-                                                                />
+                                                            <td style={{ width: "300px" }}>
+                                                                <InputGroup className="mb-3">
+                                                                    <Field
+                                                                        type="text"
+                                                                        placeholder="Service Fee"
+                                                                        id={`serviceFee${i}`}
+                                                                        name={`serviceFee${i}`}
+                                                                        className="form-control inputDesignDoubleInput"
+                                                                        onChange={(e) => {
+                                                                            setFieldValue(e.target.name,
+                                                                                toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                        }}
+                                                                    />
+                                                                    <Field
+
+                                                                        as="select"
+                                                                        placeholder="Service Fee Type"
+                                                                        id={`serviceFeeType${i}`}
+                                                                        name={`serviceFeeType${i}`}
+                                                                        className="form-select inputDesignDoubleInput customInputGroupSelect"
+                                                                    >
+                                                                        <option value={""}>Select</option>
+                                                                        <option value={52}>Weekly</option>
+                                                                        <option value={12}>Monthly</option>
+                                                                        <option value={1}>Year</option>
+                                                                    </Field>
+                                                                </InputGroup>
                                                             </td>
                                                         </tr>)
                                                     })}

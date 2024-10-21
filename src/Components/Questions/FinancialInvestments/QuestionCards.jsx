@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 
 // import "./AdditionalQueries.css";
 import BankImg from "../svgs/bank.svg";
-import TermImg from "../svgs/Chart.jpg";
+import TermImg from "../svgs/TermDepositCanva.png";
 import PortFolio from "../svgs/portfolio.svg";
 import analytics from "../svgs/analytics.png";
 import funds from "../svgs/funds.svg";
@@ -17,12 +17,10 @@ import boat from "../svgs/boat.svg";
 import trailer from "../svgs/trailer-caravan.svg";
 import settingMoney from "../svgs/settingMoney.svg";
 import moneyGiving from "../svgs/moneyGiving.png";
-import credit from "../svgs/credit-card-refund-svgrepo-com.svg";
 
 
 //Q set 3
 import houseHold from "../svgs/warehouse-.svg";
-import otherAssets from "../svgs/funds.svg";
 import Questions_Home from "../svgs/home-svgrepo-com.svg";
 
 //Q set 4
@@ -52,19 +50,12 @@ import inheritance from "../svgs/inheritance.png";
 import moneyBag from "../svgs/money-bag-svgrepo-com.svg";
 import moneyBagPng from "../svgs/money-bag.png";
 
-
-
 import Business_building from "../svgs/building-small-svgrepo-com.svg";
-import Business_TeamHandshake from "../svgs/team_Handshake.png";
 
 //Q set 8
 import people from "../svgs/Questions_People.png";
 
-import incomeImg from "../svgs/asd.png";
-import traumaImg from "../svgs/traumaimg.svg";
 import lifeImg from "../svgs/lifeimg.svg";
-import TPDImg from "../svgs/tpdimg.svg";
-
 
 import { useRecoilState, useRecoilValue } from "recoil";
 import { QuestionShift, CRState, defaultUrl, QuestionDetail } from "../../../Store/Store";
@@ -86,8 +77,6 @@ import CreditCard from './QuestionsDetail/CreditCard';
 // import HomeLoan from './QuestionsDetail/HomeLoan';
 // import OwnFamilyHome from './QuestionsDetail/OwnFamilyHome';
 import InvestmentPropertyDetails from './QuestionsDetail/InvestmentPropertyDetails';
-import InvestmentPropertyLoan from './QuestionsDetail/InvestmentPropertyLoan';
-import QuestionIncomeExpanse from './QuestionsDetail/QuestionIncomeExpanse';
 import HolidayHome from './QuestionsDetail/HolidayHome';
 
 import EstatePlanningWill from '../EstatePlanning/EstatePlanningWill';
@@ -104,8 +93,6 @@ import LifeTimeBeneFits from '../PersonalIncome/LifetimeBenefits';
 import OverseasPension from '../PersonalIncome/OverseasPension';
 import Inheritance from '../PersonalIncome/Inheritance';
 import LumpsumExpenses from '../PersonalIncome/LumpsumExpenses';
-import TradingCompany from '../BusinessEntities/TradingCompany';
-import TradingTrust from '../BusinessEntities/TradingTrust';
 import SMSFInvestmentProperty from '../QuestoinsSMSF/SMSFInvestmentProperty';
 import SMSFInvestmentPropertyModalComp from '../QuestoinsSMSF/SMSFInvestmentPropertyModalComp';
 import SMSFInvestmentHomeLoanComp from '../QuestoinsSMSF/SMSFInvestmentHomeLoanComp';
@@ -119,9 +106,6 @@ import FamilyInvestmentPropertyModalComp from '../QuestoinsFamilyTrust/FamilyInv
 import FamilyInvestmentHomeLoanComp from '../QuestoinsFamilyTrust/FamilyInvestmentHomeLoanComp';
 import FamilyInvestmentHomeExpanse from '../QuestoinsFamilyTrust/FamilyInvestmentHomeExpanse';
 import PersonalInsuranceLife from '../PersonalInsurance/LifeInsurance';
-import PersonalInsuranceTPD from '../PersonalInsurance/TPD';
-import PersonalInsuranceTrauma from '../PersonalInsurance/Trauma';
-import IncomeProtection from '../PersonalInsurance/IncomeProtection';
 import CombinedSwitch from '../CombinedSwitch/CombinedSwitch';
 
 //new comment
@@ -230,7 +214,7 @@ const QuestionCards = (props) => {
                 img: PortFolio
             },
             {
-                title: "Managed Funds",
+                title: "Platform Investments",
                 key: "managedFund",
                 img: funds
             },
@@ -251,7 +235,7 @@ const QuestionCards = (props) => {
                 img: piggybank2
             },
             {
-                title: "Invested in Annuities",
+                title: "Annuities",
                 key: "annuitiesIssues",
                 img: calender
             },
@@ -639,7 +623,7 @@ const QuestionCards = (props) => {
         "Bank Accounts": <MiddleWare />,              //reuse Component
         "Term Deposits": <MiddleWare />,               //reuse Component
         "Australian Shares": <MiddleWare />,      //reuse Component
-        "Managed Funds": <MiddleWare />,              //reuse Component
+        "Platform Investments": <MiddleWare />,              //reuse Component
         "Investment Bond": <MiddleWare />,
         "Investment Loan": <InvestmentLoan />,          //reuse Component
         "Margin Loan": <MarginLoan />,
@@ -647,7 +631,7 @@ const QuestionCards = (props) => {
         //Super and Requirement
         "Super Funds": <MiddleWare />,
         "Account Based Pension": <MiddleWare />,
-        "Invested in Annuities": <MiddleWare />,
+        "Annuities": <MiddleWare />,
         //Investment Trust
         "Investment Property Details": <InvestmentPropertyDetails />,
 

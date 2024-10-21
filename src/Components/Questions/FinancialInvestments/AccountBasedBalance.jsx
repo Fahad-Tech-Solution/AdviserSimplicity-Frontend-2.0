@@ -1,16 +1,34 @@
 import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
-import { Row, Table } from 'react-bootstrap';
+import { Button, InputGroup, Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { BankDetail, defaultUrl, QuestionDetail } from '../../../Store/Store';
 import { handleInputBlur, handleInputChange, handleInputFocus, handleInputKeyDown, PatchAxios, PostAxios, toCommaAndDollar, toPercentage } from '../../Assets/Api/Api';
 import DatePicker from 'react-datepicker';
 import { SimpleSelectField } from './QuestionsDetail/CreatableMultiSelectField';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
+import InnerModal from './QuestionsDetail/InnerModal';
+import PortfolioValue from './QuestionsDetail/PortfolioValue';
 
 const AccountBasedBalance = (props) => {
 
 
     let initialValues = { NumberOfMap: 1 };
+
+    let [flagState, setFlagState] = useState(false);
+    let [modalObject, setModalObject] = useState({});
+    const [title, setTitle] = useState(() => {
+        // let head = props.modalObject.title;
+        let currentTitle = props.modalObject.title;
+
+        // Check if the title contains an underscore
+        if (currentTitle.includes('_')) {
+            currentTitle = (currentTitle.split('_'))[0];
+        }
+
+        return currentTitle
+    });
 
     let bankDetailObj = useRecoilValue(BankDetail);
 
@@ -176,7 +194,29 @@ const AccountBasedBalance = (props) => {
         }
     };
 
+    let optionFundType = [
+        { value: "Accumulation", label: "Accumulation" },
+        { value: "Defined Benefit", label: "Defined Benefit" },
+    ]
 
+
+
+    let handleInnerModal = (title, question, key, mainKey, key3, editArray, index, values) => {
+        console.log(values);
+        let ParentModal = props.modalObject.title
+        setModalObject({
+            title,
+            question,
+            key,
+            mainKey,
+            key3,
+            editArray: editArray || [],
+            index,
+            values,
+            ParentModal
+        })
+        setFlagState(true);
+    }
 
     return (
         <Formik
@@ -192,6 +232,12 @@ const AccountBasedBalance = (props) => {
 
                 return (
                     <Form>
+
+                        <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} >
+                            {
+                                modalObject.key === "portfolioArray" ? <PortfolioValue /> : ""
+                            }
+                        </InnerModal>
                         <Row>
                             <div className="col-md-12">
                                 <div className='row justify-content-center'>
@@ -237,23 +283,35 @@ const AccountBasedBalance = (props) => {
                                                                         name={`fundType${i}`}
                                                                         component={SimpleSelectField}
                                                                         label="Multi Select Field"
-                                                                        options={generateOptions(bankDetailObj, props.modalObject.values[`fundName${props.modalObject.index}`])}
+                                                                        options={optionFundType}
                                                                         onChange={(selectedOption) => { setFieldValue(`investmentOption${i}`, selectedOption.value) }}
                                                                     />
                                                                 </td>
                                                                 <td style={{ minWidth: "90px" }}>
-                                                                    <Field
-                                                                        type="text"
-                                                                        placeholder="Portfolio Value"
-                                                                        id={`portfolioValue${i}`}
-                                                                        name={`portfolioValue${i}`}
-                                                                        className="form-control inputDesignDoubleInput"
-                                                                        onChange={(e) => {
+                                                                    <InputGroup className="mb-3">
+                                                                        <Field
+                                                                            type="text"
+                                                                            placeholder="Portfolio Value"
+                                                                            id={`portfolioValue${i}`}
+                                                                            name={`portfolioValue${i}`}
+                                                                            className="form-control inputDesignDoubleInput"
+                                                                            onChange={(e) => {
 
-                                                                            setFieldValue(`portfolioValue${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                                                            FormulaSetting(values, setFieldValue, e.target, "");
-                                                                        }}
-                                                                    />
+                                                                                setFieldValue(`portfolioValue${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                                FormulaSetting(values, setFieldValue, e.target, "");
+                                                                            }}
+                                                                        />
+                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
+
+                                                                            handleInnerModal(title + "_Portfolio Value",
+                                                                                `How many Portfolios do ${title} have ?`,
+                                                                                "portfolioArray", "portfolioValue", "",
+                                                                                values[`portfolioArray${i}`], i, values)
+
+                                                                        }}>
+                                                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                                        </Button>
+                                                                    </InputGroup>
                                                                 </td>
                                                                 <td style={{ minWidth: "150px" }}>
                                                                     <div>

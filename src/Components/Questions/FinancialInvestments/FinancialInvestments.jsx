@@ -1,7 +1,7 @@
 import { Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react'
 import BankImg from "../svgs/bank.svg";
-import TermImg from "../svgs/Chart.jpg";
+import TermImg from "../svgs/TermDepositCanva.png";
 import PortFolio from "../svgs/portfolio.svg";
 import certificate from "../svgs/certificate.svg";
 import funds from "../svgs/funds.svg";

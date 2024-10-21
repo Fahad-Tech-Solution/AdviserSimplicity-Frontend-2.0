@@ -6,6 +6,7 @@ import { BankDetail, defaultUrl, QuestionDetail } from '../../../../Store/Store'
 import { openNotificationSuccess, PatchAxios, PostAxios, RenderName, toCommaAndDollar } from '../../../Assets/Api/Api';
 import axios from 'axios';
 import DynamicTableRow from '../../../Assets/Dynamic/DynamicTableRow';
+import { CreatableMultiSelectField } from './CreatableMultiSelectField';
 
 const InvestmentLoan = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
@@ -55,21 +56,23 @@ const InvestmentLoan = (props) => {
 
     const fillInitialValues = (setFieldValue) => {
 
-        console.log(managedFundsLOC)
+        console.log(managedFundsLOC);
 
         if (managedFundsLOC && managedFundsLOC._id) {
 
-            setFieldValue(`owner`, managedFundsLOC.owner || "");
+            // Set the owner field, which is now an array
+            setFieldValue(`owner`, managedFundsLOC.owner || []);
 
-            if (managedFundsLOC.owner === "client" || managedFundsLOC.owner === "client+partner" || managedFundsLOC.owner === "client+partner+joint") {
+            // For client-related fields if "client" is included in the owner array
+            if (managedFundsLOC.owner.includes("client")) {
                 if (managedFundsLOC?.client && Object.keys(managedFundsLOC?.client).length) {
-
                     setFieldValue(`client.lender`, managedFundsLOC.client.lender || "");
                     setFieldValue(`client.loanBalance`, managedFundsLOC.client.loanBalance || "");
                     setFieldValue(`client.loanType`, managedFundsLOC.client.loanType || "");
                     setFieldValue(`client.repaymentsAmount`, managedFundsLOC.client.repaymentsAmount || "");
                     setFieldValue(`client.frequency`, managedFundsLOC.client.frequency || "");
                     setFieldValue(`client.annualRepayments`, managedFundsLOC.client.annualRepayments || "");
+                    setFieldValue(`client.serviceFeeType`, managedFundsLOC.client.serviceFeeType || "");
                     setFieldValue(`client.interestRate`, managedFundsLOC.client.interestRate || "");
                     setFieldValue(`client.loanTerm`, managedFundsLOC.client.loanTerm || "");
                     setFieldValue(`client.loanTermRemaining`, managedFundsLOC.client.loanTermRemaining || "");
@@ -77,51 +80,48 @@ const InvestmentLoan = (props) => {
                 }
             }
 
-            if (UserStatus === "Married") {
-
-                if (managedFundsLOC.owner === "partner" || managedFundsLOC.owner === "client+partner" || managedFundsLOC.owner === "client+partner+joint") {
-                    if (managedFundsLOC?.partner && Object.keys(managedFundsLOC?.partner).length) {
-
-                        setFieldValue(`partner.lender`, managedFundsLOC.partner.lender || "");
-                        setFieldValue(`partner.loanBalance`, managedFundsLOC.partner.loanBalance || "");
-                        setFieldValue(`partner.loanType`, managedFundsLOC.partner.loanType || "");
-                        setFieldValue(`partner.repaymentsAmount`, managedFundsLOC.partner.repaymentsAmount || "");
-                        setFieldValue(`partner.frequency`, managedFundsLOC.partner.frequency || "");
-                        setFieldValue(`partner.annualRepayments`, managedFundsLOC.partner.annualRepayments || "");
-                        setFieldValue(`partner.interestRate`, managedFundsLOC.partner.interestRate || "");
-                        setFieldValue(`partner.loanTerm`, managedFundsLOC.partner.loanTerm || "");
-                        setFieldValue(`partner.loanTermRemaining`, managedFundsLOC.partner.loanTermRemaining || "");
-                        setFieldValue(`partner.deductibleLoanAmount`, managedFundsLOC.partner.deductibleLoanAmount || "");
-
-                    }
+            // For partner-related fields if "partner" is included in the owner array and user status is "Married"
+            if (UserStatus === "Married" && managedFundsLOC.owner.includes("partner")) {
+                if (managedFundsLOC?.partner && Object.keys(managedFundsLOC?.partner).length) {
+                    setFieldValue(`partner.lender`, managedFundsLOC.partner.lender || "");
+                    setFieldValue(`partner.loanBalance`, managedFundsLOC.partner.loanBalance || "");
+                    setFieldValue(`partner.loanType`, managedFundsLOC.partner.loanType || "");
+                    setFieldValue(`partner.repaymentsAmount`, managedFundsLOC.partner.repaymentsAmount || "");
+                    setFieldValue(`partner.frequency`, managedFundsLOC.partner.frequency || "");
+                    setFieldValue(`partner.annualRepayments`, managedFundsLOC.partner.annualRepayments || "");
+                    setFieldValue(`partner.serviceFeeType`, managedFundsLOC.partner.serviceFeeType || "");
+                    setFieldValue(`partner.interestRate`, managedFundsLOC.partner.interestRate || "");
+                    setFieldValue(`partner.loanTerm`, managedFundsLOC.partner.loanTerm || "");
+                    setFieldValue(`partner.loanTermRemaining`, managedFundsLOC.partner.loanTermRemaining || "");
+                    setFieldValue(`partner.deductibleLoanAmount`, managedFundsLOC.partner.deductibleLoanAmount || "");
                 }
+            }
 
-                if (managedFundsLOC.owner === "joint" || managedFundsLOC.owner === "client+partner+joint") {
-                    if (managedFundsLOC?.joint && Object.keys(managedFundsLOC?.joint).length) {
-
-                        setFieldValue(`joint.lender`, managedFundsLOC.joint.lender || "");
-                        setFieldValue(`joint.loanBalance`, managedFundsLOC.joint.loanBalance || "");
-                        setFieldValue(`joint.loanType`, managedFundsLOC.joint.loanType || "");
-                        setFieldValue(`joint.repaymentsAmount`, managedFundsLOC.joint.repaymentsAmount || "");
-                        setFieldValue(`joint.frequency`, managedFundsLOC.joint.frequency || "");
-                        setFieldValue(`joint.annualRepayments`, managedFundsLOC.joint.annualRepayments || "");
-                        setFieldValue(`joint.interestRate`, managedFundsLOC.joint.interestRate || "");
-                        setFieldValue(`joint.loanTerm`, managedFundsLOC.joint.loanTerm || "");
-                        setFieldValue(`joint.loanTermRemaining`, managedFundsLOC.joint.loanTermRemaining || "");
-                        setFieldValue(`joint.deductibleLoanAmount`, managedFundsLOC.joint.deductibleLoanAmount || "");
-
-                    }
+            // For joint-related fields if "joint" is included in the owner array
+            if (managedFundsLOC.owner.includes("joint")) {
+                if (managedFundsLOC?.joint && Object.keys(managedFundsLOC?.joint).length) {
+                    setFieldValue(`joint.lender`, managedFundsLOC.joint.lender || "");
+                    setFieldValue(`joint.loanBalance`, managedFundsLOC.joint.loanBalance || "");
+                    setFieldValue(`joint.loanType`, managedFundsLOC.joint.loanType || "");
+                    setFieldValue(`joint.repaymentsAmount`, managedFundsLOC.joint.repaymentsAmount || "");
+                    setFieldValue(`joint.frequency`, managedFundsLOC.joint.frequency || "");
+                    setFieldValue(`joint.annualRepayments`, managedFundsLOC.joint.annualRepayments || "");
+                    setFieldValue(`joint.serviceFeeType`, managedFundsLOC.joint.serviceFeeType || "");
+                    setFieldValue(`joint.interestRate`, managedFundsLOC.joint.interestRate || "");
+                    setFieldValue(`joint.loanTerm`, managedFundsLOC.joint.loanTerm || "");
+                    setFieldValue(`joint.loanTermRemaining`, managedFundsLOC.joint.loanTermRemaining || "");
+                    setFieldValue(`joint.deductibleLoanAmount`, managedFundsLOC.joint.deductibleLoanAmount || "");
                 }
             }
         }
     };
 
 
+
     let DefaultUrl = useRecoilValue(defaultUrl)
 
 
     let onSubmit = async (values) => {
-
         let obj = values;
         obj.clientFK = localStorage.getItem("UserID");
 
@@ -129,7 +129,7 @@ const InvestmentLoan = (props) => {
 
         try {
             // Safely parse the value after removing non-numeric characters
-            let annualRepayments = parseFloat(obj.joint.annualRepayments.replace(/[^0-9.-]+/g, ""));
+            let annualRepayments = parseFloat(obj.joint?.annualRepayments.replace(/[^0-9.-]+/g, "")) * parseFloat(obj.joint?.serviceFeeType.replace(/[^0-9.-]+/g, ""));
 
             // Check if the parsed value is a valid number
             if (isNaN(annualRepayments) || annualRepayments === undefined) {
@@ -144,45 +144,48 @@ const InvestmentLoan = (props) => {
             fiftyPercent = 0; // Set to 0 in case of error
         }
 
-
-        if (values.owner === "client" || values.owner === "client+partner" || values.owner === "client+partner+joint") {
-            obj.clientTotal = toCommaAndDollar(parseFloat(obj.client.annualRepayments.replace(/[^0-9.-]+/g, "")) + fiftyPercent);
-        } else if (values.owner === "joint") {
+        // For "client" related calculations
+        if (values.owner.includes("client")) {
+            obj.clientTotal = toCommaAndDollar(
+                (parseFloat(obj.client.annualRepayments.replace(/[^0-9.-]+/g, "")) * parseFloat(obj.client.serviceFeeType.replace(/[^0-9.-]+/g, ""))) + fiftyPercent
+            );
+        } else if (values.owner.includes("joint")) {
             obj.clientTotal = toCommaAndDollar(fiftyPercent);
-
         } else {
             obj.clientTotal = "";
             obj.client = {};
         }
 
-        if (values.owner === "partner" || values.owner === "client+partner" || values.owner === "client+partner+joint") {
-            obj.partnerTotal = toCommaAndDollar(parseFloat(obj.partner.annualRepayments.replace(/[^0-9.-]+/g, "")) + fiftyPercent);
-        } else if (values.owner === "joint") {
+        // For "partner" related calculations
+        if (values.owner.includes("partner") && UserStatus === "Married") {
+            obj.partnerTotal = toCommaAndDollar(
+                (parseFloat(obj.partner?.annualRepayments.replace(/[^0-9.-]+/g, "")) * parseFloat(obj.partner?.serviceFeeType.replace(/[^0-9.-]+/g, ""))) + fiftyPercent
+            );
+        } else if (values.owner.includes("joint")) {
             obj.partnerTotal = toCommaAndDollar(fiftyPercent);
-
         } else {
             obj.partnerTotal = "";
             obj.partner = {};
         }
 
+        // If the user status is not married, reset partner-related data
         if (UserStatus !== "Married") {
             obj.partnerTotal = "";
             obj.partner = {};
         }
 
-
-        console.log(obj, "final obj")
+        console.log(obj, "final obj");
 
         // Check if managedFundsLOC and the array at props.modalObject.Input exist
-        // const bankAccountArray = managedFundsLOC[props.modalObject.Input] || [];
         const bankAccountArray = managedFundsLOC.clientFK || "";
 
         try {
             let res;
             if (!bankAccountArray) {
+                // Make a POST request if no bank account is found
                 res = await PostAxios(`${DefaultUrl}/api/${props.modalObject.index}/Add`, obj);
             } else {
-                // obj.collection = props.modalObject.Input
+                // Make a PATCH request if a bank account is found
                 res = await PatchAxios(`${DefaultUrl}/api/${props.modalObject.index}/Update`, obj);
             }
 
@@ -191,16 +194,18 @@ const InvestmentLoan = (props) => {
                 const updatedData = { ...questionDetail, [props.modalObject.index]: res };
                 setQuestionDetail(updatedData);
             }
-            openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
-            // Reset the flag state if necessary
+            openNotificationSuccess("success", "topRight", "Success Notification", `Data of "${props.modalObject.title}" is Saved`);
+
+            // Reset flag state if necessary
             if (props.flagState) {
                 props.setFlagState(false);
             }
         } catch (error) {
             console.error("Error occurred while making API call:", error);
-            openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
+            openNotificationSuccess("error", "topRight", "Error Notification", `Data of "${props.modalObject.title}" is not saved. Please try again!`);
         }
     };
+
 
     let optionsLender = [
         { value: "i/only", label: "i/only" },
@@ -208,7 +213,7 @@ const InvestmentLoan = (props) => {
     ]
     let optionsFrequency = [
         { value: 52, label: "Weekly" },
-        { value: 26, label: "Fortnightly" },
+        { value: 26, label: "Fortnightly"},
         { value: 12, label: "Monthly" },
         { value: 1, label: "Annually" },
     ]
@@ -219,18 +224,24 @@ const InvestmentLoan = (props) => {
     }))
 
     const rowConfig = [
-        { name: 'lender', type: 'select', options: generateOptions(), placeholder: 'Lender', styleSet: { width: "5rem" }, },
+        { name: 'lender', type: 'select', options: generateOptions(), placeholder: 'Lender', styleSet: { width: "20rem" }, },
         { name: 'loanBalance', type: 'number-toComma', placeholder: 'Loan Balance', },
         { name: 'loanType', type: 'select', options: optionsLender, placeholder: 'Loan Type', },
         { name: 'repaymentsAmount', type: 'number-toComma', placeholder: 'Repayments Amount', },
         { name: 'frequency', type: 'select', options: optionsFrequency, placeholder: 'Frequency', },
-        { name: 'annualRepayments', type: 'number-toComma', placeholder: 'Annual Repayments', },
+        {
+            name: 'annualRepayments',
+            type: 'number-toComma-and-MultiSelect',
+            placeholder: 'Annual Repayments',
+            name2: 'serviceFeeType',
+            placeholder2: "Service Fee Type",
+            styleSet: { width: "20rem" },
+        },
         { name: 'interestRate', type: 'number-toPercent', placeholder: 'Interest Rate', },
         { name: 'loanTerm', type: 'select', options: loanTermOptions, placeholder: 'Loan Term', },
         { name: 'loanTermRemaining', type: 'select', options: loanTermOptions, placeholder: 'Loan Term Remaining', },
         { name: 'deductibleLoanAmount', type: 'number-toPercent', placeholder: 'Deductible Loan Amount', },
     ]
-
 
     function generateOptions() {
         const InstituteOptions = [];
@@ -242,6 +253,13 @@ const InvestmentLoan = (props) => {
         }
         return InstituteOptions;
     };
+
+    const options = (UserStatus !== "Single") ? [
+        { value: "client", label: RenderName("client") },
+        { value: "partner", label: RenderName("partner") },
+        { value: "joint", label: RenderName("joint") }] :
+        [{ value: "client", label: RenderName("client") },];
+
 
     return (
         <Formik
@@ -261,35 +279,18 @@ const InvestmentLoan = (props) => {
                             <div className="col-md-12">
                                 <div className='row justify-content-center'>
                                     <div className='col-md-12'>
-
                                         <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                                             <label htmlFor='' className='text-end '>
                                                 Owner
                                             </label>
 
-                                            <div className='w-25'>
+                                            <div style={{ minWidth: "25%" }}>
                                                 <Field
-                                                    as="select"
-                                                    placeholder="Name of owner"
-                                                    id={`owner`}
                                                     name={`owner`}
-                                                    className="form-select inputDesignDoubleInput"
-                                                >
-                                                    <option value={""}>Select</option>
-
-                                                    <option value={"client"}>  {RenderName("client")} </option>
-
-                                                    {localStorage.getItem("UserStatus") !== "Single" &&
-                                                        <React.Fragment>
-
-                                                            <option value={"partner"}>{RenderName("partner")}</option>
-                                                            <option value={"client+partner"}>{"Both (" + RenderName("client") + " , " + RenderName("partner") + ")"} </option>
-                                                            <option value={"joint"}>{RenderName("joint")}</option>
-                                                            <option value={"client+partner+joint"}>{RenderName("client") + " , " + RenderName("partner") + " & joint"} </option>
-
-                                                        </React.Fragment>
-                                                    }
-                                                </Field>
+                                                    component={CreatableMultiSelectField}
+                                                    label="Multi Select Field"
+                                                    options={options}
+                                                />
                                             </div>
                                         </div>
                                     </div>
@@ -313,7 +314,7 @@ const InvestmentLoan = (props) => {
                                                 </thead>
                                                 <tbody>
 
-                                                    {(values.owner === "client" || values.owner === "client+partner" || values.owner === "client+partner+joint") &&
+                                                    {(values.owner.includes("client")) && (
                                                         <DynamicTableRow
                                                             rowConfig={rowConfig}
                                                             values={values}
@@ -322,8 +323,9 @@ const InvestmentLoan = (props) => {
                                                             handleBlur={handleBlur}
                                                             stakeHolder={"client."}
                                                         />
-                                                    }
-                                                    {((values.owner === "partner" || values.owner === "client+partner" || values.owner === "client+partner+joint") && (UserStatus === "Married")) &&
+                                                    )}
+
+                                                    {(values.owner.includes("partner") && UserStatus === "Married") && (
                                                         <DynamicTableRow
                                                             rowConfig={rowConfig}
                                                             values={values}
@@ -332,9 +334,9 @@ const InvestmentLoan = (props) => {
                                                             handleBlur={handleBlur}
                                                             stakeHolder={"partner."}
                                                         />
-                                                    }
+                                                    )}
 
-                                                    {(values.owner === "joint" || values.owner === "client+partner+joint") &&
+                                                    {(values.owner.includes("joint")) && (
                                                         <DynamicTableRow
                                                             rowConfig={rowConfig}
                                                             values={values}
@@ -343,7 +345,8 @@ const InvestmentLoan = (props) => {
                                                             handleBlur={handleBlur}
                                                             stakeHolder={"joint."}
                                                         />
-                                                    }
+                                                    )}
+
                                                 </tbody>
                                             </Table>
                                         </div>

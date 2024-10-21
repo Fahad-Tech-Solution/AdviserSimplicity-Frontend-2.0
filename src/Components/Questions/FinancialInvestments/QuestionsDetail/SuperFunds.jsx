@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, InputGroup, Row, Table, } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { BankDetail, defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { openNotificationSuccess, PatchAxios, PostAxios, toCommaAndDollar } from '../../../Assets/Api/Api';
+import { openNotificationSuccess, PatchAxios, PostAxios, RenderName, toCommaAndDollar } from '../../../Assets/Api/Api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import InnerModal from './InnerModal';
@@ -157,6 +157,15 @@ const SuperFunds = (props) => {
 
         props.setFieldValue(DataOf + "CurrentBalance", toCommaAndDollar(total));
 
+
+
+        props.modalObject.setShowError(prevState => ({
+            ...prevState,
+            [`${DataOf + "CurrentBalance"}Error`]: false,
+            [`${DataOf + "CurrentBalance"}Message`]: "",
+
+        }))
+
         // Reset the flag state if necessary
         if (props.flagState) {
             props.setFlagState(false);
@@ -190,20 +199,22 @@ const SuperFunds = (props) => {
                             </InnerModal>
                             <div className="col-md-12">
                                 <div className='row justify-content-center'>
-                                    <div className='col-md-5'>
-                                        <p className='text-end mt-1'>
+                                    <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                        <p className='text-end mt-3'>
                                             How many Super Funds does {nameSet} have:
                                         </p>
+
+                                        <div style={{ width: "8%" }}>
+                                            <Field
+                                                type="number"
+                                                id="NumberOfMap"
+                                                name="NumberOfMap"
+                                                className="form-control inputDesignDoubleInput"
+                                                onChange={(e) => handleInput(e, setFieldValue)}
+                                            />
+                                        </div>
                                     </div>
-                                    <div className='col-md-2'>
-                                        <Field
-                                            type="number"
-                                            id="NumberOfMap"
-                                            name="NumberOfMap"
-                                            className="form-control inputDesignDoubleInput"
-                                            onChange={(e) => handleInput(e, setFieldValue)}
-                                        />
-                                    </div>
+
                                     {values.NumberOfMap && (
                                         <div className='mt-4'>
                                             <Table striped bordered responsive hover>
@@ -230,6 +241,16 @@ const SuperFunds = (props) => {
                                                         return (<tr key={i}>
                                                             <td>{1 + i}</td>
                                                             <td>
+                                                                {
+                                                                    // (typeof bankDetailObj === "object" && bankDetailObj !== null) ? (
+                                                                    //     <span>bankDetailObj is an object.</span>
+                                                                    // ) : (Array.isArray(bankDetailObj)) ? (
+                                                                    //     <span>bankDetailObj is an array.</span>
+                                                                    // ) : (
+                                                                    //     <span>bankDetailObj is not an object or array.</span>
+                                                                    // )
+                                                                }
+
                                                                 <Field
                                                                     as="select"
                                                                     placeholder="Platform Name"
@@ -238,9 +259,8 @@ const SuperFunds = (props) => {
                                                                     className="form-select inputDesignDoubleInput"
                                                                 >
                                                                     <option value={""}>Please Select</option>
-                                                                    {bankDetailObj.map((elem, index) => {
-                                                                        return (<option key={index} value={elem._id}>{elem.platformName}</option>)
-                                                                    })}
+
+
                                                                 </Field>
                                                             </td>
                                                             <td>
@@ -266,25 +286,25 @@ const SuperFunds = (props) => {
                                                                         }}
                                                                     />
                                                                     <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
-                                                                        if (values[`fundName${i}`]) {
-                                                                            let name = "";
-                                                                            bankDetailObj.map((elem, index) => {
+                                                                        // if (values[`fundName${i}`]) {
+                                                                        let name = RenderName(props.modalObject.Input);
+                                                                        //     bankDetailObj.map((elem, index) => {
 
-                                                                                if (elem._id === values[`fundName${i}`]) {
-                                                                                    name = elem.platformName
-                                                                                }
+                                                                        //         if (elem._id === values[`fundName${i}`]) {
+                                                                        //             name = elem.platformName
+                                                                        //         }
 
-                                                                            });
+                                                                        //     });
 
-                                                                            handleInnerModal(name + "_Balance & Benefit Details",
-                                                                                `How many Benefit Details and Components do ${nameSet} have ?`,
-                                                                                "balanceBenefitDetailsArray", "balanceBenefitDetails", "",
-                                                                                values[`balanceBenefitDetailsArray${i}`], i, values)
-                                                                        }
-                                                                        else {
-                                                                            // type, placement, message, description
-                                                                            openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
-                                                                        }
+                                                                        handleInnerModal(name + "_Balance & Benefit Details",
+                                                                            `How many Benefit Details and Components do ${nameSet} have ?`,
+                                                                            "balanceBenefitDetailsArray", "balanceBenefitDetails", "",
+                                                                            values[`balanceBenefitDetailsArray${i}`], i, values)
+                                                                        // }
+                                                                        // else {
+                                                                        //     // type, placement, message, description
+                                                                        //     openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
+                                                                        // }
                                                                     }}>
                                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                     </Button>
@@ -295,22 +315,22 @@ const SuperFunds = (props) => {
                                                                     <DynamicYesNo name={`groupInsurance${i}`} values={values} handleChange={handleChange} />
                                                                     {values[`groupInsurance${i}`] === "Yes" &&
                                                                         <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
-                                                                            if (values[`fundName${i}`]) {
-                                                                                let name = "";
-                                                                                bankDetailObj.map((elem, index) => {
+                                                                            // if (values[`fundName${i}`]) {
+                                                                            let name = RenderName(props.modalObject.Input);
+                                                                            //     bankDetailObj.map((elem, index) => {
 
-                                                                                    if (elem._id === values[`fundName${i}`]) {
-                                                                                        name = elem.platformName
-                                                                                    }
+                                                                            //         if (elem._id === values[`fundName${i}`]) {
+                                                                            //             name = elem.platformName
+                                                                            //         }
 
-                                                                                });
-                                                                                handleInnerModal(name + "_Insurances", `How many Group Insurance ${nameSet} have?`, "groupInsuranceArray", "", "", values[`groupInsuranceArray${i}`], i, values)
+                                                                            //     });
+                                                                            handleInnerModal(name + "_Insurances", `How many Group Insurance ${nameSet} have?`, "groupInsuranceArray", "", "", values[`groupInsuranceArray${i}`], i, values)
 
-                                                                            }
-                                                                            else {
-                                                                                // type, placement, message, description
-                                                                                openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
-                                                                            }
+                                                                            // }
+                                                                            // else {
+                                                                            //     // type, placement, message, description
+                                                                            //     openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
+                                                                            // }
                                                                         }}>
                                                                             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                         </Button>
@@ -322,22 +342,22 @@ const SuperFunds = (props) => {
                                                                     <DynamicYesNo name={`contributions${i}`} values={values} handleChange={handleChange} />
                                                                     {values[`contributions${i}`] === "Yes" &&
                                                                         <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
-                                                                            if (values[`fundName${i}`]) {
-                                                                                let name = "";
-                                                                                bankDetailObj.map((elem, index) => {
+                                                                            // if (values[`fundName${i}`]) {
+                                                                            let name = RenderName(props.modalObject.Input);
+                                                                            //     bankDetailObj.map((elem, index) => {
 
-                                                                                    if (elem._id === values[`fundName${i}`]) {
-                                                                                        name = elem.platformName
-                                                                                    }
+                                                                            //         if (elem._id === values[`fundName${i}`]) {
+                                                                            //             name = elem.platformName
+                                                                            //         }
 
-                                                                                });
-                                                                                handleInnerModal(name + "_Contributions", `How many Contributions do ${nameSet} have ?`, "ContributionsArray", "", "", values[`ContributionsArray${i}`], i)
+                                                                            //     });
+                                                                            handleInnerModal(name + "_Contributions", `How many Contributions do ${nameSet} have ?`, "ContributionsArray", "", "", values[`ContributionsArray${i}`], i)
 
-                                                                            }
-                                                                            else {
-                                                                                // type, placement, message, description
-                                                                                openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
-                                                                            }
+                                                                            // }
+                                                                            // else {
+                                                                            //     // type, placement, message, description
+                                                                            //     openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
+                                                                            // }
                                                                         }}>
                                                                             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                         </Button>
@@ -349,22 +369,22 @@ const SuperFunds = (props) => {
                                                                     <DynamicYesNo name={`nominatedBeneficiaries${i}`} values={values} handleChange={handleChange} />
                                                                     {values[`nominatedBeneficiaries${i}`] === "Yes" &&
                                                                         <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
-                                                                            if (values[`fundName${i}`]) {
-                                                                                let name = "";
-                                                                                bankDetailObj.map((elem, index) => {
+                                                                            // if (values[`fundName${i}`]) {
+                                                                                let name = RenderName(props.modalObject.Input);
+                                                                            //     bankDetailObj.map((elem, index) => {
 
-                                                                                    if (elem._id === values[`fundName${i}`]) {
-                                                                                        name = elem.platformName
-                                                                                    }
+                                                                            //         if (elem._id === values[`fundName${i}`]) {
+                                                                            //             name = elem.platformName
+                                                                            //         }
 
-                                                                                });
+                                                                            //     });
 
                                                                                 handleInnerModal(name + "_Beneficiaries", `How many beneficiaries do ${nameSet} have?`, "beneficiariesArray", "", "", values[`beneficiariesArray${i}`], i)
-                                                                            }
-                                                                            else {
-                                                                                // type, placement, message, description
-                                                                                openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
-                                                                            }
+                                                                            // }
+                                                                            // else {
+                                                                            //     // type, placement, message, description
+                                                                            //     openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
+                                                                            // }
                                                                         }}>
                                                                             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                         </Button>

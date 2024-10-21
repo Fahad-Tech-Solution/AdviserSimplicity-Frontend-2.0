@@ -16,6 +16,18 @@ const TradingCompany = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
+  const [title, setTitle] = useState(() => {
+    // let head = props.modalObject.title;
+    let currentTitle = props.modalObject.title;
+
+    // Check if the title contains an underscore
+    if (currentTitle.includes('_')) {
+      currentTitle = (currentTitle.split('_').slice(1))[0];
+    }
+
+    return currentTitle
+  });
+
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
 
@@ -113,6 +125,13 @@ const TradingCompany = (props) => {
 
     props.setFieldValue(DataOf + "CurrentBalance", toCommaAndDollar(total));
 
+
+    props.modalObject.setShowError(prevState => ({
+      ...prevState,
+      [`${DataOf + "CurrentBalance"}Error`]: false,
+      [`${DataOf + "CurrentBalance"}Message`]: "",
+    }))
+
     if (props.flagState) {
       props.setFlagState(false);
     }
@@ -156,7 +175,7 @@ const TradingCompany = (props) => {
               <div className="col-md-12">
                 <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                   <label htmlFor='' className=''>
-                    How many {props.modalObject.title} does {nameSet} have:
+                    How many {title} does {nameSet} have:
                   </label>
 
                   <div style={{ width: "10%" }} >

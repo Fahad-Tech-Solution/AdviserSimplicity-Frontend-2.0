@@ -10,7 +10,18 @@ import { Pagination } from 'antd';
 const AustralianShares = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+    
+    const [title, setTitle] = useState(() => {
+        // let head = props.modalObject.title;
+        let currentTitle = props.modalObject.title;
 
+        // Check if the title contains an underscore
+        if (currentTitle.includes('_')) {
+            currentTitle = (currentTitle.split('_').slice(1))[0];
+        }
+
+        return currentTitle
+    });
 
 
     let [nameSet] = useState(() => {
@@ -25,12 +36,6 @@ const AustralianShares = (props) => {
         }
     })
 
-    let australianSharesFinance = Object.keys(questionDetail[props.modalObject.key]).length > 0 ? questionDetail[props.modalObject.key] : {
-        client: [],
-        partner: [],
-        joint: [],
-
-    };
 
 
     // Use an empty object as default if australianSharesFinance is undefined
@@ -321,7 +326,7 @@ const AustralianShares = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                                         <p className='text-end mt-3'>
-                                            How many {props.modalObject.title} does {nameSet} have:
+                                            How many {title} does {nameSet} have:
                                         </p>
                                         <div style={{ width: "15%" }}>
                                             <Field

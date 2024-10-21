@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Button, Modal } from 'react-bootstrap';
 import { scroller, Element } from 'react-scroll';
 
@@ -38,18 +38,52 @@ const InnerModal = (props) => {
     const xlKeys = ["balanceBenefitDetailsArray",
         "groupInsuranceArray",
         "premiumsDetails",
-        "sumInsured"
+        "sumInsured",
+        "beneficiariesArray",
+        // "ContributionsArray"
         // "Bank Accounts Detail"
     ]; // Add other titles that should use "xl" here
 
 
+    let fullTitles = ["Platform Investments Detail", "Balance & Benefit Details", "Annuities Detail", "Property Loan Details", "Expense Details"]
 
 
-    const size = xlTitles.includes(props.modalObject.title) ? "xl" : xlKeys.includes(props.modalObject.key) ? "xl" : "lg";
+    let [size, setSize] = useState("md");
+
+    useEffect(() => {
+        // console.log(props.modalObject, "inner Modal"); // Log the modalObject
+
+        // Check if modalObject is defined and has a title
+        if (props.modalObject && props.modalObject.title) {
+            let currentTitle = props.modalObject.title;
+
+            // Check if the title contains an underscore
+            if (currentTitle.includes('_')) {
+                currentTitle = (currentTitle.split('_').slice(1))[0];
+
+            }
+
+            console.log(currentTitle, "currentTitle"); // Log the modalObject
+
+            let modalSize = fullTitles.includes(currentTitle)
+                ? "xxl"
+                : xlTitles.includes(currentTitle)
+                    ? "xl"
+                    : xlKeys.includes(props.modalObject.key)
+                        ? "xl"
+                        : "lg";
+
+            setSize(modalSize);
+
+        }
+    }, [props.modalObject]);
+
+
+
 
     return (
         <div>
-            <Modal size={size} backdrop="static" keyboard={false} centered show={props.flagState} onHide={() => { props.setFlagState(false) }}>
+            <Modal dialogClassName={size === "xxl" && "modal-90w"} size={size === "xxl" ? "" : size} backdrop="static" keyboard={false} centered show={props.flagState} onHide={() => { props.setFlagState(false) }}>
                 <Element id="modal-container">
                 </Element>
                 <Modal.Header closeButton>

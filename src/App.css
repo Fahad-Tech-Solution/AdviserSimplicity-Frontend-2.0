@@ -1351,7 +1351,11 @@ label {
   margin-left: 2.5% !important;
 }
 
-
-.CardImg{
+.CardImg {
   width: 35%;
+}
+
+.customInputGroupSelect {
+  border-top-left-radius: 0px !important;
+  border-bottom-left-radius: 0px !important;
 }

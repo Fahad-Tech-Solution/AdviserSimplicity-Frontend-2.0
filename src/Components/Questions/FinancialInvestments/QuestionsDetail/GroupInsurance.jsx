@@ -117,14 +117,16 @@ const GroupInsurance = (props) => {
                                                     </td>
                                                     <td>
                                                         <Field
-                                                            type="text"
+                                                            as="select"
                                                             placeholder="Cover type"
                                                             id={`coverType`}
                                                             name={`coverType`}
-                                                            className="form-control inputDesignDoubleInput"
-                                                            value={"Unitised Fixed"}
-                                                            disabled
-                                                        />
+                                                            className="form-select  inputDesignDoubleInput"
+                                                        >
+                                                            <option value="">Select</option>
+                                                            <option value="Unitised">Unitised</option>
+                                                            <option value="Fixed">Fixed</option>
+                                                        </Field>
                                                     </td>
                                                     <td>
                                                         <Field
@@ -183,14 +185,16 @@ const GroupInsurance = (props) => {
                                                     </td>
                                                     <td>
                                                         <Field
-                                                            type="text"
+                                                            as="select"
                                                             placeholder="Cover type"
                                                             id={`coverType2`}
                                                             name={`coverType2`}
-                                                            className="form-control inputDesignDoubleInput"
-                                                            value={"Unitised Fixed"}
-                                                            disabled
-                                                        />
+                                                            className="form-select inputDesignDoubleInput"
+                                                        >
+                                                            <option value="">Select</option>
+                                                            <option value="Unitised">Unitised</option>
+                                                            <option value="Fixed">Fixed</option>
+                                                        </Field>
                                                     </td>
                                                     <td>
                                                         <Field

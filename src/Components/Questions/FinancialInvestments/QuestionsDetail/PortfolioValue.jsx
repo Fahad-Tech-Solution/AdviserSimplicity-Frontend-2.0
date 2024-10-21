@@ -110,8 +110,11 @@ const PortfolioValue = (props) => {
 
         setDynamicFields(arr)
 
-        if (props.modalObject.editArray) {
+        if (props.modalObject.editArray.length > 0) {
             setFieldValue(`NumberOfMap`, props.modalObject.editArray.length || '');
+
+            console.log(props.modalObject.editArray)
+            // return
 
             props.modalObject.editArray.forEach((data, i) => {
                 if (data) {
@@ -221,7 +224,7 @@ const PortfolioValue = (props) => {
                     if (Array.isArray(elem.arrayOfOffers) && elem.arrayOfOffers.length > 0) {
                         elem.arrayOfOffers.forEach((offerElem) => {
                             // InstituteOptions.push({ value: offerElem.name, label: offerElem.name });
-                                 if (SelectedOffer == offerElem._id) {
+                            if (SelectedOffer == offerElem._id) {
                                 code = offerElem.investmentCode
                             }
 
@@ -244,7 +247,7 @@ const PortfolioValue = (props) => {
                 return (
                     <tr key={i}>
                         <td>{1 + i}</td>
-                        <td style={{ width: "35%" }}>
+                        <td>
 
                             <Field
                                 name={`investmentOption${i}`}
@@ -276,7 +279,7 @@ const PortfolioValue = (props) => {
                                 disabled
                             />
                         </td>
-                        <td>
+                        <td style={{ width: "150px" }}>
                             <Field
                                 type="text"
                                 placeholder="Investment Value"

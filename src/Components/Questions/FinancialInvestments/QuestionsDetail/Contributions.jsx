@@ -4,27 +4,32 @@ import { Row, Table } from 'react-bootstrap';
 import { useRecoilValue } from 'recoil';
 import { defaultUrl } from '../../../../Store/Store';
 import { toCommaAndDollar } from '../../../Assets/Api/Api';
+import DatePicker from 'react-datepicker';
 
 const Contributions = (props) => {
 
 
-    let initialValues = { NumberOfMap: "10" };
+    let initialValues = { NumberOfMap: "" };
 
     const [dynamicFields, setDynamicFields] = useState([]);
 
-    const fillInitialValues = (setFieldValue, loopValue) => {
-
-        let arr = []
-
-        for (let i = 0; i < loopValue; i++) {
-            arr.push("");
-        }
-
-        setDynamicFields(arr);
+    const fillInitialValues = (setFieldValue) => {
 
 
-        if (props.modalObject.editArray) {
-            props.modalObject.editArray.forEach((data, i) => {
+        if (props.modalObject.editArray.newEntries) {
+
+            let arr = []
+
+            for (let i = 0; i < props.modalObject.editArray.newEntries.length; i++) {
+                arr.push("");
+            }
+
+            setDynamicFields(arr);
+
+            setFieldValue(`NumberOfMap`, props.modalObject.editArray.newEntries.length || '');
+            setFieldValue(`startingYear`, props.modalObject.editArray.startingYear || '');
+
+            props.modalObject.editArray.newEntries.forEach((data, i) => {
                 if (data) {
                     console.log(data.investmentOption)
                     setFieldValue(`employerContributions${i}`, data.employerContributions || '');
@@ -77,13 +82,13 @@ const Contributions = (props) => {
         // Log the new entries to verify
         console.log(newEntries);
 
-        // let total = newEntries.reduce((total, entry) => total + entry.taxableComponent, 0);
-        // let total2 = newEntries.reduce((total, entry) => total + entry.preservedAmount, 0);
+        let Obj = {
+            startingYear: values.startingYear,
+            newEntries: newEntries
+        }
 
+        props.setFieldValue(`${props.modalObject.key}${props.modalObject.index}`, Obj)
 
-        props.setFieldValue(`${props.modalObject.key}${props.modalObject.index}`, newEntries)
-        // props.setFieldValue(`${props.modalObject.key3}${props.modalObject.index}`, total)
-        // props.setFieldValue(`${props.modalObject.mainKey}${props.modalObject.index}`, total + total2)
 
         // Reset the flag state if necessary
         if (props.flagState) {
@@ -100,28 +105,52 @@ const Contributions = (props) => {
         >
             {({ values, handleChange, setFieldValue, handleBlur }) => {
                 useEffect(() => {
-                    fillInitialValues(setFieldValue, values.NumberOfMap);
-                }, [values.NumberOfMap]);
+                    fillInitialValues(setFieldValue);
+                }, []);
 
                 return (
                     <Form>
                         <Row>
                             <div className="col-md-12">
                                 <div className='row justify-content-center'>
-                                    <div className='col-md-7 d-none'>
-                                        <p className='text-end mt-1'>
+
+                                    <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                        <p className='text-end mt-3'>
                                             {props.modalObject.question}
                                         </p>
+
+                                        <div style={{ width: "8%" }}>
+                                            <Field
+                                                type="number"
+                                                id="NumberOfMap"
+                                                name="NumberOfMap"
+                                                className="form-control inputDesignDoubleInput"
+                                                onChange={(e) => handleInput(e, setFieldValue)}
+                                            />
+                                        </div>
+                                        <p className='text-end mt-3'>
+                                            Starting Form
+                                        </p>
+                                        <div style={{ width: "10%" }}>
+                                            <DatePicker
+                                                id="Starting Year"
+                                                className="form-control inputDesign DateInputPadding"
+                                                selected={values.startingYear}
+                                                onChange={(date) => {
+                                                    setFieldValue("startingYear", date);
+                                                }}
+                                                dateFormat="yyyy"  // Display year only
+                                                showYearPicker       // Enable year picker mode
+                                                placeholderText="yyyy"
+                                                onBlur={handleBlur}
+                                                name="startingYear"
+                                                maxDate={new Date()}
+                                                wrapperClassName="w-100"
+                                                showIcon
+                                            />
+                                        </div>
                                     </div>
-                                    <div className='col-md-3 d-none'>
-                                        <Field
-                                            type="number"
-                                            id="NumberOfMap"
-                                            name="NumberOfMap"
-                                            className="form-control inputDesignDoubleInput"
-                                            onChange={(e) => handleInput(e, setFieldValue)}
-                                        />
-                                    </div>
+
                                     {values.NumberOfMap && (
                                         <div className='mt-4'>
                                             <Table striped bordered responsive hover>
@@ -137,14 +166,15 @@ const Contributions = (props) => {
                                                 </thead>
                                                 <tbody>
                                                     {dynamicFields.map((elem, i) => {
-                                                        const startYear = 2020 + i;
+                                                        const DateYear = new Date(values.startingYear).getFullYear() || new Date().getFullYear();
+                                                        const startYear = DateYear + i;
                                                         const endYear = startYear + 1;
                                                         const yearRange = `${startYear}/${endYear}`;
 
                                                         return (
                                                             <tr key={i}>
                                                                 <td>{1 + i}</td>
-                                                                <td>{yearRange}</td> {/* Displaying the year range */}
+                                                                <td className="pt-3">{yearRange}</td> {/* Displaying the year range */}
                                                                 <td>
                                                                     <Field
                                                                         type="text"
