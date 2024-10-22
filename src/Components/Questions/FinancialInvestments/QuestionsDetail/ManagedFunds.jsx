@@ -13,7 +13,9 @@ const ManagedFunds = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let bankDetailObj = useRecoilValue(BankDetail)
 
-        const [title, setTitle] = useState(() => {
+
+
+    const [title, setTitle] = useState(() => {
         // let head = props.modalObject.title;
         let currentTitle = props.modalObject.title;
 
@@ -264,9 +266,16 @@ const ManagedFunds = (props) => {
                                                                     className="form-select inputDesignDoubleInput"
                                                                 >
                                                                     <option value={""}>Please Select</option>
-                                                                    {bankDetailObj.map((elem, index) => {
-                                                                        return (<option key={index} value={elem._id}>{elem.platformName}</option>)
-                                                                    })}
+
+                                                                    {title === "Platform Investments Detail" ?
+                                                                        bankDetailObj?.InvestmentPlatforms.map((elem, index) => {
+                                                                            return (<option key={index} value={elem._id}>{elem.platformName}</option>)
+                                                                        })
+                                                                        :
+                                                                        bankDetailObj?.InvestmentBonds.map((elem, index) => {
+                                                                            return (<option key={index} value={elem._id}>{elem.platformName}</option>)
+                                                                        })
+                                                                    }
                                                                 </Field>
                                                             </td>
                                                             <td style={{ width: "230px" }}>
@@ -297,13 +306,24 @@ const ManagedFunds = (props) => {
 
                                                                             if (values[`platformName${i}`]) {
                                                                                 let name = "";
-                                                                                bankDetailObj.map((elem, index) => {
 
-                                                                                    if (elem._id === values[`platformName${i}`]) {
-                                                                                        name = elem.platformName
-                                                                                    }
+                                                                                title === "Platform Investments Detail" ?
+                                                                                    bankDetailObj?.InvestmentPlatforms.map((elem, index) => {
 
-                                                                                });
+                                                                                        if (elem._id === values[`platformName${i}`]) {
+                                                                                            name = elem.platformName
+                                                                                        }
+
+                                                                                    })
+                                                                                    :
+                                                                                    bankDetailObj?.InvestmentBonds.map((elem, index) => {
+
+                                                                                        if (elem._id === values[`platformName${i}`]) {
+                                                                                            name = elem.platformName
+                                                                                        }
+
+                                                                                    })
+
 
                                                                                 handleInnerModal(name + "_Portfolio Value",
                                                                                     `How many Underlying Investments do ${nameSet} have ?`,
@@ -375,7 +395,7 @@ const ManagedFunds = (props) => {
                     </Form>
                 );
             }}
-        </Formik>
+        </Formik >
     );
 };
 

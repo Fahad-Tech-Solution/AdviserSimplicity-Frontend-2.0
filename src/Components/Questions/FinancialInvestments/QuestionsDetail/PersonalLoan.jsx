@@ -2,14 +2,14 @@ import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
+import { BankDetail, defaultUrl, QuestionDetail } from '../../../../Store/Store';
 import { handleInputChange, PatchAxios, PostAxios, toCommaAndDollar, handleInputFocus, handleInputKeyDown, handleInputBlur, toPercentage, openNotificationSuccess } from '../../../Assets/Api/Api';
 
 
 const PersonalLoan = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
-
+    let bankDetailObj = useRecoilValue(BankDetail)
 
     let [nameSet] = useState(() => {
         if (props.modalObject.Input === "client") {
@@ -154,84 +154,6 @@ const PersonalLoan = (props) => {
         }
     };
 
-    const options = [
-        "Adelaide Bank",
-        "Alliance Bank",
-        "AMP",
-        "ANZ",
-        "Arab Bank Australia",
-        "Australian Military Bank (ADCU)",
-        "Australian Mutual Bank",
-        "Australian Unity",
-        "Auswide Bank",
-        "AWA Alliance Bank",
-        "Bank Australia (bankmecu)",
-        "Bank First",
-        "Bank of Melbourne",
-        "Bank of Queensland (BOQ)",
-        "Bank of Sydney",
-        "BankSA",
-        "BankVic",
-        "Bankwest",
-        "BCU",
-        "BDCU Alliance Bank",
-        "Bendigo Bank",
-        "Beyond Bank",
-        "Border Bank",
-        "Circle Alliance Bank",
-        "Citi",
-        "Commonwealth Bank",
-        "Community First Bank",
-        "Credit Union SA",
-        "Defence Bank",
-        "Delphi Bank",
-        "Easy Street",
-        "First Choice Credit Union",
-        "First Option Bank",
-        "firstmac",
-        "G&C Mutual",
-        "Gateway Bank Ltd",
-        "Geelong Bank",
-        "Great Southern Bank",
-        "Greater Bank",
-        "Hay",
-        "Heartland Bank",
-        "Heritage Bank",
-        "Horizon Bank",
-        "HSBC Australia",
-        "Hume Bank",
-        "Illawarra Credit Union",
-        "IMB",
-        "ING",
-        "Judo Bank",
-        "Macquarie Bank",
-        "ME",
-        "MOVE Bank",
-        "MyState Bank",
-        "NAB",
-        "Newcastle Permanent",
-        "P&N Bank",
-        "People’s Choice CU",
-        "Policebank",
-        "Prospa",
-        "Qudos Bank",
-        "Rabobank",
-        "RACQ",
-        "RAMS",
-        "Regional Australia Bank",
-        "Rural Bank",
-        "Service One Alliance Bank",
-        "St.George",
-        "Suncorp Bank",
-        "Teachers Mutual Bank",
-        "Ubank",
-        "UniBank",
-        "Up Bank",
-        "Virgin Money",
-        "Westpac",
-        "Zeller"
-    ];
-
     const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
         value: (i + 1).toString(),
         label: ("Year " + (i + 1)).toString(),
@@ -330,8 +252,8 @@ const PersonalLoan = (props) => {
                                                                         className="form-select inputDesignDoubleInput"
                                                                     >
                                                                         <option value={""}>Please Select</option>
-                                                                        {options.map((elem, index) => {
-                                                                            return (<option key={index} value={elem}>{elem}</option>)
+                                                                        {bankDetailObj?.FinancialInstitutions.map((elem, index) => {
+                                                                            return (<option key={index} value={elem._id}>{elem.platformName}</option>)
                                                                         })}
                                                                     </Field>
                                                                 </td>

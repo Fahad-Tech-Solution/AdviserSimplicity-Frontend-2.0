@@ -12,6 +12,7 @@ import {
     toNumericValue,
 } from "../../Assets/Api/Api";
 import DynamicTableRow from "../../Assets/Dynamic/DynamicTableRow";
+import { CreatableMultiSelectField } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 
 const Partnership = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
@@ -28,43 +29,45 @@ const Partnership = (props) => {
                 joint: [],
             }; // Use an empty object as default if incomeFromPartnership is undefined
 
-    let initialValues = {};
-
+    let initialValues = {
+        owner: []
+    };
 
     const fillInitialValues = (setFieldValue) => {
         let data = incomeFromPartnership;
         console.log(data, "data");
-        if (incomeFromPartnership && incomeFromPartnership._id) {
-            if (data) {
 
-                setFieldValue(`owner`, data.owner || "");
+        if (data && data._id) {
+            setFieldValue(`owner`, data.owner || "");
 
-                if (data.owner === "client" || data.owner === "client+partner") {
-                    if (data?.client && Object.keys(data?.client).length) {
-
-                        setFieldValue(`client.businessName`, data.client.businessName || "");
-                        setFieldValue(`client.ABN`, data.client.ABN || "");
-                        setFieldValue(`client.businessAddress`, data.client.businessAddress || "");
-                        setFieldValue(`client.totalNetPartnershipIncome`, data.client.totalNetPartnershipIncome || "");
-                        setFieldValue(`client.shareOfPartnership`, data.client.shareOfPartnership || "");
-                        setFieldValue(`client.share`, data.client.share || "");
-                        setFieldValue(`client.goodWill`, data.client.goodWill || "");
-                    }
+            // Handle client-related fields
+            if (data.owner.includes("client")) {
+                if (data.client && Object.keys(data.client).length) {
+                    setFieldValue(`client.businessName`, data.client.businessName || "");
+                    setFieldValue(`client.ABN`, data.client.ABN || "");
+                    setFieldValue(`client.businessAddress`, data.client.businessAddress || "");
+                    setFieldValue(`client.totalNetPartnershipIncome`, data.client.totalNetPartnershipIncome || "");
+                    setFieldValue(`client.shareOfPartnership`, data.client.shareOfPartnership || "");
+                    setFieldValue(`client.share`, data.client.share || "");
+                    setFieldValue(`client.goodWill`, data.client.goodWill || "");
                 }
-                if ((data.owner === "partner" || data.owner === "client+partner") && (UserStatus === "Married")) {
-                    if (data?.partner && Object.keys(data?.partner).length) {
-                        setFieldValue(`partner.businessName`, data.partner.businessName || "");
-                        setFieldValue(`partner.ABN`, data.partner.ABN || "");
-                        setFieldValue(`partner.businessAddress`, data.partner.businessAddress || "");
-                        setFieldValue(`partner.totalNetPartnershipIncome`, data.partner.totalNetPartnershipIncome || "");
-                        setFieldValue(`partner.shareOfPartnership`, data.partner.shareOfPartnership || "");
-                        setFieldValue(`partner.share`, data.partner.share || "");
-                        setFieldValue(`partner.goodWill`, data.partner.goodWill || "");
-                    }
+            }
+
+            // Handle partner-related fields if married
+            if (data.owner.includes("partner") && UserStatus === "Married") {
+                if (data.partner && Object.keys(data.partner).length) {
+                    setFieldValue(`partner.businessName`, data.partner.businessName || "");
+                    setFieldValue(`partner.ABN`, data.partner.ABN || "");
+                    setFieldValue(`partner.businessAddress`, data.partner.businessAddress || "");
+                    setFieldValue(`partner.totalNetPartnershipIncome`, data.partner.totalNetPartnershipIncome || "");
+                    setFieldValue(`partner.shareOfPartnership`, data.partner.shareOfPartnership || "");
+                    setFieldValue(`partner.share`, data.partner.share || "");
+                    setFieldValue(`partner.goodWill`, data.partner.goodWill || "");
                 }
             }
         }
     };
+
 
 
 
@@ -75,10 +78,11 @@ const Partnership = (props) => {
         // return (false);
 
         // Create an object with additional fields
-        let obj = values;
+        let obj = { ...values };
         obj.clientFK = localStorage.getItem("UserID");
 
-        if (values.owner === "client" || values.owner === "client+partner") {
+        // Handle client-related conditions
+        if (values.owner.includes("client")) {
             obj.clientTotal = values.client.share;
             console.log("Client total set");
         } else {
@@ -87,8 +91,8 @@ const Partnership = (props) => {
             console.log("Client data cleared");
         }
 
-        // Handle partner-related conditions
-        if ((values.owner === "partner" || values.owner === "client+partner") && (UserStatus === "Married")) {
+        // Handle partner-related conditions if married
+        if (values.owner.includes("partner") && UserStatus === "Married") {
             obj.partnerTotal = values.partner.share;
             console.log("Partner total set");
         } else {
@@ -97,11 +101,9 @@ const Partnership = (props) => {
             console.log("Partner data cleared");
         }
 
-        // console.log(obj, "final obj");
         console.log(obj, "final obj");
 
         // Check if incomeFromPartnership and the array at props.modalObject.Input exist
-        // const bankAccountArray = incomeFromPartnership[props.modalObject.Input] || [];
         const bankAccountArray = incomeFromPartnership.clientFK || "";
 
         try {
@@ -112,7 +114,6 @@ const Partnership = (props) => {
                     obj
                 );
             } else {
-                // obj.collection = props.modalObject.Input;
                 res = await PatchAxios(
                     `${DefaultUrl}/api/incomeFromPartnership/Update`,
                     obj
@@ -132,7 +133,7 @@ const Partnership = (props) => {
             }
         } catch (error) {
             console.error("Error occurred while making API call:", error);
-            openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
+            openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved. Please try again.");
         }
     };
 
@@ -204,6 +205,13 @@ const Partnership = (props) => {
         },
     ];
 
+
+    const options = (UserStatus !== "Single") ? [
+        { value: "client", label: RenderName("client") },
+        { value: "partner", label: RenderName("partner") }] :
+        [{ value: "client", label: RenderName("client") },];
+
+
     return (
         <Formik
             initialValues={initialValues}
@@ -227,38 +235,18 @@ const Partnership = (props) => {
                                                 Owner
                                             </label>
 
-                                            <div className="w-25 ">
+                                            <div style={{ minWidth: "25%" }}>
                                                 <Field
-                                                    as="select"
-                                                    placeholder="Name of owner"
-                                                    id={`owner`}
                                                     name={`owner`}
-                                                    className="form-select inputDesignDoubleInput"
-                                                >
-                                                    <option value={""}>Select</option>
-                                                    <option value={"client"}>
-                                                        {"Only " + RenderName("client")}
-                                                    </option>
-                                                    {localStorage.getItem("UserStatus") !== "Single" && (
-                                                        <React.Fragment>
-                                                            <option value={"partner"}>
-                                                                {"Only " + RenderName("partner")}
-                                                            </option>
-                                                            <option value={"client+partner"}>
-                                                                {"Both (" +
-                                                                    RenderName("client") +
-                                                                    " , " +
-                                                                    RenderName("partner") +
-                                                                    ")"}
-                                                            </option>
-                                                        </React.Fragment>
-                                                    )}
-                                                </Field>
+                                                    component={CreatableMultiSelectField}
+                                                    label="Multi Select Field"
+                                                    options={options}
+                                                />
                                             </div>
                                         </div>
                                     </div>
 
-                                    {values.owner && (
+                                    {values.owner.length > 0 && (
                                         <div className="mt-4">
                                             <Table striped bordered responsive hover>
                                                 <thead>
@@ -280,7 +268,7 @@ const Partnership = (props) => {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {values.owner == "client" ? (
+                                                    {(values.owner.includes("client")) && (
                                                         <DynamicTableRow
                                                             rowConfig={rowConfig}
                                                             values={values}
@@ -290,10 +278,8 @@ const Partnership = (props) => {
                                                             //  handleInnerModal={handleInnerModal}
                                                             stakeHolder="client."
                                                         />
-                                                    ) : (
-                                                        ""
                                                     )}
-                                                    {values.owner == "partner" ? (
+                                                    {(values.owner.includes("partner") && UserStatus === "Married") && (
                                                         <DynamicTableRow
                                                             rowConfig={rowConfig}
                                                             values={values}
@@ -303,34 +289,8 @@ const Partnership = (props) => {
                                                             //  handleInnerModal={handleInnerModal}
                                                             stakeHolder="partner."
                                                         />
-                                                    ) : (
-                                                        ""
                                                     )}
-                                                    {values.owner == "client+partner" ? (
-                                                        <>
-                                                            <DynamicTableRow
-                                                                rowConfig={rowConfig}
-                                                                values={values}
-                                                                setFieldValue={setFieldValue}
-                                                                handleChange={handleChange}
-                                                                handleBlur={handleBlur}
-                                                                //   handleInnerModal={handleInnerModal}
-                                                                stakeHolder="client."
-                                                            />
-                                                            {UserStatus === "Married" &&
-                                                                <DynamicTableRow
-                                                                    rowConfig={rowConfig}
-                                                                    values={values}
-                                                                    setFieldValue={setFieldValue}
-                                                                    handleChange={handleChange}
-                                                                    handleBlur={handleBlur}
-                                                                    //   handleInnerModal={handleInnerModal}
-                                                                    stakeHolder="partner."
-                                                                />
-                                                            }
-                                                        </>
-                                                    ) : (""
-                                                    )}
+
                                                 </tbody>
                                             </Table>
                                         </div>

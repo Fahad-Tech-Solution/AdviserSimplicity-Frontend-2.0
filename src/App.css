@@ -1359,3 +1359,15 @@ label {
   border-top-left-radius: 0px !important;
   border-bottom-left-radius: 0px !important;
 }
+
+.customCardList {
+  padding: 15px;
+  margin-bottom: 15px;
+  background-color: #28d73f2a;
+  color: black;
+  /* min-height: 7rem !important; */
+  border-radius: 12px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
+    rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
+  border: 1px solid #36b446;
+}

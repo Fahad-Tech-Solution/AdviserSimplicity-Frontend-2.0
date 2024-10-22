@@ -9,6 +9,7 @@ import DatePicker from 'react-datepicker';
 import { Tooltip } from 'antd';
 import { FaCircleQuestion } from 'react-icons/fa6';
 import DynamicTableRow from '../../Assets/Dynamic/DynamicTableRow';
+import { CreatableMultiSelectField } from '../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField';
 
 const EstatePlanningPOA = (props) => {
 
@@ -27,7 +28,7 @@ const EstatePlanningPOA = (props) => {
 
 
     let initialValues = {
-        owner: "",
+        owner: [],
         client: {
             POAType: "",
             yearSetUp: "",
@@ -47,22 +48,25 @@ const EstatePlanningPOA = (props) => {
     const fillInitialValues = (setFieldValue) => {
 
         if (POA && POA.clientFK) {
-            setFieldValue("owner", POA.owner)
-            if (POA.owner === "client" || POA.owner === "client+partner" || POA.owner === "together") {
-                setFieldValue("client.POAType", POA.client.POAType)
-                setFieldValue("client.yearSetUp", POA.client.yearSetUp)
-                setFieldValue("client.POAName", POA.client.POAName)
-                setFieldValue("client.DOB", POA.client.DOB)
-                setFieldValue("client.relationshipStatus", POA.client.relationshipStatus)
-            }
-            if (POA.owner === "partner" || POA.owner === "client+partner" || POA.owner === "together") {
-                setFieldValue("partner.POAType", POA.partner.POAType)
-                setFieldValue("partner.yearSetUp", POA.partner.yearSetUp)
-                setFieldValue("partner.POAName", POA.partner.POAName)
-                setFieldValue("partner.DOB", POA.partner.DOB)
-                setFieldValue("partner.relationshipStatus", POA.partner.relationshipStatus)
+            setFieldValue("owner", POA.owner);
+
+            // For "client" related fields
+            if (POA.owner.includes("client") || POA.owner.includes("together")) {
+                setFieldValue("client.POAType", POA.client.POAType);
+                setFieldValue("client.yearSetUp", POA.client.yearSetUp);
+                setFieldValue("client.POAName", POA.client.POAName);
+                setFieldValue("client.DOB", POA.client.DOB);
+                setFieldValue("client.relationshipStatus", POA.client.relationshipStatus);
             }
 
+            // For "partner" related fields
+            if (POA.owner.includes("partner") || POA.owner.includes("together")) {
+                setFieldValue("partner.POAType", POA.partner.POAType);
+                setFieldValue("partner.yearSetUp", POA.partner.yearSetUp);
+                setFieldValue("partner.POAName", POA.partner.POAName);
+                setFieldValue("partner.DOB", POA.partner.DOB);
+                setFieldValue("partner.relationshipStatus", POA.partner.relationshipStatus);
+            }
         }
     };
 
@@ -74,7 +78,6 @@ const EstatePlanningPOA = (props) => {
         console.log(values, "Test karo yar");
         // return (false);
 
-
         let DataOf = props.modalObject.Input;
 
         // Create an object with additional fields
@@ -82,37 +85,40 @@ const EstatePlanningPOA = (props) => {
 
         obj.clientFK = localStorage.getItem("UserID");
 
-
-        if (values.owner === "client" || values.owner === "client+partner" || values.owner === "together") {
+        // For "client" related calculations
+        if (values.owner.includes("client") || values.owner.includes("together")) {
             obj.clientTotal = obj.client.POAName.toString();
         } else {
             obj.clientTotal = "";
             obj.client = {};
         }
 
-        if (values.owner === "partner" || values.owner === "client+partner" || values.owner === "together") {
+        // For "partner" related calculations
+        if (values.owner.includes("partner") || values.owner.includes("together")) {
             obj.partnerTotal = obj.partner.POAName.toString();
         } else {
             obj.partnerTotal = "";
             obj.partner = {};
         }
 
+        // If the user is not married, reset partner-related fields
         if (UserStatus !== "Married") {
             obj.partnerTotal = "";
             obj.partner = {};
         }
 
-        console.log(obj, "final obj")
+        console.log(obj, "final obj");
 
         // Check if POA and the array at props.modalObject.Input exist
-        // const bankAccountArray = POA[props.modalObject.Input] || [];
         const bankAccountArray = POA.clientFK || "";
 
         try {
             let res;
             if (!bankAccountArray) {
+                // Make a POST request if no bank account is found
                 res = await PostAxios(`${DefaultUrl}/api/POA/Add`, obj);
             } else {
+                // Make a PATCH request if a bank account is found
                 res = await PatchAxios(`${DefaultUrl}/api/POA/Update`, obj);
             }
 
@@ -130,6 +136,7 @@ const EstatePlanningPOA = (props) => {
             console.error("Error occurred while making API call:", error);
         }
     };
+
 
     let TBodyRender = (values, setFieldValue, handleChange, handleBlur) => {
         const optionsArray = [
@@ -151,7 +158,7 @@ const EstatePlanningPOA = (props) => {
 
         let storeInPartner = (values, setFieldValue, currentInput, stakeHolder) => {
 
-            if (values.owner === "together") {
+            if (values.owner.includes("together")) {
 
                 let POAType = values.client.POAType || "";
                 let yearSetUp = values.client.yearSetUp || "";
@@ -199,16 +206,16 @@ const EstatePlanningPOA = (props) => {
             { name: 'relationshipStatus', callBack: true, func: storeInPartner, type: 'select-creatableMulti', options: relationshipStatusOptionsArray, placeholder: 'Relationship Status', },
         ]
         const rowConfig2 = [
-            { name: 'POAType', type: 'select', disabled: values.owner === "together", options: optionsArray, placeholder: 'POA Type', styleSet: { width: "15rem" }, },
-            { name: 'yearSetUp', type: 'number', disabled: values.owner === "together", placeholder: 'Year Set up', },
-            { name: 'POAName', type: 'text', disabled: values.owner === "together", placeholder: 'Name of POA', },
-            { name: 'DOB', type: 'date', disabled: values.owner === "together", placeholder: 'dd/mm/yyyy', },
-            { name: 'relationshipStatus', disabled: values.owner === "together", type: 'select-creatableMulti', options: relationshipStatusOptionsArray, placeholder: 'Relationship Status', styleSet: { width: "15rem" }, },
+            { name: 'POAType', type: 'select', disabled: values.owner.includes("together"), options: optionsArray, placeholder: 'POA Type', styleSet: { width: "15rem" }, },
+            { name: 'yearSetUp', type: 'number', disabled: values.owner.includes("together"), placeholder: 'Year Set up', },
+            { name: 'POAName', type: 'text', disabled: values.owner.includes("together"), placeholder: 'Name of POA', },
+            { name: 'DOB', type: 'date', disabled: values.owner.includes("together"), placeholder: 'dd/mm/yyyy', },
+            { name: 'relationshipStatus', disabled: values.owner.includes("together"), type: 'select-creatableMulti', options: relationshipStatusOptionsArray, placeholder: 'Relationship Status', styleSet: { width: "15rem" }, },
         ]
 
         return (
             <React.Fragment>
-                {(values.owner === "client" || values.owner === "client+partner" || values.owner === "together") &&
+                {(values.owner.includes("together") || values.owner.includes("client")) &&
                     <DynamicTableRow
                         rowConfig={rowConfig}
                         values={values}
@@ -218,7 +225,7 @@ const EstatePlanningPOA = (props) => {
                         stakeHolder={"client."}
                     />
                 }
-                {((values.owner === "partner" || values.owner === "client+partner" || values.owner === "together") && (UserStatus === "Married")) &&
+                {((values.owner.includes("together") || values.owner.includes("partner")) && (UserStatus === "Married")) &&
                     <DynamicTableRow
                         rowConfig={rowConfig2}
                         values={values}
@@ -233,6 +240,13 @@ const EstatePlanningPOA = (props) => {
 
 
     }
+
+
+    const options = (UserStatus !== "Single") ? [
+        { value: "client", label: RenderName("client") },
+        { value: "partner", label: RenderName("partner") },
+        { value: "together", label: `Together(${RenderName("joint")})` }] :
+        [{ value: "client", label: RenderName("client") },];
 
 
     return (
@@ -259,55 +273,37 @@ const EstatePlanningPOA = (props) => {
                                                 Owner
                                             </label>
 
-                                            <div className='w-25'>
+                                            <div style={{ minWidth: "25%" }}>
                                                 <Field
-                                                    as="select"
-                                                    placeholder="Name of owner"
-                                                    id={`owner`}
                                                     name={`owner`}
-                                                    className="form-select inputDesignDoubleInput"
-                                                    onChange={(e) => {
-                                                        setFieldValue(e.target.name, e.target.value)
+                                                    component={CreatableMultiSelectField}
+                                                    label="Multi Select Field"
+                                                    options={options}
+                                                    onChange={(selection) => {
+                                                        // console.log(JSON.stringify(selection.target.value));
+                                                        let selectionArray = selection.target.value;
+                                                        const hasTogether = selectionArray.some(item => item.value === "together");
 
-
-                                                        if (e.target.value === "together") {
-
-                                                            setFieldValue("partner.POAType", values?.client.POAType || "")
-                                                            setFieldValue("partner.yearSetUp", values?.client.yearSetUp || "")
-                                                            setFieldValue("partner.POAName", values?.client.POAName || "")
-                                                            setFieldValue("partner.DOB", values?.client.DOB || "")
-                                                            setFieldValue("partner.relationshipStatus", values?.client.relationshipStatus || "")
+                                                        // console.log(hasTogether, values.owner);
+                                                        if (hasTogether) {
+                                                            setFieldValue("owner", ["together"]);
                                                         }
                                                     }}
-                                                >
-                                                    <option value={""}>Select</option>
-
-                                                    <option value={"client"}>  {RenderName("client")} </option>
-
-                                                    {localStorage.getItem("UserStatus") !== "Single" &&
-                                                        <React.Fragment>
-
-                                                            <option value={"partner"}>{RenderName("partner")}</option>
-                                                            <option value={"client+partner"}>{"Both (" + RenderName("client") + " , " + RenderName("partner") + ")"} </option>
-                                                            <option value={"together"}>{"Together (" + RenderName("client") + " , " + RenderName("partner") + ")"} </option>
-
-                                                        </React.Fragment>
-                                                    }
-                                                </Field>
+                                                />
                                             </div>
-                                            {values.owner === "together" &&
 
+                                            {(values.owner.includes("together")) && (
                                                 <label htmlFor='' className='text-end '>
                                                     <Tooltip placement="top" title={"When yes is selected for Partner for Wills  and POA have an option to copy details from Client Answers for Will  and POA this will apply for when client and partner have a Will together."}>
                                                         <FaCircleQuestion style={{ fontSize: '18px', cursor: 'pointer' }} />
                                                     </Tooltip>
-                                                </label>
+                                                </label>)
                                             }
 
                                         </div>
                                     </div>
 
-                                    {values.owner !== "" && (
+                                    {values.owner.length > 0 && (
                                         <div className='mt-4'>
                                             <Table striped bordered responsive hover>
                                                 <thead>

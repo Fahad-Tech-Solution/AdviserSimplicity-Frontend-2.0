@@ -173,7 +173,7 @@ const Beneficiaries = (props) => {
                                                                         className="form-select inputDesignDoubleInput"
                                                                         onChange={(e) => {
                                                                             setFieldValue(`nominationType${i}`, e.target.value);
-                                                                            if ((e.target.value === "Legal Personal Representative (Your Estate)")) {
+                                                                            if (e.target.value === "Legal Personal Representative (Your Estate)") {
                                                                                 // Loop through all entries once and set values for all applicable fields
 
                                                                                 for (let innerIndex = 0; innerIndex < values.NumberOfMap; innerIndex++) {
@@ -183,19 +183,43 @@ const Beneficiaries = (props) => {
                                                                                     setFieldValue(`shareBenefit${innerIndex}`, "100.00%");
                                                                                     setAutoClearValue(true);
                                                                                 }
-
                                                                             }
                                                                             else if (e.target.value === "Reversionary Beneficiary") {
                                                                                 setFieldValue(`beneficiaryName${i}`, "N/A");
                                                                                 setFieldValue(`relationshipStatus${i}`, "N/A");
                                                                                 setFieldValue(`shareBenefit${i}`, "100.00%");
+
+                                                                                if (values.NumberOfMap !== "1") {
+                                                                                    for (let innerIndex = 0; innerIndex < values.NumberOfMap; innerIndex++) {
+                                                                                        if (values[`nominationType${innerIndex}`] === "Legal Personal Representative (Your Estate)") {
+                                                                                            setFieldValue(`nominationType${innerIndex}`, "Legal Personal Representative (Your Estate)");
+                                                                                            setFieldValue(`beneficiaryName${innerIndex}`, "N/A");
+                                                                                            setFieldValue(`relationshipStatus${innerIndex}`, "N/A");
+                                                                                            setFieldValue(`shareBenefit${innerIndex}`, "100.00%");
+                                                                                            setAutoClearValue(true);
+                                                                                        }
+                                                                                    }
+                                                                                }
                                                                             }
                                                                             else {
+                                                                                console.log(e.target.value)
                                                                                 if (autoClearValue) {
                                                                                     setFieldValue(`beneficiaryName${i}`, "");
                                                                                     setFieldValue(`relationshipStatus${i}`, "");
                                                                                     setFieldValue(`shareBenefit${i}`, "");
                                                                                     setAutoClearValue(false);
+                                                                                }
+                                                                                if (values.NumberOfMap !== "1") {
+
+                                                                                    for (let innerIndex = 0; innerIndex < values.NumberOfMap; innerIndex++) {
+                                                                                        if (values[`nominationType${innerIndex}`] === "Legal Personal Representative (Your Estate)") {
+                                                                                            setFieldValue(`nominationType${innerIndex}`, "Legal Personal Representative (Your Estate)");
+                                                                                            setFieldValue(`beneficiaryName${innerIndex}`, "N/A");
+                                                                                            setFieldValue(`relationshipStatus${innerIndex}`, "N/A");
+                                                                                            setFieldValue(`shareBenefit${innerIndex}`, "100.00%");
+                                                                                            setAutoClearValue(true);
+                                                                                        }
+                                                                                    }
                                                                                 }
                                                                             }
                                                                         }}

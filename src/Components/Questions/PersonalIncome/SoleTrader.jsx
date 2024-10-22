@@ -7,6 +7,7 @@ import { openNotificationSuccess, PatchAxios, PostAxios, RenderName } from "../.
 
 import MyFormComponent from "../../Assets/Dynamic/DemoDynamicForm";
 import DynamicTableRow from "../../Assets/Dynamic/DynamicTableRow";
+import { CreatableMultiSelectField } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 
 const SoleTrader = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
@@ -23,44 +24,41 @@ const SoleTrader = (props) => {
                 joint: [],
             }; // Use an empty object as default if incomeFromSoleTrader is undefined
 
-    let initialValues = {};
+    let initialValues = {
+        owner: []
+    };
 
     const fillInitialValues = (setFieldValue) => {
-
         console.log(incomeFromSoleTrader, "edit");
         let data = incomeFromSoleTrader;
 
-        if (incomeFromSoleTrader && incomeFromSoleTrader._id) {
+        if (data && data._id) {
+            setFieldValue(`owner`, data.owner || "");
 
-            if (data) {
-
-                setFieldValue(`owner`, data.owner || "");
-
-                if (data.owner === "client" || data.owner === "client+partner") {
-                    if (data?.client && Object.keys(data?.client).length) {
-                        setFieldValue(`client.businessName`, data.client.businessName || "");
-                        setFieldValue(`client.ABN`, data.client.ABN || "");
-                        setFieldValue(`client.businessAddress`, data.client.businessAddress || "");
-                        setFieldValue(`client.netBusinessIncome`, data.client.netBusinessIncome || "");
-                        setFieldValue(`client.goodWill`, data.client.goodWill || "");
-                    }
+            // Handle client-related fields
+            if (data.owner.includes("client")) {
+                if (data?.client && Object.keys(data.client).length) {
+                    setFieldValue(`client.businessName`, data.client.businessName || "");
+                    setFieldValue(`client.ABN`, data.client.ABN || "");
+                    setFieldValue(`client.businessAddress`, data.client.businessAddress || "");
+                    setFieldValue(`client.netBusinessIncome`, data.client.netBusinessIncome || "");
+                    setFieldValue(`client.goodWill`, data.client.goodWill || "");
                 }
+            }
 
-                if ((data.owner === "partner" || data.owner === "client+partner") && (UserStatus === "Married")) {
-                    if (data?.partner && Object.keys(data?.partner).length) {
-                        setFieldValue(`partner.businessName`, data.partner.businessName || "");
-                        setFieldValue(`partner.ABN`, data.partner.ABN || "");
-                        setFieldValue(`partner.businessAddress`, data.partner.businessAddress || "");
-                        setFieldValue(`partner.netBusinessIncome`, data.partner.netBusinessIncome || "");
-                        setFieldValue(`partner.goodWill`, data.partner.goodWill || "");
-                    }
+            // Handle partner-related fields if married
+            if (data.owner.includes("partner") && UserStatus === "Married") {
+                if (data?.partner && Object.keys(data.partner).length) {
+                    setFieldValue(`partner.businessName`, data.partner.businessName || "");
+                    setFieldValue(`partner.ABN`, data.partner.ABN || "");
+                    setFieldValue(`partner.businessAddress`, data.partner.businessAddress || "");
+                    setFieldValue(`partner.netBusinessIncome`, data.partner.netBusinessIncome || "");
+                    setFieldValue(`partner.goodWill`, data.partner.goodWill || "");
                 }
-
-
-
             }
         }
     };
+
 
     let DefaultUrl = useRecoilValue(defaultUrl);
 
@@ -70,7 +68,7 @@ const SoleTrader = (props) => {
         obj.clientFK = localStorage.getItem("UserID");
 
         // Handle client-related conditions
-        if (values.owner === "client" || values.owner === "client+partner") {
+        if (values.owner.includes("client")) {
             obj.clientTotal = values.client.netBusinessIncome;
             console.log("Client total set");
         } else {
@@ -80,7 +78,7 @@ const SoleTrader = (props) => {
         }
 
         // Handle partner-related conditions
-        if ((values.owner === "partner" || values.owner === "client+partner") && (UserStatus === "Married")) {
+        if (values.owner.includes("partner") && UserStatus === "Married") {
             obj.partnerTotal = values.partner.netBusinessIncome;
             console.log("Partner total set");
         } else {
@@ -91,8 +89,7 @@ const SoleTrader = (props) => {
 
         console.log(obj, "final obj");
 
-        // Check if incomeFromSoleTrader and the array at props.modalObject.Input exist
-        // const bankAccountArray = incomeFromSoleTrader[props.modalObject.Input] || [];
+        // Check if incomeFromSoleTrader exists
         const bankAccountArray = incomeFromSoleTrader.clientFK || "";
 
         try {
@@ -103,7 +100,6 @@ const SoleTrader = (props) => {
                     obj
                 );
             } else {
-                // obj.collection = props.modalObject.Input;
                 res = await PatchAxios(
                     `${DefaultUrl}/api/incomeFromSoleTrader/Update`,
                     obj
@@ -116,14 +112,15 @@ const SoleTrader = (props) => {
                 setQuestionDetail(updatedData);
             }
 
-            openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
+            openNotificationSuccess("success", "topRight", "Success Notification", `Data of "${props.modalObject.title}" is Saved`);
+
             // Reset the flag state if necessary
             if (props.flagState) {
                 props.setFlagState(false);
             }
         } catch (error) {
             console.error("Error occurred while making API call:", error);
-            openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
+            openNotificationSuccess("error", "topRight", "Error Notification", `Data of "${props.modalObject.title}" is not Saved. Please try again.`);
         }
     };
 
@@ -147,6 +144,11 @@ const SoleTrader = (props) => {
             placeholder: "GoodWill Business Valuation",
         },
     ];
+
+    const options = (UserStatus !== "Single") ? [
+        { value: "client", label: RenderName("client") },
+        { value: "partner", label: RenderName("partner") }] :
+        [{ value: "client", label: RenderName("client") },];
 
 
     return (
@@ -172,37 +174,17 @@ const SoleTrader = (props) => {
                                                 Owner
                                             </label>
 
-                                            <div className="w-25 ">
+                                            <div style={{ minWidth: "25%" }}>
                                                 <Field
-                                                    as="select"
-                                                    placeholder="Name of owner"
-                                                    id={`owner`}
                                                     name={`owner`}
-                                                    className="form-select inputDesignDoubleInput"
-                                                >
-                                                    <option value={""}>Select</option>
-                                                    <option value={"client"}>
-                                                        {"Only " + RenderName("client")}
-                                                    </option>
-                                                    {localStorage.getItem("UserStatus") !== "Single" && (
-                                                        <React.Fragment>
-                                                            <option value={"partner"}>
-                                                                {"Only " + RenderName("partner")}
-                                                            </option>
-                                                            <option value={"client+partner"}>
-                                                                {"Both (" +
-                                                                    RenderName("client") +
-                                                                    " , " +
-                                                                    RenderName("partner") +
-                                                                    ")"}
-                                                            </option>
-                                                        </React.Fragment>
-                                                    )}
-                                                </Field>
+                                                    component={CreatableMultiSelectField}
+                                                    label="Multi Select Field"
+                                                    options={options}
+                                                />
                                             </div>
                                         </div>
                                     </div>
-                                    {values.owner && (
+                                    {values.owner.length > 0 && (
                                         <div className="mt-4">
                                             <Table striped bordered responsive hover>
                                                 <thead className="text-center">
@@ -220,7 +202,7 @@ const SoleTrader = (props) => {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {values.owner == "client" ? (
+                                                    {(values.owner.includes("client")) && (
                                                         <DynamicTableRow
                                                             rowConfig={rowConfig}
                                                             values={values}
@@ -230,11 +212,9 @@ const SoleTrader = (props) => {
                                                             handleInnerModal={handleInnerModal}
                                                             stakeHolder="client."
                                                         />
-                                                    ) : (
-
-                                                        ""
                                                     )}
-                                                    {values.owner == "partner" ? (
+
+                                                    {(values.owner.includes("partner") && UserStatus === "Married") &&
                                                         <DynamicTableRow
                                                             rowConfig={rowConfig}
                                                             values={values}
@@ -243,39 +223,8 @@ const SoleTrader = (props) => {
                                                             handleBlur={handleBlur}
                                                             handleInnerModal={handleInnerModal}
                                                             stakeHolder="partner."
-                                                        />
-                                                    ) : (
+                                                        />}
 
-                                                        ""
-                                                    )}
-                                                    {values.owner == "client+partner" ? (
-                                                        <>
-                                                            <DynamicTableRow
-                                                                rowConfig={rowConfig}
-                                                                values={values}
-                                                                setFieldValue={setFieldValue}
-                                                                handleChange={handleChange}
-                                                                handleBlur={handleBlur}
-                                                                handleInnerModal={handleInnerModal}
-                                                                stakeHolder="client."
-                                                            />
-                                                            {UserStatus === "Married" &&
-
-                                                                <DynamicTableRow
-                                                                    rowConfig={rowConfig}
-                                                                    values={values}
-                                                                    setFieldValue={setFieldValue}
-                                                                    handleChange={handleChange}
-                                                                    handleBlur={handleBlur}
-                                                                    handleInnerModal={handleInnerModal}
-                                                                    stakeHolder="partner."
-                                                                />
-                                                            }
-                                                        </>
-                                                    ) : (
-
-                                                        ""
-                                                    )}
                                                 </tbody>
                                             </Table>
                                         </div>

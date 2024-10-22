@@ -139,10 +139,10 @@ const ModalComponent = (props) => {
 
                 <Modal.Footer>
 
-                    <Button variant="secondary" style={{ width: "12.5%" }} onClick={() => props.setFlagState(false)}>
+                    <Button variant="secondary" style={{ width: "12.5%", minWidth: "fit-content" }} onClick={() => props.setFlagState(false)}>
                         Close
                     </Button>
-                    <button type='button' className='btn bgColor modalBtn' style={{ width: "12.5%" }} onClick={handleOk}>
+                    <button type='button' className='btn bgColor modalBtn' style={{ width: "12.5%", minWidth: "fit-content" }} onClick={handleOk}>
                         Submit
                     </button>
                 </Modal.Footer>

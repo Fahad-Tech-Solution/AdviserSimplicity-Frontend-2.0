@@ -2,12 +2,29 @@ import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { Row, Table } from "react-bootstrap";
 import { useRecoilValue } from "recoil";
-import { defaultUrl, QuestionDetail } from "../../../Store/Store";
+import { BankDetail, defaultUrl, QuestionDetail } from "../../../Store/Store";
 import DynamicTableRow from "../../Assets/Dynamic/DynamicTableRow";
 
 const HomeLoan = (props) => {
     let initialValues = {};
 
+
+    let bankDetailObj = useRecoilValue(BankDetail);
+
+
+    let [lenderOption, setLenderOption] = useState(() => {
+
+        if (!bankDetailObj?.FinancialInstitutions) return [];
+
+        // Create an options array
+        const optionsArray = bankDetailObj.FinancialInstitutions.map((elem) => ({
+            value: elem._id,
+            label: elem.platformName,
+        }));
+
+        return optionsArray;
+    })
+    
     let questionDetail = useRecoilValue(QuestionDetail);
 
     const fillInitialValues = (setFieldValue) => {
@@ -48,12 +65,15 @@ const HomeLoan = (props) => {
         label: ("Year " + (i + 1)).toString(),
     }));
 
+
+
     const rowConfig = [
         {
             name: "lender",
-            type: "text",
+            type: "select",
             placeholder: "Lender",
             styleSet: { width: "150px" },
+            options: lenderOption
         },
         {
             name: "loanBalance",

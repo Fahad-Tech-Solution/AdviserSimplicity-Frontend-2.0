@@ -13,12 +13,15 @@ import InnerModal from '../FinancialInvestments/QuestionsDetail/InnerModal';
 import SalaryPackage from './SalaryPackage';
 import LeaveEntitlementsModal from './LeaveEntitlementsModal';
 import SalaryPackaging from './SalaryPackaging';
+import { CreatableMultiSelectField } from '../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField';
 
 const EmploymentIncome = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
+
+    let [UserStatus] = useState(localStorage.getItem('UserStatus'));
 
     let incomeFromOwnBusiness = Object.keys(questionDetail.incomeFromOwnBusiness).length > 0 ? questionDetail.incomeFromOwnBusiness : {
         client: [],
@@ -27,53 +30,48 @@ const EmploymentIncome = (props) => {
 
     };  // Use an empty object as default if incomeFromOwnBusiness is undefined
 
-
     let initialValues = {
         owner: ""
     };
 
     const fillInitialValues = (setFieldValue) => {
-
         let userStatus = localStorage.getItem('UserStatus');
 
-
         if (incomeFromOwnBusiness && incomeFromOwnBusiness._id) {
-
             setFieldValue("owner", incomeFromOwnBusiness.owner);
 
-            if (incomeFromOwnBusiness.owner === "client" || incomeFromOwnBusiness.owner === "client+partner") {
-                setFieldValue("client.occupation", incomeFromOwnBusiness.client.occupation)
-                setFieldValue("client.employmentStatus", incomeFromOwnBusiness.client.employmentStatus)
-                setFieldValue("client.nameOfCompany", incomeFromOwnBusiness.client.nameOfCompany)
-                setFieldValue("client.startDate", incomeFromOwnBusiness.client.startDate)
-                setFieldValue("client.hoursWorked", incomeFromOwnBusiness.client.hoursWorked)
-                setFieldValue("client.choiceOfFund", incomeFromOwnBusiness.client.choiceOfFund)
-                setFieldValue("client.SalaryPackageModal", incomeFromOwnBusiness.client.SalaryPackageModal)
-                setFieldValue("client.salaryPackagingRadio", incomeFromOwnBusiness.client.salaryPackagingRadio)
-                setFieldValue("client.SalaryPackagingModal", incomeFromOwnBusiness.client.SalaryPackagingModal)
-                setFieldValue("client.leaveEntitlementsRadio", incomeFromOwnBusiness.client.leaveEntitlementsRadio)
-                setFieldValue("client.LeaveEntitlementsModal", incomeFromOwnBusiness.client.LeaveEntitlementsModal)
+            // Check for client ownership
+            if (incomeFromOwnBusiness.owner.includes("client")) {
+                setFieldValue("client.occupation", incomeFromOwnBusiness.client.occupation);
+                setFieldValue("client.employmentStatus", incomeFromOwnBusiness.client.employmentStatus);
+                setFieldValue("client.nameOfCompany", incomeFromOwnBusiness.client.nameOfCompany);
+                setFieldValue("client.startDate", incomeFromOwnBusiness.client.startDate);
+                setFieldValue("client.hoursWorked", incomeFromOwnBusiness.client.hoursWorked);
+                setFieldValue("client.choiceOfFund", incomeFromOwnBusiness.client.choiceOfFund);
+                setFieldValue("client.SalaryPackageModal", incomeFromOwnBusiness.client.SalaryPackageModal);
+                setFieldValue("client.salaryPackagingRadio", incomeFromOwnBusiness.client.salaryPackagingRadio);
+                setFieldValue("client.SalaryPackagingModal", incomeFromOwnBusiness.client.SalaryPackagingModal);
+                setFieldValue("client.leaveEntitlementsRadio", incomeFromOwnBusiness.client.leaveEntitlementsRadio);
+                setFieldValue("client.LeaveEntitlementsModal", incomeFromOwnBusiness.client.LeaveEntitlementsModal);
             }
 
-            if ((incomeFromOwnBusiness.owner === "partner" || incomeFromOwnBusiness.owner === "client+partner") && (userStatus === "Married")) {
-                setFieldValue("partner.occupation", incomeFromOwnBusiness.partner.occupation)
-                setFieldValue("partner.employmentStatus", incomeFromOwnBusiness.partner.employmentStatus)
-                setFieldValue("partner.nameOfCompany", incomeFromOwnBusiness.partner.nameOfCompany)
-                setFieldValue("partner.startDate", incomeFromOwnBusiness.partner.startDate)
-                setFieldValue("partner.hoursWorked", incomeFromOwnBusiness.partner.hoursWorked)
-                setFieldValue("partner.choiceOfFund", incomeFromOwnBusiness.partner.choiceOfFund)
-                setFieldValue("partner.SalaryPackageModal", incomeFromOwnBusiness.partner.SalaryPackageModal)
-                setFieldValue("partner.salaryPackagingRadio", incomeFromOwnBusiness.partner.salaryPackagingRadio)
-                setFieldValue("partner.SalaryPackagingModal", incomeFromOwnBusiness.partner.SalaryPackagingModal)
-                setFieldValue("partner.leaveEntitlementsRadio", incomeFromOwnBusiness.partner.leaveEntitlementsRadio)
-                setFieldValue("partner.LeaveEntitlementsModal", incomeFromOwnBusiness.partner.LeaveEntitlementsModal)
+            // Check for partner ownership
+            if (incomeFromOwnBusiness.owner.includes("partner") && userStatus === "Married") {
+                setFieldValue("partner.occupation", incomeFromOwnBusiness.partner.occupation);
+                setFieldValue("partner.employmentStatus", incomeFromOwnBusiness.partner.employmentStatus);
+                setFieldValue("partner.nameOfCompany", incomeFromOwnBusiness.partner.nameOfCompany);
+                setFieldValue("partner.startDate", incomeFromOwnBusiness.partner.startDate);
+                setFieldValue("partner.hoursWorked", incomeFromOwnBusiness.partner.hoursWorked);
+                setFieldValue("partner.choiceOfFund", incomeFromOwnBusiness.partner.choiceOfFund);
+                setFieldValue("partner.SalaryPackageModal", incomeFromOwnBusiness.partner.SalaryPackageModal);
+                setFieldValue("partner.salaryPackagingRadio", incomeFromOwnBusiness.partner.salaryPackagingRadio);
+                setFieldValue("partner.SalaryPackagingModal", incomeFromOwnBusiness.partner.SalaryPackagingModal);
+                setFieldValue("partner.leaveEntitlementsRadio", incomeFromOwnBusiness.partner.leaveEntitlementsRadio);
+                setFieldValue("partner.LeaveEntitlementsModal", incomeFromOwnBusiness.partner.LeaveEntitlementsModal);
             }
-
+        } else {
+            // Optional: Handle the case where incomeFromOwnBusiness does not exist
         }
-        else {
-
-        }
-
     };
 
     let DefaultUrl = useRecoilValue(defaultUrl)
@@ -82,34 +80,31 @@ const EmploymentIncome = (props) => {
         console.log(JSON.stringify(values));
 
         let userStatus = localStorage.getItem('UserStatus');
-
-
-        // return false;
         let obj = values;
 
         obj.clientFK = localStorage.getItem("UserID");
 
-        if (values.owner === "client" || values.owner === "client+partner") {
+        // Check for client ownership
+        if (values.owner.includes("client")) {
             obj.clientTotal = obj.client.SalaryPackageModal.grossSalary;
-        }
-        else {
+        } else {
             obj.clientTotal = "";
             obj.client = {};
         }
 
-        if (values.owner === "partner" || values.owner === "client+partner") {
+        // Check for partner ownership
+        if (values.owner.includes("partner")) {
             obj.partnerTotal = obj.partner.SalaryPackageModal.grossSalary;
-        }
-        else {
+        } else {
             obj.partnerTotal = "";
             obj.partner = {};
         }
 
+        // Handle status condition
         if (userStatus !== "Married") {
             obj.partnerTotal = "";
             obj.partner = {};
         }
-
 
         try {
             let res;
@@ -117,7 +112,6 @@ const EmploymentIncome = (props) => {
             if (!questionDetail.incomeFromOwnBusiness || !questionDetail.incomeFromOwnBusiness.clientFK) {
                 res = await PostAxios(`${DefaultUrl}/api/incomeFromOwnBusiness/Add`, obj);
             } else {
-                obj.collection = props.modalObject.Input
                 res = await PatchAxios(`${DefaultUrl}/api/incomeFromOwnBusiness/Update`, obj);
             }
 
@@ -128,13 +122,14 @@ const EmploymentIncome = (props) => {
             }
 
             openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
+
             // Reset the flag state if necessary
             if (props.flagState) {
                 props.setFlagState(false);
             }
         } catch (error) {
             console.error("Error occurred while making API call:", error);
-            openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
+            openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved. Please try again.");
         }
     };
 
@@ -145,6 +140,12 @@ const EmploymentIncome = (props) => {
         })
         setFlagState(true);
     }
+
+    const options = (UserStatus !== "Single") ? [
+        { value: "client", label: RenderName("client") },
+        { value: "partner", label: RenderName("partner") }] :
+        [{ value: "client", label: RenderName("client") },];
+
 
     return (
         <Formik
@@ -182,34 +183,19 @@ const EmploymentIncome = (props) => {
                                         Owner
                                     </label>
 
-                                    <div className='w-25'>
+                                    <div style={{ minWidth: "25%" }}>
                                         <Field
-                                            as="select"
-                                            placeholder="Name of owner"
-                                            id={`owner`}
                                             name={`owner`}
-                                            className="form-select inputDesignDoubleInput"
-
-                                        >
-                                            <option value={""}>Select</option>
-                                            <option value={"client"}>{RenderName("client")}</option>
-                                            {localStorage.getItem("UserStatus") !== "Single" &&
-                                                <React.Fragment>
-                                                    <option value={"partner"}>{RenderName("partner")}</option>
-                                                    {/*
-                                                        <option value={"joint"}> {"Joint (" + RenderName("joint") + ")"} </option>
-                                                        <option value={"client+partner+joint"}>{RenderName("client") + " , " + RenderName("partner") + " and Joint"} </option>
-                                                        */}
-                                                    <option value={"client+partner"}>{"Both (" + RenderName("client") + " , " + RenderName("partner") + ")"} </option>
-                                                </React.Fragment>
-                                            }
-                                        </Field>
+                                            component={CreatableMultiSelectField}
+                                            label="Multi Select Field"
+                                            options={options}
+                                        />
                                     </div>
                                 </div>
                             </div>
 
 
-                            {values.owner !== "" &&
+                            {values.owner.length > 0 &&
                                 <div className='col-md-12'>
                                     <div className='mt-4'>
                                         <Table striped bordered responsive hover>
@@ -228,10 +214,10 @@ const EmploymentIncome = (props) => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {values.owner !== "partner" &&
+                                                {(values.owner.includes("client")) &&
                                                     <tr>
                                                         <th className='py-auto'>
-                                                            {values.owner === "joint" ? RenderName("joint") : RenderName("client")}
+                                                            {values.owner.includes("joint") ? RenderName("joint") : RenderName("client")}
                                                         </th>
                                                         <td>
                                                             <Field
@@ -347,7 +333,8 @@ const EmploymentIncome = (props) => {
                                                     </tr>
                                                 }
 
-                                                {((localStorage.getItem('UserStatus') === "Married") && (values.owner == "partner" || values.owner == "client+partner" || values.owner == "client+partner+joint")) &&
+                                                {(values.owner.includes("partner") && UserStatus === "Married") &&
+
                                                     <tr>
                                                         <th className='py-auto'>
                                                             {RenderName("partner")}
@@ -466,129 +453,6 @@ const EmploymentIncome = (props) => {
                                                         </td>
                                                     </tr>
                                                 }
-
-                                                {(values.owner == "joint" || values.owner == "client+partner+joint") &&
-                                                    <tr>
-                                                        <th className='py-auto'>
-                                                            {RenderName("client")},{RenderName("partner")}
-                                                            {values.owner == "client+partner+joint" && " & Joint"}
-                                                        </th>
-                                                        <td>
-                                                            <Field
-                                                                type="text"
-                                                                placeholder="Enter Occupation"
-                                                                id={`occupation`}
-                                                                name={`joint.occupation`}
-                                                                className="form-control inputDesignDoubleInput"
-                                                            />
-                                                        </td>
-                                                        <td>
-                                                            <Field
-                                                                as="select"
-                                                                placeholder="Name of Employment Status"
-                                                                id={`employmentStatus`}
-                                                                name={`joint.employmentStatus`}
-                                                                className="form-select inputDesignDoubleInput"
-                                                            >
-                                                                <option value="">Select</option>
-                                                                <option value="Full Time">Full Time</option>
-                                                                <option value="Part Time">Part Time</option>
-                                                                <option value="Casual">Casual</option>
-                                                                <option value="Conratct">Conratct</option>
-                                                                <option value="OnLeave">On Leave</option>
-                                                            </Field>
-                                                        </td>
-                                                        <td>
-                                                            <Field
-                                                                type="text"
-                                                                placeholder="Name of Company"
-                                                                id={`nameOfCompany`}
-                                                                name={`joint.nameOfCompany`}
-                                                                className="form-control inputDesignDoubleInput"
-                                                            />
-                                                        </td>
-                                                        <td>
-                                                            <div style={{ minWidth: "100px" }}>
-                                                                <DatePicker
-                                                                    className="form-control inputDesignDoubleInput shadow DateInputPadding"
-                                                                    showIcon
-                                                                    id={`startDate`}
-                                                                    name={`joint.startDate`}
-                                                                    selected={values[`joint.startDate`]}
-                                                                    onChange={(date) => setFieldValue(`joint.startDate`, date)}
-                                                                    dateFormat="dd/MM/yyyy"
-                                                                    placeholderText="dd/mm/yyyy"
-                                                                    maxDate={new Date()}
-                                                                    showMonthDropdown
-                                                                    showYearDropdown
-                                                                    dropdownMode="select"
-                                                                    onBlur={handleBlur}
-                                                                    wrapperClassName="w-100"
-                                                                />
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <Field
-                                                                type="number"
-                                                                placeholder="Hours Worked"
-                                                                id={`hoursWorked`}
-                                                                name={`joint.hoursWorked`}
-                                                                className="form-control inputDesignDoubleInput"
-                                                            />
-                                                        </td>
-                                                        <td className='text-center'>
-                                                            <Button className='btn bgColor modalBtn border-0 my-1 ' id="button-addon2"
-                                                                onClick={() => {
-                                                                    handleInnerModal(
-                                                                        "Salary Package",
-                                                                        "SalaryPackageModal",
-                                                                        values, "joint",
-                                                                    )
-                                                                }}>
-                                                                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                            </Button>
-                                                        </td>
-                                                        <td>
-                                                            <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
-                                                                <DynamicYesNo name={`joint.salaryPackagingRadio`} values={values} handleChange={handleChange} />
-                                                                {values?.joint?.salaryPackagingRadio === "Yes" &&
-                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2"
-                                                                        onClick={() => {
-                                                                            handleInnerModal(
-                                                                                "Salary Packaging",
-                                                                                "SalaryPackagingModal",
-                                                                                values, "joint")
-                                                                        }}>
-                                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                                    </Button>
-                                                                }
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
-                                                                <DynamicYesNo name={`joint.leaveEntitlementsRadio`} values={values} handleChange={handleChange} />
-                                                                {values?.joint?.leaveEntitlementsRadio === "Yes" &&
-                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2"
-                                                                        onClick={() => {
-                                                                            handleInnerModal(
-                                                                                "Salary Packaging",
-                                                                                "LeaveEntitlementsModal",
-                                                                                values, "joint")
-                                                                        }}>
-                                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                                    </Button>
-                                                                }
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
-                                                                <DynamicYesNo id={"choiceOfFund"} name={`joint.choiceOfFund`} values={values} handleChange={handleChange} />
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                }
-
-
 
                                             </tbody>
                                         </Table>

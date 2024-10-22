@@ -12,7 +12,7 @@ const InsittuteFom = (props) => {
 
     let { modalObject } = props || {};
 
-    let initialValues = { platformName: "" };
+    let initialValues = { platformName: "", section: props.modalObject.key };
 
 
     const fillInitialValues = (setFieldValue) => {
@@ -29,72 +29,71 @@ const InsittuteFom = (props) => {
     let DefaultUrl = useRecoilValue(defaultUrl)
 
     let onSubmit = async (values) => {
-
-        // const haveData = bankDetailObj._id || "";
-        let haveData = false;
-
-        if (modalObject?.operation === "edit") {
-            let index = bankDetailObj.findIndex(
-                (item) => item._id === modalObject.data._id
-            );
-
-            haveData = bankDetailObj[index]?._id;
-        }
-
-
-        let ApiChali = ""
         let res;
+        let ApiChali = "";
 
-        console.log(haveData, bankDetailObj, "ma kea karo", values)
+        const isEditMode = modalObject?.operation === "edit";
+
+        const existingItem = isEditMode
+            ? Object.values(bankDetailObj) // Convert the object to an array of section arrays
+                .flat() // Flatten the array of arrays into a single array of items
+                .find(item => item._id === modalObject.data._id) // Find the item by _id
+            : null;
+
+        const haveData = existingItem?._id || false;
 
         try {
-
-
-
             if (!haveData) {
-                res = await PostAxios(
-                    `${DefaultUrl}/api/platform/Add`,
-                    values
-                );
-                ApiChali = "Post"
+                // POST request for adding a new platform
+                res = await PostAxios(`${DefaultUrl}/api/platform/Add`, values);
+                ApiChali = "Post";
             } else {
+                // PATCH request for updating an existing platform
                 values._id = haveData;
-
-                res = await PatchAxios(
-                    `${DefaultUrl}/api/platform/Update`,
-                    values
-                );
-                ApiChali = "patch"
+                res = await PatchAxios(`${DefaultUrl}/api/platform/Update`, values);
+                ApiChali = "Patch";
             }
 
-
             if (res) {
-                console.log(res);
-                let Obj;
-                if (ApiChali == "Post") {
+                let Obj = { ...res, arrayOfOffers: res.arrayOfOffers || [] }; // Initialize arrayOfOffers if not present
 
-                    Obj = res
+                setBankDetailObj((prevData) => {
+                    const updatedData = JSON.parse(JSON.stringify({ ...prevData })); // Create a shallow copy of the previous state
+                    const section = Obj.section;
 
-                    Obj.arrayOfOffers = [];
+                    if (ApiChali === "Post") {
+                        // Add new platform to the corresponding section
+                        updatedData[section] = updatedData[section]
+                            ? [...updatedData[section], Obj]
+                            : [Obj];
+                    } else if (ApiChali === "Patch") {
+                        // Update existing platform in the corresponding section
+                        if (updatedData[section]) {
+                            const updatedIndex = updatedData[section].findIndex(
+                                (item) => item._id === res._id
+                            );
 
-                    console.log(Obj)
+                            if (updatedIndex !== -1) {
+                                updatedData[section][updatedIndex] = { ...updatedData[section][updatedIndex], ...Obj }; // Update only the modified properties
+                            } else {
+                                console.error("Item not found in section for update.");
+                            }
+                        } else {
+                            console.error("Section not found for update.");
+                        }
 
-                    setBankDetailObj((prevUsersData) => [...prevUsersData, Obj]);
-                }
-                else {
+                    }
 
-                    Obj = JSON.parse(JSON.stringify(bankDetailObj));
+                    return updatedData;
+                });
 
-                    const updatedIndex = bankDetailObj.findIndex(
-                        (item) => item._id === res._id
-                    );
-
-                    Obj[updatedIndex].platformName = res.platformName;
-
-                    console.log(Obj)
-
-                    setBankDetailObj(Obj);
-                }
+                // Success Notification
+                openNotificationSuccess(
+                    "success",
+                    "topRight",
+                    "Success Notification",
+                    `Platform is ${ApiChali === "Post" ? "Added" : "Updated"} successfully`
+                );
             }
 
             // Reset the flag state if necessary
@@ -102,32 +101,23 @@ const InsittuteFom = (props) => {
                 props.setFlagState(false);
             }
 
-            let type = "success";
-            let placement = "topRight"
-            let message = "Success Notification"
-            let description = "Platform is Added successfull"
-            openNotificationSuccess(type, placement, message, description);
-
         } catch (error) {
-            console.log("error aya:", error?.response?.status, error?.response?.data);
-            if (error?.response?.status == 400) {
-                let type = "error";
-                let placement = "topRight"
-                let message = "Error Notification"
-                let description = error.response.data
-                openNotificationSuccess(type, placement, message, description)
-            }
-            else {
-                let type = "error";
-                let placement = "topRight"
-                let message = "Error Notification"
-                let description = "Some thing went wrong Please try again later"
-                openNotificationSuccess(type, placement, message, description)
-            }
+            const errorMessage = error?.response?.status === 400
+                ? error?.response?.data
+                : "Something went wrong. Please try again later.";
+
+            // Error Notification
+            openNotificationSuccess(
+                "error",
+                "topRight",
+                "Error Notification",
+                errorMessage
+            );
+
+            console.error("Error occurred:", error);
         }
-
-
     };
+
 
 
     return (

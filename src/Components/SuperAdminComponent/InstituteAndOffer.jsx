@@ -20,7 +20,9 @@ import { GetAxios, openNotificationSuccess, PatchAxios } from '../Assets/Api/Api
 import { SimpleSelectField } from '../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField';
 
 
-const InstituteAndOffer = () => {
+const InstituteAndOffer = (props) => {
+
+    let { Data } = props
 
     let bankDetailObj = useRecoilValue(BankDetail)
 
@@ -69,8 +71,8 @@ const InstituteAndOffer = () => {
         setModalObject({
             title: "Platform",
             operation,
-            data
-
+            data,
+            key: Data.key
         });
         setFlagState(true);
     }
@@ -256,6 +258,7 @@ const InstituteAndOffer = () => {
             });
     };
 
+    let listArray = ["FinancialInstitutions", "Annuities", "PersonalInsurances"]
     return (
         <div className='container-fluid' style={{ paddingTop: "3.8rem", minHeight: "89vh" }}>
 
@@ -268,7 +271,7 @@ const InstituteAndOffer = () => {
 
                 <div className='col-md-12'>
                     <div>
-                        <h2 className='text-center text-green'>Platform and Investment</h2>
+                        <h2 className='text-center text-green'>{Data.subTitle} Platform {!listArray.includes(Data.key) && "and Investment"} </h2>
                         <div className="QuestionIcon p-3 curser-pointer" onClick={() => { OpenInstitute("new") }}
                         >
                             <img className="img-fluid min-w-25" src={Add} alt="" />
@@ -277,131 +280,164 @@ const InstituteAndOffer = () => {
                 </div>
                 <div className='col-md-12 mt-3'>
                     <Row>
-                        <div className={`col-md-12 superAdminAccordian   mb-4`}>
-                            <Accordion defaultActiveKey="0">
-                                {bankDetailObj?.map((elem, index) => {
-                                    return (
-                                        <Accordion.Item eventKey={index} key={index}>
-                                            <Accordion.Header onClick={() => { setInvestmentFieldSearch("") }}>{elem.platformName}</Accordion.Header>
-                                            <Accordion.Body>
-                                                <div className='row'>
-                                                    <div className='col-md-4'>
-                                                        <div className='customCard'>
-                                                            <h4 className='d-flex  justify-content-between'>{elem.platformName}
+                        {!listArray.includes(Data.key) ?
+                            <div className={`col-md-12 superAdminAccordian   mb-4`}>
+                                <Accordion defaultActiveKey="0">
+                                    {bankDetailObj[`${Data.key}`]?.map((elem, index) => {
+                                        return (
+                                            <Accordion.Item eventKey={index} key={index}>
+                                                <Accordion.Header onClick={() => { setInvestmentFieldSearch("") }}>{elem.platformName}</Accordion.Header>
+                                                <Accordion.Body>
+                                                    <div className='row'>
+                                                        <div className='col-md-4'>
+                                                            <div className='customCard'>
+                                                                <h4 className='d-flex  justify-content-between'>{elem.platformName}
 
-                                                                <Tooltip placement="top" title={"Edit"}>
-                                                                    <BiSolidEdit
-                                                                        style={{ fontSize: '18px', cursor: 'pointer' }}
-                                                                        onClick={() => { OpenInstitute("edit", elem) }}
-                                                                    />
-                                                                </Tooltip>
-                                                            </h4>
+                                                                    <Tooltip placement="top" title={"Edit"}>
+                                                                        <BiSolidEdit
+                                                                            style={{ fontSize: '18px', cursor: 'pointer' }}
+                                                                            onClick={() => { OpenInstitute("edit", elem) }}
+                                                                        />
+                                                                    </Tooltip>
+                                                                </h4>
 
-                                                            <h6 className='d-flex  justify-content-between' style={{ fontSize: "17px" }}> Total Investment{elem.arrayOfOffers.length > 1 ? `s ${elem.arrayOfOffers.length}` : ` ${elem.arrayOfOffers.length}`}
+                                                                <h6 className='d-flex  justify-content-between' style={{ fontSize: "17px" }}> Total Investment{elem.arrayOfOffers.length > 1 ? `s ${elem.arrayOfOffers.length}` : ` ${elem.arrayOfOffers.length}`}
 
-                                                                <Tooltip placement="top" title={"Delete"}>
-                                                                    <RiDeleteBinLine style={{ color: "red", fontSize: '18px', cursor: 'pointer', }}
-                                                                        onClick={() => { DeleteBank(elem, "delete", index) }}
-                                                                    />
-                                                                </Tooltip>
-                                                            </h6>
+                                                                    <Tooltip placement="top" title={"Delete"}>
+                                                                        <RiDeleteBinLine style={{ color: "red", fontSize: '18px', cursor: 'pointer', }}
+                                                                            onClick={() => { DeleteBank(elem, "delete", index) }}
+                                                                        />
+                                                                    </Tooltip>
+                                                                </h6>
+                                                            </div>
                                                         </div>
-                                                    </div>
 
-                                                    <div className='col-md-4 my-2 m-md-0 '>
-                                                        <Button type='submit' className='w-100 h-100 CSVBtn m-0' onClick={() => { OpenOffer(elem, "CSV") }}>  <HiOutlinePlus style={{ fontSize: '18px', margin: "0px 0px 3px 0px" }} /> Add From CSV / Excel File</Button>
-                                                    </div>
-                                                    <div className='col-md-4'>
-                                                        <Button type='submit' className='w-100 h-100 bgColor modalBtn m-0' onClick={() => { OpenOffer(elem, "new") }}>  <HiOutlinePlus style={{ fontSize: '18px', margin: "0px 0px 3px 0px" }} /> Add Investment Manually</Button>
-                                                    </div>
-                                                    <Formik
-                                                        initialValues={{}}
-                                                        onSubmit={handleSubmitRegularIncome}
-                                                        enableReinitialize
-                                                    >
-                                                        {({ values, setFieldValue, handleChange }) => {
-                                                            return (<Form>
-                                                                <div className='col-md-12 mt-3'>
-                                                                    <div className='row justify-content-between '>
-                                                                        <div className='col-md-6 '><h2 className='m-0 p-0'>Investment</h2></div>
-                                                                        <div className='col-md-3'>
-                                                                            <div className='d-flex justify-content-between align-item-center'>
-                                                                                <div
-                                                                                    style={{ width: "100%" }}
-                                                                                >
-                                                                                    <Field type="text"
-                                                                                        name={`SearchInvestment` + index}
-                                                                                        component={SimpleSelectField}
-                                                                                        label="Multi Select Field"
-                                                                                        options={generateOptions(bankDetailObj, elem._id)}
-                                                                                        onChange={(selectedOption) => {
+                                                        {!listArray.includes(Data.key) && <React.Fragment>
+                                                            <div className='col-md-4 my-2 m-md-0 '>
+                                                                <Button type='submit' className='w-100 h-100 CSVBtn m-0' onClick={() => { OpenOffer(elem, "CSV") }}>  <HiOutlinePlus style={{ fontSize: '18px', margin: "0px 0px 3px 0px" }} /> Add From CSV / Excel File</Button>
+                                                            </div>
+                                                            <div className='col-md-4'>
+                                                                <Button type='submit' className='w-100 h-100 bgColor modalBtn m-0' onClick={() => { OpenOffer(elem, "new") }}>  <HiOutlinePlus style={{ fontSize: '18px', margin: "0px 0px 3px 0px" }} /> Add Investment Manually</Button>
+                                                            </div>
+                                                            <Formik
+                                                                initialValues={{}}
+                                                                onSubmit={handleSubmitRegularIncome}
+                                                                enableReinitialize
+                                                            >
+                                                                {({ values, setFieldValue, handleChange }) => {
+                                                                    return (<Form>
+                                                                        <div className='col-md-12 mt-3'>
+                                                                            <div className='row justify-content-between '>
+                                                                                <div className='col-md-6 '><h2 className='m-0 p-0'>Investment</h2></div>
+                                                                                <div className='col-md-3'>
+                                                                                    <div className='d-flex justify-content-between align-item-center'>
+                                                                                        <div
+                                                                                            style={{ width: "100%" }}
+                                                                                        >
+                                                                                            <Field type="text"
+                                                                                                name={`SearchInvestment` + index}
+                                                                                                component={SimpleSelectField}
+                                                                                                label="Multi Select Field"
+                                                                                                options={generateOptions(bankDetailObj, elem._id)}
+                                                                                                onChange={(selectedOption) => {
 
-                                                                                            console.log(selectedOption)
+                                                                                                    console.log(selectedOption)
 
-                                                                                            const isIdPresent = elem.arrayOfOffers.some(offer => offer._id === selectedOption.value);
+                                                                                                    const isIdPresent = elem.arrayOfOffers.some(offer => offer._id === selectedOption.value);
 
-                                                                                            if (!isIdPresent) {
-                                                                                                let type = "error";
-                                                                                                let placement = "topRight"
-                                                                                                let message = "Error Notification"
-                                                                                                let description = "No Investment Found"
-                                                                                                openNotificationSuccess(type, placement, message, description)
-                                                                                                setFieldValue(`SearchInvestment` + index, "");
-                                                                                            }
+                                                                                                    if (!isIdPresent) {
+                                                                                                        let type = "error";
+                                                                                                        let placement = "topRight"
+                                                                                                        let message = "Error Notification"
+                                                                                                        let description = "No Investment Found"
+                                                                                                        openNotificationSuccess(type, placement, message, description)
+                                                                                                        setFieldValue(`SearchInvestment` + index, "");
+                                                                                                    }
 
-                                                                                        }}
-                                                                                    />
+                                                                                                }}
+                                                                                            />
+                                                                                        </div>
+                                                                                    </div>
+
                                                                                 </div>
                                                                             </div>
-
                                                                         </div>
-                                                                    </div>
-                                                                </div>
 
-                                                                <div className='col-md-12 mt-3'>
+                                                                        <div className='col-md-12 mt-3'>
 
 
-                                                                    <Table striped bordered responsive hover>
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th>Investment Name</th>
-                                                                                <th>Investment Code</th>
-                                                                                <th>Options</th>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            {elem.arrayOfOffers.length <= 0 &&
-                                                                                <tr>
-                                                                                    <td colSpan={4}>No Investment Added</td>
-                                                                                </tr>
-                                                                            }
-                                                                            {renderRows(currentPage, setFieldValue, values, handleChange, elem.arrayOfOffers, index, elem)}
-                                                                        </tbody>
-                                                                    </Table>
-                                                                </div>
-                                                                {elem.arrayOfOffers.length >= 10 && (
-                                                                    <div className='w-100 CustomPaginantion d-flex justify-content-center'>
-                                                                        <Pagination
-                                                                            align="start"
-                                                                            defaultCurrent={1}
-                                                                            current={currentPage}
-                                                                            total={elem.arrayOfOffers.length}
-                                                                            pageSize={pageSize}
-                                                                            onChange={handlePageChange}
-                                                                            showSizeChanger={false} // Optional, you can allow page size change if needed
-                                                                        />
-                                                                    </div>
-                                                                )}
-                                                            </Form>)
-                                                        }}
-                                                    </Formik>
-                                                </div>
-                                            </Accordion.Body>
-                                        </Accordion.Item>
-                                    )
+                                                                            <Table striped bordered responsive hover>
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th>Investment Name</th>
+                                                                                        <th>Investment Code</th>
+                                                                                        <th>Options</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    {elem.arrayOfOffers.length <= 0 &&
+                                                                                        <tr>
+                                                                                            <td colSpan={4}>No Investment Added</td>
+                                                                                        </tr>
+                                                                                    }
+                                                                                    {renderRows(currentPage, setFieldValue, values, handleChange, elem.arrayOfOffers, index, elem)}
+                                                                                </tbody>
+                                                                            </Table>
+                                                                        </div>
+                                                                        {elem.arrayOfOffers.length >= 10 && (
+                                                                            <div className='w-100 CustomPaginantion d-flex justify-content-center'>
+                                                                                <Pagination
+                                                                                    align="start"
+                                                                                    defaultCurrent={1}
+                                                                                    current={currentPage}
+                                                                                    total={elem.arrayOfOffers.length}
+                                                                                    pageSize={pageSize}
+                                                                                    onChange={handlePageChange}
+                                                                                    showSizeChanger={false} // Optional, you can allow page size change if needed
+                                                                                />
+                                                                            </div>
+                                                                        )}
+                                                                    </Form>)
+                                                                }}
+                                                            </Formik>
+                                                        </React.Fragment>}
+
+                                                    </div>
+                                                </Accordion.Body>
+                                            </Accordion.Item>
+                                        )
+                                    })}
+                                </Accordion>
+                            </div>
+                            :
+                            <div className='row'>
+                                {bankDetailObj[`${Data.key}`]?.map((elem, index) => {
+                                    return (
+                                        <div className='col-md-3 col-sm-6 mb-0' key={index}> {/* 4 per row with 25% width */}
+                                            <div className='customCardList'>
+                                                <h4 className='d-flex justify-content-between m-0 p-0'>
+                                                    {elem.platformName}
+                                                    <div className='d-flex gap-3 pt-1'>
+                                                        <Tooltip placement="top" title={"Edit"}>
+                                                            <BiSolidEdit
+                                                                style={{ fontSize: '18px', cursor: 'pointer' }}
+                                                                onClick={() => { OpenInstitute("edit", elem) }}
+                                                            />
+                                                        </Tooltip>
+                                                        <Tooltip placement="top" title={"Delete"}>
+                                                            <RiDeleteBinLine style={{ color: "red", fontSize: '18px', cursor: 'pointer', }}
+                                                                onClick={() => { DeleteBank(elem, "delete", index) }}
+                                                            />
+                                                        </Tooltip>
+                                                    </div>
+                                                </h4>
+                                            </div>
+                                        </div>
+                                    );
                                 })}
-                            </Accordion>
-                        </div>
+                            </div>
+                        }
+
                     </Row>
                 </div>
             </Row >

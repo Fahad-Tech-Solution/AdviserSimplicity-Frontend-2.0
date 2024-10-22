@@ -10,6 +10,7 @@ import { Tooltip } from 'antd';
 import { FaCircleQuestion } from 'react-icons/fa6';
 import InnerModal from '../FinancialInvestments/QuestionsDetail/InnerModal';
 import DynamicDescription from './DynamicDescription';
+import { CreatableMultiSelectField } from '../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField';
 
 const EstatePlanningWill = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
@@ -30,31 +31,34 @@ const EstatePlanningWill = (props) => {
 
     const fillInitialValues = (setFieldValue) => {
         console.log(will);
+
         if (will && will.clientFK) {
-            setFieldValue("owner", will.owner)
-            if (will.owner === "client" || will.owner === "client+partner" || will.owner === "together") {
+            setFieldValue("owner", will.owner);
 
-                setFieldValue("client.yearSetUp", will.client.yearSetUp)
-                setFieldValue("client.willsCurrent", will.client.willsCurrent)
-                setFieldValue("client.executor", will.client.executor)
-                setFieldValue("client.enduringGuardianship", will.client.enduringGuardianship)
-                setFieldValue("client.testamentaryTrust", will.client.testamentaryTrust)
-                setFieldValue("client.estatePlanningRadio", will.client.estatePlanningRadio)
-                setFieldValue("client.estatePlanning", will.client.estatePlanning)
-
-            }
-            if (will.owner === "partner" || will.owner === "client+partner" || will.owner === "together") {
-                setFieldValue("partner.yearSetUp", will.partner.yearSetUp)
-                setFieldValue("partner.willsCurrent", will.partner.willsCurrent)
-                setFieldValue("partner.executor", will.partner.executor)
-                setFieldValue("partner.enduringGuardianship", will.partner.enduringGuardianship)
-                setFieldValue("partner.testamentaryTrust", will.partner.testamentaryTrust)
-                setFieldValue("partner.estatePlanningRadio", will.partner.estatePlanningRadio)
-                setFieldValue("partner.estatePlanning", will.partner.estatePlanning)
+            // Handle "client" related values
+            if (will.owner.includes("client") || will.owner.includes("together")) {
+                setFieldValue("client.yearSetUp", will.client.yearSetUp);
+                setFieldValue("client.willsCurrent", will.client.willsCurrent);
+                setFieldValue("client.executor", will.client.executor);
+                setFieldValue("client.enduringGuardianship", will.client.enduringGuardianship);
+                setFieldValue("client.testamentaryTrust", will.client.testamentaryTrust);
+                setFieldValue("client.estatePlanningRadio", will.client.estatePlanningRadio);
+                setFieldValue("client.estatePlanning", will.client.estatePlanning);
             }
 
+            // Handle "partner" related values
+            if (will.owner.includes("partner") || will.owner.includes("together")) {
+                setFieldValue("partner.yearSetUp", will.partner.yearSetUp);
+                setFieldValue("partner.willsCurrent", will.partner.willsCurrent);
+                setFieldValue("partner.executor", will.partner.executor);
+                setFieldValue("partner.enduringGuardianship", will.partner.enduringGuardianship);
+                setFieldValue("partner.testamentaryTrust", will.partner.testamentaryTrust);
+                setFieldValue("partner.estatePlanningRadio", will.partner.estatePlanningRadio);
+                setFieldValue("partner.estatePlanning", will.partner.estatePlanning);
+            }
         }
     };
+
 
     let handleInnerModal = (title, values, key, stackHolder) => {
         setModalObject({
@@ -67,40 +71,38 @@ const EstatePlanningWill = (props) => {
 
     let onSubmit = async (values) => {
         console.log(values);
-        // return (false);
 
         let DataOf = props.modalObject.Input;
 
         // Create an object with additional fields
         let obj = values;
-
         obj.clientFK = localStorage.getItem("UserID");
 
-
-        if (values.owner === "client" || values.owner === "client+partner" || values.owner === "together") {
+        // Handle "client" related values
+        if (values.owner.includes("client") || values.owner.includes("together")) {
             obj.clientTotal = obj.client.yearSetUp.toString();
         } else {
             obj.clientTotal = "";
             obj.client = {};
         }
 
-        if (values.owner === "partner" || values.owner === "client+partner" || values.owner === "together") {
+        // Handle "partner" related values
+        if (values.owner.includes("partner") || values.owner.includes("together")) {
             obj.partnerTotal = obj.partner.yearSetUp.toString();
-
         } else {
             obj.partnerTotal = "";
             obj.partner = {};
         }
 
+        // Reset partner fields if the user is not married
         if (UserStatus !== "Married") {
             obj.partnerTotal = "";
             obj.partner = {};
         }
 
-        console.log(obj, "final obj")
+        console.log(obj, "final obj");
 
         // Check if will and the array at props.modalObject.Input exist
-        // const bankAccountArray = will[props.modalObject.Input] || [];
         const bankAccountArray = will.clientFK || "";
 
         try {
@@ -130,7 +132,7 @@ const EstatePlanningWill = (props) => {
 
         let storeInPartner = (values, setFieldValue, currentInput, stakeHolder) => {
             // console.log(values, setFieldValue, currentInput, stakeHolder)
-            if (values.owner === "together") {
+            if (values.owner.includes("together")) {
 
                 let yearSetUp = "";
 
@@ -157,17 +159,17 @@ const EstatePlanningWill = (props) => {
             { name: 'estatePlanningRadio', callBack: true, func: handleInnerModal, type: 'yesnoModal', innerModalTitle: "Estate Planning", key: "estatePlanning" },
         ]
         const rowConfig2 = [
-            { disabled: values.owner === "together", name: 'yearSetUp', type: 'number', placeholder: 'Year set up', },
-            { disabled: values.owner === "together", name: 'willsCurrent', type: 'yesno', },
-            { disabled: values.owner === "together", name: 'executor', callBack: true, func: handleInnerModal, type: 'modal', placeholder: 'Executor/s', innerModalTitle: "Executor", key: "executor" },
-            { disabled: values.owner === "together", name: 'enduringGuardianship', type: 'yesno', },
-            { disabled: values.owner === "together", name: 'testamentaryTrust', type: 'yesno', },
-            { disabled: values.owner === "together", name: 'estatePlanningRadio', callBack: true, func: handleInnerModal, type: 'yesnoModal', innerModalTitle: "Estate Planning", key: "estatePlanning" },
+            { disabled: values.owner.includes("together"), name: 'yearSetUp', type: 'number', placeholder: 'Year set up', },
+            { disabled: values.owner.includes("together"), name: 'willsCurrent', type: 'yesno', },
+            { disabled: values.owner.includes("together"), name: 'executor', callBack: true, func: handleInnerModal, type: 'modal', placeholder: 'Executor/s', innerModalTitle: "Executor", key: "executor" },
+            { disabled: values.owner.includes("together"), name: 'enduringGuardianship', type: 'yesno', },
+            { disabled: values.owner.includes("together"), name: 'testamentaryTrust', type: 'yesno', },
+            { disabled: values.owner.includes("together"), name: 'estatePlanningRadio', callBack: true, func: handleInnerModal, type: 'yesnoModal', innerModalTitle: "Estate Planning", key: "estatePlanning" },
         ]
 
         return (
             <React.Fragment>
-                {(values.owner === "client" || values.owner === "client+partner" || values.owner === "together") &&
+                {(values.owner.includes("together") || values.owner.includes("client")) &&
                     <DynamicTableRow
                         rowConfig={rowConfig}
                         values={values}
@@ -178,7 +180,7 @@ const EstatePlanningWill = (props) => {
                         stakeHolder={"client."}
                     />
                 }
-                {((values.owner === "partner" || values.owner === "client+partner" || values.owner === "together") && (UserStatus === "Married")) &&
+                {((values.owner.includes("together") || values.owner.includes("partner")) && (UserStatus === "Married")) &&
                     <DynamicTableRow
                         rowConfig={rowConfig2}
                         values={values}
@@ -194,6 +196,17 @@ const EstatePlanningWill = (props) => {
 
 
     }
+
+
+
+
+
+    const options = (UserStatus !== "Single") ? [
+        { value: "client", label: RenderName("client") },
+        { value: "partner", label: RenderName("partner") },
+        { value: "together", label: `Together(${RenderName("joint")})` }] :
+        [{ value: "client", label: RenderName("client") },];
+
 
     return (
         <Formik
@@ -225,43 +238,25 @@ const EstatePlanningWill = (props) => {
                                             Owner
                                         </label>
 
-                                        <div className='w-25'>
+                                        <div style={{ minWidth: "25%" }}>
                                             <Field
-                                                as="select"
-                                                placeholder="Name of owner"
-                                                id={`owner`}
                                                 name={`owner`}
-                                                className="form-select inputDesignDoubleInput"
-                                                onChange={(e) => {
-                                                    setFieldValue(e.target.name, e.target.value)
+                                                component={CreatableMultiSelectField}
+                                                label="Multi Select Field"
+                                                options={options}
+                                                onChange={(selection) => {
+                                                    // console.log(JSON.stringify(selection.target.value));
+                                                    let selectionArray = selection.target.value;
+                                                    const hasTogether = selectionArray.some(item => item.value === "together");
 
-
-                                                    if (e.target.value === "together") {
-                                                        setFieldValue("partner.yearSetUp", values?.client.yearSetUp || "")
-                                                        setFieldValue("partner.willsCurrent", values?.client.willsCurrent || "")
-                                                        setFieldValue("partner.executor", values?.client.executor || "")
-                                                        setFieldValue("partner.enduringGuardianship", values?.client.enduringGuardianship || "")
-                                                        setFieldValue("partner.testamentaryTrust", values?.client.testamentaryTrust || "")
-                                                        setFieldValue("partner.estatePlanningRadio", values?.client.estatePlanningRadio || "")
+                                                    // console.log(hasTogether, values.owner);
+                                                    if (hasTogether) {
+                                                        setFieldValue("owner", ["together"]);
                                                     }
                                                 }}
-                                            >
-                                                <option value={""}>Select</option>
-
-                                                <option value={"client"}>  {RenderName("client")} </option>
-
-                                                {localStorage.getItem("UserStatus") !== "Single" &&
-                                                    <React.Fragment>
-
-                                                        <option value={"partner"}>{RenderName("partner")}</option>
-                                                        <option value={"client+partner"}>{"Both (" + RenderName("client") + " , " + RenderName("partner") + ")"} </option>
-                                                        <option value={"together"}>{"Together (" + RenderName("client") + " , " + RenderName("partner") + ")"} </option>
-
-                                                    </React.Fragment>
-                                                }
-                                            </Field>
+                                            />
                                         </div>
-                                        {values.owner === "together" &&
+                                        {(values.owner.includes("together")) &&
                                             <label htmlFor='' className='text-end '>
                                                 <Tooltip placement="top" title={"When yes is selected for Partner for Wills  and POA have an option to copy details from Client Answers for Will  and POA this will apply for when client and partner have a Will together."}>
                                                     <FaCircleQuestion style={{ fontSize: '18px', cursor: 'pointer' }} />
@@ -270,7 +265,7 @@ const EstatePlanningWill = (props) => {
                                         }
                                     </div>
 
-                                    {values.owner !== "" && (
+                                    {values.owner.length > 0 && (
                                         <div className='mt-4'>
                                             <Table striped bordered responsive hover>
                                                 <thead>

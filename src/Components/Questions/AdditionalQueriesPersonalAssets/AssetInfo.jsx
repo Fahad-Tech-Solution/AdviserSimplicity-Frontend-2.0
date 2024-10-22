@@ -5,6 +5,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { defaultUrl, QuestionDetail } from '../../../Store/Store';
 import { openNotificationSuccess, PatchAxios, PostAxios, RenderName } from '../../Assets/Api/Api';
 import DynamicTableRow from '../../Assets/Dynamic/DynamicTableRow';
+import { CreatableMultiSelectField } from '../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField';
 
 const AssetInfo = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
@@ -18,51 +19,45 @@ const AssetInfo = (props) => {
         console.log(props.modalObject, "kuch Chala");
 
         if (questionDetail[props.modalObject.index] && Object.keys(questionDetail[props.modalObject.index]).length >= 0) {
-            // console.log(questionDetail[props.modalObject.index], "State Ma Data", props.modalObject.index);
-
             let data = questionDetail[props.modalObject.index];
 
             if (data) {
                 setFieldValue(`owner`, data.owner || "");
 
-                if (data.owner === "client" || data.owner === "client+partner") {
+                // Check for "client" ownership
+                if (data.owner.includes("client") || data.owner.includes("client+partner")) {
                     if (data?.client && Object.keys(data?.client).length) {
-
                         setFieldValue(`client.currentValue`, data.client.currentValue || "");
 
                         if (props.modalObject.index === "car") {
                             setFieldValue(`client.modelOfCar`, data.client.modelOfCar || "");
-                        }
-                        else if (props.modalObject.index === "otherAssets") {
+                        } else if (props.modalObject.index === "otherAssets") {
                             setFieldValue(`client.description`, data.client.description || "");
                         }
-
                     }
                 }
 
-                if (data.owner === "partner" || data.owner === "client+partner") {
+                // Check for "partner" ownership
+                if (data.owner.includes("partner") || data.owner.includes("client+partner")) {
                     if (data?.partner && Object.keys(data?.partner).length) {
-
                         setFieldValue(`partner.currentValue`, data.partner.currentValue || "");
 
                         if (props.modalObject.index === "car") {
                             setFieldValue(`partner.modelOfCar`, data.partner.modelOfCar || "");
-                        }
-                        else if (props.modalObject.index === "otherAssets") {
+                        } else if (props.modalObject.index === "otherAssets") {
                             setFieldValue(`partner.description`, data.partner.description || "");
                         }
                     }
                 }
 
-                if (data.owner === "joint") {
+                // Check for "joint" ownership
+                if (data.owner.includes("joint")) {
                     if (data?.joint && Object.keys(data?.joint).length) {
-
                         setFieldValue(`joint.currentValue`, data.joint.currentValue || "");
 
                         if (props.modalObject.index === "car") {
                             setFieldValue(`joint.modelOfCar`, data.joint.modelOfCar || "");
-                        }
-                        else if (props.modalObject.index === "otherAssets") {
+                        } else if (props.modalObject.index === "otherAssets") {
                             setFieldValue(`joint.description`, data.joint.description || "");
                         }
                     }
@@ -71,48 +66,48 @@ const AssetInfo = (props) => {
         }
     };
 
+
     let DefaultUrl = useRecoilValue(defaultUrl)
 
     let onSubmit = async (values) => {
-
         let obj = values;
         obj.clientFK = localStorage.getItem("UserID");
 
         if (props.modalObject.title === "Car" || props.modalObject.title === "Other Assets") {
-
-            if (values.owner === "client" || values.owner === "client+partner") {
+            // Handle "client" related values
+            if (values.owner.includes("client") || values.owner.includes("client+partner")) {
                 obj.clientTotal = obj.client.currentValue;
             } else {
                 obj.clientTotal = "";
                 obj.client = {};
             }
 
-            if (values.owner === "partner" || values.owner === "client+partner") {
+            // Handle "partner" related values
+            if (values.owner.includes("partner") || values.owner.includes("client+partner")) {
                 obj.partnerTotal = obj.partner.currentValue;
             } else {
                 obj.partnerTotal = "";
                 obj.partner = {};
             }
-
-        }
-        else {
-
-            if (values.owner === "joint") {
+        } else {
+            // Handle "joint" related values
+            if (values.owner.includes("joint")) {
                 obj.jointTotal = obj.joint.currentValue;
-            }
-            else {
+            } else {
                 obj.jointTotal = "";
                 obj.joint = {};
             }
-
         }
+
+        // Clear partner fields if the user is not married
         if (UserStatus !== "Married") {
             obj.partnerTotal = "";
             obj.partner = {};
         }
-        
-        console.log(obj, "final obj")
 
+        console.log(obj, "final obj");
+
+        // Get bankAccountArray from questionDetail
         const bankAccountArray = questionDetail[props.modalObject.index]._id || "";
 
         try {
@@ -129,16 +124,19 @@ const AssetInfo = (props) => {
                 setQuestionDetail(updatedData);
             }
 
+            // Show success notification
             openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
+
             // Reset the flag state if necessary
             if (props.flagState) {
                 props.setFlagState(false);
             }
         } catch (error) {
             console.error("Error occurred while making API call:", error);
-            openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
+            openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved. Please try again.");
         }
     };
+
 
 
     const rowConfig = (props.modalObject.title === "Car") ? [
@@ -153,10 +151,12 @@ const AssetInfo = (props) => {
 
     let onlyJoint = ["Boat", "Caravan", "House hold"];
 
-
-
-
-
+    const options = onlyJoint.includes(props.modalObject.title) ? [
+        { value: "joint", label: RenderName("joint") }
+    ] : (UserStatus !== "Single") ? [
+        { value: "client", label: RenderName("client") },
+        { value: "partner", label: RenderName("partner") }] :
+        [{ value: "client", label: RenderName("client") },];
 
     return (
         <Formik
@@ -180,40 +180,18 @@ const AssetInfo = (props) => {
                                         Owner
                                     </label>
 
-                                    <div className='w-25'>
+                                    <div style={{ minWidth: "25%" }}>
                                         <Field
-                                            as="select"
-                                            placeholder="Name of owner"
-                                            id={`owner`}
                                             name={`owner`}
-                                            className="form-select inputDesignDoubleInput"
-                                        >
-                                            <option value={""}>Select</option>
-
-                                            {onlyJoint.includes(props.modalObject.title) ?
-                                                <option value={"joint"}> {"Joint (" + RenderName("joint") + ")"}</option> :
-                                                <React.Fragment>
-                                                    <option value={"client"}>  {RenderName("client")} </option>
-
-                                                    {localStorage.getItem("UserStatus") !== "Single" &&
-                                                        <React.Fragment>
-
-                                                            <option value={"partner"}>{RenderName("partner")}</option>
-                                                            <option value={"client+partner"}>{"Both (" + RenderName("client") + " , " + RenderName("partner") + ")"} </option>
-                                                            {/*
-                                                                <option value={"client+partner+joint"}>{RenderName("client") + " , " + RenderName("partner") + " and Joint"} </option>
-                                                                <option value={"joint"}> {"Joint (" + RenderName("joint") + ")"} </option>
-                                                            */}
-
-                                                        </React.Fragment>
-                                                    }
-                                                </React.Fragment>}
-                                        </Field>
+                                            component={CreatableMultiSelectField}
+                                            label="Multi Select Field"
+                                            options={options}
+                                        />
                                     </div>
                                 </div>
 
 
-                                {values.owner !== "" &&
+                                {values.owner.length > 0 &&
                                     <div className='row justify-content-center'>
                                         <div className='mt-4'>
                                             <Table striped bordered responsive hover>
@@ -230,7 +208,7 @@ const AssetInfo = (props) => {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {(values.owner === "client" || values.owner === "client+partner" || values.owner === "client+partner+joint") &&
+                                                    {(values.owner.includes("client")) &&
                                                         <DynamicTableRow
                                                             rowConfig={rowConfig}
                                                             values={values}
@@ -240,7 +218,7 @@ const AssetInfo = (props) => {
                                                             stakeHolder={"client."}
                                                         />
                                                     }
-                                                    {((values.owner === "partner" || values.owner === "client+partner" || values.owner === "client+partner+joint") && (UserStatus === "Married")) &&
+                                                    {(values.owner.includes("partner") && (UserStatus === "Married")) &&
                                                         <DynamicTableRow
                                                             rowConfig={rowConfig}
                                                             values={values}
@@ -251,7 +229,7 @@ const AssetInfo = (props) => {
                                                         />
                                                     }
 
-                                                    {(values.owner === "joint" || values.owner === "client+partner+joint") &&
+                                                    {(values.owner.includes("joint") && (UserStatus === "Married")) &&
                                                         <DynamicTableRow
                                                             rowConfig={rowConfig}
                                                             values={values}

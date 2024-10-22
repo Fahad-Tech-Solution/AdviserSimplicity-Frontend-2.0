@@ -13,6 +13,7 @@ import {
 } from "../../Assets/Api/Api";
 
 import DynamicTableRow from "../../Assets/Dynamic/DynamicTableRow";
+import { CreatableMultiSelectField } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 
 const LifeTimeBeneFits = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
@@ -30,44 +31,37 @@ const LifeTimeBeneFits = (props) => {
         joint: [],
       }; // Use an empty object as default if incomeFromSuperPayment is undefined
 
-  let initialValues = {};
-
+  let initialValues = {
+    owner: []
+  };
 
   const fillInitialValues = (setFieldValue) => {
     console.log(incomeFromSuperPayment, "data");
     let data = incomeFromSuperPayment;
-    if (incomeFromSuperPayment && incomeFromSuperPayment._id) {
-      if (data) {
 
-        setFieldValue(`owner`, data.owner || "");
+    if (data && data._id) {
+      setFieldValue(`owner`, data.owner || "");
 
-        if (data.owner === "client" || data.owner === "client+partner") {
-          if (data?.client && Object.keys(data?.client).length) {
-
-            setFieldValue(`client.fundName`, data.client.fundName || "");
-            setFieldValue(`client.regularIncomePerFortnight`, data.client.regularIncomePerFortnight || "");
-            setFieldValue(`client.isPension`, data.client.isPension || "");
-            setFieldValue(`client.regularIncomePA`, data.client.regularIncomePA || "");
-            setFieldValue(`client.centrelinkDeductibleAmount`, data.client.centrelinkDeductibleAmount || "");
-
-          }
+      // Handle client-related conditions
+      if (data.owner.includes("client")) {
+        if (data?.client && Object.keys(data.client).length) {
+          setFieldValue(`client.fundName`, data.client.fundName || "");
+          setFieldValue(`client.regularIncomePerFortnight`, data.client.regularIncomePerFortnight || "");
+          setFieldValue(`client.isPension`, data.client.isPension || "");
+          setFieldValue(`client.regularIncomePA`, data.client.regularIncomePA || "");
+          setFieldValue(`client.centrelinkDeductibleAmount`, data.client.centrelinkDeductibleAmount || "");
         }
+      }
 
-        if (UserStatus === "Married") {
-
-          if (data.owner === "partner" || data.owner === "client+partner") {
-            if (data?.partner && Object.keys(data?.partner).length) {
-
-              setFieldValue(`partner.regularIncomePA`, data.partner.regularIncomePA || "");
-              setFieldValue(`partner.regularIncomePerFortnight`, data.partner.regularIncomePerFortnight || "");
-              setFieldValue(`partner.centrelinkDeductibleAmount`, data.partner.centrelinkDeductibleAmount || "");
-              setFieldValue(`partner.fundName`, data.partner.fundName || "");
-              setFieldValue(`partner.isPension`, data.partner.isPension || "");
-
-            }
-          }
+      // Handle partner-related conditions
+      if (UserStatus === "Married" && data.owner.includes("partner")) {
+        if (data?.partner && Object.keys(data.partner).length) {
+          setFieldValue(`partner.regularIncomePA`, data.partner.regularIncomePA || "");
+          setFieldValue(`partner.regularIncomePerFortnight`, data.partner.regularIncomePerFortnight || "");
+          setFieldValue(`partner.centrelinkDeductibleAmount`, data.partner.centrelinkDeductibleAmount || "");
+          setFieldValue(`partner.fundName`, data.partner.fundName || "");
+          setFieldValue(`partner.isPension`, data.partner.isPension || "");
         }
-
       }
     }
   };
@@ -75,17 +69,15 @@ const LifeTimeBeneFits = (props) => {
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   let onSubmit = async (values) => {
-    // console.log(JSON.stringify(values));
-    // return (false);
-
     console.log(values);
 
-    let obj = values;
+    let obj = { ...values }; // Create a new object to avoid mutating values
     obj.clientFK = localStorage.getItem("UserID");
 
-    console.log(obj, "Objext");
+    console.log(obj, "Object");
 
-    if (values.owner === "client" || values.owner === "client+partner") {
+    // Handle client-related conditions
+    if (values.owner.includes("client")) {
       obj.clientTotal = values.client.regularIncomePA;
       console.log("Client total set");
     } else {
@@ -95,7 +87,7 @@ const LifeTimeBeneFits = (props) => {
     }
 
     // Handle partner-related conditions
-    if ((values.owner === "partner" || values.owner === "client+partner") && (UserStatus === "Married")) {
+    if (values.owner.includes("partner") && UserStatus === "Married") {
       obj.partnerTotal = values.partner.regularIncomePA;
       console.log("Partner total set");
     } else {
@@ -116,7 +108,6 @@ const LifeTimeBeneFits = (props) => {
           obj
         );
       } else {
-        // obj.collection = props.modalObject.Input;
         res = await PatchAxios(
           `${DefaultUrl}/api/incomeFromSuperPayment/Update`,
           obj
@@ -128,6 +119,7 @@ const LifeTimeBeneFits = (props) => {
         const updatedData = { ...questionDetail, incomeFromSuperPayment: res };
         setQuestionDetail(updatedData);
       }
+
       openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
 
       // Reset the flag state if necessary
@@ -148,6 +140,7 @@ const LifeTimeBeneFits = (props) => {
     { value: "Telstra", label: "Telstra" },
     { value: "Other", label: "Other" },
   ];
+
   const Formula = (values, setFieldValue, currentInput, stakeHolder) => {
     // alert(values);
     // console.log(values);
@@ -201,6 +194,15 @@ const LifeTimeBeneFits = (props) => {
       placeholder: "CentreLink Deductible Amount",
     },
   ];
+
+
+  const ownerOptions = (UserStatus !== "Single") ? [
+    { value: "client", label: RenderName("client") },
+    { value: "partner", label: RenderName("partner") }] :
+    [{ value: "client", label: RenderName("client") },];
+
+
+
   return (
     <Formik
       initialValues={initialValues}
@@ -224,40 +226,17 @@ const LifeTimeBeneFits = (props) => {
                         Owner
                       </label>
 
-                      <div className="w-25 ">
+                      <div style={{ minWidth: "25%" }}>
                         <Field
-                          as="select"
-                          placeholder="Name of owner"
-                          id={`owner`}
                           name={`owner`}
-                          className="form-select inputDesignDoubleInput"
-                        >
-                          <option value={""}>Select</option>
-                          <option value={"client"}>
-                            {"Only " + RenderName("client")}
-                          </option>
-                          {localStorage.getItem("UserStatus") !== "Single" && (
-                            <React.Fragment>
-                              <option value={"partner"}>
-                                {"Only " + RenderName("partner")}
-                              </option>
-                              <option value={"client+partner"}>
-                                {"Both (" +
-                                  RenderName("client") +
-                                  " , " +
-                                  RenderName("partner") +
-                                  ")"}
-                              </option>
-                              {/* <option value={"joint"}>
-                                {"Joint (" + RenderName("joint") + ")"}
-                              </option> */}
-                            </React.Fragment>
-                          )}
-                        </Field>
+                          component={CreatableMultiSelectField}
+                          label="Multi Select Field"
+                          options={ownerOptions}
+                        />
                       </div>
                     </div>
                   </div>
-                  {values.owner && (
+                  {values.owner.length > 0 && (
                     <div className="mt-4">
                       <Table striped bordered responsive hover>
                         <thead>
@@ -277,62 +256,31 @@ const LifeTimeBeneFits = (props) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {values.owner == "client" ? (
-                            <>
-                              <DynamicTableRow
-                                rowConfig={rowConfig}
-                                values={values}
-                                setFieldValue={setFieldValue}
-                                handleChange={handleChange}
-                                handleBlur={handleBlur}
-                                // handleInnerModal={handleInnerModal}
-                                stakeHolder="client."
-                              />
-                            </>
-                          ) : (
-                            ""
+                          {(values.owner.includes("client")) && (
+
+                            <DynamicTableRow
+                              rowConfig={rowConfig}
+                              values={values}
+                              setFieldValue={setFieldValue}
+                              handleChange={handleChange}
+                              handleBlur={handleBlur}
+                              // handleInnerModal={handleInnerModal}
+                              stakeHolder="client."
+                            />
                           )}
-                          {values.owner == "partner" ? (
-                            <>
-                              <DynamicTableRow
-                                rowConfig={rowConfig}
-                                values={values}
-                                setFieldValue={setFieldValue}
-                                handleChange={handleChange}
-                                handleBlur={handleBlur}
-                                // handleInnerModal={handleInnerModal}
-                                stakeHolder="partner."
-                              />
-                            </>
-                          ) : (
-                            ""
+
+                          {(values.owner.includes("partner") && UserStatus === "Married") && (
+                            <DynamicTableRow
+                              rowConfig={rowConfig}
+                              values={values}
+                              setFieldValue={setFieldValue}
+                              handleChange={handleChange}
+                              handleBlur={handleBlur}
+                              // handleInnerModal={handleInnerModal}
+                              stakeHolder="partner."
+                            />
                           )}
-                          {values.owner == "client+partner" ? (
-                            <>
-                              <DynamicTableRow
-                                rowConfig={rowConfig}
-                                values={values}
-                                setFieldValue={setFieldValue}
-                                handleChange={handleChange}
-                                handleBlur={handleBlur}
-                                // handleInnerModal={handleInnerModal}
-                                stakeHolder="client."
-                              />
-                              {UserStatus === "Married" &&
-                                <DynamicTableRow
-                                  rowConfig={rowConfig}
-                                  values={values}
-                                  setFieldValue={setFieldValue}
-                                  handleChange={handleChange}
-                                  handleBlur={handleBlur}
-                                  // handleInnerModal={handleInnerModal}
-                                  stakeHolder="partner."
-                                />
-                              }
-                            </>
-                          ) : (
-                            ""
-                          )}
+
                         </tbody>
                       </Table>
                     </div>

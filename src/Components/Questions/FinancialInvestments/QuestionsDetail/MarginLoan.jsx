@@ -11,7 +11,26 @@ import { CreatableMultiSelectField } from './CreatableMultiSelectField';
 const MarginLoan = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
-    let bankDetailObj = useRecoilValue(BankDetail)
+
+
+
+    let bankDetailObj = useRecoilValue(BankDetail);
+
+
+    let [lenderOption, setLenderOption] = useState(() => {
+
+        if (!bankDetailObj?.FinancialInstitutions) return [];
+
+        // Create an options array
+        const optionsArray = bankDetailObj.FinancialInstitutions.map((elem) => ({
+            value: elem._id,
+            label: elem.platformName,
+        }));
+
+        return optionsArray;
+    })
+
+
 
     let [UserStatus] = useState(localStorage.getItem('UserStatus'));
 
@@ -213,7 +232,7 @@ const MarginLoan = (props) => {
 
 
     const rowConfig = [
-        { name: 'lender', type: 'text', placeholder: 'Lender', styleSet: { width: "20rem" }, },
+        { name: 'lender', type: 'select', options: lenderOption, placeholder: 'Lender', styleSet: { width: "15rem" }, },
         { name: 'loanBalance', type: 'number-toComma', placeholder: 'Loan Balance', },
         {
             name: 'monthlyContribution',

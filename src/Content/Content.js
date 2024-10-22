@@ -195,6 +195,64 @@ export const content = {
             img: VeryHigh,
             des: "<b>High Growth</b> - As a High Growth investor, you are prepared to compromise portfolio balance to pursue potential long-term gains. Your risk profile suggests you acknowledge there will be short term fluctuations in performance and are comfortable to invest in high risk investments. Based on your risk profile you would generally prefer a portfolio comprising solely growth assets such as shares and property. Minimum Investment Term: 7 years. "
         }
+    ],
+    superAdmin: [
+        {
+            subTitle: 'Financial Institutions',
+            statusStep: 0,
+            icon: 'RiCoinsFill',
+            route: '/',
+            key: "FinancialInstitutions",
+            condition: (CRObject) => true // Always true, as this step is always needed.
+        },
+        {
+            subTitle: 'Investment Platforms',
+            statusStep: 10,
+            icon: 'MdFamilyRestroom',
+            route: '/InvestmentPlatforms',
+            key: "InvestmentPlatforms",
+            condition: (CRObject) => true // Always true, as this step is always needed.
+        },
+        {
+            subTitle: 'Investment Bonds',
+            statusStep: 20,
+            icon: 'FaCertificate',
+            route: '/InvestmentBonds',
+            key: "InvestmentBonds",
+            condition: (CRObject) => true // Always true, as this step is always needed.
+        },
+        {
+            subTitle: 'Superannuation Funds',
+            statusStep: 30,
+            icon: 'FaMoneyBillWave',
+            route: '/SuperannuationFunds',
+            key: "SuperannuationFunds",
+            condition: (CRObject) => true // Always true, as this step is always needed.
+        },
+        {
+            subTitle: 'Account Based Pensions',
+            statusStep: 40,
+            icon: 'FaUserShield',
+            route: '/AccountBasedPensions',
+            key: "AccountBasedPensions",
+            condition: (CRObject) => true // Always true, as this step is always needed.
+        },
+        {
+            subTitle: 'Annuities',
+            statusStep: 50,
+            icon: 'BiDollarCircle',
+            route: '/Annuities',
+            key: "Annuities",
+            condition: (CRObject) => true // Always true, as this step is always needed.
+        },
+        {
+            subTitle: 'Personal Insurances',
+            statusStep: 60,
+            icon: 'RiDiscountPercentFill',
+            route: '/PersonalInsurances',
+            key: "PersonalInsurances",
+            condition: (CRObject) => true // Always true, as this step is always needed.
+        },
     ]
 
 }

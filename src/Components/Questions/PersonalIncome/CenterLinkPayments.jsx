@@ -27,20 +27,14 @@ const CenterLinkPayments = (props) => {
   };
 
   const fillInitialValues = (setFieldValue) => {
-    if (
-      incomeFromCentrelink &&
-      incomeFromCentrelink._id
-    ) {
-
-
-      let data = incomeFromCentrelink
+    if (incomeFromCentrelink && incomeFromCentrelink._id) {
+      let data = incomeFromCentrelink;
 
       if (data) {
-
         setFieldValue("owner", data.owner);
-        if (incomeFromCentrelink.owner === "client" || incomeFromCentrelink.owner === "client+partner") {
 
-          setFieldValue(`client.paymentType`, data.client.paymentType || "");
+        // Check ownership for client
+        if (data.owner.includes("client")) {
           setFieldValue(`client.paymentType`, data.client.paymentType || "");
           setFieldValue(`client.CRN`, data.client.CRN || "");
           setFieldValue(`client.fortnightlyPayment`, data.client.fortnightlyPayment || "");
@@ -48,47 +42,43 @@ const CenterLinkPayments = (props) => {
           setFieldValue(`client.centrelinkCardsHeld`, data.client.centrelinkCardsHeld || "");
         }
 
-        if ((incomeFromCentrelink.owner === "partner" || incomeFromCentrelink.owner === "client+partner") && (UserStatus === "Married")) {
-
-          setFieldValue(`partner.paymentType`, data.partner.paymentType || "");
+        // Check ownership for partner
+        if (data.owner.includes("partner") && UserStatus === "Married") {
           setFieldValue(`partner.paymentType`, data.partner.paymentType || "");
           setFieldValue(`partner.CRN`, data.partner.CRN || "");
           setFieldValue(`partner.fortnightlyPayment`, data.partner.fortnightlyPayment || "");
           setFieldValue(`partner.annualPaymentAmount`, data.partner.annualPaymentAmount || "");
           setFieldValue(`partner.centrelinkCardsHeld`, data.partner.centrelinkCardsHeld || "");
         }
-
       }
     }
   };
-
 
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   let onSubmit = async (values) => {
     console.log(JSON.stringify(values));
-    // return (false);
 
     let obj = values;
-
     obj.clientFK = localStorage.getItem("UserID");
 
-    if (obj.owner === "client" || obj.owner === "client+partner") {
+    // Check ownership for client
+    if (obj.owner.includes("client")) {
       obj.clientTotal = obj.client.annualPaymentAmount;
-    }
-    else {
+    } else {
       obj.clientTotal = "";
       obj.client = {};
     }
 
-    if (obj.owner === "partner" || obj.owner === "client+partner") {
+    // Check ownership for partner
+    if (obj.owner.includes("partner")) {
       obj.partnerTotal = obj.partner.annualPaymentAmount;
-    }
-    else {
+    } else {
       obj.partnerTotal = "";
       obj.partner = {};
     }
 
+    // Check user status for married condition
     if (UserStatus !== "Married") {
       obj.partnerTotal = "";
       obj.partner = {};
@@ -99,15 +89,9 @@ const CenterLinkPayments = (props) => {
     try {
       let res;
       if (!GotData) {
-        res = await PostAxios(
-          `${DefaultUrl}/api/incomeFromCentrelink/Add`,
-          obj
-        );
+        res = await PostAxios(`${DefaultUrl}/api/incomeFromCentrelink/Add`, obj);
       } else {
-        res = await PatchAxios(
-          `${DefaultUrl}/api/incomeFromCentrelink/Update`,
-          obj
-        );
+        res = await PatchAxios(`${DefaultUrl}/api/incomeFromCentrelink/Update`, obj);
       }
 
       if (res) {
@@ -116,16 +100,18 @@ const CenterLinkPayments = (props) => {
         setQuestionDetail(updatedData);
       }
 
-      openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
+      openNotificationSuccess("success", "topRight", "Success Notification", `Data of "${props.modalObject.title}" is Saved`);
+
       // Reset the flag state if necessary
       if (props.flagState) {
         props.setFlagState(false);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
-      openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
+      openNotificationSuccess("error", "topRight", "Error Notification", `Data of "${props.modalObject.title}" is not Saved. Please try again.`);
     }
   };
+
 
   const options = [
     { value: "Age Pension", label: "Age Pension" },
@@ -152,6 +138,12 @@ const CenterLinkPayments = (props) => {
     { name: 'centrelinkCardsHeld', type: 'select-creatableMulti', placeholder: 'Multi Select Field', options: options2 },
   ];
 
+  const ownerOptions = (UserStatus !== "Single") ? [
+    { value: "client", label: RenderName("client") },
+    { value: "partner", label: RenderName("partner") }] :
+    [{ value: "client", label: RenderName("client") },];
+
+
 
   return (
     <Formik
@@ -163,7 +155,7 @@ const CenterLinkPayments = (props) => {
       {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
-        }, [values.NumberOfMap]);
+        }, []);
 
         return (
           <Form>
@@ -175,33 +167,17 @@ const CenterLinkPayments = (props) => {
                     Owner
                   </label>
 
-                  <div className='w-25'>
+                  <div style={{ minWidth: "25%" }}>
                     <Field
-                      as="select"
-                      placeholder="Name of owner"
-                      id={`owner`}
                       name={`owner`}
-                      className="form-select inputDesignDoubleInput"
-
-
-                    >
-                      <option value={""}>Select</option>
-                      <option value={"client"}>{RenderName("client")}</option>
-                      {localStorage.getItem("UserStatus") !== "Single" &&
-                        <React.Fragment>
-                          <option value={"partner"}>{RenderName("partner")}</option>
-                          {/*
-                            <option value={"joint"}> {"Joint (" + RenderName("joint") + ")"} </option>
-                            <option value={"client+partner+joint"}>{RenderName("client") + " , " + RenderName("partner") + " and Joint"} </option>
-                            */}
-                          <option value={"client+partner"}>{"Both (" + RenderName("client") + " , " + RenderName("partner") + ")"} </option>
-                        </React.Fragment>
-                      }
-                    </Field>
+                      component={CreatableMultiSelectField}
+                      label="Multi Select Field"
+                      options={ownerOptions}
+                    />
                   </div>
                 </div>
               </div>
-              {values.owner !== "" &&
+              {values.owner.length > 0 &&
 
                 <div className="col-md-12">
                   <div className="row justify-content-center">
@@ -224,7 +200,7 @@ const CenterLinkPayments = (props) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {(values.owner === "client" || values.owner === "client+partner") &&
+                          {(values.owner.includes("client")) &&
                             <DynamicTableRow
                               rowConfig={rowConfig}
                               values={values}
@@ -234,8 +210,7 @@ const CenterLinkPayments = (props) => {
                               stakeHolder={"client."}
                             />
                           }
-
-                          {((values.owner === "partner" || values.owner === "client+partner") && (UserStatus === "Married")) &&
+                          {(values.owner.includes("partner") && UserStatus === "Married") &&
                             <DynamicTableRow
                               rowConfig={rowConfig}
                               values={values}

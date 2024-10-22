@@ -33,14 +33,21 @@ const AdminSideBar = (props) => {
                     title={props.collapsed ? "Logo" : null}  // Disable tooltip when not collapsed
                 >
                     {props.collapsed ?
-                        <div className='mt-3' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', }}>
+                        <div className='mt-3' style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', }}
+                            onClick={() => {
+                                props.setCollapsed(!props.collapsed)
+                            }}
+                        >
                             <h5 role="button" className='' >
                                 <img src={AdviserSmini} alt="Logo" width={"50px"} />
                             </h5>
                         </div>
 
                         :
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', }}
+                            onClick={() => {
+                                props.setCollapsed(!props.collapsed)
+                            }}>
                             <h5 role="button">
                                 <img src={AdviserS1} alt="Logo" width={"170px"} />
                             </h5>

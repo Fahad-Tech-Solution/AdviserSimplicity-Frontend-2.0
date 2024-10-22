@@ -11,7 +11,23 @@ import { CreatableMultiSelectField } from './CreatableMultiSelectField';
 const InvestmentLoan = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
-    let bankDetailObj = useRecoilValue(BankDetail)
+
+    let bankDetailObj = useRecoilValue(BankDetail);
+
+
+    let [lenderOption, setLenderOption] = useState(() => {
+
+        if (!bankDetailObj?.FinancialInstitutions) return [];
+
+        // Create an options array
+        const optionsArray = bankDetailObj.FinancialInstitutions.map((elem) => ({
+            value: elem._id,
+            label: elem.platformName,
+        }));
+
+        return optionsArray;
+    })
+
 
     let [UserStatus] = useState(localStorage.getItem('UserStatus'));
 
@@ -213,7 +229,7 @@ const InvestmentLoan = (props) => {
     ]
     let optionsFrequency = [
         { value: 52, label: "Weekly" },
-        { value: 26, label: "Fortnightly"},
+        { value: 26, label: "Fortnightly" },
         { value: 12, label: "Monthly" },
         { value: 1, label: "Annually" },
     ]
@@ -224,7 +240,7 @@ const InvestmentLoan = (props) => {
     }))
 
     const rowConfig = [
-        { name: 'lender', type: 'select', options: generateOptions(), placeholder: 'Lender', styleSet: { width: "20rem" }, },
+        { name: 'lender', type: 'select', options: lenderOption, placeholder: 'Lender', styleSet: { width: "20rem" }, },
         { name: 'loanBalance', type: 'number-toComma', placeholder: 'Loan Balance', },
         { name: 'loanType', type: 'select', options: optionsLender, placeholder: 'Loan Type', },
         { name: 'repaymentsAmount', type: 'number-toComma', placeholder: 'Repayments Amount', },
@@ -242,17 +258,6 @@ const InvestmentLoan = (props) => {
         { name: 'loanTermRemaining', type: 'select', options: loanTermOptions, placeholder: 'Loan Term Remaining', },
         { name: 'deductibleLoanAmount', type: 'number-toPercent', placeholder: 'Deductible Loan Amount', },
     ]
-
-    function generateOptions() {
-        const InstituteOptions = [];
-
-        if (Array.isArray(bankDetailObj) && bankDetailObj.length > 0) {
-            bankDetailObj.forEach((elem) => {
-                InstituteOptions.push({ value: elem._id, label: elem.platformName });
-            });
-        }
-        return InstituteOptions;
-    };
 
     const options = (UserStatus !== "Single") ? [
         { value: "client", label: RenderName("client") },
@@ -294,7 +299,7 @@ const InvestmentLoan = (props) => {
                                             </div>
                                         </div>
                                     </div>
-                                    {values.owner !== "" && (
+                                    {values.owner.length > 0 && (
                                         <div className='mt-4'>
                                             <Table striped bordered responsive hover>
                                                 <thead>
