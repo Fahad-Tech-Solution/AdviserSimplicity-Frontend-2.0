@@ -117,6 +117,7 @@ import OwnFamilyHome from '../AdditionalQueriesPersonalAssets/OwnFamilyHome';
 import MiddleWare from './MiddleWare';
 import SampleOne from '../AdditionalQueriesPersonalAssets/SampleOne';
 import PersonalInsuranceRenderCard from './QuestionsDetail/PersonalInsuranceRenderCard';
+import SMSFQCards from './SMSFQCards';
 
 const QuestionCards = (props) => {
 
@@ -209,7 +210,7 @@ const QuestionCards = (props) => {
                 img: TermImg
             },
             {
-                title: "Australian Shares",
+                title: "Australian Shares/ETFs",
                 key: "australianShareMarket",
                 img: PortFolio
             },
@@ -387,46 +388,7 @@ const QuestionCards = (props) => {
                 key: "SMSFDetails",
                 img: will
             },
-            {
-                title: "SMSF Accumulation Details",
-                key: "SMSFAccumulationDetails",
-                img: property
-            },
-            {
-                title: "SMSF Bank Accounts",
-                key: "SMSFBank",
-                img: BankImg
-            },
-            {
-                title: "SMSF Term Deposits",
-                key: "SMSFTermDeposits",
-                img: TermImg
-            },
-            {
-                title: "SMSF Australian Shares",
-                key: "SMSFAustralianShares",
-                img: PortFolio
-            },
-            {
-                title: "SMSF Managed Funds",
-                key: "SMSFManagedFunds",
-                img: funds
-            },
-            {
-                title: "SMSF Investment Loan",
-                key: "SMSFInvestmentLoan",
-                img: analytics
-            },
-            {
-                title: "SMSF Investment Properties",
-                key: "SMSFInvestmentProperties",
-                img: people
-            },
-            {
-                title: "SMSF Pension Phase",
-                key: "SMSFPensionPhase",
-                img: calender
-            },
+
         ],
         FamilyTrust: [
             {
@@ -575,6 +537,7 @@ const QuestionCards = (props) => {
     const combinedArray = ["incomeFromOwnBusiness", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "car", "boat", "caravan", "personalAssets", "houseHold", "otherAssets", "familyHome", "investmentBondFinance", "managedFundsMarginLoan", "managedFundsLOC", "will", "POA",]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
     const towInOne = ["personalLoans"];
+    
     const sampleOne = ["investmentPropertyDetails"];
 
     const reuseModal = ["bankAccountFinance", "termDepositsFinance", "australianShareMarket", "managedFund", "investmentBondFinance", "SMSFTermDeposits", "SMSFAustralianShares", "SMSFManagedFunds", "SMSFInvestmentLoan", "familyBank", "familyTermDeposit", "familyAustralianShare", "familyMangedFunds", "familyInvestmentHomeLoan", "SMSFBank", "superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues", "BusinessAsCompanyStructure", "BusinessAsTrusts"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
@@ -622,7 +585,7 @@ const QuestionCards = (props) => {
         //Financial Investments
         "Bank Accounts": <MiddleWare />,              //reuse Component
         "Term Deposits": <MiddleWare />,               //reuse Component
-        "Australian Shares": <MiddleWare />,      //reuse Component
+        "Australian Shares/ETFs": <MiddleWare />,      //reuse Component
         "Platform Investments": <MiddleWare />,              //reuse Component
         "Investment Bond": <MiddleWare />,
         "Investment Loan": <InvestmentLoan />,          //reuse Component
@@ -655,11 +618,11 @@ const QuestionCards = (props) => {
         "Business as Trusts": <MiddleWare />,
 
         //SMSF
-        "SMSF Bank Accounts": <BankTermForm />,         //reuse Component
-        "SMSF Term Deposits": <TermDeposit />,          //reuse Component
-        "SMSF Australian Shares": <AustralianShares />, //reuse Component
-        "SMSF Managed Funds": <ManagedFunds />,         //reuse Component
-        "SMSF Investment Loan": <InvestmentLoan />,     //reuse Component
+        "SMSF Bank Accounts": <MiddleWare />,         //reuse Component
+        "SMSF Term Deposits": <MiddleWare />,          //reuse Component
+        "SMSF Australian Shares": <MiddleWare />, //reuse Component
+        "SMSF Managed Funds": <MiddleWare />,         //reuse Component
+        "SMSF Investment Loan": <MiddleWare />,     //reuse Component
         //looping Question
         "Investment Home": <SMSFInvestmentPropertyModalComp />,
         "Investment Home Loan": <SMSFInvestmentHomeLoanComp />,
@@ -770,7 +733,9 @@ const QuestionCards = (props) => {
                         const SampleOneSwitch = sampleOne.includes(elem.key) ? true : false;
                         const PersonalInsuranceRender = conditionalRender.includes(elem.key) ? true : false;
                         // console.log(PersonalInsuranceRender)
-                        const SMSFInP = elem.key === "SMSFInvestmentProperties" ? true : false;
+                        const SMSFInP = elem.key === "SMSFDetails" ? true : false;
+
+                        // const SMSFInP = elem.key === "SMSFInvestmentProperties" ? true : false;
                         const FamilyInP = elem.key === "familyInvestmentProperties" ? true : false;
                         const PartnerClass = localStorage.getItem("UserStatus") === "Single" ? "d-none" : "";
 
@@ -860,64 +825,67 @@ const QuestionCards = (props) => {
                         else if (reuseSwitch) {
                             return (
                                 <div className={`col-md-3 mb-4`} key={index}>
-                                    <Card className="py-4 shadow borderOverAll GoalsobjectiveCard" style={{ borderRadius: "20px", height: "100%" }}>
+                                    <Card className="py-4 shadow borderOverAll GoalsobjectiveCard d-flex" style={{ borderRadius: "20px", height: "100%" }}>
                                         <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}</h5>
-                                        <div className="QuestionIcon CardImg">
-                                            <img className="img-fluid" src={elem.img} alt="" />
-                                        </div>
-                                        <div
-                                            className="row justify-content-center align-items-center my-2"
-                                        >
-                                            <div className='col-12 p-0 '>
-                                                <div className='d-flex flex-column-reverse justify-content-center align-items-center gap-2'>
-                                                    <label
-                                                        className=" d-block "
-                                                        htmlFor={"client" + elem.key}
-                                                    >{localStorage.getItem("UserName") || "You"}</label>
 
-                                                    <label
-                                                        className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                                        onClick={() => { OpenReuseModal(elem.title, "client", elem.key) }}
-                                                    >
-                                                        <div>
-                                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                        </div>
-                                                    </label>
+                                        <div className='d-flex justify-content-center flex-column' style={{ marginTop: "auto" }}>
+                                            <div className="QuestionIcon CardImg">
+                                                <img className="img-fluid" src={elem.img} alt="" />
+                                            </div>
+                                            <div
+                                                className="row justify-content-center align-items-center my-2"
+                                            >
+                                                <div className='col-12 p-0 '>
+                                                    <div className='d-flex flex-column-reverse justify-content-center align-items-center gap-2'>
+                                                        <label
+                                                            className=" d-block "
+                                                            htmlFor={"client" + elem.key}
+                                                        >{localStorage.getItem("UserName") || "You"}</label>
+
+                                                        <label
+                                                            className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                                                            onClick={() => { OpenReuseModal(elem.title, "client", elem.key) }}
+                                                        >
+                                                            <div>
+                                                                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                            </div>
+                                                        </label>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <input type="text"
-                                            className="form-control inputDesign "
-                                            id={"client" + elem.key}
-                                            placeholder={elem.title}
-                                            name={"client" + elem.key}
-                                            value={questionDetail && questionDetail[elem.key]?.clientTotal ? questionDetail[elem.key].clientTotal : ""}
-                                        />
-                                        <div
-                                            className={`row justify-content-center align-items-center my-2 ${PartnerClass}`}
-                                        >
-                                            <div className='col-12 p-0 '>
-                                                <div className='d-flex flex-column-reverse justify-content-center align-items-center gap-2'>
-                                                    <label
-                                                        className=" d-block "
-                                                        htmlFor={"partner" + elem.key}
-                                                    >{localStorage.getItem("PartnerName") || "Partner"}</label>
+                                            <input type="text"
+                                                className="form-control inputDesign "
+                                                id={"client" + elem.key}
+                                                placeholder={elem.title}
+                                                name={"client" + elem.key}
+                                                value={questionDetail && questionDetail[elem.key]?.clientTotal ? questionDetail[elem.key].clientTotal : ""}
+                                            />
+                                            <div
+                                                className={`row justify-content-center align-items-center my-2 ${PartnerClass}`}
+                                            >
+                                                <div className='col-12 p-0 '>
+                                                    <div className='d-flex flex-column-reverse justify-content-center align-items-center gap-2'>
+                                                        <label
+                                                            className=" d-block "
+                                                            htmlFor={"partner" + elem.key}
+                                                        >{localStorage.getItem("PartnerName") || "Partner"}</label>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            <input type="text"
+                                                className={`form-control inputDesign ${PartnerClass}`}
+                                                id={"partner" + elem.key}
+                                                placeholder={elem.title}
+                                                name={"partner" + elem.key}
+                                                value={questionDetail && questionDetail[elem.key]?.partnerTotal ? questionDetail[elem.key].partnerTotal : ""}
+                                            />
                                         </div>
-                                        <input type="text"
-                                            className={`form-control inputDesign ${PartnerClass}`}
-                                            id={"partner" + elem.key}
-                                            placeholder={elem.title}
-                                            name={"partner" + elem.key}
-                                            value={questionDetail && questionDetail[elem.key]?.partnerTotal ? questionDetail[elem.key].partnerTotal : ""}
-                                        />
                                     </Card>
                                 </div>
                             );
                         }
                         else if (SMSFInP) {
-                            return (<SMSFInvestmentProperty PartnerClass={PartnerClass} index={index} jointClass={jointClass} elem={elem} OpenModal={OpenModal2} homeArray={homeArray} arrayCount={arrayCount} />);
+                            return (<SMSFQCards PartnerClass={PartnerClass} index={index} jointClass={jointClass} elem={elem} OpenModal={OpenModal2} homeArray={homeArray} arrayCount={arrayCount} />);
                         }
                         else if (FamilyInP) {
                             return (<FamilyInvestmentProperty PartnerClass={PartnerClass} index={index} jointClass={jointClass} elem={elem} OpenModal={OpenModal2} homeArray={homeArray} arrayCount={arrayCount} />);

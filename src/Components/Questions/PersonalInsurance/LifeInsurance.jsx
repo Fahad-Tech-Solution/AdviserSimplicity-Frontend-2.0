@@ -1,7 +1,7 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { defaultUrl, QuestionDetail } from "../../../Store/Store";
+import { BankDetail, defaultUrl, QuestionDetail } from "../../../Store/Store";
 import { openNotificationSuccess, PatchAxios, PostAxios, RenderName, toCommaAndDollar } from "../../Assets/Api/Api";
 import { Button, InputGroup, Modal, Table } from "react-bootstrap";
 import DatePicker from "react-datepicker";
@@ -18,6 +18,7 @@ const PersonalInsuranceLife = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
   let DefaultUrl = useRecoilValue(defaultUrl);
+  let bankDetailObj = useRecoilValue(BankDetail);
 
   let [UserStatus] = useState(localStorage.getItem('UserStatus'));
 
@@ -398,16 +399,17 @@ const PersonalInsuranceLife = (props) => {
                                   className="form-select inputDesignDoubleInput"
                                 >
                                   <option value={""}>Select</option>
-                                  <option value={"AIA"}>AIA</option>
-                                  <option value={"Clearview"}>Clearview</option>
-                                  <option value={"Encompass"}>Encompass</option>
-                                  <option value={"MLC"}>MLC</option>
-                                  <option value={"Metlife"}>Metlife</option>
-                                  <option value={"NEOS"}>NEOS</option>
-                                  <option value={"One Path"}>One Path</option>
-                                  <option value={"PPS Mutual"}>PPS Mutual</option>
-                                  <option value={"TAL"}>TAL</option>
-                                  <option value={"Zurich"}>Zurich</option>
+                                  {
+                                    bankDetailObj?.PersonalInsurances && bankDetailObj.PersonalInsurances.length > 0 ? (
+                                      bankDetailObj.PersonalInsurances.map((elem, index) => (
+                                        <option key={index} value={elem._id}>
+                                          {elem.platformName}
+                                        </option>
+                                      ))
+                                    ) : (
+                                      <option disabled>No Platforms Added in Personal Insurances</option>
+                                    )
+                                  }
                                 </Field>
                               </td>
                               <td>

@@ -50,6 +50,7 @@ const RecoilStateManage = () => {
 
   }, [location.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
+
   useEffect(() => {
 
     if (!bankDetailObj2?._id) {
@@ -61,7 +62,7 @@ const RecoilStateManage = () => {
     try {
       const res = await GetAxios(`${DefaultUrl}/api/investmentoffer/`);
       if (res) {
-        console.log(JSON.stringify(res))
+        // console.log(JSON.stringify(res))
         setBankDetailObj(res)
       }
     } catch (error) {

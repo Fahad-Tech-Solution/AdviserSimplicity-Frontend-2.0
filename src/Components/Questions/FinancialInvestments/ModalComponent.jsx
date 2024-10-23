@@ -114,7 +114,7 @@ const ModalComponent = (props) => {
 
     ]; // Add other titles that should use "xl" here
 
-    let fullTitles = ["Life Insurance", "Personal Insurance", "Investment Loan", "Margin Loan"]
+    let fullTitles = ["Life Insurance", "Personal Insurance", "Investment Loan", "Margin Loan", "SMSF Details"]
 
     const size = fullTitles.includes(props.modalObject.title) ? "xxl" : xlTitles.includes(props.modalObject.title) ? "xl" : "lg";
 

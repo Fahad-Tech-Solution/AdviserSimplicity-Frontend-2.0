@@ -222,21 +222,7 @@ const SmsfDetails = (props) => {
 
               <div className="col-md-12">
                 <div className="row justify-content-center">
-                  <div className="col-md-5">
-                    <p className="text-end mt-1">
-                      How many {props.modalObject.title} does{" "}
-                      {nameSet} have:
-                    </p>
-                  </div>
-                  <div className="col-md-2">
-                    <Field
-                      type="number"
-                      id="NumberOfMap"
-                      name="NumberOfMap"
-                      className="form-control inputDesignDoubleInput"
-                      onChange={(e) => handleInput(e, setFieldValue)}
-                    />
-                  </div>
+
                   {values.NumberOfMap && (
                     <div className="mt-4">
                       <Table striped bordered responsive hover>
@@ -256,7 +242,6 @@ const SmsfDetails = (props) => {
                             <th>Trustee Type</th>
                             <th>Trustee Name</th>
                             <th>Name of Accountant</th>
-                            <th>Fund and Audit Fees</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -268,7 +253,7 @@ const SmsfDetails = (props) => {
                                   {/* <InputGroup className="mb-3">  */}
                                   <Field
                                     type="text"
-                                    placeholder="Fund Name  "
+                                    placeholder="Fund Name"
                                     id={`fundName${i}`}
                                     name={`fundName${i}`}
                                     className="form-control inputDesignDoubleInput"
@@ -349,15 +334,6 @@ const SmsfDetails = (props) => {
                                     placeholder="Number of Accountants Name  "
                                     id={`noOfAccountant${i}`}
                                     name={`noOfAccountant${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="number"
-                                    placeholder="Fund and Audit Fees"
-                                    id={`fundAndAuditFee${i}`}
-                                    name={`fundAndAuditFee${i}`}
                                     className="form-control inputDesignDoubleInput"
                                   />
                                 </td>
