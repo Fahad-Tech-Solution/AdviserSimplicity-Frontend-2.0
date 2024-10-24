@@ -85,13 +85,13 @@ input[type="number"] {
 
   .LargeSheet {
     text-align: left !important;
-    padding-left: 5rem !important;
+    padding-left: 6.5rem !important;
   }
 }
 @media only screen and (min-width: 2165px) {
   .LargeSheet {
     text-align: left !important;
-    padding-left: 10rem !important;
+    padding-left: 11.5rem !important;
   }
 }
 
@@ -1088,6 +1088,22 @@ input[type="checkbox"] + .femaleSmoking + .maleNonSmoking {
     display: block;
   }
 
+  .PersonalDetailsForm .inputDesign {
+    max-width: 60%;
+    margin: 0 auto;
+    display: block;
+  }
+
+  .PersonalDetailsForm .centerDiv {
+    max-width: 60%;
+    margin: 0 auto;
+    display: block;
+  }
+
+  .PersonalDetailsForm .centerDiv label.CustomFont {
+    font-size: 20px !important;
+  }
+
   .cardInputGroup {
     max-width: 33%;
     /* border: 2px solid red; */
@@ -1130,6 +1146,7 @@ input::placeholder {
   padding: 8px 30px 8px 8px !important;
   border-radius: 5px !important;
   min-width: 6rem !important;
+  /* width: 100%; */
   box-shadow: none !important;
 }
 

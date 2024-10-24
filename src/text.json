@@ -1,96 +1,36 @@
 {
-  "NumberOfMap": 3,
-  "provider0": "NEOS",
-  "policyNo0": 1232,
-  "owner0": "client",
-  "startDate0": "2024-10-01T19:00:00.000Z",
-  "sumInsured0": [
-    { "coverType": "TPD", "premiums": "$1", "frequency": "Stepped" }
-  ],
-  "sumInsuredSum0": "$1",
-  "premiums0": "$1,476",
-  "premiumsDetails0": {
-    "coverType": "Trauma",
-    "premiums": "$123",
-    "frequency": "12",
-    "totalCost": "$1,476",
-    "payeeOfPremiums": "partner",
-    "paymentMethod": "Credit Card",
-    "commissionRate": "100.00%"
-  },
-  "loadingExclusion0": "Yes",
-  "loadingExclusionValue0": "1231",
-  "beneficiary0": "Yes",
-  "beneficiariesArray0": [
-    {
-      "nominationType": "Binding (Lapsing)",
-      "DOB": "2024-10-02T07:20:54.470Z",
-      "beneficiaryName": "123",
-      "relationshipStatus": "Spouse/De-facto",
-      "shareBenefit": "100.00%"
+  "clientFK": "671a1d183c4b560aeb93e39d",
+  "SMSFOwner": {
+    "fundName": "awdaw",
+    "ABN": 123,
+    "registeredOffice": "123",
+    "placeOfBusiness": "123",
+    "establishmentDate": "2024-10-08T19:00:00.000Z",
+    "trusteeType": "Corporate",
+    "directorsOfCorporateTrustee": [
+      { "directorName": "komail " },
+      { "directorName": "komail " },
+      { "directorName": "komail " },
+      { "directorName": "komail " },
+      { "directorName": "komail " },
+      { "directorName": "komail " }
+    ],
+    "trusteeName": "123",
+    "nameOfAccountant": "123",
+    "ACN": 123,
+    "bareTrust": "Yes",
+    "directorsOfBareTrust": {
+      "NumberOfDirectors": 6,
+      "bareTrusteeName": "asdaw",
+      "ACN": 123,
+      "directorNameArray": [
+        { "directorName": "komail" },
+        { "directorName": "komail" },
+        { "directorName": "komail" },
+        { "directorName": "komail" },
+        { "directorName": "komail" },
+        { "directorName": "komail" }
+      ]
     }
-  ],
-  "provider1": "PPS Mutual",
-  "policyNo1": 212,
-  "owner1": "client",
-  "startDate1": "2024-10-04T19:00:00.000Z",
-  "sumInsured1": [
-    { "coverType": "TPD", "premiums": "$1", "frequency": "Stepped" }
-  ],
-  "sumInsuredSum1": "$1",
-  "premiums1": "$123",
-  "premiumsDetails1": "",
-  "loadingExclusion1": "No",
-  "loadingExclusionValue1": "",
-  "beneficiary1": "No",
-  "beneficiariesArray1": "",
-  "provider2": "TAL",
-  "policyNo2": 7676,
-  "owner2": "client",
-  "startDate2": "2001-02-16T19:00:00.000Z",
-  "sumInsured2": [
-    { "coverType": "TPD", "premiums": "$123", "frequency": "Stepped" },
-    { "coverType": "Life", "premiums": "$123", "frequency": "Stepped" },
-    { "coverType": "Trauma", "premiums": "$123", "frequency": "Smoker" },
-    {
-      "coverType": "Income protection",
-      "premiums": "$123",
-      "frequency": "Smoker",
-      "waitingPeriod": "To Age 60",
-      "benefitPeriod": "60 Days"
-    }
-  ],
-  "sumInsuredSum2": "$492",
-  "premiums2": "$1,476",
-  "premiumsDetails2": {
-    "coverType": "Life",
-    "premiums": "$123",
-    "frequency": "12",
-    "totalCost": "$1,476",
-    "payeeOfPremiums": "client",
-    "paymentMethod": "Credit Card",
-    "commissionRate": "100.00%"
-  },
-  "loadingExclusion2": "Yes",
-  "loadingExclusionValue2": "alskdjk",
-  "beneficiary2": "Yes",
-  "beneficiariesArray2": [
-    {
-      "nominationType": "Binding (Non-Lapsing)",
-      "DOB": "2024-10-11T19:00:00.000Z",
-      "beneficiaryName": "1232",
-      "relationshipStatus": "Spouse/De-facto",
-      "shareBenefit": "100.00%"
-    },
-    {
-      "nominationType": "Legal Personal Representative (Your Estate)",
-      "DOB": "",
-      "beneficiaryName": "N/A",
-      "relationshipStatus": "N/A",
-      "shareBenefit": "100.00%"
-    }
-  ],
-  "lifeInsured0": "client",
-  "lifeInsured1": "partner",
-  "lifeInsured2": "client+partner"
+  }
 }

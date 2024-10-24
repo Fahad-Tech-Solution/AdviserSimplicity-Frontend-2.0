@@ -5,17 +5,19 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { defaultUrl, QuestionDetail } from '../../../Store/Store';
 import { openNotificationSuccess, PatchAxios, PostAxios, RenderName, toCommaAndDollar } from '../../Assets/Api/Api';
 import DynamicTableRow from '../../Assets/Dynamic/DynamicTableRow';
-import InnerModal from './QuestionsDetail/InnerModal';
-import BankTermForm from './QuestionsDetail/BankTermForm';
+import InnerModal from '../FinancialInvestments/QuestionsDetail/InnerModal';
+import BankTermForm from '../FinancialInvestments/QuestionsDetail/BankTermForm';
 
-import AustralianShares from './QuestionsDetail/AustralianShares';
-import ManagedFunds from './QuestionsDetail/ManagedFunds';
-import SuperFunds from './QuestionsDetail/SuperFunds';
-import AccountBasedPension from './QuestionsDetail/AccountBasedPension';
-import InvestedAnnuities from './QuestionsDetail/InvestedAnnuities';
+import AustralianShares from '../FinancialInvestments/QuestionsDetail/AustralianShares';
+import ManagedFunds from '../FinancialInvestments/QuestionsDetail/ManagedFunds';
+import SuperFunds from '../FinancialInvestments/QuestionsDetail/SuperFunds';
+import AccountBasedPension from '../FinancialInvestments/QuestionsDetail/AccountBasedPension';
+import InvestedAnnuities from '../FinancialInvestments/QuestionsDetail/InvestedAnnuities';
 import TradingCompany from '../BusinessEntities/TradingCompany';
+import SmsfAccumulationDetails from './SmsfAccumulationDetails';
+import AccumulationBenefits from './AccumulationBenefits';
 
-const MiddleWare = (props) => {
+const SMSFMiddleWare = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
@@ -24,14 +26,50 @@ const MiddleWare = (props) => {
 
     let [ShowError, setShowError] = useState({});
 
-    let switchArray = ["Australian Shares", "Platform Investments", "Investment Bond"]
+    let [conditionalAttributes, setConditionalAttributes] = useState(() => {
+        props.modalObject.title
 
-    let attrebuteSet = switchArray.includes(props.modalObject.title) ? true : false;
+        let AttributeSet = {
+            "SMSF Accumulation Details": {
+                headArray: [
+                    "Member",
+                    "Accumulation Benefits",
+                    "Contributions",
+                    "Nominated Beneficiaries",
+                ],
+                rowConfig: [
+                    { type: "plainText2.0", text: "client", value: questionDetail.SMSFDetails.SMSFOwner.fundName, styleSet: { width: "30%" }, },
+                    {
+                        name: 'SMSFOwner.accumulationBenefits',
+                        type: 'number-toComma-Modal',
+                        placeholder: 'Accumulation Benefits',
+                        extraClass: ShowError.clientCurrentBalanceError ? "is-invalid" : "",
+                        invalidMessage: ShowError.clientCurrentBalanceError ? ShowError.clientCurrentBalanceMessage : "",
+                        callBack: true,
+                        inputChangeFunc: checkValues,
+                        callBackModal: true,
+                        func: OpenInnerModal,
+                        key: "SMSFOwner",
+                        innerModalTitle: questionDetail.SMSFDetails.SMSFOwner.fundName + "_" + props.modalObject.title
+                    },
+                    {
+                        name: 'SMSFOwner.contributions', callBack: true, func: OpenInnerModal, type: 'yesnoModal',
+                        innerModalTitle: questionDetail.SMSFDetails.SMSFOwner.fundName + "_Contributions",
+                        key: "SMSFOwner"
+                    },
+                    {
+                        name: 'SMSFOwner.nominatedBeneficiaries', callBack: true, func: OpenInnerModal, type: 'yesnoModal',
+                        innerModalTitle: questionDetail.SMSFDetails.SMSFOwner.fundName + "_Nominated Beneficiaries",
+                        key: "SMSFOwner"
+                    },
 
+                ]
 
-    let clientPartnerArray = ["Super Funds", "Account Based Pension", "Annuities", "Business as Company Structure", "Business as Trusts"];
+            }
+        }
 
-    let clientPartnerOnly = clientPartnerArray.includes(props.modalObject.title) ? true : false;
+        return AttributeSet[props.modalObject.title];
+    });
 
     let BankAccountFinance = Object.keys(questionDetail[props.modalObject.key] || {}).length > 0 ? questionDetail[props.modalObject.key] : {
         client: [],
@@ -40,87 +78,12 @@ const MiddleWare = (props) => {
     };// Use an empty object as default if BankAccountFinance is undefined
 
 
-    let initialValues = {
-        clientCurrentBalance: "",
-        partnerCurrentBalance: "",
-        jointCurrentBalance: ""
-    };
+    let initialValues = {};
 
 
     const fillInitialValues = (setFieldValue) => {
         console.log(questionDetail[props.modalObject.key], props.modalObject.key, props.modalObject.title);
 
-        if (BankAccountFinance.clientFK && BankAccountFinance._id) {
-
-            setFieldValue("client", BankAccountFinance.client)
-            setFieldValue("clientCurrentBalance", BankAccountFinance.clientCurrentBalance)
-
-            let obj = {
-                name: "clientCurrentBalance",
-                value: BankAccountFinance.clientCurrentBalance
-            }
-
-            checkValues(BankAccountFinance, setFieldValue, obj, "");
-
-            if (props.modalObject.title != "Australian Shares") {
-                if (attrebuteSet) {
-                    let totalCostBase = BankAccountFinance.client.reduce((total, entry) => total + parseFloat((entry.totalPortfolioCost).replace(/[^0-9.-]+/g, "")), 0);
-                    setFieldValue("clientCostBaseTemp", toCommaAndDollar(totalCostBase))
-
-                    let obj = {
-                        name: "clientCostBaseTemp",
-                        value: BankAccountFinance.clientCostBaseTemp
-                    }
-                    checkValues(BankAccountFinance, setFieldValue, obj, "");
-                }
-            }
-            else {
-                let totalCostBase = BankAccountFinance.client.reduce((total, entry) => total + parseFloat((entry.costBase).replace(/[^0-9.-]+/g, "")), 0);
-                setFieldValue("clientCostBaseTemp", toCommaAndDollar(totalCostBase))
-            }
-
-            if (localStorage.getItem('UserStatus') === "Married") {
-
-                setFieldValue("partner", BankAccountFinance.partner)
-                setFieldValue("joint", BankAccountFinance.joint)
-
-
-                setFieldValue("partnerCurrentBalance", BankAccountFinance.partnerCurrentBalance)
-                setFieldValue("jointCurrentBalance", BankAccountFinance.jointCurrentBalance)
-
-                let obj = {
-                    name: "partnerCurrentBalance",
-                    value: BankAccountFinance.partnerCurrentBalance
-                }
-
-                checkValues(BankAccountFinance, setFieldValue, obj, "");
-
-                obj = {
-                    name: "jointCurrentBalance",
-                    value: BankAccountFinance.jointCurrentBalance
-                }
-
-                checkValues(BankAccountFinance, setFieldValue, obj, "");
-
-                if (props.modalObject.title != "Australian Shares") {
-                    if (attrebuteSet) {
-                        let totalCostBase = BankAccountFinance.partner.reduce((total, entry) => total + parseFloat((entry.totalPortfolioCost).replace(/[^0-9.-]+/g, "")), 0);
-                        setFieldValue("partnerCostBaseTemp", toCommaAndDollar(totalCostBase))
-
-                        totalCostBase = BankAccountFinance.joint.reduce((total, entry) => total + parseFloat((entry.totalPortfolioCost).replace(/[^0-9.-]+/g, "")), 0);
-                        setFieldValue("jointCostBaseTemp", toCommaAndDollar(totalCostBase))
-                    }
-                }
-                else {
-                    let totalCostBase = BankAccountFinance.partner.reduce((total, entry) => total + parseFloat((entry.costBase).replace(/[^0-9.-]+/g, "")), 0);
-                    setFieldValue("partnerCostBaseTemp", toCommaAndDollar(totalCostBase))
-
-                    totalCostBase = BankAccountFinance.joint.reduce((total, entry) => total + parseFloat((entry.costBase).replace(/[^0-9.-]+/g, "")), 0);
-                    setFieldValue("jointCostBaseTemp", toCommaAndDollar(totalCostBase))
-                }
-            }
-
-        }
     };
 
     let DefaultUrl = useRecoilValue(defaultUrl)
@@ -130,7 +93,7 @@ const MiddleWare = (props) => {
         console.log(values);
 
 
-        // return false
+        return false
 
         let obj = values;
 
@@ -216,7 +179,7 @@ const MiddleWare = (props) => {
 
     };
 
-    let checkValues = async (values, setFieldValue, currentInput, stakeHolder) => {
+    var checkValues = async (values, setFieldValue, currentInput, stakeHolder) => {
         // console.log(values, setFieldValue, currentInput, stakeHolder);
 
         // Use default empty arrays if values are undefined or null
@@ -293,7 +256,7 @@ const MiddleWare = (props) => {
     };
 
     // Function to calculate the expected total based on modal title and array
-    let CheckExpectedTotal = (ModalTitle, thisArray, currentInput, CheckState) => {
+    var CheckExpectedTotal = (ModalTitle, thisArray, currentInput, CheckState) => {
         if (!thisArray || thisArray.length === 0) return 0; // Return 0 if no data found
 
         switch (ModalTitle) {
@@ -356,143 +319,6 @@ const MiddleWare = (props) => {
         }
     };
 
-
-
-
-    const rowConfig = attrebuteSet ?
-        [
-            { type: "plainText", text: "client", styleSet: { width: "50%" }, },
-            {
-                name: 'clientCurrentBalance',
-                type: 'number-toComma-Modal',
-                placeholder: 'Current Balance',
-                extraClass: ShowError.clientCurrentBalanceError ? "is-invalid" : "",
-                invalidMessage: ShowError.clientCurrentBalanceError ? ShowError.clientCurrentBalanceMessage : "",
-                callBack: true,
-                inputChangeFunc: checkValues,
-                callBackModal: true,
-                func: OpenInnerModal,
-                key: "client",
-                innerModalTitle: RenderName("client") + "_" + props.modalObject.title + " Detail"
-            },
-            {
-                name: 'clientCostBaseTemp',
-                type: 'number-toComma',
-                placeholder: 'Cost Base',
-                styleSet: { width: "25%" },
-                extraClass: ShowError.clientCostBaseTempError ? "is-invalid" : "",
-                invalidMessage: ShowError.clientCostBaseTempError ? ShowError.clientCostBaseTempMessage : "",
-                callBack: true,
-                func: checkValues,
-            },
-        ]
-        : [
-            { type: "plainText", text: "client", styleSet: { width: "50%" }, },
-            {
-                name: 'clientCurrentBalance',
-                type: 'number-toComma-Modal',
-                placeholder: 'Current Balance',
-                extraClass: ShowError.clientCurrentBalanceError ? "is-invalid" : "",
-                invalidMessage: ShowError.clientCurrentBalanceError ? ShowError.clientCurrentBalanceMessage : "",
-                callBackModal: true,
-                func: OpenInnerModal,
-                callBack: true,
-                inputChangeFunc: checkValues,
-                key: "client",
-                innerModalTitle: RenderName("client") + "_" + props.modalObject.title + " Detail"
-            },
-        ];
-
-    const rowConfigPartner = attrebuteSet ?
-        [
-            { type: "plainText", text: "partner", styleSet: { width: "50%" }, },
-            {
-                name: 'partnerCurrentBalance',
-                type: 'number-toComma-Modal',
-                placeholder: 'Current Balance',
-                extraClass: ShowError.partnerCurrentBalanceError ? "is-invalid" : "",
-                invalidMessage: ShowError.partnerCurrentBalanceError ? ShowError.partnerCurrentBalanceMessage : "",
-                callBack: true,
-                inputChangeFunc: checkValues,
-                callBackModal: true,
-                func: OpenInnerModal,
-                key: "partner",
-                innerModalTitle: RenderName("partner") + "_" + props.modalObject.title + " Detail"
-            },
-            {
-                name: 'partnerCostBaseTemp',
-                type: 'number-toComma',
-                placeholder: 'Cost Base',
-                styleSet: { width: "25%" },
-
-                extraClass: ShowError.partnerCostBaseTempError ? "is-invalid" : "",
-                invalidMessage: ShowError.partnerCostBaseTempError ? ShowError.partnerCostBaseTempMessage : "",
-                callBack: true,
-                func: checkValues,
-            },
-        ]
-        : [
-            { type: "plainText", text: "partner", styleSet: { width: "50%" }, },
-            {
-                name: 'partnerCurrentBalance',
-                type: 'number-toComma-Modal',
-                placeholder: 'Current Balance',
-                callBackModal: true,
-                func: OpenInnerModal,
-                extraClass: ShowError.partnerCurrentBalanceError ? "is-invalid" : "",
-                invalidMessage: ShowError.partnerCurrentBalanceError ? ShowError.partnerCurrentBalanceMessage : "",
-                callBack: true,
-                inputChangeFunc: checkValues,
-                key: "partner",
-                innerModalTitle: RenderName("partner") + "_" + props.modalObject.title + " Detail"
-            },
-        ];
-
-    const rowConfigJoint = attrebuteSet ?
-        [
-            { type: "plainText", text: "joint", styleSet: { width: "50%" }, },
-            {
-                name: 'jointCurrentBalance',
-                type: 'number-toComma-Modal',
-                placeholder: 'Current Balance',
-                callBackModal: true,
-                func: OpenInnerModal,
-                extraClass: ShowError.jointCurrentBalanceError ? "is-invalid" : "",
-                invalidMessage: ShowError.jointCurrentBalanceError ? ShowError.jointCurrentBalanceMessage : "",
-                callBack: true,
-                inputChangeFunc: checkValues,
-                key: "joint",
-                innerModalTitle: RenderName("client") + " & " + RenderName("partner") + "_" + props.modalObject.title + " Detail"
-            },
-            {
-                name: 'jointCostBaseTemp',
-                type: 'number-toComma',
-                placeholder: 'Cost Base',
-                styleSet: { width: "25%" },
-
-                extraClass: ShowError.jointCostBaseTempError ? "is-invalid" : "",
-                invalidMessage: ShowError.jointCostBaseTempError ? ShowError.jointCostBaseTempMessage : "",
-                callBack: true,
-                func: checkValues,
-            },
-        ]
-        : [
-            { type: "plainText", text: "joint", styleSet: { width: "50%" }, },
-            {
-                name: 'jointCurrentBalance',
-                type: 'number-toComma-Modal',
-                placeholder: 'Current Balance',
-                callBackModal: true,
-                func: OpenInnerModal,
-                extraClass: ShowError.jointCurrentBalanceError ? "is-invalid" : "",
-                invalidMessage: ShowError.jointCurrentBalanceError ? ShowError.jointCurrentBalanceMessage : "",
-                callBack: true,
-                inputChangeFunc: checkValues,
-                key: "joint",
-                innerModalTitle: RenderName("client") + " & " + RenderName("partner") + "_" + props.modalObject.title + " Detail"
-            },
-        ];
-
     async function OpenInnerModal(title, values, key) {
         console.log(title, values, key);
         setModalObject({
@@ -502,6 +328,7 @@ const MiddleWare = (props) => {
             values,
             ShowError,
             setShowError,
+            SMSFOwner: questionDetail.SMSFDetails.SMSFOwner.fundName
         });
         setFlagState(true);
     }
@@ -517,6 +344,7 @@ const MiddleWare = (props) => {
         "Account Based Pension Detail": <AccountBasedPension />,
         "Annuities Detail": <InvestedAnnuities />,
         "Business as Company Structure Detail": <TradingCompany />,
+        "SMSF Accumulation Details": <AccumulationBenefits />,
 
     };
 
@@ -573,42 +401,19 @@ const MiddleWare = (props) => {
                                         <Table striped bordered responsive hover>
                                             <thead>
                                                 <tr>
-                                                    <th>Owner</th>
-                                                    <th>Current Balance</th>
-                                                    {
-                                                        attrebuteSet &&
-                                                        <th>Cost Base</th>
-                                                    }
+                                                    {conditionalAttributes.headArray.map((elem, index) => {
+                                                        return (<th key={index}>{elem}</th>)
+                                                    })}
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <DynamicTableRow
-                                                    rowConfig={rowConfig}
+                                                    rowConfig={conditionalAttributes.rowConfig}
                                                     values={values}
                                                     setFieldValue={setFieldValue}
                                                     handleChange={handleChange}
                                                     handleBlur={handleBlur}
                                                 />
-                                                {(localStorage.getItem('UserStatus') === "Married") &&
-                                                    <React.Fragment>
-                                                        <DynamicTableRow
-                                                            rowConfig={rowConfigPartner}
-                                                            values={values}
-                                                            setFieldValue={setFieldValue}
-                                                            handleChange={handleChange}
-                                                            handleBlur={handleBlur}
-                                                        />
-                                                        {!clientPartnerOnly &&
-                                                            <DynamicTableRow
-                                                                rowConfig={rowConfigJoint}
-                                                                values={values}
-                                                                setFieldValue={setFieldValue}
-                                                                handleChange={handleChange}
-                                                                handleBlur={handleBlur}
-                                                            />
-                                                        }
-                                                    </React.Fragment>
-                                                }
                                             </tbody>
                                         </Table>
                                     </div>
@@ -622,4 +427,4 @@ const MiddleWare = (props) => {
     );
 };
 
-export default MiddleWare;
+export default SMSFMiddleWare;

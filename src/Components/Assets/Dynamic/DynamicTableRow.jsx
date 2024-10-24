@@ -44,6 +44,15 @@ const DynamicTableRow = ({
             {RenderName(field.text)}
           </td>)
         }
+        else if (field.type === "plainText2.0") {
+          return (<td
+            key={index}
+            style={
+              field?.styleSet ? field.styleSet : {}
+            }>
+            {field.value}
+          </td>)
+        }
         else {
           return (
             <td key={index}

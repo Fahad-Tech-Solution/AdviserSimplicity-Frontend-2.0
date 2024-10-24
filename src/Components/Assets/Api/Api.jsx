@@ -200,6 +200,11 @@ const handleInputBlur = (e, setFieldValue, toPercentage, FormulaSetting, values,
     FormulaSetting(values, setFieldValue, e.target, stakeHolder);
 };
 
+const validateName = (value) => {
+    const filteredValue = value.replace(/[^a-zA-Z\s]/g, ''); // Allow only letters and spaces
+    return filteredValue
+};
+
 
 export {
     DeleteAxios,
@@ -217,5 +222,6 @@ export {
     handleInputFocus,
     handleInputKeyDown,
     handleInputBlur,
+    validateName
 };
 

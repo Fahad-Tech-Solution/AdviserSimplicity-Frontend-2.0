@@ -32,6 +32,7 @@ const InnerModal = (props) => {
         "Business as Company Structure Detail",
         "Business as Trusts",
 
+
         // "Bank Accounts Detail"
     ]; // Add other titles that should use "xl" here
 
@@ -45,7 +46,7 @@ const InnerModal = (props) => {
     ]; // Add other titles that should use "xl" here
 
 
-    let fullTitles = ["Platform Investments Detail", "Balance & Benefit Details", "Annuities Detail", "Property Loan Details", "Expense Details", "Super Funds Detail", "Account Based Pension Detail"]
+    let fullTitles = ["Platform Investments Detail", "Balance & Benefit Details", "Annuities Detail", "Property Loan Details", "Expense Details", "Super Funds Detail", "Account Based Pension Detail", "SMSF Accumulation Details"]
 
 
     let [size, setSize] = useState("md");

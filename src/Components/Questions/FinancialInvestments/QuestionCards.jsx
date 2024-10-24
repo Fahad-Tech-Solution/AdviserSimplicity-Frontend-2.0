@@ -117,7 +117,8 @@ import OwnFamilyHome from '../AdditionalQueriesPersonalAssets/OwnFamilyHome';
 import MiddleWare from './MiddleWare';
 import SampleOne from '../AdditionalQueriesPersonalAssets/SampleOne';
 import PersonalInsuranceRenderCard from './QuestionsDetail/PersonalInsuranceRenderCard';
-import SMSFQCards from './SMSFQCards';
+import SMSFQCards from '../QuestoinsSMSF/SMSFQCards';
+import SMSFMiddleWare from '../QuestoinsSMSF/SMSFMiddleWare';
 
 const QuestionCards = (props) => {
 
@@ -537,7 +538,7 @@ const QuestionCards = (props) => {
     const combinedArray = ["incomeFromOwnBusiness", "incomeFromOwnBusiness", "incomeFromSoleTrader", "incomeFromPartnership", "incomeFromCentrelink", "incomeFromSuperPayment", "incomeFromOverseasPension", "car", "boat", "caravan", "personalAssets", "houseHold", "otherAssets", "familyHome", "investmentBondFinance", "managedFundsMarginLoan", "managedFundsLOC", "will", "POA",]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
 
     const towInOne = ["personalLoans"];
-    
+
     const sampleOne = ["investmentPropertyDetails"];
 
     const reuseModal = ["bankAccountFinance", "termDepositsFinance", "australianShareMarket", "managedFund", "investmentBondFinance", "SMSFTermDeposits", "SMSFAustralianShares", "SMSFManagedFunds", "SMSFInvestmentLoan", "familyBank", "familyTermDeposit", "familyAustralianShare", "familyMangedFunds", "familyInvestmentHomeLoan", "SMSFBank", "superAnnuationIssues", "accountBasedPensionIssues", "annuitiesIssues", "BusinessAsCompanyStructure", "BusinessAsTrusts"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups
@@ -630,7 +631,7 @@ const QuestionCards = (props) => {
         //looping Question end
         "SMSF Pension Phase": <SmsfPensionAccount />,               //reuse Component
         "SMSF Details": <SmsfDetails />,                            //reuse Component
-        "SMSF Accumulation Details": <SmsfAccumulationDetails />,   //reuseComponent
+        "SMSF Accumulation Details": <SMSFMiddleWare />,   //reuseComponent
 
         "Family Trust Bank Accounts": <BankTermForm />,
         "Family Trust Term Deposits": <TermDeposit />,

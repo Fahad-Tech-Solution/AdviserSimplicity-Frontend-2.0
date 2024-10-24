@@ -45,7 +45,14 @@ const PersonalInsuranceLife = (props) => {
     let Data = personalInsurance;
 
     if (Data?.PersonalInsurance) {
-      setFieldValue("NumberOfMap", personalInsurance.numberOfPersonalInsurance);
+
+      if (personalInsurance.numberOfPersonalInsurance > 0) {
+
+        setFieldValue("NumberOfMap", personalInsurance.numberOfPersonalInsurance);
+      } else {
+        setFieldValue("NumberOfMap", "");
+      }
+
 
       personalInsurance.PersonalInsurance.forEach((entry, index) => {
         // alert(entry.lifeInsured);
@@ -67,7 +74,7 @@ const PersonalInsuranceLife = (props) => {
   };
 
   let initialValues = {
-
+    NumberOfMap: "",
   };
 
 
@@ -152,7 +159,7 @@ const PersonalInsuranceLife = (props) => {
 
       let premiumValue = parseFloat(entry.premiums.replace(/[^0-9.-]+/g, ""));
 
-      let sumInsuredArray = entry.sumInsured;
+      let sumInsuredArray = entry.sumInsured || [];
       sumInsuredArray.forEach(SumData => {
 
         if (SumData.coverType === "Life") {
@@ -177,7 +184,7 @@ const PersonalInsuranceLife = (props) => {
 
       let premiumValue = parseFloat(entry.premiums.replace(/[^0-9.-]+/g, ""));
 
-      let sumInsuredArray = entry.sumInsured;
+      let sumInsuredArray = entry.sumInsured || [];
       sumInsuredArray.forEach(SumData => {
 
         if (SumData.coverType === "Life") {
@@ -202,7 +209,7 @@ const PersonalInsuranceLife = (props) => {
 
       let premiumValue = (parseFloat(entry.premiums.replace(/[^0-9.-]+/g, "")) / 2);
 
-      let sumInsuredArray = entry.sumInsured;
+      let sumInsuredArray = entry.sumInsured || [];
       sumInsuredArray.forEach(SumData => {
 
         if (SumData.coverType === "Life") {
@@ -468,7 +475,7 @@ const PersonalInsuranceLife = (props) => {
                                   <InputGroup>
                                     <Field
                                       type="text"
-                                      placeholder="sumInsuredSum"
+                                      placeholder="Sum Insured "
                                       id={`sumInsuredSum${i}`}
                                       name={`sumInsuredSum${i}`}
                                       className="form-control inputDesignDoubleInput"
@@ -481,14 +488,11 @@ const PersonalInsuranceLife = (props) => {
                                         let name = ((values[`lifeInsured${i}`] === undefined) || (values[`lifeInsured${i}`] === null) || (values[`lifeInsured${i}`] === null)) ? RenderName("client")
                                           : values[`lifeInsured${i}`] === "client+partner" ? RenderName("client") + " & " + RenderName("partner") : RenderName(values[`lifeInsured${i}`])
 
-                                        handleInnerModal(name + "_Sum Insured", `how many Policies do ${name} have?`, `sumInsured`, values, values[`sumInsured${i}`], i)
+                                        handleInnerModal(name + "_Sum Insured", `How many Policies do ${name} have?`, `sumInsured`, values, values[`sumInsured${i}`], i)
                                       }}>
                                       <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                     </Button>
                                   </InputGroup>
-
-
-
                                 </div>
                               </td>
                               <td>
@@ -513,7 +517,6 @@ const PersonalInsuranceLife = (props) => {
                                     <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                   </Button>
                                 </InputGroup>
-
                               </td>
                               <td>
                                 <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
@@ -526,7 +529,6 @@ const PersonalInsuranceLife = (props) => {
                                         id={`loadingExclusionValue${i}`}
                                         name={`loadingExclusionValue${i}`}
                                         className="form-control inputDesignDoubleInput"
-
                                       />
                                     </div>
                                   }
@@ -540,7 +542,7 @@ const PersonalInsuranceLife = (props) => {
                                       let name = ((values[`lifeInsured${i}`] === undefined) || (values[`lifeInsured${i}`] === null) || (values[`lifeInsured${i}`] === null)) ? RenderName("client")
                                         : values[`lifeInsured${i}`] === "client+partner" ? RenderName("client") + " & " + RenderName("partner") : RenderName(values[`lifeInsured${i}`]);
 
-                                      handleInnerModal(name + "_Beneficiaries", `How many beneficiaries do ${name} have?`, `beneficiariesArray`, values, values[`beneficiariesArray${i}`], i)
+                                      handleInnerModal(name + "_Beneficiaries", `How many beneficiaries do ${name} have?`, `beneficiariesArray`, values, values[`beneficiariesArray${i}`], i, "ParentModal")
 
                                     }}>
                                     <FontAwesomeIcon icon={faArrowUpRightFromSquare} />

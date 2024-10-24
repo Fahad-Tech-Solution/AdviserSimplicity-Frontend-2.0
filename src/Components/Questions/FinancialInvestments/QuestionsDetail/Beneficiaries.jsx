@@ -16,7 +16,7 @@ const Beneficiaries = (props) => {
 
     const [title, setTitle] = useState(() => {
         // let head = props.modalObject.title;
-        let currentTitle = props.modalObject.ParentModal;
+        let currentTitle = props.modalObject.ParentModal || "";
         // Check if the title contains an underscore
         if (currentTitle.includes('_')) {
             currentTitle = (currentTitle.split('_'))[1];

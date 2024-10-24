@@ -116,42 +116,56 @@ const InstituteAndOffer = (props) => {
         }
 
     }
-
+    
     let DeleteBank = async (elem, operation, index) => {
         console.log(elem);
-        // return (false)
-        if (window.confirm("Confirm Platform Delete")) {
 
+        if (window.confirm("Confirm Platform Delete")) {
             try {
-                let res = await PatchAxios(DefaultUrl + "/api/platform/Delete", elem)
+                let res = await PatchAxios(DefaultUrl + "/api/platform/Delete", elem);
 
                 if (res) {
+                    // Copy the previous bankDetailObj state
+                    setBankDetailObj((prevData) => {
+                        const updatedData = JSON.parse(JSON.stringify({ ...prevData })); // Deep copy
 
-                    let Obj = JSON.parse(JSON.stringify(bankDetailObj));
+                        const section = elem.section; // Assuming elem contains section information
 
-                    let Data = Obj.filter((item) => item._id !== elem._id)
+                        // Ensure the section exists before proceeding
+                        if (updatedData[section]) {
+                            // Filter out the deleted platform by _id from the specific section
+                            updatedData[section] = updatedData[section].filter(
+                                (item) => item._id !== elem._id
+                            );
 
-                    setBankDetailObj(Data);
+                            return updatedData; // Return the updated state object
+                        } else {
+                            console.error("Section not found for delete operation.");
+                            return prevData; // Return unchanged state if section doesn't exist
+                        }
+                    });
 
-                    let type = "success";
-                    let placement = "topRight"
-                    let message = "Platform Deleted"
-                    let description = "Platform is Delete successfull"
-                    openNotificationSuccess(type, placement, message, description)
+                    // Show success notification
+                    openNotificationSuccess(
+                        "success",
+                        "topRight",
+                        "Platform Deleted",
+                        "Platform is successfully deleted"
+                    );
                 }
-            }
-            catch (error) {
+            } catch (error) {
                 console.log(error);
-                let type = "error";
-                let placement = "topRight"
-                let message = "Error Notification"
-                let description = "Some thing went wrong Please Try Later"
-                openNotificationSuccess(type, placement, message, description)
+                // Show error notification
+                openNotificationSuccess(
+                    "error",
+                    "topRight",
+                    "Error Notification",
+                    "Something went wrong. Please try again later."
+                );
             }
-
         }
+    };
 
-    }
 
     const generateOptions = (bankDetailObj, platformName) => {
         const InstituteOptions = [];

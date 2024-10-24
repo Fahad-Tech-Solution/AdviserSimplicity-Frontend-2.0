@@ -6,7 +6,7 @@ import * as Yup from 'yup';
 import Childe from './Childe';
 import PersonalDetailCards from './PersonalDetailCards';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultUrl, PersonalDetailsData } from '../../Store/Store';
+import { defaultUrl, PersonalDetailsData, StepsStatus } from '../../Store/Store';
 import { GetAxios, openNotificationSuccess, PatchAxios, PostAxios } from '../Assets/Api/Api';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -19,6 +19,7 @@ const PersonalDetailNew = () => {
     let [Switch, setSwitch] = useState(1);
     let [userData, setUserData] = useState({});
     let [PersonalDetailObj, setPersonalDetailObj] = useRecoilState(PersonalDetailsData);
+    let [stepsStatus, setStepsStatus] = useRecoilState(StepsStatus); // eslint-disable-line no-unused-vars
     let DefaultUrl = useRecoilValue(defaultUrl)
 
     let initialValues = {
@@ -185,6 +186,7 @@ const PersonalDetailNew = () => {
     });
 
     let includeArray = ["clientAge", "partnerAge", "clientPlannedRetirementAge", "partnerPlannedRetirementAge", "clientPostcode", "partnerPostcode", "clientPostalPostCode", "partnerPostalPostCode"]
+
     const checkAndReplaceEmptyData = (data) => {
         for (let key in data) {
             if (data[key] === "" || data[key] === null) {
@@ -275,28 +277,22 @@ const PersonalDetailNew = () => {
                 }
 
             } catch (error) {
-
                 console.error("Error occurred while making API call:", error?.response);
-
                 if (error?.response?.status == 409) {
                     if (error?.response?.data?.message) {
                         openNotificationSuccess("error", 'topRight', "Notification", error.response.data.message)
                     }
                 } else {
-                    openNotificationSuccess("error", 'topRight', "Notification", "Something when wrrong please check data again!")
+                    openNotificationSuccess("error", 'topRight', "Notification", "Something when wrong please check data again!")
                 }
-
             }
-
-
-
 
         }
         else {
+            setStepsStatus(false)
             Nav("/ImportantQuestion");
+
         }
-
-
     };
 
     const StoreData = (setFieldValue) => {
@@ -350,7 +346,7 @@ const PersonalDetailNew = () => {
             formRefOfChield.current.handleSubmit();  // Trigger Formik's handleSubmit
         }
     }
-    
+
     return (
         <Formik
             initialValues={initialValues}
@@ -368,7 +364,7 @@ const PersonalDetailNew = () => {
 
 
                 return (
-                    <Form>
+                    <Form className="PersonalDetailsForm">
 
                         {/*
                         Import all Components and create Relation Between them

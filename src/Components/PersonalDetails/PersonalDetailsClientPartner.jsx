@@ -25,15 +25,15 @@ const PersonalDetailsClientPartner = (props) => {
                     <div className='col-6 mb-4 LargeSheet'>
                         <div className="centerDiv">
                             <label
-                                htmlFor="clientTitle LargeSheet"
-                                className="form-label clientFS green mb-3 p-0"
+                                htmlFor="clientTitle LargeSheet "
+                                className="form-label clientFS green p-0 CustomFont"
                             >
                                 Client
-                                <div className="iconContainerLg m-0 p-0">
+                                <div className="iconContainerLg p-0 ms-3">
                                     <img
                                         src={single}
                                         alt="single svg"
-                                        className="w-50 "
+                                        className="w-50"
                                     />
                                 </div>
                             </label>
@@ -879,18 +879,18 @@ const PersonalDetailsClientPartner = (props) => {
                         <div className='col-6 col-md-12 mb-4 d-md-none d-block'></div>
 
                         {/*Partner Head */}
-                        <div className='col-6 col-md-12 LargeSheet mb-4'>
+                        <div className='col-6 col-md-12 LargeSheet '>
                             <div className="centerDiv">
                                 <label
                                     htmlFor="clientTitle"
-                                    className="form-label clientFS green mb-3 p-0 "
+                                    className="form-label clientFS CustomFont green mb-4 p-0 "
                                 >
                                     Partner
                                     <div className="iconContainerLg">
                                         <img
                                             src={couple}
                                             alt="single svg"
-                                            className="w-50 "
+                                            className="w-50"
                                         />
                                     </div>
                                 </label>

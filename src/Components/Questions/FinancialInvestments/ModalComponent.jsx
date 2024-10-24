@@ -109,6 +109,7 @@ const ModalComponent = (props) => {
         "Family Investment Home",
         "Family Investment Home Loan",
         "Family Investment Home Expanse",
+        "SMSF Accumulation Details"
         // "Life Insurance",
         // "Risk Goals"
 

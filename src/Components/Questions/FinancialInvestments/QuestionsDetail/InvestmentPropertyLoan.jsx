@@ -2,13 +2,13 @@ import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
+import { BankDetail, defaultUrl, QuestionDetail } from '../../../../Store/Store';
 import { handleInputBlur, handleInputChange, handleInputFocus, handleInputKeyDown, PatchAxios, PostAxios, toCommaAndDollar, toPercentage } from '../../../Assets/Api/Api';
 import axios from 'axios';
 
 const InvestmentPropertyLoan = (props) => {
-    let questionDetail = useRecoilValue(QuestionDetail);
-    let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+
+    let bankDetailObj = useRecoilValue(BankDetail);
 
 
     let [nameSet] = useState(() => {
@@ -270,9 +270,17 @@ const InvestmentPropertyLoan = (props) => {
                                                                         className="form-select inputDesignDoubleInput"
                                                                     >
                                                                         <option value={""}>Please Select</option>
-                                                                        {options.map((elem, index) => {
-                                                                            return (<option key={index} value={elem}>{elem}</option>)
-                                                                        })}
+                                                                        {
+                                                                            bankDetailObj?.FinancialInstitutions && bankDetailObj.FinancialInstitutions.length > 0 ? (
+                                                                                bankDetailObj.FinancialInstitutions.map((elem, index) => (
+                                                                                    <option key={index} value={elem._id}>
+                                                                                        {elem.platformName}
+                                                                                    </option>
+                                                                                ))
+                                                                            ) : (
+                                                                                <option disabled>No Platforms Added in Super Annuation Funds</option>
+                                                                            )
+                                                                        }
                                                                     </Field>
                                                                 </td>
                                                                 <td>

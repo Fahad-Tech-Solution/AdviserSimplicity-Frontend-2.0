@@ -84,7 +84,6 @@ const SuperFunds = (props) => {
                     setFieldValue(`ContributionsArray${i}`, data.ContributionsArray || '');
                     setFieldValue(`beneficiariesArray${i}`, data.beneficiariesArray || '');
                     setFieldValue(`annualAdvice${i}`, data.annualAdvice || '');
-
                 }
             });
         }

@@ -4,111 +4,112 @@ import { Row, Table } from "react-bootstrap";
 import { useRecoilValue } from "recoil";
 import { defaultUrl, } from "../../../Store/Store";
 import DatePicker from "react-datepicker";
+import { toCommaAndDollar } from "../../Assets/Api/Api";
 
 const AccumulationBenefits = (props) => {
-  let initialValues = props.modalObject.editArray.length
-    ? { NumberOfMap: props.modalObject.editArray.length }
-    : { NumberOfMap: "" };
 
-  const options = [
-    "Restricted non preserved",
-    "Unrestricted non preserved",
-  ];
-
-  const [dynamicFields, setDynamicFields] = useState([]);
+  let initialValues = {
+    commencementDate: "",
+    eligibleServiceDate: "",
+    taxFreeComponent: "",
+    currentBalance: "",
+    taxableComponent: "",
+    restrictedNonPreserved: "",
+    unRestrictedNonPreserved: "",
+    preservedAmount: "",
+  };
 
   const fillInitialValues = (setFieldValue) => {
 
-    let arr = [];
+    console.log(props.modalObject.values[`${props.modalObject.Input}`])
 
-    for (let i = 0; i < props.modalObject.editArray.length; i++) {
-      arr.push("");
-    }
+    if (props.modalObject.values[`${props.modalObject.Input}`]) {
 
-    setDynamicFields(arr);
+      let Obj = props.modalObject.values[`${props.modalObject.Input}`]
+      if (Obj.accumulationBenefitsOBJ) {
+        let data = Obj.accumulationBenefitsOBJ;
 
-
-    if (props.modalObject.editArray.length) {
-      props.modalObject.editArray.forEach((data, i) => {
-        if (data) {
-          setFieldValue(`commencementDate${i}`, data.commencementDate || "");
-          setFieldValue(`eligibleServiceDate${i}`, data.eligibleServiceDate || "");
-          setFieldValue(`taxFreeComponent${i}`, data.taxFreeComponent || "");
-          setFieldValue(`taxableComponent${i}`, data.taxableComponent || "");
-          setFieldValue(`restrictedNonPreserved${i}`, data.restrictedNonPreserved || "");
-          setFieldValue(`unRestrictedNonPreserved${i}`, data.unRestrictedNonPreserved || "");
-          setFieldValue(`preservedAmount${i}`, data.preservedAmount || "");
-        }
-      });
+        setFieldValue(`commencementDate`, data.commencementDate || "");
+        setFieldValue(`eligibleServiceDate`, data.eligibleServiceDate || "");
+        setFieldValue(`taxFreeComponent`, data.taxFreeComponent || "");
+        setFieldValue(`currentBalance`, data.currentBalance || "");
+        setFieldValue(`taxableComponent`, data.taxableComponent || "");
+        setFieldValue(`restrictedNonPreserved`, data.restrictedNonPreserved || "");
+        setFieldValue(`unRestrictedNonPreserved`, data.unRestrictedNonPreserved || "");
+        setFieldValue(`preservedAmount`, data.preservedAmount || "");
+      }
     }
 
   };
 
-  let handleInput = (e, setFieldValue) => {
-    const value = e.target.value > 10 ? 10 : e.target.value;
-    setFieldValue(e.target.id, value);
-
-    let arr = [];
-
-    for (let i = 0; i < value; i++) {
-      arr.push("");
-    }
-
-    setDynamicFields(arr);
-
-    // generateFields(value);
-  };
 
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   let onSubmit = async (values) => {
-    console.log(values);
+    console.log(values, props.modalObject);
 
-    const newEntries = [];
 
-    let loopLength = parseFloat(values.NumberOfMap);
+    props.setFieldValue(props.modalObject.Input + ".accumulationBenefitsOBJ", values);
 
-    // Iterate through each map entry and create a new object
-    for (let i = 0; i < loopLength; i++) {
-      // alert("loop chala")
-      const newEntry = {
-        commencementDate: values[`commencementDate${i}`] || "",
-        eligibleServiceDate: values[`eligibleServiceDate${i}`] || "",
-        taxFreeComponent: values[`taxFreeComponent${i}`] || "",
-        taxableComponent: values[`taxableComponent${i}`] || "",
-        restrictedNonPreserved: values[`restrictedNonPreserved${i}`] || "",
-        unRestrictedNonPreserved: values[`unRestrictedNonPreserved${i}`] || "",
-        preservedAmount: values[`preservedAmount${i}`] || "",
-      };
-      newEntries.push(newEntry);
-    }
-
-    // Log the new entries to verify
-    console.log(newEntries);
-
-    let total = newEntries.reduce(
-      (total, entry) => total + entry.taxFreeComponent,
-      0
-    );
-
-    props.setFieldValue(
-      `${props.modalObject.key}${props.modalObject.index}`,
-      newEntries
-    );
-    props.setFieldValue(
-      `${props.modalObject.key3}${props.modalObject.index}`,
-      total
-    );
-    props.setFieldValue(
-      `${props.modalObject.mainKey}${props.modalObject.index}`,
-      total 
-    );
+    props.setFieldValue(props.modalObject.Input + ".accumulationBenefits", values.preservedAmount);
 
     // Reset the flag state if necessary
     if (props.flagState) {
       props.setFlagState(false);
     }
   };
+
+  function FormulaSetting(values, setFieldValue, currentInput) {
+    try {
+      // Extract and sanitize values
+      let taxFreeComponent = parseFloat(values[`taxFreeComponent`]?.replace(/[^0-9.-]+/g, "")) || 0;
+      let currentBalance = parseFloat(values[`currentBalance`]?.replace(/[^0-9.-]+/g, "")) || 0;
+      let restrictedNonPreserved = parseFloat(values[`restrictedNonPreserved`]?.replace(/[^0-9.-]+/g, "")) || 0;
+      let unRestrictedNonPreserved = parseFloat(values[`unRestrictedNonPreserved`]?.replace(/[^0-9.-]+/g, "")) || 0;
+      let taxableComponent = 0;
+      let preservedAmount = 0;
+      let collection = "";
+
+      // Handle input changes for specific fields
+      switch (currentInput?.name) {
+        case "taxFreeComponent":
+          taxFreeComponent = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
+          collection = "A";
+          break;
+        case "currentBalance":
+          currentBalance = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
+          collection = "A";
+          break;
+        case "restrictedNonPreserved":
+          restrictedNonPreserved = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
+          collection = "B";
+          break;
+        case "unRestrictedNonPreserved":
+          unRestrictedNonPreserved = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
+          collection = "B";
+          break;
+        default:
+          console.error("No valid input selected");
+          break;
+      }
+
+      // Calculate taxableComponent
+      taxableComponent = currentBalance - taxFreeComponent;
+      if (isNaN(taxableComponent)) throw new Error("Invalid taxable component calculation");
+
+      // Update the 'taxableComponent' field value
+      setFieldValue("taxableComponent", toCommaAndDollar(taxableComponent));
+
+      // Calculate preservedAmount
+      preservedAmount = currentBalance - restrictedNonPreserved - unRestrictedNonPreserved;
+      if (isNaN(preservedAmount)) throw new Error("Invalid preserved amount calculation");
+
+      // Update the 'preservedAmount' field value
+      setFieldValue("preservedAmount", toCommaAndDollar(preservedAmount));
+    } catch (error) {
+      console.error("Error in FormulaSetting:", error.message);
+    }
+  }
 
   return (
     <Formik
@@ -127,151 +128,151 @@ const AccumulationBenefits = (props) => {
             <Row>
               <div className="col-md-12">
                 <div className="row justify-content-center">
-                  <div className="col-md-7">
-                    <p className="text-end mt-1">
-                      {props.modalObject.question}
-                    </p>
+                  <div className="mt-4">
+                    <Table striped bordered responsive hover>
+                      <thead>
+                        <tr>
+                          <th>Member</th>
+                          <th>Commencement Date</th>
+                          <th>Eligible Service Date</th>
+                          <th>Tax Free component</th>
+                          <th>Current Balance</th>
+                          <th>Taxable component </th>
+                          <th>Restricted non preserved</th>
+                          <th>Unrestricted non preserved</th>
+                          <th>Preserved amount</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td className="pt-3">{props.modalObject.SMSFOwner}</td>
+                          <td style={{ minWidth: "10rem" }}>
+                            <DatePicker
+                              className="form-control inputDesignDoubleInput shadow DateInputPadding"
+                              showIcon
+                              id={`commencementDate`}
+                              name={`commencementDate`}
+                              selected={values[`commencementDate`]}
+                              onChange={(date) =>
+                                setFieldValue(
+                                  `commencementDate`,
+                                  date
+                                )
+                              }
+                              dateFormat="dd/MM/yyyy"
+                              placeholderText="dd/mm/yyyy"
+                              maxDate={new Date()}
+                              showMonthDropdown
+                              showYearDropdown
+                              dropdownMode="select"
+                              onBlur={handleBlur}
+                              wrapperClassName="w-100"
+                            />
+                          </td>
+                          <td style={{ minWidth: "10rem" }}>
+                            {" "}
+                            <DatePicker
+                              className="form-control inputDesignDoubleInput shadow DateInputPadding"
+                              showIcon
+                              id={`eligibleServiceDate`}
+                              name={`eligibleServiceDate`}
+                              selected={values[`eligibleServiceDate`]}
+                              onChange={(date) =>
+                                setFieldValue(
+                                  `eligibleServiceDate`,
+                                  date
+                                )
+                              }
+                              dateFormat="dd/MM/yyyy"
+                              placeholderText="dd/mm/yyyy"
+                              maxDate={new Date()}
+                              showMonthDropdown
+                              showYearDropdown
+                              dropdownMode="select"
+                              onBlur={handleBlur}
+                              wrapperClassName="w-100"
+                            />
+                          </td>
+                          <td>
+                            <Field
+                              type="text"
+                              placeholder="Tax Free component"
+                              id={`taxFreeComponent`}
+                              name={`taxFreeComponent`}
+                              className="form-control inputDesignDoubleInput"
+                              onChange={(e) => {
+                                setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                FormulaSetting(values, setFieldValue, e.target);
+                              }}
+                            />
+                          </td>
+                          <td>
+                            <Field
+                              type="text"
+                              placeholder="Current Balance"
+                              id={`currentBalance`}
+                              name={`currentBalance`}
+                              className="form-control inputDesignDoubleInput"
+                              onChange={(e) => {
+                                setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                FormulaSetting(values, setFieldValue, e.target);
+                              }}
+                            />
+                          </td>
+                          <td>
+                            <Field
+                              type="text"
+                              placeholder="Taxable component"
+                              id={`taxableComponent`}
+                              disabled
+                              name={`taxableComponent`}
+                              className="form-control inputDesignDoubleInput"
+                              onChange={(e) => {
+                                setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                FormulaSetting(values, setFieldValue, e.target);
+                              }}
+                            />
+                          </td>
+                          <td>
+                            <Field
+                              type="text"
+                              placeholder="Restricted non preserved"
+                              id={`restrictedNonPreserved`}
+                              name={`restrictedNonPreserved`}
+                              className="form-control inputDesignDoubleInput"
+                              onChange={(e) => {
+                                setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                FormulaSetting(values, setFieldValue, e.target);
+                              }}
+                            />
+                          </td>
+                          <td>
+                            <Field
+                              type="text"
+                              placeholder="Unrestricted non preserved"
+                              id={`unRestrictedNonPreserved`}
+                              name={`unRestrictedNonPreserved`}
+                              className="form-control inputDesignDoubleInput"
+                              onChange={(e) => {
+                                setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                FormulaSetting(values, setFieldValue, e.target);
+                              }}
+                            />
+                          </td>
+                          <td>
+                            <Field
+                              type="text"
+                              placeholder="Unrestricted non preserved"
+                              id={`preservedAmount`}
+                              disabled
+                              name={`preservedAmount`}
+                              className="form-control inputDesignDoubleInput"
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </Table>
                   </div>
-                  <div className="col-md-3">
-                    <Field
-                      type="number"
-                      id="NumberOfMap"
-                      name="NumberOfMap"
-                      className="form-control inputDesignDoubleInput"
-                      onChange={(e) => handleInput(e, setFieldValue)}
-                    />
-                  </div>
-                  {values.NumberOfMap && (
-                    <div className="mt-4">
-                      <Table striped bordered responsive hover>
-                        <thead>
-                          <tr>
-                            <th>No#</th>
-                            <th>Commencement Date</th>
-                            <th>Eligible Service Date</th>
-                            <th>Tax Free component </th>
-                            <th>Taxable component </th>
-                            <th>Restricted non preserved</th>
-                            <th>Unrestricted non preserved</th>
-                            <th>Preserved amount</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {" "}
-                          {dynamicFields.map((elem, i) => {
-                            return (
-                              <tr key={i}>
-                                <td>{1 + i}</td>
-                                <td>
-                                  <DatePicker
-                                    className="form-control inputDesignDoubleInput shadow DateInputPadding"
-                                    showIcon
-                                    id={`commencementDate${i}`}
-                                    name={`commencementDate${i}`}
-                                    selected={values[`commencementDate${i}`]}
-                                    onChange={(date) =>
-                                      setFieldValue(
-                                        `commencementDate${i}`,
-                                        date
-                                      )
-                                    }
-                                    dateFormat="dd/MM/yyyy"
-                                    placeholderText="dd/mm/yyyy"
-                                    maxDate={new Date()}
-                                    showMonthDropdown
-                                    showYearDropdown
-                                    dropdownMode="select"
-                                    onBlur={handleBlur}
-                                    wrapperClassName="w-100"
-                                  />
-                                </td>
-                                <td>
-                                  {" "}
-                                  <DatePicker
-                                    className="form-control inputDesignDoubleInput shadow DateInputPadding"
-                                    showIcon
-                                    id={`eligibleServiceDate${i}`}
-                                    name={`eligibleServiceDate${i}`}
-                                    selected={values[`eligibleServiceDate${i}`]}
-                                    onChange={(date) =>
-                                      setFieldValue(
-                                        `eligibleServiceDate${i}`,
-                                        date
-                                      )
-                                    }
-                                    dateFormat="dd/MM/yyyy"
-                                    placeholderText="dd/mm/yyyy"
-                                    maxDate={new Date()}
-                                    showMonthDropdown
-                                    showYearDropdown
-                                    dropdownMode="select"
-                                    onBlur={handleBlur}
-                                    wrapperClassName="w-100"
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="number"
-                                    placeholder="Tax Free component"
-                                    id={`taxFreeComponent${i}`}
-                                    name={`taxFreeComponent${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="text"
-                                    placeholder="Taxable component"
-                                    id={`taxableComponent${i}`}
-                                    name={`taxableComponent${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  //   disabled
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="number"
-                                    placeholder="Restricted non preserved"
-                                    id={`restrictedNonPreserved${i}`}
-                                    name={`restrictedNonPreserved${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="number"
-                                    placeholder="Unrestricted non preserved"
-                                    id={`unRestrictedNonPreserved${i}`}
-                                    name={`unRestrictedNonPreserved${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-
-                                <td>
-                                  <Field
-                                    as="select"
-                                    placeholder="Preserved amount"
-                                    id={`preservedAmount${i}`}
-                                    name={`preservedAmount${i}`}
-                                    className="form-select inputDesignDoubleInput"
-                                  >
-                                    <option value={""}>Please Select</option>
-                                    {options.map((elem, index) => {
-                                      return (
-                                        <option key={index} value={elem}>
-                                          {elem}
-                                        </option>
-                                      );
-                                    })}
-                                  </Field>
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </Table>
-                    </div>
-                  )}
                 </div>
               </div>
             </Row>

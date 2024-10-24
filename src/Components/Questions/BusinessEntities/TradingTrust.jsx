@@ -362,8 +362,7 @@ const TradingTrust = (props) => {
                                     placeholder="Trustee Type"
                                     id={`trusteeType${i}`}
                                     name={`trusteeType${i}`}
-                                    className={`form-select inputDesignDoubleInput ${values[`trusteeType${i}`] === "Corporate" ? "no-right-radius" : ""
-                                      }`}
+                                    className={`form-select inputDesignDoubleInput ${values[`trusteeType${i}`] === "Corporate" ? "no-right-radius" : ""}`}
                                     onChange={(e) => {
                                       setFieldValue(e.target.name, e.target.value);
                                       if (e.target.value !== "Corporate") {

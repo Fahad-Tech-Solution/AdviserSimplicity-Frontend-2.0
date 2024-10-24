@@ -13,15 +13,15 @@ const AssetInfo = (props) => {
 
     let [UserStatus] = useState(localStorage.getItem('UserStatus'));
 
-    let initialValues = { owner: "" };
+    let initialValues = { owner: [] };
 
     const fillInitialValues = (setFieldValue) => {
         console.log(props.modalObject, "kuch Chala");
 
         if (questionDetail[props.modalObject.index] && Object.keys(questionDetail[props.modalObject.index]).length >= 0) {
-            let data = questionDetail[props.modalObject.index];
-
-            if (data) {
+            let data = questionDetail[props.modalObject.index] || "";
+            console.log(data);
+            if (Object.keys(data).length > 0) {
                 setFieldValue(`owner`, data.owner || "");
 
                 // Check for "client" ownership
@@ -208,7 +208,7 @@ const AssetInfo = (props) => {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {(values.owner.includes("client")) &&
+                                                    {(values.owner.includes("client") || (values.owner.includes("joint") && (UserStatus !== "Married"))) &&
                                                         <DynamicTableRow
                                                             rowConfig={rowConfig}
                                                             values={values}

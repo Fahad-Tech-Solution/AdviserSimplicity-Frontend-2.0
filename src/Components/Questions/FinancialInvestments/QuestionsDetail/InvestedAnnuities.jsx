@@ -45,7 +45,7 @@ const InvestedAnnuities = (props) => {
     };  // Use an empty object as default if annuitiesIssues is undefined
 
 
-    let initialValues = annuitiesIssues[props.modalObject.Input].length ? { NumberOfMap: annuitiesIssues[props.modalObject.Input].length } : { NumberOfMap: "" };
+    let initialValues = { NumberOfMap: "" };
 
     const [dynamicFields, setDynamicFields] = useState([]);
 
