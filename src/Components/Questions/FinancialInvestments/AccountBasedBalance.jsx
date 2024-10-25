@@ -43,14 +43,14 @@ const AccountBasedBalance = (props) => {
         }
 
         setDynamicFields(arr);
+
+
         if (props.modalObject.editArray) {
-
-            setFieldValue(`portfolioValue0`, props.modalObject.values[`portfolioValue${props.modalObject.index}`] || '');
-
             props.modalObject.editArray.forEach((data, i) => {
                 if (data) {
                     console.log(data.investmentOption)
                     setFieldValue(`fundType${i}`, data.fundType || '');
+                    setFieldValue(`portfolioValue${i}`, data.portfolioValue || '');
                     setFieldValue(`eligibleServiceDate${i}`, data.eligibleServiceDate || '');
                     setFieldValue(`commencementDate${i}`, data.commencementDate || '');
                     setFieldValue(`taxFree${i}`, data.taxFree || '');
@@ -60,6 +60,7 @@ const AccountBasedBalance = (props) => {
                     setFieldValue(`unrestrictedNonPreserved${i}`, data.unrestrictedNonPreserved || '');
                     setFieldValue(`preservedAmount${i}`, data.preservedAmount || '');
                 }
+
             });
         }
 
@@ -124,6 +125,34 @@ const AccountBasedBalance = (props) => {
         }
     };
 
+
+
+    const generateOptions = (bankDetailObj, platformName) => {
+        const InstituteOptions = [];
+
+        if (Array.isArray(bankDetailObj) && bankDetailObj.length > 0) {
+            bankDetailObj.forEach((elem) => {
+                // Check if the platform name matches
+                if (platformName === elem._id) {
+                    // Add the main option for the element
+                    // InstituteOptions.push({ value: elem._id, label: `${elem.name} (${elem.arrayOfOffers.length} offers)` });
+
+                    // Add InstituteOptions from arrayOfOffers if available
+                    if (Array.isArray(elem.arrayOfOffers) && elem.arrayOfOffers.length > 0) {
+                        elem.arrayOfOffers.forEach((offerElem) => {
+                            InstituteOptions.push({ value: offerElem._id, label: `${offerElem.investmentName} (${offerElem.investmentCode})` });
+                        });
+                    }
+                }
+            });
+        }
+
+
+        // console.log(InstituteOptions, bankDetailObj, platformName, "data")
+
+        return InstituteOptions;
+    };
+
     let FormulaSetting = (values, setFieldValue, currentInput, stakeHolder) => {
 
         // Extract integer index from the input name
@@ -166,9 +195,28 @@ const AccountBasedBalance = (props) => {
     };
 
     let optionFundType = [
-        { value: "Account Based", label: "Account Based" },
-        { value: "TTR", label: "TTR" },
+        { value: "Accumulation", label: "Accumulation" },
+        { value: "Defined Benefit", label: "Defined Benefit" },
     ]
+
+
+
+    let handleInnerModal = (title, question, key, mainKey, key3, editArray, index, values) => {
+        console.log(values);
+        let ParentModal = props.modalObject.title
+        setModalObject({
+            title,
+            question,
+            key,
+            mainKey,
+            key3,
+            editArray: editArray || [],
+            index,
+            values,
+            ParentModal
+        })
+        setFlagState(true);
+    }
 
     return (
         <Formik
@@ -184,6 +232,12 @@ const AccountBasedBalance = (props) => {
 
                 return (
                     <Form>
+
+                        <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} >
+                            {
+                                modalObject.key === "portfolioArray" ? <PortfolioValue /> : ""
+                            }
+                        </InnerModal>
                         <Row>
                             <div className="col-md-12">
                                 <div className='row justify-content-center'>
@@ -234,21 +288,30 @@ const AccountBasedBalance = (props) => {
                                                                     />
                                                                 </td>
                                                                 <td style={{ minWidth: "90px" }}>
+                                                                    <InputGroup className="mb-3">
+                                                                        <Field
+                                                                            type="text"
+                                                                            placeholder="Portfolio Value"
+                                                                            id={`portfolioValue${i}`}
+                                                                            name={`portfolioValue${i}`}
+                                                                            className="form-control inputDesignDoubleInput"
+                                                                            onChange={(e) => {
 
-                                                                    <Field
-                                                                        type="text"
-                                                                        placeholder="Portfolio Value"
-                                                                        disabled
-                                                                        id={`portfolioValue${i}`}
-                                                                        name={`portfolioValue${i}`}
-                                                                        className="form-control inputDesignDoubleInput"
-                                                                        onChange={(e) => {
+                                                                                setFieldValue(`portfolioValue${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                                FormulaSetting(values, setFieldValue, e.target, "");
+                                                                            }}
+                                                                        />
+                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
 
-                                                                            setFieldValue(`portfolioValue${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                                                            FormulaSetting(values, setFieldValue, e.target, "");
-                                                                        }}
-                                                                    />
+                                                                            handleInnerModal(title + "_Portfolio Value",
+                                                                                `How many Portfolios do ${title} have ?`,
+                                                                                "portfolioArray", "portfolioValue", "",
+                                                                                values[`portfolioArray${i}`], i, values)
 
+                                                                        }}>
+                                                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                                        </Button>
+                                                                    </InputGroup>
                                                                 </td>
                                                                 <td style={{ minWidth: "150px" }}>
                                                                     <div>

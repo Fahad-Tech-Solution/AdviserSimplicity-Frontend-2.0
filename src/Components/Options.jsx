@@ -13,10 +13,8 @@ import { FaHome, FaQuestionCircle } from "react-icons/fa";
 import { MdFamilyRestroom, MdWaterDrop, MdOutlineBalance, MdOutlineTimeline } from "react-icons/md";
 import { RiCoinsFill, RiDiscountPercentFill } from "react-icons/ri";
 import { content } from "../Content/Content";
-import { openNotificationSuccess } from "./Assets/Api/Api";
 
 function Options(props) {
-  let Nev = useNavigate();
 
   let [userName] = useRecoilState(UserName); // eslint-disable-line no-unused-vars
   let [CurrentP] = useRecoilState(CurrentPage);
@@ -52,6 +50,8 @@ function Options(props) {
   useEffect(() => {
     let cLocation = location.pathname.replace("/", "");
     console.log(location.pathname);
+
+    // alert(CurrentP);
 
     let Opt = "Opt1"
     let stepComplete = 0;
@@ -171,8 +171,7 @@ function Options(props) {
     const updatedItems = itemsToRender.filter(item => item.condition(conditionCheck)).map(item => {
 
       const isPersonalDetails = item.subTitle === 'Personal Details';
-      const currentEmail = localStorage.getItem("UserID") ;
-
+      const currentEmail = localStorage.getItem("UserID");
       const iconMap = {
         FaBriefcase, FaCheck, FaGift, FaKey, FaMoneyCheckDollar, FaUser, FaHome, FaQuestionCircle, MdFamilyRestroom, RiCoinsFill, FaPlus, FaChartLine,
         MdWaterDrop, FaTriangleExclamation, RiDiscountPercentFill, MdOutlineBalance, FaGraduationCap, FaChartPie, MdOutlineTimeline, FaMoneyBillWave
@@ -215,6 +214,7 @@ function Options(props) {
 
   }, [location, CRObject])
 
+  let Nev = useNavigate();
   let handleStepClick = (props) => {
     if (!stepsStatus) {
       Nev(props)

@@ -14,6 +14,7 @@ import SuperFunds from './QuestionsDetail/SuperFunds';
 import AccountBasedPension from './QuestionsDetail/AccountBasedPension';
 import InvestedAnnuities from './QuestionsDetail/InvestedAnnuities';
 import TradingCompany from '../BusinessEntities/TradingCompany';
+import TradingTrust from '../BusinessEntities/TradingTrust';
 
 const MiddleWare = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
@@ -323,7 +324,7 @@ const MiddleWare = (props) => {
                 // Check if currentBalance or costBase needs to be summed up
                 if (currentInput === `${CheckState}CurrentBalance`) {
                     return thisArray.reduce((total, entry) => {
-                        return total + (parseFloat((entry.serviceFee).replace(/[^0-9.-]+/g, "")) * parseFloat((entry.serviceFeeType) || 1) || 0);
+                        return total + (parseFloat((entry.serviceFee).replace(/[^0-9.-]+/g, "")) * parseFloat((entry.serviceFeeType)) || 0);
                     }, 0);
                 } else {
                     return thisArray.reduce((total, entry) => {
@@ -510,7 +511,7 @@ const MiddleWare = (props) => {
 
         "Bank Accounts Detail": <BankTermForm />,
         "Term Deposits Detail": <BankTermForm />,
-        "Australian Shares/ETFs Detail": <AustralianShares />,
+        "Australian Shares Detail": <AustralianShares />,
         "Platform Investments Detail": <ManagedFunds />,
         "Investment Bond Detail": <ManagedFunds />,
         "Super Funds Detail": <SuperFunds />,
@@ -544,6 +545,9 @@ const MiddleWare = (props) => {
             return ("")
         }
     };
+
+
+
 
 
     return (

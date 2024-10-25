@@ -141,8 +141,8 @@ const InsittuteFom = (props) => {
                                     <div className='col-md-6 pt-2'>
                                         <label htmlFor='platformName' className='form-label'>Platform Name</label>
                                     </div>
-                                    <div className='col-md-6'>
-                                        <Field type="text" name="platformName" id="platformName" className="form-control inputDesignDoubleInput" />
+                                    <div className='col-md-4'>
+                                        <Field type="text" name="platformName" id="platformName" className="form-control inputDesign" />
                                         <ErrorMessage name='platformName' component={"div"} className='text-danger' />
                                     </div>
                                 </div>

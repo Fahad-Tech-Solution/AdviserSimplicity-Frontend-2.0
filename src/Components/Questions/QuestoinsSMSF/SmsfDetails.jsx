@@ -436,197 +436,128 @@ const SmsfDetails = (props) => {
 
               <div className="col-md-12">
                 <div className="row justify-content-center">
-                  <div className="mt-4">
-                    <Table striped bordered responsive hover>
-                      <thead>
-                        <tr>
-                          <th
-                            onClick={() => {
-                              console.log(values);
-                            }}
-                          >
-                            No#
-                          </th>
-                          <th>Fund Name</th>
-                          <th>ABN</th>
-                          <th>Registered Office</th>
-                          <th>Place Of Business</th>
-                          <th>Establishment Date</th>
-                          <th>Trustee Type</th>
-                          <th>Trustee Name</th>
-                          <th>ACN</th>
-                          {values[`trusteeType`] === "Corporate" &&
-                            <th>Bare Trust</th>
-                          }
-                          <th>Name of Accountant</th>
-                        </tr>
-                      </thead>
-                      <tbody>
 
-                        <tr>
-                          <td>1</td>
-                          <td>
-                            {/* <InputGroup className="mb-3">  */}
-                            <Field
-                              type="text"
-                              placeholder="Fund Name"
-                              id={`fundName`}
-                              name={`fundName`}
-                              className="form-control inputDesignDoubleInput"
-                              onChange={(e) => {
-                                setFieldValue(e.target.name, validateName(e.target.value))
+                  {values.NumberOfMap && (
+                    <div className="mt-4">
+                      <Table striped bordered responsive hover>
+                        <thead>
+                          <tr>
+                            <th
+                              onClick={() => {
+                                console.log(values);
                               }}
-                            />
-                          </td>
-                          <td>
-                            <Field
-                              type="number"
-                              placeholder="ABN"
-                              id={`ABN`}
-                              name={`ABN`}
-                              className="form-control inputDesignDoubleInput"
-                            />
-                          </td>
-                          <td>
-                            <Field
-                              type="text"
-                              placeholder="Registered Office"
-                              id={`registeredOffice`}
-                              name={`registeredOffice`}
-                              className="form-control inputDesignDoubleInput"
-                            />
-                          </td>
-                          <td>
-                            <Field
-                              type="text"
-                              placeholder="Place Of Business"
-                              id={`placeOfBusiness`}
-                              name={`placeOfBusiness`}
-                              className="form-control inputDesignDoubleInput"
-                            />
-                          </td>
-                          <td>
-                            <DatePicker
-                              className="form-control inputDesignDoubleInput DateInputPadding shadow"
-                              showIcon
-                              id={`establishmentDate`}
-                              name={`establishmentDate`}
-                              selected={values[`establishmentDate`]}
-                              onChange={(date) =>
-                                setFieldValue(
-                                  `establishmentDate`,
-                                  date
-                                )
-                              }
-                              dateFormat="dd/MM/yyyy"
-                              placeholderText="dd/mm/yyyy"
-                              maxDate={new Date()}
-                              showMonthDropdown
-                              showYearDropdown
-                              dropdownMode="select"
-                              onBlur={handleBlur}
-                              wrapperClassName="w-100"
-                            />
-                          </td>
-                          <td>
-                            <InputGroup className="mb-3" style={{ minWidth: "150px" }}>
-                              <Field
-                                as="select"
-                                placeholder="Trustee Type"
-                                id={`trusteeType`}
-                                name={`trusteeType`}
-                                className={`form-select inputDesignDoubleInput ${values[`trusteeType`] === "Corporate" ? "no-right-radius" : ""}`}
-                              >
-                                <option value={""}>Please Select</option>
-                                {options.map((elem, index) => {
-                                  return (
-                                    <option key={index} value={elem}>
-                                      {elem}
-                                    </option>
-                                  );
-                                })}
-                              </Field>
+                            >
+                              No#
+                            </th>
+                            <th>Fund Name</th>
+                            <th>ABN</th>
+                            <th>Fund  Address</th>
+                            <th>Establishment Date</th>
+                            <th>Trustee Type</th>
+                            <th>Trustee Name</th>
+                            <th>Name of Accountant</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {dynamicFields.map((elem, i) => {
+                            return (
+                              <tr key={i}>
+                                <td>{1 + i}</td>
+                                <td>
+                                  {/* <InputGroup className="mb-3">  */}
+                                  <Field
+                                    type="text"
+                                    placeholder="Fund Name"
+                                    id={`fundName${i}`}
+                                    name={`fundName${i}`}
+                                    className="form-control inputDesignDoubleInput"
+                                  />
 
-                              {values[`trusteeType`] === "Corporate" && (
-                                <Button
-                                  className="btn bgColor modalBtn border-0"
-                                  id="button-addon2"
-                                  onClick={() =>
-                                    handleInnerModal(
-                                      "Business as Trusts",
-                                      "directorsOfCorporateTrustee",
-                                      "directorsOfCorporateTrustee",
-                                      values,
-                                    )
-                                  }
-                                >
-                                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                </Button>
-                              )}
-
-                            </InputGroup>
-                          </td>
-                          <td>
-                            <Field
-                              type="text"
-                              placeholder="Trustee Name"
-                              id={`trusteeName`}
-                              name={`trusteeName`}
-                              className="form-control inputDesignDoubleInput"
-                              onChange={(e) => {
-                                setFieldValue(e.target.name, validateName(e.target.value))
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <Field
-                              type="number"
-                              placeholder="ACN"
-                              id={`ACN`}
-                              name={`ACN`}
-                              className="form-control inputDesignDoubleInput"
-                            />
-                          </td>
-                          {values[`trusteeType`] === "Corporate" &&
-                            <td>
-                              <DynamicYesNo
-                                name={`bareTrust`}
-                                values={values}
-                                handleChange={handleChange}
-                              />
-                              {values[`bareTrust`] === "Yes" &&
-                                <div className="d-flex justify-content-center mt-2">
-                                  <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
-                                    if (values[`directorsOfCorporateTrustee`].length > 0) {
-                                      handleInnerModal2("Directors of Bare Trust", "directorsOfBareTrust", values[`directorsOfBareTrust`], values)
+                                </td>
+                                <td>
+                                  <Field
+                                    type="number"
+                                    placeholder="ABN"
+                                    id={`aBN${i}`}
+                                    name={`aBN${i}`}
+                                    className="form-control inputDesignDoubleInput"
+                                  />
+                                </td>
+                                <td>
+                                  <Field
+                                    type="text"
+                                    placeholder="Address"
+                                    id={`Address${i}`}
+                                    name={`Address${i}`}
+                                    className="form-control inputDesignDoubleInput"
+                                  />
+                                </td>
+                                <td>
+                                  <DatePicker
+                                    className="form-control inputDesignDoubleInput DateInputPadding shadow"
+                                    showIcon
+                                    id={`pensionType${i}`}
+                                    name={`pensionType${i}`}
+                                    selected={values[`pensionType${i}`]}
+                                    onChange={(date) =>
+                                      setFieldValue(
+                                        `pensionType${i}`,
+                                        date
+                                      )
                                     }
-                                    else {
-                                      openNotificationSuccess("error", "topRight", "Error Notification", "Please! fill Corporate Directer Names First");
-                                    }
-                                  }}>
-                                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                  </Button>
-                                </div>
-                              }
-                            </td>
-                          }
-
-                          <td>
-                            <Field
-                              type="text"
-                              placeholder="Name of Accountants"
-                              id={`nameOfAccountant`}
-                              name={`nameOfAccountant`}
-                              className="form-control inputDesignDoubleInput"
-                              onChange={(e) => {
-                                setFieldValue(e.target.name, validateName(e.target.value))
-                              }}
-                            />
-                          </td>
-                        </tr>
-                      </tbody>
-                    </Table>
-                  </div>
+                                    dateFormat="dd/MM/yyyy"
+                                    placeholderText="dd/mm/yyyy"
+                                    maxDate={new Date()}
+                                    showMonthDropdown
+                                    showYearDropdown
+                                    dropdownMode="select"
+                                    onBlur={handleBlur}
+                                    wrapperClassName="w-100"
+                                  />
+                                </td>
+                                <td>
+                                  <Field
+                                    as="select"
+                                    placeholder="Trustee Type"
+                                    id={`trusteeType${i}`}
+                                    name={`trusteeType${i}`}
+                                    className="form-select inputDesignDoubleInput"
+                                  >
+                                    <option value={""}>Please Select</option>
+                                    {options.map((elem, index) => {
+                                      return (
+                                        <option key={index} value={elem}>
+                                          {elem}
+                                        </option>
+                                      );
+                                    })}
+                                  </Field>
+                                </td>
+                                <td>
+                                  <Field
+                                    type="text"
+                                    placeholder="Trustee Name  "
+                                    id={`trusteeName${i}`}
+                                    name={`trusteeName${i}`}
+                                    className="form-control inputDesignDoubleInput"
+                                  />
+                                </td>
+                                <td>
+                                  <Field
+                                    type="text"
+                                    placeholder="Number of Accountants Name  "
+                                    id={`noOfAccountant${i}`}
+                                    name={`noOfAccountant${i}`}
+                                    className="form-control inputDesignDoubleInput"
+                                  />
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </Table>
+                    </div>
+                  )}
                 </div>
               </div>
               <InnerDirectors setFieldValue={setFieldValue} flagState={flagState1} setFlagState={setFlagState1} modalObject={modalObject}></InnerDirectors>

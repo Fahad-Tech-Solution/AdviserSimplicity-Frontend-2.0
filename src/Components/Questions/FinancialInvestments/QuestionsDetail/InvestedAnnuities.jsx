@@ -257,17 +257,9 @@ const InvestedAnnuities = (props) => {
                                                                     className="form-select inputDesignDoubleInput"
                                                                 >
                                                                     <option value={""}>Please Select</option>
-                                                                    {
-                                                                        bankDetailObj?.Annuities && bankDetailObj.Annuities.length > 0 ? (
-                                                                            bankDetailObj.Annuities.map((elem, index) => (
-                                                                                <option key={index} value={elem._id}>
-                                                                                    {elem.platformName}
-                                                                                </option>
-                                                                            ))
-                                                                        ) : (
-                                                                            <option disabled>No Platforms Added in Annuities</option>
-                                                                        )
-                                                                    }
+                                                                    {bankDetailObj.map((elem, index) => {
+                                                                        return (<option key={index} value={elem._id}>{elem.platformName}</option>)
+                                                                    })}
                                                                 </Field>
                                                             </td>
                                                             <td>

@@ -41,57 +41,53 @@ const TowInOneSwitch = (props) => {
 
     return (
         <div className={`col-md-3 mb-4`} key={index}>
-            <Card className="py-4 shadow borderOverAll GoalsobjectiveCard d-flex" style={{ borderRadius: "20px", height: "100%" }}>
+            <Card className="py-4 shadow borderOverAll GoalsobjectiveCard" style={{ borderRadius: "20px", height: "100%" }}>
                 <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}</h5>
-
                 <div className="QuestionIcon CardImg">
                     <img className="img-fluid" src={elem.img} alt="" />
                 </div>
-                <div className='d-flex justify-content-center flex-column ' style={{ marginTop: "auto" }} >
+                {sets[elem.key].map((setsElem, setsIndex) => {
 
-                    {sets[elem.key].map((setsElem, setsIndex) => {
+                    let totalValueKey = setsElem.totalValueKey || "client";
 
-                        let totalValueKey = setsElem.totalValueKey || "client";
+                    let defaultSetting = setsElem.defaultSetting || "";
 
-                        let defaultSetting = setsElem.defaultSetting || "";
+                    return (
+                        <React.Fragment>
+                            <div className="row justify-content-center align-items-center my-2">
+                                <div className='col-12 p-0 '>
+                                    <div className='d-flex flex-column-reverse justify-content-center align-items-center gap-2'>
+                                        <label
+                                            className=" d-block "
+                                            htmlFor={"client" + elem.key}
+                                        >{setsElem.title}</label>
 
-                        return (
-                            <React.Fragment>
-                                <div className="row justify-content-center align-items-center my-2">
-                                    <div className='col-12 p-0 '>
-                                        <div className='d-flex justify-content-center align-items-center gap-2'>
-                                            <label
-                                                className=" d-block "
-                                                htmlFor={"client" + elem.key}
-                                            >{setsElem.title}</label>
+                                        <label
+                                            className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                                            onClick={() => {
 
-                                            <label
-                                                className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                                onClick={() => {
+                                                let Firstargument = setsElem.defaultSetting === "2innerValues" ? elem.title : setsElem.title;
 
-                                                    let Firstargument = setsElem.defaultSetting === "2innerValues" ? elem.title : setsElem.title;
+                                                OpenModal(Firstargument, "client")
+                                            }}
+                                        >
+                                            <div>
+                                                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                            </div>
+                                        </label>
 
-                                                    OpenModal(Firstargument, "client")
-                                                }}
-                                            >
-                                                <div>
-                                                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                </div>
-                                            </label>
-
-                                        </div>
                                     </div>
                                 </div>
-                                <input type="text"
-                                    className="form-control inputDesign"
-                                    id={totalValueKey + elem.key}
-                                    placeholder={setsElem.title}
-                                    name={totalValueKey + elem.key}
-                                    value={questionDetail && questionDetail[setsElem?.key] && questionDetail[setsElem.key][`${totalValueKey}Total`] ? questionDetail[setsElem.key][`${totalValueKey}Total`] : ""}
-                                />
-                            </React.Fragment>)
-                    })}
-                </div>
+                            </div>
+                            <input type="text"
+                                className="form-control inputDesign"
+                                id={totalValueKey + elem.key}
+                                placeholder={setsElem.title}
+                                name={totalValueKey + elem.key}
+                                value={questionDetail && questionDetail[setsElem?.key] && questionDetail[setsElem.key][`${totalValueKey}Total`] ? questionDetail[setsElem.key][`${totalValueKey}Total`] : ""}
+                            />
+                        </React.Fragment>)
+                })}
 
             </Card>
         </div >

@@ -44,13 +44,13 @@ const MemberNumber = (props) => {
 
         setDynamicFields(arr);
 
-        setFieldValue(`portfolioValue0`, props.modalObject.values[`portfolioValue${props.modalObject.index}`] || '');
 
         if (props.modalObject.editArray) {
             props.modalObject.editArray.forEach((data, i) => {
                 if (data) {
                     console.log(data.investmentOption)
                     setFieldValue(`fundType${i}`, data.fundType || '');
+                    setFieldValue(`portfolioValue${i}`, data.portfolioValue || '');
                     setFieldValue(`portfolioArray${i}`, data.portfolioArray || '');
                     setFieldValue(`eligibleServiceDate${i}`, data.eligibleServiceDate || '');
                     setFieldValue(`commencementDate${i}`, data.commencementDate || '');
@@ -70,13 +70,10 @@ const MemberNumber = (props) => {
         const value = e.target.value > 10 ? 10 : e.target.value;
         setFieldValue(e.target.id, value);
 
-
-
         let arr = []
 
         for (let i = 0; i < value; i++) {
             arr.push("");
-
         }
 
         setDynamicFields(arr);
@@ -168,6 +165,13 @@ const MemberNumber = (props) => {
                 return (
                     <Form>
                         <Row>
+
+                            <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} >
+                                {
+                                    modalObject.key === "portfolioArray" ? <PortfolioValue /> : ""
+                                }
+                            </InnerModal>
+
                             <div className="col-md-12">
                                 <div className='row justify-content-center'>
                                     <div className='col-md-7 d-none'>
@@ -216,20 +220,31 @@ const MemberNumber = (props) => {
                                                                     />
                                                                 </td>
                                                                 <td style={{ minWidth: "8rem" }}>
-                                                                    <Field
-                                                                        disabled
-                                                                        type="text"
-                                                                        placeholder="Portfolio Value"
-                                                                        id={`portfolioValue${i}`}
-                                                                        name={`portfolioValue${i}`}
-                                                                        className="form-control inputDesignDoubleInput"
-                                                                        onChange={(e) => {
+                                                                    <InputGroup className="mb-3">
+                                                                        <Field
+                                                                            type="text"
+                                                                            placeholder="Portfolio Value"
+                                                                            id={`portfolioValue${i}`}
+                                                                            name={`portfolioValue${i}`}
+                                                                            className="form-control inputDesignDoubleInput"
+                                                                            onChange={(e) => {
 
-                                                                            setFieldValue(`portfolioValue${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                                                            setFieldValue(`taxableComponent${i}`, toCommaAndDollar(parseFloat(e.target.value.replace(/[^0-9.-]+/g, "") || 0) - (parseFloat(values[`taxFreeComponent${i}`].replace(/[^0-9.-]+/g, "")) || 0)));
+                                                                                setFieldValue(`portfolioValue${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                                setFieldValue(`taxableComponent${i}`, toCommaAndDollar(parseFloat(e.target.value.replace(/[^0-9.-]+/g, "") || 0) - (parseFloat(values[`taxFreeComponent${i}`].replace(/[^0-9.-]+/g, "")) || 0)));
 
-                                                                        }}
-                                                                    />
+                                                                            }}
+                                                                        />
+                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
+
+                                                                            handleInnerModal(title + "_Portfolio Value",
+                                                                                `How many Portfolios do ${title} have ?`,
+                                                                                "portfolioArray", "portfolioValue", "",
+                                                                                values[`portfolioArray${i}`], i, values)
+
+                                                                        }}>
+                                                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                                        </Button>
+                                                                    </InputGroup>
                                                                 </td>
                                                                 <td style={{ minWidth: "150px" }}>
                                                                     <div>

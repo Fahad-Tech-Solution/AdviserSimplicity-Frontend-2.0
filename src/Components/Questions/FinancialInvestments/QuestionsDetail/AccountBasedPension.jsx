@@ -14,14 +14,11 @@ import { Tooltip } from 'antd';
 import { FaCircleQuestion } from 'react-icons/fa6';
 import AccountBasedBalance from '../AccountBasedBalance';
 import AnnualPensionPaymentInnerModal from './AnnualPensionPaymentInnerModal';
-import PortfolioValue from './PortfolioValue';
 
 const AccountBasedPension = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
+
     let bankDetailObj = useRecoilValue(BankDetail);
-    let [ShowError, setShowError] = useState({});
-
-
 
     let [nameSet] = useState(() => {
         if (props.modalObject.Input === "client") {
@@ -72,10 +69,8 @@ const AccountBasedPension = (props) => {
             // alert(FoundArray.length)
             FoundArray.forEach((data, i) => {
                 if (data) {
-                    setFieldValue(`platformName${i}`, data.platformName || '');
+                    setFieldValue(`fundName${i}`, data.fundName || '');
                     setFieldValue(`memberNumber${i}`, data.memberNumber || '');
-                    setFieldValue(`portfolioArray${i}`, data.portfolioArray || '');
-                    setFieldValue(`portfolioValue${i}`, data.portfolioValue || '');
                     setFieldValue(`balanceBenefitDetails${i}`, data.balanceBenefitDetails || '');
                     setFieldValue(`balanceBenefitDetailsArray${i}`, data.balanceBenefitDetailsArray || '');
                     setFieldValue(`pensionPayment${i}`, data.pensionPayment || '');
@@ -103,7 +98,7 @@ const AccountBasedPension = (props) => {
 
     };
 
-    let handleInnerModal = (title, question, key, mainKey, key3, editArray, index, values, Platform) => {
+    let handleInnerModal = (title, question, key, mainKey, key3, editArray, index, values) => {
         console.log(values);
         let ParentModal = props.modalObject.title
         setModalObject({
@@ -115,8 +110,7 @@ const AccountBasedPension = (props) => {
             editArray: editArray || [],
             index,
             values,
-            ParentModal,
-            Platform
+            ParentModal
         })
         setFlagState(true);
     }
@@ -134,10 +128,8 @@ const AccountBasedPension = (props) => {
         // Iterate through each map entry and create a new object
         for (let i = 0; i < numberOfMaps; i++) {
             const newEntry = {
-                platformName: values[`platformName${i}`] || "",
+                fundName: values[`fundName${i}`] || "",
                 memberNumber: values[`memberNumber${i}`] || "",
-                portfolioArray: values[`portfolioArray${i}`] || "",
-                portfolioValue: values[`portfolioValue${i}`] || "",
                 balanceBenefitDetails: values[`balanceBenefitDetails${i}`] || "",
                 balanceBenefitDetailsArray: values[`balanceBenefitDetailsArray${i}`] || "",
                 pensionPayment: values[`pensionPayment${i}`] || "",
@@ -175,35 +167,6 @@ const AccountBasedPension = (props) => {
     };
 
 
-    let CheckInputValue = (values, setFieldValue, currentInput, index) => {
-        // console.log(values, setFieldValue, currentInput);
-
-
-        let portfolioArray = values[`portfolioArray${index}`];
-
-        let ExpectedSum = portfolioArray.reduce((total, entry) => total + parseFloat((entry.investmentValue).replace(/[^0-9.-]+/g, "")), 0);
-        let data = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, ""));
-
-        console.log(ExpectedSum, data, currentInput.name, ShowError)
-
-        if (ExpectedSum !== data) {
-            setShowError(prevState => ({
-                ...prevState,
-                [`${currentInput.name}Error`]: true,
-                [`${currentInput.name}Message`]: "Total must be equal to the sum of all Investment value filled in the popup. The sum is " + toCommaAndDollar(ExpectedSum),
-            }));
-        }
-        else {
-            setShowError(prevState => ({
-                ...prevState,
-                [`${currentInput.name}Error`]: false,
-                [`${currentInput.name}Message`]: "",
-            }));
-        }
-
-
-    }
-
 
 
     return (
@@ -223,10 +186,9 @@ const AccountBasedPension = (props) => {
                         <Row>
                             <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} >
                                 {
-                                    modalObject.key === "portfolioArray" ? <PortfolioValue /> :
-                                        modalObject.key === "balanceBenefitDetailsArray" ? <AccountBasedBalance /> :   // is ko change karna hai
-                                            modalObject.key === "beneficiariesArray" ? <Beneficiaries /> :   // is ko change karna hai
-                                                modalObject.key === "annualPensionPaymentArray" ? <AnnualPensionPaymentInnerModal /> : ""
+                                    modalObject.key === "balanceBenefitDetailsArray" ? <AccountBasedBalance /> :   // is ko change karna hai
+                                        modalObject.key === "beneficiariesArray" ? <Beneficiaries /> :   // is ko change karna hai
+                                            modalObject.key === "annualPensionPaymentArray" ? <AnnualPensionPaymentInnerModal /> : ""
                                 }
                             </InnerModal>
 
@@ -257,7 +219,6 @@ const AccountBasedPension = (props) => {
                                                         <th onClick={() => { console.log(values) }}>No#</th>
                                                         <th>Fund Name</th>
                                                         <th>Member Number</th>
-                                                        <th>PlatFrom</th>
                                                         <th>Balance &nbsp;
                                                             <Tooltip placement="top" title={"Enter in the Underlying investments, Tax and Preserved Components by clicking into onto the green option"}>
                                                                 <FaCircleQuestion style={{ fontSize: '18px', cursor: 'pointer' }} />
@@ -276,22 +237,14 @@ const AccountBasedPension = (props) => {
                                                                 <Field
                                                                     as="select"
                                                                     placeholder="Fund Name"
-                                                                    id={`platformName${i}`}
-                                                                    name={`platformName${i}`}
+                                                                    id={`fundName${i}`}
+                                                                    name={`fundName${i}`}
                                                                     className="form-select inputDesignDoubleInput"
                                                                 >
                                                                     <option value={""}>Please Select</option>
-                                                                    {
-                                                                        bankDetailObj?.AccountBasedPensions && bankDetailObj.AccountBasedPensions.length > 0 ? (
-                                                                            bankDetailObj.AccountBasedPensions.map((elem, index) => (
-                                                                                <option key={index} value={elem._id}>
-                                                                                    {elem.platformName}
-                                                                                </option>
-                                                                            ))
-                                                                        ) : (
-                                                                            <option disabled>No Platforms Added in Account Based Pensions</option>
-                                                                        )
-                                                                    }
+                                                                    {bankDetailObj.map((elem, index) => {
+                                                                        return (<option key={index} value={elem._id}>{elem.platformName}</option>)
+                                                                    })}
                                                                 </Field>
                                                             </td>
                                                             <td>
@@ -302,77 +255,6 @@ const AccountBasedPension = (props) => {
                                                                     name={`memberNumber${i}`}
                                                                     className="form-control inputDesignDoubleInput"
                                                                 />
-                                                            </td>
-                                                            <td>
-                                                                <InputGroup className={`mb-3 ${ShowError[`portfolioValue${i}Error`] === true ? "is-invalid" : ""}`}>
-                                                                    <Field
-                                                                        type="text"
-                                                                        placeholder="Portfolio Value"
-                                                                        id={`portfolioValue${i}`}
-                                                                        name={`portfolioValue${i}`}
-                                                                        className={`form-control inputDesignDoubleInput ${ShowError[`portfolioValue${i}Error`] === true ? "is-invalid" : ""}`}
-                                                                        onChange={(e) => {
-                                                                            setFieldValue(e.target.name,
-                                                                                toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                                                            CheckInputValue(values, setFieldValue, e.target, i)
-                                                                        }}
-                                                                    />
-                                                                    <Button
-                                                                        className="btn bgColor modalBtn border-0"
-                                                                        id="button-addon2"
-                                                                        onClick={() => {
-                                                                            const platformKey = `platformName${i}`;
-                                                                            const selectedPlatformId = values[platformKey];
-
-                                                                            // Check if a platform name is selected
-                                                                            if (!selectedPlatformId) {
-                                                                                openNotificationSuccess(
-                                                                                    "error",
-                                                                                    "topRight",
-                                                                                    "Error Notification",
-                                                                                    "Please! Select Platform Name First"
-                                                                                );
-                                                                                return;
-                                                                            }
-
-                                                                            // Define platform name and object set
-                                                                            let name = "";
-                                                                            const platforms = bankDetailObj?.AccountBasedPensions;
-
-                                                                            // Find the platform name
-                                                                            const SelectedPlatform = platforms?.find((elem) => elem._id === selectedPlatformId);
-
-                                                                            if (SelectedPlatform) {
-                                                                                name = SelectedPlatform.platformName;
-
-                                                                                // Call handleInnerModal with the platform name and relevant values
-                                                                                handleInnerModal(
-                                                                                    `${name}_Portfolio Value`,
-                                                                                    `How many Underlying Investments does ${nameSet} have?`,
-                                                                                    "portfolioArray",
-                                                                                    "portfolioValue",
-                                                                                    "totalPortfolioCost",
-                                                                                    values[`portfolioArray${i}`],
-                                                                                    i,
-                                                                                    values,
-                                                                                    SelectedPlatform
-                                                                                );
-                                                                            } else {
-                                                                                openNotificationSuccess(
-                                                                                    "error",
-                                                                                    "topRight",
-                                                                                    "Error Notification",
-                                                                                    "Selected Fund Name not found."
-                                                                                );
-                                                                            }
-                                                                        }}
-                                                                    >
-                                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                                    </Button>
-                                                                </InputGroup>
-                                                                <div class="invalid-feedback">
-                                                                    {ShowError[`portfolioValue${i}Message`]}
-                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <InputGroup className="mb-3">
@@ -387,11 +269,11 @@ const AccountBasedPension = (props) => {
                                                                         }}
                                                                     />
                                                                     <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
-                                                                        // if (values[`platformName${i}`]) {
+                                                                        // if (values[`fundName${i}`]) {
                                                                         let name = RenderName(props.modalObject.Input);
                                                                         //     bankDetailObj.map((elem, index) => {
 
-                                                                        //         if (elem._id === values[`platformName${i}`]) {
+                                                                        //         if (elem._id === values[`fundName${i}`]) {
                                                                         //             name = elem.platformName
                                                                         //         }
 
@@ -420,11 +302,11 @@ const AccountBasedPension = (props) => {
                                                                         }}
                                                                     />
                                                                     <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
-                                                                        // if (values[`platformName${i}`]) {
+                                                                        // if (values[`fundName${i}`]) {
                                                                         let name = RenderName(props.modalObject.Input);
                                                                         //     bankDetailObj.map((elem, index) => {
 
-                                                                        //         if (elem._id === values[`platformName${i}`]) {
+                                                                        //         if (elem._id === values[`fundName${i}`]) {
                                                                         //             name = elem.platformName
                                                                         //         }
 
@@ -445,11 +327,11 @@ const AccountBasedPension = (props) => {
                                                                     <DynamicYesNo name={`nominatedBeneficiaries${i}`} values={values} handleChange={handleChange} />
                                                                     {values[`nominatedBeneficiaries${i}`] === "Yes" &&
                                                                         <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
-                                                                            // if (values[`platformName${i}`]) {
+                                                                            // if (values[`fundName${i}`]) {
                                                                             let name = RenderName(props.modalObject.Input);
                                                                             //     bankDetailObj.map((elem, index) => {
 
-                                                                            //         if (elem._id === values[`platformName${i}`]) {
+                                                                            //         if (elem._id === values[`fundName${i}`]) {
                                                                             //             name = elem.platformName
                                                                             //         }
 
