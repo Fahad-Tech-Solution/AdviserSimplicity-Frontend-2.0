@@ -31,18 +31,6 @@ const InvestmentLoan = (props) => {
 
     let [UserStatus] = useState(localStorage.getItem('UserStatus'));
 
-    let [nameSet] = useState(() => {
-        if (props.modalObject.Input === "client") {
-            return (localStorage.getItem("UserName"))
-        }
-        else if (props.modalObject.Input === "partner") {
-            return (localStorage.getItem("PartnerName"))
-        }
-        else if (props.modalObject.Input === "joint") {
-            return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
-        }
-    })
-
 
     let managedFundsLOC = Object.keys(questionDetail[props.modalObject.index] || {}).length > 0 ? questionDetail[props.modalObject.index] : {
         client: [],

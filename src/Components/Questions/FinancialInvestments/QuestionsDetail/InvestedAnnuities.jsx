@@ -212,7 +212,7 @@ const InvestedAnnuities = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                                         <p className='text-end mt-3'>
-                                            How many Annuities does {nameSet} have:
+                                            How many Annuities does {nameSet} have :
                                         </p>
 
                                         <div style={{ width: "8%" }}>
@@ -257,9 +257,17 @@ const InvestedAnnuities = (props) => {
                                                                     className="form-select inputDesignDoubleInput"
                                                                 >
                                                                     <option value={""}>Please Select</option>
-                                                                    {bankDetailObj.map((elem, index) => {
-                                                                        return (<option key={index} value={elem._id}>{elem.platformName}</option>)
-                                                                    })}
+                                                                    {
+                                                                        bankDetailObj?.Annuities && bankDetailObj.Annuities.length > 0 ? (
+                                                                            bankDetailObj.Annuities.map((elem, index) => (
+                                                                                <option key={index} value={elem._id}>
+                                                                                    {elem.platformName}
+                                                                                </option>
+                                                                            ))
+                                                                        ) : (
+                                                                            <option disabled>No Platforms Added in Annuities</option>
+                                                                        )
+                                                                    }
                                                                 </Field>
                                                             </td>
                                                             <td>
@@ -438,7 +446,7 @@ const InvestedAnnuities = (props) => {
                                                                             //         }
 
                                                                             //     });
-                                                                            handleInnerModal(name + "_Beneficiaries", `How many beneficiaries do ${nameSet} have?`, "beneficiariesArray", "", "", values[`beneficiariesArray${i}`], i)
+                                                                            handleInnerModal(name + "_Beneficiaries", `How many beneficiaries do ${nameSet} have :`, "beneficiariesArray", "", "", values[`beneficiariesArray${i}`], i)
                                                                             // }
                                                                             // else {
                                                                             //     // type, placement, message, description

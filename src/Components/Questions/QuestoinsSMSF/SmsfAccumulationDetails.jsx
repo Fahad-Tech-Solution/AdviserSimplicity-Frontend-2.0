@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Button, InputGroup, Row, Table } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { PatchAxios, PostAxios } from "../../Assets/Api/Api";
+import { PatchAxios, PostAxios, RenderName, toCommaAndDollar } from "../../Assets/Api/Api";
 import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
 import DynamicYesNo from "../FinancialInvestments/QuestionsDetail/DynamicYesNo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,6 +16,7 @@ import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 import Beneficiaries from "../FinancialInvestments/QuestionsDetail/Beneficiaries";
 import AccumulationBenefits from "./AccumulationBenefits";
 import Contributions from "../FinancialInvestments/QuestionsDetail/Contributions";
+import { CreatableMultiSelectField } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 // import Contributions from "./Contributuions";
 // import Beneficiaries from "./Beneficiaries";
 // import Select from "react-select";
@@ -23,6 +24,7 @@ import Contributions from "../FinancialInvestments/QuestionsDetail/Contributions
 const SmsfAccumulationDetails = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+  let [ShowError, setShowError] = useState({});
 
   let [nameSet] = useState(() => {
     if (props.modalObject.Input === "client") {
@@ -46,61 +48,58 @@ const SmsfAccumulationDetails = (props) => {
 
   }; // Use an empty object as default if SMSFAccumulationDetails is undefined
 
-  let initialValues = SMSFAccumulationDetails[props.modalObject.Input].length
-    ? { NumberOfMap: SMSFAccumulationDetails[props.modalObject.Input].length }
-    : { NumberOfMap: "" };
-
-  const [dynamicFields, setDynamicFields] = useState([]);
-
-  useEffect(() => {
-    if (
-      SMSFAccumulationDetails[props.modalObject.Input] &&
-      SMSFAccumulationDetails[props.modalObject.Input].length
-    ) {
-      let arr = [];
-
-      for (
-        let i = 0;
-        i < SMSFAccumulationDetails[props.modalObject.Input].length;
-        i++
-      ) {
-        arr.push("");
-      }
-
-      setDynamicFields(arr);
-    }
-  }, []);
+  let initialValues = { member: [] };
 
   const fillInitialValues = (setFieldValue) => {
-    if (
-      SMSFAccumulationDetails[props.modalObject.Input] &&
-      SMSFAccumulationDetails[props.modalObject.Input].length
-    ) {
-      SMSFAccumulationDetails[props.modalObject.Input].forEach((data, i) => {
-        if (data) {
-          setFieldValue(`accumulationBenefits${i}`, data.accumulationBenefits || "");
-          setFieldValue(`accumulationBenefitsarray${i}`, data.accumulationBenefitsarray || "");
-          setFieldValue(`contributions${i}`, data.contributions || "");
-          setFieldValue(`contributionsArray${i}`, data.contributionsArray || "");
-          setFieldValue(`nominatedBeneficiaries${i}`, data.nominatedBeneficiaries || "");
-          setFieldValue(`beneficiariesArray${i}`, data.beneficiariesArray || "");
+    try {
+      console.log(SMSFAccumulationDetails)
+
+      setFieldValue("member", SMSFAccumulationDetails.member);
+
+      const clientIndex = SMSFAccumulationDetails.member.includes("client") ? SMSFAccumulationDetails.member.indexOf("client") : -1;
+      const partnerIndex = SMSFAccumulationDetails.member.includes("partner") ? SMSFAccumulationDetails.member.indexOf("partner") : -1;
+      const jointIndex = SMSFAccumulationDetails.member.includes("joint") ? SMSFAccumulationDetails.member.indexOf("joint") : -1;
+
+
+      Array.from({ length: SMSFAccumulationDetails.member.length }).map((_, i) => {
+        if (clientIndex === i) {
+          SMSFAccumulationDetails.client.forEach(element => {
+            setFieldValue("accumulationBenefits" + i, element.accumulationBenefits);
+            setFieldValue("accumulationBenefitsarray" + i, element.accumulationBenefitsarray);
+            setFieldValue("contributions" + i, element.contributions);
+            setFieldValue("contributionsArray" + i, element.contributionsArray);
+            setFieldValue("nominatedBeneficiaries" + i, element.nominatedBeneficiaries);
+            setFieldValue("beneficiariesArray" + i, element.beneficiariesArray);
+          });
         }
-      });
+        else if (partnerIndex === i) {
+          SMSFAccumulationDetails.partner.forEach(element => {
+            setFieldValue("accumulationBenefits" + i, element.accumulationBenefits);
+            setFieldValue("accumulationBenefitsarray" + i, element.accumulationBenefitsarray);
+            setFieldValue("contributions" + i, element.contributions);
+            setFieldValue("contributionsArray" + i, element.contributionsArray);
+            setFieldValue("nominatedBeneficiaries" + i, element.nominatedBeneficiaries);
+            setFieldValue("beneficiariesArray" + i, element.beneficiariesArray);
+          });
+        }
+        else if (jointIndex === i) {
+          SMSFAccumulationDetails.joint.forEach(element => {
+            setFieldValue("accumulationBenefits" + i, element.accumulationBenefits);
+            setFieldValue("accumulationBenefitsarray" + i, element.accumulationBenefitsarray);
+            setFieldValue("contributions" + i, element.contributions);
+            setFieldValue("contributionsArray" + i, element.contributionsArray);
+            setFieldValue("nominatedBeneficiaries" + i, element.nominatedBeneficiaries);
+            setFieldValue("beneficiariesArray" + i, element.beneficiariesArray);
+          });
+        }
+      })
+
+    } catch (error) {
+      console.error("An error occurred while initializing values in fillInitialValues:", error);
     }
   };
 
-  let handleInput = (e, setFieldValue) => {
-    const value = e.target.value > 10 ? 10 : e.target.value;
-    setFieldValue(e.target.id, value);
 
-    let arr = [];
-
-    for (let i = 0; i < value; i++) {
-      arr.push("");
-    }
-
-    setDynamicFields(arr);
-  };
 
   let handleInnerModal = (
     title,
@@ -132,7 +131,7 @@ const SmsfAccumulationDetails = (props) => {
     console.log(JSON.stringify(values));
     // return (false);
     // Extract the number of maps from the values
-    const numberOfMaps = parseInt(values.NumberOfMap, 10);
+    const numberOfMaps = parseInt(values.member.length, 10);
     const newEntries = [];
 
     // Iterate through each map entry and create a new object
@@ -149,26 +148,61 @@ const SmsfAccumulationDetails = (props) => {
     }
 
     // Log the new entries to verify
-    console.log(newEntries);
+    // console.log(newEntries);
 
     let DataOf = props.modalObject.Input;
 
     // Create an object with additional fields
     let obj = {
       clientFK: localStorage.getItem("UserID"),
+      member: values.member
     };
 
-    obj[DataOf] = newEntries;
+    const clientIndex = obj.member.includes("client") ? obj.member.indexOf("client") : -1;
+    const partnerIndex = obj.member.includes("partner") ? obj.member.indexOf("partner") : -1;
+    const jointIndex = obj.member.includes("joint") ? obj.member.indexOf("joint") : -1;
 
-    // Calculate total currentBalance
-    obj[DataOf + "Total"] = newEntries.reduce(
-      (total, entry) => total + entry.accumulationBenefits,
-      0
-    );
+    if (clientIndex !== -1) {
+      obj.client = [newEntries[clientIndex]]; // Assign as an array with the client entry
+      // Calculate total currentBalance
+      obj.clientTotal = toCommaAndDollar(obj.client.reduce(
+        (total, entry) => total + parseFloat(entry.accumulationBenefits.replace(/[^0-9.-]+/g, "")),
+        0
+      ));
 
-    console.log(obj, "final obj");
+    } else {
+      console.log("Client not found in newEntries array.");
+    }
 
-    // Check if SMSFAccumulationDetails and the array at props.modalObject.Input exist
+    if (partnerIndex !== -1) {
+      obj.partner = [newEntries[partnerIndex]]; // Assign as an array with the partner entry
+
+
+      obj.partnerTotal = toCommaAndDollar(obj.partner.reduce(
+        (total, entry) => total + parseFloat(entry.accumulationBenefits.replace(/[^0-9.-]+/g, "")),
+        0
+      ));
+    } else {
+      console.log("partner not found in newEntries array.");
+    }
+
+    if (jointIndex !== -1) {
+      obj.joint = [newEntries[jointIndex]]; // Assign as an array with the joint entry
+
+      obj.jointTotal = toCommaAndDollar(obj.joint.reduce(
+        (total, entry) => total + parseFloat(entry.accumulationBenefits.replace(/[^0-9.-]+/g, "")),
+        0
+      ));
+
+    } else {
+      console.log("joint not found in newEntries array.");
+    }
+
+
+
+    console.log(JSON.stringify(obj), "Final Obj");
+    // return false
+
     // const bankAccountArray = SMSFAccumulationDetails[props.modalObject.Input] || [];
     const bankAccountArray = SMSFAccumulationDetails.clientFK || "";
 
@@ -177,7 +211,6 @@ const SmsfAccumulationDetails = (props) => {
       if (!bankAccountArray) {
         res = await PostAxios(`${DefaultUrl}/api/SMSFAccumulationDetails/Add`, obj);
       } else {
-        obj.collection = props.modalObject.Input;
         res = await PatchAxios(
           `${DefaultUrl}/api/SMSFAccumulationDetails/Update`,
           obj
@@ -199,6 +232,38 @@ const SmsfAccumulationDetails = (props) => {
     }
   };
 
+
+  let CheckInputValue = (values, setFieldValue, currentInput, index) => {
+    // console.log(values, setFieldValue, currentInput);
+    let accumulationBenefitsarray = values[`accumulationBenefitsarray${index}`];
+
+    let ExpectedSum = parseFloat(accumulationBenefitsarray.taxFreeComponent.replace(/[^0-9.-]+/g, ""), 0);
+    let data = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, ""));
+
+    console.log(ExpectedSum, data, currentInput.name, ShowError)
+
+    if (ExpectedSum !== data) {
+      setShowError(prevState => ({
+        ...prevState,
+        [`${currentInput.name}Error`]: true,
+        [`${currentInput.name}Message`]: "Total must be equal to the sum of all Investment value filled in the popup. The sum is " + toCommaAndDollar(ExpectedSum),
+      }));
+    }
+    else {
+      setShowError(prevState => ({
+        ...prevState,
+        [`${currentInput.name}Error`]: false,
+        [`${currentInput.name}Message`]: "",
+      }));
+    }
+  }
+
+
+  let option = [
+    { value: "client", label: RenderName("client") },
+    { value: "partner", label: RenderName("partner") },
+    { value: "joint", label: RenderName("joint") }
+  ]
   return (
     <Formik
       initialValues={initialValues}
@@ -209,7 +274,7 @@ const SmsfAccumulationDetails = (props) => {
       {({ values, setFieldValue, handleChange }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
-        }, [values.NumberOfMap]);
+        }, []);
 
         return (
           <Form>
@@ -234,22 +299,21 @@ const SmsfAccumulationDetails = (props) => {
               </InnerModal>
               <div className="col-md-12">
                 <div className="row justify-content-center">
-                  <div className="col-md-5">
-                    <p className="text-end mt-1">
-                      How many {props.modalObject.title} does{" "}
-                      {nameSet} have:
-                    </p>
+                  <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                    <label htmlFor='' className='text-end '>
+                      Member's of SMSF {questionDetail.SMSFDetails.SMSFOwner.fundName}
+                    </label>
+
+                    <div style={{ minWidth: "25%" }}>
+                      <Field
+                        name={`member`}
+                        component={CreatableMultiSelectField}
+                        label="Multi Select Field"
+                        options={option}
+                      />
+                    </div>
                   </div>
-                  <div className="col-md-2">
-                    <Field
-                      type="number"
-                      id="NumberOfMap"
-                      name="NumberOfMap"
-                      className="form-control inputDesignDoubleInput"
-                      onChange={(e) => handleInput(e, setFieldValue)}
-                    />
-                  </div>
-                  {values.NumberOfMap && (
+                  {values.member.length > 0 && (
                     <div className="mt-4">
                       <Table striped bordered responsive hover>
                         <thead>
@@ -259,7 +323,7 @@ const SmsfAccumulationDetails = (props) => {
                                 console.log(values);
                               }}
                             >
-                              No#
+                              Member
                             </th>
                             <th>Accumulation Benefits</th>
                             <th>Contributions</th>
@@ -267,18 +331,25 @@ const SmsfAccumulationDetails = (props) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {dynamicFields.map((elem, i) => {
+                          {Array.from({ length: values.member.length }).map((_, i) => {
                             return (
                               <tr key={i}>
-                                <td>{1 + i}</td>
                                 <td>
-                                  <InputGroup className="mb-3">
+                                  {RenderName(values.member[i])}
+                                </td>
+                                <td>
+                                  <InputGroup className={`mb-3 ${ShowError[`accumulationBenefits${i}Error`] === true ? "is-invalid" : ""}`}>
                                     <Field
-                                      type="number"
+                                      type="text"
                                       placeholder="Accumulation Benefits"
                                       id={`accumulationBenefits${i}`}
                                       name={`accumulationBenefits${i}`}
-                                      className="form-control inputDesignDoubleInput"
+                                      className={`form-control inputDesignDoubleInput ${ShowError[`accumulationBenefits${i}Error`] === true ? "is-invalid" : ""}`}
+                                      onChange={(e) => {
+                                        setFieldValue(e.target.name,
+                                          toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                        CheckInputValue(values, setFieldValue, e.target, i)
+                                      }}
                                     />
                                     <Button
                                       className="btn bgColor modalBtn border-0"
@@ -286,7 +357,7 @@ const SmsfAccumulationDetails = (props) => {
                                       onClick={() => {
                                         handleInnerModal(
                                           "Accumulations Benefits", //title 
-                                          `How many Accumulations Benefits do ${nameSet} have?`, //Question
+                                          `How many Accumulations Benefits do ${nameSet} have :`, //Question
                                           "accumulationBenefitsarray", //key
                                           "accumulationBenefits", //mainKey
                                           "totalPortfolioCost", // key3
@@ -301,6 +372,9 @@ const SmsfAccumulationDetails = (props) => {
                                       />
                                     </Button>
                                   </InputGroup>
+                                  <div class="invalid-feedback">
+                                    {ShowError[`accumulationBenefits${i}Message`]}
+                                  </div>
                                 </td>
 
 
@@ -350,7 +424,7 @@ const SmsfAccumulationDetails = (props) => {
                                           onClick={() => {
                                             handleInnerModal(
                                               "Beneficiaries",
-                                              `How many beneficiaries do ${nameSet} have?`,
+                                              `How many beneficiaries do ${nameSet} have :`,
                                               "beneficiariesArray",
                                               "",
                                               "",

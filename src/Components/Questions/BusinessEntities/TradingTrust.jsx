@@ -284,7 +284,7 @@ const TradingTrust = (props) => {
 
                 <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                   <label htmlFor='' className=''>
-                    How many {props.modalObject.title} does {nameSet} have:
+                    How many {props.modalObject.title} does {nameSet} have :
                   </label>
 
                   <div style={{ width: "10%" }} >

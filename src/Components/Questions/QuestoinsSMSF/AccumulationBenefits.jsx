@@ -2,11 +2,14 @@ import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { Row, Table } from "react-bootstrap";
 import { useRecoilValue } from "recoil";
-import { defaultUrl, } from "../../../Store/Store";
+import { defaultUrl, QuestionDetail, } from "../../../Store/Store";
 import DatePicker from "react-datepicker";
-import { toCommaAndDollar } from "../../Assets/Api/Api";
+import { RenderName, toCommaAndDollar } from "../../Assets/Api/Api";
 
 const AccumulationBenefits = (props) => {
+
+  let questionDetail = useRecoilValue(QuestionDetail);
+
 
   let initialValues = {
     commencementDate: "",
@@ -19,39 +22,78 @@ const AccumulationBenefits = (props) => {
     preservedAmount: "",
   };
 
+  const options = [
+    "Restricted non preserved",
+    "Unrestricted non preserved",
+  ];
+
+
   const fillInitialValues = (setFieldValue) => {
 
-    console.log(props.modalObject.values[`${props.modalObject.Input}`])
+    if (Object.keys(props.modalObject.editArray).length) {
 
-    if (props.modalObject.values[`${props.modalObject.Input}`]) {
+      let data = props.modalObject.editArray
+      console.log(data);
 
-      let Obj = props.modalObject.values[`${props.modalObject.Input}`]
-      if (Obj.accumulationBenefitsOBJ) {
-        let data = Obj.accumulationBenefitsOBJ;
-
-        setFieldValue(`commencementDate`, data.commencementDate || "");
-        setFieldValue(`eligibleServiceDate`, data.eligibleServiceDate || "");
-        setFieldValue(`taxFreeComponent`, data.taxFreeComponent || "");
-        setFieldValue(`currentBalance`, data.currentBalance || "");
-        setFieldValue(`taxableComponent`, data.taxableComponent || "");
-        setFieldValue(`restrictedNonPreserved`, data.restrictedNonPreserved || "");
-        setFieldValue(`unRestrictedNonPreserved`, data.unRestrictedNonPreserved || "");
-        setFieldValue(`preservedAmount`, data.preservedAmount || "");
-      }
+      setFieldValue(`commencementDate`, data.commencementDate || "");
+      setFieldValue(`eligibleServiceDate`, data.eligibleServiceDate || "");
+      setFieldValue(`taxFreeComponent`, data.taxFreeComponent || "");
+      setFieldValue(`taxableComponent`, data.taxableComponent || "");
+      setFieldValue(`currentBalance`, data.currentBalance || "");
+      setFieldValue(`restrictedNonPreserved`, data.restrictedNonPreserved || "");
+      setFieldValue(`unRestrictedNonPreserved`, data.unRestrictedNonPreserved || "");
+      setFieldValue(`preservedAmount`, data.preservedAmount || "");
     }
-
-  };
-
-
-  let DefaultUrl = useRecoilValue(defaultUrl);
+  }
 
   let onSubmit = async (values) => {
-    console.log(values, props.modalObject);
+    console.log(values);
 
 
-    props.setFieldValue(props.modalObject.Input + ".accumulationBenefitsOBJ", values);
+    //you Might need this code later today 10/25/2024
 
-    props.setFieldValue(props.modalObject.Input + ".accumulationBenefits", values.preservedAmount);
+    // const newEntries = [];
+
+    // let loopLength = parseFloat(values.NumberOfMap);
+
+    // // Iterate through each map entry and create a new object
+    // for (let i = 0; i < loopLength; i++) {
+    //   // alert("loop chala")
+    //   const newEntry = {
+    //     commencementDate: values[`commencementDate`] || "",
+    //     eligibleServiceDate: values[`eligibleServiceDate`] || "",
+    //     taxFreeComponent: values[`taxFreeComponent`] || "",
+    //     taxableComponent: values[`taxableComponent`] || "",
+    //     restrictedNonPreserved: values[`restrictedNonPreserved`] || "",
+    //     unRestrictedNonPreserved: values[`unRestrictedNonPreserved`] || "",
+    //     preservedAmount: values[`preservedAmount`] || "",
+    //   };
+    //   newEntries.push(newEntry);
+    // }
+
+    // // Log the new entries to verify
+    // console.log(newEntries);
+
+    // let total = newEntries.reduce(
+    //   (total, entry) => total + entry.taxFreeComponent,
+    //   0
+    // );
+
+    // alert(values.taxFreeComponent);
+
+    props.setFieldValue(
+      `${props.modalObject.key}${props.modalObject.index}`,
+      values
+    );
+    props.setFieldValue(
+      `${props.modalObject.key3}${props.modalObject.index}`,
+      values.taxFreeComponent
+    );
+    // alert(`${props.modalObject.mainKey}${props.modalObject.index}`)
+    props.setFieldValue(
+      `${props.modalObject.mainKey}${props.modalObject.index}`,
+      values.taxFreeComponent
+    );
 
     // Reset the flag state if necessary
     if (props.flagState) {
@@ -111,6 +153,8 @@ const AccumulationBenefits = (props) => {
     }
   }
 
+
+
   return (
     <Formik
       initialValues={initialValues}
@@ -135,7 +179,7 @@ const AccumulationBenefits = (props) => {
                           <th>Member</th>
                           <th>Commencement Date</th>
                           <th>Eligible Service Date</th>
-                          <th>Tax Free component</th>
+                          <th>Tax Free component </th>
                           <th>Current Balance</th>
                           <th>Taxable component </th>
                           <th>Restricted non preserved</th>
@@ -144,8 +188,9 @@ const AccumulationBenefits = (props) => {
                         </tr>
                       </thead>
                       <tbody>
+
                         <tr>
-                          <td className="pt-3">{props.modalObject.SMSFOwner}</td>
+                          <td>{RenderName(props.modalObject.values[`member`][props.modalObject.index])}</td>
                           <td style={{ minWidth: "10rem" }}>
                             <DatePicker
                               className="form-control inputDesignDoubleInput shadow DateInputPadding"
@@ -224,13 +269,9 @@ const AccumulationBenefits = (props) => {
                               type="text"
                               placeholder="Taxable component"
                               id={`taxableComponent`}
-                              disabled
                               name={`taxableComponent`}
                               className="form-control inputDesignDoubleInput"
-                              onChange={(e) => {
-                                setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                FormulaSetting(values, setFieldValue, e.target);
-                              }}
+                              disabled
                             />
                           </td>
                           <td>
@@ -262,17 +303,19 @@ const AccumulationBenefits = (props) => {
                           <td>
                             <Field
                               type="text"
-                              placeholder="Unrestricted non preserved"
+                              placeholder="Preserved amount"
                               id={`preservedAmount`}
-                              disabled
                               name={`preservedAmount`}
                               className="form-control inputDesignDoubleInput"
+                              disabled
                             />
                           </td>
                         </tr>
+
                       </tbody>
                     </Table>
                   </div>
+
                 </div>
               </div>
             </Row>

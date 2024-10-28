@@ -1,10 +1,141 @@
 import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
-import { Row, Table } from "react-bootstrap";
+import { Button, InputGroup, Modal, Row, Table } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
 import { PatchAxios, PostAxios } from "../../Assets/Api/Api";
-import DatePicker from "react-datepicker";;
+import DatePicker from "react-datepicker"; import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
+;
+
+
+
+
+function InnerDirectors(props) {
+
+  let innerinitialValues = { NumberOfDirectors: "" };
+
+  let handleInnerSubmit = (values) => {
+
+    console.log(values);
+
+    let newEntries = [];
+
+    for (let i = 0; i < parseFloat(values.NumberOfDirectors); i++) {
+      const newEntry = {
+        directorName: values[`directorName${i}`] || "",
+      };
+
+      newEntries.push(newEntry);
+    }
+
+    props.setFieldValue("directorsOfCorporateTrustee", newEntries)
+
+    if (props.flagState) {
+      props.setFlagState(false);
+    }
+
+  }
+  let handleInput = (e, setFieldValue, limit) => {
+    const value = e.target.value > limit ? limit : e.target.value;
+    setFieldValue(e.target.id, value);
+  };
+
+  let innerfillInitialValues = (setFieldValue) => {
+
+    console.log(props.modalObject.values, props.modalObject.values[`directorsOfCorporateTrustee`])
+
+    setFieldValue("NumberOfDirectors", props.modalObject.values[`directorsOfCorporateTrustee`].length > 0 ? props.modalObject.values[`directorsOfCorporateTrustee`].length : "")
+
+    let director = props.modalObject.values[`directorsOfCorporateTrustee`] || [];
+
+    director.forEach((element, index) => {
+      setFieldValue("directorName" + index, element.directorName);
+    });
+
+  }
+
+
+  return (<Modal centered size={"md"} backdrop="static" show={props.flagState} onHide={() => props.setFlagState(false)}>
+    <Modal.Header closeButton>
+      <Modal.Title>Directors</Modal.Title>
+    </Modal.Header>
+    <Formik initialValues={innerinitialValues} onSubmit={handleInnerSubmit} enableReinitialize>
+      {({
+        values,
+        setFieldValue,
+        handleChange
+      }) => {
+        useEffect(() => {
+          innerfillInitialValues(setFieldValue);
+        }, []);
+        return <Form>
+          <Modal.Body className="px-4">
+            <div className="col-md-12">
+              <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                <label htmlFor='' className=''>
+                  How many directors does the Corporate Trustee have :
+                </label>
+
+                <div style={{
+                  width: "40%"
+                }}>
+                  <Field type="number" id={`NumberOfDirectors`} name={`NumberOfDirectors`} className="form-control inputDesignDoubleInput" onChange={e => handleInput(e, setFieldValue, 6)} />
+                </div>
+              </div>
+
+
+              <div className="row justify-content-center">
+                {values.NumberOfDirectors && <div className="mt-4">
+                  <Table striped bordered responsive hover>
+                    <thead>
+                      <tr>
+                        <th onClick={() => {
+                          console.log(values);
+                        }}>
+                          No#
+                        </th>
+                        <th>Director Name</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Array.from({
+                        length: values.NumberOfDirectors
+                      }).map((_, index) => <tr key={index}>
+                        <td>
+                          {index + 1}
+                        </td>
+                        <td>
+                          {" "}
+                          <Field type="text" placeholder="Director Name" id={`directorName${index}`} name={`directorName${index}`} className="form-control inputDesignDoubleInput"
+                            onChange={(e) => {
+                              setFieldValue(e.target.name, validateName(e.target.value))
+                            }}
+                          />
+                        </td>
+                      </tr>)}
+                    </tbody>
+                  </Table>
+                </div>}
+              </div>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => {
+              props.setFlagState(false);
+            }}>
+              Close
+            </Button>
+            <Button type='submit' className='btn bgColor modalBtn'>
+              Submit
+            </Button>
+          </Modal.Footer>
+        </Form>;
+      }}
+    </Formik>
+  </Modal>);
+}
+
 
 const FamilyDetails = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
@@ -32,9 +163,20 @@ const FamilyDetails = (props) => {
 
   }; // Use an empty object as default if familyDetails is undefined
 
-  let initialValues = familyDetails[props.modalObject.Input].length
-    ? { NumberOfMap: familyDetails[props.modalObject.Input].length }
-    : { NumberOfMap: "" };
+  let initialValues = {
+    "fundName": "",
+    "ABN": "",
+    "registeredOffice": "",
+    "placeOfBusiness": "",
+    "establishmentDate": "",
+    "trusteeType": "",
+    "directorsOfCorporateTrustee": [],
+    "trusteeName": "",
+    "nameOfAccountant": "",
+    "ACN": "",
+    "bareTrust": "No",
+    "directorsOfBareTrust": {},
+  };
 
   const [dynamicFields, setDynamicFields] = useState([]);
 
@@ -64,15 +206,15 @@ const FamilyDetails = (props) => {
     ) {
       familyDetails[props.modalObject.Input].forEach((data, i) => {
         if (data) {
-          setFieldValue(`trustName${i}`, data.trustName || "");
-          setFieldValue(`trustType${i}`, data.trustType || "");
-          setFieldValue(`ABN${i}`, data.ABN || "");
-          setFieldValue(`Address${i}`, data.Address || "");
-          setFieldValue(`establishmentDate${i}`, data.establishmentDate || "");
-          setFieldValue(`trusteeType${i}`, data.trusteeType || "");
-          setFieldValue(`trusteeName${i}`, data.trusteeName || "");
-          setFieldValue(`noOfAccountant${i}`, data.noOfAccountant || "");
-          setFieldValue(`accountantsFee${i}`, data.accountantsFee || "");
+          setFieldValue(`trustName`, data.trustName || "");
+          setFieldValue(`trustType`, data.trustType || "");
+          setFieldValue(`ABN`, data.ABN || "");
+          setFieldValue(`Address`, data.Address || "");
+          setFieldValue(`establishmentDate`, data.establishmentDate || "");
+          setFieldValue(`trusteeType`, data.trusteeType || "");
+          setFieldValue(`trusteeName`, data.trusteeName || "");
+          setFieldValue(`noOfAccountant`, data.noOfAccountant || "");
+          setFieldValue(`accountantsFee`, data.accountantsFee || "");
         }
       });
     }
@@ -91,30 +233,6 @@ const FamilyDetails = (props) => {
     setDynamicFields(arr);
   };
 
-  let handleInnerModal = (
-    title,
-    question,
-    key,
-    mainKey,
-    key3,
-    editArray,
-    index,
-    values
-  ) => {
-    console.log(values);
-    setModalObject({
-      title,
-      question,
-      key,
-      mainKey,
-      key3,
-      editArray: editArray || [],
-      index,
-      values,
-    });
-    setFlagState(true);
-  };
-
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   let onSubmit = async (values) => {
@@ -127,15 +245,15 @@ const FamilyDetails = (props) => {
     // Iterate through each map entry and create a new object
     for (let i = 0; i < numberOfMaps; i++) {
       const newEntry = {
-        trustName: values[`trustName${i}`] || "",
-        trustType: values[`trustType${i}`] || "",
-        ABN: values[`ABN${i}`] || "",
-        Address: values[`Address${i}`] || "",
-        establishmentDate: values[`establishmentDate${i}`] || "",
-        trusteeType: values[`trusteeType${i}`] || "",
-        trusteeName: values[`trusteeName${i}`] || "",
-        noOfAccountant: values[`noOfAccountant${i}`] || "",
-        accountantsFee: values[`accountantsFee${i}`] || "",
+        trustName: values[`trustName`] || "",
+        trustType: values[`trustType`] || "",
+        ABN: values[`ABN`] || "",
+        Address: values[`Address`] || "",
+        establishmentDate: values[`establishmentDate`] || "",
+        trusteeType: values[`trusteeType`] || "",
+        trusteeName: values[`trusteeName`] || "",
+        noOfAccountant: values[`noOfAccountant`] || "",
+        accountantsFee: values[`accountantsFee`] || "",
       };
       newEntries.push(newEntry);
     }
@@ -197,22 +315,17 @@ const FamilyDetails = (props) => {
   const options = ["Corporate",
     "Individual"
   ];
-  const options2 = [
-    "Pensioner Card ",
-    "Low Income Card ",
-    "Commonwealth Seniors Card",
-  ];
-  const [selectedOptions, setSelectedOptions] = useState([]);
 
-  //   const options2 = [
-  //     { value: 'Pensioner Card', label: 'Pensioner Card' },
-  //     { value: 'Low Income Card', label: 'Low Income Card' },
-  //     { value: 'Commonwealth Seniors Card', label: 'Commonwealth Seniors Card' },
-  //     // Add more options as needed
-  //   ];
-  const handleChange1 = (selected) => {
-    setSelectedOptions(selected);
-  };
+  let handleInnerModal = (title, key, mainKey, values) => {
+    setModalObject({
+      title,
+      key,
+      mainKey,
+      values,
+    })
+    setFlagState(true);
+  }
+
   return (
     <Formik
       initialValues={initialValues}
@@ -231,165 +344,161 @@ const FamilyDetails = (props) => {
 
               <div className="col-md-12">
                 <div className="row justify-content-center">
-                  <div className="col-md-5">
-                    <p className="text-end mt-1">
-                      How many {props.modalObject.title} does{" "}
-                      {nameSet} have:
-                    </p>
-                  </div>
-                  <div className="col-md-2">
-                    <Field
-                      type="number"
-                      id="NumberOfMap"
-                      name="NumberOfMap"
-                      className="form-control inputDesignDoubleInput"
-                      onChange={(e) => handleInput(e, setFieldValue)}
-                    />
-                  </div>
-                  {values.NumberOfMap && (
-                    <div className="mt-4">
-                      <Table striped bordered responsive hover>
-                        <thead>
-                          <tr>
-                            <th
-                              onClick={() => {
-                                console.log(values);
-                              }}
+                  <div className="mt-4">
+                    <Table striped bordered responsive hover>
+                      <thead>
+                        <tr>
+                          <th
+                            onClick={() => {
+                              console.log(values);
+                            }}
+                          >
+                            No#
+                          </th>
+                          <th>Trust Name</th>
+                          <th>Trust Type</th>
+                          <th>ABN</th>
+                          <th>Fund Address</th>
+                          <th>Establishment Date</th>
+                          <th>Trustee Type</th>
+                          <th>Trustee Name</th>
+                          <th>Name of Accountant</th>
+
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr >
+                          <td>1</td>
+                          <td>
+                            {/* <InputGroup className="mb-3">  */}
+                            <Field
+                              type="text"
+                              placeholder="Trust Name"
+                              id={`trustName`}
+                              name={`trustName`}
+                              className="form-control inputDesignDoubleInput"
+                            />
+
+
+                          </td>
+                          <td>
+                            <Field
+                              as="select"
+                              placeholder="Trustee Type"
+                              id={`trustType`}
+                              name={`trustType`}
+                              className="form-select inputDesignDoubleInput"
                             >
-                              No#
-                            </th>
-                            <th>Trust Name</th>
-                            <th>Trust Type</th>
-                            <th>ABN</th>
-                            <th>Fund Address</th>
-                            <th>Establishment Date</th>
-                            <th>Trustee Type</th>
-                            <th>Trustee Name</th>
-                            <th>Name of Accountant</th>
-                            <th>Accountant Fees </th>
+                              <option value={""}>Please Select</option>
+                              <option value={"Discretionary"}>Discretionary</option>
+                              <option value={"Other"}>Other</option>
+                            </Field>
 
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {dynamicFields.map((elem, i) => {
-                            return (
-                              <tr key={i}>
-                                <td>{1 + i}</td>
-                                <td>
-                                  {/* <InputGroup className="mb-3">  */}
-                                  <Field
-                                    type="text"
-                                    placeholder="Trust Name"
-                                    id={`trustName${i}`}
-                                    name={`trustName${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
+                          </td>
+                          <td>
+                            <Field
+                              type="number"
+                              placeholder="ABN"
+                              id={`ABN`}
+                              name={`ABN`}
+                              className="form-control inputDesignDoubleInput"
+                            />
+                          </td>
+                          <td>
+                            <Field
+                              type="text"
+                              placeholder="Address"
+                              id={`Address`}
+                              name={`Address`}
+                              className="form-control inputDesignDoubleInput"
+                            />
+                          </td>
+                          <td>
+                            <DatePicker
+                              className="form-control inputDesignDoubleInput shadow DateInputPadding"
+                              showIcon
+                              id={`establishmentDate`}
+                              name={`establishmentDate`}
+                              selected={values[`establishmentDate`]}
+                              onChange={(date) =>
+                                setFieldValue(
+                                  `establishmentDate`,
+                                  date
+                                )
+                              }
+                              dateFormat="dd/MM/yyyy"
+                              placeholderText="dd/mm/yyyy"
+                              maxDate={new Date()}
+                              showMonthDropdown
+                              showYearDropdown
+                              dropdownMode="select"
+                              onBlur={handleBlur}
+                              wrapperClassName="w-100"
+                            />
+                          </td>
+                          <td>
+                            <InputGroup className="mb-3" style={{ minWidth: "150px" }}>
+                              <Field
+                                as="select"
+                                placeholder="Trustee Type"
+                                id={`trusteeType`}
+                                name={`trusteeType`}
+                                className={`form-select inputDesignDoubleInput ${values[`trusteeType`] === "Corporate" ? "no-right-radius" : ""}`}
+                              >
+                                <option value={""}>Please Select</option>
+                                {options.map((elem, index) => {
+                                  return (
+                                    <option key={index} value={elem}>
+                                      {elem}
+                                    </option>
+                                  );
+                                })}
+                              </Field>
 
+                              {values[`trusteeType`] === "Corporate" && (
+                                <Button
+                                  className="btn bgColor modalBtn border-0"
+                                  id="button-addon2"
+                                  onClick={() =>
+                                    handleInnerModal(
+                                      "Business as Trusts",
+                                      "directorsOfCorporateTrustee",
+                                      "directorsOfCorporateTrustee",
+                                      values,
+                                    )
+                                  }
+                                >
+                                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                </Button>
+                              )}
 
-                                </td>
-                                <td>
-                                  <Field
-                                    type="text"
-                                    placeholder="Trust Type"
-                                    id={`trustType${i}`}
-                                    name={`trustType${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
+                            </InputGroup>
+                          </td>
+                          <td>
+                            <Field
+                              type="text"
+                              placeholder="Trustee Name  "
+                              id={`trusteeName`}
+                              name={`trusteeName`}
+                              className="form-control inputDesignDoubleInput"
+                            />
+                          </td>
+                          <td>
+                            <Field
+                              type="text"
+                              placeholder="Number of Accountants Name  "
+                              id={`noOfAccountant`}
+                              name={`noOfAccountant`}
+                              className="form-control inputDesignDoubleInput"
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </Table>
 
-                                </td>
-                                <td>
-                                  <Field
-                                    type="number"
-                                    placeholder="ABN"
-                                    id={`ABN${i}`}
-                                    name={`ABN${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="text"
-                                    placeholder="Address"
-                                    id={`Address${i}`}
-                                    name={`Address${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                                <td>
-                                  <DatePicker
-                                    className="form-control inputDesignDoubleInput shadow DateInputPadding"
-                                    showIcon
-                                    id={`establishmentDate${i}`}
-                                    name={`establishmentDate${i}`}
-                                    selected={values[`establishmentDate${i}`]}
-                                    onChange={(date) =>
-                                      setFieldValue(
-                                        `establishmentDate${i}`,
-                                        date
-                                      )
-                                    }
-                                    dateFormat="dd/MM/yyyy"
-                                    placeholderText="dd/mm/yyyy"
-                                    maxDate={new Date()}
-                                    showMonthDropdown
-                                    showYearDropdown
-                                    dropdownMode="select"
-                                    onBlur={handleBlur}
-                                    wrapperClassName="w-100"
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    as="select"
-                                    placeholder="Trustee Type"
-                                    id={`trusteeType${i}`}
-                                    name={`trusteeType${i}`}
-                                    className="form-select inputDesignDoubleInput"
-                                  >
-                                    <option value={""}>Please Select</option>
-                                    {options.map((elem, index) => {
-                                      return (
-                                        <option key={index} value={elem}>
-                                          {elem}
-                                        </option>
-                                      );
-                                    })}
-                                  </Field>
-                                </td>
-                                <td>
-                                  <Field
-                                    type="text"
-                                    placeholder="Trustee Name  "
-                                    id={`trusteeName${i}`}
-                                    name={`trusteeName${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="text"
-                                    placeholder="Number of Accountants Name  "
-                                    id={`noOfAccountant${i}`}
-                                    name={`noOfAccountant${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="number"
-                                    placeholder="Accountants Fees"
-                                    id={`accountantsFee${i}`}
-                                    name={`accountantsFee${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </Table>
-                    </div>
-                  )}
+                    <InnerDirectors setFieldValue={setFieldValue} flagState={flagState} setFlagState={setFlagState} modalObject={modalObject}></InnerDirectors>
+
+                  </div>
                 </div>
               </div>
             </Row>

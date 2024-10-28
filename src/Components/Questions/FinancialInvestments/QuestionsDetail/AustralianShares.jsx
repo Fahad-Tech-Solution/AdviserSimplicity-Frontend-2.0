@@ -10,7 +10,7 @@ import { Pagination } from 'antd';
 const AustralianShares = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
-    
+
     const [title, setTitle] = useState(() => {
         // let head = props.modalObject.title;
         let currentTitle = props.modalObject.title;
@@ -102,8 +102,15 @@ const AustralianShares = (props) => {
             setFieldValue(e.target.id, a);
 
             if (!regex.test(a)) {
-                // clearFields(setFieldValue, i);
+
+                if (!input.className.includes("is-invalid")) {
+
+                    input.className = input.className + " is-invalid "
+                }
                 return false;
+            }
+            else {
+                input.className = input.className.replace(" is-invalid ", "")
             }
 
             const settings = {
@@ -230,8 +237,11 @@ const AustralianShares = (props) => {
                                 className="form-control inputDesignDoubleInput"
                                 onChange={(e) => handleChange(e, setFieldValue, i)}
                             />
+                            <div class="invalid-feedback">
+                                ASX Code is Incorrect it should end with .AX
+                            </div>
                         </td>
-                        <td>
+                        <td style={{minWidth:"20rem"}}>
                             <Field
                                 type="text"
                                 placeholder="Company Name"
@@ -326,7 +336,7 @@ const AustralianShares = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                                         <p className='text-end mt-3'>
-                                            How many {title} does {nameSet} have:
+                                            How many {title} does {nameSet} have :
                                         </p>
                                         <div style={{ width: "15%" }}>
                                             <Field

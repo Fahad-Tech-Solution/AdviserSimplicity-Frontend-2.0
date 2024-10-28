@@ -50,7 +50,15 @@ const BankTermForm = (props) => {
     };
 
     let handleInput = (e, setFieldValue) => {
-        const value = e.target.value > 10 ? 10 : e.target.value;
+
+        let value = 0;
+        if (title === "SMSF Bank Accounts Detail") {
+            value = e.target.value > 5 ? 5 : e.target.value;
+        }
+        else {
+            value = e.target.value > 10 ? 10 : e.target.value;
+        }
+
         setFieldValue(e.target.id, value);
     };
 
@@ -116,7 +124,7 @@ const BankTermForm = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                                         <p className='text-end mt-3'>
-                                            How many {title} does {nameSet} have:
+                                            How many {title} does {nameSet} have :
                                         </p>
 
                                         <div className='w-25'>
@@ -145,7 +153,7 @@ const BankTermForm = (props) => {
                                                     {Array.from({ length: values.NumberOfMap }).map((_, i) => (
                                                         <tr key={i}>
                                                             <td>{1 + i}</td>
-                                                            <td>
+                                                            <td style={{width:"20rem"}}>
                                                                 <Field
                                                                     as="select"
                                                                     placeholder="Name of Institution"

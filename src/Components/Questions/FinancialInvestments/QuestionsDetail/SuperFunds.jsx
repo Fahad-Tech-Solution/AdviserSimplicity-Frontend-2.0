@@ -20,6 +20,7 @@ const SuperFunds = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
     let bankDetailObj = useRecoilValue(BankDetail);
+    let [ShowError, setShowError] = useState({});
 
     let [nameSet] = useState(() => {
         if (props.modalObject.Input === "client") {
@@ -70,8 +71,10 @@ const SuperFunds = (props) => {
             // alert(FoundArray.length)
             FoundArray.forEach((data, i) => {
                 if (data) {
-                    setFieldValue(`fundName${i}`, data.fundName || '');
+                    setFieldValue(`platformName${i}`, data.platformName || '');
                     setFieldValue(`memberNumber${i}`, data.memberNumber || '');
+                    setFieldValue(`portfolioArray${i}`, data.portfolioArray || '');
+                    setFieldValue(`portfolioValue${i}`, data.portfolioValue || '');
                     setFieldValue(`balanceBenefitDetails${i}`, data.balanceBenefitDetails || '');
                     setFieldValue(`balanceBenefitDetailsArray${i}`, data.balanceBenefitDetailsArray || '');
                     setFieldValue(`groupInsurance${i}`, data.groupInsurance || '');
@@ -100,7 +103,7 @@ const SuperFunds = (props) => {
 
     };
 
-    let handleInnerModal = (title, question, key, mainKey, key3, editArray, index, values) => {
+    let handleInnerModal = (title, question, key, mainKey, key3, editArray, index, values, Platform) => {
         console.log(values);
         let ParentModal = props.modalObject.title
         setModalObject({
@@ -112,7 +115,8 @@ const SuperFunds = (props) => {
             editArray: editArray || [],
             index,
             values,
-            ParentModal
+            ParentModal,
+            Platform
         })
         setFlagState(true);
     }
@@ -130,8 +134,10 @@ const SuperFunds = (props) => {
         // Iterate through each map entry and create a new object
         for (let i = 0; i < numberOfMaps; i++) {
             const newEntry = {
-                fundName: values[`fundName${i}`] || "",
+                platformName: values[`platformName${i}`] || "",
                 memberNumber: values[`memberNumber${i}`] || "",
+                portfolioArray: values[`portfolioArray${i}`] || "",
+                portfolioValue: values[`portfolioValue${i}`] || "",
                 balanceBenefitDetails: values[`balanceBenefitDetails${i}`] || "",
                 balanceBenefitDetailsArray: values[`balanceBenefitDetailsArray${i}`] || "",
                 groupInsurance: values[`groupInsurance${i}`] || "",
@@ -172,6 +178,35 @@ const SuperFunds = (props) => {
     };
 
 
+    let CheckInputValue = (values, setFieldValue, currentInput, index) => {
+        // console.log(values, setFieldValue, currentInput);
+
+
+        let portfolioArray = values[`portfolioArray${index}`];
+
+        let ExpectedSum = portfolioArray.reduce((total, entry) => total + parseFloat((entry.investmentValue).replace(/[^0-9.-]+/g, "")), 0);
+        let data = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, ""));
+
+        console.log(ExpectedSum, data, currentInput.name, ShowError)
+
+        if (ExpectedSum !== data) {
+            setShowError(prevState => ({
+                ...prevState,
+                [`${currentInput.name}Error`]: true,
+                [`${currentInput.name}Message`]: "Total must be equal to the sum of all Investment value filled in the popup. The sum is " + toCommaAndDollar(ExpectedSum),
+            }));
+        }
+        else {
+            setShowError(prevState => ({
+                ...prevState,
+                [`${currentInput.name}Error`]: false,
+                [`${currentInput.name}Message`]: "",
+            }));
+        }
+
+
+    }
+
     return (
         <Formik
             initialValues={initialValues}
@@ -200,7 +235,7 @@ const SuperFunds = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                                         <p className='text-end mt-3'>
-                                            How many Super Funds does {nameSet} have:
+                                            How many Super Funds does {nameSet} have :
                                         </p>
 
                                         <div style={{ width: "8%" }}>
@@ -223,6 +258,7 @@ const SuperFunds = (props) => {
                                                         <th onClick={() => { console.log(values) }}>No#</th>
                                                         <th>Fund Name</th>
                                                         <th>Member Number</th>
+                                                        <th>PlatForm</th>
                                                         <th>Balance &nbsp;
                                                             <Tooltip placement="top" title={"Enter in the Underlying investments, Tax and Preserved Components by clicking into onto the green option"}>
                                                                 <FaCircleQuestion style={{ fontSize: '18px', cursor: 'pointer' }} />
@@ -240,26 +276,26 @@ const SuperFunds = (props) => {
                                                         return (<tr key={i}>
                                                             <td>{1 + i}</td>
                                                             <td>
-                                                                {
-                                                                    // (typeof bankDetailObj === "object" && bankDetailObj !== null) ? (
-                                                                    //     <span>bankDetailObj is an object.</span>
-                                                                    // ) : (Array.isArray(bankDetailObj)) ? (
-                                                                    //     <span>bankDetailObj is an array.</span>
-                                                                    // ) : (
-                                                                    //     <span>bankDetailObj is not an object or array.</span>
-                                                                    // )
-                                                                }
 
                                                                 <Field
                                                                     as="select"
                                                                     placeholder="Platform Name"
-                                                                    id={`fundName${i}`}
-                                                                    name={`fundName${i}`}
+                                                                    id={`platformName${i}`}
+                                                                    name={`platformName${i}`}
                                                                     className="form-select inputDesignDoubleInput"
                                                                 >
                                                                     <option value={""}>Please Select</option>
-
-
+                                                                    {
+                                                                        bankDetailObj?.SuperannuationFunds && bankDetailObj.SuperannuationFunds.length > 0 ? (
+                                                                            bankDetailObj.SuperannuationFunds.map((elem, index) => (
+                                                                                <option key={index} value={elem._id}>
+                                                                                    {elem.platformName}
+                                                                                </option>
+                                                                            ))
+                                                                        ) : (
+                                                                            <option disabled>No Platforms Added in Super Annuation Funds</option>
+                                                                        )
+                                                                    }
                                                                 </Field>
                                                             </td>
                                                             <td>
@@ -270,6 +306,77 @@ const SuperFunds = (props) => {
                                                                     name={`memberNumber${i}`}
                                                                     className="form-control inputDesignDoubleInput"
                                                                 />
+                                                            </td>
+                                                            <td>
+                                                                <InputGroup className={`mb-3 ${ShowError[`portfolioValue${i}Error`] === true ? "is-invalid" : ""}`}>
+                                                                    <Field
+                                                                        type="text"
+                                                                        placeholder="Portfolio Value"
+                                                                        id={`portfolioValue${i}`}
+                                                                        name={`portfolioValue${i}`}
+                                                                        className={`form-control inputDesignDoubleInput ${ShowError[`portfolioValue${i}Error`] === true ? "is-invalid" : ""}`}
+                                                                        onChange={(e) => {
+                                                                            setFieldValue(e.target.name,
+                                                                                toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
+                                                                            CheckInputValue(values, setFieldValue, e.target, i)
+                                                                        }}
+                                                                    />
+                                                                    <Button
+                                                                        className="btn bgColor modalBtn border-0"
+                                                                        id="button-addon2"
+                                                                        onClick={() => {
+                                                                            const platformKey = `platformName${i}`;
+                                                                            const selectedPlatformId = values[platformKey];
+
+                                                                            // Check if a platform name is selected
+                                                                            if (!selectedPlatformId) {
+                                                                                openNotificationSuccess(
+                                                                                    "error",
+                                                                                    "topRight",
+                                                                                    "Error Notification",
+                                                                                    "Please! Select Platform Name First"
+                                                                                );
+                                                                                return;
+                                                                            }
+
+                                                                            // Define platform name and object set
+                                                                            let name = "";
+                                                                            const platforms = bankDetailObj?.SuperannuationFunds;
+
+                                                                            // Find the platform name
+                                                                            const SelectedPlatform = platforms?.find((elem) => elem._id === selectedPlatformId);
+
+                                                                            if (SelectedPlatform) {
+                                                                                name = SelectedPlatform.platformName;
+
+                                                                                // Call handleInnerModal with the platform name and relevant values
+                                                                                handleInnerModal(
+                                                                                    `${name}_Portfolio Value`,
+                                                                                    `How many Underlying Investments does ${nameSet} have :`,
+                                                                                    "portfolioArray",
+                                                                                    "portfolioValue",
+                                                                                    "totalPortfolioCost",
+                                                                                    values[`portfolioArray${i}`],
+                                                                                    i,
+                                                                                    values,
+                                                                                    SelectedPlatform
+                                                                                );
+                                                                            } else {
+                                                                                openNotificationSuccess(
+                                                                                    "error",
+                                                                                    "topRight",
+                                                                                    "Error Notification",
+                                                                                    "Selected Fund Name not found."
+                                                                                );
+                                                                            }
+                                                                        }}
+                                                                    >
+                                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                                    </Button>
+                                                                </InputGroup>
+                                                                <div class="invalid-feedback">
+                                                                    {ShowError[`portfolioValue${i}Message`]}
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <InputGroup className="mb-3">
@@ -285,25 +392,12 @@ const SuperFunds = (props) => {
                                                                         }}
                                                                     />
                                                                     <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
-                                                                        // if (values[`fundName${i}`]) {
                                                                         let name = RenderName(props.modalObject.Input);
-                                                                        //     bankDetailObj.map((elem, index) => {
-
-                                                                        //         if (elem._id === values[`fundName${i}`]) {
-                                                                        //             name = elem.platformName
-                                                                        //         }
-
-                                                                        //     });
-
                                                                         handleInnerModal(name + "_Balance & Benefit Details",
                                                                             `How many Benefit Details and Components do ${nameSet} have ?`,
                                                                             "balanceBenefitDetailsArray", "balanceBenefitDetails", "",
                                                                             values[`balanceBenefitDetailsArray${i}`], i, values)
-                                                                        // }
-                                                                        // else {
-                                                                        //     // type, placement, message, description
-                                                                        //     openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
-                                                                        // }
+
                                                                     }}>
                                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                     </Button>
@@ -323,7 +417,7 @@ const SuperFunds = (props) => {
                                                                             //         }
 
                                                                             //     });
-                                                                            handleInnerModal(name + "_Insurances", `How many Group Insurance ${nameSet} have?`, "groupInsuranceArray", "", "", values[`groupInsuranceArray${i}`], i, values)
+                                                                            handleInnerModal(name + "_Insurances", `How many Group Insurance ${nameSet} have :`, "groupInsuranceArray", "", "", values[`groupInsuranceArray${i}`], i, values)
 
                                                                             // }
                                                                             // else {
@@ -369,7 +463,7 @@ const SuperFunds = (props) => {
                                                                     {values[`nominatedBeneficiaries${i}`] === "Yes" &&
                                                                         <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
                                                                             // if (values[`fundName${i}`]) {
-                                                                                let name = RenderName(props.modalObject.Input);
+                                                                            let name = RenderName(props.modalObject.Input);
                                                                             //     bankDetailObj.map((elem, index) => {
 
                                                                             //         if (elem._id === values[`fundName${i}`]) {
@@ -378,7 +472,7 @@ const SuperFunds = (props) => {
 
                                                                             //     });
 
-                                                                                handleInnerModal(name + "_Beneficiaries", `How many beneficiaries do ${nameSet} have?`, "beneficiariesArray", "", "", values[`beneficiariesArray${i}`], i)
+                                                                            handleInnerModal(name + "_Beneficiaries", `How many beneficiaries do ${nameSet} have :`, "beneficiariesArray", "", "", values[`beneficiariesArray${i}`], i)
                                                                             // }
                                                                             // else {
                                                                             //     // type, placement, message, description

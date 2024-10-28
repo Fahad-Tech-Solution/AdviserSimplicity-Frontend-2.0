@@ -193,13 +193,7 @@ const EstatePlanningWill = (props) => {
                 }
             </React.Fragment>
         )
-
-
     }
-
-
-
-
 
     const options = (UserStatus !== "Single") ? [
         { value: "client", label: RenderName("client") },

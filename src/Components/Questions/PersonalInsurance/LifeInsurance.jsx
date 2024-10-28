@@ -1,7 +1,7 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { defaultUrl, QuestionDetail } from "../../../Store/Store";
+import { BankDetail, defaultUrl, QuestionDetail } from "../../../Store/Store";
 import { openNotificationSuccess, PatchAxios, PostAxios, RenderName, toCommaAndDollar } from "../../Assets/Api/Api";
 import { Button, InputGroup, Modal, Table } from "react-bootstrap";
 import DatePicker from "react-datepicker";
@@ -18,6 +18,7 @@ const PersonalInsuranceLife = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
   let DefaultUrl = useRecoilValue(defaultUrl);
+  let bankDetailObj = useRecoilValue(BankDetail);
 
   let [UserStatus] = useState(localStorage.getItem('UserStatus'));
 
@@ -327,7 +328,7 @@ const PersonalInsuranceLife = (props) => {
 
               <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                 <label htmlFor='' className=''>
-                  How many {props.modalObject.title} does {RenderName("client")} {UserStatus === "Married" && `and ${RenderName("partner")}`}  have:
+                  How many {props.modalObject.title} does {RenderName("client")} {UserStatus === "Married" && `and ${RenderName("partner")}`}  have :
                 </label>
 
                 <div style={{ width: "10%" }} >
@@ -405,16 +406,17 @@ const PersonalInsuranceLife = (props) => {
                                   className="form-select inputDesignDoubleInput"
                                 >
                                   <option value={""}>Select</option>
-                                  <option value={"AIA"}>AIA</option>
-                                  <option value={"Clearview"}>Clearview</option>
-                                  <option value={"Encompass"}>Encompass</option>
-                                  <option value={"MLC"}>MLC</option>
-                                  <option value={"Metlife"}>Metlife</option>
-                                  <option value={"NEOS"}>NEOS</option>
-                                  <option value={"One Path"}>One Path</option>
-                                  <option value={"PPS Mutual"}>PPS Mutual</option>
-                                  <option value={"TAL"}>TAL</option>
-                                  <option value={"Zurich"}>Zurich</option>
+                                  {
+                                    bankDetailObj?.PersonalInsurances && bankDetailObj.PersonalInsurances.length > 0 ? (
+                                      bankDetailObj.PersonalInsurances.map((elem, index) => (
+                                        <option key={index} value={elem._id}>
+                                          {elem.platformName}
+                                        </option>
+                                      ))
+                                    ) : (
+                                      <option disabled>No Platforms Added in Personal Insurances</option>
+                                    )
+                                  }
                                 </Field>
                               </td>
                               <td>
@@ -486,7 +488,7 @@ const PersonalInsuranceLife = (props) => {
                                         let name = ((values[`lifeInsured${i}`] === undefined) || (values[`lifeInsured${i}`] === null) || (values[`lifeInsured${i}`] === null)) ? RenderName("client")
                                           : values[`lifeInsured${i}`] === "client+partner" ? RenderName("client") + " & " + RenderName("partner") : RenderName(values[`lifeInsured${i}`])
 
-                                        handleInnerModal(name + "_Sum Insured", `How many Policies do ${name} have?`, `sumInsured`, values, values[`sumInsured${i}`], i)
+                                        handleInnerModal(name + "_Sum Insured", `How many Policies do ${name} have :`, `sumInsured`, values, values[`sumInsured${i}`], i)
                                       }}>
                                       <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                     </Button>
@@ -540,7 +542,7 @@ const PersonalInsuranceLife = (props) => {
                                       let name = ((values[`lifeInsured${i}`] === undefined) || (values[`lifeInsured${i}`] === null) || (values[`lifeInsured${i}`] === null)) ? RenderName("client")
                                         : values[`lifeInsured${i}`] === "client+partner" ? RenderName("client") + " & " + RenderName("partner") : RenderName(values[`lifeInsured${i}`]);
 
-                                      handleInnerModal(name + "_Beneficiaries", `How many beneficiaries do ${name} have?`, `beneficiariesArray`, values, values[`beneficiariesArray${i}`], i, "ParentModal")
+                                      handleInnerModal(name + "_Beneficiaries", `How many beneficiaries do ${name} have :`, `beneficiariesArray`, values, values[`beneficiariesArray${i}`], i, "ParentModal")
 
                                     }}>
                                     <FontAwesomeIcon icon={faArrowUpRightFromSquare} />

@@ -26,6 +26,33 @@ const SampleOne = (props) => {
                 totalValueKey: "partner"
             }
         ],
+        "SMSFInvestmentProperties": [
+            {
+                title: "Total  Market Value",
+                key: "SMSFInvestmentProperties",
+                defaultSetting: "2innerValues",
+                totalValueKey: "client"
+            },
+            {
+                title: "Total Loans",
+                key: "SMSFInvestmentProperties",
+                defaultSetting: "2innerValues",
+                totalValueKey: "partner"
+            }],
+        "familyInvestmentProperties": [
+            {
+                title: "Total  Market Value",
+                key: "familyInvestmentProperties",
+                defaultSetting: "2innerValues",
+                totalValueKey: "client"
+            },
+            {
+                title: "Total Loans",
+                key: "familyInvestmentProperties",
+                defaultSetting: "2innerValues",
+                totalValueKey: "partner"
+            }
+        ]
     };
 
 
@@ -39,8 +66,6 @@ const SampleOne = (props) => {
                 {sets[elem.key].map((setsElem, setsIndex) => {
 
                     let totalValueKey = setsElem.totalValueKey || "client";
-
-                    let defaultSetting = setsElem.defaultSetting || "";
 
                     return (
                         <React.Fragment>
@@ -59,7 +84,7 @@ const SampleOne = (props) => {
 
                                                     let Firstargument = setsElem.defaultSetting === "2innerValues" ? elem.title : setsElem.title;
 
-                                                    OpenModal(Firstargument, "client")
+                                                    OpenModal(Firstargument, "client", setsElem.key)
                                                 }}
                                             >
                                                 <div>

@@ -122,92 +122,47 @@ const OfferFom = (props) => {
 
 
     let onSubmit = async (values) => {
-
-        let haveData = props.modalObject.oppration === "edit" ? true : false;
-
-        let ApiChali = ""
         let res;
+        let ApiChali = "";
+        const isEditMode = props.modalObject.oppration === "edit";
+        const isCSVUpload = props.modalObject.oppration === "CSV";
 
-        console.log(haveData, bankDetailObj, "ma kea karo", props.modalObject.fullBank.arrayOfOffers[props.modalObject.index])
-
-        values.platformFK = props.modalObject.fullBank._id
-        console.log(values, "all Values")
+        // Set the platform foreign key
+        values.platformFK = props.modalObject.fullBank._id;
 
         try {
-
-            if (!haveData) {
-
-                if (props.modalObject.oppration === "CSV") {
-
+            if (!isEditMode) {
+                if (isCSVUpload) {
                     const formData = new FormData();
                     formData.append("file", fileList[0]);
                     formData.append("platformFK", props.modalObject.fullBank._id);
 
-
-                    res = await PostAxios(
-                        `${DefaultUrl}/api/investmentCSV/upload`,
-                        formData
-                    );
-                    ApiChali = "CSV Post"
-
+                    // CSV upload operation
+                    res = await PostAxios(`${DefaultUrl}/api/investmentCSV/upload`, formData);
+                    ApiChali = "CSV Post";
                 } else {
-                    res = await PostAxios(
-                        `${DefaultUrl}/api/investmentoffer/Add`,
-                        values
-                    );
-                    ApiChali = "Post"
+                    // Add new investment offer
+                    res = await PostAxios(`${DefaultUrl}/api/investmentoffer/Add`, values);
+                    ApiChali = "Post";
                 }
-
-
-
             } else {
+                // Update an existing offer
                 values._id = props.modalObject.fullBank.arrayOfOffers[props.modalObject.index]._id;
-
-                console.log(values)
-
-                res = await PatchAxios(
-                    `${DefaultUrl}/api/investmentoffer/Update`,
-                    values
-                );
-                ApiChali = "patch"
+                res = await PatchAxios(`${DefaultUrl}/api/investmentoffer/Update`, values);
+                ApiChali = "Patch";
             }
 
-
-
             if (res) {
-                console.log(res);
-                let Obj;
-                if (ApiChali === "Post") {
-                    let index = bankDetailObj.findIndex(
-                        (item) => item._id === props.modalObject.fullBank._id
-                    );
 
-                    Obj = JSON.parse(JSON.stringify(bankDetailObj));
+                fetchData();
 
-                    Obj[index].arrayOfOffers.push(res);
-
-                    setBankDetailObj(Obj);
-
-                }
-                else if (ApiChali === "CSV Post") {
-                    // alert("kuch karo")
-
-
-                    fetchData();
-                }
-                else {
-                    let index = bankDetailObj.findIndex(
-                        (item) => item._id === props.modalObject.fullBank._id
-                    );
-
-                    Obj = JSON.parse(JSON.stringify(bankDetailObj));
-
-                    Obj[index].arrayOfOffers[props.modalObject.index] = res;
-
-                    setBankDetailObj(Obj);
-
-                }
-
+                // Success notification
+                openNotificationSuccess(
+                    "success",
+                    "topRight",
+                    "Investment Notification",
+                    `Investment is ${ApiChali === "Post" ? "Added" : "Updated"} successfully`
+                );
             }
 
             // Reset the flag state if necessary
@@ -215,48 +170,30 @@ const OfferFom = (props) => {
                 props.setFlagState(false);
             }
 
-            let type = "success";
-            let placement = "topRight"
-            let message = "Investment Notification"
-            let description = res.message ? res.message : "Investment is Added successfull";
-            openNotificationSuccess(type, placement, message, description)
-
-
-
         } catch (error) {
-            console.log("error aya:", error?.response?.status, error?.response?.data);
-            if (error?.response?.status == 400) {
-                let type = "error";
-                let placement = "topRight"
-                let message = "Error Notification"
-                let description = error.response.data
-                openNotificationSuccess(type, placement, message, description)
-            }
-            else {
-                let type = "error";
-                let placement = "topRight"
-                let message = "Error Notification"
-                let description = "Some thing went wrong Please try again later"
-                openNotificationSuccess(type, placement, message, description)
-            }
+            const errorMessage = error?.response?.status === 400
+                ? error?.response?.data
+                : "Something went wrong. Please try again later.";
 
+            // Error notification
+            openNotificationSuccess("error", "topRight", "Error Notification", errorMessage);
+
+            console.error("Error occurred:", error);
         }
-
-
     };
 
-
+    // Fetch fresh data after CSV upload
     async function fetchData() {
         try {
             const res = await GetAxios(`${DefaultUrl}/api/investmentoffer/`);
             if (res) {
-                console.log(JSON.stringify(res))
-                setBankDetailObj(res)
+                setBankDetailObj(res); // Update bankDetailObj with new data
             }
         } catch (error) {
-            console.error("Error fetching questions:", error);
+            console.error("Error fetching data:", error);
         }
     }
+
 
 
     return (
@@ -288,8 +225,8 @@ const OfferFom = (props) => {
                                         <div className='col-md-6 pt-2'>
                                             <label htmlFor='investmentName' className='form-label'>Investment Name</label>
                                         </div>
-                                        <div className='col-md-4'>
-                                            <Field type="text" name="investmentName" id="investmentName" className="form-control inputDesign" />
+                                        <div className='col-md-6'>
+                                            <Field type="text" name="investmentName" id="investmentName" className="form-control inputDesignDoubleInput" />
                                             <ErrorMessage name='investmentName' component={"div"} className='text-danger' />
                                         </div>
                                     </div>
@@ -297,8 +234,8 @@ const OfferFom = (props) => {
                                         <div className='col-md-6 pt-2'>
                                             <label htmlFor='investmentCode' className='form-label'>Investment Code</label>
                                         </div>
-                                        <div className='col-md-4'>
-                                            <Field type="text" name="investmentCode" id="investmentCode" className="form-control inputDesign" />
+                                        <div className='col-md-6'>
+                                            <Field type="text" name="investmentCode" id="investmentCode" className="form-control inputDesignDoubleInput" />
                                             <ErrorMessage name='investmentCode' component={"div"} className='text-danger' />
                                         </div>
                                     </div>

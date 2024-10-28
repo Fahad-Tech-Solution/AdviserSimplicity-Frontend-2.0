@@ -197,7 +197,7 @@ const EstatePlanningWill = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='col-md-5'>
                                         <p className='text-end mt-1'>
-                                            How many {props.modalObject.title} does {nameSet} have:
+                                            How many {props.modalObject.title} does {nameSet} have :
                                         </p>
                                     </div>
                                     <div className='col-md-2'>

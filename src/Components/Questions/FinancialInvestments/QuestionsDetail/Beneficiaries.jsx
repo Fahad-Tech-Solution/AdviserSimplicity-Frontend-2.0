@@ -180,7 +180,7 @@ const Beneficiaries = (props) => {
                                                                                     setFieldValue(`nominationType${innerIndex}`, e.target.value);
                                                                                     setFieldValue(`beneficiaryName${innerIndex}`, "N/A");
                                                                                     setFieldValue(`relationshipStatus${innerIndex}`, "N/A");
-                                                                                    setFieldValue(`shareBenefit${innerIndex}`, "100.00%");
+                                                                                    setFieldValue(`shareBenefit${innerIndex}`, "");
                                                                                     setAutoClearValue(true);
                                                                                 }
                                                                             }
@@ -298,7 +298,7 @@ const Beneficiaries = (props) => {
                                                                         id={`shareBenefit${i}`}
                                                                         name={`shareBenefit${i}`}
                                                                         className="form-control inputDesignDoubleInput"
-                                                                        disabled={(values[`nominationType${i}`] == "Legal Personal Representative (Your Estate)") || (values[`nominationType${i}`] == "Reversionary Beneficiary")}
+                                                                        disabled={(values[`nominationType${i}`] == "Reversionary Beneficiary")}
                                                                         onChange={(e) => handleInputChange(e, setFieldValue, FormulaSetting, values)}
                                                                         onFocus={(e) => handleInputFocus(e, setFieldValue)}
                                                                         onKeyDown={(e) => handleInputKeyDown(e)}

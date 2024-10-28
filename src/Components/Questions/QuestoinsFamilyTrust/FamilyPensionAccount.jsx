@@ -235,7 +235,7 @@ const FamilyPensionAccount = (props) => {
                   <div className="col-md-5">
                     <p className="text-end mt-1">
                       How many {props.modalObject.title} does{" "}
-                      {props.modalObject.Input} have:
+                      {props.modalObject.Input} have :
                     </p>
                   </div>
                   <div className="col-md-2">
@@ -365,7 +365,7 @@ const FamilyPensionAccount = (props) => {
                                           onClick={() => {
                                             handleInnerModal(
                                               "Beneficiaries",
-                                              "How many beneficiaries do you have?",
+                                              "How many beneficiaries do you have :",
                                               "beneficiariesArray",
                                               "",
                                               "",

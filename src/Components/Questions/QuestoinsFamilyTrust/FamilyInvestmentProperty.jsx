@@ -2,169 +2,208 @@ import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react'
 import { Card } from 'react-bootstrap';
-import { CRState, QuestionDetail, QuestionShift } from '../../../Store/Store';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { CRState, QuestionDetail } from '../../../Store/Store';
+import { useRecoilValue } from 'recoil';
 
+import will from "../svgs/page-with-curl-svgrepo-com.svg";
+import investmentCircle from "../svgs/investmentCircle.png";
+import { toCommaAndDollar } from '../../Assets/Api/Api';
 
-import loan from "../svgs/loan.svg";
-import Questions_Home from "../svgs/building-small-svgrepo-com.svg";
-
-import property from "../svgs/property-value.svg";
-import rent from "../svgs/rent.svg";
 
 const FamilyInvestmentProperty = (props) => {
-    let { OpenModal, arrayCount, jointClass, PartnerClass } = props;
+    let { OpenModal, arrayCount, jointClass, PartnerClass, elem, index, OpenReuseModal } = props;
 
     let questionDetail = useRecoilValue(QuestionDetail);
     let CRObject = useRecoilValue(CRState);
 
-    let loopIndex = CRObject.numberOfFamilyInvestmentProperties || 0;
+    let FamilyCards = {
+        "familyDetails": [
+            {
+                title: "Family Details",
+                key: "familyDetails",
+                img: will
+            },],
+        "familyOtherInvestment": [
+            {
+                title: "Other Family Investments",
+                key: "familyOtherInvestment",
+                img: investmentCircle
+            },
+        ]
+    };
 
-    let arrayState = [];
+    const FamilyDetailsSubmitted = (questionDetail.FamilyDetails && Object.keys(questionDetail.FamilyDetails).length > 0) ? true : false;
 
-    let FamilyPropertySet = [
-        {
-            title: "Family Investment Home",
-            key: "familyInvestmentProperties",
-            img: property
-        },
-        {
-            title: "Family Investment Home Loan",
-            key: "familyInvestmentPropertiesLoan",
-            img: loan
-        },
-        {
-            title: "Family Investment Home Expanse",
-            key: "familyInvestmentExpenses",
-            img: rent
-        },
+    let GetValue = () => {
+        try {
 
-    ]
+            // Check if FamilyAccumulationDetails.FamilyTotal exists and parse it to a number
+            const familyDetailsClientTotal = questionDetail?.FamilyAccumulationDetails?.clientTotal
+                ? parseFloat(questionDetail.FamilyAccumulationDetails.clientTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+            // Check if familyDetails.FamilyTotal exists and parse it to a number
+            const familyBankClientTotal = questionDetail?.familyDetails?.partnerTotal
+                ? parseFloat(questionDetail.familyDetails.partnerTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+            // Check if familyBank.FamilyTotal exists and parse it to a number
+            const familyTermDepositClientTotal = questionDetail?.familyBank?.jointTotal
+                ? parseFloat(questionDetail.familyBank.jointTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+            // Check if familyTermDeposit.FamilyTotal exists and parse it to a number
+            const familyAustralianShareClientTotal = questionDetail?.familyTermDeposit?.clientTotal
+                ? parseFloat(questionDetail.familyTermDeposit.clientTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+            // Check if familyAustralianShare.FamilyTotal exists and parse it to a number
+            const familyMangedFundsClientTotal = questionDetail?.familyAustralianShare?.partnerTotal
+                ? parseFloat(questionDetail.familyAustralianShare.partnerTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+            // Check if familyMangedFunds.FamilyTotal exists and parse it to a number
+            const familyInvestmentHomeLoanClientTotal = questionDetail?.familyMangedFunds?.jointTotal
+                ? parseFloat(questionDetail.familyMangedFunds.jointTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+            // Check if familyInvestmentHomeLoan.FamilyTotal exists and parse it to a number
+            const familyInvestmentPropertiesClientTotal = questionDetail?.familyInvestmentHomeLoan?.clientTotal
+                ? parseFloat(questionDetail.familyInvestmentHomeLoan.clientTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
 
-    for (let i = 0; i < loopIndex; i++) {
-        arrayState.push(
-            FamilyPropertySet.map((elem, index) => {
-                return (
-                    <div className={`col-md-3 mb-4`} key={index}>
-                        <Card className="py-4 shadow borderOverAll GoalsobjectiveCard" style={{ borderRadius: "20px", height: "100%" }}>
-                            <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key][i]) }}>{elem.title} {i + 1}</h5>
-                            <div className="QuestionIcon CardImg">
-                                <img className="img-fluid" src={elem.img} alt="" />
-                            </div>
-                            <div
-                                className="row justify-content-center align-items-center my-2"
-                            >
-                                <div className='col-12 p-0 '>
-                                    <div className='d-flex flex-column-reverse justify-content-center align-items-center gap-2'>
+            // Check if FamilyAccumulationDetails.FamilyTotal exists and parse it to a number
+            const familyDetailsPartnerTotal = questionDetail?.FamilyAccumulationDetails?.partnerTotal
+                ? parseFloat(questionDetail.FamilyAccumulationDetails.partnerTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+            // Check if familyDetails.FamilyTotal exists and parse it to a number
+            const familyBankPartnerTotal = questionDetail?.familyDetails?.partnerTotal
+                ? parseFloat(questionDetail.familyDetails.partnerTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+            // Check if familyBank.FamilyTotal exists and parse it to a number
+            const familyTermDepositPartnerTotal = questionDetail?.familyBank?.jointTotal
+                ? parseFloat(questionDetail.familyBank.jointTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+            // Check if familyTermDeposit.FamilyTotal exists and parse it to a number
+            const familyAustralianSharePartnerTotal = questionDetail?.familyTermDeposit?.partnerTotal
+                ? parseFloat(questionDetail.familyTermDeposit.partnerTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+            // Check if familyAustralianShare.FamilyTotal exists and parse it to a number
+            const familyMangedFundsPartnerTotal = questionDetail?.familyAustralianShare?.partnerTotal
+                ? parseFloat(questionDetail.familyAustralianShare.partnerTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+            // Check if familyMangedFunds.FamilyTotal exists and parse it to a number
+            const familyInvestmentHomeLoanPartnerTotal = questionDetail?.familyMangedFunds?.jointTotal
+                ? parseFloat(questionDetail.familyMangedFunds.jointTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+            // Check if familyInvestmentHomeLoan.FamilyTotal exists and parse it to a number
+            const familyInvestmentPropertiesPartnerTotal = questionDetail?.familyInvestmentHomeLoan?.partnerTotal
+                ? parseFloat(questionDetail.familyInvestmentHomeLoan.partnerTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
 
-                                        <label
-                                            className=" d-block "
-                                            htmlFor={"client" + elem.key}
-                                        >{localStorage.getItem("UserName") || "You"}</label>
+            let total = familyDetailsClientTotal + familyBankClientTotal + familyTermDepositClientTotal + familyAustralianShareClientTotal + familyMangedFundsClientTotal + familyInvestmentHomeLoanClientTotal + familyInvestmentPropertiesClientTotal + familyDetailsPartnerTotal + familyBankPartnerTotal + familyTermDepositPartnerTotal + familyAustralianSharePartnerTotal + familyMangedFundsPartnerTotal + familyInvestmentHomeLoanPartnerTotal + familyInvestmentPropertiesPartnerTotal;
 
-                                        <label
-                                            className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                            onClick={() => { OpenModal(elem.title, "client", i) }}
+            return toCommaAndDollar(total);
+
+        } catch (error) {
+            console.error("Error calculating Family totals:", error);
+            return "$0";
+        }
+    };
+
+    return (
+        <React.Fragment>
+            {FamilyCards[elem.key].map((FamilyElem, Pindex) => {
+                const FamilyDetailsCard = FamilyElem.key === "familyDetails" ? true : false;
+                const familyOtherInvestmentCard = FamilyElem.key === "familyOtherInvestment" ? true : false;
+
+                if (FamilyDetailsCard) {
+                    return (
+                        <React.Fragment key={Pindex}>
+                            <div className={`col-md-3 mb-4`}>
+                                <Card className="py-4 shadow borderOverAll GoalsobjectiveCard d-flex" style={{ borderRadius: "20px", height: "100%" }}>
+                                    <h5 className='text-center' onClick={() => { console.log(questionDetail[FamilyElem.key]) }}>
+                                        {FamilyDetailsSubmitted ? questionDetail.FamilyDetails.FamilyOwner.fundName : FamilyElem.title}
+                                    </h5>
+                                    <div className='d-flex justify-content-center flex-column align-item-center mt-4'>
+                                        <div className="QuestionIcon CardImg">
+                                            <img className="img-fluid" src={FamilyElem.img} alt="" />
+                                        </div>
+                                        <div
+                                            className="row justify-content-center align-items-center my-2"
                                         >
-                                            <div>
-                                                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                            <div className='col-12 p-0 '>
+                                                <div className='d-flex justify-content-center align-items-center gap-2'>
+
+                                                    <label
+                                                        className=" d-block "
+                                                        htmlFor={"client" + FamilyElem.key}
+                                                    >Total Fund Value</label>
+
+                                                    <label
+                                                        className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                                                        onClick={() => { OpenModal(FamilyElem.title, "client", FamilyElem.key) }}
+                                                    >
+                                                        <div>
+                                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                        </div>
+                                                    </label>
+                                                </div>
                                             </div>
-                                        </label>
+                                        </div>
+                                        <input type="text"
+                                            className="form-control inputDesign"
+                                            id={"client" + FamilyElem.key}
+                                            placeholder={FamilyElem.title}
+                                            name={"client" + FamilyElem.key}
+                                            value={GetValue()}
+                                        />
+                                    </div>
+                                </Card>
+                            </div>
+                        </React.Fragment>
+                    );
+                }
+                else if (familyOtherInvestmentCard) {
+                    if (CRObject[FamilyElem.key] === "Yes") {
+                        return (<div className={`col-md-3 mb-4`} key={index}>
+                            <Card className="py-4 shadow borderOverAll GoalsobjectiveCard d-flex" style={{ borderRadius: "20px", height: "100%" }}>
+                                <h5 className='text-center' onClick={() => { console.log(questionDetail[FamilyElem.key]) }}>{FamilyElem.title}</h5>
+
+                                <div className="QuestionIcon CardImg">
+                                    <img className="img-fluid" src={FamilyElem.img} alt="" />
+                                </div>
+                                <div
+                                    className="row justify-content-center align-items-center my-2"
+                                >
+                                    <div className='col-12 p-0 '>
+                                        <div className='d-flex flex-column-reverse justify-content-center align-items-center gap-2'>
+                                            <label
+                                                className=" d-block "
+                                                htmlFor={"client" + FamilyElem.key}
+                                            >{localStorage.getItem("UserName") || "You"}</label>
+
+                                            <label
+                                                className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                                                onClick={() => { OpenModal(FamilyElem.title, "client", FamilyElem.key) }}
+                                            >
+                                                <div>
+                                                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                </div>
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <input type="text"
-                                className="form-control inputDesign "
-                                id={"client" + elem.key}
-                                placeholder={elem.title}
-                                name={"client" + elem.key}
-                                value={questionDetail &&
-                                    questionDetail[elem.key] &&
-                                    Array.isArray(questionDetail[elem.key]) &&
-                                    questionDetail[elem.key][i] &&
-                                    questionDetail[elem.key][i].clientTotal
-                                    ?  questionDetail[elem.key][i].clientTotal
-                                    : ""}
-                            />
-                            <div
-                                className={`row justify-content-center align-items-center my-2 ${PartnerClass}`}
-                            >
-                                <div className='col-12 p-0 '>
-                                    <div className='d-flex flex-column-reverse justify-content-center align-items-center gap-2'>
-                                        <label
-                                            className=" d-block "
-                                            htmlFor={"partner" + elem.key}
-                                        >{localStorage.getItem("PartnerName") || "Partner"}</label>
+                                <input type="text"
+                                    className="form-control inputDesign "
+                                    id={"client" + FamilyElem.key}
+                                    placeholder={FamilyElem.title}
+                                    name={"client" + FamilyElem.key}
+                                    value={questionDetail && questionDetail[FamilyElem.key]?.clientTotal ? questionDetail[FamilyElem.key].clientTotal : ""}
+                                />
+                            </Card>
+                        </div>)
+                    }
+                }
 
-                                        <label
-                                            className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                            onClick={() => { OpenModal(elem.title, "partner", i) }}
-                                        >
-                                            <div>
-                                                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <input type="text"
-                                className={`form-control inputDesign ${PartnerClass}`}
-                                id={"partner" + elem.key}
-                                placeholder={elem.title}
-                                name={"partner" + elem.key}
-                                value={questionDetail &&
-                                    questionDetail[elem.key] &&
-                                    Array.isArray(questionDetail[elem.key]) &&
-                                    questionDetail[elem.key][i] &&
-                                    questionDetail[elem.key][i].partnerTotal
-                                    ?  questionDetail[elem.key][i].partnerTotal
-                                    : ""}
-                            />
+            })}
+        </React.Fragment>
+    );
 
-                            <div
-                                className={`row justify-content-center align-items-center my-2  ${jointClass} ${PartnerClass}`}
-                            >
-                                <div className='col-12 p-0 '>
-                                    <div className='d-flex flex-column-reverse justify-content-center align-items-center gap-2'>
-                                        <label
-                                            className=" d-block "
-                                            htmlFor={"joint" + elem.key}
-                                        >{(localStorage.getItem("UserName") || "You") + " " + (localStorage.getItem("PartnerName") || "")}</label>
-
-                                        <label
-                                            className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                            onClick={() => { OpenModal(elem.title, "joint", i) }}
-                                        >
-                                            <div>
-                                                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <input type="text"
-                                className={`form-control inputDesign ${jointClass} ${PartnerClass}`}
-                                id={"joint" + elem.key}
-                                placeholder={elem.title}
-                                name={"joint" + elem.key}
-                                value={questionDetail &&
-                                    questionDetail[elem.key] &&
-                                    Array.isArray(questionDetail[elem.key]) &&
-                                    questionDetail[elem.key][i] &&
-                                    questionDetail[elem.key][i].jointTotal
-                                    ?  questionDetail[elem.key][i].jointTotal
-                                    : ""}
-                            />
-
-                        </Card>
-                    </div>
-                )
-            })
-        );
-    }
-
-    return (<>{arrayState}</>);
 }
 
 export default FamilyInvestmentProperty

@@ -102,7 +102,7 @@ const ManagedFunds = (props) => {
 
     };
 
-    let handleInnerModal = (title, question, key, mainKey, key3, editArray, index, values) => {
+    let handleInnerModal = (title, question, key, mainKey, key3, editArray, index, values, Platform) => {
         setModalObject({
             title,
             question,
@@ -111,7 +111,8 @@ const ManagedFunds = (props) => {
             key3,
             editArray: editArray || [],
             index,
-            values
+            values,
+            Platform
         })
         setFlagState(true);
     }
@@ -147,7 +148,7 @@ const ManagedFunds = (props) => {
 
         props.setFieldValue(DataOf, newEntries);
 
-        let total = newEntries.reduce((total, entry) => total + (parseFloat((entry.serviceFee).replace(/[^0-9.-]+/g, "")) * parseFloat((entry.serviceFeeType))), 0);
+        let total = newEntries.reduce((total, entry) => total + (parseFloat((entry.serviceFee).replace(/[^0-9.-]+/g, "")) * parseFloat((entry.serviceFeeType) || 1)), 0);
         let totalCostBase = newEntries.reduce((total, entry) => total + parseFloat((entry.totalPortfolioCost).replace(/[^0-9.-]+/g, "")), 0);
 
         props.setFieldValue(DataOf + "CurrentBalance", toCommaAndDollar(total));
@@ -171,7 +172,6 @@ const ManagedFunds = (props) => {
         }
 
     };
-
 
     let CheckInputValue = (values, setFieldValue, currentInput, index) => {
         // console.log(values, setFieldValue, currentInput);
@@ -228,7 +228,7 @@ const ManagedFunds = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                                         <p className='text-end mt-3'>
-                                            How many Platforms does {nameSet} have:
+                                            How many Platforms does {nameSet} have :
                                         </p>
                                         <div style={{ width: "15%" }}>
                                             <Field
@@ -287,7 +287,7 @@ const ManagedFunds = (props) => {
                                                                     className="form-control inputDesignDoubleInput"
                                                                 />
                                                             </td>
-                                                            <td style={{ width: "200px" }}>
+                                                            <td style={{ width: "150px" }}>
                                                                 <InputGroup className={`mb-3 ${ShowError[`portfolioValue${i}Error`] === true ? "is-invalid" : ""}`}>
                                                                     <Field
                                                                         type="text"
@@ -301,40 +301,59 @@ const ManagedFunds = (props) => {
                                                                             CheckInputValue(values, setFieldValue, e.target, i)
                                                                         }}
                                                                     />
-                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2"
+                                                                    <Button
+                                                                        className="btn bgColor modalBtn border-0"
+                                                                        id="button-addon2"
                                                                         onClick={() => {
+                                                                            const platformKey = `platformName${i}`;
+                                                                            const selectedPlatformId = values[platformKey];
 
-                                                                            if (values[`platformName${i}`]) {
-                                                                                let name = "";
-
-                                                                                title === "Platform Investments Detail" ?
-                                                                                    bankDetailObj?.InvestmentPlatforms.map((elem, index) => {
-
-                                                                                        if (elem._id === values[`platformName${i}`]) {
-                                                                                            name = elem.platformName
-                                                                                        }
-
-                                                                                    })
-                                                                                    :
-                                                                                    bankDetailObj?.InvestmentBonds.map((elem, index) => {
-
-                                                                                        if (elem._id === values[`platformName${i}`]) {
-                                                                                            name = elem.platformName
-                                                                                        }
-
-                                                                                    })
-
-
-                                                                                handleInnerModal(name + "_Portfolio Value",
-                                                                                    `How many Underlying Investments do ${nameSet} have ?`,
-                                                                                    "portfolioArray", "portfolioValue", "totalPortfolioCost",
-                                                                                    values[`portfolioArray${i}`], i, values)
+                                                                            // Check if a platform name is selected
+                                                                            if (!selectedPlatformId) {
+                                                                                openNotificationSuccess(
+                                                                                    "error",
+                                                                                    "topRight",
+                                                                                    "Error Notification",
+                                                                                    "Please! Select Platform Name First"
+                                                                                );
+                                                                                return;
                                                                             }
-                                                                            else {
-                                                                                // type, placement, message, description
-                                                                                openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Platform Name First")
+
+                                                                            // Define platform name and object set
+                                                                            let name = "";
+                                                                            const platforms =
+                                                                                title === "Platform Investments Detail"
+                                                                                    ? bankDetailObj?.InvestmentPlatforms
+                                                                                    : bankDetailObj?.InvestmentBonds;
+
+                                                                            // Find the platform name
+                                                                            const SelectedPlatform = platforms?.find((elem) => elem._id === selectedPlatformId);
+
+                                                                            if (SelectedPlatform) {
+                                                                                name = SelectedPlatform.platformName;
+
+                                                                                // Call handleInnerModal with the platform name and relevant values
+                                                                                handleInnerModal(
+                                                                                    `${name}_Portfolio Value`,
+                                                                                    `How many Underlying Investments does ${nameSet} have :`,
+                                                                                    "portfolioArray",
+                                                                                    "portfolioValue",
+                                                                                    "totalPortfolioCost",
+                                                                                    values[`portfolioArray${i}`],
+                                                                                    i,
+                                                                                    values,
+                                                                                    SelectedPlatform
+                                                                                );
+                                                                            } else {
+                                                                                openNotificationSuccess(
+                                                                                    "error",
+                                                                                    "topRight",
+                                                                                    "Error Notification",
+                                                                                    "Selected Platform not found."
+                                                                                );
                                                                             }
-                                                                        }}>
+                                                                        }}
+                                                                    >
                                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                     </Button>
                                                                 </InputGroup>
@@ -342,7 +361,7 @@ const ManagedFunds = (props) => {
                                                                     {ShowError[`portfolioValue${i}Message`]}
                                                                 </div>
                                                             </td>
-                                                            <td style={{ width: "200px" }}>
+                                                            <td style={{ width: "150px" }}>
                                                                 <Field
                                                                     type="text"
                                                                     placeholder="Total Portfolio Cost"

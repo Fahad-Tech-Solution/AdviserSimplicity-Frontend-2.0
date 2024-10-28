@@ -14,7 +14,6 @@ import SuperFunds from './QuestionsDetail/SuperFunds';
 import AccountBasedPension from './QuestionsDetail/AccountBasedPension';
 import InvestedAnnuities from './QuestionsDetail/InvestedAnnuities';
 import TradingCompany from '../BusinessEntities/TradingCompany';
-import TradingTrust from '../BusinessEntities/TradingTrust';
 
 const MiddleWare = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
@@ -25,7 +24,7 @@ const MiddleWare = (props) => {
 
     let [ShowError, setShowError] = useState({});
 
-    let switchArray = ["Australian Shares", "Platform Investments", "Investment Bond"]
+    let switchArray = ["Australian Shares/ETFs", "SMSF Australian Shares/ETFs", , "Family Trust Australian Shares/ETFs", "Platform Investments", , "Family Trust Platform Investments", "SMSF Platform Investments", "Investment Bond"]
 
     let attrebuteSet = switchArray.includes(props.modalObject.title) ? true : false;
 
@@ -63,7 +62,7 @@ const MiddleWare = (props) => {
 
             checkValues(BankAccountFinance, setFieldValue, obj, "");
 
-            if (props.modalObject.title != "Australian Shares") {
+            if (props.modalObject.title != "Australian Shares/ETFs") {
                 if (attrebuteSet) {
                     let totalCostBase = BankAccountFinance.client.reduce((total, entry) => total + parseFloat((entry.totalPortfolioCost).replace(/[^0-9.-]+/g, "")), 0);
                     setFieldValue("clientCostBaseTemp", toCommaAndDollar(totalCostBase))
@@ -103,7 +102,7 @@ const MiddleWare = (props) => {
 
                 checkValues(BankAccountFinance, setFieldValue, obj, "");
 
-                if (props.modalObject.title != "Australian Shares") {
+                if (props.modalObject.title != "Australian Shares/ETFs") {
                     if (attrebuteSet) {
                         let totalCostBase = BankAccountFinance.partner.reduce((total, entry) => total + parseFloat((entry.totalPortfolioCost).replace(/[^0-9.-]+/g, "")), 0);
                         setFieldValue("partnerCostBaseTemp", toCommaAndDollar(totalCostBase))
@@ -194,7 +193,7 @@ const MiddleWare = (props) => {
             if (!bankAccountArray) {
                 res = await PostAxios(`${DefaultUrl}/api/${props.modalObject.key}/Add`, obj);
             } else {
-                obj.collection = props.modalObject.Input
+                // obj.collection = props.modalObject.Input
                 res = await PatchAxios(`${DefaultUrl}/api/${props.modalObject.key}/Update`, obj);
             }
 
@@ -297,16 +296,24 @@ const MiddleWare = (props) => {
     let CheckExpectedTotal = (ModalTitle, thisArray, currentInput, CheckState) => {
         if (!thisArray || thisArray.length === 0) return 0; // Return 0 if no data found
 
+        console.log(ModalTitle)
+
         switch (ModalTitle) {
             case "Bank Accounts":
             case "Term Deposits":
+            case "SMSF Bank Accounts":
+            case "SMSF Term Deposits":
+            case "Family Trust Bank Accounts":
+            case "Family Trust Term Deposits":
                 // Safely parse and sum up current balances, fallback to 0 if invalid
                 return thisArray.reduce((total, entry) => {
                     return total + (parseFloat(entry.currentBalance?.replace(/[^0-9.-]+/g, "")) || 0);
                 }, 0);
                 break;
 
-            case "Australian Shares":
+            case "Australian Shares/ETFs":
+            case "SMSF Australian Shares/ETFs":
+            case "Family Trust Australian Shares/ETFs":
                 // Check if currentBalance or costBase needs to be summed up
                 if (currentInput === `${CheckState}CurrentBalance`) {
                     return thisArray.reduce((total, entry) => {
@@ -321,10 +328,12 @@ const MiddleWare = (props) => {
 
             case "Platform Investments":
             case "Investment Bond":
+            case "SMSF Platform Investments":
+            case "Family Trust Platform Investments":
                 // Check if currentBalance or costBase needs to be summed up
                 if (currentInput === `${CheckState}CurrentBalance`) {
                     return thisArray.reduce((total, entry) => {
-                        return total + (parseFloat((entry.serviceFee).replace(/[^0-9.-]+/g, "")) * parseFloat((entry.serviceFeeType)) || 0);
+                        return total + (parseFloat((entry.serviceFee).replace(/[^0-9.-]+/g, "")) * parseFloat((entry.serviceFeeType) || 1) || 0);
                     }, 0);
                 } else {
                     return thisArray.reduce((total, entry) => {
@@ -511,13 +520,25 @@ const MiddleWare = (props) => {
 
         "Bank Accounts Detail": <BankTermForm />,
         "Term Deposits Detail": <BankTermForm />,
-        "Australian Shares Detail": <AustralianShares />,
+        "Australian Shares/ETFs Detail": <AustralianShares />,
         "Platform Investments Detail": <ManagedFunds />,
         "Investment Bond Detail": <ManagedFunds />,
         "Super Funds Detail": <SuperFunds />,
         "Account Based Pension Detail": <AccountBasedPension />,
         "Annuities Detail": <InvestedAnnuities />,
+        //Business As company Structure 
         "Business as Company Structure Detail": <TradingCompany />,
+        //SMSF
+        "SMSF Bank Accounts Detail": <BankTermForm />,
+        "SMSF Term Deposits Detail": <BankTermForm />,
+        "SMSF Australian Shares/ETFs Detail": <AustralianShares />,
+        "SMSF Platform Investments Detail": <ManagedFunds />,
+        "SMSF Investment Bond Detail": <ManagedFunds />,
+        //Family Trust
+        "Family Trust Bank Accounts Detail": <BankTermForm />,
+        "Family Trust Term Deposits Detail": <BankTermForm />,
+        "Family Trust Australian Shares/ETFs Detail": <AustralianShares />,
+        "Family Trust Platform Investments Detail": <ManagedFunds />,
 
     };
 
@@ -545,9 +566,6 @@ const MiddleWare = (props) => {
             return ("")
         }
     };
-
-
-
 
 
     return (

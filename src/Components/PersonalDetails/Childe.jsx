@@ -197,7 +197,7 @@ const Childe = (props) => {
                                         <Form className={`${ParentValues.haveAnyChildren === "Yes" ? "d-block" : "d-none"}`}>
                                             <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                                                 <p className='text-end mt-3'>
-                                                    How many children do you have:
+                                                    How many children do you have :
                                                 </p>
 
                                                 <div className='modalNumberWidth'>

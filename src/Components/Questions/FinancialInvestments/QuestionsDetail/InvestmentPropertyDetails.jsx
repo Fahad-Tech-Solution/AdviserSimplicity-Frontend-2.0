@@ -19,6 +19,18 @@ const InvestmentPropertyDetails = (props) => {
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
 
+
+    let [SwitchFlag, setSwitchFlag] = useState(false);
+
+
+    let [investmentPropertyDetails, setinvestmentPropertyDetails] = useState({
+        client: [],
+        partner: [],
+        joint: [],
+
+    });
+
+
     let [nameSet] = useState(() => {
         if (props.modalObject.Input === "client") {
             return (localStorage.getItem("UserName"))
@@ -31,44 +43,65 @@ const InvestmentPropertyDetails = (props) => {
         }
     })
 
-    let investmentPropertyDetails = Object.keys(questionDetail.investmentPropertyDetails).length > 0 ? questionDetail.investmentPropertyDetails : {
-        client: [],
-        partner: [],
-        joint: [],
+    // let investmentPropertyDetails = Object.keys(questionDetail[props.modalObject.index]).length > 0 ? questionDetail[props.modalObject.index] : {
+    //     client: [],
+    //     partner: [],
+    //     joint: [],
 
-    }; // Use an empty object as default if investmentPropertyDetails is undefined
+    // }; // Use an empty object as default if investmentPropertyDetails is undefined
 
-    let initialValues = investmentPropertyDetails[props.modalObject.Input].length ? { NumberOfMap: investmentPropertyDetails[props.modalObject.Input].length } : { NumberOfMap: "" };
+    let initialValues = { NumberOfMap: "" };
 
     const [dynamicFields, setDynamicFields] = useState([]);
 
     useEffect(() => {
-        console.log(questionDetail, "Questions")
+        // console.log(investmentPropertyDetails[props.modalObject.Input])
+        if (props.modalObject.index === "investmentPropertyDetails") {
+            setSwitchFlag(true)
+        }
 
-        if (investmentPropertyDetails[props.modalObject.Input] && investmentPropertyDetails[props.modalObject.Input].length) {
+        let data = Object.keys(questionDetail[props.modalObject.index]).length > 0 ? questionDetail[props.modalObject.index] : {
+            client: [],
+            partner: [],
+            joint: [],
+
+        };
+
+        setinvestmentPropertyDetails(data);
+
+
+        if (data[props.modalObject.Input] && data[props.modalObject.Input].length) {
 
             let arr = []
 
-            for (let i = 0; i < investmentPropertyDetails[props.modalObject.Input].length; i++) {
+            for (let i = 0; i < data[props.modalObject.Input].length; i++) {
                 arr.push("");
             }
 
             setDynamicFields(arr);
         }
-    }, [])
+
+
+        // console.log(props.modalObject, data)
+
+
+    }, [props.modalObject])
 
 
     const fillInitialValues = (setFieldValue) => {
-
+        console.log(props.modalObject.title, " Data of :", props.modalObject.Input, ":: whole Data Set ", JSON.stringify(investmentPropertyDetails))
         if (investmentPropertyDetails[props.modalObject.Input] && investmentPropertyDetails[props.modalObject.Input].length) {
+            setFieldValue(`NumberOfMap`, investmentPropertyDetails[props.modalObject.Input].length || '');
 
             investmentPropertyDetails[props.modalObject.Input].forEach((data, i) => {
                 if (data) {
                     setFieldValue(`PropertyAddress${i}`, data.PropertyAddress || '');
                     setFieldValue(`CurrentValue${i}`, data.CurrentValue || '');
                     setFieldValue(`CostBase${i}`, data.CostBase || '');
+                    // if (SwitchFlag) {
                     setFieldValue(`ClientOwnership${i}`, data.ClientOwnership || '');
                     setFieldValue(`PartnerOwnership${i}`, data.PartnerOwnership || '');
+                    // }
                     setFieldValue(`propertyLoanBalance${i}`, data.propertyLoanBalance || '');
                     setFieldValue(`propertyLoanDetailsArray${i}`, data.propertyLoanDetailsArray || '');
                     setFieldValue(`weeklyRentalIncome${i}`, data.weeklyRentalIncome || '');
@@ -81,7 +114,15 @@ const InvestmentPropertyDetails = (props) => {
 
     let handleInput = (e, setFieldValue) => {
 
-        const value = e.target.value > 10 ? 10 : e.target.value;
+        let value = 0;
+
+        if (SwitchFlag) {
+            value = e.target.value > 10 ? 10 : e.target.value;
+        }
+        else {
+            value = e.target.value > 5 ? 5 : e.target.value;
+        }
+
         setFieldValue(e.target.id, value);
 
         let arr = []
@@ -107,8 +148,8 @@ const InvestmentPropertyDetails = (props) => {
                 PropertyAddress: values[`PropertyAddress${i}`] || "",
                 CurrentValue: values[`CurrentValue${i}`] || "",
                 CostBase: values[`CostBase${i}`] || "",
-                ClientOwnership: values[`ClientOwnership${i}`] || "",
-                PartnerOwnership: values[`PartnerOwnership${i}`] || "",
+                ClientOwnership: SwitchFlag ? values[`ClientOwnership${i}`] || "" : undefined,
+                PartnerOwnership: SwitchFlag ? values[`PartnerOwnership${i}`] || "" : undefined,
                 propertyLoanBalance: values[`propertyLoanBalance${i}`] || "",
                 propertyLoanDetailsArray: values[`propertyLoanDetailsArray${i}`] || "",
                 weeklyRentalIncome: values[`weeklyRentalIncome${i}`] || "",
@@ -135,7 +176,7 @@ const InvestmentPropertyDetails = (props) => {
         obj["clientTotal"] = toCommaAndDollar(newEntries.reduce((total, entry) => total + parseFloat((entry.CurrentValue).replace(/[^0-9.-]+/g, "")) || 0, 0));
         obj["partnerTotal"] = toCommaAndDollar(newEntries.reduce((total, entry) => total + parseFloat((entry.propertyLoanBalance).replace(/[^0-9.-]+/g, "")) || 0, 0));
 
-        console.log(obj, "final obj")
+        console.log(obj, "final obj", props.modalObject.index)
 
         // Check if investmentPropertyDetails and the array at props.modalObject.Input exist
         // const bankAccountArray = investmentPropertyDetails[props.modalObject.Input] || [];
@@ -144,15 +185,15 @@ const InvestmentPropertyDetails = (props) => {
         try {
             let res;
             if (!bankAccountArray) {
-                res = await PostAxios(`${DefaultUrl}/api/investmentPropertyDetails/Add`, obj);
+                res = await PostAxios(`${DefaultUrl}/api/${props.modalObject.index}/Add`, obj);
             } else {
-                obj.collection = props.modalObject.Input
-                res = await PatchAxios(`${DefaultUrl}/api/investmentPropertyDetails/Update`, obj);
+                // obj.collection = props.modalObject.Input
+                res = await PatchAxios(`${DefaultUrl}/api/${props.modalObject.index}/Update`, obj);
             }
 
             if (res) {
                 console.log(res);
-                const updatedData = { ...questionDetail, investmentPropertyDetails: res };
+                const updatedData = { ...questionDetail, [props.modalObject.index]: res };
                 setQuestionDetail(updatedData);
             }
 
@@ -234,7 +275,7 @@ const InvestmentPropertyDetails = (props) => {
             {({ values, setFieldValue }) => {
                 useEffect(() => {
                     fillInitialValues(setFieldValue);
-                }, [values.NumberOfMap]);
+                }, [investmentPropertyDetails]);
 
                 return (
                     <Form>
@@ -243,7 +284,7 @@ const InvestmentPropertyDetails = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                                         <p className='text-end mt-3'>
-                                            How many {props.modalObject.title} does {nameSet} have:
+                                            How many {props.modalObject.title} does {nameSet} have :
                                         </p>
 
                                         <div style={{ width: "8%" }}>
@@ -257,14 +298,12 @@ const InvestmentPropertyDetails = (props) => {
                                         </div>
                                     </div>
 
-
                                     <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} >
                                         {
                                             modalObject.key === "propertyLoanDetailsArray" ? <InvestmentPropertyLoan /> :
                                                 modalObject.key === "expensesArray" ? <QuestionIncomeExpanse /> : ""
                                         }
                                     </InnerModal>
-
 
                                     {values.NumberOfMap && (
                                         <div className='mt-4'>
@@ -275,8 +314,11 @@ const InvestmentPropertyDetails = (props) => {
                                                         <th>Property Adress</th>
                                                         <th>Current Value - <a href='https://www.property.com.au/' target='_blank' className='text-white'><FaRegBuilding /></a></th>
                                                         <th>Cost base</th>
-                                                        <th>Client Ownership</th>
-                                                        <th>Partner Ownership</th>
+                                                        {SwitchFlag &&
+                                                            <React.Fragment>
+                                                                <th>Client Ownership</th>
+                                                                <th>Partner Ownership</th>
+                                                            </React.Fragment>}
                                                         <th>Loan Balance</th>
                                                         <th>Weekly Rental Income</th>
                                                         <th>Expenses</th>
@@ -322,32 +364,35 @@ const InvestmentPropertyDetails = (props) => {
                                                                         }}
                                                                     />
                                                                 </td>
-                                                                <td>
-                                                                    <Field
-                                                                        type="text"
-                                                                        s placeholder="Client Ownership"
-                                                                        id={`ClientOwnership${i}`}
-                                                                        name={`ClientOwnership${i}`}
-                                                                        onChange={(e) => handleInputChange(e, setFieldValue, FormulaSetting, values)}
-                                                                        onFocus={(e) => handleInputFocus(e, setFieldValue)}
-                                                                        onKeyDown={(e) => handleInputKeyDown(e)}
-                                                                        onBlur={(e) => handleInputBlur(e, setFieldValue, toPercentage, FormulaSetting, values)}
-                                                                        className="form-control inputDesignDoubleInput"
-                                                                    />
-                                                                </td>
-                                                                <td>
-                                                                    <Field
-                                                                        type="text"
-                                                                        s placeholder="Partner Ownership"
-                                                                        id={`PartnerOwnership${i}`}
-                                                                        name={`PartnerOwnership${i}`}
-                                                                        onChange={(e) => handleInputChange(e, setFieldValue, FormulaSetting, values)}
-                                                                        onFocus={(e) => handleInputFocus(e, setFieldValue)}
-                                                                        onKeyDown={(e) => handleInputKeyDown(e)}
-                                                                        onBlur={(e) => handleInputBlur(e, setFieldValue, toPercentage, FormulaSetting, values)}
-                                                                        className="form-control inputDesignDoubleInput"
-                                                                    />
-                                                                </td>
+                                                                {SwitchFlag &&
+                                                                    <React.Fragment>
+                                                                        <td>
+                                                                            <Field
+                                                                                type="text"
+                                                                                s placeholder="Client Ownership"
+                                                                                id={`ClientOwnership${i}`}
+                                                                                name={`ClientOwnership${i}`}
+                                                                                onChange={(e) => handleInputChange(e, setFieldValue, FormulaSetting, values)}
+                                                                                onFocus={(e) => handleInputFocus(e, setFieldValue)}
+                                                                                onKeyDown={(e) => handleInputKeyDown(e)}
+                                                                                onBlur={(e) => handleInputBlur(e, setFieldValue, toPercentage, FormulaSetting, values)}
+                                                                                className="form-control inputDesignDoubleInput"
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <Field
+                                                                                type="text"
+                                                                                s placeholder="Partner Ownership"
+                                                                                id={`PartnerOwnership${i}`}
+                                                                                name={`PartnerOwnership${i}`}
+                                                                                onChange={(e) => handleInputChange(e, setFieldValue, FormulaSetting, values)}
+                                                                                onFocus={(e) => handleInputFocus(e, setFieldValue)}
+                                                                                onKeyDown={(e) => handleInputKeyDown(e)}
+                                                                                onBlur={(e) => handleInputBlur(e, setFieldValue, toPercentage, FormulaSetting, values)}
+                                                                                className="form-control inputDesignDoubleInput"
+                                                                            />
+                                                                        </td>
+                                                                    </React.Fragment>}
                                                                 <td>
                                                                     <InputGroup className="mb-3">
                                                                         <Field

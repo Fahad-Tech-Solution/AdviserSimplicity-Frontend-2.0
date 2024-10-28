@@ -7,6 +7,8 @@ import funds from "../svgs/funds.svg";
 import analytics from "../svgs/analytics.png";
 import people from "../svgs/Questions_People.png";
 import property from "../svgs/property-value.svg";
+import investmentCircle from "../svgs/investmentCircle.png";
+
 
 import { useRecoilState, useRecoilValue } from "recoil";
 import { QuestionShift, CRState, defaultUrl } from "../../../Store/Store";
@@ -100,6 +102,11 @@ const QuestionsSMSF = (props) => {
       title: "Does your SMSF have any money in Pension Phase?",
       img: people,
       key: "SMSFPensionPhase",
+    },
+    {
+      title: "Other Investment",
+      img: investmentCircle,
+      key: "SMSFOtherInvestment",
     },
   ]
   const QuestionClick = (index, elem, values, setFieldValue) => {

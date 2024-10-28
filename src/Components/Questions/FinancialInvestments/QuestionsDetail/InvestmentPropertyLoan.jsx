@@ -25,17 +25,10 @@ const InvestmentPropertyLoan = (props) => {
 
 
     let initialValues = { NumberOfMap: "1" };
-    const [dynamicFields, setDynamicFields] = useState([]);
-
 
     const fillInitialValues = (setFieldValue) => {
         let arr = []
         if (props.modalObject.editArray.length) {
-            for (let i = 0; i < props.modalObject.editArray.length; i++) {
-                arr.push("");
-            }
-
-            setDynamicFields(arr);
 
             props.modalObject.editArray.map((data, index) => {
                 setFieldValue(`LenderCurrent${index}`, data.LenderCurrent);
@@ -50,25 +43,11 @@ const InvestmentPropertyLoan = (props) => {
                 setFieldValue(`DeductibleLoanAmount${index}`, data.DeductibleLoanAmount);
             })
 
-
-
         }
 
     };
 
-    let handleInput = (e, setFieldValue) => {
-        const value = e.target.value > 2 ? 2 : e.target.value;
-        setFieldValue(e.target.id, value);
 
-        let arr = []
-
-        for (let i = 0; i < value; i++) {
-            arr.push("");
-        }
-
-        setDynamicFields(arr);
-
-    };
 
     let DefaultUrl = useRecoilValue(defaultUrl)
 
@@ -225,7 +204,7 @@ const InvestmentPropertyLoan = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='col-md-5 d-none'>
                                         <p className='text-end mt-1'>
-                                            How many {props.modalObject.title} does {nameSet} have:
+                                            How many {props.modalObject.title} does {nameSet} have :
                                         </p>
                                     </div>
                                     <div className='col-md-2 d-none'>
@@ -256,7 +235,7 @@ const InvestmentPropertyLoan = (props) => {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {dynamicFields.map((elem, i) => {
+                                                    {Array.from({ length: values.NumberOfMap }).map((_, i) => {
                                                         return (
                                                             <tr key={i}>
                                                                 <td>{1 + i}</td>

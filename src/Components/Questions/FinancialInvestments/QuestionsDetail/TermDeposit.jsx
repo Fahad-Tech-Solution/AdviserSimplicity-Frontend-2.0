@@ -270,7 +270,7 @@ const TermDeposit = (props) => {
 
                                     <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                                         <p className='text-end mt-3'>
-                                            How many {props.modalObject.title} does {nameSet} have:
+                                            How many {props.modalObject.title} does {nameSet} have :
                                         </p>
                                         <div style={{ width: "15%" }}>
 

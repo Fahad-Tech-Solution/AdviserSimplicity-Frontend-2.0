@@ -175,7 +175,7 @@ const TradingCompany = (props) => {
               <div className="col-md-12">
                 <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                   <label htmlFor='' className=''>
-                    How many {title} does {nameSet} have:
+                    How many {title} does {nameSet} have :
                   </label>
 
                   <div style={{ width: "10%" }} >

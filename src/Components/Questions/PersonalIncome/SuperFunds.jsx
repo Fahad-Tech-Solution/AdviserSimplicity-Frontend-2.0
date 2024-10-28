@@ -285,7 +285,7 @@ const SuperFunds = (props) => {
                                 <div className='row justify-content-center'>
                                     <div className='col-md-5'>
                                         <p className='text-end mt-1'>
-                                            How many Super Funds does {props.modalObject.Input} have:
+                                            How many Super Funds does {props.modalObject.Input} have :
                                         </p>
                                     </div>
                                     <div className='col-md-2'>
@@ -364,7 +364,7 @@ const SuperFunds = (props) => {
                                                                 <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
                                                                     <DynamicYesNo name={`groupInsurance${i}`} values={values} handleChange={handleChange} />
                                                                     {values[`groupInsurance${i}`] === "Yes" &&
-                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Insurances Attached", "How many Group Insurance you have?", "groupInsuranceArray", "", "", values[`groupInsuranceArray${i}`], i) }}>
+                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Insurances Attached", "How many Group Insurance you have :", "groupInsuranceArray", "", "", values[`groupInsuranceArray${i}`], i) }}>
                                                                             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                         </Button>
                                                                     }
@@ -384,7 +384,7 @@ const SuperFunds = (props) => {
                                                                 <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
                                                                     <DynamicYesNo name={`nominatedBeneficiaries${i}`} values={values} handleChange={handleChange} />
                                                                     {values[`nominatedBeneficiaries${i}`] === "Yes" &&
-                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Beneficiaries", "How many beneficiaries do you have?", "beneficiariesArray", "", "", values[`beneficiariesArray${i}`], i) }}>
+                                                                        <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => { handleInnerModal("Beneficiaries", "How many beneficiaries do you have :", "beneficiariesArray", "", "", values[`beneficiariesArray${i}`], i) }}>
                                                                             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                         </Button>
                                                                     }

@@ -13,6 +13,8 @@ const PortfolioValue = (props) => {
     let initialValues = props.modalObject.editArray.length ? { NumberOfMap: props.modalObject.editArray.length } : { NumberOfMap: "" };
     let bankDetailObj = useRecoilValue(BankDetail);
 
+    let Platform = props.modalObject.Platform || [];
+
 
     // const options = [
     //     "Adelaide Bank",
@@ -113,7 +115,7 @@ const PortfolioValue = (props) => {
         if (props.modalObject.editArray.length > 0) {
             setFieldValue(`NumberOfMap`, props.modalObject.editArray.length || '');
 
-            console.log(props.modalObject.editArray)
+            // console.log(props.modalObject.editArray)
             // return
 
             props.modalObject.editArray.forEach((data, i) => {
@@ -183,59 +185,46 @@ const PortfolioValue = (props) => {
         }
     };
 
-
-    const generateOptions = (bankDetailObj, platformName) => {
+    const generateOptions = (platformName) => {
         const InstituteOptions = [];
 
-        if (Array.isArray(bankDetailObj) && bankDetailObj.length > 0) {
-            bankDetailObj.forEach((elem) => {
-                // Check if the platform name matches
-                if (platformName === elem._id) {
-                    // Add the main option for the element
-                    // InstituteOptions.push({ value: elem._id, label: `${elem.name} (${elem.arrayOfOffers.length} offers)` });
-
-                    // Add InstituteOptions from arrayOfOffers if available
-                    if (Array.isArray(elem.arrayOfOffers) && elem.arrayOfOffers.length > 0) {
-                        elem.arrayOfOffers.forEach((offerElem) => {
-                            InstituteOptions.push({ value: offerElem._id, label: `${offerElem.investmentName} (${offerElem.investmentCode})` });
-                        });
-                    }
-                }
-            });
+        console.log(Platform, Platform._id === platformName, "===|platfrom|===", platformName)
+        // Ensure the platform is an object and has an arrayOfOffers
+        if (Platform && Platform._id === platformName) {
+            // Check if arrayOfOffers is an array and has elements
+            if (Array.isArray(Platform.arrayOfOffers) && Platform.arrayOfOffers.length > 0) {
+                // Iterate over arrayOfOffers to create options
+                Platform.arrayOfOffers.forEach((offerElem) => {
+                    InstituteOptions.push({
+                        value: offerElem._id,
+                        label: `${offerElem.investmentName} (${offerElem.investmentCode})`,
+                    });
+                });
+            }
         }
-
-
-        // console.log(InstituteOptions, bankDetailObj, platformName, "data")
 
         return InstituteOptions;
     };
 
-
-    let getCodeForOption = (SelectedOffer, platformName) => {
+    const getCodeForOption = (SelectedOffer, platformName) => {
         let code = "";
-        if (Array.isArray(bankDetailObj) && bankDetailObj.length > 0) {
-            bankDetailObj.forEach((elem) => {
-                // Check if the platform name matches
-                if (platformName === elem._id) {
-                    // Add the main option for the element
-                    // InstituteOptions.push({ value: elem._id, label: `${elem.name} (${elem.arrayOfOffers.length} offers)` });
 
-                    // Add InstituteOptions from arrayOfOffers if available
-                    if (Array.isArray(elem.arrayOfOffers) && elem.arrayOfOffers.length > 0) {
-                        elem.arrayOfOffers.forEach((offerElem) => {
-                            // InstituteOptions.push({ value: offerElem.name, label: offerElem.name });
-                            if (SelectedOffer == offerElem._id) {
-                                code = offerElem.investmentCode
-                            }
-
-                        });
+        // Ensure Platform is an object and matches the provided platformName
+        if (Platform && Platform._id === platformName) {
+            // Check if arrayOfOffers is an array and has elements
+            if (Array.isArray(Platform.arrayOfOffers) && Platform.arrayOfOffers.length > 0) {
+                // Iterate over arrayOfOffers to find the selected offer
+                Platform.arrayOfOffers.forEach((offerElem) => {
+                    if (SelectedOffer === offerElem._id) {
+                        code = offerElem.investmentCode;
                     }
-                }
-            });
+                });
+            }
         }
 
         return code;
-    }
+    };
+
 
     const renderRows = (currentPage, setFieldValue, values, handleChange) => {
         const pageSize = 10;
@@ -253,7 +242,7 @@ const PortfolioValue = (props) => {
                                 name={`investmentOption${i}`}
                                 component={SimpleSelectField}
                                 label="Multi Select Field"
-                                options={generateOptions(bankDetailObj, props.modalObject.values[`platformName${props.modalObject.index}`])}
+                                options={generateOptions(props.modalObject.values[`platformName${props.modalObject.index}`])}
                                 onChange={(selectedOption) => {
 
                                     const code = getCodeForOption(selectedOption.value, props.modalObject.values[`platformName${props.modalObject.index}`]);
@@ -320,20 +309,21 @@ const PortfolioValue = (props) => {
                         <Row>
                             <div className="col-md-12">
                                 <div className='row justify-content-center'>
-                                    <div className='col-md-7'>
-                                        <p className='text-end mt-1'>
+                                    <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
+                                        <p className='text-end mt-3'>
                                             {props.modalObject.question}
                                         </p>
+                                        <div style={{ width: "15%" }}>
+                                            <Field
+                                                type="number"
+                                                id="NumberOfMap"
+                                                name="NumberOfMap"
+                                                className="form-control inputDesignDoubleInput"
+                                                onChange={(e) => handleInput(e, setFieldValue)}
+                                            />
+                                        </div>
                                     </div>
-                                    <div className='col-md-3'>
-                                        <Field
-                                            type="number"
-                                            id="NumberOfMap"
-                                            name="NumberOfMap"
-                                            className="form-control inputDesignDoubleInput"
-                                            onChange={(e) => handleInput(e, setFieldValue)}
-                                        />
-                                    </div>
+
                                     {values.NumberOfMap && (
                                         <div className='mt-4'>
                                             <Table striped bordered responsive hover>

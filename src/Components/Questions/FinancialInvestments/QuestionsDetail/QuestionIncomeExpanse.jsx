@@ -24,19 +24,13 @@ const QuestionIncomeExpanse = (props) => {
     }
   })
 
-  let initialValues = props.modalObject.editArray.length ? { NumberOfMap: props.modalObject.editArray.length } : { NumberOfMap: "" };
+  let initialValues = { NumberOfMap: "1" };
 
   const [dynamicFields, setDynamicFields] = useState([]);
 
 
   const fillInitialValues = (setFieldValue) => {
-    let arr = []
     if (props.modalObject.editArray.length) {
-      for (let i = 0; i < props.modalObject.editArray.length; i++) {
-        arr.push("");
-      }
-
-      setDynamicFields(arr);
 
       props.modalObject.editArray.map((data, index) => {
         setFieldValue(`councilRates${index}`, data.councilRates)
@@ -47,27 +41,9 @@ const QuestionIncomeExpanse = (props) => {
         setFieldValue(`allOther${index}`, data.allOther)
         setFieldValue(`totalExpance${index}`, data.totalExpance)
       })
-
-
-
     }
-
   };
 
-  let handleInput = (e, setFieldValue) => {
-
-    const value = e.target.value.replace(/[^0-9.-]+/g, "") > 2 ? 2 : e.target.value.replace(/[^0-9.-]+/g, "");
-    setFieldValue(e.target.id, value);
-
-    let arr = []
-
-    for (let i = 0; i < value; i++) {
-      arr.push("");
-    }
-
-    setDynamicFields(arr);
-
-  };
 
   let DefaultUrl = useRecoilValue(defaultUrl)
 
@@ -173,20 +149,22 @@ const QuestionIncomeExpanse = (props) => {
             <Row>
               <div className="col-md-12">
                 <div className='row justify-content-center'>
-                  <div className='col-md-5'>
-                    <p className='text-end mt-1'>
-                      How many {props.modalObject.title} does {nameSet} have:
-                    </p>
+                  <div className='d-flex flex-row justify-content-center align-items-center gap-2 d-none'>
+                    <label htmlFor='' className=''>
+                      How many {props.modalObject.title} does {nameSet} have :
+                    </label>
+
+                    <div style={{ width: "10%" }} >
+                      <Field
+                        type="text"
+                        id="NumberOfMap"
+                        name="NumberOfMap"
+                        className="form-control inputDesignDoubleInput"
+                        onChange={(e) => handleInput(e, setFieldValue)}
+                      />
+                    </div>
                   </div>
-                  <div className='col-md-2'>
-                    <Field
-                      type="text"
-                      id="NumberOfMap"
-                      name="NumberOfMap"
-                      className="form-control inputDesignDoubleInput"
-                      onChange={(e) => handleInput(e, setFieldValue)}
-                    />
-                  </div>
+
                   {values.NumberOfMap && (
                     <div className='mt-4'>
                       <Table striped bordered responsive hover>
@@ -203,7 +181,7 @@ const QuestionIncomeExpanse = (props) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {dynamicFields.map((elem, i) => {
+                          {Array.from({ length: values.NumberOfMap }).map((_, i) => {
                             return (
                               <tr key={i}>
                                 <td>{1 + i}</td>
