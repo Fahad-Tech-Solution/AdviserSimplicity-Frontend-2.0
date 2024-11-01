@@ -16,7 +16,9 @@ import TermImg from "../svgs/TermDepositCanva.png";
 import PortFolio from "../svgs/portfolio.svg";
 import analytics from "../svgs/analytics.png";
 import funds from "../svgs/funds.svg";
-import people from "../svgs/Questions_People.png";
+// import people from "../svgs/Questions_People.png";
+import people from "../svgs/property-value.svg";
+
 import SMSFInvestmentProperty from './SMSFInvestmentProperty';
 import { toCommaAndDollar } from '../../Assets/Api/Api';
 import SampleOne from '../AdditionalQueriesPersonalAssets/SampleOne';
@@ -142,40 +144,38 @@ const SMSFQCards = (props) => {
                                     <h5 className='text-center' onClick={() => { console.log(questionDetail[SmsFElem.key]) }}>
                                         {SMSFDetailsSubmitted ? questionDetail.SMSFDetails.SMSFOwner.fundName : SmsFElem.title}
                                     </h5>
-                                    <div className='d-flex justify-content-center flex-column align-item-center mt-4'>
-                                        <div className="QuestionIcon CardImg">
-                                            <img className="img-fluid" src={SmsFElem.img} alt="" />
-                                        </div>
-                                        <div
-                                            className="row justify-content-center align-items-center my-2"
-                                        >
-                                            <div className='col-12 p-0 '>
-                                                <div className='d-flex justify-content-center align-items-center gap-2'>
+                                    <div className="QuestionIcon CardImg">
+                                        <img className="img-fluid" src={SmsFElem.img} alt="" />
+                                    </div>
+                                    <div
+                                        className="row justify-content-center align-items-center my-2"
+                                    >
+                                        <div className='col-12 p-0 '>
+                                            <div className='d-flex justify-content-center align-items-center gap-2'>
 
-                                                    <label
-                                                        className=" d-block "
-                                                        htmlFor={"client" + SmsFElem.key}
-                                                    >Total Fund Value</label>
+                                                <label
+                                                    className=" d-block "
+                                                    htmlFor={"client" + SmsFElem.key}
+                                                >Total Fund Value</label>
 
-                                                    <label
-                                                        className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                                        onClick={() => { OpenModal(SmsFElem.title, "client", SmsFElem.key) }}
-                                                    >
-                                                        <div>
-                                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                        </div>
-                                                    </label>
-                                                </div>
+                                                <label
+                                                    className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                                                    onClick={() => { OpenModal(SmsFElem.title, "client", SmsFElem.key) }}
+                                                >
+                                                    <div>
+                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                    </div>
+                                                </label>
                                             </div>
                                         </div>
-                                        <input type="text"
-                                            className="form-control inputDesign"
-                                            id={"client" + SmsFElem.key}
-                                            placeholder={SmsFElem.title}
-                                            name={"client" + SmsFElem.key}
-                                            value={GetValue()}
-                                        />
                                     </div>
+                                    <input type="text"
+                                        className="form-control inputDesign"
+                                        id={"client" + SmsFElem.key}
+                                        placeholder={SmsFElem.title}
+                                        name={"client" + SmsFElem.key}
+                                        value={GetValue()}
+                                    />
                                 </Card>
                             </div>
                         </React.Fragment>

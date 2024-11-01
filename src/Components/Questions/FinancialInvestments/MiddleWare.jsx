@@ -24,7 +24,7 @@ const MiddleWare = (props) => {
 
     let [ShowError, setShowError] = useState({});
 
-    let switchArray = ["Australian Shares/ETFs", "SMSF Australian Shares/ETFs", , "Family Trust Australian Shares/ETFs", "Platform Investments", , "Family Trust Platform Investments", "SMSF Platform Investments", "Investment Bond"]
+    let switchArray = ["Australian Shares/ETFs", "SMSF Australian Shares/ETFs", "Family Trust Australian Shares/ETFs", "Platform Investments", "Family Trust Platform Investments", "SMSF Platform Investments", "Investment Bond"]
 
     let attrebuteSet = switchArray.includes(props.modalObject.title) ? true : false;
 
@@ -46,80 +46,61 @@ const MiddleWare = (props) => {
         jointCurrentBalance: ""
     };
 
+    let AustralianArray = ["Australian Shares/ETFs", "SMSF Australian Shares/ETFs", "Family Trust Australian Shares/ETFs"]
+    let ManagedFundArray = ["Platform Investments", "Family Trust Platform Investments", "SMSF Platform Investments", "Investment Bond"]
 
     const fillInitialValues = (setFieldValue) => {
-        console.log(questionDetail[props.modalObject.key], props.modalObject.key, props.modalObject.title);
+        try {
+            console.log(questionDetail[props.modalObject.key], props.modalObject.key, props.modalObject.title);
 
-        if (BankAccountFinance.clientFK && BankAccountFinance._id) {
+            if (!BankAccountFinance.clientFK || !BankAccountFinance._id) return;
 
-            setFieldValue("client", BankAccountFinance.client)
-            setFieldValue("clientCurrentBalance", BankAccountFinance.clientCurrentBalance)
+            // Set client values
+            setFieldValue("client", BankAccountFinance.client);
+            setFieldValue("clientCurrentBalance", BankAccountFinance.clientCurrentBalance);
+            checkValues(BankAccountFinance, setFieldValue, { name: "clientCurrentBalance", value: BankAccountFinance.clientCurrentBalance }, "");
 
-            let obj = {
-                name: "clientCurrentBalance",
-                value: BankAccountFinance.clientCurrentBalance
+            // Calculate client cost base based on modal title
+            const isAustralian = AustralianArray.includes(props.modalObject.title);
+            const isManagedFund = ManagedFundArray.includes(props.modalObject.title);
+
+            // const calculateTotalCostBase = (entries, field) => {
+            //     return entries.reduce((total, entry) => total + parseFloat((entry[field]).replace(/[^0-9.-]+/g, "")), 0);
+            // };
+
+            const updateCostBase = (field, entries, costBaseField) => {
+                // const totalCostBase = calculateTotalCostBase(entries, costBaseField);
+                // setFieldValue(field, toCommaAndDollar(totalCostBase));
+                setFieldValue(field, BankAccountFinance[field] || "");
+                checkValues(BankAccountFinance, setFieldValue, { name: field, value: BankAccountFinance[field] || "" }, "");
+            };
+
+            try {
+                updateCostBase("clientCostBaseTemp", BankAccountFinance.client, isAustralian ? "costBase" : isManagedFund ? "totalPortfolioCost" : "costBase");
+            } catch (error) {
+                console.error("Error calculating client cost base:", error);
             }
 
-            checkValues(BankAccountFinance, setFieldValue, obj, "");
-
-            if (props.modalObject.title != "Australian Shares/ETFs") {
-                if (attrebuteSet) {
-                    let totalCostBase = BankAccountFinance.client.reduce((total, entry) => total + parseFloat((entry.totalPortfolioCost).replace(/[^0-9.-]+/g, "")), 0);
-                    setFieldValue("clientCostBaseTemp", toCommaAndDollar(totalCostBase))
-
-                    let obj = {
-                        name: "clientCostBaseTemp",
-                        value: BankAccountFinance.clientCostBaseTemp
-                    }
-                    checkValues(BankAccountFinance, setFieldValue, obj, "");
-                }
-            }
-            else {
-                let totalCostBase = BankAccountFinance.client.reduce((total, entry) => total + parseFloat((entry.costBase).replace(/[^0-9.-]+/g, "")), 0);
-                setFieldValue("clientCostBaseTemp", toCommaAndDollar(totalCostBase))
-            }
-
+            // Check for Married status and set partner and joint account values
             if (localStorage.getItem('UserStatus') === "Married") {
+                setFieldValue("partner", BankAccountFinance.partner);
+                setFieldValue("joint", BankAccountFinance.joint);
+                setFieldValue("partnerCurrentBalance", BankAccountFinance.partnerCurrentBalance);
+                setFieldValue("jointCurrentBalance", BankAccountFinance.jointCurrentBalance);
 
-                setFieldValue("partner", BankAccountFinance.partner)
-                setFieldValue("joint", BankAccountFinance.joint)
+                checkValues(BankAccountFinance, setFieldValue, { name: "partnerCurrentBalance", value: BankAccountFinance.partnerCurrentBalance }, "");
+                checkValues(BankAccountFinance, setFieldValue, { name: "jointCurrentBalance", value: BankAccountFinance.jointCurrentBalance }, "");
 
-
-                setFieldValue("partnerCurrentBalance", BankAccountFinance.partnerCurrentBalance)
-                setFieldValue("jointCurrentBalance", BankAccountFinance.jointCurrentBalance)
-
-                let obj = {
-                    name: "partnerCurrentBalance",
-                    value: BankAccountFinance.partnerCurrentBalance
-                }
-
-                checkValues(BankAccountFinance, setFieldValue, obj, "");
-
-                obj = {
-                    name: "jointCurrentBalance",
-                    value: BankAccountFinance.jointCurrentBalance
-                }
-
-                checkValues(BankAccountFinance, setFieldValue, obj, "");
-
-                if (props.modalObject.title != "Australian Shares/ETFs") {
-                    if (attrebuteSet) {
-                        let totalCostBase = BankAccountFinance.partner.reduce((total, entry) => total + parseFloat((entry.totalPortfolioCost).replace(/[^0-9.-]+/g, "")), 0);
-                        setFieldValue("partnerCostBaseTemp", toCommaAndDollar(totalCostBase))
-
-                        totalCostBase = BankAccountFinance.joint.reduce((total, entry) => total + parseFloat((entry.totalPortfolioCost).replace(/[^0-9.-]+/g, "")), 0);
-                        setFieldValue("jointCostBaseTemp", toCommaAndDollar(totalCostBase))
-                    }
-                }
-                else {
-                    let totalCostBase = BankAccountFinance.partner.reduce((total, entry) => total + parseFloat((entry.costBase).replace(/[^0-9.-]+/g, "")), 0);
-                    setFieldValue("partnerCostBaseTemp", toCommaAndDollar(totalCostBase))
-
-                    totalCostBase = BankAccountFinance.joint.reduce((total, entry) => total + parseFloat((entry.costBase).replace(/[^0-9.-]+/g, "")), 0);
-                    setFieldValue("jointCostBaseTemp", toCommaAndDollar(totalCostBase))
+                // Update partner and joint cost bases based on title type
+                try {
+                    updateCostBase("partnerCostBaseTemp", BankAccountFinance.partner, isAustralian ? "costBase" : isManagedFund ? "totalPortfolioCost" : "costBase");
+                    updateCostBase("jointCostBaseTemp", BankAccountFinance.joint, isAustralian ? "costBase" : isManagedFund ? "totalPortfolioCost" : "costBase");
+                } catch (error) {
+                    console.error("Error calculating partner and joint cost bases:", error);
                 }
             }
-
+        } catch (error) {
+            console.error("Error in fillInitialValues function:", error);
         }
     };
 
@@ -129,12 +110,11 @@ const MiddleWare = (props) => {
 
         console.log(values);
 
-
         // return false
 
         let obj = values;
 
-        if (attrebuteSet) {
+        if (!attrebuteSet) {
             values.clientCostBaseTemp = undefined;
             values.partnerCostBaseTemp = undefined;
             values.jointCostBaseTemp = undefined;
@@ -184,7 +164,7 @@ const MiddleWare = (props) => {
         }
 
 
-        console.log(obj, "final obj")
+        console.log(JSON.stringify(obj), "final obj")
 
         const bankAccountArray = BankAccountFinance.clientFK || "";
 
@@ -198,7 +178,7 @@ const MiddleWare = (props) => {
             }
 
             if (res) {
-                console.log(res);
+                console.log(JSON.stringify(res));
                 const updatedData = { ...questionDetail, [props.modalObject.key]: res };
                 setQuestionDetail(updatedData);
             }
@@ -216,154 +196,266 @@ const MiddleWare = (props) => {
 
     };
 
-    let checkValues = async (values, setFieldValue, currentInput, stakeHolder) => {
-        // console.log(values, setFieldValue, currentInput, stakeHolder);
+    // let checkValues = async (values, setFieldValue, currentInput, stakeHolder) => {
+    //     // console.log(values, setFieldValue, currentInput, stakeHolder);
 
-        // Use default empty arrays if values are undefined or null
-        let client = values.client || [];
-        let partner = values.partner || [];
-        let joint = values.joint || [];
+    //     // Use default empty arrays if values are undefined or null
+    //     let client = values.client || [];
+    //     let partner = values.partner || [];
+    //     let joint = values.joint || [];
 
-        let CheckState = "";
-        let InputSet = "current balance";
-        let ExpectedTotal = "";
-        // Safely parse the current input value, fallback to 0 if parsing fails
-        let fromWith = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
+    //     let CheckState = "";
+    //     let InputSet = "current balance";
+    //     let ExpectedTotal = "";
+    //     // Safely parse the current input value, fallback to 0 if parsing fails
+    //     let fromWith = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
 
-        // Use switch case to determine which value needs to be checked
+    //     // Use switch case to determine which value needs to be checked
+    //     switch (currentInput.name) {
+    //         case "clientCurrentBalance":
+    //             CheckState = "client";
+    //             InputSet = "current balance";
+    //             ExpectedTotal = await CheckExpectedTotal(props.modalObject.title, client, currentInput.name, CheckState);
+    //             break;
+
+    //         case "partnerCurrentBalance":
+    //             InputSet = "current balance";
+    //             CheckState = "partner";
+    //             ExpectedTotal = await CheckExpectedTotal(props.modalObject.title, partner, currentInput.name, CheckState);
+    //             break;
+
+    //         case "jointCurrentBalance":
+    //             InputSet = "current balance";
+    //             CheckState = "joint";
+    //             ExpectedTotal = await CheckExpectedTotal(props.modalObject.title, joint, currentInput.name, CheckState);
+    //             break;
+
+    //         case "clientCostBaseTemp":
+    //             InputSet = "Cost Base";
+    //             CheckState = "client";
+    //             ExpectedTotal = await CheckExpectedTotal(props.modalObject.title, client, currentInput.name, CheckState);
+    //             break;
+
+    //         case "partnerCostBaseTemp":
+    //             CheckState = "partner";
+    //             InputSet = "Cost Base";
+    //             ExpectedTotal = await CheckExpectedTotal(props.modalObject.title, partner, currentInput.name, CheckState);
+    //             break;
+
+    //         case "jointCostBaseTemp":
+    //             CheckState = "joint";
+    //             InputSet = "Cost Base";
+    //             ExpectedTotal = await CheckExpectedTotal(props.modalObject.title, joint, currentInput.name, CheckState);
+    //             break;
+
+    //         default:
+    //             break;
+    //     }
+
+    //     // Ensure ExpectedTotal is a valid number, fallback to 0 if NaN
+    //     ExpectedTotal = ExpectedTotal || 0;
+
+    //     console.log(ExpectedTotal, fromWith);
+    //     // Check if the calculated total matches the input value
+    //     if ((ExpectedTotal !== 0) && (ExpectedTotal !== fromWith)) {
+    //         setShowError(prevState => ({
+    //             ...prevState,
+    //             [`${currentInput.name}Error`]: true,
+    //             [`${currentInput.name}Message`]: "Total must be equal to the sum of all " + InputSet + " filled in the popup. The sum is " + toCommaAndDollar(ExpectedTotal),
+    //         }));
+    //     } else {
+    //         setShowError(prevState => ({
+    //             ...prevState,
+    //             [`${currentInput.name}Error`]: false,
+    //             [`${currentInput.name}Message`]: "",
+    //         }));
+    //     }
+    // };
+
+    // // Function to calculate the expected total based on modal title and array
+    // let CheckExpectedTotal = (ModalTitle, thisArray, currentInput, CheckState) => {
+    //     if (!thisArray || thisArray.length === 0) return 0; // Return 0 if no data found
+
+    //     console.log(ModalTitle)
+
+    //     switch (ModalTitle) {
+    //         case "Bank Accounts":
+    //         case "Term Deposits":
+    //         case "SMSF Bank Accounts":
+    //         case "SMSF Term Deposits":
+    //         case "Family Trust Bank Accounts":
+    //         case "Family Trust Term Deposits":
+    //             // Safely parse and sum up current balances, fallback to 0 if invalid
+    //             return thisArray.reduce((total, entry) => {
+    //                 return total + (parseFloat(entry.currentBalance?.replace(/[^0-9.-]+/g, "")) || 0);
+    //             }, 0);
+    //             break;
+
+    //         case "Australian Shares/ETFs":
+    //         case "SMSF Australian Shares/ETFs":
+    //         case "Family Trust Australian Shares/ETFs":
+    //             // Check if currentBalance or costBase needs to be summed up
+    //             if (currentInput === `${CheckState}CurrentBalance`) {
+    //                 return thisArray.reduce((total, entry) => {
+    //                     return total + (parseFloat(entry.currentBalance?.replace(/[^0-9.-]+/g, "")) || 0);
+    //                 }, 0);
+    //             } else {
+    //                 return thisArray.reduce((total, entry) => {
+    //                     return total + (parseFloat(entry.costBase?.replace(/[^0-9.-]+/g, "")) || 0);
+    //                 }, 0);
+    //             }
+    //             break;
+
+    //         case "Platform Investments":
+    //         case "Investment Bond":
+    //         case "SMSF Platform Investments":
+    //         case "Family Trust Platform Investments":
+    //             // Check if currentBalance or costBase needs to be summed up
+    //             if (currentInput === `${CheckState}CurrentBalance`) {
+    //                 return thisArray.reduce((total, entry) => {
+    //                     return total + (parseFloat((entry.serviceFee).replace(/[^0-9.-]+/g, "")) * parseFloat((entry.serviceFeeType) || 1) || 0);
+    //                 }, 0);
+    //             } else {
+    //                 return thisArray.reduce((total, entry) => {
+    //                     return total + (parseFloat(entry.totalPortfolioCost?.replace(/[^0-9.-]+/g, "")) || 0);
+    //                 }, 0);
+    //             }
+    //             break;
+    //         case "Super Funds":
+    //             // Check if currentBalance or costBase needs to be summed up
+    //             return thisArray.reduce((total, entry) => {
+    //                 return total + (parseFloat(entry.annualAdvice?.replace(/[^0-9.-]+/g, "")) || 0);
+    //             }, 0);
+    //             break;
+    //         case "Account Based Pension":
+    //             // Check if currentBalance or costBase needs to be summed up
+    //             return thisArray.reduce((total, entry) => {
+    //                 return total + (parseFloat(entry.pensionPayment?.replace(/[^0-9.-]+/g, "")) || 0);
+    //             }, 0);
+    //             break;
+    //         case "Invested in Annuities":
+    //             // Check if currentBalance or costBase needs to be summed up
+    //             return thisArray.reduce((total, entry) => {
+    //                 return total + (parseFloat(entry.originalInvestmentAmount?.replace(/[^0-9.-]+/g, "")) || 0);
+    //             }, 0);
+    //             break;
+    //         case "Business as Company Structure":
+    //             // Check if currentBalance or costBase needs to be summed up
+    //             return thisArray.reduce((total, entry) => total + parseFloat((entry.equityPosition).replace(/[^0-9.-]+/g, "")), 0);
+    //             break;
+
+    //         default:
+    //             console.log("Koi Modal Match Nahi huwa ")
+    //             return 0; // Return 0 if no valid case matches
+    //     }
+    // };
+    // Function to validate the total of input values for a specific account type and update error messages
+    const checkValues = async (values, setFieldValue, currentInput, stakeHolder) => {
+        // Initialize arrays with default empty arrays if values are undefined
+        const client = values.client || [];
+        const partner = values.partner || [];
+        const joint = values.joint || [];
+
+        // Variables to determine which data set to use for checks
+        let checkState = "";
+        let inputSet = "current balance";
+        let expectedTotal = 0;
+
+        // Parse the current input value, using 0 as a fallback
+        const fromWith = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
+
+        // Determine the data source based on input name and set the expected total
         switch (currentInput.name) {
             case "clientCurrentBalance":
-                CheckState = "client";
-                InputSet = "current balance";
-                ExpectedTotal = await CheckExpectedTotal(props.modalObject.title, client, currentInput.name, CheckState);
-                break;
-
             case "partnerCurrentBalance":
-                InputSet = "current balance";
-                CheckState = "partner";
-                ExpectedTotal = await CheckExpectedTotal(props.modalObject.title, partner, currentInput.name, CheckState);
-                break;
-
             case "jointCurrentBalance":
-                InputSet = "current balance";
-                CheckState = "joint";
-                ExpectedTotal = await CheckExpectedTotal(props.modalObject.title, joint, currentInput.name, CheckState);
+                checkState = currentInput.name.replace("CurrentBalance", "");
+                inputSet = "current balance";
                 break;
 
             case "clientCostBaseTemp":
-                InputSet = "Cost Base";
-                CheckState = "client";
-                ExpectedTotal = await CheckExpectedTotal(props.modalObject.title, client, currentInput.name, CheckState);
-                break;
-
             case "partnerCostBaseTemp":
-                CheckState = "partner";
-                InputSet = "Cost Base";
-                ExpectedTotal = await CheckExpectedTotal(props.modalObject.title, partner, currentInput.name, CheckState);
-                break;
-
             case "jointCostBaseTemp":
-                CheckState = "joint";
-                InputSet = "Cost Base";
-                ExpectedTotal = await CheckExpectedTotal(props.modalObject.title, joint, currentInput.name, CheckState);
+                checkState = currentInput.name.replace("CostBaseTemp", "");
+                inputSet = "Cost Base";
                 break;
 
             default:
-                break;
+                return;
         }
 
-        // Ensure ExpectedTotal is a valid number, fallback to 0 if NaN
-        ExpectedTotal = ExpectedTotal || 0;
+        // Calculate the expected total for the selected checkState and inputSet
+        expectedTotal = await calculateExpectedTotal(
+            props.modalObject.title,
+            values[checkState] || [],
+            currentInput.name,
+            checkState
+        );
 
-        console.log(ExpectedTotal, fromWith);
-        // Check if the calculated total matches the input value
-        if ((ExpectedTotal !== 0) && (ExpectedTotal !== fromWith)) {
-            setShowError(prevState => ({
-                ...prevState,
-                [`${currentInput.name}Error`]: true,
-                [`${currentInput.name}Message`]: "Total must be equal to the sum of all " + InputSet + " filled in the popup. The sum is " + toCommaAndDollar(ExpectedTotal),
-            }));
-        } else {
-            setShowError(prevState => ({
-                ...prevState,
-                [`${currentInput.name}Error`]: false,
-                [`${currentInput.name}Message`]: "",
-            }));
-        }
+        // If expected total doesn’t match the input value, show error; otherwise, clear any existing error message
+        setShowError(prevState => ({
+            ...prevState,
+            [`${currentInput.name}Error`]: expectedTotal !== 0 && expectedTotal !== fromWith,
+            [`${currentInput.name}Message`]: expectedTotal !== fromWith
+                ? `Total must be equal to the sum of all ${inputSet} filled in the popup. The sum is ${toCommaAndDollar(expectedTotal)}`
+                : ""
+        }));
     };
 
-    // Function to calculate the expected total based on modal title and array
-    let CheckExpectedTotal = (ModalTitle, thisArray, currentInput, CheckState) => {
-        if (!thisArray || thisArray.length === 0) return 0; // Return 0 if no data found
+    // Function to calculate expected total based on the modal title and the selected data array
+    const calculateExpectedTotal = (modalTitle, dataArray, currentInput, checkState) => {
+        if (!dataArray || dataArray.length === 0) return 0;
 
-        console.log(ModalTitle)
-
-        switch (ModalTitle) {
+        // Switch case on modalTitle to apply relevant calculations
+        switch (modalTitle) {
             case "Bank Accounts":
             case "Term Deposits":
             case "SMSF Bank Accounts":
             case "SMSF Term Deposits":
             case "Family Trust Bank Accounts":
             case "Family Trust Term Deposits":
-                // Safely parse and sum up current balances, fallback to 0 if invalid
-                return thisArray.reduce((total, entry) => {
-                    return total + (parseFloat(entry.currentBalance?.replace(/[^0-9.-]+/g, "")) || 0);
-                }, 0);
-                break;
+                return sumArrayValues(dataArray, "currentBalance");
 
             case "Australian Shares/ETFs":
             case "SMSF Australian Shares/ETFs":
             case "Family Trust Australian Shares/ETFs":
-                // Check if currentBalance or costBase needs to be summed up
-                if (currentInput === `${CheckState}CurrentBalance`) {
-                    return thisArray.reduce((total, entry) => {
-                        return total + (parseFloat(entry.currentBalance?.replace(/[^0-9.-]+/g, "")) || 0);
-                    }, 0);
-                } else {
-                    return thisArray.reduce((total, entry) => {
-                        return total + (parseFloat(entry.costBase?.replace(/[^0-9.-]+/g, "")) || 0);
-                    }, 0);
-                }
-                break;
+                return currentInput === `${checkState}CurrentBalance`
+                    ? sumArrayValues(dataArray, "currentBalance")
+                    : sumArrayValues(dataArray, "costBase");
 
             case "Platform Investments":
             case "Investment Bond":
             case "SMSF Platform Investments":
             case "Family Trust Platform Investments":
-                // Check if currentBalance or costBase needs to be summed up
-                if (currentInput === `${CheckState}CurrentBalance`) {
-                    return thisArray.reduce((total, entry) => {
-                        return total + (parseFloat((entry.serviceFee).replace(/[^0-9.-]+/g, "")) * parseFloat((entry.serviceFeeType) || 1) || 0);
-                    }, 0);
-                } else {
-                    return thisArray.reduce((total, entry) => {
-                        return total + (parseFloat(entry.totalPortfolioCost?.replace(/[^0-9.-]+/g, "")) || 0);
-                    }, 0);
-                }
-                break;
+                return currentInput === `${checkState}CurrentBalance`
+                    ? sumArrayValues(dataArray, "serviceFee", "serviceFeeType")
+                    : sumArrayValues(dataArray, "totalPortfolioCost");
+
             case "Super Funds":
-                // Check if currentBalance or costBase needs to be summed up
-                return thisArray.reduce((total, entry) => {
-                    return total + (parseFloat(entry.annualAdvice?.replace(/[^0-9.-]+/g, "")) || 0);
-                }, 0);
-                break;
+                return sumArrayValues(dataArray, "annualAdvice");
+
             case "Account Based Pension":
-                // Check if currentBalance or costBase needs to be summed up
-                return thisArray.reduce((total, entry) => {
-                    return total + (parseFloat(entry.pensionPayment?.replace(/[^0-9.-]+/g, "")) || 0);
-                }, 0);
-                break;
+                return sumArrayValues(dataArray, "pensionPayment");
+
             case "Invested in Annuities":
-                // Check if currentBalance or costBase needs to be summed up
-                return thisArray.reduce((total, entry) => {
-                    return total + (parseFloat(entry.originalInvestmentAmount?.replace(/[^0-9.-]+/g, "")) || 0);
-                }, 0);
-                break;
+                return sumArrayValues(dataArray, "originalInvestmentAmount");
+
+            case "Business as Company Structure":
+                return sumArrayValues(dataArray, "equityPosition");
 
             default:
-                console.log("Koi Modal Match Nahi huwa ")
-                return 0; // Return 0 if no valid case matches
+                console.log("No matching modal found");
+                return 0;
         }
+    };
+
+    // Helper function to sum values in an array with optional multiplier fields
+    const sumArrayValues = (array, key, multiplierKey = null) => {
+        return array.reduce((total, entry) => {
+            const value = parseFloat(entry[key]?.replace(/[^0-9.-]+/g, "")) || 0;
+            const multiplier = multiplierKey ? parseFloat(entry[multiplierKey] || 1) : 1;
+            return total + (value * multiplier);
+        }, 0);
     };
 
 

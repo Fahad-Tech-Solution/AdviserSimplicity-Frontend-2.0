@@ -139,6 +139,9 @@ const ImportantQuestion = () => {
                 numberOfFamilyInvestmentProperties: 0,
                 familyPensionPhase: "No",
 
+                "SMSFOtherInvestment": "No",
+                "familyOtherInvestment": "No",
+
                 //loop keys
                 // familyInvestmentPropertiesLoan
                 // familyInvestmentExpenses

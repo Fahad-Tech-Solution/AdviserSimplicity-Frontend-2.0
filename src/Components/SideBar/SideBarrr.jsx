@@ -229,7 +229,7 @@ const SideBarrr = (props) => {
                   <Accordion.Body>
 
                     <div className={`w-100 px-3 Custom_hover ${CurrentP === '/Cash-Flow' && 'active'}`}
-                      onClick={() => { setOptRender("Opt3"); localStorage.setItem("OptionRender", "Opt3"); Navigate("/Cash-Flow/#" + localStorage.getItem("UserID")); }}
+                      onClick={() => { setOptRender("Opt3"); localStorage.setItem("OptionRender", "Opt3"); Navigate("/Cash-Flow/PersonalDetail") }}
                       id="cashFlow"
                     >
                       <NavLink

@@ -42,22 +42,6 @@ const InvestmentLoan = (props) => {
 
     let initialValues = { owner: "", };
 
-    const [dynamicFields, setDynamicFields] = useState([]);
-
-    useEffect(() => {
-        if (managedFundsLOC[props.modalObject.Input] && managedFundsLOC[props.modalObject.Input].length) {
-
-            let arr = []
-
-            for (let i = 0; i < managedFundsLOC[props.modalObject.Input].length; i++) {
-                arr.push("");
-            }
-
-            setDynamicFields(arr);
-        }
-    }, [])
-
-
     const fillInitialValues = (setFieldValue) => {
 
         console.log(managedFundsLOC);
@@ -120,10 +104,7 @@ const InvestmentLoan = (props) => {
         }
     };
 
-
-
     let DefaultUrl = useRecoilValue(defaultUrl)
-
 
     let onSubmit = async (values) => {
         let obj = values;
@@ -210,11 +191,11 @@ const InvestmentLoan = (props) => {
         }
     };
 
-
     let optionsLender = [
         { value: "i/only", label: "i/only" },
         { value: "P&I", label: "P&I" },
     ]
+    
     let optionsFrequency = [
         { value: 52, label: "Weekly" },
         { value: 26, label: "Fortnightly" },
@@ -274,7 +255,7 @@ const InvestmentLoan = (props) => {
                                     <div className='col-md-12'>
                                         <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                                             <label htmlFor='' className='text-end '>
-                                                Owner
+                                                {props.modalObject.title !== "Investment Loan" ? "members" : "Owner"}
                                             </label>
 
                                             <div style={{ minWidth: "25%" }}>
@@ -292,7 +273,7 @@ const InvestmentLoan = (props) => {
                                             <Table striped bordered responsive hover>
                                                 <thead>
                                                     <tr>
-                                                        <th>Owner</th>
+                                                        <th>{props.modalObject.title !== "Investment Loan" ? "members" : "Owner"}</th>
                                                         <th>Lender</th>
                                                         <th>Loan Balance</th>
                                                         <th>Loan Type</th>

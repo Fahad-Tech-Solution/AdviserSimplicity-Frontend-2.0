@@ -55,8 +55,8 @@ const InvestmentPropertyDetails = (props) => {
     const [dynamicFields, setDynamicFields] = useState([]);
 
     useEffect(() => {
-        // console.log(investmentPropertyDetails[props.modalObject.Input])
-        if (props.modalObject.index === "investmentPropertyDetails") {
+        console.log(investmentPropertyDetails[props.modalObject.Input])
+        if (props.modalObject.index === "investmentPropertyDetails" || props.modalObject.index === "familyInvestmentProperties") {
             setSwitchFlag(true)
         }
 
@@ -311,7 +311,7 @@ const InvestmentPropertyDetails = (props) => {
                                                 <thead>
                                                     <tr>
                                                         <th>No#</th>
-                                                        <th>Property Adress</th>
+                                                        <th>Property Address</th>
                                                         <th>Current Value - <a href='https://www.property.com.au/' target='_blank' className='text-white'><FaRegBuilding /></a></th>
                                                         <th>Cost base</th>
                                                         {SwitchFlag &&

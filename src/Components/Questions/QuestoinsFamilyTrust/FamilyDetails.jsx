@@ -3,13 +3,9 @@ import React, { useEffect, useState } from "react";
 import { Button, InputGroup, Modal, Row, Table } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { PatchAxios, PostAxios } from "../../Assets/Api/Api";
+import { openNotificationSuccess, PatchAxios, PostAxios, validateName } from "../../Assets/Api/Api";
 import DatePicker from "react-datepicker"; import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
-;
-
-
-
 
 function InnerDirectors(props) {
 
@@ -80,7 +76,7 @@ function InnerDirectors(props) {
                 <div style={{
                   width: "40%"
                 }}>
-                  <Field type="number" id={`NumberOfDirectors`} name={`NumberOfDirectors`} className="form-control inputDesignDoubleInput" onChange={e => handleInput(e, setFieldValue, 6)} />
+                  <Field type="number" id={`NumberOfDirectors`} name={`NumberOfDirectors`} className="form-control inputDesignDoubleInput" onChange={e => handleInput(e, setFieldValue, 4)} />
                 </div>
               </div>
 
@@ -157,126 +153,49 @@ const FamilyDetails = (props) => {
   let [modalObject, setModalObject] = useState({});
 
   let familyDetails = Object.keys(questionDetail.familyDetails).length > 0 ? questionDetail.familyDetails : {
-    client: [],
+    familyTrustOwner: [],
     partner: [],
     joint: [],
 
   }; // Use an empty object as default if familyDetails is undefined
 
   let initialValues = {
-    "fundName": "",
+    "trustName": "",
+    "trustType": "",
     "ABN": "",
     "registeredOffice": "",
     "placeOfBusiness": "",
     "establishmentDate": "",
     "trusteeType": "",
-    "directorsOfCorporateTrustee": [],
     "trusteeName": "",
-    "nameOfAccountant": "",
     "ACN": "",
-    "bareTrust": "No",
-    "directorsOfBareTrust": {},
+    "nameOfAccountant": "",
+    "directorsOfCorporateTrustee": [],
   };
 
-  const [dynamicFields, setDynamicFields] = useState([]);
-
-  useEffect(() => {
-    if (
-      familyDetails[props.modalObject.Input] &&
-      familyDetails[props.modalObject.Input].length
-    ) {
-      let arr = [];
-
-      for (
-        let i = 0;
-        i < familyDetails[props.modalObject.Input].length;
-        i++
-      ) {
-        arr.push("");
-      }
-
-      setDynamicFields(arr);
-    }
-  }, []);
 
   const fillInitialValues = (setFieldValue) => {
-    if (
-      familyDetails[props.modalObject.Input] &&
-      familyDetails[props.modalObject.Input].length
-    ) {
-      familyDetails[props.modalObject.Input].forEach((data, i) => {
-        if (data) {
-          setFieldValue(`trustName`, data.trustName || "");
-          setFieldValue(`trustType`, data.trustType || "");
-          setFieldValue(`ABN`, data.ABN || "");
-          setFieldValue(`Address`, data.Address || "");
-          setFieldValue(`establishmentDate`, data.establishmentDate || "");
-          setFieldValue(`trusteeType`, data.trusteeType || "");
-          setFieldValue(`trusteeName`, data.trusteeName || "");
-          setFieldValue(`noOfAccountant`, data.noOfAccountant || "");
-          setFieldValue(`accountantsFee`, data.accountantsFee || "");
-        }
-      });
-    }
-  };
-
-  let handleInput = (e, setFieldValue) => {
-    const value = e.target.value > 10 ? 10 : e.target.value;
-    setFieldValue(e.target.id, value);
-
-    let arr = [];
-
-    for (let i = 0; i < value; i++) {
-      arr.push("");
-    }
-
-    setDynamicFields(arr);
+    let data = familyDetails.familyTrustOwner || {};
+    // Loop through each property of SMSFDetails and set the field values
+    Object.keys(data).forEach((key) => {
+      setFieldValue(key, data[key] || ""); // Set each field value or an empty string if the value is null/undefined
+    });
   };
 
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   let onSubmit = async (values) => {
-    console.log(JSON.stringify(values));
+    // console.log(JSON.stringify(values));
     // return (false);
-    // Extract the number of maps from the values
-    const numberOfMaps = parseInt(values.NumberOfMap, 10);
-    const newEntries = [];
-
-    // Iterate through each map entry and create a new object
-    for (let i = 0; i < numberOfMaps; i++) {
-      const newEntry = {
-        trustName: values[`trustName`] || "",
-        trustType: values[`trustType`] || "",
-        ABN: values[`ABN`] || "",
-        Address: values[`Address`] || "",
-        establishmentDate: values[`establishmentDate`] || "",
-        trusteeType: values[`trusteeType`] || "",
-        trusteeName: values[`trusteeName`] || "",
-        noOfAccountant: values[`noOfAccountant`] || "",
-        accountantsFee: values[`accountantsFee`] || "",
-      };
-      newEntries.push(newEntry);
-    }
-
-    // Log the new entries to verify
-    console.log(newEntries);
-
-    let DataOf = props.modalObject.Input;
 
     // Create an object with additional fields
     let obj = {
       clientFK: localStorage.getItem("UserID"),
     };
 
-    obj[DataOf] = newEntries;
+    obj.familyTrustOwner = values;
 
-    // Calculate total currentBalance
-    obj[DataOf + "Total"] = newEntries.reduce(
-      (total, entry) => total + entry.accountantsFee,
-      0
-    );
-
-    console.log(obj, "final obj");
+    console.log(JSON.stringify(obj), "final obj");
 
     // Check if familyDetails and the array at props.modalObject.Input exist
     // const bankAccountArray = familyDetails[props.modalObject.Input] || [];
@@ -290,7 +209,6 @@ const FamilyDetails = (props) => {
           obj
         );
       } else {
-        obj.collection = props.modalObject.Input;
         res = await PatchAxios(
           `${DefaultUrl}/api/familyDetails/Update`,
           obj
@@ -303,12 +221,14 @@ const FamilyDetails = (props) => {
         setQuestionDetail(updatedData);
       }
 
+      openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
       // Reset the flag state if necessary
       if (props.flagState) {
         props.setFlagState(false);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
+      openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
     }
   };
 
@@ -341,7 +261,6 @@ const FamilyDetails = (props) => {
         return (
           <Form>
             <Row>
-
               <div className="col-md-12">
                 <div className="row justify-content-center">
                   <div className="mt-4">
@@ -358,12 +277,13 @@ const FamilyDetails = (props) => {
                           <th>Trust Name</th>
                           <th>Trust Type</th>
                           <th>ABN</th>
-                          <th>Fund Address</th>
+                          <th>Registered Office</th>
+                          <th>Place Of Business</th>
                           <th>Establishment Date</th>
                           <th>Trustee Type</th>
                           <th>Trustee Name</th>
+                          <th>ACN</th>
                           <th>Name of Accountant</th>
-
                         </tr>
                       </thead>
                       <tbody>
@@ -377,6 +297,9 @@ const FamilyDetails = (props) => {
                               id={`trustName`}
                               name={`trustName`}
                               className="form-control inputDesignDoubleInput"
+                              onChange={(e) => {
+                                setFieldValue(e.target.name, validateName(e.target.value))
+                              }}
                             />
 
 
@@ -407,9 +330,18 @@ const FamilyDetails = (props) => {
                           <td>
                             <Field
                               type="text"
-                              placeholder="Address"
-                              id={`Address`}
-                              name={`Address`}
+                              placeholder="Registered Office"
+                              id={`registeredOffice`}
+                              name={`registeredOffice`}
+                              className="form-control inputDesignDoubleInput"
+                            />
+                          </td>
+                          <td>
+                            <Field
+                              type="text"
+                              placeholder="place Of Business"
+                              id={`placeOfBusiness`}
+                              name={`placeOfBusiness`}
                               className="form-control inputDesignDoubleInput"
                             />
                           </td>
@@ -485,10 +417,19 @@ const FamilyDetails = (props) => {
                           </td>
                           <td>
                             <Field
+                              type="number"
+                              placeholder="ACN"
+                              id={`ACN`}
+                              name={`ACN`}
+                              className="form-control inputDesignDoubleInput"
+                            />
+                          </td>
+                          <td>
+                            <Field
                               type="text"
                               placeholder="Number of Accountants Name  "
-                              id={`noOfAccountant`}
-                              name={`noOfAccountant`}
+                              id={`nameOfAccountant`}
+                              name={`nameOfAccountant`}
                               className="form-control inputDesignDoubleInput"
                             />
                           </td>

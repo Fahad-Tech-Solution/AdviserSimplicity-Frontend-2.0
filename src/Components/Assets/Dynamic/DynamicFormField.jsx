@@ -198,7 +198,7 @@ const DynamicFormField = ({
       return (
 
         <React.Fragment>
-          <InputGroup className="mb-3">
+          <InputGroup className="mb-3 flex-nowrap">
             <Field
               type="text"
               placeholder={placeholder}

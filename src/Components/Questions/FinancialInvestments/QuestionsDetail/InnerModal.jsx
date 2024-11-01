@@ -36,6 +36,9 @@ const InnerModal = (props) => {
         "Business as Company Structure Detail",
         "Business as Trusts",
         "Pension Benefits Details",
+        "SMSF Australian Shares/ETFs Detail",
+        "Family Trust Platform Investments Detail",
+        "Family Trust Australian Shares/ETFs Detail",
         // "Portfolio Value"
         // "Bank Accounts Detail"
     ]; // Add other titles that should use "xl" here
@@ -60,6 +63,9 @@ const InnerModal = (props) => {
         "SMSF Accumulation Details",
         "Accumulations Benefits",
         "Pension Benefits",
+        // "Pension Benefits Details",
+        "SMSF Platform Investments Detail",
+
     ]
 
 
@@ -105,7 +111,6 @@ const InnerModal = (props) => {
                     <Modal.Title>{props.modalObject.title}</Modal.Title>
                 </Modal.Header>
 
-
                 <Modal.Body>
                     {props.children ? (
                         React.cloneElement(props.children, { formRef, flagState, setFlagState, modalObject, setQuestionChange, setFieldValue })
@@ -113,7 +118,6 @@ const InnerModal = (props) => {
                 </Modal.Body>
 
                 <Modal.Footer>
-
                     <Button variant="secondary" style={{ width: "12.5%", minWidth: "fit-content" }} onClick={() => props.setFlagState(false)}>
                         Close
                     </Button>
@@ -122,8 +126,6 @@ const InnerModal = (props) => {
                     </button>
                 </Modal.Footer>
             </Modal>
-
-
         </div>
     )
 }

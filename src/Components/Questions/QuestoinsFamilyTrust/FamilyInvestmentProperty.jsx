@@ -32,7 +32,7 @@ const FamilyInvestmentProperty = (props) => {
         ]
     };
 
-    const FamilyDetailsSubmitted = (questionDetail.FamilyDetails && Object.keys(questionDetail.FamilyDetails).length > 0) ? true : false;
+    const FamilyDetailsSubmitted = (questionDetail.familyDetails && Object.keys(questionDetail.familyDetails).length > 0) ? true : false;
 
     let GetValue = () => {
         try {
@@ -95,7 +95,8 @@ const FamilyInvestmentProperty = (props) => {
                 ? parseFloat(questionDetail.familyInvestmentHomeLoan.partnerTotal.replace(/[^0-9.-]+/g, ""))
                 : 0;
 
-            let total = familyDetailsClientTotal + familyBankClientTotal + familyTermDepositClientTotal + familyAustralianShareClientTotal + familyMangedFundsClientTotal + familyInvestmentHomeLoanClientTotal + familyInvestmentPropertiesClientTotal + familyDetailsPartnerTotal + familyBankPartnerTotal + familyTermDepositPartnerTotal + familyAustralianSharePartnerTotal + familyMangedFundsPartnerTotal + familyInvestmentHomeLoanPartnerTotal + familyInvestmentPropertiesPartnerTotal;
+
+            let total = familyDetailsClientTotal + familyBankClientTotal + familyTermDepositClientTotal + familyAustralianShareClientTotal + familyMangedFundsClientTotal - familyInvestmentHomeLoanClientTotal - familyInvestmentPropertiesClientTotal + familyDetailsPartnerTotal + familyBankPartnerTotal + familyTermDepositPartnerTotal + familyAustralianSharePartnerTotal + familyMangedFundsPartnerTotal - familyInvestmentHomeLoanPartnerTotal - familyInvestmentPropertiesPartnerTotal;
 
             return toCommaAndDollar(total);
 
@@ -117,42 +118,40 @@ const FamilyInvestmentProperty = (props) => {
                             <div className={`col-md-3 mb-4`}>
                                 <Card className="py-4 shadow borderOverAll GoalsobjectiveCard d-flex" style={{ borderRadius: "20px", height: "100%" }}>
                                     <h5 className='text-center' onClick={() => { console.log(questionDetail[FamilyElem.key]) }}>
-                                        {FamilyDetailsSubmitted ? questionDetail.FamilyDetails.FamilyOwner.fundName : FamilyElem.title}
+                                        {FamilyDetailsSubmitted ? questionDetail.familyDetails.familyTrustOwner.trustName : FamilyElem.title}
                                     </h5>
-                                    <div className='d-flex justify-content-center flex-column align-item-center mt-4'>
-                                        <div className="QuestionIcon CardImg">
-                                            <img className="img-fluid" src={FamilyElem.img} alt="" />
-                                        </div>
-                                        <div
-                                            className="row justify-content-center align-items-center my-2"
-                                        >
-                                            <div className='col-12 p-0 '>
-                                                <div className='d-flex justify-content-center align-items-center gap-2'>
+                                    <div className="QuestionIcon CardImg">
+                                        <img className="img-fluid" src={FamilyElem.img} alt="" />
+                                    </div>
+                                    <div
+                                        className="row justify-content-center align-items-center my-2"
+                                    >
+                                        <div className='col-12 p-0 '>
+                                            <div className='d-flex justify-content-center align-items-center gap-2'>
 
-                                                    <label
-                                                        className=" d-block "
-                                                        htmlFor={"client" + FamilyElem.key}
-                                                    >Total Fund Value</label>
+                                                <label
+                                                    className=" d-block "
+                                                    htmlFor={"client" + FamilyElem.key}
+                                                >Total Fund Value</label>
 
-                                                    <label
-                                                        className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                                        onClick={() => { OpenModal(FamilyElem.title, "client", FamilyElem.key) }}
-                                                    >
-                                                        <div>
-                                                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                        </div>
-                                                    </label>
-                                                </div>
+                                                <label
+                                                    className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                                                    onClick={() => { OpenModal(FamilyElem.title, "client", FamilyElem.key) }}
+                                                >
+                                                    <div>
+                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                    </div>
+                                                </label>
                                             </div>
                                         </div>
-                                        <input type="text"
-                                            className="form-control inputDesign"
-                                            id={"client" + FamilyElem.key}
-                                            placeholder={FamilyElem.title}
-                                            name={"client" + FamilyElem.key}
-                                            value={GetValue()}
-                                        />
                                     </div>
+                                    <input type="text"
+                                        className="form-control inputDesign"
+                                        id={"client" + FamilyElem.key}
+                                        placeholder={FamilyElem.title}
+                                        name={"client" + FamilyElem.key}
+                                        value={GetValue()}
+                                    />
                                 </Card>
                             </div>
                         </React.Fragment>

@@ -13,6 +13,7 @@ import SuperAdminRouts from "./MultiRoutes/SuperAdminRouts";
 
 import Aos from "aos";
 import "aos/dist/aos.css";
+import CashFlow from "./CashFlow/CashFlowComponent/CashFlow";
 
 function App() {
 
@@ -33,6 +34,7 @@ function App() {
         <Route path="/VerifyEmail" element={<VerifyEmail />} />
         <Route path="/ForgetPassword" element={<ForgetPassword />} />
         <Route path="/SuperAdmin/*" element={<SuperAdminRouts />} />
+        <Route path="/Cash-Flow/*" element={<CashFlow />} />
         <Route path="/*" element={<AuthRouts />} />
       </Routes>
     </div>

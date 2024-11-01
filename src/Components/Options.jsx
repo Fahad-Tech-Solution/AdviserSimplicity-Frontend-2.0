@@ -56,6 +56,7 @@ function Options(props) {
     let Opt = "Opt1"
     let stepComplete = 0;
     let Risk = false;
+    let cashFlow = false;
 
     setCurrentPCLassSwitch(cLocation.trim());
 
@@ -171,7 +172,7 @@ function Options(props) {
     const updatedItems = itemsToRender.filter(item => item.condition(conditionCheck)).map(item => {
 
       const isPersonalDetails = item.subTitle === 'Personal Details';
-      const currentEmail = localStorage.getItem("UserID") ;
+      const currentEmail = localStorage.getItem("UserID");
 
       const iconMap = {
         FaBriefcase, FaCheck, FaGift, FaKey, FaMoneyCheckDollar, FaUser, FaHome, FaQuestionCircle, MdFamilyRestroom, RiCoinsFill, FaPlus, FaChartLine,

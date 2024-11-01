@@ -1,557 +1,154 @@
-import React, { useState, useEffect } from "react";
-import { Formik, Field, Form, ErrorMessage } from "formik";
-import { differenceInYears, getDate } from "date-fns";
-import Modal from "react-bootstrap/Modal";
-
+import React, { useState } from "react";
+import { Formik, Field, Form, ErrorMessage, FieldArray } from "formik";
 import * as Yup from "yup";
-import DatePicker from "react-datepicker";
-import "yup-phone";
+import "react-datepicker/dist/react-datepicker.css";
 
-//Images 
-import plus from "./images/plus.svg";
-import male from "./images/male.svg";
-import female from "./images/female.svg";
+// Images
+import single from "../../../Components/Svgs/single-2.svg";
+import couple from "../../../Components/Svgs/single-2.svg";
 
 const PersonalDetails_cashFlow = (Props) => {
+  const [PersonalDetailModal, setPersonalDetailModal] = useState(false);
 
-  let [PersonalDetailModal, setPersonalDetailModal] = useState(false);
-
-  let initialValues = {
-    // matched attributes in add client personal details
-    ClientEdit: "No",
-    clientPreferredName: "",
-    clientDOB: "",
-    clientAge: "",
-    clientHealth: "Yes",
-    clientPlannedRetirementAge: "",
-    clientGender: false,
-    
-    // unmatched attributes in add client personal details
-    clientRetirement: "",
-    clientPreservation: "60",
-    
-    partnerEdit: "No",
-    partnerPreferredName: "",
-    partnerDOB: "",
-    partnerAge: "",
-    partnerHealth: "Yes",
-    partnerPlannedRetirementAge: "",
-    partnerGender: false,
-    
-    // unmatched attributes in add partner personal details
-    partnerRetirement: "",
-    partnerPreservation: "60",
-
+  const initialValues = {
+    client: {
+      Names: "",
+      DOB: "",
+      Age: "",
+      Sex: "",
+      PrivateHealthCover: "",
+      RetirementYear: "",
+      PlannedRetirementAge: "",
+      PreservationAge: "",
+    },
+    partner: {
+      Names: "",
+      DOB: "",
+      Age: "",
+      Sex: "",
+      PrivateHealthCover: "",
+      RetirementYear: "",
+      PlannedRetirementAge: "",
+      PreservationAge: "",
+    },
   };
 
-  let validationSchema = Yup.object().shape({
-    clientPreferredName: Yup.string().when("ClientEdit", {
-      is: (val) => val && val == "Yes",
-      then: Yup.string().matches(/^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$/, 'Invalid Name').required("Required"),
-      otherwise: Yup.string().matches(/^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$/, 'Invalid Name').notRequired(),
+  const validationSchema = Yup.object().shape({
+    client: Yup.object({
+      Names: Yup.string().required("Required"),
+      DOB: Yup.date().required("Required"),
+      Age: Yup.number().required("Required"),
+      // Add other validation rules as needed
     }),
-
-    // clientPreferredName: Yup.string().matches(/^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$/,'Invalid Name').required('Required'),
-    // clientDOB: Yup.date().required('Date of Birth is required'),
-    clientDOB: Yup.date().when("ClientEdit", {
-      is: (val) => val && val == "Yes",
-      then: Yup.date().required("Required"),
-      otherwise: Yup.date().notRequired(),
-    }),
-
-
-
-
-    clientRetirement: Yup.string().when("ClientEdit", {
-      is: (val) => val && val == "Yes",
-      then: Yup.string().required("Required"),
-      otherwise: Yup.string().notRequired(),
-    }),
-    // Add validation rules for other fields if needed
-    partnerPreferredName: Yup.string().when("partnerEdit", {
-      is: (val) => val && val == "Yes",
-      then: Yup.string().matches(/^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$/, 'Invalid Name').required("Required"),
-      otherwise: Yup.string().matches(/^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$/, 'Invalid Name').notRequired(),
-    }),
-    partnerDOB: Yup.date().when("partnerEdit", {
-      is: (val) => val && val == "Yes",
-      then: Yup.date().required("Required"),
-      otherwise: Yup.date().notRequired(),
-    }),
-    PartnerRetirement: Yup.string().when("partnerEdit", {
-      is: (val) => val && val == "Yes",
-      then: Yup.string().required("Required"),
-      otherwise: Yup.string().notRequired(),
+    partner: Yup.object({
+      Names: Yup.string().required("Required"),
+      DOB: Yup.date().required("Required"),
+      Age: Yup.number().required("Required"),
+      // Add other validation rules as needed
     }),
   });
 
-  function onSubmit(values) {
+  const onSubmit = (values) => {
     console.log(values);
-  }
+  };
 
+  const InputsArray = [
+    { name: "Names", label: "Names", type: "text", id: "name" },
+    { name: "DOB", label: "Date of Birth", type: "date", id: "dob" },
+    { name: "Age", label: "Age", type: "number", id: "age" },
+    { name: "Sex", label: "Sex", type: "select", id: "sex", options: ["Male", "Female", "Other"] },
+    { name: "PrivateHealthCover", label: "Private Health Cover", type: "text", id: "privateHealthCover" },
+    { name: "RetirementYear", label: "Retirement Year", type: "number", id: "retirementYear" },
+    { name: "PlannedRetirementAge", label: "Planned Retirement Age", type: "number", id: "plannedRetirementAge" },
+    { name: "PreservationAge", label: "Preservation Age", type: "number", id: "preservationAge" },
+  ];
 
+  const renderFields = (sectionName) => {
 
-  return (
-    <div>
+    let classNames = sectionName === "partner" ? "col-6 col-md-12" : "col-6";
 
-
-
-      <div className="">
-        <div className="">
-          <label className="form-label">Personal Details</label>
-          <br />
-          <button type="button" className=" btn btn-outline-success "
-            onClick={() => { setPersonalDetailModal(true); }}
-          >
-            <div className="iconContainer mx-1">
-              <img className="img-fluid" src={plus} alt="" />
-            </div>
-            Enter Details
-          </button>
+    return (InputsArray.map((input) => (
+      <React.Fragment key={`${sectionName}.${input.name}`}>
+        <div className={classNames + "mb-3"}>
+          <label htmlFor={`${sectionName}.${input.name}`} className="form-label d-block mt-2">
+            {input.label}
+          </label>
         </div>
-      </div>
 
-
-
-
-      <Modal
-        show={PersonalDetailModal}
-        onHide={() => { setPersonalDetailModal(false) }}
-        backdrop="static"
-        className="modal-xl"
-        keyboard={false}
-      >
-        <Modal.Header
-          className="text-light modalBG "
-          closeButton
-        >
-          <Modal.Title className="fontStyle">
-            Personal Detail
-            <div className="iconContainerLg">
-            </div>
-          </Modal.Title>
-        </Modal.Header>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={onSubmit}
-        >
-          {({ values, setFieldValue, setValues, handleChange, handleBlur }) => (
-            <Form>
-              <Modal.Body>
-                {/* Professional Advisor Detail Form */}
-                <div className="row">
-                  <div className="col-md-12">
-                    <h3>Client</h3>
-                    <div className="form-check form-switch m-0 p-0 ">
-                      <div className="radiobutton">
-                        <input type="radio" name="ClientEdit" id="ClientEdit1"
-                          value="Yes" onChange={handleChange} checked={values.ClientEdit == "Yes"}
-                        />
-                        <label htmlFor="ClientEdit1" className="label1">
-                          <span>YES</span>
-                        </label>
-                        <input type="radio" name="ClientEdit" id="ClientEdit2"
-                          value="No" onChange={handleChange} checked={values.ClientEdit == "No"} />
-                        <label htmlFor="ClientEdit2" className="label2">
-                          <span>NO</span>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="row mt-3">
-                  <div className="col-md-3">
-                    <label htmlFor="clientPreferredName" className="form-label">  Name  </label>
-                    <Field type="text" className="form-control shadow inputDesign" id="clientPreferredName"
-                      name="clientPreferredName" placeholder="Name" disabled={values.ClientEdit === "Yes" ? false : true} />
-                    <ErrorMessage component="div" className="text-danger fw-bold" name="clientPreferredName" />
-                  </div>
-                  <div className="col-md-3">
-                    <label htmlFor="clientDOB" className="form-label">
-                      Date of Birth client
-                    </label>
-                    <div>
-                      <DatePicker
-                        id="clientDOB"
-                        className="form-control inputDesign shadow DateInputPadding"
-                        selected={values.clientDOB}
-                        onChange={(date) => {
-                          setFieldValue("clientDOB", date);
-                          const age = differenceInYears(new Date(), date) || 0;
-                          setFieldValue("clientAge", age);
-                        }}
-                        dateFormat="dd/MM/yyyy"
-                        placeholderText="dd/mm/yyyy"
-                        showYearDropdown
-                        scrollableYearDropdown
-                        onBlur={handleBlur}
-                        name="clientDOB"
-                        maxDate={new Date()}
-                        showMonthDropdown
-                        dropdownMode="select"
-                        disabled={values.ClientEdit === "Yes" ? false : true}
-                      />
-                    </div>
-                    <ErrorMessage
-                      component="div"
-                      className="text-danger fw-bold"
-                      name="clientDOB"
-                    />
-                  </div>
-                  <div className="col-md-3">
-                    <label htmlFor="clientAge" className="form-label">
-                      Age
-                    </label>
-                    <Field
-                      type="text"
-                      className="form-control inputDesign shadow"
-                      id="clientAge"
-                      name="clientAge"
-                      placeholder="Age"
-                      readOnly
-                      disabled={values.ClientEdit === "Yes" ? false : true}
-                    />
-                    <ErrorMessage
-                      component="div"
-                      className="text-danger fw-bold"
-                      name="clientAge"
-                    />
-                  </div>
-                  <div className="col-md-3">
-                    <div className="mb-3">
-                      <label htmlFor="" className="form-label">
-                        Gender
-                      </label>
-                      <div className=" d-flex justify-content-start align-items-center w-100">
-
-                        <Field type="checkbox" name="clientGender" className="d-none" />
-
-                        <div
-                          id="female1"
-                          className="femaleSmoking "
-                          onClick={() => { setFieldValue('clientGender', true) }}
-                        >
-                          <img
-                            className="img-fluid imgPerson w-100"
-                            htmlFor="female"
-                            src={female}
-                            alt=""
-                          />
-                        </div>
-
-                        <div
-                          id="male1"
-                          className=" mx-2 maleNonSmoking"
-                          onClick={() => setFieldValue('clientGender', false)}
-                        >
-                          <img
-                            className=" img-fluid imgPerson w-100"
-                            htmlFor="male"
-                            src={male}
-                            alt=""
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="row mb-4">
-                  <div className="col-md-3">
-                    <label htmlFor="clientHealth" className="form-label"> Private Health Cover</label>
-                    <div className="form-check form-switch m-0 p-0 ">
-                      <div className="radiobutton">
-                        <input type="radio" name="clientHealth" id="ClientHealth1"
-                          value="Yes" onChange={handleChange} checked={values.clientHealth == "Yes"}
-                          disabled={values.ClientEdit === "Yes" ? false : true}
-                        />
-                        <label htmlFor="ClientHealth1" className="label1">
-                          <span>YES</span>
-                        </label>
-                        <input type="radio" name="clientHealth" id="ClientHealth2"
-                          value="No" onChange={handleChange} checked={values.clientHealth == "No"}
-                          disabled={values.ClientEdit === "Yes" ? false : true} />
-                        <label htmlFor="ClientHealth2" className="label2">
-                          <span>NO</span>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <label htmlFor="clientRetirement" className="form-label"> Retirement Year</label>
-                    <Field as="select" className="form-select shadow inputDesign" id="clientRetirement"
-                      name="clientRetirement" placeholder="clientRetirement" disabled={values.ClientEdit === "Yes" ? false : true} >
-                      <option value="">Select</option>
-                      <option value="1">1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
-                      <option value="5">5</option>
-                      <option value="6">6</option>
-                      <option value="7">7</option>
-                      <option value="8">8</option>
-                      <option value="9">9</option>
-                      <option value="10">10</option>
-                      <option value="11">11</option>
-                      <option value="12">12</option>
-                      <option value="13">13</option>
-                      <option value="14">14</option>
-                      <option value="15">15</option>
-                      <option value="16">16</option>
-                      <option value="17">17</option>
-                      <option value="18">18</option>
-                      <option value="19">19</option>
-                      <option value="20">20</option>
-                      <option value="21">21</option>
-                      <option value="22">22</option>
-                      <option value="23">23</option>
-                      <option value="24">24</option>
-                      <option value="25">25</option>
-                      <option value="26">26</option>
-                      <option value="27">27</option>
-                      <option value="28">28</option>
-                      <option value="29">29</option>
-                      <option value="30">30</option>
-                    </Field>
-                    <ErrorMessage component="div" className="text-danger fw-bold" name="clientRetirement" />
-                  </div>
-                  <div className="col-md-3">
-                    <label htmlFor="clientPlannedRetirementAge" className="form-label"> Planned Retirement Age  </label>
-                    <Field type="text" className="form-control shadow inputDesign" id="clientPlannedRetirementAge"
-                      name="clientPlannedRetirementAge" placeholder="Planned Retirement Age" readOnly
-                      disabled={values.ClientEdit === "Yes" ? false : true} />
-                    <ErrorMessage component="div" className="text-danger fw-bold" name="clientPlannedRetirementAge" />
-                  </div>
-                  <div className="col-md-3">
-                    <label htmlFor="clientPreservation" className="form-label"> Preservation Age  </label>
-                    <Field type="text" className="form-control shadow inputDesign" id="clientPreservation"
-                      name="clientPreservation" placeholder="Preservation Age" readOnly
-                      disabled={values.ClientEdit === "Yes" ? false : true} />
-                    <ErrorMessage component="div" className="text-danger fw-bold" name="clientPreservation" />
-                  </div>
-                </div>
-                <hr />
-                <div className="row">
-                  <div className="col-md-12">
-                    <h3>Partner </h3>
-                    <div className="form-check form-switch m-0 p-0 ">
-                      <div className="radiobutton">
-                        <input type="radio" name="partnerEdit" id="PartnerEdit1"
-                          value="Yes" onChange={handleChange} checked={values.partnerEdit == "Yes"}
-                        />
-                        <label htmlFor="PartnerEdit1" className="label1">
-                          <span>YES</span>
-                        </label>
-                        <input type="radio" name="partnerEdit" id="PartnerEdit2"
-                          value="No" onChange={handleChange} checked={values.partnerEdit == "No"} />
-                        <label htmlFor="PartnerEdit2" className="label2">
-                          <span>NO</span>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="row mt-3">
-                  <div className="col-md-3">
-                    <label htmlFor="partnerPreferredName" className="form-label">  Name  </label>
-                    <Field type="text" className="form-control shadow inputDesign" id="partnerPreferredName"
-                      name="partnerPreferredName" placeholder="Name" disabled={values.partnerEdit === "Yes" ? false : true} />
-                    <ErrorMessage component="div" className="text-danger fw-bold" name="partnerPreferredName" />
-                  </div>
-                  <div className="col-md-3">
-                    <label htmlFor="partnerDOB" className="form-label">
-                      Date of Birth Partner
-                    </label>
-                    <div>
-                      <DatePicker
-                        id="partnerDOB"
-                        className="form-control inputDesign shadow DateInputPadding"
-                        selected={values.partnerDOB}
-                        onChange={(date) => {
-                          setFieldValue("partnerDOB", date);
-                          const age = differenceInYears(new Date(), date) || 0;
-                          setFieldValue("partnerAge", age);
-                        }}
-                        dateFormat="dd/MM/yyyy"
-                        placeholderText="dd/mm/yyyy"
-                        showYearDropdown
-                        scrollableYearDropdown
-                        onBlur={handleBlur}
-                        name="partnerDOB"
-                        maxDate={new Date()}
-                        showMonthDropdown
-                        dropdownMode="select"
-                        disabled={values.partnerEdit === "Yes" ? false : true}
-                      />
-                    </div>
-                    <ErrorMessage
-                      component="div"
-                      className="text-danger fw-bold"
-                      name="partnerDOB"
-                    />
-                  </div>
-                  <div className="col-md-3">
-                    <label htmlFor="partnerAge" className="form-label">
-                      Age
-                    </label>
-                    <Field
-                      type="text"
-                      className="form-control inputDesign shadow"
-                      id="partnerAge"
-                      name="partnerAge"
-                      placeholder="Age"
-                      readOnly
-                      disabled={values.partnerEdit === "Yes" ? false : true}
-                    />
-                    <ErrorMessage
-                      component="div"
-                      className="text-danger fw-bold"
-                      name="partnerAge"
-                    />
-                  </div>
-                  <div className="col-md-3">
-                    <div className="mb-3">
-                      <label htmlFor="" className="form-label">
-                        Gender
-                      </label>
-                      <div className=" d-flex justify-content-start align-items-center w-100">
-
-                        <Field type="checkbox" name="partnerGender" className="d-none" />
-
-                        <div
-                          id="female1"
-                          className="femaleSmoking "
-                          onClick={() => { setFieldValue('partnerGender', true) }}
-                        >
-                          <img
-                            className="img-fluid imgPerson w-100"
-                            htmlFor="female"
-                            src={female}
-                            alt=""
-                          />
-                        </div>
-
-                        <div
-                          id="male1"
-                          className=" mx-2 maleNonSmoking"
-                          onClick={() => setFieldValue('partnerGender', false)}
-                        >
-                          <img
-                            className=" img-fluid imgPerson w-100"
-                            htmlFor="male"
-                            src={male}
-                            alt=""
-                          />
-                        </div>
-
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="row">
-                  <div className="col-md-3">
-                    <label htmlFor="PartnerHealth" className="form-label"> Private Health Cover</label>
-                    <div className="form-check form-switch m-0 p-0 ">
-                      <div className="radiobutton">
-                        <input type="radio" name="PartnerHealth" id="PartnerHealth1"
-                          value="Yes" onChange={handleChange} checked={values.PartnerHealth == "Yes"}
-                          disabled={values.partnerEdit === "Yes" ? false : true}
-                        />
-                        <label htmlFor="PartnerHealth1" className="label1">
-                          <span>YES</span>
-                        </label>
-                        <input type="radio" name="PartnerHealth" id="PartnerHealth2"
-                          value="No" onChange={handleChange} checked={values.PartnerHealth == "No"}
-                          disabled={values.partnerEdit === "Yes" ? false : true} />
-                        <label htmlFor="PartnerHealth2" className="label2">
-                          <span>NO</span>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <label htmlFor="PartnerRetirement" className="form-label"> Retirement Year</label>
-                    <Field as="select" className="form-select shadow inputDesign" id="PartnerRetirement"
-                      name="PartnerRetirement" placeholder="PartnerRetirement" disabled={values.partnerEdit === "Yes" ? false : true} >
-                      <option value="">Select</option>
-                      <option value="1">1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
-                      <option value="5">5</option>
-                      <option value="6">6</option>
-                      <option value="7">7</option>
-                      <option value="8">8</option>
-                      <option value="9">9</option>
-                      <option value="10">10</option>
-                      <option value="11">11</option>
-                      <option value="12">12</option>
-                      <option value="13">13</option>
-                      <option value="14">14</option>
-                      <option value="15">15</option>
-                      <option value="16">16</option>
-                      <option value="17">17</option>
-                      <option value="18">18</option>
-                      <option value="19">19</option>
-                      <option value="20">20</option>
-                      <option value="21">21</option>
-                      <option value="22">22</option>
-                      <option value="23">23</option>
-                      <option value="24">24</option>
-                      <option value="25">25</option>
-                      <option value="26">26</option>
-                      <option value="27">27</option>
-                      <option value="28">28</option>
-                      <option value="29">29</option>
-                      <option value="30">30</option>
-                    </Field>
-                    <ErrorMessage component="div" className="text-danger fw-bold" name="PartnerRetirement" />
-                  </div>
-                  <div className="col-md-3">
-                    <label htmlFor="PartnerRetirementAge" className="form-label"> Planned Retirement Age  </label>
-                    <Field type="text" className="form-control shadow inputDesign" id="PartnerRetirementAge"
-                      name="PartnerRetirementAge" placeholder="Planned Retirement Age" readOnly
-                      disabled={values.partnerEdit === "Yes" ? false : true} />
-                    <ErrorMessage component="div" className="text-danger fw-bold" name="PartnerRetirementAge" />
-                  </div>
-                  <div className="col-md-3">
-                    <label htmlFor="PartnerPreservation" className="form-label"> Preservation Age  </label>
-                    <Field type="text" className="form-control shadow inputDesign" id="PartnerPreservation"
-                      name="PartnerPreservation" placeholder="Preservation Age" readOnly
-                      disabled={values.partnerEdit === "Yes" ? false : true} />
-                    <ErrorMessage component="div" className="text-danger fw-bold" name="PartnerPreservation" />
-                  </div>
-                </div>
-
-
-                {/* Professional Advisor Detail Form */}
-              </Modal.Body>
-              <Modal.Footer>
-                <div className="col-md-12">
-                  <button
-                    className="float-end btn w-25  bgColor modalBtn"
-                    // onClick={handleClose}
-                    type="submit"
-                  >
-                    Save
-                  </button>
-                  <button
-                    type='button'
-                    className="float-end btn w-25  btn-outline  backBtn mx-3"
-                    onClick={() => { setPersonalDetailModal(false) }}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </Modal.Footer>
-            </Form>
+        <div className={classNames + "mb-4"}>
+          {input.type === "select" ? (
+            <Field as="select" id={`${sectionName}.${input.id}`} name={`${sectionName}.${input.name}`} className="form-select inputDesign">
+              <option value="">Select</option>
+              {input.options.map((option, index) => (
+                <option key={index} value={option}>
+                  {option}
+                </option>
+              ))}
+            </Field>
+          ) : (
+            <Field type={input.type} id={`${sectionName}.${input.id}`} name={`${sectionName}.${input.name}`} className="form-control inputDesign" />
           )}
-        </Formik>
-      </Modal>
-    </div>
+          <ErrorMessage component="div" className="text-danger" name={`${sectionName}.${input.name}`} />
+        </div>
+      </React.Fragment>
+    )))
+  }
+  return (
+    <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
+      {({ values }) => (
+        <Form className="container-fluid mt-2 mt-md-0 p-0 px-md-5">
+          <div className="row">
+            {/* Client Section */}
+            <div className="col-md-8">
+              <div className="row">
+                <div className="col-6 mb-4"></div>
+                <div className="col-6 mb-4 LargeSheet">
+                  <div className="centerDiv">
+                    <label className="form-label clientFS green p-0 CustomFont">
+                      Client
+                      <div className="iconContainerLg p-0 ms-3">
+                        <img src={single} alt="single icon" className="w-50" />
+                      </div>
+                    </label>
+                  </div>
+                </div>
 
+                {/* Client Fields */}
+                {renderFields("client")}
+              </div>
+            </div>
+
+            {/* Partner Section */}
+            <div className="col-md-4">
+              <div className="row">
+                <div className="col-6 col-md-12 mb-4 d-md-none d-block"></div>
+                <div className="col-6 col-md-12 LargeSheet">
+                  <div className="centerDiv">
+                    <label className="form-label clientFS CustomFont green mb-4 p-0">
+                      Partner
+                      <div className="iconContainerLg">
+                        <img src={couple} alt="couple icon" className="w-50" />
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Partner Fields */}
+                {renderFields("partner")}
+              </div>
+            </div>
+          </div>
+
+          <div className="row justify-content-center gap-2 mb-4">
+            <div className="col-md-4">
+              <button className="float-end btn w-100 bgColor modalBtn" type="submit">
+                Next
+              </button>
+            </div>
+          </div>
+        </Form>
+      )}
+    </Formik>
   );
 };
 

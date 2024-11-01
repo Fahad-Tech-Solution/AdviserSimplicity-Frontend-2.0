@@ -90,6 +90,17 @@ const AssetInfo = (props) => {
                 obj.partner = {};
             }
         } else {
+            // if (UserStatus !== "Married") {
+            //     // Handle "joint" related values
+            //     if (values.owner.includes("client")) {
+            //         obj.clientTotal = obj.client.currentValue;
+            //     } else {
+            //         obj.clientTotal = "";
+            //         obj.client = {};
+            //     }
+            // }
+            // else {
+
             // Handle "joint" related values
             if (values.owner.includes("joint")) {
                 obj.jointTotal = obj.joint.currentValue;
@@ -97,12 +108,13 @@ const AssetInfo = (props) => {
                 obj.jointTotal = "";
                 obj.joint = {};
             }
+            // }
         }
 
         // Clear partner fields if the user is not married
         if (UserStatus !== "Married") {
-            obj.partnerTotal = "";
-            obj.partner = {};
+            obj.partnerTotal = undefined;
+            obj.partner = undefined;
         }
 
         console.log(obj, "final obj");
@@ -215,7 +227,7 @@ const AssetInfo = (props) => {
                                                             setFieldValue={setFieldValue}
                                                             handleChange={handleChange}
                                                             handleBlur={handleBlur}
-                                                            stakeHolder={"client."}
+                                                            stakeHolder={(values.owner.includes("joint") && (UserStatus !== "Married")) ? "joint." : "client."}
                                                         />
                                                     }
                                                     {(values.owner.includes("partner") && (UserStatus === "Married")) &&

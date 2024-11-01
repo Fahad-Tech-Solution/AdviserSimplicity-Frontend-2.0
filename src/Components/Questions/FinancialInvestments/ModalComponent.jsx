@@ -109,14 +109,14 @@ const ModalComponent = (props) => {
         "Family Investment Home",
         "Family Investment Home Loan",
         "Family Investment Home Expanse",
-        "SMSF Accumulation Details",
+        // "SMSF Accumulation Details",
         // "SMSF Accumulation Details"
         // "Life Insurance",
         // "Risk Goals"
 
     ]; // Add other titles that should use "xl" here
 
-    let fullTitles = ["Family Details", "Life Insurance", "Personal Insurance", "Investment Loan", "Margin Loan", "SMSF Details", "SMSF Investment Properties", "SMSF Platform Investments Detail"]
+    let fullTitles = ["Family Trust Investment Loan", "Family Details", "Life Insurance", "Personal Insurance", "Investment Loan", "Margin Loan", "SMSF Details", "SMSF Investment Properties", "SMSF Platform Investments Detail", "Family Trust Investment Property", "SMSF Investment Loan"]
 
     const size = fullTitles.includes(props.modalObject.title) ? "xxl" : xlTitles.includes(props.modalObject.title) ? "xl" : "lg";
 

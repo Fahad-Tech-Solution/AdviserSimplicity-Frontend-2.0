@@ -1,0 +1,22 @@
+{
+  "client": {
+    "Names": "",
+    "DOB": "",
+    "Age": "",
+    "Sex": "",
+    "PrivateHealthCover": "",
+    "RetirementYear": "",
+    "PlannedRetirementAge": "",
+    "PreservationAge": ""
+  },
+  "partner": {
+    "Names": "",
+    "DOB": "",
+    "Age": "",
+    "Sex": "",
+    "PrivateHealthCover": "",
+    "RetirementYear": "",
+    "PlannedRetirementAge": "",
+    "PreservationAge": ""
+  }
+}

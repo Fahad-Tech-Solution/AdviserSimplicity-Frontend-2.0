@@ -3,28 +3,23 @@ import React, { useEffect, useState } from "react";
 import { Button, InputGroup, Row, Table } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { PatchAxios, PostAxios, RenderName, toCommaAndDollar } from "../../Assets/Api/Api";
+import { openNotificationSuccess, PatchAxios, PostAxios, RenderName, toCommaAndDollar } from "../../Assets/Api/Api";
 import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
 import DynamicYesNo from "../FinancialInvestments/QuestionsDetail/DynamicYesNo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
-// import PortfolioValue from "./accumulationBenefits";
-// import accumulationBenefits from "./accumulationBenefits";
-// import SuperFunds from "./SuperFunds";
-// import CenterLinkPayments from "./CenterLinkPayments";
-// import accumulationBenefits from "./accumulationBenefits";
+
 import Beneficiaries from "../FinancialInvestments/QuestionsDetail/Beneficiaries";
 import AccumulationBenefits from "./AccumulationBenefits";
 import Contributions from "../FinancialInvestments/QuestionsDetail/Contributions";
 import { CreatableMultiSelectField } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
-// import Contributions from "./Contributuions";
-// import Beneficiaries from "./Beneficiaries";
-// import Select from "react-select";
 
 const SmsfAccumulationDetails = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
   let [ShowError, setShowError] = useState({});
+
+  let [UserStatus] = useState(localStorage.getItem('UserStatus'));
 
   let [nameSet] = useState(() => {
     if (props.modalObject.Input === "client") {
@@ -52,47 +47,50 @@ const SmsfAccumulationDetails = (props) => {
 
   const fillInitialValues = (setFieldValue) => {
     try {
-      console.log(SMSFAccumulationDetails)
+      console.log(SMSFAccumulationDetails, "ma hun")
 
-      setFieldValue("member", SMSFAccumulationDetails.member);
+      if (SMSFAccumulationDetails.member) {
 
-      const clientIndex = SMSFAccumulationDetails.member.includes("client") ? SMSFAccumulationDetails.member.indexOf("client") : -1;
-      const partnerIndex = SMSFAccumulationDetails.member.includes("partner") ? SMSFAccumulationDetails.member.indexOf("partner") : -1;
-      const jointIndex = SMSFAccumulationDetails.member.includes("joint") ? SMSFAccumulationDetails.member.indexOf("joint") : -1;
+        setFieldValue("member", SMSFAccumulationDetails.member);
+
+        const clientIndex = SMSFAccumulationDetails.member.includes("client") ? SMSFAccumulationDetails.member.indexOf("client") : -1;
+        const partnerIndex = SMSFAccumulationDetails.member.includes("partner") ? SMSFAccumulationDetails.member.indexOf("partner") : -1;
+        const jointIndex = SMSFAccumulationDetails.member.includes("joint") ? SMSFAccumulationDetails.member.indexOf("joint") : -1;
 
 
-      Array.from({ length: SMSFAccumulationDetails.member.length }).map((_, i) => {
-        if (clientIndex === i) {
-          SMSFAccumulationDetails.client.forEach(element => {
-            setFieldValue("accumulationBenefits" + i, element.accumulationBenefits);
-            setFieldValue("accumulationBenefitsarray" + i, element.accumulationBenefitsarray);
-            setFieldValue("contributions" + i, element.contributions);
-            setFieldValue("contributionsArray" + i, element.contributionsArray);
-            setFieldValue("nominatedBeneficiaries" + i, element.nominatedBeneficiaries);
-            setFieldValue("beneficiariesArray" + i, element.beneficiariesArray);
-          });
-        }
-        else if (partnerIndex === i) {
-          SMSFAccumulationDetails.partner.forEach(element => {
-            setFieldValue("accumulationBenefits" + i, element.accumulationBenefits);
-            setFieldValue("accumulationBenefitsarray" + i, element.accumulationBenefitsarray);
-            setFieldValue("contributions" + i, element.contributions);
-            setFieldValue("contributionsArray" + i, element.contributionsArray);
-            setFieldValue("nominatedBeneficiaries" + i, element.nominatedBeneficiaries);
-            setFieldValue("beneficiariesArray" + i, element.beneficiariesArray);
-          });
-        }
-        else if (jointIndex === i) {
-          SMSFAccumulationDetails.joint.forEach(element => {
-            setFieldValue("accumulationBenefits" + i, element.accumulationBenefits);
-            setFieldValue("accumulationBenefitsarray" + i, element.accumulationBenefitsarray);
-            setFieldValue("contributions" + i, element.contributions);
-            setFieldValue("contributionsArray" + i, element.contributionsArray);
-            setFieldValue("nominatedBeneficiaries" + i, element.nominatedBeneficiaries);
-            setFieldValue("beneficiariesArray" + i, element.beneficiariesArray);
-          });
-        }
-      })
+        Array.from({ length: SMSFAccumulationDetails.member.length }).map((_, i) => {
+          if (clientIndex === i) {
+            SMSFAccumulationDetails.client.forEach(element => {
+              setFieldValue("accumulationBenefits" + i, element.accumulationBenefits);
+              setFieldValue("accumulationBenefitsarray" + i, element.accumulationBenefitsarray);
+              setFieldValue("contributions" + i, element.contributions);
+              setFieldValue("contributionsArray" + i, element.contributionsArray);
+              setFieldValue("nominatedBeneficiaries" + i, element.nominatedBeneficiaries);
+              setFieldValue("beneficiariesArray" + i, element.beneficiariesArray);
+            });
+          }
+          else if (partnerIndex === i) {
+            SMSFAccumulationDetails.partner.forEach(element => {
+              setFieldValue("accumulationBenefits" + i, element.accumulationBenefits);
+              setFieldValue("accumulationBenefitsarray" + i, element.accumulationBenefitsarray);
+              setFieldValue("contributions" + i, element.contributions);
+              setFieldValue("contributionsArray" + i, element.contributionsArray);
+              setFieldValue("nominatedBeneficiaries" + i, element.nominatedBeneficiaries);
+              setFieldValue("beneficiariesArray" + i, element.beneficiariesArray);
+            });
+          }
+          else if (jointIndex === i) {
+            SMSFAccumulationDetails.joint.forEach(element => {
+              setFieldValue("accumulationBenefits" + i, element.accumulationBenefits);
+              setFieldValue("accumulationBenefitsarray" + i, element.accumulationBenefitsarray);
+              setFieldValue("contributions" + i, element.contributions);
+              setFieldValue("contributionsArray" + i, element.contributionsArray);
+              setFieldValue("nominatedBeneficiaries" + i, element.nominatedBeneficiaries);
+              setFieldValue("beneficiariesArray" + i, element.beneficiariesArray);
+            });
+          }
+        })
+      }
 
     } catch (error) {
       console.error("An error occurred while initializing values in fillInitialValues:", error);
@@ -223,12 +221,14 @@ const SmsfAccumulationDetails = (props) => {
         setQuestionDetail(updatedData);
       }
 
+      openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved"); openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
       // Reset the flag state if necessary
       if (props.flagState) {
         props.setFlagState(false);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
+      openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again"); openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
     }
   };
 
@@ -259,11 +259,14 @@ const SmsfAccumulationDetails = (props) => {
   }
 
 
-  let option = [
+  let option = (UserStatus !== "Single") ? [
     { value: "client", label: RenderName("client") },
     { value: "partner", label: RenderName("partner") },
-    { value: "joint", label: RenderName("joint") }
-  ]
+    { value: "joint", label: RenderName("joint") }] :
+    [{ value: "client", label: RenderName("client") },];
+
+
+
   return (
     <Formik
       initialValues={initialValues}
@@ -337,7 +340,7 @@ const SmsfAccumulationDetails = (props) => {
                                 <td>
                                   {RenderName(values.member[i])}
                                 </td>
-                                <td>
+                                <td style={{ width: "11rem" }}>
                                   <InputGroup className={`mb-3 ${ShowError[`accumulationBenefits${i}Error`] === true ? "is-invalid" : ""}`}>
                                     <Field
                                       type="text"

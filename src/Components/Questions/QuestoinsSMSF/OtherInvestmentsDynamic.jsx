@@ -60,14 +60,12 @@ const OtherInvestmentsDynamic = (props) => {
         }
     };
 
-
-
     let DefaultUrl = useRecoilValue(defaultUrl)
-
 
     let onSubmit = async (values) => {
         let obj = values;
         obj.clientFK = localStorage.getItem("UserID");
+        obj.clientTotal = values.currentValue;
 
         console.log(obj, "final obj");
 
@@ -101,16 +99,15 @@ const OtherInvestmentsDynamic = (props) => {
         }
     };
 
-
     let optionsLender = [
         { value: "i/only", label: "i/only" },
         { value: "P&I", label: "P&I" },
     ]
 
     const rowConfig = [
-        { name: 'investmentName', type: 'text', options: lenderOption, placeholder: 'Name of Investment', styleSet: { width: "20rem" }, },
+        { name: 'investmentName', type: 'text', placeholder: 'Name of Investment', styleSet: { width: "20rem" }, },
         { name: 'currentValue', type: 'number-toComma', placeholder: 'Current Value', },
-        { name: 'costBase', type: 'text', options: optionsLender, placeholder: 'Cost Base', },
+        { name: 'costBase', type: 'number-toComma', placeholder: 'Cost Base', },
     ]
 
     return (
@@ -129,7 +126,6 @@ const OtherInvestmentsDynamic = (props) => {
                     <Form>
                         <Row>
                             <div className="col-md-12">
-                                <h5>Need some Work Don't Test this</h5>
                                 <div className='row justify-content-center'>
                                     <div className='mt-4'>
                                         <Table striped bordered responsive hover>

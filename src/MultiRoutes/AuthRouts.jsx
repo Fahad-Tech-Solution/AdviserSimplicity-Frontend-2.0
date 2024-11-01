@@ -145,8 +145,9 @@ function AuthRouts() {
                             <Route path="/PDF-Test" element={<Contact />} />
 
 
-                            {/* Cash-Flow ROUTING */}
-                            <Route path="/Cash-Flow" element={<CashFlow />} />
+                            {/* Cash-Flow ROUTING
+                                <Route path="/Cash-Flow" element={<CashFlow />} />
+                                */}
                             <Route path="/Income-And-Expenses-CashFlow" element={<IncomeAndExpenses />} />
                             <Route path="/Personal-Assets-CashFlow" element={<PersonalAssets />} />
                             <Route path="/Investments-CashFlow" element={<InvestmentsCashFlow />} />

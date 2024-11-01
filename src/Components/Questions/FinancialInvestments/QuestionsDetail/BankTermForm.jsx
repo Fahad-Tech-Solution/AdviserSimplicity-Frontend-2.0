@@ -52,7 +52,7 @@ const BankTermForm = (props) => {
     let handleInput = (e, setFieldValue) => {
 
         let value = 0;
-        if (title === "SMSF Bank Accounts Detail") {
+        if (title === "SMSF Bank Accounts Detail" || title === "Family Trust Bank Accounts Detail") {
             value = e.target.value > 5 ? 5 : e.target.value;
         }
         else {
@@ -153,7 +153,7 @@ const BankTermForm = (props) => {
                                                     {Array.from({ length: values.NumberOfMap }).map((_, i) => (
                                                         <tr key={i}>
                                                             <td>{1 + i}</td>
-                                                            <td style={{width:"20rem"}}>
+                                                            <td style={{ width: "20rem" }}>
                                                                 <Field
                                                                     as="select"
                                                                     placeholder="Name of Institution"

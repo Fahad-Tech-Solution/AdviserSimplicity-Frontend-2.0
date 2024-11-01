@@ -278,7 +278,7 @@ const ManagedFunds = (props) => {
                                                                     }
                                                                 </Field>
                                                             </td>
-                                                            <td style={{ width: "230px" }}>
+                                                            <td style={{ width: "130px" }}>
                                                                 <Field
                                                                     type="number"
                                                                     placeholder="Account Number"

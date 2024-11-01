@@ -110,8 +110,8 @@ export const CRState = atom({
         numberOfFamilyInvestmentProperties: 0,
         familyPensionPhase: "No",
 
-        "SMSFOtherInvestment": "Yes",
-        "familyOtherInvestment": "Yes",
+        "SMSFOtherInvestment": "No",
+        "familyOtherInvestment": "No",
 
         //loop keys
         // familyInvestmentPropertiesLoan
@@ -151,7 +151,7 @@ export const CurrentPage = atom({
 export const defaultUrl = atom({
     key: "defaultUrl",
 
-    default: "http://localhost:7000",
+    // default: "http://localhost:7000",
 
     // default: "http://192.168.1.54:7000",    // Usama bhai AUSU
     // default: "http://192.168.3.71:7000",    // Usama bhai growWork_Beta
@@ -159,7 +159,7 @@ export const defaultUrl = atom({
     // default: "http://192.168.227.244:7000", // Usama bhai Fahad bhai k sath
     // default: "http://192.168.3.4:7000",
     // default: "http://192.168.211.242:7000",
-    // default: "http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com:7000",  // Live link 
+    default: "http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com:7000",  // Live link 
 
     // default: "",
 });

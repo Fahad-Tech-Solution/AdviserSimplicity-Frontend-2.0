@@ -268,7 +268,7 @@ function InnerDirectorsOfBareTrust(props) {
                                 placeholder="Director Name"
                                 id={`directorName${index}`}
                                 name={`directorName${index}`}
-                                className="form-control inputDesignDoubleInput" >
+                                className="form-select inputDesignDoubleInput" >
                                 <option value="">Select</option>
                                 {
                                   props.modalObject.values[`directorsOfCorporateTrustee`].map((elem, i) => {

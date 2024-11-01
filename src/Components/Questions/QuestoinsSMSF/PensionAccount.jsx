@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Button, InputGroup, Row, Table } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { PatchAxios, PostAxios, RenderName, toCommaAndDollar } from "../../Assets/Api/Api";
+import { openNotificationSuccess, PatchAxios, PostAxios, RenderName, toCommaAndDollar } from "../../Assets/Api/Api";
 import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
 import DynamicYesNo from "../FinancialInvestments/QuestionsDetail/DynamicYesNo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -35,6 +35,7 @@ const SmsfPensionAccount = (props) => {
 
   const fillInitialValues = (setFieldValue) => {
     console.log(props.modalObject.editArray)
+
     if (props.modalObject.editArray) {
       setFieldValue(`NumberOfMap`, props.modalObject.editArray.length || "");
       props.modalObject.editArray.forEach((data, i) => {
@@ -48,6 +49,7 @@ const SmsfPensionAccount = (props) => {
         }
       });
     }
+
   };
 
   let handleInnerModal = (
@@ -61,6 +63,7 @@ const SmsfPensionAccount = (props) => {
     values
   ) => {
     console.log(values);
+    let ParentModal = props.modalObject.title
     setModalObject({
       title,
       question,
@@ -70,6 +73,7 @@ const SmsfPensionAccount = (props) => {
       editArray: editArray || [],
       index,
       values,
+      ParentModal
     });
     setFlagState(true);
   };
@@ -143,6 +147,12 @@ const SmsfPensionAccount = (props) => {
     }
   }
 
+  let handleInput = (e, setFieldValue) => {
+
+    const value = e.target.value > 5 ? 5 : e.target.value;
+    setFieldValue(e.target.id, value);
+  };
+
 
   return (
     <Formik
@@ -188,7 +198,7 @@ const SmsfPensionAccount = (props) => {
                       id="NumberOfMap"
                       name="NumberOfMap"
                       className="form-control inputDesignDoubleInput"
-                      onChange={handleChange}
+                      onChange={(e) => handleInput(e, setFieldValue)}
                     />
                   </div>
                   {values.NumberOfMap && (
@@ -294,6 +304,7 @@ const SmsfPensionAccount = (props) => {
                                           className="btn bgColor modalBtn border-0"
                                           id="button-addon2"
                                           onClick={() => {
+                                            let nameSet = RenderName(props.modalObject.Input);
                                             handleInnerModal(
                                               "Beneficiaries",
                                               `How many beneficiaries do ${nameSet} have :`,
@@ -335,6 +346,8 @@ const SmsfPensionAccountMiddleWare = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
+  let [UserStatus] = useState(localStorage.getItem('UserStatus'));
+
   let [ShowError, setShowError] = useState({});
 
   let [flagState, setFlagState] = useState(false);
@@ -354,36 +367,38 @@ const SmsfPensionAccountMiddleWare = (props) => {
     try {
       console.log(SMSFPensionPhase)
 
-      setFieldValue("member", SMSFPensionPhase.member);
+      if (SMSFPensionPhase.member) {
+        setFieldValue("member", SMSFPensionPhase.member);
 
-      const clientIndex = SMSFPensionPhase.member.includes("client") ? SMSFPensionPhase.member.indexOf("client") : -1;
-      const partnerIndex = SMSFPensionPhase.member.includes("partner") ? SMSFPensionPhase.member.indexOf("partner") : -1;
-      const jointIndex = SMSFPensionPhase.member.includes("joint") ? SMSFPensionPhase.member.indexOf("joint") : -1;
+        const clientIndex = SMSFPensionPhase.member.includes("client") ? SMSFPensionPhase.member.indexOf("client") : -1;
+        const partnerIndex = SMSFPensionPhase.member.includes("partner") ? SMSFPensionPhase.member.indexOf("partner") : -1;
+        const jointIndex = SMSFPensionPhase.member.includes("joint") ? SMSFPensionPhase.member.indexOf("joint") : -1;
 
 
-      Array.from({ length: SMSFPensionPhase.member.length }).map((_, i) => {
-        if (clientIndex === i) {
-          SMSFPensionPhase.client.forEach(element => {
-            setFieldValue("pensionBenefitsTotal" + i, element.pensionBenefitsTotal);
-            setFieldValue("pensionBenefitsTotalArray" + i, element.pensionBenefitsTotalArray);
+        Array.from({ length: SMSFPensionPhase.member.length }).map((_, i) => {
+          if (clientIndex === i) {
+            SMSFPensionPhase.client.forEach(element => {
+              setFieldValue("pensionBenefitsTotal" + i, element.pensionBenefitsTotal);
+              setFieldValue("pensionBenefitsTotalArray" + i, element.pensionBenefitsTotalArray);
 
-          });
-        }
-        else if (partnerIndex === i) {
-          SMSFPensionPhase.partner.forEach(element => {
-            setFieldValue("pensionBenefitsTotal" + i, element.pensionBenefitsTotal);
-            setFieldValue("pensionBenefitsTotalArray" + i, element.pensionBenefitsTotalArray);
+            });
+          }
+          else if (partnerIndex === i) {
+            SMSFPensionPhase.partner.forEach(element => {
+              setFieldValue("pensionBenefitsTotal" + i, element.pensionBenefitsTotal);
+              setFieldValue("pensionBenefitsTotalArray" + i, element.pensionBenefitsTotalArray);
 
-          });
-        }
-        else if (jointIndex === i) {
-          SMSFPensionPhase.joint.forEach(element => {
-            setFieldValue("pensionBenefitsTotal" + i, element.pensionBenefitsTotal);
-            setFieldValue("pensionBenefitsTotalArray" + i, element.pensionBenefitsTotalArray);
+            });
+          }
+          else if (jointIndex === i) {
+            SMSFPensionPhase.joint.forEach(element => {
+              setFieldValue("pensionBenefitsTotal" + i, element.pensionBenefitsTotal);
+              setFieldValue("pensionBenefitsTotalArray" + i, element.pensionBenefitsTotalArray);
 
-          });
-        }
-      })
+            });
+          }
+        })
+      }
 
     } catch (error) {
       console.error("An error occurred while initializing values in fillInitialValues:", error);
@@ -400,7 +415,8 @@ const SmsfPensionAccountMiddleWare = (props) => {
     key3,
     editArray,
     index,
-    values
+    values,
+    Input
   ) => {
     console.log(values);
     setModalObject({
@@ -411,6 +427,7 @@ const SmsfPensionAccountMiddleWare = (props) => {
       editArray: editArray || [],
       index,
       values,
+      Input
     });
     setFlagState(true);
   };
@@ -436,7 +453,6 @@ const SmsfPensionAccountMiddleWare = (props) => {
     // Log the new entries to verify
     console.log(values.member, newEntries);
 
-    let DataOf = props.modalObject.Input;
 
     let obj = {
       clientFK: localStorage.getItem("UserID"),
@@ -492,7 +508,6 @@ const SmsfPensionAccountMiddleWare = (props) => {
       if (!bankAccountArray) {
         res = await PostAxios(`${DefaultUrl}/api/SMSFPensionPhase/Add`, obj);
       } else {
-        obj.collection = props.modalObject.Input;
         res = await PatchAxios(
           `${DefaultUrl}/api/SMSFPensionPhase/Update`,
           obj
@@ -505,22 +520,25 @@ const SmsfPensionAccountMiddleWare = (props) => {
         setQuestionDetail(updatedData);
       }
 
+      openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
       // Reset the flag state if necessary
       if (props.flagState) {
         props.setFlagState(false);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
+      openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
     }
   };
 
 
 
-  let option = [
+  let option = (UserStatus !== "Single") ? [
     { value: "client", label: RenderName("client") },
     { value: "partner", label: RenderName("partner") },
-    { value: "joint", label: RenderName("joint") }
-  ]
+    { value: "joint", label: RenderName("joint") }] :
+    [{ value: "client", label: RenderName("client") },];
+
 
   let CheckInputValue = (values, setFieldValue, currentInput, index) => {
     let pensionBenefitsTotalArray = values[`pensionBenefitsTotalArray${index}`];
@@ -629,6 +647,7 @@ const SmsfPensionAccountMiddleWare = (props) => {
                                       className="btn bgColor modalBtn border-0"
                                       id="button-addon2"
                                       onClick={() => {
+                                        let DataOf = values.member[i]
                                         handleInnerModal(
                                           "Pension Benefits Details", //title 
                                           "pensionBenefitsTotalArray", //key
@@ -636,7 +655,8 @@ const SmsfPensionAccountMiddleWare = (props) => {
                                           "totalPortfolioCost", // key3
                                           values[`pensionBenefitsTotalArray${i}`], //editarray
                                           i, //index
-                                          values // all form Values
+                                          values, // all form Values
+                                          DataOf
                                         );
                                       }}
                                     >

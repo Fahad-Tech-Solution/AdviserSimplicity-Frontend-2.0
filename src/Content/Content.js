@@ -6,7 +6,6 @@ import High from "../Components/RiskProfile/METER/5-  High.png";
 import VeryHigh from "../Components/RiskProfile/METER/6- Very High.png";
 
 export const content = {
-
     itemsOpt: [
         {
             subTitle: 'Personal Details',
@@ -253,6 +252,63 @@ export const content = {
             key: "PersonalInsurances",
             condition: (CRObject) => true // Always true, as this step is always needed.
         },
+    ],
+    cashFlow: [
+        {
+            subTitle: 'Personal Details',
+            statusStep: 0,
+            icon: 'FaUser',
+            route: '/PersonalDetail',
+            condition: (CRObject) => true // Always true, as this step is always needed.
+        },
+        {
+            subTitle: 'Income & Expenses',
+            statusStep: 10,
+            icon: 'FaUser',
+            route: '/Income-And-Expenses',
+            condition: (CRObject) => true // Always true, as this step is always needed.
+        },
+        {
+            subTitle: 'Personal Assets',
+            statusStep: 20,
+            icon: 'FaUser',
+            route: '/Personal-Assets',
+            condition: (CRObject) => true // Always true, as this step is always needed.
+        },
+        {
+            subTitle: 'Investments',
+            statusStep: 30,
+            icon: 'FaUser',
+            route: '/Investments',
+            condition: (CRObject) => true // Always true, as this step is always needed.
+        },
+        {
+            subTitle: 'Direct Property',
+            statusStep: 40,
+            icon: 'FaUser',
+            route: '/Direct-Property',
+            condition: (CRObject) => true // Always true, as this step is always needed.
+        },
+        {
+            subTitle: 'Super and Retirement',
+            statusStep: 50,
+            icon: 'FaUser',
+            route: '/Super-and-Retirement',
+            condition: (CRObject) => true // Always true, as this step is always needed.
+        },
+        {
+            subTitle: 'Investment',
+            statusStep: 60,
+            icon: 'FaUser',
+            route: '/Investment',
+            condition: (CRObject) => true // Always true, as this step is always needed.
+        },
+        {
+            subTitle: 'SMSF',
+            statusStep: 70,
+            icon: 'FaUser',
+            route: '/SMSF',
+            condition: (CRObject) => true // Always true, as this step is always needed.
+        },
     ]
-
 }

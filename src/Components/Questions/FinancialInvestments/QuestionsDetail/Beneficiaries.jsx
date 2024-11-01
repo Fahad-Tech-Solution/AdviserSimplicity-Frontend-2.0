@@ -104,7 +104,7 @@ const Beneficiaries = (props) => {
     };
 
 
-    let extraValue = ["Account Based Pension Detail", "Annuities Detail"]
+    let extraValue = ["Account Based Pension Detail", "Annuities Detail", "Pension Benefits Details"]
 
     let [autoClearValue, setAutoClearValue] = useState(false);
 
@@ -225,7 +225,7 @@ const Beneficiaries = (props) => {
                                                                         }}
                                                                     >
                                                                         <option value={""}>Select</option>
-                                                                        {title}
+
                                                                         {extraValue.includes(title) &&
                                                                             <option value={"Reversionary Beneficiary"}>Reversionary Beneficiary</option>
                                                                         }
