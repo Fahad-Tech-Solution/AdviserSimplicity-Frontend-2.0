@@ -218,11 +218,12 @@ const NewLoadingExclusion = (props) => {
                                                                                         className="form-select inputDesignDoubleInput"
                                                                                     >
                                                                                         <option value={""}>Select</option>
+                                                                                        <option value={"30 Days"}>30 Days</option>
+                                                                                        <option value={"60 Days"}>60 Days</option>
+                                                                                        <option value={"90 Days"}>90 Days</option>
+                                                                                        <option value={"120 Days"}>120 Days</option>
+                                                                                        <option value={"180 Days"}>180 Days</option>
                                                                                         <option value={"2 Years"}>2 Years</option>
-                                                                                        <option value={"5 Years"}>5 Years</option>
-                                                                                        <option value={"To Age 60"}>To Age 60</option>
-                                                                                        <option value={"To Age 65"}>To Age 65</option>
-                                                                                        <option value={"To Age 70"}>To Age 70</option>
                                                                                     </Field>
                                                                                 </td>
                                                                                 <td className="ps-2" >
@@ -233,12 +234,12 @@ const NewLoadingExclusion = (props) => {
                                                                                         className="form-select inputDesignDoubleInput"
                                                                                     >
                                                                                         <option value={""}>Select</option>
-                                                                                        <option value={"30 Days"}>30 Days</option>
-                                                                                        <option value={"60 Days"}>60 Days</option>
-                                                                                        <option value={"90 Days"}>90 Days</option>
-                                                                                        <option value={"120 Days"}>120 Days</option>
-                                                                                        <option value={"180 Days"}>180 Days</option>
                                                                                         <option value={"2 Years"}>2 Years</option>
+                                                                                        <option value={"5 Years"}>5 Years</option>
+                                                                                        <option value={"To Age 60"}>To Age 60</option>
+                                                                                        <option value={"To Age 65"}>To Age 65</option>
+                                                                                        <option value={"To Age 70"}>To Age 70</option>
+
                                                                                     </Field>
                                                                                 </td>
                                                                             </tbody>

@@ -95,9 +95,10 @@ const FamilyInvestmentProperty = (props) => {
                 ? parseFloat(questionDetail.familyInvestmentHomeLoan.partnerTotal.replace(/[^0-9.-]+/g, ""))
                 : 0;
 
+            let allSums = familyDetailsClientTotal + familyBankClientTotal + familyTermDepositClientTotal + familyAustralianShareClientTotal + familyMangedFundsClientTotal + familyDetailsPartnerTotal + familyBankPartnerTotal + familyTermDepositPartnerTotal + familyAustralianSharePartnerTotal + familyMangedFundsPartnerTotal;
 
-            let total = familyDetailsClientTotal + familyBankClientTotal + familyTermDepositClientTotal + familyAustralianShareClientTotal + familyMangedFundsClientTotal - familyInvestmentHomeLoanClientTotal - familyInvestmentPropertiesClientTotal + familyDetailsPartnerTotal + familyBankPartnerTotal + familyTermDepositPartnerTotal + familyAustralianSharePartnerTotal + familyMangedFundsPartnerTotal - familyInvestmentHomeLoanPartnerTotal - familyInvestmentPropertiesPartnerTotal;
-
+            let total = allSums + familyInvestmentPropertiesClientTotal - familyInvestmentHomeLoanClientTotal - familyInvestmentHomeLoanPartnerTotal - familyInvestmentPropertiesPartnerTotal;
+                                //^ this is Property Values so it must be added to Total
             return toCommaAndDollar(total);
 
         } catch (error) {

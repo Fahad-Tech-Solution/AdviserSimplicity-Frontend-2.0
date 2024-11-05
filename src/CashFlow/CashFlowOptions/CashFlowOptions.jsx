@@ -37,7 +37,7 @@ function CashFlowOptions(props) {
 
     useEffect(() => {
         let cLocation = location.pathname.replace("/", "");
-        console.log(location.pathname, cLocation);
+        // console.log(location.pathname, cLocation);
 
         let Opt = "Opt1"
         let stepComplete = 0;
@@ -77,7 +77,6 @@ function CashFlowOptions(props) {
 
         setOptRender(Opt)
         setStepCompleted(stepComplete);
-
 
         const itemsToRender = cashFlow;
 

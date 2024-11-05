@@ -5,6 +5,32 @@ import ModeratelyHigh from "../Components/RiskProfile/METER/4- Moderately high.p
 import High from "../Components/RiskProfile/METER/5-  High.png";
 import VeryHigh from "../Components/RiskProfile/METER/6- Very High.png";
 
+import overseas from "../Components/Questions/svgs/overseas.svg";
+import Businessman from "../Components/Questions/svgs/businessman.svg";
+import businessIncome from "../Components/Questions/svgs/business-income.png";
+import businessPartnership from "../Components/Questions/svgs/businessPartnership.png";
+import Gears from "../Components/Questions/svgs/gears-gear-svgrepo-com.svg";
+import money from "../Components/Questions/svgs/money-3.svg";
+import businessIncomeCase from "../Components/Questions/svgs/business-income.png";
+import OtherTaxable from "../Components/Questions/svgs/no-tax.png";
+import moneyBagPng from "../Components/Questions/svgs/money-bag.png";
+import Education from "../Components/Questions/svgs/Education.png";
+
+
+import car from "../Components/Questions/svgs/car.svg";
+import boat from "../Components/Questions/svgs/boat.svg";
+import trailer from "../Components/Questions/svgs/trailer-caravan.svg";
+import settingMoney from "../Components/Questions/svgs/settingMoney.svg";
+import Questions_Home from "../Components/Questions/svgs/home-svgrepo-com.svg";
+import houseHold from "../Components/Questions/svgs/warehouse-.svg";
+
+import PortFolio from "../Components/Questions/svgs/portfolio.svg";
+import funds from "../Components/Questions/svgs/funds.svg";
+
+
+
+
+
 export const content = {
     itemsOpt: [
         {
@@ -264,50 +290,162 @@ export const content = {
         {
             subTitle: 'Income & Expenses',
             statusStep: 10,
-            icon: 'FaUser',
+            icon: 'FaMoneyCheckDollar',
             route: '/Income-And-Expenses',
+            key: 'CashFlow_Income_And_Expenses',
+            QuestionsArray: [
+                {
+                    title: "Overseas Pensions",
+                    img: overseas,
+                    key: "cashFlowIncomeFromOverseasPension",
+                },
+                {
+                    title: "Sole Trader Income",
+                    key: "incomeFromSoleTrader",
+                    img: businessIncome,
+                },
+                {
+                    title: "Partnership Income",
+                    img: businessPartnership,
+                    key: "incomeFromPartnership",
+                },
+                {
+                    title: "Centrelink Payments/Benefits",
+                    img: Gears,
+                    key: "incomeFromCentrelink",
+                    info: "This includes Family Tax Benefit (A&B) Payments and any Centrelink Cards"
+                },
+                {
+                    title: "Lifetime/Defined Benefit Super Pensions",
+                    img: money,
+                    key: "incomeFromSuperPayment",
+                },
+                {
+                    title: "Employment Income",
+                    key: "incomeFromOwnBusiness",
+                    img: Businessman,
+                },
+                {
+                    title: "Business Income",
+                    key: "businessIncome",
+                    img: businessIncomeCase,
+                },
+                {
+                    title: "Other Non-Taxable",
+                    key: "otherNonTaxable",
+                    img: OtherTaxable,
+                },
+                {
+                    title: "Regular Living Expenses",
+                    key: "RegularLivingExpenses",
+                    img: moneyBagPng,
+                },
+                {
+                    title: "Education Expenses",
+                    key: "EducationExpenses",
+                    img: Education,
+                },
+            ],
             condition: (CRObject) => true // Always true, as this step is always needed.
         },
         {
-            subTitle: 'Personal Assets',
+            subTitle: 'Lifestyle Assets & Debt',
             statusStep: 20,
-            icon: 'FaUser',
+            icon: 'FaHome',
             route: '/Personal-Assets',
+            QuestionsArray: [
+                {
+                    title: "Home",
+                    img: overseas,
+                    key: "Home",
+                },
+                {
+                    title: "Own a Family Home",
+                    key: "familyHome",
+                    img: Questions_Home,
+                },
+                {
+                    title: "Car",
+                    key: "car",
+                    img: car
+                },
+                {
+                    title: "House hold",
+                    key: "houseHold",
+                    img: houseHold
+                },
+                {
+                    title: "Boat",
+                    key: "boat",
+                    img: boat
+                },
+                {
+                    title: "Caravan",
+                    key: "caravan",
+                    img: trailer
+                },
+                {
+                    title: "Other Assets",
+                    key: "otherAssets",
+                    img: settingMoney
+                },
+                {
+                    title: "Personal Debt",
+                    key: "PersonalDebt",
+                    img: settingMoney
+                },
+            ],
             condition: (CRObject) => true // Always true, as this step is always needed.
         },
         {
-            subTitle: 'Investments',
+            subTitle: 'Financial Investments',
             statusStep: 30,
-            icon: 'FaUser',
+            icon: 'RiCoinsFill',
             route: '/Investments',
+            QuestionsArray: [
+                {
+                    title: "Australian Shares",
+                    img: PortFolio,
+                    key: "AustralianShares",
+                },
+                {
+                    title: "Platform Investment",
+                    img: funds,
+                    key: "PlatformInvestment",
+                },
+            ],
             condition: (CRObject) => true // Always true, as this step is always needed.
         },
         {
             subTitle: 'Direct Property',
             statusStep: 40,
-            icon: 'FaUser',
+            icon: 'FaKey',
             route: '/Direct-Property',
+            QuestionsArray: [],
             condition: (CRObject) => true // Always true, as this step is always needed.
         },
         {
             subTitle: 'Super and Retirement',
             statusStep: 50,
-            icon: 'FaUser',
+            icon: 'FaMoneyCheckDollar',
+            QuestionsArray: [],
             route: '/Super-and-Retirement',
             condition: (CRObject) => true // Always true, as this step is always needed.
         },
         {
             subTitle: 'Investment',
             statusStep: 60,
-            icon: 'FaUser',
+            icon: 'FaBriefcase',
             route: '/Investment',
+            QuestionsArray: [],
             condition: (CRObject) => true // Always true, as this step is always needed.
         },
         {
             subTitle: 'SMSF',
             statusStep: 70,
-            icon: 'FaUser',
+            icon: 'FaGift',
             route: '/SMSF',
+            QuestionsArray: [],
             condition: (CRObject) => true // Always true, as this step is always needed.
         },
     ]

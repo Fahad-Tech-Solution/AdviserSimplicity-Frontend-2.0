@@ -339,7 +339,7 @@ const FamilyDetails = (props) => {
                           <td>
                             <Field
                               type="text"
-                              placeholder="place Of Business"
+                              placeholder="Place Of Business"
                               id={`placeOfBusiness`}
                               name={`placeOfBusiness`}
                               className="form-control inputDesignDoubleInput"
@@ -409,7 +409,7 @@ const FamilyDetails = (props) => {
                           <td>
                             <Field
                               type="text"
-                              placeholder="Trustee Name  "
+                              placeholder="Trustee Name"
                               id={`trusteeName`}
                               name={`trusteeName`}
                               className="form-control inputDesignDoubleInput"
@@ -427,7 +427,7 @@ const FamilyDetails = (props) => {
                           <td>
                             <Field
                               type="text"
-                              placeholder="Number of Accountants Name  "
+                              placeholder="Number of Accountants Name"
                               id={`nameOfAccountant`}
                               name={`nameOfAccountant`}
                               className="form-control inputDesignDoubleInput"

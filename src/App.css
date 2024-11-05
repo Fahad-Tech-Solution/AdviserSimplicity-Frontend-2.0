@@ -1113,6 +1113,10 @@ input[type="checkbox"] + .femaleSmoking + .maleNonSmoking {
     padding: 0px 7.9% !important;
   }
 
+  .cashFlowNextBtn{
+    padding: 0px 7% !important;
+  }
+
   .DateIconParent .react-datepicker__calendar-icon {
     margin-left: calc(50% - 30%);
   }

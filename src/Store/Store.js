@@ -5,6 +5,37 @@ export const QuestionShift = atom({
     default: "FinancialInvestments",
 });
 
+export const CashFlowShift = atom({
+    key: "CashFlowShift",
+    default: "PersonalDetail",
+});
+export const CFQObject = atom({
+    key: "CFQObject",
+    default: {
+        //Financial Assets 
+        QuestionsFlag: false,
+        clientFK: "",
+        businessIncome: "No",
+        cashFlowIncomeFromOverseasPension: "No",
+        incomeFromSoleTrader: "No",
+        incomeFromPartnership: "No",
+        incomeFromCentrelink: "No",
+        incomeFromSuperPayment: "No",
+        incomeFromOwnBusiness: "No",
+        incomeFromOwnBusiness: "No",
+        otherNonTaxable: "No",
+        RegularLivingExpenses: "No",
+        EducationExpenses: "No",
+        Home: "No",
+        familyHome: "No",
+        car: "No",
+        houseHold: "No",
+        boat: "No",
+        caravan: "No",
+        otherAssets: "No",
+    },
+});
+
 export const UserName = atom({
     key: "UserName",
     default: "Welcome User",
