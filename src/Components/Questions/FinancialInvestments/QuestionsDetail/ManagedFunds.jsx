@@ -203,6 +203,12 @@ const ManagedFunds = (props) => {
     }
 
 
+    let InvestmentPlatformsBanks = [
+        "Platform Investments Detail",
+        "Family Trust Platform Investments Detail",
+        "SMSF Platform Investments Detail",
+    ]
+
 
     return (
         <Formik
@@ -267,7 +273,7 @@ const ManagedFunds = (props) => {
                                                                 >
                                                                     <option value={""}>Please Select</option>
 
-                                                                    {title === "Platform Investments Detail" ?
+                                                                    {InvestmentPlatformsBanks.includes(title) ?
                                                                         bankDetailObj?.InvestmentPlatforms.map((elem, index) => {
                                                                             return (<option key={index} value={elem._id}>{elem.platformName}</option>)
                                                                         })

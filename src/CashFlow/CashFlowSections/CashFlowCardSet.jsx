@@ -1,13 +1,26 @@
-import React, { useEffect, useState } from 'react'
-import ModalComponent from '../../Components/Questions/FinancialInvestments/ModalComponent'
+import React, { useEffect, useState } from 'react';
+import ModalComponent from '../../Components/Questions/FinancialInvestments/ModalComponent';
 import Add from "../../Components/Questions/svgs/add-circle-solid-svgrepo-com.svg";
+
 import { content } from '../../Content/Content';
 import { QuestionShift } from '../../Store/Store';
 import { useRecoilState } from 'recoil';
 import { useNavigate } from 'react-router-dom';
 import CFQModal from './CFQModal';
+
 import CashFlowCarsCards from './CashFlowCarsCards';
 import CashFlowOverseasPensions from '../Income&ExpenseComponents/CashFlowNew/CashFlowOverseasPensions';
+import CashFlowOtherNoneTaxable from '../Income&ExpenseComponents/CashFlowNew/CashFlowOtherNoneTaxable';
+import CashFlowBusinessIncome from '../Income&ExpenseComponents/CashFlowNew/CashFlowBusinessIncome';
+import CashFlowRegulerLiving from '../Income&ExpenseComponents/CashFlowNew/CashFlowRegulerLiving';
+import CashFlowLifetimeBenefit from '../Income&ExpenseComponents/CashFlowNew/CashFlowLifetimeBenefit';
+import CashFlowPartnership from '../Income&ExpenseComponents/CashFlowNew/CashFlowPartnership';
+import ChildeCashFlowEducationExpenses from '../Income&ExpenseComponents/CashFlowNew/CashFlowEducationExpenses';
+import CashFlowSoleTradeIncome from '../Income&ExpenseComponents/CashFlowNew/CashFlowSoleTradeIncome';
+import CashFlowCenterLink from '../Income&ExpenseComponents/CashFlowNew/CashFlowCenterLink';
+
+import CashFlowOtherAsset from '../PersonalAssetsComponents/CashFlowNew/CashFlowOtherAsset';
+import CashFlowFamilyHome from '../PersonalAssetsComponents/CashFlowNew/CashFlowFamilyHome';
 
 const CashFlowCardSet = (props) => {
 
@@ -20,6 +33,20 @@ const CashFlowCardSet = (props) => {
     const componentMapping = {
         "CFQModal": <CFQModal />,
         "Overseas Pensions": <CashFlowOverseasPensions />,
+        "Other Non-Taxable": <CashFlowOtherNoneTaxable />,
+        "Business Income": <CashFlowBusinessIncome />,
+        "Regular Living Expenses": <CashFlowRegulerLiving />,
+        "Lifetime Benefits": <CashFlowLifetimeBenefit />,
+        "Partnership Income": <CashFlowPartnership />,
+        "Sole Trader Income": <CashFlowSoleTradeIncome />,
+        "Education Expenses": <ChildeCashFlowEducationExpenses />,
+        "Centrelink Payments/Benefits": <CashFlowCenterLink />,
+        "Other Assets": <CashFlowOtherAsset />,
+        "Car": <CashFlowOtherAsset />,
+        "House hold": <CashFlowOtherAsset />,
+        "Boat": <CashFlowOtherAsset />,
+        "Caravan": <CashFlowOtherAsset />,
+        "Own a Family Home": <CashFlowFamilyHome />,
     }
 
     const ModalContent = (obj) => {
@@ -35,32 +62,14 @@ const CashFlowCardSet = (props) => {
 
     const HandleSubmit = () => {
         console.log(QuestionChange)
-        // Find the current item index based on the QuestionChange state
+
         const currentIndex = cashFlow.findIndex(item => item.route === `/${location.pathname.replace("/Cash-Flow/", "")}`);
-        // alert("Current Index :" + currentIndex);
-        // Find the next valid route by incrementing the index and checking the condition
         let nextIndex = currentIndex + 1;
 
-        // console.log("Current Index :", cashFlow[nextIndex]);
-        // while (nextIndex < cashFlow.length) {
         const nextItem = cashFlow[nextIndex];
-        //     if (nextItem.condition(CRObject)) {
-        //         // alert(nextItem.route);
+
         Navigation(`/Cash-Flow` + nextItem.route);
-        //         break;
-        //     }
-        //     nextIndex++;
-        // }
 
-        // cashFlow[nextIndex]
-
-        // Handle case where no next route is found (end of the list)
-        // if (nextIndex >= cashFlow.length) {
-
-        //     Navigation("/Goals-And-Objectives");
-
-        //     console.log("End of navigation, no further steps.");
-        // }
     };
 
     const BackHandle = () => {
@@ -76,12 +85,10 @@ const CashFlowCardSet = (props) => {
 
     };
 
-    let OpenModal = (title, key) => {
+    let OpenModal = (props) => {
+        // console.log(props);
         setFlagState(true);
-        setModalObject({
-            title: title,
-            key: key,
-        })
+        setModalObject(props)
     }
 
     return (

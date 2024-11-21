@@ -5,71 +5,89 @@ import DynamicTableRow from "../../../Components/Assets/Dynamic/DynamicTableRow"
 import {
   openNotificationSuccess,
   RenderName,
+  toCommaAndDollar,
 } from "../../../Components/Assets/Api/Api";
 import { Row, Table } from "react-bootstrap";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
 import { useRecoilValue } from "recoil";
 
-const CashFlowOverseasPensions = (props) => {
+const CashFlowBusinessIncome = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
 
   let [UserStatus] = useState(localStorage.getItem("UserStatus"));
   let DefaultUrl = useRecoilValue(defaultUrl);
 
-  let incomeFromOverseasPension =
-    Object.keys(questionDetail.incomeFromOverseasPension || {}).length > 0
-      ? questionDetail.incomeFromOverseasPension
+  let incomeFromSoleTrader =
+    Object.keys(questionDetail.incomeFromSoleTrader || {}).length > 0
+      ? questionDetail.incomeFromSoleTrader
       : {
           client: [],
           partner: [],
           joint: [],
-        }; // Use an empty object as default if incomeFromOverseasPension is undefined
+        };
 
-  let initialValues = { owner: [] };
+  let incomeFromPartnership =
+    Object.keys(questionDetail.incomeFromPartnership || {}).length > 0
+      ? questionDetail.incomeFromPartnership
+      : {
+          client: [],
+          partner: [],
+          joint: [],
+        };
+
+  let initialValues = {
+    owner: [],
+    client: {
+      includeFromYear: 1,
+      upUntillYear: 30,
+      indexation: "2.50%",
+    },
+    partner: {
+      includeFromYear: 1,
+      upUntillYear: 30,
+      indexation: "2.50%",
+    },
+  };
 
   const fillInitialValues = (setFieldValue) => {
-    console.log(incomeFromOverseasPension, "data");
-    if (incomeFromOverseasPension && incomeFromOverseasPension._id) {
-      setFieldValue(`owner`, incomeFromOverseasPension.owner || "");
+   
+    let incomeFromPartnershipClientTotal = 0;
+    let incomeFromSoleTraderClientTotal = 0;
 
-      // Handle client-related conditions
-      if (incomeFromOverseasPension.owner.includes("client")) {
-        if (
-          incomeFromOverseasPension?.client &&
-          Object.keys(incomeFromOverseasPension.client).length
-        ) {
-          setFieldValue(
-            `client.otherTaxableIncome`,
-            incomeFromOverseasPension.client.regularIncomePA || ""
-          );
+	let incomeFromPartnershipPartnerTotal = 0;
+    let incomeFromSoleTraderPartnerTotal = 0;
 
-          setFieldValue(`client.includeFromYear`,1);
-          setFieldValue(`client.upUntillYear`,30);
-          setFieldValue(`client.indexation`,"2.50%");
-        }
-       
-
-      }
-
-      // Handle partner-related conditions
-      if (
-        UserStatus === "Married" &&
-        incomeFromOverseasPension.owner.includes("partner")
-      ) {
-        if (
-          incomeFromOverseasPension?.partner &&
-          Object.keys(incomeFromOverseasPension.partner).length
-        ) {
-          setFieldValue(
-            `partner.regularIncomePA`,
-            incomeFromOverseasPension.partner.regularIncomePA || ""
-          );
-          setFieldValue(`partner.includeFromYear`,1);
-          setFieldValue(`partner.upUntillYear`,30);
-          setFieldValue(`partner.indexation`,"2.50%");
-        }
-      }
+    if (incomeFromPartnership && incomeFromPartnership._id) {
+      incomeFromPartnershipClientTotal = parseInt(
+        incomeFromPartnership.clientTotal.replace(/[^0-9]/g, ""),
+        10
+      );
+      incomeFromPartnershipPartnerTotal = parseInt(
+        incomeFromPartnership.partnerTotal.replace(/[^0-9]/g, ""),
+        10
+      );
     }
+    if (incomeFromSoleTrader && incomeFromSoleTrader._id) {
+      incomeFromSoleTraderClientTotal = parseInt(
+        incomeFromSoleTrader.clientTotal.replace(/[^0-9]/g, ""),
+        10
+      );
+	  incomeFromSoleTraderPartnerTotal = parseInt(
+        incomeFromSoleTrader.partnerTotal.replace(/[^0-9]/g, ""),
+        10
+      );
+    }
+
+    let clientSumOfSoleAndPartnership =
+      incomeFromSoleTraderClientTotal + incomeFromPartnershipClientTotal;
+
+	  let partnerSumOfSoleAndPartnership =
+      incomeFromSoleTraderPartnerTotal + incomeFromPartnershipPartnerTotal;
+
+
+
+    setFieldValue(`client.lifetimePensionIncome`, toCommaAndDollar(clientSumOfSoleAndPartnership));
+    setFieldValue(`partner.lifetimePensionIncome`, toCommaAndDollar(partnerSumOfSoleAndPartnership));
   };
 
   let onSubmit = async (values) => {
@@ -170,9 +188,9 @@ const CashFlowOverseasPensions = (props) => {
 
   const rowConfig = [
     {
-      name: "otherTaxableIncome",
+      name: "lifetimePensionIncome",
       type: "number-toComma",
-      placeholder: "Other Taxable Income",
+      placeholder: "Lifetime Pension Income",
     },
     {
       name: "includeFromYear",
@@ -236,7 +254,7 @@ const CashFlowOverseasPensions = (props) => {
                         >
                           Owner
                         </th>
-                        <th>Other Taxable Income</th>
+                        <th>Lifetime Pension Income</th>
                         <th>Include From Year:</th>
                         <th>Up Until Year:</th>
                         <th>Indexation</th>
@@ -279,4 +297,4 @@ const CashFlowOverseasPensions = (props) => {
   );
 };
 
-export default CashFlowOverseasPensions;
+export default CashFlowBusinessIncome;

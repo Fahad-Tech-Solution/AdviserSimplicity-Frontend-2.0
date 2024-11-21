@@ -253,7 +253,7 @@ const QuestionsNew = (props) => {
               <div className="col-md-12">
                 <button
                   onClick={BackHandle}
-                  className="float-center btn w-25  btn-outline  backBtn mx-3">
+                  className="float-center btn w-25 btn-outline backBtn mx-3">
                   Back
                 </button>
                 <button

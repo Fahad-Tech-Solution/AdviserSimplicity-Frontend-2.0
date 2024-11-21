@@ -10,66 +10,30 @@ import { Row, Table } from "react-bootstrap";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
 import { useRecoilValue } from "recoil";
 
-const CashFlowOverseasPensions = (props) => {
+const CashFlowPartnership = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
 
   let [UserStatus] = useState(localStorage.getItem("UserStatus"));
   let DefaultUrl = useRecoilValue(defaultUrl);
 
-  let incomeFromOverseasPension =
-    Object.keys(questionDetail.incomeFromOverseasPension || {}).length > 0
-      ? questionDetail.incomeFromOverseasPension
-      : {
-          client: [],
-          partner: [],
-          joint: [],
-        }; // Use an empty object as default if incomeFromOverseasPension is undefined
-
-  let initialValues = { owner: [] };
+  let initialValues = {
+    owner: [],
+    client: {
+      includeFromYear: 1,
+      "upUntillYear": 30,
+      "indexation": "2.50%",
+    },
+    partner: {
+      includeFromYear: 1,
+      "upUntillYear": 30,
+      "indexation": '2.50%'
+    },
+  
+  };
 
   const fillInitialValues = (setFieldValue) => {
-    console.log(incomeFromOverseasPension, "data");
-    if (incomeFromOverseasPension && incomeFromOverseasPension._id) {
-      setFieldValue(`owner`, incomeFromOverseasPension.owner || "");
-
-      // Handle client-related conditions
-      if (incomeFromOverseasPension.owner.includes("client")) {
-        if (
-          incomeFromOverseasPension?.client &&
-          Object.keys(incomeFromOverseasPension.client).length
-        ) {
-          setFieldValue(
-            `client.otherTaxableIncome`,
-            incomeFromOverseasPension.client.regularIncomePA || ""
-          );
-
-          setFieldValue(`client.includeFromYear`,1);
-          setFieldValue(`client.upUntillYear`,30);
-          setFieldValue(`client.indexation`,"2.50%");
-        }
-       
-
-      }
-
-      // Handle partner-related conditions
-      if (
-        UserStatus === "Married" &&
-        incomeFromOverseasPension.owner.includes("partner")
-      ) {
-        if (
-          incomeFromOverseasPension?.partner &&
-          Object.keys(incomeFromOverseasPension.partner).length
-        ) {
-          setFieldValue(
-            `partner.regularIncomePA`,
-            incomeFromOverseasPension.partner.regularIncomePA || ""
-          );
-          setFieldValue(`partner.includeFromYear`,1);
-          setFieldValue(`partner.upUntillYear`,30);
-          setFieldValue(`partner.indexation`,"2.50%");
-        }
-      }
-    }
+    // console.log(, "data");
+    
   };
 
   let onSubmit = async (values) => {
@@ -170,9 +134,9 @@ const CashFlowOverseasPensions = (props) => {
 
   const rowConfig = [
     {
-      name: "otherTaxableIncome",
+      name: "netBusinessIncome",
       type: "number-toComma",
-      placeholder: "Other Taxable Income",
+      placeholder: "Net Business Income",
     },
     {
       name: "includeFromYear",
@@ -236,7 +200,7 @@ const CashFlowOverseasPensions = (props) => {
                         >
                           Owner
                         </th>
-                        <th>Other Taxable Income</th>
+                        <th>Net Business Income</th>
                         <th>Include From Year:</th>
                         <th>Up Until Year:</th>
                         <th>Indexation</th>
@@ -279,4 +243,4 @@ const CashFlowOverseasPensions = (props) => {
   );
 };
 
-export default CashFlowOverseasPensions;
+export default CashFlowPartnership;

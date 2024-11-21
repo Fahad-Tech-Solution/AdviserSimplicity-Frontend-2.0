@@ -116,8 +116,25 @@ const ModalComponent = (props) => {
 
     ]; // Add other titles that should use "xl" here
 
-    let fullTitles = ["Family Trust Investment Loan", "Family Details", "Life Insurance", "Personal Insurance", "Investment Loan", "Margin Loan", "SMSF Details", "SMSF Investment Properties", "SMSF Platform Investments Detail", "Family Trust Investment Property", "SMSF Investment Loan"]
-    let xlKey = ["CFQ", "cashFlowIncomeFromOverseasPension"]
+    let fullTitles = ["Family Trust Investment Loan", "Family Details", "Life Insurance", "Personal Insurance", "Investment Loan", "Margin Loan", "SMSF Details", "SMSF Investment Properties", "SMSF Platform Investments Detail", "Family Trust Investment Property", "SMSF Investment Loan",
+        "Education Expenses",
+        "Centrelink Payments/Benefits",
+        "Own a Family Home"
+    ]
+    let xlKey = [
+        "CFQ",
+        "cashFlowIncomeFromOverseasPension",
+        "otherNonTaxable",
+        "businessIncome",
+        "RegularLivingExpenses",
+        "cashFlowLifetimeBenefit",
+        "incomeFromPartnership",
+        "incomeFromSoleTrader",
+        "car",
+
+
+
+    ];
 
     const size = fullTitles.includes(props.modalObject.title) ? "xxl" : xlTitles.includes(props.modalObject.title) ? "xl" : xlKey.includes(props.modalObject.key) ? "xl" : "lg";
 
@@ -128,7 +145,11 @@ const ModalComponent = (props) => {
                 <Element id="modal-container">
                 </Element>
                 <Modal.Header closeButton>
-                    <Modal.Title>{props.modalObject.title === "Regular Living Expenses" ? props.modalObject.title2 : props.modalObject.title}</Modal.Title>
+                    <Modal.Title>
+                        {props.modalObject.title === "Regular Living Expenses"
+                            ? props.modalObject.title2 || props.modalObject.title
+                            : props.modalObject.title}
+                    </Modal.Title>
                 </Modal.Header>
 
 

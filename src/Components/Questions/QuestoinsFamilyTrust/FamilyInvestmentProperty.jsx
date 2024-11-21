@@ -41,64 +41,107 @@ const FamilyInvestmentProperty = (props) => {
             const familyDetailsClientTotal = questionDetail?.FamilyAccumulationDetails?.clientTotal
                 ? parseFloat(questionDetail.FamilyAccumulationDetails.clientTotal.replace(/[^0-9.-]+/g, ""))
                 : 0;
-            // Check if familyDetails.FamilyTotal exists and parse it to a number
-            const familyBankClientTotal = questionDetail?.familyDetails?.partnerTotal
-                ? parseFloat(questionDetail.familyDetails.partnerTotal.replace(/[^0-9.-]+/g, ""))
+
+            //Bank Totals
+            const familyBankClientTotal = questionDetail?.familyBank?.clientTotal
+                ? parseFloat(questionDetail.familyBank.clientTotal.replace(/[^0-9.-]+/g, ""))
                 : 0;
-            // Check if familyBank.FamilyTotal exists and parse it to a number
-            const familyTermDepositClientTotal = questionDetail?.familyBank?.jointTotal
+
+            const familyBankPartnerTotal = questionDetail?.familyBank?.partnerTotal
+                ? parseFloat(questionDetail.familyBank.partnerTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+
+            const familyBankJointTotal = questionDetail?.familyBank?.jointTotal
                 ? parseFloat(questionDetail.familyBank.jointTotal.replace(/[^0-9.-]+/g, ""))
                 : 0;
-            // Check if familyTermDeposit.FamilyTotal exists and parse it to a number
-            const familyAustralianShareClientTotal = questionDetail?.familyTermDeposit?.clientTotal
+
+
+            //Term Deposit Totals
+            const familyTermDepositClientTotal = questionDetail?.familyTermDeposit?.clientTotal
                 ? parseFloat(questionDetail.familyTermDeposit.clientTotal.replace(/[^0-9.-]+/g, ""))
                 : 0;
-            // Check if familyAustralianShare.FamilyTotal exists and parse it to a number
-            const familyMangedFundsClientTotal = questionDetail?.familyAustralianShare?.partnerTotal
+
+            const familyTermDepositPartnerTotal = questionDetail?.familyTermDeposit?.partnerTotal
+                ? parseFloat(questionDetail.familyTermDeposit.partnerTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+
+            const familyTermDepositJointTotal = questionDetail?.familyTermDeposit?.jointTotal
+                ? parseFloat(questionDetail.familyTermDeposit.jointTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+
+            //Australian Totals
+            const familyAustralianShareClientTotal = questionDetail?.familyAustralianShare?.clientTotal
+                ? parseFloat(questionDetail.familyAustralianShare.clientTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+
+            const familyAustralianSharePartnerTotal = questionDetail?.familyAustralianShare?.partnerTotal
                 ? parseFloat(questionDetail.familyAustralianShare.partnerTotal.replace(/[^0-9.-]+/g, ""))
                 : 0;
-            // Check if familyMangedFunds.FamilyTotal exists and parse it to a number
-            const familyInvestmentHomeLoanClientTotal = questionDetail?.familyMangedFunds?.jointTotal
+
+            const familyAustralianShareJointTotal = questionDetail?.familyAustralianShare?.jointTotal
+                ? parseFloat(questionDetail.familyAustralianShare.jointTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+
+            //Manged Funds Totals
+            const familyMangedFundsClientTotal = questionDetail?.familyMangedFunds?.clientTotal
+                ? parseFloat(questionDetail.familyMangedFunds.clientTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+
+            const familyMangedFundsPartnerTotal = questionDetail?.familyMangedFunds?.partnerTotal
+                ? parseFloat(questionDetail.familyMangedFunds.partnerTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+
+            const familyMangedFundsJointTotal = questionDetail?.familyMangedFunds?.jointTotal
                 ? parseFloat(questionDetail.familyMangedFunds.jointTotal.replace(/[^0-9.-]+/g, ""))
                 : 0;
-            // Check if familyInvestmentHomeLoan.FamilyTotal exists and parse it to a number
-            const familyInvestmentPropertiesClientTotal = questionDetail?.familyInvestmentHomeLoan?.clientTotal
+
+
+
+            const familyInvestmentHomeLoanClientTotal = questionDetail?.familyInvestmentHomeLoan?.clientTotal
                 ? parseFloat(questionDetail.familyInvestmentHomeLoan.clientTotal.replace(/[^0-9.-]+/g, ""))
                 : 0;
 
-            // Check if FamilyAccumulationDetails.FamilyTotal exists and parse it to a number
-            const familyDetailsPartnerTotal = questionDetail?.FamilyAccumulationDetails?.partnerTotal
-                ? parseFloat(questionDetail.FamilyAccumulationDetails.partnerTotal.replace(/[^0-9.-]+/g, ""))
-                : 0;
-            // Check if familyDetails.FamilyTotal exists and parse it to a number
-            const familyBankPartnerTotal = questionDetail?.familyDetails?.partnerTotal
-                ? parseFloat(questionDetail.familyDetails.partnerTotal.replace(/[^0-9.-]+/g, ""))
-                : 0;
-            // Check if familyBank.FamilyTotal exists and parse it to a number
-            const familyTermDepositPartnerTotal = questionDetail?.familyBank?.jointTotal
-                ? parseFloat(questionDetail.familyBank.jointTotal.replace(/[^0-9.-]+/g, ""))
-                : 0;
-            // Check if familyTermDeposit.FamilyTotal exists and parse it to a number
-            const familyAustralianSharePartnerTotal = questionDetail?.familyTermDeposit?.partnerTotal
-                ? parseFloat(questionDetail.familyTermDeposit.partnerTotal.replace(/[^0-9.-]+/g, ""))
-                : 0;
-            // Check if familyAustralianShare.FamilyTotal exists and parse it to a number
-            const familyMangedFundsPartnerTotal = questionDetail?.familyAustralianShare?.partnerTotal
-                ? parseFloat(questionDetail.familyAustralianShare.partnerTotal.replace(/[^0-9.-]+/g, ""))
-                : 0;
-            // Check if familyMangedFunds.FamilyTotal exists and parse it to a number
-            const familyInvestmentHomeLoanPartnerTotal = questionDetail?.familyMangedFunds?.jointTotal
-                ? parseFloat(questionDetail.familyMangedFunds.jointTotal.replace(/[^0-9.-]+/g, ""))
-                : 0;
-            // Check if familyInvestmentHomeLoan.FamilyTotal exists and parse it to a number
-            const familyInvestmentPropertiesPartnerTotal = questionDetail?.familyInvestmentHomeLoan?.partnerTotal
+            const familyInvestmentHomeLoanPartnerTotal = questionDetail?.familyInvestmentHomeLoan?.partnerTotal
                 ? parseFloat(questionDetail.familyInvestmentHomeLoan.partnerTotal.replace(/[^0-9.-]+/g, ""))
                 : 0;
 
-            let allSums = familyDetailsClientTotal + familyBankClientTotal + familyTermDepositClientTotal + familyAustralianShareClientTotal + familyMangedFundsClientTotal + familyDetailsPartnerTotal + familyBankPartnerTotal + familyTermDepositPartnerTotal + familyAustralianSharePartnerTotal + familyMangedFundsPartnerTotal;
+            const familyInvestmentHomeLoanJointTotal = questionDetail?.familyInvestmentHomeLoan?.jointTotal
+                ? parseFloat(questionDetail.familyInvestmentHomeLoan.jointTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
 
-            let total = allSums + familyInvestmentPropertiesClientTotal - familyInvestmentHomeLoanClientTotal - familyInvestmentHomeLoanPartnerTotal - familyInvestmentPropertiesPartnerTotal;
-                                //^ this is Property Values so it must be added to Total
+
+
+            const familyInvestmentPropertiesClientTotal = questionDetail?.familyInvestmentProperties?.clientTotal
+                ? parseFloat(questionDetail.familyInvestmentProperties.clientTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+
+            const familyInvestmentPropertiesPartnerTotal = questionDetail?.familyInvestmentProperties?.partnerTotal
+                ? parseFloat(questionDetail.familyInvestmentProperties.partnerTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+
+            const familyInvestmentPropertiesJointTotal = questionDetail?.familyInvestmentProperties?.jointTotal
+                ? parseFloat(questionDetail.familyInvestmentProperties.jointTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+
+
+            let allSums = familyBankClientTotal +
+                familyBankPartnerTotal +
+                familyBankJointTotal +
+                familyTermDepositClientTotal +
+                familyTermDepositPartnerTotal +
+                familyTermDepositJointTotal +
+                familyAustralianShareClientTotal +
+                familyAustralianSharePartnerTotal +
+                familyAustralianShareJointTotal +
+                familyMangedFundsClientTotal +
+                familyMangedFundsPartnerTotal +
+                familyMangedFundsJointTotal +
+                familyInvestmentPropertiesClientTotal;
+
+            // alert(allSums)
+
+            let total = allSums - familyInvestmentHomeLoanClientTotal - familyInvestmentHomeLoanPartnerTotal - familyInvestmentHomeLoanJointTotal - familyInvestmentPropertiesPartnerTotal;
+            //^ this is Property Values so it must be added to Total
             return toCommaAndDollar(total);
 
         } catch (error) {

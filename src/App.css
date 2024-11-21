@@ -663,6 +663,12 @@ h6 {
   z-index: 1000;
 }
 
+.cashFlowCardHead {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1b254b;
+}
+
 .Top_Nav {
   border-radius: 10px;
   backdrop-filter: blur(10px);
@@ -1113,7 +1119,7 @@ input[type="checkbox"] + .femaleSmoking + .maleNonSmoking {
     padding: 0px 7.9% !important;
   }
 
-  .cashFlowNextBtn{
+  .cashFlowNextBtn {
     padding: 0px 7% !important;
   }
 
@@ -1391,4 +1397,40 @@ label {
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px,
     rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
   border: 1px solid #36b446;
+}
+
+.cashFlowAllUsers .accordion .accordion-item {
+  border: 1px solid #36b446 !important;
+}
+
+.cashFlowAllUsers
+  .accordion
+  .accordion-item
+  .accordion-header
+  .accordion-button::after {
+  content: "";
+  /* background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M2 5L8 11L14 5'/%3e%3c/svg%3e"); */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'%3e%3cpath d='M2 5L8 11L14 5'/%3e%3c/svg%3e");
+
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+}
+
+.cashFlowAllUsers
+  .accordion
+  .accordion-item
+  .accordion-header
+  .accordion-button {
+  background-color: #36b446 !important;
+  color: white;
+  box-shadow: none !important;
+}
+
+.bg-Custom-green {
+  background-color: #bafae252 !important;
+  border-color: #bafae252 !important;
 }

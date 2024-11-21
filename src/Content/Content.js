@@ -281,18 +281,25 @@ export const content = {
     ],
     cashFlow: [
         {
-            subTitle: 'Personal Details',
+            subTitle: "All Users of CashFlow",
             statusStep: 0,
-            icon: 'FaUser',
-            route: '/PersonalDetail',
-            condition: (CRObject) => true // Always true, as this step is always needed.
+            icon: "FaUser",
+            route: "/AllUsers",
+            condition: (CRObject) => false, // Always true, as this step is always needed.
         },
         {
-            subTitle: 'Income & Expenses',
+            subTitle: "Personal Details",
+            statusStep: 0,
+            icon: "FaUser",
+            route: "/PersonalDetail",
+            condition: (CRObject) => true, // Always true, as this step is always needed.
+        },
+        {
+            subTitle: "Income & Expenses",
             statusStep: 10,
-            icon: 'FaMoneyCheckDollar',
-            route: '/Income-And-Expenses',
-            key: 'CashFlow_Income_And_Expenses',
+            icon: "FaMoneyCheckDollar",
+            route: "/Income-And-Expenses",
+            key: "CashFlow_Income_And_Expenses",
             QuestionsArray: [
                 {
                     title: "Overseas Pensions",
@@ -313,12 +320,12 @@ export const content = {
                     title: "Centrelink Payments/Benefits",
                     img: Gears,
                     key: "incomeFromCentrelink",
-                    info: "This includes Family Tax Benefit (A&B) Payments and any Centrelink Cards"
+                    info: "This includes Family Tax Benefit (A&B) Payments and any Centrelink Cards",
                 },
                 {
-                    title: "Lifetime/Defined Benefit Super Pensions",
+                    title: "Lifetime Benefits",
                     img: money,
-                    key: "incomeFromSuperPayment",
+                    key: "cashFlowLifetimeBenefit",
                 },
                 {
                     title: "Employment Income",
@@ -346,13 +353,13 @@ export const content = {
                     img: Education,
                 },
             ],
-            condition: (CRObject) => true // Always true, as this step is always needed.
+            condition: (CRObject) => true, // Always true, as this step is always needed.
         },
         {
-            subTitle: 'Lifestyle Assets & Debt',
+            subTitle: "Lifestyle Assets & Debt",
             statusStep: 20,
-            icon: 'FaHome',
-            route: '/Personal-Assets',
+            icon: "FaHome",
+            route: "/Personal-Assets",
             QuestionsArray: [
                 {
                     title: "Home",
@@ -367,41 +374,41 @@ export const content = {
                 {
                     title: "Car",
                     key: "car",
-                    img: car
+                    img: car,
                 },
                 {
                     title: "House hold",
                     key: "houseHold",
-                    img: houseHold
+                    img: houseHold,
                 },
                 {
                     title: "Boat",
                     key: "boat",
-                    img: boat
+                    img: boat,
                 },
                 {
                     title: "Caravan",
                     key: "caravan",
-                    img: trailer
+                    img: trailer,
                 },
                 {
                     title: "Other Assets",
                     key: "otherAssets",
-                    img: settingMoney
+                    img: settingMoney,
                 },
                 {
                     title: "Personal Debt",
                     key: "PersonalDebt",
-                    img: settingMoney
+                    img: settingMoney,
                 },
             ],
-            condition: (CRObject) => true // Always true, as this step is always needed.
+            condition: (CRObject) => true, // Always true, as this step is always needed.
         },
         {
-            subTitle: 'Financial Investments',
+            subTitle: "Financial Investments",
             statusStep: 30,
-            icon: 'RiCoinsFill',
-            route: '/Investments',
+            icon: "RiCoinsFill",
+            route: "/Investments",
             QuestionsArray: [
                 {
                     title: "Australian Shares",
@@ -414,39 +421,39 @@ export const content = {
                     key: "PlatformInvestment",
                 },
             ],
-            condition: (CRObject) => true // Always true, as this step is always needed.
+            condition: (CRObject) => true, // Always true, as this step is always needed.
         },
         {
-            subTitle: 'Direct Property',
+            subTitle: "Direct Property",
             statusStep: 40,
-            icon: 'FaKey',
-            route: '/Direct-Property',
+            icon: "FaKey",
+            route: "/Direct-Property",
             QuestionsArray: [],
-            condition: (CRObject) => true // Always true, as this step is always needed.
+            condition: (CRObject) => true, // Always true, as this step is always needed.
         },
         {
-            subTitle: 'Super and Retirement',
+            subTitle: "Super and Retirement",
             statusStep: 50,
-            icon: 'FaMoneyCheckDollar',
+            icon: "FaMoneyCheckDollar",
             QuestionsArray: [],
-            route: '/Super-and-Retirement',
-            condition: (CRObject) => true // Always true, as this step is always needed.
+            route: "/Super-and-Retirement",
+            condition: (CRObject) => true, // Always true, as this step is always needed.
         },
         {
-            subTitle: 'Investment',
+            subTitle: "Investment",
             statusStep: 60,
-            icon: 'FaBriefcase',
-            route: '/Investment',
+            icon: "FaBriefcase",
+            route: "/Investment",
             QuestionsArray: [],
-            condition: (CRObject) => true // Always true, as this step is always needed.
+            condition: (CRObject) => true, // Always true, as this step is always needed.
         },
         {
-            subTitle: 'SMSF',
+            subTitle: "SMSF",
             statusStep: 70,
-            icon: 'FaGift',
-            route: '/SMSF',
+            icon: "FaGift",
+            route: "/SMSF",
             QuestionsArray: [],
-            condition: (CRObject) => true // Always true, as this step is always needed.
+            condition: (CRObject) => true, // Always true, as this step is always needed.
         },
-    ]
+    ],
 }

@@ -48,6 +48,7 @@ const InnerModal = (props) => {
         "premiumsDetails",
         "sumInsured",
         "beneficiariesArray",
+        "totalCostBase"
         // "ContributionsArray"
         // "Bank Accounts Detail"
     ]; // Add other titles that should use "xl" here

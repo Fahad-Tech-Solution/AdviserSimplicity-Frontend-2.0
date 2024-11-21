@@ -10,67 +10,36 @@ import { Row, Table } from "react-bootstrap";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
 import { useRecoilValue } from "recoil";
 
-const CashFlowOverseasPensions = (props) => {
+const CashFlowRegulerLiving = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
 
   let [UserStatus] = useState(localStorage.getItem("UserStatus"));
   let DefaultUrl = useRecoilValue(defaultUrl);
 
-  let incomeFromOverseasPension =
-    Object.keys(questionDetail.incomeFromOverseasPension || {}).length > 0
-      ? questionDetail.incomeFromOverseasPension
+  let generalLivingExpenses =
+    Object.keys(questionDetail.generalLivingExpenses || {}).length > 0
+      ? questionDetail.generalLivingExpenses
       : {
-          client: [],
-          partner: [],
-          joint: [],
-        }; // Use an empty object as default if incomeFromOverseasPension is undefined
+          client: []
+         
+        }; // Use an empty object as default if generalLivingExpenses is undefined
 
-  let initialValues = { owner: [] };
+        let initialValues = {
+          client: {
+            includeFromYear: 1,
+            "upUntillYear": 30,
+            "indexation": "2.50%",
+          }
+        
+        };
 
   const fillInitialValues = (setFieldValue) => {
-    console.log(incomeFromOverseasPension, "data");
-    if (incomeFromOverseasPension && incomeFromOverseasPension._id) {
-      setFieldValue(`owner`, incomeFromOverseasPension.owner || "");
+    console.log(generalLivingExpenses.generalLivingExpensesTotal, "data");
+    if (generalLivingExpenses && generalLivingExpenses._id) {
+      setFieldValue(`client.amount`, generalLivingExpenses.generalLivingExpensesTotal || "");
 
-      // Handle client-related conditions
-      if (incomeFromOverseasPension.owner.includes("client")) {
-        if (
-          incomeFromOverseasPension?.client &&
-          Object.keys(incomeFromOverseasPension.client).length
-        ) {
-          setFieldValue(
-            `client.otherTaxableIncome`,
-            incomeFromOverseasPension.client.regularIncomePA || ""
-          );
-
-          setFieldValue(`client.includeFromYear`,1);
-          setFieldValue(`client.upUntillYear`,30);
-          setFieldValue(`client.indexation`,"2.50%");
-        }
-       
-
-      }
-
-      // Handle partner-related conditions
-      if (
-        UserStatus === "Married" &&
-        incomeFromOverseasPension.owner.includes("partner")
-      ) {
-        if (
-          incomeFromOverseasPension?.partner &&
-          Object.keys(incomeFromOverseasPension.partner).length
-        ) {
-          setFieldValue(
-            `partner.regularIncomePA`,
-            incomeFromOverseasPension.partner.regularIncomePA || ""
-          );
-          setFieldValue(`partner.includeFromYear`,1);
-          setFieldValue(`partner.upUntillYear`,30);
-          setFieldValue(`partner.indexation`,"2.50%");
-        }
-      }
-    }
   };
+};
 
   let onSubmit = async (values) => {
     console.log(JSON.stringify(values));
@@ -101,18 +70,18 @@ const CashFlowOverseasPensions = (props) => {
     }
 
     console.log(obj, "final obj");
-    const bankAccountArray = incomeFromOverseasPension.clientFK || "";
+    const bankAccountArray = generalLivingExpenses.clientFK || "";
 
     try {
       let res;
       if (!bankAccountArray) {
         res = await PostAxios(
-          `${DefaultUrl}/api/incomeFromOverseasPension/Add`,
+          `${DefaultUrl}/api/generalLivingExpenses/Add`,
           obj
         );
       } else {
         res = await PatchAxios(
-          `${DefaultUrl}/api/incomeFromOverseasPension/Update`,
+          `${DefaultUrl}/api/generalLivingExpenses/Update`,
           obj
         );
       }
@@ -121,7 +90,7 @@ const CashFlowOverseasPensions = (props) => {
         console.log(res);
         const updatedData = {
           ...questionDetail,
-          incomeFromOverseasPension: res,
+          generalLivingExpenses: res,
         };
         setQuestionDetail(updatedData);
       }
@@ -155,9 +124,27 @@ const CashFlowOverseasPensions = (props) => {
     label: ("Year " + (i + 1)).toString(),
   }));
 
+  
+
   const indexation = Array.from({ length: 21 }, (_, i) => ({
     value: (i * 0.5).toFixed(2) + "%",
     label: (i * 0.5).toFixed(2) + "%",
+  }));
+
+  const optionOfExpenses = [
+    "Living Expenses",
+    "Reduce Living Expenses",
+    "ASFS Retirement Standards",
+    "Holidays",
+    "Other",
+    "Personal Insurance",
+    "Income Protection",
+    "Other Deductible"
+  ];
+  
+  const ArrayOfExpenses = optionOfExpenses.map(key => ({
+    value: key,
+    label: key
   }));
 
   const options =
@@ -170,7 +157,12 @@ const CashFlowOverseasPensions = (props) => {
 
   const rowConfig = [
     {
-      name: "otherTaxableIncome",
+      name: "expenses",
+      type: "select",
+      options: ArrayOfExpenses,
+    },
+    {
+      name: "amount",
       type: "number-toComma",
       placeholder: "Other Taxable Income",
     },
@@ -208,23 +200,8 @@ const CashFlowOverseasPensions = (props) => {
         return (
           <Form>
             <Row>
-              <div className="col-md-12">
-                <div className="d-flex justify-content-center align-items-center gap-4">
-                  <label htmlFor="" className="text-end ">
-                    Owner
-                  </label>
-
-                  <div style={{ minWidth: "25%" }}>
-                    <Field
-                      name={`owner`}
-                      component={CreatableMultiSelectField}
-                      label="Multi Select Field"
-                      options={options}
-                    />
-                  </div>
-                </div>
-              </div>
-              {values.owner.length > 0 && (
+        
+           
                 <div className="mt-4">
                   <Table striped bordered responsive hover>
                     <thead>
@@ -236,14 +213,15 @@ const CashFlowOverseasPensions = (props) => {
                         >
                           Owner
                         </th>
-                        <th>Other Taxable Income</th>
+                        <th>Expenses</th>
+                        <th>Amount</th>
                         <th>Include From Year:</th>
                         <th>Up Until Year:</th>
                         <th>Indexation</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {values.owner.includes("client") && (
+                    
                         <DynamicTableRow
                           rowConfig={rowConfig}
                           values={values}
@@ -253,24 +231,13 @@ const CashFlowOverseasPensions = (props) => {
                           // handleInnerModal={handleInnerModal}
                           stakeHolder="client."
                         />
-                      )}
+                    
 
-                      {values.owner.includes("partner") &&
-                        UserStatus === "Married" && (
-                          <DynamicTableRow
-                            rowConfig={rowConfig}
-                            values={values}
-                            setFieldValue={setFieldValue}
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                            // handleInnerModal={handleInnerModal}
-                            stakeHolder="partner."
-                          />
-                        )}
+           
                     </tbody>
                   </Table>
                 </div>
-              )}
+          
             </Row>
           </Form>
         );
@@ -279,4 +246,4 @@ const CashFlowOverseasPensions = (props) => {
   );
 };
 
-export default CashFlowOverseasPensions;
+export default CashFlowRegulerLiving;

@@ -234,11 +234,8 @@ function Options(props) {
   let topMenuArray = [
     '/',
     '/All-Clients',
+    '/Cash-Flow/AllUsers'
   ]
-
-
-
-
 
   if (topMenuArray.includes(CurrentP)) {
     return (

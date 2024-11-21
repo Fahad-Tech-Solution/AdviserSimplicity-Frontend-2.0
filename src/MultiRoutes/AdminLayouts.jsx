@@ -15,7 +15,7 @@ const AdminLayouts = () => {
         <div className="container-fluid p-0 d-flex flex-row">
             <AdminSideBar collapsed={collapsed}
                 setCollapsed={setCollapsed} />
-            <div className="flex-grow-1">
+            <div className={`flex-grow-1`}>
                 <AdminTopMenu collapsed={collapsed}
                     setCollapsed={setCollapsed} />
                 <Routes>

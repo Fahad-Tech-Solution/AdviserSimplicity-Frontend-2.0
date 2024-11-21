@@ -5,68 +5,97 @@ import DynamicTableRow from "../../../Components/Assets/Dynamic/DynamicTableRow"
 import {
   openNotificationSuccess,
   RenderName,
+  toCommaAndDollar,
 } from "../../../Components/Assets/Api/Api";
 import { Row, Table } from "react-bootstrap";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
 import { useRecoilValue } from "recoil";
 
-const CashFlowOverseasPensions = (props) => {
+const CashFlowCenterLink = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
 
   let [UserStatus] = useState(localStorage.getItem("UserStatus"));
   let DefaultUrl = useRecoilValue(defaultUrl);
 
-  let incomeFromOverseasPension =
-    Object.keys(questionDetail.incomeFromOverseasPension || {}).length > 0
-      ? questionDetail.incomeFromOverseasPension
+  let incomeFromCentrelink =
+    Object.keys(questionDetail.incomeFromCentrelink || {}).length > 0
+      ? questionDetail.incomeFromCentrelink
       : {
           client: [],
           partner: [],
           joint: [],
-        }; // Use an empty object as default if incomeFromOverseasPension is undefined
+        };
 
-  let initialValues = { owner: [] };
+  let initialValues = {
+    owner: [],
+    client: {
+
+      includeFromYear: 1,
+      allowCarerAllowance: ["No"],
+      isClientRenting: ["No"],
+      applySeparatedByIllness:"No"
+    },
+    partner: {
+      includeFromYear: 1,
+      allowCarerAllowance: ["No"],
+      isClientRenting: ["No"],
+      applySeparatedByIllness:"No"
+    },
+  };
 
   const fillInitialValues = (setFieldValue) => {
-    console.log(incomeFromOverseasPension, "data");
-    if (incomeFromOverseasPension && incomeFromOverseasPension._id) {
-      setFieldValue(`owner`, incomeFromOverseasPension.owner || "");
+    console.log("incomeFromCentrelink: ", incomeFromCentrelink);
+    console.log(
+      "incomeFromCentrelink.client.paymentType: ",
+      incomeFromCentrelink.client.paymentType
+    );
+
+    if (incomeFromCentrelink && incomeFromCentrelink._id) {
+      setFieldValue(`owner`, incomeFromCentrelink.owner || "");
 
       // Handle client-related conditions
-      if (incomeFromOverseasPension.owner.includes("client")) {
+      if (incomeFromCentrelink.owner.includes("client")) {
         if (
-          incomeFromOverseasPension?.client &&
-          Object.keys(incomeFromOverseasPension.client).length
+          incomeFromCentrelink?.client &&
+          Object.keys(incomeFromCentrelink.client).length
         ) {
+          setFieldValue("client.centrelinkPayment", [
+            ...incomeFromCentrelink.client.paymentType,
+          ]);
+
+          // setFieldValue(`client.centrelinkPayment`, incomeFromCentrelink.client.paymentType);
           setFieldValue(
-            `client.otherTaxableIncome`,
-            incomeFromOverseasPension.client.regularIncomePA || ""
+            `client.allowCarerAllowance`,
+            incomeFromCentrelink.client.paymentType
           );
-
-          setFieldValue(`client.includeFromYear`,1);
-          setFieldValue(`client.upUntillYear`,30);
-          setFieldValue(`client.indexation`,"2.50%");
+          setFieldValue(
+            `client.isClientRenting`,
+            incomeFromCentrelink.client.paymentType
+          );
         }
-       
-
       }
 
       // Handle partner-related conditions
       if (
         UserStatus === "Married" &&
-        incomeFromOverseasPension.owner.includes("partner")
+        incomeFromCentrelink.owner.includes("partner")
       ) {
         if (
-          incomeFromOverseasPension?.partner &&
-          Object.keys(incomeFromOverseasPension.partner).length
+          incomeFromCentrelink?.partner &&
+          Object.keys(incomeFromCentrelink.partner).length
         ) {
           setFieldValue(
-            `partner.regularIncomePA`,
-            incomeFromOverseasPension.partner.regularIncomePA || ""
+            `partner.centrelinkPayment`,
+            incomeFromCentrelink.partner.paymentType
           );
-          setFieldValue(`partner.includeFromYear`,1);
-          setFieldValue(`partner.upUntillYear`,30);
-          setFieldValue(`partner.indexation`,"2.50%");
+          setFieldValue(
+            `partner.allowCarerAllowance`,
+            incomeFromCentrelink.partner.paymentType
+          );
+          setFieldValue(
+            `partner.isClientRenting`,
+            incomeFromCentrelink.partner.paymentType
+          );
         }
       }
     }
@@ -101,18 +130,18 @@ const CashFlowOverseasPensions = (props) => {
     }
 
     console.log(obj, "final obj");
-    const bankAccountArray = incomeFromOverseasPension.clientFK || "";
+    const bankAccountArray = incomeFromCentrelink.clientFK || "";
 
     try {
       let res;
       if (!bankAccountArray) {
         res = await PostAxios(
-          `${DefaultUrl}/api/incomeFromOverseasPension/Add`,
+          `${DefaultUrl}/api/incomeFromCentrelink/Add`,
           obj
         );
       } else {
         res = await PatchAxios(
-          `${DefaultUrl}/api/incomeFromOverseasPension/Update`,
+          `${DefaultUrl}/api/incomeFromCentrelink/Update`,
           obj
         );
       }
@@ -121,7 +150,7 @@ const CashFlowOverseasPensions = (props) => {
         console.log(res);
         const updatedData = {
           ...questionDetail,
-          incomeFromOverseasPension: res,
+          incomeFromCentrelink: res,
         };
         setQuestionDetail(updatedData);
       }
@@ -168,11 +197,55 @@ const CashFlowOverseasPensions = (props) => {
         ]
       : [{ value: "client", label: RenderName("client") }];
 
+  let paymentType = [
+ 
+    { value: "Age Pension", label: "Age Pension" },
+    { value: "Disability Pension", label: "Disability Pension" },
+    { value: "Carer Payment", label: "Carer Payment" },
+    { value: "Carer Allowance", label: "Carer Allowance" },
+    { value: "Jobseeker", label: "Jobseeker" },
+    { value: "Family Tax Benefit A", label: "Family Tax Benefit A" },
+    { value: "Family Tax Benefit B", label: "Family Tax Benefit B" },
+    { value: "Rent Assistance", label: "Rent Assistance" },
+    { value: "No", label: "No" },
+  ];
+
+
+  let CheckMultiSelect = (value, setFieldValue, currentInput) => {
+    let selectedArray = currentInput.value;
+
+    // console.log(selectedArray);
+
+    // Check if "No" is selected
+    const hasNoValue = selectedArray.some((item) => item.value === "No");
+    const noIndex = selectedArray.findIndex((item) => item.value === "No");
+
+    // If only "No" is selected or if "No" is the last selection, set only ["No"]
+    if (
+      (selectedArray.length === 1 && hasNoValue) ||
+      (selectedArray.length === 2 && hasNoValue && noIndex === 1)
+    ) {
+      setFieldValue(currentInput.name, ["No"]);
+      return;
+    }
+
+    if (hasNoValue && selectedArray.length > 2) {
+      // If "No" is present in a larger selection, prioritize it and set only ["No"]
+      setFieldValue(currentInput.name, ["No"]);
+    } else {
+      // Filter out any "No" values and use the remaining selected items
+      const filtered = selectedArray
+        .filter((item) => item.value !== "No")
+        .map((item) => item.value);
+      setFieldValue(currentInput.name, filtered);
+    }
+  };
+
   const rowConfig = [
     {
-      name: "otherTaxableIncome",
-      type: "number-toComma",
-      placeholder: "Other Taxable Income",
+      name: "centrelinkPayment",
+      type: "select-multi",
+      options: paymentType,
     },
     {
       name: "includeFromYear",
@@ -180,14 +253,22 @@ const CashFlowOverseasPensions = (props) => {
       options: loanTermOptions,
     },
     {
-      name: "upUntillYear",
-      type: "select",
-      options: loanTermOptions,
+      name: "allowCarerAllowance",
+      type: "select-multi",
+      options: paymentType,
+      callBack: true,
+      func: CheckMultiSelect,
     },
     {
-      name: "indexation",
-      type: "select",
-      options: indexation,
+      name: "isClientRenting",
+      type: "select-multi",
+      options: paymentType,
+      callBack: true,
+      func: CheckMultiSelect,
+    },
+    {
+      name: "applySeparatedByIllness",
+      type: "yesno",
     },
 
     // { name: "businessAddress", type: "text", placeholder: "Business Address" },
@@ -236,10 +317,11 @@ const CashFlowOverseasPensions = (props) => {
                         >
                           Owner
                         </th>
-                        <th>Other Taxable Income</th>
+                        <th>Centrelink Payment</th>
                         <th>Include From Year:</th>
-                        <th>Up Until Year:</th>
-                        <th>Indexation</th>
+                        <th>Allow Carer Allowance</th>
+                        <th>Is Client Renting</th>
+                        <th>Apply Separated By illness</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -279,4 +361,4 @@ const CashFlowOverseasPensions = (props) => {
   );
 };
 
-export default CashFlowOverseasPensions;
+export default CashFlowCenterLink;

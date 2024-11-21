@@ -5,47 +5,61 @@ import DynamicTableRow from "../../../Components/Assets/Dynamic/DynamicTableRow"
 import {
   openNotificationSuccess,
   RenderName,
+  toCommaAndDollar,
 } from "../../../Components/Assets/Api/Api";
 import { Row, Table } from "react-bootstrap";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
 import { useRecoilValue } from "recoil";
 
-const CashFlowOverseasPensions = (props) => {
+const CashFlowLifetimeBenefit = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
 
   let [UserStatus] = useState(localStorage.getItem("UserStatus"));
   let DefaultUrl = useRecoilValue(defaultUrl);
 
-  let incomeFromOverseasPension =
-    Object.keys(questionDetail.incomeFromOverseasPension || {}).length > 0
-      ? questionDetail.incomeFromOverseasPension
+  let incomeFromSuperPayment =
+    Object.keys(questionDetail.incomeFromSuperPayment || {}).length > 0
+      ? questionDetail.incomeFromSuperPayment
       : {
           client: [],
           partner: [],
           joint: [],
-        }; // Use an empty object as default if incomeFromOverseasPension is undefined
+        };
 
-  let initialValues = { owner: [] };
+
+  let initialValues = {
+    owner: [],
+    client: {
+      includeFromYear: 1,
+      upUntillYear: 30,
+      indexation: "2.50%",
+    },
+    partner: {
+      includeFromYear: 1,
+      upUntillYear: 30,
+      indexation: "2.50%",
+    },
+  };
 
   const fillInitialValues = (setFieldValue) => {
-    console.log(incomeFromOverseasPension, "data");
-    if (incomeFromOverseasPension && incomeFromOverseasPension._id) {
-      setFieldValue(`owner`, incomeFromOverseasPension.owner || "");
+   
+console.log( "incomeFromSuperPayment: ",incomeFromSuperPayment)
+   
+
+
+    if (incomeFromSuperPayment && incomeFromSuperPayment._id) {
+      setFieldValue(`owner`, incomeFromSuperPayment.owner || "");
 
       // Handle client-related conditions
-      if (incomeFromOverseasPension.owner.includes("client")) {
+      if (incomeFromSuperPayment.owner.includes("client")) {
         if (
-          incomeFromOverseasPension?.client &&
-          Object.keys(incomeFromOverseasPension.client).length
+          incomeFromSuperPayment?.client &&
+          Object.keys(incomeFromSuperPayment.client).length
         ) {
-          setFieldValue(
-            `client.otherTaxableIncome`,
-            incomeFromOverseasPension.client.regularIncomePA || ""
-          );
-
-          setFieldValue(`client.includeFromYear`,1);
-          setFieldValue(`client.upUntillYear`,30);
-          setFieldValue(`client.indexation`,"2.50%");
+          setFieldValue(`client.taxFree`, incomeFromSuperPayment.client.isPension);
+          setFieldValue(`client.lifetimePensionIncome`, incomeFromSuperPayment.client.regularIncomePA);
+          setFieldValue(`client.CentrelinkDeductibleAmount`, incomeFromSuperPayment.client.centrelinkDeductibleAmount);
+    
         }
        
 
@@ -54,22 +68,20 @@ const CashFlowOverseasPensions = (props) => {
       // Handle partner-related conditions
       if (
         UserStatus === "Married" &&
-        incomeFromOverseasPension.owner.includes("partner")
+        incomeFromSuperPayment.owner.includes("partner")
       ) {
         if (
-          incomeFromOverseasPension?.partner &&
-          Object.keys(incomeFromOverseasPension.partner).length
+          incomeFromSuperPayment?.partner &&
+          Object.keys(incomeFromSuperPayment.partner).length
         ) {
-          setFieldValue(
-            `partner.regularIncomePA`,
-            incomeFromOverseasPension.partner.regularIncomePA || ""
-          );
-          setFieldValue(`partner.includeFromYear`,1);
-          setFieldValue(`partner.upUntillYear`,30);
-          setFieldValue(`partner.indexation`,"2.50%");
+          setFieldValue(`partner.taxFree`, incomeFromSuperPayment.partner.isPension);
+          setFieldValue(`partner.lifetimePensionIncome`, incomeFromSuperPayment.partner.regularIncomePA);
+          setFieldValue(`partner.CentrelinkDeductibleAmount`, incomeFromSuperPayment.partner.centrelinkDeductibleAmount);
+    
         }
       }
     }
+
   };
 
   let onSubmit = async (values) => {
@@ -101,18 +113,18 @@ const CashFlowOverseasPensions = (props) => {
     }
 
     console.log(obj, "final obj");
-    const bankAccountArray = incomeFromOverseasPension.clientFK || "";
+    const bankAccountArray = incomeFromSuperPayment.clientFK || "";
 
     try {
       let res;
       if (!bankAccountArray) {
         res = await PostAxios(
-          `${DefaultUrl}/api/incomeFromOverseasPension/Add`,
+          `${DefaultUrl}/api/incomeFromSuperPayment/Add`,
           obj
         );
       } else {
         res = await PatchAxios(
-          `${DefaultUrl}/api/incomeFromOverseasPension/Update`,
+          `${DefaultUrl}/api/incomeFromSuperPayment/Update`,
           obj
         );
       }
@@ -121,7 +133,7 @@ const CashFlowOverseasPensions = (props) => {
         console.log(res);
         const updatedData = {
           ...questionDetail,
-          incomeFromOverseasPension: res,
+          incomeFromSuperPayment: res,
         };
         setQuestionDetail(updatedData);
       }
@@ -170,9 +182,9 @@ const CashFlowOverseasPensions = (props) => {
 
   const rowConfig = [
     {
-      name: "otherTaxableIncome",
+      name: "lifetimePensionIncome",
       type: "number-toComma",
-      placeholder: "Other Taxable Income",
+      placeholder: "Lifetime Pension Income",
     },
     {
       name: "includeFromYear",
@@ -188,6 +200,17 @@ const CashFlowOverseasPensions = (props) => {
       name: "indexation",
       type: "select",
       options: indexation,
+    },
+    {
+      name: "taxFree",
+      type: "yesno",
+    
+    },
+
+    {
+      name: "CentrelinkDeductibleAmount",
+      type: "number-toPercent",
+      placeholder: "Centrelink Deductible Amount",
     },
 
     // { name: "businessAddress", type: "text", placeholder: "Business Address" },
@@ -236,10 +259,12 @@ const CashFlowOverseasPensions = (props) => {
                         >
                           Owner
                         </th>
-                        <th>Other Taxable Income</th>
+                        <th>Lifetime Pension Income</th>
                         <th>Include From Year:</th>
                         <th>Up Until Year:</th>
                         <th>Indexation</th>
+                        <th>Tax-Free</th>
+                        <th>Centrelink Deductible Amount</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -279,4 +304,4 @@ const CashFlowOverseasPensions = (props) => {
   );
 };
 
-export default CashFlowOverseasPensions;
+export default CashFlowLifetimeBenefit;

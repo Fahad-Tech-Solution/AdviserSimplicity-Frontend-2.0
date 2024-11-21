@@ -6,69 +6,73 @@ import {
   openNotificationSuccess,
   RenderName,
 } from "../../../Components/Assets/Api/Api";
-import { Row, Table } from "react-bootstrap";
+import { Card, Row, Table } from "react-bootstrap";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
 import { useRecoilValue } from "recoil";
 
-const CashFlowOverseasPensions = (props) => {
+const CashFlowOtherAsset = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
 
   let [UserStatus] = useState(localStorage.getItem("UserStatus"));
   let DefaultUrl = useRecoilValue(defaultUrl);
 
-  let incomeFromOverseasPension =
-    Object.keys(questionDetail.incomeFromOverseasPension || {}).length > 0
-      ? questionDetail.incomeFromOverseasPension
+  let other =
+    Object.keys(questionDetail[props.modalObject.key] || {}).length > 0
+      ? questionDetail[props.modalObject.key]
       : {
-          client: [],
-          partner: [],
-          joint: [],
-        }; // Use an empty object as default if incomeFromOverseasPension is undefined
+        client: [],
+        partner: [],
+        joint: [],
+      };
 
-  let initialValues = { owner: [] };
+  let initialValues = {
+    owner: [],
+    client: {
+
+      // indexation: "2.50%",
+    },
+    partner: {
+
+      // indexation: "2.50%",
+    },
+  };
+
+  let onlyJoint = ["Boat", "Caravan", "House hold"];
 
   const fillInitialValues = (setFieldValue) => {
-    console.log(incomeFromOverseasPension, "data");
-    if (incomeFromOverseasPension && incomeFromOverseasPension._id) {
-      setFieldValue(`owner`, incomeFromOverseasPension.owner || "");
+    console.log(other, "data", questionDetail[props.modalObject.key], props.modalObject.key);
+    if (other && other._id) {
+
+      setFieldValue(`owner`, other.owner || "");
+
+      if (onlyJoint.includes(props.modalObject.title)) {
+        if (other.owner.includes("joint")) {
+          if (other?.joint && Object.keys(other.joint).length) {
+
+
+            setFieldValue(`joint.currentValue`, other.joint.currentValue || "");
+
+            return (false);
+          }
+        }
+      }
+
 
       // Handle client-related conditions
-      if (incomeFromOverseasPension.owner.includes("client")) {
-        if (
-          incomeFromOverseasPension?.client &&
-          Object.keys(incomeFromOverseasPension.client).length
-        ) {
-          setFieldValue(
-            `client.otherTaxableIncome`,
-            incomeFromOverseasPension.client.regularIncomePA || ""
-          );
+      if (other.owner.includes("client")) {
+        if (other?.client && Object.keys(other.client).length) {
+          setFieldValue(`client.currentValue`, other.client.currentValue || "");
 
-          setFieldValue(`client.includeFromYear`,1);
-          setFieldValue(`client.upUntillYear`,30);
-          setFieldValue(`client.indexation`,"2.50%");
         }
-       
-
       }
 
       // Handle partner-related conditions
-      if (
-        UserStatus === "Married" &&
-        incomeFromOverseasPension.owner.includes("partner")
-      ) {
-        if (
-          incomeFromOverseasPension?.partner &&
-          Object.keys(incomeFromOverseasPension.partner).length
-        ) {
-          setFieldValue(
-            `partner.regularIncomePA`,
-            incomeFromOverseasPension.partner.regularIncomePA || ""
-          );
-          setFieldValue(`partner.includeFromYear`,1);
-          setFieldValue(`partner.upUntillYear`,30);
-          setFieldValue(`partner.indexation`,"2.50%");
+      if (UserStatus === "Married" && other.owner.includes("partner")) {
+        if (other?.partner && Object.keys(other.partner).length) {
+          setFieldValue(`partner.currentValue`, other.partner.currentValue || "");
         }
       }
+
     }
   };
 
@@ -101,27 +105,21 @@ const CashFlowOverseasPensions = (props) => {
     }
 
     console.log(obj, "final obj");
-    const bankAccountArray = incomeFromOverseasPension.clientFK || "";
+    const bankAccountArray = other.clientFK || "";
 
     try {
       let res;
       if (!bankAccountArray) {
-        res = await PostAxios(
-          `${DefaultUrl}/api/incomeFromOverseasPension/Add`,
-          obj
-        );
+        res = await PostAxios(`${DefaultUrl}/api/${props.modalObject.key}/Add`, obj);
       } else {
-        res = await PatchAxios(
-          `${DefaultUrl}/api/incomeFromOverseasPension/Update`,
-          obj
-        );
+        res = await PatchAxios(`${DefaultUrl}/api/${props.modalObject.key}/Update`, obj);
       }
 
       if (res) {
         console.log(res);
         const updatedData = {
           ...questionDetail,
-          incomeFromOverseasPension: res,
+          [props.modalObject.key]: res,
         };
         setQuestionDetail(updatedData);
       }
@@ -144,43 +142,66 @@ const CashFlowOverseasPensions = (props) => {
         "topRight",
         "Error Notification",
         'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        props.modalObject.title +
+        '" is not Saved Please! try again'
       );
     }
   };
 
-  const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
-    value: (i + 1).toString(),
-    label: ("Year " + (i + 1)).toString(),
+  const loanTermOptions = Array.from({ length: 31 }, (_, i) => ({
+    value: i.toString(),
+    label: `Year ${i}`
   }));
 
-  const indexation = Array.from({ length: 21 }, (_, i) => ({
-    value: (i * 0.5).toFixed(2) + "%",
-    label: (i * 0.5).toFixed(2) + "%",
-  }));
+  const indexation = [
+    // Negative values from -0.00% to -5.00% in increments of 0.50%
+    ...Array.from({ length: 11 }, (_, i) => ({
+      value: `-${(i * 0.5).toFixed(2)}%`,
+      label: `-${(i * 0.5).toFixed(2)}%`
+    })),
 
-  const options =
-    UserStatus !== "Single"
-      ? [
-          { value: "client", label: RenderName("client") },
-          { value: "partner", label: RenderName("partner") },
-        ]
-      : [{ value: "client", label: RenderName("client") }];
+    // Positive values from 0.00% to 5.00% in increments of 0.50%
+    ...Array.from({ length: 11 }, (_, i) => ({
+      value: (i * 0.5).toFixed(2) + "%",
+      label: (i * 0.5).toFixed(2) + "%"
+    }))
+  ];
+
+  // const options =
+  //   UserStatus !== "Single"
+  //     ? [
+  //       { value: "client", label: RenderName("client") },
+  //       { value: "partner", label: RenderName("partner") },
+  //     ]
+  //     : [{ value: "client", label: RenderName("client") }];
+
+
+
+  const options = onlyJoint.includes(props.modalObject.title) ? [
+    { value: "joint", label: RenderName("joint") }
+  ] : (UserStatus !== "Single") ? [
+    { value: "client", label: RenderName("client") },
+    { value: "partner", label: RenderName("partner") }] :
+    [{ value: "client", label: RenderName("client") },];
 
   const rowConfig = [
     {
-      name: "otherTaxableIncome",
+      name: "currentValue",
       type: "number-toComma",
-      placeholder: "Other Taxable Income",
+      placeholder: "Current Value",
     },
     {
-      name: "includeFromYear",
+      name: "sellInYear",
       type: "select",
       options: loanTermOptions,
     },
     {
-      name: "upUntillYear",
+      name: "newPurchase",
+      type: "number-toComma",
+      placeholder: "New Purchase",
+    },
+    {
+      name: "purchaseInYear",
       type: "select",
       options: loanTermOptions,
     },
@@ -236,9 +257,10 @@ const CashFlowOverseasPensions = (props) => {
                         >
                           Owner
                         </th>
-                        <th>Other Taxable Income</th>
-                        <th>Include From Year:</th>
-                        <th>Up Until Year:</th>
+                        <th>Current Value</th>
+                        <th>Sell In Year</th>
+                        <th>New Purchase</th>
+                        <th>Purchase In Year</th>
                         <th>Indexation</th>
                       </tr>
                     </thead>
@@ -267,6 +289,19 @@ const CashFlowOverseasPensions = (props) => {
                             stakeHolder="partner."
                           />
                         )}
+                      
+                      {values.owner.includes("joint") &&
+                        UserStatus === "Married" && (
+                          <DynamicTableRow
+                            rowConfig={rowConfig}
+                            values={values}
+                            setFieldValue={setFieldValue}
+                            handleChange={handleChange}
+                            handleBlur={handleBlur}
+                            // handleInnerModal={handleInnerModal}
+                            stakeHolder="joint."
+                          />
+                        )}
                     </tbody>
                   </Table>
                 </div>
@@ -279,4 +314,4 @@ const CashFlowOverseasPensions = (props) => {
   );
 };
 
-export default CashFlowOverseasPensions;
+export default CashFlowOtherAsset;

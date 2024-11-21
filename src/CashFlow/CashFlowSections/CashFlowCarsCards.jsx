@@ -43,7 +43,7 @@ const CashFlowCarsCards = (props) => {
 
                                                     <label
                                                         className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                                        onClick={() => { OpenModal(CashFlowElem.title, CashFlowElem.key) }}
+                                                        onClick={() => { OpenModal(CashFlowElem) }}
                                                     >
                                                         <div>
                                                             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
