@@ -54,20 +54,22 @@ const CashFlowEducationExpenses = (props) => {
 
 
   const fillInitialValues = (setFieldValue) => {
-    console.log("PersonalDetailObj: ", PersonalDetailObj.children);
-  
-    // Set the number of children
-    setFieldValue(`numberOfChildren`, PersonalDetailObj.children.numberOfChildren);
-  
-    // Loop through the array of children and set values for each child
-    PersonalDetailObj.children.arrayOfChildren.forEach((child, i) => {
-      setFieldValue(`Name${i}`, child.Name);  // Set the child's name
-      setFieldValue(`DOB${i}`, new Date(child.DOB)); // Set the child's DOB as a Date object
-      // Set other fields if needed, e.g., Gender, age, etc.
-      setFieldValue(`age${i}`, differenceInYears(new Date(), new Date(child.DOB)) || 0);
-    });
+    if (PersonalDetailObj?.children?.numberOfChildren.length > 0) {
+      console.log("PersonalDetailObj: ", PersonalDetailObj.children);
+
+      // Set the number of children
+      setFieldValue(`numberOfChildren`, PersonalDetailObj.children.numberOfChildren);
+
+      // Loop through the array of children and set values for each child
+      PersonalDetailObj.children.arrayOfChildren.forEach((child, i) => {
+        setFieldValue(`Name${i}`, child.Name);  // Set the child's name
+        setFieldValue(`DOB${i}`, new Date(child.DOB)); // Set the child's DOB as a Date object
+        // Set other fields if needed, e.g., Gender, age, etc.
+        setFieldValue(`age${i}`, differenceInYears(new Date(), new Date(child.DOB)) || 0);
+      });
+    }
   };
-  
+
 
 
   const indexation = Array.from({ length: 21 }, (_, i) => ({
@@ -86,9 +88,9 @@ const CashFlowEducationExpenses = (props) => {
             enableReinitialize
           >
             {({ values, setFieldValue, handleChange, errors, handleBlur }) => {
-                    useEffect(() => {
-                        fillInitialValues(setFieldValue);
-                    }, []);
+              useEffect(() => {
+                fillInitialValues(setFieldValue);
+              }, []);
               return (
                 <Form className="">
                   <div className="d-flex  justify-content-center align-items-center gap-4">
@@ -135,7 +137,7 @@ const CashFlowEducationExpenses = (props) => {
                               return (
                                 <tr key={i}>
                                   <td className="text-center pt-3">{1 + i}</td>
-                                  <td style={{minWidth:'9rem'}}>
+                                  <td style={{ minWidth: '9rem' }}>
                                     <Field
                                       placeholder="Enter Child Name"
                                       id={`Name${i}`}
@@ -144,7 +146,7 @@ const CashFlowEducationExpenses = (props) => {
                                       className="form-control inputDesignDoubleInput"
                                     />
                                   </td>
-                                  <td style={{minWidth:'9rem'}}>
+                                  <td style={{ minWidth: '9rem' }}>
                                     <div>
                                       <DatePicker
                                         className="form-control inputDesignDoubleInput shadow DateInputPadding"
@@ -184,7 +186,7 @@ const CashFlowEducationExpenses = (props) => {
                                       <option value={"Other"}>Other</option>
                                     </Field>
                                   </td> */}
-                                  <td style={{minWidth:'4rem'}}>
+                                  <td style={{ minWidth: '4rem' }}>
                                     <Field
                                       placeholder="Age"
                                       id={`age${i}`}
@@ -285,7 +287,7 @@ const CashFlowEducationExpenses = (props) => {
                                     </Field>
                                   </td>
 
-                                  <td style={{minWidth:'6rem'}}>
+                                  <td style={{ minWidth: '6rem' }}>
                                     <Field
                                       placeholder="Uni"
                                       id={`uni${i}`}

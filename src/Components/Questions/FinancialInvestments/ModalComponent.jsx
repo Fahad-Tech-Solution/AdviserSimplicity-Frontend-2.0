@@ -119,7 +119,8 @@ const ModalComponent = (props) => {
     let fullTitles = ["Family Trust Investment Loan", "Family Details", "Life Insurance", "Personal Insurance", "Investment Loan", "Margin Loan", "SMSF Details", "SMSF Investment Properties", "SMSF Platform Investments Detail", "Family Trust Investment Property", "SMSF Investment Loan",
         "Education Expenses",
         "Centrelink Payments/Benefits",
-        "Own a Family Home"
+        "Own a Family Home",
+        "Employment Income"
     ]
     let xlKey = [
         "CFQ",
@@ -131,8 +132,6 @@ const ModalComponent = (props) => {
         "incomeFromPartnership",
         "incomeFromSoleTrader",
         "car",
-
-
 
     ];
 

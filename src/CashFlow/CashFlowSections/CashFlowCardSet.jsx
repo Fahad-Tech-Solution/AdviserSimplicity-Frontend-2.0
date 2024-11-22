@@ -21,6 +21,7 @@ import CashFlowCenterLink from '../Income&ExpenseComponents/CashFlowNew/CashFlow
 
 import CashFlowOtherAsset from '../PersonalAssetsComponents/CashFlowNew/CashFlowOtherAsset';
 import CashFlowFamilyHome from '../PersonalAssetsComponents/CashFlowNew/CashFlowFamilyHome';
+import CashFlowEmploymentIncome from '../Income&ExpenseComponents/CashFlowNew/CashFlowEmploymentIncome';
 
 const CashFlowCardSet = (props) => {
 
@@ -40,6 +41,7 @@ const CashFlowCardSet = (props) => {
         "Partnership Income": <CashFlowPartnership />,
         "Sole Trader Income": <CashFlowSoleTradeIncome />,
         "Education Expenses": <ChildeCashFlowEducationExpenses />,
+        "Employment Income": <CashFlowEmploymentIncome />,
         "Centrelink Payments/Benefits": <CashFlowCenterLink />,
         "Other Assets": <CashFlowOtherAsset />,
         "Car": <CashFlowOtherAsset />,
