@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { Route, Routes, } from "react-router-dom";
 import SideBar from "../../Components/SideBar/SideBarrr";
-import CashFlowOptions from '../CashFlowOptions/CashFlowOptions';
 import RecoilStateManage from '../../RecoilStateManage/RecoilStateManage';
 import { content } from '../../Content/Content';
-import CashFlowSections from '../CashFlowSections/CashFlowSections';
 import CashFlowLayout from './CashFlowLayout';
-import AllUsers from './AllUsers';
+import CashFlowAllUsers from './CashFlowAllUsers';
 
 const CashFlow = () => {
 
@@ -48,7 +46,7 @@ const CashFlow = () => {
 
         <div>
           <Routes>
-            <Route path={"/AllUsers"} element={<AllUsers switchState={switchState} sideSwitchMenu={sideSwitchMenu} />} />
+            <Route path={"/AllUsers"} element={<CashFlowAllUsers switchState={switchState} sideSwitchMenu={sideSwitchMenu} />} />
             <Route path={"/*"} element={<CashFlowLayout />} />
           </Routes>
         </div>

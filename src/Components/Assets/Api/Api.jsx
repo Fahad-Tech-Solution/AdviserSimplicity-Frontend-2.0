@@ -1,6 +1,5 @@
 import { notification } from "antd";
 import axios from "axios";
-import { BiInfoCircle } from "react-icons/bi";
 
 let GetAxios = async (Api) => {
     console.log("Get api Chali")
@@ -205,6 +204,14 @@ const validateName = (value) => {
     return filteredValue
 };
 
+let ConvertDate = (date) => {
+    let d = new Date(date);
+    let day = d.getDate().toString().padStart(2, '0');
+    let month = (d.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+    let year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+};
+
 
 export {
     DeleteAxios,
@@ -222,6 +229,7 @@ export {
     handleInputFocus,
     handleInputKeyDown,
     handleInputBlur,
-    validateName
+    validateName,
+    ConvertDate
 };
 
