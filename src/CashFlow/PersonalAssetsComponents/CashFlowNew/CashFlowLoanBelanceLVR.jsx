@@ -13,38 +13,31 @@ const CashFlowLoanBelanceLVR = (props) => {
 
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
-    let bankDetailObj = useRecoilValue(BankDetail);
 
 
+    const fillInitialValues = (setFieldValue) => {
+        // console.log(props.modalObject, "kuch Chala");
 
-    let questionDetail = useRecoilValue(QuestionDetail);
+        if (Object.keys(props.modalObject.values[props.modalObject.key + "CashFlowLoanBelanceLVR"] || {}).length > 0) {
+            let Data = props.modalObject.values[props.modalObject.key + "CashFlowLoanBelanceLVR"]
+            setFieldValue("LVR", Data.LVR)
+            setFieldValue("loanAmount", Data.loanAmount)
+            setFieldValue("loanBalance", Data.loanBalance)
+            setFieldValue("clientOwnership", Data.clientOwnership)
+            setFieldValue("partnerOwnership", Data.partnerOwnership)
+        }
 
-    let familyHome =
-  Object.keys(questionDetail.familyHome || {}).length > 0
-    ? questionDetail.familyHome
-    : {
-        client: [],
-        partner: [],
-        joint: [],
-      };
+    };
 
-
-  const fillInitialValues = (setFieldValue) => {
-    // console.log(props.modalObject, "kuch Chala");
-    console.log("Home Loan");
-    console.log("familyHome ", familyHome)
-    setFieldValue(`loanAmount`, familyHome.HomeLoanModal.loanBalance);
-};
-   
 
 
     let onSubmit = async (values) => {
         console.log("values", values);
 
 
-        props.setFieldValue(`TotalCostModal`, values);
-        props.setFieldValue(`loanAmount`, values.loanBalance);
-        props.setFieldValue(`annualRepayments`, values.annualRepayments);
+        props.setFieldValue(props.modalObject.key + "CashFlowLoanBelanceLVR", values);
+        props.setFieldValue(props.modalObject.key, values.loanBalance);
+
 
         // Reset the flag state if necessary
         if (props.flagState) {
@@ -52,24 +45,29 @@ const CashFlowLoanBelanceLVR = (props) => {
         }
     };
 
-    const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
-        value: (i + 1).toString(),
-        label: ("Year " + (i + 1)).toString(),
-    }));
+    let CalculatePercentage = (values, setFieldValue, CurrentInput, stakeHolder) => {
+        // console.log(values, setFieldValue, CurrentInput, stakeHolder);
 
-    let handleInnerModal = (title, values, key) => {
-        // console.log(values);
+        let clientOwnership = values.clientOwnership.replace(/[^0-9.]+/g, "") || 0;
+        let partnerOwnership = values.partnerOwnership.replace(/[^0-9.]+/g, "") || 0;
 
-        setModalObject({
-            title,
-            values,
-            key,
-        });
-        setFlagState(true);
-    };
+        switch (CurrentInput.name) {
+            case "clientOwnership":
+                clientOwnership = CurrentInput.value.replace(/[^0-9.]+/g, "");
+                setFieldValue("partnerOwnership", (100 - (clientOwnership > 100 ? 100 : clientOwnership)).toFixed(2) + "%")
+                break;
+            case "partnerOwnership":
+                partnerOwnership = CurrentInput.value.replace(/[^0-9.]+/g, "");
+                setFieldValue("clientOwnership", (100 - (partnerOwnership > 100 ? 100 : partnerOwnership)).toFixed(2) + "%")
+                break;
+            default:
+                console.log("Ma nahi Btao gha")
+                break;
+        }
+    }
 
     const rowConfig = [
-  
+
         {
             name: "LVR",
             type: 'number-toPercent',
@@ -91,16 +89,20 @@ const CashFlowLoanBelanceLVR = (props) => {
         {
             name: "clientOwnership",
             type: 'number-toPercent',
+            callBack: true,
+            func: CalculatePercentage,
             placeholder: "Client Ownership",
 
         },
-   
+
         {
             name: "partnerOwnership",
             type: 'number-toPercent',
+            callBack: true,
+            func: CalculatePercentage,
             placeholder: "Partner Ownership",
         },
-        
+
     ];
 
     return (
@@ -117,14 +119,14 @@ const CashFlowLoanBelanceLVR = (props) => {
 
                 return (
                     <Form>
-                             <InnerModal
-                                        modalObject={modalObject}
-                                        setFieldValue={setFieldValue}
-                                        setFlagState={setFlagState}
-                                        flagState={flagState}
-                                    >
-                                        
-                                    </InnerModal>
+                        <InnerModal
+                            modalObject={modalObject}
+                            setFieldValue={setFieldValue}
+                            setFlagState={setFlagState}
+                            flagState={flagState}
+                        >
+
+                        </InnerModal>
                         <Row>
                             <div className="col-md-12">
                                 <div className="row justify-content-center">

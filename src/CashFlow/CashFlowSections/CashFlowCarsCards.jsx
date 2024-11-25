@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { Card } from 'react-bootstrap';
 import { useRecoilValue } from 'recoil';
 import { CFQObject } from '../../Store/Store';
+import CashFlowCarsCardsTowInOne from './CashFlowCarsCardsTowInOne';
 
 const CashFlowCarsCards = (props) => {
 
@@ -17,6 +18,13 @@ const CashFlowCarsCards = (props) => {
         <div className='row'>
             {props.Data.QuestionsArray.map((CashFlowElem, index) => {
                 if (CFObject[CashFlowElem.key] === "Yes") {
+
+                    let TowInOne = CashFlowElem.key === "PersonalDebt"
+
+                    if (TowInOne) {
+                        return (<CashFlowCarsCardsTowInOne CashFlowElem={CashFlowElem} index={index} OpenModal={OpenModal} />)
+                    }
+
                     return (
                         <React.Fragment key={index}>
                             <div className={`col-md-3 mb-4`}>

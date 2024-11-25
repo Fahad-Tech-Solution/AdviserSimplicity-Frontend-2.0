@@ -2,24 +2,10 @@ import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { Row, Table } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  defaultUrl,
-  PersonalDetailsData,
-  QuestionDetail,
-} from "../../../Store/Store";
-// import { openNotificationSuccess, PatchAxios, PostAxios } from "../../Assets/Api/Api";
-import {
-  openNotificationSuccess,
-  PatchAxios,
-  PostAxios,
-} from "../../../Components/Assets/Api/Api";
+import { defaultUrl, PersonalDetailsData, QuestionDetail } from "../../../Store/Store";
 
-import { FaRegBuilding } from "react-icons/fa6";
-// import DynamicTableRow from "../../../Components/Assets/Dynamic/DynamicTableRow";
-// import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
+import { openNotificationSuccess, PatchAxios, PostAxios } from "../../../Components/Assets/Api/Api";
 
-// import HomeLoan from "./HomeLoan";
-import { object } from "yup";
 import DynamicTableRow from "../../../Components/Assets/Dynamic/DynamicTableRow";
 import InnerModal from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 import CashFlowHomeLoan from "./CashFlowHomeLoan";
@@ -39,10 +25,10 @@ const CashFlowFamilyHome = (props) => {
     Object.keys(questionDetail.familyHome || {}).length > 0
       ? questionDetail.familyHome
       : {
-          client: [],
-          partner: [],
-          joint: [],
-        }; // Use an empty object as default if familyHome is undefined
+        client: [],
+        partner: [],
+        joint: [],
+      }; // Use an empty object as default if familyHome is undefined
 
   let initialValues = {
     expectedGrowthRate: "2.50%",
@@ -50,7 +36,7 @@ const CashFlowFamilyHome = (props) => {
     yearOfPurchase: familyHome.currentValue ? "Existing" : "",
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   const fillInitialValues = (setFieldValue) => {
     console.log(familyHome);
@@ -60,17 +46,11 @@ const CashFlowFamilyHome = (props) => {
       setFieldValue(`clientOwnership`, familyHome.clientOwnership || "");
       setFieldValue(`partnerOwnership`, familyHome.partnerOwnership || "");
 
-      // setFieldValue(`costBase`, familyHome.costBase || "");
-
       setFieldValue(`loanBalance`, familyHome.loanAttached || "");
-      // setFieldValue(`HomeLoanModal`, familyHome.HomeLoanModal || "");
 
-      // setFieldValue(`loanAmount`, familyHome?.HomeLoanModal?.loanBalance || "");
-      // setFieldValue(`annualRepayments`, familyHome?.HomeLoanModal?.annualRepayments || "");
     }
   };
 
-  let DefaultUrl = useRecoilValue(defaultUrl);
 
   const sellPropertyInYearNo = [
     { value: "No", label: "No" },
@@ -96,69 +76,6 @@ const CashFlowFamilyHome = (props) => {
   let onSubmit = async (values) => {
     console.log(values);
     return;
-
-    let obj = {
-      currentValue: values.currentValue,
-      costBase: values.costBase,
-      clientOwnership: values.clientOwnership,
-      partnerOwnership: values.partnerOwnership,
-      loanAttached: values.loanAttached,
-
-      HomeLoanModal:
-        values.loanAttached === "Yes"
-          ? Object.keys(values.HomeLoanModal).length > 0
-            ? values.HomeLoanModal
-            : undefined
-          : undefined,
-      // loanAmount: values.loanAmount,
-      // annualRepayments: values.annualRepayments,
-    };
-
-    obj.clientFK = localStorage.getItem("UserID");
-
-    // Calculate total currentBalance
-
-    obj["clientTotal"] = obj.currentValue;
-
-    console.log(obj, "final obj");
-
-    const bankAccountArray = familyHome.clientFK || "";
-
-    try {
-      let res;
-      if (!bankAccountArray) {
-        res = await PostAxios(`${DefaultUrl}/api/familyHome/Add`, obj);
-      } else {
-        res = await PatchAxios(`${DefaultUrl}/api/familyHome/Update`, obj);
-      }
-
-      if (res) {
-        console.log(res);
-        const updatedData = { ...questionDetail, familyHome: res };
-        setQuestionDetail(updatedData);
-      }
-
-      openNotificationSuccess(
-        "success",
-        "topRight",
-        "Success Notification",
-        'Data of "' + props.modalObject.title + '" is Saved'
-      );
-      // Reset the flag state if necessary
-      if (props.flagState) {
-        props.setFlagState(false);
-      }
-    } catch (error) {
-      console.error("Error occurred while making API call:", error);
-      openNotificationSuccess(
-        "error",
-        "topRight",
-        "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
-      );
-    }
   };
 
   let handleInnerModal = (title, values, key) => {
@@ -172,6 +89,27 @@ const CashFlowFamilyHome = (props) => {
     setFlagState(true);
   };
 
+  let CalculatePercentage = (values, setFieldValue, CurrentInput, stakeHolder) => {
+    // console.log(values, setFieldValue, CurrentInput, stakeHolder);
+
+    let clientOwnership = values.clientOwnership.replace(/[^0-9.]+/g, "") || 0;
+    let partnerOwnership = values.partnerOwnership.replace(/[^0-9.]+/g, "") || 0;
+
+    switch (CurrentInput.name) {
+      case "clientOwnership":
+        clientOwnership = CurrentInput.value.replace(/[^0-9.]+/g, "");
+        setFieldValue("partnerOwnership", (100 - (clientOwnership > 100 ? 100 : clientOwnership)).toFixed(2) + "%")
+        break;
+      case "partnerOwnership":
+        partnerOwnership = CurrentInput.value.replace(/[^0-9.]+/g, "");
+        setFieldValue("clientOwnership", (100 - (partnerOwnership > 100 ? 100 : partnerOwnership)).toFixed(2) + "%")
+        break;
+      default:
+        console.log("Ma nahi Btao gha")
+        break;
+    }
+  }
+
   const rowConfig = [
     {
       name: "address",
@@ -183,15 +121,21 @@ const CashFlowFamilyHome = (props) => {
       name: "currentValue",
       type: "number-toComma",
       placeholder: "Current Value",
+
     },
     {
       name: "clientOwnership",
       type: "number-toPercent",
+      callBack: true,
+      func: CalculatePercentage,
       placeholder: "Client Ownership",
+
     },
     {
       name: "partnerOwnership",
       type: "number-toPercent",
+      callBack: true,
+      func: CalculatePercentage,
       placeholder: "Partner Ownership",
     },
     {
@@ -245,6 +189,7 @@ const CashFlowFamilyHome = (props) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
+
         return (
           <Form>
             <Row>
@@ -269,20 +214,15 @@ const CashFlowFamilyHome = (props) => {
                     <Table striped bordered responsive hover>
                       <thead>
                         <tr>
-                          {/* <th>No#</th> */}
                           <th>Street Address</th>
-                          <th>Current Value</th>
-                          {/* <th>Cost base</th> */}
+                          <th>Current Value/Purchase Price </th>
                           <th>Client Ownership</th>
                           <th>Partner Ownership</th>
                           <th>Year Of Purchase</th>
                           <th>Total Cost Base</th>
                           <th>Loan Balance</th>
                           <th>Expected Growth Rate</th>
-                          <th>Sell Propertry In Year</th>
-                          {/* <th>Loan Attached</th> */}
-                          {/* <th>Loan Amount</th> */}
-                          {/* <th>Annual Repayments</th> */}
+                          <th>Sell Property In Year</th>
                         </tr>
                       </thead>
                       <tbody>

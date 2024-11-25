@@ -32,7 +32,9 @@ const CashFlowCardSet = (props) => {
     let { cashFlow } = content;
 
     const componentMapping = {
-        "CFQModal": <CFQModal />,
+        "CFQModal": <CFQModal />,  // inner Modal just for Questions Yes/No
+
+        //First Section Modals Income and Expanse 
         "Overseas Pensions": <CashFlowOverseasPensions />,
         "Other Non-Taxable": <CashFlowOtherNoneTaxable />,
         "Business Income": <CashFlowBusinessIncome />,
@@ -43,12 +45,15 @@ const CashFlowCardSet = (props) => {
         "Education Expenses": <ChildeCashFlowEducationExpenses />,
         "Employment Income": <CashFlowEmploymentIncome />,
         "Centrelink Payments/Benefits": <CashFlowCenterLink />,
-        "Other Assets": <CashFlowOtherAsset />,
+
+        "Own a Family Home": <CashFlowFamilyHome />,
+        "Contents": <CashFlowOtherAsset />,
         "Car": <CashFlowOtherAsset />,
-        "House hold": <CashFlowOtherAsset />,
+        "Motor Vehicle 2": <CashFlowOtherAsset />,
         "Boat": <CashFlowOtherAsset />,
         "Caravan": <CashFlowOtherAsset />,
-        "Own a Family Home": <CashFlowFamilyHome />,
+        "Other Assets": <CashFlowOtherAsset />,
+        //personal Debit Left
     }
 
     const ModalContent = (obj) => {

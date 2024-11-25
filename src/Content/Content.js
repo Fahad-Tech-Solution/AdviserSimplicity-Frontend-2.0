@@ -18,6 +18,7 @@ import Education from "../Components/Questions/svgs/Education.png";
 
 
 import car from "../Components/Questions/svgs/car.svg";
+import jeep from "../Components/Questions/svgs/jeep-car-svgrepo-com.svg";
 import boat from "../Components/Questions/svgs/boat.svg";
 import trailer from "../Components/Questions/svgs/trailer-caravan.svg";
 import settingMoney from "../Components/Questions/svgs/settingMoney.svg";
@@ -354,7 +355,7 @@ export const content = {
                 },
             ],
             condition: (CRObject) => true, // Always true, as this step is always needed.
-        },
+        },  //? all inner Cards Done without APi
         {
             subTitle: "Lifestyle Assets & Debt",
             statusStep: 20,
@@ -362,14 +363,14 @@ export const content = {
             route: "/Personal-Assets",
             QuestionsArray: [
                 {
-                    title: "Home",
-                    img: overseas,
-                    key: "Home",
-                },
-                {
                     title: "Own a Family Home",
                     key: "familyHome",
                     img: Questions_Home,
+                },
+                {
+                    title: "Contents",
+                    key: "Contents",
+                    img: houseHold,
                 },
                 {
                     title: "Car",
@@ -377,10 +378,15 @@ export const content = {
                     img: car,
                 },
                 {
-                    title: "House hold",
-                    key: "houseHold",
-                    img: houseHold,
+                    title: "Motor Vehicle 2",
+                    key: "MotorVehicle2",
+                    img: jeep,
                 },
+                // {
+                //     title: "House hold",
+                //     key: "houseHold",     check with Usama Bhai Before Removing
+                //     img: houseHold,
+                // },
                 {
                     title: "Boat",
                     key: "boat",

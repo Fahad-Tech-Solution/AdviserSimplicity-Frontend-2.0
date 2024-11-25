@@ -95,6 +95,7 @@ function AuthRouts() {
                             <Route path="/PersonalDetail" element={<PersonalDetailNew />} />
                             <Route path="/PersonalDetailOld" element={<PersonalDetail_Edit />} />
 
+
                             {/* POST ROUTING
                                 <Route path="/NewPersonalDetail" element={<HOCLoader><PersonalDetails /></HOCLoader>} />
                                 */}
@@ -121,23 +122,12 @@ function AuthRouts() {
                             <Route path="/Goals-And-Objectives" element={<GoalsObjectiveNew />} />
 
                             <Route path="/Risk-Profile/*" element={<RiskProfileNew />} />
+                           
+                           
                             {/*
                                 <Route path="/Risk-Profile-Cards/" element={<RiskProfileCards />} />
                                 */}
-
                             <Route path="/PDF-Test" element={<Contact />} />
-
-
-                            {/* Cash-Flow ROUTING
-                                <Route path="/Cash-Flow" element={<CashFlow />} />
-                                <Route path="/Income-And-Expenses-CashFlow" element={<IncomeAndExpenses />} />
-                                <Route path="/Personal-Assets-CashFlow" element={<PersonalAssets />} />
-                            <Route path="/Investments-CashFlow" element={<InvestmentsCashFlow />} />
-                            <Route path="/Direct-Property" element={<DirectProperty />} />
-                            <Route path="/Super-And-Retirement-CashFlow" element={<SuperAndRetirementCashFlow />} />
-                            <Route path="/Investment-Trust-CashFlow" element={<InvestmentTrustCashFlow />} />
-                            <Route path="/SMSF-CashFlow" element={<SmsfCashFlow />} />
-                            */}
 
                         </Routes>
                     </div>

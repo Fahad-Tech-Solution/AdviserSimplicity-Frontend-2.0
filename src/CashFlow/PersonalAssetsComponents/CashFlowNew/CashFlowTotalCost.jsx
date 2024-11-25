@@ -8,39 +8,35 @@ import InnerModal from "../../../Components/Questions/FinancialInvestments/Quest
 
 const CashFlowTotalCost = (props) => {
     let initialValues = {
-
+        stampDuty: "",
+        stampDutyCalculation: "",
+        otherPurchaseCosts: "",
+        costBaseExisting: "",
+        totalCostBase: "",
     };
-    let questionDetail = useRecoilValue(QuestionDetail);
 
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
-    let bankDetailObj = useRecoilValue(BankDetail);
-
-    let familyHome =
-    Object.keys(questionDetail.familyHome || {}).length > 0
-      ? questionDetail.familyHome
-      : {
-          client: [],
-          partner: [],
-          joint: [],
-        };
 
 
     const fillInitialValues = (setFieldValue) => {
-        console.log(props.modalObject, "kuch Chala");
-        console.log("familyHome ", familyHome)
-        setFieldValue(`costBaseExisting`, familyHome.costBase);
-        
+        if (Object.keys(props.modalObject.values[props.modalObject.key + "Obj"] || {}).length > 0) {
+            let Data = props.modalObject.values[props.modalObject.key + "Obj"]
+            setFieldValue("stampDuty", Data.stampDuty)
+            setFieldValue("stampDutyCalculation", Data.stampDutyCalculation)
+            setFieldValue("otherPurchaseCosts", Data.otherPurchaseCosts)
+            setFieldValue("costBaseExisting", Data.costBaseExisting)
+            setFieldValue("totalCostBase", Data.totalCostBase)
+
+        }
     };
 
 
     let onSubmit = async (values) => {
         console.log("values", values);
 
-return
-        props.setFieldValue(`TotalCostModal`, values);
-        props.setFieldValue(`loanAmount`, values.loanBalance);
-        props.setFieldValue(`annualRepayments`, values.annualRepayments);
+        props.setFieldValue(props.modalObject.key + "Obj", values);
+        props.setFieldValue(props.modalObject.key, values.totalCostBase);
 
         // Reset the flag state if necessary
         if (props.flagState) {
@@ -77,9 +73,9 @@ return
         },
 
         {
-            name: "stampDuty",
+            name: "stampDutyCalculation",
             type: 'yesno',
-           
+
         },
         {
             name: "otherPurchaseCosts",
@@ -93,13 +89,13 @@ return
             placeholder: "Cost Base (Existing)",
 
         },
-   
+
         {
             name: "totalCostBase",
             type: 'number-toComma',
             placeholder: "Total Cost Base",
         },
-        
+
     ];
 
     return (
@@ -116,14 +112,9 @@ return
 
                 return (
                     <Form>
-                             <InnerModal
-                                        modalObject={modalObject}
-                                        setFieldValue={setFieldValue}
-                                        setFlagState={setFlagState}
-                                        flagState={flagState}
-                                    >
-                                        
-                                    </InnerModal>
+                        <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState}>
+
+                        </InnerModal>
                         <Row>
                             <div className="col-md-12">
                                 <div className="row justify-content-center">
@@ -131,13 +122,11 @@ return
                                         <Table striped bordered responsive hover>
                                             <thead>
                                                 <tr>
-                                                 
                                                     <th>Stamp Duty</th>
                                                     <th>Stamp Duty Calculation</th>
                                                     <th>Other Purchase Costs</th>
                                                     <th>Cost Base (Existing)</th>
                                                     <th>Total Cost Base</th>
-                                                   
                                                 </tr>
                                             </thead>
                                             <tbody>

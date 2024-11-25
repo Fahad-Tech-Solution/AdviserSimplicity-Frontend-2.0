@@ -28,12 +28,8 @@ const CashFlowOtherAsset = (props) => {
   let initialValues = {
     owner: [],
     client: {
-
-      // indexation: "2.50%",
     },
     partner: {
-
-      // indexation: "2.50%",
     },
   };
 
@@ -167,15 +163,6 @@ const CashFlowOtherAsset = (props) => {
     }))
   ];
 
-  // const options =
-  //   UserStatus !== "Single"
-  //     ? [
-  //       { value: "client", label: RenderName("client") },
-  //       { value: "partner", label: RenderName("partner") },
-  //     ]
-  //     : [{ value: "client", label: RenderName("client") }];
-
-
 
   const options = onlyJoint.includes(props.modalObject.title) ? [
     { value: "joint", label: RenderName("joint") }
@@ -265,6 +252,7 @@ const CashFlowOtherAsset = (props) => {
                       </tr>
                     </thead>
                     <tbody>
+                      
                       {values.owner.includes("client") && (
                         <DynamicTableRow
                           rowConfig={rowConfig}
@@ -272,7 +260,6 @@ const CashFlowOtherAsset = (props) => {
                           setFieldValue={setFieldValue}
                           handleChange={handleChange}
                           handleBlur={handleBlur}
-                          // handleInnerModal={handleInnerModal}
                           stakeHolder="client."
                         />
                       )}
@@ -285,7 +272,6 @@ const CashFlowOtherAsset = (props) => {
                             setFieldValue={setFieldValue}
                             handleChange={handleChange}
                             handleBlur={handleBlur}
-                            // handleInnerModal={handleInnerModal}
                             stakeHolder="partner."
                           />
                         )}
@@ -298,7 +284,6 @@ const CashFlowOtherAsset = (props) => {
                             setFieldValue={setFieldValue}
                             handleChange={handleChange}
                             handleBlur={handleBlur}
-                            // handleInnerModal={handleInnerModal}
                             stakeHolder="joint."
                           />
                         )}

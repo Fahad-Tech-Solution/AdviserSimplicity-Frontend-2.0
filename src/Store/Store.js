@@ -30,10 +30,12 @@ export const CFQObject = atom({
         Home: "No",
         familyHome: "No",
         car: "No",
-        houseHold: "No",
+        MotorVehicle2: "No",
+        Contents: "No",
         boat: "No",
         caravan: "No",
         otherAssets: "No",
+        PersonalDebt: "No"
     },
 });
 

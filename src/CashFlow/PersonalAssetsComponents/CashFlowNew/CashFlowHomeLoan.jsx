@@ -1,54 +1,36 @@
 import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { Row, Table } from "react-bootstrap";
-import { useRecoilValue } from "recoil";
-import { BankDetail, defaultUrl, QuestionDetail } from "../../../Store/Store";
 import DynamicTableRow from "../../../Components/Assets/Dynamic/DynamicTableRow";
 import InnerModal from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 import CashFlowLoanBelanceLVR from "./CashFlowLoanBelanceLVR";
 
 const CashFlowHomeLoan = (props) => {
+
   let initialValues = {
-  loanTerm:"30",
-  "repayLoanInYear":"No"
+    loanTerm: "30",
+    "repayLoanInYear": "No"
   };
-  let questionDetail = useRecoilValue(QuestionDetail);
 
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
-  let bankDetailObj = useRecoilValue(BankDetail);
-
-  let [lenderOption, setLenderOption] = useState(() => {
-    if (!bankDetailObj?.FinancialInstitutions) return [];
-
-    // Create an options array
-    const optionsArray = bankDetailObj.FinancialInstitutions.map((elem) => ({
-      value: elem._id,
-      label: elem.platformName,
-    }));
-
-    return optionsArray;
-  });
-
-  let familyHome =
-  Object.keys(questionDetail.familyHome || {}).length > 0
-    ? questionDetail.familyHome
-    : {
-        client: [],
-        partner: [],
-        joint: [],
-      };
 
 
   const fillInitialValues = (setFieldValue) => {
     // console.log(props.modalObject, "kuch Chala");
     console.log("Home Loan");
-    console.log("familyHome ", familyHome)
-    setFieldValue(`costBaseExisting`, familyHome.costBase);
-    setFieldValue(`initialInterestRatePA`, familyHome.HomeLoanModal.interestRatePA);
-    setFieldValue(`loanType`, familyHome.HomeLoanModal.loanType);
-    
-};
+    if (Object.keys(props.modalObject.values[props.modalObject.key] || {}).length > 0) {
+      let Data = props.modalObject.values[props.modalObject.key]
+      setFieldValue("loanBalance", Data.loanBalance)
+      setFieldValue("loanBalanceCashFlowLoanBelanceLVR", Data.loanBalanceCashFlowLoanBelanceLVR)
+      setFieldValue("loanType", Data.loanType)
+      setFieldValue("loanTerm", Data.loanTerm)
+      setFieldValue("initialInterestRatePA", Data.initialInterestRatePA)
+      setFieldValue("minimumRepaymentsPA", Data.minimumRepaymentsPA)
+      setFieldValue("actualAnnualRepayments", Data.actualAnnualRepayments)
+      setFieldValue("repayLoanInYear", Data.repayLoanInYear)
+    }
+  };
 
   const repayInYearNo = [
     { value: "No", label: "No" },
@@ -61,9 +43,7 @@ const CashFlowHomeLoan = (props) => {
   let onSubmit = async (values) => {
     console.log("values", values);
 
-    props.setFieldValue(`HomeLoanModal`, values);
-    props.setFieldValue(`loanAmount`, values.loanBalance);
-    props.setFieldValue(`annualRepayments`, values.annualRepayments);
+    props.setFieldValue(props.modalObject.key, values);
 
     // Reset the flag state if necessary
     if (props.flagState) {
@@ -94,18 +74,10 @@ const CashFlowHomeLoan = (props) => {
       innerModalTitle: "Loan Balance",
       type: "number-toComma-Modal",
       placeholder: "Loan Balance",
-      key:"CashFlowLoanBelanceLVR",
+      key: "loanBalance",
       func: handleInnerModal,
       callBack: true,
     },
-
-//     name: "totalCostBase",
-//     innerModalTitle: "Total Cost Base",
-//     type: "number-toComma-Modal",
-//   //   callBack: true,
-//     key: "totalCostBase",
-//     func: handleInnerModal,
-//   },
     {
       name: "loanType",
       type: "select",
@@ -116,21 +88,21 @@ const CashFlowHomeLoan = (props) => {
     },
 
     {
-        name: "loanTerm",
-        type: "select",
-        options: loanTermOptions,
-      },
+      name: "loanTerm",
+      type: "select",
+      options: loanTermOptions,
+    },
 
-      {
-        name: "initialInterestRatePA",
-        type: "number-toPercent",
-        placeholder: "Interest Rate (p.a)",
-      },
+    {
+      name: "initialInterestRatePA",
+      type: "number-toPercent",
+      placeholder: "Interest Rate (p.a)",
+    },
     {
       name: "minimumRepaymentsPA",
       type: "number-toComma",
       placeholder: "Minimum Repayments (p.a)",
-  
+
     },
 
     {
@@ -138,17 +110,6 @@ const CashFlowHomeLoan = (props) => {
       type: "number-toComma",
       placeholder: "Actual Annual Repayments",
     },
-
-
-    // {
-    //         innerModalTitle: "Loan to Value Ratio (LVR) ",
-    //         type: "yesnoModal",
-    //         callBack: true,
-    //         name: "LoanToValueRatio",
-    //         key: "LVR",
-    //         func: handleInnerModal,
-    // },
-
     {
       name: "repayLoanInYear",
       type: "select",
@@ -177,9 +138,9 @@ const CashFlowHomeLoan = (props) => {
               flagState={flagState}
 
             >
-                {modalObject.key === "CashFlowLoanBelanceLVR" ? (
-                      <CashFlowLoanBelanceLVR/>
-                    ) :''}
+              {modalObject.key === "loanBalance" ? (
+                <CashFlowLoanBelanceLVR />
+              ) : ''}
             </InnerModal>
             <Row>
               <div className="col-md-12">
@@ -189,7 +150,7 @@ const CashFlowHomeLoan = (props) => {
                       <thead>
                         <tr>
                           {/* <th>No#</th> */}
-                   
+
                           <th>Loan Balance</th>
                           <th>Loan Type</th>
                           <th>Loan Term </th>
@@ -197,7 +158,7 @@ const CashFlowHomeLoan = (props) => {
                           <th>Minimum Repayments (p.a)</th>
                           <th>Actual Annual Repayments</th>
                           <th>Repay Loan in Year</th>
-                         
+
                         </tr>
                       </thead>
                       <tbody>
