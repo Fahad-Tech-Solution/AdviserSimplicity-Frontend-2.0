@@ -1,16 +1,21 @@
 import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { Row } from "react-bootstrap";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { openNotificationSuccess, PatchAxios, PostAxios } from "../../Components/Assets/Api/Api";
-import { defaultUrl } from "../../Store/Store";
+import { CashFlowData, defaultUrl } from "../../Store/Store";
 import { useNavigate } from "react-router-dom";
+import { content } from "../../Content/Content";
 
 const ScenarioForm = (props) => {
 
     let initialValues = {
         scenarioName: ""
     };
+
+    let { cashFlow } = content;
+
+    let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
 
     let [tableData, setTableData] = useState([])
 
@@ -23,40 +28,52 @@ const ScenarioForm = (props) => {
     };
 
     let DefaultUrl = useRecoilValue(defaultUrl);
+    let BaseURL = DefaultUrl + "/api/CF/scenario"
 
     let Nav = useNavigate();
 
     let onSubmit = async (values) => {
         console.log(JSON.stringify(values));
-        if (props.modalObject.action === "New") {
-            Nav("/Cash-Flow/PersonalDetail" + "#" + props.modalObject.Data._id);
-        }
-        return false;
+        // if (props.modalObject.action === "New") {
+        //     Nav("/Cash-Flow/PersonalDetail" + "#" + props.modalObject.Data._id);
+        // }
+        // return false;
         let obj = values;
-        obj.clientFK = localStorage.getItem("UserID");
+        obj.clientFK = props.modalObject.Data._id;
 
-
-        const GotData = incomeFromCentrelink.clientFK || "";
 
         try {
             let res;
-            if (!GotData) {
-                res = await PostAxios(`${DefaultUrl}/api/incomeFromCentrelink/Add`, obj);
+            if (props.modalObject.action === "New") {
+                res = await PostAxios(`${BaseURL}/Add`, obj);
             } else {
-                res = await PatchAxios(`${DefaultUrl}/api/incomeFromCentrelink/Update`, obj);
+                res = await PatchAxios(`${BaseURL}/Update`, obj);
             }
 
             if (res) {
                 console.log(res);
-                const updatedData = { ...questionDetail, incomeFromCentrelink: res };
-                setQuestionDetail(updatedData);
+                const updatedData = {
+                    ...cashFlowData,
+                    Scenarios: [...cashFlowData.Scenarios, res],
+                };
+                setCashFlowData(updatedData);
+
+                if (props.modalObject.action === "New") {
+                    Nav("/Cash-Flow/PersonalDetail" + "#" + props.modalObject.Data._id);
+                }
+                else {
+                    const route = cashFlow.find((module) => module.subTitle === res.lastModuleEdited)?.route;
+                    Nav("/Cash-Flow" + route);
+
+                }
+
             }
 
             openNotificationSuccess("success", "topRight", "Success Notification", `Data of "${props.modalObject.title}" is Saved`);
 
             // Reset the flag state if necessary
             if (props.flagState) {
-                props.setFlagState(false);
+                // props.setFlagState(false);
             }
         } catch (error) {
             console.error("Error occurred while making API call:", error);

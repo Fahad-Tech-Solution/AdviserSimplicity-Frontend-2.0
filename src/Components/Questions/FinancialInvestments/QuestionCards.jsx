@@ -64,19 +64,15 @@ import { Button, Card, InputGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import ModalComponent from './ModalComponent';
-import BankTermForm from './QuestionsDetail/BankTermForm';
+
 import { openNotificationSuccess, PatchAxios, PostAxios, toCommaAndDollar } from '../../Assets/Api/Api';
-import TermDeposit from './QuestionsDetail/TermDeposit';
 
 
-import AustralianShares from './QuestionsDetail/AustralianShares';
-import ManagedFunds from './QuestionsDetail/ManagedFunds';
 import InvestmentLoan from './QuestionsDetail/InvestmentLoan';
 import MarginLoan from './QuestionsDetail/MarginLoan';
 import PersonalLoan from './QuestionsDetail/PersonalLoan';
 import CreditCard from './QuestionsDetail/CreditCard';
-// import HomeLoan from './QuestionsDetail/HomeLoan';
-// import OwnFamilyHome from './QuestionsDetail/OwnFamilyHome';
+
 import InvestmentPropertyDetails from './QuestionsDetail/InvestmentPropertyDetails';
 import HolidayHome from './QuestionsDetail/HolidayHome';
 
@@ -94,18 +90,13 @@ import LifeTimeBeneFits from '../PersonalIncome/LifetimeBenefits';
 import OverseasPension from '../PersonalIncome/OverseasPension';
 import Inheritance from '../PersonalIncome/Inheritance';
 import LumpsumExpenses from '../PersonalIncome/LumpsumExpenses';
-// import SMSFInvestmentProperty from '../QuestoinsSMSF/SMSFInvestmentProperty';
-import SMSFInvestmentPropertyModalComp from '../QuestoinsSMSF/SMSFInvestmentPropertyModalComp';
-import SMSFInvestmentHomeLoanComp from '../QuestoinsSMSF/SMSFInvestmentHomeLoanComp';
-import InvestmentHomeExpanse from '../QuestoinsSMSF/InvestmentHomeExpanse';
+
 import SmsfAccumulationDetails from '../QuestoinsSMSF/SmsfAccumulationDetails';
 import SmsfDetails from '../QuestoinsSMSF/SmsfDetails';
-import SmsfPensionAccount from '../QuestoinsSMSF/PensionAccount';
+
 import FamilyInvestmentProperty from '../QuestoinsFamilyTrust/FamilyInvestmentProperty';
 import FamilyDetails from '../QuestoinsFamilyTrust/FamilyDetails';
-import FamilyInvestmentPropertyModalComp from '../QuestoinsFamilyTrust/FamilyInvestmentPropertyModalComp';
-import FamilyInvestmentHomeLoanComp from '../QuestoinsFamilyTrust/FamilyInvestmentHomeLoanComp';
-import FamilyInvestmentHomeExpanse from '../QuestoinsFamilyTrust/FamilyInvestmentHomeExpanse';
+
 import PersonalInsuranceLife from '../PersonalInsurance/LifeInsurance';
 import CombinedSwitch from '../CombinedSwitch/CombinedSwitch';
 
@@ -119,7 +110,7 @@ import MiddleWare from './MiddleWare';
 import SampleOne from '../AdditionalQueriesPersonalAssets/SampleOne';
 import PersonalInsuranceRenderCard from './QuestionsDetail/PersonalInsuranceRenderCard';
 import SMSFQCards from '../QuestoinsSMSF/SMSFQCards';
-import SMSFMiddleWare from '../QuestoinsSMSF/SMSFMiddleWare';
+
 import SmsfPensionAccountMiddleWare from '../QuestoinsSMSF/PensionAccount';
 import OtherInvestmentsDynamic from '../QuestoinsSMSF/OtherInvestmentsDynamic';
 

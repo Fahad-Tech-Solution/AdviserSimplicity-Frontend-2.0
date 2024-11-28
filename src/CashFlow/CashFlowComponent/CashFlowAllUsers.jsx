@@ -10,7 +10,7 @@ import { FaArrowRotateRight, FaGear } from 'react-icons/fa6'
 import { FaRing } from 'react-icons/fa'
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { GetAxios } from '../../Components/Assets/Api/Api';
-import { AllUsers, defaultUrl } from '../../Store/Store';
+import { AllUsers, CashFlowData, defaultUrl } from '../../Store/Store';
 import AccordionItems from './AccordionItems';
 import ModalComponent from '../../Components/Questions/FinancialInvestments/ModalComponent';
 import ScenarioForm from './ScenarioForm';
@@ -18,6 +18,7 @@ import ScenarioForm from './ScenarioForm';
 const CashFlowAllUsers = (props) => {
 
     const [PersonalDetail2, setPersonalDetail] = useRecoilState(AllUsers);
+    let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
     let DefaultUrl = useRecoilValue(defaultUrl);
 
 
@@ -32,11 +33,30 @@ const CashFlowAllUsers = (props) => {
                     if (res) {
                         setPersonalDetail(res);
                     }
+                    // console.log(JSON.stringify(res[0]), "Cash Grow Work");
+                } catch (error) {
+                    console.error("Error fetching personal details:", error);
+                }
+            }
+
+
+            if (Object.keys(cashFlowData).length < 0 || (!cashFlowData?.Scenarios) || cashFlowData?.Scenarios.length <= 0) {
+                try {
+                    let res = await GetAxios(`${DefaultUrl}/api/CF/scenario/`);
+                    if (res) {
+                        const updatedData = {
+                            ...cashFlowData,
+                            Scenarios: res,
+                        };
+                        setCashFlowData(updatedData);
+                    }
                     console.log(JSON.stringify(res[0]), "Cash Grow Work");
                 } catch (error) {
                     console.error("Error fetching personal details:", error);
                 }
             }
+
+
         };
 
         fetchData();
@@ -44,8 +64,11 @@ const CashFlowAllUsers = (props) => {
 
 
 
-    let OpenModal = (UserData,action) => {
+    let OpenModal = (UserData, action) => {
         // console.log(UserData);
+
+        localStorage.getItem("UserID", UserData._id);
+
 
         setModalObject({
             title: "Add Scenario",
@@ -73,7 +96,15 @@ const CashFlowAllUsers = (props) => {
                         <h5 className="cashFlowCardHead LeagueSpartanFamily">Users List</h5>
                         <Accordion defaultActiveKey="0">
                             {PersonalDetail2.map((elem, index) => {
-                                return (<AccordionItems CallBack={OpenModal} fullData={elem} client={elem.client} partner={elem.partner} tableData={[]} index={index} />)
+
+                                // Filter scenarios that have the same clientFK as the current client's ID
+                                const filteredScenarios = (cashFlowData.Scenarios || []).filter(
+                                    (scenario) => scenario.clientFK == elem._id
+                                );
+
+                                console.log(filteredScenarios, "PersonalDetail2")
+
+                                return (<AccordionItems CallBack={OpenModal} fullData={elem} client={elem.client} partner={elem.partner} tableData={filteredScenarios || []} index={index} />)
                             })}
                         </Accordion>
                     </Card.Body></Card>

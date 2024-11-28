@@ -3,6 +3,7 @@ import ModalComponent from '../../Components/Questions/FinancialInvestments/Moda
 import Add from "../../Components/Questions/svgs/add-circle-solid-svgrepo-com.svg";
 
 import { content } from '../../Content/Content';
+
 import { QuestionShift } from '../../Store/Store';
 import { useRecoilState } from 'recoil';
 import { useNavigate } from 'react-router-dom';
@@ -22,6 +23,12 @@ import CashFlowCenterLink from '../Income&ExpenseComponents/CashFlowNew/CashFlow
 import CashFlowOtherAsset from '../PersonalAssetsComponents/CashFlowNew/CashFlowOtherAsset';
 import CashFlowFamilyHome from '../PersonalAssetsComponents/CashFlowNew/CashFlowFamilyHome';
 import CashFlowEmploymentIncome from '../Income&ExpenseComponents/CashFlowNew/CashFlowEmploymentIncome';
+import CashFlowPersonalDebt from '../PersonalAssetsComponents/CashFlowNew/CashFlowPersonalDebt';
+import CashFlowAustralianShares from '../Financial Investments/CashFlowAustralianShares';
+import CashFlowCashBankDetails from '../Financial Investments/CashFlowCashBankDetails';
+import CashFlowInvestmentLoansLOC from '../Financial Investments/CashFlowInvestmentLoansLOC';
+import CashFlowMarginLoan from '../Financial Investments/CashFlowMarginLoan';
+import CashFlowInvestmentsProperty from '../Financial Investments/CashFlowInvestmentsProperty';
 
 const CashFlowCardSet = (props) => {
 
@@ -46,6 +53,7 @@ const CashFlowCardSet = (props) => {
         "Employment Income": <CashFlowEmploymentIncome />,
         "Centrelink Payments/Benefits": <CashFlowCenterLink />,
 
+        //Second Section Modals LifeStyle Assets & Debt
         "Own a Family Home": <CashFlowFamilyHome />,
         "Contents": <CashFlowOtherAsset />,
         "Car": <CashFlowOtherAsset />,
@@ -53,7 +61,25 @@ const CashFlowCardSet = (props) => {
         "Boat": <CashFlowOtherAsset />,
         "Caravan": <CashFlowOtherAsset />,
         "Other Assets": <CashFlowOtherAsset />,
-        //personal Debit Left
+        "Persona Loans": <CashFlowPersonalDebt />,
+        "Credit Card": <CashFlowPersonalDebt />,
+
+        //Second Section Modals Financial Investments
+        "Australian Shares": <CashFlowAustralianShares />,
+        "Platform Investment": <CashFlowAustralianShares />,
+        "Other Investments": <CashFlowAustralianShares />,
+
+        "Cash": <CashFlowCashBankDetails />,
+        "Term Deposits": <CashFlowCashBankDetails />,
+        "Investment Bonds": <CashFlowCashBankDetails />,
+
+        "Investment Loans (LOC)": <CashFlowInvestmentLoansLOC />,
+        "Margin Loan": <CashFlowMarginLoan />,
+        "Investments Property": <CashFlowInvestmentsProperty />
+
+
+
+
     }
 
     const ModalContent = (obj) => {
@@ -122,9 +148,7 @@ const CashFlowCardSet = (props) => {
                             </div>
                         </div>
 
-
                         <CashFlowCarsCards OpenModal={OpenModal} Data={props.Data} />
-
 
                         <div className="row mt-2">
                             <div className="col-md-12">

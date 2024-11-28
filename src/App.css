@@ -1434,3 +1434,16 @@ label {
   background-color: #bafae252 !important;
   border-color: #bafae252 !important;
 }
+
+/* .GInputSelect {
+  display: flex !important;
+  flex-direction: row !important;
+} */
+
+.GInputSelect .form-select {
+  min-width: 3rem !important;
+  border-top-right-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+}
+
+

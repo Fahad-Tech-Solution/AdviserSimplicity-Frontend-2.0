@@ -36,7 +36,6 @@ import RecoilStateManage from "../RecoilStateManage/RecoilStateManage";
 import ImportantQuestion from "../Components/Questions/ImportantQuestion/ImportantQuestion";
 import PersonalDetailNew from "../Components/PersonalDetails/PersonalDetailNew";
 
-import Contact from "../Components/ContactTest/Contact";
 import PersonalInsuranceLife from "../Components/Questions/PersonalInsurance/LifeInsurance";
 
 function AuthRouts() {
@@ -122,12 +121,12 @@ function AuthRouts() {
                             <Route path="/Goals-And-Objectives" element={<GoalsObjectiveNew />} />
 
                             <Route path="/Risk-Profile/*" element={<RiskProfileNew />} />
-                           
-                           
+
+
                             {/*
                                 <Route path="/Risk-Profile-Cards/" element={<RiskProfileCards />} />
+                                <Route path="/PDF-Test" element={<Contact />} />
                                 */}
-                            <Route path="/PDF-Test" element={<Contact />} />
 
                         </Routes>
                     </div>

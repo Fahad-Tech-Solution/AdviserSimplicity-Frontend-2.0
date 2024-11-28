@@ -256,6 +256,39 @@ const DynamicFormField = ({
         </Field>
       );
 
+    case "selectModal":
+      return (
+        <React.Fragment>
+          <InputGroup className={((stakeHolder ? values?.[stakeHolder.slice(0, -1)]?.[name] : values?.[name]) === all.ModalOption) ? "GInputSelect" : ""}>
+            <Field as="select" name={stakeHolder ? stakeHolder + name : name} className="form-select inputDesignDoubleInput"
+              disabled={all?.disabled ? all.disabled : false}
+              onChange={(e) => {
+                handleChange(e);
+                if (all.callBack) {
+                  all.func(values, setFieldValue, e.target, stakeHolder);
+                }
+              }}
+            >
+              <option value="">Select</option>
+              {options.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </Field>
+
+            {(stakeHolder ? values?.[stakeHolder.slice(0, -1)]?.[name] : values?.[name]) === all.ModalOption &&
+              <Button
+                className="btn bgColor modalBtn border-0"
+                onClick={() => handleInnerModal(innerModalTitle, values, all.key, stakeHolder)}
+              >
+                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+              </Button>
+            }
+          </InputGroup>
+        </React.Fragment>
+      );
+
     case "select-creatableMulti":
       return (
         <Field

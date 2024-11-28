@@ -109,10 +109,14 @@ const ModalComponent = (props) => {
         "Family Investment Home",
         "Family Investment Home Loan",
         "Family Investment Home Expanse",
-        // "SMSF Accumulation Details",
-        // "SMSF Accumulation Details"
-        // "Life Insurance",
-        // "Risk Goals"
+        "Persona Loans",
+        "Australian Shares",
+        "Platform Investment",
+        "Other Investments",
+        "Cash",
+        "Term Deposits",
+        "Investment Bonds",
+        "Investment Loans (LOC)",
 
     ]; // Add other titles that should use "xl" here
 
@@ -120,8 +124,10 @@ const ModalComponent = (props) => {
         "Education Expenses",
         "Centrelink Payments/Benefits",
         "Own a Family Home",
-        "Employment Income"
+        "Employment Income",
+        "Investments Property"
     ]
+
     let xlKey = [
         "CFQ",
         "cashFlowIncomeFromOverseasPension",
@@ -175,5 +181,3 @@ const ModalComponent = (props) => {
 }
 
 export default ModalComponent
-
-// {props.Question ? Question : "Submit"}

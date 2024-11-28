@@ -7,24 +7,18 @@ const CashFlowCarsCardsTowInOne = (props) => {
 
     let { CashFlowElem, OpenModal, index } = props
 
-
-
     let ObjTowInOneArray = {
         "PersonalDebt": [
             {
-                label: "Personal Debt",
+                title: "Persona Loans",
                 key: "PersonalDebt"
             },
             {
-                label: "Credit Card",
+                title: "Credit Card",
                 key: "CreditCard"
             }
         ]
     }
-
-
-    console.log(ObjTowInOneArray[CashFlowElem.key])
-
 
     return (
         <React.Fragment key={index}>
@@ -41,17 +35,14 @@ const CashFlowCarsCardsTowInOne = (props) => {
                         >
                             {ObjTowInOneArray[CashFlowElem.key].map((elem, i) => {
                                 return (<React.Fragment key={i}>
-
                                     <div className={'col-12 p-0 my-2'}>
                                         <div className='d-flex justify-content-center align-items-center gap-2'>
-
                                             <label
                                                 className="d-block"
                                                 htmlFor={"client" + elem.key}
                                             >
-                                                {elem.key}
+                                                {elem.title}
                                             </label>
-
                                             <label
                                                 className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
                                                 onClick={() => { OpenModal(elem) }}
@@ -62,38 +53,15 @@ const CashFlowCarsCardsTowInOne = (props) => {
                                             </label>
                                         </div>
                                     </div>
-
                                     <input type="text"
                                         className="form-control inputDesign"
                                         id={"client" + elem.key}
                                         placeholder={elem.title}
                                         name={"client" + elem.key}
                                     />
-
                                 </React.Fragment>)
                             })}
-
                         </div>
-                        {/*
-                            <div
-                            className={`row justify-content-center align-items-center my-2`}
-                            >
-                            <div className='col-12 p-0 '>
-                            <div className='d-flex flex-column-reverse justify-content-center align-items-center gap-2'>
-                            <label
-                            className=" d-block "
-                            htmlFor={"partner" + CashFlowElem.key}
-                            >{localStorage.getItem("PartnerName") || "Partner"}</label>
-                            </div>
-                            </div>
-                            </div>
-                            <input type="text"
-                            className={`form-control inputDesign`}
-                            id={"partner" + CashFlowElem.key}
-                            placeholder={CashFlowElem.title}
-                            name={"partner" + CashFlowElem.key}
-                            />
-                            */}
                     </div>
                 </Card>
             </div>

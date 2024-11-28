@@ -22,15 +22,21 @@ import jeep from "../Components/Questions/svgs/jeep-car-svgrepo-com.svg";
 import boat from "../Components/Questions/svgs/boat.svg";
 import trailer from "../Components/Questions/svgs/trailer-caravan.svg";
 import settingMoney from "../Components/Questions/svgs/settingMoney.svg";
+import PersonalDebt from "../Components/Questions/svgs/credit-card-refund-svgrepo-com.svg";
 import Questions_Home from "../Components/Questions/svgs/home-svgrepo-com.svg";
 import houseHold from "../Components/Questions/svgs/warehouse-.svg";
 
 import PortFolio from "../Components/Questions/svgs/portfolio.svg";
 import funds from "../Components/Questions/svgs/funds.svg";
-
-
-
-
+import certificate from "../Components/Questions/svgs/certificate.svg";
+import piggybank1 from "../Components/Questions/svgs/piggy-bank.svg";
+import piggybank2 from "../Components/Questions/svgs/piggy-bank-new.svg";
+import calender from "../Components/Questions/svgs/calendar.png";
+import TermImg from "../Components/Questions/svgs/TermDepositCanva.png";
+import analytics from "../Components/Questions/svgs/analytics.png";
+import property from "../Components/Questions/svgs/property-value.svg";
+import loan from "../Components/Questions/svgs/loan.svg";
+import otherInvestment from "../Components/Questions/svgs/investmentCircle.png";
 
 export const content = {
     itemsOpt: [
@@ -405,7 +411,7 @@ export const content = {
                 {
                     title: "Personal Debt",
                     key: "PersonalDebt",
-                    img: settingMoney,
+                    img: PersonalDebt,
                 },
             ],
             condition: (CRObject) => true, // Always true, as this step is always needed.
@@ -425,6 +431,56 @@ export const content = {
                     title: "Platform Investment",
                     img: funds,
                     key: "PlatformInvestment",
+                },
+                {
+                    title: "Other Investments",
+                    img: otherInvestment,
+                    key: "OtherInvestments",
+                },
+                {
+                    title: "Cash",
+                    img: funds,
+                    key: "Cash",
+                },
+                {
+                    title: "Term Deposits",
+                    img: TermImg,
+                    key: "TermDeposits",
+                },
+                {
+                    title: "Investment Bonds",
+                    img: certificate,
+                    key: "InvestmentBonds",
+                },
+                {
+                    title: "Investment Loans (LOC)",
+                    img: loan,
+                    key: "InvestmentLoansLOC",
+                },
+                {
+                    title: "Margin Loan",
+                    img: analytics,
+                    key: "MarginLoan",
+                },
+                {
+                    title: "Investments Property",
+                    img: property,
+                    key: "InvestmentsProperty",
+                },
+                {
+                    title: "Super Fund",
+                    img: piggybank1,
+                    key: "SuperFund",
+                },
+                {
+                    title: "Account Based Pension",
+                    img: piggybank2,
+                    key: "AccountBasedPension",
+                },
+                {
+                    title: "Annuities",
+                    img: calender,
+                    key: "Annuities",
                 },
             ],
             condition: (CRObject) => true, // Always true, as this step is always needed.

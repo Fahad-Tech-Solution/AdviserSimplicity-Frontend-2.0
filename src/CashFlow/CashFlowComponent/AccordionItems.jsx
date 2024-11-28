@@ -1,12 +1,13 @@
 import React from 'react';
-import { Accordion, Table } from 'react-bootstrap';
+import { Accordion, Button, Dropdown, Table } from 'react-bootstrap';
 import { MdMale, MdCake, MdAdd } from 'react-icons/md';
-import { FaArrowRotateRight, FaGear, FaRing } from 'react-icons/fa6'
+import { FaArrowRotateRight, FaClipboardList, FaGear, FaRing } from 'react-icons/fa6'
 
 
 import single from "../../Components/Svgs/single-2.svg";
 import couple from "../../Components/Svgs/couple-2.svg";
 import { ConvertDate } from '../../Components/Assets/Api/Api';
+import { FaEdit, FaRegEdit, FaTrashAlt } from 'react-icons/fa';
 
 const AccordionItems = ({ client, partner, tableData, index, fullData, CallBack }) => {
 
@@ -147,7 +148,7 @@ const AccordionItems = ({ client, partner, tableData, index, fullData, CallBack 
                   <h5>Scenario List :</h5>
                 </div>
                 <div style={{ width: "fit-content" }}>
-                  <button className='btn bgColor modalBtn' onClick={() => { CallBack(fullData,"New") }} > Add New <MdAdd />  </button>
+                  <button className='btn bgColor modalBtn' onClick={() => { CallBack(fullData, "New") }} > Add New <MdAdd />  </button>
                 </div>
               </div>
             </div>
@@ -161,7 +162,7 @@ const AccordionItems = ({ client, partner, tableData, index, fullData, CallBack 
                       <tr>
                         <th>No#</th>
                         <th>Scenario</th>
-                        <th>Marital status</th>
+                        <th>Last Module Edited</th>
                         <th>Date of Creation</th>
                         <th>Date of Update</th>
                         <th>Operation</th>
@@ -170,12 +171,60 @@ const AccordionItems = ({ client, partner, tableData, index, fullData, CallBack 
                     <tbody>
                       {tableData.map((row, index) => (
                         <tr key={index}>
-                          <td>{row.no}</td>
-                          <td>{row.scenario}</td>
-                          <td>{row.maritalStatus}</td>
-                          <td>{row.creationDate}</td>
-                          <td>{row.updateDate}</td>
-                          <td><FaGear /></td>
+                          <td>{index + 1}</td>
+                          <td>{row.scenarioName}</td>
+                          <td>{row.lastModuleEdited || "not Available"}</td>
+                          <td>{ConvertDate(row.createdAt)}</td>
+                          <td>{ConvertDate(row.updatedAt)}</td>
+                          <td>
+
+                            <Dropdown>
+                              <Dropdown.Toggle role='button' className='bgColor modalBtn' id="custom-dropdown-button"></Dropdown.Toggle>
+                              <Dropdown.Menu>
+                                <Dropdown.Item eventKey="1" className="fw-bold "><FaEdit /> Edit</Dropdown.Item>
+                                <Dropdown.Item eventKey="2" className="fw-bold "><FaClipboardList /> Update</Dropdown.Item>
+                                <Dropdown.Item eventKey="3" className="fw-bold "><FaClipboardList /> Update Scenario</Dropdown.Item>
+                                <Dropdown.Item eventKey="4" className="fw-bold text-danger"><FaTrashAlt /> Delete</Dropdown.Item>
+                              </Dropdown.Menu>
+                            </Dropdown>
+                            {/* 
+              <Dropdown>
+              <Dropdown.Toggle
+                                role="button"
+                                className="bgColor modalBtn"
+                                id={`custom-dropdown-button-${index}`}>
+                                Actions
+                              </Dropdown.Toggle>
+                              <Dropdown.Menu
+                                container={document.body} // Render outside the table
+                                style={{ position: "absolute", zIndex: 1050 }} // Ensure visibility
+                                popperConfig={{
+                                  modifiers: [
+                                    {
+                                      name: "preventOverflow",
+                                      options: {
+                                        boundary: "viewport", // Prevent it from being clipped by table's container
+                                      },
+                                    },
+                                  ],
+                                }}
+                              >
+                                <Dropdown.Item eventKey="1" className="fw-bold">
+                                  <FaEdit /> Edit
+                                </Dropdown.Item>
+                                <Dropdown.Item eventKey="2" className="fw-bold">
+                                  <FaClipboardList /> Update
+                                </Dropdown.Item>
+                                <Dropdown.Item eventKey="3" className="fw-bold">
+                                  <FaClipboardList /> Update Scenario
+                                </Dropdown.Item>
+                                <Dropdown.Item eventKey="4" className="fw-bold text-danger">
+                                <FaTrashAlt /> Delete
+                                </Dropdown.Item>
+                                </Dropdown.Menu>
+                                </Dropdown>
+                                */}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
