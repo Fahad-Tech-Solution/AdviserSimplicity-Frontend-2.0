@@ -4,6 +4,9 @@ import { Form, Formik } from 'formik';
 import { Row, Table } from 'react-bootstrap';
 import { FaRegBuilding } from 'react-icons/fa6';
 import InnerModal from '../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal';
+import TotalCostBase from './TotalCostBase';
+import LoanBalance from './LoanBalance';
+import CashFlowHomeLoan from '../PersonalAssetsComponents/CashFlowNew/CashFlowHomeLoan';
 
 const CashFlowInvestmentsProperty = (props) => {
 
@@ -72,7 +75,8 @@ const CashFlowInvestmentsProperty = (props) => {
             title,
             values,
             key,
-            stakeHolder
+            stakeHolder,
+            ParentObject: props.modalObject,
         });
         setFlagState(true);
     };
@@ -132,7 +136,7 @@ const CashFlowInvestmentsProperty = (props) => {
             type: "yesnoModal",
             placeholder: "Loan Balance",
             innerModalTitle: "Loan Balance",
-            key: "LoanBalance",
+            key: "LoanBalanceObj",
             callBack: true,
             func: handleInnerModal,
         },
@@ -156,7 +160,8 @@ const CashFlowInvestmentsProperty = (props) => {
     ];
 
     const componentMapping = {
-
+        "Total Cost Base": <TotalCostBase />,
+        "Loan Balance": <CashFlowHomeLoan />
     }
 
     const ModalContent = (obj) => {

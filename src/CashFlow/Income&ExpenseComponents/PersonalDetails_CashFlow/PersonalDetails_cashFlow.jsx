@@ -8,78 +8,98 @@ import single from "../../../Components/Svgs/single-2.svg";
 import couple from "../../../Components/Svgs/single-2.svg";
 import DatePicker from "react-datepicker";
 import { differenceInYears } from "date-fns";
-import { PersonalDetailsData, QuestionShift } from "../../../Store/Store";
+import { CashFlowData, CashFlowScenarioData, defaultUrl, PersonalDetailsData, QuestionShift } from "../../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 import DynamicYesNo from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/DynamicYesNo";
-import { validateName } from "../../../Components/Assets/Api/Api";
-import { useLocation, useNavigate } from "react-router-dom";
+import { PatchAxios, PostAxios, validateName } from "../../../Components/Assets/Api/Api";
+import { useNavigate } from "react-router-dom";
 
 const PersonalDetails_cashFlow = (Props) => {
 
+  let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
   let [QuestionChange, setQuestionChange] = useRecoilState(QuestionShift);
 
-  let location = useLocation();
+  let DefaultUrl = useRecoilValue(defaultUrl);
+
 
   let PersonalDetailObj = useRecoilValue(PersonalDetailsData);
+  let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
 
   const initialValues = {
     client: {
-      Names: "",
+      name: "",
       DOB: "",
-      Age: "",
-      MaritalStatus: "",
-      Gender: "",
-      PrivateHealthCover: "",
-      RetirementYear: "",
-      PlannedRetirementAge: "",
-      PreservationAge: "",
+      age: "",
+      maritalStatus: "",
+      gender: "",
+      privateHealthCover: "",
+      retirementYear: "",
+      plannedRetirementAge: "",
+      // preservationAge: 0,
     },
     partner: {
-      Names: "",
+      name: "",
       DOB: "",
-      Age: "",
-      MaritalStatus: "",
-      Gender: "",
-      PrivateHealthCover: "",
-      RetirementYear: "",
-      PlannedRetirementAge: "",
-      PreservationAge: "",
+      age: "",
+      maritalStatus: "",
+      gender: "",
+      privateHealthCover: "",
+      retirementYear: "",
+      plannedRetirementAge: "",
+      // preservationAge: 0,
     },
   };
 
   const validationSchema = Yup.object().shape({
     client: Yup.object({
-      MaritalStatus: Yup.string().required("Marital Status is required"),
-      PlannedRetirementAge: Yup.number()
-        .min(0, "Planned Retirement Age cannot be negative.")
-        .required("Planned Retirement Age is required"),
+      maritalStatus: Yup.string().required("Marital Status is required"),
+      plannedRetirementAge: Yup.number()
+        .min(0, "Planned Retirement age cannot be negative.")
+        .required("Planned Retirement age is required"),
       // Add other client validations as needed
     }),
-    // partner: Yup.object({
-    //   PlannedRetirementAge: Yup.number()
-    //     .min(0, "Planned Retirement Age cannot be negative.")
-    //     .required("Planned Retirement Age is required")
-    //     .test("is-valid", "Planned Retirement Age is required for partnered clients if not single or widowed", function (value) {
-    //       const { client } = this.parent; // Access parent object (the whole object being validated)
-    //       const maritalStatus = client.MaritalStatus; // Get the marital status
-    //       // Only validate if the marital status is not "Single" or "Widowed"
-    //       if (maritalStatus !== "Single" && maritalStatus !== "Widowed") {
-    //         return value != null; // Validate if the value exists
-    //       }
-    //       return true; // If marital status is "Single" or "Widowed", skip validation
-    //     }),
-    //   // Add other partner validations as needed
-    // }),
   });
 
   let Nev = useNavigate();
 
-  const onSubmit = (values) => {
-    console.log(values);
-    setQuestionChange("Income-And-Expenses")
-    Nev(`/Cash-Flow/Income-And-Expenses`)
-  };
+  const onSubmit = async (values) => {
+    console.log(JSON.stringify(values));
 
+    let obj = values
+
+    obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
+
+    const bankAccountArray = cashFlowData?.cf_personalDetails?._id || "";
+    try {
+      let res;
+      if (!bankAccountArray) {
+        res = await PostAxios(`${DefaultUrl}/api/CF/cf_personalDetails/Add`, obj);
+      } else {
+        obj._id = cashFlowData.cf_personalDetails._id;
+        res = await PatchAxios(`${DefaultUrl}/api/CF/cf_personalDetails/Update`, obj);
+      }
+
+      if (res) {
+        // console.log(res);
+        const updatedData = { ...cashFlowData, cf_personalDetails: res };
+        setCashFlowData(updatedData);
+
+        localStorage.setItem('UserStatus', res.client.maritalStatus);
+        localStorage.setItem('UserName', res.client.name);
+
+        if (res.client.maritalStatus !== "Single" && res.client.maritalStatus !== "Widowed") {
+          localStorage.setItem('PartnerName', res.partner.name)
+        }
+
+        setQuestionChange("Income-And-Expenses")
+        Nev(`/Cash-Flow/Income-And-Expenses`)
+      }
+
+
+    } catch (error) {
+      console.error("Error occurred while making API call:", error);
+    }
+  };
 
   const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
     value: (i + 1).toString(),
@@ -101,15 +121,15 @@ const PersonalDetails_cashFlow = (Props) => {
   ]
 
   const InputsArray = [
-    { name: "Names", label: "Names", type: "text", id: "name" },
+    { name: "name", label: "Name", type: "text", id: "name" },
     { name: "DOB", label: "Date of Birth", type: "date", id: "dob" },
-    { name: "Age", label: "Age", type: "number", id: "age", disabled: true },
-    { name: "MaritalStatus", label: "MaritalStatus", type: "select", id: "maritalStatus", options: maritalStatusOptions, },
-    { name: "Gender", label: "Sex", type: "select", id: "sender", options: GenderStatusOptions },
-    { name: "PrivateHealthCover", label: "Private Health Cover", type: "Radio", id: "privateHealthCover" },
-    { name: "RetirementYear", label: "Retirement Year", type: "select", options: loanTermOptions, id: "retirementYear" },
-    { name: "PlannedRetirementAge", label: "Planned Retirement Age", type: "number", id: "plannedRetirementAge", disabled: true },
-    { name: "PreservationAge", label: "Preservation Age", type: "number", id: "preservationAge", disabled: true },
+    { name: "age", label: "Age", type: "number", id: "age", disabled: true },
+    { name: "maritalStatus", label: "Marital Status", type: "select", id: "maritalStatus", options: maritalStatusOptions, },
+    { name: "gender", label: "Sex", type: "select", id: "sender", options: GenderStatusOptions },
+    { name: "privateHealthCover", label: "Private Health Cover", type: "Radio", id: "privateHealthCover" },
+    { name: "retirementYear", label: "Retirement Year", type: "select", options: loanTermOptions, id: "retirementYear" },
+    { name: "plannedRetirementAge", label: "Planned Retirement age", type: "number", id: "plannedRetirementAge", disabled: true },
+    { name: "preservationAge", label: "Preservation age", type: "number", id: "preservationAge", disabled: true },
   ];
 
   const renderFields = (sectionName, values, setFieldValue, handleBlur, handleChange,) => {
@@ -150,7 +170,7 @@ const PersonalDetails_cashFlow = (Props) => {
                   onChange={(date) => {
                     setFieldValue(`${sectionName}.${input.name}`, date); // Set date in form
                     const age = differenceInYears(new Date(), date) || 0; // Calculate age
-                    setFieldValue(`${sectionName}.Age`, age); // Assuming you want to store the age separately
+                    setFieldValue(`${sectionName}.age`, age); // Assuming you want to store the age separately
                   }}
                   dateFormat="dd/MM/yyyy"
                   placeholderText="dd/mm/yyyy"
@@ -165,11 +185,10 @@ const PersonalDetails_cashFlow = (Props) => {
                   wrapperClassName="w-100"
                 />
               </div>
-
               :
               input.type === "Radio" ?
-                <div className="PersonalDetailsForm  m-0 p-0 ">
-                  <div className="inputDesign">
+                <div className="PersonalDetailsForm d-flex justify-content-center  m-0 p-0 ">
+                  <div style={{ width: "15rem" }}>
                     <DynamicYesNo
                       name={`${sectionName}.${input.name}`}
                       values={values}
@@ -193,7 +212,6 @@ const PersonalDetails_cashFlow = (Props) => {
     )))
   }
 
-
   function handleNameChange(values, setFieldValue, currentInput, CalBacks, sectionName,) {
 
 
@@ -204,25 +222,25 @@ const PersonalDetails_cashFlow = (Props) => {
     }
 
     switch (currentInput.name) {
-      case `${sectionName}.Names`:
+      case `${sectionName}.name`:
         setFieldValue(currentInput.name, validateName(currentInput.value));
         break;
 
-      case `${sectionName}.RetirementYear`:
+      case `${sectionName}.retirementYear`:
         setFieldValue(currentInput.name, currentInput.value);
 
-        // Ensure that `Age` and `currentInput.value` are numbers before performing calculation
-        const age = parseInt(values[`${sectionName}`][`Age`], 10) || 0;
+        // Ensure that `age` and `currentInput.value` are numbers before performing calculation
+        const age = parseInt(values[`${sectionName}`][`age`], 10) || 0;
         const retirementYear = parseInt(currentInput.value, 10) || 0;
 
 
 
-        // Calculate `PlannedRetirementAge` based on the `Age` and `RetirementYear`
+        // Calculate `plannedRetirementAge` based on the `age` and `retirementYear`
         const plannedRetirementAge = age > 0 ? retirementYear - age + 1 : 0;
 
-        console.log(age, retirementYear, plannedRetirementAge, currentInput.value)
+        // console.log(age, retirementYear, plannedRetirementAge, currentInput.value)
 
-        setFieldValue(`${sectionName}.PlannedRetirementAge`, plannedRetirementAge > 30 ? 30 : plannedRetirementAge);
+        setFieldValue(`${sectionName}.plannedRetirementAge`, plannedRetirementAge > 30 ? 30 : plannedRetirementAge);
 
         break;
 
@@ -232,29 +250,158 @@ const PersonalDetails_cashFlow = (Props) => {
     }
   }
 
+  // const fillInitialValues = (setFieldValue) => {
+
+
+  //   let ScenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+  //   if (ScenarioObj.selectedSource === "discoveryForm") {
+  //     if (PersonalDetailObj._id) {
+  //       if (PersonalDetailObj.client) {
+  //         let ClientData = PersonalDetailObj.client;
+  //         setFieldValue(`client.name`, ClientData.clientGivenName)
+  //         setFieldValue(`client.DOB`, ClientData.clientDOB)
+  //         setFieldValue(`client.age`, ClientData.clientAge)
+  //         setFieldValue(`client.gender`, ClientData.clientGender)
+  //         setFieldValue(`client.privateHealthCover`, ClientData.clientPrivateHealthCoverRadio)
+  //         setFieldValue(`client.maritalStatus`, ClientData.clientMaritalStatus)
+  //       }
+
+  //       if (PersonalDetailObj.partner) {
+  //         let partnerData = PersonalDetailObj.partner;
+  //         setFieldValue(`partner.name`, partnerData.partnerGivenName)
+  //         setFieldValue(`partner.DOB`, partnerData.partnerDOB)
+  //         setFieldValue(`partner.age`, partnerData.partnerAge)
+  //         setFieldValue(`partner.gender`, partnerData.partnerGender)
+  //         setFieldValue(`partner.privateHealthCover`, partnerData.partnerPrivateHealthCoverRadio)
+  //       }
+  //     }
+  //   }
+  //   else {
+  //     const cashFlowDataFound = CashFlowScenarioDataObj.cf_personalDetails;
+
+  //     // Update client details if available
+  //     let clientDataOfScenario = cashFlowDataFound?.client;
+
+  //     if (clientDataOfScenario) {
+  //       setFieldValue("client.name", clientDataOfScenario.name || "");
+  //       setFieldValue("client.DOB", clientDataOfScenario.DOB || "");
+  //       setFieldValue("client.age", clientDataOfScenario.age || "");
+  //       setFieldValue("client.gender", clientDataOfScenario.gender || "");
+  //       setFieldValue("client.privateHealthCover", clientDataOfScenario.privateHealthCover || "");
+  //       setFieldValue("client.maritalStatus", clientDataOfScenario.maritalStatus || "");
+  //       setFieldValue("client.retirementYear", clientDataOfScenario.retirementYear || "");
+  //       setFieldValue("client.plannedRetirementAge", clientDataOfScenario.plannedRetirementAge || "");
+  //     }
+
+  //     // Update partner details if available
+  //     let partnerDataOfScenario = cashFlowDataFound?.partner;
+  //     if (partnerDataOfScenario) {
+  //       setFieldValue("partner.name", partnerDataOfScenario.name || "");
+  //       setFieldValue("partner.DOB", partnerDataOfScenario.DOB || "");
+  //       setFieldValue("partner.age", partnerDataOfScenario.age || "");
+  //       setFieldValue("partner.gender", partnerDataOfScenario.gender || "");
+  //       setFieldValue("partner.privateHealthCover", partnerDataOfScenario.privateHealthCover || "");
+  //       setFieldValue("partner.maritalStatus", partnerDataOfScenario.maritalStatus || "");
+  //       setFieldValue("partner.retirementYear", partnerDataOfScenario.retirementYear || "");
+  //       setFieldValue("partner.plannedRetirementAge", partnerDataOfScenario.plannedRetirementAge || "");
+  //     }
+  //   }
+
+  //   let clientData = {};
+  //   let partnerData = {};
+
+  //   if (cashFlowData?.cf_personalDetails?._id) {
+  //     const cashFlowDataFound = cashFlowData.cf_personalDetails;
+
+
+  //     // Update client details if available
+  //     clientData = cashFlowDataFound?.client;
+
+
+  //     if (clientData) {
+  //       setFieldValue("client.name", clientData.name || "");
+  //       setFieldValue("client.DOB", clientData.DOB || "");
+  //       setFieldValue("client.age", clientData.age || "");
+  //       setFieldValue("client.gender", clientData.gender || "");
+  //       setFieldValue("client.privateHealthCover", clientData.privateHealthCover || "");
+  //       setFieldValue("client.maritalStatus", clientData.maritalStatus || "");
+  //       setFieldValue("client.retirementYear", clientData.retirementYear || "");
+  //       setFieldValue("client.plannedRetirementAge", clientData.plannedRetirementAge || "");
+  //     }
+
+  //     // Update partner details if available
+  //     partnerData = cashFlowDataFound?.partner;
+  //     if (partnerData) {
+  //       setFieldValue("partner.name", partnerData.name || "");
+  //       setFieldValue("partner.DOB", partnerData.DOB || "");
+  //       setFieldValue("partner.age", partnerData.age || "");
+  //       setFieldValue("partner.gender", partnerData.gender || "");
+  //       setFieldValue("partner.privateHealthCover", partnerData.privateHealthCover || "");
+  //       setFieldValue("partner.maritalStatus", partnerData.maritalStatus || "");
+  //       setFieldValue("partner.retirementYear", partnerData.retirementYear || "");
+  //       setFieldValue("partner.plannedRetirementAge", partnerData.plannedRetirementAge || "");
+  //     }
+  //   }
+
+  // };
+
 
   const fillInitialValues = (setFieldValue) => {
-    if (PersonalDetailObj._id) {
-      console.log(PersonalDetailObj);
-      if (PersonalDetailObj.client) {
-        let ClientData = PersonalDetailObj.client;
-        setFieldValue(`client.Names`, ClientData.clientGivenName)
-        setFieldValue(`client.DOB`, ClientData.clientDOB)
-        setFieldValue(`client.Age`, ClientData.clientAge)
-        setFieldValue(`client.Gender`, ClientData.clientGender)
-        setFieldValue(`client.PrivateHealthCover`, ClientData.clientPrivateHealthCoverRadio)
-      }
-      if (PersonalDetailObj.partner) {
-        let partnerData = PersonalDetailObj.partner;
-        setFieldValue(`partner.Names`, partnerData.partnerGivenName)
-        setFieldValue(`partner.DOB`, partnerData.partnerDOB)
-        setFieldValue(`partner.Age`, partnerData.partnerAge)
-        setFieldValue(`partner.Gender`, partnerData.partnerGender)
-        setFieldValue(`partner.PrivateHealthCover`, partnerData.partnerPrivateHealthCoverRadio)
+    try {
+      // Retrieve the ScenarioObj from localStorage
+      const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+
+      // Helper function to update field values
+      const updateFields = (data, prefix) => {
+        if (!data) return;
+
+        const fields = {
+          name: data.name || data.clientGivenName || "",
+          DOB: data.DOB || data.clientDOB || "",
+          age: data.age || data.clientAge || "",
+          gender: data.gender || data.clientGender || "",
+          privateHealthCover: data.privateHealthCover || data.clientPrivateHealthCoverRadio || "",
+          maritalStatus: data.maritalStatus || data.clientMaritalStatus || "",
+          retirementYear: data.retirementYear || "",
+          plannedRetirementAge: data.plannedRetirementAge || "",
+        };
+
+        Object.entries(fields).forEach(([key, value]) => {
+          setFieldValue(`${prefix}.${key}`, value);
+        });
+      };
+
+      // Handle the discoveryForm scenario
+      if (scenarioObj?.selectedSource === "discoveryForm" && PersonalDetailObj?._id) {
+        // Update client details
+        updateFields(PersonalDetailObj.client, "client");
+        // Update partner details
+        updateFields(PersonalDetailObj.partner, "partner");
+
       }
 
+      // Handle cashFlowData scenario
+      const cashFlowDetails = CashFlowScenarioDataObj?.cf_personalDetails;
+      if (cashFlowDetails) {
+        // Update client details
+        updateFields(cashFlowDetails.client, "client");
+        // Update partner details
+        updateFields(cashFlowDetails.partner, "partner");
+      }
+
+      // Additional data from cashFlowData
+      if (cashFlowData?.cf_personalDetails?._id) {
+        const cashFlowDataDetails = cashFlowData.cf_personalDetails;
+        // Update client details
+        updateFields(cashFlowDataDetails.client, "client");
+        // Update partner details
+        updateFields(cashFlowDataDetails.partner, "partner");
+      }
+    } catch (error) {
+      console.error("Error in fillInitialValues:", error);
     }
   };
+
 
   return (
     <Formik initialValues={initialValues}
@@ -263,7 +410,7 @@ const PersonalDetails_cashFlow = (Props) => {
       {({ values, setFieldValue, handleBlur, handleChange, }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue)
-        }, [])
+        }, [PersonalDetailObj, cashFlowData])
 
         return (
           <Form className="container-fluid PersonalDetailsForm  mt-2 mt-md-0 p-0 px-md-5">
@@ -289,8 +436,10 @@ const PersonalDetails_cashFlow = (Props) => {
               </div>
 
               {/* Partner Section */}
-              {((values.client.MaritalStatus !== "Single") &&
-                (values.client.MaritalStatus !== "Widowed")) &&
+              {((values.client.maritalStatus !== "Single") &&
+                (values.client.maritalStatus !== "Widowed") &&
+                (values.client.maritalStatus !== "")
+              ) &&
 
                 <div className="col-md-4">
                   <div className="row">

@@ -40,7 +40,7 @@ const InnerModal = (props) => {
         "Family Trust Platform Investments Detail",
         "Family Trust Australian Shares/ETFs Detail",
         "Reduced Salary Income",
-        "Salary Packaging Car"
+        "Salary Packaging Car",
         // "Portfolio Value"
         // "Bank Accounts Detail"
     ]; // Add other titles that should use "xl" here
@@ -68,6 +68,7 @@ const InnerModal = (props) => {
         "Pension Benefits",
         // "Pension Benefits Details",
         "SMSF Platform Investments Detail",
+        "Loan Balance"
 
     ]
 

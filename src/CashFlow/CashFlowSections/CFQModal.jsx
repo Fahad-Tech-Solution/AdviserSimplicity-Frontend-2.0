@@ -1,18 +1,44 @@
 import { Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react'
 import DynamicQuestionBlocks from '../../Components/Assets/DynamicQuestionBlocks/DynamicQuestionBlocks';
-import { CFQObject } from '../../Store/Store';
-import { useRecoilState } from 'recoil';
+import { CFQObject, defaultUrl } from '../../Store/Store';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { PatchAxios, PostAxios } from '../../Components/Assets/Api/Api';
 
 const CFQModal = (props) => {
     let [CFObject, setCFObject] = useRecoilState(CFQObject);
+    let DefaultUrl = useRecoilValue(defaultUrl);
+
     let [QuestionArray, setQuestionArray] = useState([]);
 
-    let onSubmit = (values) => {
+    let onSubmit = async (values) => {
         console.log(values)
-        setCFObject(values)
-        if (props.flagState) {
-            props.setFlagState(false);
+
+        let obj = values
+
+        obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
+
+        const bankAccountArray = CFObject?._id || "";
+
+        console.log(obj, "final OBJ of CFQ Modal")
+        try {
+            let res;
+            if (!bankAccountArray) {
+                res = await PostAxios(`${DefaultUrl}/api/CF/cf_basicQuestions/Add`, obj);
+            } else {
+                obj._id = CFObject._id;
+                res = await PatchAxios(`${DefaultUrl}/api/CF/cf_basicQuestions/Update`, obj);
+            }
+
+            if (res) {
+                console.log(res);
+                setCFObject(res);
+                if (props.flagState) {
+                    props.setFlagState(false);
+                }
+            }
+        } catch (error) {
+            console.error("Error occurred while making API call:", error);
         }
     }
 

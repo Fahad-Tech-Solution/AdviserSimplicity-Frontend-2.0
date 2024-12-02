@@ -15,42 +15,55 @@ export const CFQObject = atom({
     default: {
         //Financial Assets 
         QuestionsFlag: false,
-        clientFK: "",
 
-        businessIncome: "No",
-        cashFlowIncomeFromOverseasPension: "No",
-        incomeFromSoleTrader: "No",
-        incomeFromPartnership: "No",
-        incomeFromCentrelink: "No",
-        cashFlowLifetimeBenefit: "No",
-        incomeFromOwnBusiness: "No",
-        incomeFromOwnBusiness: "No",
-        otherNonTaxable: "No",
-        RegularLivingExpenses: "No",
-        EducationExpenses: "No",
+        // "cf_deductibleExpenses": "Yes",
+        // "cf_incomeAndExpence": "Yes",
 
-        Home: "No",
-        familyHome: "No",
-        car: "No",
-        MotorVehicle2: "No",
-        Contents: "No",
-        boat: "No",
-        caravan: "No",
-        otherAssets: "No",
-        PersonalDebt: "No",
+        cf_incomeFromOverseas: "No",
+        cf_incomeFromSoleTrade: "No",
+        cf_incomeFromPartnership: "No",
+        cf_incomeFromCentrelink: "No",
+        cf_incomeFromLifeTimePension: "No",
+        cf_employmentIncome: "No",
+        cf_incomeFromBusiness: "No",
+        cf_incomeFromOtherNonTaxable: "No",
+        cf_incomeFromRegularLivingExpense: "No",
+        cf_incomeFromEducation: "No",
 
-        AustralianShares: "No",
-        PlatformInvestment: "No",
-        OtherInvestments: "No",
-        Cash: "No",
-        TermDeposits: "No",
-        InvestmentBonds: "No",
-        InvestmentLoansLOC: "No",
-        MarginLoan: "No",
-        InvestmentsProperty: "No",
-        SuperFund: "No",
-        AccountBasedPension: "No",
-        Annuities: "No",
+        businessIncome: "Yes",
+        cashFlowIncomeFromOverseasPension: "Yes",
+        incomeFromSoleTrader: "Yes",
+        incomeFromPartnership: "Yes",
+        incomeFromCentrelink: "Yes",
+        cashFlowLifetimeBenefit: "Yes",
+        incomeFromOwnBusiness: "Yes",
+        incomeFromOwnBusiness: "Yes",
+        otherNonTaxable: "Yes",
+        RegularLivingExpenses: "Yes",
+        EducationExpenses: "Yes",
+
+        Home: "Yes",
+        familyHome: "Yes",
+        car: "Yes",
+        MotorVehicle2: "Yes",
+        Contents: "Yes",
+        boat: "Yes",
+        caravan: "Yes",
+        otherAssets: "Yes",
+        PersonalDebt: "Yes",
+
+        AustralianShares: "Yes",
+        PlatformInvestment: "Yes",
+        OtherInvestments: "Yes",
+        Cash: "Yes",
+        TermDeposits: "Yes",
+        InvestmentBonds: "Yes",
+        InvestmentLoansLOC: "Yes",
+        MarginLoan: "Yes",
+        InvestmentsProperty: "Yes",
+        SuperFund: "Yes",
+        AccountBasedPension: "Yes",
+        Annuities: "Yes",
 
     },
 });
@@ -204,12 +217,12 @@ export const defaultUrl = atom({
     // default: "http://localhost:7000",
 
     // default: "http://192.168.1.54:7000",    // Usama bhai AUSU
-    default: "http://192.168.3.159:7000",    // Usama bhai growWork_Beta
+    // default: "http://192.168.3.159:7000",    // Usama bhai growWork_Beta
     // default: "http://192.168.14.244:7000",  // Usama bhai mara Mobile k sath
     // default: "http://192.168.227.244:7000", // Usama bhai Fahad bhai k sath
     // default: "http://192.168.3.4:7000",
     // default: "http://192.168.211.242:7000",
-    // default: "http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com:7000",  // Live link 
+    default: "http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com:7000",  // Live link 
 
     // default: "",
 });
@@ -394,4 +407,14 @@ export const BankDetail = atom({
 export const CashFlowData = atom({
     key: "CashFlowData",
     default: {},
+});
+
+export const CashFlowScenarioData = atom({
+    key: "CashFlowScenarioData",
+    default: {},
+});
+
+export const CashFlowScenarioType = atom({
+    key: "CashFlowScenarioType",
+    default: "",
 });

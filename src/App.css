@@ -1428,6 +1428,7 @@ label {
   background-color: #36b446 !important;
   color: white;
   box-shadow: none !important;
+  border-bottom: 1px solid white !important;
 }
 
 .bg-Custom-green {
@@ -1446,4 +1447,19 @@ label {
   border-bottom-right-radius: 0px !important;
 }
 
+.ClearDropDownSpan li span.ant-dropdown-menu-title-content {
+  display: unset !important;
+  height: unset !important;
+  width: unset !important;
+  justify-content: unset !important;
+  align-items: unset !important;
+}
 
+/* Target the Delete menu item specifically */
+.ClearDropDownSpan .ant-dropdown-menu-item:last-child {
+  color: #d20303; /* Set the text color to red */
+  &&:is(:hover, :focus, :active) {
+    background-color: #d20303; /* Set the background to red  d20303*/
+    color: white; /* Set the text color to white */
+  }
+}

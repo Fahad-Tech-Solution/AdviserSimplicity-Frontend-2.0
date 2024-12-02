@@ -14,6 +14,8 @@ const CashFlowCarsCards = (props) => {
 
     let [renderFlag, setRenderFlag] = useState(false);
 
+    let [UserStatus] = useState(localStorage.getItem("UserStatus") !== "Single" && localStorage.getItem("UserStatus") !== "Widowed");
+
     return (
         <div className='row'>
             {props.Data.QuestionsArray.map((CashFlowElem, index) => {
@@ -66,24 +68,28 @@ const CashFlowCarsCards = (props) => {
                                             placeholder={CashFlowElem.title}
                                             name={"client" + CashFlowElem.key}
                                         />
-                                        <div
-                                            className={`row justify-content-center align-items-center my-2`}
-                                        >
-                                            <div className='col-12 p-0 '>
-                                                <div className='d-flex flex-column-reverse justify-content-center align-items-center gap-2'>
-                                                    <label
-                                                        className=" d-block "
-                                                        htmlFor={"partner" + CashFlowElem.key}
-                                                    >{localStorage.getItem("PartnerName") || "Partner"}</label>
+                                        {UserStatus &&
+                                            <React.Fragment>
+                                                <div
+                                                    className={`row justify-content-center align-items-center my-2`}
+                                                >
+                                                    <div className='col-12 p-0 '>
+                                                        <div className='d-flex flex-column-reverse justify-content-center align-items-center gap-2'>
+                                                            <label
+                                                                className=" d-block "
+                                                                htmlFor={"partner" + CashFlowElem.key}
+                                                            >{localStorage.getItem("PartnerName") || "Partner"}</label>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <input type="text"
-                                            className={`form-control inputDesign`}
-                                            id={"partner" + CashFlowElem.key}
-                                            placeholder={CashFlowElem.title}
-                                            name={"partner" + CashFlowElem.key}
-                                        />
+                                                <input type="text"
+                                                    className={`form-control inputDesign`}
+                                                    id={"partner" + CashFlowElem.key}
+                                                    placeholder={CashFlowElem.title}
+                                                    name={"partner" + CashFlowElem.key}
+                                                />
+                                            </React.Fragment>}
+
                                     </div>
                                 </Card>
                             </div>

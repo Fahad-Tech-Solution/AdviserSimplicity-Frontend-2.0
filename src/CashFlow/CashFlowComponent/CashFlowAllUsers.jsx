@@ -64,15 +64,16 @@ const CashFlowAllUsers = (props) => {
 
 
 
-    let OpenModal = (UserData, action) => {
+    let OpenModal = (UserData, Scenario, action) => {
         // console.log(UserData);
 
         localStorage.getItem("UserID", UserData._id);
 
 
         setModalObject({
-            title: "Add Scenario",
+            title: (action === "New" ? "Add" : "Update") + " Scenario",
             Data: UserData,
+            Scenario,
             action
         })
         setFlagState(true);
@@ -101,8 +102,6 @@ const CashFlowAllUsers = (props) => {
                                 const filteredScenarios = (cashFlowData.Scenarios || []).filter(
                                     (scenario) => scenario.clientFK == elem._id
                                 );
-
-                                console.log(filteredScenarios, "PersonalDetail2")
 
                                 return (<AccordionItems CallBack={OpenModal} fullData={elem} client={elem.client} partner={elem.partner} tableData={filteredScenarios || []} index={index} />)
                             })}
