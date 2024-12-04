@@ -7,10 +7,10 @@ import { RenderName, toCommaAndDollar } from '../../../Components/Assets/Api/Api
 const SalaryPackagingOther = (props) => {
 
     let initialValues = {
-        SalaryPackagingOther: "",
+        salaryPackagingOther: "",
         GSTStatus: "Without GST",
-        IncludeFromYear: "",
-        UpUntilYear: "",
+        includeFromYear: "",
+        upUntilYear: "",
 
     };
 
@@ -21,10 +21,10 @@ const SalaryPackagingOther = (props) => {
             console.log(props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")])
             if (SourceObj[props.modalObject.key]) {
                 let Data = SourceObj[props.modalObject.key];
-                setFieldValue("SalaryPackagingOther", Data.SalaryPackagingOther);
+                setFieldValue("salaryPackagingOther", Data.salaryPackagingOther);
                 setFieldValue("GSTStatus", Data.GSTStatus);
-                setFieldValue("IncludeFromYear", Data.IncludeFromYear);
-                setFieldValue("UpUntilYear", Data.UpUntilYear);
+                setFieldValue("includeFromYear", Data.includeFromYear);
+                setFieldValue("upUntilYear", Data.upUntilYear);
             }
         }
     };
@@ -95,8 +95,8 @@ const SalaryPackagingOther = (props) => {
                                                         <Field
                                                             as="select"
                                                             placeholder="Salary Packaging (Other)"
-                                                            id={`SalaryPackagingOther`}
-                                                            name={`SalaryPackagingOther`}
+                                                            id={`salaryPackagingOther`}
+                                                            name={`salaryPackagingOther`}
                                                             className="form-select inputDesignDoubleInput"
                                                         >
                                                             <option value={""}>Please Select</option>
@@ -122,8 +122,8 @@ const SalaryPackagingOther = (props) => {
                                                         <Field
                                                             as="select"
                                                             placeholder="Include From Year"
-                                                            id={`IncludeFromYear`}
-                                                            name={`IncludeFromYear`}
+                                                            id={`includeFromYear`}
+                                                            name={`includeFromYear`}
                                                             className="form-select inputDesignDoubleInput"
                                                         >
                                                             <option value={""}>Please Select</option>
@@ -136,8 +136,8 @@ const SalaryPackagingOther = (props) => {
                                                         <Field
                                                             as="select"
                                                             placeholder="Up Until Year"
-                                                            id={`UpUntilYear`}
-                                                            name={`UpUntilYear`}
+                                                            id={`upUntilYear`}
+                                                            name={`upUntilYear`}
                                                             className="form-select inputDesignDoubleInput"
                                                         >
                                                             <option value={""}>Please Select</option>

@@ -1,37 +1,74 @@
-{
-  "_id": "671a15b03c4b560aeb93e178",
-  "client": {
-    "clientTitle": "Mr",
-    "clientGivenName": "Qa Person",
-    "clientSurname": "Wahab",
-    "clientPreferredName": "For Testing Purpose",
-    "clientGender": "Male",
-    "clientDOB": "2009-09-30T18:00:00.000Z",
-    "clientAge": 15,
-    "clientMaritalStatus": "Single",
-    "clientEmploymentStatus": "Employee",
-    "clientHealth": "good",
-    "clientSmoker": "smoker",
-    "clientPlannedRetirementAge": 21,
-    "clientHomeAddress": "Distinctio Quia adi",
-    "clientPostcode": 71,
-    "clientHomePhone": "+1 (836) 162-4721",
-    "clientWorkPhone": "+1 (799) 201-5677",
-    "clientMobile": "185",
-    "Email": "wahabhameed2160@gmail.com",
-    "clientPostalAddress": "Distinctio Quia adi",
-    "clientPostalPostCode": 71,
-    "clientMiddleName": "Eliana Yates",
-    "clientOccupationID": "Beatae omnis nobis a",
-    "clientTaxResidentRadio": "Yes",
-    "clientPrivateHealthCoverRadio": "Yes",
-    "clientHELPSDebtRadio": "Yes",
-    "clientSameAsAbove": true
-  },
-  "children": { "arrayOfChildren": [] },
-  "haveAnyChildren": "No",
-  "softDelete": false,
-  "createdAt": "2024-10-24T09:38:56.905Z",
-  "updatedAt": "2024-10-30T11:16:12.418Z",
-  "__v": 1
-}
+const Joi = require("joi");
+
+// Reduced Salary Income Modal Validation
+const reducedSalaryIncomeSchema = Joi.object({
+    reducedSalaryIncome: Joi.string().allow(null, ''),
+    includeFromYear: Joi.number().allow(null, ''),
+    upUntilYear: Joi.number().allow(null, ''),
+});
+
+// Salary Packaging Other Modal Validation
+const salaryPackagingOtherSchema = Joi.object({
+    salaryPackagingOther: Joi.string().allow(null, ''),
+    GSTStatus: Joi.string().allow(null, ''),
+    includeFromYear: Joi.number().allow(null, ''),
+    upUntilYear: Joi.number().allow(null, ''),
+});
+
+// Salary Packaging Car Modal Validation
+const salaryPackagingCarSchema = Joi.object({
+    employerFBTStatus: Joi.string().allow(null, ''),
+    costBaseOfCar: Joi.string().allow(null, ''),
+    FBTPaidByEmployer: Joi.string().allow(null, ''),
+    includeFromYear: Joi.number().allow(null, ''),
+    upUntilYear: Joi.number().allow(null, ''),
+    indexation: Joi.string().allow(null, ''),
+});
+
+// Employment Income Validation
+const employmentIncomeSchema = Joi.object({
+    salaryIncome: Joi.string().allow(null, ''),
+    includeFromYear: Joi.number().allow(null, ''),
+    upUntilYear: Joi.number().allow(null, ''),
+    indexation: Joi.string().allow(null, ''),
+    reducedSalaryIncomeRadio: Joi.string().allow(null, ''), // "Yes" or "No"
+    salaryPackingCarRadio: Joi.string().allow(null, ''),    // "Yes" or "No"
+    salaryPackingOtherRadio: Joi.string().allow(null, ''), // "Yes" or "No"
+
+    reducedSalaryIncomeModal: Joi.alternatives()
+        .conditional('reducedSalaryIncomeRadio', {
+            is: "Yes",
+            then: reducedSalaryIncomeSchema,
+            otherwise: Joi.allow(null),
+        }),
+
+    salaryPackingCarModal: Joi.alternatives()
+        .conditional('salaryPackingCarRadio', {
+            is: "Yes",
+            then: salaryPackagingCarSchema.required(),
+            otherwise: Joi.allow(null),
+        }),
+
+    salaryPackingOtherModal: Joi.alternatives()
+        .conditional('salaryPackingOtherRadio', {
+            is: "Yes",
+            then: salaryPackagingOtherSchema,
+            otherwise: Joi.allow(null),
+        }),
+});
+
+// Main Schema Validation
+const clientSchema = (data) => {
+    const schema = Joi.object({
+        scenarioFK: Joi.string().required(),
+        client: employmentIncomeSchema.allow(null),
+        partner: employmentIncomeSchema.allow(null),
+        clientTotal: Joi.string().allow(null, ''),
+        partnerTotal: Joi.string().allow(null, ''),
+        owner: Joi.array().items(Joi.string()).optional(),
+    });
+
+    return schema.validate(data);
+};
+
+module.exports = clientSchema;

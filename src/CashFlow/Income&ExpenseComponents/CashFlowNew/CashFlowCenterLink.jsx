@@ -4,27 +4,33 @@ import { CreatableMultiSelectField } from "../../../Components/Questions/Financi
 import DynamicTableRow from "../../../Components/Assets/Dynamic/DynamicTableRow";
 import {
   openNotificationSuccess,
+  PatchAxios,
+  PostAxios,
   RenderName,
   toCommaAndDollar,
 } from "../../../Components/Assets/Api/Api";
 import { Row, Table } from "react-bootstrap";
-import { defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { useRecoilValue } from "recoil";
+import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from "../../../Store/Store";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 const CashFlowCenterLink = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
+  let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+  let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
 
   let [UserStatus] = useState(localStorage.getItem("UserStatus"));
+  let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
+
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   let incomeFromCentrelink =
     Object.keys(questionDetail.incomeFromCentrelink || {}).length > 0
       ? questionDetail.incomeFromCentrelink
       : {
-          client: [],
-          partner: [],
-          joint: [],
-        };
+        client: [],
+        partner: [],
+        joint: [],
+      };
 
   let initialValues = {
     owner: [],
@@ -33,115 +39,127 @@ const CashFlowCenterLink = (props) => {
       includeFromYear: 1,
       allowCarerAllowance: ["No"],
       isClientRenting: ["No"],
-      applySeparatedByIllness:"No"
+      applySeparatedByIllness: "No"
     },
     partner: {
       includeFromYear: 1,
       allowCarerAllowance: ["No"],
       isClientRenting: ["No"],
-      applySeparatedByIllness:"No"
+      applySeparatedByIllness: "No"
     },
   };
 
+
   const fillInitialValues = (setFieldValue) => {
-    console.log("incomeFromCentrelink: ", incomeFromCentrelink);
-    console.log(
-      "incomeFromCentrelink.client.paymentType: ",
-      incomeFromCentrelink.client.paymentType
-    );
+    try {
+      // Set the object and API key
+      setObjAndAPIKey(props.modalObject.key);
 
-    if (incomeFromCentrelink && incomeFromCentrelink._id) {
-      setFieldValue(`owner`, incomeFromCentrelink.owner || "");
+      console.log(incomeFromCentrelink, "Discovery Form Data");
+      // console.log(cashFlowData, "cashFlowData Form Data");
+      // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
 
-      // Handle client-related conditions
-      if (incomeFromCentrelink.owner.includes("client")) {
-        if (
-          incomeFromCentrelink?.client &&
-          Object.keys(incomeFromCentrelink.client).length
-        ) {
-          setFieldValue("client.centrelinkPayment", [
-            ...incomeFromCentrelink.client.paymentType,
-          ]);
+      const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
 
-          // setFieldValue(`client.centrelinkPayment`, incomeFromCentrelink.client.paymentType);
-          setFieldValue(
-            `client.allowCarerAllowance`,
-            incomeFromCentrelink.client.paymentType
-          );
-          setFieldValue(
-            `client.isClientRenting`,
-            incomeFromCentrelink.client.paymentType
-          );
+      // Helper function to update field values
+      const updateFields = (data, prefix) => {
+
+        if (!data || !Object.keys(data).length) return;
+        const fields = {
+          includeFromYear: data.includeFromYear || 1,
+          allowCarerAllowance: data.allowCarerAllowance || data.paymentType || "",
+          isClientRenting: data.isClientRenting || data.paymentType || "",
+          centrelinkPayment: data.centrelinkPayment || data.paymentType || "",
+          applySeparatedByIllness: data.applySeparatedByIllness || "",
+        };
+
+        Object.entries(fields).forEach(([key, value]) => {
+          setFieldValue(`${prefix}.${key}`, value);
+        });
+      };
+
+      // Update owner field
+      if (scenarioObj?.selectedSource === "discoveryForm" && incomeFromCentrelink && incomeFromCentrelink._id) {
+        setFieldValue(`owner`, incomeFromCentrelink.owner || "");
+
+        // Update client-related fields
+        if (incomeFromCentrelink.owner.includes("client")) {
+          updateFields(incomeFromCentrelink.client, "client");
+        }
+
+        // Update partner-related fields
+        if (UserStatus === "Married" && incomeFromCentrelink.owner.includes("partner")) {
+          updateFields(incomeFromCentrelink.partner, "partner");
+        }
+      }
+      else {
+        // Handle cashFlowData scenario
+        const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
+        console.log(cashFlowDetails, "cashFlowDetails")
+        if (cashFlowDetails) {
+          setFieldValue(`owner`, cashFlowDetails.owner || "");
+          if (cashFlowDetails.owner.includes("client")) {
+            // Update client details
+            updateFields(cashFlowDetails.client, "client");
+          }
+
+          if (UserStatus === "Married" && cashFlowDetails.owner.includes("partner")) {
+            // Update partner details
+            updateFields(cashFlowDetails.partner, "partner");
+          }
         }
       }
 
-      // Handle partner-related conditions
-      if (
-        UserStatus === "Married" &&
-        incomeFromCentrelink.owner.includes("partner")
-      ) {
-        if (
-          incomeFromCentrelink?.partner &&
-          Object.keys(incomeFromCentrelink.partner).length
-        ) {
-          setFieldValue(
-            `partner.centrelinkPayment`,
-            incomeFromCentrelink.partner.paymentType
-          );
-          setFieldValue(
-            `partner.allowCarerAllowance`,
-            incomeFromCentrelink.partner.paymentType
-          );
-          setFieldValue(
-            `partner.isClientRenting`,
-            incomeFromCentrelink.partner.paymentType
-          );
+
+      // Additional data from cashFlowData
+      if (cashFlowData?.[objAndAPIKey]?._id) {
+        const cashFlowDataDetails = cashFlowData[objAndAPIKey];
+        setFieldValue(`owner`, cashFlowDataDetails.owner || "");
+
+        if (cashFlowDataDetails.owner.includes("client")) {
+          // Update client details
+          updateFields(cashFlowDataDetails.client, "client");
+        }
+
+        if (UserStatus === "Married" && cashFlowDataDetails.owner.includes("partner")) {
+          // Update partner details
+          updateFields(cashFlowDataDetails.partner, "partner");
         }
       }
+
+    } catch (error) {
+      console.error("Error in fillInitialValues:", error);
     }
   };
+
 
   let onSubmit = async (values) => {
     console.log(JSON.stringify(values));
     // return (false);
+    let obj = values
 
-    let obj = values;
-    obj.clientFK = localStorage.getItem("UserID");
-    console.log(obj, "new Object");
+    obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
 
-    // Handle client-related conditions
-    if (values.owner.includes("client")) {
-      obj.clientTotal = values.client.regularIncomePA;
-      console.log("Client total set");
-    } else {
-      obj.client = {};
-      obj.clientTotal = "";
-      console.log("Client data cleared");
+    obj.clientTotal = "Year " + values.client.includeFromYear || "";
+
+    if (values.owner.includes("partner")) {
+      obj.partnerTotal = "Year " + values.partner.includeFromYear || "";
     }
 
-    // Handle partner-related conditions
-    if (values.owner.includes("partner") && UserStatus === "Married") {
-      obj.partnerTotal = values.partner.regularIncomePA;
-      console.log("Partner total set");
-    } else {
-      obj.partner = {};
-      obj.partnerTotal = "";
-      console.log("Partner data cleared");
-    }
+    const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
 
     console.log(obj, "final obj");
-    const bankAccountArray = incomeFromCentrelink.clientFK || "";
 
     try {
       let res;
       if (!bankAccountArray) {
         res = await PostAxios(
-          `${DefaultUrl}/api/incomeFromCentrelink/Add`,
+          `${DefaultUrl}/api/CF/${objAndAPIKey}/Add`,
           obj
         );
       } else {
         res = await PatchAxios(
-          `${DefaultUrl}/api/incomeFromCentrelink/Update`,
+          `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
           obj
         );
       }
@@ -149,10 +167,10 @@ const CashFlowCenterLink = (props) => {
       if (res) {
         console.log(res);
         const updatedData = {
-          ...questionDetail,
-          incomeFromCentrelink: res,
+          ...cashFlowData,
+          [objAndAPIKey]: res,
         };
-        setQuestionDetail(updatedData);
+        setCashFlowData(updatedData);
       }
 
       openNotificationSuccess(
@@ -173,8 +191,8 @@ const CashFlowCenterLink = (props) => {
         "topRight",
         "Error Notification",
         'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        props.modalObject.title +
+        '" is not Saved Please! try again'
       );
     }
   };
@@ -192,13 +210,13 @@ const CashFlowCenterLink = (props) => {
   const options =
     UserStatus !== "Single"
       ? [
-          { value: "client", label: RenderName("client") },
-          { value: "partner", label: RenderName("partner") },
-        ]
+        { value: "client", label: RenderName("client") },
+        { value: "partner", label: RenderName("partner") },
+      ]
       : [{ value: "client", label: RenderName("client") }];
 
   let paymentType = [
- 
+
     { value: "Age Pension", label: "Age Pension" },
     { value: "Disability Pension", label: "Disability Pension" },
     { value: "Carer Payment", label: "Carer Payment" },
@@ -318,7 +336,7 @@ const CashFlowCenterLink = (props) => {
                           Owner
                         </th>
                         <th>Centrelink Payment</th>
-                        <th>Include From Year:</th>
+                        <th>Include From Year</th>
                         <th>Allow Carer Allowance</th>
                         <th>Is Client Renting</th>
                         <th>Apply Separated By illness</th>

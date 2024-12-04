@@ -11,8 +11,8 @@ const SalaryPackagingCar = (props) => {
         employerFBTStatus: "",
         costBaseOfCar: "",
         FBTPaidByEmployer: "",
-        IncludeFromYear: "",
-        UpUntilYear: "",
+        includeFromYear: "",
+        upUntilYear: "",
 
     };
 
@@ -26,9 +26,9 @@ const SalaryPackagingCar = (props) => {
                 setFieldValue("employerFBTStatus", Data.employerFBTStatus);
                 setFieldValue("costBaseOfCar", Data.costBaseOfCar); //costBaseOfCar Value From Discovery Form
                 setFieldValue("FBTPaidByEmployer", Data.FBTPaidByEmployer);
-                setFieldValue("IncludeFromYear", Data.IncludeFromYear);
-                setFieldValue("UpUntilYear", Data.UpUntilYear);
-                setFieldValue("Indexation", Data.Indexation);
+                setFieldValue("includeFromYear", Data.includeFromYear);
+                setFieldValue("upUntilYear", Data.upUntilYear);
+                setFieldValue("indexation", Data.indexation);
             }
         }
     };
@@ -88,7 +88,7 @@ const SalaryPackagingCar = (props) => {
                                                     <th>FBT Paid By Employer</th>
                                                     <th>Include From Year</th>
                                                     <th>Up Until Year</th>
-                                                    <th>Indexation</th>
+                                                    <th>indexation</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -131,8 +131,8 @@ const SalaryPackagingCar = (props) => {
                                                         <Field
                                                             as="select"
                                                             placeholder="Include From Year"
-                                                            id={`IncludeFromYear`}
-                                                            name={`IncludeFromYear`}
+                                                            id={`includeFromYear`}
+                                                            name={`includeFromYear`}
                                                             className="form-select inputDesignDoubleInput"
                                                         >
                                                             <option value={""}>Please Select</option>
@@ -145,8 +145,8 @@ const SalaryPackagingCar = (props) => {
                                                         <Field
                                                             as="select"
                                                             placeholder="Up Until Year"
-                                                            id={`UpUntilYear`}
-                                                            name={`UpUntilYear`}
+                                                            id={`upUntilYear`}
+                                                            name={`upUntilYear`}
                                                             className="form-select inputDesignDoubleInput"
                                                         >
                                                             <option value={""}>Please Select</option>
@@ -158,9 +158,9 @@ const SalaryPackagingCar = (props) => {
                                                     <td>
                                                         <Field
                                                             as="select"
-                                                            placeholder="Indexation"
-                                                            id={`Indexation`}
-                                                            name={`Indexation`}
+                                                            placeholder="indexation"
+                                                            id={`indexation`}
+                                                            name={`indexation`}
                                                             className="form-select inputDesignDoubleInput"
                                                         >
                                                             <option value={""}>Please Select</option>

@@ -117,6 +117,7 @@ const ModalComponent = (props) => {
         "Term Deposits",
         "Investment Bonds",
         "Investment Loans (LOC)",
+        "Lifetime Benefits",
 
     ]; // Add other titles that should use "xl" here
 

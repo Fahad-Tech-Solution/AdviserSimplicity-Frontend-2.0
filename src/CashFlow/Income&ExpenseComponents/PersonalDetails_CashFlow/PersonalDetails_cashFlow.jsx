@@ -11,7 +11,7 @@ import { differenceInYears } from "date-fns";
 import { CashFlowData, CashFlowScenarioData, defaultUrl, PersonalDetailsData, QuestionShift } from "../../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 import DynamicYesNo from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/DynamicYesNo";
-import { PatchAxios, PostAxios, validateName } from "../../../Components/Assets/Api/Api";
+import { openNotificationSuccess, PatchAxios, PostAxios, validateName } from "../../../Components/Assets/Api/Api";
 import { useNavigate } from "react-router-dom";
 
 const PersonalDetails_cashFlow = (Props) => {
@@ -91,6 +91,9 @@ const PersonalDetails_cashFlow = (Props) => {
           localStorage.setItem('PartnerName', res.partner.name)
         }
 
+
+        openNotificationSuccess("success", "topRight", "Success Notification", `Data of CashFlow Personal Detail is Saved`);
+
         setQuestionChange("Income-And-Expenses")
         Nev(`/Cash-Flow/Income-And-Expenses`)
       }
@@ -98,6 +101,7 @@ const PersonalDetails_cashFlow = (Props) => {
 
     } catch (error) {
       console.error("Error occurred while making API call:", error);
+      openNotificationSuccess("error", "topRight", "Error Notification", `Data of CashFlow Personal Detail is not Saved. Please try again.`);
     }
   };
 
@@ -377,7 +381,6 @@ const PersonalDetails_cashFlow = (Props) => {
         updateFields(PersonalDetailObj.client, "client");
         // Update partner details
         updateFields(PersonalDetailObj.partner, "partner");
-
       }
 
       // Handle cashFlowData scenario

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import DynamicQuestionBlocks from '../../Components/Assets/DynamicQuestionBlocks/DynamicQuestionBlocks';
 import { CFQObject, defaultUrl } from '../../Store/Store';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { PatchAxios, PostAxios } from '../../Components/Assets/Api/Api';
+import { openNotificationSuccess, PatchAxios, PostAxios } from '../../Components/Assets/Api/Api';
 
 const CFQModal = (props) => {
     let [CFObject, setCFObject] = useRecoilState(CFQObject);
@@ -14,7 +14,7 @@ const CFQModal = (props) => {
     let onSubmit = async (values) => {
         console.log(values)
 
-        let obj = values
+        let obj = JSON.parse(JSON.stringify(values))
 
         obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
 
@@ -33,12 +33,16 @@ const CFQModal = (props) => {
             if (res) {
                 console.log(res);
                 setCFObject(res);
+
+                openNotificationSuccess("success", "topRight", "Success Notification", `Data of "${props.modalObject.title}" is Saved`);
                 if (props.flagState) {
                     props.setFlagState(false);
                 }
             }
         } catch (error) {
+
             console.error("Error occurred while making API call:", error);
+            openNotificationSuccess("error", "topRight", "Error Notification", `Data of "${props.modalObject.title}" is not Saved. Please try again.`);
         }
     }
 

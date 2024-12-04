@@ -370,47 +370,42 @@ export const content = {
             QuestionsArray: [
                 {
                     title: "Own a Family Home",
-                    key: "familyHome",
+                    key: "cf_familyHome",
                     img: Questions_Home,
                 },
                 {
                     title: "Contents",
-                    key: "Contents",
+                    key: "cf_contents",
                     img: houseHold,
                 },
                 {
                     title: "Car",
-                    key: "car",
+                    key: "cf_car",
                     img: car,
                 },
                 {
                     title: "Motor Vehicle 2",
-                    key: "MotorVehicle2",
+                    key: "cf_motorVehicle2",
                     img: jeep,
                 },
-                // {
-                //     title: "House hold",
-                //     key: "houseHold",     check with Usama Bhai Before Removing
-                //     img: houseHold,
-                // },
                 {
                     title: "Boat",
-                    key: "boat",
+                    key: "cf_boat",
                     img: boat,
                 },
                 {
                     title: "Caravan",
-                    key: "caravan",
+                    key: "cf_caravan",
                     img: trailer,
                 },
                 {
                     title: "Other Assets",
-                    key: "otherAssets",
+                    key: "cf_otherAssets",
                     img: settingMoney,
                 },
                 {
                     title: "Personal Debt",
-                    key: "PersonalDebt",
+                    key: "cf_personalDebt",
                     img: PersonalDebt,
                 },
             ],
@@ -425,62 +420,62 @@ export const content = {
                 {
                     title: "Australian Shares",
                     img: PortFolio,
-                    key: "AustralianShares",
+                    key: "cf_AustralianShares",
                 },
                 {
                     title: "Platform Investment",
                     img: funds,
-                    key: "PlatformInvestment",
+                    key: "cf_platformInvestment",
                 },
                 {
                     title: "Other Investments",
                     img: otherInvestment,
-                    key: "OtherInvestments",
+                    key: "cf_otherInvestments",
                 },
                 {
                     title: "Cash",
                     img: funds,
-                    key: "Cash",
+                    key: "cf_cash",
                 },
                 {
                     title: "Term Deposits",
                     img: TermImg,
-                    key: "TermDeposits",
+                    key: "cf_termDeposits",
                 },
                 {
                     title: "Investment Bonds",
                     img: certificate,
-                    key: "InvestmentBonds",
+                    key: "cf_investmentBonds",
                 },
                 {
                     title: "Investment Loans (LOC)",
                     img: loan,
-                    key: "InvestmentLoansLOC",
+                    key: "cf_investmentLoansLOC",
                 },
                 {
                     title: "Margin Loan",
                     img: analytics,
-                    key: "MarginLoan",
+                    key: "cf_marginLoan",
                 },
                 {
                     title: "Investments Property",
                     img: property,
-                    key: "InvestmentsProperty",
+                    key: "cf_investmentsProperty",
                 },
                 {
                     title: "Super Fund",
                     img: piggybank1,
-                    key: "SuperFund",
+                    key: "cf_superFund",
                 },
                 {
                     title: "Account Based Pension",
                     img: piggybank2,
-                    key: "AccountBasedPension",
+                    key: "cf_accountBasedPension",
                 },
                 {
                     title: "Annuities",
                     img: calender,
-                    key: "Annuities",
+                    key: "cf_annuities",
                 },
             ],
             condition: (CRObject) => true, // Always true, as this step is always needed.

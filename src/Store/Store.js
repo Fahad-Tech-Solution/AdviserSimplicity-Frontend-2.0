@@ -30,40 +30,33 @@ export const CFQObject = atom({
         cf_incomeFromRegularLivingExpense: "No",
         cf_incomeFromEducation: "No",
 
-        businessIncome: "Yes",
-        cashFlowIncomeFromOverseasPension: "Yes",
-        incomeFromSoleTrader: "Yes",
-        incomeFromPartnership: "Yes",
-        incomeFromCentrelink: "Yes",
-        cashFlowLifetimeBenefit: "Yes",
-        incomeFromOwnBusiness: "Yes",
-        incomeFromOwnBusiness: "Yes",
-        otherNonTaxable: "Yes",
-        RegularLivingExpenses: "Yes",
-        EducationExpenses: "Yes",
 
-        Home: "Yes",
-        familyHome: "Yes",
-        car: "Yes",
-        MotorVehicle2: "Yes",
-        Contents: "Yes",
-        boat: "Yes",
-        caravan: "Yes",
-        otherAssets: "Yes",
-        PersonalDebt: "Yes",
+        // asset and debt
 
-        AustralianShares: "Yes",
-        PlatformInvestment: "Yes",
-        OtherInvestments: "Yes",
-        Cash: "Yes",
-        TermDeposits: "Yes",
-        InvestmentBonds: "Yes",
-        InvestmentLoansLOC: "Yes",
-        MarginLoan: "Yes",
-        InvestmentsProperty: "Yes",
-        SuperFund: "Yes",
-        AccountBasedPension: "Yes",
-        Annuities: "Yes",
+        cf_familyHome: "Yes",
+        cf_contents: "Yes",
+        cf_car: "Yes",
+        cf_motorVehicle2: "Yes",
+        cf_boat: "Yes",
+        cf_caravan: "Yes",
+        cf_otherAssets: "Yes",
+        cf_personalDebt: "Yes",
+
+
+        // financial investment
+
+        cf_AustralianShares: "No",
+        cf_platformInvestment: "No",
+        cf_otherInvestments: "No",
+        cf_cash: "No",
+        cf_termDeposits: "No",
+        cf_investmentBonds: "No",
+        cf_investmentLoansLOC: "No",
+        cf_marginLoan: "No",
+        cf_investmentsProperty: "No",
+        cf_superFund: "No",
+        cf_accountBasedPension: "No",
+        cf_annuities: "No",
 
     },
 });
@@ -217,12 +210,12 @@ export const defaultUrl = atom({
     // default: "http://localhost:7000",
 
     // default: "http://192.168.1.54:7000",    // Usama bhai AUSU
-    // default: "http://192.168.3.159:7000",    // Usama bhai growWork_Beta
+    default: "http://192.168.3.159:7000",    // Usama bhai growWork_Beta
     // default: "http://192.168.14.244:7000",  // Usama bhai mara Mobile k sath
     // default: "http://192.168.227.244:7000", // Usama bhai Fahad bhai k sath
     // default: "http://192.168.3.4:7000",
     // default: "http://192.168.211.242:7000",
-    default: "http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com:7000",  // Live link 
+    // default: "http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com:7000",  // Live link 
 
     // default: "",
 });

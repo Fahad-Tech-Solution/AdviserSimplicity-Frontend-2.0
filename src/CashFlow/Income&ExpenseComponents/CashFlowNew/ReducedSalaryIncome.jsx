@@ -4,12 +4,12 @@ import { Row, Table } from 'react-bootstrap';
 import { RenderName, toCommaAndDollar } from '../../../Components/Assets/Api/Api';
 
 
-const ReducedSalaryIncome = (props) => {
+const reducedSalaryIncome = (props) => {
 
     let initialValues = {
-        ReducedSalaryIncome: "",
-        IncludeFromYear: "",
-        UpUntilYear: "",
+        reducedSalaryIncome: "",
+        includeFromYear: "",
+        upUntilYear: "",
     };
 
 
@@ -19,9 +19,9 @@ const ReducedSalaryIncome = (props) => {
             console.log(props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")])
             if (SourceObj[props.modalObject.key]) {
                 let Data = SourceObj[props.modalObject.key];
-                setFieldValue("ReducedSalaryIncome", Data.ReducedSalaryIncome);
-                setFieldValue("IncludeFromYear", Data.IncludeFromYear);
-                setFieldValue("UpUntilYear", Data.UpUntilYear);
+                setFieldValue("reducedSalaryIncome", Data.reducedSalaryIncome);
+                setFieldValue("includeFromYear", Data.includeFromYear);
+                setFieldValue("upUntilYear", Data.upUntilYear);
             }
         }
     };
@@ -88,8 +88,8 @@ const ReducedSalaryIncome = (props) => {
                                                         <Field
                                                             type="text"
                                                             placeholder="Reduced Salary Income"
-                                                            id={`ReducedSalaryIncome`}
-                                                            name={`ReducedSalaryIncome`}
+                                                            id={`reducedSalaryIncome`}
+                                                            name={`reducedSalaryIncome`}
                                                             className="form-control inputDesignDoubleInput"
                                                             onChange={(e) => {
                                                                 setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")))
@@ -100,8 +100,8 @@ const ReducedSalaryIncome = (props) => {
                                                         <Field
                                                             as="select"
                                                             placeholder="Include From Year"
-                                                            id={`IncludeFromYear`}
-                                                            name={`IncludeFromYear`}
+                                                            id={`includeFromYear`}
+                                                            name={`includeFromYear`}
                                                             className="form-select inputDesignDoubleInput"
                                                         >
                                                             <option value={""}>Please Select</option>
@@ -114,8 +114,8 @@ const ReducedSalaryIncome = (props) => {
                                                         <Field
                                                             as="select"
                                                             placeholder="Up Until Year"
-                                                            id={`UpUntilYear`}
-                                                            name={`UpUntilYear`}
+                                                            id={`upUntilYear`}
+                                                            name={`upUntilYear`}
                                                             className="form-select inputDesignDoubleInput"
                                                         >
                                                             <option value={""}>Please Select</option>
@@ -138,4 +138,4 @@ const ReducedSalaryIncome = (props) => {
     );
 };
 
-export default ReducedSalaryIncome;
+export default reducedSalaryIncome;

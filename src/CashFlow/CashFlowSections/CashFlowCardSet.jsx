@@ -43,15 +43,15 @@ const CashFlowCardSet = (props) => {
 
         //First Section Modals Income and Expanse 
         "Overseas Pensions": <CashFlowOverseasPensions />,
-        "Other Non-Taxable": <CashFlowOtherNoneTaxable />,
-        "Business Income": <CashFlowBusinessIncome />,
-        "Regular Living Expenses": <CashFlowRegulerLiving />,
-        "Lifetime Benefits": <CashFlowLifetimeBenefit />,
-        "Partnership Income": <CashFlowPartnership />,
         "Sole Trader Income": <CashFlowSoleTradeIncome />,
-        "Education Expenses": <ChildeCashFlowEducationExpenses />,
-        "Employment Income": <CashFlowEmploymentIncome />,
+        "Partnership Income": <CashFlowPartnership />,
         "Centrelink Payments/Benefits": <CashFlowCenterLink />,
+        "Lifetime Benefits": <CashFlowLifetimeBenefit />,
+        "Employment Income": <CashFlowEmploymentIncome />,
+        "Business Income": <CashFlowBusinessIncome />,
+        "Other Non-Taxable": <CashFlowOtherNoneTaxable />,
+        "Regular Living Expenses": <CashFlowRegulerLiving />,
+        "Education Expenses": <ChildeCashFlowEducationExpenses />,
 
         //Second Section Modals LifeStyle Assets & Debt
         "Own a Family Home": <CashFlowFamilyHome />,
@@ -68,17 +68,14 @@ const CashFlowCardSet = (props) => {
         "Australian Shares": <CashFlowAustralianShares />,
         "Platform Investment": <CashFlowAustralianShares />,
         "Other Investments": <CashFlowAustralianShares />,
-
+        // Same type of Modal
         "Cash": <CashFlowCashBankDetails />,
         "Term Deposits": <CashFlowCashBankDetails />,
         "Investment Bonds": <CashFlowCashBankDetails />,
-
+        // Same type of Modal
         "Investment Loans (LOC)": <CashFlowInvestmentLoansLOC />,
         "Margin Loan": <CashFlowMarginLoan />,
         "Investments Property": <CashFlowInvestmentsProperty />
-
-
-
 
     }
 

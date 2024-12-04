@@ -2,19 +2,25 @@ import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { Row, Table } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { defaultUrl, QuestionDetail } from "../../../Store/Store";
+import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from "../../../Store/Store";
 import { CreatableMultiSelectField } from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import DynamicTableRow from "../../../Components/Assets/Dynamic/DynamicTableRow";
-import { RenderName } from "../../../Components/Assets/Api/Api";
+import { openNotificationSuccess, PatchAxios, PostAxios, RenderName } from "../../../Components/Assets/Api/Api";
 import InnerModal from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 import ReducedSalaryIncome from "./ReducedSalaryIncome";
 import SalaryPackagingCar from "./SalaryPackagingCar";
 import SalaryPackagingOther from "./SalaryPackagingOther";
+
 // import Select from "react-select";
 
 const CashFlowEmploymentIncome = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+
+    let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+    let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+
+    let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
 
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
@@ -30,99 +36,147 @@ const CashFlowEmploymentIncome = (props) => {
     };  // Use an empty object as default if incomeFromOwnBusiness is undefined
 
     let initialValues = {
-        owner: []
+        owner: [],
+        client: {
+            reducedSalaryIncomeModal: {},
+            salaryPackingCarModal: {},
+            salaryPackingOtherModal: {},
+        },
+        partner: {
+            reducedSalaryIncomeModal: {},
+            salaryPackingCarModal: {},
+            salaryPackingOtherModal: {},
+        },
+
     };
 
     const fillInitialValues = (setFieldValue) => {
         try {
-            // id Flow Starts with Discovery Module  Following input Values Came From that
-            if (incomeFromOwnBusiness && incomeFromOwnBusiness._id) {
+            // Set the object and API key
+            setObjAndAPIKey(props.modalObject.key);
+
+            console.log(incomeFromOwnBusiness.client, "Discovery Form Data");
+            // console.log(cashFlowData, "cashFlowData Form Data");
+            // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
+
+            const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+
+            // Helper function to update field values
+            const updateFields = (data, prefix) => {
+
+                if (!data || !Object.keys(data).length) return;
+                const fields = {
+
+                    salaryIncome: data.salaryIncome || data.SalaryPackageModal.grossSalary || "$0",
+
+                    includeFromYear: data.includeFromYear || "",
+                    upUntilYear: data.upUntilYear || "",
+                    indexation: data.indexation || "",
+
+                    reducedSalaryIncomeRadio: data.reducedSalaryIncomeRadio || "",
+                    reducedSalaryIncomeModal: data.reducedSalaryIncomeModal || {},
+
+                    salaryPackingCarRadio: data.salaryPackingCarRadio || "",
+                    salaryPackingCarModal: data.salaryPackingCarModal || (data?.SalaryPackagingModal
+                        ? {
+                            employerFBTStatus: data?.SalaryPackagingModal?.employerFBTStatus || "",
+                            costBaseOfCar: data?.SalaryPackagingModal?.costBaseOfCar || "",
+                            FBTPaidByEmployer: data?.SalaryPackagingModal?.FBTPaidByEmployer || "",
+                        }
+                        : {}),
+
+                    salaryPackingOtherRadio: data.salaryPackingOtherRadio || "",
+                    salaryPackingOtherModal: data.salaryPackingOtherModal || {},
+                };
+
+                Object.entries(fields).forEach(([key, value]) => {
+                    setFieldValue(`${prefix}.${key}`, value);
+                });
+            };
+
+            // Update owner field
+            if (scenarioObj?.selectedSource === "discoveryForm" && incomeFromOwnBusiness && incomeFromOwnBusiness._id) {
+                setFieldValue(`owner`, incomeFromOwnBusiness.owner || "");
+
+                // Update client-related fields
                 if (incomeFromOwnBusiness.owner.includes("client")) {
-                    let client = incomeFromOwnBusiness.client;
-
-                    if (client && Object.keys(client.SalaryPackageModal || {}).length > 0) {
-                        let Data = client.SalaryPackageModal;
-                        setFieldValue("client.SalaryIncome", Data.grossSalary || 0);
-                    }
-
-                    if (client && Object.keys(client.SalaryPackagingModal || {}).length > 0) {
-                        let Data = client.SalaryPackagingModal;
-                        setFieldValue("client.SalaryPackagingArray.SalaryPackagingOther", Data.employerFBTStatus || ""); // Next Popup input Came From Same Discovery Module
-
-                        setFieldValue("client.SalaryPackagingCarArray.employerFBTStatus", Data.employerFBTStatus || "");
-                        setFieldValue("client.SalaryPackagingCarArray.costBaseOfCar", Data.costBaseOfCar || "");
-                        setFieldValue("client.SalaryPackagingCarArray.FBTPaidByEmployer", Data.FBTPaidByEmployer || "");
-                    }
+                    updateFields(incomeFromOwnBusiness.client, "client");
                 }
 
-                if (incomeFromOwnBusiness.owner.includes("partner")) {
-                    let partner = incomeFromOwnBusiness.partner;
-
-                    if (partner && Object.keys(partner.SalaryPackageModal || {}).length > 0) {
-                        let Data = partner.SalaryPackageModal;
-                        setFieldValue("partner.SalaryIncome", Data.grossSalary || 0);
+                // Update partner-related fields
+                if (UserStatus === "Married" && incomeFromOwnBusiness.owner.includes("partner")) {
+                    updateFields(incomeFromOwnBusiness.partner, "partner");
+                }
+            }
+            else {
+                // Handle cashFlowData scenario
+                const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
+                console.log(cashFlowDetails, "cashFlowDetails")
+                if (cashFlowDetails) {
+                    setFieldValue(`owner`, cashFlowDetails.owner || "");
+                    if (cashFlowDetails.owner.includes("client")) {
+                        // Update client details
+                        updateFields(cashFlowDetails.client, "client");
                     }
 
-                    if (partner && Object.keys(partner.SalaryPackagingModal || {}).length > 0) {
-                        let Data = partner.SalaryPackagingModal;
-                        setFieldValue("partner.SalaryPackagingArray.SalaryPackagingOther", Data.employerFBTStatus || ""); // Next Popup input Came From Same Discovery Module
-
-                        setFieldValue("partner.SalaryPackagingCarArray.employerFBTStatus", Data.employerFBTStatus || "");
-                        setFieldValue("partner.SalaryPackagingCarArray.costBaseOfCar", Data.costBaseOfCar || "");
-                        setFieldValue("partner.SalaryPackagingCarArray.FBTPaidByEmployer", Data.FBTPaidByEmployer || "");
+                    if (UserStatus === "Married" && cashFlowDetails.owner.includes("partner")) {
+                        // Update partner details
+                        updateFields(cashFlowDetails.partner, "partner");
                     }
                 }
             }
+
+            // Additional data from cashFlowData
+            if (cashFlowData?.[objAndAPIKey]?._id) {
+                const cashFlowDataDetails = cashFlowData[objAndAPIKey];
+                setFieldValue(`owner`, cashFlowDataDetails.owner || "");
+
+                if (cashFlowDataDetails.owner.includes("client")) {
+                    // Update client details
+                    updateFields(cashFlowDataDetails.client, "client");
+                }
+
+                if (UserStatus === "Married" && cashFlowDataDetails.owner.includes("partner")) {
+                    console.log("Usama Faheem Ahmed");
+                    // Update partner details
+                    updateFields(cashFlowDataDetails.partner, "partner");
+                }
+            }
+
         } catch (error) {
-            console.error("Error in fillInitialValues function:", error);
+            console.error("Error in fillInitialValues:", error);
         }
     };
-
 
     let DefaultUrl = useRecoilValue(defaultUrl);
 
     let onSubmit = async (values) => {
         console.log(JSON.stringify(values));
+        // return (false);
+        let obj = values
 
-        return (false);
+        obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
 
-        let obj = values;
-        obj.clientFK = localStorage.getItem("UserID");
-        console.log(obj, "new Object");
+        obj.clientTotal = values.client.salaryIncome || "$0";
 
-        // Handle client-related conditions
-        if (values.owner.includes("client")) {
-            obj.clientTotal = values.client.regularIncomePA;
-            console.log("Client total set");
-        } else {
-            obj.client = {};
-            obj.clientTotal = "";
-            console.log("Client data cleared");
+        if (values.owner.includes("partner")) {
+            obj.partnerTotal = values.partner.salaryIncome || "$0";
         }
 
-        // Handle partner-related conditions
-        if (values.owner.includes("partner") && UserStatus === "Married") {
-            obj.partnerTotal = values.partner.regularIncomePA;
-            console.log("Partner total set");
-        } else {
-            obj.partner = {};
-            obj.partnerTotal = "";
-            console.log("Partner data cleared");
-        }
+        const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
 
         console.log(obj, "final obj");
-        const bankAccountArray = incomeFromOverseasPension.clientFK || "";
 
         try {
             let res;
             if (!bankAccountArray) {
                 res = await PostAxios(
-                    `${DefaultUrl}/api/incomeFromOverseasPension/Add`,
+                    `${DefaultUrl}/api/CF/${objAndAPIKey}/Add`,
                     obj
                 );
             } else {
                 res = await PatchAxios(
-                    `${DefaultUrl}/api/incomeFromOverseasPension/Update`,
+                    `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
                     obj
                 );
             }
@@ -130,13 +184,18 @@ const CashFlowEmploymentIncome = (props) => {
             if (res) {
                 console.log(res);
                 const updatedData = {
-                    ...questionDetail,
-                    incomeFromOverseasPension: res,
+                    ...cashFlowData,
+                    [objAndAPIKey]: res,
                 };
-                setQuestionDetail(updatedData);
+                setCashFlowData(updatedData);
             }
 
-            openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
+            openNotificationSuccess(
+                "success",
+                "topRight",
+                "Success Notification",
+                'Data of "' + props.modalObject.title + '" is Saved'
+            );
 
             // Reset the flag state if necessary
             if (props.flagState) {
@@ -144,7 +203,14 @@ const CashFlowEmploymentIncome = (props) => {
             }
         } catch (error) {
             console.error("Error occurred while making API call:", error);
-            openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
+            openNotificationSuccess(
+                "error",
+                "topRight",
+                "Error Notification",
+                'Data of "' +
+                props.modalObject.title +
+                '" is not Saved Please! try again'
+            );
         }
     };
 
@@ -177,54 +243,54 @@ const CashFlowEmploymentIncome = (props) => {
 
     const rowConfig = [
         {
-            name: "SalaryIncome",
+            name: "salaryIncome",
             type: "number-toComma",
             placeholder: "Salary Income",
         },
         {
-            name: "IncludeFromYear",
+            name: "includeFromYear",
             type: "select",
             options: loanTermOptions,
             placeholder: "Include From Year",
         },
         {
-            name: "UpUntilYear",
+            name: "upUntilYear",
             type: "select",
             options: loanTermOptions,
             placeholder: "Up Until Year",
         },
         {
-            name: "Indexation",
+            name: "indexation",
             type: "select",
             options: indexation,
-            placeholder: "Indexation",
+            placeholder: "indexation",
         },
         {
-            name: "ReducedSalaryIncome",
+            name: "reducedSalaryIncomeRadio",
             type: "yesnoModal",
             callBack: true,
             func: OpenModal,
             placeholder: "Reduced Salary Income",
             innerModalTitle: "Reduced Salary Income",
-            key: "ReducedSalaryIncomeObj",
+            key: "reducedSalaryIncomeModal",
         },
         {
-            name: "SalaryPackagingCar",
+            name: "salaryPackingCarRadio",
             type: "yesnoModal",
             callBack: true,
             func: OpenModal,
             placeholder: "Salary Packaging Car",
             innerModalTitle: "Salary Packaging Car",
-            key: "SalaryPackagingCarArray",
+            key: "salaryPackingCarModal",
         },
         {
-            name: "SalaryPackagingOther",
+            name: "salaryPackingOtherRadio",
             type: "yesnoModal",
             callBack: true,
             func: OpenModal,
             placeholder: "Salary Packaging (Other)",
             innerModalTitle: "Salary Packaging (Other)",
-            key: "SalaryPackagingArray",
+            key: "salaryPackingOtherModal",
         },
     ];
 
@@ -292,7 +358,7 @@ const CashFlowEmploymentIncome = (props) => {
                                                         <th>Salary Income</th>
                                                         <th>Include From Year</th>
                                                         <th>Up Until Year</th>
-                                                        <th>Indexation</th>
+                                                        <th>indexation</th>
                                                         <th>Reduced Salary Income</th>
                                                         <th>Salary Packaging Car</th>
                                                         <th>Salary Packaging (Other)</th>

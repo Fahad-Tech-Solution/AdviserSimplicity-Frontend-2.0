@@ -8,14 +8,14 @@ const CashFlowCarsCardsTowInOne = (props) => {
     let { CashFlowElem, OpenModal, index } = props
 
     let ObjTowInOneArray = {
-        "PersonalDebt": [
+        "cf_personalDebt": [
             {
                 title: "Persona Loans",
-                key: "PersonalDebt"
+                key: "cf_personalDebt"
             },
             {
                 title: "Credit Card",
-                key: "CreditCard"
+                key: "cf_creditCard"
             }
         ]
     }

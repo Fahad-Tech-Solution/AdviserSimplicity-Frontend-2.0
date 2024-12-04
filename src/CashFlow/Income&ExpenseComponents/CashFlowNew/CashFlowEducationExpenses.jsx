@@ -25,32 +25,6 @@ const CashFlowEducationExpenses = (props) => {
     // generateFields(value);
   };
 
-  let onSubmit = (values) => {
-    console.log(values);
-    return;
-    const numberOfChildren = parseInt(values.numberOfChildren, 10);
-    const newEntries = [];
-
-    console.log("numberOfChildren", numberOfChildren);
-
-    // Iterate through each map entry and create a new object
-    for (let i = 0; i < numberOfChildren; i++) {
-      const newEntry = {
-        Name: values[`Name${i}`] || "",
-        DOB: values[`DOB${i}`] || "",
-        Gender: values[`Gender${i}`] || "",
-        relationship: values[`relationship${i}`] || "",
-        depenantChild: values[`depenantChild${i}`] || "",
-      };
-      newEntries.push(newEntry);
-    }
-
-    // Log the new entries to verify
-    // console.log(newEntries);
-  };
-
-  //   let validationSchema = Yup.object({});
-
 
 
   const fillInitialValues = (setFieldValue) => {
@@ -69,6 +43,8 @@ const CashFlowEducationExpenses = (props) => {
       });
     }
   };
+
+
 
 
 

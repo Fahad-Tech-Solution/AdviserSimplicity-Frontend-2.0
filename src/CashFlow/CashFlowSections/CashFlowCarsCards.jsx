@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react'
 import { Card } from 'react-bootstrap';
 import { useRecoilValue } from 'recoil';
-import { CFQObject } from '../../Store/Store';
+import { CashFlowData, CFQObject } from '../../Store/Store';
 import CashFlowCarsCardsTowInOne from './CashFlowCarsCardsTowInOne';
 
 const CashFlowCarsCards = (props) => {
@@ -13,6 +13,7 @@ const CashFlowCarsCards = (props) => {
     let { OpenModal } = props;
 
     let [renderFlag, setRenderFlag] = useState(false);
+    let cashFlowData = useRecoilValue(CashFlowData);
 
     let [UserStatus] = useState(localStorage.getItem("UserStatus") !== "Single" && localStorage.getItem("UserStatus") !== "Widowed");
 
@@ -21,7 +22,7 @@ const CashFlowCarsCards = (props) => {
             {props.Data.QuestionsArray.map((CashFlowElem, index) => {
                 if (CFObject[CashFlowElem.key] === "Yes") {
 
-                    let TowInOne = CashFlowElem.key === "PersonalDebt"
+                    let TowInOne = CashFlowElem.key === "cf_personalDebt"
 
                     if (TowInOne) {
                         return (<CashFlowCarsCardsTowInOne CashFlowElem={CashFlowElem} index={index} OpenModal={OpenModal} />)
@@ -67,6 +68,12 @@ const CashFlowCarsCards = (props) => {
                                             id={"client" + CashFlowElem.key}
                                             placeholder={CashFlowElem.title}
                                             name={"client" + CashFlowElem.key}
+                                            value={
+                                                (cashFlowData &&
+                                                    cashFlowData[CashFlowElem.key] &&
+                                                    cashFlowData[CashFlowElem.key].clientTotal) ||
+                                                ""
+                                            }
                                         />
                                         {UserStatus &&
                                             <React.Fragment>
@@ -82,12 +89,20 @@ const CashFlowCarsCards = (props) => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <input type="text"
-                                                    className={`form-control inputDesign`}
+                                                <input
+                                                    type="text"
+                                                    className="form-control inputDesign"
                                                     id={"partner" + CashFlowElem.key}
                                                     placeholder={CashFlowElem.title}
                                                     name={"partner" + CashFlowElem.key}
+                                                    value={
+                                                        (cashFlowData &&
+                                                            cashFlowData[CashFlowElem.key] &&
+                                                            cashFlowData[CashFlowElem.key].partnerTotal) ||
+                                                        ""
+                                                    }
                                                 />
+
                                             </React.Fragment>}
 
                                     </div>
