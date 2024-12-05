@@ -1,19 +1,3 @@
-// describe("Personal Income and Expense", () => {
-
-//   it("should login with valid credentials", () => {
-//     cy.visit("http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com/");
-
-//     cy.get(":nth-child(6) > :nth-child(7)").click();
-//     cy.get("#popover > :nth-child(3)").click();
-//     cy.get('[statusstep="16"] > .ant-steps-item-container > .ant-steps-item-icon > .ant-steps-icon > .rounded-circle').click();
-
-//   });
-// });
-
-// File: cypress/support/login.js
-
-// File: cypress/e2e/Personal_Income_And_Expense/Sections/Sections.cy.js
-
 class PersonalIncomeAndExpense {
   section() {
     cy.visit("http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com/");
@@ -31,43 +15,46 @@ class PersonalIncomeAndExpense {
 
     //Select Questions:
     cy.get(".modal-body").within(() => {
-      cy.get(":nth-child(1) > .d-flex > .border").wait(1000)
+      cy.get(":nth-child(1) > .d-flex > .border")
+        .wait(1000)
         .contains("Overseas Pensions")
         .click();
       cy.get("img").should("be.visible");
 
-      cy.get(":nth-child(2) > .d-flex > .border").wait(1000)
+      cy.get(":nth-child(2) > .d-flex > .border")
+        .wait(1000)
         .contains("Sole Trader Income")
         .click();
       cy.get("img").should("be.visible");
 
-      cy.get(":nth-child(3) > .d-flex > .border").wait(1000)
+      cy.get(":nth-child(3) > .d-flex > .border")
+        .wait(1000)
         .contains("Partnership Income")
         .click();
       cy.get("img").should("be.visible");
 
-      cy.get(":nth-child(4) > .d-flex > .border").wait(1000)
-      .contains(
-        "Centrelink Payments/Benefits"
-      )
-      cy.get('svg[viewBox="0 0 512 512"]')
-            .trigger("mouseover");
+      cy.get(":nth-child(4) > .d-flex > .border")
+        .wait(1000)
+        .contains("Centrelink Payments/Benefits");
+      cy.get('svg[viewBox="0 0 512 512"]').trigger("mouseover");
 
       cy.get("img").should("be.visible");
       cy.get('svg[stroke="currentColor"][fill="currentColor"]').click();
 
-      cy.get(":nth-child(5) > .d-flex > .border").wait(1000)
+      cy.get(":nth-child(5) > .d-flex > .border")
+        .wait(1000)
         .contains("Lifetime/Defined Benefit Super Pensions")
         .click();
       cy.get("img").should("be.visible");
 
-      cy.get(":nth-child(6) > .d-flex > .border").wait(1000)
+      cy.get(":nth-child(6) > .d-flex > .border")
+        .wait(1000)
         .contains("Employment Income")
         .click();
-        cy.get("img").should("be.visible");
+      cy.get("img").should("be.visible");
     });
 
-    // // Test for the "Close" button
+    // Test for the "Close" button
     cy.get("button")
       .contains("Close")
       .should("be.visible")
@@ -79,98 +66,175 @@ class PersonalIncomeAndExpense {
       .and("not.be.disabled")
       .click();
 
+    //Question Selection End Here
 
+    cy.wait(2000);
+    cy.get(":nth-child(1) > .py-4").within(() => {
+      cy.contains("Employement Income");
+      cy.get("img");
 
+      cy.get(
+        "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
+      ).click(); // Or any other interaction you want
+    });
 
+    //Employment Income Card
 
+    cy.contains("Employement Income").should("be.visible");
+    cy.get(".btn-close").should("be.visible");
 
+    cy.contains("Owner");
+    cy.get(".css-b62m3t-container");
+    cy.get(".css-1xc3v61-indicatorContainer").click();
+    cy.get("#react-select-2-option-0").click();
 
+    //In Table
+    cy.get("form > .row > :nth-child(3)").within(() => {
+      cy.contains("Owner").should("be.visible");
+      // Checking if 'Occupation' is visible and typing in the occupation field
+      cy.contains("Occupation").should("be.visible");
+      cy.get("#occupation").type("Occupation").should("be.visible");
+      // Checking if 'Employment Status' is visible and clicking the dropdown
+      cy.contains("Employment Status").should("be.visible");
+      cy.get("#employmentStatus").select("Full Time"); // Select "Full Time" option by text
+      cy.contains("Name of Company");
+      cy.get("#nameOfCompany").type("Software Company");
+      cy.contains("Start Date");
+      cy.get("#startDate").type("06/11/2024").should("exist");
+      cy.contains("Hours Worked");
+      cy.get("#hoursWorked").type("65").should("be.visible");
+      cy.contains("Salary Package");
+      cy.get(".text-center > #button-addon2").click();
+    });
 
+    //Sallery Package Card :
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
+    ).contains("Salary Package");
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close'
+    ).should("be.visible");
+    //Inner Tabel
+    cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+      () => {
+        cy.contains("Salary Package");
 
+        Cypress.on("uncaught:exception", (err, runnable) => {
+          return false;
+        });
 
-    // cy.get(":nth-child(1) > .py-4").contains("Employement Income");
-    // cy.get(":nth-child(1) > .py-4 > .QuestionIcon > .img-fluid").should(
-    //   "be.visible"
-    // );
+        cy.get("#remunerationType").select("Gross Salary");
 
-    // cy.get(
-    //   ":nth-child(1) > .py-4 > :nth-child(3) > .col-12 > .d-flex > .mb-0"
-    // ).click();
+        cy.contains("Amount");
+        cy.get("#amount").type("54").should("be.visible");
 
-    // //Employment Income Card
-    // cy.get(".modal-header").contains("Employement Income").should("be.visible");
-    // cy.get(".btn-close").should("be.visible");
+        cy.contains("SG");
+        cy.get("#SG").type("32");
 
-    // cy.contains("Owner");
-    // cy.get(".css-b62m3t-container");
-    // cy.get(".css-1xc3v61-indicatorContainer").click();
-    // cy.get("#react-select-2-option-0").click();
+        cy.contains("Salary Sarifice Contributions");
+        cy.get("#salarySacrificeContributions").type("32");
 
-    // //In Table
-    // cy.get("form > .row > :nth-child(3)").within(() => {
-    //   cy.contains("Owner").should("be.visible");
+        cy.contains("After Tax Contributions");
+        cy.get("#afterTaxContributions").type("446");
 
-    //   // Checking if 'Occupation' is visible and typing in the occupation field
-    //   cy.contains("Occupation").should("be.visible");
-    //   cy.get("#occupation").type("Occupation").should("be.visible");
+        cy.contains("Gross Salary");
+        cy.get("#grossSalary").should("not.have.value", "");
 
-    //   // Checking if 'Employment Status' is visible and clicking the dropdown
-    //   cy.contains("Employment Status").should("be.visible");
+        cy.contains("SGC");
+        cy.get("#SGC").should("not.have.value", "");
 
-    //   cy.get("#employmentStatus").select("Full Time"); // Select "Full Time" option by text
+        cy.contains("Submit").click();
+      }
+    );
 
-    //   cy.contains("Name of Company");
-    //   cy.get("#nameOfCompany").type("Software Company");
+    cy.contains("Salary Packaging");
+    cy.get(
+      ":nth-child(8) > .d-flex > .form-check > .radioButton2 > .tableYesLabel > span"
+    )
+      .contains("Yes")
+      .click();
 
-    //   cy.contains("Start Date");
-    //   cy.get("#startDate").type("06/11/2024").should("exist");
+    cy.get(".d-flex > #button-addon2").click();
+    //Header
+    cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+      () => {
+        cy.contains("Salary Packaging");
+      }
+    );
+    //Table Salary Packaging
 
-    //   cy.contains("Hours Worked");
-    //   cy.get("#hoursWorked").type("65").should("be.visible");
+    cy.get(".row > .mt-4 > .table-responsive > .table").within(() => {
+      cy.contains("Employer FBT Status");
+      cy.get("#employerFBTStatus").select(
+        "Full FBT/Rebatable/Exempt (17K Cap)"
+      );
 
-    //   cy.contains("Salary Package");
-    //   cy.get(".text-center > #button-addon2").click();
+      cy.contains("Credit Card/Mortgage Repayments");
+      cy.get("#creditCardMortgageRepayments")
+        .type("486543")
+        .should("be.visible");
 
-    //   //Sallery Package Card :
-    //   // cy.get('[style="display: block;"] > .modal-dialog > .modal-content').contains('Salary Package')
-    //   // cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close').should('be.visible')
+      cy.contains("Cost Base of Car");
+      cy.get("#costBaseOfCar").type("857").should("be.visible");
 
-    //     cy.contains('lable','Remuneration Type')
-    //     cy.get('#remunerationType').select('Gross Salary').should('be.visible')
-    //     cy.contains('Amount')
-    //     cy.get('#amount').type('54').should('be.visible')
-    //     cy.contains('SG')
-    //     cy.get('#SG').type('32')
-    //     cy.contains('Gross Salary')
-    //     cy.get('#grossSalary').should('not.have.value', '').and('match', /^\d+(\.\d+)?$/);
-    //     cy.contains('SGC').
-    //     cy.contains('Salary Sarifice Contributions')
-    //     cy.contains('After Tax Contributions')
+      cy.contains("FBT Paid By Employer");
+      cy.get(
+        ":nth-child(4) > .form-check > .radioButton2 > .tableYesLabel > span"
+      ).click();
 
-    //   cy.contains("Salary Packaging");
-    //   cy.get(':nth-child(8) > .d-flex > .form-check > .radioButton2 > .tableNoLabel > span')
-    //     .contains("No")
-    //     .click();
+      cy.contains("Running Costs of Car");
+      cy.get("#runningCostsOfCar").type("8673").should("be.visible");
+    });
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
+    ).within(() => {
+      cy.contains("Submit").click();
+      cy.contains("Close");
+    });
 
-    //   cy.contains("Leave entitlements");
-    //   cy.get(':nth-child(9) > .d-flex > .form-check > .radioButton2 > .tableNoLabel > span')
-    //     .contains("No")
-    //     .click();
+    cy.contains("Leave entitlements");
+    cy.get(
+      ":nth-child(9) > .d-flex > .form-check > .radioButton2 > .tableYesLabel > span"
+    ).click();
+    cy.get(":nth-child(9) > .d-flex > #button-addon2").click();
 
-    //   cy.contains("Choice of Fund");
-    //   cy.get(':nth-child(10) > .d-flex > .form-check > .radioButton2 > .tableNoLabel > span')
-    //     .contains("No")
-    //     .click();
-    // });
-    // cy.get('.modal-footer').within(()=>{
-    //   cy.contains('Submit').should('be.visible').click();
+    cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+      () => {
+        cy.contains("Leave entitlements");
 
-    // });
+        cy.contains("Leave Type");
+        cy.get("#annualLeave").should("not.have.value", "");
+        cy.get("#sickLeave").should("not.have.value", "");
+        cy.get("#longServiceLeave").should("not.have.value", "");
 
+        cy.contains("Amount");
+        cy.get("#annualLeaveAmount").type("32445");
+        cy.get("#sickLeaveAmount").type("365245");
+        cy.get("#longServiceLeaveAmount").type("53245");
 
+        cy.contains("Time");
+        cy.get("#annualLeaveTime").select("Days");
+        cy.get("#sickLeaveTime").select("Weeks");
+        cy.get("#longServiceLeaveTime").select("Hours");
+
+        cy.contains("Submit").click();
+      }
+    );
+
+    cy.contains("Choice of Fund");
+    cy.get(
+      ":nth-child(10) > .d-flex > .form-check > .radioButton2 > .tableYesLabel > span"
+    ).click();
+
+    cy.get(".modal-footer").within(() => {
+      cy.contains("Close").should("be.visible");
+      cy.contains("Submit").should("be.visible").click();
+    });
+
+    cy.get("#clientincomeFromOwnBusiness").should("not.have.value", "");
 
     //Sole Trader
-
+    cy.wait(2000);
     cy.get(":nth-child(2) > .py-4")
       .should("be.visible")
       .within(() => {
@@ -187,11 +251,12 @@ class PersonalIncomeAndExpense {
     cy.get(".modal-header").contains("Sole Trader");
     cy.get(".btn-close").should("be.visible");
     cy.get(".col-md-12 > .d-flex").within(() => {
-      cy.contains("Owner");
 
+      cy.wait(1000)
+      cy.contains("Owner");
       cy.get(".css-1xc3v61-indicatorContainer").click();
     });
-    cy.get("#react-select-2-option-0").click();
+    cy.get('#react-select-3-option-0').click();
 
     cy.get(".css-1lcv7hw").should("be.visible");
 
@@ -222,7 +287,7 @@ class PersonalIncomeAndExpense {
     cy.get("#clientincomeFromSoleTrader").should("not.have.value", ""); // Ensure it's not empty
 
     //Partnership
-
+    cy.wait(2000);
     cy.get(":nth-child(3) > .py-4").within(() => {
       cy.contains("Partnership");
       cy.get("img");
@@ -238,7 +303,7 @@ class PersonalIncomeAndExpense {
       cy.contains("Owner");
       cy.get(".css-1xc3v61-indicatorContainer").click();
     });
-    cy.get('#react-select-3-option-0').click();
+    cy.get('#react-select-4-option-0').click();
     cy.get(".css-1lcv7hw").should("be.visible");
 
     //Card Selection
@@ -276,7 +341,7 @@ class PersonalIncomeAndExpense {
     cy.get("#clientincomeFromPartnership").should("not.have.value", "");
 
     //Centerlink Payments
-
+    cy.wait(2000);
     cy.get(":nth-child(4) > .py-4").within(() => {
       cy.contains("Centerlink Payments");
       cy.get("img");
@@ -292,7 +357,7 @@ class PersonalIncomeAndExpense {
       cy.contains("Owner");
       cy.get(".css-1xc3v61-indicatorContainer").click();
     });
-    cy.get('#react-select-4-option-0').click();
+    cy.get('#react-select-5-option-0').click();
     cy.get(".css-1lcv7hw").should("be.visible");
 
     //Card Selection
@@ -311,7 +376,8 @@ class PersonalIncomeAndExpense {
     cy.get(".css-kva4ii-control > .css-1f8fajx > .css-1lx7dxn").type(
       "Age Pension"
     );
-    cy.get('#react-select-5-option-0').contains("Age Pension").click();
+    cy.wait(1000)
+    cy.get('#react-select-6-option-0').contains("Age Pension").click();
 
     cy.contains("Fortnightly Payment").should("be.visible");
     cy.get("#fortnightlyPayment").type("987").should("be.visible");
@@ -320,10 +386,12 @@ class PersonalIncomeAndExpense {
     cy.get("#annualPaymentAmount").type("896").should("be.visible");
 
     cy.contains("Centrelink Cards Held").should("be.visible");
+    cy.wait(1000)
     cy.get(".css-1f8fajx > .css-1lx7dxn")
       .type("Low Income Card")
       .should("be.visible");
-      cy.get('#react-select-6-option-1').click();
+      
+      cy.get('#react-select-7-option-1').click();
 
     //Footer
     cy.get(".modal-footer").within(() => {
@@ -334,7 +402,7 @@ class PersonalIncomeAndExpense {
     cy.get("#clientincomeFromCentrelink").should("not.have.value", "");
 
     //Centerlink Payments
-
+    cy.wait(2000);
     cy.get(":nth-child(5) > .py-4").within(() => {
       cy.contains("LifeTime Benefits");
       cy.get("img");
@@ -350,7 +418,7 @@ class PersonalIncomeAndExpense {
       cy.contains("Owner");
       cy.get(".css-1xc3v61-indicatorContainer").click();
     });
-    cy.get('#react-select-7-option-0').click();
+    cy.get('#react-select-8-option-0').click();
     cy.get(".css-1lcv7hw").should("be.visible");
 
     //LifeTime Benefits Card
@@ -360,7 +428,7 @@ class PersonalIncomeAndExpense {
 
     cy.contains("Fund Name").should("be.visible");
     cy.get(".css-13n1d3b > .css-1lx7dxn").type("PSS");
-    cy.get('#react-select-8-option-1').contains("PSS").click();
+    cy.get('#react-select-9-listbox').contains("PSS").click();
 
     cy.contains("Regular Income per Fortnight").should("be.visible");
 
@@ -384,7 +452,7 @@ class PersonalIncomeAndExpense {
     cy.get("#clientincomeFromSuperPayment").should("not.have.value", "");
 
     //Overseas Pension
-
+    cy.wait(2000);
     cy.get(":nth-child(5) > .py-4").within(() => {
       cy.contains("LifeTime Benefits");
       cy.get("img");
@@ -400,7 +468,7 @@ class PersonalIncomeAndExpense {
       cy.contains("Owner");
       cy.get(".css-1xc3v61-indicatorContainer").click();
     });
-    cy.get('#react-select-9-option-0').click();
+    cy.get('#react-select-10-option-0').click();
     cy.get(".css-1lcv7hw").should("be.visible");
 
     //LifeTime Benefits Card
@@ -422,6 +490,10 @@ class PersonalIncomeAndExpense {
     });
 
     cy.get("#clientincomeFromOverseasPension").should("not.have.value", "");
+
+    //Tast Card
+    cy.get("#retirementLivingExpense").type("789");
+    cy.get(".inputDesign > .btn").click();
   }
 }
 
