@@ -10,12 +10,21 @@ import Modal from "react-bootstrap/Modal";
 import "yup-phone";
 import * as Yup from "yup";
 import DynamicYesNo from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/DynamicYesNo";
-import { toCommaAndDollar } from "../../../Components/Assets/Api/Api";
+import { openNotificationSuccess, PatchAxios, PostAxios, toCommaAndDollar } from "../../../Components/Assets/Api/Api";
 import { differenceInYears } from "date-fns";
-import { PersonalDetailsData, QuestionDetail } from "../../../Store/Store";
+import { CashFlowData, CashFlowScenarioData, defaultUrl, PersonalDetailsData, QuestionDetail } from "../../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 
 const CashFlowEducationExpenses = (props) => {
+
+  let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+  let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+
+  let [UserStatus] = useState(localStorage.getItem("UserStatus"));
+  let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
+
+  let DefaultUrl = useRecoilValue(defaultUrl);
+
   let initialValues = {};
   let PersonalDetailObj = useRecoilValue(PersonalDetailsData);
 
@@ -25,26 +34,170 @@ const CashFlowEducationExpenses = (props) => {
     // generateFields(value);
   };
 
-
-
   const fillInitialValues = (setFieldValue) => {
-    if (PersonalDetailObj?.children?.numberOfChildren.length > 0) {
-      console.log("PersonalDetailObj: ", PersonalDetailObj.children);
+    try {
+      // Set the object and API key
+      setObjAndAPIKey(props.modalObject.key);
 
-      // Set the number of children
-      setFieldValue(`numberOfChildren`, PersonalDetailObj.children.numberOfChildren);
+      console.log(PersonalDetailObj.children, "Discovery Form Data");
+      // console.log(cashFlowData, "cashFlowData Form Data");
+      // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
 
-      // Loop through the array of children and set values for each child
-      PersonalDetailObj.children.arrayOfChildren.forEach((child, i) => {
-        setFieldValue(`Name${i}`, child.Name);  // Set the child's name
-        setFieldValue(`DOB${i}`, new Date(child.DOB)); // Set the child's DOB as a Date object
-        // Set other fields if needed, e.g., Gender, age, etc.
-        setFieldValue(`age${i}`, differenceInYears(new Date(), new Date(child.DOB)) || 0);
-      });
+      const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+
+      // Helper function to update field values
+      const updateFields = (data, prefix) => {
+
+
+        if (!data || !Object.keys(data).length) return;
+        const fields = {
+          Name: data.Name || "",
+          DOB: data.DOB || "",
+          age: parseFloat(differenceInYears(new Date(), new Date(data.DOB))) || "",
+          childSupportReceived: data.childSupportReceived || "",
+          paidOrReceived: data.paidOrReceived || "",
+          primary: data.primary || "",
+          secondary: data.secondary || "",
+          educationUntil: data.educationUntil || "",
+          uni: data.uni || "",
+          courseYears: data.courseYears || "",
+          indexation: data.indexation || "",
+        };
+
+        Object.entries(fields).forEach(([key, value]) => {
+          setFieldValue(`${key}${prefix}`, value);
+        });
+      };
+
+      // Update owner field
+      if (scenarioObj?.selectedSource === "discoveryForm" && PersonalDetailObj && PersonalDetailObj._id) {
+        setFieldValue(`numberOfChildren`, PersonalDetailObj.children.numberOfChildren || 0);
+
+        // Update client-related fields
+        if (PersonalDetailObj?.children?.arrayOfChildren) {
+          PersonalDetailObj.children.arrayOfChildren.forEach((child, index) => {
+            updateFields(child, index);
+          })
+        }
+
+      }
+      else {
+        // Handle cashFlowData scenario
+        const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
+        // console.log(cashFlowDetails, "cashFlowDetails")
+        if (cashFlowDetails) {
+          setFieldValue(`numberOfChildren`, cashFlowDetails.numberOfChildren || 0);
+
+          if (cashFlowDetails?.arrayOfChildren) {
+            cashFlowDetails.arrayOfChildren.forEach((child, index) => {
+              updateFields(child, index);
+            })
+          }
+        }
+      }
+
+
+      // Additional data from cashFlowData
+      if (cashFlowData?.[objAndAPIKey]?._id) {
+        // Handle cashFlowData scenario
+        const cashFlowDetails = cashFlowData?.[objAndAPIKey];
+        // console.log(cashFlowDetails, "cashFlowDetails")
+        if (cashFlowDetails) {
+          setFieldValue(`numberOfChildren`, cashFlowDetails.numberOfChildren || 0);
+
+          if (cashFlowDetails?.arrayOfChildren) {
+            cashFlowDetails.arrayOfChildren.forEach((child, index) => {
+              updateFields(child, index);
+            })
+          }
+        }
+      }
+
+
+    } catch (error) {
+      console.error("Error in fillInitialValues:", error);
     }
   };
 
+  let onSubmit = async (values) => {
 
+    const childrenArray = [];
+    for (let i = 0; i < values.numberOfChildren; i++) {
+      childrenArray.push({
+        Name: values[`Name${i}`],
+        DOB: values[`DOB${i}`],
+        age: values[`age${i}`],
+        childSupportReceived: values[`childSupportReceived${i}`],
+        paidOrReceived: values[`paidOrReceived${i}`],
+        primary: values[`primary${i}`],
+        secondary: values[`secondary${i}`],
+        educationUntil: values[`educationUntil${i}`],
+        uni: values[`uni${i}`],
+        courseYears: values[`courseYears${i}`],
+        indexation: values[`indexation${i}`],
+      });
+    }
+
+    // console.log(JSON.stringify(childrenArray));
+    // return (false);
+    let obj = {
+      numberOfChildren: values.numberOfChildren,
+      arrayOfChildren: childrenArray,
+      clientTotal: toCommaAndDollar(childrenArray.reduce((total, entry) => total + parseFloat(entry.childSupportReceived.replace(/[^0-9.-]+/g, "")), 0))
+    }
+
+    obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
+
+    const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
+
+    console.log(JSON.stringify(obj), "final obj");
+
+    try {
+      let res;
+      if (!bankAccountArray) {
+        res = await PostAxios(
+          `${DefaultUrl}/api/CF/${objAndAPIKey}/Add`,
+          obj
+        );
+      } else {
+        res = await PatchAxios(
+          `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
+          obj
+        );
+      }
+
+      if (res) {
+        console.log(res);
+        const updatedData = {
+          ...cashFlowData,
+          [objAndAPIKey]: res,
+        };
+        setCashFlowData(updatedData);
+      }
+
+      openNotificationSuccess(
+        "success",
+        "topRight",
+        "Success Notification",
+        'Data of "' + props.modalObject.title + '" is Saved'
+      );
+
+      // Reset the flag state if necessary
+      if (props.flagState) {
+        props.setFlagState(false);
+      }
+    } catch (error) {
+      console.error("Error occurred while making API call:", error);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        'Data of "' +
+        props.modalObject.title +
+        '" is not Saved Please! try again'
+      );
+    }
+  };
 
 
 
@@ -52,6 +205,9 @@ const CashFlowEducationExpenses = (props) => {
     value: (i * 0.5).toFixed(2) + "%",
     label: (i * 0.5).toFixed(2) + "%",
   }));
+
+
+
   return (
     <div className="container-fluid my-4">
       <div className="row justify-content-center">
@@ -85,7 +241,7 @@ const CashFlowEducationExpenses = (props) => {
                     </div>
                   </div>
 
-                  {values.numberOfChildren && (
+                  {values.numberOfChildren > 0 && (
                     <div className="mt-4">
                       <Table striped bordered responsive hover>
                         <thead>
@@ -102,9 +258,6 @@ const CashFlowEducationExpenses = (props) => {
                             <th>Uni ($)</th>
                             <th>Course Years</th>
                             <th>Indexation</th>
-                            {/* <th>Gender</th>
-                            <th>Add in Relationship</th>
-                            <th>Add in is Child Depenant</th> */}
                           </tr>
                         </thead>
                         <tbody>
@@ -149,19 +302,6 @@ const CashFlowEducationExpenses = (props) => {
                                       />
                                     </div>
                                   </td>
-                                  {/* <td>
-                                    <Field
-                                      as="select"
-                                      id={`Gender${i}`}
-                                      name={`Gender${i}`}
-                                      className="form-select inputDesignDoubleInput"
-                                    >
-                                      <option value={""}>Select</option>
-                                      <option value={"Male"}>Male</option>
-                                      <option value={"Female"}>Female</option>
-                                      <option value={"Other"}>Other</option>
-                                    </Field>
-                                  </td> */}
                                   <td style={{ minWidth: '4rem' }}>
                                     <Field
                                       placeholder="Age"

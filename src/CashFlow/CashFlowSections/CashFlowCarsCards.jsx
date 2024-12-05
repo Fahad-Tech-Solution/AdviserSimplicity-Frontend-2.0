@@ -17,12 +17,14 @@ const CashFlowCarsCards = (props) => {
 
     let [UserStatus] = useState(localStorage.getItem("UserStatus") !== "Single" && localStorage.getItem("UserStatus") !== "Widowed");
 
+    let towInOneArray = ["cf_personalDebt", "cf_incomeFromEducation", "cf_incomeFromRegularLivingExpense", "cf_boat", "cf_caravan"]
+
     return (
         <div className='row'>
             {props.Data.QuestionsArray.map((CashFlowElem, index) => {
                 if (CFObject[CashFlowElem.key] === "Yes") {
 
-                    let TowInOne = CashFlowElem.key === "cf_personalDebt"
+                    let TowInOne = towInOneArray.includes(CashFlowElem.key) ? true : false;
 
                     if (TowInOne) {
                         return (<CashFlowCarsCardsTowInOne CashFlowElem={CashFlowElem} index={index} OpenModal={OpenModal} />)

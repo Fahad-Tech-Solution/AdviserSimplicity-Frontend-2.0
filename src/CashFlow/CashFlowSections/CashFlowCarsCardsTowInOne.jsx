@@ -2,8 +2,12 @@ import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react'
 import { Card } from 'react-bootstrap';
+import { CashFlowData } from '../../Store/Store';
+import { useRecoilValue } from 'recoil';
 
 const CashFlowCarsCardsTowInOne = (props) => {
+
+    let cashFlowData = useRecoilValue(CashFlowData);
 
     let { CashFlowElem, OpenModal, index } = props
 
@@ -11,13 +15,45 @@ const CashFlowCarsCardsTowInOne = (props) => {
         "cf_personalDebt": [
             {
                 title: "Persona Loans",
-                key: "cf_personalDebt"
+                key: "cf_personalDebt",
+                attribute: "clientTotal",
             },
             {
                 title: "Credit Card",
-                key: "cf_creditCard"
+                key: "cf_creditCard",
+                attribute: "clientTotal",
             }
+        ],
+        "cf_incomeFromEducation": [
+            {
+                title: "Education Expenses",
+                key: "cf_incomeFromEducation",
+                attribute: "clientTotal",
+            },
+        ],
+        "cf_incomeFromRegularLivingExpense": [
+            {
+                title: "Regular Living Expenses",
+                key: "cf_incomeFromRegularLivingExpense",
+                attribute: "clientTotal",
+            },
+        ],
+        "cf_boat": [
+            {
+                title: "Boat",
+                key: "cf_boat",
+                attribute: "clientTotal",
+            },
+        ],
+        "cf_caravan": [
+            {
+                title: "Caravan",
+                key: "cf_caravan",
+                attribute: "clientTotal",
+            },
         ]
+
+
     }
 
     return (
@@ -26,7 +62,7 @@ const CashFlowCarsCardsTowInOne = (props) => {
                 <Card className="py-4 shadow borderOverAll GoalsobjectiveCard d-flex" style={{ borderRadius: "20px", height: "100%" }}>
                     <h5 className='text-center' onClick={() => { console.log(questionDetail[CashFlowElem.key]) }}>{CashFlowElem.title}
                     </h5>
-                    <div className='d-flex justify-content-center flex-column' style={{ marginTop: "auto" }}>
+                    <div className='d-flex justify-content-center flex-column' style={{ marginTop: ObjTowInOneArray[CashFlowElem.key].length > 1 ? "auto" : "" }}>
                         <div className="QuestionIcon CardImg">
                             <img className="img-fluid" src={CashFlowElem.img} alt="" />
                         </div>
@@ -58,6 +94,12 @@ const CashFlowCarsCardsTowInOne = (props) => {
                                         id={"client" + elem.key}
                                         placeholder={elem.title}
                                         name={"client" + elem.key}
+                                        value={
+                                            (cashFlowData &&
+                                                cashFlowData[CashFlowElem.key] &&
+                                                cashFlowData[CashFlowElem.key][elem.attribute]) ||
+                                            ""
+                                        }
                                     />
                                 </React.Fragment>)
                             })}

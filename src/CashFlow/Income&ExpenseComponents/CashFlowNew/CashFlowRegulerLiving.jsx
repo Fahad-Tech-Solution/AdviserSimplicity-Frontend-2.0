@@ -4,84 +4,155 @@ import { CreatableMultiSelectField } from "../../../Components/Questions/Financi
 import DynamicTableRow from "../../../Components/Assets/Dynamic/DynamicTableRow";
 import {
   openNotificationSuccess,
+  PatchAxios,
+  PostAxios,
   RenderName,
 } from "../../../Components/Assets/Api/Api";
 import { Row, Table } from "react-bootstrap";
-import { defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { useRecoilValue } from "recoil";
+import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from "../../../Store/Store";
+import { useRecoilState, useRecoilValue } from "recoil";
 
-const CashFlowRegulerLiving = (props) => {
+const CashFlowRegularLiving = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
+  let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+  let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
 
   let [UserStatus] = useState(localStorage.getItem("UserStatus"));
+  let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
+
+
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   let generalLivingExpenses =
     Object.keys(questionDetail.generalLivingExpenses || {}).length > 0
       ? questionDetail.generalLivingExpenses
       : {
-          client: []
-         
-        }; // Use an empty object as default if generalLivingExpenses is undefined
+        client: []
 
-        let initialValues = {
-          client: {
-            includeFromYear: 1,
-            "upUntillYear": 30,
-            "indexation": "2.50%",
-          }
-        
-        };
+      }; // Use an empty object as default if generalLivingExpenses is undefined
 
-  const fillInitialValues = (setFieldValue) => {
-    console.log(generalLivingExpenses.generalLivingExpensesTotal, "data");
-    if (generalLivingExpenses && generalLivingExpenses._id) {
-      setFieldValue(`client.amount`, generalLivingExpenses.generalLivingExpensesTotal || "");
+  let initialValues = {
+    client: {
+      includeFromYear: 1,
+      "upUntillYear": 30,
+      "indexation": "2.50%",
+    }
 
   };
-};
+
+  //   const fillInitialValues = (setFieldValue) => {
+  //     console.log(generalLivingExpenses.generalLivingExpensesTotal, "data");
+  //     if (generalLivingExpenses && generalLivingExpenses._id) {
+  //       setFieldValue(`client.amount`, generalLivingExpenses.generalLivingExpensesTotal || "");
+
+  //   };
+  // };
+
+  const fillInitialValues = (setFieldValue) => {
+    try {
+      // Set the object and API key
+      setObjAndAPIKey(props.modalObject.key);
+
+      console.log(generalLivingExpenses, "Discovery Form Data");
+      // console.log(cashFlowData, "cashFlowData Form Data");
+      // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
+
+      const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+
+      // Helper function to update field values
+      const updateFields = (data, prefix) => {
+
+        if (!data || !Object.keys(data).length) return;
+        const fields = {
+          expenses: data.expenses || "",
+          amount: data.amount || data.generalLivingExpensesTotal || "",
+          includeFromYear: data.includeFromYear || 1,
+          upUntillYear: data.upUntillYear || 30,
+          indexation: data.indexation || "2.50%",
+        };
+
+        Object.entries(fields).forEach(([key, value]) => {
+          setFieldValue(`${prefix}.${key}`, value);
+        });
+      };
+
+      // Update owner field
+      if (scenarioObj?.selectedSource === "discoveryForm" && generalLivingExpenses && generalLivingExpenses._id) {
+        // setFieldValue(`owner`, generalLivingExpenses.owner || "");
+
+        // Update client-related fields
+        // if (generalLivingExpenses.owner.includes("client")) {
+        updateFields(generalLivingExpenses, "client");
+        // }
+
+        // // Update partner-related fields
+        // if (UserStatus === "Married" && generalLivingExpenses.owner.includes("partner")) {
+        //   updateFields(generalLivingExpenses.partner, "partner");
+        // }
+      }
+      else {
+        // Handle cashFlowData scenario
+        const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
+        console.log(cashFlowDetails, "cashFlowDetails")
+        if (cashFlowDetails) {
+          // setFieldValue(`owner`, cashFlowDetails.owner || "");
+          if (cashFlowDetails.owner.includes("client")) {
+            // Update client details
+            updateFields(cashFlowDetails.client, "client");
+          }
+
+          // if (UserStatus === "Married" && cashFlowDetails.owner.includes("partner")) {
+          //   // Update partner details
+          //   updateFields(cashFlowDetails.partner, "partner");
+          // }
+        }
+      }
+
+
+      // Additional data from cashFlowData
+      if (cashFlowData?.[objAndAPIKey]?._id) {
+        const cashFlowDataDetails = cashFlowData[objAndAPIKey];
+        // setFieldValue(`owner`, cashFlowDataDetails.owner || "");
+
+        // if (cashFlowDataDetails.owner.includes("client")) {
+        // Update client details
+        updateFields(cashFlowDataDetails.client, "client");
+        // }
+
+        // if (UserStatus === "Married" && cashFlowDataDetails.owner.includes("partner")) {
+        //   // Update partner details
+        //   updateFields(cashFlowDataDetails.partner, "partner");
+        // }
+      }
+
+    } catch (error) {
+      console.error("Error in fillInitialValues:", error);
+    }
+  };
 
   let onSubmit = async (values) => {
     console.log(JSON.stringify(values));
     // return (false);
+    let obj = values
 
-    let obj = values;
-    obj.clientFK = localStorage.getItem("UserID");
-    console.log(obj, "new Object");
+    obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
 
-    // Handle client-related conditions
-    if (values.owner.includes("client")) {
-      obj.clientTotal = values.client.regularIncomePA;
-      console.log("Client total set");
-    } else {
-      obj.client = {};
-      obj.clientTotal = "";
-      console.log("Client data cleared");
-    }
+    obj.clientTotal = values.client.amount || "$0";
 
-    // Handle partner-related conditions
-    if (values.owner.includes("partner") && UserStatus === "Married") {
-      obj.partnerTotal = values.partner.regularIncomePA;
-      console.log("Partner total set");
-    } else {
-      obj.partner = {};
-      obj.partnerTotal = "";
-      console.log("Partner data cleared");
-    }
+    const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
 
     console.log(obj, "final obj");
-    const bankAccountArray = generalLivingExpenses.clientFK || "";
 
     try {
       let res;
       if (!bankAccountArray) {
         res = await PostAxios(
-          `${DefaultUrl}/api/generalLivingExpenses/Add`,
+          `${DefaultUrl}/api/CF/${objAndAPIKey}/Add`,
           obj
         );
       } else {
         res = await PatchAxios(
-          `${DefaultUrl}/api/generalLivingExpenses/Update`,
+          `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
           obj
         );
       }
@@ -89,10 +160,10 @@ const CashFlowRegulerLiving = (props) => {
       if (res) {
         console.log(res);
         const updatedData = {
-          ...questionDetail,
-          generalLivingExpenses: res,
+          ...cashFlowData,
+          [objAndAPIKey]: res,
         };
-        setQuestionDetail(updatedData);
+        setCashFlowData(updatedData);
       }
 
       openNotificationSuccess(
@@ -113,8 +184,8 @@ const CashFlowRegulerLiving = (props) => {
         "topRight",
         "Error Notification",
         'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        props.modalObject.title +
+        '" is not Saved Please! try again'
       );
     }
   };
@@ -124,7 +195,7 @@ const CashFlowRegulerLiving = (props) => {
     label: ("Year " + (i + 1)).toString(),
   }));
 
-  
+
 
   const indexation = Array.from({ length: 21 }, (_, i) => ({
     value: (i * 0.5).toFixed(2) + "%",
@@ -141,19 +212,12 @@ const CashFlowRegulerLiving = (props) => {
     "Income Protection",
     "Other Deductible"
   ];
-  
+
   const ArrayOfExpenses = optionOfExpenses.map(key => ({
     value: key,
     label: key
   }));
 
-  const options =
-    UserStatus !== "Single"
-      ? [
-          { value: "client", label: RenderName("client") },
-          { value: "partner", label: RenderName("partner") },
-        ]
-      : [{ value: "client", label: RenderName("client") }];
 
   const rowConfig = [
     {
@@ -200,44 +264,44 @@ const CashFlowRegulerLiving = (props) => {
         return (
           <Form>
             <Row>
-        
-           
-                <div className="mt-4">
-                  <Table striped bordered responsive hover>
-                    <thead>
-                      <tr>
-                        <th
-                          onClick={() => {
-                            console.log(values);
-                          }}
-                        >
-                          Owner
-                        </th>
-                        <th>Expenses</th>
-                        <th>Amount</th>
-                        <th>Include From Year:</th>
-                        <th>Up Until Year:</th>
-                        <th>Indexation</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                          // handleInnerModal={handleInnerModal}
-                          stakeHolder="client."
-                        />
-                    
 
-           
-                    </tbody>
-                  </Table>
-                </div>
-          
+
+              <div className="mt-4">
+                <Table striped bordered responsive hover>
+                  <thead>
+                    <tr>
+                      <th
+                        onClick={() => {
+                          console.log(values);
+                        }}
+                      >
+                        Owner
+                      </th>
+                      <th>Expenses</th>
+                      <th>Amount</th>
+                      <th>Include From Year:</th>
+                      <th>Up Until Year:</th>
+                      <th>Indexation</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    <DynamicTableRow
+                      rowConfig={rowConfig}
+                      values={values}
+                      setFieldValue={setFieldValue}
+                      handleChange={handleChange}
+                      handleBlur={handleBlur}
+                      // handleInnerModal={handleInnerModal}
+                      stakeHolder="client."
+                    />
+
+
+
+                  </tbody>
+                </Table>
+              </div>
+
             </Row>
           </Form>
         );
@@ -246,4 +310,4 @@ const CashFlowRegulerLiving = (props) => {
   );
 };
 
-export default CashFlowRegulerLiving;
+export default CashFlowRegularLiving;

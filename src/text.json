@@ -1,74 +1,37 @@
-const Joi = require("joi");
-
-// Reduced Salary Income Modal Validation
-const reducedSalaryIncomeSchema = Joi.object({
-    reducedSalaryIncome: Joi.string().allow(null, ''),
-    includeFromYear: Joi.number().allow(null, ''),
-    upUntilYear: Joi.number().allow(null, ''),
-});
-
-// Salary Packaging Other Modal Validation
-const salaryPackagingOtherSchema = Joi.object({
-    salaryPackagingOther: Joi.string().allow(null, ''),
-    GSTStatus: Joi.string().allow(null, ''),
-    includeFromYear: Joi.number().allow(null, ''),
-    upUntilYear: Joi.number().allow(null, ''),
-});
-
-// Salary Packaging Car Modal Validation
-const salaryPackagingCarSchema = Joi.object({
-    employerFBTStatus: Joi.string().allow(null, ''),
-    costBaseOfCar: Joi.string().allow(null, ''),
-    FBTPaidByEmployer: Joi.string().allow(null, ''),
-    includeFromYear: Joi.number().allow(null, ''),
-    upUntilYear: Joi.number().allow(null, ''),
-    indexation: Joi.string().allow(null, ''),
-});
-
-// Employment Income Validation
-const employmentIncomeSchema = Joi.object({
-    salaryIncome: Joi.string().allow(null, ''),
-    includeFromYear: Joi.number().allow(null, ''),
-    upUntilYear: Joi.number().allow(null, ''),
-    indexation: Joi.string().allow(null, ''),
-    reducedSalaryIncomeRadio: Joi.string().allow(null, ''), // "Yes" or "No"
-    salaryPackingCarRadio: Joi.string().allow(null, ''),    // "Yes" or "No"
-    salaryPackingOtherRadio: Joi.string().allow(null, ''), // "Yes" or "No"
-
-    reducedSalaryIncomeModal: Joi.alternatives()
-        .conditional('reducedSalaryIncomeRadio', {
-            is: "Yes",
-            then: reducedSalaryIncomeSchema,
-            otherwise: Joi.allow(null),
-        }),
-
-    salaryPackingCarModal: Joi.alternatives()
-        .conditional('salaryPackingCarRadio', {
-            is: "Yes",
-            then: salaryPackagingCarSchema.required(),
-            otherwise: Joi.allow(null),
-        }),
-
-    salaryPackingOtherModal: Joi.alternatives()
-        .conditional('salaryPackingOtherRadio', {
-            is: "Yes",
-            then: salaryPackagingOtherSchema,
-            otherwise: Joi.allow(null),
-        }),
-});
-
-// Main Schema Validation
-const clientSchema = (data) => {
-    const schema = Joi.object({
-        scenarioFK: Joi.string().required(),
-        client: employmentIncomeSchema.allow(null),
-        partner: employmentIncomeSchema.allow(null),
-        clientTotal: Joi.string().allow(null, ''),
-        partnerTotal: Joi.string().allow(null, ''),
-        owner: Joi.array().items(Joi.string()).optional(),
-    });
-
-    return schema.validate(data);
-};
-
-module.exports = clientSchema;
+{
+  "client": {
+    "expectedGrowthRate": "2.50%",
+    "sellPropertyInYear": "No",
+    "yearOfPurchase": "Existing",
+    "loanBalance": "Yes",
+    "address": "Distinctio Quia adi",
+    "currentValue": "$88",
+    "clientOwnership": "8.44%",
+    "partnerOwnership": "2.00%",
+    "totalCostBaseObj": {
+      "stampDuty": "FH Buyer",
+      "stampDutyCalculation": "Yes",
+      "otherPurchaseCosts": "$123",
+      "costBaseExisting": "$123",
+      "totalCostBase": "$123"
+    },
+    "totalCostBase": "$123",
+    "familyHomeLoan": {
+      "loanTerm": "30",
+      "repayLoanInYear": "1",
+      "loanBalance": "$123",
+      "loanType": "P&i",
+      "initialInterestRatePA": "100.00%",
+      "minimumRepaymentsPA": "$123",
+      "actualAnnualRepayments": "$12",
+      "loanBalanceCashFlowLoanBelanceLVR": {
+        "LVR": "100.00%",
+        "loanAmount": "$123",
+        "loanBalance": "$123",
+        "clientOwnership": "0.00%",
+        "partnerOwnership": "100.00%"
+      }
+    }
+  },
+  "clientTotal": "$123"
+}

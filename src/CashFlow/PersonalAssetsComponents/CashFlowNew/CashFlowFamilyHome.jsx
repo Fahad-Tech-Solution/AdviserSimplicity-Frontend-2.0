@@ -74,7 +74,7 @@ const CashFlowFamilyHome = (props) => {
   ];
 
   let onSubmit = async (values) => {
-    console.log(values);
+    console.log(JSON.stringify(values));
     return;
   };
 

@@ -27,7 +27,7 @@ const CashFlowSections = (props) => {
 
 
     async function FetchData(ScenarioObj) {
-        if (ScenarioObj.selectedSource !== "discoveryForm") {
+        if (ScenarioObj?.selectedSource !== "discoveryForm") {
 
             try {
                 let GetFromDiscoveryFormOfThatScenario = await GetAxios(`${DefaultUrl}/api/CF/dataOfAllSection/${ScenarioObj.selectedSource}`);
@@ -89,7 +89,7 @@ const CashFlowSections = (props) => {
     const FetchCFQObject = async () => {
         try {
             const res = await GetAxios(`${DefaultUrl}/api/CF/cf_basicQuestions/${(JSON.parse(localStorage.getItem("ScenarioObj")))._id}`);
-            console.log(JSON.stringify(res), ":res of cf_basicQuestions Data")
+            // console.log(JSON.stringify(res), ":res of cf_basicQuestions Data")
             if (res) {
                 setCFObject(res);
             }

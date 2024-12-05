@@ -13,7 +13,7 @@ import CashFlowCarsCards from './CashFlowCarsCards';
 import CashFlowOverseasPensions from '../Income&ExpenseComponents/CashFlowNew/CashFlowOverseasPensions';
 import CashFlowOtherNoneTaxable from '../Income&ExpenseComponents/CashFlowNew/CashFlowOtherNoneTaxable';
 import CashFlowBusinessIncome from '../Income&ExpenseComponents/CashFlowNew/CashFlowBusinessIncome';
-import CashFlowRegulerLiving from '../Income&ExpenseComponents/CashFlowNew/CashFlowRegulerLiving';
+import CashFlowRegularLiving from '../Income&ExpenseComponents/CashFlowNew/CashFlowRegulerLiving';
 import CashFlowLifetimeBenefit from '../Income&ExpenseComponents/CashFlowNew/CashFlowLifetimeBenefit';
 import CashFlowPartnership from '../Income&ExpenseComponents/CashFlowNew/CashFlowPartnership';
 import ChildeCashFlowEducationExpenses from '../Income&ExpenseComponents/CashFlowNew/CashFlowEducationExpenses';
@@ -50,7 +50,7 @@ const CashFlowCardSet = (props) => {
         "Employment Income": <CashFlowEmploymentIncome />,
         "Business Income": <CashFlowBusinessIncome />,
         "Other Non-Taxable": <CashFlowOtherNoneTaxable />,
-        "Regular Living Expenses": <CashFlowRegulerLiving />,
+        "Regular Living Expenses": <CashFlowRegularLiving />,
         "Education Expenses": <ChildeCashFlowEducationExpenses />,
 
         //Second Section Modals LifeStyle Assets & Debt

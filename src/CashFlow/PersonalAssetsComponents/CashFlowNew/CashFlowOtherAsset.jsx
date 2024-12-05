@@ -4,21 +4,28 @@ import { CreatableMultiSelectField } from "../../../Components/Questions/Financi
 import DynamicTableRow from "../../../Components/Assets/Dynamic/DynamicTableRow";
 import {
   openNotificationSuccess,
+  PatchAxios,
+  PostAxios,
   RenderName,
 } from "../../../Components/Assets/Api/Api";
 import { Card, Row, Table } from "react-bootstrap";
-import { defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { useRecoilValue } from "recoil";
+import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from "../../../Store/Store";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 const CashFlowOtherAsset = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
+  let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+  let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
 
   let [UserStatus] = useState(localStorage.getItem("UserStatus"));
+  let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
+
+
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   let other =
-    Object.keys(questionDetail[props.modalObject.key] || {}).length > 0
-      ? questionDetail[props.modalObject.key]
+    Object.keys(questionDetail[props.modalObject.key.replace("cf_", "")] || {}).length > 0
+      ? questionDetail[props.modalObject.key.replace("cf_", "")]
       : {
         client: [],
         partner: [],
@@ -35,89 +42,192 @@ const CashFlowOtherAsset = (props) => {
 
   let onlyJoint = ["Boat", "Caravan", "House hold"];
 
+  // const fillInitialValues = (setFieldValue) => {
+  //   console.log(other, "data", questionDetail[props.modalObject.key.replace("cf_", "")], props.modalObject.key);
+  //   if (other && other._id) {
+
+  //     setFieldValue(`owner`, other.owner || "");
+
+  //     if (onlyJoint.includes(props.modalObject.title)) {
+  //       if (other.owner.includes("joint")) {
+  //         if (other?.joint && Object.keys(other.joint).length) {
+
+  //           setFieldValue(`joint.currentValue`, other.joint.currentValue || "");
+
+  //           return (false);
+  //         }
+  //       }
+  //     }
+
+
+  //     // Handle client-related conditions
+  //     if (other.owner.includes("client")) {
+  //       if (other?.client && Object.keys(other.client).length) {
+  //         setFieldValue(`client.currentValue`, other.client.currentValue || "");
+  //       }
+  //     }
+
+  //     // Handle partner-related conditions
+  //     if (UserStatus === "Married" && other.owner.includes("partner")) {
+  //       if (other?.partner && Object.keys(other.partner).length) {
+  //         setFieldValue(`partner.currentValue`, other.partner.currentValue || "");
+  //       }
+  //     }
+
+  //   }
+  // };
+  // currentValue
+  // sellInYear
+  // newPurchase
+  // purchaseInYear
+  // indexation
+
   const fillInitialValues = (setFieldValue) => {
-    console.log(other, "data", questionDetail[props.modalObject.key], props.modalObject.key);
-    if (other && other._id) {
+    try {
+      // Set the object and API key
+      setObjAndAPIKey(props.modalObject.key);
 
-      setFieldValue(`owner`, other.owner || "");
+      // console.log(other, "Discovery Form Data");
+      // console.log(cashFlowData, "cashFlowData Form Data");
+      // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
 
-      if (onlyJoint.includes(props.modalObject.title)) {
-        if (other.owner.includes("joint")) {
-          if (other?.joint && Object.keys(other.joint).length) {
+      const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+
+      // Helper function to update field values
+      const updateFields = (data, prefix) => {
+
+        if (!data || !Object.keys(data).length) return;
+        const fields = {
+          currentValue: data.currentValue || "",
+          sellInYear: data.sellInYear || 1,
+          newPurchase: data.newPurchase || "$0",
+          purchaseInYear: data.purchaseInYear || 30,
+          indexation: data.indexation || "2.50%",
+        };
+
+        Object.entries(fields).forEach(([key, value]) => {
+          setFieldValue(`${prefix}.${key}`, value);
+        });
+      };
+
+      // Update owner field
+      if (scenarioObj?.selectedSource === "discoveryForm" && other && other._id) {
+        setFieldValue(`owner`, other.owner || "");
+
+        if (onlyJoint.includes(props.modalObject.title)) {
+          if (other.owner.includes("joint")) {
+            if (other?.joint && Object.keys(other.joint).length) {
+
+              updateFields(other.joint, "joint");
+
+            }
+          }
+        }
 
 
-            setFieldValue(`joint.currentValue`, other.joint.currentValue || "");
+        // Update client-related fields
+        if (other.owner.includes("client")) {
+          updateFields(other.client, "client");
+        }
 
-            return (false);
+        // Update partner-related fields
+        if (UserStatus === "Married" && other.owner.includes("partner")) {
+          updateFields(other.partner, "partner");
+        }
+
+      }
+      else {
+        // Handle cashFlowData scenario
+        const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
+        console.log(cashFlowDetails, "cashFlowDetails")
+        if (cashFlowDetails) {
+          setFieldValue(`owner`, cashFlowDetails.owner || "");
+          if (cashFlowDetails.owner.includes("client")) {
+            // Update client details
+            updateFields(cashFlowDetails.client, "client");
+          }
+
+          if (UserStatus === "Married" && cashFlowDetails.owner.includes("partner")) {
+            // Update partner details
+            updateFields(cashFlowDetails.partner, "partner");
+          }
+
+          if (cashFlowDataDetails.owner.includes("joint")) {
+            // Update joint details
+            updateFields(cashFlowDataDetails.joint, "joint");
           }
         }
       }
 
 
-      // Handle client-related conditions
-      if (other.owner.includes("client")) {
-        if (other?.client && Object.keys(other.client).length) {
-          setFieldValue(`client.currentValue`, other.client.currentValue || "");
+      // Additional data from cashFlowData
+      if (cashFlowData?.[objAndAPIKey]?._id) {
+        const cashFlowDataDetails = cashFlowData[objAndAPIKey];
+        setFieldValue(`owner`, cashFlowDataDetails.owner || "");
 
+        if (cashFlowDataDetails.owner.includes("client")) {
+          // Update client details
+          updateFields(cashFlowDataDetails.client, "client");
         }
+
+        if (UserStatus === "Married" && cashFlowDataDetails.owner.includes("partner")) {
+          // Update partner details
+          updateFields(cashFlowDataDetails.partner, "partner");
+        }
+
+        if (cashFlowDataDetails.owner.includes("joint")) {
+          // Update joint details
+          updateFields(cashFlowDataDetails.joint, "joint");
+        }
+
+
+
       }
 
-      // Handle partner-related conditions
-      if (UserStatus === "Married" && other.owner.includes("partner")) {
-        if (other?.partner && Object.keys(other.partner).length) {
-          setFieldValue(`partner.currentValue`, other.partner.currentValue || "");
-        }
-      }
 
+    } catch (error) {
+      console.error("Error in fillInitialValues:", error);
     }
   };
 
   let onSubmit = async (values) => {
     console.log(JSON.stringify(values));
     // return (false);
+    let obj = values
 
-    let obj = values;
-    obj.clientFK = localStorage.getItem("UserID");
-    console.log(obj, "new Object");
+    obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
 
-    // Handle client-related conditions
-    if (values.owner.includes("client")) {
-      obj.clientTotal = values.client.regularIncomePA;
-      console.log("Client total set");
-    } else {
-      obj.client = {};
-      obj.clientTotal = "";
-      console.log("Client data cleared");
+    obj.clientTotal = values.client.currentValue || values.joint.currentValue || "$0";
+
+    if (values.owner.includes("partner")) {
+      obj.partnerTotal = values.partner.currentValue || "$0";
     }
 
-    // Handle partner-related conditions
-    if (values.owner.includes("partner") && UserStatus === "Married") {
-      obj.partnerTotal = values.partner.regularIncomePA;
-      console.log("Partner total set");
-    } else {
-      obj.partner = {};
-      obj.partnerTotal = "";
-      console.log("Partner data cleared");
-    }
+    const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
 
     console.log(obj, "final obj");
-    const bankAccountArray = other.clientFK || "";
 
     try {
       let res;
       if (!bankAccountArray) {
-        res = await PostAxios(`${DefaultUrl}/api/${props.modalObject.key}/Add`, obj);
+        res = await PostAxios(
+          `${DefaultUrl}/api/CF/${objAndAPIKey}/Add`,
+          obj
+        );
       } else {
-        res = await PatchAxios(`${DefaultUrl}/api/${props.modalObject.key}/Update`, obj);
+        res = await PatchAxios(
+          `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
+          obj
+        );
       }
 
       if (res) {
         console.log(res);
         const updatedData = {
-          ...questionDetail,
-          [props.modalObject.key]: res,
+          ...cashFlowData,
+          [objAndAPIKey]: res,
         };
-        setQuestionDetail(updatedData);
+        setCashFlowData(updatedData);
       }
 
       openNotificationSuccess(
@@ -252,7 +362,7 @@ const CashFlowOtherAsset = (props) => {
                       </tr>
                     </thead>
                     <tbody>
-                      
+
                       {values.owner.includes("client") && (
                         <DynamicTableRow
                           rowConfig={rowConfig}
@@ -275,7 +385,7 @@ const CashFlowOtherAsset = (props) => {
                             stakeHolder="partner."
                           />
                         )}
-                      
+
                       {values.owner.includes("joint") &&
                         UserStatus === "Married" && (
                           <DynamicTableRow
