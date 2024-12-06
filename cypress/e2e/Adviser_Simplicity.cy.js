@@ -105,12 +105,12 @@ describe("Adviser Simplicity", () => {
   });
 
 
-  it.only("Personal Income Expense Card's", () => {
+  it("Personal Income Expense Card's", () => {
     personalIncomeExpense.section();
   });
 
 
-  it(" Personal Assets And Debt Card's", () => {
+  it.only(" Personal Assets And Debt Card's", () => {
     personalassetsanddebt.section();
   });
 
