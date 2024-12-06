@@ -1,15 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import React, { useEffect, useState } from "react";
+import { Field, Form, Formik } from "formik";
 import DatePicker from "react-datepicker";
-import { Image, Table } from "react-bootstrap";
-
-import childimg from "../../../Components/PersonalDetails/images/child.svg";
-import Modal from "react-bootstrap/Modal";
-// import DynamicYesNo from '../Questions/FinancialInvestments/QuestionsDetail/DynamicYesNo';
+import { Table } from "react-bootstrap";
 
 import "yup-phone";
-import * as Yup from "yup";
-import DynamicYesNo from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/DynamicYesNo";
+
 import { openNotificationSuccess, PatchAxios, PostAxios, toCommaAndDollar } from "../../../Components/Assets/Api/Api";
 import { differenceInYears } from "date-fns";
 import { CashFlowData, CashFlowScenarioData, defaultUrl, PersonalDetailsData, QuestionDetail } from "../../../Store/Store";

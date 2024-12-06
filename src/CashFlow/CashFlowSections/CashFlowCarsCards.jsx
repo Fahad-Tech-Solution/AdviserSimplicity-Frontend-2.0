@@ -17,7 +17,7 @@ const CashFlowCarsCards = (props) => {
 
     let [UserStatus] = useState(localStorage.getItem("UserStatus") !== "Single" && localStorage.getItem("UserStatus") !== "Widowed");
 
-    let towInOneArray = ["cf_personalDebt", "cf_incomeFromEducation", "cf_incomeFromRegularLivingExpense", "cf_boat", "cf_caravan"]
+    let towInOneArray = ["cf_personalDebt", "cf_incomeFromEducation", "cf_incomeFromRegularLivingExpense", "cf_boat", "cf_caravan", "cf_familyHome"]
 
     return (
         <div className='row'>

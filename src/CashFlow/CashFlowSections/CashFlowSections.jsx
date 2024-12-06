@@ -3,7 +3,7 @@ import PersonalDetails_cashFlow from '../Income&ExpenseComponents/PersonalDetail
 import CashFlowCardSet from './CashFlowCardSet'
 import { useLocation } from 'react-router-dom'
 import { GetAxios } from '../../Components/Assets/Api/Api'
-import { CashFlowData, CashFlowScenarioData, CashFlowScenarioType, CFQObject, defaultUrl, PersonalDetailsData, QuestionDetail } from '../../Store/Store'
+import { CashFlowData, CashFlowScenarioData, CashFlowScenarioType, CFQObject, defaultUrl, Loading, PersonalDetailsData, QuestionDetail } from '../../Store/Store'
 import { useRecoilState, useRecoilValue } from 'recoil'
 
 const CashFlowSections = (props) => {
@@ -19,6 +19,8 @@ const CashFlowSections = (props) => {
     let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
     let [CFObject, setCFObject] = useRecoilState(CFQObject);
 
+    let [loadingState, setLoadingState] = useRecoilState(Loading);
+
     useEffect(() => {
         let ScenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
         setCashFlowScenarioType(ScenarioObj.selectedSource);
@@ -27,6 +29,7 @@ const CashFlowSections = (props) => {
 
 
     async function FetchData(ScenarioObj) {
+        setLoadingState(true);
         if (ScenarioObj?.selectedSource !== "discoveryForm") {
 
             try {
@@ -47,7 +50,7 @@ const CashFlowSections = (props) => {
                     // console.log(GetFromDiscoveryFormOfPersonalDetails, "CashFlow ma Discovery Form ka PersonalDetail Fetch kea hai ya");
                     setPersonalDetailObj(GetFromDiscoveryFormOfPersonalDetails);
 
-                    fetchDataAllInOne(GetFromDiscoveryFormOfPersonalDetails._id);
+                    let a = await fetchDataAllInOne(GetFromDiscoveryFormOfPersonalDetails._id);
                 }
 
 
@@ -69,7 +72,12 @@ const CashFlowSections = (props) => {
 
 
 
-        FetchCFQObject();
+        let lastApi = await FetchCFQObject();
+
+
+        if (lastApi) {
+            setLoadingState(false);
+        }
 
     }
 
@@ -79,6 +87,7 @@ const CashFlowSections = (props) => {
             // console.log(JSON.stringify(res), ":res of get all inner Question Data")
             if (res) {
                 setQuestionDetail(res);
+                return true
             }
         } catch (error) {
             console.error("Error fetching questions:", error);
@@ -92,6 +101,7 @@ const CashFlowSections = (props) => {
             // console.log(JSON.stringify(res), ":res of cf_basicQuestions Data")
             if (res) {
                 setCFObject(res);
+                return true;
             }
         } catch (error) {
             console.error("Error fetching questions:", error);

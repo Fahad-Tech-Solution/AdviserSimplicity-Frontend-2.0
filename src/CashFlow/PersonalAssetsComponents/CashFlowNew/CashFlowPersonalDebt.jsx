@@ -1,10 +1,31 @@
 import { Field, Form, Formik } from 'formik';
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Row, Table } from 'react-bootstrap';
-import { handleInputBlur, handleInputChange, handleInputFocus, handleInputKeyDown, toCommaAndDollar, toPercentage } from '../../../Components/Assets/Api/Api';
+import { handleInputBlur, handleInputChange, handleInputFocus, handleInputKeyDown, openNotificationSuccess, PatchAxios, PostAxios, toCommaAndDollar, toPercentage } from '../../../Components/Assets/Api/Api';
 import DynamicYesNo from '../../../Components/Questions/FinancialInvestments/QuestionsDetail/DynamicYesNo';
+import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from '../../../Store/Store';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 const CashFlowPersonalDebt = (props) => {
+
+    let questionDetail = useRecoilValue(QuestionDetail);
+
+    let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+    let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+
+    let [UserStatus] = useState(localStorage.getItem("UserStatus"));
+    let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
+
+    let DefaultUrl = useRecoilValue(defaultUrl);
+
+
+    let personalLoans = Object.keys(questionDetail?.[props.modalObject.discoveryKey]).length > 0 ? questionDetail[props.modalObject.discoveryKey] : {
+        client: [],
+        partner: [],
+        joint: [],
+
+    };
+
 
     let handleInput = (e, setFieldValue) => {
         const value = e.target.value > 2 ? 2 : e.target.value;
@@ -13,19 +34,166 @@ const CashFlowPersonalDebt = (props) => {
 
     let initialValues = { NumberOfMap: "" };
 
-    let onSubmit = (values) => {
-
-    }
-
     const fillInitialValues = (setFieldValue) => {
+        try {
+            // Set the object and API key
+            setObjAndAPIKey(props.modalObject.key);
+
+            // console.log(personalLoans, "Discovery Form Data");
+            console.log(cashFlowData[props.modalObject.key], "cashFlowData Form Data");
+            // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
+
+            const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+
+            // Helper function to update field values
+            const updateFields = (data, prefix) => {
 
 
+                if (!data || !Object.keys(data).length) return;
+                const fields = {
+                    YearLoan: data.YearLoan || "",
+                    CurrentLoanBalance: data.CurrentLoanBalance || "",
+                    LoanType: data.LoanType || "",
+                    LoanTerm: data.LoanTerm || "",
+                    InterestRate: data.InterestRate || "",
+                    MinimumRepayments: data.MinimumRepayments || "",
+                    ActualAnnualRepayments: data.ActualAnnualRepayments || "",
+                    RepayLoanInYear: data.RepayLoanInYear || "",
+                };
+
+                console.log(fields)
+                Object.entries(fields).forEach(([key, value]) => {
+                    setFieldValue(`${key}${prefix}`, value);
+                });
+            };
+
+            // Update owner field
+            if (scenarioObj?.selectedSource === "discoveryForm" && personalLoans && personalLoans._id) {
+                setFieldValue(`NumberOfMap`, personalLoans.NumberOfMap || 0);
+
+                // Update client-related fields
+                if (personalLoans?.client) {
+                    personalLoans.client.forEach((data, index) => {
+                        updateFields(data, index);
+                    })
+                }
+
+            }
+            else {
+                // Handle cashFlowData scenario
+                const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
+                // console.log(cashFlowDetails, "cashFlowDetails")
+                if (cashFlowDetails) {
+                    setFieldValue(`NumberOfMap`, cashFlowDetails.NumberOfMap || 0);
+                    if (cashFlowDetails?.client) {
+                        cashFlowDetails.client.forEach((child, index) => {
+                            updateFields(child, index);
+                        })
+                    }
+                }
+            }
+
+
+            // Additional data from cashFlowData
+            if (cashFlowData?.[objAndAPIKey]?._id) {
+                // Handle cashFlowData scenario
+                const cashFlowDetails = cashFlowData?.[objAndAPIKey];
+                // console.log(cashFlowDetails, "cashFlowDetails")
+                if (cashFlowDetails) {
+                    setFieldValue(`NumberOfMap`, cashFlowDetails.NumberOfMap || 0);
+
+                    if (cashFlowDetails?.client) {
+                        cashFlowDetails.client.forEach((child, index) => {
+                            updateFields(child, index);
+                        })
+                    }
+                }
+            }
+
+        } catch (error) {
+            console.error("Error in fillInitialValues:", error);
+        }
     };
 
-    let FormulaSetting = () => {
+    let onSubmit = async (values) => {
 
-    }
+        const personalLoansArray = [];
+        for (let i = 0; i < values.NumberOfMap; i++) {
+            personalLoansArray.push({
+                YearLoan: values[`YearLoan${i}`],
+                CurrentLoanBalance: values[`CurrentLoanBalance${i}`],
+                LoanType: values[`LoanType${i}`],
+                LoanTerm: values[`LoanTerm${i}`],
+                InterestRate: values[`InterestRate${i}`],
+                MinimumRepayments: values[`MinimumRepayments${i}`],
+                ActualAnnualRepayments: values[`ActualAnnualRepayments${i}`],
+                RepayLoanInYear: values[`RepayLoanInYear${i}`],
+            });
+        }
 
+        // console.log(JSON.stringify(personalLoansArray));
+        // return (false);
+        let obj = {
+            NumberOfMap: values.NumberOfMap,
+            client: personalLoansArray,
+            clientTotal: toCommaAndDollar(personalLoansArray.reduce((total, entry) => total + parseFloat(entry.CurrentLoanBalance.replace(/[^0-9.-]+/g, "")), 0))
+        }
+
+        obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
+
+        const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
+
+        console.log(JSON.stringify(obj), "final obj");
+
+        try {
+            let res;
+            if (!bankAccountArray) {
+                res = await PostAxios(
+                    `${DefaultUrl}/api/CF/${objAndAPIKey}/Add`,
+                    obj
+                );
+            } else {
+                res = await PatchAxios(
+                    `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
+                    obj
+                );
+            }
+
+            if (res) {
+                console.log(res);
+                const updatedData = {
+                    ...cashFlowData,
+                    [objAndAPIKey]: res,
+                };
+                setCashFlowData(updatedData);
+            }
+
+            openNotificationSuccess(
+                "success",
+                "topRight",
+                "Success Notification",
+                'Data of "' + props.modalObject.title + '" is Saved'
+            );
+
+            // Reset the flag state if necessary
+            if (props.flagState) {
+                props.setFlagState(false);
+            }
+        } catch (error) {
+            console.error("Error occurred while making API call:", error);
+            openNotificationSuccess(
+                "error",
+                "topRight",
+                "Error Notification",
+                'Data of "' + props.modalObject.title +
+                '" is not Saved Please! try again'
+            );
+        }
+    };
+
+
+
+    let FormulaSetting = () => { }
 
     return (
         <Formik
@@ -37,7 +205,7 @@ const CashFlowPersonalDebt = (props) => {
             {({ values, setFieldValue, handleChange }) => {
                 useEffect(() => {
                     fillInitialValues(setFieldValue);
-                }, [values.NumberOfMap]);
+                }, []);
 
                 return (
                     <Form>
@@ -60,7 +228,7 @@ const CashFlowPersonalDebt = (props) => {
                                         </div>
                                     </div>
 
-                                    {values.NumberOfMap && (
+                                    {values.NumberOfMap > 0 && (
                                         <div className='mt-4'>
                                             <Table striped bordered responsive hover>
                                                 <thead>

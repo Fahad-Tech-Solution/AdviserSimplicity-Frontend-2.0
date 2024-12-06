@@ -159,7 +159,6 @@ const PersonalLoan = (props) => {
         label: ("Year " + (i + 1)).toString(),
     }))
 
-
     let AnnualFormula = (values, setFieldValue, currentInput, index) => {
 
         let RepaymentsAmount = parseFloat(values[`RepaymentsAmount${index}`].replace(/[^0-9.-]+/g, ""));

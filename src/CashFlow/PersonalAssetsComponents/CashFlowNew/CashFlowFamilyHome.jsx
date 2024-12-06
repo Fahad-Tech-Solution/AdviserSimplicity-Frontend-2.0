@@ -36,7 +36,6 @@ const CashFlowFamilyHome = (props) => {
     yearOfPurchase: familyHome.currentValue ? "Existing" : "",
   };
 
-  useEffect(() => { }, []);
 
   const fillInitialValues = (setFieldValue) => {
     console.log(familyHome);
@@ -50,6 +49,14 @@ const CashFlowFamilyHome = (props) => {
 
     }
   };
+
+
+
+  let onSubmit = async (values) => {
+    console.log(JSON.stringify(values));
+    return;
+  };
+
 
 
   const sellPropertyInYearNo = [
@@ -72,11 +79,6 @@ const CashFlowFamilyHome = (props) => {
       label: "Year " + (i + 1),
     })),
   ];
-
-  let onSubmit = async (values) => {
-    console.log(JSON.stringify(values));
-    return;
-  };
 
   let handleInnerModal = (title, values, key) => {
     // console.log(values);

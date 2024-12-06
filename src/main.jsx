@@ -10,7 +10,14 @@ import { BrowserRouter } from 'react-router-dom';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <ConfigProvider notify={notification}>
+    <ConfigProvider notify={notification}
+      theme={{
+        token: {
+          /* here is your global tokens */
+          colorPrimary: "#36b446"
+        },
+      }}
+    >
       <RecoilRoot>
         <BrowserRouter>
           <App />

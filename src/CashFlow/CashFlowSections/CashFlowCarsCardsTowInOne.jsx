@@ -17,11 +17,15 @@ const CashFlowCarsCardsTowInOne = (props) => {
                 title: "Persona Loans",
                 key: "cf_personalDebt",
                 attribute: "clientTotal",
+                discoveryKey: "personalLoans",
+                ModalBtn: true
             },
             {
                 title: "Credit Card",
                 key: "cf_creditCard",
                 attribute: "clientTotal",
+                discoveryKey: "creditCards",
+                ModalBtn: true
             }
         ],
         "cf_incomeFromEducation": [
@@ -29,6 +33,7 @@ const CashFlowCarsCardsTowInOne = (props) => {
                 title: "Education Expenses",
                 key: "cf_incomeFromEducation",
                 attribute: "clientTotal",
+                ModalBtn: true
             },
         ],
         "cf_incomeFromRegularLivingExpense": [
@@ -36,6 +41,7 @@ const CashFlowCarsCardsTowInOne = (props) => {
                 title: "Regular Living Expenses",
                 key: "cf_incomeFromRegularLivingExpense",
                 attribute: "clientTotal",
+                ModalBtn: true
             },
         ],
         "cf_boat": [
@@ -43,6 +49,7 @@ const CashFlowCarsCardsTowInOne = (props) => {
                 title: "Boat",
                 key: "cf_boat",
                 attribute: "clientTotal",
+                ModalBtn: true
             },
         ],
         "cf_caravan": [
@@ -50,8 +57,26 @@ const CashFlowCarsCardsTowInOne = (props) => {
                 title: "Caravan",
                 key: "cf_caravan",
                 attribute: "clientTotal",
+                ModalBtn: true
             },
+        ],
+        "cf_familyHome": [
+            {
+                title: "Own a Family Home",
+                SubTitle: "Market Value",
+                key: "cf_familyHome",
+                attribute: "clientTotal",
+                ModalBtn: true
+            },
+            {
+                title: "Own a Family Home",
+                SubTitle: "Loan Balance",
+                key: "cf_familyHome",
+                attribute: "partnerTotal",
+                ModalBtn: false
+            }
         ]
+
 
 
     }
@@ -77,27 +102,31 @@ const CashFlowCarsCardsTowInOne = (props) => {
                                                 className="d-block"
                                                 htmlFor={"client" + elem.key}
                                             >
-                                                {elem.title}
+                                                {elem.SubTitle ? elem.SubTitle : elem.title}
                                             </label>
-                                            <label
-                                                className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                                onClick={() => { OpenModal(elem) }}
-                                            >
-                                                <div>
-                                                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                </div>
-                                            </label>
+                                            {elem?.ModalBtn &&
+
+                                                <label
+                                                    className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                                                    onClick={() => { OpenModal(elem) }}
+                                                >
+                                                    <div>
+                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                                    </div>
+                                                </label>
+
+                                            }
                                         </div>
                                     </div>
                                     <input type="text"
                                         className="form-control inputDesign"
                                         id={"client" + elem.key}
-                                        placeholder={elem.title}
+                                        placeholder={elem.SubTitle ? elem.SubTitle : elem.title}
                                         name={"client" + elem.key}
                                         value={
                                             (cashFlowData &&
-                                                cashFlowData[CashFlowElem.key] &&
-                                                cashFlowData[CashFlowElem.key][elem.attribute]) ||
+                                                cashFlowData[elem.key] &&
+                                                cashFlowData[elem.key][elem.attribute]) ||
                                             ""
                                         }
                                     />

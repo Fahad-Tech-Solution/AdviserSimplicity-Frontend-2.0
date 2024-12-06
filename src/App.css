@@ -1463,3 +1463,7 @@ label {
     color: white; /* Set the text color to white */
   }
 }
+
+.bg-gray {
+  background: #a0a0a05d;
+}
