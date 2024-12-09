@@ -93,16 +93,16 @@ class PersonalIncomeAndExpense {
     //   cy.contains("Owner").should("be.visible");
     //   // Checking if 'Occupation' is visible and typing in the occupation field
     //   cy.contains("Occupation").should("be.visible");
-    //   cy.get("#occupation").type("Occupation").should("be.visible");
+    //   cy.get("#occupation").clear().type("Occupation").should("be.visible");
     //   // Checking if 'Employment Status' is visible and clicking the dropdown
     //   cy.contains("Employment Status").should("be.visible");
     //   cy.get("#employmentStatus").select("Full Time"); // Select "Full Time" option by text
     //   cy.contains("Name of Company");
-    //   cy.get("#nameOfCompany").type("Software Company");
+    //   cy.get("#nameOfCompany").clear().type("Software Company");
     //   cy.contains("Start Date");
-    //   cy.get("#startDate").type("06/11/2024").should("exist");
+    //   cy.get("#startDate").clear().type("06/11/2024").should("exist");
     //   cy.contains("Hours Worked");
-    //   cy.get("#hoursWorked").type("65").should("be.visible");
+    //   cy.get("#hoursWorked").clear().type("65").should("be.visible");
     //   cy.contains("Salary Package");
     //   cy.get(".text-center > #button-addon2").click();
     // });
@@ -126,16 +126,16 @@ class PersonalIncomeAndExpense {
     //     cy.get("#remunerationType").select("Gross Salary");
 
     //     cy.contains("Amount");
-    //     cy.get("#amount").type("54").should("be.visible");
+    //     cy.get("#amount").clear().type("54").should("be.visible");
 
     //     cy.contains("SG");
-    //     cy.get("#SG").type("32");
+    //     cy.get("#SG").clear().type("32");
 
     //     cy.contains("Salary Sarifice Contributions");
-    //     cy.get("#salarySacrificeContributions").type("32");
- 
+    //     cy.get("#salarySacrificeContributions").clear().type("32");
+
     //     cy.contains("After Tax Contributions");
-    //     cy.get("#afterTaxContributions").type("446");
+    //     cy.get("#afterTaxContributions").clear().type("446");
 
     //     cy.contains("Gross Salary");
     //     cy.get("#grossSalary").should("not.have.value", "");
@@ -171,11 +171,11 @@ class PersonalIncomeAndExpense {
 
     //   cy.contains("Credit Card/Mortgage Repayments");
     //   cy.get("#creditCardMortgageRepayments")
-    //     .type("486543")
+    //     .clear().type("486543")
     //     .should("be.visible");
 
     //   cy.contains("Cost Base of Car");
-    //   cy.get("#costBaseOfCar").type("857").should("be.visible");
+    //   cy.get("#costBaseOfCar").clear().type("857").should("be.visible");
 
     //   cy.contains("FBT Paid By Employer");
     //   cy.get(
@@ -183,7 +183,7 @@ class PersonalIncomeAndExpense {
     //   ).click();
 
     //   cy.contains("Running Costs of Car");
-    //   cy.get("#runningCostsOfCar").type("8673").should("be.visible");
+    //   cy.get("#runningCostsOfCar").clear().type("8673").should("be.visible");
     // });
     // cy.get(
     //   '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
@@ -208,9 +208,9 @@ class PersonalIncomeAndExpense {
     //     cy.get("#longServiceLeave").should("not.have.value", "");
 
     //     cy.contains("Amount");
-    //     cy.get("#annualLeaveAmount").type("32445");
-    //     cy.get("#sickLeaveAmount").type("365245");
-    //     cy.get("#longServiceLeaveAmount").type("53245");
+    //     cy.get("#annualLeaveAmount").clear().type("32445");
+    //     cy.get("#sickLeaveAmount").clear().type("365245");
+    //     cy.get("#longServiceLeaveAmount").clear().type("53245");
 
     //     cy.contains("Time");
     //     cy.get("#annualLeaveTime").select("Days");
@@ -265,19 +265,19 @@ class PersonalIncomeAndExpense {
     // cy.get("tbody > tr > :nth-child(1)").should("be.visible");
 
     // cy.contains("Business Name").should("be.visible");
-    // cy.get("#businessName").type("FTS").should("be.visible");
+    // cy.get("#businessName").clear().type("FTS").should("be.visible");
 
     // cy.contains("ABN").should("be.visible");
-    // cy.get("#ABN").type("64").should("be.visible");
+    // cy.get("#ABN").clear().type("64").should("be.visible");
 
     // cy.contains("Business Address").should("be.visible");
-    // cy.get("#businessAddress").type("Grow Work").should("be.visible");
+    // cy.get("#businessAddress").clear().type("Grow Work").should("be.visible");
 
     // cy.contains("Net Business Income").should("be.visible");
-    // cy.get("#netBusinessIncome").type("56745").should("be.visible");
+    // cy.get("#netBusinessIncome").clear().type("56745").should("be.visible");
 
     // cy.contains("Goodwill/Business Valuation").should("be.visible");
-    // cy.get("#goodWill").type("896");
+    // cy.get("#goodWill").clear().type("896");
     // //Footer
     // cy.get(".modal-footer").within(() => {
     //   cy.contains("Close").should("be.visible");
@@ -312,25 +312,25 @@ class PersonalIncomeAndExpense {
     // cy.get("tbody > tr > :nth-child(1)").should("be.visible");
 
     // cy.contains("Business Name").should("be.visible");
-    // cy.get("#businessName").type("FTS").should("be.visible");
+    // cy.get("#businessName").clear().type("FTS").should("be.visible");
 
     // cy.contains("ABN").should("be.visible");
-    // cy.get("#ABN").type("896").should("be.visible");
+    // cy.get("#ABN").clear().type("896").should("be.visible");
 
     // cy.contains("Business Address").should("be.visible");
-    // cy.get("#businessAddress").type("Grow Work").should("be.visible");
+    // cy.get("#businessAddress").clear().type("Grow Work").should("be.visible");
 
     // cy.contains("Total Net Partnership income").should("be.visible");
-    // cy.get("#totalNetPartnershipIncome").type("896").should("be.visible");
+    // cy.get("#totalNetPartnershipIncome").clear().type("896").should("be.visible");
 
     // cy.contains("Share of Partnership %").should("be.visible");
-    // cy.get("#shareOfPartnership").type("6").should("be.visible");
+    // cy.get("#shareOfPartnership").clear().type("6").should("be.visible");
 
     // cy.contains("Share").should("be.visible");
     // cy.get("#share").should("not.have.value", "");
 
     // cy.contains("Goodwill/Business Valuation").should("be.visible");
-    // cy.get("#goodWill").type("896");
+    // cy.get("#goodWill").clear().type("896");
 
     // //Footer
     // cy.get(".modal-footer").within(() => {
@@ -366,31 +366,31 @@ class PersonalIncomeAndExpense {
     // cy.get("tbody > tr > :nth-child(1)").should("be.visible");
 
     // cy.contains("CRN").should("be.visible");
-    // cy.get("#CRN").type("65").should("be.visible");
+    // cy.get("#CRN").clear().type("65").should("be.visible");
 
     // cy.contains("Payment Type").should("be.visible");
     // cy.get(
     //   ":nth-child(3) > .css-b62m3t-container > .css-1dq17ye-control > .css-d07bj1 > .css-1xc3v61-indicatorContainer"
     // ).click();
 
-    // cy.get(".css-kva4ii-control > .css-1f8fajx > .css-1lx7dxn").type(
+    // cy.get(".css-kva4ii-control > .css-1f8fajx > .css-1lx7dxn").clear().type(
     //   "Age Pension"
     // );
     // cy.wait(1000)
     // cy.get('#react-select-6-option-0').contains("Age Pension").click();
 
     // cy.contains("Fortnightly Payment").should("be.visible");
-    // cy.get("#fortnightlyPayment").type("987").should("be.visible");
+    // cy.get("#fortnightlyPayment").clear().type("987").should("be.visible");
 
     // cy.contains("Annual Payment Amount").should("be.visible");
-    // cy.get("#annualPaymentAmount").type("896").should("be.visible");
+    // cy.get("#annualPaymentAmount").clear().type("896").should("be.visible");
 
     // cy.contains("Centrelink Cards Held").should("be.visible");
     // cy.wait(1000)
     // cy.get(".css-1f8fajx > .css-1lx7dxn")
-    //   .type("Low Income Card")
+    //  .clear().type("Low Income Card")
     //   .should("be.visible");
-      
+
     //   cy.get('#react-select-7-option-1').click();
 
     // //Footer
@@ -427,18 +427,18 @@ class PersonalIncomeAndExpense {
     // cy.get("tbody > tr > :nth-child(1)").should("be.visible");
 
     // cy.contains("Fund Name").should("be.visible");
-    // cy.get(".css-13n1d3b > .css-1lx7dxn").type("PSS");
+    // cy.get(".css-13n1d3b > .css-1lx7dxn").clear().type("PSS");
     // cy.get('#react-select-9-listbox').contains("PSS").click();
 
     // cy.contains("Regular Income per Fortnight").should("be.visible");
 
-    // cy.get("#regularIncomePerFortnight").type("789");
+    // cy.get("#regularIncomePerFortnight").clear().type("789");
 
     // cy.contains("Regular Income p.a").should("be.visible");
     // cy.get("#regularIncomePA").should("be.visible");
 
     // cy.contains("Centrelink Deductible Amount").should("be.visible");
-    // cy.get("#centrelinkDeductibleAmount").type("896").should("be.visible");
+    // cy.get("#centrelinkDeductibleAmount").clear().type("896").should("be.visible");
 
     // cy.contains("Is Pension Tax Fee").should("be.visible");
     // cy.get(".radioButton2").contains("Yes").click();
@@ -477,11 +477,11 @@ class PersonalIncomeAndExpense {
     // cy.get("tbody > tr > :nth-child(1)").should("be.visible");
 
     // cy.contains("Country").should("be.visible");
-    // cy.get("#country").type("Pakistan");
+    // cy.get("#country").clear().type("Pakistan");
 
     // cy.contains("Regular Income p.a").should("be.visible");
 
-    // cy.get("#regularIncomePA").type("789");
+    // cy.get("#regularIncomePA").clear().type("789");
 
     // //Footer
     // cy.get(".modal-footer").within(() => {
@@ -492,7 +492,7 @@ class PersonalIncomeAndExpense {
     // cy.get("#clientincomeFromOverseasPension").should("not.have.value", "");
 
     // //Tast Card
-    // cy.get("#retirementLivingExpense").type("789");
+    // cy.get("#retirementLivingExpense").clear().type("789");
     // cy.get(".inputDesign > .btn").click();
   }
 }

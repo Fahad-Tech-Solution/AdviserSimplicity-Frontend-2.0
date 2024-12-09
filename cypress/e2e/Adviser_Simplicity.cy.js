@@ -110,7 +110,7 @@ describe("Adviser Simplicity", () => {
   });
 
 
-  it.only(" Personal Assets And Debt Card's", () => {
+  it(" Personal Assets And Debt Card's", () => {
     personalassetsanddebt.section();
   });
 
@@ -120,7 +120,7 @@ describe("Adviser Simplicity", () => {
   });
 
 
-  it("Estate Planning And Professional Adviser Card's", () => {
+  it.only("Estate Planning And Professional Adviser Card's", () => {
     adviser.section();
   });
 
