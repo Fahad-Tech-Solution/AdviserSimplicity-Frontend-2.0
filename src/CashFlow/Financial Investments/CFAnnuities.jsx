@@ -15,8 +15,6 @@ import RegularContributions from "./RegularContributions";
 
 const CFAnnuities = (props) => {
 
-   
-
 
     let questionDetail = useRecoilValue(QuestionDetail);
 
@@ -243,54 +241,64 @@ const CFAnnuities = (props) => {
     const [rowConfig, setRowConfig] = useState(() => {
         let OriginalArray = [
             {
-                name: "balanceComponents",
-                type: "number-toComma-Modal",
-                placeholder: "Balance & Components",
+                name: "originalInvestmentAmount",
+                type: "number-toComma",
+                placeholder: "Original Investment Amount",
             },
             {
-                name: "Year to Commence",
+                name: "sourceOfFunds",
                 type: "select",
                 options: loanTermOptions,
             },
             {
-                name: "riskProfile",
+                name: "annuityType",
                 type: "select",
                 options: riskProfileOptions,
 
             },
             {
-                name: "investmentReturns",
+                name: "reversionaryAnnuity",
                 type: "selectModal",
-                placeholder: "Investment Returns",
+                placeholder: "Is this a Reversionary Annuity",
                 options: InvestmentReturnsOptions,
                 ModalOption: "input Override",
                 innerModalTitle: "Input Override",
                 key: "investmentReturns",
             },
             {
-                name: "investmentFees",
+                name: "RCV",
                 type: "number-toPercent",
                 placeholder: "Investment Fees %",
             },
             {
-                name: "adviserServiceFee",
+                name: "includeFromYear",
                 type: "number-toComma",
-                placeholder: "Adviser Service Fee",
+                placeholder: "Include From Year",
             },
             {
-                name: "pensionPayments",
+                name: "term",
                 type: "number-toComma-Modal",
-                placeholder: "Pension  Payments",
+                placeholder: "Term",
             },
             {
-                name: "newPensionRollover",
+                name: "yearsUntilMaturity",
                 type: "yesnoModal",
-                placeholder: "New Pension Rollovers",
+                placeholder: "Years Until Maturity",
             },
             {
-                name: "Withdrawals",
+                name: "annualInflationRate",
+                type: "yesnoModal",
+                placeholder: "Annual Inflation Rate",
+            },
+            {
+                name: "annualPayment",
+                type: "yesnoModal",
+                placeholder: "Annual Payment",
+            },
+            {
+                name: "deductibleAmount",
                 type: "yesno",
-                placeholder: "Withdrawals",
+                placeholder: "Deductible Amount",
                 options: loanTermOptions,
             },
         ];
@@ -381,15 +389,17 @@ const CFAnnuities = (props) => {
                                                 >
                                                     Owner
                                                 </th>
-                                                <th>Balance & Components</th>
-                                                <th>Year to Commence</th>
-                                                <th>Risk Profile</th>
-                                                <th>Investment Returns</th>
-                                                <th>Investment Fees %</th>
-                                                <th>Adviser Service Fee ($)</th>
-                                                <th>Pension  Payments</th>
-                                                <th>New Pension Rollover</th>
-                                                <th>Withdrawals</th>
+                                                <th>Original Investment Amount</th>
+                                                <th>Source of Funds</th>
+                                                <th>Annuity Type</th>
+                                                <th>Is this a Reversionary Annuity</th>
+                                                <th>RCV</th>
+                                                <th>Include From Year</th>
+                                                <th>Term</th>
+                                                <th>Years Until Maturity</th>
+                                                <th>Annual Inflation Rate</th>
+                                                <th>Annual Payment</th>
+                                                <th>Deductible Amount</th>
                                             </tr>
                                         </thead>
                                         <tbody>

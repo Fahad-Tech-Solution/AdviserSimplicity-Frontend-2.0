@@ -127,7 +127,8 @@ const ModalComponent = (props) => {
         "Own a Family Home",
         "Employment Income",
         "Investments Property",
-        "Super Fund"
+        "Super Fund",
+        "Annuities"
 
     ]
 

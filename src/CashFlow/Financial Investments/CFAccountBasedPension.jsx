@@ -247,7 +247,7 @@ const CFAccountBasedPension = (props) => {
                 placeholder: "Balance & Components",
             },
             {
-                name: "Year to Commence",
+                name: "yearToCommence",
                 type: "select",
                 options: loanTermOptions,
             },
