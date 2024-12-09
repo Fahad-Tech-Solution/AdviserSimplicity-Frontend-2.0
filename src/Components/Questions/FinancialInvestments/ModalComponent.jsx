@@ -126,7 +126,9 @@ const ModalComponent = (props) => {
         "Centrelink Payments/Benefits",
         "Own a Family Home",
         "Employment Income",
-        "Investments Property"
+        "Investments Property",
+        "Super Fund"
+
     ]
 
     let xlKey = [

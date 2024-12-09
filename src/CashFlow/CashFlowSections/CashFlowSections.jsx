@@ -94,7 +94,6 @@ const CashFlowSections = (props) => {
         }
     };
 
-
     const FetchCFQObject = async () => {
         try {
             const res = await GetAxios(`${DefaultUrl}/api/CF/cf_basicQuestions/${(JSON.parse(localStorage.getItem("ScenarioObj")))._id}`);
@@ -107,8 +106,6 @@ const CashFlowSections = (props) => {
             console.error("Error fetching questions:", error);
         }
     };
-
-
 
     if (props.Data.subTitle === "Personal Details") {
         return (<PersonalDetails_cashFlow />)

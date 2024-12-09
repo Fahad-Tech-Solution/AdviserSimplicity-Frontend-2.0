@@ -2,7 +2,7 @@ import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { Row, Table } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { defaultUrl, PersonalDetailsData, QuestionDetail } from "../../../Store/Store";
+import { CashFlowData, CashFlowScenarioData, defaultUrl, PersonalDetailsData, QuestionDetail } from "../../../Store/Store";
 
 import { openNotificationSuccess, PatchAxios, PostAxios } from "../../../Components/Assets/Api/Api";
 
@@ -13,6 +13,14 @@ import CashFlowTotalCost from "./CashFlowTotalCost";
 
 const CashFlowFamilyHome = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
+  let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+  let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+
+  let [UserStatus] = useState(localStorage.getItem("UserStatus"));
+  let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
+
+
+  let DefaultUrl = useRecoilValue(defaultUrl);
   let PersonalData = useRecoilValue(PersonalDetailsData);
 
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
@@ -37,27 +45,142 @@ const CashFlowFamilyHome = (props) => {
   };
 
 
+  // const fillInitialVa lues = (setFieldValue) => {
+  //   console.log(familyHome);
+  //   setFieldValue(`address`, PersonalData.client.clientHomeAddress || "");
+  //   if (familyHome && familyHome._id) {
+  //     setFieldValue(`currentValue`, familyHome.currentValue || "");
+  //     setFieldValue(`clientOwnership`, familyHome.clientOwnership || "");
+  //     setFieldValue(`partnerOwnership`, familyHome.partnerOwnership || "");
+
+  //     setFieldValue(`loanBalance`, familyHome.loanAttached || "");
+
+  //   }
+  // };
+
+
+
   const fillInitialValues = (setFieldValue) => {
-    console.log(familyHome);
-    setFieldValue(`address`, PersonalData.client.clientHomeAddress || "");
-    if (familyHome && familyHome._id) {
-      setFieldValue(`currentValue`, familyHome.currentValue || "");
-      setFieldValue(`clientOwnership`, familyHome.clientOwnership || "");
-      setFieldValue(`partnerOwnership`, familyHome.partnerOwnership || "");
+    try {
+      // Set the object and API key
+      setObjAndAPIKey(props.modalObject.key);
 
-      setFieldValue(`loanBalance`, familyHome.loanAttached || "");
+      console.log(familyHome, "Discovery Form Data");
+      // console.log(cashFlowData, "cashFlowData Form Data");
+      // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
 
+      const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+
+      // Helper function to update field values
+      const updateFields = (data, prefix) => {
+
+        if (!data || !Object.keys(data).length) return;
+        console.log(data.clientOwnership, "Data");
+        const fields = {
+          address: data.address || PersonalData.client.clientHomeAddress || "",
+          currentValue: data.currentValue || "$0",
+          clientOwnership: data.clientOwnership || "2.50%",
+          partnerOwnership: data.partnerOwnership || "2.50%",
+          yearOfPurchase: data.yearOfPurchase || 1,
+          totalCostBase: data.totalCostBase || "$0",
+          totalCostBaseObj: data.totalCostBaseObj || {},
+          loanBalance: data.loanBalance || data.loanAttached || "",
+          familyHomeLoan: data.familyHomeLoan || {},
+          expectedGrowthRate: data.expectedGrowthRate || "2.50%",
+          sellPropertyInYear: data.sellPropertyInYear || 1,
+        };
+
+        Object.entries(fields).forEach(([key, value]) => {
+          setFieldValue(`${key}`, value);
+        });
+      };
+
+      // Update owner field
+      if (scenarioObj?.selectedSource === "discoveryForm" && familyHome && familyHome._id) {
+        setFieldValue(`address`, PersonalData.client.clientHomeAddress || "");
+        updateFields(familyHome, "client");
+      }
+      else {
+        // Handle cashFlowData scenario
+        const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
+        console.log(cashFlowDetails, "cashFlowDetails")
+        if (cashFlowDetails) {
+          updateFields(cashFlowDetails, "client");
+        }
+      }
+
+      // Additional data from cashFlowData
+      if (cashFlowData?.[objAndAPIKey]?._id) {
+        const cashFlowDataDetails = cashFlowData[objAndAPIKey];
+        updateFields(cashFlowDataDetails, "client");
+      }
+
+    } catch (error) {
+      console.error("Error in fillInitialValues:", error);
     }
   };
 
-
-
   let onSubmit = async (values) => {
     console.log(JSON.stringify(values));
-    return;
+    // return (false);
+    let obj = values
+
+    obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
+
+    obj.clientTotal = values.currentValue || "$0";
+
+    obj.partnerTotal = values.familyHomeLoan.loanBalance || "$0";
+
+    const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
+
+    console.log(obj, "final obj");
+
+    try {
+      let res;
+      if (!bankAccountArray) {
+        res = await PostAxios(
+          `${DefaultUrl}/api/CF/${objAndAPIKey}/Add`,
+          obj
+        );
+      } else {
+        res = await PatchAxios(
+          `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
+          obj
+        );
+      }
+
+      if (res) {
+        console.log(res);
+        const updatedData = {
+          ...cashFlowData,
+          [objAndAPIKey]: res,
+        };
+        setCashFlowData(updatedData);
+      }
+
+      openNotificationSuccess(
+        "success",
+        "topRight",
+        "Success Notification",
+        'Data of "' + props.modalObject.title + '" is Saved'
+      );
+
+      // Reset the flag state if necessary
+      if (props.flagState) {
+        props.setFlagState(false);
+      }
+    } catch (error) {
+      console.error("Error occurred while making API call:", error);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        'Data of "' +
+        props.modalObject.title +
+        '" is not Saved Please! try again'
+      );
+    }
   };
-
-
 
   const sellPropertyInYearNo = [
     { value: "No", label: "No" },

@@ -29,6 +29,9 @@ import CashFlowCashBankDetails from '../Financial Investments/CashFlowCashBankDe
 import CashFlowInvestmentLoansLOC from '../Financial Investments/CashFlowInvestmentLoansLOC';
 import CashFlowMarginLoan from '../Financial Investments/CashFlowMarginLoan';
 import CashFlowInvestmentsProperty from '../Financial Investments/CashFlowInvestmentsProperty';
+import CFSuperFund from '../Financial Investments/CFSuperFund';
+import CFAccountBasedPension from '../Financial Investments/CFAccountBasedPension';
+import CFAnnuities from '../Financial Investments/CFAnnuities';
 
 const CashFlowCardSet = (props) => {
 
@@ -75,7 +78,11 @@ const CashFlowCardSet = (props) => {
         // Same type of Modal
         "Investment Loans (LOC)": <CashFlowInvestmentLoansLOC />,
         "Margin Loan": <CashFlowMarginLoan />,
-        "Investments Property": <CashFlowInvestmentsProperty />
+        "Investments Property": <CashFlowInvestmentsProperty />,
+        // Same type of Modal
+        "Super Fund": <CFSuperFund />,
+        "Account Based Pension": <CFAccountBasedPension />,
+        "Annuities": <CFAnnuities />,
 
     }
 
@@ -132,7 +139,7 @@ const CashFlowCardSet = (props) => {
                     <div className="pb-4 bg-white  borderOverAll  rounded text-center">
 
                         <div>
-                            <div className="QuestionIcon p-3 curser-pointer" onClick={() => {
+                            <div clas-sName="QuestionIcon p-3 curser-pointer" onClick={() => {
                                 setFlagState(true);
                                 setModalObject({
                                     title: props.Data.subTitle + " Questions",

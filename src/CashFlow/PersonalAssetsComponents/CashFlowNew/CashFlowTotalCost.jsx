@@ -44,22 +44,6 @@ const CashFlowTotalCost = (props) => {
         }
     };
 
-    const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
-        value: (i + 1).toString(),
-        label: ("Year " + (i + 1)).toString(),
-    }));
-
-    let handleInnerModal = (title, values, key) => {
-        // console.log(values);
-
-        setModalObject({
-            title,
-            values,
-            key,
-        });
-        setFlagState(true);
-    };
-
     const rowConfig = [
         {
             name: "stampDuty",
