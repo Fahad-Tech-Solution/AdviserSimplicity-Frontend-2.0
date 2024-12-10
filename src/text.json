@@ -1,37 +1,37 @@
 {
-  "client": {
-    "expectedGrowthRate": "2.50%",
-    "sellPropertyInYear": "No",
-    "yearOfPurchase": "Existing",
-    "loanBalance": "Yes",
-    "address": "Distinctio Quia adi",
-    "currentValue": "$88",
-    "clientOwnership": "8.44%",
-    "partnerOwnership": "2.00%",
-    "totalCostBaseObj": {
-      "stampDuty": "FH Buyer",
-      "stampDutyCalculation": "Yes",
-      "otherPurchaseCosts": "$123",
-      "costBaseExisting": "$123",
-      "totalCostBase": "$123"
-    },
-    "totalCostBase": "$123",
-    "familyHomeLoan": {
-      "loanTerm": "30",
-      "repayLoanInYear": "1",
-      "loanBalance": "$123",
-      "loanType": "P&i",
-      "initialInterestRatePA": "100.00%",
-      "minimumRepaymentsPA": "$123",
-      "actualAnnualRepayments": "$12",
-      "loanBalanceCashFlowLoanBelanceLVR": {
-        "LVR": "100.00%",
-        "loanAmount": "$123",
-        "loanBalance": "$123",
-        "clientOwnership": "0.00%",
-        "partnerOwnership": "100.00%"
-      }
-    }
+  "expectedGrowthRate": "4.50%",
+  "sellPropertyInYear": "11",
+  "yearOfPurchase": "5",
+  "loanBalance": "Yes",
+  "address": "Distinctio Quia adi",
+  "currentValue": "$882,133",
+  "clientOwnership": "8.44%",
+  "partnerOwnership": "91.56%",
+  "totalCostBase": "$1,234",
+  "totalCostBaseObj": {
+    "stampDuty": "Manual",
+    "stampDutyCalculation": "No",
+    "otherPurchaseCosts": "$2,134",
+    "costBaseExisting": "$234",
+    "totalCostBase": "$1,234"
   },
-  "clientTotal": "$123"
+  "familyHomeLoan": {
+    "loanTerm": "13",
+    "repayLoanInYear": "30",
+    "loanBalance": "$324",
+    "loanBalanceCashFlowLoanBelanceLVR": {
+      "LVR": "100.00%",
+      "loanAmount": "$234",
+      "loanBalance": "$324",
+      "clientOwnership": "100.00%",
+      "partnerOwnership": "0.00%"
+    },
+    "loanType": "P&i",
+    "initialInterestRatePA": "100.00%",
+    "minimumRepaymentsPA": "$2,134",
+    "actualAnnualRepayments": "$234"
+  },
+  "scenarioFK": "674999ee0ad151e3406f3f31",
+  "clientTotal": "$882,133",
+  "partnerTotal": "$324"
 }

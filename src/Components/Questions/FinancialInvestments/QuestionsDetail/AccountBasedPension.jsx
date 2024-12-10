@@ -370,7 +370,7 @@ const AccountBasedPension = (props) => {
                                                                         <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                                                                     </Button>
                                                                 </InputGroup>
-                                                                <div class="invalid-feedback">
+                                                                <div className="invalid-feedback">
                                                                     {ShowError[`portfolioValue${i}Message`]}
                                                                 </div>
                                                             </td>

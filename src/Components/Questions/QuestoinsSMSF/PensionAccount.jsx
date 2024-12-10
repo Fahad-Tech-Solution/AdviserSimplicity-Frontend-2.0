@@ -259,7 +259,7 @@ const SmsfPensionAccount = (props) => {
                                       />
                                     </Button>
                                   </InputGroup>
-                                  <div class="invalid-feedback">
+                                  <div className="invalid-feedback">
                                     {ShowError[`pensionBenefits${i}Message`]}
                                   </div>
                                 </td>
@@ -665,7 +665,7 @@ const SmsfPensionAccountMiddleWare = (props) => {
                                       />
                                     </Button>
                                   </InputGroup>
-                                  <div class="invalid-feedback">
+                                  <div className="invalid-feedback">
                                     {ShowError[`pensionBenefitsTotal${i}Message`]}
                                   </div>
                                 </td>

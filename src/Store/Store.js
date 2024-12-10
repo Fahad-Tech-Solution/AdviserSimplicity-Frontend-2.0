@@ -213,11 +213,11 @@ export const defaultUrl = atom({
     // default: "http://192.168.3.44:7000",    // Usama bhai growWork_Beta
     // default: "http://192.168.14.244:7000",  // Usama bhai mara Mobile k sath
     // default: "http://192.168.227.244:7000", // Usama bhai Fahad bhai k sath
-    // default: "http://192.168.3.4:7000",
+    // default: "http://192.168.3.137:7000",
     // default: "http://192.168.211.242:7000",
-    default: "http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com:7000",  // Live link 
+    // default: "http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com:7000",  // Live link 
 
-    // default: "",
+    default: "",
 });
 
 export const allAPIs = atom({

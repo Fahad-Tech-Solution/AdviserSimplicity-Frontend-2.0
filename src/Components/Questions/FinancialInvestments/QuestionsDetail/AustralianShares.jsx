@@ -237,7 +237,7 @@ const AustralianShares = (props) => {
                                 className="form-control inputDesignDoubleInput"
                                 onChange={(e) => handleChange(e, setFieldValue, i)}
                             />
-                            <div class="invalid-feedback">
+                            <div className="invalid-feedback">
                                 ASX Code is Incorrect it should end with .AX
                             </div>
                         </td>

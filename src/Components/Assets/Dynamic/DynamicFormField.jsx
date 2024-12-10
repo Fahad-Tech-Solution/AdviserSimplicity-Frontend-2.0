@@ -110,7 +110,7 @@ const DynamicFormField = ({
             }}
             disabled={all?.disabled ? all.disabled : false}
           />
-          <div class="invalid-feedback">
+          <div className="invalid-feedback">
             {all.invalidMessage}
           </div>
         </React.Fragment>
@@ -119,7 +119,7 @@ const DynamicFormField = ({
     case "number-toComma-Modal":
       return (
         <React.Fragment>
-          <InputGroup className={` ${all.extraClass}`}>
+          <InputGroup className={`${all.extraClass}`}>
             <Field
               type="text"
               placeholder={placeholder}
@@ -139,13 +139,13 @@ const DynamicFormField = ({
 
             <Button className='btn bgColor modalBtn border-0' id="button-addon2"
               onClick={() => {
-                all.func(innerModalTitle, values, all.key)
+                all.func(innerModalTitle, values, all.key, stakeHolder)
               }}
             >
               <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
             </Button>
           </InputGroup>
-          <div class="invalid-feedback">
+          <div className="invalid-feedback">
             {all.invalidMessage}
           </div>
         </React.Fragment>
@@ -230,7 +230,7 @@ const DynamicFormField = ({
             </Field>
 
           </InputGroup>
-          <div class="invalid-feedback">
+          <div className="invalid-feedback">
             {all.invalidMessage}
           </div>
         </React.Fragment>

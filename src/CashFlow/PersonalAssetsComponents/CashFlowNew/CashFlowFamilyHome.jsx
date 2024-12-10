@@ -44,29 +44,13 @@ const CashFlowFamilyHome = (props) => {
     yearOfPurchase: familyHome.currentValue ? "Existing" : "",
   };
 
-
-  // const fillInitialVa lues = (setFieldValue) => {
-  //   console.log(familyHome);
-  //   setFieldValue(`address`, PersonalData.client.clientHomeAddress || "");
-  //   if (familyHome && familyHome._id) {
-  //     setFieldValue(`currentValue`, familyHome.currentValue || "");
-  //     setFieldValue(`clientOwnership`, familyHome.clientOwnership || "");
-  //     setFieldValue(`partnerOwnership`, familyHome.partnerOwnership || "");
-
-  //     setFieldValue(`loanBalance`, familyHome.loanAttached || "");
-
-  //   }
-  // };
-
-
-
   const fillInitialValues = (setFieldValue) => {
     try {
       // Set the object and API key
       setObjAndAPIKey(props.modalObject.key);
 
-      console.log(familyHome, "Discovery Form Data");
-      // console.log(cashFlowData, "cashFlowData Form Data");
+      // console.log(familyHome, "Discovery Form Data");
+      console.log(cashFlowData[props.modalObject.key], "cashFlowData Form Data");
       // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
 
       const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
@@ -81,13 +65,13 @@ const CashFlowFamilyHome = (props) => {
           currentValue: data.currentValue || "$0",
           clientOwnership: data.clientOwnership || "2.50%",
           partnerOwnership: data.partnerOwnership || "2.50%",
-          yearOfPurchase: data.yearOfPurchase || 1,
+          yearOfPurchase: data.yearOfPurchase || "1",
           totalCostBase: data.totalCostBase || "$0",
           totalCostBaseObj: data.totalCostBaseObj || {},
           loanBalance: data.loanBalance || data.loanAttached || "",
           familyHomeLoan: data.familyHomeLoan || {},
           expectedGrowthRate: data.expectedGrowthRate || "2.50%",
-          sellPropertyInYear: data.sellPropertyInYear || 1,
+          sellPropertyInYear: data.sellPropertyInYear || "1",
         };
 
         Object.entries(fields).forEach(([key, value]) => {
@@ -121,7 +105,7 @@ const CashFlowFamilyHome = (props) => {
   };
 
   let onSubmit = async (values) => {
-    console.log(JSON.stringify(values));
+    // console.log(JSON.stringify(values));
     // return (false);
     let obj = values
 
@@ -133,7 +117,7 @@ const CashFlowFamilyHome = (props) => {
 
     const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
 
-    console.log(obj, "final obj");
+    console.log(JSON.stringify(obj), "final obj");
 
     try {
       let res;

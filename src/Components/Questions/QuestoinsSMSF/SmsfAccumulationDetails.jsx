@@ -375,7 +375,7 @@ const SmsfAccumulationDetails = (props) => {
                                       />
                                     </Button>
                                   </InputGroup>
-                                  <div class="invalid-feedback">
+                                  <div className="invalid-feedback">
                                     {ShowError[`accumulationBenefits${i}Message`]}
                                   </div>
                                 </td>

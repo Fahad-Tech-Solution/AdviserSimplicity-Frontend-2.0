@@ -139,7 +139,7 @@ const CashFlowCardSet = (props) => {
                     <div className="pb-4 bg-white  borderOverAll  rounded text-center">
 
                         <div>
-                            <div clas-sName="QuestionIcon p-3 curser-pointer" onClick={() => {
+                            <div className="QuestionIcon p-3 curser-pointer" onClick={() => {
                                 setFlagState(true);
                                 setModalObject({
                                     title: props.Data.subTitle + " Questions",

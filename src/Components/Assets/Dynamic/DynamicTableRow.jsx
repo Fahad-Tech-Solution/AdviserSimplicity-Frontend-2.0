@@ -30,8 +30,7 @@ const DynamicTableRow = ({
         ""
       )}
 
-
-
+      
 
       {rowConfig.map((field, index) => {
 
@@ -51,6 +50,15 @@ const DynamicTableRow = ({
               field?.styleSet ? field.styleSet : {}
             }>
             {field.value}
+          </td>)
+        }
+        else if (field.type === "index") {
+          return (<td
+            key={index}
+            style={
+              field?.styleSet ? field.styleSet : {}
+            }>
+            {index + 1}
           </td>)
         }
         else {

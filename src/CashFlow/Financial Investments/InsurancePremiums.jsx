@@ -3,7 +3,7 @@ import DynamicTableRow from '../../Components/Assets/Dynamic/DynamicTableRow';
 import { Form, Formik } from 'formik';
 import { Row, Table } from 'react-bootstrap';
 
-const InputOverride = (props) => {
+const InsurancePremiums = (props) => {
 
     let initialValues = {
         IncomeYield: "",
@@ -34,22 +34,50 @@ const InputOverride = (props) => {
 
     let rowConfig = [
         {
-            name: "IncomeYield",
-            type: "number-toPercent",
-            placeholder: "Income Yield",
+            name: "index",
+            type: "plainText2.0",
+            value: "Fund 1"
         },
         {
-            name: "GrowthRate",
+            name: "insurancePremiums",
             type: "number-toPercent",
-            placeholder: "Growth Rate",
+            placeholder: "Insurance Premiums",
         },
         {
-            name: "Franking",
+            name: "yearsInclude",
             type: "number-toPercent",
-            placeholder: "Franking",
+            placeholder: "Years to Include",
+        },
+        {
+            name: "indexationPremiums",
+            type: "number-toPercent",
+            placeholder: "Indexation of Premiums",
         },
     ]
-    
+
+    let rowConfig1 = [
+        {
+            name: "index",
+            type: "plainText2.0",
+            value: "Fund 2"
+        },
+        {
+            name: "insurancePremiums1",
+            type: "number-toPercent",
+            placeholder: "Insurance Premiums",
+        },
+        {
+            name: "yearsInclude1",
+            type: "number-toPercent",
+            placeholder: "Years to Include",
+        },
+        {
+            name: "indexationPremiums1",
+            type: "number-toPercent",
+            placeholder: "Indexation of Premiums",
+        },
+    ]
+
     return (
         <Formik
             initialValues={initialValues}
@@ -71,14 +99,22 @@ const InputOverride = (props) => {
                                         <Table striped bordered responsive hover>
                                             <thead>
                                                 <tr>
-                                                    <th>Income Yield</th>
-                                                    <th>Growth Rate</th>
-                                                    <th>Franking</th>
+                                                    <th>Fund</th>
+                                                    <th>Insurance Premiums</th>
+                                                    <th>Years to Include</th>
+                                                    <th>Indexation of Premiums</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <DynamicTableRow
                                                     rowConfig={rowConfig}
+                                                    values={values}
+                                                    setFieldValue={setFieldValue}
+                                                    handleChange={handleChange}
+                                                    handleBlur={handleBlur}
+                                                />
+                                                <DynamicTableRow
+                                                    rowConfig={rowConfig1}
                                                     values={values}
                                                     setFieldValue={setFieldValue}
                                                     handleChange={handleChange}
@@ -97,4 +133,4 @@ const InputOverride = (props) => {
     )
 }
 
-export default InputOverride
+export default InsurancePremiums

@@ -12,6 +12,8 @@ import { useRecoilValue } from "recoil";
 import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 import InputOverride from "./InputOverride";
 import RegularContributions from "./RegularContributions";
+import BalanceComponents from "./BalanceComponents";
+import InsurancePremiums from "./InsurancePremiums";
 
 const CFSuperFund = (props) => {
 
@@ -34,74 +36,61 @@ const CFSuperFund = (props) => {
     })
 
 
-    let incomeFromOverseasPension =
-        Object.keys(questionDetail.incomeFromOverseasPension || {}).length > 0
-            ? questionDetail.incomeFromOverseasPension
-            : {
-                client: [],
-                partner: [],
-                joint: [],
-            }; // Use an empty object as default if incomeFromOverseasPension is undefined
+
+    let superAnnuationIssues = Object.keys(questionDetail.superAnnuationIssues || {}).length > 0 ? questionDetail.superAnnuationIssues : {
+        client: [],
+        partner: [],
+        joint: [],
+
+    };  // Use an empty object as default if superAnnuationIssues is undefined
 
     let initialValues = {
         owner: [],
-        client: {
-            RiskProfile: layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
-            CashOutFunds: "No",
-        },
-        partner: {
-            RiskProfile: layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
-            CashOutFunds: "No",
-        },
-        joint: {
-            RiskProfile: layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
-            CashOutFunds: "No",
-        }
     };
 
     const fillInitialValues = (setFieldValue) => {
-        console.log(incomeFromOverseasPension, "data");
-        if (incomeFromOverseasPension && incomeFromOverseasPension._id) {
-            setFieldValue(`owner`, incomeFromOverseasPension.owner || "");
+        // console.log(superAnnuationIssues, "data");
+        // if (superAnnuationIssues && superAnnuationIssues._id) {
+        //     setFieldValue(`owner`, superAnnuationIssues.owner || "");
 
-            // Handle client-related conditions
-            if (incomeFromOverseasPension.owner.includes("client")) {
-                if (
-                    incomeFromOverseasPension?.client &&
-                    Object.keys(incomeFromOverseasPension.client).length
-                ) {
-                    setFieldValue(
-                        `client.otherTaxableIncome`,
-                        incomeFromOverseasPension.client.regularIncomePA || ""
-                    );
+        //     // Handle client-related conditions
+        //     if (superAnnuationIssues.owner.includes("client")) {
+        //         if (
+        //             superAnnuationIssues?.client &&
+        //             Object.keys(superAnnuationIssues.client).length
+        //         ) {
+        //             setFieldValue(
+        //                 `client.otherTaxableIncome`,
+        //                 superAnnuationIssues.client.regularIncomePA || ""
+        //             );
 
-                    setFieldValue(`client.includeFromYear`, 1);
-                    setFieldValue(`client.upUntillYear`, 30);
-                    setFieldValue(`client.indexation`, "2.50%");
-                }
+        //             setFieldValue(`client.includeFromYear`, 1);
+        //             setFieldValue(`client.upUntillYear`, 30);
+        //             setFieldValue(`client.indexation`, "2.50%");
+        //         }
 
 
-            }
+        //     }
 
-            // Handle partner-related conditions
-            if (
-                UserStatus === "Married" &&
-                incomeFromOverseasPension.owner.includes("partner")
-            ) {
-                if (
-                    incomeFromOverseasPension?.partner &&
-                    Object.keys(incomeFromOverseasPension.partner).length
-                ) {
-                    setFieldValue(
-                        `partner.regularIncomePA`,
-                        incomeFromOverseasPension.partner.regularIncomePA || ""
-                    );
-                    setFieldValue(`partner.includeFromYear`, 1);
-                    setFieldValue(`partner.upUntillYear`, 30);
-                    setFieldValue(`partner.indexation`, "2.50%");
-                }
-            }
-        }
+        //     // Handle partner-related conditions
+        //     if (
+        //         UserStatus === "Married" &&
+        //         superAnnuationIssues.owner.includes("partner")
+        //     ) {
+        //         if (
+        //             superAnnuationIssues?.partner &&
+        //             Object.keys(superAnnuationIssues.partner).length
+        //         ) {
+        //             setFieldValue(
+        //                 `partner.regularIncomePA`,
+        //                 superAnnuationIssues.partner.regularIncomePA || ""
+        //             );
+        //             setFieldValue(`partner.includeFromYear`, 1);
+        //             setFieldValue(`partner.upUntillYear`, 30);
+        //             setFieldValue(`partner.indexation`, "2.50%");
+        //         }
+        //     }
+        // }
     };
 
     let onSubmit = async (values) => {
@@ -133,18 +122,18 @@ const CFSuperFund = (props) => {
         }
 
         console.log(obj, "final obj");
-        const bankAccountArray = incomeFromOverseasPension.clientFK || "";
+        const bankAccountArray = superAnnuationIssues.clientFK || "";
 
         try {
             let res;
             if (!bankAccountArray) {
                 res = await PostAxios(
-                    `${DefaultUrl}/api/incomeFromOverseasPension/Add`,
+                    `${DefaultUrl}/api/superAnnuationIssues/Add`,
                     obj
                 );
             } else {
                 res = await PatchAxios(
-                    `${DefaultUrl}/api/incomeFromOverseasPension/Update`,
+                    `${DefaultUrl}/api/superAnnuationIssues/Update`,
                     obj
                 );
             }
@@ -153,7 +142,7 @@ const CFSuperFund = (props) => {
                 console.log(res);
                 const updatedData = {
                     ...questionDetail,
-                    incomeFromOverseasPension: res,
+                    superAnnuationIssues: res,
                 };
                 setQuestionDetail(updatedData);
             }
@@ -183,30 +172,17 @@ const CFSuperFund = (props) => {
     };
 
     let handleInnerModal = (title, values, key, stakeHolder) => {
-        // console.log(title, values, key);
+        console.log(title, values, key, stakeHolder);
         setModalObject({
             title,
             values,
             key,
-            stakeHolder
+            stakeHolder,
+            DiscoveryObj: superAnnuationIssues,
         });
         setFlagState(true);
     };
 
-    const loanTermOptions = Array.from({ length: 31 }, (_, i) => {
-        if (i === 0) {
-            return ({
-                value: "No",
-                label: "No",
-            })
-        }
-        else {
-            return ({
-                value: (i).toString(),
-                label: ("Year " + (i)).toString(),
-            })
-        }
-    });
 
     const options =
         UserStatus !== "Single"
@@ -216,8 +192,6 @@ const CFSuperFund = (props) => {
                 { value: "joint", label: RenderName("joint") },
             ]
             : [{ value: "client", label: RenderName("client") }];
-
-
 
     let riskProfileOptions = [
         { value: "Conservative", label: "Conservative" },
@@ -233,22 +207,6 @@ const CFSuperFund = (props) => {
         { value: "Australian Shares", label: "Australian Shares" },
     ]
 
-
-
-    let RiskProfileOptions = [
-        { value: "Conservative", label: "Conservative" },
-        { value: "Moderately Conservative", label: "Moderately Conservative" },
-        { value: "Balanced", label: "Balanced" },
-        { value: "Growth", label: "Growth" },
-        { value: "High Growth", label: "High Growth" },
-        { value: "Cash", label: "Cash" },
-        { value: "International Shares", label: "International Shares" },
-        { value: "Property", label: "Property" },
-        { value: "Australian Fixed Interest", label: "Australian Fixed Interest" },
-        { value: "International Fixed Interest", label: "International Fixed Interest" },
-        { value: "Other", label: "Other" },
-        { value: "Australian Shares", label: "Australian Shares" },
-    ]
     let InvestmentReturnsOptions = [
         { value: "system", label: "System" },
         { value: "input Override", label: "Input Override" },
@@ -260,6 +218,10 @@ const CFSuperFund = (props) => {
                 name: "balanceComponents",
                 type: "number-toComma-Modal",
                 placeholder: "Balance & Components",
+                callBack: true,
+                innerModalTitle: "Balance & Components",
+                key: "balanceComponents",
+                func: handleInnerModal,
             },
             {
                 name: "riskProfile",
@@ -290,11 +252,19 @@ const CFSuperFund = (props) => {
                 name: "insurancePremiums",
                 type: "yesnoModal",
                 placeholder: "Insurance Premiums",
+                callBack: true,
+                key: "insurancePremiumsObj",
+                innerModalTitle: "Insurance Premiums",
+                func: handleInnerModal,
             },
             {
                 name: "rolloverFunds",
                 type: "yesnoModal",
                 placeholder: "Rollover Funds",
+                callBack: true,
+                key: "rolloverFundsObj",
+                innerModalTitle: "Rollover Funds",
+                func: handleInnerModal,
             },
             {
                 name: "concessionalContributions",
@@ -307,15 +277,21 @@ const CFSuperFund = (props) => {
             },
             {
                 name: "nonConcessionalContributions",
-                type: "yesno",
+                type: "yesnoModal",
                 placeholder: "Non Concessional Contributions",
-                options: RiskProfileOptions,
+                callBack: true,
+                key: "nonConcessionalContributionsObj",
+                innerModalTitle: "Non Concessional Contributions",
+                func: handleInnerModal,
             },
             {
-                name: "Withdrawals",
-                type: "yesno",
+                name: "withdrawals",
+                type: "yesnoModal",
                 placeholder: "Withdrawals",
-                options: loanTermOptions,
+                callBack: true,
+                key: "withdrawalsObj",
+                innerModalTitle: "Withdrawals",
+                func: handleInnerModal,
             },
         ];
 
@@ -342,10 +318,13 @@ const CFSuperFund = (props) => {
     });
 
     const componentMapping = {
-
+        "Balance & Components": <BalanceComponents />,
         "Input Override": <InputOverride />,
-        "Regular Contributions": <RegularContributions />,
-
+        "Insurance Premiums": <InsurancePremiums />,
+        "Rollover Funds": <InputOverride />,
+        "Concessional Contributions": <InputOverride />,
+        "Non Concessional Contributions": <InputOverride />,
+        "Withdrawals": <InputOverride />,
     }
 
     const ModalContent = (obj) => {
@@ -367,7 +346,6 @@ const CFSuperFund = (props) => {
                 return (
                     <Form>
                         <Row>
-
                             <InnerModal
                                 modalObject={modalObject}
                                 setFieldValue={setFieldValue}

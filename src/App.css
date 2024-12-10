@@ -1005,6 +1005,7 @@ input[type="checkbox"] + .femaleSmoking + .maleNonSmoking {
 
 .min-w-25 {
   min-width: 9% !important;
+  /* max-width: 9% !important; */
 }
 .ant-notification-notice-icon {
   width: 35px !important;
@@ -1303,7 +1304,6 @@ label {
   color: gray !important;
   background-color: transparent !important;
   &&:is(:hover, :focus, :active) {
-    
     border: 2px dashed #36b446;
     color: #36b446 !important;
     background-color: transparent !important;
