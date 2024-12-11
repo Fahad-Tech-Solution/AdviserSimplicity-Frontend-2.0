@@ -120,12 +120,12 @@ describe("Adviser Simplicity", () => {
   });
 
 
-  it.only("Estate Planning And Professional Adviser Card's", () => {
+  it("Estate Planning And Professional Adviser Card's", () => {
     adviser.section();
   });
 
 
-  it("Personal Insurance Card's", () => {
+  it.only("Personal Insurance Card's", () => {
     personalInsurance.section();
   });
 
