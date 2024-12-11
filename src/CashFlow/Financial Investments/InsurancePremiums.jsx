@@ -6,9 +6,9 @@ import { Row, Table } from 'react-bootstrap';
 const InsurancePremiums = (props) => {
 
     let initialValues = {
-        IncomeYield: "",
-        GrowthRate: "",
-        Franking: "",
+        insurancePremiums: "",
+        yearsInclude: "",
+        indexationPremiums: "",
     }
 
     let fillInitialValues = (setFieldValue) => {
@@ -16,9 +16,13 @@ const InsurancePremiums = (props) => {
             let SubObj = props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")]
             if (SubObj[props.modalObject.key + "Obj"]) {
                 let Data = SubObj[props.modalObject.key + "Obj"];
-                setFieldValue("IncomeYield", Data.IncomeYield)
-                setFieldValue("GrowthRate", Data.GrowthRate)
-                setFieldValue("Franking", Data.Franking)
+                setFieldValue("insurancePremiums", Data.insurancePremiums)
+                setFieldValue("yearsInclude", Data.yearsInclude)
+                setFieldValue("indexationPremiums", Data.indexationPremiums)
+
+                setFieldValue("insurancePremiums1", Data.insurancePremiums1)
+                setFieldValue("yearsInclude1", Data.yearsInclude1)
+                setFieldValue("indexationPremiums1", Data.indexationPremiums1)
             }
         }
     }
@@ -32,26 +36,48 @@ const InsurancePremiums = (props) => {
         }
     }
 
+    const yearsIncludedArray = Array.from({ length: 31 }, (_, i) => {
+        if (i === 0) {
+            return ({
+                value: "No",
+                label: "No",
+            })
+        }
+        else {
+            return ({
+                value: (i).toString(),
+                label: ("Year " + (i)).toString(),
+            })
+        }
+    });
+
+    const indexation = Array.from({ length: 21 }, (_, i) => ({
+        value: (i * 0.5).toFixed(2) + "%",
+        label: (i * 0.5).toFixed(2) + "%",
+    }));
+
     let rowConfig = [
         {
             name: "index",
             type: "plainText2.0",
-            value: "Fund 1"
+            value: "Fund 1",
+            styleSet: { fontWeight: "800", fontSize: "16px" }
         },
         {
             name: "insurancePremiums",
-            type: "number-toPercent",
+            type: "number-toComma",
             placeholder: "Insurance Premiums",
+            styleSet: { width: "11vw" }
         },
         {
             name: "yearsInclude",
-            type: "number-toPercent",
-            placeholder: "Years to Include",
+            type: "select",
+            options: yearsIncludedArray,
         },
         {
             name: "indexationPremiums",
-            type: "number-toPercent",
-            placeholder: "Indexation of Premiums",
+            type: "select",
+            options: indexation,
         },
     ]
 
@@ -59,22 +85,23 @@ const InsurancePremiums = (props) => {
         {
             name: "index",
             type: "plainText2.0",
-            value: "Fund 2"
+            value: "Fund 2",
+            styleSet: { fontWeight: "800", fontSize: "16px" }
         },
         {
             name: "insurancePremiums1",
-            type: "number-toPercent",
+            type: "number-toComma",
             placeholder: "Insurance Premiums",
         },
         {
             name: "yearsInclude1",
-            type: "number-toPercent",
-            placeholder: "Years to Include",
+            type: "select",
+            options: yearsIncludedArray,
         },
         {
             name: "indexationPremiums1",
-            type: "number-toPercent",
-            placeholder: "Indexation of Premiums",
+            type: "select",
+            options: indexation,
         },
     ]
 
@@ -93,7 +120,7 @@ const InsurancePremiums = (props) => {
                 return (
                     <Form>
                         <Row>
-                            <div className="col-md-12">
+                            <div className="col-md-12" >
                                 <div className="row justify-content-center">
                                     <div className="mt-4">
                                         <Table striped bordered responsive hover>

@@ -7,11 +7,11 @@ import { toCommaAndDollar } from '../../Components/Assets/Api/Api';
 const TotalCostBase = (props) => {
 
     let initialValues = {
-        Contribution: "",
-        RegularContributions: "",
-        ContributeFromYear: "",
-        ContributeUpUntil: "",
-        Indexation: "",
+        StampDutyType: "",
+        StampDutyValue: "",
+        OtherPurchaseCosts: "",
+        CostBaseExisting: "",
+        TotalCostBase: "",
     }
 
     let fillInitialValues = (setFieldValue) => {

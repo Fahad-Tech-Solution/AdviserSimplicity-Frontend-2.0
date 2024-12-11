@@ -3,14 +3,14 @@ import DynamicTableRow from '../../Components/Assets/Dynamic/DynamicTableRow';
 import { Form, Formik } from 'formik';
 import { Row, Table } from 'react-bootstrap';
 
-const RegularContributions = (props) => {
+const regularContributions = (props) => {
 
     let initialValues = {
-        Contribution: "",
-        RegularContributions: "",
-        ContributeFromYear: "",
-        ContributeUpUntil: "",
-        Indexation: "",
+        contribution: "",
+        regularContributions: "",
+        contributeFromYear: "",
+        contributeUpUntil: "",
+        indexation: "",
     }
 
     let fillInitialValues = (setFieldValue) => {
@@ -19,11 +19,11 @@ const RegularContributions = (props) => {
             let SubObj = props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")]
             if (SubObj[props.modalObject.key + "Obj"]) {
                 let Data = SubObj[props.modalObject.key + "Obj"];
-                setFieldValue("Contribution", Data.Contribution)
-                setFieldValue("RegularContributions", Data.RegularContributions)
-                setFieldValue("ContributeFromYear", Data.ContributeFromYear)
-                setFieldValue("ContributeUpUntil", Data.ContributeUpUntil)
-                setFieldValue("Indexation", Data.Indexation)
+                setFieldValue("contribution", Data.contribution)
+                setFieldValue("regularContributions", Data.regularContributions)
+                setFieldValue("contributeFromYear", Data.contributeFromYear)
+                setFieldValue("contributeUpUntil", Data.contributeUpUntil)
+                setFieldValue("indexation", Data.indexation)
             }
         }
     }
@@ -49,29 +49,29 @@ const RegularContributions = (props) => {
 
     let rowConfig = [
         {
-            name: "Contribution",
+            name: "contribution",
             type: "number-toComma",
             placeholder: "Contribution",
         },
         {
-            name: "RegularContributions",
+            name: "regularContributions",
             type: "number-toComma",
-            placeholder: "Regular Contributions p.a",
+            placeholder: "Regular contributions p.a",
         },
         {
-            name: "ContributeFromYear",
+            name: "contributeFromYear",
             type: "select",
             placeholder: "Contribute from Year",
             options: loanTermOptions
         },
         {
-            name: "ContributeUpUntil",
+            name: "contributeUpUntil",
             type: "select",
             placeholder: "Contribute Up Until",
             options: loanTermOptions
         },
         {
-            name: "Indexation",
+            name: "indexation",
             type: "select",
             placeholder: "Indexation",
             options: indexation
@@ -100,7 +100,7 @@ const RegularContributions = (props) => {
                                             <thead>
                                                 <tr>
                                                     <th>Contribution</th>
-                                                    <th>Regular Contributions p.a</th>
+                                                    <th>Regular contributions p.a</th>
                                                     <th>Contribute from Year</th>
                                                     <th>Contribute Up Until</th>
                                                     <th>Indexation</th>
@@ -127,4 +127,4 @@ const RegularContributions = (props) => {
     )
 }
 
-export default RegularContributions
+export default regularContributions

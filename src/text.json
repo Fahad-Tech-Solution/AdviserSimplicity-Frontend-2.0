@@ -1,37 +1,66 @@
 {
-  "expectedGrowthRate": "4.50%",
-  "sellPropertyInYear": "11",
-  "yearOfPurchase": "5",
-  "loanBalance": "Yes",
-  "address": "Distinctio Quia adi",
-  "currentValue": "$882,133",
-  "clientOwnership": "8.44%",
-  "partnerOwnership": "91.56%",
-  "totalCostBase": "$1,234",
-  "totalCostBaseObj": {
-    "stampDuty": "Manual",
-    "stampDutyCalculation": "No",
-    "otherPurchaseCosts": "$2,134",
-    "costBaseExisting": "$234",
-    "totalCostBase": "$1,234"
-  },
-  "familyHomeLoan": {
-    "loanTerm": "13",
-    "repayLoanInYear": "30",
-    "loanBalance": "$324",
-    "loanBalanceCashFlowLoanBelanceLVR": {
-      "LVR": "100.00%",
-      "loanAmount": "$234",
-      "loanBalance": "$324",
-      "clientOwnership": "100.00%",
-      "partnerOwnership": "0.00%"
+  "owner": ["client", "partner", "joint"],
+  "client": {
+    "riskProfile": "Australian Shares",
+    "cashOutFunds": "2",
+    "currentBalance": "$1",
+    "costBase": "$32",
+    "investmentReturns": "input Override",
+    "investmentReturnsObj": {
+      "incomeYield": "100.00%",
+      "growthRate": "100.00%",
+      "franking": "100.00%"
     },
-    "loanType": "P&i",
-    "initialInterestRatePA": "100.00%",
-    "minimumRepaymentsPA": "$2,134",
-    "actualAnnualRepayments": "$234"
+    "reinvestIncome": "Yes",
+    "regularContributions": "Yes",
+    "regularContributionsObj": {
+      "contribution": "$23",
+      "regularContributions": "$23",
+      "contributeFromYear": "10",
+      "contributeUpUntil": "10",
+      "indexation": "4.00%"
+    }
   },
-  "scenarioFK": "674999ee0ad151e3406f3f31",
-  "clientTotal": "$882,133",
-  "partnerTotal": "$324"
+  "partner": {
+    "riskProfile": "Australian Shares",
+    "cashOutFunds": "9",
+    "currentBalance": "$1",
+    "costBase": "$123",
+    "investmentReturns": "input Override",
+    "investmentReturnsObj": {
+      "incomeYield": "12.00%",
+      "growthRate": "2.00%",
+      "franking": "2.00%"
+    },
+    "reinvestIncome": "Yes",
+    "regularContributions": "Yes",
+    "regularContributionsObj": {
+      "contribution": "$23",
+      "regularContributions": "$23",
+      "contributeFromYear": "10",
+      "contributeUpUntil": "10",
+      "indexation": "4.50%"
+    }
+  },
+  "joint": {
+    "riskProfile": "Australian Shares",
+    "cashOutFunds": "11",
+    "currentBalance": "$100",
+    "costBase": "$123",
+    "investmentReturns": "input Override",
+    "investmentReturnsObj": {
+      "incomeYield": "77.00%",
+      "growthRate": "77.00%",
+      "franking": "77.00%"
+    },
+    "reinvestIncome": "Yes",
+    "regularContributions": "Yes",
+    "regularContributionsObj": {
+      "contribution": "$23",
+      "regularContributions": "$2,322",
+      "contributeFromYear": "10",
+      "contributeUpUntil": "9",
+      "indexation": "4.50%"
+    }
+  }
 }

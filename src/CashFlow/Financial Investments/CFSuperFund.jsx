@@ -14,6 +14,8 @@ import InputOverride from "./InputOverride";
 import RegularContributions from "./RegularContributions";
 import BalanceComponents from "./BalanceComponents";
 import InsurancePremiums from "./InsurancePremiums";
+import RolloverFunds from "./RolloverFunds";
+import ConcessionalContributions from "./ConcessionalContributions";
 
 const CFSuperFund = (props) => {
 
@@ -321,8 +323,8 @@ const CFSuperFund = (props) => {
         "Balance & Components": <BalanceComponents />,
         "Input Override": <InputOverride />,
         "Insurance Premiums": <InsurancePremiums />,
-        "Rollover Funds": <InputOverride />,
-        "Concessional Contributions": <InputOverride />,
+        "Rollover Funds": <RolloverFunds />,
+        "Concessional Contributions": <ConcessionalContributions />,
         "Non Concessional Contributions": <InputOverride />,
         "Withdrawals": <InputOverride />,
     }

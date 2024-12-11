@@ -28,6 +28,7 @@ const CashFlowInvestmentsProperty = (props) => {
     }
 
     let onSubmit = (values) => {
+        console.log(JSON.stringify(values))
         // props.setFieldValue(props.modalObject.stakeHolder + props.modalObject.key + "Obj", values)
 
         // // Reset the flag state if necessary

@@ -36,7 +36,9 @@ const CashFlowInvestmentLoansLOC = (props) => {
 
     let initialValues = { NumberOfMap: "" };
 
-    let onSubmit = (values) => { }
+    let onSubmit = (values) => {
+        console.log(JSON.stringify(values))
+    }
 
     const fillInitialValues = (setFieldValue) => {
 

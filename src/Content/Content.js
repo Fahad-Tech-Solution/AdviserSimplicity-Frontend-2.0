@@ -421,6 +421,7 @@ export const content = {
                     title: "Australian Shares",
                     img: PortFolio,
                     key: "cf_AustralianShares",
+                    sourceKey: "australianShareMarket",
                 },
                 {
                     title: "Platform Investment",
