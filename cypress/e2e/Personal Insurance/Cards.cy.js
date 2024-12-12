@@ -59,6 +59,7 @@ class PersonalInsurance {
       cy.get("#startDate0").type(12 - 1 - 2021);
     });
 
+//Sererio no 1 
     cy.contains("Sum Insured");
     cy.get("#button-addon2").click();
 
@@ -69,7 +70,7 @@ class PersonalInsurance {
     );
 
     cy.contains("How many Policies do Admin have :");
-    cy.get(".row > .d-flex > div > #NumberOfMap").type("1");
+    cy.get(".row > .d-flex > div > #NumberOfMap").type("4");
 
     cy.get(".col-md-12 > .row > .mt-4 > .table-responsive > .table").within(
       () => {
@@ -85,6 +86,57 @@ class PersonalInsurance {
 
         cy.contains("Frequency");
         cy.get("#frequency0").select("Smoker");
+
+        //2nd
+
+        cy.contains("No#").should("be.visible");
+        cy.get("tbody > tr > :nth-child(2)").should("be.visible");
+        cy.contains("2").should("be.visible");
+
+        cy.contains("Cover Type");
+        cy.get("#coverType1").select("TPD");
+
+        cy.contains("Premiums");
+        cy.get('[colspan="1"] > #premiums1').type("345");
+
+        cy.contains("Frequency");
+        cy.get("#frequency1").select("Smoker");
+
+        //3rd
+
+        cy.contains("No#").should("be.visible");
+        cy.get("tbody > tr > :nth-child(3)").should("be.visible");
+        cy.contains("3").should("be.visible");
+
+        cy.contains("Cover Type");
+        cy.get("#coverType2").select("Trauma");
+
+        cy.contains("Premiums");
+        cy.get('[colspan="1"] > #premiums2').type("345");
+
+        cy.contains("Frequency");
+        cy.get("#frequency2").select("Smoker");
+
+        //4th
+
+        cy.contains("No#").should("be.visible");
+        cy.get("tbody > tr > :nth-child(4)").should("be.visible");
+        cy.contains("4").should("be.visible");
+
+        cy.contains("Cover Type");
+        cy.get("#coverType3").select("Income protection");
+
+        cy.contains("Premiums");
+        cy.get('.pe-2 > #premiums3').type("987");
+
+        cy.contains("Waiting Period");
+        cy.get('#waitingPeriod3').select("30 Days");
+
+        cy.contains('Benefit Period')
+        cy.get('#benefitPeriod3') .select('2 Years')
+
+cy.contains('Frequency')
+        cy.get('#frequency3').select('Smoker')
       }
     );
     cy.get(
@@ -94,6 +146,18 @@ class PersonalInsurance {
       cy.contains("Submit").click();
     });
 
+
+   
+
+    //Admin_Sum Insured
+    cy.contains("Admin_Sum Insured");
+    cy.get(
+      ":nth-child(5) > .modal-dialog > .modal-content > .modal-header > .btn-close"
+    );
+
+  
+
+    //Premiuma P.A
     cy.contains("Premiums p.a");
     cy.get("tbody > tr > :nth-child(8)").within(() => {
       cy.get(".btn.bgColor.modalBtn.border-0.btn.btn-primary").click();
@@ -145,9 +209,6 @@ class PersonalInsurance {
 
     //Admin_Beneficiaries Card
     cy.contains("Admin_Beneficiaries");
-    cy.get(
-      ":nth-child(5) > .modal-dialog > .modal-content > .modal-header > .btn-close"
-    );
 
     cy.contains("How many beneficiaries do Admin have :");
     cy.get(".row > .d-flex > div > #NumberOfMap").type("1");
@@ -184,12 +245,33 @@ class PersonalInsurance {
 
     cy.contains("Close");
     cy.contains("Submit").click();
-
-    cy.get(".py-4").within(() => {
+// Cards
+cy.get(':nth-child(1) > .py-4').within(() => {
       cy.contains("Life Insurance");
       cy.get("img");
       cy.contains("Admin");
-      cy.get("#clientLife").should("not.have.value", "");
+      cy.get('#clientLife').should("not.have.value", "");
+    });
+
+    cy.get(':nth-child(2) > .py-4').within(() => {
+      cy.contains("TPD");
+      cy.get("img");
+      cy.contains("Admin");
+      cy.get('#clientTPD').should("not.have.value", "");
+    });
+
+    cy.get(':nth-child(3) > .py-4').within(() => {
+      cy.contains("Trauma");
+      cy.get("img");
+      cy.contains("Admin");
+      cy.get('#clientTrauma').should("not.have.value", "");
+    });
+
+    cy.get(':nth-child(4) > .py-4').within(() => {
+      cy.contains("Income Protection");
+      cy.get("img");
+      cy.contains("Admin");
+      cy.get('#clientIncomeProtection').should("not.have.value", "");
     });
   }
 }

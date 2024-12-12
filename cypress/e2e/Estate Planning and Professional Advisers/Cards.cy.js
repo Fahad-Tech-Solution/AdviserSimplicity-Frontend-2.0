@@ -69,7 +69,8 @@ class EstatePlanningAndProfessionalAdviser {
 
     //Select Question Section End Here
 
-    Wills: cy.get(":nth-child(1) > .py-4").within(() => {
+    //Wills:
+    cy.get(":nth-child(1) > .py-4").within(() => {
       cy.contains("Wills");
       cy.get("img");
       cy.contains("Admin");

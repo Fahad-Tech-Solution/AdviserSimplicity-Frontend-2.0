@@ -125,12 +125,12 @@ describe("Adviser Simplicity", () => {
   });
 
 
-  it.only("Personal Insurance Card's", () => {
+  it("Personal Insurance Card's", () => {
     personalInsurance.section();
   });
 
 
-  it("Business Entities Card's", () => {
+  it.only("Business Entities Card's", () => {
     businessEntities.section();
   });
 
