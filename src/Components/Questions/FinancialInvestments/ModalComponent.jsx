@@ -128,8 +128,8 @@ const ModalComponent = (props) => {
         "Employment Income",
         "Investments Property",
         "Super Fund",
-        "Annuities"
-
+        "Annuities",
+        "Account Based Pension",
     ]
 
     let xlKey = [

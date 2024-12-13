@@ -16,7 +16,6 @@ const TotalCostBase = (props) => {
 
     let fillInitialValues = (setFieldValue) => {
         console.log(props.modalObject)
-
         let SubObj = props.modalObject.values
         if (SubObj[props.modalObject.key]) {
             let Data = SubObj[props.modalObject.key];

@@ -43,6 +43,13 @@ const DynamicFormField = ({
               all.func(values, setFieldValue, e.target, stakeHolder);
             }
           }}
+          onBlur={
+            (e) => {
+              if (all.BlurHandler) {
+                all.BlurHandler(values, setFieldValue, e.target, stakeHolder)
+              }
+            }
+          }
           disabled={all?.disabled ? all.disabled : false}
         />
       );

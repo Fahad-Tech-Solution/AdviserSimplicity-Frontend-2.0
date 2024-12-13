@@ -69,42 +69,42 @@ const InnerModal = (props) => {
         "Pension Benefits",
         // "Pension Benefits Details",
         "SMSF Platform Investments Detail",
-        "Loan Balance"
-
+        "Loan Balance",
+        "Concessional Contributions",
+        "Non Concessional Contributions",
+        "Balance & Rollover Amount",
+        "Pension Payments",
+        "New Pension Rollover"
     ]
+
+    let mdTitles = ["Other Percentage Amount"]
 
 
     let [size, setSize] = useState("md");
 
     useEffect(() => {
-        // console.log(props.modalObject, "inner Modal"); // Log the modalObject
-
-        // Check if modalObject is defined and has a title
         if (props.modalObject && props.modalObject.title) {
             let currentTitle = props.modalObject.title;
 
-            // Check if the title contains an underscore
             if (currentTitle.includes('_')) {
                 currentTitle = (currentTitle.split('_').slice(1))[0];
-
             }
 
-            console.log(currentTitle, "currentTitle"); // Log the modalObject
+            let modalSize = "lg"; // Default size
 
-            let modalSize = fullTitles.includes(currentTitle)
-                ? "xxl"
-                : xlTitles.includes(currentTitle)
-                    ? "xl"
-                    : xlKeys.includes(props.modalObject.key)
-                        ? "xl"
-                        : "lg";
+            if (fullTitles.includes(currentTitle)) {
+                modalSize = "xxl";
+            } else if (xlTitles.includes(currentTitle)) {
+                modalSize = "xl";
+            } else if (xlKeys.includes(props.modalObject.key)) {
+                modalSize = "xl";
+            } else if (mdTitles.includes(currentTitle)) {
+                modalSize = "md";
+            }
 
             setSize(modalSize);
-
         }
     }, [props.modalObject]);
-
-
 
 
     return (

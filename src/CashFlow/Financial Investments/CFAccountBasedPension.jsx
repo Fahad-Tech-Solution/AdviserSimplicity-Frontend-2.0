@@ -12,10 +12,12 @@ import { useRecoilValue } from "recoil";
 import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 import InputOverride from "./InputOverride";
 import RegularContributions from "./RegularContributions";
+import Withdrawals from "./Withdrawals";
+import BalanceRolloverAmount from "./BalanceRolloverAmount";
+import NewPensionRollover from "./NewPensionRollover";
+import PensionPayments from "./PensionPayments";
 
 const CFAccountBasedPension = (props) => {
-
-
 
     let questionDetail = useRecoilValue(QuestionDetail);
 
@@ -24,17 +26,6 @@ const CFAccountBasedPension = (props) => {
 
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
-
-
-    let layoutSwitchArray = ["Platform Investment", "Other Investments"]
-
-    let [layoutSwitchFlag, setLayoutSwitchFlag] = useState(() => {
-        if (layoutSwitchArray.includes(props.modalObject.title)) {
-            return true
-        }
-        return false
-    })
-
 
     let incomeFromOverseasPension =
         Object.keys(questionDetail.incomeFromOverseasPension || {}).length > 0
@@ -47,18 +38,6 @@ const CFAccountBasedPension = (props) => {
 
     let initialValues = {
         owner: [],
-        client: {
-            RiskProfile: layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
-            CashOutFunds: "No",
-        },
-        partner: {
-            RiskProfile: layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
-            CashOutFunds: "No",
-        },
-        joint: {
-            RiskProfile: layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
-            CashOutFunds: "No",
-        }
     };
 
     const fillInitialValues = (setFieldValue) => {
@@ -239,22 +218,31 @@ const CFAccountBasedPension = (props) => {
         { value: "input Override", label: "Input Override" },
     ]
 
+
+
+
     const [rowConfig, setRowConfig] = useState(() => {
         let OriginalArray = [
             {
-                name: "balanceComponents",
+                name: "balanceRolloverAmount",
                 type: "number-toComma-Modal",
-                placeholder: "Balance & Components",
+                placeholder: "Balance & Rollover Amount",
+                callBack: true,
+                innerModalTitle: "Balance & Rollover Amount",
+                key: "balanceRolloverAmount",
+                func: handleInnerModal,
             },
             {
                 name: "yearToCommence",
                 type: "select",
-                options: loanTermOptions,
+                options: riskProfileOptions,
+                placeholder: "Year To Commence",
             },
             {
                 name: "riskProfile",
                 type: "select",
                 options: riskProfileOptions,
+                placeholder: "Year to Commence",
 
             },
             {
@@ -268,50 +256,42 @@ const CFAccountBasedPension = (props) => {
             },
             {
                 name: "investmentFees",
-                type: "number-toPercent",
+                type: "number-toComma",
                 placeholder: "Investment Fees %",
             },
             {
                 name: "adviserServiceFee",
                 type: "number-toComma",
-                placeholder: "Adviser Service Fee",
+                placeholder: "Adviser Service Fee ($)",
             },
             {
                 name: "pensionPayments",
                 type: "number-toComma-Modal",
-                placeholder: "Pension  Payments",
+                placeholder: "Pension Payments",
+                callBack: true,
+                innerModalTitle: "Pension Payments",
+                key: "pensionPayments",
+                func: handleInnerModal,
             },
             {
                 name: "newPensionRollover",
                 type: "yesnoModal",
-                placeholder: "New Pension Rollovers",
+                placeholder: "New Pension Rollover",
+                callBack: true,
+                key: "newPensionRollover",
+                innerModalTitle: "New Pension Rollover",
+                func: handleInnerModal,
             },
             {
-                name: "Withdrawals",
-                type: "yesno",
+                name: "withdrawals",
+                type: "yesnoModal",
                 placeholder: "Withdrawals",
-                options: loanTermOptions,
+                callBack: true,
+                key: "withdrawals",
+                innerModalTitle: "Withdrawals",
+                func: handleInnerModal,
             },
         ];
-
-        if (layoutSwitchArray.includes(props.modalObject.title)) {
-            // Create the new object
-            const newObject = {
-                name: "InvestmentFees",
-                type: "number-toPercent",
-                placeholder: "Investment Fees",
-            };
-
-            // Find the index of the "CashOutFunds" object
-            const CashOutFundsIndex = OriginalArray.findIndex(
-                (item) => item.name === "CashOutFunds"
-            );
-
-            // Insert the new object before "CashOutFunds"
-            if (CashOutFundsIndex !== -1) {
-                OriginalArray.splice(CashOutFundsIndex, 0, newObject);
-            }
-        }
 
         return OriginalArray;
     });
@@ -319,7 +299,10 @@ const CFAccountBasedPension = (props) => {
     const componentMapping = {
 
         "Input Override": <InputOverride />,
-        "Regular Contributions": <RegularContributions />,
+        "Balance & Rollover Amount": <BalanceRolloverAmount />,
+        "Withdrawals": <Withdrawals />,
+        "New Pension Rollover": <NewPensionRollover />,
+        "Pension Payments": <PensionPayments />
 
     }
 
@@ -380,7 +363,8 @@ const CFAccountBasedPension = (props) => {
                                                 >
                                                     Owner
                                                 </th>
-                                                <th>Balance & Components</th>
+
+                                                <th>Balance & Rollover Amount</th>
                                                 <th>Year to Commence</th>
                                                 <th>Risk Profile</th>
                                                 <th>Investment Returns</th>
@@ -414,19 +398,6 @@ const CFAccountBasedPension = (props) => {
                                                         handleBlur={handleBlur}
                                                         handleInnerModal={handleInnerModal}
                                                         stakeHolder="partner."
-                                                    />
-                                                )}
-
-                                            {values.owner.includes("joint") &&
-                                                UserStatus === "Married" && (
-                                                    <DynamicTableRow
-                                                        rowConfig={rowConfig}
-                                                        values={values}
-                                                        setFieldValue={setFieldValue}
-                                                        handleChange={handleChange}
-                                                        handleBlur={handleBlur}
-                                                        handleInnerModal={handleInnerModal}
-                                                        stakeHolder="joint."
                                                     />
                                                 )}
                                         </tbody>

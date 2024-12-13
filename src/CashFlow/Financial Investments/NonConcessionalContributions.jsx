@@ -5,25 +5,29 @@ import { Row, Table } from 'react-bootstrap';
 import InnerModal from '../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal';
 import ContributionSplittingInner from './ContributionSplittingInner';
 import OtherPercentageAmount from './OtherPercentageAmount';
+import LumpsumNonConcessionalNonConcessional from './LumpsumNonConcessionalNonConcessional';
+import DownSizerContributionNonConcessional from "./DownSizerContributionNonConcessional";
+import ApplySpouseContribution from "./ApplySpouseContribution";
 
-const ConcessionalContributions = (props) => {
+const NonConcessionalContributions = (props) => {
 
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
 
     let initialValues = {
-        employerSGContributions: "",
-        personalSalarySacrifice: "",
-        personalSalarySacrificeObj: {},
-        affordabilityAmountOtherAmount: "",
-        indexationOtherAmount: "",
-        contributionsFund: "",
+        lumpsumNonConcessionalYearOne: "",
+        contributionsToFund: "",
+        lumpsumNonConcessional: "",
+        lumpsumNonConcessionalObj: {},
+        regularNonConcessional: "",
         yearCommence: "",
         yearsInclude: "",
-        catchUpContribution: "",
-        contributionsToFund: "",
-        contributionSplitting: "",
-        contributionSplittingObj: {},
+        contributionsFund: "",
+        governmentCoContribution: "",
+        // downSizerContribution: "",
+        // downSizerContributionObj: {},
+        applySpouseContribution: "",
+        applySpouseContributionObj: {},
     }
 
     let fillInitialValues = (setFieldValue) => {
@@ -32,18 +36,19 @@ const ConcessionalContributions = (props) => {
             let SubObj = props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")]
             if (SubObj[props.modalObject.key + "Obj"]) {
                 let Data = SubObj[props.modalObject.key + "Obj"];
-                setFieldValue("employerSGContributions", Data.employerSGContributions);
-                setFieldValue("personalSalarySacrifice", Data.personalSalarySacrifice);
-                setFieldValue("personalSalarySacrificeObj", Data.personalSalarySacrificeObj);
-                setFieldValue("affordabilityAmountOtherAmount", Data.affordabilityAmountOtherAmount);
-                setFieldValue("indexationOtherAmount", Data.indexationOtherAmount);
-                setFieldValue("contributionsFund", Data.contributionsFund);
+                setFieldValue("lumpsumNonConcessionalYearOne", Data.lumpsumNonConcessionalYearOne);
+                setFieldValue("contributionsToFund", Data.contributionsToFund);
+                setFieldValue("lumpsumNonConcessional", Data.lumpsumNonConcessional);
+                setFieldValue("lumpsumNonConcessionalObj", Data.lumpsumNonConcessionalObj);
+                setFieldValue("regularNonConcessional", Data.regularNonConcessional);
                 setFieldValue("yearCommence", Data.yearCommence);
                 setFieldValue("yearsInclude", Data.yearsInclude);
-                setFieldValue("catchUpContribution", Data.catchUpContribution);
-                setFieldValue("contributionsToFund", Data.contributionsToFund);
-                setFieldValue("contributionSplitting", Data.contributionSplitting);
-                setFieldValue("contributionSplittingObj", Data.contributionSplittingObj);
+                setFieldValue("contributionsFund", Data.contributionsFund);
+                setFieldValue("governmentCoContribution", Data.governmentCoContribution);
+                // setFieldValue("downSizerContribution", Data.downSizerContribution);
+                // setFieldValue("downSizerContributionObj", Data.downSizerContributionObj);
+                setFieldValue("applySpouseContribution", Data.applySpouseContribution);
+                setFieldValue("applySpouseContributionObj", Data.applySpouseContributionObj);
             }
         }
     }
@@ -66,27 +71,6 @@ const ConcessionalContributions = (props) => {
             label: ("Year " + (i + 1)).toString(),
         })
     });
-
-    const employerSGContributionsOptions = [
-        { value: "SGC", label: "SGC", },
-        { value: "Capped at Max", label: "Capped at Max", },
-        { value: "Other", label: "Other", },
-        { value: "Self-Employed", label: "Self-Employed", },
-
-
-    ]
-
-    const personalSalarySacrificeOptions = [
-        { value: "Up Until CC Cap", label: "Up Until CC Cap", },
-        { value: "Other", label: "Other", },
-        { value: "Match Net Income", label: "Match Net Income", },
-
-    ]
-
-    const indexation = Array.from({ length: 21 }, (_, i) => ({
-        value: (i * 0.5).toFixed(2) + "%",
-        label: (i * 0.5).toFixed(2) + "%",
-    }));
 
     const contributionsFundOptions = [
         { value: "1", label: "1", },
@@ -117,37 +101,29 @@ const ConcessionalContributions = (props) => {
             styleSet: { fontWeight: "800", fontSize: "16px" }
         },
         {
-            name: "employerSGContributions",
-            type: "select",
-            options: employerSGContributionsOptions,
-            placeholder: "Employer SG Contributions"
-        },
-        {
-            name: "personalSalarySacrifice",
-            type: "selectModal",
-            options: personalSalarySacrificeOptions,
-            placeholder: "Personal/Salary Sacrifice",
-            ModalOption: "Other",
-            innerModalTitle: "Other Percentage Amount",
-            key: "personalSalarySacrifice",
-            styleSet: { minWidth: "10vw" }
-        },
-        {
-            name: "affordabilityAmountOtherAmount",
+            name: "lumpsumNonConcessionalYearOne",
             type: "number-toComma",
-            placeholder: "Affordability amount (net p.a.) / Other Amount"
+            placeholder: "Lumpsum Non - Concessional(Year 1 only)"
         },
         {
-            name: "indexationOtherAmount",
+            name: "contributionsToFund",
             type: "select",
-            options: indexation,
-            placeholder: "Indexation of Other Amount"
-        },
-        {
-            name: "contributionsFund",
-            type: "select",
-            options: contributionsFundOptions,
+            options: contributionsToFundOptions,
             placeholder: "Contributions To Fund"
+        },
+        {
+            name: "lumpsumNonConcessional",
+            type: "yesnoModal",
+            placeholder: "Lumpsum Non - Concessional",
+            callBack: true,
+            key: "lumpsumNonConcessional",
+            innerModalTitle: "Lumpsum Non - Concessional",
+            func: handleInnerModal,
+        },
+        {
+            name: "regularNonConcessional",
+            type: "number-toComma",
+            placeholder: "Regular Non - Concessional"
         },
         {
             name: "yearCommence",
@@ -162,30 +138,41 @@ const ConcessionalContributions = (props) => {
             placeholder: "Years to Include"
         },
         {
-            name: "catchUpContribution",
-            type: "number-toComma",
-            placeholder: "Catch Up contribution (Year 1 only)"
-        },
-        {
-            name: "contributionsToFund",
+            name: "contributionsFund",
             type: "select",
-            options: contributionsToFundOptions,
+            options: contributionsFundOptions,
             placeholder: "Contributions To Fund"
         },
         {
-            name: "contributionSplitting",
+            name: "governmentCoContribution",
+            type: "select",
+            options: contributionsToFundOptions,
+            placeholder: "Government Co - contribution to"
+        },
+        {
+            name: "downSizerContribution",
             type: "yesnoModal",
-            placeholder: "Contribution Splitting",
+            placeholder: "Downsizer contribution",
             callBack: true,
-            key: "contributionSplitting",
-            innerModalTitle: "Contribution Splitting",
+            key: "downSizerContribution",
+            innerModalTitle: "Downsizer contribution",
+            func: handleInnerModal,
+        },
+        {
+            name: "applySpouseContribution",
+            type: "yesnoModal",
+            placeholder: "Apply Spouse Contribution",
+            callBack: true,
+            key: "applySpouseContribution",
+            innerModalTitle: "Apply Spouse Contribution",
             func: handleInnerModal,
         },
     ]
 
     const componentMapping = {
-        "Other Percentage Amount": <OtherPercentageAmount />,
-        "Contribution Splitting": <ContributionSplittingInner />,
+        "Lumpsum Non - Concessional": <LumpsumNonConcessionalNonConcessional />,
+        "Downsizer contribution": <DownSizerContributionNonConcessional />,
+        "Apply Spouse Contribution": <ApplySpouseContribution />,
     }
 
     const ModalContent = (obj) => {
@@ -223,16 +210,16 @@ const ConcessionalContributions = (props) => {
                                             <thead>
                                                 <tr>
                                                     <th>Owner</th>
-                                                    <th>Employer SG Contributions</th>
-                                                    <th>Personal/Salary Sacrifice</th>
-                                                    <th>Affordability amount (net p.a.) / Other Amount</th>
-                                                    <th>Indexation of Other Amount</th>
+                                                    <th>Lumpsum Non-Concessional (Year 1 only)</th>
                                                     <th>Contributions To Fund</th>
+                                                    <th>Lumpsum Non-Concessional</th>
+                                                    <th>Regular Non-Concessional</th>
                                                     <th>Year to Commence</th>
                                                     <th>Years to Include</th>
-                                                    <th>Catch Up contribution (Year 1 only)</th>
                                                     <th>Contributions To Fund</th>
-                                                    <th>Contribution Splitting</th>
+                                                    <th>Government Co-contribution to</th>
+                                                    <th>Downsizer contribution</th>
+                                                    <th>Apply Spouse Contribution</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -257,4 +244,4 @@ const ConcessionalContributions = (props) => {
     )
 }
 
-export default ConcessionalContributions
+export default NonConcessionalContributions

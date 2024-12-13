@@ -12,9 +12,10 @@ import { useRecoilValue } from "recoil";
 import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 import InputOverride from "./InputOverride";
 import RegularContributions from "./RegularContributions";
+import RCV from "./RCV";
+import DeductibleAmount from "./DeductibleAmount";
 
 const CFAnnuities = (props) => {
-
 
     let questionDetail = useRecoilValue(QuestionDetail);
 
@@ -23,17 +24,6 @@ const CFAnnuities = (props) => {
 
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
-
-
-    let layoutSwitchArray = ["Platform Investment", "Other Investments"]
-
-    let [layoutSwitchFlag, setLayoutSwitchFlag] = useState(() => {
-        if (layoutSwitchArray.includes(props.modalObject.title)) {
-            return true
-        }
-        return false
-    })
-
 
     let incomeFromOverseasPension =
         Object.keys(questionDetail.incomeFromOverseasPension || {}).length > 0
@@ -46,18 +36,6 @@ const CFAnnuities = (props) => {
 
     let initialValues = {
         owner: [],
-        client: {
-            RiskProfile: layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
-            CashOutFunds: "No",
-        },
-        partner: {
-            RiskProfile: layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
-            CashOutFunds: "No",
-        },
-        joint: {
-            RiskProfile: layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
-            CashOutFunds: "No",
-        }
     };
 
     const fillInitialValues = (setFieldValue) => {
@@ -194,49 +172,35 @@ const CFAnnuities = (props) => {
         setFlagState(true);
     };
 
-    const loanTermOptions = Array.from({ length: 31 }, (_, i) => {
-        if (i === 0) {
-            return ({
-                value: "No",
-                label: "No",
-            })
-        }
-        else {
-            return ({
-                value: (i).toString(),
-                label: ("Year " + (i)).toString(),
-            })
-        }
-    });
-
     const options =
         UserStatus !== "Single"
             ? [
                 { value: "client", label: RenderName("client") },
-                { value: "partner", label: RenderName("partner") },
-                { value: "joint", label: RenderName("joint") },
+                { value: "partner", label: RenderName("partner") }
             ]
             : [{ value: "client", label: RenderName("client") }];
 
-    let riskProfileOptions = [
-        { value: "Conservative", label: "Conservative" },
-        { value: "Moderately Conservative", label: "Moderately Conservative" },
-        { value: "Balanced", label: "Balanced" },
-        { value: "Growth", label: "Growth" },
-        { value: "High Growth", label: "High Growth" },
-        { value: "Cash", label: "Cash" },
-        { value: "International Shares", label: "International Shares" },
-        { value: "Property", label: "Property" },
-        { value: "Australian Fixed Interest", label: "Australian Fixed Interest" },
-        { value: "International Fixed Interest", label: "International Fixed Interest" },
-        { value: "Other", label: "Other" },
-        { value: "Australian Shares", label: "Australian Shares" },
+    let sourceOfFundsOptions = [
+        { value: "Ordinary", label: "Ordinary" },
+        { value: "Super", label: "Super" },
+    ]
+    let annuityTypeOptions = [
+        { value: "Short-Term", label: "Short-Term" },
+        { value: "Long-Term", label: "Long-Term" },
+        { value: "Life-Time", label: "Life-Time" }
     ]
 
-    let InvestmentReturnsOptions = [
-        { value: "system", label: "System" },
-        { value: "input Override", label: "Input Override" },
-    ]
+    const indexation = Array.from({ length: 21 }, (_, i) => ({
+        value: (i * 0.5).toFixed(2) + "%",
+        label: (i * 0.5).toFixed(2) + "%",
+    }));
+
+    const yearsIncludedArray = Array.from({ length: 30 }, (_, i) => {
+        return ({
+            value: (i + 1).toString(),
+            label: ("Year " + (i + 1)).toString(),
+        })
+    });
 
     const [rowConfig, setRowConfig] = useState(() => {
         let OriginalArray = [
@@ -248,79 +212,67 @@ const CFAnnuities = (props) => {
             {
                 name: "sourceOfFunds",
                 type: "select",
-                options: loanTermOptions,
+                options: sourceOfFundsOptions,
             },
             {
                 name: "annuityType",
                 type: "select",
-                options: riskProfileOptions,
+                options: annuityTypeOptions,
 
             },
             {
-                name: "reversionaryAnnuity",
-                type: "selectModal",
+                name: "ThisReversionaryAnnuity",
+                type: "yesno",
                 placeholder: "Is this a Reversionary Annuity",
-                options: InvestmentReturnsOptions,
-                ModalOption: "input Override",
-                innerModalTitle: "Input Override",
-                key: "investmentReturns",
             },
             {
                 name: "RCV",
-                type: "number-toPercent",
-                placeholder: "Investment Fees %",
+                type: "yesnoModal",
+                placeholder: "RCV",
+                callBack: true,
+                key: "RCV",
+                innerModalTitle: "RCV",
+                func: handleInnerModal,
             },
             {
                 name: "includeFromYear",
-                type: "number-toComma",
+                type: "select",
+                options: yearsIncludedArray,
                 placeholder: "Include From Year",
             },
             {
                 name: "term",
-                type: "number-toComma-Modal",
+                type: "select",
+                options: yearsIncludedArray,
                 placeholder: "Term",
             },
             {
                 name: "yearsUntilMaturity",
-                type: "yesnoModal",
+                type: "select",
+                options: yearsIncludedArray,
                 placeholder: "Years Until Maturity",
             },
             {
                 name: "annualInflationRate",
-                type: "yesnoModal",
+                type: "select",
+                options: indexation,
                 placeholder: "Annual Inflation Rate",
             },
             {
                 name: "annualPayment",
-                type: "yesnoModal",
+                type: "number-toComma",
                 placeholder: "Annual Payment",
             },
             {
                 name: "deductibleAmount",
-                type: "yesno",
+                type: "yesnoModal",
                 placeholder: "Deductible Amount",
-                options: loanTermOptions,
+                callBack: true,
+                key: "deductibleAmount",
+                innerModalTitle: "Deductible Amount",
+                func: handleInnerModal,
             },
         ];
-
-        if (layoutSwitchArray.includes(props.modalObject.title)) {
-            // Create the new object
-            const newObject = {
-                name: "InvestmentFees",
-                type: "number-toPercent",
-                placeholder: "Investment Fees",
-            };
-
-            // Find the index of the "CashOutFunds" object
-            const CashOutFundsIndex = OriginalArray.findIndex(
-                (item) => item.name === "CashOutFunds"
-            );
-
-            // Insert the new object before "CashOutFunds"
-            if (CashOutFundsIndex !== -1) {
-                OriginalArray.splice(CashOutFundsIndex, 0, newObject);
-            }
-        }
 
         return OriginalArray;
     });
@@ -329,6 +281,8 @@ const CFAnnuities = (props) => {
 
         "Input Override": <InputOverride />,
         "Regular Contributions": <RegularContributions />,
+        "RCV": <RCV />,
+        "Deductible Amount": <DeductibleAmount />,
 
     }
 
@@ -428,18 +382,6 @@ const CFAnnuities = (props) => {
                                                     />
                                                 )}
 
-                                            {values.owner.includes("joint") &&
-                                                UserStatus === "Married" && (
-                                                    <DynamicTableRow
-                                                        rowConfig={rowConfig}
-                                                        values={values}
-                                                        setFieldValue={setFieldValue}
-                                                        handleChange={handleChange}
-                                                        handleBlur={handleBlur}
-                                                        handleInnerModal={handleInnerModal}
-                                                        stakeHolder="joint."
-                                                    />
-                                                )}
                                         </tbody>
                                     </Table>
                                 </div>

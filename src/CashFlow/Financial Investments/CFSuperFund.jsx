@@ -16,6 +16,8 @@ import BalanceComponents from "./BalanceComponents";
 import InsurancePremiums from "./InsurancePremiums";
 import RolloverFunds from "./RolloverFunds";
 import ConcessionalContributions from "./ConcessionalContributions";
+import NonConcessionalContributions from "./NonConcessionalContributions";
+import Withdrawals from "./Withdrawals";
 
 const CFSuperFund = (props) => {
 
@@ -191,7 +193,6 @@ const CFSuperFund = (props) => {
             ? [
                 { value: "client", label: RenderName("client") },
                 { value: "partner", label: RenderName("partner") },
-                { value: "joint", label: RenderName("joint") },
             ]
             : [{ value: "client", label: RenderName("client") }];
 
@@ -255,7 +256,7 @@ const CFSuperFund = (props) => {
                 type: "yesnoModal",
                 placeholder: "Insurance Premiums",
                 callBack: true,
-                key: "insurancePremiumsObj",
+                key: "insurancePremiums",
                 innerModalTitle: "Insurance Premiums",
                 func: handleInnerModal,
             },
@@ -264,7 +265,7 @@ const CFSuperFund = (props) => {
                 type: "yesnoModal",
                 placeholder: "Rollover Funds",
                 callBack: true,
-                key: "rolloverFundsObj",
+                key: "rolloverFunds",
                 innerModalTitle: "Rollover Funds",
                 func: handleInnerModal,
             },
@@ -273,7 +274,7 @@ const CFSuperFund = (props) => {
                 type: "yesnoModal",
                 placeholder: "Concessional Contributions",
                 callBack: true,
-                key: "concessionalContributionsObj",
+                key: "concessionalContributions",
                 innerModalTitle: "Concessional Contributions",
                 func: handleInnerModal,
             },
@@ -282,7 +283,7 @@ const CFSuperFund = (props) => {
                 type: "yesnoModal",
                 placeholder: "Non Concessional Contributions",
                 callBack: true,
-                key: "nonConcessionalContributionsObj",
+                key: "nonConcessionalContributions",
                 innerModalTitle: "Non Concessional Contributions",
                 func: handleInnerModal,
             },
@@ -291,7 +292,7 @@ const CFSuperFund = (props) => {
                 type: "yesnoModal",
                 placeholder: "Withdrawals",
                 callBack: true,
-                key: "withdrawalsObj",
+                key: "withdrawals",
                 innerModalTitle: "Withdrawals",
                 func: handleInnerModal,
             },
@@ -325,8 +326,8 @@ const CFSuperFund = (props) => {
         "Insurance Premiums": <InsurancePremiums />,
         "Rollover Funds": <RolloverFunds />,
         "Concessional Contributions": <ConcessionalContributions />,
-        "Non Concessional Contributions": <InputOverride />,
-        "Withdrawals": <InputOverride />,
+        "Non Concessional Contributions": <NonConcessionalContributions />,
+        "Withdrawals": <Withdrawals />,
     }
 
     const ModalContent = (obj) => {
@@ -420,19 +421,6 @@ const CFSuperFund = (props) => {
                                                         handleBlur={handleBlur}
                                                         handleInnerModal={handleInnerModal}
                                                         stakeHolder="partner."
-                                                    />
-                                                )}
-
-                                            {values.owner.includes("joint") &&
-                                                UserStatus === "Married" && (
-                                                    <DynamicTableRow
-                                                        rowConfig={rowConfig}
-                                                        values={values}
-                                                        setFieldValue={setFieldValue}
-                                                        handleChange={handleChange}
-                                                        handleBlur={handleBlur}
-                                                        handleInnerModal={handleInnerModal}
-                                                        stakeHolder="joint."
                                                     />
                                                 )}
                                         </tbody>

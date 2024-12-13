@@ -1,66 +1,22 @@
 {
-  "owner": ["client", "partner", "joint"],
-  "client": {
-    "riskProfile": "Australian Shares",
-    "cashOutFunds": "2",
-    "currentBalance": "$1",
-    "costBase": "$32",
-    "investmentReturns": "input Override",
-    "investmentReturnsObj": {
-      "incomeYield": "100.00%",
-      "growthRate": "100.00%",
-      "franking": "100.00%"
-    },
-    "reinvestIncome": "Yes",
-    "regularContributions": "Yes",
-    "regularContributionsObj": {
-      "contribution": "$23",
-      "regularContributions": "$23",
-      "contributeFromYear": "10",
-      "contributeUpUntil": "10",
-      "indexation": "4.00%"
-    }
+  "originalInvestmentAmount ": "",
+  "sourceOfFunds": "",
+  "annuityType": "",
+  "IsThisReversionaryAnnuity": "",
+  "RCV": "",
+  "RCVObj": {
+    "RCVPercentage": "",
+    "RCV": "",
+    "otherCommunicationEndTerm": ""
   },
-  "partner": {
-    "riskProfile": "Australian Shares",
-    "cashOutFunds": "9",
-    "currentBalance": "$1",
-    "costBase": "$123",
-    "investmentReturns": "input Override",
-    "investmentReturnsObj": {
-      "incomeYield": "12.00%",
-      "growthRate": "2.00%",
-      "franking": "2.00%"
-    },
-    "reinvestIncome": "Yes",
-    "regularContributions": "Yes",
-    "regularContributionsObj": {
-      "contribution": "$23",
-      "regularContributions": "$23",
-      "contributeFromYear": "10",
-      "contributeUpUntil": "10",
-      "indexation": "4.50%"
-    }
-  },
-  "joint": {
-    "riskProfile": "Australian Shares",
-    "cashOutFunds": "11",
-    "currentBalance": "$100",
-    "costBase": "$123",
-    "investmentReturns": "input Override",
-    "investmentReturnsObj": {
-      "incomeYield": "77.00%",
-      "growthRate": "77.00%",
-      "franking": "77.00%"
-    },
-    "reinvestIncome": "Yes",
-    "regularContributions": "Yes",
-    "regularContributionsObj": {
-      "contribution": "$23",
-      "regularContributions": "$2,322",
-      "contributeFromYear": "10",
-      "contributeUpUntil": "9",
-      "indexation": "4.50%"
-    }
+  "includeFromYear": "",
+  "term": "",
+  "yearsUntilMaturity": "",
+  "annualInflationRate": "",
+  "annualPayment": "",
+  "deductibleAmount": "",
+  "deductibleAmountObj": {
+    "otherDeductibleAmount": "",
+    "deductibleAmount": ""
   }
 }
