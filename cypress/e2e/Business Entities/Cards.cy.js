@@ -19,30 +19,30 @@ class BusinessEntities {
 
     // cy.get(".pb-4 > :nth-child(1) > .QuestionIcon > .img-fluid").click();
 
-    // cy.get(".modal-header").within(() => {
-    //   cy.contains("Questions").should("be.visible");
-    //   cy.get(".btn-close").should("be.visible");
+    //   cy.get(".modal-header").within(() => {
+    //    cy.contains("Questions").should("be.visible");
+    //     cy.get(".btn-close").should("be.visible");
     // });
 
-    // cy.wait(1000);
-    // cy.get(":nth-child(1) > .d-flex > .customBorder")
-    //   .click()
-    //   .within(() => {
-    //     cy.get("img").should("be.visible");
-    //     cy.contains(
-    //       "Are you Running a business a Company Structure (Pty Ltd)?"
-    //     ).should("be.visible");
-    //   });
+    //   cy.wait(1000);
+    //   cy.get(":nth-child(1) > .d-flex > .customBorder")
+    //    .click()
+    //    .within(() => {
+    //      cy.get("img").should("be.visible");
+    //      cy.contains(
+    //        "Are you Running a business a Company Structure (Pty Ltd)?"
+    //      ).should("be.visible");
+    //    });
 
-    // cy.wait(1000);
-    // cy.get(":nth-child(2) > .d-flex > .customBorder")
-    //   .click()
-    //   .within(() => {
-    //     cy.get("img").should("be.visible");
-    //     cy.contains("Are you Running a business via a Trusts?").should(
-    //       "be.visible"
-    //     );
-    //   });
+    //  cy.wait(1000);
+    //  cy.get(":nth-child(2) > .d-flex > .customBorder")
+    //    .click()
+    //    .within(() => {
+    //      cy.get("img").should("be.visible");
+    //      cy.contains("Are you Running a business via a Trusts?").should(
+    //        "be.visible" 
+    //      );
+    //    });
 
     // cy.get(".modal-footer").within(() => {
     //   cy.contains("Close").should("be.visible");
@@ -182,20 +182,20 @@ class BusinessEntities {
       cy.contains("Submit").click();
     });
 
-    cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer > .bgColor').contains("Submit").click();
-    
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer > .bgColor'
+    )
+      .contains("Submit")
+      .click();
 
-    cy.get('.modal-footer > .bgColor').contains("Submit").click();
-    
+    cy.get(".modal-footer > .bgColor").contains("Submit").click();
 
-    
-
-    cy.get('.py-4').within(()=>{
-      cy.contains('Business as Company Structure')
-      cy.get('img')
-      cy.contains('Admin')
+    cy.get(".py-4").within(() => {
+      cy.contains("Business as Company Structure");
+      cy.get("img");
+      cy.contains("Admin");
       cy.get("#clientBusinessAsCompanyStructure").should("not.have.value", "");
-    })
+    });
   }
 }
 
