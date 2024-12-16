@@ -136,7 +136,7 @@ const CashFlowPersonalDebt = (props) => {
         let obj = {
             NumberOfMap: values.NumberOfMap,
             client: personalLoansArray,
-            clientTotal: toCommaAndDollar(personalLoansArray.reduce((total, entry) => total + parseFloat(entry.CurrentLoanBalance.replace(/[^0-9.-]+/g, "")), 0))
+            clientTotal: toCommaAndDollar(personalLoansArray.reduce((total, entry) => total + parseFloat(entry.CurrentLoanBalance.replace(/[^0-9.-]+/g, "") || 0), 0)) || "$0"
         }
 
         obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;

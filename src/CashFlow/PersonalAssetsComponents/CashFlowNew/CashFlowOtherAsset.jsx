@@ -197,10 +197,21 @@ const CashFlowOtherAsset = (props) => {
 
     obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
 
-    obj.clientTotal = values.client.currentValue || values.joint.currentValue || "$0";
+    if (values.owner.includes("client")) {
+      obj.clientTotal = values.client.currentValue || "$0";
+    }
+    else if (values.owner.includes("joint")) {
+      obj.clientTotal = values.joint.currentValue || "$0";
+    }
+    else {
+      obj.clientTotal = ""
+    }
 
     if (values.owner.includes("partner")) {
       obj.partnerTotal = values.partner.currentValue || "$0";
+    }
+    else {
+      obj.partnerTotal = ""
     }
 
     const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";

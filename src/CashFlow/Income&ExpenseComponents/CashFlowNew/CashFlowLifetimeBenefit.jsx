@@ -139,11 +139,18 @@ const CashFlowLifetimeBenefit = (props) => {
     let obj = values
 
     obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
-
-    obj.clientTotal = values.client.lifetimePensionIncome || "$0";
+    if (values.owner.includes("client")) {
+      obj.clientTotal = values.client.lifetimePensionIncome || "$0";
+    }
+    else {
+      obj.clientTotal = ""
+    }
 
     if (values.owner.includes("partner")) {
       obj.partnerTotal = values.partner.lifetimePensionIncome || "$0";
+    }
+    else {
+      obj.partnerTotal = ""
     }
 
     const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";

@@ -13,8 +13,6 @@ const ManagedFunds = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let bankDetailObj = useRecoilValue(BankDetail)
 
-
-
     const [title, setTitle] = useState(() => {
         // let head = props.modalObject.title;
         let currentTitle = props.modalObject.title;
@@ -313,7 +311,6 @@ const ManagedFunds = (props) => {
                                                                         onClick={() => {
                                                                             const platformKey = `platformName${i}`;
                                                                             const selectedPlatformId = values[platformKey];
-
                                                                             // Check if a platform name is selected
                                                                             if (!selectedPlatformId) {
                                                                                 openNotificationSuccess(
@@ -328,12 +325,13 @@ const ManagedFunds = (props) => {
                                                                             // Define platform name and object set
                                                                             let name = "";
                                                                             const platforms =
-                                                                                title === "Platform Investments Detail"
+                                                                                (title === "Platform Investments Detail" || title == "SMSF Platform Investments Detail" || title == "Family Trust Platform Investments Detail")
                                                                                     ? bankDetailObj?.InvestmentPlatforms
                                                                                     : bankDetailObj?.InvestmentBonds;
 
                                                                             // Find the platform name
                                                                             const SelectedPlatform = platforms?.find((elem) => elem._id === selectedPlatformId);
+                                                                            console.log(platforms, selectedPlatformId, title)
 
                                                                             if (SelectedPlatform) {
                                                                                 name = SelectedPlatform.platformName;

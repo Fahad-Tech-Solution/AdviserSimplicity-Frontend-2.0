@@ -18,8 +18,8 @@ const NewPensionRollover = (props) => {
         nominatedPensionAmount: "",
         otherAmount: "",
         indexationPension: "",
-        maximumTTRPension: "",
-        maximumTTRPension: "",
+        minimumPension: "",
+        maximumPension: "",
     }
 
     let fillInitialValues = (setFieldValue) => {
@@ -36,8 +36,8 @@ const NewPensionRollover = (props) => {
                 setFieldValue("nominatedPensionAmount", Data.nominatedPensionAmount);
                 setFieldValue("otherAmount", Data.otherAmount);
                 setFieldValue("indexationPension", Data.indexationPension);
-                setFieldValue("maximumTTRPension", Data.maximumTTRPension);
-                setFieldValue("maximumTTRPension", Data.maximumTTRPension);
+                setFieldValue("minimumPension", Data.minimumPension);
+                setFieldValue("maximumPension", Data.maximumPension);
             }
         }
     }
@@ -45,7 +45,7 @@ const NewPensionRollover = (props) => {
     let onSubmit = (values) => {
 
         console.log(JSON.stringify(values));
-        
+
         props.setFieldValue(props.modalObject.stakeHolder + props.modalObject.key + "Obj", values)
 
         // Reset the flag state if necessary
@@ -147,13 +147,13 @@ const NewPensionRollover = (props) => {
             placeholder: "Indexation of Pension",
         },
         {
-            name: "maximumTTRPension",
+            name: "minimumPension",
             type: "number-toComma",
             placeholder: "Minimum Pension",
             disabled: true,
         },
         {
-            name: "maximumTTRPension",
+            name: "maximumPension",
             type: "number-toComma",
             placeholder: "Maximum Pension",
             disabled: true,

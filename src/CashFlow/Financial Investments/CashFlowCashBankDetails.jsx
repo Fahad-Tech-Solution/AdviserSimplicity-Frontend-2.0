@@ -4,11 +4,14 @@ import { CreatableMultiSelectField } from "../../Components/Questions/FinancialI
 import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
 import {
     openNotificationSuccess,
+    PatchAxios,
+    PostAxios,
     RenderName,
+    toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
 import { Row, Table } from "react-bootstrap";
-import { defaultUrl, QuestionDetail } from "../../Store/Store";
-import { useRecoilValue } from "recoil";
+import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from "../../Store/Store";
+import { useRecoilState, useRecoilValue } from "recoil";
 import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 import InputOverride from "./InputOverride";
 import RegularContributions from "./RegularContributions";
@@ -28,6 +31,10 @@ const CashFlowCashBankDetails = (props) => {
        - If specific modifications are required for one modal type, consider implementing targeted logic or extensions 
          to maintain the integrity of the shared functionality.
    */
+
+    let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
+    let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+    let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
 
 
     let layoutSwitchArray = ["Term Deposits", "Investment Bonds"];
@@ -54,114 +61,191 @@ const CashFlowCashBankDetails = (props) => {
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
 
-    let incomeFromOverseasPension =
-        Object.keys(questionDetail.incomeFromOverseasPension || {}).length > 0
-            ? questionDetail.incomeFromOverseasPension
-            : {
-                client: [],
-                partner: [],
-                joint: [],
-            }; // Use an empty object as default if incomeFromOverseasPension is undefined
+    let incomeFromOverseasPension = Object.keys(questionDetail[props.modalObject.sourceKey] || {}).length > 0 ? questionDetail[props.modalObject.sourceKey] : {
+        client: [],
+        joint: [],
+        partner: [],
+    }; // Use an empty object as default if incomeFromOverseasPension is undefined
 
     let initialValues = {
         owner: [],
         client: {
-            InvestmentReturns: "",
+            investmentReturns: "",
         },
         partner: {
-            InvestmentReturns: "",
+            investmentReturns: "",
         },
         joint: {
-            InvestmentReturns: "",
+            investmentReturns: "",
         }
     };
 
     const fillInitialValues = (setFieldValue) => {
-        console.log(incomeFromOverseasPension, "data");
-        if (incomeFromOverseasPension && incomeFromOverseasPension._id) {
-            setFieldValue(`owner`, incomeFromOverseasPension.owner || "");
+        try {
+            // Set the object and API key
+            setObjAndAPIKey(props.modalObject.key);
 
-            // Handle client-related conditions
-            if (incomeFromOverseasPension.owner.includes("client")) {
-                if (
-                    incomeFromOverseasPension?.client &&
-                    Object.keys(incomeFromOverseasPension.client).length
-                ) {
-                    setFieldValue(
-                        `client.otherTaxableIncome`,
-                        incomeFromOverseasPension.client.regularIncomePA || ""
-                    );
+            // console.log(incomeFromOverseasPension, "Discovery Form Data " + props.modalObject.key + " and SourceKey " + props.modalObject.sourceKey);
+            console.log(cashFlowData?.[objAndAPIKey].client, "cashFlowData Form Data");
+            // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
 
-                    setFieldValue(`client.includeFromYear`, 1);
-                    setFieldValue(`client.upUntillYear`, 30);
-                    setFieldValue(`client.indexation`, "2.50%");
+            const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+
+            // Helper function to update field values
+            const updateFields = (data, prefix) => {
+
+                if (!data || !Object.keys(data).length) return;
+                const fields = {
+                    currentBalance: data.currentBalance || "$0",
+                    costBase: data.costBase || "$0",
+                    investmentReturns: data.investmentReturns || "",
+                    reinvestIncome: data.reinvestIncome || "No",
+                    regularContributions: data.regularContributions || "No",
+                    regularContributionsObj: data.regularContributionsObj || "No",
+                    riskProfile: data.riskProfile || {},
+                };
+
+                if (layoutSwitchArray.includes(props.modalObject.title)) {
+                    fields.cashOutYear = data.cashOutYear || ""
                 }
 
+                if (props.modalObject.title === "Investment Bonds") {
+                    fields.earningsRate = data.earningsRate || ""
+                    fields.investmentFees = data.investmentFees || ""
+                }
+                else {
+                    fields.incomeYield = data.incomeYield || ""
+                }
+
+                Object.entries(fields).forEach(([key, value]) => {
+                    setFieldValue(`${prefix}.${key}`, value);
+                });
+            };
+
+            // Update owner field
+            if (scenarioObj?.selectedSource === "discoveryForm" && incomeFromOverseasPension && incomeFromOverseasPension._id) {
+                // setFieldValue(`owner`, incomeFromOverseasPension.owner || "");
+
+                // Update client-related fields
+                if (incomeFromOverseasPension?.client.length > 0) {
+                    let Obj = {
+                        currentBalance: incomeFromOverseasPension.client.clientCurrentBalance,
+                    }
+                    updateFields(Obj, "client");
+                }
+
+                // Update partner-related fields
+                if (UserStatus === "Married" && incomeFromOverseasPension?.partner.length > 0) {
+                    let Obj = {
+                        currentBalance: incomeFromOverseasPension.partner.partnerCurrentBalance,
+                    }
+                    updateFields(Obj, "partner");
+                }
+
+                // Update partner-related fields
+                if (UserStatus === "Married" && incomeFromOverseasPension?.joint.length > 0) {
+                    let Obj = {
+                        currentBalance: incomeFromOverseasPension.joint.jointCurrentBalance,
+                    }
+                    updateFields(Obj, "joint");
+                }
 
             }
+            else {
+                // Handle cashFlowData scenario
+                const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
+                console.log(cashFlowDetails, "cashFlowDetails")
+                if (cashFlowDetails) {
+                    setFieldValue(`owner`, cashFlowDetails.owner || "");
+                    if (cashFlowDetails.owner.includes("client")) {
+                        // Update client details
+                        updateFields(cashFlowDetails.client, "client");
+                    }
 
-            // Handle partner-related conditions
-            if (
-                UserStatus === "Married" &&
-                incomeFromOverseasPension.owner.includes("partner")
-            ) {
-                if (
-                    incomeFromOverseasPension?.partner &&
-                    Object.keys(incomeFromOverseasPension.partner).length
-                ) {
-                    setFieldValue(
-                        `partner.regularIncomePA`,
-                        incomeFromOverseasPension.partner.regularIncomePA || ""
-                    );
-                    setFieldValue(`partner.includeFromYear`, 1);
-                    setFieldValue(`partner.upUntillYear`, 30);
-                    setFieldValue(`partner.indexation`, "2.50%");
+                    if (UserStatus === "Married" && cashFlowDetails.owner.includes("partner")) {
+                        // Update partner details
+                        updateFields(cashFlowDetails.partner, "partner");
+                    }
+
+                    if (UserStatus === "Married" && cashFlowDetails.owner.includes("joint")) {
+                        // Update partner details
+                        updateFields(cashFlowDetails.joint, "joint");
+                    }
                 }
             }
+
+
+            // Additional data from cashFlowData
+            if (cashFlowData?.[objAndAPIKey]?._id) {
+                const cashFlowDataDetails = cashFlowData[objAndAPIKey];
+                setFieldValue(`owner`, cashFlowDataDetails.owner || "");
+
+                if (cashFlowDataDetails.owner.includes("client")) {
+                    // Update client details
+                    updateFields(cashFlowDataDetails.client, "client");
+                }
+
+                if (UserStatus === "Married" && cashFlowDataDetails.owner.includes("partner")) {
+                    // Update partner details
+                    updateFields(cashFlowDataDetails.partner, "partner");
+                }
+
+                if (UserStatus === "Married" && cashFlowDataDetails.owner.includes("joint")) {
+                    // Update partner details
+                    updateFields(cashFlowDataDetails.joint, "joint");
+                }
+            }
+
+        } catch (error) {
+            console.error("Error in fillInitialValues:", error);
         }
     };
 
+
+
+
+
     let onSubmit = async (values) => {
         console.log(JSON.stringify(values));
-        return (false);
+        // return (false);
+        let obj = values
 
-        let obj = values;
-        obj.clientFK = localStorage.getItem("UserID");
-        console.log(obj, "new Object");
+        obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
 
-        // Handle client-related conditions
+        let JointCurrentBalance = 0
+
+        if (values.owner.includes("joint")) {
+            JointCurrentBalance = parseFloat(values.joint.currentBalance.replace(/[^0-9.-]+/g, ""))
+        }
+
         if (values.owner.includes("client")) {
-            obj.clientTotal = values.client.regularIncomePA;
-            console.log("Client total set");
-        } else {
-            obj.client = {};
-            obj.clientTotal = "";
-            console.log("Client data cleared");
+            obj.clientTotal = toCommaAndDollar(parseFloat(values.client.currentBalance.replace(/[^0-9.-]+/g, "")) + (JointCurrentBalance / 2)) || "$0";
+        }
+        else {
+            obj.clientTotal = ""
         }
 
-        // Handle partner-related conditions
-        if (values.owner.includes("partner") && UserStatus === "Married") {
-            obj.partnerTotal = values.partner.regularIncomePA;
-            console.log("Partner total set");
-        } else {
-            obj.partner = {};
-            obj.partnerTotal = "";
-            console.log("Partner data cleared");
+        if (values.owner.includes("partner")) {
+            obj.partnerTotal = toCommaAndDollar(parseFloat(values.partner.currentBalance.replace(/[^0-9.-]+/g, "")) + (JointCurrentBalance / 2)) || "$0";
         }
+        else {
+            obj.partnerTotal = ""
+        }
+
+        const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
 
         console.log(obj, "final obj");
-        const bankAccountArray = incomeFromOverseasPension.clientFK || "";
 
         try {
             let res;
             if (!bankAccountArray) {
                 res = await PostAxios(
-                    `${DefaultUrl}/api/incomeFromOverseasPension/Add`,
+                    `${DefaultUrl}/api/CF/${objAndAPIKey}/Add`,
                     obj
                 );
             } else {
                 res = await PatchAxios(
-                    `${DefaultUrl}/api/incomeFromOverseasPension/Update`,
+                    `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
                     obj
                 );
             }
@@ -169,10 +253,10 @@ const CashFlowCashBankDetails = (props) => {
             if (res) {
                 console.log(res);
                 const updatedData = {
-                    ...questionDetail,
-                    incomeFromOverseasPension: res,
+                    ...cashFlowData,
+                    [objAndAPIKey]: res,
                 };
-                setQuestionDetail(updatedData);
+                setCashFlowData(updatedData);
             }
 
             openNotificationSuccess(
@@ -261,17 +345,17 @@ const CashFlowCashBankDetails = (props) => {
     function createInitialRowConfig(isDisabled) {
         let inputArray = [
             {
-                name: "CurrentBalance",
+                name: "currentBalance",
                 type: "number-toComma",
                 placeholder: "Current Balance",
             },
+            // {
+            //     name: "costBase",
+            //     type: "number-toComma",
+            //     placeholder: "Cost Base",
+            // },
             {
-                name: "CostBase",
-                type: "number-toComma",
-                placeholder: "Cost Base",
-            },
-            {
-                name: "InvestmentReturns",
+                name: "investmentReturns",
                 type: "select",
                 placeholder: "Investment Returns",
                 options: InvestmentReturnsOptions,
@@ -279,27 +363,27 @@ const CashFlowCashBankDetails = (props) => {
                 func: AddExtraInput,
             },
             {
-                name: layoutSwitchFlag2 ? "EarningsRate" : "IncomeYield",
+                name: layoutSwitchFlag2 ? "earningsRate" : "incomeYield",
                 type: layoutSwitchFlag2 ? "number-toPercent" : "number-toComma",
                 placeholder: layoutSwitchFlag2 ? "Earnings Rate" : "Income Yield",
                 disabled: isDisabled, // Configurable based on the initial state
             },
             {
-                name: "ReinvestIncome",
+                name: "reinvestIncome",
                 type: "yesno",
                 placeholder: "Reinvest income",
             },
             {
-                name: "RegularContributions",
+                name: "regularContributions",
                 type: "yesnoModal",
                 placeholder: "Regular Contributions",
                 callBack: true,
-                key: "RegularContributions",
+                key: "regularContributions",
                 innerModalTitle: "Regular Contributions",
                 func: handleInnerModal,
             },
             {
-                name: "RiskProfile",
+                name: "riskProfile",
                 type: "select",
                 placeholder: "Risk Profile",
                 options: RiskProfileOptions,
@@ -310,7 +394,7 @@ const CashFlowCashBankDetails = (props) => {
         if (layoutSwitchFlag2) {
             inputArray.push(
                 {
-                    name: "InvestmentFees",
+                    name: "investmentFees",
                     type: "number-toPercent",
                     placeholder: "Investment Fees",
                 }
@@ -321,7 +405,7 @@ const CashFlowCashBankDetails = (props) => {
         if (layoutSwitchFlag) {
             inputArray.push(
                 {
-                    name: "CashOutYear",
+                    name: "cashOutYear",
                     type: "select",
                     placeholder: "Cashout Year",
                     options: loanTermOptions,
@@ -342,9 +426,9 @@ const CashFlowCashBankDetails = (props) => {
 
     // Modify AddExtraInput to update specific configurations
     function AddExtraInput(values, setFieldValue, currentInput, stakeHolder) {
-        const isDisabled = currentInput.value === "";
+        const isDisabled = (currentInput.value === "") || (currentInput.value === "system");
         if (isDisabled) {
-            let inputName = layoutSwitchFlag2 ? "EarningsRate" : "IncomeYield"
+            let inputName = layoutSwitchFlag2 ? "earningsRate" : "incomeYield"
             setFieldValue(stakeHolder + inputName, "")
         }
         updateRowConfig(stakeHolder, isDisabled);
@@ -411,7 +495,9 @@ const CashFlowCashBankDetails = (props) => {
                                                     Owner
                                                 </th>
                                                 <th>Current Balance</th>
-                                                <th>Cost Base</th>
+                                                {/*
+                                                    <th>Cost Base</th>
+                                                    */}
                                                 <th>Investment Returns</th>
                                                 <th>{layoutSwitchFlag2 ? "Earnings Rate" : "Income Yield"}</th>
                                                 <th>Reinvest income</th>

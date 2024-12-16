@@ -372,6 +372,19 @@ const PersonalDetails_cashFlow = (Props) => {
 
         Object.entries(fields).forEach(([key, value]) => {
           setFieldValue(`${prefix}.${key}`, value);
+          if (prefix === "client") {
+            if (key === "name") {
+              localStorage.setItem('UserName', value);
+            }
+            if (key === "maritalStatus") {
+              localStorage.setItem('UserStatus', value);
+            }
+          }
+          if (prefix === "partner") {
+            if (key === "name") {
+              localStorage.setItem('PartnerName', value)
+            }
+          }
         });
       };
 

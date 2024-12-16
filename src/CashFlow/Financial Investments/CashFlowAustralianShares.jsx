@@ -42,7 +42,6 @@ const CashFlowAustralianShares = (props) => {
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
 
-
     let layoutSwitchArray = ["Platform Investment", "Other Investments"]
 
     let [layoutSwitchFlag, setLayoutSwitchFlag] = useState(() => {
@@ -80,8 +79,9 @@ const CashFlowAustralianShares = (props) => {
             // Set the object and API key
             setObjAndAPIKey(props.modalObject.key);
 
-            console.log(BankAccountFinance, "Discovery Form Data " + props.modalObject.key + " and SourceKey " + props.modalObject.sourceKey);
-            // console.log(cashFlowData, "cashFlowData Form Data");
+            // console.log(BankAccountFinance, "Discovery Form Data " + props.modalObject.key + " and SourceKey " + props.modalObject.sourceKey, BankAccountFinance.client);
+            
+            console.log(cashFlowData?.[objAndAPIKey].client.investmentFees, "cashFlowData Form Data");
             // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
 
             const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
@@ -90,17 +90,22 @@ const CashFlowAustralianShares = (props) => {
             const updateFields = (data, prefix) => {
 
                 if (!data || !Object.keys(data).length) return;
+
                 const fields = {
-                    currentBalance: data.currentBalance || "2.50%",
-                    costBase: data.costBase || "2.50%",
-                    investmentReturns: data.investmentReturns || "2.50%",
+                    currentBalance: data.currentBalance || "$0",
+                    costBase: data.costBase || "$0",
+                    investmentReturns: data.investmentReturns || "",
                     investmentReturnsObj: data.investmentReturnsObj || {},
                     reinvestIncome: data.reinvestIncome || "No",
                     regularContributions: data.regularContributions || "No",
                     regularContributionsObj: data.regularContributionsObj || {},
-                    riskProfile: data.riskProfile || "2.50%",
-                    cashOutFunds: data.cashOutFunds || "2.50%",
+                    riskProfile: data.riskProfile || "",
+                    cashOutFunds: data.cashOutFunds || "",
                 };
+
+                if (layoutSwitchArray.includes(props.modalObject.title)) {
+                    fields.investmentFees = data.investmentFees || "2.50%"
+                }
 
                 Object.entries(fields).forEach(([key, value]) => {
                     setFieldValue(`${prefix}.${key}`, value);
@@ -113,27 +118,39 @@ const CashFlowAustralianShares = (props) => {
 
                 // Update client-related fields
                 if (BankAccountFinance?.client.length > 0) {
+                    // let Obj = {
+                    //     currentBalance: toCommaAndDollar(BankAccountFinance.client.reduce((total, entry) => total + parseFloat((entry.currentBalance || entry.clientCurrentBalance).replace(/[^0-9.-]+/g, "")), 0)),
+                    //     costBase: toCommaAndDollar(BankAccountFinance.client.reduce((total, entry) => total + parseFloat((entry.costBase || entry.clientCostBaseTemp).replace(/[^0-9.-]+/g, "")), 0)),
+                    // }
                     let Obj = {
-                        currentBalance: toCommaAndDollar(BankAccountFinance.client.reduce((total, entry) => total + parseFloat((entry.currentBalance).replace(/[^0-9.-]+/g, "")), 0)),
-                        costBase: toCommaAndDollar(BankAccountFinance.client.reduce((total, entry) => total + parseFloat((entry.costBase).replace(/[^0-9.-]+/g, "")), 0)),
+                        currentBalance: BankAccountFinance.clientCurrentBalance,
+                        costBase: BankAccountFinance.clientCostBaseTemp,
                     }
                     updateFields(Obj, "client");
                 }
 
                 // Update partner-related fields
                 if (UserStatus === "Married" && BankAccountFinance?.partner.length > 0) {
+                    // let Obj = {
+                    //     currentBalance: toCommaAndDollar(BankAccountFinance.partner.reduce((total, entry) => total + parseFloat((entry.currentBalance).replace(/[^0-9.-]+/g, "")), 0)),
+                    //     costBase: toCommaAndDollar(BankAccountFinance.partner.reduce((total, entry) => total + parseFloat((entry.costBase).replace(/[^0-9.-]+/g, "")), 0)),
+                    // }
                     let Obj = {
-                        currentBalance: toCommaAndDollar(BankAccountFinance.partner.reduce((total, entry) => total + parseFloat((entry.currentBalance).replace(/[^0-9.-]+/g, "")), 0)),
-                        costBase: toCommaAndDollar(BankAccountFinance.partner.reduce((total, entry) => total + parseFloat((entry.costBase).replace(/[^0-9.-]+/g, "")), 0)),
+                        currentBalance: BankAccountFinance.partnerCurrentBalance,
+                        costBase: BankAccountFinance.partnerCostBaseTemp,
                     }
                     updateFields(Obj, "partner");
                 }
 
                 // Update partner-related fields
                 if (UserStatus === "Married" && BankAccountFinance?.joint.length > 0) {
+                    // let Obj = {
+                    //     currentBalance: toCommaAndDollar(BankAccountFinance.joint.reduce((total, entry) => total + parseFloat((entry.currentBalance).replace(/[^0-9.-]+/g, "")), 0)),
+                    //     costBase: toCommaAndDollar(BankAccountFinance.joint.reduce((total, entry) => total + parseFloat((entry.costBase).replace(/[^0-9.-]+/g, "")), 0)),
+                    // }
                     let Obj = {
-                        currentBalance: toCommaAndDollar(BankAccountFinance.joint.reduce((total, entry) => total + parseFloat((entry.currentBalance).replace(/[^0-9.-]+/g, "")), 0)),
-                        costBase: toCommaAndDollar(BankAccountFinance.joint.reduce((total, entry) => total + parseFloat((entry.costBase).replace(/[^0-9.-]+/g, "")), 0)),
+                        currentBalance: BankAccountFinance.jointCurrentBalance,
+                        costBase: BankAccountFinance.jointCostBaseTemp,
                     }
                     updateFields(Obj, "joint");
                 }
@@ -201,11 +218,18 @@ const CashFlowAustralianShares = (props) => {
             JointCurrentBalance = parseFloat(values.joint.currentBalance.replace(/[^0-9.-]+/g, ""))
         }
 
-
-        obj.clientTotal = toCommaAndDollar(parseFloat(values.client.currentBalance.replace(/[^0-9.-]+/g, "")) + (JointCurrentBalance / 2)) || "$0";
+        if (values.owner.includes("client")) {
+            obj.clientTotal = toCommaAndDollar(parseFloat(values.client.currentBalance.replace(/[^0-9.-]+/g, "")) + (JointCurrentBalance / 2)) || "$0";
+        }
+        else {
+            obj.clientTotal = ""
+        }
 
         if (values.owner.includes("partner")) {
             obj.partnerTotal = toCommaAndDollar(parseFloat(values.partner.currentBalance.replace(/[^0-9.-]+/g, "")) + (JointCurrentBalance / 2)) || "$0";
+        }
+        else {
+            obj.partnerTotal = ""
         }
 
         const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
@@ -370,7 +394,7 @@ const CashFlowAustralianShares = (props) => {
         if (layoutSwitchArray.includes(props.modalObject.title)) {
             // Create the new object
             const newObject = {
-                name: "InvestmentFees",
+                name: "investmentFees",
                 type: "number-toPercent",
                 placeholder: "Investment Fees",
             };

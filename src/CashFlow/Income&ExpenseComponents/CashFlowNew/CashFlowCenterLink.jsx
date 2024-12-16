@@ -140,10 +140,18 @@ const CashFlowCenterLink = (props) => {
 
     obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
 
-    obj.clientTotal = "Year " + values.client.includeFromYear || "";
+    if (values.owner.includes("client")) {
+      obj.clientTotal = "Year " + values.client.includeFromYear || "";
+    }
+    else {
+      obj.clientTotal = ""
+    }
 
     if (values.owner.includes("partner")) {
       obj.partnerTotal = "Year " + values.partner.includeFromYear || "";
+    }
+    else {
+      obj.partnerTotal = ""
     }
 
     const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";

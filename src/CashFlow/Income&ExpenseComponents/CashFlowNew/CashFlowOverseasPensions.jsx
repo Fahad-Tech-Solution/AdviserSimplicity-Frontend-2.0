@@ -122,10 +122,18 @@ const CashFlowOverseasPensions = (props) => {
 
     obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
 
-    obj.clientTotal = values.client.otherTaxableIncome || "$0";
+    if (values.owner.includes("client")) {
+      obj.clientTotal = values.client.otherTaxableIncome || "$0";
+    }
+    else {
+      obj.clientTotal = ""
+    }
 
     if (values.owner.includes("partner")) {
       obj.partnerTotal = values.partner.otherTaxableIncome || "$0";
+    }
+    else {
+      obj.partnerTotal = ""
     }
 
     const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";

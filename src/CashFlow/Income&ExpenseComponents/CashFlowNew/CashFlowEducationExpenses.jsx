@@ -138,7 +138,7 @@ const CashFlowEducationExpenses = (props) => {
     let obj = {
       numberOfChildren: values.numberOfChildren,
       arrayOfChildren: childrenArray,
-      clientTotal: toCommaAndDollar(childrenArray.reduce((total, entry) => total + parseFloat(entry.childSupportReceived.replace(/[^0-9.-]+/g, "")), 0))
+      clientTotal: toCommaAndDollar(childrenArray.reduce((total, entry) => total + parseFloat(entry.childSupportReceived.replace(/[^0-9.-]+/g, "") || 0), 0)) || "$0"
     }
 
     obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;

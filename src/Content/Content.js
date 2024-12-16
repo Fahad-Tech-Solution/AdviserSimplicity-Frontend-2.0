@@ -427,21 +427,25 @@ export const content = {
                     title: "Platform Investment",
                     img: funds,
                     key: "cf_platformInvestment",
+                    sourceKey: "managedFund",
                 },
                 {
                     title: "Other Investments",
                     img: otherInvestment,
                     key: "cf_otherInvestments",
+                    // sourceKey: "otherInvestments",
                 },
                 {
                     title: "Cash",
                     img: funds,
                     key: "cf_cash",
+                    // sourceKey: "bankAccountFinance",
                 },
                 {
                     title: "Term Deposits",
                     img: TermImg,
                     key: "cf_termDeposits",
+                    sourceKey: "termDepositsFinance",
                 },
                 {
                     title: "Investment Bonds",

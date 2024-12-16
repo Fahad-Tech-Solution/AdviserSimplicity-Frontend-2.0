@@ -1,22 +1,25 @@
 {
-  "originalInvestmentAmount ": "",
-  "sourceOfFunds": "",
-  "annuityType": "",
-  "IsThisReversionaryAnnuity": "",
-  "RCV": "",
-  "RCVObj": {
-    "RCVPercentage": "",
-    "RCV": "",
-    "otherCommunicationEndTerm": ""
+  "owner": ["client"],
+  "client": {
+    "investmentReturns": "input Override",
+    "otherTaxableIncome": "$88",
+    "includeFromYear": 1,
+    "upUntillYear": 30,
+    "indexation": "2.50%",
+    "reinvestIncome": "Yes",
+    "regularContributions": "Yes",
+    "currentBalance": "$12",
+    "costBase": "$23",
+    "incomeYield": "$123",
+    "riskProfile": "Growth",
+    "regularContributionsObj": {
+      "contribution": "$12",
+      "regularContributions": "$21",
+      "contributeFromYear": "2",
+      "contributeUpUntil": "2",
+      "indexation": "1.00%"
+    }
   },
-  "includeFromYear": "",
-  "term": "",
-  "yearsUntilMaturity": "",
-  "annualInflationRate": "",
-  "annualPayment": "",
-  "deductibleAmount": "",
-  "deductibleAmountObj": {
-    "otherDeductibleAmount": "",
-    "deductibleAmount": ""
-  }
+  "partner": { "investmentReturns": "" },
+  "joint": { "investmentReturns": "" }
 }
