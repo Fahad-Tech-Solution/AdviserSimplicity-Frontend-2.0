@@ -417,188 +417,326 @@ class SMSF {
 
     //       cy.get('#clientSMSFAustralianShares').should("not.have.value", "");
 
-    // //SMSF Platform Investments
-    // cy.get(':nth-child(7) > .py-4').within(() => {
-    //   cy.contains("SMSF Platform Investments");
+    //SMSF Platform Investments
+    cy.get(":nth-child(7) > .py-4").within(() => {
+      cy.contains("SMSF Platform Investments");
+      cy.get("img");
+      cy.contains("Admin");
+      cy.get(
+        "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
+      ).click();
+    });
+
+    cy.get(".modal-content").within(() => {
+      cy.contains("SMSF Platform Investments");
+      cy.get(".btn-close");
+      cy.get(".table").within(() => {
+        cy.contains("Owner");
+        cy.get('[style="width: 50%;"]').contains("Admin");
+        cy.contains("Current Balance");
+      });
+    });
+
+    cy.get("#button-addon2").click();
+
+    cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+      () => {
+        cy.contains("Admin_SMSF Platform Investments Detail");
+        cy.contains("How many Platforms does Admin have :");
+        cy.get("#NumberOfMap").clear().type(1);
+      }
+    );
+    //Inner Table
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4'
+    ).within(() => {
+      cy.contains("No#");
+      cy.contains("1");
+
+      cy.contains("Platform Name");
+      cy.get("#platformName0").select("For Testing Purpose");
+
+      cy.contains("Account Number");
+      cy.get("#accountNumber0").clear().type("45");
+
+      cy.contains("Portfolio Cost Base");
+      cy.get("#totalPortfolioCost0").clear().type("$45");
+
+      cy.contains("Annual Advice Service Fee");
+      cy.get("#serviceFee0").clear().type("$3");
+      cy.get("#serviceFeeType0").select("Weekly");
+
+      cy.contains("Portfolio Value");
+      cy.get("#button-addon2").click();
+    });
+
+    //Portfolio Value inner card
+    cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
+      cy.contains("For Testing Purpose_Portfolio Value");
+      cy.contains("How many Underlying Investments does Admin have :");
+      cy.get("#NumberOfMap").clear().type(1);
+
+      cy.contains("No#");
+      cy.contains("1");
+
+      cy.contains("Investment Option");
+    });
+    cy.get(".css-1xc3v61-indicatorContainer").click();
+    cy.get("#react-select-2-option-0").click();
+
+    cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
+      cy.wait(1000);
+      cy.contains("Investment Code");
+      cy.get("#investmentCode0").should("not.have.value", "");
+
+      cy.contains("Investment Value");
+      cy.get("#investmentValue0").type("$22");
+
+      cy.contains("Close");
+      cy.contains("Submit").click();
+    });
+
+    // cy.get("#sharePrice0").should("not.have.value", "");
+
+    cy.get("#portfolioValue0").should("not.have.value", "");
+
+    // cy.get(
+    //   '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer > .btn-secondary'
+    // );
+
+    // Solution 2: Force click
+    // Replace line 507 with this:
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer > .bgColor'
+    )
+      .should("be.visible")
+      .as("modalButton")
+      .click();
+
+      ERROR
+
+    cy.get("#clientCurrentBalance").should("not.have.value", "");
+
+    cy.contains("Cost Base");
+    cy.get("#clientCostBaseTemp").should("not.have.value", "");
+
+    cy.get(".modal-footer").within(() => {
+      cy.contains("Close");
+      cy.get(".modal-footer > .bgColor")
+        .contains("Submit")
+        .should("be.visible")
+        .click();
+    });
+
+    cy.get("#clientSMSFManagedFunds").should("not.have.value", "");
+
+    //Not Completed Becauseof some error in Actual Project
+
+    // //SMSF Investment Loan:
+    // cy.get(":nth-child(8) > .py-4").within(() => {
+    //   cy.contains("SMSF Investment Loan");
     //   cy.get("img");
     //   cy.contains("Admin");
     //   cy.get(
-    //     "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
-    //   ).click();
+    //     ".mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
+    //   )
+    //     .click()
+    //     .should("be.visible");
+    // });
+    // //SMSF Investment Loan Card Header
+    // cy.get(".modal-header").within(() => {
+    //   cy.contains("SMSF Investment Loan");
+    //   cy.get(".btn-close").should("be.visible");
     // });
 
-    // cy.get(".modal-content").within(() => {
-    //   cy.contains("SMSF Platform Investments");
-    //   cy.get(".btn-close");
-    //   cy.get(".table").within(() => {
-    //     cy.contains("Owner");
-    //     cy.get('[style="width: 50%;"]').contains("Admin");
-    //     cy.contains("Current Balance");
-    //   });
+    // cy.get(".modal-body").within(() => {
+    //   cy.contains("members").should("be.visible");
     // });
 
-    // cy.get("#button-addon2").click();
+    // cy.get(".css-1xc3v61-indicatorContainer").click();
+    // cy.get("#react-select-2-option-0").click();
+    // //SMSF Investment Loan Card Section
 
-    // cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
-    //   () => {
-    //     cy.contains("Admin_SMSF Platform Investments Detail");
-    //     cy.contains(
-    //       "How many Platforms does Admin have :"
-    //     );
-    //     cy.get("#NumberOfMap").clear().type(1);
-    //   }
-    // );
-    // //Inner Table
-    // cy.get(
-    //   '[style="display: block;"] > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4'
-    // ).within(() => {
-    //   cy.contains("No#");
-    //   cy.contains("1");
+    // cy.get(".table").within(() => {
+    //   cy.contains("members");
+    //   cy.get("tbody > tr > :nth-child(1)");
+    //   cy.contains("Admin");
 
-    //   cy.contains("Platform Name");
-    //   cy.get('#platformName0').select("For Testing Purpose");
-   
-    //   cy.contains("Account Number");
-    //   cy.get('#accountNumber0').clear().type("45")
+    //   cy.contains("Lender");
+    //   cy.get(":nth-child(2) > .form-select").select("Testing");
 
-    
+    //   cy.contains("Loan Balance");
+    //   cy.get("#loanBalance").clear().type("$987").blur();
 
-    //   cy.contains("Portfolio Cost Base");
-    //   cy.get('#totalPortfolioCost0').clear().type("$45");
+    //   cy.contains("Loan Type");
+    //   cy.get(":nth-child(4) > .form-select").select("i/only");
 
-     
-     
+    //   cy.contains("Repayments Amount");
+    //   cy.get("#repaymentsAmount").clear().type("$2022").blur();
+
+    //   cy.contains("Frequency");
+    //   cy.get(":nth-child(6) > .form-select").select("Weekly");
+
+    //   cy.contains("Annual Repayments");
+    //   cy.get("#annualRepayments").clear().type("2022").blur();
+    //   cy.get("#serviceFeeType").select("Weekly");
+
+    //   cy.contains("Interest Rate (p.a)");
+    //   cy.get("#interestRate").clear().type("2022").blur();
+
+    //   cy.contains("Loan Term");
+    //   cy.get(":nth-child(9) > .form-select").select("Year 19");
+
+    //   cy.contains("Loan Term Remaining");
+    //   cy.get(":nth-child(10) > .form-select").select("Year 22");
+
+    //   cy.contains("Deductible Loan Amount");
+    //   cy.get("#deductibleLoanAmount").clear().type("33.00%").blur();
     // });
 
-    // cy.contains("Annual Advice Service Fee");
-    // cy.get('#serviceFee0').clear().type("$3")
-    // cy.get('#serviceFeeType0').select('Weekly');
-
-    // cy.contains("Portfolio Value");
-    // cy.get("#button-addon2").click();
-    // // cy.get("#sharePrice0").should("not.have.value", "");
-
-
-    // cy.get(
-    //   '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
-    // ).within(() => {
+    // //SMSF Investment Loan Card Footer
+    // cy.get(".modal-footer").within(() => {
     //   cy.contains("Close").should("be.visible");
     //   cy.contains("Submit").should("be.visible").click();
     // });
-    // cy.get("#clientCurrentBalance").should("not.have.value", "");
 
-    // cy.contains("Cost Base");
-    // cy.get("#clientCostBaseTemp").should("not.have.value", "");
+    // cy.get("#clientSMSFInvestmentLoan").should("not.have.value", "");
 
-    // cy.contains("Close");
-    // cy.get(".modal-footer > .bgColor")
-    //   .contains("Submit")
-    //   .should("be.visible")
-    //   .click();
+    // //Other Investments:
+    // cy.get(":nth-child(10) > .py-4").within(() => {
+    //   cy.contains("Other Investments");
+    //   cy.get("img");
+    //   cy.contains("Admin");
+    //   cy.get(
+    //     ".mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
+    //   )
+    //     .click()
+    //     .should("be.visible");
+    // });
+    // //Other Investments Card Header
+    // cy.get(".modal-header").within(() => {
+    //   cy.contains("Other Investments");
+    //   cy.get(".btn-close").should("be.visible");
+    // });
 
-    // cy.get("#clientSMSFAustralianShares").should("not.have.value", "");
+    // //Other Investments Card Section
 
-    //Not Completed Becauseof some error in Actual Project 
+    // cy.get(".table").within(() => {
+    //   cy.contains("Name of Investment");
+    //   cy.get("#investmentName").clear().type("Automation Tester").blur();
 
- //SMSF Investment Loan:
- cy.get(':nth-child(8) > .py-4').within(() => {
-  cy.contains("SMSF Investment Loan");
-  cy.get("img");
-  cy.contains("Admin");
-  cy.get(
-    ".mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
-  )
-    .click()
-    .should("be.visible");
-});
-//Will Card Header
-cy.get(".modal-header").within(() => {
-  cy.contains("SMSF Investment Loan");
-  cy.get(".btn-close").should("be.visible");
-});
+    //   cy.contains("Current Value");
+    //   cy.get("#currentValue").clear().type("$345").blur();
 
-cy.get(".modal-body").within(() => {
-  cy.contains("members").should("be.visible");
-});
+    //   cy.contains("Cost Base");
+    //   cy.get("#costBase").clear().type("$422").blur();
+    // });
 
-cy.get(".css-1xc3v61-indicatorContainer").click();
-cy.get("#react-select-2-option-0").click();
-//Will Card Section
+    // //Other Investments Card Footer
+    // cy.get(".modal-footer").within(() => {
+    //   cy.contains("Close").should("be.visible");
+    //   cy.contains("Submit").should("be.visible").click();
+    // });
 
-cy.get(".table").within(() => {
-  cy.contains("No#");
-  cy.get("tbody > tr > :nth-child(1)");
-  cy.contains("Admin");
+    // cy.get("#clientSMSFOtherInvestment").should("not.have.value", "");
 
-  cy.contains("Year set up");
-  cy.get("#yearSetUp").clear().type("2022").blur();
+    //   //SMSF Investment Properties
+    //   cy.get(":nth-child(9) > .py-4").within(() => {
+    //     cy.contains("SMSF Investment Properties");
+    //     cy.get("img");
+    //     cy.contains("Total Market Value");
+    //     cy.contains("Total Loans");
 
-  cy.get(":nth-child(3) > .form-check > .radioButton2")
-    .contains("Yes")
-    .click();
+    //     cy.get(
+    //       ".mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
+    //     ).click({ multiple: true, force: true });
+    //   });
+    //   //Header
+    //   cy.get(".modal-header").within(() => {
+    //     cy.contains("SMSF Investment Properties");
+    //     cy.get(".btn-close");
+    //   });
 
-  cy.contains("Enduring Guardianship").should("be.visible");
-  cy.get(":nth-child(5) > .form-check > .radioButton2")
-    .contains("Yes")
-    .click();
+    //   cy.get(".modal-body").within(() => {
+    //     cy.contains("How many SMSF Investment Properties does Admin have :");
+    //   });
 
-  cy.contains("Testamentary Trust").should("be.visible");
-  cy.get(":nth-child(6) > .form-check > .radioButton2")
-    .contains("Yes")
-    .click();
-});
+    //   cy.get("#NumberOfMap").clear().type("1").should("have.value", "1");
 
-cy.contains("Executor").should("be.visible");
-cy.get(".d-flex > .btn").click();
-cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
-  () => {
-    cy.contains("Executor");
+    //   cy.get(".table").within(() => {
+    //     cy.contains("No#");
+    //     cy.contains("1");
 
-    cy.contains("Description");
-    cy.get(".col-md-12 > .form-control").type(
-      "This Text is written for Automation Testing Purpose"
-    );
+    //     cy.contains("Property Address");
+    //     cy.get("#PropertyAddress0").clear().type("FTS ");
 
-    cy.contains("Close");
-    cy.contains("Submit").click();
-  }
-);
+    //     cy.contains("Current Value - ");
+    //     cy.get("#CurrentValue0").clear().type("$24");
 
-cy.contains("Any specific estate planning requirements/needs?").should(
-  "be.visible"
-);
-cy.get(":nth-child(7) > .form-check > .radioButton2")
-  .contains("Yes")
-  .click();
-cy.get("#button-addon2").click();
+    //     cy.contains("Cost base");
+    //     cy.get("#CostBase0").clear().type("$567");
 
-cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
-  () => {
-    cy.contains("Estate Planning");
+    //     cy.contains("Weekly Rental Income");
+    //     cy.get("#weeklyRentalIncome0").clear().type("23");
+    //   });
+    //   // Loan Balance
+    //   cy.contains("Loan Balance");
 
-    cy.contains("Description");
-    cy.get(".col-md-12 > .form-control").type(
-      "This Text is written for Automation Testing Purpose"
-    );
+    //   cy.get("#button-addon2").click();
+    //   //Loan Balance Header
+    //   cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+    //     () => {
+    //       cy.contains("Property Loan Details");
+    //       cy.get(".btn-close");
 
-    cy.contains("Close");
-    cy.contains("Submit").click();
-  }
-);
+    //       cy.contains("Lender");
+    //       cy.get("#LenderCurrent0").select("Testing");
 
-//Wills Card Footer
+    //       cy.contains("Loan Balance");
+    //       cy.get("#LoanBalance0").clear().type("$987").blur();
 
-cy.contains("Close").should("be.visible");
-cy.contains("Submit").should("be.visible").click();
+    //       cy.contains("Loan Type");
+    //       cy.get("#LoanType0").select("i/only");
 
-cy.get("#clientwill").should("not.have.value", "");
+    //       cy.contains("Repayments Amount");
+    //       cy.get("#RepaymentsAmount0").clear().type("$2022").blur();
 
-     
+    //       cy.contains("Frequency");
+    //       cy.get("#Frequency0").select("Weekly");
 
-   
-      
-     
-   
+    //       cy.contains("Annual Repayments");
+    //       cy.get("#AnnualRepayments0");
+
+    //       cy.contains("Interest Rate (p.a)");
+    //       cy.get("#InterestRate0").clear().type("22.00%").blur();
+
+    //       cy.contains("Loan Term");
+    //       cy.get("#LoanTerm0").select("Year 19");
+
+    //       cy.contains("Loan Term Remaining");
+    //       cy.get("#LoanTermRemaining0").select("Year 22");
+
+    //       cy.contains("Deductible Loan Amount");
+    //       cy.get("#DeductibleLoanAmount0").clear().type("33.00%").blur();
+
+    //       cy.contains("Close");
+    //       cy.contains("Submit").click();
+    //     }
+    //   );
+    //   cy.get("#propertyLoanBalance0").should("not.have.value", "");
+
+    // ;
+
+    //   //Footer
+    //     cy.contains("Close").should("be.visible");
+    //     cy.contains("Submit").should("be.visible").click();
+
+    //  cy.contains('Total Market Value')
+    //  cy.get('#clientSMSFInvestmentProperties').should("not.have.value", "");
+    //  cy.contains('Total Loans')
+    //  cy.get('#partnerSMSFInvestmentProperties').should("not.have.value", "");
+
+    // // Expense Section is not Automate yet Because i face issue of same button click (Loan / Expense Section)
   }
 }
 
