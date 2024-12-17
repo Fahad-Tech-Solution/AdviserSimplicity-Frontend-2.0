@@ -71,14 +71,17 @@ const CashFlowCardSet = (props) => {
         "Australian Shares": <CashFlowAustralianShares />,
         "Platform Investment": <CashFlowAustralianShares />,
         "Other Investments": <CashFlowAustralianShares />,
+        
         // Same type of Modal
         "Cash": <CashFlowCashBankDetails />,
         "Term Deposits": <CashFlowCashBankDetails />,
         "Investment Bonds": <CashFlowCashBankDetails />,
-        // Same type of Modal
+        
+        
         "Investment Loans (LOC)": <CashFlowInvestmentLoansLOC />,
         "Margin Loan": <CashFlowMarginLoan />,
         "Investments Property": <CashFlowInvestmentsProperty />,
+
         // Same type of Modal
         "Super Fund": <CFSuperFund />,
         "Account Based Pension": <CFAccountBasedPension />,

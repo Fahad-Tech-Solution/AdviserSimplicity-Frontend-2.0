@@ -139,7 +139,7 @@ const CashFlowHomeLoan = (props) => {
   const rowConfigWithDeductibleInterest = [
     ...rowConfig.slice(0, 4), // Slice the array up to the index of 'initialInterestRatePA'
     {
-      name: "DeductibleInterest",
+      name: "deductibleInterest",
       type: "number-toPercent",
       placeholder: "Deductible Interest %",
     },

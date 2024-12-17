@@ -1,25 +1,109 @@
 {
-  "owner": ["client"],
-  "client": {
-    "investmentReturns": "input Override",
-    "otherTaxableIncome": "$88",
-    "includeFromYear": 1,
-    "upUntillYear": 30,
-    "indexation": "2.50%",
-    "reinvestIncome": "Yes",
-    "regularContributions": "Yes",
-    "currentBalance": "$12",
-    "costBase": "$23",
-    "incomeYield": "$123",
-    "riskProfile": "Growth",
-    "regularContributionsObj": {
-      "contribution": "$12",
-      "regularContributions": "$21",
-      "contributeFromYear": "2",
-      "contributeUpUntil": "2",
-      "indexation": "1.00%"
+  "Contribution": "",
+  "RegularContributions": "",
+  "ContributeFromYear": "",
+  "ContributeUpUntil": "",
+  "Indexation": "",
+  "LoanBalance": "Yes",
+  "RentalIncome": "No",
+  "StreetAddress": "12",
+  "ValueOfProperty": "$12",
+  "ClientOwnership": "12.00%",
+  "PartnerOwnership": "88.00%",
+  "YearOfPurchase": "10",
+  "TotalCostBase": {
+    "StampDutyType": "Standard Rates",
+    "StampDutyValue": "",
+    "OtherPurchaseCosts": "$12",
+    "CostBaseExisting": "$12",
+    "TotalCostBase": ""
+  },
+  "ExpectedGrowthRate": "12.00%",
+  "LoanBalanceObj": {
+    "loanTerm": "29",
+    "repayLoanInYear": "10",
+    "loanBalance": "$12",
+    "loanType": "i/only",
+    "initialInterestRatePA": "12.00%",
+    "DeductibleInterest": "12.00%",
+    "minimumRepaymentsPA": "$12",
+    "actualAnnualRepayments": "$12",
+    "loanBalanceCashFlowLoanBelanceLVR": {
+      "LVR": "12.00%",
+      "loanAmount": "$12",
+      "loanBalance": "$12",
+      "clientOwnership": "88.00%",
+      "partnerOwnership": "12.00%"
     }
   },
-  "partner": { "investmentReturns": "" },
-  "joint": { "investmentReturns": "" }
+  "SellPropertyInYear": "",
+  "ConvertToPPRYear": "",
+  "scenarioFK": "674999ee0ad151e3406f3f31",
+  "clientTotal": "$0",
+  "loanBalance": "Yes",
+  "rentalIncome": "Yes",
+  "totalCostBase": {
+    "StampDutyType": "Manual",
+    "StampDutyValue": "$12",
+    "OtherPurchaseCosts": "$23",
+    "CostBaseExisting": "$23",
+    "TotalCostBase": "$47"
+  },
+  "loanBalanceObj": {
+    "loanTerm": "30",
+    "repayLoanInYear": "10",
+    "loanBalanceCashFlowLoanBelanceLVR": {
+      "LVR": "12.00%",
+      "loanAmount": "$12",
+      "loanBalance": "$12",
+      "clientOwnership": "88.00%",
+      "partnerOwnership": "12.00%"
+    },
+    "loanBalance": "$12",
+    "loanType": "i/only",
+    "initialInterestRatePA": "12.00%",
+    "DeductibleInterest": "12.00%",
+    "minimumRepaymentsPA": "$2",
+    "actualAnnualRepayments": "$2"
+  },
+  "sellPropertyInYear": "9",
+  "convertToPPRYear": "8",
+  "partnerTotal": "$12",
+  "jinga": {
+    "expectedGrowthRate": "3.50%",
+    "sellPropertyInYear": "8",
+    "yearOfPurchase": "11",
+    "loanBalance": "Yes",
+    "address": "Distinctio Quia adi",
+    "currentValue": "$8,812,134",
+    "clientOwnership": "8.44%",
+    "partnerOwnership": "91.56%",
+    "totalCostBase": "$123",
+    "totalCostBaseObj": {
+      "stampDuty": "Manual",
+      "stampDutyCalculation": "No",
+      "otherPurchaseCosts": "$123",
+      "costBaseExisting": "$123",
+      "totalCostBase": "$123"
+    },
+    "familyHomeLoan": {
+      "loanTerm": "26",
+      "repayLoanInYear": "28",
+      "loanBalance": "$123",
+      "loanType": "i/only",
+      "initialInterestRatePA": "100.00%",
+      "minimumRepaymentsPA": "$123",
+      "actualAnnualRepayments": "$12,312",
+      "loanBalanceCashFlowLoanBelanceLVR": {
+        "LVR": "100.00%",
+        "loanAmount": "$123",
+        "loanBalance": "$123",
+        "clientOwnership": "0.00%",
+        "partnerOwnership": "100.00%"
+      }
+    },
+    "scenarioFK": "674999ee0ad151e3406f3f31",
+    "clientTotal": "$8,812,134",
+    "partnerTotal": "$123"
+  }
 }

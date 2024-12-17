@@ -399,6 +399,23 @@ const CashFlowCashBankDetails = (props) => {
                     placeholder: "Investment Fees",
                 }
             )
+
+            const newObject = {
+                name: "costBase",
+                type: "number-toComma",
+                placeholder: "Cost Base",
+            }
+
+
+            // Find the index of the "cashOutFunds" object
+            const cashOutFundsIndex = inputArray.findIndex(
+                (item) => item.name === "investmentReturns"
+            );
+
+            // Insert the new object before "cashOutFunds"
+            if (cashOutFundsIndex !== -1) {
+                inputArray.splice(cashOutFundsIndex, 0, newObject);
+            }
         }
 
 
@@ -495,9 +512,7 @@ const CashFlowCashBankDetails = (props) => {
                                                     Owner
                                                 </th>
                                                 <th>Current Balance</th>
-                                                {/*
-                                                    <th>Cost Base</th>
-                                                    */}
+                                                {layoutSwitchFlag2 && <th>Cost Base</th>}
                                                 <th>Investment Returns</th>
                                                 <th>{layoutSwitchFlag2 ? "Earnings Rate" : "Income Yield"}</th>
                                                 <th>Reinvest income</th>

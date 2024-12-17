@@ -207,7 +207,7 @@ export const CurrentPage = atom({
 export const defaultUrl = atom({
     key: "defaultUrl",
 
-    default: "http://localhost:7000",
+    // default: "http://localhost:7000",
 
     // default: "http://192.168.3.210:7000",    // Usama Faheem Ah
     // default: "http://192.168.3.4:7000",    // Usama bhai growWork_Beta
@@ -217,7 +217,7 @@ export const defaultUrl = atom({
     // default: "http://192.168.211.242:7000",
     // default: "http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com:7000",  // Live link 
 
-    // default: "",
+    default: "",
 });
 
 export const allAPIs = atom({

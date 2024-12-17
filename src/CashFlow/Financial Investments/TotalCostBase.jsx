@@ -7,11 +7,11 @@ import { toCommaAndDollar } from '../../Components/Assets/Api/Api';
 const TotalCostBase = (props) => {
 
     let initialValues = {
-        StampDutyType: "",
-        StampDutyValue: "",
-        OtherPurchaseCosts: "",
-        CostBaseExisting: "",
-        TotalCostBase: "",
+        stampDutyType: "",
+        stampDutyValue: "",
+        otherPurchaseCosts: "",
+        costBaseExisting: "",
+        totalCostBase: "",
     }
 
     let fillInitialValues = (setFieldValue) => {
@@ -19,11 +19,11 @@ const TotalCostBase = (props) => {
         let SubObj = props.modalObject.values
         if (SubObj[props.modalObject.key]) {
             let Data = SubObj[props.modalObject.key];
-            setFieldValue("StampDutyType", Data.StampDutyType)
-            setFieldValue("StampDutyValue", Data.StampDutyValue)
-            setFieldValue("OtherPurchaseCosts", Data.OtherPurchaseCosts)
-            setFieldValue("CostBaseExisting", Data.CostBaseExisting)
-            setFieldValue("TotalCostBase", Data.TotalCostBase)
+            setFieldValue("stampDutyType", Data.stampDutyType)
+            setFieldValue("stampDutyValue", Data.stampDutyValue)
+            setFieldValue("otherPurchaseCosts", Data.otherPurchaseCosts)
+            setFieldValue("costBaseExisting", Data.costBaseExisting)
+            setFieldValue("totalCostBase", Data.totalCostBase)
         }
 
 
@@ -44,36 +44,37 @@ const TotalCostBase = (props) => {
     ]
 
     let CalculateTotal = (values, setFieldValue, currentInput, stakeHolder) => {
-        let StampDutyType = values.StampDutyType;
-        let StampDutyValue = values.StampDutyValue.replace(/[^0-9.-]+/g, "");
-        let OtherPurchaseCosts = values.OtherPurchaseCosts.replace(/[^0-9.-]+/g, "");
+        let stampDutyType = values.stampDutyType;
+        let stampDutyValue = values.stampDutyValue.replace(/[^0-9.-]+/g, "");
+        let otherPurchaseCosts = values.otherPurchaseCosts.replace(/[^0-9.-]+/g, "");
 
         switch (currentInput.name) {
-            case "StampDutyType":
-                StampDutyType = currentInput.value;
+            case "stampDutyType":
+                stampDutyType = currentInput.value;
                 break;
-            case "StampDutyValue":
-                StampDutyValue = currentInput.value.replace(/[^0-9.-]+/g, "");
+            case "stampDutyValue":
+                stampDutyValue = currentInput.value.replace(/[^0-9.-]+/g, "");
                 break;
-            case "OtherPurchaseCosts":
-                OtherPurchaseCosts = currentInput.value.replace(/[^0-9.-]+/g, "");
+            case "otherPurchaseCosts":
+                otherPurchaseCosts = currentInput.value.replace(/[^0-9.-]+/g, "");
                 break;
             default:
                 console.warn("No valid input selected"); // Use warn for non-critical issues
                 break;
         }
 
-        console.log(StampDutyType, StampDutyValue, OtherPurchaseCosts, props.modalObject.values);
+        // console.log(StampDutyType, StampDutyValue, OtherPurchaseCosts, props.modalObject.values);
 
-        if (StampDutyType === "Manual") {
+        if (stampDutyType === "Manual") {
             // Try-catch block for parsing and calculation
             try {
                 const parsedValueOfProperty = parseFloat(
-                    props.modalObject.values.ValueOfProperty.replace(/[^0-9.-]+/g, "")
+                    props.modalObject.values.valueOfProperty.replace(/[^0-9.-]+/g, "")
                 ) || 0;
-                const totalCostBase = parseFloat(StampDutyValue) + parseFloat(OtherPurchaseCosts) + parsedValueOfProperty;
+
+                const totalCostBase = parseFloat(stampDutyValue) + parseFloat(otherPurchaseCosts) + parsedValueOfProperty;
                 console.log(totalCostBase);
-                setFieldValue("TotalCostBase", toCommaAndDollar(totalCostBase));
+                setFieldValue("totalCostBase", toCommaAndDollar(totalCostBase));
             } catch (error) {
                 console.error("Error calculating total cost base:", error);
                 // Handle the error here (e.g., display an error message to the user)
@@ -83,7 +84,7 @@ const TotalCostBase = (props) => {
 
     let rowConfig = [
         {
-            name: "StampDutyType",
+            name: "stampDutyType",
             type: "select",
             placeholder: "Stamp Duty",
             options: StampDutyOptions,
@@ -91,7 +92,7 @@ const TotalCostBase = (props) => {
             func: CalculateTotal
         },
         {
-            name: "StampDutyValue",
+            name: "stampDutyValue",
             type: "number-toComma",
             placeholder: "Stamp Duty Value",
             disabled: true,
@@ -99,19 +100,19 @@ const TotalCostBase = (props) => {
             func: CalculateTotal
         },
         {
-            name: "OtherPurchaseCosts",
+            name: "otherPurchaseCosts",
             type: "number-toComma",
             placeholder: "Other Purchase Costs",
             callBack: true,
             func: CalculateTotal
         },
         {
-            name: "CostBaseExisting",
+            name: "costBaseExisting",
             type: "number-toComma",
             placeholder: "Cost Base Existing",
         },
         {
-            name: "TotalCostBase",
+            name: "totalCostBase",
             type: "number-toComma",
             placeholder: "Total Cost Base",
             disabled: true
@@ -151,7 +152,7 @@ const TotalCostBase = (props) => {
                                                     // rowConfig={rowConfig}
                                                     rowConfig={rowConfig.map(item => ({
                                                         ...item,
-                                                        disabled: item.name === 'StampDutyValue' ? (values.StampDutyType !== "Manual") : item.disabled
+                                                        disabled: item.name === 'stampDutyValue' ? (values.stampDutyType !== "Manual") : item.disabled
                                                     }))}
                                                     values={values}
                                                     setFieldValue={setFieldValue}

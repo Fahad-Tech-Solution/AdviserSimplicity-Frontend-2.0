@@ -23,8 +23,6 @@ const CashFlowFamilyHome = (props) => {
   let DefaultUrl = useRecoilValue(defaultUrl);
   let PersonalData = useRecoilValue(PersonalDetailsData);
 
-  let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
-
   let [dis, setDis] = useState("");
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
