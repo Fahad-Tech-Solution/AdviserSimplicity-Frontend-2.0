@@ -4,14 +4,17 @@ import { CreatableMultiSelectField } from "../../Components/Questions/FinancialI
 import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
 import {
     openNotificationSuccess,
+    PatchAxios,
+    PostAxios,
     RenderName,
+    toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
 import { Row, Table } from "react-bootstrap";
-import { defaultUrl, QuestionDetail } from "../../Store/Store";
-import { useRecoilValue } from "recoil";
+import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from "../../Store/Store";
+import { useRecoilState, useRecoilValue } from "recoil";
 import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
+
 import InputOverride from "./InputOverride";
-import RegularContributions from "./RegularContributions";
 import BalanceComponents from "./BalanceComponents";
 import InsurancePremiums from "./InsurancePremiums";
 import RolloverFunds from "./RolloverFunds";
@@ -21,25 +24,18 @@ import Withdrawals from "./Withdrawals";
 
 const CFSuperFund = (props) => {
 
+
     let questionDetail = useRecoilValue(QuestionDetail);
+    let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+    let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+
+    let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
 
     let [UserStatus] = useState(localStorage.getItem("UserStatus"));
     let DefaultUrl = useRecoilValue(defaultUrl);
 
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
-
-
-    let layoutSwitchArray = ["Platform Investment", "Other Investments"]
-
-    let [layoutSwitchFlag, setLayoutSwitchFlag] = useState(() => {
-        if (layoutSwitchArray.includes(props.modalObject.title)) {
-            return true
-        }
-        return false
-    })
-
-
 
     let superAnnuationIssues = Object.keys(questionDetail.superAnnuationIssues || {}).length > 0 ? questionDetail.superAnnuationIssues : {
         client: [],
@@ -53,91 +49,170 @@ const CFSuperFund = (props) => {
     };
 
     const fillInitialValues = (setFieldValue) => {
-        // console.log(superAnnuationIssues, "data");
-        // if (superAnnuationIssues && superAnnuationIssues._id) {
-        //     setFieldValue(`owner`, superAnnuationIssues.owner || "");
+        try {
+            // Set the object and API key
+            setObjAndAPIKey(props.modalObject.key);
 
-        //     // Handle client-related conditions
-        //     if (superAnnuationIssues.owner.includes("client")) {
-        //         if (
-        //             superAnnuationIssues?.client &&
-        //             Object.keys(superAnnuationIssues.client).length
-        //         ) {
-        //             setFieldValue(
-        //                 `client.otherTaxableIncome`,
-        //                 superAnnuationIssues.client.regularIncomePA || ""
-        //             );
+            console.log(superAnnuationIssues, "Discovery Form Data " + props.modalObject.key + " and SourceKey " + props.modalObject.sourceKey, superAnnuationIssues.client);
+            // console.log(cashFlowData?.[objAndAPIKey].client.investmentFees, "cashFlowData Form Data");
+            // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
 
-        //             setFieldValue(`client.includeFromYear`, 1);
-        //             setFieldValue(`client.upUntillYear`, 30);
-        //             setFieldValue(`client.indexation`, "2.50%");
-        //         }
+            const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+
+            // Helper function to update field values
+            const updateFields = (data, prefix) => {
+
+                if (!data || !Object.keys(data).length) return;
+
+                const fields = {
+                    balanceComponents: data.balanceComponents || "$0",
+                    balanceComponentsObj: data.balanceComponentsObj || {},
+                    riskProfile: data.riskProfile || "$0",
+                    investmentReturns: data.investmentReturns || "$0",
+                    investmentReturnsObj: data.investmentReturnsObj || {},
+                    investmentFees: data.investmentFees || "0%",
+                    adviserServiceFee: data.adviserServiceFee || "$0",
+                    insurancePremiums: data.insurancePremiums || "No",
+                    insurancePremiumsObj: data.insurancePremiumsObj || {},
+                    rolloverFunds: data.rolloverFunds || "No",
+                    rolloverFundsObj: data.rolloverFundsObj || {},
+                    concessionalContributions: data.concessionalContributions || "No",
+                    concessionalContributionsObj: data.concessionalContributionsObj || {},
+                    nonConcessionalContributions: data.nonConcessionalContributions || "No",
+                    nonConcessionalContributionsObj: data.nonConcessionalContributionsObj || {},
+                    withdrawals: data.withdrawals || "No",
+                    withdrawalsObj: data.withdrawalsObj || {},
+                };
+
+                Object.entries(fields).forEach(([key, value]) => {
+                    setFieldValue(`${prefix}.${key}`, value);
+                });
+            };
+
+            // Update owner field
+            if (scenarioObj?.selectedSource === "discoveryForm" && superAnnuationIssues && superAnnuationIssues._id) {
+
+                // Update client-related fields
+                if (superAnnuationIssues?.client.length > 0) {
+
+                    let totalOfAnnualAdvice = superAnnuationIssues.client.reduce((total, entry) => total + parseFloat((entry.annualAdvice).replace(/[^0-9.-]+/g, "")), 0)
+                    let taxFreeComponentTotal = superAnnuationIssues.client.reduce((total, entry) => total + parseFloat((entry.balanceBenefitDetailsArray[0].taxFreeComponent).replace(/[^0-9.-]+/g, "")), 0)
+
+                    let Obj = {
+                        balanceComponentsObj: {
+                            currentBalance: toCommaAndDollar(totalOfAnnualAdvice),
+                            taxFreeComponent: toCommaAndDollar(taxFreeComponentTotal),
+                        }
+                    }
+
+                    if (superAnnuationIssues.client.length > 1) {
+                        Obj.balanceComponentsObj.currentBalance1 = toCommaAndDollar(totalOfAnnualAdvice);
+                        Obj.balanceComponentsObj.taxFreeComponent1 = toCommaAndDollar(taxFreeComponentTotal);
+                    }
+                    updateFields(Obj, "client");
+                }
+
+                // Update partner-related fields
+                if (
+                    UserStatus === "Married" &&
+                    superAnnuationIssues?.partner &&
+                    superAnnuationIssues.partner.length > 0
+                ) {
+
+                    let totalOfAnnualAdvice = superAnnuationIssues?.partner.reduce((total, entry) => total + parseFloat((entry.annualAdvice).replace(/[^0-9.-]+/g, "")), 0)
+                    let taxFreeComponentTotal = superAnnuationIssues?.partner.reduce((total, entry) => total + parseFloat((entry.balanceBenefitDetailsArray[0].taxFreeComponent).replace(/[^0-9.-]+/g, "")), 0)
+
+                    let Obj = {
+                        balanceComponentsObj: {
+                            currentBalance: toCommaAndDollar(totalOfAnnualAdvice),
+                            taxFreeComponent: toCommaAndDollar(taxFreeComponentTotal),
+                        }
+                    }
+
+                    if (superAnnuationIssues.partner.length > 1) {
+                        Obj.balanceComponentsObj.currentBalance1 = toCommaAndDollar(totalOfAnnualAdvice);
+                        Obj.balanceComponentsObj.taxFreeComponent1 = toCommaAndDollar(taxFreeComponentTotal);
+                    }
+                    updateFields(Obj, "partner");
+                }
+
+            }
+            else {
+                // Handle cashFlowData scenario
+                const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
+                console.log(cashFlowDetails, "cashFlowDetails")
+                if (cashFlowDetails) {
+                    setFieldValue(`owner`, cashFlowDetails.owner || "");
+                    if (cashFlowDetails.owner.includes("client")) {
+                        // Update client details
+                        updateFields(cashFlowDetails.client, "client");
+                    }
+
+                    if (UserStatus === "Married" && cashFlowDetails.owner.includes("partner")) {
+                        // Update partner details
+                        updateFields(cashFlowDetails.partner, "partner");
+                    }
+                }
+            }
 
 
-        //     }
+            // Additional data from cashFlowData
+            if (cashFlowData?.[objAndAPIKey]?._id) {
+                const cashFlowDataDetails = cashFlowData[objAndAPIKey];
+                setFieldValue(`owner`, cashFlowDataDetails.owner || "");
 
-        //     // Handle partner-related conditions
-        //     if (
-        //         UserStatus === "Married" &&
-        //         superAnnuationIssues.owner.includes("partner")
-        //     ) {
-        //         if (
-        //             superAnnuationIssues?.partner &&
-        //             Object.keys(superAnnuationIssues.partner).length
-        //         ) {
-        //             setFieldValue(
-        //                 `partner.regularIncomePA`,
-        //                 superAnnuationIssues.partner.regularIncomePA || ""
-        //             );
-        //             setFieldValue(`partner.includeFromYear`, 1);
-        //             setFieldValue(`partner.upUntillYear`, 30);
-        //             setFieldValue(`partner.indexation`, "2.50%");
-        //         }
-        //     }
-        // }
+                if (cashFlowDataDetails.owner.includes("client")) {
+                    // Update client details
+                    updateFields(cashFlowDataDetails.client, "client");
+                }
+
+                if (UserStatus === "Married" && cashFlowDataDetails.owner.includes("partner")) {
+                    // Update partner details
+                    updateFields(cashFlowDataDetails.partner, "partner");
+                }
+            }
+
+        } catch (error) {
+            console.error("Error in fillInitialValues:", error);
+        }
     };
 
     let onSubmit = async (values) => {
         console.log(JSON.stringify(values));
-        return (false);
+        // return (false);
+        let obj = values
 
-        let obj = values;
-        obj.clientFK = localStorage.getItem("UserID");
-        console.log(obj, "new Object");
+        obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
 
-        // Handle client-related conditions
+
         if (values.owner.includes("client")) {
-            obj.clientTotal = values.client.regularIncomePA;
-            console.log("Client total set");
-        } else {
-            obj.client = {};
-            obj.clientTotal = "";
-            console.log("Client data cleared");
+            obj.clientTotal = values.client.adviserServiceFee || "$0";
+        }
+        else {
+            obj.clientTotal = ""
         }
 
-        // Handle partner-related conditions
-        if (values.owner.includes("partner") && UserStatus === "Married") {
-            obj.partnerTotal = values.partner.regularIncomePA;
-            console.log("Partner total set");
-        } else {
-            obj.partner = {};
-            obj.partnerTotal = "";
-            console.log("Partner data cleared");
+        if (values.owner.includes("partner")) {
+            obj.partnerTotal = values.partner.adviserServiceFee || "$0";
         }
+        else {
+            obj.partnerTotal = ""
+        }
+
+        const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
 
         console.log(obj, "final obj");
-        const bankAccountArray = superAnnuationIssues.clientFK || "";
 
         try {
             let res;
             if (!bankAccountArray) {
                 res = await PostAxios(
-                    `${DefaultUrl}/api/superAnnuationIssues/Add`,
+                    `${DefaultUrl}/api/CF/${objAndAPIKey}/Add`,
                     obj
                 );
             } else {
                 res = await PatchAxios(
-                    `${DefaultUrl}/api/superAnnuationIssues/Update`,
+                    `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
                     obj
                 );
             }
@@ -145,10 +220,10 @@ const CFSuperFund = (props) => {
             if (res) {
                 console.log(res);
                 const updatedData = {
-                    ...questionDetail,
-                    superAnnuationIssues: res,
+                    ...cashFlowData,
+                    [objAndAPIKey]: res,
                 };
-                setQuestionDetail(updatedData);
+                setCashFlowData(updatedData);
             }
 
             openNotificationSuccess(
@@ -174,6 +249,7 @@ const CFSuperFund = (props) => {
             );
         }
     };
+
 
     let handleInnerModal = (title, values, key, stakeHolder) => {
         console.log(title, values, key, stakeHolder);
@@ -297,25 +373,6 @@ const CFSuperFund = (props) => {
                 func: handleInnerModal,
             },
         ];
-
-        if (layoutSwitchArray.includes(props.modalObject.title)) {
-            // Create the new object
-            const newObject = {
-                name: "InvestmentFees",
-                type: "number-toPercent",
-                placeholder: "Investment Fees",
-            };
-
-            // Find the index of the "CashOutFunds" object
-            const CashOutFundsIndex = OriginalArray.findIndex(
-                (item) => item.name === "CashOutFunds"
-            );
-
-            // Insert the new object before "CashOutFunds"
-            if (CashOutFundsIndex !== -1) {
-                OriginalArray.splice(CashOutFundsIndex, 0, newObject);
-            }
-        }
 
         return OriginalArray;
     });

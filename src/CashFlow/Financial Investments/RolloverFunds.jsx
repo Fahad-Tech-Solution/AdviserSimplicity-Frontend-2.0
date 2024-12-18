@@ -7,7 +7,7 @@ const RolloverFunds = (props) => {
 
     let initialValues = {
         rolloverBenefitFund: "",
-        rolloverBenefitsFear: "",
+        rolloverBenefitsYear: "",
     }
 
     let fillInitialValues = (setFieldValue) => {
@@ -16,9 +16,9 @@ const RolloverFunds = (props) => {
             if (SubObj[props.modalObject.key + "Obj"]) {
                 let Data = SubObj[props.modalObject.key + "Obj"];
                 setFieldValue("rolloverBenefitFund", Data.rolloverBenefitFund)
-                setFieldValue("rolloverBenefitsFear", Data.rolloverBenefitsFear)
+                setFieldValue("rolloverBenefitsYear", Data.rolloverBenefitsYear)
                 setFieldValue("rolloverBenefitFund1", Data.rolloverBenefitFund1)
-                setFieldValue("rolloverBenefitsFear1", Data.rolloverBenefitsFear1)
+                setFieldValue("rolloverBenefitsYear1", Data.rolloverBenefitsYear1)
             }
         }
     }
@@ -58,7 +58,7 @@ const RolloverFunds = (props) => {
             options: rolloverBenefitFundArray,
         },
         {
-            name: "rolloverBenefitsFear",
+            name: "rolloverBenefitsYear",
             type: "select",
             options: yearsIncludedArray,
         },
@@ -77,7 +77,7 @@ const RolloverFunds = (props) => {
             options: rolloverBenefitFundArray,
         },
         {
-            name: "rolloverBenefitsFear1",
+            name: "rolloverBenefitsYear1",
             type: "select",
             options: yearsIncludedArray,
         },

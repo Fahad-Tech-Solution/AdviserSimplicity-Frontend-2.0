@@ -4,11 +4,14 @@ import { CreatableMultiSelectField } from "../../Components/Questions/FinancialI
 import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
 import {
     openNotificationSuccess,
+    PatchAxios,
+    PostAxios,
     RenderName,
+    toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
 import { Row, Table } from "react-bootstrap";
-import { defaultUrl, QuestionDetail } from "../../Store/Store";
-import { useRecoilValue } from "recoil";
+import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from "../../Store/Store";
+import { useRecoilState, useRecoilValue } from "recoil";
 import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 import InputOverride from "./InputOverride";
 import RegularContributions from "./RegularContributions";
@@ -18,6 +21,10 @@ import DeductibleAmount from "./DeductibleAmount";
 const CFAnnuities = (props) => {
 
     let questionDetail = useRecoilValue(QuestionDetail);
+    let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+    let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+
+    let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
 
     let [UserStatus] = useState(localStorage.getItem("UserStatus"));
     let DefaultUrl = useRecoilValue(defaultUrl);
@@ -25,105 +32,166 @@ const CFAnnuities = (props) => {
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
 
-    let incomeFromOverseasPension =
-        Object.keys(questionDetail.incomeFromOverseasPension || {}).length > 0
-            ? questionDetail.incomeFromOverseasPension
-            : {
-                client: [],
-                partner: [],
-                joint: [],
-            }; // Use an empty object as default if incomeFromOverseasPension is undefined
+    let annuitiesIssues = Object.keys(questionDetail.annuitiesIssues).length > 0 ? questionDetail.annuitiesIssues : {
+        client: [],
+        partner: [],
+        joint: [],
+    };  // Use an empty object as default if incomeFromOverseasPension is undefined
 
     let initialValues = {
         owner: [],
     };
 
     const fillInitialValues = (setFieldValue) => {
-        console.log(incomeFromOverseasPension, "data");
-        if (incomeFromOverseasPension && incomeFromOverseasPension._id) {
-            setFieldValue(`owner`, incomeFromOverseasPension.owner || "");
+        try {
+            // Set the object and API key
+            setObjAndAPIKey(props.modalObject.key);
 
-            // Handle client-related conditions
-            if (incomeFromOverseasPension.owner.includes("client")) {
-                if (
-                    incomeFromOverseasPension?.client &&
-                    Object.keys(incomeFromOverseasPension.client).length
-                ) {
-                    setFieldValue(
-                        `client.otherTaxableIncome`,
-                        incomeFromOverseasPension.client.regularIncomePA || ""
-                    );
+            // console.log(annuitiesIssues, "Discovery Form Data " + props.modalObject.key + " and SourceKey " + props.modalObject.sourceKey, annuitiesIssues.client);
+            // console.log(cashFlowData?.[objAndAPIKey].client.investmentFees, "cashFlowData Form Data");
+            // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
 
-                    setFieldValue(`client.includeFromYear`, 1);
-                    setFieldValue(`client.upUntillYear`, 30);
-                    setFieldValue(`client.indexation`, "2.50%");
+            const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+
+            // Helper function to update field values
+            const updateFields = (data, prefix) => {
+
+                if (!data || !Object.keys(data).length) return;
+
+                const fields = {
+                    originalInvestmentAmount: data.originalInvestmentAmount || "$0",
+                    sourceOfFunds: data.sourceOfFunds || "$0",
+                    annuityType: data.annuityType || "$0",
+                    IsThisReversionaryAnnuity: data.IsThisReversionaryAnnuity || "No",
+                    RCV: data.RCV || "No",
+                    RCVObj: data.RCVObj || {},
+                    includeFromYear: data.includeFromYear || "1",
+                    term: data.term || "$0",
+                    yearsUntilMaturity: data.yearsUntilMaturity || "$0",
+                    annualInflationRate: data.annualInflationRate || "$0",
+                    annualPayment: data.annualPayment || "$0",
+                    deductibleAmount: data.deductibleAmount || "No",
+                    deductibleAmountObj: data.deductibleAmountObj || {},
+                };
+
+                Object.entries(fields).forEach(([key, value]) => {
+                    setFieldValue(`${prefix}.${key}`, value);
+                });
+            };
+
+            // Update owner field
+            if (scenarioObj?.selectedSource === "discoveryForm" && annuitiesIssues && annuitiesIssues._id) {
+
+                // Update client-related fields
+                if (annuitiesIssues?.client.length > 0) {
+
+                    let Obj = {
+                        originalInvestmentAmount: toCommaAndDollar(annuitiesIssues.client.reduce((total, entry) => total + parseFloat((entry.originalInvestmentAmount).replace(/[^0-9.-]+/g, "")), 0)),
+                        sourceOfFunds: annuitiesIssues.client[0].sourceFunds,
+                        annuityType: annuitiesIssues.client[0].annuityType,
+                        includeFromYear: annuitiesIssues.client[0].yearsMaturity,
+                        term: annuitiesIssues.client[0].term,
+                        annualPayment: toCommaAndDollar(annuitiesIssues.client.reduce((total, entry) => total + parseFloat((entry.annualAnnuityPayment).replace(/[^0-9.-]+/g, "")), 0)),
+                    }
+
+                    updateFields(Obj, "client");
                 }
 
+                // Update partner-related fields
+                if (
+                    UserStatus === "Married" &&
+                    annuitiesIssues?.partner &&
+                    annuitiesIssues.partner.length > 0
+                ) {
+
+                    let Obj = {
+                        originalInvestmentAmount: toCommaAndDollar(annuitiesIssues.partner.reduce((total, entry) => total + parseFloat((entry.originalInvestmentAmount).replace(/[^0-9.-]+/g, "")), 0)),
+                        sourceOfFunds: annuitiesIssues.partner[0].sourceFunds,
+                        annuityType: annuitiesIssues.partner[0].annuityType,
+                        includeFromYear: annuitiesIssues.partner[0].yearsMaturity,
+                        term: annuitiesIssues.partner[0].term,
+                        annualAnnuityPayment: toCommaAndDollar(annuitiesIssues.partner.reduce((total, entry) => total + parseFloat((entry.annualAnnuityPayment).replace(/[^0-9.-]+/g, "")), 0)),
+                    }
+                    updateFields(Obj, "partner");
+                }
 
             }
+            else {
+                // Handle cashFlowData scenario
+                const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
+                console.log(cashFlowDetails, "cashFlowDetails")
+                if (cashFlowDetails) {
+                    setFieldValue(`owner`, cashFlowDetails.owner || "");
+                    if (cashFlowDetails.owner.includes("client")) {
+                        // Update client details
+                        updateFields(cashFlowDetails.client, "client");
+                    }
 
-            // Handle partner-related conditions
-            if (
-                UserStatus === "Married" &&
-                incomeFromOverseasPension.owner.includes("partner")
-            ) {
-                if (
-                    incomeFromOverseasPension?.partner &&
-                    Object.keys(incomeFromOverseasPension.partner).length
-                ) {
-                    setFieldValue(
-                        `partner.regularIncomePA`,
-                        incomeFromOverseasPension.partner.regularIncomePA || ""
-                    );
-                    setFieldValue(`partner.includeFromYear`, 1);
-                    setFieldValue(`partner.upUntillYear`, 30);
-                    setFieldValue(`partner.indexation`, "2.50%");
+                    if (UserStatus === "Married" && cashFlowDetails.owner.includes("partner")) {
+                        // Update partner details
+                        updateFields(cashFlowDetails.partner, "partner");
+                    }
                 }
             }
+
+
+            // Additional data from cashFlowData
+            if (cashFlowData?.[objAndAPIKey]?._id) {
+                const cashFlowDataDetails = cashFlowData[objAndAPIKey];
+                setFieldValue(`owner`, cashFlowDataDetails.owner || "");
+
+                if (cashFlowDataDetails.owner.includes("client")) {
+                    // Update client details
+                    updateFields(cashFlowDataDetails.client, "client");
+                }
+
+                if (UserStatus === "Married" && cashFlowDataDetails.owner.includes("partner")) {
+                    // Update partner details
+                    updateFields(cashFlowDataDetails.partner, "partner");
+                }
+            }
+
+        } catch (error) {
+            console.error("Error in fillInitialValues:", error);
         }
     };
 
     let onSubmit = async (values) => {
         console.log(JSON.stringify(values));
-        return (false);
+        // return (false);
+        let obj = values
 
-        let obj = values;
-        obj.clientFK = localStorage.getItem("UserID");
-        console.log(obj, "new Object");
+        obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
 
-        // Handle client-related conditions
+
         if (values.owner.includes("client")) {
-            obj.clientTotal = values.client.regularIncomePA;
-            console.log("Client total set");
-        } else {
-            obj.client = {};
-            obj.clientTotal = "";
-            console.log("Client data cleared");
+            obj.clientTotal = values.client.annualPayment || "$0";
+        }
+        else {
+            obj.clientTotal = ""
         }
 
-        // Handle partner-related conditions
-        if (values.owner.includes("partner") && UserStatus === "Married") {
-            obj.partnerTotal = values.partner.regularIncomePA;
-            console.log("Partner total set");
-        } else {
-            obj.partner = {};
-            obj.partnerTotal = "";
-            console.log("Partner data cleared");
+        if (values.owner.includes("partner")) {
+            obj.partnerTotal = values.partner.annualPayment || "$0";
         }
+        else {
+            obj.partnerTotal = ""
+        }
+
+        const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
 
         console.log(obj, "final obj");
-        const bankAccountArray = incomeFromOverseasPension.clientFK || "";
 
         try {
             let res;
             if (!bankAccountArray) {
                 res = await PostAxios(
-                    `${DefaultUrl}/api/incomeFromOverseasPension/Add`,
+                    `${DefaultUrl}/api/CF/${objAndAPIKey}/Add`,
                     obj
                 );
             } else {
                 res = await PatchAxios(
-                    `${DefaultUrl}/api/incomeFromOverseasPension/Update`,
+                    `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
                     obj
                 );
             }
@@ -131,10 +199,10 @@ const CFAnnuities = (props) => {
             if (res) {
                 console.log(res);
                 const updatedData = {
-                    ...questionDetail,
-                    incomeFromOverseasPension: res,
+                    ...cashFlowData,
+                    [objAndAPIKey]: res,
                 };
-                setQuestionDetail(updatedData);
+                setCashFlowData(updatedData);
             }
 
             openNotificationSuccess(
@@ -221,7 +289,7 @@ const CFAnnuities = (props) => {
 
             },
             {
-                name: "ThisReversionaryAnnuity",
+                name: "IsThisReversionaryAnnuity",
                 type: "yesno",
                 placeholder: "Is this a Reversionary Annuity",
             },

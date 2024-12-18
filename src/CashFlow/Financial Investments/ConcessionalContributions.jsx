@@ -15,8 +15,8 @@ const ConcessionalContributions = (props) => {
         employerSGContributions: "",
         personalSalarySacrifice: "",
         personalSalarySacrificeObj: {},
-        affordabilityAmountOtherAmount: "",
-        indexationOtherAmount: "",
+        affordabilityOtherAmount: "",
+        indexationOfOtherAmount: "",
         contributionsFund: "",
         yearCommence: "",
         yearsInclude: "",
@@ -35,8 +35,8 @@ const ConcessionalContributions = (props) => {
                 setFieldValue("employerSGContributions", Data.employerSGContributions);
                 setFieldValue("personalSalarySacrifice", Data.personalSalarySacrifice);
                 setFieldValue("personalSalarySacrificeObj", Data.personalSalarySacrificeObj);
-                setFieldValue("affordabilityAmountOtherAmount", Data.affordabilityAmountOtherAmount);
-                setFieldValue("indexationOtherAmount", Data.indexationOtherAmount);
+                setFieldValue("affordabilityOtherAmount", Data.affordabilityOtherAmount);
+                setFieldValue("indexationOfOtherAmount", Data.indexationOfOtherAmount);
                 setFieldValue("contributionsFund", Data.contributionsFund);
                 setFieldValue("yearCommence", Data.yearCommence);
                 setFieldValue("yearsInclude", Data.yearsInclude);
@@ -133,12 +133,12 @@ const ConcessionalContributions = (props) => {
             styleSet: { minWidth: "10vw" }
         },
         {
-            name: "affordabilityAmountOtherAmount",
+            name: "affordabilityOtherAmount",
             type: "number-toComma",
             placeholder: "Affordability amount (net p.a.) / Other Amount"
         },
         {
-            name: "indexationOtherAmount",
+            name: "indexationOfOtherAmount",
             type: "select",
             options: indexation,
             placeholder: "Indexation of Other Amount"

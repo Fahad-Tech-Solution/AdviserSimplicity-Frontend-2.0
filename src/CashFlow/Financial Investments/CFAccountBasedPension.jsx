@@ -4,14 +4,16 @@ import { CreatableMultiSelectField } from "../../Components/Questions/FinancialI
 import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
 import {
     openNotificationSuccess,
+    PatchAxios,
+    PostAxios,
     RenderName,
+    toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
 import { Row, Table } from "react-bootstrap";
-import { defaultUrl, QuestionDetail } from "../../Store/Store";
-import { useRecoilValue } from "recoil";
+import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from "../../Store/Store";
+import { useRecoilState, useRecoilValue } from "recoil";
 import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 import InputOverride from "./InputOverride";
-import RegularContributions from "./RegularContributions";
 import Withdrawals from "./Withdrawals";
 import BalanceRolloverAmount from "./BalanceRolloverAmount";
 import NewPensionRollover from "./NewPensionRollover";
@@ -20,6 +22,10 @@ import PensionPayments from "./PensionPayments";
 const CFAccountBasedPension = (props) => {
 
     let questionDetail = useRecoilValue(QuestionDetail);
+    let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+    let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+
+    let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
 
     let [UserStatus] = useState(localStorage.getItem("UserStatus"));
     let DefaultUrl = useRecoilValue(defaultUrl);
@@ -27,105 +33,167 @@ const CFAccountBasedPension = (props) => {
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
 
-    let incomeFromOverseasPension =
-        Object.keys(questionDetail.incomeFromOverseasPension || {}).length > 0
-            ? questionDetail.incomeFromOverseasPension
-            : {
-                client: [],
-                partner: [],
-                joint: [],
-            }; // Use an empty object as default if incomeFromOverseasPension is undefined
+    let accountBasedPensionIssues = Object.keys(questionDetail.accountBasedPensionIssues).length > 0 ? questionDetail.accountBasedPensionIssues : {
+        client: [],
+        partner: [],
+        joint: [],
+
+    };  // Use an empty object as default if accountBasedPensionIssues is undefined
 
     let initialValues = {
         owner: [],
     };
 
     const fillInitialValues = (setFieldValue) => {
-        console.log(incomeFromOverseasPension, "data");
-        if (incomeFromOverseasPension && incomeFromOverseasPension._id) {
-            setFieldValue(`owner`, incomeFromOverseasPension.owner || "");
+        try {
+            // Set the object and API key
+            setObjAndAPIKey(props.modalObject.key);
 
-            // Handle client-related conditions
-            if (incomeFromOverseasPension.owner.includes("client")) {
-                if (
-                    incomeFromOverseasPension?.client &&
-                    Object.keys(incomeFromOverseasPension.client).length
-                ) {
-                    setFieldValue(
-                        `client.otherTaxableIncome`,
-                        incomeFromOverseasPension.client.regularIncomePA || ""
-                    );
+            console.log(accountBasedPensionIssues, "Discovery Form Data " + props.modalObject.key + " and SourceKey " + props.modalObject.sourceKey, accountBasedPensionIssues.client);
+            // console.log(cashFlowData?.[objAndAPIKey].client.investmentFees, "cashFlowData Form Data");
+            // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
 
-                    setFieldValue(`client.includeFromYear`, 1);
-                    setFieldValue(`client.upUntillYear`, 30);
-                    setFieldValue(`client.indexation`, "2.50%");
+            const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+
+            // Helper function to update field values
+            const updateFields = (data, prefix) => {
+
+                if (!data || !Object.keys(data).length) return;
+
+                const fields = {
+                    balanceRolloverAmount: data.balanceRolloverAmount || "$0",
+                    balanceRolloverAmountObj: data.balanceRolloverAmountObj || {},
+                    yearToCommence: data.yearToCommence || "$0",
+                    riskProfile: data.riskProfile || "$0",
+                    investmentReturns: data.investmentReturns || "$0",
+                    investmentReturnsObj: data.investmentReturnsObj || {},
+                    investmentFees: data.investmentFees || "$0",
+                    adviserServiceFee: data.adviserServiceFee || "$0",
+                    pensionPayments: data.pensionPayments || "$0",
+                    pensionPaymentsObj: data.pensionPaymentsObj || {},
+                    newPensionRollover: data.newPensionRollover || "No",
+                    newPensionRolloverObj: data.newPensionRolloverObj || {},
+                    withdrawals: data.withdrawals || "No",
+                    withdrawalsObj: data.withdrawalsObj || {},
+                };
+
+                Object.entries(fields).forEach(([key, value]) => {
+                    setFieldValue(`${prefix}.${key}`, value);
+                });
+            };
+
+            // Update owner field
+            if (scenarioObj?.selectedSource === "discoveryForm" && accountBasedPensionIssues && accountBasedPensionIssues._id) {
+
+                // Update client-related fields
+                if (accountBasedPensionIssues?.client.length > 0) {
+
+                    let Obj = {
+                        balanceRolloverAmount: accountBasedPensionIssues.clientCurrentBalance,
+                        balanceBenefitDetails: toCommaAndDollar(accountBasedPensionIssues.client.reduce((total, entry) => total + parseFloat((entry.balanceBenefitDetails).replace(/[^0-9.-]+/g, "")), 0)),
+                        annuityType: accountBasedPensionIssues.client[0].annuityType,
+                        includeFromYear: accountBasedPensionIssues.client[0].yearsMaturity,
+                        term: accountBasedPensionIssues.client[0].term,
+                        // annualPayment: toCommaAndDollar(accountBasedPensionIssues.client.reduce((total, entry) => total + parseFloat((entry.annualAnnuityPayment).replace(/[^0-9.-]+/g, "")), 0)),
+                    }
+
+
+                    console.log("Obj", Obj)
+
+                    updateFields(Obj, "client");
                 }
 
+                // Update partner-related fields
+                if (
+                    UserStatus === "Married" &&
+                    accountBasedPensionIssues?.partner &&
+                    accountBasedPensionIssues.partner.length > 0
+                ) {
+
+                    let totalOfAnnualAdvice = accountBasedPensionIssues?.partner.reduce((total, entry) => total + parseFloat((entry.annualAdvice).replace(/[^0-9.-]+/g, "")), 0)
+                    let taxFreeComponentTotal = accountBasedPensionIssues?.partner.reduce((total, entry) => total + parseFloat((entry.balanceBenefitDetailsArray[0].taxFreeComponent).replace(/[^0-9.-]+/g, "")), 0)
+
+                    let Obj = {};
+                    updateFields(Obj, "partner");
+                }
 
             }
+            else {
+                // Handle cashFlowData scenario
+                const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
+                console.log(cashFlowDetails, "cashFlowDetails")
+                if (cashFlowDetails) {
+                    setFieldValue(`owner`, cashFlowDetails.owner || "");
+                    if (cashFlowDetails.owner.includes("client")) {
+                        // Update client details
+                        updateFields(cashFlowDetails.client, "client");
+                    }
 
-            // Handle partner-related conditions
-            if (
-                UserStatus === "Married" &&
-                incomeFromOverseasPension.owner.includes("partner")
-            ) {
-                if (
-                    incomeFromOverseasPension?.partner &&
-                    Object.keys(incomeFromOverseasPension.partner).length
-                ) {
-                    setFieldValue(
-                        `partner.regularIncomePA`,
-                        incomeFromOverseasPension.partner.regularIncomePA || ""
-                    );
-                    setFieldValue(`partner.includeFromYear`, 1);
-                    setFieldValue(`partner.upUntillYear`, 30);
-                    setFieldValue(`partner.indexation`, "2.50%");
+                    if (UserStatus === "Married" && cashFlowDetails.owner.includes("partner")) {
+                        // Update partner details
+                        updateFields(cashFlowDetails.partner, "partner");
+                    }
                 }
             }
+
+
+            // Additional data from cashFlowData
+            if (cashFlowData?.[objAndAPIKey]?._id) {
+                const cashFlowDataDetails = cashFlowData[objAndAPIKey];
+                setFieldValue(`owner`, cashFlowDataDetails.owner || "");
+
+                if (cashFlowDataDetails.owner.includes("client")) {
+                    // Update client details
+                    updateFields(cashFlowDataDetails.client, "client");
+                }
+
+                if (UserStatus === "Married" && cashFlowDataDetails.owner.includes("partner")) {
+                    // Update partner details
+                    updateFields(cashFlowDataDetails.partner, "partner");
+                }
+            }
+
+        } catch (error) {
+            console.error("Error in fillInitialValues:", error);
         }
     };
 
     let onSubmit = async (values) => {
         console.log(JSON.stringify(values));
-        return (false);
+        // return (false);
+        let obj = values
 
-        let obj = values;
-        obj.clientFK = localStorage.getItem("UserID");
-        console.log(obj, "new Object");
+        obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
 
-        // Handle client-related conditions
+
         if (values.owner.includes("client")) {
-            obj.clientTotal = values.client.regularIncomePA;
-            console.log("Client total set");
-        } else {
-            obj.client = {};
-            obj.clientTotal = "";
-            console.log("Client data cleared");
+            obj.clientTotal = values.client.adviserServiceFee || "$0";
+        }
+        else {
+            obj.clientTotal = ""
         }
 
-        // Handle partner-related conditions
-        if (values.owner.includes("partner") && UserStatus === "Married") {
-            obj.partnerTotal = values.partner.regularIncomePA;
-            console.log("Partner total set");
-        } else {
-            obj.partner = {};
-            obj.partnerTotal = "";
-            console.log("Partner data cleared");
+        if (values.owner.includes("partner")) {
+            obj.partnerTotal = values.partner.adviserServiceFee || "$0";
         }
+        else {
+            obj.partnerTotal = ""
+        }
+
+        const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
 
         console.log(obj, "final obj");
-        const bankAccountArray = incomeFromOverseasPension.clientFK || "";
 
         try {
             let res;
             if (!bankAccountArray) {
                 res = await PostAxios(
-                    `${DefaultUrl}/api/incomeFromOverseasPension/Add`,
+                    `${DefaultUrl}/api/CF/${objAndAPIKey}/Add`,
                     obj
                 );
             } else {
                 res = await PatchAxios(
-                    `${DefaultUrl}/api/incomeFromOverseasPension/Update`,
+                    `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
                     obj
                 );
             }
@@ -133,10 +201,10 @@ const CFAccountBasedPension = (props) => {
             if (res) {
                 console.log(res);
                 const updatedData = {
-                    ...questionDetail,
-                    incomeFromOverseasPension: res,
+                    ...cashFlowData,
+                    [objAndAPIKey]: res,
                 };
-                setQuestionDetail(updatedData);
+                setCashFlowData(updatedData);
             }
 
             openNotificationSuccess(
