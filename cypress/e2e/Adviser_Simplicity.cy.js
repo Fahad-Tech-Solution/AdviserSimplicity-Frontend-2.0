@@ -135,12 +135,12 @@ describe("Adviser Simplicity", () => {
   });
 
 
-  it.only("SMSF Card's", () => {
+  it("SMSF Card's", () => {
     smsf.section();
   });
 
 
-  it("Investment Trust Card's", () => {
+  it.only("Investment Trust Card's", () => {
     investmentTrust.section();
   });
 

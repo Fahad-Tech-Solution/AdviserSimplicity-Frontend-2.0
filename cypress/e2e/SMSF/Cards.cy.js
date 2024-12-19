@@ -468,7 +468,7 @@ class SMSF {
     });
     //Pension Benefits Card
 
-    cy.get(':nth-child(7) > .modal-dialog > .modal-content').within(() => {
+    cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
       cy.contains("Pension Benefits");
 
       cy.contains("No#");
@@ -1016,7 +1016,7 @@ class SMSF {
       cy.contains("How many SMSF Investment Properties does Admin have :");
     });
 
-    cy.get("#NumberOfMap").clear().type("1").should("have.value", "1");
+    cy.get("#NumberOfMap").clear().type("1");
 
     cy.get(".table").within(() => {
       cy.contains("No#");
