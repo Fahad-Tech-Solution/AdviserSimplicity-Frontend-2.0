@@ -13,32 +13,44 @@ import { Row, Table } from "react-bootstrap";
 import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from "../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
-import InputOverride from "./InputOverride";
-import Withdrawals from "./Withdrawals";
-import BalanceRolloverAmount from "./BalanceRolloverAmount";
-import NewPensionRollover from "./NewPensionRollover";
-import PensionPayments from "./PensionPayments";
+import DividendIncome from "./DividendIncome";
+import AssetValueOfCompany from "./AssetValueOfCompany";
 
-const CFAccountBasedPension = (props) => {
+const BusinessInvestmentsMiddleware = (props) => {
+
+    /*
+       This component is a dynamic and reusable modal component designed to handle the following modal types:
+       1. "Dividend Income"
+       2. "Business as Trusts"
+       3. "Bucket Company"
+   
+       TODO-IMPORTANT:
+       - Ensure any changes to this component are planned carefully to avoid unintended effects on all supported modals.
+       - If specific modifications are required for one modal type, consider implementing targeted logic or extensions 
+         to maintain the integrity of the shared functionality.
+   */
 
     let questionDetail = useRecoilValue(QuestionDetail);
     let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
     let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
 
+    let [UserStatus] = useState(localStorage.getItem("UserStatus"));
     let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
 
-    let [UserStatus] = useState(localStorage.getItem("UserStatus"));
     let DefaultUrl = useRecoilValue(defaultUrl);
 
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
 
-    let accountBasedPensionIssues = Object.keys(questionDetail.accountBasedPensionIssues).length > 0 ? questionDetail.accountBasedPensionIssues : {
-        client: [],
-        partner: [],
-        joint: [],
 
-    };  // Use an empty object as default if accountBasedPensionIssues is undefined
+    let [layoutSwitchFlag, setLayoutSwitchFlag] = useState(props.modalObject.title)
+
+
+    let BankAccountFinance = {
+        client: [],
+        joint: [],
+        partner: [],
+    }; // Use an empty object as default if BankAccountFinance is undefined
 
     let initialValues = {
         owner: [],
@@ -49,7 +61,7 @@ const CFAccountBasedPension = (props) => {
             // Set the object and API key
             setObjAndAPIKey(props.modalObject.key);
 
-            console.log(accountBasedPensionIssues, "Discovery Form Data " + props.modalObject.key + " and SourceKey " + props.modalObject.sourceKey, accountBasedPensionIssues.client);
+            // console.log(BankAccountFinance, "Discovery Form Data " + props.modalObject.key + " and SourceKey " + props.modalObject.sourceKey, BankAccountFinance.client);
             // console.log(cashFlowData?.[objAndAPIKey].client.investmentFees, "cashFlowData Form Data");
             // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
 
@@ -61,20 +73,14 @@ const CFAccountBasedPension = (props) => {
                 if (!data || !Object.keys(data).length) return;
 
                 const fields = {
-                    balanceRolloverAmount: data.balanceRolloverAmount || "$0",
-                    balanceRolloverAmountObj: data.balanceRolloverAmountObj || {},
-                    yearToCommence: data.yearToCommence || "$0",
-                    riskProfile: data.riskProfile || "$0",
-                    investmentReturns: data.investmentReturns || "$0",
-                    investmentReturnsObj: data.investmentReturnsObj || {},
-                    investmentFees: data.investmentFees || "$0",
-                    adviserServiceFee: data.adviserServiceFee || "$0",
-                    pensionPayments: data.pensionPayments || "$0",
-                    pensionPaymentsObj: data.pensionPaymentsObj || {},
-                    newPensionRollover: data.newPensionRollover || "No",
-                    newPensionRolloverObj: data.newPensionRolloverObj || {},
-                    withdrawals: data.withdrawals || "No",
-                    withdrawalsObj: data.withdrawalsObj || {},
+                    dividendIncome: data.dividendIncome || "$0",
+                    dividendIncomeObj: data.dividendIncomeObj || {},
+                    assetValueOfCompany: data.assetValueOfCompany || "$0",
+                    assetValueOfCompanyObj: data.assetValueOfCompanyObj || {},
+                    // netTrustDistribution: data.netTrustDistribution || "$0",
+                    // assetValueOfBusinessTrust: data.assetValueOfBusinessTrust || "$0",
+                    // netTrustDistribution: data.netTrustDistribution || "$0",
+                    // dividendIncome: data.dividendIncome || "$0",
                 };
 
                 Object.entries(fields).forEach(([key, value]) => {
@@ -83,45 +89,31 @@ const CFAccountBasedPension = (props) => {
             };
 
             // Update owner field
-            if (scenarioObj?.selectedSource === "discoveryForm" && accountBasedPensionIssues && accountBasedPensionIssues._id) {
+            if (scenarioObj?.selectedSource === "discoveryForm" && BankAccountFinance && BankAccountFinance._id) {
+                // setFieldValue(`owner`, BankAccountFinance.owner || "");
 
                 // Update client-related fields
-                if (accountBasedPensionIssues?.client.length > 0) {
-
+                if (BankAccountFinance?.client.length > 0) {
                     let Obj = {
-                        balanceRolloverAmount: accountBasedPensionIssues.clientCurrentBalance,
-                        balanceBenefitDetails: toCommaAndDollar(accountBasedPensionIssues.client.reduce((total, entry) => total + parseFloat((entry.balanceBenefitDetails).replace(/[^0-9.-]+/g, "")), 0)),
-                        annuityType: accountBasedPensionIssues.client[0].annuityType,
-                        includeFromYear: accountBasedPensionIssues.client[0].yearsMaturity,
-                        term: accountBasedPensionIssues.client[0].term,
-                        // annualPayment: toCommaAndDollar(accountBasedPensionIssues.client.reduce((total, entry) => total + parseFloat((entry.annualAnnuityPayment).replace(/[^0-9.-]+/g, "")), 0)),
+                        currentBalance: BankAccountFinance.clientCurrentBalance,
+                        costBase: BankAccountFinance.clientCostBaseTemp,
                     }
-
-
-                    console.log("Obj", Obj)
-
                     updateFields(Obj, "client");
                 }
 
                 // Update partner-related fields
-                if (
-                    UserStatus === "Married" &&
-                    accountBasedPensionIssues?.partner &&
-                    accountBasedPensionIssues.partner.length > 0
-                ) {
-
-                    let totalOfAnnualAdvice = accountBasedPensionIssues?.partner.reduce((total, entry) => total + parseFloat((entry.annualAdvice).replace(/[^0-9.-]+/g, "")), 0)
-                    let taxFreeComponentTotal = accountBasedPensionIssues?.partner.reduce((total, entry) => total + parseFloat((entry.balanceBenefitDetailsArray[0].taxFreeComponent).replace(/[^0-9.-]+/g, "")), 0)
-
-                    let Obj = {};
+                if (UserStatus === "Married" && BankAccountFinance?.partner.length > 0) {
+                    let Obj = {
+                        currentBalance: BankAccountFinance.partnerCurrentBalance,
+                        costBase: BankAccountFinance.partnerCostBaseTemp,
+                    }
                     updateFields(Obj, "partner");
                 }
-
             }
             else {
                 // Handle cashFlowData scenario
                 const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-                console.log(cashFlowDetails, "cashFlowDetails")
+                // console.log(cashFlowDetails, "cashFlowDetails")
                 if (cashFlowDetails) {
                     setFieldValue(`owner`, cashFlowDetails.owner || "");
                     if (cashFlowDetails.owner.includes("client")) {
@@ -165,16 +157,15 @@ const CFAccountBasedPension = (props) => {
 
         obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
 
-
         if (values.owner.includes("client")) {
-            obj.clientTotal = values.client.adviserServiceFee || "$0";
+            obj.clientTotal = values.client.currentBalance || "$0";
         }
         else {
             obj.clientTotal = ""
         }
 
         if (values.owner.includes("partner")) {
-            obj.partnerTotal = values.partner.adviserServiceFee || "$0";
+            obj.partnerTotal = values.partner.currentBalance || "$0";
         }
         else {
             obj.partnerTotal = ""
@@ -231,31 +222,18 @@ const CFAccountBasedPension = (props) => {
         }
     };
 
+
     let handleInnerModal = (title, values, key, stakeHolder) => {
         // console.log(title, values, key);
         setModalObject({
             title,
             values,
             key,
-            stakeHolder
+            stakeHolder,
+            sourceObj: props.modalObject,
         });
         setFlagState(true);
     };
-
-    const loanTermOptions = Array.from({ length: 31 }, (_, i) => {
-        if (i === 0) {
-            return ({
-                value: "No",
-                label: "No",
-            })
-        }
-        else {
-            return ({
-                value: (i).toString(),
-                label: ("Year " + (i)).toString(),
-            })
-        }
-    });
 
     const options =
         UserStatus !== "Single"
@@ -265,108 +243,89 @@ const CFAccountBasedPension = (props) => {
             ]
             : [{ value: "client", label: RenderName("client") }];
 
-    let riskProfileOptions = [
-        { value: "Conservative", label: "Conservative" },
-        { value: "Moderately Conservative", label: "Moderately Conservative" },
-        { value: "Balanced", label: "Balanced" },
-        { value: "Growth", label: "Growth" },
-        { value: "High Growth", label: "High Growth" },
-        { value: "Cash", label: "Cash" },
-        { value: "International Shares", label: "International Shares" },
-        { value: "Property", label: "Property" },
-        { value: "Australian Fixed Interest", label: "Australian Fixed Interest" },
-        { value: "International Fixed Interest", label: "International Fixed Interest" },
-        { value: "Other", label: "Other" },
-        { value: "Australian Shares", label: "Australian Shares" },
-    ]
 
-    let InvestmentReturnsOptions = [
-        { value: "system", label: "System" },
-        { value: "input Override", label: "Input Override" },
-    ]
 
     const [rowConfig, setRowConfig] = useState(() => {
         let OriginalArray = [
             {
-                name: "balanceRolloverAmount",
+                name: "dividendIncome",
                 type: "number-toComma-Modal",
-                placeholder: "Balance & Rollover Amount",
+                placeholder: "Dividend Income",
                 callBack: true,
-                innerModalTitle: "Balance & Rollover Amount",
-                key: "balanceRolloverAmount",
+                innerModalTitle: "Dividend Income",
+                key: "dividendIncome",
                 func: handleInnerModal,
             },
             {
-                name: "yearToCommence",
-                type: "select",
-                options: riskProfileOptions,
-                placeholder: "Year To Commence",
-            },
-            {
-                name: "riskProfile",
-                type: "select",
-                options: riskProfileOptions,
-                placeholder: "Year to Commence",
-
-            },
-            {
-                name: "investmentReturns",
-                type: "selectModal",
-                placeholder: "Investment Returns",
-                options: InvestmentReturnsOptions,
-                ModalOption: "input Override",
-                innerModalTitle: "Input Override",
-                key: "investmentReturns",
-            },
-            {
-                name: "investmentFees",
-                type: "number-toComma",
-                placeholder: "Investment Fees %",
-            },
-            {
-                name: "adviserServiceFee",
-                type: "number-toComma",
-                placeholder: "Adviser Service Fee ($)",
-            },
-            {
-                name: "pensionPayments",
+                name: "assetValueOfCompany",
                 type: "number-toComma-Modal",
-                placeholder: "Pension Payments",
+                placeholder: "Asset Value of Company",
                 callBack: true,
-                innerModalTitle: "Pension Payments",
-                key: "pensionPayments",
-                func: handleInnerModal,
-            },
-            {
-                name: "newPensionRollover",
-                type: "yesnoModal",
-                placeholder: "New Pension Rollover",
-                callBack: true,
-                key: "newPensionRollover",
-                innerModalTitle: "New Pension Rollover",
-                func: handleInnerModal,
-            },
-            {
-                name: "withdrawals",
-                type: "yesnoModal",
-                placeholder: "Withdrawals",
-                callBack: true,
-                key: "withdrawals",
-                innerModalTitle: "Withdrawals",
+                innerModalTitle: "Asset Value of Company",
+                key: "assetValueOfCompany",
                 func: handleInnerModal,
             },
         ];
+
+
+        if (layoutSwitchFlag === "Business as Trusts") {
+            OriginalArray = [
+                {
+                    name: "netTrustDistribution",
+                    type: "number-toComma-Modal",
+                    placeholder: "Net Trust Distribution",
+                    callBack: true,
+                    innerModalTitle: "Net Trust Distribution",
+                    key: "netTrustDistribution",
+                    func: handleInnerModal,
+                },
+                {
+                    name: "assetValueOfBusinessTrust",
+                    type: "number-toComma-Modal",
+                    placeholder: "Asset Value of Business Trust",
+                    callBack: true,
+                    innerModalTitle: "Asset Value of Business Trust",
+                    key: "assetValueOfBusinessTrust",
+                    func: handleInnerModal,
+                },
+            ]
+        }
+
+
+        if (layoutSwitchFlag === "Bucket Company") {
+            OriginalArray = [
+                {
+                    name: "netTrustDistribution",
+                    type: "number-toComma-Modal",
+                    placeholder: "Net Trust Distribution",
+                    callBack: true,
+                    innerModalTitle: "Net Trust Distribution",
+                    key: "netTrustDistribution",
+                    func: handleInnerModal,
+                },
+                {
+                    name: "dividendIncome",
+                    type: "number-toComma-Modal",
+                    placeholder: "Dividend Income",
+                    callBack: true,
+                    innerModalTitle: "Dividend Income",
+                    key: "dividendIncome",
+                    func: handleInnerModal,
+                },
+            ]
+        }
+
+
 
         return OriginalArray;
     });
 
     const componentMapping = {
 
-        "Input Override": <InputOverride />,
-        "Balance & Rollover Amount": <BalanceRolloverAmount />,
-        "Withdrawals": <Withdrawals />,
-        "New Pension Rollover": <NewPensionRollover />,
-        "Pension Payments": <PensionPayments />
+        "Dividend Income": <DividendIncome />,
+        "Asset Value of Company": <AssetValueOfCompany />,
+        "Net Trust Distribution": <AssetValueOfCompany />,
+        "Asset Value of Business Trust": <AssetValueOfCompany />,
 
     }
 
@@ -389,7 +348,6 @@ const CFAccountBasedPension = (props) => {
                 return (
                     <Form>
                         <Row>
-
                             <InnerModal
                                 modalObject={modalObject}
                                 setFieldValue={setFieldValue}
@@ -415,6 +373,7 @@ const CFAccountBasedPension = (props) => {
                                     </div>
                                 </div>
                             </div>
+
                             {values.owner.length > 0 && (
                                 <div className="mt-4">
                                     <Table striped bordered responsive hover>
@@ -427,15 +386,24 @@ const CFAccountBasedPension = (props) => {
                                                 >
                                                     Owner
                                                 </th>
-                                                <th>Balance & Rollover Amount</th>
-                                                <th>Year to Commence</th>
-                                                <th>Risk Profile</th>
-                                                <th>Investment Returns</th>
-                                                <th>Investment Fees %</th>
-                                                <th>Adviser Service Fee ($)</th>
-                                                <th>Pension  Payments</th>
-                                                <th>New Pension Rollover</th>
-                                                <th>Withdrawals</th>
+                                                {layoutSwitchFlag === "Dividend Income" &&
+                                                    <React.Fragment>
+                                                        <th>Dividend Income</th>
+                                                        <th>Asset Value of Company</th>
+                                                    </React.Fragment>
+                                                }
+                                                {layoutSwitchFlag === "Business as Trusts" &&
+                                                    <React.Fragment>
+                                                        <th>Net Trust Distribution</th>
+                                                        <th>Asset Value of Business Trust</th>
+                                                    </React.Fragment>
+                                                }
+                                                {layoutSwitchFlag === "Bucket Company" &&
+                                                    <React.Fragment>
+                                                        <th>Net Trust Distribution</th>
+                                                        <th>Dividend Income</th>
+                                                    </React.Fragment>
+                                                }
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -475,4 +443,4 @@ const CFAccountBasedPension = (props) => {
     );
 };
 
-export default CFAccountBasedPension;
+export default BusinessInvestmentsMiddleware;

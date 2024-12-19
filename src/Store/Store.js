@@ -16,9 +16,7 @@ export const CFQObject = atom({
         //Financial Assets 
         QuestionsFlag: false,
 
-        // "cf_deductibleExpenses": "Yes",
-        // "cf_incomeAndExpence": "Yes",
-
+        // Income and Expense
         cf_incomeFromOverseas: "No",
         cf_incomeFromSoleTrade: "No",
         cf_incomeFromPartnership: "No",
@@ -30,9 +28,7 @@ export const CFQObject = atom({
         cf_incomeFromRegularLivingExpense: "No",
         cf_incomeFromEducation: "No",
 
-
         // asset and debt
-
         cf_familyHome: "Yes",
         cf_contents: "Yes",
         cf_car: "Yes",
@@ -42,9 +38,7 @@ export const CFQObject = atom({
         cf_otherAssets: "Yes",
         cf_personalDebt: "Yes",
 
-
-        // financial investment
-
+        // Financial Investment
         cf_AustralianShares: "No",
         cf_platformInvestment: "No",
         cf_otherInvestments: "No",
@@ -58,6 +52,10 @@ export const CFQObject = atom({
         cf_accountBasedPension: "No",
         cf_annuities: "No",
 
+        // Business Investment
+        cf_DividendIncome: "No",
+        cf_BusinessAsTrusts: "No",
+        cf_BucketCompany: "No",
     },
 });
 
@@ -209,10 +207,10 @@ export const defaultUrl = atom({
 
     // default: "http://localhost:7000",
 
-    // default: "http://192.168.3.210:7000",    // Usama Faheem Ah
-    // default: "http://192.168.3.4:7000",    // Usama bhai growWork_Beta
-    // default: "http://192.168.14.244:7000",  // Usama bhai mara Mobile k sath
-    // default: "http://192.168.227.244:7000", // Usama bhai Fahad bhai k sath
+    // default: "http://192.168.3.210:7000",    // Usama Faheem Ahmed
+    // default: "http://192.168.3.4:7000",      // Usama bhai growWork_Beta
+    // default: "http://192.168.14.244:7000",   // Usama bhai mara Mobile k sath
+    // default: "http://192.168.227.244:7000",  // Usama bhai Fahad bhai k sath
     // default: "http://192.168.3.137:7000",
     // default: "http://192.168.211.242:7000",
     // default: "http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com:7000",  // Live link 

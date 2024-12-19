@@ -57,7 +57,7 @@ function CashFlowOptions(props) {
             case "Cash-Flow/Investments":
                 stepComplete = 30;
                 break
-            case "Cash-Flow/Direct-Property":
+            case "Cash-Flow/Business-Entitles":
                 stepComplete = 40;
                 break
             case "Cash-Flow/Super-and-Retirement":

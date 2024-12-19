@@ -63,6 +63,8 @@ const AccountBasedPension = (props) => {
         }
     }, [])
 
+    //Create a function to fill the initial values of the Form making sure that the values are not undefined or null
+
     const fillInitialValues = (setFieldValue) => {
 
         if (props.modalObject.values[props.modalObject.Input] && props.modalObject.values[props.modalObject.Input].length > 0) {

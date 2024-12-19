@@ -32,6 +32,7 @@ import CashFlowInvestmentsProperty from '../Financial Investments/CashFlowInvest
 import CFSuperFund from '../Financial Investments/CFSuperFund';
 import CFAccountBasedPension from '../Financial Investments/CFAccountBasedPension';
 import CFAnnuities from '../Financial Investments/CFAnnuities';
+import BusinessInvestmentsMiddleware from '../BusinessInvestment/BusinessInvestmentsMiddleware';
 
 const CashFlowCardSet = (props) => {
 
@@ -71,13 +72,13 @@ const CashFlowCardSet = (props) => {
         "Australian Shares": <CashFlowAustralianShares />,
         "Platform Investment": <CashFlowAustralianShares />,
         "Other Investments": <CashFlowAustralianShares />,
-        
+
         // Same type of Modal
         "Cash": <CashFlowCashBankDetails />,
         "Term Deposits": <CashFlowCashBankDetails />,
         "Investment Bonds": <CashFlowCashBankDetails />,
-        
-        
+
+
         "Investment Loans (LOC)": <CashFlowInvestmentLoansLOC />,
         "Margin Loan": <CashFlowMarginLoan />,
         "Investments Property": <CashFlowInvestmentsProperty />,
@@ -86,6 +87,15 @@ const CashFlowCardSet = (props) => {
         "Super Fund": <CFSuperFund />,
         "Account Based Pension": <CFAccountBasedPension />,
         "Annuities": <CFAnnuities />,
+
+        //Business Investments
+        "Dividend Income": <BusinessInvestmentsMiddleware />,
+        "Business as Trusts": <BusinessInvestmentsMiddleware />,
+        "Bucket Company": <BusinessInvestmentsMiddleware />,
+
+
+
+
 
     }
 

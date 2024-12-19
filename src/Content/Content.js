@@ -38,6 +38,10 @@ import property from "../Components/Questions/svgs/property-value.svg";
 import loan from "../Components/Questions/svgs/loan.svg";
 import otherInvestment from "../Components/Questions/svgs/investmentCircle.png";
 
+import Business_building from "../Components/Questions/svgs/building-small-svgrepo-com.svg";
+import BusinessTeam_Handshake from "../Components/Questions/svgs/team_Handshake.png";
+import Business_fund from "../Components/Questions/svgs/Business-fund.png";
+
 export const content = {
     itemsOpt: [
         {
@@ -486,11 +490,27 @@ export const content = {
             condition: (CRObject) => true, // Always true, as this step is always needed.
         },
         {
-            subTitle: "Direct Property",
+            subTitle: "Business Entitles",
             statusStep: 40,
-            icon: "FaKey",
-            route: "/Direct-Property",
-            QuestionsArray: [],
+            icon: "FaBriefcase",
+            route: "/Business-Entitles",
+            QuestionsArray: [
+                {
+                    title: "Dividend Income",
+                    key: "cf_DividendIncome",
+                    img: Business_building,
+                },
+                {
+                    title: "Business as Trusts",
+                    key: "cf_BusinessAsTrusts",
+                    img: BusinessTeam_Handshake,
+                },
+                {
+                    title: "Bucket Company",
+                    key: "cf_BucketCompany",
+                    img: Business_fund,
+                },
+            ],
             condition: (CRObject) => true, // Always true, as this step is always needed.
         },
         {
