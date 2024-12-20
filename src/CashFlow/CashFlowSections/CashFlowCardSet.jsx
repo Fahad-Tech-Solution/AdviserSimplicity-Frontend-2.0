@@ -33,6 +33,8 @@ import CFSuperFund from '../Financial Investments/CFSuperFund';
 import CFAccountBasedPension from '../Financial Investments/CFAccountBasedPension';
 import CFAnnuities from '../Financial Investments/CFAnnuities';
 import BusinessInvestmentsMiddleware from '../BusinessInvestment/BusinessInvestmentsMiddleware';
+import SMSFAccumulationDetails from '../SMSF/SMSFAccumulationDetails';
+import SMSFPensionAccountDetails from '../SMSF/SMSFPensionAccountDetails';
 
 const CashFlowCardSet = (props) => {
 
@@ -92,6 +94,10 @@ const CashFlowCardSet = (props) => {
         "Dividend Income": <BusinessInvestmentsMiddleware />,
         "Business as Trusts": <BusinessInvestmentsMiddleware />,
         "Bucket Company": <BusinessInvestmentsMiddleware />,
+
+        "SMSF Accumulation Details": <SMSFAccumulationDetails />,
+        "SMSF Pension Account Details": <SMSFPensionAccountDetails />,
+        "SMSF Bank": "",
 
 
 

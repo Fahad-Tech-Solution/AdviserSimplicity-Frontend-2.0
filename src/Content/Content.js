@@ -42,6 +42,8 @@ import Business_building from "../Components/Questions/svgs/building-small-svgre
 import BusinessTeam_Handshake from "../Components/Questions/svgs/team_Handshake.png";
 import Business_fund from "../Components/Questions/svgs/Business-fund.png";
 
+import SMSFBank from "../Components/Questions/svgs/bank.svg";
+
 export const content = {
     itemsOpt: [
         {
@@ -441,7 +443,7 @@ export const content = {
                 },
                 {
                     title: "Cash",
-                    img: funds,
+                    img: SMSFBank,
                     key: "cf_cash",
                     // sourceKey: "bankAccountFinance",
                 },
@@ -490,7 +492,7 @@ export const content = {
             condition: (CRObject) => true, // Always true, as this step is always needed.
         },
         {
-            subTitle: "Business Entitles",
+            subTitle: "Business Entities",
             statusStep: 40,
             icon: "FaBriefcase",
             route: "/Business-Entitles",
@@ -517,7 +519,23 @@ export const content = {
             subTitle: "Super and Retirement",
             statusStep: 50,
             icon: "FaMoneyCheckDollar",
-            QuestionsArray: [],
+            QuestionsArray: [
+                {
+                    title: "SMSF Accumulation Details",
+                    key: "cf_SMSFAccumulationDetails",
+                    img: property,
+                },
+                {
+                    title: "SMSF Pension Account Details",
+                    key: "cf_SMSFPensionAccountDetails",
+                    img: calender,
+                },
+                {
+                    title: "SMSF Bank",
+                    key: "cf_SMSFBank",
+                    img: SMSFBank,
+                },
+            ],
             route: "/Super-and-Retirement",
             condition: (CRObject) => true, // Always true, as this step is always needed.
         },

@@ -41,6 +41,8 @@ const InnerModal = (props) => {
         "Family Trust Australian Shares/ETFs Detail",
         "Reduced Salary Income",
         "Salary Packaging Car",
+        "Accumulation Details",
+        "Balance Rollover Amount"
         // "Insurance Premiums"
         // "Portfolio Value"
         // "Bank Accounts Detail"
