@@ -175,10 +175,7 @@ const CashFlowInvestmentsProperty = (props) => {
         label: ("Year " + (i + 1)).toString(),
     }));
 
-    const indexation = Array.from({ length: 21 }, (_, i) => ({
-        value: (i * 0.5).toFixed(2) + "%",
-        label: (i * 0.5).toFixed(2) + "%",
-    }));
+ 
 
 
     let CalculatePercentage = (values, setFieldValue, CurrentInput, stakeHolder) => {

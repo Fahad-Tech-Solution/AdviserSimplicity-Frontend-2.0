@@ -3,7 +3,7 @@ import DynamicTableRow from '../../Components/Assets/Dynamic/DynamicTableRow';
 import { Form, Formik } from 'formik';
 import { Row, Table } from 'react-bootstrap';
 
-const regularContributions = (props) => {
+const RegularContributions = (props) => {
 
     let initialValues = {
         contribution: "",
@@ -127,4 +127,4 @@ const regularContributions = (props) => {
     )
 }
 
-export default regularContributions
+export default RegularContributions

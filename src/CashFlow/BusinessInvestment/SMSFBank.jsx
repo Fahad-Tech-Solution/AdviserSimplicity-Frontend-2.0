@@ -6,24 +6,15 @@ import { Row, Table } from "react-bootstrap";
 import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from "../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
-
-// import Balance from "./Balance";
-// import RolloverAmount from "./RolloverAmount";
-// import PensionPayments from "./PensionPayments";
-// import NewPensionRollover from "./NewPensionRollover";
-
 import {
+
     openNotificationSuccess,
     PatchAxios,
     PostAxios,
     RenderName,
 } from "../../Components/Assets/Api/Api";
-import Withdrawals from "../Financial Investments/Withdrawals";
-import CFSMSFBalance from "./CFSMSFBalance";
-import PensionPayments from "../Financial Investments/PensionPayments";
-import NewPensionRollover from "../Financial Investments/NewPensionRollover";
 
-const SMSFPensionAccountDetails = (props) => {
+const SMSFBank = (props) => {
 
     let questionDetail = useRecoilValue(QuestionDetail);
     let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
@@ -53,12 +44,14 @@ const SMSFPensionAccountDetails = (props) => {
                 if (!data || !Object.keys(data).length) return;
 
                 const fields = {
-                    balance: data.balance || "$0",
-                    rolloverAmount: data.rolloverAmount || "$0",
-                    yearToCommence: data.yearToCommence || "",
-                    pensionPayments: data.pensionPayments || "$0",
-                    newPensionRollover: data.newPensionRollover || "$0",
-                    withdrawals: data.withdrawals || "$0",
+                    openingBalance: data.openingBalance || "$0",
+                    investmentReturns: data.investmentReturns || "$0",
+                    incomeYield: data.incomeYield || "$0",
+                    accountingFees: data.accountingFees || "$0",
+                    atoLevy: data.atoLevy || "$0",
+                    adviserFees: data.adviserFees || "$0",
+                    indexationFundFees: data.indexationFundFees || "$0",
+                    windupFundYear: data.windupFundYear || "$0",
                 };
 
                 Object.entries(fields).forEach(([key, value]) => {
@@ -98,17 +91,20 @@ const SMSFPensionAccountDetails = (props) => {
     };
 
     let onSubmit = async (values) => {
+
+        console.log(JSON.stringify(values));
+
         let obj = values;
         obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
 
         if (values.owner.includes("client")) {
-            obj.clientTotal = values.client.balance || "$0";
+            obj.clientTotal = values.client.openingBalance || "$0";
         } else {
             obj.clientTotal = "";
         }
 
         if (values.owner.includes("partner")) {
-            obj.partnerTotal = values.partner.balance || "$0";
+            obj.partnerTotal = values.partner.openingBalance || "$0";
         } else {
             obj.partnerTotal = "";
         }
@@ -179,72 +175,68 @@ const SMSFPensionAccountDetails = (props) => {
             ]
             : [{ value: "client", label: RenderName("client") }];
 
+    const indexation = Array.from({ length: 21 }, (_, i) => ({
+        value: (i * 0.5).toFixed(2) + "%",
+        label: (i * 0.5).toFixed(2) + "%",
+    }));
 
-    const yearsArray = Array.from({ length: 30 }, (_, i) => {
-        return ({
-            value: (i + 1).toString(),
-            label: ("Year " + (i + 1)).toString(),
-        })
-    });
+    const InvestmentReturnsOptions = [
+        { value: "System", label: "System" },
+        { value: "Input Override", label: "Input Override" },
+    ]
+
+    const windupFundYearOptions = Array.from({ length: 30 }, (_, i) => ({
+        value: (i + 1).toString(),
+        label: `Year ${i + 1}`,
+    }));
 
     const [rowConfig, setRowConfig] = useState(() => {
         return [
             {
-                name: "balanceRolloverAmount",
-                type: "number-toComma-Modal",
-                placeholder: "Balance Rollover Amount",
-                callBack: true,
-                innerModalTitle: "Balance Rollover Amount",
-                key: "balanceRolloverAmount",
-                func: handleInnerModal,
+                name: "openingBalance",
+                type: "number-toComma",
+                placeholder: "Opening Balance",
             },
             {
-                name: "yearToCommence",
+                name: "investmentReturns",
                 type: "select",
-                placeholder: "Year to Commence",
-                options: yearsArray
+                placeholder: "Investment Returns",
+                options: InvestmentReturnsOptions,
             },
             {
-                name: "pensionPayments",
-                type: "number-toComma-Modal",
-                placeholder: "Pension Payments",
-                callBack: true,
-                innerModalTitle: "Pension Payments",
-                key: "pensionPayments",
-                func: handleInnerModal,
+                name: "incomeYield",
+                type: "number-toComma",
+                placeholder: "Income Yield",
             },
             {
-                name: "newPensionRollover",
-                type: "yesnoModal",
-                placeholder: "New Pension Rollover",
-                callBack: true,
-                innerModalTitle: "New Pension Rollover",
-                key: "newPensionRollover",
-                func: handleInnerModal,
+                name: "accountingFees",
+                type: "number-toComma",
+                placeholder: "Accounting & Auditing Fees",
             },
             {
-                name: "withdrawals",
-                type: "yesnoModal",
-                placeholder: "Withdrawals",
-                callBack: true,
-                innerModalTitle: "Withdrawals",
-                key: "withdrawals",
-                func: handleInnerModal,
+                name: "atoLevy",
+                type: "number-toComma",
+                placeholder: "ATO LEVY",
+            },
+            {
+                name: "adviserFees",
+                type: "number-toComma",
+                placeholder: "Adviser Service Fees",
+            },
+            {
+                name: "indexationFundFees",
+                type: "select",
+                placeholder: "Indexation of Fund Fees",
+                options: indexation,
+            },
+            {
+                name: "windupFundYear",
+                type: "select",
+                placeholder: "Windup Fund in Year",
+                options: windupFundYearOptions,
             },
         ];
     });
-
-    const componentMapping = {
-        "Balance Rollover Amount": <CFSMSFBalance />,
-        // "Year to Commence": <YearToCommence />,
-        "Pension Payments": <PensionPayments />,
-        "New Pension Rollover": <NewPensionRollover />,
-        "Withdrawals": <Withdrawals />,
-    }
-
-    const ModalContent = (obj) => {
-        return componentMapping[obj.title] || null;
-    };
 
     return (
         <Formik
@@ -267,7 +259,7 @@ const SMSFPensionAccountDetails = (props) => {
                                 setFlagState={setFlagState}
                                 flagState={flagState}
                             >
-                                {ModalContent(modalObject)}
+                                {/* Modal content can be added here */}
                             </InnerModal>
 
                             <div className="col-md-12">
@@ -293,11 +285,14 @@ const SMSFPensionAccountDetails = (props) => {
                                         <thead>
                                             <tr>
                                                 <th>Owner</th>
-                                                <th>Balance Rollover Amount</th>
-                                                <th>Year to Commence</th>
-                                                <th>Pension Payments</th>
-                                                <th>New Pension Rollover</th>
-                                                <th>Withdrawals</th>
+                                                <th>Opening Balance</th>
+                                                <th>Investment Returns</th>
+                                                <th>Income Yield</th>
+                                                <th>Accounting & Auditing Fees</th>
+                                                <th>ATO LEVY</th>
+                                                <th>Adviser Service Fees</th>
+                                                <th>Indexation of Fund Fees</th>
+                                                <th>Windup Fund in Year</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -337,4 +332,4 @@ const SMSFPensionAccountDetails = (props) => {
     );
 };
 
-export default SMSFPensionAccountDetails;
+export default SMSFBank;

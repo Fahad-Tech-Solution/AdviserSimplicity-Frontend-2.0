@@ -1,71 +1,24 @@
 {
-  "owner": ["client"],
-  "client": {
-    "accumulationDetails": "Yes",
-    "insurancePremiums": "Yes",
-    "concessionalContributions": "Yes",
-    "nonConcessionalContributions": "Yes",
-    "withdrawals": "Yes",
-    "accumulationDetailsObj": {
-      "totalFundNetAssetValue": "",
-      "percentageOfFundForMember": "100.00%",
-      "actualValueToMember": "",
-      "taxFreeComponent": "$123",
-      "taxableComponent": ""
+  "owner": ["partner"],
+  "client": { "openingBalance": "" },
+  "partner": {
+    "openingBalance": "$123",
+    "reinvestIncome": "No",
+    "regularContributions": "Yes",
+    "regularContributionsObj": {
+      "contribution": "$123",
+      "regularContributions": "$123",
+      "contributeFromYear": "8",
+      "contributeUpUntil": "8",
+      "indexation": "4.00%"
     },
-    "insurancePremiumsObj": {
-      "insurancePremiums": "$123,123",
-      "yearsInclude": "6",
-      "indexationOfPremiums": "3.50%"
-    },
-    "concessionalContributionsObj": {
-      "employerSGContributions": "Other",
-      "personalSalarySacrifice": "Other",
-      "personalSalarySacrificeObj": { "otherPercentageAmount": "100.00%" },
-      "affordabilityOtherAmount": "$12",
-      "indexationOfOtherAmount": "0.50%",
-      "contributionsFund": "SMSF",
-      "yearCommence": "2",
-      "yearsInclude": "2",
-      "catchUpContribution": "$12",
-      "contributionsToFund": "SMSF",
-      "contributionSplitting": "Yes",
-      "contributionSplittingObj": {
-        "contributionSplitting": "$12",
-        "yearToCommence": "1",
-        "yearsToInclude": "2",
-        "contributionsToFund": "2"
-      }
-    },
-    "nonConcessionalContributionsObj": {
-      "lumpsumNonConcessionalYearOne": "$123",
-      "contributionsToFund": "SMSF",
-      "lumpsumNonConcessional": "Yes",
-      "lumpsumNonConcessionalObj": {
-        "contributionsToFund": "2",
-        "year": "8",
-        "amount": "$12"
-      },
-      "regularNonConcessional": "$12",
-      "yearCommence": "2",
-      "yearsInclude": "3",
-      "contributionsFund": "2",
-      "governmentCoContribution": "SMSF",
-      "applySpouseContribution": "Yes",
-      "applySpouseContributionObj": {
-        "yearToCommence": "4",
-        "yearsToInclude": "17"
-      },
-      "downSizerContribution": "Yes",
-      "downSizerContributionObj": {
-        "downSizerContribution": "$12",
-        "contributionsToFund": "2"
-      }
-    },
-    "withdrawalsObj": {
-      "contributionsToFund": "SMSF",
-      "year": "3",
-      "amount": "$113"
-    }
-  }
+    "investmentReturns": "input Override",
+    "incomeYield": "$1,023",
+    "riskProfile": "Balanced",
+    "cashOutYear": "9"
+  },
+  "joint": { "openingBalance": "" },
+  "scenarioFK": "674999ee0ad151e3406f3f31",
+  "clientTotal": "",
+  "partnerTotal": "$123"
 }

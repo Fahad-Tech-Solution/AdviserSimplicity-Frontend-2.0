@@ -7,40 +7,41 @@ import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from "
 import { useRecoilState, useRecoilValue } from "recoil";
 import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 
-// import Balance from "./Balance";
-// import RolloverAmount from "./RolloverAmount";
-// import PensionPayments from "./PensionPayments";
-// import NewPensionRollover from "./NewPensionRollover";
 
 import {
     openNotificationSuccess,
     PatchAxios,
     PostAxios,
     RenderName,
+    toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
-import Withdrawals from "../Financial Investments/Withdrawals";
-import CFSMSFBalance from "./CFSMSFBalance";
-import PensionPayments from "../Financial Investments/PensionPayments";
-import NewPensionRollover from "../Financial Investments/NewPensionRollover";
+import RegularContributions from "../Financial Investments/RegularContributions";
 
-const SMSFPensionAccountDetails = (props) => {
-
-    let questionDetail = useRecoilValue(QuestionDetail);
+const SMSFTermDeposit = (props) => {
+    let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
     let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
     let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
 
-    let [UserStatus] = useState(localStorage.getItem("UserStatus"));
-    let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
+    let [layoutSwitchFlag, setLayoutSwitchFlag] = useState(() => {
+        return props.modalObject.title === "SMSF Term Deposit";
+    });
 
+    let questionDetail = useRecoilValue(QuestionDetail);
+
+    let [UserStatus] = useState(localStorage.getItem("UserStatus"));
     let DefaultUrl = useRecoilValue(defaultUrl);
 
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
 
-    let [layoutSwitchFlag, setLayoutSwitchFlag] = useState(props.modalObject.title)
-
     let initialValues = {
         owner: [],
+        client: {
+            openingBalance: "",
+        },
+        partner: {
+            openingBalance: "",
+        },
     };
 
     const fillInitialValues = (setFieldValue) => {
@@ -51,14 +52,14 @@ const SMSFPensionAccountDetails = (props) => {
 
             const updateFields = (data, prefix) => {
                 if (!data || !Object.keys(data).length) return;
-
                 const fields = {
-                    balance: data.balance || "$0",
-                    rolloverAmount: data.rolloverAmount || "$0",
-                    yearToCommence: data.yearToCommence || "",
-                    pensionPayments: data.pensionPayments || "$0",
-                    newPensionRollover: data.newPensionRollover || "$0",
-                    withdrawals: data.withdrawals || "$0",
+                    openingBalance: data.openingBalance || "$0",
+                    investmentReturns: data.investmentReturns || "",
+                    incomeYield: data.incomeYield || "",
+                    reinvestIncome: data.reinvestIncome || "No",
+                    reinvestUpUntil: data.reinvestUpUntil || "",
+                    riskProfile: data.riskProfile || {},
+                    cashOutYear: data.cashOutYear || ""
                 };
 
                 Object.entries(fields).forEach(([key, value]) => {
@@ -66,16 +67,34 @@ const SMSFPensionAccountDetails = (props) => {
                 });
             };
 
-            if (scenarioObj?.selectedSource === "discoveryForm") {
+            if (scenarioObj?.selectedSource === "discoveryForm" && questionDetail[props.modalObject.sourceKey]) {
+                const incomeFromOverseasPension = questionDetail[props.modalObject.sourceKey];
+                if (incomeFromOverseasPension?.client.length > 0) {
+                    let Obj = {
+                        openingBalance: incomeFromOverseasPension.client.clientCurrentBalance,
+                    }
+                    updateFields(Obj, "client");
+                }
+
+                if (UserStatus === "Married" && incomeFromOverseasPension?.partner.length > 0) {
+                    let Obj = {
+                        openingBalance: incomeFromOverseasPension.partner.partnerCurrentBalance,
+                    }
+                    updateFields(Obj, "partner");
+                }
+
+            } else {
                 const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
                 if (cashFlowDetails) {
                     setFieldValue(`owner`, cashFlowDetails.owner || "");
                     if (cashFlowDetails.owner.includes("client")) {
                         updateFields(cashFlowDetails.client, "client");
                     }
+
                     if (UserStatus === "Married" && cashFlowDetails.owner.includes("partner")) {
                         updateFields(cashFlowDetails.partner, "partner");
                     }
+
                 }
             }
 
@@ -90,6 +109,8 @@ const SMSFPensionAccountDetails = (props) => {
                 if (UserStatus === "Married" && cashFlowDataDetails.owner.includes("partner")) {
                     updateFields(cashFlowDataDetails.partner, "partner");
                 }
+
+
             }
 
         } catch (error) {
@@ -98,17 +119,24 @@ const SMSFPensionAccountDetails = (props) => {
     };
 
     let onSubmit = async (values) => {
+        console.log("Values:", JSON.stringify(values));
         let obj = values;
         obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
 
+        let JointCurrentBalance = 0;
+
+        if (values.owner.includes("joint")) {
+            JointCurrentBalance = parseFloat(values.joint.openingBalance.replace(/[^0-9.-]+/g, ""));
+        }
+
         if (values.owner.includes("client")) {
-            obj.clientTotal = values.client.balance || "$0";
+            obj.clientTotal = toCommaAndDollar(parseFloat(values.client.openingBalance.replace(/[^0-9.-]+/g, "")) + (JointCurrentBalance / 2)) || "$0";
         } else {
             obj.clientTotal = "";
         }
 
         if (values.owner.includes("partner")) {
-            obj.partnerTotal = values.partner.balance || "$0";
+            obj.partnerTotal = toCommaAndDollar(parseFloat(values.partner.openingBalance.replace(/[^0-9.-]+/g, "")) + (JointCurrentBalance / 2)) || "$0";
         } else {
             obj.partnerTotal = "";
         }
@@ -165,8 +193,7 @@ const SMSFPensionAccountDetails = (props) => {
             title,
             values,
             key,
-            stakeHolder,
-            sourceObj: props.modalObject,
+            stakeHolder
         });
         setFlagState(true);
     };
@@ -179,67 +206,113 @@ const SMSFPensionAccountDetails = (props) => {
             ]
             : [{ value: "client", label: RenderName("client") }];
 
-
-    const yearsArray = Array.from({ length: 30 }, (_, i) => {
-        return ({
-            value: (i + 1).toString(),
-            label: ("Year " + (i + 1)).toString(),
-        })
+    const loanTermOptions = Array.from({ length: 31 }, (_, i) => {
+        if (i === 0) {
+            return ({
+                value: "No",
+                label: "No",
+            })
+        } else {
+            return ({
+                value: (i).toString(),
+                label: ("Year " + (i)).toString(),
+            })
+        }
     });
 
-    const [rowConfig, setRowConfig] = useState(() => {
-        return [
+    let InvestmentReturnsOptions = [
+        { value: "system", label: "System" },
+        { value: "input Override", label: "Input Override" },
+    ]
+
+    let RiskProfileOptions = [
+        { value: "Conservative", label: "Conservative" },
+        { value: "Moderately Conservative", label: "Moderately Conservative" },
+        { value: "Balanced", label: "Balanced" },
+        { value: "Growth", label: "Growth" },
+        { value: "High Growth", label: "High Growth" },
+        { value: "Cash", label: "Cash" },
+        { value: "International Shares", label: "International Shares" },
+        { value: "Property", label: "Property" },
+        { value: "Australian Fixed Interest", label: "Australian Fixed Interest" },
+        { value: "International Fixed Interest", label: "International Fixed Interest" },
+        { value: "Other", label: "Other" },
+        { value: "Australian Shares", label: "Australian Shares" },
+    ]
+
+    const [rowConfigClient, setRowConfigClient] = useState(() => createInitialRowConfig(true));
+    const [rowConfigPartner, setRowConfigPartner] = useState(() => createInitialRowConfig(true));
+    const [rowConfigJoint, setRowConfigJoint] = useState(() => createInitialRowConfig(true));
+
+    function createInitialRowConfig(isDisabled) {
+        let inputArray = [
             {
-                name: "balanceRolloverAmount",
-                type: "number-toComma-Modal",
-                placeholder: "Balance Rollover Amount",
-                callBack: true,
-                innerModalTitle: "Balance Rollover Amount",
-                key: "balanceRolloverAmount",
-                func: handleInnerModal,
+                name: "openingBalance",
+                type: "number-toComma",
+                placeholder: "Opening Balance",
             },
             {
-                name: "yearToCommence",
+                name: "investmentReturns",
                 type: "select",
-                placeholder: "Year to Commence",
-                options: yearsArray
-            },
-            {
-                name: "pensionPayments",
-                type: "number-toComma-Modal",
-                placeholder: "Pension Payments",
+                placeholder: "Investment Returns",
+                options: InvestmentReturnsOptions,
                 callBack: true,
-                innerModalTitle: "Pension Payments",
-                key: "pensionPayments",
-                func: handleInnerModal,
+                func: AddExtraInput,
             },
             {
-                name: "newPensionRollover",
+                name: "incomeYield",
+                type: "number-toComma",
+                placeholder: "Income Yield",
+                disabled: isDisabled,
+            },
+            {
+                name: "reinvestIncome",
+                type: "yesno",
+                placeholder: "Reinvest income",
+            },
+            {
+                name: "regularContributions",
                 type: "yesnoModal",
-                placeholder: "New Pension Rollover",
+                placeholder: "Regular Contributions",
                 callBack: true,
-                innerModalTitle: "New Pension Rollover",
-                key: "newPensionRollover",
+                key: "regularContributions",
+                innerModalTitle: "Regular Contributions",
                 func: handleInnerModal,
             },
             {
-                name: "withdrawals",
-                type: "yesnoModal",
-                placeholder: "Withdrawals",
-                callBack: true,
-                innerModalTitle: "Withdrawals",
-                key: "withdrawals",
-                func: handleInnerModal,
+                name: "riskProfile",
+                type: "select",
+                placeholder: "Risk Profile",
+                options: RiskProfileOptions,
             },
+            {
+                name: "cashOutYear",
+                type: "select",
+                placeholder: "Cashout Year",
+                options: loanTermOptions,
+            }
         ];
-    });
+
+        return inputArray;
+    }
+
+    function updateRowConfig(stakeHolder, isDisabled) {
+        const updatedConfig = createInitialRowConfig(isDisabled);
+        if (stakeHolder === "client.") setRowConfigClient(updatedConfig);
+        if (stakeHolder === "partner.") setRowConfigPartner(updatedConfig);
+        if (stakeHolder === "joint.") setRowConfigJoint(updatedConfig);
+    }
+
+    function AddExtraInput(values, setFieldValue, currentInput, stakeHolder) {
+        const isDisabled = (currentInput.value === "") || (currentInput.value === "system");
+        if (isDisabled) {
+            setFieldValue(stakeHolder + "incomeYield", "")
+        }
+        updateRowConfig(stakeHolder, isDisabled);
+    }
 
     const componentMapping = {
-        "Balance Rollover Amount": <CFSMSFBalance />,
-        // "Year to Commence": <YearToCommence />,
-        "Pension Payments": <PensionPayments />,
-        "New Pension Rollover": <NewPensionRollover />,
-        "Withdrawals": <Withdrawals />,
+        "Regular Contributions": <RegularContributions />,
     }
 
     const ModalContent = (obj) => {
@@ -257,7 +330,6 @@ const SMSFPensionAccountDetails = (props) => {
                 useEffect(() => {
                     fillInitialValues(setFieldValue);
                 }, []);
-
                 return (
                     <Form>
                         <Row>
@@ -286,24 +358,31 @@ const SMSFPensionAccountDetails = (props) => {
                                     </div>
                                 </div>
                             </div>
-
                             {values.owner.length > 0 && (
                                 <div className="mt-4">
                                     <Table striped bordered responsive hover>
                                         <thead>
                                             <tr>
-                                                <th>Owner</th>
-                                                <th>Balance Rollover Amount</th>
-                                                <th>Year to Commence</th>
-                                                <th>Pension Payments</th>
-                                                <th>New Pension Rollover</th>
-                                                <th>Withdrawals</th>
+                                                <th
+                                                    onClick={() => {
+                                                        console.log(values);
+                                                    }}
+                                                >
+                                                    Owner
+                                                </th>
+                                                <th>Opening Balance</th>
+                                                <th>Investment Returns</th>
+                                                <th>Income Yield</th>
+                                                <th>Reinvest income</th>
+                                                <th>Reinvest Up Until</th>
+                                                <th>Risk Profile/SAA</th>
+                                                <th>Cashout in Year</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {values.owner.includes("client") && (
                                                 <DynamicTableRow
-                                                    rowConfig={rowConfig}
+                                                    rowConfig={rowConfigClient}
                                                     values={values}
                                                     setFieldValue={setFieldValue}
                                                     handleChange={handleChange}
@@ -316,7 +395,7 @@ const SMSFPensionAccountDetails = (props) => {
                                             {values.owner.includes("partner") &&
                                                 UserStatus === "Married" && (
                                                     <DynamicTableRow
-                                                        rowConfig={rowConfig}
+                                                        rowConfig={rowConfigPartner}
                                                         values={values}
                                                         setFieldValue={setFieldValue}
                                                         handleChange={handleChange}
@@ -337,4 +416,4 @@ const SMSFPensionAccountDetails = (props) => {
     );
 };
 
-export default SMSFPensionAccountDetails;
+export default SMSFTermDeposit;

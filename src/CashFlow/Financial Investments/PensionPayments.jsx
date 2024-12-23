@@ -161,7 +161,6 @@ const PensionPayments = (props) => {
                                                     <th>Preservation Age in Year</th>
                                                     <th>Minimum Pension</th>
                                                     <th>Maximum TTR Pension</th>
-
                                                 </tr>
                                             </thead>
                                             <tbody>

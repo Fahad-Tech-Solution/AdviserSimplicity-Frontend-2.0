@@ -35,6 +35,8 @@ import CFAnnuities from '../Financial Investments/CFAnnuities';
 import BusinessInvestmentsMiddleware from '../BusinessInvestment/BusinessInvestmentsMiddleware';
 import SMSFAccumulationDetails from '../SMSF/SMSFAccumulationDetails';
 import SMSFPensionAccountDetails from '../SMSF/SMSFPensionAccountDetails';
+import SMSFBank from '../BusinessInvestment/SMSFBank';
+import SMSFTermDeposit from '../BusinessInvestment/SMSFTermDeposit';
 
 const CashFlowCardSet = (props) => {
 
@@ -97,7 +99,8 @@ const CashFlowCardSet = (props) => {
 
         "SMSF Accumulation Details": <SMSFAccumulationDetails />,
         "SMSF Pension Account Details": <SMSFPensionAccountDetails />,
-        "SMSF Bank": "",
+        "SMSF Bank": <SMSFBank />,
+        "SMSF Term Deposit": <SMSFTermDeposit />,
 
 
 

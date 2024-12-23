@@ -60,14 +60,11 @@ function CashFlowOptions(props) {
             case "Cash-Flow/Business-Entitles":
                 stepComplete = 40;
                 break
-            case "Cash-Flow/Super-and-Retirement":
+            case "Cash-Flow/SMSF":
                 stepComplete = 50;
                 break
-            case "Cash-Flow/Investment":
+            case "Cash-Flow/InvestmentTrust":
                 stepComplete = 60;
-                break
-            case "Cash-Flow/SMSF":
-                stepComplete = 70;
                 break
             default:
                 let a = cLocation.split('/')[0];

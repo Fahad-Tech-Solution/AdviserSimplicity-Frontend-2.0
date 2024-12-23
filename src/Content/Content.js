@@ -516,7 +516,7 @@ export const content = {
             condition: (CRObject) => true, // Always true, as this step is always needed.
         },
         {
-            subTitle: "Super and Retirement",
+            subTitle: "SMSF",
             statusStep: 50,
             icon: "FaMoneyCheckDollar",
             QuestionsArray: [
@@ -535,25 +535,30 @@ export const content = {
                     key: "cf_SMSFBank",
                     img: SMSFBank,
                 },
+                {
+                    title: "SMSF Term Deposit",
+                    key: "cf_SMSFTermDeposit",
+                    img: TermImg,
+                },
             ],
-            route: "/Super-and-Retirement",
+            route: "/SMSF",
             condition: (CRObject) => true, // Always true, as this step is always needed.
         },
         {
-            subTitle: "Investment",
+            subTitle: "Investment Trust",
             statusStep: 60,
             icon: "FaBriefcase",
-            route: "/Investment",
+            route: "/InvestmentTrust",
             QuestionsArray: [],
             condition: (CRObject) => true, // Always true, as this step is always needed.
         },
-        {
-            subTitle: "SMSF",
-            statusStep: 70,
-            icon: "FaGift",
-            route: "/SMSF",
-            QuestionsArray: [],
-            condition: (CRObject) => true, // Always true, as this step is always needed.
-        },
+        // {
+        //     subTitle: "SMSF",
+        //     statusStep: 70,
+        //     icon: "FaGift",
+        //     route: "/SMSF",
+        //     QuestionsArray: [],
+        //     condition: (CRObject) => true, // Always true, as this step is always needed.
+        // },
     ],
 }
