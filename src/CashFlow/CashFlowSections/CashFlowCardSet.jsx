@@ -102,6 +102,12 @@ const CashFlowCardSet = (props) => {
         "SMSF Bank": <SMSFBank />,
         "SMSF Term Deposit": <SMSFTermDeposit />,
 
+        "SMSF Australian Shares": <CashFlowAustralianShares />,
+        "SMSF Platform Investment": <CashFlowAustralianShares />,
+        "SMSF": <CashFlowAustralianShares />,
+
+
+
 
 
 

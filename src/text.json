@@ -1,24 +1,39 @@
 {
-  "owner": ["partner"],
-  "client": { "openingBalance": "" },
-  "partner": {
-    "openingBalance": "$123",
-    "reinvestIncome": "No",
-    "regularContributions": "Yes",
-    "regularContributionsObj": {
-      "contribution": "$123",
-      "regularContributions": "$123",
-      "contributeFromYear": "8",
-      "contributeUpUntil": "8",
-      "indexation": "4.00%"
-    },
-    "investmentReturns": "input Override",
-    "incomeYield": "$1,023",
-    "riskProfile": "Balanced",
-    "cashOutYear": "9"
+  "streetAddress": "12",
+  "valueOfProperty": "$121",
+  "clientOwnership": "50.00%",
+  "partnerOwnership": "50.00%",
+  "yearOfPurchase": "9",
+  "totalCostBaseObj": {
+    "stampDutyType": "Manual",
+    "stampDutyValue": "$50,002",
+    "otherPurchaseCosts": "$20,020",
+    "costBaseExisting": "$1,000,020",
+    "totalCostBase": "$70,034"
   },
-  "joint": { "openingBalance": "" },
+  "expectedGrowthRate": "52.00%",
+  "loanBalance": "Yes",
+  "loanBalanceObj": {
+    "loanBalance": "$12",
+    "loanType": "P&i",
+    "loanTerm": "30",
+    "initialInterestRatePA": "12.00%",
+    "deductibleInterest": "",
+    "minimumRepaymentsPA": "$200,002",
+    "actualAnnualRepayments": "$250,002",
+    "repayLoanInYear": "9",
+    "loanBalanceCashFlowLoanBelanceLVR": {
+      "LVR": "12.00%",
+      "loanAmount": "$12",
+      "loanBalance": "$12",
+      "clientOwnership": "88.00%",
+      "partnerOwnership": "12.00%"
+    }
+  },
+  "rentalIncome": "Yes",
+  "sellPropertyInYear": "10",
+  "convertToPPRYear": "9",
   "scenarioFK": "674999ee0ad151e3406f3f31",
-  "clientTotal": "",
-  "partnerTotal": "$123"
+  "clientTotal": "$121",
+  "partnerTotal": "$12"
 }

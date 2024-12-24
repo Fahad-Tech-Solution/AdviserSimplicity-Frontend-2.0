@@ -5,8 +5,6 @@ import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
 import { Row, Table } from "react-bootstrap";
 import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from "../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
-import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
-
 
 import {
     openNotificationSuccess,
@@ -15,7 +13,6 @@ import {
     RenderName,
     toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
-import RegularContributions from "../Financial Investments/RegularContributions";
 
 const SMSFTermDeposit = (props) => {
     let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
@@ -31,17 +28,8 @@ const SMSFTermDeposit = (props) => {
     let [UserStatus] = useState(localStorage.getItem("UserStatus"));
     let DefaultUrl = useRecoilValue(defaultUrl);
 
-    let [flagState, setFlagState] = useState(false);
-    let [modalObject, setModalObject] = useState({});
-
     let initialValues = {
         owner: [],
-        client: {
-            openingBalance: "",
-        },
-        partner: {
-            openingBalance: "",
-        },
     };
 
     const fillInitialValues = (setFieldValue) => {
@@ -120,6 +108,8 @@ const SMSFTermDeposit = (props) => {
 
     let onSubmit = async (values) => {
         console.log("Values:", JSON.stringify(values));
+
+
         let obj = values;
         obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
 
@@ -226,17 +216,7 @@ const SMSFTermDeposit = (props) => {
     ]
 
     let RiskProfileOptions = [
-        { value: "Conservative", label: "Conservative" },
-        { value: "Moderately Conservative", label: "Moderately Conservative" },
-        { value: "Balanced", label: "Balanced" },
-        { value: "Growth", label: "Growth" },
-        { value: "High Growth", label: "High Growth" },
         { value: "Cash", label: "Cash" },
-        { value: "International Shares", label: "International Shares" },
-        { value: "Property", label: "Property" },
-        { value: "Australian Fixed Interest", label: "Australian Fixed Interest" },
-        { value: "International Fixed Interest", label: "International Fixed Interest" },
-        { value: "Other", label: "Other" },
         { value: "Australian Shares", label: "Australian Shares" },
     ]
 
@@ -271,13 +251,10 @@ const SMSFTermDeposit = (props) => {
                 placeholder: "Reinvest income",
             },
             {
-                name: "regularContributions",
-                type: "yesnoModal",
-                placeholder: "Regular Contributions",
-                callBack: true,
-                key: "regularContributions",
-                innerModalTitle: "Regular Contributions",
-                func: handleInnerModal,
+                name: "reinvestUpUntil",
+                type: "select",
+                placeholder: "Reinvest Up Until",
+                options: loanTermOptions,
             },
             {
                 name: "riskProfile",
@@ -311,13 +288,6 @@ const SMSFTermDeposit = (props) => {
         updateRowConfig(stakeHolder, isDisabled);
     }
 
-    const componentMapping = {
-        "Regular Contributions": <RegularContributions />,
-    }
-
-    const ModalContent = (obj) => {
-        return componentMapping[obj.title] || null;
-    };
 
     return (
         <Formik
@@ -333,15 +303,6 @@ const SMSFTermDeposit = (props) => {
                 return (
                     <Form>
                         <Row>
-                            <InnerModal
-                                modalObject={modalObject}
-                                setFieldValue={setFieldValue}
-                                setFlagState={setFlagState}
-                                flagState={flagState}
-                            >
-                                {ModalContent(modalObject)}
-                            </InnerModal>
-
                             <div className="col-md-12">
                                 <div className="d-flex justify-content-center align-items-center gap-4">
                                     <label htmlFor="" className="text-end ">
@@ -387,7 +348,6 @@ const SMSFTermDeposit = (props) => {
                                                     setFieldValue={setFieldValue}
                                                     handleChange={handleChange}
                                                     handleBlur={handleBlur}
-                                                    handleInnerModal={handleInnerModal}
                                                     stakeHolder="client."
                                                 />
                                             )}
@@ -400,7 +360,7 @@ const SMSFTermDeposit = (props) => {
                                                         setFieldValue={setFieldValue}
                                                         handleChange={handleChange}
                                                         handleBlur={handleBlur}
-                                                        handleInnerModal={handleInnerModal}
+
                                                         stakeHolder="partner."
                                                     />
                                                 )}

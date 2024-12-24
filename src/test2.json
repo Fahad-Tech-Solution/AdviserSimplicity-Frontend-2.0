@@ -1,0 +1,54 @@
+{
+  "owner": ["partner", "client"],
+  "partner": { "newPensionRollover": "No", "withdrawals": "No" },
+  "client": {
+    "newPensionRollover": "Yes",
+    "withdrawals": "Yes",
+    "balanceRolloverAmount": "$12",
+    "balanceRolloverAmountObj": {
+      "pensionType": "Defined Benefit",
+      "commencePensionYear": "8",
+      "applyDeeming": "Yes",
+      "applyDeemingObj": {
+        "purchasePrice": "$12",
+        "centreLinkRelevantNumber": "12.00"
+      },
+      "totalSuperannuationBenefits": "$12",
+      "nominatedRolloverAmount": "Partial",
+      "nominatedRolloverAmountValue": "$12",
+      "taxFreeComponent": "$12"
+    },
+    "yearToCommence": "10",
+    "pensionPayments": "$12",
+    "pensionPaymentsObj": {
+      "nominatedPensionAmount": "Maximum",
+      "reversionaryPensionOption": "Yes",
+      "otherAmount": "$12",
+      "indexationPension": "",
+      "preservationAge": "",
+      "preservationAgeYear": "",
+      "minimumPension": "",
+      "maximumTTRPension": ""
+    },
+    "newPensionRolloverObj": {
+      "commencePensionInYear": "9",
+      "currentPensionDetails": "",
+      "totalSuperannuationBenefits": "",
+      "nominatedRolloverAmount": "$12",
+      "reversionaryPensionOption": "Yes",
+      "nominatedPensionAmount": "Maximum",
+      "otherAmount": "$12",
+      "indexationPension": "4.00%",
+      "minimumPension": "",
+      "maximumPension": ""
+    },
+    "withdrawalsObj": {
+      "contributionsToFund": "1",
+      "year": "10",
+      "amount": "$12"
+    }
+  },
+  "scenarioFK": "674999ee0ad151e3406f3f31",
+  "clientTotal": "$0",
+  "partnerTotal": "$0"
+}

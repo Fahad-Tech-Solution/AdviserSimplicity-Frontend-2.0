@@ -119,7 +119,10 @@ const ModalComponent = (props) => {
         "Investment Loans (LOC)",
         "Lifetime Benefits",
         "SMSF Accumulation Details",
-        "SMSF Bank"
+        "SMSF Bank",
+        "SMSF Australian Shares",
+        "SMSF Platform Investment",
+        "SMSF"
 
     ]; // Add other titles that should use "xl" here
 

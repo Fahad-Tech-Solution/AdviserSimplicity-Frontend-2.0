@@ -540,6 +540,21 @@ export const content = {
                     key: "cf_SMSFTermDeposit",
                     img: TermImg,
                 },
+                {
+                    title: "SMSF Australian Shares",
+                    key: "cf_SMSFAustralianShares",
+                    img: PortFolio,
+                },
+                {
+                    title: "SMSF Platform Investment",
+                    key: "cf_SMSFPlatformInvestment",
+                    img: funds,
+                },
+                {
+                    title: "SMSF",
+                    key: "cf_SMSF",
+                    img: otherInvestment,
+                },
             ],
             route: "/SMSF",
             condition: (CRObject) => true, // Always true, as this step is always needed.

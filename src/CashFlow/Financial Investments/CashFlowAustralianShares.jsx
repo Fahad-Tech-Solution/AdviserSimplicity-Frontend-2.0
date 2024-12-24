@@ -23,6 +23,8 @@ const CashFlowAustralianShares = (props) => {
        1. "Australian Shares"
        2. "Platform Investment"
        3. "Other Investments"
+       4. "SMSF Australian Shares"
+       s. "SMSF Platform Investment"
    
        TODO-IMPORTANT:
        - Ensure any changes to this component are planned carefully to avoid unintended effects on all supported modals.
@@ -42,7 +44,7 @@ const CashFlowAustralianShares = (props) => {
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
 
-    let layoutSwitchArray = ["Platform Investment", "Other Investments"]
+    let layoutSwitchArray = ["Platform Investment", "Other Investments", "SMSF Platform Investment", "SMSF Australian Shares"];
 
     let [layoutSwitchFlag, setLayoutSwitchFlag] = useState(() => {
         if (layoutSwitchArray.includes(props.modalObject.title)) {
@@ -51,6 +53,15 @@ const CashFlowAustralianShares = (props) => {
         return false
     })
 
+
+    let layoutSwitchSMSFArray = ["SMSF Platform Investment", "SMSF Australian Shares", "SMSF"];
+
+    let [layoutSwitchSMSFFlag, setLayoutSwitchSMSFFlag] = useState(() => {
+        if (layoutSwitchSMSFArray.includes(props.modalObject.title)) {
+            return true
+        }
+        return false
+    })
 
     let BankAccountFinance = Object.keys(questionDetail[props.modalObject.sourceKey] || {}).length > 0 ? questionDetail[props.modalObject.sourceKey] : {
         client: [],
@@ -80,7 +91,7 @@ const CashFlowAustralianShares = (props) => {
             setObjAndAPIKey(props.modalObject.key);
 
             // console.log(BankAccountFinance, "Discovery Form Data " + props.modalObject.key + " and SourceKey " + props.modalObject.sourceKey, BankAccountFinance.client);
-            
+
             console.log(cashFlowData?.[objAndAPIKey].client.investmentFees, "cashFlowData Form Data");
             // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
 
@@ -214,7 +225,7 @@ const CashFlowAustralianShares = (props) => {
 
         let JointCurrentBalance = 0
 
-        if (values.owner.includes("joint")) {
+        if (values.owner.includes("joint") && layoutSwitchSMSFFlag === false) {
             JointCurrentBalance = parseFloat(values.joint.currentBalance.replace(/[^0-9.-]+/g, ""))
         }
 
@@ -230,6 +241,11 @@ const CashFlowAustralianShares = (props) => {
         }
         else {
             obj.partnerTotal = ""
+        }
+
+        if (layoutSwitchSMSFFlag) {
+            obj.jointTotal = undefined;
+            obj.joint = undefined;
         }
 
         const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
@@ -312,11 +328,17 @@ const CashFlowAustralianShares = (props) => {
 
     const options =
         UserStatus !== "Single"
-            ? [
-                { value: "client", label: RenderName("client") },
-                { value: "partner", label: RenderName("partner") },
-                { value: "joint", label: RenderName("joint") },
-            ]
+            ?
+            layoutSwitchSMSFFlag ?
+                [
+                    { value: "client", label: RenderName("client") },
+                    { value: "partner", label: RenderName("partner") },
+                ] :
+                [
+                    { value: "client", label: RenderName("client") },
+                    { value: "partner", label: RenderName("partner") },
+                    { value: "joint", label: RenderName("joint") },
+                ]
             : [{ value: "client", label: RenderName("client") }];
 
 
@@ -346,7 +368,13 @@ const CashFlowAustralianShares = (props) => {
             {
                 name: "currentBalance",
                 type: "number-toComma",
-                placeholder: "Current Balance",
+                placeholder: layoutSwitchSMSFFlag ?
+                    props.modalObject.title === "SMSF" ?
+                        "Current Balance"
+                        :
+                        "Opening Balance"
+                    :
+                    "Current Balance",
             },
             {
                 name: "costBase",
@@ -477,7 +505,16 @@ const CashFlowAustralianShares = (props) => {
                                                 >
                                                     Owner
                                                 </th>
-                                                <th>Current Balance</th>
+                                                <th>
+                                                    {layoutSwitchSMSFFlag ?
+                                                        props.modalObject.title === "SMSF" ?
+                                                            "Current Balance"
+                                                            :
+                                                            "Opening Balance"
+                                                        :
+                                                        "Current Balance"
+                                                    }
+                                                </th>
                                                 <th>Cost Base</th>
                                                 <th>Investment Returns</th>
                                                 <th>Reinvest income</th>

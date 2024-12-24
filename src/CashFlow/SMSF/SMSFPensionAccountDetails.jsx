@@ -98,6 +98,7 @@ const SMSFPensionAccountDetails = (props) => {
     };
 
     let onSubmit = async (values) => {
+        console.log(JSON.stringify(values));
         let obj = values;
         obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
 
