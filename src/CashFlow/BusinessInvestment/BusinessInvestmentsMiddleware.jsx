@@ -72,16 +72,38 @@ const BusinessInvestmentsMiddleware = (props) => {
 
                 if (!data || !Object.keys(data).length) return;
 
-                const fields = {
-                    dividendIncome: data.dividendIncome || "$0",
-                    dividendIncomeObj: data.dividendIncomeObj || {},
-                    assetValueOfCompany: data.assetValueOfCompany || "$0",
-                    assetValueOfCompanyObj: data.assetValueOfCompanyObj || {},
-                    // netTrustDistribution: data.netTrustDistribution || "$0",
-                    // assetValueOfBusinessTrust: data.assetValueOfBusinessTrust || "$0",
-                    // netTrustDistribution: data.netTrustDistribution || "$0",
-                    // dividendIncome: data.dividendIncome || "$0",
-                };
+                let fields = {};
+
+
+                if (props.modalObject.title === "Dividend Income") {
+                    fields = {
+                        dividendIncome: data.dividendIncome || "$0",
+                        dividendIncomeObj: data.dividendIncomeObj || {},
+                        assetValueOfCompany: data.assetValueOfCompany || "$0",
+                        assetValueOfCompanyObj: data.assetValueOfCompanyObj || {},
+                    };
+                }
+
+                if (props.modalObject.title === "Business as Trusts") {
+                    fields = {
+                        netTrustDistribution: data.netTrustDistribution || "$0",
+                        netTrustDistributionObj: data.netTrustDistributionObj || {},
+                        assetValueOfBusinessTrust: data.assetValueOfBusinessTrust || "$0",
+                        assetValueOfBusinessTrustObj: data.assetValueOfBusinessTrustObj || {},
+                    };
+                }
+
+                if (props.modalObject.title === "Bucket Company") {
+                    fields = {
+                        netTrustDistribution: data.netTrustDistribution || "$0",
+                        netTrustDistributionObj: data.netTrustDistributionObj || {},
+                        dividendIncome: data.dividendIncome || "$0",
+                        dividendIncomeObj: data.dividendIncomeObj || {},
+                    };
+                }
+
+
+
 
                 Object.entries(fields).forEach(([key, value]) => {
                     setFieldValue(`${prefix}.${key}`, value);
@@ -158,17 +180,15 @@ const BusinessInvestmentsMiddleware = (props) => {
         obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
 
         if (values.owner.includes("client")) {
-            obj.clientTotal = values.client.currentBalance || "$0";
-        }
-        else {
-            obj.clientTotal = ""
+            obj.clientTotal = Object.values(values.client)[0] || "$0";
+        } else {
+            obj.clientTotal = "";
         }
 
         if (values.owner.includes("partner")) {
-            obj.partnerTotal = values.partner.currentBalance || "$0";
-        }
-        else {
-            obj.partnerTotal = ""
+            obj.partnerTotal = Object.values(values.partner)[0] || "$0";
+        } else {
+            obj.partnerTotal = "";
         }
 
         const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
@@ -255,6 +275,7 @@ const BusinessInvestmentsMiddleware = (props) => {
                 innerModalTitle: "Dividend Income",
                 key: "dividendIncome",
                 func: handleInnerModal,
+                inputChangeFunc: () => { },
             },
             {
                 name: "assetValueOfCompany",
@@ -264,6 +285,7 @@ const BusinessInvestmentsMiddleware = (props) => {
                 innerModalTitle: "Asset Value of Company",
                 key: "assetValueOfCompany",
                 func: handleInnerModal,
+                inputChangeFunc: () => { },
             },
         ];
 
@@ -278,6 +300,7 @@ const BusinessInvestmentsMiddleware = (props) => {
                     innerModalTitle: "Net Trust Distribution",
                     key: "netTrustDistribution",
                     func: handleInnerModal,
+                    inputChangeFunc: () => { },
                 },
                 {
                     name: "assetValueOfBusinessTrust",
@@ -287,6 +310,7 @@ const BusinessInvestmentsMiddleware = (props) => {
                     innerModalTitle: "Asset Value of Business Trust",
                     key: "assetValueOfBusinessTrust",
                     func: handleInnerModal,
+                    inputChangeFunc: () => { },
                 },
             ]
         }
@@ -302,6 +326,7 @@ const BusinessInvestmentsMiddleware = (props) => {
                     innerModalTitle: "Net Trust Distribution",
                     key: "netTrustDistribution",
                     func: handleInnerModal,
+                    inputChangeFunc: () => { },
                 },
                 {
                     name: "dividendIncome",
@@ -311,11 +336,10 @@ const BusinessInvestmentsMiddleware = (props) => {
                     innerModalTitle: "Dividend Income",
                     key: "dividendIncome",
                     func: handleInnerModal,
+                    inputChangeFunc: () => { },
                 },
             ]
         }
-
-
 
         return OriginalArray;
     });

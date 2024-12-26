@@ -37,7 +37,9 @@ const CashFlowCarsCards = (props) => {
                                 <Card className="py-4 shadow borderOverAll GoalsobjectiveCard d-flex" style={{ borderRadius: "20px", height: "100%" }}>
                                     <h5 className='text-center' onClick={() => { console.log(questionDetail[CashFlowElem.key]) }}>{CashFlowElem.title}
                                     </h5>
-                                    <div className='d-flex justify-content-center flex-column' style={{ marginTop: "auto" }}>
+                                    <div className='d-flex justify-content-center flex-column'
+                                    // style={{ marginTop: "auto" }}
+                                    >
                                         <div className="QuestionIcon CardImg">
                                             <img className="img-fluid" src={CashFlowElem.img} alt="" />
                                         </div>

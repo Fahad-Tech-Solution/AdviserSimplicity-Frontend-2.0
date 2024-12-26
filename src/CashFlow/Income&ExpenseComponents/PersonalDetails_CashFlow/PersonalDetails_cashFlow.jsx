@@ -69,6 +69,10 @@ const PersonalDetails_cashFlow = (Props) => {
 
     obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
 
+
+    (obj.client.maritalStatus === "Single" || obj.client.maritalStatus === "Widowed") ? obj.partner = {} : obj.partner = obj.partner;
+
+
     const bankAccountArray = cashFlowData?.cf_personalDetails?._id || "";
     try {
       let res;
@@ -254,102 +258,6 @@ const PersonalDetails_cashFlow = (Props) => {
     }
   }
 
-  // const fillInitialValues = (setFieldValue) => {
-
-
-  //   let ScenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
-  //   if (ScenarioObj.selectedSource === "discoveryForm") {
-  //     if (PersonalDetailObj._id) {
-  //       if (PersonalDetailObj.client) {
-  //         let ClientData = PersonalDetailObj.client;
-  //         setFieldValue(`client.name`, ClientData.clientGivenName)
-  //         setFieldValue(`client.DOB`, ClientData.clientDOB)
-  //         setFieldValue(`client.age`, ClientData.clientAge)
-  //         setFieldValue(`client.gender`, ClientData.clientGender)
-  //         setFieldValue(`client.privateHealthCover`, ClientData.clientPrivateHealthCoverRadio)
-  //         setFieldValue(`client.maritalStatus`, ClientData.clientMaritalStatus)
-  //       }
-
-  //       if (PersonalDetailObj.partner) {
-  //         let partnerData = PersonalDetailObj.partner;
-  //         setFieldValue(`partner.name`, partnerData.partnerGivenName)
-  //         setFieldValue(`partner.DOB`, partnerData.partnerDOB)
-  //         setFieldValue(`partner.age`, partnerData.partnerAge)
-  //         setFieldValue(`partner.gender`, partnerData.partnerGender)
-  //         setFieldValue(`partner.privateHealthCover`, partnerData.partnerPrivateHealthCoverRadio)
-  //       }
-  //     }
-  //   }
-  //   else {
-  //     const cashFlowDataFound = CashFlowScenarioDataObj.cf_personalDetails;
-
-  //     // Update client details if available
-  //     let clientDataOfScenario = cashFlowDataFound?.client;
-
-  //     if (clientDataOfScenario) {
-  //       setFieldValue("client.name", clientDataOfScenario.name || "");
-  //       setFieldValue("client.DOB", clientDataOfScenario.DOB || "");
-  //       setFieldValue("client.age", clientDataOfScenario.age || "");
-  //       setFieldValue("client.gender", clientDataOfScenario.gender || "");
-  //       setFieldValue("client.privateHealthCover", clientDataOfScenario.privateHealthCover || "");
-  //       setFieldValue("client.maritalStatus", clientDataOfScenario.maritalStatus || "");
-  //       setFieldValue("client.retirementYear", clientDataOfScenario.retirementYear || "");
-  //       setFieldValue("client.plannedRetirementAge", clientDataOfScenario.plannedRetirementAge || "");
-  //     }
-
-  //     // Update partner details if available
-  //     let partnerDataOfScenario = cashFlowDataFound?.partner;
-  //     if (partnerDataOfScenario) {
-  //       setFieldValue("partner.name", partnerDataOfScenario.name || "");
-  //       setFieldValue("partner.DOB", partnerDataOfScenario.DOB || "");
-  //       setFieldValue("partner.age", partnerDataOfScenario.age || "");
-  //       setFieldValue("partner.gender", partnerDataOfScenario.gender || "");
-  //       setFieldValue("partner.privateHealthCover", partnerDataOfScenario.privateHealthCover || "");
-  //       setFieldValue("partner.maritalStatus", partnerDataOfScenario.maritalStatus || "");
-  //       setFieldValue("partner.retirementYear", partnerDataOfScenario.retirementYear || "");
-  //       setFieldValue("partner.plannedRetirementAge", partnerDataOfScenario.plannedRetirementAge || "");
-  //     }
-  //   }
-
-  //   let clientData = {};
-  //   let partnerData = {};
-
-  //   if (cashFlowData?.cf_personalDetails?._id) {
-  //     const cashFlowDataFound = cashFlowData.cf_personalDetails;
-
-
-  //     // Update client details if available
-  //     clientData = cashFlowDataFound?.client;
-
-
-  //     if (clientData) {
-  //       setFieldValue("client.name", clientData.name || "");
-  //       setFieldValue("client.DOB", clientData.DOB || "");
-  //       setFieldValue("client.age", clientData.age || "");
-  //       setFieldValue("client.gender", clientData.gender || "");
-  //       setFieldValue("client.privateHealthCover", clientData.privateHealthCover || "");
-  //       setFieldValue("client.maritalStatus", clientData.maritalStatus || "");
-  //       setFieldValue("client.retirementYear", clientData.retirementYear || "");
-  //       setFieldValue("client.plannedRetirementAge", clientData.plannedRetirementAge || "");
-  //     }
-
-  //     // Update partner details if available
-  //     partnerData = cashFlowDataFound?.partner;
-  //     if (partnerData) {
-  //       setFieldValue("partner.name", partnerData.name || "");
-  //       setFieldValue("partner.DOB", partnerData.DOB || "");
-  //       setFieldValue("partner.age", partnerData.age || "");
-  //       setFieldValue("partner.gender", partnerData.gender || "");
-  //       setFieldValue("partner.privateHealthCover", partnerData.privateHealthCover || "");
-  //       setFieldValue("partner.maritalStatus", partnerData.maritalStatus || "");
-  //       setFieldValue("partner.retirementYear", partnerData.retirementYear || "");
-  //       setFieldValue("partner.plannedRetirementAge", partnerData.plannedRetirementAge || "");
-  //     }
-  //   }
-
-  // };
-
-
   const fillInitialValues = (setFieldValue) => {
     try {
       // Retrieve the ScenarioObj from localStorage
@@ -359,13 +267,22 @@ const PersonalDetails_cashFlow = (Props) => {
       const updateFields = (data, prefix) => {
         if (!data) return;
 
-        const fields = {
+        const fields = prefix === "client" ? {
           name: data.name || data.clientGivenName || "",
           DOB: data.DOB || data.clientDOB || "",
           age: data.age || data.clientAge || "",
           gender: data.gender || data.clientGender || "",
           privateHealthCover: data.privateHealthCover || data.clientPrivateHealthCoverRadio || "",
           maritalStatus: data.maritalStatus || data.clientMaritalStatus || "",
+          retirementYear: data.retirementYear || "",
+          plannedRetirementAge: data.plannedRetirementAge || "",
+        } : {
+          name: data.name || data.partnerGivenName || "",
+          DOB: data.DOB || data.partnerDOB || "",
+          age: data.age || data.partnerAge || "",
+          gender: data.gender || data.partnerGender || "",
+          privateHealthCover: data.privateHealthCover || data.partnerPrivateHealthCoverRadio || "",
+          maritalStatus: data.maritalStatus || data.partnerMaritalStatus || "",
           retirementYear: data.retirementYear || "",
           plannedRetirementAge: data.plannedRetirementAge || "",
         };
@@ -382,7 +299,7 @@ const PersonalDetails_cashFlow = (Props) => {
           }
           if (prefix === "partner") {
             if (key === "name") {
-              localStorage.setItem('PartnerName', value)
+              localStorage.setItem('PartnerName', value);
             }
           }
         });
@@ -394,15 +311,14 @@ const PersonalDetails_cashFlow = (Props) => {
         updateFields(PersonalDetailObj.client, "client");
         // Update partner details
         updateFields(PersonalDetailObj.partner, "partner");
-      }
-
-      // Handle cashFlowData scenario
-      const cashFlowDetails = CashFlowScenarioDataObj?.cf_personalDetails;
-      if (cashFlowDetails) {
-        // Update client details
-        updateFields(cashFlowDetails.client, "client");
-        // Update partner details
-        updateFields(cashFlowDetails.partner, "partner");
+      } else {    // Handle cashFlowData scenario
+        const cashFlowDetails = CashFlowScenarioDataObj?.cf_personalDetails;
+        if (cashFlowDetails) {
+          // Update client details
+          updateFields(cashFlowDetails.client, "client");
+          // Update partner details
+          updateFields(cashFlowDetails.partner, "partner");
+        }
       }
 
       // Additional data from cashFlowData

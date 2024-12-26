@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import DynamicTableRow from '../../Components/Assets/Dynamic/DynamicTableRow';
 import { Form, Formik } from 'formik';
 import { Row, Table } from 'react-bootstrap';
 import { FaRegBuilding } from 'react-icons/fa6';
 import InnerModal from '../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal';
-import TotalCostBase from './TotalCostBase';
-import CashFlowHomeLoan from '../PersonalAssetsComponents/CashFlowNew/CashFlowHomeLoan';
 import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from '../../Store/Store';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { openNotificationSuccess, PatchAxios, PostAxios } from '../../Components/Assets/Api/Api';
+import TotalCostBase from '../Financial Investments/TotalCostBase';
+import CashFlowHomeLoan from '../PersonalAssetsComponents/CashFlowNew/CashFlowHomeLoan';
 
-const CashFlowInvestmentsProperty = (props) => {
+const SMSFInvestmentProperties = (props) => {
 
     let questionDetail = useRecoilValue(QuestionDetail);
     let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
@@ -27,8 +27,6 @@ const CashFlowInvestmentsProperty = (props) => {
     let initialValues = {
         streetAddress: "",
         valueOfProperty: "",
-        clientOwnership: "",
-        partnerOwnership: "",
         yearOfPurchase: "",
         totalCostBaseObj: {},
         expectedGrowthRate: "",
@@ -36,37 +34,19 @@ const CashFlowInvestmentsProperty = (props) => {
         loanBalanceObj: {},
         rentalIncome: "",
         sellPropertyInYear: "",
-        convertToPPRYear: "",
     }
-
-    let managedFundsLOC = Object.keys(questionDetail.managedFundsLOC || {}).length > 0 ? questionDetail.managedFundsLOC : {
-        client: [],
-        partner: [],
-        joint: [],
-
-    };
 
     const fillInitialValues = (setFieldValue) => {
         try {
-            // Set the object and API key
             setObjAndAPIKey(props.modalObject.key);
-
-            // console.log(managedFundsLOC, "Discovery Form Data");
-            // console.log(cashFlowData[props.modalObject.key], "cashFlowData Form Data");
-            // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
 
             const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
 
-            // Helper function to update field values
             const updateFields = (data, prefix) => {
-
                 if (!data || !Object.keys(data).length) return;
-                console.log(data.clientOwnership, "Data");
                 const fields = {
                     streetAddress: data.streetAddress || "",
                     valueOfProperty: data.valueOfProperty || "",
-                    clientOwnership: data.clientOwnership || "",
-                    partnerOwnership: data.partnerOwnership || "",
                     yearOfPurchase: data.yearOfPurchase || "",
                     totalCostBaseObj: data.totalCostBaseObj || {},
                     expectedGrowthRate: data.expectedGrowthRate || "",
@@ -74,7 +54,6 @@ const CashFlowInvestmentsProperty = (props) => {
                     loanBalanceObj: data.loanBalanceObj || {},
                     rentalIncome: data.rentalIncome || "",
                     sellPropertyInYear: data.sellPropertyInYear || "",
-                    convertToPPRYear: data.convertToPPRYear || "",
                 };
 
                 Object.entries(fields).forEach(([key, value]) => {
@@ -82,21 +61,15 @@ const CashFlowInvestmentsProperty = (props) => {
                 });
             };
 
-            // Update owner field
             if (scenarioObj?.selectedSource === "discoveryForm" && managedFundsLOC && managedFundsLOC._id) {
-                // setFieldValue(`address`, PersonalData.client.clientHomeAddress || "");
                 updateFields(managedFundsLOC, "client");
-            }
-            else {
-                // Handle cashFlowData scenario
+            } else {
                 const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-                console.log(cashFlowDetails, "cashFlowDetails")
                 if (cashFlowDetails) {
                     updateFields(cashFlowDetails, "client");
                 }
             }
 
-            // Additional data from cashFlowData
             if (cashFlowData?.[objAndAPIKey]?._id) {
                 const cashFlowDataDetails = cashFlowData[objAndAPIKey];
                 updateFields(cashFlowDataDetails, "client");
@@ -108,19 +81,11 @@ const CashFlowInvestmentsProperty = (props) => {
     };
 
     let onSubmit = async (values) => {
-        console.log(JSON.stringify(values));
-        // return (false);
-        let obj = values
-
+        let obj = values;
         obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
-
         obj.clientTotal = values.valueOfProperty || "$0";
-
         obj.partnerTotal = values.loanBalanceObj.loanBalance || "$0";
-
         const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
-
-        console.log(JSON.stringify(obj), "final obj");
 
         try {
             let res;
@@ -137,7 +102,6 @@ const CashFlowInvestmentsProperty = (props) => {
             }
 
             if (res) {
-                console.log(res);
                 const updatedData = {
                     ...cashFlowData,
                     [objAndAPIKey]: res,
@@ -152,7 +116,6 @@ const CashFlowInvestmentsProperty = (props) => {
                 'Data of "' + props.modalObject.title + '" is Saved'
             );
 
-            // Reset the flag state if necessary
             if (props.flagState) {
                 props.setFlagState(false);
             }
@@ -174,33 +137,7 @@ const CashFlowInvestmentsProperty = (props) => {
         label: ("Year " + (i + 1)).toString(),
     }));
 
-
-
-
-    let CalculatePercentage = (values, setFieldValue, CurrentInput, stakeHolder) => {
-        // console.log(values, setFieldValue, CurrentInput, stakeHolder);
-
-        let clientOwnership = values.clientOwnership.replace(/[^0-9.]+/g, "") || 0;
-        let partnerOwnership = values.partnerOwnership.replace(/[^0-9.]+/g, "") || 0;
-
-        switch (CurrentInput.name) {
-            case "clientOwnership":
-                clientOwnership = CurrentInput.value.replace(/[^0-9.]+/g, "");
-                setFieldValue("partnerOwnership", (100 - (clientOwnership > 100 ? 100 : clientOwnership)).toFixed(2) + "%")
-                break;
-            case "partnerOwnership":
-                partnerOwnership = CurrentInput.value.replace(/[^0-9.]+/g, "");
-                setFieldValue("clientOwnership", (100 - (partnerOwnership > 100 ? 100 : partnerOwnership)).toFixed(2) + "%")
-                break;
-            default:
-                console.log("Ma nahi Btao gha")
-                break;
-        }
-    }
-
-
     let handleInnerModal = (title, values, key, stakeHolder) => {
-        console.log(title, values, key);
         setModalObject({
             title,
             values,
@@ -210,8 +147,6 @@ const CashFlowInvestmentsProperty = (props) => {
         });
         setFlagState(true);
     };
-
-
 
     let rowConfig = [
         {
@@ -227,21 +162,6 @@ const CashFlowInvestmentsProperty = (props) => {
             name: "valueOfProperty",
             type: "number-toComma",
             placeholder: "Value of Property",
-        },
-        {
-            name: "clientOwnership",
-            type: "number-toPercent",
-            callBack: true,
-            func: CalculatePercentage,
-            placeholder: "Client % Ownership",
-
-        },
-        {
-            name: "partnerOwnership",
-            type: "number-toPercent",
-            callBack: true,
-            func: CalculatePercentage,
-            placeholder: "Partner % Ownership",
         },
         {
             name: "yearOfPurchase",
@@ -281,12 +201,6 @@ const CashFlowInvestmentsProperty = (props) => {
             placeholder: "Sell Property in Year",
             options: loanTermOptions,
         },
-        {
-            name: "convertToPPRYear",
-            type: "select",
-            placeholder: "Convert into PPR in Year",
-            options: loanTermOptions,
-        },
     ];
 
     const componentMapping = {
@@ -297,7 +211,6 @@ const CashFlowInvestmentsProperty = (props) => {
     const ModalContent = (obj) => {
         return componentMapping[obj.title] || null;
     };
-
 
     return (
         <Formik
@@ -313,7 +226,6 @@ const CashFlowInvestmentsProperty = (props) => {
 
                 return (
                     <Form>
-
                         <InnerModal
                             modalObject={modalObject}
                             setFieldValue={setFieldValue}
@@ -333,15 +245,12 @@ const CashFlowInvestmentsProperty = (props) => {
                                                     <th>No#</th>
                                                     <th>Street Address</th>
                                                     <th>Value of Property - <a href='https://www.property.com.au/' target='_blank' className='text-white'><FaRegBuilding /></a></th>
-                                                    <th>Client %Ownership</th>
-                                                    <th>Partner %Ownership</th>
                                                     <th>Year Of Purchase</th>
                                                     <th>Total Cost Base</th>
                                                     <th>Expected Growth Rate</th>
                                                     <th>Loan Balance</th>
                                                     <th>Rental Income</th>
                                                     <th>Sell Property in Year</th>
-                                                    <th>Convert into PPR in year</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -366,4 +275,4 @@ const CashFlowInvestmentsProperty = (props) => {
     )
 }
 
-export default CashFlowInvestmentsProperty
+export default SMSFInvestmentProperties;

@@ -555,6 +555,16 @@ export const content = {
                     key: "cf_SMSF",
                     img: otherInvestment,
                 },
+                {
+                    title: "SMSF Investment Loan",
+                    key: "cf_SMSFInvestmentLoan",
+                    img: loan,
+                },
+                {
+                    title: "SMSF Investment Properties",
+                    key: "cf_SMSFInvestmentProperties",
+                    img: property,
+                },
             ],
             route: "/SMSF",
             condition: (CRObject) => true, // Always true, as this step is always needed.
@@ -564,7 +574,9 @@ export const content = {
             statusStep: 60,
             icon: "FaBriefcase",
             route: "/InvestmentTrust",
-            QuestionsArray: [],
+            QuestionsArray: [
+                
+            ],
             condition: (CRObject) => true, // Always true, as this step is always needed.
         },
         // {

@@ -29,14 +29,14 @@ export const CFQObject = atom({
         cf_incomeFromEducation: "No",
 
         // asset and debt
-        cf_familyHome: "Yes",
-        cf_contents: "Yes",
-        cf_car: "Yes",
-        cf_motorVehicle2: "Yes",
-        cf_boat: "Yes",
-        cf_caravan: "Yes",
-        cf_otherAssets: "Yes",
-        cf_personalDebt: "Yes",
+        cf_familyHome: "No",
+        cf_contents: "No",
+        cf_car: "No",
+        cf_motorVehicle2: "No",
+        cf_boat: "No",
+        cf_caravan: "No",
+        cf_otherAssets: "No",
+        cf_personalDebt: "No",
 
         // Financial Investment
         cf_AustralianShares: "No",
@@ -208,7 +208,7 @@ export const defaultUrl = atom({
     // default: "http://localhost:7000",
 
     // default: "http://192.168.3.210:7000",    // Usama Faheem Ahmed
-    // default: "http://192.168.3.4:7000",      // Usama bhai growWork_Beta
+    // default: "http://192.168.3.131:7000",      // Usama bhai growWork_Beta
     // default: "http://192.168.14.244:7000",   // Usama bhai mara Mobile k sath
     // default: "http://192.168.227.244:7000",  // Usama bhai Fahad bhai k sath
     // default: "http://192.168.3.137:7000",

@@ -34,10 +34,8 @@ const CashFlowLoanBelanceLVR = (props) => {
     let onSubmit = async (values) => {
         console.log("values", values);
 
-
         props.setFieldValue(props.modalObject.key + "CashFlowLoanBelanceLVR", values);
         props.setFieldValue(props.modalObject.key, values.loanBalance);
-
 
         // Reset the flag state if necessary
         if (props.flagState) {
@@ -134,22 +132,23 @@ const CashFlowLoanBelanceLVR = (props) => {
                                         <Table striped bordered responsive hover>
                                             <thead>
                                                 <tr>
-                                                    {/* <th>No#</th> */}
                                                     <th>Loan to Value Ratio (LVR) </th>
                                                     <th>Loan Amount</th>
-                                                    <th>Loan Balance</th>
-                                                    <th>Client Ownership</th>
-                                                    <th>Partner Ownership</th>
-                                                    {/* <th>Frequency</th>
-                                                    <th>Annual Repayments</th>
-                                                    <th>Interest Rate (p.a)</th>
-                                                    <th>Loan Term </th>
-                                                    <th>Loan Term Remaining </th> */}
+                                                    <th>Loan Balance {props.modalObject.ParentObject.title}</th>
+                                                    {props.modalObject.ParentObject.title !== "SMSF Investment Properties" &&
+                                                        <React.Fragment>
+                                                            <th>Client Ownership</th>
+                                                            <th>Partner Ownership</th>
+                                                        </React.Fragment>
+                                                    }
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <DynamicTableRow
-                                                    rowConfig={rowConfig}
+                                                    rowConfig={rowConfig.filter(row =>
+                                                        props.modalObject.ParentObject.title !== "SMSF Investment Properties" ||
+                                                        (row.name !== "clientOwnership" && row.name !== "partnerOwnership")
+                                                    )}
                                                     values={values}
                                                     setFieldValue={setFieldValue}
                                                     handleChange={handleChange}

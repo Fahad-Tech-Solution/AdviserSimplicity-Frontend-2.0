@@ -63,15 +63,17 @@ const CashFlowEmploymentIncome = (props) => {
 
             // Helper function to update field values
             const updateFields = (data, prefix) => {
-
                 if (!data || !Object.keys(data).length) return;
+
+                let upUntilYearData = cashFlowData.cf_personalDetails
+
                 const fields = {
 
                     salaryIncome: data.salaryIncome || data.SalaryPackageModal.grossSalary || "$0",
 
-                    includeFromYear: data.includeFromYear || "",
-                    upUntilYear: data.upUntilYear || "",
-                    indexation: data.indexation || "",
+                    includeFromYear: data.includeFromYear || "1",
+                    upUntilYear: data.upUntilYear || upUntilYearData[prefix].plannedRetirementAge || "",
+                    indexation: data.indexation || "2.50%",
 
                     reducedSalaryIncomeRadio: data.reducedSalaryIncomeRadio || "",
                     reducedSalaryIncomeModal: data.reducedSalaryIncomeModal || {},

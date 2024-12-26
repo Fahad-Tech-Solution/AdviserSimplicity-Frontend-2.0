@@ -10,7 +10,8 @@ const CashFlowHomeLoan = (props) => {
   /*
      This component is a dynamic and reusable modal component designed to handle the following modal types:
      1. "Home Loan"  inner Modal
-     2. "Loan Balance" inner Modal
+     2. "Financial Investment/Investment Loan/Loan Balance" inner Modal
+     3. "SMSF/Investment Loan/Loan Balance" inner Modal
  
      TODO-IMPORTANT:
      - Ensure any changes to this component are planned carefully to avoid unintended effects on all supported modals.
@@ -80,6 +81,7 @@ const CashFlowHomeLoan = (props) => {
       title,
       values,
       key,
+      ParentObject: props.modalObject.ParentObject,
     });
     setFlagState(true);
   };
@@ -119,9 +121,7 @@ const CashFlowHomeLoan = (props) => {
       name: "minimumRepaymentsPA",
       type: "number-toComma",
       placeholder: "Minimum Repayments (p.a)",
-
     },
-
     {
       name: "actualAnnualRepayments",
       type: "number-toComma",
