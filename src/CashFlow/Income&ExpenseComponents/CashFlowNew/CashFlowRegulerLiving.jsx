@@ -13,13 +13,13 @@ import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from "
 import { useRecoilState, useRecoilValue } from "recoil";
 
 const CashFlowRegularLiving = (props) => {
+
   let questionDetail = useRecoilValue(QuestionDetail);
   let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
   let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
 
   let [UserStatus] = useState(localStorage.getItem("UserStatus"));
   let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
-
 
   let DefaultUrl = useRecoilValue(defaultUrl);
 
@@ -279,8 +279,8 @@ const CashFlowRegularLiving = (props) => {
                       </th>
                       <th>Expenses</th>
                       <th>Amount</th>
-                      <th>Include From Year:</th>
-                      <th>Up Until Year:</th>
+                      <th>Include From Year</th>
+                      <th>Up Until Year</th>
                       <th>Indexation</th>
                     </tr>
                   </thead>

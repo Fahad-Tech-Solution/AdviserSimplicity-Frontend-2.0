@@ -242,10 +242,13 @@ const CashFlowOtherAsset = (props) => {
 
   const options = onlyJoint.includes(props.modalObject.title) ? [
     { value: "joint", label: RenderName("joint") }
-  ] : (UserStatus !== "Single") ? [
-    { value: "client", label: RenderName("client") },
-    { value: "partner", label: RenderName("partner") }] :
-    [{ value: "client", label: RenderName("client") },];
+  ] :
+    (UserStatus === "Married") ?
+
+      [{ value: "client", label: RenderName("client") },
+      { value: "partner", label: RenderName("partner") }] :
+
+      [{ value: "client", label: RenderName("client") },];
 
   const rowConfig = [
     {
@@ -352,17 +355,16 @@ const CashFlowOtherAsset = (props) => {
                           />
                         )}
 
-                      {values.owner.includes("joint") &&
-                        UserStatus === "Married" && (
-                          <DynamicTableRow
-                            rowConfig={rowConfig}
-                            values={values}
-                            setFieldValue={setFieldValue}
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                            stakeHolder="joint."
-                          />
-                        )}
+                      {values.owner.includes("joint") && (
+                        <DynamicTableRow
+                          rowConfig={rowConfig}
+                          values={values}
+                          setFieldValue={setFieldValue}
+                          handleChange={handleChange}
+                          handleBlur={handleBlur}
+                          stakeHolder="joint."
+                        />
+                      )}
                     </tbody>
                   </Table>
                 </div>

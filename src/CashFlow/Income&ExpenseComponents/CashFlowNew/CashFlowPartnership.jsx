@@ -285,8 +285,8 @@ const CashFlowPartnership = (props) => {
                           Owner
                         </th>
                         <th>Net Business Income</th>
-                        <th>Include From Year:</th>
-                        <th>Up Until Year:</th>
+                        <th>Include From Year</th>
+                        <th>Up Until Year</th>
                         <th>Indexation</th>
                       </tr>
                     </thead>

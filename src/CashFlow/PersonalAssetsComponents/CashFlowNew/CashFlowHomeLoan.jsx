@@ -43,9 +43,9 @@ const CashFlowHomeLoan = (props) => {
       setFieldValue("loanBalanceCashFlowLoanBelanceLVR", Data.loanBalanceCashFlowLoanBelanceLVR)
       setFieldValue("loanType", Data.loanType)
       setFieldValue("loanTerm", Data.loanTerm)
-      setFieldValue("initialInterestRatePA", Data.initialInterestRatePA)
+      setFieldValue("initialInterestRatePA", Data.initialInterestRatePA || Data.interestRatePA || "")
       setFieldValue("minimumRepaymentsPA", Data.minimumRepaymentsPA)
-      setFieldValue("actualAnnualRepayments", Data.actualAnnualRepayments)
+      setFieldValue("actualAnnualRepayments", Data.actualAnnualRepayments || Data.annualRepayments || "")
       setFieldValue("repayLoanInYear", Data.repayLoanInYear)
     }
   };
@@ -93,6 +93,7 @@ const CashFlowHomeLoan = (props) => {
       innerModalTitle: "Loan Balance",
       type: "number-toComma-Modal",
       placeholder: "Loan Balance",
+      disabled: true,
       key: "loanBalance",
       func: handleInnerModal,
       callBack: true,
@@ -121,6 +122,7 @@ const CashFlowHomeLoan = (props) => {
       name: "minimumRepaymentsPA",
       type: "number-toComma",
       placeholder: "Minimum Repayments (p.a)",
+      disabled: true,
     },
     {
       name: "actualAnnualRepayments",

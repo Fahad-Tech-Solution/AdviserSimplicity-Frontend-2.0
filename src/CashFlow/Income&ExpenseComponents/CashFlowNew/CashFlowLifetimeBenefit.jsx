@@ -301,8 +301,8 @@ const CashFlowLifetimeBenefit = (props) => {
                           Owner
                         </th>
                         <th>Lifetime Pension Income</th>
-                        <th>Include From Year:</th>
-                        <th>Up Until Year:</th>
+                        <th>Include From Year</th>
+                        <th>Up Until Year</th>
                         <th>Indexation</th>
                         <th>Tax-Free</th>
                         <th>Centrelink Deductible Amount</th>

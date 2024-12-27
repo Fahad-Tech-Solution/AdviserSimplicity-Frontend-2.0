@@ -23,9 +23,14 @@ const CashFlowEducationExpenses = (props) => {
   let initialValues = {};
   let PersonalDetailObj = useRecoilValue(PersonalDetailsData);
 
-  let handleInput = (e, setFieldValue) => {
+  let handleInput = (e, setFieldValue, values) => {
     const value = e.target.value > 5 ? 5 : e.target.value;
     setFieldValue(e.target.name, value);
+
+    for (let i = 0; i < value; i++) {
+      setFieldValue(`indexation${i}`, values['indexation' + i] || "2.50%");
+    }
+
     // generateFields(value);
   };
 
@@ -56,7 +61,7 @@ const CashFlowEducationExpenses = (props) => {
           educationUntil: data.educationUntil || "",
           uni: data.uni || "",
           courseYears: data.courseYears || "",
-          indexation: data.indexation || "",
+          indexation: data.indexation || "2.50%",
         };
 
         Object.entries(fields).forEach(([key, value]) => {
@@ -231,7 +236,7 @@ const CashFlowEducationExpenses = (props) => {
                         id="numberOfChildren"
                         name="numberOfChildren"
                         className="form-control inputDesignDoubleInput"
-                        onChange={(e) => handleInput(e, setFieldValue)}
+                        onChange={(e) => handleInput(e, setFieldValue, values)}
                       />
                     </div>
                   </div>

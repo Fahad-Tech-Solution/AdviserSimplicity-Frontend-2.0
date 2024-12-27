@@ -1,23 +1,16 @@
-import { Field, Form, Formik } from "formik";
+import { Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { Row, Table } from "react-bootstrap";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { BankDetail, defaultUrl, QuestionDetail } from "../../../Store/Store";
 import DynamicTableRow from "../../../Components/Assets/Dynamic/DynamicTableRow";
-import InnerModal from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 
 const CashFlowTotalCost = (props) => {
     let initialValues = {
         stampDuty: "",
         stampDutyCalculation: "",
         otherPurchaseCosts: "",
-        costBaseExisting: "",
+        costBaseExisting: props.modalObject.values.totalCostBase || "",
         totalCostBase: "",
     };
-
-    let [flagState, setFlagState] = useState(false);
-    let [modalObject, setModalObject] = useState({});
-
 
     const fillInitialValues = (setFieldValue) => {
         if (Object.keys(props.modalObject.values[props.modalObject.key + "Obj"] || {}).length > 0) {
@@ -25,7 +18,7 @@ const CashFlowTotalCost = (props) => {
             setFieldValue("stampDuty", Data.stampDuty)
             setFieldValue("stampDutyCalculation", Data.stampDutyCalculation)
             setFieldValue("otherPurchaseCosts", Data.otherPurchaseCosts)
-            setFieldValue("costBaseExisting", Data.costBaseExisting)
+            setFieldValue("costBaseExisting", Data.costBaseExisting || props.modalObject.values.totalCostBase || "")
             setFieldValue("totalCostBase", Data.totalCostBase)
 
         }
@@ -36,7 +29,7 @@ const CashFlowTotalCost = (props) => {
         console.log("values", values);
 
         props.setFieldValue(props.modalObject.key + "Obj", values);
-        props.setFieldValue(props.modalObject.key, values.totalCostBase);
+        props.setFieldValue(props.modalObject.key, values.costBaseExisting);
 
         // Reset the flag state if necessary
         if (props.flagState) {
@@ -51,14 +44,16 @@ const CashFlowTotalCost = (props) => {
             styleSet: { width: "150px" },
             options: [
                 { value: "Standard Rates", label: "Standard Rates" },
-                { value: "FH Buyer", label: "P&FH Buyer" },
+                { value: "FH Buyer", label: "FH Buyer" },
                 { value: "Manual", label: "Manual" },
             ],
         },
 
         {
             name: "stampDutyCalculation",
-            type: 'yesno',
+            type: 'number-toComma',
+            placeholder: "Stamp Duty Calculation",
+            disabled: true
 
         },
         {
@@ -78,6 +73,7 @@ const CashFlowTotalCost = (props) => {
             name: "totalCostBase",
             type: 'number-toComma',
             placeholder: "Total Cost Base",
+            disabled: true
         },
 
     ];
@@ -96,9 +92,6 @@ const CashFlowTotalCost = (props) => {
 
                 return (
                     <Form>
-                        <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState}>
-
-                        </InnerModal>
                         <Row>
                             <div className="col-md-12">
                                 <div className="row justify-content-center">
@@ -106,8 +99,10 @@ const CashFlowTotalCost = (props) => {
                                         <Table striped bordered responsive hover>
                                             <thead>
                                                 <tr>
-                                                    <th>Stamp Duty</th>
-                                                    <th>Stamp Duty Calculation</th>
+                                                    <th colSpan={2}>Stamp Duty</th>
+                                                    {/*
+                                                        <th>Stamp Duty Calculation</th>
+                                                        */}
                                                     <th>Other Purchase Costs</th>
                                                     <th>Cost Base (Existing)</th>
                                                     <th>Total Cost Base</th>

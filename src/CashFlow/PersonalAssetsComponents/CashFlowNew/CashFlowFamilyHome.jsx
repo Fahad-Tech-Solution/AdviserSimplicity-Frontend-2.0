@@ -47,8 +47,8 @@ const CashFlowFamilyHome = (props) => {
       // Set the object and API key
       setObjAndAPIKey(props.modalObject.key);
 
-      // console.log(familyHome, "Discovery Form Data");
-      console.log(cashFlowData[props.modalObject.key], "cashFlowData Form Data");
+      console.log(familyHome, "Discovery Form Data");
+      // console.log(cashFlowData[props.modalObject.key], "cashFlowData Form Data");
       // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
 
       const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
@@ -57,19 +57,20 @@ const CashFlowFamilyHome = (props) => {
       const updateFields = (data, prefix) => {
 
         if (!data || !Object.keys(data).length) return;
-        console.log(data.clientOwnership, "Data");
+        // console.log(familyHome, "Data");
+
         const fields = {
           address: data.address || PersonalData.client.clientHomeAddress || "",
           currentValue: data.currentValue || "$0",
           clientOwnership: data.clientOwnership || "2.50%",
           partnerOwnership: data.partnerOwnership || "2.50%",
           yearOfPurchase: data.yearOfPurchase || "1",
-          totalCostBase: data.totalCostBase || "$0",
+          totalCostBase: data.totalCostBase || data.costBase || "$0",
           totalCostBaseObj: data.totalCostBaseObj || {},
           loanBalance: data.loanBalance || data.loanAttached || "",
-          familyHomeLoan: data.familyHomeLoan || {},
+          familyHomeLoan: data.familyHomeLoan || data.HomeLoanModal || {},
           expectedGrowthRate: data.expectedGrowthRate || "2.50%",
-          sellPropertyInYear: data.sellPropertyInYear || "1",
+          sellPropertyInYear: data.sellPropertyInYear || "No",
         };
 
         Object.entries(fields).forEach(([key, value]) => {

@@ -275,8 +275,8 @@ const CashFlowOverseasPensions = (props) => {
                           Owner
                         </th>
                         <th>Other Taxable Income</th>
-                        <th>Include From Year:</th>
-                        <th>Up Until Year:</th>
+                        <th>Include From Year</th>
+                        <th>Up Until Year</th>
                         <th>Indexation</th>
                       </tr>
                     </thead>

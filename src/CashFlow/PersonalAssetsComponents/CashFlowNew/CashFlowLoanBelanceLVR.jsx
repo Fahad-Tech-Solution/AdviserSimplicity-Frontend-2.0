@@ -20,8 +20,9 @@ const CashFlowLoanBelanceLVR = (props) => {
 
         if (Object.keys(props.modalObject.values[props.modalObject.key + "CashFlowLoanBelanceLVR"] || {}).length > 0) {
             let Data = props.modalObject.values[props.modalObject.key + "CashFlowLoanBelanceLVR"]
+            let dataParent = props.modalObject.ParentObject.values[props.modalObject.ParentObject.key]
             setFieldValue("LVR", Data.LVR)
-            setFieldValue("loanAmount", Data.loanAmount)
+            setFieldValue("loanAmount", Data.loanAmount || dataParent.loanBalance || "")
             setFieldValue("loanBalance", Data.loanBalance)
             setFieldValue("clientOwnership", Data.clientOwnership)
             setFieldValue("partnerOwnership", Data.partnerOwnership)

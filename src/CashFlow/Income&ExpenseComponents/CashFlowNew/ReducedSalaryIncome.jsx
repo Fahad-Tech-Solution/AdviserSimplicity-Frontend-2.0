@@ -8,8 +8,8 @@ const reducedSalaryIncome = (props) => {
 
     let initialValues = {
         reducedSalaryIncome: "",
-        includeFromYear: "",
-        upUntilYear: "",
+        includeFromYear: "1",
+        upUntilYear: "30",
     };
 
 
@@ -20,8 +20,8 @@ const reducedSalaryIncome = (props) => {
             if (SourceObj[props.modalObject.key]) {
                 let Data = SourceObj[props.modalObject.key];
                 setFieldValue("reducedSalaryIncome", Data.reducedSalaryIncome);
-                setFieldValue("includeFromYear", Data.includeFromYear);
-                setFieldValue("upUntilYear", Data.upUntilYear);
+                setFieldValue("includeFromYear", Data.includeFromYear || "1");
+                setFieldValue("upUntilYear", Data.upUntilYear || "30");
             }
         }
     };
