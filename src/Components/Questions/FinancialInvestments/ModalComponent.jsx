@@ -120,6 +120,7 @@ const ModalComponent = (props) => {
         "Lifetime Benefits",
         "SMSF Accumulation Details",
         "SMSF Bank",
+        "SMSF Term Deposit",
         "SMSF Australian Shares",
         "SMSF Platform Investment",
         "SMSF"

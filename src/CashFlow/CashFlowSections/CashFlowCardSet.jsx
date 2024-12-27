@@ -39,6 +39,8 @@ import SMSFBank from '../SMSF/SMSFBank';
 import SMSFTermDeposit from '../SMSF/SMSFTermDeposit';
 import SMSFInvestmentProperties from '../SMSF/SMSFInvestmentProperties';
 import SMSFInvestmentLoan from '../SMSF/SMSFInvestmentLoan';
+import WestFamilyTrustInvestment from '../Family Trust/WestFamilyTrustInvestment';
+import FamilyTrustBankAccount from '../Family Trust/FamilyTrustBankAccount';
 
 const CashFlowCardSet = (props) => {
 
@@ -109,6 +111,19 @@ const CashFlowCardSet = (props) => {
         "SMSF": <CashFlowAustralianShares />,
         "SMSF Investment Loan": <SMSFInvestmentLoan />,
         "SMSF Investment Properties": <SMSFInvestmentProperties />,
+
+        "West Family Trust Investment": <WestFamilyTrustInvestment />,
+        "Family Trust Bank Account": <FamilyTrustBankAccount />,
+        // "Family Trust Term Deposits": <FamilyTrustTermDeposits />,
+
+
+        // "Family Trust Australian Shares": <FamilyTrustAustralianShares />,
+        // "Family Trust Platform Investment": <FamilyTrustPlatformInvestment />,
+
+        // "Family Trust": <FamilyTrust />,
+
+        // "Family Trust Investment Loan": <FamilyTrustInvestmentLoan />,
+        // "Family Trust Investment Properties": <FamilyTrustInvestmentProperties />,
 
     }
 

@@ -1,39 +1,19 @@
 {
-  "streetAddress": "12",
-  "valueOfProperty": "$121",
-  "clientOwnership": "50.00%",
-  "partnerOwnership": "50.00%",
-  "yearOfPurchase": "9",
-  "totalCostBaseObj": {
-    "stampDutyType": "Manual",
-    "stampDutyValue": "$50,002",
-    "otherPurchaseCosts": "$20,020",
-    "costBaseExisting": "$1,000,020",
-    "totalCostBase": "$70,034"
+  "owner": ["client", "partner"],
+  "client": {
+    "openingCashAtBank": "$12",
+    "investmentReturns": "Input Override",
+    "incomeYield": "12.00%",
+    "accountingFees": "$23",
+    "adviserFees": "$23",
+    "indexationFundFees": "2.50%"
   },
-  "expectedGrowthRate": "52.00%",
-  "loanBalance": "Yes",
-  "loanBalanceObj": {
-    "loanBalance": "$12",
-    "loanType": "P&i",
-    "loanTerm": "30",
-    "initialInterestRatePA": "12.00%",
-    "deductibleInterest": "",
-    "minimumRepaymentsPA": "$200,002",
-    "actualAnnualRepayments": "$250,002",
-    "repayLoanInYear": "9",
-    "loanBalanceCashFlowLoanBelanceLVR": {
-      "LVR": "12.00%",
-      "loanAmount": "$12",
-      "loanBalance": "$12",
-      "clientOwnership": "88.00%",
-      "partnerOwnership": "12.00%"
-    }
-  },
-  "rentalIncome": "Yes",
-  "sellPropertyInYear": "10",
-  "convertToPPRYear": "9",
-  "scenarioFK": "674999ee0ad151e3406f3f31",
-  "clientTotal": "$121",
-  "partnerTotal": "$12"
+  "partner": {
+    "openingCashAtBank": "$213",
+    "investmentReturns": "Input Override",
+    "incomeYield": "12.00%",
+    "accountingFees": "$123",
+    "adviserFees": "$12",
+    "indexationFundFees": "2.50%"
+  }
 }

@@ -18,8 +18,6 @@ import RegularContributions from "./RegularContributions";
 
 const CashFlowCashBankDetails = (props) => {
 
-
-
     /*
        This component is a dynamic and reusable modal component designed to handle the following modal types:
        1. "Cash"

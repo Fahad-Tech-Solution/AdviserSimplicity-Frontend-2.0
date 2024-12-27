@@ -42,46 +42,6 @@ const CashFlowOtherAsset = (props) => {
 
   let onlyJoint = ["Boat", "Caravan", "House hold"];
 
-  // const fillInitialValues = (setFieldValue) => {
-  //   console.log(other, "data", questionDetail[props.modalObject.key.replace("cf_", "")], props.modalObject.key);
-  //   if (other && other._id) {
-
-  //     setFieldValue(`owner`, other.owner || "");
-
-  //     if (onlyJoint.includes(props.modalObject.title)) {
-  //       if (other.owner.includes("joint")) {
-  //         if (other?.joint && Object.keys(other.joint).length) {
-
-  //           setFieldValue(`joint.currentValue`, other.joint.currentValue || "");
-
-  //           return (false);
-  //         }
-  //       }
-  //     }
-
-
-  //     // Handle client-related conditions
-  //     if (other.owner.includes("client")) {
-  //       if (other?.client && Object.keys(other.client).length) {
-  //         setFieldValue(`client.currentValue`, other.client.currentValue || "");
-  //       }
-  //     }
-
-  //     // Handle partner-related conditions
-  //     if (UserStatus === "Married" && other.owner.includes("partner")) {
-  //       if (other?.partner && Object.keys(other.partner).length) {
-  //         setFieldValue(`partner.currentValue`, other.partner.currentValue || "");
-  //       }
-  //     }
-
-  //   }
-  // };
-  // currentValue
-  // sellInYear
-  // newPurchase
-  // purchaseInYear
-  // indexation
-
   const fillInitialValues = (setFieldValue) => {
     try {
       // Set the object and API key
@@ -179,12 +139,7 @@ const CashFlowOtherAsset = (props) => {
           // Update joint details
           updateFields(cashFlowDataDetails.joint, "joint");
         }
-
-
-
       }
-
-
     } catch (error) {
       console.error("Error in fillInitialValues:", error);
     }

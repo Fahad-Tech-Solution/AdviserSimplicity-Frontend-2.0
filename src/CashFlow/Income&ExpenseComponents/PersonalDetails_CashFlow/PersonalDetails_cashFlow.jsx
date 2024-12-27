@@ -25,6 +25,8 @@ const PersonalDetails_cashFlow = (Props) => {
   let PersonalDetailObj = useRecoilValue(PersonalDetailsData);
   let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
 
+  let singleArray = ["Single", "Widowed"];
+
   const initialValues = {
     client: {
       name: "",
@@ -88,7 +90,7 @@ const PersonalDetails_cashFlow = (Props) => {
         const updatedData = { ...cashFlowData, cf_personalDetails: res };
         setCashFlowData(updatedData);
 
-        localStorage.setItem('UserStatus', res.client.maritalStatus);
+        localStorage.setItem('UserStatus', singleArray.includes(res.client.maritalStatus) ? "Single" : "Married");
         localStorage.setItem('UserName', res.client.name);
 
         if (res.client.maritalStatus !== "Single" && res.client.maritalStatus !== "Widowed") {
@@ -294,7 +296,7 @@ const PersonalDetails_cashFlow = (Props) => {
               localStorage.setItem('UserName', value);
             }
             if (key === "maritalStatus") {
-              localStorage.setItem('UserStatus', value);
+              localStorage.setItem('UserStatus', singleArray.includes(value) ? "Single" : "Married");
             }
           }
           if (prefix === "partner") {

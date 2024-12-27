@@ -575,7 +575,46 @@ export const content = {
             icon: "FaBriefcase",
             route: "/InvestmentTrust",
             QuestionsArray: [
-                
+                {
+                    title: "West Family Trust Investment",
+                    key: "cf_WestFamilyTrustInvestment",
+                    img: BusinessTeam_Handshake,
+                },
+                {
+                    title: "Family Trust Bank Account",
+                    key: "cf_FamilyTrustBankAccount",
+                    img: SMSFBank,
+                },
+                {
+                    title: "Family Trust Term Deposits",
+                    key: "cf_WestFamilyTrustTermDeposits",
+                    img: TermImg,
+                },
+                {
+                    title: "Family Trust Australian Shares",
+                    key: "cf_FamilyTrustAustralianShares",
+                    img: PortFolio,
+                },
+                {
+                    title: "Family Trust Platform Investment",
+                    key: "cf_FamilyTrustPlatformInvestment",
+                    img: funds,
+                },
+                {
+                    title: "Family Trust",
+                    key: "cf_FamilyTrust",
+                    img: otherInvestment,
+                },
+                {
+                    title: "Family Trust Investment Loan",
+                    key: "cf_FamilyTrustInvestmentLoan",
+                    img: loan,
+                },
+                {
+                    title: "Family Trust Investment Properties",
+                    key: "cf_FamilyTrustInvestmentProperties",
+                    img: property,
+                },
             ],
             condition: (CRObject) => true, // Always true, as this step is always needed.
         },

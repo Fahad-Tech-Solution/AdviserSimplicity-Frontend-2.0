@@ -9,9 +9,8 @@ const SalaryPackagingOther = (props) => {
     let initialValues = {
         salaryPackagingOther: "",
         GSTStatus: "Without GST",
-        includeFromYear: "",
-        upUntilYear: "",
-
+        includeFromYear: "1",
+        upUntilYear: "30",
     };
 
 
@@ -23,8 +22,8 @@ const SalaryPackagingOther = (props) => {
                 let Data = SourceObj[props.modalObject.key];
                 setFieldValue("salaryPackagingOther", Data.salaryPackagingOther);
                 setFieldValue("GSTStatus", Data.GSTStatus);
-                setFieldValue("includeFromYear", Data.includeFromYear);
-                setFieldValue("upUntilYear", Data.upUntilYear);
+                setFieldValue("includeFromYear", Data.includeFromYear || "1");
+                setFieldValue("upUntilYear", Data.upUntilYear || "30");
             }
         }
     };
@@ -33,28 +32,19 @@ const SalaryPackagingOther = (props) => {
 
     let onSubmit = async (values) => {
         console.log(values);
-
         props.setFieldValue(props.modalObject.stakeHolder + props.modalObject.key, values);
-
         // Reset the flag state if necessary
         if (props.flagState) {
             props.setFlagState(false);
         }
-
     };
-
 
     const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
         value: (i + 1).toString(),
         label: ("Year " + (i + 1)).toString(),
     }));
 
-    const indexation = Array.from({ length: 21 }, (_, i) => ({
-        value: (i * 0.5).toFixed(2) + "%",
-        label: (i * 0.5).toFixed(2) + "%",
-    }));
-
-
+    
     return (
         <Formik
             initialValues={initialValues}
@@ -86,7 +76,6 @@ const SalaryPackagingOther = (props) => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-
                                                 <tr>
                                                     <td>
                                                         {RenderName(props.modalObject.stakeHolder.replace(".", ""))}

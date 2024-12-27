@@ -11,9 +11,9 @@ const SalaryPackagingCar = (props) => {
         employerFBTStatus: "",
         costBaseOfCar: "",
         FBTPaidByEmployer: "",
-        includeFromYear: "",
-        upUntilYear: "",
-
+        includeFromYear: "1",
+        upUntilYear: "30",
+        indexation: "2.50%"
     };
 
 
@@ -26,9 +26,9 @@ const SalaryPackagingCar = (props) => {
                 setFieldValue("employerFBTStatus", Data.employerFBTStatus);
                 setFieldValue("costBaseOfCar", Data.costBaseOfCar); //costBaseOfCar Value From Discovery Form
                 setFieldValue("FBTPaidByEmployer", Data.FBTPaidByEmployer);
-                setFieldValue("includeFromYear", Data.includeFromYear);
-                setFieldValue("upUntilYear", Data.upUntilYear);
-                setFieldValue("indexation", Data.indexation);
+                setFieldValue("includeFromYear", Data.includeFromYear || "1");
+                setFieldValue("upUntilYear", Data.upUntilYear || "30");
+                setFieldValue("indexation", Data.indexation || "2.50%");
             }
         }
     };
