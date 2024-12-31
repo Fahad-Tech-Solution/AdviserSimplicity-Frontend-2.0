@@ -114,7 +114,7 @@ const CashFlowCardSet = (props) => {
 
         "West Family Trust Investment": <WestFamilyTrustInvestment />,
         "Family Trust Bank Account": <FamilyTrustBankAccount />,
-        // "Family Trust Term Deposits": <FamilyTrustTermDeposits />,
+        "Family Trust Term Deposits": <SMSFTermDeposit />,
 
 
         // "Family Trust Australian Shares": <FamilyTrustAustralianShares />,

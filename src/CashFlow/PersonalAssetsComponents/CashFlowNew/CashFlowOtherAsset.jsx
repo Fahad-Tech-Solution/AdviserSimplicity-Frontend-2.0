@@ -9,7 +9,7 @@ import {
   RenderName,
 } from "../../../Components/Assets/Api/Api";
 import { Card, Row, Table } from "react-bootstrap";
-import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from "../../../Store/Store";
+import { CashFlowData, CashFlowScenarioData, defaultUrl, GoalsDetail, QuestionDetail } from "../../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 
 const CashFlowOtherAsset = (props) => {
@@ -21,6 +21,7 @@ const CashFlowOtherAsset = (props) => {
   let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
 
 
+  let goalsDetail = useRecoilValue(GoalsDetail);
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   let other =
@@ -35,8 +36,18 @@ const CashFlowOtherAsset = (props) => {
   let initialValues = {
     owner: [],
     client: {
+      currentValue: "",
+      sellInYear: "No",
+      newPurchase: "",
+      purchaseInYear: 30,
+      indexation: "2.50%",
     },
     partner: {
+      currentValue: "",
+      sellInYear: "No",
+      newPurchase: "",
+      purchaseInYear: 30,
+      indexation: "2.50%",
     },
   };
 
@@ -59,11 +70,16 @@ const CashFlowOtherAsset = (props) => {
         if (!data || !Object.keys(data).length) return;
         const fields = {
           currentValue: data.currentValue || "",
-          sellInYear: data.sellInYear || 1,
+          sellInYear: data.sellInYear || "No",
           newPurchase: data.newPurchase || "$0",
           purchaseInYear: data.purchaseInYear || 30,
           indexation: data.indexation || "2.50%",
         };
+
+        if (props.modalObject.title === "Car" && goalsDetail.carGoal && goalsDetail.carGoal.estimatedValue) {
+          fields.newPurchase = goalsDetail.carGoal.estimatedValue || "$0";
+            fields.purchaseInYear = parseFloat(goalsDetail.carGoal.when.match(/\d+/g).join('')) || 30;
+        }
 
         Object.entries(fields).forEach(([key, value]) => {
           setFieldValue(`${prefix}.${key}`, value);
@@ -220,10 +236,20 @@ const CashFlowOtherAsset = (props) => {
     }
   };
 
-  const loanTermOptions = Array.from({ length: 31 }, (_, i) => ({
-    value: i.toString(),
-    label: `Year ${i}`
-  }));
+  const loanTermOptions = Array.from({ length: 31 }, (_, i) => {
+
+    if (i === 0) {
+      return ({
+        value: "No",
+        label: "No"
+      });
+    }
+
+    return ({
+      value: i.toString(),
+      label: `Year ${i}`
+    })
+  });
 
   const indexation = [
     // Negative values from -0.00% to -5.00% in increments of 0.50%

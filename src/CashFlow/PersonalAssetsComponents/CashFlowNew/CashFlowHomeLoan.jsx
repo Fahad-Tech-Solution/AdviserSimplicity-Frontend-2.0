@@ -81,7 +81,7 @@ const CashFlowHomeLoan = (props) => {
       title,
       values,
       key,
-      ParentObject: props.modalObject.ParentObject,
+      ParentObject: props.modalObject,
     });
     setFlagState(true);
   };

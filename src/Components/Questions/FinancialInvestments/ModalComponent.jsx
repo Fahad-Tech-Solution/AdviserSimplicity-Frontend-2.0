@@ -123,7 +123,8 @@ const ModalComponent = (props) => {
         "SMSF Term Deposit",
         "SMSF Australian Shares",
         "SMSF Platform Investment",
-        "SMSF"
+        "SMSF",
+        "Family Trust Term Deposits"
 
     ]; // Add other titles that should use "xl" here
 

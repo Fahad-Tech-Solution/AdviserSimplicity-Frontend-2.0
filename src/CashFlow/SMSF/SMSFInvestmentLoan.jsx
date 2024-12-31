@@ -51,15 +51,15 @@ const SMSFInvestmentLoan = (props) => {
             };
 
             if (scenarioObj?.selectedSource === "discoveryForm") {
-                setFieldValue(`owner`, questionDetail.owner || "");
+                // setFieldValue(`owner`, questionDetail.owner || "");
 
-                if (questionDetail.owner.includes("client")) {
-                    updateFields(questionDetail.client, "client");
-                }
+                // if (questionDetail.owner.includes("client")) {
+                //     updateFields(questionDetail.client, "client");
+                // }
 
-                if (UserStatus === "Married" && questionDetail.owner.includes("partner")) {
-                    updateFields(questionDetail.partner, "partner");
-                }
+                // if (UserStatus === "Married" && questionDetail.owner.includes("partner")) {
+                //     updateFields(questionDetail.partner, "partner");
+                // }
             } else {
                 const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
                 if (cashFlowDetails) {

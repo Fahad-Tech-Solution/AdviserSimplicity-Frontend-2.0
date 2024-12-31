@@ -21,6 +21,8 @@ const WestFamilyTrustInvestment = (props) => {
 
     let DefaultUrl = useRecoilValue(defaultUrl);
 
+    let WestFamilyTrustInvestment = questionDetail.WestFamilyTrustInvestment || {};
+
     let initialValues = {
         percentOfBeneficiaryAccounts: "",
         totalOfBeneficiaryAccounts: "",
@@ -50,8 +52,8 @@ const WestFamilyTrustInvestment = (props) => {
                 });
             };
 
-            if (scenarioObj?.selectedSource === "discoveryForm" && managedFundsLOC && managedFundsLOC._id) {
-                updateFields(managedFundsLOC, "client");
+            if (scenarioObj?.selectedSource === "discoveryForm" && WestFamilyTrustInvestment && WestFamilyTrustInvestment._id) {
+                updateFields(WestFamilyTrustInvestment, "client");
             } else {
                 const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
                 if (cashFlowDetails) {
@@ -72,7 +74,8 @@ const WestFamilyTrustInvestment = (props) => {
     let onSubmit = async (values) => {
         let obj = values;
         obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
-        obj.clientTotal = values.totalOfBeneficiaryAccounts || "$0";
+        // obj.clientTotal = values.totalOfBeneficiaryAccounts || "$0"; // change it when excel is connected correctly
+        obj.clientTotal = values.percentOfBeneficiaryAccounts || "$0";
         const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
 
         try {

@@ -24,8 +24,8 @@ const NonConcessionalContributions = (props) => {
         yearsInclude: "",
         contributionsFund: "",
         governmentCoContribution: "",
-        // downSizerContribution: "",
-        // downSizerContributionObj: {},
+        downSizerContribution: "",
+        downSizerContributionObj: {},
         applySpouseContribution: "",
         applySpouseContributionObj: {},
     }
@@ -45,8 +45,8 @@ const NonConcessionalContributions = (props) => {
                 setFieldValue("yearsInclude", Data.yearsInclude);
                 setFieldValue("contributionsFund", Data.contributionsFund);
                 setFieldValue("governmentCoContribution", Data.governmentCoContribution);
-                // setFieldValue("downSizerContribution", Data.downSizerContribution);
-                // setFieldValue("downSizerContributionObj", Data.downSizerContributionObj);
+                setFieldValue("downSizerContribution", Data.downSizerContribution);
+                setFieldValue("downSizerContributionObj", Data.downSizerContributionObj);
                 setFieldValue("applySpouseContribution", Data.applySpouseContribution);
                 setFieldValue("applySpouseContributionObj", Data.applySpouseContributionObj);
             }

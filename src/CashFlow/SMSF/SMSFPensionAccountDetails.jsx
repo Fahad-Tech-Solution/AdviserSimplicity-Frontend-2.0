@@ -53,12 +53,15 @@ const SMSFPensionAccountDetails = (props) => {
                 if (!data || !Object.keys(data).length) return;
 
                 const fields = {
-                    balance: data.balance || "$0",
-                    rolloverAmount: data.rolloverAmount || "$0",
-                    yearToCommence: data.yearToCommence || "",
+                    balanceRolloverAmount: data.balanceRolloverAmount || "$0",
+                    balanceRolloverAmountObj: data.balanceRolloverAmountObj || {},
+                    yearToCommence: data.yearToCommence || "$0",
                     pensionPayments: data.pensionPayments || "$0",
-                    newPensionRollover: data.newPensionRollover || "$0",
-                    withdrawals: data.withdrawals || "$0",
+                    pensionPaymentsObj: data.pensionPaymentsObj || {},
+                    newPensionRollover: data.newPensionRollover || "No",
+                    newPensionRolloverObj: data.newPensionRolloverObj || {},
+                    withdrawals: data.withdrawals || "No",
+                    withdrawalsObj: data.withdrawalsObj || {},
                 };
 
                 Object.entries(fields).forEach(([key, value]) => {
@@ -103,13 +106,13 @@ const SMSFPensionAccountDetails = (props) => {
         obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
 
         if (values.owner.includes("client")) {
-            obj.clientTotal = values.client.balance || "$0";
+            obj.clientTotal = values.client.balanceRolloverAmount || "$0";
         } else {
             obj.clientTotal = "";
         }
 
         if (values.owner.includes("partner")) {
-            obj.partnerTotal = values.partner.balance || "$0";
+            obj.partnerTotal = values.partner.balanceRolloverAmount || "$0";
         } else {
             obj.partnerTotal = "";
         }

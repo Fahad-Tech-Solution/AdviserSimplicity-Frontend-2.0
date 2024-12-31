@@ -24,6 +24,8 @@ const SMSFInvestmentProperties = (props) => {
 
     let DefaultUrl = useRecoilValue(defaultUrl);
 
+    let managedFundsLOC = questionDetail?.managedFundsLOC || {};
+
     let initialValues = {
         streetAddress: "",
         valueOfProperty: "",

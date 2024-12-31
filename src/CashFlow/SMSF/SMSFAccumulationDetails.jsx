@@ -52,10 +52,15 @@ const SMSFAccumulationDetails = (props) => {
 
                 const fields = {
                     accumulationDetails: data.accumulationDetails || "$0",
+                    accumulationDetailsObj: data.accumulationDetailsObj || "$0",
                     insurancePremiums: data.insurancePremiums || "$0",
+                    insurancePremiumsObj: data.insurancePremiumsObj || "$0",
                     concessionalContributions: data.concessionalContributions || "$0",
+                    concessionalContributionsObj: data.concessionalContributionsObj || "$0",
                     nonConcessionalContributions: data.nonConcessionalContributions || "$0",
+                    nonConcessionalContributionsObj: data.nonConcessionalContributionsObj || "$0",
                     withdrawals: data.withdrawals || "$0",
+                    withdrawalsObj: data.withdrawalsObj || "$0",
                 };
 
                 Object.entries(fields).forEach(([key, value]) => {
@@ -102,13 +107,13 @@ const SMSFAccumulationDetails = (props) => {
         obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
 
         if (values.owner.includes("client")) {
-            obj.clientTotal = values.client.accumulationDetails || "$0";
+            obj.clientTotal = values.client.accumulationDetailsObj.taxFreeComponent || "$0";
         } else {
             obj.clientTotal = "";
         }
 
         if (values.owner.includes("partner")) {
-            obj.partnerTotal = values.partner.accumulationDetails || "$0";
+            obj.partnerTotal = values.partner.accumulationDetailsObj.taxFreeComponent || "$0";
         } else {
             obj.partnerTotal = "";
         }

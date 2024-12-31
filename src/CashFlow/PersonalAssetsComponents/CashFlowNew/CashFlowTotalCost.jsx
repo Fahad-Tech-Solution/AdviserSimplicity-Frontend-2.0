@@ -53,7 +53,7 @@ const CashFlowTotalCost = (props) => {
             name: "stampDutyCalculation",
             type: 'number-toComma',
             placeholder: "Stamp Duty Calculation",
-            disabled: true
+            disabled: false
 
         },
         {
@@ -110,7 +110,10 @@ const CashFlowTotalCost = (props) => {
                                             </thead>
                                             <tbody>
                                                 <DynamicTableRow
-                                                    rowConfig={rowConfig}
+                                                    rowConfig={rowConfig.map(item => ({
+                                                        ...item,
+                                                        disabled: item.name === 'stampDutyCalculation' ? (values.stampDuty !== "Manual") : item.disabled
+                                                    }))}
                                                     values={values}
                                                     setFieldValue={setFieldValue}
                                                     handleChange={handleChange}

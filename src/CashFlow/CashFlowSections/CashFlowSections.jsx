@@ -3,7 +3,7 @@ import PersonalDetails_cashFlow from '../Income&ExpenseComponents/PersonalDetail
 import CashFlowCardSet from './CashFlowCardSet'
 import { useLocation } from 'react-router-dom'
 import { GetAxios } from '../../Components/Assets/Api/Api'
-import { CashFlowData, CashFlowScenarioData, CashFlowScenarioType, CFQObject, defaultUrl, Loading, PersonalDetailsData, QuestionDetail } from '../../Store/Store'
+import { CashFlowData, CashFlowScenarioData, CashFlowScenarioType, CFQObject, defaultUrl, GoalsDetail, GQState, Loading, PersonalDetailsData, QuestionDetail } from '../../Store/Store'
 import { useRecoilState, useRecoilValue } from 'recoil'
 
 const CashFlowSections = (props) => {
@@ -18,6 +18,9 @@ const CashFlowSections = (props) => {
     let [cashFlowScenarioType, setCashFlowScenarioType] = useRecoilState(CashFlowScenarioType);
     let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
     let [CFObject, setCFObject] = useRecoilState(CFQObject);
+
+    let [GQObject, setGQObject] = useRecoilState(GQState);
+    let [goalsDetail, setGoalsDetail] = useRecoilState(GoalsDetail);
 
     let [loadingState, setLoadingState] = useRecoilState(Loading);
 
@@ -39,6 +42,8 @@ const CashFlowSections = (props) => {
                 await fetchScenarioData(scenarioObj.selectedSource);
             } else {
                 await fetchPersonalDetails(scenarioObj.clientFK);
+                await GetGoals(scenarioObj.clientFK);
+                await GetGoalsQuestion(scenarioObj.clientFK);
             }
 
             await fetchCashFlowData(scenarioObj._id);
@@ -117,6 +122,30 @@ const CashFlowSections = (props) => {
             }
         } catch (error) {
             console.error("Error fetching CF Object:", error);
+        }
+    };
+
+    let GetGoals = async (clientId) => {
+        try {
+            const res = await GetAxios(`${DefaultUrl}/api/CombinedGoalsAndObjectives/${clientId}`);
+            // console.log(JSON.stringify(res))
+            if (res) {
+                setGoalsDetail(res);
+            }
+        } catch (error) {
+            console.error("Error fetching Goals:", error);
+        }
+    };
+
+    let GetGoalsQuestion = async (clientId) => {
+        try {
+            const res = await GetAxios(`${DefaultUrl}/api/goalsQuestions/getByClient/${clientId}`);
+            // console.log(JSON.stringify(res))
+            if (res) {
+                setGQObject(res);
+            }
+        } catch (error) {
+            console.error("Error fetching Goals:", error);
         }
     };
 

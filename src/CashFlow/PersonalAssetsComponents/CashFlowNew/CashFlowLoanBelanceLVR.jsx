@@ -14,20 +14,25 @@ const CashFlowLoanBelanceLVR = (props) => {
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
 
-
     const fillInitialValues = (setFieldValue) => {
-        // console.log(props.modalObject, "kuch Chala");
+        try {
+            if (Object.keys(props.modalObject.values[props.modalObject.key + "CashFlowLoanBelanceLVR"] || {}).length > 0) {
+                let Data = props.modalObject.values[props.modalObject.key + "CashFlowLoanBelanceLVR"];
+                setFieldValue("LVR", Data.LVR);
+                setFieldValue("loanAmount", Data.loanAmount || "");
+                setFieldValue("loanBalance", Data.loanBalance || "");
+                setFieldValue("clientOwnership", Data.clientOwnership);
+                setFieldValue("partnerOwnership", Data.partnerOwnership);
+            }
+            else if (props.modalObject && props.modalObject.ParentObject && props.modalObject.ParentObject.values) {
+                let dataParent = props.modalObject.ParentObject.values[props.modalObject.ParentObject.key] || {};
+                console.log(dataParent.loanBalance, "dataParent.loanBalance");
 
-        if (Object.keys(props.modalObject.values[props.modalObject.key + "CashFlowLoanBelanceLVR"] || {}).length > 0) {
-            let Data = props.modalObject.values[props.modalObject.key + "CashFlowLoanBelanceLVR"]
-            let dataParent = props.modalObject.ParentObject.values[props.modalObject.ParentObject.key]
-            setFieldValue("LVR", Data.LVR)
-            setFieldValue("loanAmount", Data.loanAmount || dataParent.loanBalance || "")
-            setFieldValue("loanBalance", Data.loanBalance)
-            setFieldValue("clientOwnership", Data.clientOwnership)
-            setFieldValue("partnerOwnership", Data.partnerOwnership)
+                setFieldValue("loanAmount", dataParent.loanBalance || "");
+            }
+        } catch (error) {
+            console.error("Error filling initial values:", error);
         }
-
     };
 
 
@@ -138,8 +143,8 @@ const CashFlowLoanBelanceLVR = (props) => {
                                                     <th>Loan Balance {props.modalObject.ParentObject.title}</th>
                                                     {props.modalObject.ParentObject.title !== "SMSF Investment Properties" &&
                                                         <React.Fragment>
-                                                            <th>Client Ownership</th>
-                                                            <th>Partner Ownership</th>
+                                                            <th>Client %Ownership</th>
+                                                            <th>Partner %Ownership</th>
                                                         </React.Fragment>
                                                     }
                                                 </tr>
