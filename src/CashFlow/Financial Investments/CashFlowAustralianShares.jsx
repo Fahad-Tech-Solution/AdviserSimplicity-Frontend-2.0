@@ -44,7 +44,7 @@ const CashFlowAustralianShares = (props) => {
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
 
-    let layoutSwitchArray = ["Platform Investment", "Other Investments", "SMSF Platform Investment", "SMSF Australian Shares"];
+    let layoutSwitchArray = ["Platform Investment", "Other Investments", "SMSF Platform Investment", "SMSF Australian Shares", "Family Trust Australian Shares", "Family Trust Platform Investment", "Family Trust"];
 
     let [layoutSwitchFlag, setLayoutSwitchFlag] = useState(() => {
         if (layoutSwitchArray.includes(props.modalObject.title)) {
@@ -54,7 +54,7 @@ const CashFlowAustralianShares = (props) => {
     })
 
 
-    let layoutSwitchSMSFArray = ["SMSF Platform Investment", "SMSF Australian Shares", "SMSF"];
+    let layoutSwitchSMSFArray = ["SMSF Platform Investment", "SMSF Australian Shares", "SMSF", "Family Trust Australian Shares", "Family Trust Platform Investment", "Family Trust"];
 
     let [layoutSwitchSMSFFlag, setLayoutSwitchSMSFFlag] = useState(() => {
         if (layoutSwitchSMSFArray.includes(props.modalObject.title)) {
@@ -110,8 +110,8 @@ const CashFlowAustralianShares = (props) => {
                     reinvestIncome: data.reinvestIncome || "No",
                     regularContributions: data.regularContributions || "No",
                     regularContributionsObj: data.regularContributionsObj || {},
-                    riskProfile: data.riskProfile || "",
-                    cashOutFunds: data.cashOutFunds || "",
+                    riskProfile: data.riskProfile || layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
+                    cashOutFunds: data.cashOutFunds || "No",
                 };
 
                 if (layoutSwitchArray.includes(props.modalObject.title)) {
@@ -369,7 +369,7 @@ const CashFlowAustralianShares = (props) => {
                 name: "currentBalance",
                 type: "number-toComma",
                 placeholder: layoutSwitchSMSFFlag ?
-                    props.modalObject.title === "SMSF" ?
+                    (props.modalObject.title === "SMSF" || props.modalObject.title === "Family Trust") ?
                         "Current Balance"
                         :
                         "Opening Balance"
@@ -507,7 +507,7 @@ const CashFlowAustralianShares = (props) => {
                                                 </th>
                                                 <th>
                                                     {layoutSwitchSMSFFlag ?
-                                                        props.modalObject.title === "SMSF" ?
+                                                        (props.modalObject.title === "SMSF" || props.modalObject.title === "Family Trust") ?
                                                             "Current Balance"
                                                             :
                                                             "Opening Balance"

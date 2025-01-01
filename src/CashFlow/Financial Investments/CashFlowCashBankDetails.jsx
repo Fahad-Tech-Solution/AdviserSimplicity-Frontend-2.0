@@ -83,8 +83,8 @@ const CashFlowCashBankDetails = (props) => {
             // Set the object and API key
             setObjAndAPIKey(props.modalObject.key);
 
-            // console.log(incomeFromOverseasPension, "Discovery Form Data " + props.modalObject.key + " and SourceKey " + props.modalObject.sourceKey);
-            console.log(cashFlowData?.[objAndAPIKey].client, "cashFlowData Form Data");
+            console.log(incomeFromOverseasPension, "Discovery Form Data " + props.modalObject.key + " and SourceKey " + props.modalObject.sourceKey);
+            // console.log(cashFlowData?.[objAndAPIKey].client, "cashFlowData Form Data");
             // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
 
             const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
@@ -95,21 +95,25 @@ const CashFlowCashBankDetails = (props) => {
                 if (!data || !Object.keys(data).length) return;
                 const fields = {
                     currentBalance: data.currentBalance || "$0",
-                    costBase: data.costBase || "$0",
                     investmentReturns: data.investmentReturns || "",
-                    reinvestIncome: data.reinvestIncome || "No",
+
                     regularContributions: data.regularContributions || "No",
                     regularContributionsObj: data.regularContributionsObj || "No",
-                    riskProfile: data.riskProfile || {},
+                    riskProfile: data.riskProfile || "Cash",
                 };
 
+                if (!layoutSwitchFlag2) {
+                    fields.reinvestIncome = data.reinvestIncome || "No";
+                }
+
                 if (layoutSwitchArray.includes(props.modalObject.title)) {
-                    fields.cashOutYear = data.cashOutYear || ""
+                    fields.cashOutYear = data.cashOutYear || "No"
                 }
 
                 if (props.modalObject.title === "Investment Bonds") {
                     fields.earningsRate = data.earningsRate || ""
                     fields.investmentFees = data.investmentFees || ""
+                    fields.costBase = data.costBase || "$0"
                 }
                 else {
                     fields.incomeYield = data.incomeYield || ""
@@ -127,7 +131,10 @@ const CashFlowCashBankDetails = (props) => {
                 // Update client-related fields
                 if (incomeFromOverseasPension?.client.length > 0) {
                     let Obj = {
-                        currentBalance: incomeFromOverseasPension.client.clientCurrentBalance,
+                        currentBalance: incomeFromOverseasPension.clientCurrentBalance || "",
+                    }
+                    if (incomeFromOverseasPension?.clientCostBaseTemp) {
+                        Obj.costBase = incomeFromOverseasPension.clientCostBaseTemp || ""
                     }
                     updateFields(Obj, "client");
                 }
@@ -135,7 +142,10 @@ const CashFlowCashBankDetails = (props) => {
                 // Update partner-related fields
                 if (UserStatus === "Married" && incomeFromOverseasPension?.partner.length > 0) {
                     let Obj = {
-                        currentBalance: incomeFromOverseasPension.partner.partnerCurrentBalance,
+                        currentBalance: incomeFromOverseasPension.partnerCurrentBalance || "",
+                    }
+                    if (incomeFromOverseasPension?.partnerCostBaseTemp) {
+                        Obj.costBase = incomeFromOverseasPension.partnerCostBaseTemp || ""
                     }
                     updateFields(Obj, "partner");
                 }
@@ -143,7 +153,10 @@ const CashFlowCashBankDetails = (props) => {
                 // Update partner-related fields
                 if (UserStatus === "Married" && incomeFromOverseasPension?.joint.length > 0) {
                     let Obj = {
-                        currentBalance: incomeFromOverseasPension.joint.jointCurrentBalance,
+                        currentBalance: incomeFromOverseasPension.jointCurrentBalance || "",
+                    }
+                    if (incomeFromOverseasPension?.jointCostBaseTemp) {
+                        Obj.costBase = incomeFromOverseasPension.jointCostBaseTemp || ""
                     }
                     updateFields(Obj, "joint");
                 }
@@ -366,11 +379,11 @@ const CashFlowCashBankDetails = (props) => {
                 placeholder: layoutSwitchFlag2 ? "Earnings Rate" : "Income Yield",
                 disabled: isDisabled, // Configurable based on the initial state
             },
-            {
-                name: "reinvestIncome",
-                type: "yesno",
-                placeholder: "Reinvest income",
-            },
+            // {
+            //     name: "reinvestIncome",
+            //     type: "yesno",
+            //     placeholder: "Reinvest income",
+            // },
             {
                 name: "regularContributions",
                 type: "yesnoModal",
@@ -422,10 +435,31 @@ const CashFlowCashBankDetails = (props) => {
                 {
                     name: "cashOutYear",
                     type: "select",
-                    placeholder: "Cashout Year",
+                    placeholder: "Cashout " + layoutSwitchFlag2 ? "Funds" : "Year",
                     options: loanTermOptions,
                 },
             )
+        }
+
+        if (!layoutSwitchFlag2) {
+            // fields.reinvestIncome = data.reinvestIncome || "No",
+
+            const newObject = {
+                name: "reinvestIncome",
+                type: "yesno",
+                placeholder: "Reinvest income",
+            };
+
+
+            // Find the index of the "cashOutFunds" object
+            const cashOutFundsIndex = inputArray.findIndex(
+                (item) => item.name === "regularContributions"
+            );
+
+            // Insert the new object before "cashOutFunds"
+            if (cashOutFundsIndex !== -1) {
+                inputArray.splice(cashOutFundsIndex, 0, newObject);
+            }
         }
 
 
@@ -513,11 +547,11 @@ const CashFlowCashBankDetails = (props) => {
                                                 {layoutSwitchFlag2 && <th>Cost Base</th>}
                                                 <th>Investment Returns</th>
                                                 <th>{layoutSwitchFlag2 ? "Earnings Rate" : "Income Yield"}</th>
-                                                <th>Reinvest income</th>
+                                                {!layoutSwitchFlag2 && <th>Reinvest income</th>}
                                                 <th>Regular Contributions</th>
                                                 <th>Risk Profile/SAA</th>
                                                 {layoutSwitchFlag2 && <th>Investment Fees</th>}
-                                                {layoutSwitchFlag && <th>Cashout in Year</th>}
+                                                {layoutSwitchFlag && <th>Cashout in  {layoutSwitchFlag2 ? "Funds" : "Year"}</th>}
                                             </tr>
                                         </thead>
                                         <tbody>

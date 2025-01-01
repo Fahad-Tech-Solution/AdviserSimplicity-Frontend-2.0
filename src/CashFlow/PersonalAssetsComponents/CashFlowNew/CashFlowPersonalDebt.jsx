@@ -18,14 +18,12 @@ const CashFlowPersonalDebt = (props) => {
 
     let DefaultUrl = useRecoilValue(defaultUrl);
 
-
     let personalLoans = Object.keys(questionDetail?.[props.modalObject.discoveryKey]).length > 0 ? questionDetail[props.modalObject.discoveryKey] : {
         client: [],
         partner: [],
         joint: [],
 
     };
-
 
     let handleInput = (e, setFieldValue) => {
         const value = e.target.value > 2 ? 2 : e.target.value;
@@ -52,13 +50,13 @@ const CashFlowPersonalDebt = (props) => {
                 if (!data || !Object.keys(data).length) return;
                 const fields = {
                     YearLoan: data.YearLoan || "",
-                    CurrentLoanBalance: data.CurrentLoanBalance || "",
+                    CurrentLoanBalance: data.CurrentLoanBalance || data.LoanBalance || "",
                     LoanType: data.LoanType || "",
                     LoanTerm: data.LoanTerm || "",
                     InterestRate: data.InterestRate || "",
                     MinimumRepayments: data.MinimumRepayments || "",
-                    ActualAnnualRepayments: data.ActualAnnualRepayments || "",
-                    RepayLoanInYear: data.RepayLoanInYear || "",
+                    ActualAnnualRepayments: data.ActualAnnualRepayments || data.AnnualRepayments || "",
+                    RepayLoanInYear: data.RepayLoanInYear || data.LoanTermRemaining || "No",
                 };
 
                 console.log(fields)
@@ -69,10 +67,11 @@ const CashFlowPersonalDebt = (props) => {
 
             // Update owner field
             if (scenarioObj?.selectedSource === "discoveryForm" && personalLoans && personalLoans._id) {
-                setFieldValue(`NumberOfMap`, personalLoans.NumberOfMap || 0);
 
                 // Update client-related fields
                 if (personalLoans?.client) {
+                    console.log(personalLoans.client, "personalLoans")
+                    setFieldValue(`NumberOfMap`, personalLoans.client.length || "");
                     personalLoans.client.forEach((data, index) => {
                         updateFields(data, index);
                     })
@@ -190,8 +189,6 @@ const CashFlowPersonalDebt = (props) => {
             );
         }
     };
-
-
 
     let FormulaSetting = () => { }
 
@@ -333,13 +330,16 @@ const CashFlowPersonalDebt = (props) => {
                                                                     />
                                                                 </td>
                                                                 <td>
-                                                                    <div className='mt-1 w-100'>
-                                                                        <DynamicYesNo
-                                                                            name={`ActualAnnualRepayments${i}`}
-                                                                            values={values}
-                                                                            handleChange={handleChange}
-                                                                        />
-                                                                    </div>
+                                                                    <Field
+                                                                        type="text"
+                                                                        placeholder="Actual Annual Repayments"
+                                                                        id={`ActualAnnualRepayments${i}`}
+                                                                        name={`ActualAnnualRepayments${i}`}
+                                                                        className="form-control inputDesignDoubleInput"
+                                                                        onChange={(e) => {
+                                                                            setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")))
+                                                                        }}
+                                                                    />
                                                                 </td>
                                                                 <td>
                                                                     <Field

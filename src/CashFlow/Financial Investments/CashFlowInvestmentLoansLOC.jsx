@@ -24,14 +24,14 @@ const CashFlowInvestmentLoansLOC = (props) => {
 
     let DefaultUrl = useRecoilValue(defaultUrl);
 
-    let incomeFromOverseasPension =
-        Object.keys(questionDetail.incomeFromOverseasPension || {}).length > 0
-            ? questionDetail.incomeFromOverseasPension
+    let managedFundsLOC =
+        Object.keys(questionDetail.managedFundsLOC || {}).length > 0
+            ? questionDetail.managedFundsLOC
             : {
                 client: [],
                 partner: [],
                 joint: [],
-            }; // Use an empty object as default if incomeFromOverseasPension is undefined
+            }; // Use an empty object as default if managedFundsLOC is undefined
 
     let initialValues = { owner: [] };
 
@@ -40,7 +40,7 @@ const CashFlowInvestmentLoansLOC = (props) => {
             // Set the object and API key
             setObjAndAPIKey(props.modalObject.key);
 
-            console.log(incomeFromOverseasPension, "Discovery Form Data");
+            console.log(managedFundsLOC, "Discovery Form Data");
             // console.log(cashFlowData, "cashFlowData Form Data");
             // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
 
@@ -51,14 +51,14 @@ const CashFlowInvestmentLoansLOC = (props) => {
 
                 if (!data || !Object.keys(data).length) return;
                 const fields = {
-                    currentLoanBalance: data.currentLoanBalance || "",
+                    currentLoanBalance: data.currentLoanBalance || data.loanBalance || "",
                     loanType: data.loanType || "",
                     loanTerm: data.loanTerm || "",
-                    initialInterestRate: data.initialInterestRate || "",
-                    deductibleInterest: data.deductibleInterest || "",
+                    initialInterestRate: data.initialInterestRate || data.interestRate || "",
+                    deductibleInterest: data.deductibleInterest || data.deductibleLoanAmount || "",
                     minimumRepayments: data.minimumRepayments || "",
-                    actualAnnualRepayments: data.actualAnnualRepayments || "",
-                    repayLoanYear: data.repayLoanYear || "",
+                    actualAnnualRepayments: data.actualAnnualRepayments || data.annualRepayments || "",
+                    repayLoanYear: data.repayLoanYear || "No",
                 };
 
                 Object.entries(fields).forEach(([key, value]) => {
@@ -67,17 +67,18 @@ const CashFlowInvestmentLoansLOC = (props) => {
             };
 
             // Update owner field
-            if (scenarioObj?.selectedSource === "discoveryForm" && incomeFromOverseasPension && incomeFromOverseasPension._id) {
-                setFieldValue(`owner`, incomeFromOverseasPension.owner || "");
+            if (scenarioObj?.selectedSource === "discoveryForm" && managedFundsLOC && managedFundsLOC._id) {
+                setFieldValue(`owner`, managedFundsLOC.owner || "");
 
                 // Update client-related fields
-                if (incomeFromOverseasPension.owner.includes("client")) {
-                    updateFields(incomeFromOverseasPension.client, "client");
+                if (managedFundsLOC.owner.includes("client")) {
+
+                    updateFields(managedFundsLOC.client, "client");
                 }
 
                 // Update partner-related fields
-                if (UserStatus === "Married" && incomeFromOverseasPension.owner.includes("partner")) {
-                    updateFields(incomeFromOverseasPension.partner, "partner");
+                if (UserStatus === "Married" && managedFundsLOC.owner.includes("partner")) {
+                    updateFields(managedFundsLOC.partner, "partner");
                 }
             }
             else {
@@ -204,6 +205,22 @@ const CashFlowInvestmentLoansLOC = (props) => {
         label: ("Year " + (i + 1)).toString(),
     }));
 
+    const loanTermOptions2 = Array.from({ length: 31 }, (_, i) => {
+
+        if (i === 0) {
+            return ({
+                value: "No",
+                label: "No",
+            })
+        }
+
+        return ({
+            // value: (i + 1).toString(),
+            value: (i + 1),
+            label: ("Year " + (i + 1)).toString(),
+        })
+    });
+
     const options =
         UserStatus !== "Single"
             ? [
@@ -213,8 +230,8 @@ const CashFlowInvestmentLoansLOC = (props) => {
             : [{ value: "client", label: RenderName("client") }];
 
     let loanTypeOptions = [
-        { value: "I/Only", label: "I/Only" },
-        { value: "P & I", label: "P & I" },
+        { value: "i/only", label: "i/only" },
+        { value: "P&I", label: "P&I" },
     ]
 
     const rowConfig = [
@@ -260,7 +277,7 @@ const CashFlowInvestmentLoansLOC = (props) => {
             name: "repayLoanYear",
             placeholder: "Repay Loan in Year",
             type: "select",
-            options: loanTermOptions,
+            options: loanTermOptions2,
         },
     ];
 

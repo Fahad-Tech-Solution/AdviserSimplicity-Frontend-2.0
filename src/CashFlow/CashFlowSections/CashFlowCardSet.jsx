@@ -117,10 +117,10 @@ const CashFlowCardSet = (props) => {
         "Family Trust Term Deposits": <SMSFTermDeposit />,
 
 
-        // "Family Trust Australian Shares": <FamilyTrustAustralianShares />,
-        // "Family Trust Platform Investment": <FamilyTrustPlatformInvestment />,
+        "Family Trust Australian Shares": <CashFlowAustralianShares />,
+        "Family Trust Platform Investment": <CashFlowAustralianShares />,
+        "Family Trust": <CashFlowAustralianShares />,
 
-        // "Family Trust": <FamilyTrust />,
 
         // "Family Trust Investment Loan": <FamilyTrustInvestmentLoan />,
         // "Family Trust Investment Properties": <FamilyTrustInvestmentProperties />,

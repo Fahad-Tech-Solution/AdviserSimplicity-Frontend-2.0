@@ -445,7 +445,7 @@ export const content = {
                     title: "Cash",
                     img: SMSFBank,
                     key: "cf_cash",
-                    // sourceKey: "bankAccountFinance",
+                    sourceKey: "bankAccountFinance",
                 },
                 {
                     title: "Term Deposits",
@@ -457,6 +457,7 @@ export const content = {
                     title: "Investment Bonds",
                     img: certificate,
                     key: "cf_investmentBonds",
+                    sourceKey: "investmentBondFinance",
                 },
                 {
                     title: "Investment Loans (LOC)",

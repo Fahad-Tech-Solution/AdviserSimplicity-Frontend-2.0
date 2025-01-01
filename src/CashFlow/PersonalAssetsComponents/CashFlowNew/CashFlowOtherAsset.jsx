@@ -77,7 +77,7 @@ const CashFlowOtherAsset = (props) => {
         };
 
         if (props.modalObject.title === "Car" && goalsDetail.carGoal && goalsDetail.carGoal.estimatedValue) {
-          fields.newPurchase = goalsDetail.carGoal.estimatedValue || "$0";
+          fields.newPurchase = goalsDetail.carGoal.estimatedValue || "";
             fields.purchaseInYear = parseFloat(goalsDetail.carGoal.when.match(/\d+/g).join('')) || 30;
         }
 
@@ -93,9 +93,7 @@ const CashFlowOtherAsset = (props) => {
         if (onlyJoint.includes(props.modalObject.title)) {
           if (other.owner.includes("joint")) {
             if (other?.joint && Object.keys(other.joint).length) {
-
               updateFields(other.joint, "joint");
-
             }
           }
         }
