@@ -10,10 +10,10 @@ const DividendIncome = (props) => {
     let initialValues = {
         dividendIncome: "",
         franking: "",
-        includeFromYear: "",
-        upUntilYear: "",
-        takeAsCashFromUntilYear: "",
-        indexation: "",
+        includeFromYear: 1,
+        upUntilYear: 30,
+        takeAsCashFromUntilYear: 1,
+        indexation: "2.50%",
     }
 
     let fillInitialValues = (setFieldValue) => {

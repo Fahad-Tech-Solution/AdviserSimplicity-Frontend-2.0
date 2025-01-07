@@ -16,7 +16,7 @@ const CFSMSFBalance = (props) => {
         applyDeeming: "",
         applyDeemingObj: "",
         totalSuperannuationBenefits: "",
-        nominatedRolloverAmount: "",
+        nominatedRolloverAmount: "No",
         nominatedRolloverAmountValue: "",
         taxFreeComponent: "",
     };
@@ -31,7 +31,7 @@ const CFSMSFBalance = (props) => {
                 setFieldValue("applyDeeming", Data.applyDeeming || "");
                 setFieldValue("applyDeemingObj", Data.applyDeemingObj || "");
                 setFieldValue("totalSuperannuationBenefits", Data.totalSuperannuationBenefits || "");
-                setFieldValue("nominatedRolloverAmount", Data.nominatedRolloverAmount || "");
+                setFieldValue("nominatedRolloverAmount", Data.nominatedRolloverAmount || "No");
                 setFieldValue("nominatedRolloverAmountValue", Data.nominatedRolloverAmountValue || "");
                 setFieldValue("taxFreeComponent", Data.taxFreeComponent || "");
             }
@@ -112,6 +112,8 @@ const CFSMSFBalance = (props) => {
             name: "totalSuperannuationBenefits",
             type: "number-toComma",
             placeholder: "Total Superannuation Benefits",
+            disabled: true,
+
         },
         {
             name: "nominatedRolloverAmount",

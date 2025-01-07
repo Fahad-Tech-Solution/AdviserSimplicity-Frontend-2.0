@@ -12,7 +12,7 @@ const PensionPayments = (props) => {
     let [modalObject, setModalObject] = useState({});
 
     let initialValues = {
-        nominatedPensionAmount: "",
+        nominatedPensionAmount: "Other",
         reversionaryPensionOption: "",
         otherAmount: "",
         indexationPension: "",

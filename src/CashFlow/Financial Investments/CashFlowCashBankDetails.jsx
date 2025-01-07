@@ -375,7 +375,7 @@ const CashFlowCashBankDetails = (props) => {
             },
             {
                 name: layoutSwitchFlag2 ? "earningsRate" : "incomeYield",
-                type: layoutSwitchFlag2 ? "number-toPercent" : "number-toComma",
+                type: "number-toPercent",
                 placeholder: layoutSwitchFlag2 ? "Earnings Rate" : "Income Yield",
                 disabled: isDisabled, // Configurable based on the initial state
             },

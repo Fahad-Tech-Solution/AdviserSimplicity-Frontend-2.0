@@ -32,7 +32,7 @@ const CFAnnuities = (props) => {
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
 
-    let annuitiesIssues = Object.keys(questionDetail.annuitiesIssues).length > 0 ? questionDetail.annuitiesIssues : {
+    let annuitiesIssues = Object.keys(questionDetail.annuitiesIssues|| {}).length > 0 ? questionDetail.annuitiesIssues : {
         client: [],
         partner: [],
         joint: [],
@@ -59,17 +59,17 @@ const CFAnnuities = (props) => {
                 if (!data || !Object.keys(data).length) return;
 
                 const fields = {
-                    originalInvestmentAmount: data.originalInvestmentAmount || "$0",
-                    sourceOfFunds: data.sourceOfFunds || "$0",
-                    annuityType: data.annuityType || "$0",
+                    originalInvestmentAmount: data.originalInvestmentAmount || "",
+                    sourceOfFunds: data.sourceOfFunds || "",
+                    annuityType: data.annuityType || "",
                     IsThisReversionaryAnnuity: data.IsThisReversionaryAnnuity || "No",
                     RCV: data.RCV || "No",
                     RCVObj: data.RCVObj || {},
                     includeFromYear: data.includeFromYear || "1",
-                    term: data.term || "$0",
-                    yearsUntilMaturity: data.yearsUntilMaturity || "$0",
-                    annualInflationRate: data.annualInflationRate || "$0",
-                    annualPayment: data.annualPayment || "$0",
+                    term: data.term || 30,
+                    yearsUntilMaturity: data.yearsUntilMaturity || "30",
+                    annualInflationRate: data.annualInflationRate || "",
+                    annualPayment: data.annualPayment || "",
                     deductibleAmount: data.deductibleAmount || "No",
                     deductibleAmountObj: data.deductibleAmountObj || {},
                 };
@@ -92,6 +92,9 @@ const CFAnnuities = (props) => {
                         includeFromYear: annuitiesIssues.client[0].yearsMaturity,
                         term: annuitiesIssues.client[0].term,
                         annualPayment: toCommaAndDollar(annuitiesIssues.client.reduce((total, entry) => total + parseFloat((entry.annualAnnuityPayment).replace(/[^0-9.-]+/g, "")), 0)),
+                        RCVObj: {
+                            RCV: annuitiesIssues.client[0].returnCapitalValue || "",
+                        }
                     }
 
                     updateFields(Obj, "client");
@@ -111,6 +114,9 @@ const CFAnnuities = (props) => {
                         includeFromYear: annuitiesIssues.partner[0].yearsMaturity,
                         term: annuitiesIssues.partner[0].term,
                         annualAnnuityPayment: toCommaAndDollar(annuitiesIssues.partner.reduce((total, entry) => total + parseFloat((entry.annualAnnuityPayment).replace(/[^0-9.-]+/g, "")), 0)),
+                        RCVObj: {
+                            RCV: annuitiesIssues.partner[0].returnCapitalValue || "",
+                        }
                     }
                     updateFields(Obj, "partner");
                 }
@@ -169,6 +175,7 @@ const CFAnnuities = (props) => {
         }
         else {
             obj.clientTotal = ""
+            obj.client = {}
         }
 
         if (values.owner.includes("partner")) {
@@ -176,6 +183,7 @@ const CFAnnuities = (props) => {
         }
         else {
             obj.partnerTotal = ""
+            obj.partner = {}
         }
 
         const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";

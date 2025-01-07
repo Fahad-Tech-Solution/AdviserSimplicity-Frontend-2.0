@@ -104,6 +104,7 @@ const InvestmentPropertyDetails = (props) => {
                     // }
                     setFieldValue(`propertyLoanBalance${i}`, data.propertyLoanBalance || '');
                     setFieldValue(`propertyLoanDetailsArray${i}`, data.propertyLoanDetailsArray || '');
+                    
                     setFieldValue(`weeklyRentalIncome${i}`, data.weeklyRentalIncome || '');
                     setFieldValue(`expenses${i}`, data.expenses || '');
                     setFieldValue(`expensesArray${i}`, data.expensesArray || '');

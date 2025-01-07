@@ -30,24 +30,17 @@ const FamilyTrustBankAccount = (props) => {
 
     let [layoutSwitchFlag, setLayoutSwitchFlag] = useState(props.modalObject.title)
 
+
+    let familyBank = Object.keys(questionDetail[props.modalObject.sourceKey] || {}).length > 0 ? questionDetail[props.modalObject.sourceKey] : {
+        client: [],
+        joint: [],
+        partner: [],
+    }; // Use an empty object as default if familyBank is undefined
+
+
+
     let initialValues = {
         owner: [],
-        client: {
-            openingCashAtBank: "",
-            investmentReturns: "System",
-            incomeYield: "",
-            accountingFees: "",
-            adviserFees: "",
-            indexationFundFees: "2.50%",
-        },
-        partner: {
-            openingCashAtBank: "",
-            investmentReturns: "System",
-            incomeYield: "",
-            accountingFees: "",
-            adviserFees: "",
-            indexationFundFees: "2.50%",
-        },
     };
 
     const fillInitialValues = (setFieldValue) => {
@@ -74,15 +67,21 @@ const FamilyTrustBankAccount = (props) => {
             };
 
             if (scenarioObj?.selectedSource === "discoveryForm") {
-                const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-                if (cashFlowDetails) {
-                    setFieldValue(`owner`, cashFlowDetails.owner || "");
-                    if (cashFlowDetails.owner.includes("client")) {
-                        updateFields(cashFlowDetails.client, "client");
+                if (familyBank?.client.length > 0) {
+                    let Obj = {
+                        openingCashAtBank: familyBank.clientCurrentBalance || "",
                     }
-                    if (UserStatus === "Married" && cashFlowDetails.owner.includes("partner")) {
-                        updateFields(cashFlowDetails.partner, "partner");
+
+                    updateFields(Obj, "client");
+                }
+
+                // Update partner-related fields
+                if (UserStatus === "Married" && familyBank?.partner.length > 0) {
+                    let Obj = {
+                        openingCashAtBank: familyBank.partnerCurrentBalance || "",
                     }
+
+                    updateFields(Obj, "client");
                 }
             }
 

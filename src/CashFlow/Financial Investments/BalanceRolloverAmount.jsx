@@ -17,7 +17,7 @@ const BalanceRolloverAmount = (props) => {
         applyDeeming: "",
         applyDeemingObj: {},
         totalSuperAnnuationBenefits: "",
-        nominatedRolloverAmountType: "",
+        nominatedRolloverAmountType: "No",
         nominatedRolloverAmount: "",
         taxFreeComponent: "",
     }

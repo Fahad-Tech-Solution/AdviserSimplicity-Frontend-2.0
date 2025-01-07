@@ -18,11 +18,10 @@ const CashFlowPersonalDebt = (props) => {
 
     let DefaultUrl = useRecoilValue(defaultUrl);
 
-    let personalLoans = Object.keys(questionDetail?.[props.modalObject.discoveryKey]).length > 0 ? questionDetail[props.modalObject.discoveryKey] : {
+    let personalLoans = Object.keys(questionDetail?.[props.modalObject.discoveryKey] || {}).length > 0 ? questionDetail[props.modalObject.discoveryKey] : {
         client: [],
         partner: [],
         joint: [],
-
     };
 
     let handleInput = (e, setFieldValue) => {
@@ -100,7 +99,6 @@ const CashFlowPersonalDebt = (props) => {
                 // console.log(cashFlowDetails, "cashFlowDetails")
                 if (cashFlowDetails) {
                     setFieldValue(`NumberOfMap`, cashFlowDetails.NumberOfMap || 0);
-
                     if (cashFlowDetails?.client) {
                         cashFlowDetails.client.forEach((child, index) => {
                             updateFields(child, index);
@@ -108,7 +106,6 @@ const CashFlowPersonalDebt = (props) => {
                     }
                 }
             }
-
         } catch (error) {
             console.error("Error in fillInitialValues:", error);
         }

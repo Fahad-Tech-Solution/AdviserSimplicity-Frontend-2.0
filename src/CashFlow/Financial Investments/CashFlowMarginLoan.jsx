@@ -28,14 +28,14 @@ const CashFlowMarginLoan = (props) => {
 
     let DefaultUrl = useRecoilValue(defaultUrl);
 
-    let incomeFromOverseasPension =
-        Object.keys(questionDetail.incomeFromOverseasPension || {}).length > 0
-            ? questionDetail.incomeFromOverseasPension
+    let managedFundsMarginLoan =
+        Object.keys(questionDetail.managedFundsMarginLoan || {}).length > 0
+            ? questionDetail.managedFundsMarginLoan
             : {
                 client: [],
                 partner: [],
                 joint: [],
-            }; // Use an empty object as default if incomeFromOverseasPension is undefined
+            }; // Use an empty object as default if managedFundsMarginLoan is undefined
 
     let initialValues = { owner: [] };
 
@@ -44,7 +44,7 @@ const CashFlowMarginLoan = (props) => {
             // Set the object and API key
             setObjAndAPIKey(props.modalObject.key);
 
-            console.log(incomeFromOverseasPension, "Discovery Form Data");
+            console.log(managedFundsMarginLoan, "Discovery Form Data");
             // console.log(cashFlowData, "cashFlowData Form Data");
             // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
 
@@ -55,13 +55,13 @@ const CashFlowMarginLoan = (props) => {
 
                 if (!data || !Object.keys(data).length) return;
                 const fields = {
-                    currentLoanBalance: data.currentLoanBalance || "",
+                    currentLoanBalance: data.currentLoanBalance || data.loanBalance || "",
                     loanTerm: data.loanTerm || "",
-                    initialInterestRate: data.initialInterestRate || "",
-                    deductibleInterest: data.deductibleInterest || "",
+                    initialInterestRate: data.initialInterestRate || data.interestRate || "",
+                    deductibleInterest: data.deductibleInterest || data.deductibleLoanAmount || "",
                     monthlyContributions: data.monthlyContributions || "",
-                    monthlyContributionsObj: data.monthlyContributionsObj || "",
-                    repayLoanYear: data.repayLoanYear || "",
+                    monthlyContributionsObj: data.monthlyContributionsObj || {},
+                    repayLoanYear: data.repayLoanYear || "No",
                 };
 
                 Object.entries(fields).forEach(([key, value]) => {
@@ -70,17 +70,17 @@ const CashFlowMarginLoan = (props) => {
             };
 
             // Update owner field
-            if (scenarioObj?.selectedSource === "discoveryForm" && incomeFromOverseasPension && incomeFromOverseasPension._id) {
-                setFieldValue(`owner`, incomeFromOverseasPension.owner || "");
+            if (scenarioObj?.selectedSource === "discoveryForm" && managedFundsMarginLoan && managedFundsMarginLoan._id) {
+                setFieldValue(`owner`, managedFundsMarginLoan.owner || "");
 
                 // Update client-related fields
-                if (incomeFromOverseasPension.owner.includes("client")) {
-                    updateFields(incomeFromOverseasPension.client, "client");
+                if (managedFundsMarginLoan.owner.includes("client")) {
+                    updateFields(managedFundsMarginLoan.client, "client");
                 }
 
                 // Update partner-related fields
-                if (UserStatus === "Married" && incomeFromOverseasPension.owner.includes("partner")) {
-                    updateFields(incomeFromOverseasPension.partner, "partner");
+                if (UserStatus === "Married" && managedFundsMarginLoan.owner.includes("partner")) {
+                    updateFields(managedFundsMarginLoan.partner, "partner");
                 }
             }
             else {
@@ -128,6 +128,8 @@ const CashFlowMarginLoan = (props) => {
         // return (false);
         let obj = values
 
+
+
         obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
 
         let jointCurrentLoanBalance = 0
@@ -138,6 +140,9 @@ const CashFlowMarginLoan = (props) => {
 
         if (values.owner.includes("client")) {
             obj.clientTotal = toCommaAndDollar(parseFloat(values.client.currentLoanBalance.replace(/[^0-9.-]+/g, "")) + (jointCurrentLoanBalance / 2)) || "$0";
+            if (values.client.monthlyContributions === "No") {
+                obj.client.monthlyContributionsObj = {};
+            }
         }
         else {
             obj.clientTotal = ""
@@ -145,6 +150,9 @@ const CashFlowMarginLoan = (props) => {
 
         if (values.owner.includes("partner")) {
             obj.partnerTotal = toCommaAndDollar(parseFloat(values.partner.currentLoanBalance.replace(/[^0-9.-]+/g, "")) + (jointCurrentLoanBalance / 2)) || "$0";
+            if (values.partner.monthlyContributions === "No") {
+                obj.partner.monthlyContributionsObj = {};
+            }
         }
         else {
             obj.partnerTotal = ""
@@ -207,6 +215,22 @@ const CashFlowMarginLoan = (props) => {
         label: ("Year " + (i + 1)).toString(),
     }));
 
+    const loanTermOptionsWithNo = Array.from({ length: 31 }, (_, i) => {
+
+        if (i === 0) {
+            return ({
+                value: "No",
+                label: "No",
+            })
+        }
+
+        return ({
+            // value: (i + 1).toString(),
+            value: (i + 1),
+            label: ("Year " + (i + 1)).toString(),
+        })
+    });
+
     const options =
         UserStatus !== "Single"
             ? [
@@ -214,11 +238,6 @@ const CashFlowMarginLoan = (props) => {
                 { value: "partner", label: RenderName("partner") },
             ]
             : [{ value: "client", label: RenderName("client") }];
-
-    let loanTypeOptions = [
-        { value: "I/Only", label: "I/Only" },
-        { value: "P & I", label: "P & I" },
-    ]
 
     let handleInnerModal = (title, values, key, stakeHolder) => {
         // console.log(title, values, key);
@@ -230,8 +249,6 @@ const CashFlowMarginLoan = (props) => {
         });
         setFlagState(true);
     };
-
-
 
     const rowConfig = [
         {
@@ -268,13 +285,12 @@ const CashFlowMarginLoan = (props) => {
             name: "repayLoanYear",
             placeholder: "Repay Loan in Year",
             type: "select",
-            options: loanTermOptions,
+            options: loanTermOptionsWithNo,
         },
     ];
 
     const componentMapping = {
         "Monthly Contributions": <RegularContributions />
-
     }
 
     const ModalContent = (obj) => {

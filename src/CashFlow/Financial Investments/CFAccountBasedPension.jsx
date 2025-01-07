@@ -33,7 +33,7 @@ const CFAccountBasedPension = (props) => {
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
 
-    let accountBasedPensionIssues = Object.keys(questionDetail.accountBasedPensionIssues).length > 0 ? questionDetail.accountBasedPensionIssues : {
+    let accountBasedPensionIssues = Object.keys(questionDetail.accountBasedPensionIssues || {}).length > 0 ? questionDetail.accountBasedPensionIssues : {
         client: [],
         partner: [],
         joint: [],
@@ -61,15 +61,15 @@ const CFAccountBasedPension = (props) => {
                 if (!data || !Object.keys(data).length) return;
 
                 const fields = {
-                    balanceRolloverAmount: data.balanceRolloverAmount || "$0",
+                    balanceRolloverAmount: data.balanceRolloverAmount || "",
                     balanceRolloverAmountObj: data.balanceRolloverAmountObj || {},
-                    yearToCommence: data.yearToCommence || "$0",
-                    riskProfile: data.riskProfile || "$0",
-                    investmentReturns: data.investmentReturns || "$0",
+                    yearToCommence: data.yearToCommence || "",
+                    riskProfile: data.riskProfile || "",
+                    investmentReturns: data.investmentReturns || "",
                     investmentReturnsObj: data.investmentReturnsObj || {},
-                    investmentFees: data.investmentFees || "$0",
-                    adviserServiceFee: data.adviserServiceFee || "$0",
-                    pensionPayments: data.pensionPayments || "$0",
+                    investmentFees: data.investmentFees || "",
+                    adviserServiceFee: data.adviserServiceFee || "",
+                    pensionPayments: data.pensionPayments || "",
                     pensionPaymentsObj: data.pensionPaymentsObj || {},
                     newPensionRollover: data.newPensionRollover || "No",
                     newPensionRolloverObj: data.newPensionRolloverObj || {},
@@ -88,13 +88,20 @@ const CFAccountBasedPension = (props) => {
                 // Update client-related fields
                 if (accountBasedPensionIssues?.client.length > 0) {
 
-                    let Obj = {
-                        balanceRolloverAmount: accountBasedPensionIssues.clientCurrentBalance,
-                        balanceBenefitDetails: toCommaAndDollar(accountBasedPensionIssues.client.reduce((total, entry) => total + parseFloat((entry.balanceBenefitDetails).replace(/[^0-9.-]+/g, "")), 0)),
-                        annuityType: accountBasedPensionIssues.client[0].annuityType,
-                        includeFromYear: accountBasedPensionIssues.client[0].yearsMaturity,
-                        term: accountBasedPensionIssues.client[0].term,
-                        // annualPayment: toCommaAndDollar(accountBasedPensionIssues.client.reduce((total, entry) => total + parseFloat((entry.annualAnnuityPayment).replace(/[^0-9.-]+/g, "")), 0)),
+                    let Obj = {};
+                    if (accountBasedPensionIssues?.client?.length > 0) {
+                        Obj = {
+                            balanceRolloverAmount: accountBasedPensionIssues.clientCurrentBalance,
+                            balanceRolloverAmountObj: {
+                                pensionType: accountBasedPensionIssues?.client[0]?.balanceBenefitDetailsArray[0]?.fundType || "",
+                                taxFreeComponent: accountBasedPensionIssues?.client[0]?.balanceBenefitDetailsArray[0]?.taxFreeComponent || "",
+                            },
+                            balanceBenefitDetails: toCommaAndDollar(accountBasedPensionIssues.client.reduce((total, entry) => total + parseFloat((entry.balanceBenefitDetails).replace(/[^0-9.-]+/g, "")), 0)),
+                            annuityType: accountBasedPensionIssues.client[0].annuityType,
+                            includeFromYear: accountBasedPensionIssues.client[0].yearsMaturity,
+                            term: accountBasedPensionIssues.client[0].term,
+                            // annualPayment: toCommaAndDollar(accountBasedPensionIssues.client.reduce((total, entry) => total + parseFloat((entry.annualAnnuityPayment).replace(/[^0-9.-]+/g, "")), 0)),
+                        };
                     }
 
 
@@ -110,10 +117,17 @@ const CFAccountBasedPension = (props) => {
                     accountBasedPensionIssues.partner.length > 0
                 ) {
 
-                    let totalOfAnnualAdvice = accountBasedPensionIssues?.partner.reduce((total, entry) => total + parseFloat((entry.annualAdvice).replace(/[^0-9.-]+/g, "")), 0)
-                    let taxFreeComponentTotal = accountBasedPensionIssues?.partner.reduce((total, entry) => total + parseFloat((entry.balanceBenefitDetailsArray[0].taxFreeComponent).replace(/[^0-9.-]+/g, "")), 0)
+                    let Obj = {
+                        balanceRolloverAmount: accountBasedPensionIssues.partnerCurrentBalance,
+                        balanceBenefitDetails: toCommaAndDollar(accountBasedPensionIssues.partner.reduce((total, entry) => total + parseFloat((entry.balanceBenefitDetails).replace(/[^0-9.-]+/g, "")), 0)),
+                        annuityType: accountBasedPensionIssues.partner[0].annuityType,
+                        includeFromYear: accountBasedPensionIssues.partner[0].yearsMaturity,
+                        term: accountBasedPensionIssues.partner[0].term,
+                        // annualPayment: toCommaAndDollar(accountBasedPensionIssues.partner.reduce((total, entry) => total + parseFloat((entry.annualAnnuityPayment).replace(/[^0-9.-]+/g, "")), 0)),
+                    };
 
-                    let Obj = {};
+                    console.log("Obj", Obj);
+
                     updateFields(Obj, "partner");
                 }
 
@@ -237,25 +251,11 @@ const CFAccountBasedPension = (props) => {
             title,
             values,
             key,
-            stakeHolder
+            stakeHolder,
+            sourceObj: props.modalObject,
         });
         setFlagState(true);
     };
-
-    const loanTermOptions = Array.from({ length: 31 }, (_, i) => {
-        if (i === 0) {
-            return ({
-                value: "No",
-                label: "No",
-            })
-        }
-        else {
-            return ({
-                value: (i).toString(),
-                label: ("Year " + (i)).toString(),
-            })
-        }
-    });
 
     const options =
         UserStatus !== "Single"
@@ -295,12 +295,14 @@ const CFAccountBasedPension = (props) => {
                 innerModalTitle: "Balance & Rollover Amount",
                 key: "balanceRolloverAmount",
                 func: handleInnerModal,
+                disabled: true,
             },
             {
                 name: "yearToCommence",
                 type: "select",
                 options: riskProfileOptions,
                 placeholder: "Year To Commence",
+                disabled: true,
             },
             {
                 name: "riskProfile",
@@ -320,7 +322,7 @@ const CFAccountBasedPension = (props) => {
             },
             {
                 name: "investmentFees",
-                type: "number-toComma",
+                type: "number-toPercent",
                 placeholder: "Investment Fees %",
             },
             {

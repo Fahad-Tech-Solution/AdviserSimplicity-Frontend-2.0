@@ -46,11 +46,11 @@ const BusinessInvestmentsMiddleware = (props) => {
     let [layoutSwitchFlag, setLayoutSwitchFlag] = useState(props.modalObject.title)
 
 
-    let BankAccountFinance = {
+    let BankAccountFinance = Object.keys(questionDetail.BusinessAsCompanyStructure || {}).length > 0 ? questionDetail.BusinessAsCompanyStructure : {
         client: [],
-        joint: [],
         partner: [],
-    }; // Use an empty object as default if BankAccountFinance is undefined
+        joint: [],
+    };  // Use an empty object as default if incomeFromOverseasPension is undefined
 
     let initialValues = {
         owner: [],
@@ -61,7 +61,7 @@ const BusinessInvestmentsMiddleware = (props) => {
             // Set the object and API key
             setObjAndAPIKey(props.modalObject.key);
 
-            // console.log(BankAccountFinance, "Discovery Form Data " + props.modalObject.key + " and SourceKey " + props.modalObject.sourceKey, BankAccountFinance.client);
+            console.log(BankAccountFinance, "Discovery Form Data " + props.modalObject.key + " and SourceKey " + props.modalObject.sourceKey, BankAccountFinance.client);
             // console.log(cashFlowData?.[objAndAPIKey].client.investmentFees, "cashFlowData Form Data");
             // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
 
@@ -117,8 +117,22 @@ const BusinessInvestmentsMiddleware = (props) => {
                 // Update client-related fields
                 if (BankAccountFinance?.client.length > 0) {
                     let Obj = {
-                        currentBalance: BankAccountFinance.clientCurrentBalance,
-                        costBase: BankAccountFinance.clientCostBaseTemp,
+                        dividendIncome: BankAccountFinance.client[0].dividendReceived,
+                        dividendIncomeObj: {
+                            dividendIncome: BankAccountFinance.client[0].dividendReceived,
+                        },
+                        assetValueOfCompany: BankAccountFinance.client[0].equityPosition,
+                        assetValueOfCompanyObj: {
+                            assetValue: BankAccountFinance.client[0].equityPosition,
+                        },
+                        netTrustDistribution: toCommaAndDollar(BankAccountFinance.client[0].equityPositionArray[0].distributionReceived),
+                        netTrustDistributionObj: {
+                            assetValue: toCommaAndDollar(BankAccountFinance.client[0].equityPositionArray[0].distributionReceived)
+                        },
+                        assetValueOfBusinessTrust: toCommaAndDollar(BankAccountFinance.client[0].equityPositionArray[0].distributionReceived),
+                        assetValueOfBusinessTrustObj: {
+                            assetValue: toCommaAndDollar(BankAccountFinance.client[0].equityPositionArray[0].distributionReceived)
+                        },
                     }
                     updateFields(Obj, "client");
                 }
@@ -126,8 +140,22 @@ const BusinessInvestmentsMiddleware = (props) => {
                 // Update partner-related fields
                 if (UserStatus === "Married" && BankAccountFinance?.partner.length > 0) {
                     let Obj = {
-                        currentBalance: BankAccountFinance.partnerCurrentBalance,
-                        costBase: BankAccountFinance.partnerCostBaseTemp,
+                        dividendIncome: BankAccountFinance.partner[0].dividendReceived,
+                        dividendIncomeObj: {
+                            dividendIncome: BankAccountFinance.partner[0].dividendReceived,
+                        },
+                        assetValueOfCompany: BankAccountFinance.partner[0].equityPosition,
+                        assetValueOfCompanyObj: {
+                            assetValue: BankAccountFinance.partner[0].equityPosition,
+                        },
+                        netTrustDistribution: toCommaAndDollar(BankAccountFinance.partner[0].equityPositionArray[0].distributionReceived),
+                        netTrustDistributionObj: {
+                            assetValue: toCommaAndDollar(BankAccountFinance.partner[0].equityPositionArray[0].distributionReceived)
+                        },
+                        assetValueOfBusinessTrust: toCommaAndDollar(BankAccountFinance.partner[0].equityPositionArray[0].distributionReceived),
+                        assetValueOfBusinessTrustObj: {
+                            assetValue: toCommaAndDollar(BankAccountFinance.partner[0].equityPositionArray[0].distributionReceived)
+                        },
                     }
                     updateFields(Obj, "partner");
                 }
@@ -180,13 +208,13 @@ const BusinessInvestmentsMiddleware = (props) => {
         obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
 
         if (values.owner.includes("client")) {
-            obj.clientTotal = Object.values(values.client)[0] || "$0";
+            obj.clientTotal = Object.values(values.client || {})[0] || "$0";
         } else {
             obj.clientTotal = "";
         }
 
         if (values.owner.includes("partner")) {
-            obj.partnerTotal = Object.values(values.partner)[0] || "$0";
+            obj.partnerTotal = Object.values(values.partner || {})[0] || "$0";
         } else {
             obj.partnerTotal = "";
         }

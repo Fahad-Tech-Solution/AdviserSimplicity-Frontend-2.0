@@ -12,6 +12,7 @@ const CashFlowHomeLoan = (props) => {
      1. "Home Loan"  inner Modal
      2. "Financial Investment/Investment Loan/Loan Balance" inner Modal
      3. "SMSF/Investment Loan/Loan Balance" inner Modal
+     4. "Family trust Investment Loan/Loan Balance" inner Modal
  
      TODO-IMPORTANT:
      - Ensure any changes to this component are planned carefully to avoid unintended effects on all supported modals.
@@ -20,33 +21,47 @@ const CashFlowHomeLoan = (props) => {
  */
 
 
-
   let initialValues = {
     loanTerm: "30",
-    "repayLoanInYear": "No"
+    "repayLoanInYear": "No",
+    "deductibleInterest": "100%",
   };
 
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
 
   let [addInputFlag, setAddInputFlag] = useState(false);
+  let [clientPartnerPer, setClientPartnerPer] = useState(false);
 
+  let DeductibleInterestFormsArray = ["SMSF Investment Properties", "Investments Property", "Family Trust Investment Properties"];
+  let clientPartnerPercentageFormsArray = ["SMSF Investment Properties", "Family Trust Investment Properties"];
 
   const fillInitialValues = (setFieldValue) => {
     console.log(props.modalObject.ParentObject, "kuch Chala");
-    setAddInputFlag(props.modalObject.ParentObject.title === "Investments Property");
+    console.log(clientPartnerPercentageFormsArray.includes(props.modalObject.ParentObject.title), "clientPartnerPercentageFormsArray.includes(props.modalObject.ParentObject.title)")
+    console.log(DeductibleInterestFormsArray.includes(props.modalObject.ParentObject.title), "DeductibleInterestFormsArray.includes(props.modalObject.ParentObject.title)")
+
+    setAddInputFlag(DeductibleInterestFormsArray.includes(props.modalObject.ParentObject.title));
+    setClientPartnerPer(clientPartnerPercentageFormsArray.includes(props.modalObject.ParentObject.title));
 
     console.log("Home Loan");
     if (Object.keys(props.modalObject.values[props.modalObject.key] || {}).length > 0) {
       let Data = props.modalObject.values[props.modalObject.key]
-      setFieldValue("loanBalance", Data.loanBalance)
-      setFieldValue("loanBalanceCashFlowLoanBelanceLVR", Data.loanBalanceCashFlowLoanBelanceLVR)
-      setFieldValue("loanType", Data.loanType)
-      setFieldValue("loanTerm", Data.loanTerm)
-      setFieldValue("initialInterestRatePA", Data.initialInterestRatePA || Data.interestRatePA || "")
+      setFieldValue("loanBalance", Data.loanBalance || Data.LoanBalance)
+      setFieldValue("loanBalanceCashFlowLoanBelanceLVR", Data.loanBalanceCashFlowLoanBelanceLVR || {
+        loanAmount: Data.loanBalance || Data.LoanBalance || "",
+      } || {})
+      setFieldValue("loanType", Data.loanType || Data.LoanType || "")
+      setFieldValue("loanTerm", Data.loanTerm || Data.LoanTerm || "30")
+      setFieldValue("initialInterestRatePA", Data.initialInterestRatePA || Data.interestRatePA || Data.InterestRate || "")
       setFieldValue("minimumRepaymentsPA", Data.minimumRepaymentsPA)
-      setFieldValue("actualAnnualRepayments", Data.actualAnnualRepayments || Data.annualRepayments || "")
-      setFieldValue("repayLoanInYear", Data.repayLoanInYear)
+      setFieldValue("actualAnnualRepayments", Data.actualAnnualRepayments || Data.annualRepayments || Data.AnnualRepayments || "")
+      setFieldValue("repayLoanInYear", Data.repayLoanInYear || "No")
+
+      if (DeductibleInterestFormsArray.includes(props.modalObject.ParentObject.title)) {
+        setFieldValue("deductibleInterest", Data.deductibleInterest || Data.DeductibleLoanAmount || "100%")
+      }
+
     }
   };
 
@@ -60,6 +75,10 @@ const CashFlowHomeLoan = (props) => {
 
   let onSubmit = async (values) => {
     console.log("values", values);
+
+    if (!addInputFlag) {
+      values.deductibleInterest = undefined;
+    }
 
     props.setFieldValue(props.modalObject.key, values);
 
@@ -82,6 +101,7 @@ const CashFlowHomeLoan = (props) => {
       values,
       key,
       ParentObject: props.modalObject,
+      clientPartnerPer,
     });
     setFlagState(true);
   };

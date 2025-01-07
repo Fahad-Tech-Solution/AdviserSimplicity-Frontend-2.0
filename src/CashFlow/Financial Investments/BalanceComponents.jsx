@@ -13,25 +13,25 @@ const BalanceComponents = (props) => {
     let fillInitialValues = (setFieldValue) => {
         console.log(props.modalObject.DiscoveryObj);
         let Double = false;
-        // let DiscoveryObj = props.modalObject.DiscoveryObj;
+        let DiscoveryObj = props.modalObject.DiscoveryObj;
 
-        // if (DiscoveryObj[props.modalObject.stakeHolder.replace(".", "")]) {
-        //     let DiscoveryObjArray = DiscoveryObj[props.modalObject.stakeHolder.replace(".", "")];
-        //     let totalOfAnnualAdvice = DiscoveryObjArray.reduce((total, entry) => total + parseFloat((entry.annualAdvice).replace(/[^0-9.-]+/g, "")), 0)
+        if (DiscoveryObj[props.modalObject.stakeHolder.replace(".", "")]) {
+            let DiscoveryObjArray = DiscoveryObj[props.modalObject.stakeHolder.replace(".", "")];
+            let totalOfAnnualAdvice = DiscoveryObjArray.reduce((total, entry) => total + parseFloat((entry.annualAdvice).replace(/[^0-9.-]+/g, "")), 0)
 
-        //     let taxFreeComponentTotal = DiscoveryObjArray.reduce((total, entry) => total + parseFloat((entry.balanceBenefitDetailsArray[0].taxFreeComponent).replace(/[^0-9.-]+/g, "")), 0)
+            let taxFreeComponentTotal = DiscoveryObjArray.reduce((total, entry) => total + parseFloat((entry.balanceBenefitDetailsArray[0].taxFreeComponent).replace(/[^0-9.-]+/g, "")), 0)
 
-        //     setFieldValue("currentBalance", toCommaAndDollar(totalOfAnnualAdvice))
-        //     setFieldValue("taxFreeComponent", toCommaAndDollar(taxFreeComponentTotal))
-        //     // alert(DiscoveryObjArray.length)
-        //     if (DiscoveryObjArray.length > 1) {
-        //         Double = true;
-        //         setFieldValue("currentBalance1", toCommaAndDollar(totalOfAnnualAdvice))
-        //         setFieldValue("taxFreeComponent1", toCommaAndDollar(taxFreeComponentTotal))
-        //         setDoubleRowFlag(Double);
-        //     }
+            setFieldValue("currentBalance", toCommaAndDollar(totalOfAnnualAdvice))
+            setFieldValue("taxFreeComponent", toCommaAndDollar(taxFreeComponentTotal))
+            // alert(DiscoveryObjArray.length)
+            if (DiscoveryObjArray.length > 1) {
+                Double = true;
+                setFieldValue("currentBalance1", toCommaAndDollar(totalOfAnnualAdvice))
+                setFieldValue("taxFreeComponent1", toCommaAndDollar(taxFreeComponentTotal))
+                setDoubleRowFlag(Double);
+            }
 
-        // }
+        }
 
         if (props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")]) {
             let SubObj = props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")]

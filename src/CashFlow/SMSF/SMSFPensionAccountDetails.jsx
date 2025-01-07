@@ -43,6 +43,13 @@ const SMSFPensionAccountDetails = (props) => {
         owner: [],
     };
 
+    let SMSFPensionPhase = Object.keys(questionDetail.SMSFPensionPhase || {}).length > 0 ? questionDetail.SMSFPensionPhase : {
+        client: [],
+        partner: [],
+        joint: [],
+    };  // Use an empty object as default if incomeFromOverseasPension is undefined
+
+
     const fillInitialValues = (setFieldValue) => {
         try {
             setObjAndAPIKey(props.modalObject.key);
@@ -53,10 +60,10 @@ const SMSFPensionAccountDetails = (props) => {
                 if (!data || !Object.keys(data).length) return;
 
                 const fields = {
-                    balanceRolloverAmount: data.balanceRolloverAmount || "$0",
+                    balanceRolloverAmount: data.balanceRolloverAmount || "",
                     balanceRolloverAmountObj: data.balanceRolloverAmountObj || {},
-                    yearToCommence: data.yearToCommence || "$0",
-                    pensionPayments: data.pensionPayments || "$0",
+                    yearToCommence: data.yearToCommence || "",
+                    pensionPayments: data.pensionPayments || "",
                     pensionPaymentsObj: data.pensionPaymentsObj || {},
                     newPensionRollover: data.newPensionRollover || "No",
                     newPensionRolloverObj: data.newPensionRolloverObj || {},
@@ -70,6 +77,37 @@ const SMSFPensionAccountDetails = (props) => {
             };
 
             if (scenarioObj?.selectedSource === "discoveryForm") {
+                // questionDetail
+
+                // Update client-related fields
+                if (SMSFPensionPhase?.client.length > 0) {
+                    let Obj = {
+                        balanceRolloverAmountObj: {
+                            pensionType: SMSFPensionPhase?.client[0]?.pensionBenefitsTotalArray[0]?.pensionType.trim() || "",
+                            commencePensionYear: parseFloat(cashFlowData?.cf_personalDetails.client?.retirementYear) || 30,
+                            taxFreeComponent: SMSFPensionPhase?.client[0]?.pensionBenefitsTotalArray[0]?.pensionBenefitsarray[0]?.taxFreeComponent || "",
+                            // pensionBenefitsarray
+                        },
+                        pensionPaymentsObj: {
+                            pensionType: SMSFPensionPhase?.client[0]?.pensionBenefitsTotalArray[0]?.pensionType.trim() || "",
+                        }
+                    }
+                    updateFields(Obj, "client");
+                }
+
+                // Update partner-related fields
+                if (SMSFPensionPhase?.partner.length > 0) {
+                    let Obj = {
+                        balanceRolloverAmountObj: {
+                            pensionType: SMSFPensionPhase?.partner[0]?.pensionBenefitsTotalArray[0]?.pensionType.trim() || "",
+                            commencePensionYear: parseFloat(cashFlowData?.cf_personalDetails.partner?.retirementYear) || 30,
+                            taxFreeComponent: SMSFPensionPhase?.partner[0]?.pensionBenefitsTotalArray[0]?.pensionBenefitsarray[0]?.taxFreeComponent || "",
+                        }
+                    }
+                    updateFields(Obj, "partner");
+                }
+            }
+            else {
                 const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
                 if (cashFlowDetails) {
                     setFieldValue(`owner`, cashFlowDetails.owner || "");
@@ -201,12 +239,14 @@ const SMSFPensionAccountDetails = (props) => {
                 innerModalTitle: "Balance Rollover Amount",
                 key: "balanceRolloverAmount",
                 func: handleInnerModal,
+                disabled: true,
             },
             {
                 name: "yearToCommence",
                 type: "select",
                 placeholder: "Year to Commence",
-                options: yearsArray
+                options: yearsArray,
+                disabled: true,
             },
             {
                 name: "pensionPayments",

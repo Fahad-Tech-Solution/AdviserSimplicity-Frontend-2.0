@@ -12,10 +12,7 @@ const MarginLoan = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
-
-
     let bankDetailObj = useRecoilValue(BankDetail);
-
 
     let [lenderOption, setLenderOption] = useState(() => {
 

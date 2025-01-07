@@ -88,7 +88,7 @@ const SalaryPackagingCar = (props) => {
                                                     <th>FBT Paid By Employer</th>
                                                     <th>Include From Year</th>
                                                     <th>Up Until Year</th>
-                                                    <th>indexation</th>
+                                                    <th>Indexation</th>
                                                 </tr>
                                             </thead>
                                             <tbody>

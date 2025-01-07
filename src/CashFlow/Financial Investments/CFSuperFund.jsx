@@ -65,13 +65,13 @@ const CFSuperFund = (props) => {
                 if (!data || !Object.keys(data).length) return;
 
                 const fields = {
-                    balanceComponents: data.balanceComponents || "$0",
+                    balanceComponents: data.balanceComponents || "",
                     balanceComponentsObj: data.balanceComponentsObj || {},
-                    riskProfile: data.riskProfile || "$0",
-                    investmentReturns: data.investmentReturns || "$0",
+                    riskProfile: data.riskProfile || "",
+                    investmentReturns: data.investmentReturns || "",
                     investmentReturnsObj: data.investmentReturnsObj || {},
                     investmentFees: data.investmentFees || "0%",
-                    adviserServiceFee: data.adviserServiceFee || "$0",
+                    adviserServiceFee: data.adviserServiceFee || "",
                     insurancePremiums: data.insurancePremiums || "No",
                     insurancePremiumsObj: data.insurancePremiumsObj || {},
                     rolloverFunds: data.rolloverFunds || "No",
@@ -301,6 +301,7 @@ const CFSuperFund = (props) => {
                 innerModalTitle: "Balance & Components",
                 key: "balanceComponents",
                 func: handleInnerModal,
+                disabled: true,
             },
             {
                 name: "riskProfile",

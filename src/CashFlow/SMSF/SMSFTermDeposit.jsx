@@ -32,9 +32,18 @@ const SMSFTermDeposit = (props) => {
         owner: [],
     };
 
+    let SMSFTerm = Object.keys(questionDetail[props.modalObject.sourceKey] || {}).length > 0 ? questionDetail[props.modalObject.sourceKey] : {
+        client: [],
+        joint: [],
+        partner: [],
+    }; // Use an empty object as default if SMSFBank is undefined
+
+
     const fillInitialValues = (setFieldValue) => {
         try {
             setObjAndAPIKey(props.modalObject.key);
+
+            console.log(SMSFTerm)
 
             const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
 
@@ -45,9 +54,9 @@ const SMSFTermDeposit = (props) => {
                     investmentReturns: data.investmentReturns || "",
                     incomeYield: data.incomeYield || "",
                     reinvestIncome: data.reinvestIncome || "No",
-                    reinvestUpUntil: data.reinvestUpUntil || "",
-                    riskProfile: data.riskProfile || {},
-                    cashOutYear: data.cashOutYear || ""
+                    reinvestUpUntil: data.reinvestUpUntil || "No",
+                    riskProfile: data.riskProfile || "Cash",
+                    cashOutYear: data.cashOutYear || "No"
                 };
 
                 Object.entries(fields).forEach(([key, value]) => {
@@ -56,17 +65,16 @@ const SMSFTermDeposit = (props) => {
             };
 
             if (scenarioObj?.selectedSource === "discoveryForm" && questionDetail[props.modalObject.sourceKey]) {
-                const incomeFromOverseasPension = questionDetail[props.modalObject.sourceKey];
-                if (incomeFromOverseasPension?.client.length > 0) {
+                if (SMSFTerm?.client.length > 0) {
                     let Obj = {
-                        openingBalance: incomeFromOverseasPension.client.clientCurrentBalance,
+                        openingBalance: SMSFTerm.clientCurrentBalance || "",
                     }
                     updateFields(Obj, "client");
                 }
 
-                if (UserStatus === "Married" && incomeFromOverseasPension?.partner.length > 0) {
+                if (UserStatus === "Married" && SMSFTerm?.partner.length > 0) {
                     let Obj = {
-                        openingBalance: incomeFromOverseasPension.partner.partnerCurrentBalance,
+                        openingBalance: SMSFTerm.partnerCurrentBalance || "",
                     }
                     updateFields(Obj, "partner");
                 }
@@ -82,7 +90,6 @@ const SMSFTermDeposit = (props) => {
                     if (UserStatus === "Married" && cashFlowDetails.owner.includes("partner")) {
                         updateFields(cashFlowDetails.partner, "partner");
                     }
-
                 }
             }
 
@@ -97,8 +104,6 @@ const SMSFTermDeposit = (props) => {
                 if (UserStatus === "Married" && cashFlowDataDetails.owner.includes("partner")) {
                     updateFields(cashFlowDataDetails.partner, "partner");
                 }
-
-
             }
 
         } catch (error) {
@@ -241,7 +246,7 @@ const SMSFTermDeposit = (props) => {
             },
             {
                 name: "incomeYield",
-                type: "number-toComma",
+                type: "number-toPercent",
                 placeholder: "Income Yield",
                 disabled: isDisabled,
             },

@@ -1,14 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import DynamicTableRow from '../../Components/Assets/Dynamic/DynamicTableRow';
-import { Form, Formik } from 'formik';
-import { Row, Table } from 'react-bootstrap';
-import InnerModal from '../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal';
-import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from '../../Store/Store';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { openNotificationSuccess, PatchAxios, PostAxios } from '../../Components/Assets/Api/Api';
+import { Field, Form, Formik } from "formik";
+import React, { useEffect, useState } from "react";
+import { CreatableMultiSelectField } from "../../Components/Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
+import { Row, Table } from "react-bootstrap";
+import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from "../../Store/Store";
+import { useRecoilState, useRecoilValue } from "recoil";
+import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
+
+import {
+    openNotificationSuccess,
+    PatchAxios,
+    PostAxios,
+    RenderName,
+    toCommaAndDollar,
+} from "../../Components/Assets/Api/Api";
 
 const WestFamilyTrustInvestment = (props) => {
-
     let questionDetail = useRecoilValue(QuestionDetail);
     let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
     let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
@@ -16,20 +23,29 @@ const WestFamilyTrustInvestment = (props) => {
     let [UserStatus] = useState(localStorage.getItem("UserStatus"));
     let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
 
+    let DefaultUrl = useRecoilValue(defaultUrl);
+
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
 
-    let DefaultUrl = useRecoilValue(defaultUrl);
-
-    let WestFamilyTrustInvestment = questionDetail.WestFamilyTrustInvestment || {};
-
     let initialValues = {
-        percentOfBeneficiaryAccounts: "",
-        totalOfBeneficiaryAccounts: "",
-        distributionOfIncomeCGT: "",
-        distributionTakenAsCash: "",
-        distributionTakenAsCashFromYear: "",
-    }
+        owner: [],
+        client: {
+            percentOfBeneficiaryAccounts: "",
+            totalOfBeneficiaryAccounts: "$0",
+            distributionOfIncomeCGT: "",
+            distributionTakenAsCash: "No",
+            distributionTakenAsCashFromYear: "No",
+        },
+        partner: {
+            percentOfBeneficiaryAccounts: "",
+            totalOfBeneficiaryAccounts: "$0",
+            distributionOfIncomeCGT: "",
+            distributionTakenAsCash: "No",
+            distributionTakenAsCashFromYear: "No",
+        },
+
+    };
 
     const fillInitialValues = (setFieldValue) => {
         try {
@@ -39,31 +55,60 @@ const WestFamilyTrustInvestment = (props) => {
 
             const updateFields = (data, prefix) => {
                 if (!data || !Object.keys(data).length) return;
+
                 const fields = {
                     percentOfBeneficiaryAccounts: data.percentOfBeneficiaryAccounts || "",
                     totalOfBeneficiaryAccounts: data.totalOfBeneficiaryAccounts || "",
-                    distributionOfIncomeCGT: data.distributionOfIncomeCGT || "",
-                    distributionTakenAsCash: data.distributionTakenAsCash || "",
-                    distributionTakenAsCashFromYear: data.distributionTakenAsCashFromYear || "",
+                    distributionOfIncomeCGT: data.distributionOfIncomeCGT || "No",
+                    distributionTakenAsCash: data.distributionTakenAsCash || "No",
+                    distributionTakenAsCashFromYear: data.distributionTakenAsCashFromYear || "No",
                 };
 
                 Object.entries(fields).forEach(([key, value]) => {
-                    setFieldValue(`${key}`, value);
+                    setFieldValue(`${prefix}.${key}`, value);
                 });
             };
 
-            if (scenarioObj?.selectedSource === "discoveryForm" && WestFamilyTrustInvestment && WestFamilyTrustInvestment._id) {
-                updateFields(WestFamilyTrustInvestment, "client");
+            if (scenarioObj?.selectedSource === "discoveryForm" && questionDetail && questionDetail._id) {
+                if (questionDetail?.client.length > 0) {
+                    let Obj = {
+                        totalOfBeneficiaryAccounts: questionDetail.clienttotalOfBeneficiaryAccounts,
+                    }
+                    updateFields(Obj, "client");
+                }
+
+                if (UserStatus === "Married" && questionDetail?.partner.length > 0) {
+                    let Obj = {
+                        totalOfBeneficiaryAccounts: questionDetail.partnertotalOfBeneficiaryAccounts,
+                    }
+                    updateFields(Obj, "partner");
+                }
+
             } else {
                 const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
                 if (cashFlowDetails) {
-                    updateFields(cashFlowDetails, "client");
+                    setFieldValue(`owner`, cashFlowDetails.owner || "");
+                    if (cashFlowDetails.owner.includes("client")) {
+                        updateFields(cashFlowDetails.client, "client");
+                    }
+
+                    if (UserStatus === "Married" && cashFlowDetails.owner.includes("partner")) {
+                        updateFields(cashFlowDetails.partner, "partner");
+                    }
                 }
             }
 
             if (cashFlowData?.[objAndAPIKey]?._id) {
                 const cashFlowDataDetails = cashFlowData[objAndAPIKey];
-                updateFields(cashFlowDataDetails, "client");
+                setFieldValue(`owner`, cashFlowDataDetails.owner || "");
+
+                if (cashFlowDataDetails.owner.includes("client")) {
+                    updateFields(cashFlowDataDetails.client, "client");
+                }
+
+                if (UserStatus === "Married" && cashFlowDataDetails.owner.includes("partner")) {
+                    updateFields(cashFlowDataDetails.partner, "partner");
+                }
             }
 
         } catch (error) {
@@ -72,11 +117,26 @@ const WestFamilyTrustInvestment = (props) => {
     };
 
     let onSubmit = async (values) => {
-        let obj = values;
+        console.log(JSON.stringify(values));
+        let obj = values
+
         obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
-        // obj.clientTotal = values.totalOfBeneficiaryAccounts || "$0"; // change it when excel is connected correctly
-        obj.clientTotal = values.percentOfBeneficiaryAccounts || "$0";
+
+        if (values.owner.includes("client")) {
+            obj.clientTotal = values.client.percentOfBeneficiaryAccounts || "$0";
+        } else {
+            obj.clientTotal = ""
+        }
+
+        if (values.owner.includes("partner")) {
+            obj.partnerTotal = values.partner.percentOfBeneficiaryAccounts || "$0";
+        } else {
+            obj.partnerTotal = ""
+        }
+
         const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
+
+        console.log(obj, "final obj");
 
         try {
             let res;
@@ -93,6 +153,7 @@ const WestFamilyTrustInvestment = (props) => {
             }
 
             if (res) {
+                console.log(res);
                 const updatedData = {
                     ...cashFlowData,
                     [objAndAPIKey]: res,
@@ -123,27 +184,30 @@ const WestFamilyTrustInvestment = (props) => {
         }
     };
 
-    const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
-        value: (i + 1).toString(),
-        label: ("Year " + (i + 1)).toString(),
-    }));
+    const loanTermOptions = Array.from({ length: 31 }, (_, i) => {
+        if (i === 0) {
+            return ({
+                value: "No",
+                label: "No",
+            })
+        } else {
+            return ({
+                value: (i).toString(),
+                label: ("Year " + (i)).toString(),
+            })
+        }
+    });
 
-    let handleInnerModal = (title, values, key, stakeHolder) => {
-        setModalObject({
-            title,
-            values,
-            key,
-            stakeHolder,
-            ParentObject: props.modalObject,
-        });
-        setFlagState(true);
-    };
+    const options =
+        UserStatus !== "Single"
+            ? [
+                { value: "client", label: RenderName("client") },
+                { value: "partner", label: RenderName("partner") },
+                { value: "joint", label: RenderName("joint") },
+            ]
+            : [{ value: "client", label: RenderName("client") }];
 
-    let rowConfig = [
-        {
-            value: "1",
-            type: "plainText2.0",
-        },
+    const rowConfig = [
         {
             name: "percentOfBeneficiaryAccounts",
             type: "number-toPercent",
@@ -153,7 +217,7 @@ const WestFamilyTrustInvestment = (props) => {
             name: "totalOfBeneficiaryAccounts",
             type: "number-toComma",
             placeholder: "Total of Beneficiary Accounts",
-            disabled: true,
+            disabled: true
         },
         {
             name: "distributionOfIncomeCGT",
@@ -180,57 +244,88 @@ const WestFamilyTrustInvestment = (props) => {
             enableReinitialize
             innerRef={props.formRef}
         >
-            {({ values, handleChange, setFieldValue, handleBlur }) => {
+            {({ values, setFieldValue, handleChange, handleBlur }) => {
                 useEffect(() => {
                     fillInitialValues(setFieldValue);
                 }, []);
 
                 return (
                     <Form>
-                        <InnerModal
-                            modalObject={modalObject}
-                            setFieldValue={setFieldValue}
-                            setFlagState={setFlagState}
-                            flagState={flagState}
-                        >
-                            {/* Add any modal content here if needed */}
-                        </InnerModal>
-
                         <Row>
                             <div className="col-md-12">
-                                <div className="row justify-content-center">
-                                    <div className="mt-4">
-                                        <Table striped bordered responsive hover>
-                                            <thead>
-                                                <tr>
-                                                    <th>No#</th>
-                                                    <th>% of Beneficiary Accounts</th>
-                                                    <th>Total of Beneficiary Accounts</th>
-                                                    <th>Distribution of Income/CGT</th>
-                                                    <th>Distribution Taken as Cash</th>
-                                                    <th>Distribution Taken as Cash From Year</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
+                                <div className="d-flex justify-content-center align-items-center gap-4">
+                                    <label htmlFor="" className="text-end ">
+                                        Owner
+                                    </label>
+
+                                    <div style={{ minWidth: "25%" }}>
+                                        <Field
+                                            name={`owner`}
+                                            component={CreatableMultiSelectField}
+                                            label="Multi Select Field"
+                                            options={options}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            {values.owner.length > 0 && (
+                                <div className="mt-4">
+                                    <Table striped bordered responsive hover>
+                                        <thead>
+                                            <tr>
+                                                <th>Owner</th>
+                                                <th>% of Beneficiary Accounts</th>
+                                                <th>Total of Beneficiary Accounts</th>
+                                                <th>Distribution of Income/CGT</th>
+                                                <th>Distribution Taken as Cash</th>
+                                                <th>Distribution Taken as Cash From Year</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {values.owner.includes("client") && (
                                                 <DynamicTableRow
                                                     rowConfig={rowConfig}
                                                     values={values}
                                                     setFieldValue={setFieldValue}
                                                     handleChange={handleChange}
                                                     handleBlur={handleBlur}
-                                                    handleInnerModal={handleInnerModal}
+                                                    stakeHolder="client."
                                                 />
-                                            </tbody>
-                                        </Table>
-                                    </div>
+                                            )}
+
+                                            {values.owner.includes("partner") &&
+                                                UserStatus === "Married" && (
+                                                    <DynamicTableRow
+                                                        rowConfig={rowConfig}
+                                                        values={values}
+                                                        setFieldValue={setFieldValue}
+                                                        handleChange={handleChange}
+                                                        handleBlur={handleBlur}
+                                                        stakeHolder="partner."
+                                                    />
+                                                )}
+
+                                            {values.owner.includes("joint") &&
+                                                UserStatus === "Married" && (
+                                                    <DynamicTableRow
+                                                        rowConfig={rowConfig}
+                                                        values={values}
+                                                        setFieldValue={setFieldValue}
+                                                        handleChange={handleChange}
+                                                        handleBlur={handleBlur}
+                                                        stakeHolder="joint."
+                                                    />
+                                                )}
+                                        </tbody>
+                                    </Table>
                                 </div>
-                            </div>
+                            )}
                         </Row>
                     </Form>
                 );
             }}
         </Formik>
-    )
-}
+    );
+};
 
 export default WestFamilyTrustInvestment;

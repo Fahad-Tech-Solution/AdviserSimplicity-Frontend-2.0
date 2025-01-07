@@ -75,7 +75,60 @@ const CashFlowCarsCardsTowInOne = (props) => {
                 attribute: "partnerTotal",
                 ModalBtn: false
             }
-        ]
+        ],
+        "cf_investmentsProperty": [
+            {
+                title: "Investments Property",
+                key: "cf_investmentsProperty",
+                SubTitle: "Market Value",
+                attribute: "clientTotal",
+                ModalBtn: true
+            },
+            {
+                title: "Investments Property",
+                key: "cf_investmentsProperty",
+                SubTitle: "Loan Balance",
+                attribute: "partnerTotal",
+                ModalBtn: false
+            },
+        ],
+        "cf_SMSFInvestmentProperties": [
+            {
+                title: "SMSF Investment Properties",
+                key: "cf_SMSFInvestmentProperties",
+                SubTitle: "Market Value",
+                attribute: "clientTotal",
+                ModalBtn: true,
+                sourceKey: "SMSFInvestmentProperties"
+            },
+            {
+                title: "SMSF Investment Properties",
+                key: "cf_SMSFInvestmentProperties",
+                SubTitle: "Loan Balance",
+                attribute: "partnerTotal",
+                ModalBtn: false,
+                sourceKey: "SMSFInvestmentProperties"
+            },
+        ],
+        "cf_FamilyTrustInvestmentProperties": [
+            {
+                title: "Family Trust Investment Properties",
+                key: "cf_FamilyTrustInvestmentProperties",
+                SubTitle: "Market Value",
+                attribute: "clientTotal",
+                ModalBtn: true,
+                sourceKey: "familyInvestmentProperties"
+            },
+            {
+                title: "Family Trust Investment Properties",
+                key: "cf_FamilyTrustInvestmentProperties",
+                SubTitle: "Loan Balance",
+                attribute: "partnerTotal",
+                ModalBtn: false,
+                sourceKey: "familyInvestmentProperties"
+            },
+        ],
+
 
 
 

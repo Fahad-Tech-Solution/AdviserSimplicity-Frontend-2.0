@@ -86,7 +86,6 @@ const CashFlowCardSet = (props) => {
         "Term Deposits": <CashFlowCashBankDetails />,
         "Investment Bonds": <CashFlowCashBankDetails />,
 
-
         "Investment Loans (LOC)": <CashFlowInvestmentLoansLOC />,
         "Margin Loan": <CashFlowMarginLoan />,
         "Investments Property": <CashFlowInvestmentsProperty />,
@@ -116,14 +115,15 @@ const CashFlowCardSet = (props) => {
         "Family Trust Bank Account": <FamilyTrustBankAccount />,
         "Family Trust Term Deposits": <SMSFTermDeposit />,
 
-
         "Family Trust Australian Shares": <CashFlowAustralianShares />,
         "Family Trust Platform Investment": <CashFlowAustralianShares />,
         "Family Trust": <CashFlowAustralianShares />,
+        "Family Trust Investment Loan": <SMSFInvestmentLoan />,
+        "Family Trust Investment Properties": <SMSFInvestmentProperties />,
+
+        
 
 
-        // "Family Trust Investment Loan": <FamilyTrustInvestmentLoan />,
-        // "Family Trust Investment Properties": <FamilyTrustInvestmentProperties />,
 
     }
 

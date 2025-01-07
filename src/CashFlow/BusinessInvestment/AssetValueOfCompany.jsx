@@ -9,9 +9,9 @@ const AssetValueOfCompany = (props) => {
 
     let initialValues = {
         assetValue: "",
-        includeFromYear: "",
-        upUntilYear: "",
-        expectedGrowthRate: "",
+        includeFromYear: 1,
+        upUntilYear: 30,
+        expectedGrowthRate: "2.50%",
     }
 
     let fillInitialValues = (setFieldValue) => {
@@ -23,9 +23,12 @@ const AssetValueOfCompany = (props) => {
                 setFieldValue("assetValue", Data.assetValue)
                 setFieldValue("includeFromYear", Data.includeFromYear)
                 setFieldValue("upUntilYear", Data.upUntilYear)
+                if (props.modalObject.title === "Net Trust Distribution" && props.modalObject.sourceObj.title === "Bucket Company") {
+                    setFieldValue("indexation", Data.indexation || "2.50%")
+                }
                 if (props.modalObject.title === "Net Trust Distribution" && props.modalObject.sourceObj.title === "Business as Trusts") {
-                    setFieldValue("takeAsCashFromUntilYear", Data.takeAsCashFromUntilYear)
-                    setFieldValue("indexation", Data.indexation)
+                    setFieldValue("takeAsCashFromUntilYear", Data.takeAsCashFromUntilYear || "1")
+                    setFieldValue("indexation", Data.indexation || "2.50%")
                 } else {
                     setFieldValue("expectedGrowthRate", Data.expectedGrowthRate)
                 }
@@ -105,6 +108,22 @@ const AssetValueOfCompany = (props) => {
             );
         }
 
+
+        if (props.modalObject.sourceObj.title === "Bucket Company") {
+            // Find the index of the "upUntilYear" object
+            const upUntilYearIndex = OriginalArray.findIndex(item => item.name === "upUntilYear");
+
+            // Add the "indexation" object after the "upUntilYear" object
+            if (upUntilYearIndex !== -1) {
+                OriginalArray.splice(upUntilYearIndex + 1, 0, {
+                    name: "indexation",
+                    type: "select",
+                    placeholder: "Indexation",
+                    options: indexation
+                });
+            }
+        }
+
         return OriginalArray;
     });
 
@@ -134,6 +153,9 @@ const AssetValueOfCompany = (props) => {
                                                     <th>{props.modalObject.title}</th>
                                                     <th>Include From Year</th>
                                                     <th>Up Until Year</th>
+                                                    {(layoutSwitchFlag === "Net Trust Distribution" && props.modalObject.sourceObj.title === "Bucket Company") &&
+                                                        <th>Indexation</th>
+                                                    }
                                                     {layoutSwitchFlag === "Net Trust Distribution" && props.modalObject.sourceObj.title === "Business as Trusts" ?
                                                         <React.Fragment>
                                                             <th>Take As Cash From Until Year</th>
@@ -141,6 +163,7 @@ const AssetValueOfCompany = (props) => {
                                                         </React.Fragment> :
                                                         <th>Expected Growth Rate</th>
                                                     }
+
                                                 </tr>
                                             </thead>
                                             <tbody>

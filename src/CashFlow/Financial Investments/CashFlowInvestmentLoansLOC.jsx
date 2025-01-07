@@ -33,7 +33,9 @@ const CashFlowInvestmentLoansLOC = (props) => {
                 joint: [],
             }; // Use an empty object as default if managedFundsLOC is undefined
 
-    let initialValues = { owner: [] };
+    let initialValues = {
+        owner: [],
+    };
 
     const fillInitialValues = (setFieldValue) => {
         try {
@@ -205,7 +207,7 @@ const CashFlowInvestmentLoansLOC = (props) => {
         label: ("Year " + (i + 1)).toString(),
     }));
 
-    const loanTermOptions2 = Array.from({ length: 31 }, (_, i) => {
+    const loanTermOptionsWithNo = Array.from({ length: 31 }, (_, i) => {
 
         if (i === 0) {
             return ({
@@ -277,7 +279,7 @@ const CashFlowInvestmentLoansLOC = (props) => {
             name: "repayLoanYear",
             placeholder: "Repay Loan in Year",
             type: "select",
-            options: loanTermOptions2,
+            options: loanTermOptionsWithNo,
         },
     ];
 

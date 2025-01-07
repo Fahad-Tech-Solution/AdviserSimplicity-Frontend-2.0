@@ -11,7 +11,7 @@ const CFSMSFInsurancePremiums = (props) => {
     let initialValues = {
         insurancePremiums: "",
         yearsInclude: "",
-        indexationOfPremiums: "",
+        indexationOfPremiums: "2.50%",
     }
 
     let fillInitialValues = (setFieldValue) => {

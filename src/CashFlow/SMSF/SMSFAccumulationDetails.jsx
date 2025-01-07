@@ -14,6 +14,8 @@ import {
     PatchAxios,
     PostAxios,
     RenderName,
+    toCommaAndDollar,
+    toPercentage,
 } from "../../Components/Assets/Api/Api";
 import ConcessionalContributions from "../Financial Investments/ConcessionalContributions";
 import NonConcessionalContributions from "../Financial Investments/NonConcessionalContributions";
@@ -41,6 +43,61 @@ const SMSFAccumulationDetails = (props) => {
         owner: [],
     };
 
+
+    let SMSFAccumulationDetails = Object.keys(questionDetail.SMSFAccumulationDetails|| {}).length > 0 ? questionDetail.SMSFAccumulationDetails : {
+        client: [],
+        partner: [],
+        joint: [],
+    };  // Use an empty object as default if incomeFromOverseasPension is undefined
+
+
+    let GetValue = (valueOf) => {
+        try {
+            // Check if SMSFAccumulationDetails.SMSFTotal exists and parse it to a number
+            const SMSFAccumulationDetailsClientTotal = questionDetail?.SMSFAccumulationDetails?.clientTotal
+                ? parseFloat(questionDetail.SMSFAccumulationDetails.clientTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+            // Check if SMSFAccumulationDetails.SMSFTotal exists and parse it to a number
+            const SMSFAccumulationDetailsPartnerTotal = questionDetail?.SMSFAccumulationDetails?.partnerTotal
+                ? parseFloat(questionDetail.SMSFAccumulationDetails.partnerTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+            // Check if SMSFAccumulationDetails.SMSFTotal exists and parse it to a number
+            const SMSFAccumulationDetailsJointTotal = questionDetail?.SMSFAccumulationDetails?.jointTotal
+                ? parseFloat(questionDetail.SMSFAccumulationDetails.jointTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+
+
+            // Check if SMSFAccumulationDetails.SMSFTotal exists and parse it to a number
+            const SMSFPensionPhaseClientTotal = questionDetail?.SMSFPensionPhase?.clientTotal
+                ? parseFloat(questionDetail.SMSFPensionPhase.clientTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+            // Check if SMSFPensionPhase.SMSFTotal exists and parse it to a number
+            const SMSFPensionPhasePartnerTotal = questionDetail?.SMSFPensionPhase?.partnerTotal
+                ? parseFloat(questionDetail.SMSFPensionPhase.partnerTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+            // Check if SMSFPensionPhase.SMSFTotal exists and parse it to a number
+            const SMSFPensionPhaseJointTotal = questionDetail?.SMSFPensionPhase?.jointTotal
+                ? parseFloat(questionDetail.SMSFPensionPhase.jointTotal.replace(/[^0-9.-]+/g, ""))
+                : 0;
+
+            if (valueOf === "client") {
+                return toPercentage((SMSFAccumulationDetailsClientTotal + SMSFPensionPhaseClientTotal) / (SMSFAccumulationDetailsClientTotal + SMSFAccumulationDetailsPartnerTotal + SMSFAccumulationDetailsJointTotal + SMSFPensionPhaseClientTotal + SMSFPensionPhasePartnerTotal + SMSFPensionPhaseJointTotal));
+            }
+            else if (valueOf === "partner") {
+                return toPercentage((SMSFAccumulationDetailsPartnerTotal + SMSFPensionPhasePartnerTotal) / (SMSFAccumulationDetailsClientTotal + SMSFAccumulationDetailsPartnerTotal + SMSFAccumulationDetailsJointTotal + SMSFPensionPhaseClientTotal + SMSFPensionPhasePartnerTotal + SMSFPensionPhaseJointTotal));
+            }
+            else if (valueOf === "joint") {
+                return toPercentage((SMSFAccumulationDetailsJointTotal + SMSFPensionPhaseJointTotal) / (SMSFAccumulationDetailsClientTotal + SMSFAccumulationDetailsPartnerTotal + SMSFAccumulationDetailsJointTotal + SMSFPensionPhaseClientTotal + SMSFPensionPhasePartnerTotal + SMSFPensionPhaseJointTotal));
+            }
+
+
+        } catch (error) {
+            console.error("Error calculating SMSF totals:", error);
+            return "$0";
+        }
+    };
+
+
     const fillInitialValues = (setFieldValue) => {
         try {
             setObjAndAPIKey(props.modalObject.key);
@@ -51,16 +108,16 @@ const SMSFAccumulationDetails = (props) => {
                 if (!data || !Object.keys(data).length) return;
 
                 const fields = {
-                    accumulationDetails: data.accumulationDetails || "$0",
-                    accumulationDetailsObj: data.accumulationDetailsObj || "$0",
-                    insurancePremiums: data.insurancePremiums || "$0",
-                    insurancePremiumsObj: data.insurancePremiumsObj || "$0",
-                    concessionalContributions: data.concessionalContributions || "$0",
-                    concessionalContributionsObj: data.concessionalContributionsObj || "$0",
-                    nonConcessionalContributions: data.nonConcessionalContributions || "$0",
-                    nonConcessionalContributionsObj: data.nonConcessionalContributionsObj || "$0",
-                    withdrawals: data.withdrawals || "$0",
-                    withdrawalsObj: data.withdrawalsObj || "$0",
+                    accumulationDetails: data.accumulationDetails || "No",
+                    accumulationDetailsObj: data.accumulationDetailsObj || {},
+                    insurancePremiums: data.insurancePremiums || "No",
+                    insurancePremiumsObj: data.insurancePremiumsObj || {},
+                    concessionalContributions: data.concessionalContributions || "No",
+                    concessionalContributionsObj: data.concessionalContributionsObj || {},
+                    nonConcessionalContributions: data.nonConcessionalContributions || "No",
+                    nonConcessionalContributionsObj: data.nonConcessionalContributionsObj || {},
+                    withdrawals: data.withdrawals || "No",
+                    withdrawalsObj: data.withdrawalsObj || {},
                 };
 
                 Object.entries(fields).forEach(([key, value]) => {
@@ -69,13 +126,44 @@ const SMSFAccumulationDetails = (props) => {
             };
 
             if (scenarioObj?.selectedSource === "discoveryForm") {
+                setFieldValue(`owner`, SMSFAccumulationDetails.member || "");
+
+                // Update client-related fields
+                if (SMSFAccumulationDetails?.client.length > 0) {
+                    let Obj = {
+                        accumulationDetailsObj: {
+                            percentageOfFundForMember: GetValue("client") || "",
+                            taxFreeComponent: SMSFAccumulationDetails.clientTotal || "",
+                        }
+                    }
+                    updateFields(Obj, "client");
+                }
+
+                // Update partner-related fields
+                if (SMSFAccumulationDetails?.partner.length > 0) {
+                    let Obj = {
+                        accumulationDetailsObj: {
+                            percentageOfFundForMember: GetValue("partner") || "",
+                            taxFreeComponent: SMSFAccumulationDetails.partnerTotal || "",
+                        }
+                    }
+                    updateFields(Obj, "partner");
+                }
+
+            }
+            else {
+                // Handle cashFlowData scenario
                 const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
+                // console.log(cashFlowDetails, "cashFlowDetails")
                 if (cashFlowDetails) {
                     setFieldValue(`owner`, cashFlowDetails.owner || "");
                     if (cashFlowDetails.owner.includes("client")) {
+                        // Update client details
                         updateFields(cashFlowDetails.client, "client");
                     }
+
                     if (UserStatus === "Married" && cashFlowDetails.owner.includes("partner")) {
+                        // Update partner details
                         updateFields(cashFlowDetails.partner, "partner");
                     }
                 }

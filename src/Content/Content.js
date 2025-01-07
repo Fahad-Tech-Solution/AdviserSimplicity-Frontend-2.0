@@ -535,21 +535,25 @@ export const content = {
                     title: "SMSF Bank",
                     key: "cf_SMSFBank",
                     img: SMSFBank,
+                    sourceKey: "SMSFBank"
                 },
                 {
                     title: "SMSF Term Deposit",
                     key: "cf_SMSFTermDeposit",
                     img: TermImg,
+                    sourceKey: "SMSFTermDeposits"
                 },
                 {
                     title: "SMSF Australian Shares",
                     key: "cf_SMSFAustralianShares",
                     img: PortFolio,
+                    sourceKey: "SMSFAustralianShares"
                 },
                 {
                     title: "SMSF Platform Investment",
                     key: "cf_SMSFPlatformInvestment",
                     img: funds,
+                    sourceKey: "SMSFManagedFunds"
                 },
                 {
                     title: "SMSF",
@@ -560,11 +564,13 @@ export const content = {
                     title: "SMSF Investment Loan",
                     key: "cf_SMSFInvestmentLoan",
                     img: loan,
+                    sourceKey: "SMSFInvestmentLoan"
                 },
                 {
                     title: "SMSF Investment Properties",
                     key: "cf_SMSFInvestmentProperties",
                     img: property,
+                    sourceKey: "SMSFInvestmentProperties"
                 },
             ],
             route: "/SMSF",
@@ -585,21 +591,25 @@ export const content = {
                     title: "Family Trust Bank Account",
                     key: "cf_FamilyTrustBankAccount",
                     img: SMSFBank,
+                    sourceKey: "familyBank"
                 },
                 {
                     title: "Family Trust Term Deposits",
                     key: "cf_WestFamilyTrustTermDeposits",
                     img: TermImg,
+                    sourceKey: "familyTermDeposit"
                 },
                 {
                     title: "Family Trust Australian Shares",
                     key: "cf_FamilyTrustAustralianShares",
                     img: PortFolio,
+                    sourceKey: "familyAustralianShare"
                 },
                 {
                     title: "Family Trust Platform Investment",
                     key: "cf_FamilyTrustPlatformInvestment",
                     img: funds,
+                    sourceKey: "familyMangedFunds"
                 },
                 {
                     title: "Family Trust",
@@ -610,11 +620,13 @@ export const content = {
                     title: "Family Trust Investment Loan",
                     key: "cf_FamilyTrustInvestmentLoan",
                     img: loan,
+                    sourceKey: "familyInvestmentHomeLoan"
                 },
                 {
                     title: "Family Trust Investment Properties",
                     key: "cf_FamilyTrustInvestmentProperties",
                     img: property,
+                    sourceKey: "familyInvestmentProperties"
                 },
             ],
             condition: (CRObject) => true, // Always true, as this step is always needed.

@@ -1455,9 +1455,8 @@ label {
   justify-content: unset !important;
   align-items: unset !important;
 }
-
-/* Target the Delete menu item specifically */
-.ClearDropDownSpan .ant-dropdown-menu-item:last-child {
+/* Target the last two Delete menu items specifically */
+.ClearDropDownSpan .ant-dropdown-menu-item:nth-last-child(-n+2) {
   color: #d20303; /* Set the text color to red */
   &&:is(:hover, :focus, :active) {
     background-color: #d20303; /* Set the background to red  d20303*/

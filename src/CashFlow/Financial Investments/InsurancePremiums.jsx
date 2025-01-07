@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import DynamicTableRow from '../../Components/Assets/Dynamic/DynamicTableRow';
 import { Form, Formik } from 'formik';
 import { Row, Table } from 'react-bootstrap';
+import { toCommaAndDollar } from '../../Components/Assets/Api/Api';
 
 const InsurancePremiums = (props) => {
 
@@ -11,18 +12,44 @@ const InsurancePremiums = (props) => {
         indexationPremiums: "",
     }
 
+    let [doubleRowFLag, setDoubleRowFlag] = useState(false);
+
+
     let fillInitialValues = (setFieldValue) => {
+        let Double = false;
+        let DiscoveryObj = props.modalObject.DiscoveryObj;
+        let totalOfInsurancePremiums = "";
+
+        if (DiscoveryObj[props.modalObject.stakeHolder.replace(".", "")]) {
+            let DiscoveryObjArray = DiscoveryObj[props.modalObject.stakeHolder.replace(".", "")];
+
+
+            totalOfInsurancePremiums = DiscoveryObjArray.reduce((total, entry) => total + parseFloat((entry.groupInsuranceArray.lifeCover).replace(/[^0-9.-]+/g, "")) + parseFloat((entry.groupInsuranceArray.TPDCover).replace(/[^0-9.-]+/g, "")) + parseFloat((entry.groupInsuranceArray.cost).replace(/[^0-9.-]+/g, "")) + parseFloat((entry.groupInsuranceArray.cost2).replace(/[^0-9.-]+/g, "")), 0);
+
+            console.log(totalOfInsurancePremiums, "Fataksa ");
+
+            setFieldValue("insurancePremiums", toCommaAndDollar(totalOfInsurancePremiums));
+            // alert(DiscoveryObjArray.length)
+            if (DiscoveryObjArray.length > 1) {
+                Double = true;
+                setFieldValue("insurancePremiums1", toCommaAndDollar(totalOfInsurancePremiums));
+                setDoubleRowFlag(Double);
+            }
+        }
+
         if (props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")]) {
-            let SubObj = props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")]
+            let SubObj = props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")];
             if (SubObj[props.modalObject.key + "Obj"]) {
                 let Data = SubObj[props.modalObject.key + "Obj"];
-                setFieldValue("insurancePremiums", Data.insurancePremiums)
-                setFieldValue("yearsInclude", Data.yearsInclude)
-                setFieldValue("indexationPremiums", Data.indexationPremiums)
+                setFieldValue("insurancePremiums", Data.insurancePremiums || toCommaAndDollar(totalOfInsurancePremiums));
+                setFieldValue("yearsInclude", Data.yearsInclude);
+                setFieldValue("indexationPremiums", Data.indexationPremiums);
 
-                setFieldValue("insurancePremiums1", Data.insurancePremiums1)
-                setFieldValue("yearsInclude1", Data.yearsInclude1)
-                setFieldValue("indexationPremiums1", Data.indexationPremiums1)
+                if (Double) {
+                    setFieldValue("insurancePremiums1", Data.insurancePremiums1 || toCommaAndDollar(totalOfInsurancePremiums));
+                    setFieldValue("yearsInclude1", Data.yearsInclude1);
+                    setFieldValue("indexationPremiums1", Data.indexationPremiums1);
+                }
             }
         }
     }
@@ -140,13 +167,14 @@ const InsurancePremiums = (props) => {
                                                     handleChange={handleChange}
                                                     handleBlur={handleBlur}
                                                 />
-                                                <DynamicTableRow
-                                                    rowConfig={rowConfig1}
-                                                    values={values}
-                                                    setFieldValue={setFieldValue}
-                                                    handleChange={handleChange}
-                                                    handleBlur={handleBlur}
-                                                />
+                                                {doubleRowFLag &&
+                                                    <DynamicTableRow
+                                                        rowConfig={rowConfig1}
+                                                        values={values}
+                                                        setFieldValue={setFieldValue}
+                                                        handleChange={handleChange}
+                                                        handleBlur={handleBlur}
+                                                    />}
                                             </tbody>
                                         </Table>
                                     </div>

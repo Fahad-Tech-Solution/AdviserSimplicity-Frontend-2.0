@@ -39,7 +39,7 @@ const CashFlowInvestmentsProperty = (props) => {
         convertToPPRYear: "",
     }
 
-    let managedFundsLOC = Object.keys(questionDetail.managedFundsLOC || {}).length > 0 ? questionDetail.managedFundsLOC : {
+    let investmentPropertyDetails = Object.keys(questionDetail.investmentPropertyDetails || {}).length > 0 ? questionDetail.investmentPropertyDetails : {
         client: [],
         partner: [],
         joint: [],
@@ -51,7 +51,7 @@ const CashFlowInvestmentsProperty = (props) => {
             // Set the object and API key
             setObjAndAPIKey(props.modalObject.key);
 
-            // console.log(managedFundsLOC, "Discovery Form Data");
+            // console.log(investmentPropertyDetails, "Discovery Form Data");
             // console.log(cashFlowData[props.modalObject.key], "cashFlowData Form Data");
             // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
 
@@ -61,20 +61,24 @@ const CashFlowInvestmentsProperty = (props) => {
             const updateFields = (data, prefix) => {
 
                 if (!data || !Object.keys(data).length) return;
-                console.log(data.clientOwnership, "Data");
+
+                console.log(data.propertyLoanDetailsArray, "Data");
+
                 const fields = {
-                    streetAddress: data.streetAddress || "",
-                    valueOfProperty: data.valueOfProperty || "",
-                    clientOwnership: data.clientOwnership || "",
-                    partnerOwnership: data.partnerOwnership || "",
+                    streetAddress: data.streetAddress || data.PropertyAddress || "",
+                    valueOfProperty: data.valueOfProperty || data.CurrentValue || "",
+                    clientOwnership: data.clientOwnership || data.ClientOwnership || "",
+                    partnerOwnership: data.partnerOwnership || data.PartnerOwnership || "",
                     yearOfPurchase: data.yearOfPurchase || "",
-                    totalCostBaseObj: data.totalCostBaseObj || {},
-                    expectedGrowthRate: data.expectedGrowthRate || "",
-                    loanBalance: data.loanBalance || "",
-                    loanBalanceObj: data.loanBalanceObj || {},
+                    totalCostBaseObj: data.totalCostBaseObj || {
+                        costBaseExisting: data.costBaseExisting || data.CostBase || "",
+                    },
+                    expectedGrowthRate: data.expectedGrowthRate || "2.50%",
+                    loanBalance: data.loanBalance || (data.propertyLoanDetailsArray.length > 0 && "Yes") || "No",
+                    loanBalanceObj: data.loanBalanceObj || (data.propertyLoanDetailsArray[0]) || {},
                     rentalIncome: data.rentalIncome || "",
-                    sellPropertyInYear: data.sellPropertyInYear || "",
-                    convertToPPRYear: data.convertToPPRYear || "",
+                    sellPropertyInYear: data.sellPropertyInYear || "No",
+                    convertToPPRYear: data.convertToPPRYear || "No",
                 };
 
                 Object.entries(fields).forEach(([key, value]) => {
@@ -83,9 +87,12 @@ const CashFlowInvestmentsProperty = (props) => {
             };
 
             // Update owner field
-            if (scenarioObj?.selectedSource === "discoveryForm" && managedFundsLOC && managedFundsLOC._id) {
+            if (scenarioObj?.selectedSource === "discoveryForm" && investmentPropertyDetails && investmentPropertyDetails._id) {
                 // setFieldValue(`address`, PersonalData.client.clientHomeAddress || "");
-                updateFields(managedFundsLOC, "client");
+
+                let Obj = investmentPropertyDetails?.client[0];
+                updateFields(Obj, "client");
+
             }
             else {
                 // Handle cashFlowData scenario
@@ -174,6 +181,22 @@ const CashFlowInvestmentsProperty = (props) => {
         label: ("Year " + (i + 1)).toString(),
     }));
 
+
+    const loanTermOptionsWithNo = Array.from({ length: 31 }, (_, i) => {
+
+        if (i === 0) {
+            return ({
+                value: "No",
+                label: "No",
+            })
+        }
+
+        return ({
+            // value: (i + 1).toString(),
+            value: (i + 1),
+            label: ("Year " + (i + 1)).toString(),
+        })
+    });
 
 
 
@@ -279,13 +302,13 @@ const CashFlowInvestmentsProperty = (props) => {
             name: "sellPropertyInYear",
             type: "select",
             placeholder: "Sell Property in Year",
-            options: loanTermOptions,
+            options: loanTermOptionsWithNo,
         },
         {
             name: "convertToPPRYear",
             type: "select",
             placeholder: "Convert into PPR in Year",
-            options: loanTermOptions,
+            options: loanTermOptionsWithNo,
         },
     ];
 

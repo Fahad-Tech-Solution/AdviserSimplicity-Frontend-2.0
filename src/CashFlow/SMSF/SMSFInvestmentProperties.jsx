@@ -38,24 +38,35 @@ const SMSFInvestmentProperties = (props) => {
         sellPropertyInYear: "",
     }
 
+    let SMSFInvestmentLoan = Object.keys(questionDetail[props.modalObject.sourceKey] || {}).length > 0 ? questionDetail[props.modalObject.sourceKey] : {
+        client: [],
+        joint: [],
+        partner: [],
+    }; // Use an empty object as default if SMSFBank is undefined
+
+
+
     const fillInitialValues = (setFieldValue) => {
         try {
             setObjAndAPIKey(props.modalObject.key);
+            console.log(SMSFInvestmentLoan, questionDetail[props.modalObject.sourceKey])
 
             const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
 
             const updateFields = (data, prefix) => {
                 if (!data || !Object.keys(data).length) return;
                 const fields = {
-                    streetAddress: data.streetAddress || "",
-                    valueOfProperty: data.valueOfProperty || "",
-                    yearOfPurchase: data.yearOfPurchase || "",
-                    totalCostBaseObj: data.totalCostBaseObj || {},
-                    expectedGrowthRate: data.expectedGrowthRate || "",
-                    loanBalance: data.loanBalance || "",
-                    loanBalanceObj: data.loanBalanceObj || {},
+                    streetAddress: data.streetAddress || data.PropertyAddress || "",
+                    valueOfProperty: data.valueOfProperty || data.CurrentValue || "",
+                    yearOfPurchase: data.yearOfPurchase,
+                    totalCostBaseObj: data.totalCostBaseObj || {
+                        costBaseExisting: data.costBaseExisting || data.CostBase || "",
+                    },
+                    expectedGrowthRate: data.expectedGrowthRate || "2.50%",
+                    loanBalance: data.loanBalance || (data.propertyLoanDetailsArray.length > 0 && "Yes") || "No",
+                    loanBalanceObj: data.loanBalanceObj || (data.propertyLoanDetailsArray[0]) || {},
                     rentalIncome: data.rentalIncome || "",
-                    sellPropertyInYear: data.sellPropertyInYear || "",
+                    sellPropertyInYear: data.sellPropertyInYear || "No",
                 };
 
                 Object.entries(fields).forEach(([key, value]) => {
@@ -64,7 +75,15 @@ const SMSFInvestmentProperties = (props) => {
             };
 
             if (scenarioObj?.selectedSource === "discoveryForm" && managedFundsLOC && managedFundsLOC._id) {
-                updateFields(managedFundsLOC, "client");
+
+                if (SMSFInvestmentLoan.client.length > 0) {
+                    updateFields(SMSFInvestmentLoan.client[0], "client");
+                }
+
+                if (UserStatus === "Married" && SMSFInvestmentLoan.partner.length > 0) {
+                    updateFields(SMSFInvestmentLoan.partner[0], "partner");
+                }
+
             } else {
                 const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
                 if (cashFlowDetails) {
@@ -139,6 +158,22 @@ const SMSFInvestmentProperties = (props) => {
         label: ("Year " + (i + 1)).toString(),
     }));
 
+    const loanTermOptionsWithNo = Array.from({ length: 31 }, (_, i) => {
+
+        if (i === 0) {
+            return ({
+                value: "No",
+                label: "No",
+            })
+        }
+
+        return ({
+            // value: (i + 1).toString(),
+            value: (i + 1),
+            label: ("Year " + (i + 1)).toString(),
+        })
+    });
+
     let handleInnerModal = (title, values, key, stakeHolder) => {
         setModalObject({
             title,
@@ -201,7 +236,7 @@ const SMSFInvestmentProperties = (props) => {
             name: "sellPropertyInYear",
             type: "select",
             placeholder: "Sell Property in Year",
-            options: loanTermOptions,
+            options: loanTermOptionsWithNo,
         },
     ];
 

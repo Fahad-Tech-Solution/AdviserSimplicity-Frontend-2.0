@@ -128,6 +128,7 @@ const ModalComponent = (props) => {
         "Family Trust Australian Shares",
         "Family Trust Platform Investment",
         "Family Trust",
+        "Family Trust Investment Properties"
 
     ]; // Add other titles that should use "xl" here
 

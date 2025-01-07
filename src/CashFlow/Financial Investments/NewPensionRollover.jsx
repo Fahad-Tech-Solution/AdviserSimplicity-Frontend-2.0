@@ -56,7 +56,6 @@ const NewPensionRollover = (props) => {
 
     const nominatedPensionAmountOptions = [
         { value: "Minimum", label: "Minimum", },
-        { value: "Maximum", label: "Maximum", },
         { value: "Other", label: "Other", }
     ]
 

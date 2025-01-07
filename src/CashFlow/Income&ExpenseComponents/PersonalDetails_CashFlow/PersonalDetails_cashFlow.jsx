@@ -243,13 +243,10 @@ const PersonalDetails_cashFlow = (Props) => {
         const age = parseInt(values[`${sectionName}`][`age`], 10) || 0;
         const retirementYear = parseInt(currentInput.value, 10) || 0;
 
-
-
         // Calculate `plannedRetirementAge` based on the `age` and `retirementYear`
-        const plannedRetirementAge = age > 0 ? retirementYear - age + 1 : 0;
+        const plannedRetirementAge = age > 0 ? retirementYear + age + 1 : 0;
 
         // console.log(age, retirementYear, plannedRetirementAge, currentInput.value)
-
         setFieldValue(`${sectionName}.plannedRetirementAge`, plannedRetirementAge > 30 ? 30 : plannedRetirementAge);
 
         break;

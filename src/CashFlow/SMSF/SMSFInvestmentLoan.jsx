@@ -15,7 +15,9 @@ import {
 } from "../../Components/Assets/Api/Api";
 
 const SMSFInvestmentLoan = (props) => {
+
     let questionDetail = useRecoilValue(QuestionDetail);
+
     let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
     let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
 
@@ -26,6 +28,15 @@ const SMSFInvestmentLoan = (props) => {
 
     let initialValues = { owner: [] };
 
+
+    let SMSFInvestmentLoan = Object.keys(questionDetail[props.modalObject.sourceKey] || {}).length > 0 ? questionDetail[props.modalObject.sourceKey] : {
+        client: [],
+        joint: [],
+        partner: [],
+    }; // Use an empty object as default if SMSFBank is undefined
+
+
+
     const fillInitialValues = (setFieldValue) => {
         try {
             setObjAndAPIKey(props.modalObject.key);
@@ -35,14 +46,14 @@ const SMSFInvestmentLoan = (props) => {
             const updateFields = (data, prefix) => {
                 if (!data || !Object.keys(data).length) return;
                 const fields = {
-                    currentLoanBalance: data.currentLoanBalance || "",
+                    currentLoanBalance: data.currentLoanBalance || data.loanBalance || "",
                     loanType: data.loanType || "",
                     loanTerm: data.loanTerm || "",
-                    initialInterestRate: data.initialInterestRate || "",
-                    deductibleInterest: data.deductibleInterest || "",
+                    initialInterestRate: data.initialInterestRate || data.interestRate || "",
+                    deductibleInterest: data.deductibleInterest || data.deductibleLoanAmount || "",
                     minimumRepayments: data.minimumRepayments || "",
-                    actualAnnualRepayments: data.actualAnnualRepayments || "",
-                    repayLoanYear: data.repayLoanYear || "",
+                    actualAnnualRepayments: data.actualAnnualRepayments || data.annualRepayments || "",
+                    repayLoanYear: data.repayLoanYear || "No",
                 };
 
                 Object.entries(fields).forEach(([key, value]) => {
@@ -51,15 +62,16 @@ const SMSFInvestmentLoan = (props) => {
             };
 
             if (scenarioObj?.selectedSource === "discoveryForm") {
-                // setFieldValue(`owner`, questionDetail.owner || "");
+                setFieldValue(`owner`, SMSFInvestmentLoan.owner || "");
 
-                // if (questionDetail.owner.includes("client")) {
-                //     updateFields(questionDetail.client, "client");
-                // }
+                if (SMSFInvestmentLoan.owner.includes("client")) {
+                    updateFields(SMSFInvestmentLoan.client, "client");
+                }
 
-                // if (UserStatus === "Married" && questionDetail.owner.includes("partner")) {
-                //     updateFields(questionDetail.partner, "partner");
-                // }
+                if (UserStatus === "Married" && SMSFInvestmentLoan.owner.includes("partner")) {
+                    updateFields(SMSFInvestmentLoan.partner, "partner");
+                }
+
             } else {
                 const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
                 if (cashFlowDetails) {
@@ -170,10 +182,26 @@ const SMSFInvestmentLoan = (props) => {
             ]
             : [{ value: "client", label: RenderName("client") }];
 
+    const loanTermOptionsWithNo = Array.from({ length: 31 }, (_, i) => {
+
+        if (i === 0) {
+            return ({
+                value: "No",
+                label: "No",
+            })
+        }
+
+        return ({
+            // value: (i + 1).toString(),
+            value: (i + 1),
+            label: ("Year " + (i + 1)).toString(),
+        })
+    });
+
     let loanTypeOptions = [
-        { value: "I/Only", label: "I/Only" },
-        { value: "P & I", label: "P & I" },
-    ];
+        { value: "i/only", label: "i/only" },
+        { value: "P&I", label: "P&I" },
+    ]
 
     const rowConfig = [
         {
@@ -218,7 +246,7 @@ const SMSFInvestmentLoan = (props) => {
             name: "repayLoanYear",
             placeholder: "Repay Loan in Year",
             type: "select",
-            options: loanTermOptions,
+            options: loanTermOptionsWithNo,
         },
     ];
 

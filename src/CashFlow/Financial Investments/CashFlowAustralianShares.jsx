@@ -91,8 +91,7 @@ const CashFlowAustralianShares = (props) => {
             setObjAndAPIKey(props.modalObject.key);
 
             // console.log(BankAccountFinance, "Discovery Form Data " + props.modalObject.key + " and SourceKey " + props.modalObject.sourceKey, BankAccountFinance.client);
-
-            console.log(cashFlowData?.[objAndAPIKey].client.investmentFees, "cashFlowData Form Data");
+            // console.log(cashFlowData?.[objAndAPIKey].client.investmentFees, "cashFlowData Form Data");
             // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
 
             const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
@@ -129,10 +128,6 @@ const CashFlowAustralianShares = (props) => {
 
                 // Update client-related fields
                 if (BankAccountFinance?.client.length > 0) {
-                    // let Obj = {
-                    //     currentBalance: toCommaAndDollar(BankAccountFinance.client.reduce((total, entry) => total + parseFloat((entry.currentBalance || entry.clientCurrentBalance).replace(/[^0-9.-]+/g, "")), 0)),
-                    //     costBase: toCommaAndDollar(BankAccountFinance.client.reduce((total, entry) => total + parseFloat((entry.costBase || entry.clientCostBaseTemp).replace(/[^0-9.-]+/g, "")), 0)),
-                    // }
                     let Obj = {
                         currentBalance: BankAccountFinance.clientCurrentBalance,
                         costBase: BankAccountFinance.clientCostBaseTemp,
@@ -142,10 +137,6 @@ const CashFlowAustralianShares = (props) => {
 
                 // Update partner-related fields
                 if (UserStatus === "Married" && BankAccountFinance?.partner.length > 0) {
-                    // let Obj = {
-                    //     currentBalance: toCommaAndDollar(BankAccountFinance.partner.reduce((total, entry) => total + parseFloat((entry.currentBalance).replace(/[^0-9.-]+/g, "")), 0)),
-                    //     costBase: toCommaAndDollar(BankAccountFinance.partner.reduce((total, entry) => total + parseFloat((entry.costBase).replace(/[^0-9.-]+/g, "")), 0)),
-                    // }
                     let Obj = {
                         currentBalance: BankAccountFinance.partnerCurrentBalance,
                         costBase: BankAccountFinance.partnerCostBaseTemp,
@@ -155,10 +146,6 @@ const CashFlowAustralianShares = (props) => {
 
                 // Update partner-related fields
                 if (UserStatus === "Married" && BankAccountFinance?.joint.length > 0) {
-                    // let Obj = {
-                    //     currentBalance: toCommaAndDollar(BankAccountFinance.joint.reduce((total, entry) => total + parseFloat((entry.currentBalance).replace(/[^0-9.-]+/g, "")), 0)),
-                    //     costBase: toCommaAndDollar(BankAccountFinance.joint.reduce((total, entry) => total + parseFloat((entry.costBase).replace(/[^0-9.-]+/g, "")), 0)),
-                    // }
                     let Obj = {
                         currentBalance: BankAccountFinance.jointCurrentBalance,
                         costBase: BankAccountFinance.jointCostBaseTemp,

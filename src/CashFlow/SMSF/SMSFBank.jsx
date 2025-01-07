@@ -6,13 +6,7 @@ import { Row, Table } from "react-bootstrap";
 import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from "../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
-import {
-
-    openNotificationSuccess,
-    PatchAxios,
-    PostAxios,
-    RenderName,
-} from "../../Components/Assets/Api/Api";
+import { openNotificationSuccess, PatchAxios, PostAxios, RenderName, } from "../../Components/Assets/Api/Api";
 
 const SMSFBank = (props) => {
 
@@ -34,9 +28,18 @@ const SMSFBank = (props) => {
         owner: [],
     };
 
+    let SMSFBank = Object.keys(questionDetail[props.modalObject.sourceKey] || {}).length > 0 ? questionDetail[props.modalObject.sourceKey] : {
+        client: [],
+        joint: [],
+        partner: [],
+    }; // Use an empty object as default if SMSFBank is undefined
+
+
     const fillInitialValues = (setFieldValue) => {
         try {
             setObjAndAPIKey(props.modalObject.key);
+
+            console.log(SMSFBank)
 
             const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
 
@@ -45,13 +48,13 @@ const SMSFBank = (props) => {
 
                 const fields = {
                     openingBalance: data.openingBalance || "$0",
-                    investmentReturns: data.investmentReturns || "$0",
-                    incomeYield: data.incomeYield || "$0",
-                    accountingFees: data.accountingFees || "$0",
-                    atoLevy: data.atoLevy || "$0",
-                    adviserFees: data.adviserFees || "$0",
-                    indexationFundFees: data.indexationFundFees || "$0",
-                    windupFundYear: data.windupFundYear || "$0",
+                    investmentReturns: data.investmentReturns || "System",
+                    incomeYield: data.incomeYield || "",
+                    accountingFees: data.accountingFees || "",
+                    atoLevy: data.atoLevy || "",
+                    adviserFees: data.adviserFees || "",
+                    indexationFundFees: data.indexationFundFees || "2.50%",
+                    windupFundYear: data.windupFundYear || "No",
                 };
 
                 Object.entries(fields).forEach(([key, value]) => {
@@ -60,6 +63,27 @@ const SMSFBank = (props) => {
             };
 
             if (scenarioObj?.selectedSource === "discoveryForm") {
+                // setFieldValue(`owner`, SMSFBank.owner || "");
+
+                // Update client-related fields
+                if (SMSFBank?.client.length > 0) {
+                    let Obj = {
+                        openingBalance: SMSFBank.clientCurrentBalance || "",
+                    }
+
+                    updateFields(Obj, "client");
+                }
+
+                // Update partner-related fields
+                if (UserStatus === "Married" && SMSFBank?.partner.length > 0) {
+                    let Obj = {
+                        openingBalance: SMSFBank.partnerCurrentBalance || "",
+                    }
+
+                    updateFields(Obj, "partner");
+                }
+            }
+            else {
                 const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
                 if (cashFlowDetails) {
                     setFieldValue(`owner`, cashFlowDetails.owner || "");
@@ -185,10 +209,22 @@ const SMSFBank = (props) => {
         { value: "Input Override", label: "Input Override" },
     ]
 
-    const windupFundYearOptions = Array.from({ length: 30 }, (_, i) => ({
-        value: (i + 1).toString(),
-        label: `Year ${i + 1}`,
-    }));
+
+    const loanTermOptionsWithNo = Array.from({ length: 31 }, (_, i) => {
+
+        if (i === 0) {
+            return ({
+                value: "No",
+                label: "No",
+            })
+        }
+
+        return ({
+            // value: (i + 1).toString(),
+            value: (i + 1),
+            label: ("Year " + (i + 1)).toString(),
+        })
+    });
 
     const [rowConfig, setRowConfig] = useState(() => {
         return [
@@ -233,7 +269,7 @@ const SMSFBank = (props) => {
                 name: "windupFundYear",
                 type: "select",
                 placeholder: "Windup Fund in Year",
-                options: windupFundYearOptions,
+                options: loanTermOptionsWithNo,
             },
         ];
     });
@@ -298,7 +334,15 @@ const SMSFBank = (props) => {
                                         <tbody>
                                             {values.owner.includes("client") && (
                                                 <DynamicTableRow
-                                                    rowConfig={rowConfig}
+                                                    rowConfig={rowConfig.map((config) => {
+                                                        if (config.name === "incomeYield") {
+                                                            return {
+                                                                ...config,
+                                                                disabled: values.client?.investmentReturns !== "Input Override",
+                                                            };
+                                                        }
+                                                        return config;
+                                                    })}
                                                     values={values}
                                                     setFieldValue={setFieldValue}
                                                     handleChange={handleChange}
@@ -311,7 +355,15 @@ const SMSFBank = (props) => {
                                             {values.owner.includes("partner") &&
                                                 UserStatus === "Married" && (
                                                     <DynamicTableRow
-                                                        rowConfig={rowConfig}
+                                                        rowConfig={rowConfig.map((config) => {
+                                                            if (config.name === "incomeYield") {
+                                                                return {
+                                                                    ...config,
+                                                                    disabled: values.partner?.investmentReturns !== "Input Override",
+                                                                };
+                                                            }
+                                                            return config;
+                                                        })}
                                                         values={values}
                                                         setFieldValue={setFieldValue}
                                                         handleChange={handleChange}

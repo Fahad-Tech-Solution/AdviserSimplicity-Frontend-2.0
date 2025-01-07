@@ -38,10 +38,16 @@ const TotalCostBase = (props) => {
         }
     }
 
-    let StampDutyOptions = [
-        { value: "Standard Rates", label: "Standard Rates" },
-        { value: "Manual", label: "Manual" },
-    ]
+    let StampDutyOptions = props.modalObject.ParentObject.title === "Investments Property" ?
+        [
+            { value: "Standard Rates", label: "Standard Rates" },
+            { value: "FH Buyer", label: "FH Buyer" },
+            { value: "Manual", label: "Manual" },
+        ]
+        : [
+            { value: "Standard Rates", label: "Standard Rates" },
+            { value: "Manual", label: "Manual" },
+        ]
 
     let CalculateTotal = (values, setFieldValue, currentInput, stakeHolder) => {
         let stampDutyType = values.stampDutyType;

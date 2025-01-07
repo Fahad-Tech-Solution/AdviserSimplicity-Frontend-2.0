@@ -28,6 +28,7 @@ const ConcessionalContributions = (props) => {
 
     let fillInitialValues = (setFieldValue) => {
         console.log(props.modalObject);
+        
         if (props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")]) {
             let SubObj = props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")]
             if (SubObj[props.modalObject.key + "Obj"]) {

@@ -118,7 +118,7 @@ const SmsfPensionAccount = (props) => {
 
   };
 
-  const options = ["Account Based Pension ", "TTR"];
+  const options = ["Account Based Pension", "TTR"];
 
   let [ShowError, setShowError] = useState({});
 

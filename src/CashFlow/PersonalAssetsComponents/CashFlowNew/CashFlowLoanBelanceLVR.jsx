@@ -71,23 +71,21 @@ const CashFlowLoanBelanceLVR = (props) => {
     }
 
     const rowConfig = [
-
         {
             name: "LVR",
             type: 'number-toPercent',
             placeholder: "LVR",
-
         },
         {
             name: "loanAmount",
             type: 'number-toComma',
             placeholder: "Loan Amount",
-
         },
         {
             name: "loanBalance",
             type: 'number-toComma',
             placeholder: "Loan Balance",
+            disabled: true,
 
         },
         {
@@ -95,16 +93,16 @@ const CashFlowLoanBelanceLVR = (props) => {
             type: 'number-toPercent',
             callBack: true,
             func: CalculatePercentage,
+            disabled: true,
             placeholder: "Client Ownership",
-
         },
-
         {
             name: "partnerOwnership",
             type: 'number-toPercent',
             callBack: true,
             func: CalculatePercentage,
             placeholder: "Partner Ownership",
+            disabled: true,
         },
 
     ];
@@ -140,8 +138,8 @@ const CashFlowLoanBelanceLVR = (props) => {
                                                 <tr>
                                                     <th>Loan to Value Ratio (LVR) </th>
                                                     <th>Loan Amount</th>
-                                                    <th>Loan Balance {props.modalObject.ParentObject.title}</th>
-                                                    {props.modalObject.ParentObject.title !== "SMSF Investment Properties" &&
+                                                    <th>Loan Balance</th>
+                                                    {(!props.modalObject.clientPartnerPer) &&
                                                         <React.Fragment>
                                                             <th>Client %Ownership</th>
                                                             <th>Partner %Ownership</th>
@@ -152,7 +150,7 @@ const CashFlowLoanBelanceLVR = (props) => {
                                             <tbody>
                                                 <DynamicTableRow
                                                     rowConfig={rowConfig.filter(row =>
-                                                        props.modalObject.ParentObject.title !== "SMSF Investment Properties" ||
+                                                        (!props.modalObject.clientPartnerPer) ||
                                                         (row.name !== "clientOwnership" && row.name !== "partnerOwnership")
                                                     )}
                                                     values={values}

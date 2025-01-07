@@ -1,7 +1,7 @@
 import React from 'react';
 import { Accordion, Button, Table } from 'react-bootstrap';
-import { MdMale, MdCake, MdAdd } from 'react-icons/md';
-import { FaArrowRotateRight, FaClipboardList, FaGear, FaRing } from 'react-icons/fa6'
+import { MdMale, MdCake, MdAdd, MdEdit } from 'react-icons/md';
+import { FaArrowRotateRight, FaClipboardList, FaGear, FaLock, FaRegCopy, FaRing } from 'react-icons/fa6'
 
 
 import single from "../../Components/Svgs/single-2.svg";
@@ -64,8 +64,10 @@ const AccordionItems = ({ client, partner, tableData, index, fullData, CallBack 
   const getMenu = (row) => (
     <Menu className='ClearDropDownSpan'>
       <Menu.Item key="1" icon={<FaEdit />} onClick={() => menuClicked(row, "Edit")}> Edit </Menu.Item>
-      <Menu.Item key="3" icon={<FaClipboardList />} onClick={() => CallBack(fullData, row, "Edit")}>Update Scenario </Menu.Item>
-      <Menu.Item key="4" icon={<FaTrashAlt />}>Delete</Menu.Item>
+      <Menu.Item key="3" icon={<FaEdit />} onClick={() => CallBack(fullData, row, "Edit")}>Edit Name  </Menu.Item>
+      <Menu.Item key="5" icon={<FaRegCopy />}>Duplicate </Menu.Item>
+      <Menu.Item key="4" icon={<FaLock />}>Lock </Menu.Item>
+      <Menu.Item key="6" icon={<FaTrashAlt />}>Delete </Menu.Item>
     </Menu>
   );
 

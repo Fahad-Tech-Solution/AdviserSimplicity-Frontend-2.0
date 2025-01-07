@@ -84,11 +84,14 @@ const CashFlowEmploymentIncome = (props) => {
                             employerFBTStatus: data?.SalaryPackagingModal?.employerFBTStatus || "",
                             costBaseOfCar: data?.SalaryPackagingModal?.costBaseOfCar || "",
                             FBTPaidByEmployer: data?.SalaryPackagingModal?.FBTPaidByEmployer || "",
+                            upUntilYear: upUntilYearData[prefix].plannedRetirementAge || "",
                         }
                         : {}),
 
                     salaryPackingOtherRadio: data.salaryPackingOtherRadio || "",
-                    salaryPackingOtherModal: data.salaryPackingOtherModal || {},
+                    salaryPackingOtherModal: data.salaryPackingOtherModal || {
+                        upUntilYear: upUntilYearData[prefix].plannedRetirementAge || "",
+                    },
                 };
 
                 Object.entries(fields).forEach(([key, value]) => {
@@ -368,7 +371,7 @@ const CashFlowEmploymentIncome = (props) => {
                                                         <th>Salary Income</th>
                                                         <th>Include From Year</th>
                                                         <th>Up Until Year</th>
-                                                        <th>indexation</th>
+                                                        <th>Indexation</th>
                                                         <th>Reduced Salary Income</th>
                                                         <th>Salary Packaging Car</th>
                                                         <th>Salary Packaging (Other)</th>
