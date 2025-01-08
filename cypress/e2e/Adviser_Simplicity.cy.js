@@ -115,7 +115,7 @@ describe("Adviser Simplicity", () => {
   });
 
 
-  it("Financial Investments Card's", () => {
+  it.only("Financial Investments Card's", () => {
     financialInvestments.section();
   });
 
@@ -140,7 +140,7 @@ describe("Adviser Simplicity", () => {
   });
 
 
-  it.only("Investment Trust Card's", () => {
+  it("Investment Trust Card's", () => {
     investmentTrust.section();
   });
 

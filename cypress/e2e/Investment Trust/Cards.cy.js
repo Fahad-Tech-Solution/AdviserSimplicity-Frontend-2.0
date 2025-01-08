@@ -544,7 +544,7 @@ class InvestmentTrust {
     });
 
     cy.get(".css-1xc3v61-indicatorContainer").click();
-    cy.get("#react-select-2-option-0").click();
+    cy.get('#react-select-4-option-0').click();
     //Family Trust Investment Loan Card Section
 
     cy.get(".table").within(() => {
