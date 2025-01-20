@@ -73,7 +73,7 @@ const CashFlowCardSet = (props) => {
         "Boat": <CashFlowOtherAsset />,
         "Caravan": <CashFlowOtherAsset />,
         "Other Assets": <CashFlowOtherAsset />,
-        "Persona Loans": <CashFlowPersonalDebt />,
+        "Personal Loans": <CashFlowPersonalDebt />,
         "Credit Card": <CashFlowPersonalDebt />,
 
         //Second Section Modals Financial Investments
@@ -120,10 +120,6 @@ const CashFlowCardSet = (props) => {
         "Family Trust": <CashFlowAustralianShares />,
         "Family Trust Investment Loan": <SMSFInvestmentLoan />,
         "Family Trust Investment Properties": <SMSFInvestmentProperties />,
-
-        
-
-
 
     }
 

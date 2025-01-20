@@ -3,11 +3,6 @@ import React, { useEffect, useState } from 'react'
 import { Accordion, Card, Table } from 'react-bootstrap'
 import Options from '../../Components/Options'
 
-import single from "../../Components/Svgs/single-2.svg";
-import couple from "../../Components/Svgs/couple-2.svg";
-import { MdCake, MdMale } from 'react-icons/md'
-import { FaArrowRotateRight, FaGear } from 'react-icons/fa6'
-import { FaRing } from 'react-icons/fa'
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { GetAxios } from '../../Components/Assets/Api/Api';
 import { AllUsers, CashFlowData, defaultUrl } from '../../Store/Store';
@@ -20,7 +15,6 @@ const CashFlowAllUsers = (props) => {
     const [PersonalDetail2, setPersonalDetail] = useRecoilState(AllUsers);
     let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
     let DefaultUrl = useRecoilValue(defaultUrl);
-
 
     let [flagState, setFlagState] = useState(false);
     let [modalObject, setModalObject] = useState({});
@@ -55,32 +49,23 @@ const CashFlowAllUsers = (props) => {
                     console.error("Error fetching personal details:", error);
                 }
             }
-
-
         };
 
         fetchData();
     }, [PersonalDetail2]);
 
-
-
     let OpenModal = (UserData, Scenario, action) => {
         // console.log(UserData);
-
         localStorage.getItem("UserID", UserData._id);
 
-
         setModalObject({
-            title: (action === "New" ? "Add" : "Update") + " Scenario",
+            title: (action === "New" ? "Add" : action === "duplicate" ? "Duplicate" : "Update") + " Scenario" + (action === "duplicate" && " Name"),
             Data: UserData,
             Scenario,
             action
         })
         setFlagState(true);
     }
-
-
-
 
     return (
         <div className='container-fluid  ps-4 position-relative '>

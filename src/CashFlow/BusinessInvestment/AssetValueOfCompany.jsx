@@ -9,8 +9,8 @@ const AssetValueOfCompany = (props) => {
 
     let initialValues = {
         assetValue: "",
-        includeFromYear: 1,
-        upUntilYear: 30,
+        includeFromYear: "1",
+        upUntilYear: "30",
         expectedGrowthRate: "2.50%",
     }
 

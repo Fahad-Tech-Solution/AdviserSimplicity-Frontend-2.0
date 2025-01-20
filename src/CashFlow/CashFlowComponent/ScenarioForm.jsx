@@ -37,6 +37,9 @@ const ScenarioForm = (props) => {
         else if (props.modalObject.action === "Edit") {
             setFieldValue("scenarioName", props.modalObject.Scenario.scenarioName)
         }
+        else if (props.modalObject.action === "duplicate") {
+            setFieldValue("scenarioName", props.modalObject.Scenario.scenarioName + " (Copy)")
+        }
     };
 
 
@@ -56,10 +59,16 @@ const ScenarioForm = (props) => {
             let res;
             if (props.modalObject.action === "New") {
                 res = await PostAxios(`${BaseURL}/Add`, obj);
-            } else {
+            }
+            else if (props.modalObject.action === "duplicate") {
+                obj.selectedSource = props.modalObject.Scenario._id;
+                res = await PostAxios(`${BaseURL}/Duplicate/`, obj)
+            }
+            else {
                 obj._id = props.modalObject.Scenario._id;
                 res = await PatchAxios(`${BaseURL}/Update`, obj);
             }
+
 
             if (res) {
                 console.log(res);
@@ -71,6 +80,17 @@ const ScenarioForm = (props) => {
                     setCashFlowData(updatedData);
 
                     localStorage.setItem("ScenarioObj", JSON.stringify(res));
+
+                    Nav("/Cash-Flow/PersonalDetail" + "#" + res._id);
+                }
+                else if (props.modalObject.action === "duplicate") {
+                    const updatedData = {
+                        ...cashFlowData,
+                        Scenarios: [...cashFlowData.Scenarios, res.data],
+                    };
+                    setCashFlowData(updatedData);
+
+                    localStorage.setItem("ScenarioObj", JSON.stringify(res.data));
 
                     Nav("/Cash-Flow/PersonalDetail" + "#" + res._id);
                 }
@@ -92,9 +112,7 @@ const ScenarioForm = (props) => {
                 else {
                     const route = cashFlow.find((module) => module.subTitle === res.lastModuleEdited)?.route;
                     Nav("/Cash-Flow" + route);
-
                 }
-
             }
 
             openNotificationSuccess("success", "topRight", "Success Notification", `Data of "${props.modalObject.title}" is Saved`);
@@ -105,6 +123,14 @@ const ScenarioForm = (props) => {
             }
         } catch (error) {
             console.error("Error occurred while making API call:", error);
+
+            // console.error("Error occurred while making API call:", error.response);
+            if (error.response.status === 409) {
+                openNotificationSuccess("error", "topRight", "Error Notification", error.response.data.message);
+                return false;
+            }
+
+
             openNotificationSuccess("error", "topRight", "Error Notification", `Data of "${props.modalObject.title}" is not Saved. Please try again.`);
         }
     };

@@ -56,6 +56,26 @@ export const CFQObject = atom({
         cf_DividendIncome: "No",
         cf_BusinessAsTrusts: "No",
         cf_BucketCompany: "No",
+
+        cf_SMSFAccumulationDetails: "No",
+        cf_SMSFPensionAccountDetails: "No",
+        cf_SMSFBank: "No",
+        cf_SMSFTermDeposit: "No",
+        cf_SMSFAustralianShares: "No",
+        cf_SMSFPlatformInvestment: "No",
+        cf_SMSF: "No",
+        cf_SMSFInvestmentLoan: "No",
+        cf_SMSFInvestmentProperties: "No",
+
+        cf_WestFamilyTrustInvestment: "No",
+        cf_FamilyTrustBankAccount: "No",
+        cf_WestFamilyTrustTermDeposits: "No",
+        cf_FamilyTrustAustralianShares: "No",
+        cf_FamilyTrustPlatformInvestment: "No",
+        cf_FamilyTrust: "No",
+        cf_FamilyTrustInvestmentLoan: "No",
+        cf_FamilyTrustInvestmentProperties: "No",
+
     },
 });
 
@@ -208,12 +228,12 @@ export const defaultUrl = atom({
     // default: "http://localhost:7000",
 
     // default: "http://192.168.3.210:7000",    // Usama Faheem Ahmed
-    default: "http://192.168.3.57:7000",      // Usama bhai growWork_Beta
+    // default: "http://192.168.3.57:7000",     // Usama bhai growWork_Beta
     // default: "http://192.168.14.244:7000",   // Usama bhai mara Mobile k sath
     // default: "http://192.168.227.244:7000",  // Usama bhai Fahad bhai k sath
     // default: "http://192.168.3.137:7000",
     // default: "http://192.168.211.242:7000",
-    // default: "http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com:7000",  // Live link 
+    default: "http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com:7000",  // Live link 
 
     // default: "",
 });

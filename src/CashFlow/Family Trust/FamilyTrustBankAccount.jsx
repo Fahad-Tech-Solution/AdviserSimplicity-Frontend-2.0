@@ -65,25 +65,47 @@ const FamilyTrustBankAccount = (props) => {
                     setFieldValue(`${prefix}.${key}`, value);
                 });
             };
-
             if (scenarioObj?.selectedSource === "discoveryForm") {
-                if (familyBank?.client.length > 0) {
-                    let Obj = {
-                        openingCashAtBank: familyBank.clientCurrentBalance || "",
-                    }
-
+                // Update client-related fields
+                if (familyBank?.client?.length > 0) {
+                    const Obj = {
+                        openingCashAtBank: familyBank.clientCurrentBalance || "", // Fallback to an empty string if undefined
+                    };
                     updateFields(Obj, "client");
+                } else {
+                    console.warn("No client data available in familyBank.");
                 }
 
                 // Update partner-related fields
-                if (UserStatus === "Married" && familyBank?.partner.length > 0) {
-                    let Obj = {
-                        openingCashAtBank: familyBank.partnerCurrentBalance || "",
+                if (UserStatus === "Married" && familyBank?.partner?.length > 0) {
+                    const Obj = {
+                        openingCashAtBank: familyBank.partnerCurrentBalance || "", // Fallback to an empty string if undefined
+                    };
+                    updateFields(Obj, "partner");
+                } else if (UserStatus === "Married") {
+                    console.warn("No partner data available in familyBank.");
+                }
+            } else {
+                const cashFlowScenarioDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
+
+                if (cashFlowScenarioDetails) {
+                    // Update owner field
+                    setFieldValue("owner", cashFlowScenarioDetails.owner || "");
+
+                    // Update client-related fields
+                    if (cashFlowScenarioDetails.owner?.includes("client")) {
+                        updateFields(cashFlowScenarioDetails.client || {}, "client");
                     }
 
-                    updateFields(Obj, "client");
+                    // Update partner-related fields
+                    if (UserStatus === "Married" && cashFlowScenarioDetails.owner?.includes("partner")) {
+                        updateFields(cashFlowScenarioDetails.partner || {}, "partner");
+                    }
+                } else {
+                    console.warn("No cash flow scenario details found for the provided key.");
                 }
             }
+
 
             if (cashFlowData?.[objAndAPIKey]?._id) {
                 const cashFlowDataDetails = cashFlowData[objAndAPIKey];
@@ -298,7 +320,7 @@ const FamilyTrustBankAccount = (props) => {
                                                         if (row.name === "incomeYield") {
                                                             return {
                                                                 ...row,
-                                                                disabled: values.client.investmentReturns !== "Input Override",
+                                                                disabled: values?.client?.investmentReturns !== "Input Override",
                                                             };
                                                         }
                                                         return row;
@@ -319,7 +341,7 @@ const FamilyTrustBankAccount = (props) => {
                                                             if (row.name === "incomeYield") {
                                                                 return {
                                                                     ...row,
-                                                                    disabled: values.partner.investmentReturns !== "Input Override",
+                                                                    disabled: values?.partner?.investmentReturns !== "Input Override",
                                                                 };
                                                             }
                                                             return row;

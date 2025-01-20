@@ -7,6 +7,7 @@ import { openNotificationSuccess, PatchAxios, PostAxios } from '../../Components
 
 const CFQModal = (props) => {
     let [CFObject, setCFObject] = useRecoilState(CFQObject);
+
     let DefaultUrl = useRecoilValue(defaultUrl);
 
     let [QuestionArray, setQuestionArray] = useState([]);
@@ -65,6 +66,8 @@ const CFQModal = (props) => {
     }, [])
 
 
+
+
     return (
         <div className="container-fluid">
             <div className="row m-0">
@@ -74,36 +77,42 @@ const CFQModal = (props) => {
                     enableReinitialize
                     innerRef={props.formRef}
                 >
-                    {({ values, handleChange, setFieldValue }) => <Form>
+                    {({ values, handleChange, setFieldValue }) => {
 
-                        <div className="col-md-12 text-center">
 
-                            <div className="row my-3 justify-content-center">
-                                <DynamicQuestionBlocks QuestionArray={QuestionArray} QuestionClick={QuestionClick} values={values} setFieldValue={setFieldValue} />
-                            </div>
+                        return (<Form>
 
-                            <div className="row mt-2 d-none">
-                                <div className="col-md-12">
-                                    <button
-                                        onClick={() => {
+                            <div className="col-md-12 text-center">
 
-                                        }}
-                                        type="submit"
-                                        className="float-end btn w-25  bgColor modalBtn"
-                                    >
-                                        Next
-                                    </button>
-                                    <button
-                                        onClick={() => {
+                                <div className="row my-3 justify-content-center">
+                                    <DynamicQuestionBlocks QuestionArray={QuestionArray} QuestionClick={QuestionClick} values={values} setFieldValue={setFieldValue} />
+                                </div>
 
-                                        }}
-                                        className="float-end btn w-25  btn-outline  backBtn mx-3 d-none">
-                                        Back
-                                    </button>
+                                <div className="row mt-2 d-none">
+                                    <div className="col-md-12">
+                                        <button
+                                            onClick={() => {
+
+                                            }}
+                                            type="submit"
+                                            className="float-end btn w-25  bgColor modalBtn"
+                                        >
+                                            Next
+                                        </button>
+                                        <button
+                                            onClick={() => {
+
+                                            }}
+                                            className="float-end btn w-25  btn-outline  backBtn mx-3 d-none">
+                                            Back
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </Form>}
+                        </Form>
+                        )
+                    }
+                    }
                 </Formik>
             </div>
         </div>

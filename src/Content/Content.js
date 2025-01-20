@@ -318,6 +318,7 @@ export const content = {
                     title: "Overseas Pensions",
                     img: overseas,
                     key: "cf_incomeFromOverseas",
+                    cal: true
                 },
                 {
                     title: "Sole Trader Income",
@@ -328,6 +329,7 @@ export const content = {
                     title: "Partnership Income",
                     img: businessPartnership,
                     key: "cf_incomeFromPartnership",
+                    cal: true
                 },
                 {
                     title: "Centrelink Payments/Benefits",

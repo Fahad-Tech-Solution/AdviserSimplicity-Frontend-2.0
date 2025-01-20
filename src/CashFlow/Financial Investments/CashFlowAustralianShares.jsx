@@ -72,15 +72,15 @@ const CashFlowAustralianShares = (props) => {
     let initialValues = {
         owner: [],
         client: {
-            riskProfile: layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
+            // riskProfile: layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
             cashOutFunds: "No",
         },
         partner: {
-            riskProfile: layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
+            // riskProfile: layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
             cashOutFunds: "No",
         },
         joint: {
-            riskProfile: layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
+            // riskProfile: layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
             cashOutFunds: "No",
         }
     };
@@ -91,7 +91,7 @@ const CashFlowAustralianShares = (props) => {
             setObjAndAPIKey(props.modalObject.key);
 
             // console.log(BankAccountFinance, "Discovery Form Data " + props.modalObject.key + " and SourceKey " + props.modalObject.sourceKey, BankAccountFinance.client);
-            // console.log(cashFlowData?.[objAndAPIKey].client.investmentFees, "cashFlowData Form Data");
+            console.log(cashFlowData?.[objAndAPIKey].client.investmentFees, "cashFlowData Form Data");
             // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
 
             const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
@@ -109,7 +109,11 @@ const CashFlowAustralianShares = (props) => {
                     reinvestIncome: data.reinvestIncome || "No",
                     regularContributions: data.regularContributions || "No",
                     regularContributionsObj: data.regularContributionsObj || {},
-                    riskProfile: data.riskProfile || layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
+                    // riskProfile: data.riskProfile || layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
+                    riskProfile: data.riskProfile
+                        ? data.riskProfile
+                        : (layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares"),
+
                     cashOutFunds: data.cashOutFunds || "No",
                 };
 
@@ -136,22 +140,27 @@ const CashFlowAustralianShares = (props) => {
                 }
 
                 // Update partner-related fields
-                if (UserStatus === "Married" && BankAccountFinance?.partner.length > 0) {
-                    let Obj = {
-                        currentBalance: BankAccountFinance.partnerCurrentBalance,
-                        costBase: BankAccountFinance.partnerCostBaseTemp,
-                    }
+                if (UserStatus === "Married" && BankAccountFinance?.partner?.length > 0) {
+                    const Obj = {
+                        currentBalance: BankAccountFinance.partnerCurrentBalance || 0, // Fallback to 0 if undefined
+                        costBase: BankAccountFinance.partnerCostBaseTemp || 0,       // Fallback to 0 if undefined
+                    };
                     updateFields(Obj, "partner");
+                } else {
+                    console.warn("No partner data available or UserStatus is not 'Married'");
                 }
 
-                // Update partner-related fields
-                if (UserStatus === "Married" && BankAccountFinance?.joint.length > 0) {
-                    let Obj = {
-                        currentBalance: BankAccountFinance.jointCurrentBalance,
-                        costBase: BankAccountFinance.jointCostBaseTemp,
-                    }
+                // Update joint-related fields
+                if (UserStatus === "Married" && BankAccountFinance?.joint?.length > 0) {
+                    const Obj = {
+                        currentBalance: BankAccountFinance.jointCurrentBalance || 0, // Fallback to 0 if undefined
+                        costBase: BankAccountFinance.jointCostBaseTemp || 0,       // Fallback to 0 if undefined
+                    };
                     updateFields(Obj, "joint");
+                } else {
+                    console.warn("No joint data available or UserStatus is not 'Married'");
                 }
+
             }
             else {
                 // Handle cashFlowData scenario
@@ -381,7 +390,6 @@ const CashFlowAustralianShares = (props) => {
                 name: "reinvestIncome",
                 type: "yesno",
                 placeholder: "Reinvest income",
-
             },
             {
                 name: "regularContributions",

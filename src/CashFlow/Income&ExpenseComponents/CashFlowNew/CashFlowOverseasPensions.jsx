@@ -231,6 +231,11 @@ const CashFlowOverseasPensions = (props) => {
     // { name: "businessAddress", type: "text", placeholder: "Business Address" },
   ];
 
+  let Recalculate = (values, setFieldValue) => {
+    alert("ma chala");
+  }
+
+
   return (
     <Formik
       initialValues={initialValues}
@@ -242,6 +247,13 @@ const CashFlowOverseasPensions = (props) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
+
+        useEffect(() => {
+          if (callBackFun) {
+            Recalculate(values, setFieldValue);
+          }
+
+        }, [props.callBackFun]);
 
         return (
           <Form>

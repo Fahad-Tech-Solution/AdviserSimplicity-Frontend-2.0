@@ -80,32 +80,44 @@ const SMSFPensionAccountDetails = (props) => {
                 // questionDetail
 
                 // Update client-related fields
-                if (SMSFPensionPhase?.client.length > 0) {
-                    let Obj = {
+                if (SMSFPensionPhase?.client?.length > 0) {
+                    const clientData = SMSFPensionPhase.client[0];
+                    const pensionBenefits = clientData?.pensionBenefitsTotalArray?.[0] || {};
+                    const pensionBenefitsArray = pensionBenefits?.pensionBenefitsarray?.[0] || {};
+
+                    const Obj = {
                         balanceRolloverAmountObj: {
-                            pensionType: SMSFPensionPhase?.client[0]?.pensionBenefitsTotalArray[0]?.pensionType.trim() || "",
-                            commencePensionYear: parseFloat(cashFlowData?.cf_personalDetails.client?.retirementYear) || 30,
-                            taxFreeComponent: SMSFPensionPhase?.client[0]?.pensionBenefitsTotalArray[0]?.pensionBenefitsarray[0]?.taxFreeComponent || "",
-                            // pensionBenefitsarray
+                            pensionType: pensionBenefits?.pensionType?.trim() || "",
+                            commencePensionYear: cashFlowData?.cf_personalDetails?.client?.retirementYear
+                                ? String(parseFloat(cashFlowData.cf_personalDetails.client.retirementYear))
+                                : "30",
+                            taxFreeComponent: pensionBenefitsArray?.taxFreeComponent || "",
                         },
-                        pensionPaymentsObj: {
-                            pensionType: SMSFPensionPhase?.client[0]?.pensionBenefitsTotalArray[0]?.pensionType.trim() || "",
-                        }
-                    }
+                    };
+
                     updateFields(Obj, "client");
                 }
 
+
                 // Update partner-related fields
-                if (SMSFPensionPhase?.partner.length > 0) {
-                    let Obj = {
+                if (SMSFPensionPhase?.partner?.length > 0) {
+                    const partnerData = SMSFPensionPhase.partner[0];
+                    const pensionBenefits = partnerData?.pensionBenefitsTotalArray?.[0] || {};
+                    const pensionBenefitsArray = pensionBenefits?.pensionBenefitsarray?.[0] || {};
+
+                    const Obj = {
                         balanceRolloverAmountObj: {
-                            pensionType: SMSFPensionPhase?.partner[0]?.pensionBenefitsTotalArray[0]?.pensionType.trim() || "",
-                            commencePensionYear: parseFloat(cashFlowData?.cf_personalDetails.partner?.retirementYear) || 30,
-                            taxFreeComponent: SMSFPensionPhase?.partner[0]?.pensionBenefitsTotalArray[0]?.pensionBenefitsarray[0]?.taxFreeComponent || "",
-                        }
-                    }
+                            pensionType: pensionBenefits?.pensionType?.trim() || "",
+                            commencePensionYear: cashFlowData?.cf_personalDetails?.partner?.retirementYear
+                                ? String(parseFloat(cashFlowData.cf_personalDetails.partner.retirementYear))
+                                : "30",
+                            taxFreeComponent: pensionBenefitsArray?.taxFreeComponent || "",
+                        },
+                    };
+
                     updateFields(Obj, "partner");
                 }
+
             }
             else {
                 const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];

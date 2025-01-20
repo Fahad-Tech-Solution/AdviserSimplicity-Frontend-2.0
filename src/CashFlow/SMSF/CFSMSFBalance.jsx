@@ -14,7 +14,7 @@ const CFSMSFBalance = (props) => {
         pensionType: "",
         commencePensionYear: "",
         applyDeeming: "",
-        applyDeemingObj: "",
+        applyDeemingObj: {},
         totalSuperannuationBenefits: "",
         nominatedRolloverAmount: "No",
         nominatedRolloverAmountValue: "",
@@ -27,9 +27,9 @@ const CFSMSFBalance = (props) => {
             if (SubObj?.[`${props.modalObject.key}Obj`]) {
                 const Data = SubObj[`${props.modalObject.key}Obj`];
                 setFieldValue("pensionType", Data.pensionType || "");
-                setFieldValue("commencePensionYear", Data.commencePensionYear || "");
+                setFieldValue("commencePensionYear", Data.commencePensionYear ? String(Data.commencePensionYear) : "");
                 setFieldValue("applyDeeming", Data.applyDeeming || "");
-                setFieldValue("applyDeemingObj", Data.applyDeemingObj || "");
+                setFieldValue("applyDeemingObj", Data.applyDeemingObj || {});
                 setFieldValue("totalSuperannuationBenefits", Data.totalSuperannuationBenefits || "");
                 setFieldValue("nominatedRolloverAmount", Data.nominatedRolloverAmount || "No");
                 setFieldValue("nominatedRolloverAmountValue", Data.nominatedRolloverAmountValue || "");
@@ -41,7 +41,7 @@ const CFSMSFBalance = (props) => {
     const onSubmit = (values) => {
         const { stakeHolder, key } = props.modalObject || {};
         if (stakeHolder && key) {
-            props.setFieldValue(`${stakeHolder}${key}`, values.totalSuperannuationBenefits);
+            props.setFieldValue(`${stakeHolder}${key}`, values.taxFreeComponent);
             props.setFieldValue(`${stakeHolder}${key}Obj`, values);
         }
 

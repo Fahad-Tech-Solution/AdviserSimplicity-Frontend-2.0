@@ -1448,7 +1448,7 @@ label {
   border-bottom-right-radius: 0px !important;
 }
 
-.ClearDropDownSpan li span.ant-dropdown-menu-title-content {
+.ClearDropDownSpanDouble li span.ant-dropdown-menu-title-content {
   display: unset !important;
   height: unset !important;
   width: unset !important;
@@ -1456,10 +1456,26 @@ label {
   align-items: unset !important;
 }
 /* Target the last two Delete menu items specifically */
-.ClearDropDownSpan .ant-dropdown-menu-item:nth-last-child(-n+2) {
+.ClearDropDownSpanDouble .ant-dropdown-menu-item:nth-last-child(-n + 2) {
   color: #d20303; /* Set the text color to red */
   &&:is(:hover, :focus, :active) {
-    background-color: #d20303; /* Set the background to red  d20303*/
+    background-color: #ac0202; /* Set the background to red  d20303*/
+    color: white; /* Set the text color to white */
+  }
+}
+
+.ClearDropDownSpanSingle li span.ant-dropdown-menu-title-content {
+  display: unset !important;
+  height: unset !important;
+  width: unset !important;
+  justify-content: unset !important;
+  align-items: unset !important;
+}
+/* Target the last two Delete menu items specifically */
+.ClearDropDownSpanSingle .ant-dropdown-menu-item:nth-last-child(-n + 1) {
+  color: #d20303; /* Set the text color to red */
+  &&:is(:hover, :focus, :active) {
+    background-color: #ac0202; /* Set the background to red  d20303*/
     color: white; /* Set the text color to white */
   }
 }

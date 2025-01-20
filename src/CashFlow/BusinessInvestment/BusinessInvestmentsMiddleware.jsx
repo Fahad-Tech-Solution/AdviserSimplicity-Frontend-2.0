@@ -102,9 +102,6 @@ const BusinessInvestmentsMiddleware = (props) => {
                     };
                 }
 
-
-
-
                 Object.entries(fields).forEach(([key, value]) => {
                     setFieldValue(`${prefix}.${key}`, value);
                 });
@@ -129,36 +126,42 @@ const BusinessInvestmentsMiddleware = (props) => {
                         netTrustDistributionObj: {
                             assetValue: toCommaAndDollar(BankAccountFinance.client[0].equityPositionArray[0].distributionReceived)
                         },
-                        assetValueOfBusinessTrust: toCommaAndDollar(BankAccountFinance.client[0].equityPositionArray[0].distributionReceived),
+                        assetValueOfBusinessTrust: BankAccountFinance.client[0].equityPositionArray[0].businessValuation,
                         assetValueOfBusinessTrustObj: {
-                            assetValue: toCommaAndDollar(BankAccountFinance.client[0].equityPositionArray[0].distributionReceived)
+                            assetValue: BankAccountFinance.client[0].equityPositionArray[0].businessValuation
                         },
                     }
                     updateFields(Obj, "client");
                 }
 
                 // Update partner-related fields
-                if (UserStatus === "Married" && BankAccountFinance?.partner.length > 0) {
-                    let Obj = {
-                        dividendIncome: BankAccountFinance.partner[0].dividendReceived,
+                if (UserStatus === "Married" && BankAccountFinance?.partner?.length > 0) {
+                    const partnerData = BankAccountFinance.partner?.[0] || {}; // Ensure safe access with a fallback
+                    const partnerEquityPosition = partnerData.equityPositionArray?.[0] || {}; // Safe access for nested property
+
+                    const Obj = {
+                        dividendIncome: partnerData.dividendReceived || "$0",
                         dividendIncomeObj: {
-                            dividendIncome: BankAccountFinance.partner[0].dividendReceived,
+                            dividendIncome: partnerData.dividendReceived || "$0",
                         },
-                        assetValueOfCompany: BankAccountFinance.partner[0].equityPosition,
+                        assetValueOfCompany: partnerData.equityPosition || "$0",
                         assetValueOfCompanyObj: {
-                            assetValue: BankAccountFinance.partner[0].equityPosition,
+                            assetValue: partnerData.equityPosition || "$0",
                         },
-                        netTrustDistribution: toCommaAndDollar(BankAccountFinance.partner[0].equityPositionArray[0].distributionReceived),
+                        netTrustDistribution: toCommaAndDollar(partnerEquityPosition.distributionReceived || 0),
                         netTrustDistributionObj: {
-                            assetValue: toCommaAndDollar(BankAccountFinance.partner[0].equityPositionArray[0].distributionReceived)
+                            assetValue: toCommaAndDollar(partnerEquityPosition.distributionReceived || 0),
                         },
-                        assetValueOfBusinessTrust: toCommaAndDollar(BankAccountFinance.partner[0].equityPositionArray[0].distributionReceived),
+                        assetValueOfBusinessTrust: partnerEquityPosition.businessValuation || "$0",
                         assetValueOfBusinessTrustObj: {
-                            assetValue: toCommaAndDollar(BankAccountFinance.partner[0].equityPositionArray[0].distributionReceived)
+                            assetValue: partnerEquityPosition.businessValuation || "$0",
                         },
-                    }
+                    };
                     updateFields(Obj, "partner");
+                } else {
+                    console.warn("No partner data available or user is not married");
                 }
+
             }
             else {
                 // Handle cashFlowData scenario

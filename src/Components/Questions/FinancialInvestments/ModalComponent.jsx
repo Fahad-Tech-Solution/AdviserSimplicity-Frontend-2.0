@@ -1,14 +1,26 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Button, Modal } from 'react-bootstrap';
 import { scroller, Element } from 'react-scroll';
+import { FaInfoCircle } from "react-icons/fa";
 
 const ModalComponent = (props) => {
 
     const formRef = useRef(null);  // Create a ref to store the form instance
 
+    let [callBackFun, setCallBackFun] = useState(false);
+
     const handleOk = () => {
         if (formRef.current) {
             formRef.current.handleSubmit();  // Trigger Formik's handleSubmit
+        }
+    };
+
+    const handleRecalculate = () => {
+        alert("ma chala parent ma");
+
+        if (!callBackFun) {
+            alert("function mil gaya");
+            setCallBackFun(!callBackFun);
         }
     };
 
@@ -158,9 +170,9 @@ const ModalComponent = (props) => {
 
     const size = fullTitles.includes(props.modalObject.title) ? "xxl" : xlTitles.includes(props.modalObject.title) ? "xl" : xlKey.includes(props.modalObject.key) ? "xl" : "lg";
 
+
     return (
         <div>
-
             <Modal dialogClassName={size === "xxl" && "modal-90w"} size={size === "xxl" ? "" : size} backdrop="static" keyboard={false} centered show={props.flagState} onHide={() => { props.setFlagState(false) }}>
                 <Element id="modal-container">
                 </Element>
@@ -175,7 +187,7 @@ const ModalComponent = (props) => {
 
                 <Modal.Body>
                     {props.children ? (
-                        React.cloneElement(props.children, { formRef, flagState, setFlagState, modalObject, setQuestionChange })
+                        React.cloneElement(props.children, { formRef, flagState, setFlagState, modalObject, setQuestionChange, callBackFun, setCallBackFun })
                     ) : "no Child exist"}
                 </Modal.Body>
 
@@ -183,6 +195,13 @@ const ModalComponent = (props) => {
 
                     <Button variant="secondary" style={{ width: "12.5%", minWidth: "fit-content" }} onClick={() => props.setFlagState(false)}>
                         Close
+                    </Button>
+                    <Button
+                        variant="secondary"
+                        style={{ width: "12.5%", minWidth: "fit-content" }}
+                        onClick={handleRecalculate}
+                    >
+                        <FaInfoCircle size={14} style={{ marginBottom: "4px" }} />   Re-Calculate
                     </Button>
                     <button type='button' className='btn bgColor modalBtn' style={{ width: "12.5%", minWidth: "fit-content" }} onClick={handleOk}>
                         Submit

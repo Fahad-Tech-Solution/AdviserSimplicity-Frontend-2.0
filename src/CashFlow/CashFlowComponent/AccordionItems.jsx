@@ -1,18 +1,18 @@
 import React from 'react';
 import { Accordion, Button, Table } from 'react-bootstrap';
 import { MdMale, MdCake, MdAdd, MdEdit } from 'react-icons/md';
-import { FaArrowRotateRight, FaClipboardList, FaGear, FaLock, FaRegCopy, FaRing } from 'react-icons/fa6'
+import { FaArrowRotateRight, FaClipboardList, FaFileLines, FaGear, FaLock, FaRegCopy, FaRing } from 'react-icons/fa6'
 
 
 import single from "../../Components/Svgs/single-2.svg";
 import couple from "../../Components/Svgs/couple-2.svg";
-import { ConvertDate } from '../../Components/Assets/Api/Api';
-import { FaEdit, FaRegEdit, FaTrashAlt } from 'react-icons/fa';
+import { ConvertDate, DeleteAxios, openNotificationSuccess, PatchAxios } from '../../Components/Assets/Api/Api';
+import { FaEdit, FaTrashAlt, } from 'react-icons/fa';
 import { Dropdown, Menu } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { content } from '../../Content/Content';
-import { useRecoilState } from 'recoil';
-import { CashFlowScenarioData, CashFlowScenarioType, PersonalDetailsData, QuestionDetail } from '../../Store/Store';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { CashFlowData, CashFlowScenarioData, CashFlowScenarioType, CFQObject, defaultUrl, PersonalDetailsData, QuestionDetail } from '../../Store/Store';
 
 const AccordionItems = ({ client, partner, tableData, index, fullData, CallBack }) => {
 
@@ -20,18 +20,23 @@ const AccordionItems = ({ client, partner, tableData, index, fullData, CallBack 
   let [PersonalDetailObj, setPersonalDetailObj] = useRecoilState(PersonalDetailsData);
   let [cashFlowScenarioData, setCashFlowScenarioData] = useRecoilState(CashFlowScenarioData);
   let [cashFlowScenarioType, setCashFlowScenarioType] = useRecoilState(CashFlowScenarioType);
+  let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+  let [CFObject, setCFObject] = useRecoilState(CFQObject);
+
+  let DefaultUrl = useRecoilValue(defaultUrl);
 
   let Nav = useNavigate()
 
   let { cashFlow } = content;
 
-  function menuClicked(row, operation) {
+  async function menuClicked(fullData, row, operation) {
     localStorage.setItem("ScenarioObj", JSON.stringify(row));
 
     setQuestionDetail({})
     setPersonalDetailObj({})
     setCashFlowScenarioData({})
     setCashFlowScenarioType("")
+    setCFObject({});
 
 
     switch (operation) {
@@ -50,6 +55,111 @@ const AccordionItems = ({ client, partner, tableData, index, fullData, CallBack 
         else {
           Nav("/Cash-Flow/PersonalDetail" + "#" + fullData._id);
         }
+        break;
+
+      case "lock":
+        try {
+          const lockData = await PatchAxios(DefaultUrl + "/api/CF/scenario/lockedScenario/" + row._id);
+
+          if (lockData) {
+            console.log(lockData);
+
+            setCashFlowData(prevData => {
+              if (prevData && Array.isArray(prevData.Scenarios)) {
+                const updatedScenarios = prevData.Scenarios.map(item =>
+                  item._id === row._id ? lockData : item
+                );
+                return {
+                  ...prevData,
+                  Scenarios: updatedScenarios,
+                };
+              }
+              console.error("Scenarios is not an array or cashFlowData is invalid. Resetting state.");
+              return { ...prevData, Scenarios: [] }; // Fallback if something is wrong
+            });
+
+            openNotificationSuccess(
+              "success",
+              "topRight",
+              "Success Notification",
+              "Scenario successfully locked"
+            );
+          } else {
+            console.log("Failed to lock the scenario. Please try again.");
+            openNotificationSuccess(
+              "error",
+              "topRight",
+              "Error Notification",
+              "Something went wrong! Please try again later."
+            );
+          }
+        } catch (error) {
+          console.log("An error occurred while locking the scenario: " + error.message);
+          openNotificationSuccess(
+            "error",
+            "topRight",
+            "Error Notification",
+            "Something went wrong! Please try again later."
+          );
+        }
+
+        break;
+
+      case "delete":
+
+        if (row.isLocked) {
+          openNotificationSuccess(
+            "error",
+            "topRight",
+            "Error Notification",
+            "Please! contact Super-admin to perform this action"
+          );
+          return false;
+        }
+
+
+        try {
+          let deleteData = await DeleteAxios(DefaultUrl + "/api/CF/scenario/softDelete/" + row._id);
+
+          if (deleteData) {
+            console.log(deleteData);
+
+            setCashFlowData(prevData => {
+              if (prevData && Array.isArray(prevData.Scenarios)) {
+                const updatedScenarios = prevData.Scenarios.filter(item => item._id !== row._id);
+                return {
+                  ...prevData,
+                  Scenarios: updatedScenarios,
+                };
+              }
+              console.error("Scenarios is not an array or cashFlowData is invalid. Resetting state.");
+              return { ...prevData, Scenarios: [] }; // Fallback if something is wrong
+            });
+
+            openNotificationSuccess(
+              "success",
+              "topRight",
+              "Success Notification",
+              "Scenario successfully deleted"
+            );
+          } else {
+            console.log("Failed to delete the scenario. Please try again.");
+            openNotificationSuccess(
+              "error",
+              "topRight",
+              "Error Notification",
+              "Something went wrong! Please try again later."
+            );
+          }
+        } catch (error) {
+          console.log("An error occurred while deleting the scenario: " + error.message);
+          openNotificationSuccess(
+            "error",
+            "topRight",
+            "Error Notification",
+            "Something went wrong! Please try again later."
+          );
+        }
 
         break;
 
@@ -62,12 +172,27 @@ const AccordionItems = ({ client, partner, tableData, index, fullData, CallBack 
 
 
   const getMenu = (row) => (
-    <Menu className='ClearDropDownSpan'>
-      <Menu.Item key="1" icon={<FaEdit />} onClick={() => menuClicked(row, "Edit")}> Edit </Menu.Item>
-      <Menu.Item key="3" icon={<FaEdit />} onClick={() => CallBack(fullData, row, "Edit")}>Edit Name  </Menu.Item>
-      <Menu.Item key="5" icon={<FaRegCopy />}>Duplicate </Menu.Item>
-      <Menu.Item key="4" icon={<FaLock />}>Lock </Menu.Item>
-      <Menu.Item key="6" icon={<FaTrashAlt />}>Delete </Menu.Item>
+    <Menu className={
+      row.isLocked ?
+        "ClearDropDownSpanSingle"
+        :
+        'ClearDropDownSpanDouble'
+    }>
+      {(!row.isLocked) &&
+        <React.Fragment>
+          <Menu.Item key="1" icon={<FaEdit />} onClick={() => menuClicked(fullData, row, "Edit")}> Edit </Menu.Item>
+          <Menu.Item key="3" icon={<FaEdit />} onClick={() => CallBack(fullData, row, "Edit")}>Edit Name  </Menu.Item>
+        </React.Fragment>}
+
+      {(row.isLocked) &&
+        <Menu.Item key="1" icon={<FaFileLines />} onClick={() => menuClicked(fullData, row, "Edit")}> View </Menu.Item>
+      }
+      <Menu.Item key="5" icon={<FaRegCopy />} onClick={() => CallBack(fullData, row, "duplicate")}>Duplicate </Menu.Item>
+
+      {(!row.isLocked) &&
+        <Menu.Item key="4" icon={<FaLock />} onClick={() => menuClicked(fullData, row, "lock")}>Lock </Menu.Item>
+      }
+      <Menu.Item key="6" icon={<FaTrashAlt />} onClick={() => menuClicked(fullData, row, "delete")}>Delete </Menu.Item>
     </Menu>
   );
 
@@ -232,16 +357,32 @@ const AccordionItems = ({ client, partner, tableData, index, fullData, CallBack 
                     <tbody>
                       {tableData.map((row, index) => (
                         <tr key={index}>
-                          <td>{index + 1}</td>
+                          <td>{index + 1} </td>
                           <td>{row.scenarioName}</td>
                           <td>{row.lastModuleEdited || "not Available"}</td>
                           <td>{ConvertDate(row.createdAt)}</td>
                           <td>{ConvertDate(row.updatedAt)}</td>
-                          <td >
+                          <td>
                             <Dropdown overlay={getMenu(row)} trigger={["click"]}
                             >
-                              <FaGear />
-                            </Dropdown>
+                              {row.isLocked ?
+                                <div style={{ position: 'relative', display: 'inline-block' }}>
+                                  <FaGear size={20} />
+                                  <FaLock
+                                    size={10}
+                                    style={{
+                                      position: 'absolute',
+                                      top: '75%',
+                                      left: '95%',
+                                      transform: 'translate(-50%, -50%)',
+                                      border: '20px solid inherit',
+                                      borderRadius: '50%',
+                                      backgroundColor: 'white', // Optional for better visibility
+                                      color: "#ac0202"
+                                    }}
+                                  />
+                                </div>
+                                : <FaGear size={20} />}</Dropdown>
                           </td>
                         </tr>
                       ))}

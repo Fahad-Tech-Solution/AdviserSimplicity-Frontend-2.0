@@ -203,7 +203,6 @@ const WestFamilyTrustInvestment = (props) => {
             ? [
                 { value: "client", label: RenderName("client") },
                 { value: "partner", label: RenderName("partner") },
-                { value: "joint", label: RenderName("joint") },
             ]
             : [{ value: "client", label: RenderName("client") }];
 
@@ -302,18 +301,6 @@ const WestFamilyTrustInvestment = (props) => {
                                                         handleChange={handleChange}
                                                         handleBlur={handleBlur}
                                                         stakeHolder="partner."
-                                                    />
-                                                )}
-
-                                            {values.owner.includes("joint") &&
-                                                UserStatus === "Married" && (
-                                                    <DynamicTableRow
-                                                        rowConfig={rowConfig}
-                                                        values={values}
-                                                        setFieldValue={setFieldValue}
-                                                        handleChange={handleChange}
-                                                        handleBlur={handleBlur}
-                                                        stakeHolder="joint."
                                                     />
                                                 )}
                                         </tbody>

@@ -14,7 +14,7 @@ const CashFlowCarsCardsTowInOne = (props) => {
     let ObjTowInOneArray = {
         "cf_personalDebt": [
             {
-                title: "Persona Loans",
+                title: "Personal Loans",
                 key: "cf_personalDebt",
                 attribute: "clientTotal",
                 discoveryKey: "personalLoans",

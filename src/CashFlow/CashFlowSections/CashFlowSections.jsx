@@ -3,7 +3,11 @@ import PersonalDetails_cashFlow from '../Income&ExpenseComponents/PersonalDetail
 import CashFlowCardSet from './CashFlowCardSet'
 import { useLocation } from 'react-router-dom'
 import { GetAxios } from '../../Components/Assets/Api/Api'
-import { CashFlowData, CashFlowScenarioData, CashFlowScenarioType, CFQObject, defaultUrl, GoalsDetail, GQState, Loading, PersonalDetailsData, QuestionDetail } from '../../Store/Store'
+import {
+    CashFlowData, CashFlowScenarioData, CashFlowScenarioType, CFQObject,
+    defaultUrl, GoalsDetail, GQState, Loading, PersonalDetailsData,
+    QuestionDetail
+} from '../../Store/Store'
 import { useRecoilState, useRecoilValue } from 'recoil'
 
 const CashFlowSections = (props) => {
@@ -61,9 +65,27 @@ const CashFlowSections = (props) => {
         try {
             const response = await GetAxios(`${DefaultUrl}/api/CF/dataOfAllSection/${source}`);
             if (response) {
-                console.log("Fetched scenario data:", response);
+                // console.log("Fetched scenario data:", response);
                 setCashFlowScenarioData(response);
+                // const sanitizedResponse = Object.keys(response).reduce((acc, key) => {
+                //     const { _id, scenarioFK, ...rest } = response[key]; // Destructure to exclude _id
+                //     acc[key] = rest; // Reconstruct the object without _id
+                //     return acc;
+                // }, {});
+
+                // console.log("Sanitized Response: ", sanitizedResponse);
+
+                // setCashFlowData(sanitizedResponse);
+
             }
+
+            const responseBQ = await GetAxios(`${DefaultUrl}/api/CF/cf_basicQuestions/${source}`);
+            if (responseBQ) {
+                // console.log("Fetched CF Object:", responseBQ);
+                setCFObject(responseBQ);
+            }
+
+
         } catch (error) {
             console.error("Error fetching scenario data:", error);
         }
@@ -74,12 +96,66 @@ const CashFlowSections = (props) => {
         try {
             const response = await GetAxios(`${DefaultUrl}/api/personalDetails/getUserById/${clientId}`);
             if (response) {
-                console.log("Fetched personal details:", response);
+                // console.log("Fetched personal details:", response);
                 setPersonalDetailObj(response);
 
                 // Fetch additional data related to personal details
                 await fetchDataAllInOne(response._id);
             }
+
+            const res = await GetAxios(`${DefaultUrl}/api/questions/${clientId}`);
+            if (res) {
+                let Obj = {
+                    cf_incomeFromOverseas: res.incomeFromOverseasPension || "No",
+                    cf_incomeFromSoleTrade: res.incomeFromSoleTrader || "No",
+                    cf_incomeFromPartnership: res.incomeFromPartnership || "No",
+                    cf_incomeFromCentrelink: res.incomeFromCentrelink || "No",
+                    cf_incomeFromLifeTimePension: res.incomeFromSuperPayment || "No",
+                    cf_employmentIncome: res.incomeFromOwnBusiness || "No",
+                    cf_incomeFromRegularLivingExpense: res.incomeFromRegularLivingExpenses || "No",
+
+                    cf_familyHome: res.familyHome || "No",
+                    cf_car: res.car || "No",
+                    cf_boat: res.boat || "No",
+                    cf_caravan: res.caravan || "No",
+                    cf_otherAssets: res.otherAssets || "No",
+                    cf_personalDebt: res.personalLoans || "No",
+
+                    cf_AustralianShares: res.australianShareMarket || "No",
+                    cf_platformInvestment: res.managedFund || "No",
+                    cf_cash: res.bankAccountFinance || "No",
+                    cf_termDeposits: res.termDepositsFinance || "No",
+                    cf_investmentBonds: res.managedFundsLOC || "No",
+                    cf_investmentLoansLOC: res.investmentBondFinance || "No",
+                    cf_marginLoan: res.managedFundsMarginLoan || "No",
+                    cf_investmentsProperty: res.investmentPropertyDetails || "No",
+                    cf_superFund: res.superAnnuationIssues || "No",
+                    cf_accountBasedPension: res.accountBasedPensionIssues || "No",
+                    cf_annuities: res.annuitiesIssues || "No",
+
+                    cf_DividendIncome: res.businessAsInvestmentTab || "No",
+                    cf_BusinessAsTrusts: res.businessAsInvestmentTab || "No",
+                    cf_BucketCompany: res.businessAsInvestmentTab || "No",
+
+                    cf_SMSFTermDeposit: res.SMSFTermDeposits || "No",
+                    cf_SMSFAustralianShares: res.SMSFAustralianShares || "No",
+                    cf_SMSFPlatformInvestment: res.SMSFManagedFunds || "No",
+                    cf_SMSFInvestmentLoan: res.SMSFInvestmentLoan || "No",
+                    cf_SMSFInvestmentProperties: res.SMSFInvestmentProperties || "No",
+
+                    cf_SMSF: res.cf_SMSF || "No",
+
+                    cf_WestFamilyTrustTermDeposits: res.familyTermDeposit || "No",
+                    cf_FamilyTrustAustralianShares: res.familyAustralianShare || "No",
+                    cf_FamilyTrustPlatformInvestment: res.familyMangedFunds || "No",
+                    cf_FamilyTrustInvestmentLoan: res.familyInvestmentHomeLoan || "No",
+                    cf_FamilyTrustInvestmentProperties: res.familyInvestmentProperties || "No",
+
+                    cf_FamilyTrust: res.cf_FamilyTrust || "No",
+                }
+                setCFObject(Obj)
+            }
+
         } catch (error) {
             console.error("Error fetching personal details:", error);
         }
@@ -90,7 +166,7 @@ const CashFlowSections = (props) => {
         try {
             const response = await GetAxios(`${DefaultUrl}/api/dataOfAllSection/${id}`);
             if (response) {
-                console.log("Fetched all related data:", response);
+                // console.log("Fetched all related data:", response);
                 setQuestionDetail(response);
             }
         } catch (error) {
@@ -103,8 +179,27 @@ const CashFlowSections = (props) => {
         try {
             const response = await GetAxios(`${DefaultUrl}/api/CF/dataOfAllSection/${scenarioId}`);
             if (response) {
-                console.log("Fetched cash flow data:", response);
-                setCashFlowData(response);
+                // // Filter out empty objects
+                // const filteredResponse = Object.keys(response).reduce((acc, key) => {
+                //     const item = response[key];
+                //     if (item && Object.keys(item).length > 0) { // Check if the nested object is non-empty
+                //         acc[key] = item;
+                //     }
+                //     return acc;
+                // }, {});
+
+                // console.log("Fetched cash flow data:", filteredResponse);
+                // // Update only the filtered keys in cashFlowData
+                // setCashFlowData(prevData => {
+                //     const updatedData = { ...prevData }; // Create a shallow copy of the existing state
+                //     Object.keys(filteredResponse).forEach(key => {
+                //         updatedData[key] = filteredResponse[key]; // Replace only the filtered keys
+                //     });
+                //     return updatedData;
+                // });
+
+                setCashFlowData(response)
+
             }
         } catch (error) {
             console.error("Error fetching cash flow data:", error);
@@ -117,7 +212,7 @@ const CashFlowSections = (props) => {
             const scenarioId = JSON.parse(localStorage.getItem("ScenarioObj"))?._id;
             const response = await GetAxios(`${DefaultUrl}/api/CF/cf_basicQuestions/${scenarioId}`);
             if (response) {
-                console.log("Fetched CF Object:", response);
+                // console.log("Fetched CF Object:", response);
                 setCFObject(response);
             }
         } catch (error) {
