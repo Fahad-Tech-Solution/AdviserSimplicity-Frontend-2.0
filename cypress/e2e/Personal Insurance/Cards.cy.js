@@ -59,7 +59,7 @@ class PersonalInsurance {
       cy.get("#startDate0").type(12 - 1 - 2021);
     });
 
-//Sererio no 1 
+    //Sererio no 1
     cy.contains("Sum Insured");
     cy.get("#button-addon2").click();
 
@@ -127,16 +127,16 @@ class PersonalInsurance {
         cy.get("#coverType3").select("Income protection");
 
         cy.contains("Premiums");
-        cy.get('.pe-2 > #premiums3').type("987");
+        cy.get(".pe-2 > #premiums3").type("987");
 
         cy.contains("Waiting Period");
-        cy.get('#waitingPeriod3').select("30 Days");
+        cy.get("#waitingPeriod3").select("30 Days");
 
-        cy.contains('Benefit Period')
-        cy.get('#benefitPeriod3') .select('2 Years')
+        cy.contains("Benefit Period");
+        cy.get("#benefitPeriod3").select("2 Years");
 
-cy.contains('Frequency')
-        cy.get('#frequency3').select('Smoker')
+        cy.contains("Frequency");
+        cy.get("#frequency3").select("Smoker");
       }
     );
     cy.get(
@@ -146,16 +146,11 @@ cy.contains('Frequency')
       cy.contains("Submit").click();
     });
 
-
-   
-
     //Admin_Sum Insured
     cy.contains("Admin_Sum Insured");
     cy.get(
       ":nth-child(5) > .modal-dialog > .modal-content > .modal-header > .btn-close"
     );
-
-  
 
     //Premiuma P.A
     cy.contains("Premiums p.a");
@@ -245,33 +240,33 @@ cy.contains('Frequency')
 
     cy.contains("Close");
     cy.contains("Submit").click();
-// Cards
-cy.get(':nth-child(1) > .py-4').within(() => {
+    // Cards
+    cy.get(":nth-child(1) > .py-4").within(() => {
       cy.contains("Life Insurance");
       cy.get("img");
       cy.contains("Admin");
-      cy.get('#clientLife').should("not.have.value", "");
+      cy.get("#clientLife").should("not.have.value", "");
     });
 
-    cy.get(':nth-child(2) > .py-4').within(() => {
+    cy.get(":nth-child(2) > .py-4").within(() => {
       cy.contains("TPD");
       cy.get("img");
       cy.contains("Admin");
-      cy.get('#clientTPD').should("not.have.value", "");
+      cy.get("#clientTPD").should("not.have.value", "");
     });
 
-    cy.get(':nth-child(3) > .py-4').within(() => {
+    cy.get(":nth-child(3) > .py-4").within(() => {
       cy.contains("Trauma");
       cy.get("img");
       cy.contains("Admin");
-      cy.get('#clientTrauma').should("not.have.value", "");
+      cy.get("#clientTrauma").should("not.have.value", "");
     });
 
-    cy.get(':nth-child(4) > .py-4').within(() => {
+    cy.get(":nth-child(4) > .py-4").within(() => {
       cy.contains("Income Protection");
       cy.get("img");
       cy.contains("Admin");
-      cy.get('#clientIncomeProtection').should("not.have.value", "");
+      cy.get("#clientIncomeProtection").should("not.have.value", "");
     });
   }
 }

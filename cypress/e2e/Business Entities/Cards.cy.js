@@ -40,7 +40,7 @@ class BusinessEntities {
     //    .within(() => {
     //      cy.get("img").should("be.visible");
     //      cy.contains("Are you Running a business via a Trusts?").should(
-    //        "be.visible" 
+    //        "be.visible"
     //      );
     //    });
 

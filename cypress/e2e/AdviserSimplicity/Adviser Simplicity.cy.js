@@ -9,8 +9,6 @@ describe("Adviser Simplicity", () => {
 
     cy.get(":nth-child(2) > .btn").click();
 
-    
-
     cy.get(".px-5")
       .should("be.visible")
       .within(() => {
@@ -99,9 +97,8 @@ describe("Adviser Simplicity", () => {
         ":nth-child(1) > .py-4 > :nth-child(3) > .col-12 > .d-flex > .mb-0"
       ).click();
 
+      cy.get(".btn-close");
 
-      cy.get('.btn-close')
-    
       cy.contains("Employement Income");
 
       // //Sole Trader

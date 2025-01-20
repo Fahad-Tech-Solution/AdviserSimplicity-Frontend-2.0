@@ -11,6 +11,7 @@ import PersonalInsurance from "./Personal Insurance/Cards.cy";
 import BusinessEntities from "./Business Entities/Cards.cy";
 import SMSF from "./SMSF/Cards.cy";
 import InvestmentTrust from "./Investment Trust/Cards.cy";
+import CashFlow from './Cash Flow/Cash Flow.cy.js';
 
 describe("Adviser Simplicity", () => {
   const inputDetails = new Input_details(); 
@@ -24,6 +25,7 @@ describe("Adviser Simplicity", () => {
   const businessEntities = new BusinessEntities();
   const smsf = new SMSF(); 
   const investmentTrust = new InvestmentTrust();
+  const cashFlow = new CashFlow();
 
   it.skip("Adding Single Client Detail's", () => {
     cy.visit("http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com/");
@@ -115,7 +117,7 @@ describe("Adviser Simplicity", () => {
   });
 
 
-  it.only("Financial Investments Card's", () => {
+  it("Financial Investments Card's", () => {
     financialInvestments.section();
   });
 
@@ -144,4 +146,9 @@ describe("Adviser Simplicity", () => {
     investmentTrust.section();
   });
 
+  //CashFlow
+
+  it.only('Should run Cash Flow tests including Income and Expenses', () => {
+    cashFlow.section();
+});
 });

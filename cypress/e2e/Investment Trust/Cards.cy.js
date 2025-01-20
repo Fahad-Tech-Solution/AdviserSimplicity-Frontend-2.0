@@ -94,7 +94,7 @@ class InvestmentTrust {
     //   cy.contains("Submit").should("be.visible").click();
     // });
 
-   // Family Details
+    // Family Details
     cy.get(":nth-child(1) > .py-4").within(() => {
       // cy.contains("Family Details");
       cy.get("img");
@@ -349,23 +349,23 @@ class InvestmentTrust {
       cy.contains("1");
 
       cy.contains("ASX Code");
-      cy.get('#ASXCode0').clear().type("BML.AX");
+      cy.get("#ASXCode0").clear().type("BML.AX");
       cy.wait(1000);
 
       cy.contains("Company Name");
-      cy.get('#companyName0').should("not.have.value", "");
+      cy.get("#companyName0").should("not.have.value", "");
 
       cy.contains("Shares Price");
-      cy.get('#sharePrice0').should("not.have.value", "");
+      cy.get("#sharePrice0").should("not.have.value", "");
 
       cy.contains("Number of Shares");
-      cy.get('#shares0').clear().type("4522");
+      cy.get("#shares0").clear().type("4522");
 
       cy.contains("Cost base");
-      cy.get('#costBase0').clear().type("9878");
+      cy.get("#costBase0").clear().type("9878");
 
       cy.contains("Current Balance");
-      cy.get('#currentBalance0').should("not.have.value", "");
+      cy.get("#currentBalance0").should("not.have.value", "");
     });
     cy.get(
       '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
@@ -381,110 +381,114 @@ class InvestmentTrust {
       .should("be.visible")
       .click();
 
-    cy.get('#clientfamilyAustralianShare').should("not.have.value", "");
+    cy.get("#clientfamilyAustralianShare").should("not.have.value", "");
 
-        //Family Trust Platform Investments
-        cy.get(":nth-child(5) > .py-4").within(() => {
-          cy.contains("Family Trust Platform Investments");
-          cy.get("img");
-          cy.contains("Admin");
-          cy.get(
-            "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
-          ).click();
-        });
+    //Family Trust Platform Investments
+    cy.get(":nth-child(5) > .py-4").within(() => {
+      cy.contains("Family Trust Platform Investments");
+      cy.get("img");
+      cy.contains("Admin");
+      cy.get(
+        "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
+      ).click();
+    });
 
-        cy.get(".modal-content").within(() => {
-          cy.contains("Family Trust Platform Investments");
-          cy.get(".btn-close");
-          cy.get(".table").within(() => {
-            cy.contains("Owner");
-            cy.get('[style="width: 50%;"]').contains("Admin");
-            cy.contains("Current Balance");
-          });
-        });
+    cy.get(".modal-content").within(() => {
+      cy.contains("Family Trust Platform Investments");
+      cy.get(".btn-close");
+      cy.get(".table").within(() => {
+        cy.contains("Owner");
+        cy.get('[style="width: 50%;"]').contains("Admin");
+        cy.contains("Current Balance");
+      });
+    });
 
-        cy.get("#button-addon2").click();
+    cy.get("#button-addon2").click();
 
-        cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
-          () => {
-            cy.contains("Admin_Family Trust Platform Investments Detail");
-            cy.contains("How many Platforms does Admin have :");
-            cy.get("#NumberOfMap").clear().type(1);
-          }
-        );
-        //Inner Table
-        cy.get(
-          '[style="display: block;"] > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4'
-        ).within(() => {
-          cy.contains("No#");
-          cy.contains("1");
+    cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+      () => {
+        cy.contains("Admin_Family Trust Platform Investments Detail");
+        cy.contains("How many Platforms does Admin have :");
+        cy.get("#NumberOfMap").clear().type(1);
+      }
+    );
+    //Inner Table
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4'
+    ).within(() => {
+      cy.contains("No#");
+      cy.contains("1");
 
-          cy.contains("Platform Name");
-          cy.get("#platformName0").select("For Testing Purpose");
-          cy.wait(1000);
+      cy.contains("Platform Name");
+      cy.get("#platformName0").select("For Testing Purpose");
+      cy.wait(1000);
 
-          cy.contains("Account Number");
-          cy.get("#accountNumber0").clear().type("9878");
+      cy.contains("Account Number");
+      cy.get("#accountNumber0").clear().type("9878");
 
-          cy.contains("Portfolio Cost Base");
-          cy.get("#totalPortfolioCost0").clear().type("4522");
+      cy.contains("Portfolio Cost Base");
+      cy.get("#totalPortfolioCost0").clear().type("4522");
 
-          cy.contains("Annual Advice Service Fee");
-          cy.get("#serviceFee0").clear().type("9878");
-          cy.get("#serviceFeeType0").select("Weekly");
+      cy.contains("Annual Advice Service Fee");
+      cy.get("#serviceFee0").clear().type("9878");
+      cy.get("#serviceFeeType0").select("Weekly");
 
-          cy.contains("Portfolio Value");
-          cy.get("#portfolioValue0");
+      cy.contains("Portfolio Value");
+      cy.get("#portfolioValue0");
 
-          cy.get("#button-addon2").click();
-        });
-        //Inner Card :
+      cy.get("#button-addon2").click();
+    });
+    //Inner Card :
 
-        cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
-          cy.contains("For Testing Purpose_Portfolio Value");
-          cy.contains("How many Underlying Investments does Admin have :");
-          cy.get("#NumberOfMap").clear().type(1);
-        });
-        //Inner Table
-        cy.get(
-          ":nth-child(7) > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4 > .table-responsive"
-        ).within(() => {
-          cy.contains("No#");
-          cy.contains("1");
+    cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
+      cy.contains("For Testing Purpose_Portfolio Value");
+      cy.contains("How many Underlying Investments does Admin have :");
+      cy.get("#NumberOfMap").clear().type(1);
+    });
+    //Inner Table
+    cy.get(
+      ":nth-child(7) > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4 > .table-responsive"
+    ).within(() => {
+      cy.contains("No#");
+      cy.contains("1");
 
-          cy.contains("Investment Code");
-          cy.get("#investmentCode0");
+      cy.contains("Investment Code");
+      cy.get("#investmentCode0");
 
-          cy.contains("Investment Value");
-          cy.get("#investmentValue0").clear().type("4522");
-        });
+      cy.contains("Investment Value");
+      cy.get("#investmentValue0").clear().type("4522");
+    });
 
-        cy.contains("Investment Option");
-        // cy.get(".css-1lx7dxn").type("Testing (001)");
-        // cy.get("#react-select-2-option-0").click();
+    cy.contains("Investment Option");
+    // cy.get(".css-1lx7dxn").type("Testing (001)");
+    // cy.get("#react-select-2-option-0").click();
 
-        cy.get(
-          ":nth-child(7) > .modal-dialog > .modal-content > .modal-footer"
-        ).within(() => {
-          cy.contains("Close").should("be.visible");
-          cy.contains("Submit").should("be.visible").click();
-        });
+    cy.get(
+      ":nth-child(7) > .modal-dialog > .modal-content > .modal-footer"
+    ).within(() => {
+      cy.contains("Close").should("be.visible");
+      cy.contains("Submit").should("be.visible").click();
+    });
 
     //Portfolio Value
-        cy.get('#portfolioValue0').should("not.have.value", "");
+    cy.get("#portfolioValue0").should("not.have.value", "");
 
-        //Close Inner Card :
-        cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer > .bgColor').contains("Submit").click();
+    //Close Inner Card :
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer > .bgColor'
+    )
+      .contains("Submit")
+      .click();
 
-        cy.get("#clientCurrentBalance").should("not.have.value", "");
+    cy.get("#clientCurrentBalance").should("not.have.value", "");
 
-        cy.contains("Close");
-        cy.get(".modal-footer > .bgColor")
-          .contains("Submit")
-          .should("be.visible")
-          .click();
+    cy.contains("Close");
+    cy.get(".modal-footer > .bgColor")
+      .contains("Submit")
+      .should("be.visible")
+      .click();
 
-          cy.get('#clientfamilyMangedFunds').should("not.have.value", "");
+    cy.get("#clientfamilyMangedFunds").should("not.have.value", "");
 
     // Family Details:
     cy.get(":nth-child(8) > .py-4").within(() => {
@@ -544,7 +548,7 @@ class InvestmentTrust {
     });
 
     cy.get(".css-1xc3v61-indicatorContainer").click();
-    cy.get('#react-select-4-option-0').click();
+    cy.get("#react-select-4-option-0").click();
     //Family Trust Investment Loan Card Section
 
     cy.get(".table").within(() => {
@@ -592,7 +596,6 @@ class InvestmentTrust {
 
     cy.get("#clientfamilyInvestmentHomeLoan").should("not.have.value", "");
 
-
     //Family Trust Investment Property
     cy.get(":nth-child(7) > .py-4").within(() => {
       cy.contains("Family Trust Investment Property");
@@ -611,7 +614,9 @@ class InvestmentTrust {
     });
 
     cy.get(".modal-body").within(() => {
-      cy.contains("How many Family Trust Investment Property does Admin have :");
+      cy.contains(
+        "How many Family Trust Investment Property does Admin have :"
+      );
     });
 
     cy.get("#NumberOfMap").clear().type("1");
@@ -678,7 +683,7 @@ class InvestmentTrust {
     );
     cy.get("#propertyLoanBalance0").should("not.have.value", "");
     //Expense Detail Card's
-    cy.get('tbody > tr > :nth-child(9)')
+    cy.get("tbody > tr > :nth-child(9)")
       .filter(":visible")
       .within(() => {
         cy.get("#button-addon2").click();
@@ -721,9 +726,9 @@ class InvestmentTrust {
     cy.contains("Submit").should("be.visible").click();
 
     cy.contains("Total Market Value");
-    cy.get('#clientfamilyInvestmentProperties').should("not.have.value", "");
+    cy.get("#clientfamilyInvestmentProperties").should("not.have.value", "");
     cy.contains("Total Loans");
-    cy.get('#partnerfamilyInvestmentProperties').should("not.have.value", "");
+    cy.get("#partnerfamilyInvestmentProperties").should("not.have.value", "");
   }
 }
 
