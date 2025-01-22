@@ -5,9 +5,10 @@ import { FaInfoCircle } from "react-icons/fa";
 
 const ModalComponent = (props) => {
 
-    const formRef = useRef(null);  // Create a ref to store the form instance
 
-    let [callBackFun, setCallBackFun] = useState(false);
+
+    const formRef = useRef(null);  // Create a ref to store the form instance
+    const childButtonRef = useRef(null);
 
     const handleOk = () => {
         if (formRef.current) {
@@ -15,14 +16,13 @@ const ModalComponent = (props) => {
         }
     };
 
-    const handleRecalculate = () => {
-        alert("ma chala parent ma");
-
-        if (!callBackFun) {
-            alert("function mil gaya");
-            setCallBackFun(!callBackFun);
+    const handleParentButtonClick = () => {
+        // alert("Parent button clicked");
+        if (childButtonRef.current) {
+            childButtonRef.current.click();
         }
     };
+
 
     let flagState = props.flagState;
     let setFlagState = props.setFlagState;
@@ -121,7 +121,7 @@ const ModalComponent = (props) => {
         "Family Investment Home",
         "Family Investment Home Loan",
         "Family Investment Home Expanse",
-        "Persona Loans",
+        "Personal Loans",
         "Australian Shares",
         "Platform Investment",
         "Other Investments",
@@ -187,7 +187,7 @@ const ModalComponent = (props) => {
 
                 <Modal.Body>
                     {props.children ? (
-                        React.cloneElement(props.children, { formRef, flagState, setFlagState, modalObject, setQuestionChange, callBackFun, setCallBackFun })
+                        React.cloneElement(props.children, { formRef, flagState, setFlagState, modalObject, setQuestionChange, childButtonRef })
                     ) : "no Child exist"}
                 </Modal.Body>
 
@@ -196,13 +196,17 @@ const ModalComponent = (props) => {
                     <Button variant="secondary" style={{ width: "12.5%", minWidth: "fit-content" }} onClick={() => props.setFlagState(false)}>
                         Close
                     </Button>
-                    <Button
-                        variant="secondary"
-                        style={{ width: "12.5%", minWidth: "fit-content" }}
-                        onClick={handleRecalculate}
-                    >
-                        <FaInfoCircle size={14} style={{ marginBottom: "4px" }} />   Re-Calculate
-                    </Button>
+
+                    {props.modalObject?.cal &&
+                        <Button
+                            variant="secondary"
+                            style={{ width: "12.5%", minWidth: "fit-content" }}
+                            onClick={handleParentButtonClick}
+                        >
+                            <FaInfoCircle size={14} style={{ marginBottom: "4px" }} />   Re-Calculate
+                        </Button>
+                    }
+
                     <button type='button' className='btn bgColor modalBtn' style={{ width: "12.5%", minWidth: "fit-content" }} onClick={handleOk}>
                         Submit
                     </button>

@@ -18,14 +18,16 @@ const CashFlowCarsCardsTowInOne = (props) => {
                 key: "cf_personalDebt",
                 attribute: "clientTotal",
                 discoveryKey: "personalLoans",
-                ModalBtn: true
+                ModalBtn: true,
+                cal: true,
             },
             {
                 title: "Credit Card",
                 key: "cf_creditCard",
                 attribute: "clientTotal",
                 discoveryKey: "creditCards",
-                ModalBtn: true
+                ModalBtn: true,
+                cal: true,
             }
         ],
         "cf_incomeFromEducation": [

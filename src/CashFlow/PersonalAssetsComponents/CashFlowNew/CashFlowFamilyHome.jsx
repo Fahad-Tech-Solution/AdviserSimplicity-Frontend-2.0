@@ -194,6 +194,7 @@ const CashFlowFamilyHome = (props) => {
       values,
       key,
       ParentObject: props.modalObject,
+      cal: true,
     });
     setFlagState(true);
   };

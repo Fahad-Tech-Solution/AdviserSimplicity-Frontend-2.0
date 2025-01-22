@@ -259,6 +259,7 @@ const CFSuperFund = (props) => {
             key,
             stakeHolder,
             DiscoveryObj: superAnnuationIssues,
+            cal: title === "Balance & Components",
         });
         setFlagState(true);
     };

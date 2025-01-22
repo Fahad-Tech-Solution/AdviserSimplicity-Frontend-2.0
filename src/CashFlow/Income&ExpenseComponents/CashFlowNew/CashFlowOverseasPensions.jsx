@@ -231,9 +231,6 @@ const CashFlowOverseasPensions = (props) => {
     // { name: "businessAddress", type: "text", placeholder: "Business Address" },
   ];
 
-  let Recalculate = (values, setFieldValue) => {
-    alert("ma chala");
-  }
 
 
   return (
@@ -248,12 +245,7 @@ const CashFlowOverseasPensions = (props) => {
           fillInitialValues(setFieldValue);
         }, []);
 
-        useEffect(() => {
-          if (callBackFun) {
-            Recalculate(values, setFieldValue);
-          }
 
-        }, [props.callBackFun]);
 
         return (
           <Form>

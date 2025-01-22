@@ -245,7 +245,8 @@ const CashFlowMarginLoan = (props) => {
             title,
             values,
             key,
-            stakeHolder
+            stakeHolder,
+            cal: true,
         });
         setFlagState(true);
     };

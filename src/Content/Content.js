@@ -318,7 +318,6 @@ export const content = {
                     title: "Overseas Pensions",
                     img: overseas,
                     key: "cf_incomeFromOverseas",
-                    cal: true
                 },
                 {
                     title: "Sole Trader Income",
@@ -329,7 +328,6 @@ export const content = {
                     title: "Partnership Income",
                     img: businessPartnership,
                     key: "cf_incomeFromPartnership",
-                    cal: true
                 },
                 {
                     title: "Centrelink Payments/Benefits",
@@ -465,6 +463,7 @@ export const content = {
                     title: "Investment Loans (LOC)",
                     img: loan,
                     key: "cf_investmentLoansLOC",
+                    cal: true,
                 },
                 {
                     title: "Margin Loan",
@@ -475,6 +474,7 @@ export const content = {
                     title: "Investments Property",
                     img: property,
                     key: "cf_investmentsProperty",
+                    cal: true,
                 },
                 {
                     title: "Super Fund",

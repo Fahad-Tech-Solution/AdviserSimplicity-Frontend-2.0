@@ -1,14 +1,23 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Button, Modal } from 'react-bootstrap';
+import { FaInfoCircle } from 'react-icons/fa';
 import { scroller, Element } from 'react-scroll';
 
 const InnerModal = (props) => {
 
     const formRef = useRef(null);  // Create a ref to store the form instance
+    const childButtonRef = useRef(null);
 
     const handleOk = () => {
         if (formRef.current) {
             formRef.current.handleSubmit();  // Trigger Formik's handleSubmit
+        }
+    };
+
+    const handleParentButtonClick = () => {
+        // alert("Parent button clicked");
+        if (childButtonRef.current) {
+            childButtonRef.current.click();
         }
     };
 
@@ -120,7 +129,7 @@ const InnerModal = (props) => {
 
                 <Modal.Body>
                     {props.children ? (
-                        React.cloneElement(props.children, { formRef, flagState, setFlagState, modalObject, setQuestionChange, setFieldValue })
+                        React.cloneElement(props.children, { formRef, flagState, setFlagState, modalObject, setQuestionChange, setFieldValue, childButtonRef })
                     ) : "no Child exist"}
                 </Modal.Body>
 
@@ -128,6 +137,17 @@ const InnerModal = (props) => {
                     <Button variant="secondary" style={{ width: "12.5%", minWidth: "fit-content" }} onClick={() => props.setFlagState(false)}>
                         Close
                     </Button>
+
+                    {props.modalObject?.cal &&
+                        <Button
+                            variant="secondary"
+                            style={{ width: "12.5%", minWidth: "fit-content" }}
+                            onClick={handleParentButtonClick}
+                        >
+                            <FaInfoCircle size={14} style={{ marginBottom: "4px" }} />   Re-Calculate
+                        </Button>
+                    }
+
                     <button type='button' className='btn bgColor modalBtn' style={{ width: "12.5%", minWidth: "fit-content" }} onClick={handleOk}>
                         Submit
                     </button>
