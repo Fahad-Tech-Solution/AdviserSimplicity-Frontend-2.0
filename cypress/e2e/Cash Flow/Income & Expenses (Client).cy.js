@@ -1,5 +1,5 @@
 // e2e/Cash Flow/Income & Expenses.cy.js
-class IncomeAndExpenses {
+class ClientIncomeAndExpenses {
   section() {
     cy.visit("http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com/");
 
@@ -32,7 +32,7 @@ class IncomeAndExpenses {
     cy.wait(2000);
     cy.get(":nth-child(1) > .py-4").within(() => {
       cy.contains("Overseas Pensions");
-      cy.contains("Quality Assurance");
+      cy.contains("Aiden Smith");
       cy.get("img");
     });
     cy.get(
@@ -42,17 +42,21 @@ class IncomeAndExpenses {
       .should("be.visible");
 
     //Card Header
+
+    //Use only for remove partner When Run code with Client only
+    cy.get(":nth-child(2) > .css-v7duua").click();
+
     cy.get(".modal-header").contains("Overseas Pensions");
     cy.get(".btn-close").should("be.visible");
     cy.get(".col-md-12 > .d-flex").within(() => {
       cy.contains("Owner");
-      cy.get(".css-9jq23d").contains("Quality Assurance");
+      cy.get(".css-9jq23d").contains("Aiden Smith");
     });
 
     cy.get(".table").within(() => {
       cy.contains("Owner").should("be.visible");
 
-      cy.contains("Quality Assurance").should("be.visible");
+      cy.contains("Aiden Smith").should("be.visible");
 
       cy.contains("Other Taxable Income").should("be.visible");
       cy.get("#otherTaxableIncome").should("have.value", "$789");
@@ -79,7 +83,7 @@ class IncomeAndExpenses {
     cy.wait(2000);
     cy.get(":nth-child(2) > .py-4").within(() => {
       cy.contains("Sole Trader Income");
-      cy.contains("Quality Assurance");
+      cy.contains("Aiden Smith");
       cy.get("img");
     });
     cy.get(
@@ -89,17 +93,19 @@ class IncomeAndExpenses {
       .should("be.visible");
 
     //Card Header
+    //Use only for remove partner When Run code with Client only
+    cy.get(":nth-child(2) > .css-v7duua").click();
     cy.get(".modal-header").contains("Sole Trader Income");
     cy.get(".btn-close").should("be.visible");
     cy.get(".col-md-12 > .d-flex").within(() => {
       cy.contains("Owner");
-      cy.get(".css-9jq23d").contains("Quality Assurance");
+      cy.get(".css-9jq23d").contains("Aiden Smith");
     });
 
     cy.get(".table").within(() => {
       cy.contains("Owner").should("be.visible");
 
-      cy.contains("Quality Assurance").should("be.visible");
+      cy.contains("Aiden Smith").should("be.visible");
 
       cy.contains("Net Business Income").should("be.visible");
       cy.get("#netBusinessIncome").should("have.value", "$56,745");
@@ -120,14 +126,14 @@ class IncomeAndExpenses {
       cy.contains("Submit").should("be.visible").click();
     });
 
-    cy.get("#netBusinessIncome").should("have.value", "$56,745");
+    cy.get("#clientcf_incomeFromSoleTrade").should("have.value", "$56,745");
 
     //PartnerShip Income
 
     cy.wait(2000);
     cy.get(":nth-child(3) > .py-4").within(() => {
       cy.contains("Partnership Income");
-      cy.contains("Quality Assurance");
+      cy.contains("Aiden Smith");
       cy.get("img");
     });
     cy.get(
@@ -137,17 +143,20 @@ class IncomeAndExpenses {
       .should("be.visible");
 
     //Card Header
+
+    //Use only for remove partner When Run code with Client only
+    cy.get(":nth-child(2) > .css-v7duua").click();
     cy.get(".modal-header").contains("Partnership Income");
     cy.get(".btn-close").should("be.visible");
     cy.get(".col-md-12 > .d-flex").within(() => {
       cy.contains("Owner");
-      cy.get(".css-9jq23d").contains("Quality Assurance");
+      cy.get(".css-9jq23d").contains("Aiden Smith");
     });
 
     cy.get(".table").within(() => {
       cy.contains("Owner").should("be.visible");
 
-      cy.contains("Quality Assurance").should("be.visible");
+      cy.contains("Aiden Smith").should("be.visible");
 
       cy.contains("Net Business Income").should("be.visible");
       cy.get("#netBusinessIncome").should("have.value", "$896");
@@ -174,7 +183,7 @@ class IncomeAndExpenses {
     cy.wait(2000);
     cy.get(":nth-child(4) > .py-4").within(() => {
       cy.contains("Centrelink Payments/Benefits");
-      cy.contains("Quality Assurance");
+      cy.contains("Aiden Smith");
       cy.get("img");
     });
     cy.get(
@@ -184,17 +193,19 @@ class IncomeAndExpenses {
       .should("be.visible");
 
     //Card Header
+    // Use only for remove partner When Run code with Client only
+    cy.get(":nth-child(2) > .css-v7duua").click();
     cy.get(".modal-header").contains("Centrelink Payments/Benefits");
     cy.get(".btn-close").should("be.visible");
     cy.get(".col-md-12 > .d-flex").within(() => {
       cy.contains("Owner");
-      cy.get(".css-9jq23d").contains("Quality Assurance");
+      cy.get(".css-9jq23d").contains("Aiden Smith");
     });
 
     cy.get(".table").within(() => {
       cy.contains("Owner").should("be.visible");
 
-      cy.contains("Quality Assurance").should("be.visible");
+      cy.contains("Aiden Smith").should("be.visible");
 
       cy.contains("Centrelink Payment").should("be.visible");
       cy.get(
@@ -236,7 +247,7 @@ class IncomeAndExpenses {
     cy.wait(2000);
     cy.get(":nth-child(3) > .py-4").within(() => {
       cy.contains("Partnership Income");
-      cy.contains("Quality Assurance");
+      cy.contains("Aiden Smith");
       cy.get("img");
     });
     cy.get(
@@ -246,17 +257,19 @@ class IncomeAndExpenses {
       .should("be.visible");
 
     //Card Header
+    // Use only for remove partner When Run code with Client only
+    cy.get(":nth-child(2) > .css-v7duua").click();
     cy.get(".modal-header").contains("Lifetime Benefits");
     cy.get(".btn-close").should("be.visible");
     cy.get(".col-md-12 > .d-flex").within(() => {
       cy.contains("Owner");
-      cy.get(".css-9jq23d").contains("Quality Assurance");
+      cy.get(".css-9jq23d").contains("Aiden Smith");
     });
 
     cy.get(".table").within(() => {
       cy.contains("Owner").should("be.visible");
 
-      cy.contains("Quality Assurance").should("be.visible");
+      cy.contains("Aiden Smith").should("be.visible");
 
       cy.contains("Lifetime Pension Income").should("be.visible");
       cy.get("#lifetimePensionIncome").should("have.value", "$20,514");
@@ -288,6 +301,168 @@ class IncomeAndExpenses {
       "$20,514"
     );
 
+    //Employment Income
+    cy.wait(2000);
+    cy.get(":nth-child(6) > .py-4").within(() => {
+      cy.contains("Employment Income");
+      cy.get("img");
+
+      cy.get(
+        "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
+      ).click(); // Or any other interaction you want
+    });
+
+    //Employment Income Card
+
+    cy.contains("Employment Income").should("be.visible");
+    cy.get(".btn-close").should("be.visible");
+
+    //Remove Partner
+    cy.get(":nth-child(2) > .css-v7duua").click();
+    cy.contains("Aiden Smith");
+
+    //In Table
+    cy.get(".table-responsive").within(() => {
+      cy.contains("Owner").should("be.visible");
+      cy.contains("Aiden Smith").should("be.visible");
+
+      cy.contains("Salary Income").should("be.visible");
+      cy.get("#salaryIncome").should("have.value", "$54");
+
+      cy.contains("Include From Year").should("be.visible");
+      cy.get(":nth-child(3) > .form-select").should("have.value", "1");
+
+      cy.contains("Up Until Year");
+      cy.get(":nth-child(4) > .form-select").should("have.value", "30");
+      cy.contains("Indexation");
+      cy.get(":nth-child(5) > .form-select").should("have.value", "2.50%");
+    });
+
+    //Sallery Package Card :
+    cy.get("thead > tr > :nth-child(6)").contains("Reduced Salary Income");
+    cy.get(":nth-child(6) > .form-check > .radioButton2")
+      .contains("Yes")
+      .click();
+    cy.get("tbody > tr > :nth-child(6)").within(() => {
+      cy.get("#button-addon2").click();
+    });
+
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close'
+    ).should("be.visible");
+    //Inner Tabel
+    cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+      () => {
+        cy.contains("Reduced Salary Income");
+
+        Cypress.on("uncaught:exception", (err, runnable) => {
+          return false;
+        });
+
+        cy.contains("Owner");
+        cy.contains("Aiden Smith");
+
+        cy.contains("Reduced Salary Income");
+        cy.get("#reducedSalaryIncome").clear().type("54").should("be.visible");
+
+        cy.contains("Include From Year");
+        cy.get("#includeFromYear").should("have.value", "1");
+
+        cy.contains("Up Until Year");
+        cy.get("#upUntilYear").should("have.value", "30");
+
+        cy.contains("Submit").click();
+      }
+    );
+
+    cy.contains("Salary Packaging");
+    cy.get(":nth-child(7) > .form-check > .radioButton2")
+      .contains("Yes")
+      .click();
+
+    cy.get("tbody > tr > :nth-child(7)").within(() => {
+      cy.get(".d-flex > #button-addon2").click();
+    });
+
+    //Header
+    cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+      () => {
+        cy.contains("Salary Packaging Car");
+      }
+    );
+    //Table Salary Packaging
+
+    cy.get(
+      ":nth-child(1) > :nth-child(1) > .row > .mt-4 > .table-responsive"
+    ).within(() => {
+      cy.contains("Owner");
+
+      cy.contains("Aiden Smith");
+
+      cy.contains("Employer FBT Status");
+      cy.get("#employerFBTStatus").select(
+        "Full FBT/Rebatable/Exempt (17K Cap)"
+      );
+
+      cy.contains("Cost Base Of Car");
+      cy.get("#costBaseOfCar").clear().type("486543").should("be.visible");
+
+      cy.contains("FBT Paid By Employer");
+      cy.get(".d-flex > .form-check > .radioButton2").contains("Yes").click();
+
+      cy.contains("Include From Year");
+      cy.get("#includeFromYear").should("have.value", "1");
+
+      cy.contains("Up Until Year");
+      cy.get("#upUntilYear").should("have.value", "30");
+
+      cy.contains("Indexation");
+      cy.get("#indexation").should("have.value", "2.50%");
+    });
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
+    ).within(() => {
+      cy.contains("Submit").click();
+      cy.contains("Close");
+    });
+
+    cy.contains("Salary Packaging (Other)");
+    cy.get(":nth-child(8) > .form-check > .radioButton2")
+      .contains("Yes")
+      .click();
+    cy.get("tbody > tr > :nth-child(8)").within(() => {});
+    cy.get(":nth-child(8) > .d-flex > #button-addon2").click();
+
+    cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+      () => {
+        cy.contains("Salary Packaging (Other)");
+
+        cy.contains("Owner");
+        cy.contains("Aiden Smith");
+
+        cy.contains("Salary Packaging (Other)");
+        cy.get("#salaryPackagingOther").select(
+          "Full FBT/Rebatable/Exempt (17K Cap)"
+        );
+
+        cy.contains("GST Status");
+        cy.get("#GSTStatus").should("have.value", "Without GST");
+
+        cy.contains("Include From Year");
+        cy.get("#includeFromYear").should("have.value", "1");
+
+        cy.contains("Up Until Year");
+        cy.get("#upUntilYear").should("have.value", "30");
+
+        cy.contains("Submit").click();
+      }
+    );
+
+    cy.contains("Close").should("be.visible");
+    cy.contains("Submit").should("be.visible").click();
+
+    cy.get("#clientcf_employmentIncome").should("not.have.value", "");
+
     //Lifetime Benefits
     cy.wait(2000);
     cy.get(":nth-child(7) > .py-4").within(() => {
@@ -302,13 +477,14 @@ class IncomeAndExpenses {
       .should("be.visible");
 
     //Card Header
+
     cy.get(".modal-header").contains("Regular Living Expenses");
     cy.get(".btn-close").should("be.visible");
 
     cy.get(".table").within(() => {
       cy.contains("Owner").should("be.visible");
 
-      cy.contains("Quality Assurance").should("be.visible");
+      cy.contains("Aiden Smith").should("be.visible");
 
       cy.contains("Expenses").should("be.visible");
       cy.get(":nth-child(2) > .form-select").select("Living Expenses");
@@ -338,4 +514,4 @@ class IncomeAndExpenses {
     );
   }
 }
-export default IncomeAndExpenses;
+export default ClientIncomeAndExpenses;
