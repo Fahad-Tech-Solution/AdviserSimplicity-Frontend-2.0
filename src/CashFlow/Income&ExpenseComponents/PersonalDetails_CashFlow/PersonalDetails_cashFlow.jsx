@@ -181,6 +181,7 @@ const PersonalDetails_cashFlow = (Props) => {
                     setFieldValue(`${sectionName}.${input.name}`, date); // Set date in form
                     const age = differenceInYears(new Date(), date) || 0; // Calculate age
                     setFieldValue(`${sectionName}.age`, age); // Assuming you want to store the age separately
+                    handleNameChange(values, setFieldValue, { name: `${sectionName}.${input.name}`, value: date }, input, sectionName);
                   }}
                   dateFormat="dd/MM/yyyy"
                   placeholderText="dd/mm/yyyy"
@@ -222,8 +223,7 @@ const PersonalDetails_cashFlow = (Props) => {
     )))
   }
 
-  function handleNameChange(values, setFieldValue, currentInput, CalBacks, sectionName,) {
-
+  async function handleNameChange(values, setFieldValue, currentInput, CalBacks, sectionName,) {
 
     // Check if `currentInput` contains `name` and `value`
     if (!currentInput || !currentInput.name || typeof currentInput.value === 'undefined') {
@@ -255,6 +255,47 @@ const PersonalDetails_cashFlow = (Props) => {
         setFieldValue(currentInput.name, currentInput.value);
         break;
     }
+
+    // alert("Macha ay ayay:" + currentInput.name)
+
+    switch (currentInput.name) {
+      case `${sectionName}.DOB`:
+      case `${sectionName}.retirementYear`:
+        // alert("Macha ay ayay")
+
+        // Ensure that `DOB` and `retirementYear` are valid dates before performing calculation
+        const DOB = new Date(values[`${sectionName}`][`DOB`]);
+        const retirementYearValue = parseInt(values[`${sectionName}`][`retirementYear`], 10) || 0;
+
+        if (DOB instanceof Date && !isNaN(DOB.getTime()) && retirementYearValue > 0) {
+          let data = JSON.parse(JSON.stringify(cashFlowData));
+          data.cf_personalDetails = values;
+          data.cf_personalDetails[`${sectionName}`][`${currentInput.name.split('.')[1]}`] = currentInput.value;
+          console.log(data)
+          // run Calculate api here
+          let res = await PostAxios(`${DefaultUrl}/api/cal/cf_personalDetails`, data);
+          if (res.data) {
+            console.log(res.data);
+            let obj = res.data;
+            //store Preservation Age
+            setFieldValue(`${sectionName}.preservationAge`, (parseFloat(obj[`${sectionName}`].preservationAge)).toFixed(0));
+            // let plannedRetirementAge = (parseFloat(obj[`${sectionName}`].plannedRetirementAge)).toFixed(0);
+            // //store Planned Retirement Age
+            // setFieldValue(`${sectionName}.plannedRetirementAge`, plannedRetirementAge > 30 ? 30 : plannedRetirementAge);
+            // //store Age
+            // setFieldValue(`${sectionName}.age`, (parseFloat(obj[`${sectionName}`].age)).toFixed(0));
+
+
+          }
+
+        }
+
+        break;
+      default:
+        break;
+    }
+
+
   }
 
   const fillInitialValues = (setFieldValue) => {
@@ -275,6 +316,7 @@ const PersonalDetails_cashFlow = (Props) => {
           maritalStatus: data.maritalStatus || data.clientMaritalStatus || "",
           retirementYear: data.retirementYear || "",
           plannedRetirementAge: data.plannedRetirementAge || "",
+          preservationAge: data.preservationAge || "",
         } : {
           name: data.name || data.partnerGivenName || "",
           DOB: data.DOB || data.partnerDOB || "",
@@ -284,6 +326,7 @@ const PersonalDetails_cashFlow = (Props) => {
           maritalStatus: data.maritalStatus || data.partnerMaritalStatus || "",
           retirementYear: data.retirementYear || "",
           plannedRetirementAge: data.plannedRetirementAge || "",
+          preservationAge: data.preservationAge || "",
         };
 
         Object.entries(fields).forEach(([key, value]) => {
