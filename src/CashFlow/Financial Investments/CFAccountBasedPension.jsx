@@ -253,6 +253,7 @@ const CFAccountBasedPension = (props) => {
             key,
             stakeHolder,
             sourceObj: props.modalObject,
+            cal: title === "Balance & Rollover Amount",
         });
         setFlagState(true);
     };
@@ -302,7 +303,7 @@ const CFAccountBasedPension = (props) => {
                 type: "select",
                 options: riskProfileOptions,
                 placeholder: "Year To Commence",
-                disabled: true,
+                // disabled: true,
             },
             {
                 name: "riskProfile",

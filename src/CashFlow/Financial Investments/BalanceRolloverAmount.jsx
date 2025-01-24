@@ -155,6 +155,31 @@ const BalanceRolloverAmount = (props) => {
         return componentMapping[obj.title] || null;
     };
 
+
+    let handleChildButtonClick = async (values, setFieldValue) => {
+        alert("ma chala");
+        // try {
+        //     let obj = {
+        //         values: props.modalObject.values,
+        //         AllCashFlowData: cashFlowData,
+        //     };
+
+        //     obj.values[props.modalObject.key + "Obj"] = values;
+        //     obj.values[props.modalObject.key] = values.costBaseExisting;
+
+        //     // let res = await PostAxios(`${defaultUrl}/api/Calculate/Overseas`, obj);
+        //     // console.log(res, "res");
+        //     // if (res) {
+        //     //     console.log(res);
+
+        //     // }
+        //     openNotificationSuccess("success", "topRight", "Success Notification", 'Data of "' + props.modalObject.title + '" is Saved');
+        // } catch (error) {
+        //     console.error("Error occurred while making API call:", error);
+        //     openNotificationSuccess("error", "topRight", "Error Notification", 'Data of "' + props.modalObject.title + '" is not Saved Please! try again');
+        // }
+    };
+
     return (
         <Formik
             initialValues={initialValues}
@@ -205,6 +230,14 @@ const BalanceRolloverAmount = (props) => {
                                                 />
                                             </tbody>
                                         </Table>
+                                        <button
+                                            ref={props.childButtonRef}
+                                            onClick={() => { handleChildButtonClick(values, setFieldValue) }}
+                                            style={{ display: "none" }} // Hidden button
+                                            type="button"
+                                        >
+                                            Hidden Child Button
+                                        </button>
                                     </div>
                                 </div>
                             </div>
