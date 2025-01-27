@@ -1,7 +1,7 @@
 // e2e/Cash Flow/Cash Flow.cy.js
 /// <reference types="cypress" />
 import PartnerIncomeAndExpenses from "./Income & Expenses (Partner).cy.js";
-import ClientIncomeAndExpenses from "./Income & Expenses (Client).cy.js"
+import ClientIncomeAndExpenses from "./Income & Expenses (Client).cy.js";
 import ClientLifestyleAssetsandDebt from "./Lifestyle Assets & Debt (Client).cy.js";
 import PartnerLifestyleAssetsandDebt from "./Lifestyle Assets & Debt (Partner).cy.js";
 import PersonalDetail from "./Personal Detail.cy.js";
@@ -25,13 +25,13 @@ describe("Adviser Simplicity", () => {
     IncomeAndExpenseClient.section();
   });
 
+  it("Lifestyle Assets and Debt With Partner", () => {
+    LifestyleAssetsandDebtPartner.section();
+  });
 
-
-  it.only("Lifestyle Assets and Debt With Client", () => {
+  it("Lifestyle Assets and Debt With Client", () => {
     LifestyleAssetsandDebtClient.section();
   });
 
-  it.only("Lifestyle Assets and Debt With Partner", () => {
-    LifestyleAssetsandDebtPartner.section();
-  });
+ 
 });
