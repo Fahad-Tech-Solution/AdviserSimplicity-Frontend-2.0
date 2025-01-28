@@ -17,11 +17,11 @@ describe("Adviser Simplicity", () => {
     personalDetail.section();
   });
 
-  it.skip("Income And Expenses With Partner ", () => {
+  it.only("Income And Expenses With Partner ", () => {
     IncomeAndExpensesPartner.section();
   });
 
-  it.skip("Income And Expenses With Client ", () => {
+  it("Income And Expenses With Client ", () => {
     IncomeAndExpenseClient.section();
   });
 
