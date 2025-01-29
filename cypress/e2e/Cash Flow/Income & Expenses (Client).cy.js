@@ -463,7 +463,7 @@ class ClientIncomeAndExpenses {
 
     // cy.get("#clientcf_employmentIncome").should("not.have.value", "");
 
-    // //Lifetime Benefits
+    // //Regular Living Expenses
     // cy.wait(2000);
     // cy.get(":nth-child(7) > .py-4").within(() => {
     //   cy.contains("Regular Living Expenses");
@@ -513,55 +513,167 @@ class ClientIncomeAndExpenses {
     //   "$20,514"
     // );
 
+    // //Business Income
+    // cy.wait(2000);
+    // cy.get(':nth-child(7) > .py-4').within(() => {
+    //   cy.contains("Business Income");
+    //   cy.contains("Aiden Smith");
+    //   cy.get("img");
+    // });
+    // cy.get(':nth-child(7) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0')
+    //   .click()
+    //   .should("be.visible");
 
-    //Business Income
+    // //Card Header
+    // //Use only for remove partner When Run code with Client only
+
+    // cy.get(".modal-header").contains("Business Income");
+    // cy.get(".btn-close").should("be.visible");
+    // cy.get(".col-md-12 > .d-flex").within(() => {
+    //   cy.contains("Owner");
+    //  // cy.get(':nth-child(2) > .css-v7duua').click();
+    //   cy.get('.css-1lx7dxn').type("Aiden Smith{enter}")
+    // });
+
+    // cy.get(".table").within(() => {
+    //   cy.contains("Owner").should("be.visible");
+
+    //   cy.contains("Aiden Smith").should("be.visible");
+
+    //   cy.contains("Lifetime Pension Income").should("be.visible");
+    //   cy.get('#lifetimePensionIncome').clear().type("100")
+
+    //   cy.contains("Include From Year").should("be.visible");
+    //   cy.get(':nth-child(3) > .form-select').should("have.value", "1");
+
+    //   cy.contains("Up Until Year").should("be.visible");
+    //   cy.get(':nth-child(4) > .form-select').should("have.value", "30");
+
+    //   cy.contains("Indexation").should("be.visible");
+    //  cy.get(':nth-child(5) > .form-select').should("have.value", "2.50%");
+    // });
+
+    // //Business Income Footer
+    // cy.get(".modal-footer").within(() => {
+    //   cy.contains("Close").should("be.visible");
+    //   cy.contains("Submit").should("be.visible").click();
+    // });
+
+    // cy.get('#clientcf_incomeFromBusiness').should("have.value", "$100");
+
+    // //Other Non-Taxable
+    // cy.wait(2000);
+    // cy.get(':nth-child(8) > .py-4').within(() => {
+    //   cy.contains("Other Non-Taxable");
+    //   cy.contains("Aiden Smith");
+    //   cy.get("img");
+    // });
+    // cy.get(':nth-child(8) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0')
+    //   .click()
+    //   .should("be.visible");
+
+    // //Card Header
+    // //Use only for remove partner When Run code with Client only
+
+    // cy.get(".modal-header").contains("Other Non-Taxable");
+    // cy.get(".btn-close").should("be.visible");
+    //Remove Partner
+    // cy.get(".col-md-12 > .d-flex").within(() => {
+    //   cy.contains("Owner");
+    //   cy.get(':nth-child(2) > .css-v7duua').click();
+    //   cy.get('.css-1lx7dxn').type("Aiden Smith{enter}")
+    // });
+
+    // cy.get(".table").within(() => {
+    //   cy.contains("Owner").should("be.visible");
+
+    //   cy.contains("Aiden Smith").should("be.visible");
+
+    //   cy.contains("Other None Taxable Income").should("be.visible");
+    //   cy.get('#otherNoneTaxableIncome').clear().type("100")
+
+    //   cy.contains("Include From Year").should("be.visible");
+    //   cy.get(':nth-child(3) > .form-select').should("have.value", "1");
+
+    //   cy.contains("Up Until Year").should("be.visible");
+    //   cy.get(':nth-child(4) > .form-select').should("have.value", "30");
+
+    //   cy.contains("Indexation").should("be.visible");
+    //   cy.get(':nth-child(5) > .form-select').should("have.value", "2.50%");
+    // });
+
+    // //Other Non-Taxable Footer
+    // cy.get(".modal-footer").within(() => {
+    //   cy.contains("Close").should("be.visible");
+    //   cy.contains("Submit").should("be.visible").click();
+    // });
+
+    // cy.get('#clientcf_incomeFromOtherNonTaxable').should("have.value", "$100");
+
+    //Education Expenses
+
     cy.wait(2000);
-    cy.get(':nth-child(7) > .py-4').within(() => {
-      cy.contains("Business Income");
-      cy.contains("Aiden Smith");
+    cy.get(":nth-child(10) > .py-4").within(() => {
+      cy.contains("Education Expenses");
+      cy.contains("Education Expenses");
+
       cy.get("img");
     });
-    cy.get(':nth-child(7) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0')
+
+    cy.get(
+      ":nth-child(10) > .py-4 > .flex-column > .row > .col-12 > .d-flex > .mb-0"
+    )
       .click()
       .should("be.visible");
 
-    //Card Header
-    //Use only for remove partner When Run code with Client only
-  
-    cy.get(".modal-header").contains("Business Income");
-    cy.get(".btn-close").should("be.visible");
-    cy.get(".col-md-12 > .d-flex").within(() => {
-      cy.contains("Owner");
-     // cy.get(':nth-child(2) > .css-v7duua').click();
-      cy.get('.css-1lx7dxn').type("Aiden Smith{enter}")
-    });
+    cy.get(".modal-header").contains("Education Expenses");
+
+    cy.contains("How many children do you have :");
+    cy.get("#numberOfChildren").clear().type("1");
 
     cy.get(".table").within(() => {
-      cy.contains("Owner").should("be.visible");
+      cy.contains("No#").should("be.visible");
 
-      cy.contains("Aiden Smith").should("be.visible");
+      cy.contains("1").should("be.visible");
 
-      cy.contains("Lifetime Pension Income").should("be.visible");
-      cy.get('#lifetimePensionIncome').clear().type("100")
+      cy.contains("Name");
+      cy.get("#Name0").type("Aiden Smith");
 
-      cy.contains("Include From Year").should("be.visible");
-      cy.get(':nth-child(3) > .form-select').should("have.value", "1");
+      cy.contains("Dob").should("be.visible");
+      cy.get("#DOB0").clear().type("10/1/2012");
 
-      cy.contains("Up Until Year").should("be.visible");
-      cy.get(':nth-child(4) > .form-select').should("have.value", "30");
+      cy.contains("Age");
+      cy.get("#age0").should("have.value", "13");
 
+      cy.contains("Child Support Received ($)");
+      cy.get("#childSupportReceived0").clear().type("1986");
 
-      cy.contains("Indexation").should("be.visible");
-     cy.get(':nth-child(5) > .form-select').should("have.value", "2.50%");
+      cy.contains("Paid or Received");
+      cy.get("#paidOrReceived0").select("Paid").should("have.value", "Paid");
+
+      cy.contains("Primary");
+      cy.get("#primary0").clear().type("19").should("have.value", "$19");
+
+      cy.contains("Secondary").should("be.visible");
+      cy.get("#secondary0").clear().type("400").should("have.value", "$400");
+
+      cy.contains("Uni ($)");
+      cy.get("#uni0").clear().type("2341");
+
+      cy.contains("Course Years");
+      cy.get("#courseYears0").select("10").should("have.value", "10");
+
+      cy.contains("Indexation");
+      cy.get("#indexation0").select("2.50%").should("have.value", "2.50%");
     });
 
-    //Business Income Footer
+    //Education Expenses Footer
     cy.get(".modal-footer").within(() => {
       cy.contains("Close").should("be.visible");
       cy.contains("Submit").should("be.visible").click();
     });
 
-    cy.get('#clientcf_incomeFromBusiness').should("have.value", "$100");
+    cy.get("#clientcf_incomeFromEducation").should("have.value", "$1,986");
   }
 }
 export default ClientIncomeAndExpenses;
