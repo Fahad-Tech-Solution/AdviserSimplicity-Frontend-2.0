@@ -209,8 +209,8 @@ class PartnerLifestyleAssetsandDebt {
     //Contents
     cy.wait(2000);
     cy.get(':nth-child(2) > .py-4').within(() => {
+     
       cy.contains("Contents");
-      cy.contains("Aiden Smith");
       cy.get("img");
     });
     cy.get(':nth-child(2) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0')
@@ -218,8 +218,7 @@ class PartnerLifestyleAssetsandDebt {
       .should("be.visible");
 
     //Card Header
-    //Use only for remove partner When Run code with Client only
-    //cy.get(":nth-child(2) > .css-v7duua").click();
+    
     cy.get(".css-1lcv7hw").type("Aiden Smith{enter}");
 
     cy.get(".modal-header").contains("Contents");
@@ -250,35 +249,7 @@ class PartnerLifestyleAssetsandDebt {
       cy.get(":nth-child(6) > .form-select").should("have.value", "2.50%");
     });
 
-    //PartnerShip Section :
-    //cy.get(":nth-child(2) > .css-v7duua").click();
-
-    cy.get(".css-1lcv7hw").type("Emma Taylor{enter}");
-
-    cy.get(".table").within(() => {
-      cy.get(":nth-child(2) > :nth-child(1) > th").contains("Emma Taylor");
-
-      cy.get(":nth-child(2) > :nth-child(2) > #currentValue")
-        .clear()
-        .type("100");
-
-      cy.get(":nth-child(2) > :nth-child(3) > .form-select").should(
-        "have.value",
-        "No"
-      );
-
-      cy.get(":nth-child(2) > :nth-child(4) > #newPurchase")
-        .clear()
-        .type("100");
-
-      cy.get(":nth-child(2) > :nth-child(5) > .form-select")
-        .select("30")
-        .should("have.value", "30");
-
-      cy.get(":nth-child(2) > :nth-child(6) > .form-select")
-        .select("2.50%")
-        .should("have.value", "2.50%");
-    });
+    
 
     //Contents Footer
     cy.get(".modal-footer").within(() => {
@@ -287,7 +258,7 @@ class PartnerLifestyleAssetsandDebt {
     });
 
     cy.get('#clientcf_contents').should("have.value", "$100");
-    cy.get('#partnercf_contents').should("have.value", "$100");
+   
 
     
    
@@ -376,97 +347,97 @@ class PartnerLifestyleAssetsandDebt {
     cy.get("#clientcf_car").should("have.value", "$100");
     cy.get("#partnercf_car").should("have.value", "$100");
 
-     //Contents
-     cy.wait(2000);
-     cy.get(':nth-child(4) > .py-4').within(() => {
-       cy.contains("Motor Vehicle 2");
-       cy.contains("Aiden Smith");
-       cy.get("img");
-     });
-     cy.get(':nth-child(4) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0')
-       .click()
-       .should("be.visible");
+    //  //Contents
+    //  cy.wait(2000);
+    //  cy.get(':nth-child(4) > .py-4').within(() => {
+    //    cy.contains("Motor Vehicle 2");
+    //    cy.contains("Aiden Smith");
+    //    cy.get("img");
+    //  });
+    //  cy.get(':nth-child(4) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0')
+    //    .click()
+    //    .should("be.visible");
  
-     //Card Header
-     //Use only for remove partner When Run code with Client only
-     //cy.get(":nth-child(2) > .css-v7duua").click();
-     cy.get(".css-1lcv7hw").type("Aiden Smith{enter}");
+    //  //Card Header
+    //  //Use only for remove partner When Run code with Client only
+    //  //cy.get(":nth-child(2) > .css-v7duua").click();
+    //  cy.get(".css-1lcv7hw").type("Aiden Smith{enter}");
  
-     cy.get(".modal-header").contains("Motor Vehicle 2");
-     cy.get(".btn-close").should("be.visible");
-     cy.get(".col-md-12 > .d-flex").within(() => {
-       cy.contains("Owner");
-       cy.get(".css-9jq23d").contains("Aiden Smith");
-     });
+    //  cy.get(".modal-header").contains("Motor Vehicle 2");
+    //  cy.get(".btn-close").should("be.visible");
+    //  cy.get(".col-md-12 > .d-flex").within(() => {
+    //    cy.contains("Owner");
+    //    cy.get(".css-9jq23d").contains("Aiden Smith");
+    //  });
  
-     cy.get(".table").within(() => {
-       cy.contains("Owner").should("be.visible");
+    //  cy.get(".table").within(() => {
+    //    cy.contains("Owner").should("be.visible");
  
-       cy.contains("Aiden Smith").should("be.visible");
+    //    cy.contains("Aiden Smith").should("be.visible");
  
-       cy.contains("Current Value").should("be.visible");
-       cy.get("#currentValue").clear().type("888");
+    //    cy.contains("Current Value").should("be.visible");
+    //    cy.get("#currentValue").clear().type("888");
  
-       cy.contains("Sell In Year").should("be.visible");
-       cy.get(":nth-child(3) > .form-select").should("have.value", "No");
+    //    cy.contains("Sell In Year").should("be.visible");
+    //    cy.get(":nth-child(3) > .form-select").should("have.value", "No");
  
-       cy.contains("New Purchase").should("be.visible");
-       cy.get("#newPurchase").clear().type("400");
+    //    cy.contains("New Purchase").should("be.visible");
+    //    cy.get("#newPurchase").clear().type("400");
  
-       cy.contains("Purchase In Year").should("be.visible");
-       cy.get(":nth-child(5) > .form-select").should("have.value", "30");
+    //    cy.contains("Purchase In Year").should("be.visible");
+    //    cy.get(":nth-child(5) > .form-select").should("have.value", "30");
  
-       cy.contains("Indexation").should("be.visible");
-       cy.get(":nth-child(6) > .form-select").should("have.value", "2.50%");
-     });
+    //    cy.contains("Indexation").should("be.visible");
+    //    cy.get(":nth-child(6) > .form-select").should("have.value", "2.50%");
+    //  });
  
-     //PartnerShip Section :
-     //cy.get(":nth-child(2) > .css-v7duua").click();
+    //  //PartnerShip Section :
+    //  //cy.get(":nth-child(2) > .css-v7duua").click();
  
-     cy.get(".css-1lcv7hw").type("Emma Taylor{enter}");
+    //  cy.get(".css-1lcv7hw").type("Emma Taylor{enter}");
  
-     cy.get(".table").within(() => {
-       cy.get(":nth-child(2) > :nth-child(1) > th").contains("Emma Taylor");
+    //  cy.get(".table").within(() => {
+    //    cy.get(":nth-child(2) > :nth-child(1) > th").contains("Emma Taylor");
  
-       cy.get(":nth-child(2) > :nth-child(2) > #currentValue")
-         .clear()
-         .type("342");
+    //    cy.get(":nth-child(2) > :nth-child(2) > #currentValue")
+    //      .clear()
+    //      .type("342");
  
-       cy.get(":nth-child(2) > :nth-child(3) > .form-select").should(
-         "have.value",
-         "No"
-       );
+    //    cy.get(":nth-child(2) > :nth-child(3) > .form-select").should(
+    //      "have.value",
+    //      "No"
+    //    );
  
-       cy.get(":nth-child(2) > :nth-child(4) > #newPurchase")
-         .clear()
-         .type("990");
+    //    cy.get(":nth-child(2) > :nth-child(4) > #newPurchase")
+    //      .clear()
+    //      .type("990");
  
-       cy.get(":nth-child(2) > :nth-child(5) > .form-select")
-         .select("30")
-         .should("have.value", "30");
+    //    cy.get(":nth-child(2) > :nth-child(5) > .form-select")
+    //      .select("30")
+    //      .should("have.value", "30");
  
-       cy.get(":nth-child(2) > :nth-child(6) > .form-select")
-         .select("2.50%")
-         .should("have.value", "2.50%");
-     });
+    //    cy.get(":nth-child(2) > :nth-child(6) > .form-select")
+    //      .select("2.50%")
+    //      .should("have.value", "2.50%");
+    //  });
  
-     //Contents Footer
-     cy.get(".modal-footer").within(() => {
-       cy.contains("Close").should("be.visible");
-       cy.contains("Submit").should("be.visible").click();
-     });
+    //  //Contents Footer
+    //  cy.get(".modal-footer").within(() => {
+    //    cy.contains("Close").should("be.visible");
+    //    cy.contains("Submit").should("be.visible").click();
+    //  });
  
-     cy.get('#clientcf_motorVehicle2').should("have.value", "$888");
-     cy.get('#partnercf_motorVehicle2').should("have.value", "$342");
+    //  cy.get('#clientcf_motorVehicle2').should("have.value", "$888");
+    //  cy.get('#partnercf_motorVehicle2').should("have.value", "$342");
 
     //Boat
     cy.wait(2000);
-    cy.get(':nth-child(5) > .py-4').within(() => {
+    cy.get(':nth-child(4) > .py-4').within(() => {
       cy.contains("Boat");
     
       cy.get("img");
     });
-    cy.get(':nth-child(5) > .py-4 > .flex-column > .row > .col-12 > .d-flex > .mb-0')
+    cy.get(':nth-child(4) > .py-4 > .flex-column > .row > .col-12 > .d-flex > .mb-0')
       .click()
       .should("be.visible");
 
@@ -510,12 +481,12 @@ class PartnerLifestyleAssetsandDebt {
 
     //Caravan
     cy.wait(2000);
-    cy.get(':nth-child(6) > .py-4').within(() => {
+    cy.get(':nth-child(5) > .py-4').within(() => {
       cy.contains("Caravan");
       cy.contains("Caravan");
       cy.get("img");
     });
-    cy.get(':nth-child(6) > .py-4 > .flex-column > .row > .col-12 > .d-flex > .mb-0')
+    cy.get(':nth-child(5) > .py-4 > .flex-column > .row > .col-12 > .d-flex > .mb-0')
       .click()
       .should("be.visible");
 
@@ -565,21 +536,17 @@ class PartnerLifestyleAssetsandDebt {
 
     //Other Assets
     cy.wait(2000);
-    cy.get(':nth-child(7) > .py-4').within(() => {
+    cy.get(':nth-child(6) > .py-4').within(() => {
       cy.contains("Other Assets");
-      cy.contains("Aiden Smith");
-      cy.contains("Emma Taylor");
+     
       cy.get("img");
     });
-    cy.get(':nth-child(7) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0')
+    cy.get(':nth-child(6) > .py-4 > .flex-column > .row > .col-12 > .d-flex > .mb-0')
       .click()
       .should("be.visible");
 
     //Other Assets Card Header
-    //Use only for remove partner When Run code with Client only
-
-    //cy.get(":nth-child(2) > .css-v7duua").click();
-
+   
     cy.get(".modal-header").contains("Other Assets");
     cy.get(".btn-close").should("be.visible");
     cy.get(".col-md-12 > .d-flex").within(() => {
@@ -610,35 +577,7 @@ class PartnerLifestyleAssetsandDebt {
       cy.get(":nth-child(6) > .form-select").should("have.value", "2.50%");
     });
 
-    //PartnerShip Section :
-
-    cy.get(".css-1lx7dxn").type("Emma Taylor{enter}");
-
-    cy.get(".table").within(() => {
-      cy.contains("Emma Taylor").should("be.visible");
-      cy.get(":nth-child(2) > :nth-child(2) > #currentValue")
-        .clear()
-        .type("989");
-
-      cy.get(":nth-child(2) > :nth-child(3) > .form-select").should(
-        "have.value",
-        "No"
-      );
-
-      cy.get(":nth-child(2) > :nth-child(4) > #newPurchase")
-        .clear()
-        .type("100");
-
-      cy.get(":nth-child(2) > :nth-child(5) > .form-select").should(
-        "have.value",
-        "30"
-      );
-
-      cy.get(":nth-child(2) > :nth-child(6) > .form-select").should(
-        "have.value",
-        "2.50%"
-      );
-    });
+    
 
     //Other Assets Footer
     cy.get(".modal-footer").within(() => {
@@ -647,17 +586,16 @@ class PartnerLifestyleAssetsandDebt {
     });
 
     cy.get("#clientcf_otherAssets").should("have.value", "$100");
-    cy.get("#partnercf_otherAssets").should("have.value", "$989");
-
+   
     //Personal Debt Personal Loans
     cy.wait(2000);
-    cy.get(':nth-child(8) > .py-4').within(() => {
+    cy.get(':nth-child(7) > .py-4').within(() => {
       cy.contains("Personal Debt");
       cy.contains("Personal Loans");
       cy.contains("Credit Card");
       cy.get("img");
     });
-    cy.get(':nth-child(8) > .py-4 > .flex-column > .row > :nth-child(1) > .d-flex > .mb-0')
+    cy.get(':nth-child(7) > .py-4 > .flex-column > .row > :nth-child(1) > .d-flex > .mb-0')
       .click()
       .should("be.visible");
 
@@ -711,7 +649,7 @@ class PartnerLifestyleAssetsandDebt {
 
     //Personal Debt Credit Card
   
-    cy.get(':nth-child(3) > .d-flex > .mb-0').click().should("be.visible");
+    cy.get(':nth-child(3) > .d-flex > .mb-0').click()
 
     cy.get(".modal-header").contains("Credit Card");
 

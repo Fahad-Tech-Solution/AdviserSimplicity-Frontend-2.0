@@ -54,7 +54,7 @@ describe("Adviser Simplicity", () => {
     FinancialInvestmentsPartner.section();
   });
 
-  it.skip("Financial Investments With Client", () => {
+  it("Financial Investments With Client", () => {
     FinancialInvestmentsClient.section();
   });
 
