@@ -11,8 +11,8 @@ const CashFlowHomeLoan = (props) => {
      This component is a dynamic and reusable modal component designed to handle the following modal types:
      1. "Home Loan"  inner Modal
      2. "Financial Investment/Investment Loan/Loan Balance" inner Modal
-     3. "SMSF/Investment Loan/Loan Balance" inner Modal
-     4. "Family trust Investment Loan/Loan Balance" inner Modal
+     3. "SMSF/Investment property/Loan Balance" inner Modal
+     4. "Family trust Investment property/Loan Balance" inner Modal
  
      TODO-IMPORTANT:
      - Ensure any changes to this component are planned carefully to avoid unintended effects on all supported modals.
@@ -53,10 +53,13 @@ const CashFlowHomeLoan = (props) => {
       } || {})
       setFieldValue("loanType", Data.loanType || Data.LoanType || "")
       setFieldValue("loanTerm", Data.loanTerm || Data.LoanTerm || "30")
+      setFieldValue("interestOnlyPeriod", Data.interestOnlyPeriod || "")
       setFieldValue("initialInterestRatePA", Data.initialInterestRatePA || Data.interestRatePA || Data.InterestRate || "")
       setFieldValue("minimumRepaymentsPA", Data.minimumRepaymentsPA)
       setFieldValue("actualAnnualRepayments", Data.actualAnnualRepayments || Data.annualRepayments || Data.AnnualRepayments || "")
       setFieldValue("repayLoanInYear", Data.repayLoanInYear || "No")
+      setFieldValue("applyMinimumRepaymentsOR", Data.applyMinimumRepaymentsOR || "No")
+      setFieldValue("surplusToHomeLoan", Data.surplusToHomeLoan || "No")
 
       if (DeductibleInterestFormsArray.includes(props.modalObject.ParentObject.title)) {
         setFieldValue("deductibleInterest", Data.deductibleInterest || Data.DeductibleLoanAmount || "100%")
@@ -78,6 +81,10 @@ const CashFlowHomeLoan = (props) => {
 
     if (!addInputFlag) {
       values.deductibleInterest = undefined;
+    }
+
+    if (addInputFlag) {
+      values.surplusToHomeLoan = undefined;
     }
 
     props.setFieldValue(props.modalObject.key, values);
@@ -133,7 +140,12 @@ const CashFlowHomeLoan = (props) => {
       type: "select",
       options: loanTermOptions,
     },
-
+    {
+      name: "interestOnlyPeriod",
+      placeholder: "Interest Only Period",
+      type: "select",
+      options: loanTermOptions,
+    },
     {
       name: "initialInterestRatePA",
       type: "number-toPercent",
@@ -146,6 +158,11 @@ const CashFlowHomeLoan = (props) => {
       disabled: true,
     },
     {
+      name: "applyMinimumRepaymentsOR",
+      type: "yesno",
+      placeholder: "Apply Minimum Repayments OR",
+    },
+    {
       name: "actualAnnualRepayments",
       type: "number-toComma",
       placeholder: "Actual Annual Repayments",
@@ -154,6 +171,10 @@ const CashFlowHomeLoan = (props) => {
       name: "repayLoanInYear",
       type: "select",
       options: repayInYearNo,
+    },
+    {
+      name: "surplusToHomeLoan",
+      type: "yesno",
     },
   ];
 
@@ -166,7 +187,7 @@ const CashFlowHomeLoan = (props) => {
       type: "number-toPercent",
       placeholder: "Deductible Interest %",
     },
-    ...rowConfig.slice(4) // Slice the array from the index of 'minimumRepaymentsPA' onwards
+    ...rowConfig.slice(4).filter(row => row.name !== "surplusToHomeLoan") // Slice the array from the index of 'minimumRepaymentsPA' onwards and filter out 'surplusToHomeLoan'
   ];
 
   let handleChildButtonClick = async (values, setFieldValue) => {
@@ -230,11 +251,16 @@ const CashFlowHomeLoan = (props) => {
                           <th>Loan Balance</th>
                           <th>Loan Type</th>
                           <th>Loan Term </th>
+                          <th>Interest Only Period</th>
                           <th>Interest Rate (p.a)</th>
                           {addInputFlag && <th>Deductible interest %</th>}
                           <th>Minimum Repayments (p.a)</th>
+                          <th>Apply Minimum Repayments OR</th>
                           <th>Actual Annual Repayments</th>
                           <th>Repay Loan in Year</th>
+                          {(!addInputFlag) &&
+                            <th>Surplus to Home loan</th>
+                          }
 
                         </tr>
                       </thead>

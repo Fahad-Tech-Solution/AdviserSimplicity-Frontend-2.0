@@ -195,6 +195,11 @@ const CashFlowRegularLiving = (props) => {
     label: ("Year " + (i + 1)).toString(),
   }));
 
+  const loanTermOptionsWithNo = [{ value: "No", label: "No" }, ...Array.from({ length: 30 }, (_, i) => ({
+    value: (i + 1).toString(),
+    label: ("Year " + (i + 1)).toString(),
+  }))];
+
 
 
   const indexation = Array.from({ length: 21 }, (_, i) => ({
@@ -218,12 +223,24 @@ const CashFlowRegularLiving = (props) => {
     label: key
   }));
 
+  let arrayOfAmount = [
+    { value: "Modest", label: "Modest" },
+    { value: "Comfortable", label: "Comfortable" },
+    { value: "No", label: "No" },
+  ]
+
 
   const rowConfig = [
     {
       name: "expenses",
       type: "select",
       options: ArrayOfExpenses,
+      callBack: true,
+      func: (values, setFieldValue, currentInput, stakeHolder) => {
+        if (currentInput.value === "ASFS Retirement Standards") {
+          setFieldValue("client.upUntillYear", "");
+        }
+      }
     },
     {
       name: "amount",
@@ -287,15 +304,38 @@ const CashFlowRegularLiving = (props) => {
                   <tbody>
 
                     <DynamicTableRow
-                      rowConfig={rowConfig}
+                      rowConfig={values.client.expenses === "ASFS Retirement Standards" ?
+                        rowConfig.map((config) => {
+                          if (config.name === "amount") {
+                            return {
+                              ...config,
+                              type: "select",
+                              options: arrayOfAmount,
+                            };
+                          }
+                          if (config.name === "includeFromYear") {
+                            return {
+                              ...config,
+                              options: loanTermOptionsWithNo,
+                            };
+                          }
+                          if (config.name === "upUntillYear") {
+                            return {
+                              ...config,
+                              disabled: true,
+                            };
+                          }
+
+
+                          return config;
+                        })
+                        : rowConfig} // Use the original rowConfig if condition is false
                       values={values}
                       setFieldValue={setFieldValue}
                       handleChange={handleChange}
                       handleBlur={handleBlur}
-                      // handleInnerModal={handleInnerModal}
                       stakeHolder="client."
                     />
-
 
 
                   </tbody>

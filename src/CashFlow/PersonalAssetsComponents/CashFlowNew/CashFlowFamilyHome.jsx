@@ -71,6 +71,8 @@ const CashFlowFamilyHome = (props) => {
           familyHomeLoan: data.familyHomeLoan || data.HomeLoanModal || {},
           expectedGrowthRate: data.expectedGrowthRate || "2.50%",
           sellPropertyInYear: data.sellPropertyInYear || "No",
+          state: data.state || "",
+          estimatedFutureSellingCost: data.estimatedFutureSellingCost || "",
         };
 
         Object.entries(fields).forEach(([key, value]) => {
@@ -186,6 +188,22 @@ const CashFlowFamilyHome = (props) => {
     })),
   ];
 
+  const estimatedFutureSellingCostOptions = [
+    { value: "0.00%", label: "0.00%" },
+    { value: "1.00%", label: "1.00%" },
+    { value: "1.50%", label: "1.50%" },
+    { value: "2.00%", label: "2.00%" },
+    { value: "2.50%", label: "2.50%" },
+    { value: "3.00%", label: "3.00%" },
+    { value: "3.50%", label: "3.50%" },
+    { value: "4.00%", label: "4.00%" },
+    { value: "4.50%", label: "4.50%" },
+    { value: "5.00%", label: "5.00%" },
+  ];
+
+
+
+
   let handleInnerModal = (title, values, key) => {
     // console.log(values);
 
@@ -231,6 +249,22 @@ const CashFlowFamilyHome = (props) => {
       name: "currentValue",
       type: "number-toComma",
       placeholder: "Current Value",
+
+    },
+    {
+      name: "state",
+      type: "select",
+      placeholder: "State",
+      options: [
+        { value: "ACT", label: "ACT", },
+        { value: "NSW", label: "NSW", },
+        { value: "NT", label: "NT", },
+        { value: "QLD", label: "QLD", },
+        { value: "SA", label: "SA", },
+        { value: "TAS", label: "TAS", },
+        { value: "VIC", label: "VIC", },
+        { value: "WA", label: "WA", },
+      ]
 
     },
     {
@@ -282,6 +316,11 @@ const CashFlowFamilyHome = (props) => {
       type: "select",
       options: sellPropertyInYearNo,
     },
+    {
+      name: "estimatedFutureSellingCost",
+      type: "select",
+      options: estimatedFutureSellingCostOptions,
+    },
   ];
 
   return (
@@ -326,6 +365,7 @@ const CashFlowFamilyHome = (props) => {
                         <tr>
                           <th>Street Address</th>
                           <th>Current Value/Purchase Price </th>
+                          <th>State</th>
                           <th>Client Ownership</th>
                           <th>Partner Ownership</th>
                           <th>Year Of Purchase</th>
@@ -333,6 +373,7 @@ const CashFlowFamilyHome = (props) => {
                           <th>Loan Balance</th>
                           <th>Expected Growth Rate</th>
                           <th>Sell Property In Year</th>
+                          <th>Estimated Future Selling Cost (%)</th>
                         </tr>
                       </thead>
                       <tbody>

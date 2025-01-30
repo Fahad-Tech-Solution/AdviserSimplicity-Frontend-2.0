@@ -52,6 +52,7 @@ const CashFlowOtherAsset = (props) => {
   };
 
   let onlyJoint = ["Boat", "Caravan", "House hold"];
+  let onlyClient = ["Contents", "Other Assets"];
 
   const fillInitialValues = (setFieldValue) => {
     try {
@@ -78,7 +79,7 @@ const CashFlowOtherAsset = (props) => {
 
         if (props.modalObject.title === "Car" && goalsDetail.carGoal && goalsDetail.carGoal.estimatedValue) {
           fields.newPurchase = goalsDetail.carGoal.estimatedValue || "";
-            fields.purchaseInYear = parseFloat(goalsDetail.carGoal.when.match(/\d+/g).join('')) || 30;
+          fields.purchaseInYear = parseFloat(goalsDetail.carGoal.when.match(/\d+/g).join('')) || 30;
         }
 
         Object.entries(fields).forEach(([key, value]) => {
@@ -267,12 +268,15 @@ const CashFlowOtherAsset = (props) => {
   const options = onlyJoint.includes(props.modalObject.title) ? [
     { value: "joint", label: RenderName("joint") }
   ] :
-    (UserStatus === "Married") ?
+    onlyClient.includes(props.modalObject.title) ? [
+      { value: "client", label: RenderName("client") }
+    ] :
+      (UserStatus === "Married") ?
 
-      [{ value: "client", label: RenderName("client") },
-      { value: "partner", label: RenderName("partner") }] :
+        [{ value: "client", label: RenderName("client") },
+        { value: "partner", label: RenderName("partner") }] :
 
-      [{ value: "client", label: RenderName("client") },];
+        [{ value: "client", label: RenderName("client") },];
 
   const rowConfig = [
     {

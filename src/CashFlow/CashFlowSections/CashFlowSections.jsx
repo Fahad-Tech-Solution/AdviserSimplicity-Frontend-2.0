@@ -113,6 +113,9 @@ const CashFlowSections = (props) => {
                     cf_incomeFromLifeTimePension: res.incomeFromSuperPayment || "No",
                     cf_employmentIncome: res.incomeFromOwnBusiness || "No",
                     cf_incomeFromRegularLivingExpense: res.incomeFromRegularLivingExpenses || "No",
+                    cf_incomeFromBusiness: "No",
+                    cf_incomeFromOtherNonTaxable: "No",
+                    cf_incomeFromEducation: "No",
 
                     cf_familyHome: res.familyHome || "No",
                     cf_car: res.car || "No",
@@ -120,7 +123,9 @@ const CashFlowSections = (props) => {
                     cf_caravan: res.caravan || "No",
                     cf_otherAssets: res.otherAssets || "No",
                     cf_personalDebt: res.personalLoans || "No",
-
+                    cf_contents: "No",
+                    cf_motorVehicle2: "No",
+            
                     cf_AustralianShares: res.australianShareMarket || "No",
                     cf_platformInvestment: res.managedFund || "No",
                     cf_cash: res.bankAccountFinance || "No",
@@ -132,6 +137,7 @@ const CashFlowSections = (props) => {
                     cf_superFund: res.superAnnuationIssues || "No",
                     cf_accountBasedPension: res.accountBasedPensionIssues || "No",
                     cf_annuities: res.annuitiesIssues || "No",
+                    cf_otherInvestments: "No",
 
                     cf_DividendIncome: res.businessAsInvestmentTab || "No",
                     cf_BusinessAsTrusts: res.businessAsInvestmentTab || "No",
@@ -144,6 +150,10 @@ const CashFlowSections = (props) => {
                     cf_SMSFInvestmentProperties: res.SMSFInvestmentProperties || "No",
 
                     cf_SMSF: res.cf_SMSF || "No",
+                    cf_SMSFAccumulationDetails: "No",
+                    cf_SMSFPensionAccountDetails: "No",
+                    cf_SMSFBank: "No",
+            
 
                     cf_WestFamilyTrustTermDeposits: res.familyTermDeposit || "No",
                     cf_FamilyTrustAustralianShares: res.familyAustralianShare || "No",
@@ -152,6 +162,9 @@ const CashFlowSections = (props) => {
                     cf_FamilyTrustInvestmentProperties: res.familyInvestmentProperties || "No",
 
                     cf_FamilyTrust: res.cf_FamilyTrust || "No",
+                    cf_FamilyTrustBankAccount: "No",
+                    cf_WestFamilyTrustInvestment:"No",
+            
                 }
                 setCFObject(Obj)
             }

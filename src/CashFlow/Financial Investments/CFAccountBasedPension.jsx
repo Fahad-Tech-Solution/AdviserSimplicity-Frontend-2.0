@@ -253,7 +253,7 @@ const CFAccountBasedPension = (props) => {
             key,
             stakeHolder,
             sourceObj: props.modalObject,
-            cal: title === "Balance & Rollover Amount",
+            cal: title !== "Withdrawals" && title !== "Input Override",
         });
         setFlagState(true);
     };

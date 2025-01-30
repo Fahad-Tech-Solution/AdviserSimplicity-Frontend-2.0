@@ -33,7 +33,7 @@ const InnerModal = (props) => {
         "Pension Benefits",
         "Balance & Benefit Details",
         "Salary Package",
-        "Home Loan",
+        // "Home Loan",
         "Australian Shares/ETFs Detail",
         "Managed Funds Detail",
         "Super Funds Detail",
@@ -85,7 +85,8 @@ const InnerModal = (props) => {
         "Non Concessional Contributions",
         "Balance & Rollover Amount",
         "Pension Payments",
-        "New Pension Rollover"
+        "New Pension Rollover",
+        "Home Loan"
     ]
 
     let mdTitles = ["Other Percentage Amount"]

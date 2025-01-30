@@ -46,6 +46,14 @@ const CashFlowCarsCardsTowInOne = (props) => {
                 ModalBtn: true
             },
         ],
+        "cf_contents": [
+            {
+                title: "Contents",
+                key: "cf_contents",
+                attribute: "clientTotal",
+                ModalBtn: true
+            },
+        ],
         "cf_boat": [
             {
                 title: "Boat",
@@ -58,6 +66,14 @@ const CashFlowCarsCardsTowInOne = (props) => {
             {
                 title: "Caravan",
                 key: "cf_caravan",
+                attribute: "clientTotal",
+                ModalBtn: true
+            },
+        ],
+        "cf_otherAssets": [
+            {
+                title: "Other Assets",
+                key: "cf_otherAssets",
                 attribute: "clientTotal",
                 ModalBtn: true
             },

@@ -162,13 +162,17 @@ const AssetInfo = (props) => {
     ]
 
     let onlyJoint = ["Boat", "Caravan", "House hold"];
+    let onlyClient = ["Other Assets"];
 
     const options = onlyJoint.includes(props.modalObject.title) ? [
         { value: "joint", label: RenderName("joint") }
-    ] : (UserStatus !== "Single") ? [
-        { value: "client", label: RenderName("client") },
-        { value: "partner", label: RenderName("partner") }] :
-        [{ value: "client", label: RenderName("client") },];
+    ] : (onlyClient.includes(props.modalObject.title)) ? [
+        { value: "client", label: RenderName("client") }
+    ] :
+        (UserStatus !== "Single") ? [
+            { value: "client", label: RenderName("client") },
+            { value: "partner", label: RenderName("partner") }] :
+            [{ value: "client", label: RenderName("client") },];
 
     return (
         <Formik

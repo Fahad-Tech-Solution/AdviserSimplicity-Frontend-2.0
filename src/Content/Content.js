@@ -389,11 +389,11 @@ export const content = {
                     key: "cf_car",
                     img: car,
                 },
-                {
-                    title: "Motor Vehicle 2",
-                    key: "cf_motorVehicle2",
-                    img: jeep,
-                },
+                // {
+                //     title: "Motor Vehicle 2",
+                //     key: "cf_motorVehicle2",
+                //     img: jeep,
+                // },
                 {
                     title: "Boat",
                     key: "cf_boat",

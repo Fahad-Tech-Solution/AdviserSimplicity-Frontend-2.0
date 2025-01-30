@@ -54,6 +54,8 @@ const SMSFInvestmentLoan = (props) => {
                     minimumRepayments: data.minimumRepayments || "",
                     actualAnnualRepayments: data.actualAnnualRepayments || data.annualRepayments || "",
                     repayLoanYear: data.repayLoanYear || "No",
+                    interestOnlyPeriod: data.interestOnlyPeriod || "",
+                    applyMinimumRepaymentsOR: data.applyMinimumRepaymentsOR || "No",
                 };
 
                 Object.entries(fields).forEach(([key, value]) => {
@@ -222,6 +224,12 @@ const SMSFInvestmentLoan = (props) => {
             options: loanTermOptions,
         },
         {
+            name: "interestOnlyPeriod",
+            placeholder: "Interest Only Period",
+            type: "select",
+            options: loanTermOptions,
+        },
+        {
             name: "initialInterestRate",
             placeholder: "Initial Interest Rate (p.a.)",
             type: "number-toPercent",
@@ -236,6 +244,11 @@ const SMSFInvestmentLoan = (props) => {
             placeholder: "Minimum Repayments (p.a)",
             type: "number-toComma",
             disabled: true,
+        },
+        {
+            name: "applyMinimumRepaymentsOR",
+            type: "yesno",
+            placeholder: "Apply Minimum Repayments OR",
         },
         {
             name: "actualAnnualRepayments",
@@ -290,9 +303,11 @@ const SMSFInvestmentLoan = (props) => {
                                                 <th>Current Loan Balance</th>
                                                 <th>Loan Type</th>
                                                 <th>Loan Term</th>
+                                                <th>Interest Only Period</th>
                                                 <th>Initial Interest Rate (p.a.)</th>
                                                 <th>Deductible interest</th>
                                                 <th>Minimum Repayments (p.a)</th>
+                                                <th>Apply Minimum Repayments OR</th>
                                                 <th>Actual Annual Repayments</th>
                                                 <th>Repay Loan in Year</th>
                                             </tr>

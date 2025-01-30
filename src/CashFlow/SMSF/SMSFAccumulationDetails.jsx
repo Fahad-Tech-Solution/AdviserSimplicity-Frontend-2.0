@@ -44,7 +44,7 @@ const SMSFAccumulationDetails = (props) => {
     };
 
 
-    let SMSFAccumulationDetails = Object.keys(questionDetail.SMSFAccumulationDetails|| {}).length > 0 ? questionDetail.SMSFAccumulationDetails : {
+    let SMSFAccumulationDetails = Object.keys(questionDetail.SMSFAccumulationDetails || {}).length > 0 ? questionDetail.SMSFAccumulationDetails : {
         client: [],
         partner: [],
         joint: [],
@@ -260,6 +260,7 @@ const SMSFAccumulationDetails = (props) => {
             key,
             stakeHolder,
             sourceObj: props.modalObject,
+            cal: title === "Accumulation Details"
         });
         setFlagState(true);
     };
