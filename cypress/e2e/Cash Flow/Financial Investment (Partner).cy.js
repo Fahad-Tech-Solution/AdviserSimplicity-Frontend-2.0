@@ -36,504 +36,499 @@ class PartnerFinancialInvestments {
     cy.wait(2000);
     cy.get(".bgColor").click();
 
-  //   //Platform Investment
-
-  //   cy.wait(2000);
-  //   cy.get(":nth-child(1) > .py-4").within(() => {
-  //     cy.contains("Platform Investment");
-  //     cy.get("img");
-  //     cy.contains("Aiden Smith");
-  //     cy.contains("Emma Taylor");
-  //   });
-  //   cy.get(
-  //     ":nth-child(1) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0"
-  //   ).click();
-  //   cy.get(".modal-content").within(() => {
-  //     cy.contains("Platform Investment");
-  //     cy.get(".btn-close");
-  //   });
-
-  //   cy.get(".col-md-12 > .d-flex").within(() => {
-  //     cy.contains("Owner");
-
-  //     cy.get(".css-d07bj1 > :nth-child(1)").click();
-
-  //     cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
-  //   });
-
-  //   cy.wait(2000);
-  //   cy.get(".table").within(() => {
-  //     cy.contains("Owner");
-  //     cy.contains("Aiden Smith");
-  //     //  cy.get("#streetAddress")
-  //     //    .invoke("val")
-  //     //    .should((actualValue) => {
-  //     //      expect(actualValue.trim()).to.equal("FTS");
-  //     //    });
-
-  //     cy.contains("Current Balance").should("be.visible");
-  //     cy.get("#currentBalance").clear().type("24").should("have.value", "$24");
-
-  //     cy.contains("Cost Base").should("be.visible");
-  //     cy.get("#costBase").clear().type("77").should("have.value", "$77");
-
-  //     cy.contains("Regular Contributions");
-  //     cy.get(":nth-child(6) > .form-check > .radioButton2")
-  //       .contains("Yes")
-  //       .click();
-  //     cy.contains("Risk Profile/SAA");
-  //     cy.get(":nth-child(7) > .form-select").select("Cash");
-
-  //     cy.contains("Cashout Funds");
-  //     cy.get(":nth-child(8) > .form-select").should("have.value", "No");
-
-  //     cy.contains("Investment Returns");
-  //     cy.get(".input-group > .form-select").select("Input Override");
-  //     cy.wait(1000);
-  //     cy.get(".modalBtn").eq(0).click({ force: true }); // Clicks the first button
-  //   });
-
-  //   //Investment Returns Inner Card
-  //   cy.get(
-  //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
-  //   ).within(() => {
-  //     cy.contains("Input Override");
-  //     //cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close').should('be.visible')
-  //   });
-
-  //   cy.get(".col-md-12 > .row > .mt-4").within(() => {
-  //     cy.contains("Income Yield");
-  //     cy.get("#incomeYield").clear().type("23").should("have.value", "23");
-  //     //  Cypress.on("uncaught:exception", (err, runnable) => {
-  //     //    return false; // Prevent Cypress from failing the test
-  //     //  });
-
-  //     cy.contains("Growth Rate");
-  //     cy.get("#growthRate").clear().type("53").should("have.value", "53");
-  //     cy.contains("Franking");
-  //     cy.get("#franking").clear().type("66").should("have.value", "66");
-  //   });
-  //   //Investment Returns Footer
-  //   cy.get(
-  //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
-  //   ).within(() => {
-  //     cy.contains("Close").should("be.visible");
-  //     cy.contains("Submit").should("be.visible").click();
-  //   });
-
-  //   cy.wait(2000);
-  //   cy.contains("Reinvest income");
-  //   cy.get(":nth-child(5) > .form-check > .radioButton2")
-  //     .contains("Yes")
-  //     .click();
-
-  //   //Regular Contributions
-  //   cy.get("tbody > tr > :nth-child(6)").within(() => {
-  //     cy.get("#button-addon2").click();
-  //   });
-
-  //   //Regular Contributions Inner Card End
-  //   cy.get(
-  //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
-  //   ).within(() => {
-  //     cy.contains("Regular Contributions");
-  //     //cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close').should('be.visible')
-  //   });
-
-  //   cy.get(".col-md-12 > .row > .mt-4").within(() => {
-  //     cy.contains("Contribution");
-  //     cy.get("#contribution").clear().type("100").should("have.value", "$100");
-
-  //     cy.contains("Regular contributions p.a");
-  //     cy.get("#regularContributions")
-  //       .clear()
-  //       .type("200")
-  //       .should("have.value", "$200");
-
-  //     cy.contains("Contribute from Year");
-  //     cy.get(":nth-child(3) > .form-select").select("21");
-
-  //     cy.contains("Contribute Up Until");
-  //     cy.get(":nth-child(4) > .form-select").select("10");
-
-  //     cy.contains("Indexation");
-  //     cy.get(":nth-child(5) > .form-select").select("2.50%");
-  //   });
-  //   cy.get(
-  //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
-  //   ).within(() => {
-  //     cy.contains("Close").should("be.visible");
-  //     cy.contains("Submit").should("be.visible").click();
-  //   });
-
-
-  //  // Partner Section 
-  //   cy.get(".css-1lx7dxn").type("Emma Taylor{enter}");
-
-  //   cy.contains("Emma Taylor").should("be.visible");
-
-  //   cy.get(":nth-child(2) > :nth-child(2) > #currentBalance")
-  //     .clear()
-  //     .type("24")
-  //     .should("have.value", "$24");
-
-  //   cy.get(":nth-child(2) > :nth-child(3) > #costBase")
-  //     .clear()
-  //     .type("77")
-  //     .should("have.value", "$77");
-
-  //   cy.get(":nth-child(2) > :nth-child(5) > .form-check > .radioButton2")
-  //     .contains("Yes")
-  //     .click();
-
-  //   cy.get(":nth-child(2) > :nth-child(7) > .form-select").select(
-  //     "High Growth"
-  //   );
-
-  //   cy.get(":nth-child(2) > :nth-child(8) > .form-select")
-  //     .select("13")
-  //     .should("have.value", "13");
-
-  //   cy.get(
-  //     ":nth-child(2) > :nth-child(4) > .input-group > .form-select"
-  //   ).select("Input Override");
-
-  //   cy.get(":nth-child(2) > :nth-child(4) > .GInputSelect").within(() => {
-  //     cy.get(".btn.bgColor.modalBtn.border-0.btn.btn-primary").click();
-  //   });
-
-  //   //Partner Section  Investment Returns Inner Card
-  //   cy.get(
-  //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
-  //   ).within(() => {
-  //     cy.contains("Input Override");
-  //     //cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close').should('be.visible')
-  //   });
-  //   cy.get(".col-md-12 > .row > .mt-4").within(() => {
-  //     cy.contains("Income Yield");
-  //     cy.get("#incomeYield").clear().type("23").should("have.value", "23");
-  //     //  Cypress.on("uncaught:exception", (err, runnable) => {
-  //     //    return false; // Prevent Cypress from failing the test
-  //     //  });
-
-  //     cy.contains("Growth Rate");
-  //     cy.get("#growthRate").clear().type("53").should("have.value", "53");
-  //     cy.contains("Franking");
-  //     cy.get("#franking").clear().type("66").should("have.value", "66");
-  //   });
-  //   //Partner Section  Investment Returns Footer
-  //   cy.get(
-  //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
-  //   ).within(() => {
-  //     cy.contains("Close").should("be.visible");
-  //     cy.contains("Submit").should("be.visible").click();
-  //   });
-
-  //   cy.wait(2000);
-  //   cy.contains("Reinvest income");
-
-  //   //Partner Section  Regular Contributions
-  //   cy.get(
-  //     ":nth-child(2) > :nth-child(6) > .form-check > .radioButton2"
-  //   ).within(() => {
-  //     cy.contains("Yes").click();
-  //   });
-
-  //   cy.get("tbody > :nth-child(2) > :nth-child(6) > .d-flex").within(() => {
-  //     cy.get(".btn.bgColor.modalBtn.border-0.btn.btn-primary").click();
-  //   });
-
-  //   // Partner Section  Regular Contributions Inner Card End
-  //   cy.get(
-  //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
-  //   ).within(() => {
-  //     cy.contains("Regular Contributions");
-  //     //cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close').should('be.visible')
-  //   });
-
-  //   cy.get(".col-md-12 > .row > .mt-4").within(() => {
-  //     cy.contains("Contribution");
-  //     cy.get("#contribution").clear().type("100").should("have.value", "$100");
-
-  //     cy.contains("Regular contributions p.a");
-  //     cy.get("#regularContributions")
-  //       .clear()
-  //       .type("200")
-  //       .should("have.value", "$200");
-
-  //     cy.contains("Contribute from Year");
-  //     cy.get(":nth-child(3) > .form-select").select("21");
-
-  //     cy.contains("Contribute Up Until");
-  //     cy.get(":nth-child(4) > .form-select").select("10");
-
-  //     cy.contains("Indexation");
-  //     cy.get(":nth-child(5) > .form-select").select("2.50%");
-  //   });
-  //   cy.get(
-  //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
-  //   ).within(() => {
-  //     cy.contains("Close").should("be.visible");
-  //     cy.contains("Submit").should("be.visible").click();
-  //   });
-
-  //   //Partner Section Platform Investment Inner Footer
-
-  //   cy.contains("Close").should("be.visible");
-  //   cy.contains("Submit").should("be.visible").click();
-
-  //   cy.get("#clientcf_AustralianShares").should("have.value", "$24");
-  //   cy.get('#partnercf_AustralianShares').should('have.value', '$24');
-
-
-
-    //Platform Investment
-
-    cy.wait(2000);
-    cy.get(':nth-child(2) > .py-4').within(() => {
-      cy.contains("Platform Investment");
-      cy.get("img");
-      cy.contains("Aiden Smith");
-      cy.contains("Emma Taylor");
-    });
-    cy.get(':nth-child(2) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0').click();
-    cy.get(".modal-content").within(() => {
-      cy.contains("Platform Investment");
-      cy.get(".btn-close");
-    });
-
-    cy.get(".col-md-12 > .d-flex").within(() => {
-      cy.contains("Owner");
-
-      cy.get(".css-d07bj1 > :nth-child(1)").click();
-
-      cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
-    });
-
-    cy.wait(2000);
-    cy.get(".table").within(() => {
-      cy.contains("Owner");
-      cy.contains("Aiden Smith");
-      //  cy.get("#streetAddress")
-      //    .invoke("val")
-      //    .should((actualValue) => {
-      //      expect(actualValue.trim()).to.equal("FTS");
-      //    });
-
-      cy.contains("Current Balance").should("be.visible");
-      cy.get("#currentBalance").clear().type("24").should("have.value", "$24");
-
-      cy.contains("Cost Base").should("be.visible");
-      cy.get("#costBase").clear().type("77").should("have.value", "$77");
-
-      cy.contains("Regular Contributions");
-      cy.get(":nth-child(6) > .form-check > .radioButton2")
-        .contains("Yes")
-        .click();
-      cy.contains("Risk Profile/SAA");
-      cy.get(":nth-child(7) > .form-select").select("Cash");
-
-      cy.contains("Cashout Funds");
-      cy.get(':nth-child(9) > .form-select').should("have.value", "No");
-
-      cy.contains("Investment Returns");
-      cy.get(".input-group > .form-select").select("Input Override");
-      cy.wait(1000);
-      cy.get(".modalBtn").eq(0).click({ force: true }); // Clicks the first button
-    });
-
-    //Investment Returns Inner Card
-    cy.get(
-      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
-    ).within(() => {
-      cy.contains("Input Override");
-      //cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close').should('be.visible')
-    });
-
-    cy.get(".col-md-12 > .row > .mt-4").within(() => {
-      cy.contains("Income Yield");
-      cy.get("#incomeYield").clear().type("23").should("have.value", "23");
-      //  Cypress.on("uncaught:exception", (err, runnable) => {
-      //    return false; // Prevent Cypress from failing the test
-      //  });
-
-      cy.contains("Growth Rate");
-      cy.get("#growthRate").clear().type("53").should("have.value", "53");
-      cy.contains("Franking");
-      cy.get("#franking").clear().type("66").should("have.value", "66");
-    });
-    //Investment Returns Footer
-    cy.get(
-      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
-    ).within(() => {
-      cy.contains("Close").should("be.visible");
-      cy.contains("Submit").should("be.visible").click();
-    });
-
-    cy.wait(2000);
-    cy.contains("Reinvest income");
-    cy.get(":nth-child(5) > .form-check > .radioButton2")
-      .contains("Yes")
-      .click();
-
-    //Regular Contributions
-    cy.get("tbody > tr > :nth-child(6)").within(() => {
-      cy.get("#button-addon2").click();
-    });
-
-    //Regular Contributions Inner Card End
-    cy.get(
-      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
-    ).within(() => {
-      cy.contains("Regular Contributions");
-      //cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close').should('be.visible')
-    });
-
-    cy.get(".col-md-12 > .row > .mt-4").within(() => {
-      cy.contains("Contribution");
-      cy.get("#contribution").clear().type("100").should("have.value", "$100");
-
-      cy.contains("Regular contributions p.a");
-      cy.get("#regularContributions")
-        .clear()
-        .type("200")
-        .should("have.value", "$200");
-
-      cy.contains("Contribute from Year");
-      cy.get(":nth-child(3) > .form-select").select("21");
-
-      cy.contains("Contribute Up Until");
-      cy.get(":nth-child(4) > .form-select").select("10");
-
-      cy.contains("Indexation");
-      cy.get(":nth-child(5) > .form-select").select("2.50%");
-    });
-    cy.get(
-      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
-    ).within(() => {
-      cy.contains("Close").should("be.visible");
-      cy.contains("Submit").should("be.visible").click();
-    });
-
-
-   // Partner Section 
-    cy.get(".css-1lx7dxn").type("Emma Taylor{enter}");
-
-    cy.contains("Emma Taylor").should("be.visible");
-
-    cy.get(":nth-child(2) > :nth-child(2) > #currentBalance")
-      .clear()
-      .type("24")
-      .should("have.value", "$24");
-
-    cy.get(":nth-child(2) > :nth-child(3) > #costBase")
-      .clear()
-      .type("77")
-      .should("have.value", "$77");
-
-    cy.get(":nth-child(2) > :nth-child(5) > .form-check > .radioButton2")
-      .contains("Yes")
-      .click();
-
-    cy.get(":nth-child(2) > :nth-child(7) > .form-select").select(
-      "High Growth"
-    );
-
-    cy.get(':nth-child(2) > :nth-child(9) > .form-select')
-      .select("13")
-      .should("have.value", "13");
-
-    cy.get(
-      ":nth-child(2) > :nth-child(4) > .input-group > .form-select"
-    ).select("Input Override");
-
-    cy.get(":nth-child(2) > :nth-child(4) > .GInputSelect").within(() => {
-      cy.get(".btn.bgColor.modalBtn.border-0.btn.btn-primary").click();
-    });
-
-    //Partner Section  Investment Returns Inner Card
-    cy.get(
-      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
-    ).within(() => {
-      cy.contains("Input Override");
-      //cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close').should('be.visible')
-    });
-    cy.get(".col-md-12 > .row > .mt-4").within(() => {
-      cy.contains("Income Yield");
-      cy.get("#incomeYield").clear().type("23").should("have.value", "23");
-      //  Cypress.on("uncaught:exception", (err, runnable) => {
-      //    return false; // Prevent Cypress from failing the test
-      //  });
-
-      cy.contains("Growth Rate");
-      cy.get("#growthRate").clear().type("53").should("have.value", "53");
-      cy.contains("Franking");
-      cy.get("#franking").clear().type("66").should("have.value", "66");
-    });
-    //Partner Section  Investment Returns Footer
-    cy.get(
-      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
-    ).within(() => {
-      cy.contains("Close").should("be.visible");
-      cy.contains("Submit").should("be.visible").click();
-    });
-
-    cy.wait(2000);
-    cy.contains("Reinvest income");
-
-    //Partner Section  Regular Contributions
-    cy.get(
-      ":nth-child(2) > :nth-child(6) > .form-check > .radioButton2"
-    ).within(() => {
-      cy.contains("Yes").click();
-    });
-
-    cy.get("tbody > :nth-child(2) > :nth-child(6) > .d-flex").within(() => {
-      cy.get(".btn.bgColor.modalBtn.border-0.btn.btn-primary").click();
-    });
-
-    // Partner Section  Regular Contributions Inner Card End
-    cy.get(
-      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
-    ).within(() => {
-      cy.contains("Regular Contributions");
-      //cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close').should('be.visible')
-    });
-
-    cy.get(".col-md-12 > .row > .mt-4").within(() => {
-      cy.contains("Contribution");
-      cy.get("#contribution").clear().type("100").should("have.value", "$100");
-
-      cy.contains("Regular contributions p.a");
-      cy.get("#regularContributions")
-        .clear()
-        .type("200")
-        .should("have.value", "$200");
-
-      cy.contains("Contribute from Year");
-      cy.get(":nth-child(3) > .form-select").select("21");
-
-      cy.contains("Contribute Up Until");
-      cy.get(":nth-child(4) > .form-select").select("10");
-
-      cy.contains("Indexation");
-      cy.get(":nth-child(5) > .form-select").select("2.50%");
-    });
-    cy.get(
-      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
-    ).within(() => {
-      cy.contains("Close").should("be.visible");
-      cy.contains("Submit").should("be.visible").click();
-    });
-
-    //Partner Section Platform Investment Inner Footer
-
-    cy.contains("Close").should("be.visible");
-    cy.contains("Submit").should("be.visible").click();
-
-    cy.get("#clientcf_AustralianShares").should("have.value", "$24");
-    cy.get('#partnercf_AustralianShares').should('have.value', '$24');
-
+    //   //Platform Investment
+
+    //   cy.wait(2000);
+    //   cy.get(":nth-child(1) > .py-4").within(() => {
+    //     cy.contains("Platform Investment");
+    //     cy.get("img");
+    //     cy.contains("Aiden Smith");
+    //     cy.contains("Emma Taylor");
+    //   });
+    //   cy.get(
+    //     ":nth-child(1) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0"
+    //   ).click();
+    //   cy.get(".modal-content").within(() => {
+    //     cy.contains("Platform Investment");
+    //     cy.get(".btn-close");
+    //   });
+
+    //   cy.get(".col-md-12 > .d-flex").within(() => {
+    //     cy.contains("Owner");
+
+    //     cy.get(".css-d07bj1 > :nth-child(1)").click();
+
+    //     cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
+    //   });
+
+    //   cy.wait(2000);
+    //   cy.get(".table").within(() => {
+    //     cy.contains("Owner");
+    //     cy.contains("Aiden Smith");
+    //     //  cy.get("#streetAddress")
+    //     //    .invoke("val")
+    //     //    .should((actualValue) => {
+    //     //      expect(actualValue.trim()).to.equal("FTS");
+    //     //    });
+
+    //     cy.contains("Current Balance").should("be.visible");
+    //     cy.get("#currentBalance").clear().type("24").should("have.value", "$24");
+
+    //     cy.contains("Cost Base").should("be.visible");
+    //     cy.get("#costBase").clear().type("77").should("have.value", "$77");
+
+    //     cy.contains("Regular Contributions");
+    //     cy.get(":nth-child(6) > .form-check > .radioButton2")
+    //       .contains("Yes")
+    //       .click();
+    //     cy.contains("Risk Profile/SAA");
+    //     cy.get(":nth-child(7) > .form-select").select("Cash");
+
+    //     cy.contains("Cashout Funds");
+    //     cy.get(":nth-child(8) > .form-select").should("have.value", "No");
+
+    //     cy.contains("Investment Returns");
+    //     cy.get(".input-group > .form-select").select("Input Override");
+    //     cy.wait(1000);
+    //     cy.get(".modalBtn").eq(0).click({ force: true }); // Clicks the first button
+    //   });
+
+    //   //Investment Returns Inner Card
+    //   cy.get(
+    //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
+    //   ).within(() => {
+    //     cy.contains("Input Override");
+    //     //cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close').should('be.visible')
+    //   });
+
+    //   cy.get(".col-md-12 > .row > .mt-4").within(() => {
+    //     cy.contains("Income Yield");
+    //     cy.get("#incomeYield").clear().type("23").should("have.value", "23");
+    //     //  Cypress.on("uncaught:exception", (err, runnable) => {
+    //     //    return false; // Prevent Cypress from failing the test
+    //     //  });
+
+    //     cy.contains("Growth Rate");
+    //     cy.get("#growthRate").clear().type("53").should("have.value", "53");
+    //     cy.contains("Franking");
+    //     cy.get("#franking").clear().type("66").should("have.value", "66");
+    //   });
+    //   //Investment Returns Footer
+    //   cy.get(
+    //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
+    //   ).within(() => {
+    //     cy.contains("Close").should("be.visible");
+    //     cy.contains("Submit").should("be.visible").click();
+    //   });
+
+    //   cy.wait(2000);
+    //   cy.contains("Reinvest income");
+    //   cy.get(":nth-child(5) > .form-check > .radioButton2")
+    //     .contains("Yes")
+    //     .click();
+
+    //   //Regular Contributions
+    //   cy.get("tbody > tr > :nth-child(6)").within(() => {
+    //     cy.get("#button-addon2").click();
+    //   });
+
+    //   //Regular Contributions Inner Card End
+    //   cy.get(
+    //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
+    //   ).within(() => {
+    //     cy.contains("Regular Contributions");
+    //     //cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close').should('be.visible')
+    //   });
+
+    //   cy.get(".col-md-12 > .row > .mt-4").within(() => {
+    //     cy.contains("Contribution");
+    //     cy.get("#contribution").clear().type("100").should("have.value", "$100");
+
+    //     cy.contains("Regular contributions p.a");
+    //     cy.get("#regularContributions")
+    //       .clear()
+    //       .type("200")
+    //       .should("have.value", "$200");
+
+    //     cy.contains("Contribute from Year");
+    //     cy.get(":nth-child(3) > .form-select").select("21");
+
+    //     cy.contains("Contribute Up Until");
+    //     cy.get(":nth-child(4) > .form-select").select("10");
+
+    //     cy.contains("Indexation");
+    //     cy.get(":nth-child(5) > .form-select").select("2.50%");
+    //   });
+    //   cy.get(
+    //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
+    //   ).within(() => {
+    //     cy.contains("Close").should("be.visible");
+    //     cy.contains("Submit").should("be.visible").click();
+    //   });
+
+    //  // Partner Section
+    //   cy.get(".css-1lx7dxn").type("Emma Taylor{enter}");
+
+    //   cy.contains("Emma Taylor").should("be.visible");
+
+    //   cy.get(":nth-child(2) > :nth-child(2) > #currentBalance")
+    //     .clear()
+    //     .type("24")
+    //     .should("have.value", "$24");
+
+    //   cy.get(":nth-child(2) > :nth-child(3) > #costBase")
+    //     .clear()
+    //     .type("77")
+    //     .should("have.value", "$77");
+
+    //   cy.get(":nth-child(2) > :nth-child(5) > .form-check > .radioButton2")
+    //     .contains("Yes")
+    //     .click();
+
+    //   cy.get(":nth-child(2) > :nth-child(7) > .form-select").select(
+    //     "High Growth"
+    //   );
+
+    //   cy.get(":nth-child(2) > :nth-child(8) > .form-select")
+    //     .select("13")
+    //     .should("have.value", "13");
+
+    //   cy.get(
+    //     ":nth-child(2) > :nth-child(4) > .input-group > .form-select"
+    //   ).select("Input Override");
+
+    //   cy.get(":nth-child(2) > :nth-child(4) > .GInputSelect").within(() => {
+    //     cy.get(".btn.bgColor.modalBtn.border-0.btn.btn-primary").click();
+    //   });
+
+    //   //Partner Section  Investment Returns Inner Card
+    //   cy.get(
+    //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
+    //   ).within(() => {
+    //     cy.contains("Input Override");
+    //     //cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close').should('be.visible')
+    //   });
+    //   cy.get(".col-md-12 > .row > .mt-4").within(() => {
+    //     cy.contains("Income Yield");
+    //     cy.get("#incomeYield").clear().type("23").should("have.value", "23");
+    //     //  Cypress.on("uncaught:exception", (err, runnable) => {
+    //     //    return false; // Prevent Cypress from failing the test
+    //     //  });
+
+    //     cy.contains("Growth Rate");
+    //     cy.get("#growthRate").clear().type("53").should("have.value", "53");
+    //     cy.contains("Franking");
+    //     cy.get("#franking").clear().type("66").should("have.value", "66");
+    //   });
+    //   //Partner Section  Investment Returns Footer
+    //   cy.get(
+    //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
+    //   ).within(() => {
+    //     cy.contains("Close").should("be.visible");
+    //     cy.contains("Submit").should("be.visible").click();
+    //   });
+
+    //   cy.wait(2000);
+    //   cy.contains("Reinvest income");
+
+    //   //Partner Section  Regular Contributions
+    //   cy.get(
+    //     ":nth-child(2) > :nth-child(6) > .form-check > .radioButton2"
+    //   ).within(() => {
+    //     cy.contains("Yes").click();
+    //   });
+
+    //   cy.get("tbody > :nth-child(2) > :nth-child(6) > .d-flex").within(() => {
+    //     cy.get(".btn.bgColor.modalBtn.border-0.btn.btn-primary").click();
+    //   });
+
+    //   // Partner Section  Regular Contributions Inner Card End
+    //   cy.get(
+    //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
+    //   ).within(() => {
+    //     cy.contains("Regular Contributions");
+    //     //cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close').should('be.visible')
+    //   });
+
+    //   cy.get(".col-md-12 > .row > .mt-4").within(() => {
+    //     cy.contains("Contribution");
+    //     cy.get("#contribution").clear().type("100").should("have.value", "$100");
+
+    //     cy.contains("Regular contributions p.a");
+    //     cy.get("#regularContributions")
+    //       .clear()
+    //       .type("200")
+    //       .should("have.value", "$200");
+
+    //     cy.contains("Contribute from Year");
+    //     cy.get(":nth-child(3) > .form-select").select("21");
+
+    //     cy.contains("Contribute Up Until");
+    //     cy.get(":nth-child(4) > .form-select").select("10");
+
+    //     cy.contains("Indexation");
+    //     cy.get(":nth-child(5) > .form-select").select("2.50%");
+    //   });
+    //   cy.get(
+    //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
+    //   ).within(() => {
+    //     cy.contains("Close").should("be.visible");
+    //     cy.contains("Submit").should("be.visible").click();
+    //   });
+
+    //   //Partner Section Platform Investment Inner Footer
+
+    //   cy.contains("Close").should("be.visible");
+    //   cy.contains("Submit").should("be.visible").click();
+
+    //   cy.get("#clientcf_AustralianShares").should("have.value", "$24");
+    //   cy.get('#partnercf_AustralianShares').should('have.value', '$24');
+
+    //   //Platform Investment
+
+    //   cy.wait(2000);
+    //   cy.get(':nth-child(2) > .py-4').within(() => {
+    //     cy.contains("Platform Investment");
+    //     cy.get("img");
+    //     cy.contains("Aiden Smith");
+    //     cy.contains("Emma Taylor");
+    //   });
+    //   cy.get(':nth-child(2) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0').click();
+    //   cy.get(".modal-content").within(() => {
+    //     cy.contains("Platform Investment");
+    //     cy.get(".btn-close");
+    //   });
+
+    //   cy.get(".col-md-12 > .d-flex").within(() => {
+    //     cy.contains("Owner");
+
+    //     cy.get(".css-d07bj1 > :nth-child(1)").click();
+
+    //     cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
+    //   });
+
+    //   cy.wait(2000);
+    //   cy.get(".table").within(() => {
+    //     cy.contains("Owner");
+    //     cy.contains("Aiden Smith");
+    //     //  cy.get("#streetAddress")
+    //     //    .invoke("val")
+    //     //    .should((actualValue) => {
+    //     //      expect(actualValue.trim()).to.equal("FTS");
+    //     //    });
+
+    //     cy.contains("Current Balance").should("be.visible");
+    //     cy.get("#currentBalance").clear().type("24").should("have.value", "$24");
+
+    //     cy.contains("Cost Base").should("be.visible");
+    //     cy.get("#costBase").clear().type("77").should("have.value", "$77");
+
+    //     cy.contains("Regular Contributions");
+    //     cy.get(":nth-child(6) > .form-check > .radioButton2")
+    //       .contains("Yes")
+    //       .click();
+    //     cy.contains("Risk Profile/SAA");
+    //     cy.get(":nth-child(7) > .form-select").select("Cash");
+
+    //     cy.contains("Cashout Funds");
+    //     cy.get(':nth-child(9) > .form-select').should("have.value", "No");
+
+    //     cy.contains("Investment Returns");
+    //     cy.get(".input-group > .form-select").select("Input Override");
+    //     cy.wait(1000);
+    //     cy.get(".modalBtn").eq(0).click({ force: true }); // Clicks the first button
+    //   });
+
+    //   //Investment Returns Inner Card
+    //   cy.get(
+    //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
+    //   ).within(() => {
+    //     cy.contains("Input Override");
+    //     //cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close').should('be.visible')
+    //   });
+
+    //   cy.get(".col-md-12 > .row > .mt-4").within(() => {
+    //     cy.contains("Income Yield");
+    //     cy.get("#incomeYield").clear().type("23").should("have.value", "23");
+    //     //  Cypress.on("uncaught:exception", (err, runnable) => {
+    //     //    return false; // Prevent Cypress from failing the test
+    //     //  });
+
+    //     cy.contains("Growth Rate");
+    //     cy.get("#growthRate").clear().type("53").should("have.value", "53");
+    //     cy.contains("Franking");
+    //     cy.get("#franking").clear().type("66").should("have.value", "66");
+    //   });
+    //   //Investment Returns Footer
+    //   cy.get(
+    //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
+    //   ).within(() => {
+    //     cy.contains("Close").should("be.visible");
+    //     cy.contains("Submit").should("be.visible").click();
+    //   });
+
+    //   cy.wait(2000);
+    //   cy.contains("Reinvest income");
+    //   cy.get(":nth-child(5) > .form-check > .radioButton2")
+    //     .contains("Yes")
+    //     .click();
+
+    //   //Regular Contributions
+    //   cy.get("tbody > tr > :nth-child(6)").within(() => {
+    //     cy.get("#button-addon2").click();
+    //   });
+
+    //   //Regular Contributions Inner Card End
+    //   cy.get(
+    //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
+    //   ).within(() => {
+    //     cy.contains("Regular Contributions");
+    //     //cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close').should('be.visible')
+    //   });
+
+    //   cy.get(".col-md-12 > .row > .mt-4").within(() => {
+    //     cy.contains("Contribution");
+    //     cy.get("#contribution").clear().type("100").should("have.value", "$100");
+
+    //     cy.contains("Regular contributions p.a");
+    //     cy.get("#regularContributions")
+    //       .clear()
+    //       .type("200")
+    //       .should("have.value", "$200");
+
+    //     cy.contains("Contribute from Year");
+    //     cy.get(":nth-child(3) > .form-select").select("21");
+
+    //     cy.contains("Contribute Up Until");
+    //     cy.get(":nth-child(4) > .form-select").select("10");
+
+    //     cy.contains("Indexation");
+    //     cy.get(":nth-child(5) > .form-select").select("2.50%");
+    //   });
+    //   cy.get(
+    //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
+    //   ).within(() => {
+    //     cy.contains("Close").should("be.visible");
+    //     cy.contains("Submit").should("be.visible").click();
+    //   });
+
+    //  // Partner Section
+    //   cy.get(".css-1lx7dxn").type("Emma Taylor{enter}");
+
+    //   cy.contains("Emma Taylor").should("be.visible");
+
+    //   cy.get(":nth-child(2) > :nth-child(2) > #currentBalance")
+    //     .clear()
+    //     .type("24")
+    //     .should("have.value", "$24");
+
+    //   cy.get(":nth-child(2) > :nth-child(3) > #costBase")
+    //     .clear()
+    //     .type("77")
+    //     .should("have.value", "$77");
+
+    //   cy.get(":nth-child(2) > :nth-child(5) > .form-check > .radioButton2")
+    //     .contains("Yes")
+    //     .click();
+
+    //   cy.get(":nth-child(2) > :nth-child(7) > .form-select").select(
+    //     "High Growth"
+    //   );
+
+    //   cy.get(':nth-child(2) > :nth-child(9) > .form-select')
+    //     .select("13")
+    //     .should("have.value", "13");
+
+    //   cy.get(
+    //     ":nth-child(2) > :nth-child(4) > .input-group > .form-select"
+    //   ).select("Input Override");
+
+    //   cy.get(":nth-child(2) > :nth-child(4) > .GInputSelect").within(() => {
+    //     cy.get(".btn.bgColor.modalBtn.border-0.btn.btn-primary").click();
+    //   });
+
+    //   //Partner Section  Investment Returns Inner Card
+    //   cy.get(
+    //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
+    //   ).within(() => {
+    //     cy.contains("Input Override");
+    //     //cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close').should('be.visible')
+    //   });
+    //   cy.get(".col-md-12 > .row > .mt-4").within(() => {
+    //     cy.contains("Income Yield");
+    //     cy.get("#incomeYield").clear().type("23").should("have.value", "23");
+    //     //  Cypress.on("uncaught:exception", (err, runnable) => {
+    //     //    return false; // Prevent Cypress from failing the test
+    //     //  });
+
+    //     cy.contains("Growth Rate");
+    //     cy.get("#growthRate").clear().type("53").should("have.value", "53");
+    //     cy.contains("Franking");
+    //     cy.get("#franking").clear().type("66").should("have.value", "66");
+    //   });
+    //   //Partner Section  Investment Returns Footer
+    //   cy.get(
+    //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
+    //   ).within(() => {
+    //     cy.contains("Close").should("be.visible");
+    //     cy.contains("Submit").should("be.visible").click();
+    //   });
+
+    //   cy.wait(2000);
+    //   cy.contains("Reinvest income");
+
+    //   //Partner Section  Regular Contributions
+    //   cy.get(
+    //     ":nth-child(2) > :nth-child(6) > .form-check > .radioButton2"
+    //   ).within(() => {
+    //     cy.contains("Yes").click();
+    //   });
+
+    //   cy.get("tbody > :nth-child(2) > :nth-child(6) > .d-flex").within(() => {
+    //     cy.get(".btn.bgColor.modalBtn.border-0.btn.btn-primary").click();
+    //   });
+
+    //   // Partner Section  Regular Contributions Inner Card End
+    //   cy.get(
+    //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
+    //   ).within(() => {
+    //     cy.contains("Regular Contributions");
+    //     //cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close').should('be.visible')
+    //   });
+
+    //   cy.get(".col-md-12 > .row > .mt-4").within(() => {
+    //     cy.contains("Contribution");
+    //     cy.get("#contribution").clear().type("100").should("have.value", "$100");
+
+    //     cy.contains("Regular contributions p.a");
+    //     cy.get("#regularContributions")
+    //       .clear()
+    //       .type("200")
+    //       .should("have.value", "$200");
+
+    //     cy.contains("Contribute from Year");
+    //     cy.get(":nth-child(3) > .form-select").select("21");
+
+    //     cy.contains("Contribute Up Until");
+    //     cy.get(":nth-child(4) > .form-select").select("10");
+
+    //     cy.contains("Indexation");
+    //     cy.get(":nth-child(5) > .form-select").select("2.50%");
+    //   });
+    //   cy.get(
+    //     '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
+    //   ).within(() => {
+    //     cy.contains("Close").should("be.visible");
+    //     cy.contains("Submit").should("be.visible").click();
+    //   });
+
+    //   //Partner Section Platform Investment Inner Footer
+
+    //   cy.contains("Close").should("be.visible");
+    //   cy.contains("Submit").should("be.visible").click();
+
+    //   cy.get("#clientcf_AustralianShares").should("have.value", "$24");
+    //   cy.get('#partnercf_AustralianShares').should('have.value', '$24');
 
     // //Investments Property
     // cy.wait(2000);
@@ -718,6 +713,295 @@ class PartnerFinancialInvestments {
     // cy.contains("Submit").should("be.visible").click();
 
     // cy.get('[placeholder="Market Value"]').should("have.value", "$24");
+
+    //  //Investment Loans (LOC)
+
+    //  cy.wait(2000);
+    //  cy.get(":nth-child(7) > .py-4").within(() => {
+    //    cy.contains("Investment Loans (LOC)");
+    //    cy.get("img");
+    //    cy.contains("Aiden Smith");
+    //    cy.contains("Emma Taylor");
+    //  });
+    //  cy.get(
+    //    ":nth-child(7) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0"
+    //  ).click();
+    //  cy.get(".modal-content").within(() => {
+    //    cy.contains("Investment Loans (LOC)");
+    //    cy.get(".btn-close");
+    //  });
+
+    //  cy.get(".col-md-12 > .d-flex").within(() => {
+    //    cy.contains("Owner");
+
+    //    cy.get(".css-d07bj1 > :nth-child(1)").click();
+
+    //    cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
+    //  });
+
+    //  cy.wait(2000);
+    //  cy.get(".table").within(() => {
+    //    cy.contains("Owner");
+    //    cy.contains("Aiden Smith");
+    //    //  cy.get("#streetAddress")
+    //    //    .invoke("val")
+    //    //    .should((actualValue) => {
+    //    //      expect(actualValue.trim()).to.equal("FTS");
+    //    //    });
+
+    //    cy.contains("Current Loan Balance").should("be.visible");
+    //    cy.get("#currentLoanBalance")
+    //      .clear()
+    //      .type("24")
+    //      .should("have.value", "$24");
+    //    cy.contains("Loan Type").should("be.visible");
+    //    cy.get(":nth-child(3) > .form-select").select("i/only");
+
+    //    cy.contains("Loan Term");
+    //    cy.get(":nth-child(4) > .form-select").select("19");
+
+    //    cy.contains("Initial Interest Rate (p.a.)");
+    //    cy.get("#initialInterestRate").clear().type("20.00%");
+
+    //    cy.contains("Deductible interest");
+    //    cy.get("#deductibleInterest").clear().type("20.00%");
+
+    //    cy.contains("Minimum Repayments (p.a)");
+    //    cy.get("#minimumRepayments");
+
+    //    cy.contains("Actual Annual Repayments");
+    //    cy.get("#actualAnnualRepayments")
+    //      .clear()
+    //      .type("20")
+    //      .should("have.value", "$20");
+
+    //    cy.contains("Repay Loan in Year");
+    //    cy.get(":nth-child(9) > .form-select").should("have.value", "No");
+    //  });
+
+    //  //Investment Loans (LOC) Inner Footer
+
+    //        // Partner Section
+    //         cy.get(".css-1lx7dxn").type("Emma Taylor{enter}");
+
+    //         cy.contains("Emma Taylor").should("be.visible");
+
+    //    cy.contains("Current Loan Balance").should("be.visible");
+    //    cy.get(':nth-child(2) > :nth-child(2) > #currentLoanBalance')
+    //      .clear()
+    //      .type("24")
+    //      .should("have.value", "$24");
+    //    cy.contains("Loan Type").should("be.visible");
+    //    cy.get(':nth-child(2) > :nth-child(3) > .form-select').select("i/only");
+
+    //    cy.contains("Loan Term");
+    //    cy.get(':nth-child(2) > :nth-child(4) > .form-select').select("19");
+
+    //    cy.contains("Initial Interest Rate (p.a.)");
+    //    cy.get(':nth-child(2) > :nth-child(5) > #initialInterestRate').clear().type("20.00%");
+
+    //    cy.contains("Deductible interest");
+    //    cy.get(':nth-child(2) > :nth-child(6) > #deductibleInterest').clear().type("20.00%");
+
+    //    cy.contains("Minimum Repayments (p.a)");
+    //    cy.get(':nth-child(2) > :nth-child(7) > #minimumRepayments')
+
+    //    cy.contains("Actual Annual Repayments");
+    //    cy.get(':nth-child(2) > :nth-child(8) > #actualAnnualRepayments')
+    //      .clear()
+    //      .type("20")
+    //      .should("have.value", "$20");
+
+    //    cy.contains("Repay Loan in Year");
+    //    cy.get(':nth-child(2) > :nth-child(9) > .form-select').select("14");
+
+    //         cy.contains("Close").should("be.visible");
+    //         cy.contains("Submit").should("be.visible").click();
+
+    //         cy.get('#clientcf_investmentLoansLOC').should("have.value", "$20");
+    //         cy.get('#partnercf_investmentLoansLOC').should('have.value', '$20');
+
+    //Margin Loan
+
+    cy.wait(2000);
+    cy.get(":nth-child(8) > .py-4").within(() => {
+      cy.contains("Margin Loan");
+      cy.get("img");
+      cy.contains("Aiden Smith");
+      cy.contains("Emma Taylor");
+    });
+    cy.get(
+      ":nth-child(8) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0"
+    ).click();
+    cy.get(".modal-content").within(() => {
+      cy.contains("Margin Loan");
+      cy.get(".btn-close");
+    });
+
+    cy.get(".col-md-12 > .d-flex").within(() => {
+      cy.contains("Owner");
+
+      cy.get(".css-v7duua").click();
+
+      cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
+    });
+
+    cy.wait(2000);
+    cy.get(".table").within(() => {
+      cy.contains("Owner");
+      cy.contains("Aiden Smith");
+      //  cy.get("#streetAddress")
+      //    .invoke("val")
+      //    .should((actualValue) => {
+      //      expect(actualValue.trim()).to.equal("FTS");
+      //    });
+
+      cy.contains("Current Loan Balance").should("be.visible");
+      cy.get("#currentLoanBalance")
+        .clear()
+        .type("24")
+        .should("have.value", "$24");
+
+      cy.contains("Loan Term").should("be.visible");
+      cy.get(":nth-child(3) > .form-select").select("19");
+
+      cy.contains("Initial Interest Rate (p.a.)");
+      cy.get("#initialInterestRate").clear().type("20.00%");
+      cy.contains("Deductible interest");
+      cy.get("#deductibleInterest").clear().type("20.00%");
+
+      cy.contains("Repay Loan in Year");
+      cy.get(":nth-child(7) > .form-select").should("have.value", "No");
+    });
+
+    cy.wait(2000);
+    cy.contains("Monthly Contributions");
+    cy.get(".radioButton2").contains("Yes").click();
+
+    //Regular Contributions
+    cy.get("tbody > tr > :nth-child(6)").within(() => {
+      cy.get("#button-addon2").click();
+    });
+
+    //Regular Contributions Inner Card End
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
+    ).within(() => {
+      cy.contains("Monthly Contributions");
+      //cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close').should('be.visible')
+    });
+
+    cy.get(".col-md-12 > .row > .mt-4").within(() => {
+      cy.contains("Contribution");
+      cy.get("#contribution").clear().type("100").should("have.value", "$100");
+
+      cy.contains("Regular contributions p.a");
+      cy.get("#regularContributions")
+        .clear()
+        .type("200")
+        .should("have.value", "$200");
+
+      cy.contains("Contribute from Year");
+      cy.get(":nth-child(3) > .form-select").select("21");
+
+      cy.contains("Contribute Up Until");
+      cy.get(":nth-child(4) > .form-select").select("10");
+
+      cy.contains("Indexation");
+      cy.get(":nth-child(5) > .form-select").select("2.50%");
+    });
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
+    ).within(() => {
+      cy.contains("Close").should("be.visible");
+      cy.contains("Submit").should("be.visible").click();
+    });
+
+    // Partner Section
+    cy.get(".css-1lx7dxn").type("Emma Taylor{enter}");
+
+    cy.contains("Emma Taylor").should("be.visible");
+
+    cy.wait(2000);
+    cy.get(".table").within(() => {
+      cy.contains("Owner");
+      cy.contains("Aiden Smith");
+
+      cy.contains("Current Loan Balance").should("be.visible");
+      cy.get(":nth-child(2) > :nth-child(2) > #currentLoanBalance")
+        .clear()
+        .type("24")
+        .should("have.value", "$24");
+
+      cy.contains("Loan Term").should("be.visible");
+      cy.get(":nth-child(2) > :nth-child(3) > .form-select").select("19");
+
+      cy.contains("Initial Interest Rate (p.a.)");
+      cy.get(":nth-child(2) > :nth-child(4) > #initialInterestRate")
+        .clear()
+        .type("20.00%");
+
+      cy.contains("Deductible interest");
+      cy.get(":nth-child(2) > :nth-child(5) > #deductibleInterest")
+        .clear()
+        .type("20.00%");
+
+      cy.contains("Repay Loan in Year");
+      cy.get(":nth-child(2) > :nth-child(7) > .form-select").select("14");
+    });
+
+    cy.wait(2000);
+    cy.contains("Monthly Contributions");
+    cy.get(":nth-child(2) > :nth-child(6) > .form-check > .radioButton2")
+      .contains("Yes")
+      .click();
+
+    //Regular Contributions
+    cy.get("tbody > :nth-child(2) > :nth-child(6)").within(() => {
+      cy.get("#button-addon2").click();
+    });
+
+    //Monthly Contributions Inner Card End
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
+    ).within(() => {
+      cy.contains("Monthly Contributions");
+      //cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close').should('be.visible')
+    });
+
+    cy.get(".col-md-12 > .row > .mt-4").within(() => {
+      cy.contains("Contribution");
+      cy.get("#contribution").clear().type("100").should("have.value", "$100");
+
+      cy.contains("Regular contributions p.a");
+      cy.get("#regularContributions")
+        .clear()
+        .type("200")
+        .should("have.value", "$200");
+
+      cy.contains("Contribute from Year");
+      cy.get(":nth-child(3) > .form-select").select("21");
+
+      cy.contains("Contribute Up Until");
+      cy.get(":nth-child(4) > .form-select").select("10");
+
+      cy.contains("Indexation");
+      cy.get(":nth-child(5) > .form-select").select("2.50%");
+    });
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
+    ).within(() => {
+      cy.contains("Close").should("be.visible");
+      cy.contains("Submit").should("be.visible").click();
+    });
+
+    //Margin Loan Inner Footer
+
+    cy.contains("Close").should("be.visible");
+    cy.contains("Submit").should("be.visible").click();
+
+    cy.get("#clientcf_marginLoan").should("have.value", "$24");
+    cy.get("#partnercf_marginLoan").should("have.value", "$24");
   }
 }
 export default PartnerFinancialInvestments;
