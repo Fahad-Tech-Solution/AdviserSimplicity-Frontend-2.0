@@ -4,6 +4,9 @@ import { Row, Table } from "react-bootstrap";
 import DynamicTableRow from "../../../Components/Assets/Dynamic/DynamicTableRow";
 import InnerModal from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 import CashFlowLoanBelanceLVR from "./CashFlowLoanBelanceLVR";
+import { CashFlowData, defaultUrl } from "../../../Store/Store";
+import { useRecoilValue } from "recoil";
+import { openNotificationSuccess, PostAxios } from "../../../Components/Assets/Api/Api";
 
 const CashFlowHomeLoan = (props) => {
 
@@ -20,6 +23,8 @@ const CashFlowHomeLoan = (props) => {
        to maintain the integrity of the shared functionality.
  */
 
+  let DefaultUrl = useRecoilValue(defaultUrl);
+  let cashFlowData = useRecoilValue(CashFlowData);
 
   let initialValues = {
     loanTerm: "30",
@@ -37,9 +42,9 @@ const CashFlowHomeLoan = (props) => {
   let clientPartnerPercentageFormsArray = ["SMSF Investment Properties", "Family Trust Investment Properties"];
 
   const fillInitialValues = (setFieldValue) => {
-    console.log(props.modalObject.ParentObject, "kuch Chala");
-    console.log(clientPartnerPercentageFormsArray.includes(props.modalObject.ParentObject.title), "clientPartnerPercentageFormsArray.includes(props.modalObject.ParentObject.title)")
-    console.log(DeductibleInterestFormsArray.includes(props.modalObject.ParentObject.title), "DeductibleInterestFormsArray.includes(props.modalObject.ParentObject.title)")
+    // console.log(props.modalObject.ParentObject, "kuch Chala");
+    // console.log(clientPartnerPercentageFormsArray.includes(props.modalObject.ParentObject.title), "clientPartnerPercentageFormsArray.includes(props.modalObject.ParentObject.title)")
+    // console.log(DeductibleInterestFormsArray.includes(props.modalObject.ParentObject.title), "DeductibleInterestFormsArray.includes(props.modalObject.ParentObject.title)")
 
     setAddInputFlag(DeductibleInterestFormsArray.includes(props.modalObject.ParentObject.title));
     setClientPartnerPer(clientPartnerPercentageFormsArray.includes(props.modalObject.ParentObject.title));
@@ -191,27 +196,27 @@ const CashFlowHomeLoan = (props) => {
   ];
 
   let handleChildButtonClick = async (values, setFieldValue) => {
-    alert("ma chala");
-    // try {
-    //     let obj = {
-    //         values: props.modalObject.values,
-    //         AllCashFlowData: cashFlowData,
-    //     };
+    // alert("ma chala");
+    try {
+      let obj = {
+        values: props.modalObject.values,
+        AllCashFlowData: cashFlowData,
+      };
 
-    //     obj.values[props.modalObject.key + "Obj"] = values;
-    //     obj.values[props.modalObject.key] = values.costBaseExisting;
+      obj.values[props.modalObject.key + "Obj"] = values;
+      obj.values[props.modalObject.key] = values.costBaseExisting;
+      alert(`${DefaultUrl}/api/cal/cf_familyHome`)
+      let res = await PostAxios(`${DefaultUrl}/api/cal/cf_familyHome`, obj);
+      console.log(res, "res");
+      if (res) {
+        console.log(res);
 
-    //     // let res = await PostAxios(`${defaultUrl}/api/Calculate/Overseas`, obj);
-    //     // console.log(res, "res");
-    //     // if (res) {
-    //     //     console.log(res);
-
-    //     // }
-    //     openNotificationSuccess("success", "topRight", "Success Notification", 'Data of "' + props.modalObject.title + '" is Saved');
-    // } catch (error) {
-    //     console.error("Error occurred while making API call:", error);
-    //     openNotificationSuccess("error", "topRight", "Error Notification", 'Data of "' + props.modalObject.title + '" is not Saved Please! try again');
-    // }
+      }
+      openNotificationSuccess("success", "topRight", "Success Notification", 'Data of "' + props.modalObject.title + '" is Saved');
+    } catch (error) {
+      console.error("Error occurred while making API call:", error);
+      openNotificationSuccess("error", "topRight", "Error Notification", 'Data of "' + props.modalObject.title + '" is not Saved Please! try again');
+    }
   };
 
   return (

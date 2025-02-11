@@ -1,30 +1,17 @@
-
-// let handleChildButtonClick = async (values, setFieldValue) => {
-//     alert("ma chala");
-//     // try {
-//     //   let obj = values;
-//     //   let res = await PostAxios(`${DefaultUrl}/api/Calculate/Overseas`, obj);
-//     //   console.log(res, "res");
-//     //   if (res) {
-//     //     console.log(res);
-
-//     //     const updatedData = {
-//     //       ...cashFlowData,
-//     //       [objAndAPIKey]: res,
-//     //     };
-//     //     setCashFlowData(updatedData);
-//     //   }
-//     //   openNotificationSuccess("success", "topRight", "Success Notification", 'Data of "' + props.modalObject.title + '" is Saved');
-//     // } catch (error) {
-//     //   console.error("Error occurred while making API call:", error);
-//     //   openNotificationSuccess("error", "topRight", "Error Notification", 'Data of "' + props.modalObject.title + '" is not Saved Please! try again');
-//     // }
-//   };
-//                   <button
-//                     ref={props.childButtonRef}
-//                     onClick={() => { handleChildButtonClick(values, setFieldValue) }}
-//                     style={{ display: "none" }} // Hidden button
-//                     type="button"
-//                   >
-//                     Hidden Child Button
-//                   </button>
+{
+    "cf_employmentIncome": {
+        "salaryPackingCarModal": {
+            "runningCostsOfCarPackaged": "$123"
+        }
+    },
+    "cf_familyHome": {
+        "state": "SA",
+        "estimatedFutureSellingCost": "3.4%",
+        "familyHomeLoan": {
+            "interestOnlyPeriod": "Year 1",
+            "applyMinimumRepaymentsOR": "Yes",
+            "surplusToHomeLoan": "Yes"
+        }
+    },
+    "": ""
+}
