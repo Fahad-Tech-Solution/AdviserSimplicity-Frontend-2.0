@@ -1091,110 +1091,304 @@ class ClientFinancialInvestments {
     //   cy.contains("Submit").should("be.visible").click();
     // });
 
-    //Concessional Contributions
-    cy.contains("Concessional Contributions");
-    cy.get("tbody > tr > :nth-child(9)").within(() => {
+    // //Concessional Contributions
+    // cy.contains("Concessional Contributions");
+    // cy.get("tbody > tr > :nth-child(9)").within(() => {
+    //   cy.contains("Yes").click();
+    //   cy.get("#button-addon2").click();
+    // });
+
+    // //Concessional Contributions
+    // cy.get(
+    //   '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
+    // ).within(() => {
+    //   cy.contains("Concessional Contributions");
+    // });
+
+    // cy.get(".col-md-12 > .row > .mt-4").within(() => {
+    //   cy.contains("Owner");
+    //   cy.contains("Aiden Smith");
+
+    //   cy.contains("Employer SG Contributions");
+    //   cy.get(":nth-child(2) > .form-select").select("SGC");
+
+    //   cy.contains("Personal/Salary Sacrifice");
+    //   cy.get('[style="min-width: 10vw;"] > .input-group > .form-select').select(
+    //     "Other"
+    //   );
+
+    //   cy.contains("Affordability amount (net p.a.) / Other Amount");
+    //   cy.get("#affordabilityOtherAmount")
+    //     .clear()
+    //     .type("24")
+    //     .should("have.value", "$24");
+
+    //   cy.contains("Indexation of Other Amount");
+    //   cy.get(":nth-child(5) > .form-select").select("2.50%");
+
+    //   cy.contains("Contributions To Fund");
+    //   cy.get(":nth-child(6) > .form-select").select("2");
+
+    //   cy.contains("Year to Commence");
+    //   cy.get(":nth-child(7) > .form-select").select("21");
+
+    //   cy.contains("Years to Include");
+    //   cy.get(":nth-child(8) > .form-select").select("1");
+
+    //   cy.contains("Catch Up contribution (Year 1 only)");
+    //   cy.get("#catchUpContribution")
+    //     .clear()
+    //     .type("24")
+    //     .should("have.value", "$24");
+
+    //   cy.contains("Contributions To Fund");
+    //   cy.get(":nth-child(10) > .form-select").select("SMSF");
+
+    //   cy.contains("Contribution Splitting");
+    //   // cy.get('.radioButton2').contains("Yes")
+    //   //   .check();
+
+    //   cy.get(".tableYesLabel").click();
+    //   cy.get("tr > :nth-child(11) > .d-flex").within(() => {
+    //     cy.get("#button-addon2").click();
+    //   });
+    // });
+
+    // //Contribution Splitting Inner Card
+
+    // cy.contains("Contribution Splitting");
+
+    // cy.get(
+    //   ":nth-child(7) > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4"
+    // ).within(() => {
+    //   cy.contains("Owner");
+    //   cy.contains("Aiden Smith");
+
+    //   cy.contains("Contribution Splitting");
+    //   cy.get("#contributionSplitting")
+    //     .clear()
+    //     .type("24")
+    //     .should("have.value", "$24");
+
+    //   cy.contains("Year to Commence");
+    //   cy.get('select[name="yearToCommence"]').select("1");
+
+    //   cy.contains("Years to Include");
+    //   cy.get(":nth-child(4) > .form-select").select("21");
+
+    //   cy.contains("Contributions To Fund");
+    //   cy.get('select[name="contributionsToFund"]').select("SMSF");
+    // });
+    // cy.get(".modal-footer .btn-secondary").should("be.visible"); // Close button
+
+    // cy.get(".modal-footer .modalBtn").filter(":visible").first().click();
+
+    // //Personal/Salary Sacrifice inner card
+    // cy.get('[style="min-width: 10vw;"]').within(() => {
+    //   cy.get(".btn.bgColor.modalBtn").click();
+    // });
+    // cy.contains("Other Percentage Amount").should("be.visible");
+
+    // cy.contains("Other Percentage Amount");
+    // cy.get("#otherPercentageAmount")
+    //   .clear()
+    //   .type("44")
+    //   .should("have.value", "44");
+
+    // cy.get(".modal-footer .btn-secondary").filter(":visible").first();
+
+    // cy.get(".modal-footer .modalBtn").filter(":visible").first().click();
+
+    // //Concessional Contributions Closing
+    // cy.contains("Close");
+    // cy.get(
+    //   '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer > .bgColor'
+    // )
+    //   .contains("Submit")
+
+    //   .click();
+
+    //Non Concessional Contributions
+    cy.contains("Non Concessional Contributions");
+    cy.get("tbody > tr > :nth-child(10)").within(() => {
       cy.contains("Yes").click();
       cy.get("#button-addon2").click();
     });
 
-    //Concessional Contributions
+    //Non Concessional Contributions
     cy.get(
       '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
     ).within(() => {
-      cy.contains("Concessional Contributions");
+      cy.contains("Non Concessional Contributions");
     });
 
     cy.get(".col-md-12 > .row > .mt-4").within(() => {
       cy.contains("Owner");
       cy.contains("Aiden Smith");
 
-      cy.contains("Employer SG Contributions");
-      cy.get(":nth-child(2) > .form-select").select("SGC");
+      cy.contains("Lumpsum Non-Concessional (Year 1 only)");
+      cy.get("#lumpsumNonConcessionalYearOne").clear().type("34");
 
-      cy.contains("Personal/Salary Sacrifice");
-      cy.get('[style="min-width: 10vw;"] > .input-group > .form-select').select(
-        "Other"
-      );
+      cy.contains("Contributions To Fund");
+      cy.get('select[name="contributionsToFund"]').select("SMSF");
 
-      cy.contains("Affordability amount (net p.a.) / Other Amount");
-      cy.get("#affordabilityOtherAmount")
+      cy.contains("Regular Non-Concessional");
+      cy.get("#regularNonConcessional")
         .clear()
         .type("24")
         .should("have.value", "$24");
-
-      cy.contains("Indexation of Other Amount");
-      cy.get(":nth-child(5) > .form-select").select("2.50%");
-
-      cy.contains("Contributions To Fund");
-      cy.get(":nth-child(6) > .form-select").select("2");
 
       cy.contains("Year to Commence");
-      cy.get(":nth-child(7) > .form-select").select("21");
+      cy.get(":nth-child(6) > .form-select").select("7");
 
       cy.contains("Years to Include");
-      cy.get(":nth-child(8) > .form-select").select("1");
-
-      cy.contains("Catch Up contribution (Year 1 only)");
-      cy.get("#catchUpContribution")
-        .clear()
-        .type("24")
-        .should("have.value", "$24");
+      cy.get(":nth-child(7) > .form-select").select("2");
 
       cy.contains("Contributions To Fund");
-      cy.get(":nth-child(10) > .form-select").select("SMSF");
+      cy.get(":nth-child(8) > .form-select").select("SMSF");
 
-      cy.contains("Contribution Splitting");
+      cy.contains("Government Co-contribution to");
+      cy.get(":nth-child(9) > .form-select").select("1");
+
+      cy.contains("Lumpsum Non-Concessional");
       // cy.get('.radioButton2').contains("Yes")
       //   .check();
 
-      cy.get(".tableYesLabel").click();
-      cy.get("tr > :nth-child(11) > .d-flex").within(() => {
-        cy.get("#button-addon2").click();
+      cy.get(":nth-child(4) > .form-check > .radioButton2")
+        .contains("Yes")
+        .click();
+      cy.get("tr > :nth-child(4) > .d-flex").within(() => {
+        cy.get("#button-addon2").first().click();
       });
     });
 
-      //Contribution Splitting Inner Card
-      cy.get(':nth-child(7) > .modal-dialog > .modal-content > .modal-header').within(() => {
-      cy.contains("Contribution Splitting");
-    });
+    //Lumpsum Non-Concessional Inner Card
 
-    cy.get(':nth-child(7) > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4').within(() => {
+    cy.contains("Lumpsum Non - Concessional");
+
+    cy.get(
+      ":nth-child(7) > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4"
+    ).within(() => {
       cy.contains("Owner");
       cy.contains("Aiden Smith");
 
-      cy.contains("Contribution Splitting");
-      cy.get('#contributionSplitting').clear().type("24").should("have.value", "$24");
+      cy.contains("Contributions To Fund");
+      cy.get(":nth-child(2) > .form-select").select("1");
+
+      cy.contains("Year");
+      cy.get('select[name="year"]').select("1");
+
+      cy.contains("Amount");
+      cy.get("#amount").clear().type("24").should("have.value", "$24");
+    });
+    cy.get(".modal-footer .btn-secondary").should("be.visible"); // Close button
+
+    cy.get(".modal-footer .modalBtn").filter(":visible").first().click();
+
+    //Lumpsum Non-Concessional ENded
+
+    //Downsizer contribution
+    cy.contains("Downsizer contribution");
+
+    cy.get(
+      ":nth-child(2) > .row > .mt-4 > .table-responsive > .table > tbody > tr > :nth-child(10)"
+    ).within(() => {
+      cy.contains("Yes").click();
+      cy.get("#button-addon2").first().click();
+    });
+
+    cy.contains("Downsizer contribution");
+
+    cy.get(
+      ":nth-child(7) > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4"
+    ).within(() => {
+      cy.contains("Owner");
+      cy.contains("Aiden Smith");
+
+      cy.contains("Downsizer contribution (Year 1 only)");
+      cy.get("#downSizerContribution")
+        .clear()
+        .type("24")
+        .should("have.value", "$24");
+
+      cy.contains("Contributions To Fund");
+      cy.get('select[name="contributionsToFund"]').select("1");
+    });
+    cy.get(".modal-footer .btn-secondary").should("be.visible"); // Close button
+
+    cy.get(".modal-footer .modalBtn").filter(":visible").first().click();
+
+    //Apply Spouse Contribution
+    cy.contains("Apply Spouse Contribution");
+
+    cy.get(
+      ":nth-child(2) > .row > .mt-4 > .table-responsive > .table > tbody > tr > :nth-child(11)"
+    ).within(() => {
+      cy.contains("Yes").click();
+      cy.get("#button-addon2").first().click();
+    });
+
+    cy.contains("Apply Spouse Contribution");
+
+    cy.get(
+      ":nth-child(7) > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4"
+    ).within(() => {
+      cy.contains("Owner");
+      cy.contains("Aiden Smith");
 
       cy.contains("Year to Commence");
-      cy.get('.col-md-12 > .row > .mt-4 > .table-responsive > .table > tbody > tr > :nth-child(3) > .form-select').select("1");
+      cy.get('select[name="yearToCommence"]').select("5");
 
       cy.contains("Years to Include");
-      cy.get(':nth-child(4) > .form-select').select("21");
-
-      cy.contains("Contributions To Fund")
-      cy.get(':nth-child(7) > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4 > .table-responsive > .table > tbody > tr > :nth-child(5) > .form-select').select("SMSF");  
+      cy.get('select[name="yearToCommence"]').select("10");
     });
-    cy.get(
-      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
-    ).within(() => {
-      cy.contains("Close").should("be.visible");
-      cy.contains("Submit").should("be.visible").click();
-     });
+    cy.get(".modal-footer .btn-secondary").should("be.visible"); // Close button
+
+    cy.get(".modal-footer .modalBtn").filter(":visible").first().click();
+
+    //	Withdrawals
+
+    cy.contains("Withdrawals");
 
     cy.get(
-      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
+      ":nth-child(2) > .row > .mt-4 > .table-responsive > .table > tbody > tr > :nth-child(11)"
     ).within(() => {
-      cy.contains("Close").should("be.visible");
-      cy.contains("Submit").should("be.visible").click();
+      cy.contains("Yes").click();
+      cy.get("#button-addon2").first().click();
     });
 
-    //Super Fund Footer
+    cy.contains("Apply Spouse Contribution");
 
-    cy.contains("Close").should("be.visible");
-    cy.contains("Submit").should("be.visible").click();
+    cy.get(
+      ":nth-child(7) > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4"
+    ).within(() => {
+      cy.contains("Owner");
+      cy.contains("Aiden Smith");
 
-    cy.get("#clientcf_investmentBonds").should("have.value", "$24");
+      cy.contains("Year to Commence");
+      cy.get('select[name="yearToCommence"]').select("5");
+
+      cy.contains("Years to Include");
+      cy.get('select[name="yearToCommence"]').select("10");
+    });
+    cy.get(".modal-footer .btn-secondary").should("be.visible"); // Close button
+
+    cy.get(".modal-footer .modalBtn").filter(":visible").first().click();
+    //Concessional Contributions Closing
+    cy.contains("Close");
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer > .bgColor'
+    )
+      .contains("Submit")
+
+      .click();
+
+    // //Super Fund Footer
+
+    // cy.contains("Close").should("be.visible");
+    // cy.contains("Submit").should("be.visible").click();
+
+    // cy.get("#clientcf_investmentBonds").should("have.value", "$24");
   }
 }
 export default ClientFinancialInvestments;
