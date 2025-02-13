@@ -225,6 +225,22 @@ const CashFlowInvestmentLoansLOC = (props) => {
             label: ("Year " + (i + 1)).toString(),
         })
     });
+    
+    const loanTermOptionsWithExisting = Array.from({ length: 31 }, (_, i) => {
+
+        if (i === 0) {
+            return ({
+                value: "Existing",
+                label: "Existing",
+            })
+        }
+
+        return ({
+            // value: (i + 1).toString(),
+            value: (i + 1),
+            label: ("Year " + (i + 1)).toString(),
+        })
+    });
 
     const options =
         UserStatus !== "Single"
@@ -240,6 +256,12 @@ const CashFlowInvestmentLoansLOC = (props) => {
     ]
 
     const rowConfig = [
+        {
+            name: "yearOfLoan",
+            placeholder: "Year of Loan",
+            type: "select",
+            options: loanTermOptionsWithExisting,
+        },
         {
             name: "currentLoanBalance",
             placeholder: "Current Loan Balance",
@@ -364,6 +386,7 @@ const CashFlowInvestmentLoansLOC = (props) => {
                                                 >
                                                     Owner
                                                 </th>
+                                                <th>Year of Loan</th>
                                                 <th>Current Loan Balance</th>
                                                 <th>Loan Type</th>
                                                 <th>Loan Term</th>

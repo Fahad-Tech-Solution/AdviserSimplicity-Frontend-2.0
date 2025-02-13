@@ -13,5 +13,39 @@
             "surplusToHomeLoan": "Yes"
         }
     },
+    "cf_investmentLoansLOC": {
+        "client": {
+            "yearOfLoan": "year 1",
+            "interestOnlyPeriod": "year 1",
+            "applyMinimumRepaymentsOR": "yes"
+        }
+    },
+    "cf_BucketCompany": {
+        "netTrustDistribution": {
+            "openingValue": "$123"
+        }
+    },
+    "cf_SMSFInvestmentLoan": {
+        "yearOfLoan": "Existing"
+    },
+    "cf_SMSFInvestmentProperties": {
+        "state": "SA",
+        "estimatedFutureSellingCost": "SA",
+        "loanBalanceObj": {
+            "interestOnlyPeriod": "Year 1",
+            "applyMinimumRepaymentsOR": "Yes"
+        }
+    },
+    "cf_FamilyTrustInvestmentLoan": {
+        "yearOfLoan": "Existing"
+    },
+    "cf_FamilyTrustInvestmentProperties": {
+        "state": "SA",
+        "estimatedFutureSellingCost": "SA",
+        "loanBalanceObj": {
+            "interestOnlyPeriod": "Year 1",
+            "applyMinimumRepaymentsOR": "Yes"
+        }
+    },
     "": ""
 }

@@ -140,7 +140,8 @@ const ModalComponent = (props) => {
         "Family Trust Australian Shares",
         "Family Trust Platform Investment",
         "Family Trust",
-        "Family Trust Investment Properties"
+        "Family Trust Investment Properties",
+        "SMSF Pension Account Details"
 
     ]; // Add other titles that should use "xl" here
 
@@ -153,6 +154,7 @@ const ModalComponent = (props) => {
         "Super Fund",
         "Annuities",
         "Account Based Pension",
+        
     ]
 
     let xlKey = [
