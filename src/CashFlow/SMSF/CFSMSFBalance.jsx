@@ -166,16 +166,6 @@ const CFSMSFBalance = (props) => {
       type: "number-toComma",
       placeholder: "Tax-free Component",
     },
-    {
-      name: "purchasePrice",
-      type: "number-toComma",
-      placeholder: "Purchase Price (Less Commut)",
-    },
-    {
-      name: "centrelinkRelevantNumber",
-      type: "number-toComma",
-      placeholder: "Centrelink Relevant Number",
-    },
   ];
 
   const componentMapping = {
@@ -223,8 +213,6 @@ const CFSMSFBalance = (props) => {
                           <th>Total Superannuation Benefits</th>
                           <th colSpan={2}>Nominated Rollover amount</th>
                           <th>Tax-free Component</th>
-                          <th>Purchase Price (Less Commut)</th>
-                          <th>Centrelink Relevant Number</th>
                         </tr>
                       </thead>
                       <tbody>

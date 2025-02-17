@@ -1,223 +1,270 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Button, Modal } from 'react-bootstrap';
-import { scroller, Element } from 'react-scroll';
+import React, { useEffect, useRef, useState } from "react";
+import { Button, Modal } from "react-bootstrap";
+import { scroller, Element } from "react-scroll";
 import { FaInfoCircle } from "react-icons/fa";
+import { CashFlowReCalculateLoading } from "../../../Store/Store";
+import { useRecoilState } from "recoil";
 
 const ModalComponent = (props) => {
+  const formRef = useRef(null); // Create a ref to store the form instance
+  const childButtonRef = useRef(null);
 
+  let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
+    useRecoilState(CashFlowReCalculateLoading);
 
+  const handleOk = () => {
+    if (formRef.current) {
+      formRef.current.handleSubmit(); // Trigger Formik's handleSubmit
+    }
+  };
 
-    const formRef = useRef(null);  // Create a ref to store the form instance
-    const childButtonRef = useRef(null);
+  const handleParentButtonClick = () => {
+    // alert("Parent button clicked");
+    if (childButtonRef.current) {
+      childButtonRef.current.click();
+    }
+  };
 
-    const handleOk = () => {
-        if (formRef.current) {
-            formRef.current.handleSubmit();  // Trigger Formik's handleSubmit
-        }
-    };
+  let flagState = props.flagState;
+  let setFlagState = props.setFlagState;
+  let modalObject = props.modalObject;
+  let setQuestionChange = props.setQuestionChange;
 
-    const handleParentButtonClick = () => {
-        // alert("Parent button clicked");
-        if (childButtonRef.current) {
-            childButtonRef.current.click();
-        }
-    };
+  useEffect(() => {
+    // console.log("Ma chala a a a ", props.Question)
+    // Scroll to the header of the modal whenever props.Question changes
+    scroller.scrollTo("modal-header", {
+      duration: 800,
+      delay: 0,
+      smooth: "easeInOutQuart",
+      containerId: "modal-container",
+    });
+  }, [props.setQuestionChange, props.Question]);
 
+  const xlTitles = [
+    "Questions",
+    "Employement Income",
+    // "Australian Shares",
+    // "Managed Funds",
+    // "Investment Bond",
+    "Investment Loan",
+    "Margin Loan",
+    "Personal Loan",
+    "Credit Card",
+    "Home Loan",
+    "Own a Family Home",
+    "Holiday Home",
+    "Holiday Home Loan",
+    "Investment Properties",
+    "Investment Property Loan",
+    // "Super Funds",
+    // "Account Based Pension",
+    // "invested in Annuities",
+    "Wills",
+    "Power of Attorneys",
+    "Professional Advisers",
+    "Centerlink Payments",
+    "Sole Trader",
+    "Partnership",
+    "SMSF Details",
+    "SMSF Investment Loan",
+    "Investment Home Loan",
+    // "Business as Company Structure",
+    // "Business as Trusts",
+    "Family Trust Details",
+    "Family Trust Investment Loan",
+    "Goals and Objectives Questions",
+    "Set up a Budget",
+    "Pay off Credit Card/Debt",
+    "Protect my Lifestyle & Family",
+    "Take a Holiday",
+    "Buy a Car",
+    "Accumulate Emergency Fund",
+    "Regular Savings Plan",
+    "Buy a House",
+    "Buy a Boat",
+    "Buy a Carvan",
+    "Upgrade Family Home",
+    "Renovate Family Home",
+    "Downsize Family Home",
+    "Buy an Investment Property",
+    "Pay off Home Loan",
+    "Start a Business",
+    "Save for Children’s Education",
+    "Plan for Retirement",
+    "Start a Family",
+    "Care for Ageing Family Member",
+    "Receive an Inheritance",
+    "Leave an Inheritance",
+    "Eligibility to Centrelink",
+    "Set up a Family Trust",
+    "Set up an SMSF",
+    "Save for a Wedding",
+    "Estate Planning",
+    "Set up an Investment Portfolio",
+    "Review Investment Portfolio",
+    "Pay Less Tax",
+    "Ongoing Financial Advice",
+    "Review my Super",
+    "Combine my Super into One",
+    "Contribute Money into Super",
+    "Generate a Retirement Income Stream",
+    "Set up a Super Income Stream",
+    "Review your Current Personal Insurance Cover",
+    "Analysis of your Personal Insurance needs",
+    "Retain Current Personal Insurances as is",
+    "Reduce my Current Personal Insurance Cover",
+    "Advice on Surplus Income",
+    "Investment Home",
+    "Investment Home Loan",
+    "Investment Home Expanse",
+    "Family Investment Home",
+    "Family Investment Home Loan",
+    "Family Investment Home Expanse",
+    "Personal Loans",
+    "Australian Shares",
+    "Platform Investment",
+    "Other Investments",
+    "Cash",
+    "Term Deposits",
+    "Investment Bonds",
+    "Investment Loans (LOC)",
+    "Lifetime Benefits",
+    "SMSF Accumulation Details",
+    "SMSF Bank",
+    "SMSF Term Deposit",
+    "SMSF Australian Shares",
+    "SMSF Platform Investment",
+    "SMSF",
+    "Family Trust Term Deposits",
+    "Family Trust Australian Shares",
+    "Family Trust Platform Investment",
+    "Family Trust",
+    "Family Trust Investment Properties",
+    "SMSF Pension Account Details",
+  ]; // Add other titles that should use "xl" here
 
-    let flagState = props.flagState;
-    let setFlagState = props.setFlagState;
-    let modalObject = props.modalObject;
-    let setQuestionChange = props.setQuestionChange;
+  let fullTitles = [
+    "Family Trust Investment Loan",
+    "Family Details",
+    "Life Insurance",
+    "Personal Insurance",
+    "Investment Loan",
+    "Margin Loan",
+    "SMSF Details",
+    "SMSF Investment Properties",
+    "SMSF Platform Investments Detail",
+    "Family Trust Investment Property",
+    "SMSF Investment Loan",
+    "Education Expenses",
+    "Centrelink Payments/Benefits",
+    "Own a Family Home",
+    "Employment Income",
+    "Investments Property",
+    "Super Fund",
+    "Annuities",
+    "Account Based Pension",
+  ];
 
-    useEffect(() => {
-        // console.log("Ma chala a a a ", props.Question)
-        // Scroll to the header of the modal whenever props.Question changes
-        scroller.scrollTo("modal-header", {
-            duration: 800,
-            delay: 0,
-            smooth: 'easeInOutQuart',
-            containerId: 'modal-container'
-        });
-    }, [props.setQuestionChange, props.Question]);
+  let xlKey = [
+    "CFQ",
+    "cashFlowIncomeFromOverseasPension",
+    "otherNonTaxable",
+    "businessIncome",
+    "RegularLivingExpenses",
+    "cashFlowLifetimeBenefit",
+    "incomeFromPartnership",
+    "incomeFromSoleTrader",
+    "car",
+  ];
 
+  const size = fullTitles.includes(props.modalObject.title)
+    ? "xxl"
+    : xlTitles.includes(props.modalObject.title)
+    ? "xl"
+    : xlKey.includes(props.modalObject.key)
+    ? "xl"
+    : "lg";
 
-    const xlTitles = [
-        "Questions",
-        "Employement Income",
-        // "Australian Shares",
-        // "Managed Funds",
-        // "Investment Bond",
-        "Investment Loan",
-        "Margin Loan",
-        "Personal Loan",
-        "Credit Card",
-        "Home Loan",
-        "Own a Family Home",
-        "Holiday Home",
-        "Holiday Home Loan",
-        "Investment Properties",
-        "Investment Property Loan",
-        // "Super Funds",
-        // "Account Based Pension",
-        // "invested in Annuities",
-        "Wills",
-        "Power of Attorneys",
-        "Professional Advisers",
-        "Centerlink Payments",
-        "Sole Trader",
-        "Partnership",
-        "SMSF Details",
-        "SMSF Investment Loan",
-        "Investment Home Loan",
-        // "Business as Company Structure",
-        // "Business as Trusts",
-        "Family Trust Details",
-        "Family Trust Investment Loan",
-        "Goals and Objectives Questions",
-        "Set up a Budget",
-        "Pay off Credit Card/Debt",
-        "Protect my Lifestyle & Family",
-        "Take a Holiday",
-        "Buy a Car",
-        "Accumulate Emergency Fund",
-        "Regular Savings Plan",
-        "Buy a House",
-        "Buy a Boat",
-        "Buy a Carvan",
-        "Upgrade Family Home",
-        "Renovate Family Home",
-        "Downsize Family Home",
-        "Buy an Investment Property",
-        "Pay off Home Loan",
-        "Start a Business",
-        "Save for Children’s Education",
-        "Plan for Retirement",
-        "Start a Family",
-        "Care for Ageing Family Member",
-        "Receive an Inheritance",
-        "Leave an Inheritance",
-        "Eligibility to Centrelink",
-        "Set up a Family Trust",
-        "Set up an SMSF",
-        "Save for a Wedding",
-        "Estate Planning",
-        "Set up an Investment Portfolio",
-        "Review Investment Portfolio",
-        "Pay Less Tax",
-        "Ongoing Financial Advice",
-        "Review my Super",
-        "Combine my Super into One",
-        "Contribute Money into Super",
-        "Generate a Retirement Income Stream",
-        "Set up a Super Income Stream",
-        "Review your Current Personal Insurance Cover",
-        "Analysis of your Personal Insurance needs",
-        "Retain Current Personal Insurances as is",
-        "Reduce my Current Personal Insurance Cover",
-        "Advice on Surplus Income",
-        "Investment Home",
-        "Investment Home Loan",
-        "Investment Home Expanse",
-        "Family Investment Home",
-        "Family Investment Home Loan",
-        "Family Investment Home Expanse",
-        "Personal Loans",
-        "Australian Shares",
-        "Platform Investment",
-        "Other Investments",
-        "Cash",
-        "Term Deposits",
-        "Investment Bonds",
-        "Investment Loans (LOC)",
-        "Lifetime Benefits",
-        "SMSF Accumulation Details",
-        "SMSF Bank",
-        "SMSF Term Deposit",
-        "SMSF Australian Shares",
-        "SMSF Platform Investment",
-        "SMSF",
-        "Family Trust Term Deposits",
-        "Family Trust Australian Shares",
-        "Family Trust Platform Investment",
-        "Family Trust",
-        "Family Trust Investment Properties",
-        "SMSF Pension Account Details"
+  return (
+    <div>
+      <Modal
+        dialogClassName={size === "xxl" && "modal-90w"}
+        size={size === "xxl" ? "" : size}
+        backdrop="static"
+        keyboard={false}
+        centered
+        show={props.flagState}
+        onHide={() => {
+          props.setFlagState(false);
+        }}
+      >
+        <Element id="modal-container"></Element>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            {props.modalObject.title === "Regular Living Expenses"
+              ? props.modalObject.title2 || props.modalObject.title
+              : props.modalObject.title}
+          </Modal.Title>
+        </Modal.Header>
 
-    ]; // Add other titles that should use "xl" here
+        <Modal.Body>
+          {props.children
+            ? React.cloneElement(props.children, {
+                formRef,
+                flagState,
+                setFlagState,
+                modalObject,
+                setQuestionChange,
+                childButtonRef,
+              })
+            : "no Child exist"}
+        </Modal.Body>
 
-    let fullTitles = ["Family Trust Investment Loan", "Family Details", "Life Insurance", "Personal Insurance", "Investment Loan", "Margin Loan", "SMSF Details", "SMSF Investment Properties", "SMSF Platform Investments Detail", "Family Trust Investment Property", "SMSF Investment Loan",
-        "Education Expenses",
-        "Centrelink Payments/Benefits",
-        "Own a Family Home",
-        "Employment Income",
-        "Investments Property",
-        "Super Fund",
-        "Annuities",
-        "Account Based Pension",
-        
-    ]
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            style={{ width: "12.5%", minWidth: "fit-content" }}
+            onClick={() => props.setFlagState(false)}
+          >
+            Close
+          </Button>
 
-    let xlKey = [
-        "CFQ",
-        "cashFlowIncomeFromOverseasPension",
-        "otherNonTaxable",
-        "businessIncome",
-        "RegularLivingExpenses",
-        "cashFlowLifetimeBenefit",
-        "incomeFromPartnership",
-        "incomeFromSoleTrader",
-        "car",
+          {props.modalObject?.cal && (
+            <Button
+              variant="secondary"
+              style={{ width: "12.5%", minWidth: "fit-content" }}
+              onClick={handleParentButtonClick}
+            >
+              <FaInfoCircle size={14} style={{ marginBottom: "4px" }} />{" "}
+              Re-Calculate
+              {cashFlowReCalculateLoading && (
+                <ConfigProvider
+                  theme={{
+                    token: {
+                      /* here is your global tokens */
+                      colorPrimary: "#fff",
+                    },
+                  }}
+                >
+                  &nbsp; <Spin size="small" />
+                </ConfigProvider>
+              )}
+            </Button>
+          )}
 
-    ];
+          <button
+            type="button"
+            className="btn bgColor modalBtn"
+            style={{ width: "12.5%", minWidth: "fit-content" }}
+            onClick={handleOk}
+          >
+            Submit
+          </button>
+        </Modal.Footer>
+      </Modal>
+    </div>
+  );
+};
 
-    const size = fullTitles.includes(props.modalObject.title) ? "xxl" : xlTitles.includes(props.modalObject.title) ? "xl" : xlKey.includes(props.modalObject.key) ? "xl" : "lg";
-
-
-    return (
-        <div>
-            <Modal dialogClassName={size === "xxl" && "modal-90w"} size={size === "xxl" ? "" : size} backdrop="static" keyboard={false} centered show={props.flagState} onHide={() => { props.setFlagState(false) }}>
-                <Element id="modal-container">
-                </Element>
-                <Modal.Header closeButton>
-                    <Modal.Title>
-                        {props.modalObject.title === "Regular Living Expenses"
-                            ? props.modalObject.title2 || props.modalObject.title
-                            : props.modalObject.title}
-                    </Modal.Title>
-                </Modal.Header>
-
-
-                <Modal.Body>
-                    {props.children ? (
-                        React.cloneElement(props.children, { formRef, flagState, setFlagState, modalObject, setQuestionChange, childButtonRef })
-                    ) : "no Child exist"}
-                </Modal.Body>
-
-                <Modal.Footer>
-
-                    <Button variant="secondary" style={{ width: "12.5%", minWidth: "fit-content" }} onClick={() => props.setFlagState(false)}>
-                        Close
-                    </Button>
-
-                    {props.modalObject?.cal &&
-                        <Button
-                            variant="secondary"
-                            style={{ width: "12.5%", minWidth: "fit-content" }}
-                            onClick={handleParentButtonClick}
-                        >
-                            <FaInfoCircle size={14} style={{ marginBottom: "4px" }} />   Re-Calculate
-                        </Button>
-                    }
-
-                    <button type='button' className='btn bgColor modalBtn' style={{ width: "12.5%", minWidth: "fit-content" }} onClick={handleOk}>
-                        Submit
-                    </button>
-                </Modal.Footer>
-            </Modal>
-
-
-        </div>
-    )
-}
-
-export default ModalComponent
+export default ModalComponent;

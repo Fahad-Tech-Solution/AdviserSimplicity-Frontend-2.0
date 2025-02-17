@@ -1,11 +1,17 @@
+import { ConfigProvider, Spin } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { FaInfoCircle } from "react-icons/fa";
 import { scroller, Element } from "react-scroll";
+import { useRecoilState } from "recoil";
+import { CashFlowReCalculateLoading } from "../../../../Store/Store";
 
 const InnerModal = (props) => {
   const formRef = useRef(null); // Create a ref to store the form instance
   const childButtonRef = useRef(null);
+
+  let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
+    useRecoilState(CashFlowReCalculateLoading);
 
   const handleOk = () => {
     if (formRef.current) {
@@ -16,6 +22,7 @@ const InnerModal = (props) => {
   const handleParentButtonClick = () => {
     // alert("Parent button clicked");
     if (childButtonRef.current) {
+      setCashFlowReCalculateLoading(true);
       childButtonRef.current.click();
     }
   };
@@ -167,6 +174,18 @@ const InnerModal = (props) => {
             >
               <FaInfoCircle size={14} style={{ marginBottom: "4px" }} />{" "}
               Re-Calculate
+              {cashFlowReCalculateLoading && (
+                <ConfigProvider
+                  theme={{
+                    token: {
+                      /* here is your global tokens */
+                      colorPrimary: "#fff",
+                    },
+                  }}
+                >
+                 &nbsp; <Spin size="small" />
+                </ConfigProvider>
+              )}
             </Button>
           )}
 
