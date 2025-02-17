@@ -50,11 +50,11 @@ describe("Adviser Simplicity", () => {
     LifestyleAssetsandDebtClient.section();
   });
 
-  it("Financial Investments With Partner", () => {
+  it.only("Financial Investments With Partner", () => {
     FinancialInvestmentsPartner.section();
   });
 
-  it.only("Financial Investments With Client", () => {
+  it("Financial Investments With Client", () => {
     FinancialInvestmentsClient.section();
   });
 
