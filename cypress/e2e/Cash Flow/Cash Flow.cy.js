@@ -50,7 +50,7 @@ describe("Adviser Simplicity", () => {
     LifestyleAssetsandDebtClient.section();
   });
 
-  it.only("Financial Investments With Partner", () => {
+  it("Financial Investments With Partner", () => {
     FinancialInvestmentsPartner.section();
   });
 
@@ -58,19 +58,12 @@ describe("Adviser Simplicity", () => {
     FinancialInvestmentsClient.section();
   });
 
-  it.skip("Investment Trust With Partner", () => {
-    InvestmentTrustPartner.section();
-  });
 
-  it.skip("Investment Trust With Client", () => {
-    InvestmentTrustClient.section();
-  });
-
-  it.skip("Business Entities With Partner", () => {
+  it.only("Business Entities With Partner", () => {
     BusinessEntitiesPartner.section();
   });
 
-  it.skip("Business Entities With Client", () => {
+  it("Business Entities With Client", () => {
     BusinessEntitiesClient.section();
   });
 
@@ -80,6 +73,15 @@ describe("Adviser Simplicity", () => {
 
   it.skip("SMSF With Client", () => {
     SMSFClient.section();
+  });
+
+  
+  it.skip("Investment Trust With Partner", () => {
+    InvestmentTrustPartner.section();
+  });
+
+  it.skip("Investment Trust With Client", () => {
+    InvestmentTrustClient.section();
   });
 
 });
