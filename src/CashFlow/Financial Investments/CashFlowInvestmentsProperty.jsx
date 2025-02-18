@@ -78,7 +78,8 @@ const CashFlowInvestmentsProperty = (props) => {
           valueOfProperty: data.valueOfProperty || data.CurrentValue || "",
           clientOwnership: data.clientOwnership || data.ClientOwnership || "",
           partnerOwnership:
-            data.partnerOwnership || data.PartnerOwnership || "",
+          data.partnerOwnership || data.PartnerOwnership || "",
+          state: data.state || "",
           yearOfPurchase: data.yearOfPurchase || "",
           totalCostBaseObj: data.totalCostBaseObj || {
             costBaseExisting: data.costBaseExisting || data.CostBase || "",
@@ -93,6 +94,7 @@ const CashFlowInvestmentsProperty = (props) => {
           rentalIncome: data.rentalIncome || "",
           sellPropertyInYear: data.sellPropertyInYear || "No",
           convertToPPRYear: data.convertToPPRYear || "No",
+          estimatedFutureSellingCost: data.estimatedFutureSellingCost || "",
         };
 
         Object.entries(fields).forEach(([key, value]) => {
@@ -293,6 +295,21 @@ const CashFlowInvestmentsProperty = (props) => {
       placeholder: "Partner % Ownership",
     },
     {
+      name: "state",
+      type: "select",
+      placeholder: "State",
+      options: [
+        { value: "ACT", label: "ACT" },
+        { value: "NSW", label: "NSW" },
+        { value: "NT", label: "NT" },
+        { value: "QLD", label: "QLD" },
+        { value: "SA", label: "SA" },
+        { value: "TAS", label: "TAS" },
+        { value: "VIC", label: "VIC" },
+        { value: "WA", label: "WA" },
+      ],
+    },
+    {
       name: "yearOfPurchase",
       type: "select",
       placeholder: "Year of Purchase",
@@ -337,7 +354,7 @@ const CashFlowInvestmentsProperty = (props) => {
       options: loanTermOptionsWithNo,
     },
     {
-      name: "estimatedFutureSelllingCost",
+      name: "estimatedFutureSellingCost",
       type: "select",
       placeholder: "Estimated Future Sellling Cost (%)",
       options: indexation,
@@ -421,6 +438,7 @@ const CashFlowInvestmentsProperty = (props) => {
                           </th>
                           <th>Client %Ownership</th>
                           <th>Partner %Ownership</th>
+                          <th style={{ color: "black" }}>State</th>
                           <th>Year Of Purchase</th>
                           <th>Total Cost Base</th>
                           <th>Expected Growth Rate</th>
@@ -428,7 +446,9 @@ const CashFlowInvestmentsProperty = (props) => {
                           <th>Rental Income</th>
                           <th>Sell Property in Year</th>
                           <th>Convert into PPR in year</th>
-                          <th>Estimated Future Sellling Cost (%)</th>
+                          <th style={{ color: "black" }}>
+                            Estimated Future Sellling Cost (%)
+                          </th>
                         </tr>
                       </thead>
                       <tbody>

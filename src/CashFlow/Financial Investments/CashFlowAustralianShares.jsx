@@ -130,6 +130,7 @@ const CashFlowAustralianShares = (props) => {
           investmentReturns: data.investmentReturns || "",
           investmentReturnsObj: data.investmentReturnsObj || {},
           reinvestIncome: data.reinvestIncome || "No",
+          reinvestUpUntil: data.reinvestUpUntil || "",
           regularContributions: data.regularContributions || "No",
           regularContributionsObj: data.regularContributionsObj || {},
           // riskProfile: data.riskProfile || layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
@@ -567,7 +568,7 @@ const CashFlowAustralianShares = (props) => {
                         <th>Cost Base</th>
                         <th>Investment Returns</th>
                         <th>Reinvest income</th>
-                        <th>Reinvest Up Until</th>
+                        <th style={{ color: "black" }}>Reinvest Up Until</th>
                         <th>Regular Contributions</th>
                         <th>Risk Profile/SAA</th>
                         {layoutSwitchFlag && <th>Investment Fees</th>}

@@ -17,6 +17,8 @@ const NewPensionRollover = (props) => {
     nominatedPensionAmount: "",
     otherAmount: "",
     indexationPension: "",
+    pensionFunding: "",
+    applyFromYear: "",
     minimumPension: "",
     maximumPension: "",
   };
@@ -46,6 +48,8 @@ const NewPensionRollover = (props) => {
         setFieldValue("nominatedPensionAmount", Data.nominatedPensionAmount);
         setFieldValue("otherAmount", Data.otherAmount);
         setFieldValue("indexationPension", Data.indexationPension);
+        setFieldValue("pensionFunding", Data.pensionFunding);
+        setFieldValue("applyFromYear", Data.applyFromYear);
         setFieldValue("minimumPension", Data.minimumPension);
         setFieldValue("maximumPension", Data.maximumPension);
       }
@@ -207,8 +211,8 @@ const NewPensionRollover = (props) => {
                           <th>Nominated Pension Amount</th>
                           <th>Other Amount</th>
                           <th>Indexation of Pension</th>
-                          <th>Pension Funding</th>
-                          <th>Apply from Year</th>
+                          <th style={{ color: "black" }}>Pension Funding</th>
+                          <th style={{ color: "black" }}>Apply from Year</th>
                           <th>Minimum Pension</th>
                           <th>Maximum Pension</th>
                         </tr>

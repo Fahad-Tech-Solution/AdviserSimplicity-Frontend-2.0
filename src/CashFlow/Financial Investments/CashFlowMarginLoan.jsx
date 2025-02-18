@@ -59,6 +59,7 @@ const CashFlowMarginLoan = (props) => {
       const updateFields = (data, prefix) => {
         if (!data || !Object.keys(data).length) return;
         const fields = {
+          yearOfLoan: data.yearOfLoan || "",
           currentLoanBalance: data.currentLoanBalance || data.loanBalance || "",
           loanTerm: data.loanTerm || "",
           initialInterestRate:
@@ -268,7 +269,6 @@ const CashFlowMarginLoan = (props) => {
       values,
       key,
       stakeHolder,
-      cal: true,
     });
     setFlagState(true);
   };
@@ -393,7 +393,7 @@ const CashFlowMarginLoan = (props) => {
                         >
                           Owner
                         </th>
-                        <th>Year of Loan</th>
+                        <th style={{ color: "black" }}>Year of Loan</th>
                         <th>Current Loan Balance</th>
                         <th>Loan Term</th>
                         <th>Initial Interest Rate (p.a.)</th>

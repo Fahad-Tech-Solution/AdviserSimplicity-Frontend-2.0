@@ -91,7 +91,9 @@ const SalaryPackagingCar = (props) => {
                           <th>Employer FBT Status</th>
                           <th>Cost Base Of Car</th>
                           <th>FBT Paid By Employer</th>
-                          <th>Running Costs of Car Packaged</th>
+                          <th style={{ color: "black" }}>
+                            Running Costs of Car Packaged
+                          </th>
                           <th>Include From Year</th>
                           <th>Up Until Year</th>
                           <th>Indexation</th>

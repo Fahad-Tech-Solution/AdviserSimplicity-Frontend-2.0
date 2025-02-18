@@ -6,10 +6,12 @@ import InnerModal from "../../../Components/Questions/FinancialInvestments/Quest
 import CashFlowLoanBelanceLVR from "./CashFlowLoanBelanceLVR";
 import { CashFlowData, defaultUrl } from "../../../Store/Store";
 import { useRecoilValue } from "recoil";
-import { openNotificationSuccess, PostAxios } from "../../../Components/Assets/Api/Api";
+import {
+  openNotificationSuccess,
+  PostAxios,
+} from "../../../Components/Assets/Api/Api";
 
 const CashFlowHomeLoan = (props) => {
-
   /*
      This component is a dynamic and reusable modal component designed to handle the following modal types:
      1. "Home Loan"  inner Modal
@@ -28,8 +30,8 @@ const CashFlowHomeLoan = (props) => {
 
   let initialValues = {
     loanTerm: "30",
-    "repayLoanInYear": "No",
-    "deductibleInterest": "100%",
+    repayLoanInYear: "No",
+    deductibleInterest: "100%",
   };
 
   let [flagState, setFlagState] = useState(false);
@@ -38,38 +40,81 @@ const CashFlowHomeLoan = (props) => {
   let [addInputFlag, setAddInputFlag] = useState(false);
   let [clientPartnerPer, setClientPartnerPer] = useState(false);
 
-  let DeductibleInterestFormsArray = ["SMSF Investment Properties", "Investments Property", "Family Trust Investment Properties"];
-  let clientPartnerPercentageFormsArray = ["SMSF Investment Properties", "Family Trust Investment Properties"];
+  let DeductibleInterestFormsArray = [
+    "SMSF Investment Properties",
+    "Investments Property",
+    "Family Trust Investment Properties",
+  ];
+  let clientPartnerPercentageFormsArray = [
+    "SMSF Investment Properties",
+    "Family Trust Investment Properties",
+  ];
 
   const fillInitialValues = (setFieldValue) => {
     // console.log(props.modalObject.ParentObject, "kuch Chala");
     // console.log(clientPartnerPercentageFormsArray.includes(props.modalObject.ParentObject.title), "clientPartnerPercentageFormsArray.includes(props.modalObject.ParentObject.title)")
     // console.log(DeductibleInterestFormsArray.includes(props.modalObject.ParentObject.title), "DeductibleInterestFormsArray.includes(props.modalObject.ParentObject.title)")
 
-    setAddInputFlag(DeductibleInterestFormsArray.includes(props.modalObject.ParentObject.title));
-    setClientPartnerPer(clientPartnerPercentageFormsArray.includes(props.modalObject.ParentObject.title));
+    setAddInputFlag(
+      DeductibleInterestFormsArray.includes(
+        props.modalObject.ParentObject.title
+      )
+    );
+    setClientPartnerPer(
+      clientPartnerPercentageFormsArray.includes(
+        props.modalObject.ParentObject.title
+      )
+    );
 
     console.log("Home Loan");
-    if (Object.keys(props.modalObject.values[props.modalObject.key] || {}).length > 0) {
-      let Data = props.modalObject.values[props.modalObject.key]
-      setFieldValue("loanBalance", Data.loanBalance || Data.LoanBalance)
-      setFieldValue("loanBalanceCashFlowLoanBelanceLVR", Data.loanBalanceCashFlowLoanBelanceLVR || {
-        loanAmount: Data.loanBalance || Data.LoanBalance || "",
-      } || {})
-      setFieldValue("loanType", Data.loanType || Data.LoanType || "")
-      setFieldValue("loanTerm", Data.loanTerm || Data.LoanTerm || "30")
-      setFieldValue("interestOnlyPeriod", Data.interestOnlyPeriod || "")
-      setFieldValue("initialInterestRatePA", Data.initialInterestRatePA || Data.interestRatePA || Data.InterestRate || "")
-      setFieldValue("minimumRepaymentsPA", Data.minimumRepaymentsPA)
-      setFieldValue("actualAnnualRepayments", Data.actualAnnualRepayments || Data.annualRepayments || Data.AnnualRepayments || "")
-      setFieldValue("repayLoanInYear", Data.repayLoanInYear || "No")
-      setFieldValue("applyMinimumRepaymentsOR", Data.applyMinimumRepaymentsOR || "No")
-      setFieldValue("surplusToHomeLoan", Data.surplusToHomeLoan || "No")
+    if (
+      Object.keys(props.modalObject.values[props.modalObject.key] || {})
+        .length > 0
+    ) {
+      let Data = props.modalObject.values[props.modalObject.key];
+      setFieldValue("loanBalance", Data.loanBalance || Data.LoanBalance);
+      setFieldValue(
+        "loanBalanceCashFlowLoanBelanceLVR",
+        Data.loanBalanceCashFlowLoanBelanceLVR || {
+            loanAmount: Data.loanBalance || Data.LoanBalance || "",
+          } ||
+          {}
+      );
+      setFieldValue("loanType", Data.loanType || Data.LoanType || "");
+      setFieldValue("loanTerm", Data.loanTerm || Data.LoanTerm || "30");
+      setFieldValue("interestOnlyPeriod", Data.interestOnlyPeriod || "");
+      setFieldValue(
+        "initialInterestRatePA",
+        Data.initialInterestRatePA ||
+          Data.interestRatePA ||
+          Data.InterestRate ||
+          ""
+      );
+      setFieldValue("minimumRepaymentsPA", Data.minimumRepaymentsPA);
+      setFieldValue(
+        "actualAnnualRepayments",
+        Data.actualAnnualRepayments ||
+          Data.annualRepayments ||
+          Data.AnnualRepayments ||
+          ""
+      );
+      setFieldValue("repayLoanInYear", Data.repayLoanInYear || "No");
+      setFieldValue(
+        "applyMinimumRepaymentsOR",
+        Data.applyMinimumRepaymentsOR || "No"
+      );
+      setFieldValue("surplusToHomeLoan", Data.surplusToHomeLoan || "No");
 
-      if (DeductibleInterestFormsArray.includes(props.modalObject.ParentObject.title)) {
-        setFieldValue("deductibleInterest", Data.deductibleInterest || Data.DeductibleLoanAmount || "100%")
+      if (
+        DeductibleInterestFormsArray.includes(
+          props.modalObject.ParentObject.title
+        )
+      ) {
+        setFieldValue(
+          "deductibleInterest",
+          Data.deductibleInterest || Data.DeductibleLoanAmount || "100%"
+        );
       }
-
     }
   };
 
@@ -120,7 +165,6 @@ const CashFlowHomeLoan = (props) => {
   };
 
   const rowConfig = [
-
     {
       name: "loanBalance",
       innerModalTitle: "Loan Balance",
@@ -183,8 +227,6 @@ const CashFlowHomeLoan = (props) => {
     },
   ];
 
-
-
   const rowConfigWithDeductibleInterest = [
     ...rowConfig.slice(0, 4), // Slice the array up to the index of 'initialInterestRatePA'
     {
@@ -192,7 +234,7 @@ const CashFlowHomeLoan = (props) => {
       type: "number-toPercent",
       placeholder: "Deductible Interest %",
     },
-    ...rowConfig.slice(4).filter(row => row.name !== "surplusToHomeLoan") // Slice the array from the index of 'minimumRepaymentsPA' onwards and filter out 'surplusToHomeLoan'
+    ...rowConfig.slice(4).filter((row) => row.name !== "surplusToHomeLoan"), // Slice the array from the index of 'minimumRepaymentsPA' onwards and filter out 'surplusToHomeLoan'
   ];
 
   let handleChildButtonClick = async (values, setFieldValue) => {
@@ -205,17 +247,28 @@ const CashFlowHomeLoan = (props) => {
 
       obj.values[props.modalObject.key + "Obj"] = values;
       obj.values[props.modalObject.key] = values.costBaseExisting;
-      alert(`${DefaultUrl}/api/cal/cf_familyHome`)
+      
       let res = await PostAxios(`${DefaultUrl}/api/cal/cf_familyHome`, obj);
       console.log(res, "res");
       if (res) {
         console.log(res);
-
       }
-      openNotificationSuccess("success", "topRight", "Success Notification", 'Data of "' + props.modalObject.title + '" is Saved');
+      openNotificationSuccess(
+        "success",
+        "topRight",
+        "Success Notification",
+        'Data of "' + props.modalObject.title + '" is Saved'
+      );
     } catch (error) {
       console.error("Error occurred while making API call:", error);
-      openNotificationSuccess("error", "topRight", "Error Notification", 'Data of "' + props.modalObject.title + '" is not Saved Please! try again');
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        'Data of "' +
+          props.modalObject.title +
+          '" is not Saved Please! try again'
+      );
     }
   };
 
@@ -238,11 +291,12 @@ const CashFlowHomeLoan = (props) => {
               setFieldValue={setFieldValue}
               setFlagState={setFlagState}
               flagState={flagState}
-
             >
               {modalObject.key === "loanBalance" ? (
                 <CashFlowLoanBelanceLVR />
-              ) : ''}
+              ) : (
+                ""
+              )}
             </InnerModal>
             <Row>
               <div className="col-md-12">
@@ -256,23 +310,32 @@ const CashFlowHomeLoan = (props) => {
                           <th>Loan Balance</th>
                           <th>Loan Type</th>
                           <th>Loan Term </th>
-                          <th>Interest Only Period</th>
+                          <th style={{ color: "black" }}>
+                            Interest Only Period
+                          </th>
                           <th>Interest Rate (p.a)</th>
                           {addInputFlag && <th>Deductible interest %</th>}
                           <th>Minimum Repayments (p.a)</th>
-                          <th>Apply Minimum Repayments OR</th>
+                          <th style={{ color: "black" }}>
+                            Apply Minimum Repayments OR
+                          </th>
                           <th>Actual Annual Repayments</th>
                           <th>Repay Loan in Year</th>
-                          {(!addInputFlag) &&
-                            <th>Surplus to Home loan</th>
-                          }
-
+                          {!addInputFlag && (
+                            <th style={{ color: "black" }}>
+                              Surplus to Home loan
+                            </th>
+                          )}
                         </tr>
                       </thead>
                       <tbody>
                         <DynamicTableRow
                           // rowConfig={rowConfig}
-                          rowConfig={addInputFlag ? rowConfigWithDeductibleInterest : rowConfig}
+                          rowConfig={
+                            addInputFlag
+                              ? rowConfigWithDeductibleInterest
+                              : rowConfig
+                          }
                           values={values}
                           setFieldValue={setFieldValue}
                           handleChange={handleChange}
@@ -282,7 +345,9 @@ const CashFlowHomeLoan = (props) => {
                     </Table>
                     <button
                       ref={props.childButtonRef}
-                      onClick={() => { handleChildButtonClick(values, setFieldValue) }}
+                      onClick={() => {
+                        handleChildButtonClick(values, setFieldValue);
+                      }}
                       style={{ display: "none" }} // Hidden button
                       type="button"
                     >

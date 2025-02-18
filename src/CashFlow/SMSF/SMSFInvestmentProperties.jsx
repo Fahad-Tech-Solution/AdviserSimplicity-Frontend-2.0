@@ -58,19 +58,23 @@ const SMSFInvestmentProperties = (props) => {
   const fillInitialValues = (setFieldValue) => {
     try {
       setObjAndAPIKey(props.modalObject.key);
-      console.log(
-        SMSFInvestmentLoan,
-        questionDetail[props.modalObject.sourceKey]
-      );
+      // console.log(
+      //   SMSFInvestmentLoan,
+      //   questionDetail[props.modalObject.sourceKey]
+      // );
+
+      console.log("cashFlowData:", cashFlowData);
 
       const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
 
       const updateFields = (data, prefix) => {
         if (!data || !Object.keys(data).length) return;
+
         const fields = {
           streetAddress: data.streetAddress || data.PropertyAddress || "",
           valueOfProperty: data.valueOfProperty || data.CurrentValue || "",
-          yearOfPurchase: data.yearOfPurchase,
+          state: data.state || "",
+          yearOfPurchase: data.yearOfPurchase || "",
           totalCostBaseObj: data.totalCostBaseObj || {
             costBaseExisting: data.costBaseExisting || data.CostBase || "",
           },
@@ -83,6 +87,7 @@ const SMSFInvestmentProperties = (props) => {
             data.loanBalanceObj || data.propertyLoanDetailsArray[0] || {},
           rentalIncome: data.rentalIncome || "",
           sellPropertyInYear: data.sellPropertyInYear || "No",
+          estimatedFutureSellingCost: data.estimatedFutureSellingCost || "",
         };
 
         Object.entries(fields).forEach(([key, value]) => {
@@ -125,6 +130,8 @@ const SMSFInvestmentProperties = (props) => {
     obj.partnerTotal = values.loanBalanceObj.loanBalance || "$0";
     const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
 
+    console.log("obj", obj);
+
     try {
       let res;
       if (!bankAccountArray) {
@@ -137,10 +144,13 @@ const SMSFInvestmentProperties = (props) => {
       }
 
       if (res) {
+        console.log("API Returns Data", res);
+
         const updatedData = {
           ...cashFlowData,
           [objAndAPIKey]: res,
         };
+        
         setCashFlowData(updatedData);
       }
 
@@ -208,7 +218,7 @@ const SMSFInvestmentProperties = (props) => {
     { value: "3.50%", label: "3.50%" },
     { value: "4.00%", label: "4.00%" },
     { value: "4.50%", label: "4.50%" },
-    { value: "5.00%", label: "5.00%" }, 
+    { value: "5.00%", label: "5.00%" },
   ];
 
   let rowConfig = [
@@ -337,14 +347,16 @@ const SMSFInvestmentProperties = (props) => {
                               <FaRegBuilding />
                             </a>
                           </th>
-                          <th>State</th>
+                          <th style={{ color: "black" }}>State</th>
                           <th>Year Of Purchase</th>
                           <th>Total Cost Base</th>
                           <th>Expected Growth Rate</th>
                           <th>Loan Balance</th>
                           <th>Rental Income</th>
                           <th>Sell Property in Year</th>
-                          <th>Estimated Future Sellling Cost (%)</th>
+                          <th style={{ color: "black" }}>
+                            Estimated Future Sellling Cost (%)
+                          </th>
                         </tr>
                       </thead>
                       <tbody>

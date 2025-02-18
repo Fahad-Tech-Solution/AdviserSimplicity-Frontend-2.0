@@ -286,7 +286,9 @@ const CashFlowPersonalDebt = (props) => {
                             <th>Loan Term</th>
                             <th>Initial Interest Rate (p.a.)</th>
                             <th>Minimum Repayments (p.a)</th>
-                            <th>Apply Minimum Repayments OR</th>
+                            <th style={{ color: "black" }}>
+                              Apply Minimum Repayments OR
+                            </th>
                             <th>Actual Annual Repayments</th>
                             <th>Repay Loan in Year</th>
                           </tr>

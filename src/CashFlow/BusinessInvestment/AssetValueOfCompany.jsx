@@ -29,11 +29,13 @@ const AssetValueOfCompany = (props) => {
         setFieldValue("assetValue", Data.assetValue);
         setFieldValue("includeFromYear", Data.includeFromYear);
         setFieldValue("upUntilYear", Data.upUntilYear);
+        
         if (
           props.modalObject.title === "Net Trust Distribution" &&
           props.modalObject.sourceObj.title === "Bucket Company"
         ) {
           setFieldValue("indexation", Data.indexation || "2.50%");
+          setFieldValue("openingValue", Data.openingValue || "");
         }
         if (
           props.modalObject.title === "Net Trust Distribution" &&
@@ -184,7 +186,9 @@ const AssetValueOfCompany = (props) => {
                         <tr>
                           {layoutSwitchFlag === "Net Trust Distribution" &&
                             props.modalObject.sourceObj.title ===
-                              "Bucket Company" && <th>Opening Value</th>}
+                              "Bucket Company" && (
+                              <th style={{ color: "black" }}>Opening Value</th>
+                            )}
                           <th>{props.modalObject.title}</th>
                           <th>Include From Year</th>
                           <th>Up Until Year</th>

@@ -344,15 +344,17 @@ const SMSFInvestmentLoan = (props) => {
                     <thead>
                       <tr>
                         <th>Owner</th>
-                        <th>Year of Loan</th>
+                        <th style={{ color: "black" }}>Year of Loan</th>
                         <th>Current Loan Balance</th>
                         <th>Loan Type</th>
                         <th>Loan Term</th>
-                        <th>Interest Only Period</th>
+                        <th style={{ color: "black" }}>Interest Only Period</th>
                         <th>Initial Interest Rate (p.a.)</th>
                         <th>Deductible interest</th>
                         <th>Minimum Repayments (p.a)</th>
-                        <th>Apply Minimum Repayments OR</th>
+                        <th style={{ color: "black" }}>
+                          Apply Minimum Repayments OR
+                        </th>
                         <th>Actual Annual Repayments</th>
                         <th>Repay Loan in Year</th>
                       </tr>

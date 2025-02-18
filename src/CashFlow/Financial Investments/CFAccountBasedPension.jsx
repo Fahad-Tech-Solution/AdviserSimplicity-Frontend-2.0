@@ -285,6 +285,19 @@ const CFAccountBasedPension = (props) => {
         { value: "system", label: "System" },
         { value: "input Override", label: "Input Override" },
     ]
+    const yearOptionsWithExisting = Array.from({ length: 31 }, (_, i) => {
+        if (i == 0) {
+          return {
+            value: "Existing",
+            label: "Existing",
+          };
+        } else {
+          return {
+            value: i.toString(),
+            label: ("Year " + i).toString(),
+          };
+        }
+      });
 
     const [rowConfig, setRowConfig] = useState(() => {
         let OriginalArray = [
@@ -301,9 +314,8 @@ const CFAccountBasedPension = (props) => {
             {
                 name: "yearToCommence",
                 type: "select",
-                options: riskProfileOptions,
+                options: yearOptionsWithExisting,
                 placeholder: "Year To Commence",
-                // disabled: true,
             },
             {
                 name: "riskProfile",

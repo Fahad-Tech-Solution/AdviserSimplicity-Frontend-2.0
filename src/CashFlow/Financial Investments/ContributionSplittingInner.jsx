@@ -19,6 +19,7 @@ const ContributionSplittingInner = (props) => {
       setFieldValue("yearToCommence", Data.yearToCommence);
       setFieldValue("yearsToInclude", Data.yearsToInclude);
       setFieldValue("contributionsToFund", Data.contributionsToFund);
+      setFieldValue("previousLumpsumWithdrawals", Data.previousLumpsumWithdrawals);
     }
   };
 
@@ -106,7 +107,7 @@ const ContributionSplittingInner = (props) => {
                           <th>Year to Commence</th>
                           <th>Years to Include</th>
                           <th>Contributions To Fund</th>
-                          <th>Previous Lumpsum Withdrawals</th>
+                          <th style={{ color: "black" }}>Previous Lumpsum Withdrawals</th>
                         </tr>
                       </thead>
                       <tbody>

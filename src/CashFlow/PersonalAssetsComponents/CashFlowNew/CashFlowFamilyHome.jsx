@@ -365,7 +365,7 @@ const CashFlowFamilyHome = (props) => {
                         <tr>
                           <th>Street Address</th>
                           <th>Current Value/Purchase Price </th>
-                          <th>State</th>
+                          <th style={{ color: "black" }}>State</th>
                           <th>Client Ownership</th>
                           <th>Partner Ownership</th>
                           <th>Year Of Purchase</th>
@@ -373,7 +373,7 @@ const CashFlowFamilyHome = (props) => {
                           <th>Loan Balance</th>
                           <th>Expected Growth Rate</th>
                           <th>Sell Property In Year</th>
-                          <th>Estimated Future Selling Cost (%)</th>
+                          <th style={{ color: "black" }}>Estimated Future Selling Cost (%)</th>
                         </tr>
                       </thead>
                       <tbody>
