@@ -171,6 +171,7 @@ const InnerModal = (props) => {
               variant="secondary"
               style={{ width: "12.5%", minWidth: "fit-content" }}
               onClick={handleParentButtonClick}
+              disabled={cashFlowReCalculateLoading}
             >
               <FaInfoCircle size={14} style={{ marginBottom: "4px" }} />{" "}
               Re-Calculate
@@ -183,7 +184,7 @@ const InnerModal = (props) => {
                     },
                   }}
                 >
-                 &nbsp; <Spin size="small" />
+                  &nbsp; <Spin size="small" />
                 </ConfigProvider>
               )}
             </Button>

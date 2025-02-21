@@ -12,6 +12,7 @@ import {
 import { Row, Table } from "react-bootstrap";
 import {
   CashFlowData,
+  CashFlowReCalculateLoading,
   CashFlowScenarioData,
   defaultUrl,
   QuestionDetail,
@@ -27,6 +28,9 @@ const CashFlowInvestmentLoansLOC = (props) => {
   let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
 
   let DefaultUrl = useRecoilValue(defaultUrl);
+
+  let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
+    useRecoilState(CashFlowReCalculateLoading);
 
   let managedFundsLOC =
     Object.keys(questionDetail.managedFundsLOC || {}).length > 0
@@ -70,8 +74,6 @@ const CashFlowInvestmentLoansLOC = (props) => {
           actualAnnualRepayments:
             data.actualAnnualRepayments || data.annualRepayments || "",
           repayLoanYear: data.repayLoanYear || "No",
-          interestOnlyPeriod: data.interestOnlyPeriod || "",
-          applyMinimumRepaymentsOR: data.applyMinimumRepaymentsOR || "No",
         };
 
         Object.entries(fields).forEach(([key, value]) => {
@@ -344,27 +346,67 @@ const CashFlowInvestmentLoansLOC = (props) => {
   ];
 
   let handleChildButtonClick = async (values, setFieldValue) => {
-    alert("ma chala");
-    // try {
-    //     let obj = {
-    //         values: props.modalObject.values,
-    //         AllCashFlowData: cashFlowData,
-    //     };
+    try {
+      let obj = JSON.parse(JSON.stringify(cashFlowData));
 
-    //     obj.values[props.modalObject.key + "Obj"] = values;
-    //     obj.values[props.modalObject.key] = values.costBaseExisting;
+      obj.cf_investmentLoansLOC = values;
 
-    //     // let res = await PostAxios(`${defaultUrl}/api/Calculate/Overseas`, obj);
-    //     // console.log(res, "res");
-    //     // if (res) {
-    //     //     console.log(res);
+      let res = await PostAxios(
+        `${DefaultUrl}/api/cal/financialInvestment/INPUTS_Investment_Loans`,
+        obj
+      );
 
-    //     // }
-    //     openNotificationSuccess("success", "topRight", "Success Notification", 'Data of "' + props.modalObject.title + '" is Saved');
-    // } catch (error) {
-    //     console.error("Error occurred while making API call:", error);
-    //     openNotificationSuccess("error", "topRight", "Error Notification", 'Data of "' + props.modalObject.title + '" is not Saved Please! try again');
-    // }
+      if (res) {
+        // console.log(res);
+        let { cf_investmentLoansLOC } = res.data;
+
+        // console.log(
+        //   typeof cf_investmentLoansLOC.minimumRepayments,
+        //   "cf_investmentLoansLOC.minimumRepayments"
+        // );
+
+        if (values.owner.includes("client")) {
+          if (typeof cf_investmentLoansLOC.minimumRepayments === "number") {
+            setFieldValue(
+              "client.minimumRepayments",
+              toCommaAndDollar(cf_investmentLoansLOC.minimumRepayments)
+            );
+          } else {
+            setFieldValue("client.minimumRepayments", "$0");
+          }
+        }
+
+        if (values.owner.includes("partner")) {
+          if (typeof cf_investmentLoansLOC.minimumRepayments === "number") {
+            setFieldValue(
+              "partner.minimumRepayments",
+              toCommaAndDollar(cf_investmentLoansLOC.minimumRepayments)
+            );
+          } else {
+            setFieldValue("partner.minimumRepayments", "$0");
+          }
+        }
+
+        setCashFlowReCalculateLoading(false);
+        openNotificationSuccess(
+          "success",
+          "topRight",
+          "Success Notification",
+          'Data of "' + props.modalObject.title + '" is Saved'
+        );
+      }
+    } catch (error) {
+      console.error("Error occurred while making API call:", error);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        'Data of "' +
+          props.modalObject.title +
+          '" is not Saved Please! try again'
+      );
+      setCashFlowReCalculateLoading(false);
+    }
   };
 
   return (

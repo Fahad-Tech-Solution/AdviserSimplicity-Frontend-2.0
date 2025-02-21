@@ -19,7 +19,6 @@ import { Loading } from "./Store/Store";
 import { Spin } from "antd";
 
 function App() {
-
   let loadingState = useRecoilValue(Loading);
 
   useEffect(() => {
@@ -30,14 +29,24 @@ function App() {
     });
   }, []);
 
-
   return (
     <div className="position-relative">
-      {loadingState &&
-        <div className='position-absolute top-0 d-flex justify-content-center align-items-center bg-gray' style={{ width: '100%', height: "100%", zIndex: "1000" }}>
-          <Spin size="large" style={{ width: 'fit-content', height: "fit-content" }}></Spin>
+      {loadingState && (
+        <div
+          className="position-absolute top-0 d-flex justify-content-center align-items-center bg-gray"
+          style={{
+            width: "100%",
+            height: "100%",
+            minHeight: "100vh",
+            zIndex: "1000",
+          }}
+        >
+          <Spin
+            size="large"
+            style={{ width: "fit-content", height: "fit-content" }}
+          ></Spin>
         </div>
-      }
+      )}
       <Routes>
         <Route path="/Login" element={<LoginForm />} />
         <Route path="/Register" element={<Register />} />
@@ -48,7 +57,7 @@ function App() {
         <Route path="/*" element={<AuthRouts />} />
       </Routes>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

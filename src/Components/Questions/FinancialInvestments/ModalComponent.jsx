@@ -4,6 +4,7 @@ import { scroller, Element } from "react-scroll";
 import { FaInfoCircle } from "react-icons/fa";
 import { CashFlowReCalculateLoading } from "../../../Store/Store";
 import { useRecoilState } from "recoil";
+import { ConfigProvider, Spin } from "antd";
 
 const ModalComponent = (props) => {
   const formRef = useRef(null); // Create a ref to store the form instance
@@ -21,6 +22,7 @@ const ModalComponent = (props) => {
   const handleParentButtonClick = () => {
     // alert("Parent button clicked");
     if (childButtonRef.current) {
+      setCashFlowReCalculateLoading(true);
       childButtonRef.current.click();
     }
   };
@@ -235,6 +237,7 @@ const ModalComponent = (props) => {
               variant="secondary"
               style={{ width: "12.5%", minWidth: "fit-content" }}
               onClick={handleParentButtonClick}
+              disabled={cashFlowReCalculateLoading}
             >
               <FaInfoCircle size={14} style={{ marginBottom: "4px" }} />{" "}
               Re-Calculate

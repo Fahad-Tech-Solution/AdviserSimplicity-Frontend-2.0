@@ -355,7 +355,7 @@ const SMSFInvestmentProperties = (props) => {
                           <th>Rental Income</th>
                           <th>Sell Property in Year</th>
                           <th style={{ color: "black" }}>
-                            Estimated Future Sellling Cost (%)
+                            Estimated Future Selling Cost (%)
                           </th>
                         </tr>
                       </thead>

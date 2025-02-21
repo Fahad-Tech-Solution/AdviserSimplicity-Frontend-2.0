@@ -4,11 +4,16 @@ import { Row, Table } from "react-bootstrap";
 import DynamicTableRow from "../../../Components/Assets/Dynamic/DynamicTableRow";
 import InnerModal from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 import CashFlowLoanBelanceLVR from "./CashFlowLoanBelanceLVR";
-import { CashFlowData, defaultUrl } from "../../../Store/Store";
-import { useRecoilValue } from "recoil";
+import {
+  CashFlowData,
+  CashFlowReCalculateLoading,
+  defaultUrl,
+} from "../../../Store/Store";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   openNotificationSuccess,
   PostAxios,
+  toCommaAndDollar,
 } from "../../../Components/Assets/Api/Api";
 
 const CashFlowHomeLoan = (props) => {
@@ -27,6 +32,8 @@ const CashFlowHomeLoan = (props) => {
 
   let DefaultUrl = useRecoilValue(defaultUrl);
   let cashFlowData = useRecoilValue(CashFlowData);
+  let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
+    useRecoilState(CashFlowReCalculateLoading);
 
   let initialValues = {
     loanTerm: "30",
@@ -179,11 +186,10 @@ const CashFlowHomeLoan = (props) => {
       name: "loanType",
       type: "select",
       options: [
-        { value: "i/only", label: "i/only" },
-        { value: "P&i", label: "P&i" },
+        { value: "I/Only", label: "I/Only" },
+        { value: "P & I", label: "P & I" },
       ],
     },
-
     {
       name: "loanTerm",
       type: "select",
@@ -238,27 +244,64 @@ const CashFlowHomeLoan = (props) => {
   ];
 
   let handleChildButtonClick = async (values, setFieldValue) => {
-    // alert("ma chala");
     try {
-      let obj = {
-        values: props.modalObject.values,
-        AllCashFlowData: cashFlowData,
+      let obj = JSON.parse(JSON.stringify(cashFlowData));
+      let FullObj = props.modalObject.values;
+
+      FullObj[props.modalObject.key] = values;
+
+      console.log(
+        props.modalObject.ParentObject.key,
+        "props.modalObject.ParentObject.key"
+      );
+      console.log(FullObj, "FullObj", props.modalObject.ParentObject.key);
+
+      let apiKey = {
+        cf_familyHome: { key: "cf_familyHome", param: "" },
+        cf_investmentsProperty: {
+          key: "financialInvestment",
+          param: "INPUTS_Property",
+        },
       };
 
-      obj.values[props.modalObject.key + "Obj"] = values;
-      obj.values[props.modalObject.key] = values.costBaseExisting;
-      
-      let res = await PostAxios(`${DefaultUrl}/api/cal/cf_familyHome`, obj);
-      console.log(res, "res");
+      obj[props.modalObject.ParentObject.key] = FullObj;
+
+      let res = await PostAxios(
+        `${DefaultUrl}/api/cal/${
+          apiKey[props.modalObject.ParentObject.key].key
+        }/${apiKey[props.modalObject.ParentObject.key].param}`,
+        obj
+      );
       if (res) {
         console.log(res);
+        let loan = {};
+
+        if (props.modalObject.ParentObject.key === "cf_familyHome") {
+          loan = res.data.loan;
+        } else {
+          loan = res.data[props.modalObject.ParentObject.key].loan;
+        }
+
+        if (
+          loan.minimumRepaymentsPA &&
+          typeof loan.minimumRepaymentsPA === "number"
+        ) {
+          setFieldValue(
+            "minimumRepaymentsPA",
+            toCommaAndDollar(loan.minimumRepaymentsPA)
+          );
+        } else {
+          setFieldValue("minimumRepaymentsPA", "$0");
+        }
+
+        setCashFlowReCalculateLoading(false);
+        openNotificationSuccess(
+          "success",
+          "topRight",
+          "Success Notification",
+          'Data of "' + props.modalObject.title + '" is Saved'
+        );
       }
-      openNotificationSuccess(
-        "success",
-        "topRight",
-        "Success Notification",
-        'Data of "' + props.modalObject.title + '" is Saved'
-      );
     } catch (error) {
       console.error("Error occurred while making API call:", error);
       openNotificationSuccess(
@@ -269,6 +312,7 @@ const CashFlowHomeLoan = (props) => {
           props.modalObject.title +
           '" is not Saved Please! try again'
       );
+      setCashFlowReCalculateLoading(false);
     }
   };
 

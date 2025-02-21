@@ -15,6 +15,7 @@ import {
 import DynamicYesNo from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/DynamicYesNo";
 import {
   CashFlowData,
+  CashFlowReCalculateLoading,
   CashFlowScenarioData,
   defaultUrl,
   QuestionDetail,
@@ -31,6 +32,8 @@ const CashFlowPersonalDebt = (props) => {
   let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
 
   let DefaultUrl = useRecoilValue(defaultUrl);
+  let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
+    useRecoilState(CashFlowReCalculateLoading);
 
   let personalLoans =
     Object.keys(questionDetail?.[props.modalObject.discoveryKey] || {}).length >
@@ -55,10 +58,10 @@ const CashFlowPersonalDebt = (props) => {
       setObjAndAPIKey(props.modalObject.key);
 
       // console.log(personalLoans, "Discovery Form Data");
-      console.log(
-        cashFlowData[props.modalObject.key],
-        "cashFlowData Form Data"
-      );
+      // console.log(
+      //   cashFlowData[props.modalObject.key],
+      //   "cashFlowData Form Data"
+      // );
       // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
 
       const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
@@ -79,7 +82,7 @@ const CashFlowPersonalDebt = (props) => {
             data.RepayLoanInYear || data.LoanTermRemaining || "No",
         };
 
-        console.log(fields);
+        // console.log(fields);
         Object.entries(fields).forEach(([key, value]) => {
           setFieldValue(`${key}${prefix}`, value);
         });
@@ -93,7 +96,7 @@ const CashFlowPersonalDebt = (props) => {
       ) {
         // Update client-related fields
         if (personalLoans?.client) {
-          console.log(personalLoans.client, "personalLoans");
+          // console.log(personalLoans.client, "personalLoans");
           setFieldValue(`NumberOfMap`, personalLoans.client.length || "");
           personalLoans.client.forEach((data, index) => {
             updateFields(data, index);
@@ -218,27 +221,87 @@ const CashFlowPersonalDebt = (props) => {
   let FormulaSetting = () => {};
 
   let handleChildButtonClick = async (values, setFieldValue) => {
-    alert("ma chala");
-    // try {
-    //     let obj = {
-    //         values: props.modalObject.values,
-    //         AllCashFlowData: cashFlowData,
-    //     };
+    try {
+      let obj = JSON.parse(JSON.stringify(cashFlowData));
 
-    //     obj.values[props.modalObject.key + "Obj"] = values;
-    //     obj.values[props.modalObject.key] = values.costBaseExisting;
+      const personalLoansArray = [];
+      for (let i = 0; i < values.NumberOfMap; i++) {
+        personalLoansArray.push({
+          YearLoan: values[`YearLoan${i}`],
+          CurrentLoanBalance: values[`CurrentLoanBalance${i}`],
+          LoanType: values[`LoanType${i}`],
+          LoanTerm: values[`LoanTerm${i}`],
+          InterestRate: values[`InterestRate${i}`],
+          MinimumRepayments: values[`MinimumRepayments${i}`],
+          ActualAnnualRepayments: values[`ActualAnnualRepayments${i}`],
+          RepayLoanInYear: values[`RepayLoanInYear${i}`],
+        });
+      }
 
-    //     // let res = await PostAxios(`${defaultUrl}/api/Calculate/Overseas`, obj);
-    //     // console.log(res, "res");
-    //     // if (res) {
-    //     //     console.log(res);
+      let FullObj = {
+        NumberOfMap: values.NumberOfMap,
+        client: personalLoansArray,
+        clientTotal:
+          toCommaAndDollar(
+            personalLoansArray.reduce(
+              (total, entry) =>
+                total +
+                parseFloat(
+                  entry.CurrentLoanBalance.replace(/[^0-9.-]+/g, "") || 0
+                ),
+              0
+            )
+          ) || "$0",
+      };
 
-    //     // }
-    //     openNotificationSuccess("success", "topRight", "Success Notification", 'Data of "' + props.modalObject.title + '" is Saved');
-    // } catch (error) {
-    //     console.error("Error occurred while making API call:", error);
-    //     openNotificationSuccess("error", "topRight", "Error Notification", 'Data of "' + props.modalObject.title + '" is not Saved Please! try again');
-    // }
+      FullObj.scenarioFK = JSON.parse(localStorage.getItem("ScenarioObj"))._id;
+
+      obj[props.modalObject.key] = FullObj;
+
+      console.log(obj[props.modalObject.key], ":obj");
+
+      let res = await PostAxios(`${DefaultUrl}/api/cal/cf_familyHome`, obj);
+      if (res) {
+        console.log(res.data[props.modalObject.key]);
+        let Data = res.data[props.modalObject.key];
+
+        if (values.NumberOfMap > 0) {
+          for (let i = 0; i < values.NumberOfMap; i++) {
+            console.log(Data["MinimumRepayments" + (i + 1)]);
+            if (
+              Data["MinimumRepayments" + (i + 1)] &&
+              typeof Data["MinimumRepayments" + (i + 1)] == "number"
+            ) {
+              setFieldValue(
+                `MinimumRepayments${i}`,
+                toCommaAndDollar(Data["MinimumRepayments" + (i + 1)])
+              );
+            } else {
+              setFieldValue(`MinimumRepayments${i}`, "$0");
+            }
+          }
+        }
+
+        setCashFlowReCalculateLoading(false);
+        openNotificationSuccess(
+          "success",
+          "topRight",
+          "Success Notification",
+          'Data of "' + props.modalObject.title + '" is Saved'
+        );
+      }
+    } catch (error) {
+      console.error("Error occurred while making API call:", error);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        'Data of "' +
+          props.modalObject.title +
+          '" is not Saved Please! try again'
+      );
+      setCashFlowReCalculateLoading(false);
+    }
   };
 
   return (
@@ -346,8 +409,8 @@ const CashFlowPersonalDebt = (props) => {
                                       className="form-select inputDesignDoubleInput"
                                     >
                                       <option value={""}>Please Select</option>
-                                      <option value={"i/only"}>i/only</option>
-                                      <option value={"P&I"}>P&I</option>
+                                      <option value={"I/Only"}>I/Only</option>
+                                      <option value={"P & I"}>P & I</option>
                                     </Field>
                                   </td>
                                   <td>
@@ -418,7 +481,7 @@ const CashFlowPersonalDebt = (props) => {
                                     {/*applyMinimumRepaymentsOR */}
                                     <div className="d-flex flex-column justify-content-center align-items-center gap-2 pt-1">
                                       <DynamicYesNo
-                                        name={`applyMinimumRepaymentsOR`}
+                                        name={`applyMinimumRepaymentsOR${i}`}
                                         values={values}
                                         handleChange={handleChange}
                                       />
