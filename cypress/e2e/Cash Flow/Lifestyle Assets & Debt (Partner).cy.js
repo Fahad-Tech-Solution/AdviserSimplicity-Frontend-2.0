@@ -56,20 +56,29 @@ class PartnerLifestyleAssetsandDebt {
       cy.contains("Current Value/Purchase Price").should("be.visible");
       cy.get("#currentValue").should("have.value", "$77");
 
+      cy.contains("State");
+      cy.get(":nth-child(3) > .form-select")
+        .select("NSW")
+        .should("have.value", "NSW");
+
       cy.contains("Client Ownership").should("be.visible");
       cy.get("#clientOwnership").should("have.value", "77.00%");
 
       cy.contains("Partner Ownership");
       cy.get("#partnerOwnership").should("have.value", "77.00%");
       cy.contains("Year Of Purchase");
-      cy.get(":nth-child(5) > .form-select").should("have.value", "1");
+      cy.get(":nth-child(6) > .form-select").should("have.value", "1");
 
       cy.contains("Expected Growth Rate");
-      cy.get(":nth-child(8) > .form-select").should("have.value", "2.50%");
+      cy.get(":nth-child(9) > .form-select").should("have.value", "2.50%");
       cy.contains("Sell Property In Year");
-      cy.get(":nth-child(9) > .form-select")
+      cy.get(":nth-child(10) > .form-select")
         .select("1")
         .should("have.value", "1");
+
+      cy.get(":nth-child(11) > .form-select")
+        .select("2.50%")
+        .should("have.value", "2.50%");
 
       cy.contains("Total Cost Base");
       cy.get(".input-group").within(() => {
@@ -115,7 +124,7 @@ class PartnerLifestyleAssetsandDebt {
 
     cy.contains("Loan Balance");
 
-    cy.get("tbody > tr > :nth-child(7)").within(() => {
+    cy.get("tbody > tr > :nth-child(8)").within(() => {
       cy.get(".radioButton2").contains("Yes").click();
       cy.get("#button-addon2").click();
     });
@@ -135,19 +144,32 @@ class PartnerLifestyleAssetsandDebt {
       cy.contains("Loan Term");
       cy.get(":nth-child(3) > .form-select").should("have.value", "19");
 
+      cy.contains("Interest Only Period");
+      cy.get(":nth-child(4) > .form-select")
+        .select("21")
+        .should("have.value", "21");
+
       cy.contains("Interest Rate (p.a)");
       cy.get("#initialInterestRatePA").should("have.value", "77.00%");
 
       cy.contains("Minimum Repayments (p.a)");
       cy.get("#minimumRepaymentsPA");
 
+      cy.contains("Apply Minimum Repayments OR");
+      cy.get(":nth-child(7) > .form-check > .radioButton2")
+        .contains("Yes")
+        .click();
+
       cy.contains("Actual Annual Repayments");
       cy.get("#actualAnnualRepayments").should("have.value", "$543");
 
       cy.contains("Repay Loan in Year");
-      cy.get(":nth-child(7) > .form-select")
-        .select("1")
-        .should("have.value", "1");
+      cy.get('select[name="repayLoanInYear"]').select("Year 10"); // Selects "Year 10"
+
+      cy.contains("Surplus to Home loan");
+      cy.get(":nth-child(10) > .form-check > .radioButton2")
+        .contains("Yes")
+        .click();
 
       cy.contains("Loan Balance");
       cy.get(":nth-child(1) > .input-group").within(() => {
@@ -205,20 +227,20 @@ class PartnerLifestyleAssetsandDebt {
 
     cy.get('[placeholder="Market Value"]').should("have.value", "$77");
 
-
     //Contents
     cy.wait(2000);
-    cy.get(':nth-child(2) > .py-4').within(() => {
-     
+    cy.get(":nth-child(2) > .py-4").within(() => {
       cy.contains("Contents");
       cy.get("img");
     });
-    cy.get(':nth-child(2) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0')
+    cy.get(
+      ":nth-child(2) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0"
+    )
       .click()
       .should("be.visible");
 
     //Card Header
-    
+
     cy.get(".css-1lcv7hw").type("Aiden Smith{enter}");
 
     cy.get(".modal-header").contains("Contents");
@@ -249,29 +271,24 @@ class PartnerLifestyleAssetsandDebt {
       cy.get(":nth-child(6) > .form-select").should("have.value", "2.50%");
     });
 
-    
-
     //Contents Footer
     cy.get(".modal-footer").within(() => {
       cy.contains("Close").should("be.visible");
       cy.contains("Submit").should("be.visible").click();
     });
 
-    cy.get('#clientcf_contents').should("have.value", "$100");
-   
-
-    
-   
-
+    cy.get("#clientcf_contents").should("have.value", "$100");
 
     //Car
     cy.wait(2000);
-    cy.get(':nth-child(3) > .py-4').within(() => {
+    cy.get(":nth-child(3) > .py-4").within(() => {
       cy.contains("Car");
       cy.contains("Aiden Smith");
       cy.get("img");
     });
-    cy.get(':nth-child(3) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0')
+    cy.get(
+      ":nth-child(3) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0"
+    )
       .click()
       .should("be.visible");
 
@@ -357,87 +374,89 @@ class PartnerLifestyleAssetsandDebt {
     //  cy.get(':nth-child(4) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0')
     //    .click()
     //    .should("be.visible");
- 
+
     //  //Card Header
     //  //Use only for remove partner When Run code with Client only
     //  //cy.get(":nth-child(2) > .css-v7duua").click();
     //  cy.get(".css-1lcv7hw").type("Aiden Smith{enter}");
- 
+
     //  cy.get(".modal-header").contains("Motor Vehicle 2");
     //  cy.get(".btn-close").should("be.visible");
     //  cy.get(".col-md-12 > .d-flex").within(() => {
     //    cy.contains("Owner");
     //    cy.get(".css-9jq23d").contains("Aiden Smith");
     //  });
- 
+
     //  cy.get(".table").within(() => {
     //    cy.contains("Owner").should("be.visible");
- 
+
     //    cy.contains("Aiden Smith").should("be.visible");
- 
+
     //    cy.contains("Current Value").should("be.visible");
     //    cy.get("#currentValue").clear().type("888");
- 
+
     //    cy.contains("Sell In Year").should("be.visible");
     //    cy.get(":nth-child(3) > .form-select").should("have.value", "No");
- 
+
     //    cy.contains("New Purchase").should("be.visible");
     //    cy.get("#newPurchase").clear().type("400");
- 
+
     //    cy.contains("Purchase In Year").should("be.visible");
     //    cy.get(":nth-child(5) > .form-select").should("have.value", "30");
- 
+
     //    cy.contains("Indexation").should("be.visible");
     //    cy.get(":nth-child(6) > .form-select").should("have.value", "2.50%");
     //  });
- 
+
     //  //PartnerShip Section :
     //  //cy.get(":nth-child(2) > .css-v7duua").click();
- 
+
     //  cy.get(".css-1lcv7hw").type("Emma Taylor{enter}");
- 
+
     //  cy.get(".table").within(() => {
     //    cy.get(":nth-child(2) > :nth-child(1) > th").contains("Emma Taylor");
- 
+
     //    cy.get(":nth-child(2) > :nth-child(2) > #currentValue")
     //      .clear()
     //      .type("342");
- 
+
     //    cy.get(":nth-child(2) > :nth-child(3) > .form-select").should(
     //      "have.value",
     //      "No"
     //    );
- 
+
     //    cy.get(":nth-child(2) > :nth-child(4) > #newPurchase")
     //      .clear()
     //      .type("990");
- 
+
     //    cy.get(":nth-child(2) > :nth-child(5) > .form-select")
     //      .select("30")
     //      .should("have.value", "30");
- 
+
     //    cy.get(":nth-child(2) > :nth-child(6) > .form-select")
     //      .select("2.50%")
     //      .should("have.value", "2.50%");
     //  });
- 
+
     //  //Contents Footer
     //  cy.get(".modal-footer").within(() => {
     //    cy.contains("Close").should("be.visible");
     //    cy.contains("Submit").should("be.visible").click();
     //  });
- 
+
     //  cy.get('#clientcf_motorVehicle2').should("have.value", "$888");
     //  cy.get('#partnercf_motorVehicle2').should("have.value", "$342");
 
     //Boat
     cy.wait(2000);
-    cy.get(':nth-child(4) > .py-4').within(() => {
+    cy.get(":nth-child(4) > .py-4").within(() => {
       cy.contains("Boat");
-    
+
       cy.get("img");
     });
-    cy.get(':nth-child(4) > .py-4 > .flex-column > .row > .col-12 > .d-flex > .mb-0')
+    cy.get(
+      ":nth-child(4) > .py-4 > .flex-column > .row > .col-12 > .d-flex > .mb-0"
+    )
       .click()
       .should("be.visible");
 
@@ -481,12 +500,14 @@ class PartnerLifestyleAssetsandDebt {
 
     //Caravan
     cy.wait(2000);
-    cy.get(':nth-child(5) > .py-4').within(() => {
+    cy.get(":nth-child(5) > .py-4").within(() => {
       cy.contains("Caravan");
       cy.contains("Caravan");
       cy.get("img");
     });
-    cy.get(':nth-child(5) > .py-4 > .flex-column > .row > .col-12 > .d-flex > .mb-0')
+    cy.get(
+      ":nth-child(5) > .py-4 > .flex-column > .row > .col-12 > .d-flex > .mb-0"
+    )
       .click()
       .should("be.visible");
 
@@ -536,17 +557,19 @@ class PartnerLifestyleAssetsandDebt {
 
     //Other Assets
     cy.wait(2000);
-    cy.get(':nth-child(6) > .py-4').within(() => {
+    cy.get(":nth-child(6) > .py-4").within(() => {
       cy.contains("Other Assets");
-     
+
       cy.get("img");
     });
-    cy.get(':nth-child(6) > .py-4 > .flex-column > .row > .col-12 > .d-flex > .mb-0')
+    cy.get(
+      ":nth-child(6) > .py-4 > .flex-column > .row > .col-12 > .d-flex > .mb-0"
+    )
       .click()
       .should("be.visible");
 
     //Other Assets Card Header
-   
+
     cy.get(".modal-header").contains("Other Assets");
     cy.get(".btn-close").should("be.visible");
     cy.get(".col-md-12 > .d-flex").within(() => {
@@ -577,8 +600,6 @@ class PartnerLifestyleAssetsandDebt {
       cy.get(":nth-child(6) > .form-select").should("have.value", "2.50%");
     });
 
-    
-
     //Other Assets Footer
     cy.get(".modal-footer").within(() => {
       cy.contains("Close").should("be.visible");
@@ -586,16 +607,18 @@ class PartnerLifestyleAssetsandDebt {
     });
 
     cy.get("#clientcf_otherAssets").should("have.value", "$100");
-   
+
     //Personal Debt Personal Loans
     cy.wait(2000);
-    cy.get(':nth-child(7) > .py-4').within(() => {
+    cy.get(":nth-child(7) > .py-4").within(() => {
       cy.contains("Personal Debt");
       cy.contains("Personal Loans");
       cy.contains("Credit Card");
       cy.get("img");
     });
-    cy.get(':nth-child(7) > .py-4 > .flex-column > .row > :nth-child(1) > .d-flex > .mb-0')
+    cy.get(
+      ":nth-child(7) > .py-4 > .flex-column > .row > :nth-child(1) > .d-flex > .mb-0"
+    )
       .click()
       .should("be.visible");
 
@@ -619,17 +642,21 @@ class PartnerLifestyleAssetsandDebt {
         .should("have.value", "$109");
 
       cy.contains("Loan Type");
-      cy.get("#LoanType0").select("i/only").should("have.value", "i/only");
+      cy.get("#LoanType0").select("I/Only").should("have.value", "I/Only");
 
       cy.contains("Loan Term");
       cy.get("#LoanTerm0").select("19").should("have.value", "19");
 
       cy.contains("Initial Interest Rate (p.a.)").should("be.visible");
       cy.get("#InterestRate0").clear().type("4.00%");
+
       cy.contains("Minimum Repayments (p.a)").should("be.visible");
       cy.get("#MinimumRepayments0");
 
-      cy.contains("Actual Annual Repayments").should("be.visible");
+      cy.contains("Apply Minimum Repayments OR");
+      cy.get(".radioButton2").contains("Yes").click();
+
+      cy.contains("Actual Annual Repayments");
       cy.get("#ActualAnnualRepayments0")
         .clear()
         .type("90")
@@ -648,13 +675,13 @@ class PartnerLifestyleAssetsandDebt {
     cy.get("#clientcf_personalDebt").should("have.value", "$109");
 
     //Personal Debt Credit Card
-  
-    cy.get(':nth-child(3) > .d-flex > .mb-0').click()
+
+    cy.get(":nth-child(3) > .d-flex > .mb-0").click();
 
     cy.get(".modal-header").contains("Credit Card");
 
     cy.contains("How many Credit Card does Aiden Smith have:");
-    cy.get('#NumberOfMap').clear().type("1");
+    cy.get("#NumberOfMap").clear().type("1");
 
     cy.get(".table").within(() => {
       cy.contains("No#").should("be.visible");
@@ -671,17 +698,21 @@ class PartnerLifestyleAssetsandDebt {
         .should("have.value", "$97");
 
       cy.contains("Loan Type");
-      cy.get("#LoanType0").select("i/only").should("have.value", "i/only");
+      cy.get("#LoanType0").select("I/Only").should("have.value", "I/Only");
 
       cy.contains("Loan Term");
       cy.get("#LoanTerm0").select("19").should("have.value", "19");
 
       cy.contains("Initial Interest Rate (p.a.)").should("be.visible");
       cy.get("#InterestRate0").clear().type("4.00%");
+
       cy.contains("Minimum Repayments (p.a)").should("be.visible");
       cy.get("#MinimumRepayments0");
 
-      cy.contains("Actual Annual Repayments").should("be.visible");
+      cy.contains("Apply Minimum Repayments OR");
+      cy.get(".radioButton2").contains("Yes").click();
+
+      cy.contains("Actual Annual Repayments");
       cy.get("#ActualAnnualRepayments0")
         .clear()
         .type("90")

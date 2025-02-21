@@ -59,7 +59,7 @@ describe("Adviser Simplicity", () => {
   });
 
 
-  it.only("Business Entities With Partner", () => {
+  it("Business Entities With Partner", () => {
     BusinessEntitiesPartner.section();
   });
 
@@ -67,7 +67,7 @@ describe("Adviser Simplicity", () => {
     BusinessEntitiesClient.section();
   });
 
-  it.skip("SMSF With Partner", () => {
+  it.only("SMSF With Partner", () => {
     SMSFPartner.section();
   });
 

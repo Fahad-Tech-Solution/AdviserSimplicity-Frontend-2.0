@@ -33,28 +33,28 @@ class ClientLifestyleAssetsandDebt {
       cy.get(".bgColor").click();
     });
 
-    
-
-     //Contents
+    //Contents
     cy.wait(2000);
     cy.get(":nth-child(2) > .py-4").within(() => {
       cy.contains("Contents");
       cy.contains("Contents");
       cy.get("img");
     });
-    cy.get(':nth-child(2) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0')
+    cy.get(
+      ":nth-child(2) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0"
+    )
       .click()
       .should("be.visible");
 
     //Card Header
     //Use only for remove partner When Run code with Client only
-  
+
     cy.get(".modal-header").contains("Contents");
     cy.get(".btn-close").should("be.visible");
     cy.get(".col-md-12 > .d-flex").within(() => {
       cy.contains("Owner");
-  
-      cy.get('.css-1lx7dxn').type("Aiden Smith{enter}")
+
+      cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
     });
 
     cy.get(".table").within(() => {
@@ -63,19 +63,19 @@ class ClientLifestyleAssetsandDebt {
       cy.contains("Aiden Smith").should("be.visible");
 
       cy.contains("Current Value").should("be.visible");
-      cy.get('#currentValue').clear().type("100")
+      cy.get("#currentValue").clear().type("100");
 
       cy.contains("Sell In Year").should("be.visible");
-      cy.get(':nth-child(3) > .form-select').should("have.value", "No");
+      cy.get(":nth-child(3) > .form-select").should("have.value", "No");
 
       cy.contains("New Purchase").should("be.visible");
-      cy.get('#newPurchase').clear().type("100")
+      cy.get("#newPurchase").clear().type("100");
 
       cy.contains("Purchase In Year").should("be.visible");
-      cy.get(':nth-child(5) > .form-select').should("have.value", "30");
+      cy.get(":nth-child(5) > .form-select").should("have.value", "30");
 
       cy.contains("Indexation").should("be.visible");
-      cy.get(':nth-child(6) > .form-select').should("have.value", "2.50%");
+      cy.get(":nth-child(6) > .form-select").should("have.value", "2.50%");
     });
 
     //Contents Footer
@@ -84,7 +84,7 @@ class ClientLifestyleAssetsandDebt {
       cy.contains("Submit").should("be.visible").click();
     });
 
-    cy.get('#clientcf_contents').should("have.value", "$100");
+    cy.get("#clientcf_contents").should("have.value", "$100");
 
     //Car
     cy.wait(2000);
@@ -93,13 +93,15 @@ class ClientLifestyleAssetsandDebt {
       cy.contains("Aiden Smith");
       cy.get("img");
     });
-    cy.get(':nth-child(3) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0')
+    cy.get(
+      ":nth-child(3) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0"
+    )
       .click()
       .should("be.visible");
 
     //Card Header
     //Use only for remove partner When Run code with Client only
-    cy.get(':nth-child(2) > .css-v7duua').click();
+    cy.get(":nth-child(2) > .css-v7duua").click();
     cy.get(".modal-header").contains("Car");
     cy.get(".btn-close").should("be.visible");
     cy.get(".col-md-12 > .d-flex").within(() => {
@@ -113,19 +115,19 @@ class ClientLifestyleAssetsandDebt {
       cy.contains("Aiden Smith").should("be.visible");
 
       cy.contains("Current Value").should("be.visible");
-      cy.get('#currentValue').clear().type("100")
+      cy.get("#currentValue").clear().type("100");
 
       cy.contains("Sell In Year").should("be.visible");
-      cy.get(':nth-child(3) > .form-select').should("have.value", "No");
+      cy.get(":nth-child(3) > .form-select").should("have.value", "No");
 
       cy.contains("New Purchase").should("be.visible");
-      cy.get('#newPurchase').clear().type("943")
+      cy.get("#newPurchase").clear().type("943");
 
       cy.contains("Purchase In Year").should("be.visible");
-      cy.get(':nth-child(5) > .form-select').should("have.value", "30");
+      cy.get(":nth-child(5) > .form-select").should("have.value", "30");
 
       cy.contains("Indexation").should("be.visible");
-      cy.get(':nth-child(6) > .form-select').should("have.value", "2.50%");
+      cy.get(":nth-child(6) > .form-select").should("have.value", "2.50%");
     });
 
     //Car Footer
@@ -134,7 +136,7 @@ class ClientLifestyleAssetsandDebt {
       cy.contains("Submit").should("be.visible").click();
     });
 
-    cy.get('#clientcf_car').should("have.value", "$100");
+    cy.get("#clientcf_car").should("have.value", "$100");
 
     // //Motor Vehicle 2
     // cy.wait(2000);
@@ -186,16 +188,17 @@ class ClientLifestyleAssetsandDebt {
 
     // cy.get('#clientcf_motorVehicle2').should("have.value", "$487");
 
-
     //Other Assets
     cy.wait(2000);
-    cy.get(':nth-child(6) > .py-4').within(() => {
+    cy.get(":nth-child(6) > .py-4").within(() => {
       cy.contains("Other Assets");
       cy.contains("Other Assets");
 
       cy.get("img");
     });
-    cy.get(':nth-child(6) > .py-4 > .flex-column > .row > .col-12 > .d-flex > .mb-0')
+    cy.get(
+      ":nth-child(6) > .py-4 > .flex-column > .row > .col-12 > .d-flex > .mb-0"
+    )
       .click()
       .should("be.visible");
 

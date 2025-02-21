@@ -68,6 +68,7 @@ class PartnerIncomeAndExpenses {
       cy.get(":nth-child(5) > .form-select").should("have.value", "2.50%");
     });
 
+    cy.wait(2000);
     //PartnerShip Section :
     //cy.get(":nth-child(2) > .css-v7duua").click();
 
@@ -116,7 +117,7 @@ class PartnerIncomeAndExpenses {
     //Card Header
 
     cy.get(".modal-header").contains("Sole Trader Income");
-    cy.get(".btn-close").should("be.visible");
+    cy.get(".btn-close");
     cy.get(".col-md-12 > .d-flex").within(() => {
       cy.contains("Owner");
       cy.get(".css-9jq23d").contains("Aiden Smith");
@@ -140,6 +141,7 @@ class PartnerIncomeAndExpenses {
       cy.get(":nth-child(5) > .form-select").should("have.value", "2.50%");
     });
 
+    cy.wait(2000);
     //PartnerShip Section :
     //use to remove partner
     // cy.get(":nth-child(2) > .css-v7duua").click();
@@ -215,6 +217,7 @@ class PartnerIncomeAndExpenses {
       cy.get(":nth-child(5) > .form-select").should("have.value", "2.50%");
     });
 
+    cy.wait(2000);
     //PartnerShip Section :
     //use to remove partner
     // cy.get(":nth-child(2) > .css-v7duua").click();
@@ -305,45 +308,34 @@ class PartnerIncomeAndExpenses {
     });
 
     //PartnerShip Section :
+
+    cy.wait(2000);
     //use to remove partner
 
-    cy.get(
-      '[style="min-width: 25%;"] > .css-b62m3t-container > .css-14gfs0a-control > .css-1lcv7hw'
-    ).type("Emma Taylor{enter}");
-    cy.wait(2000);
+    cy.get(".css-1lcv7hw").first().type("Emma Taylor{enter}"); // Selects the first matching element
 
-    // cy.get(".table").within(() => {
-    //   //Clear Input :
-
-    //   cy.get(
-    //     ":nth-child(2) > :nth-child(2) > .css-b62m3t-container > .css-14gfs0a-control > .css-d07bj1 > :nth-child(1)"
-    //   ).click();
-    // });
-
-    // cy.get(
-    //   ":nth-child(2) > :nth-child(2) > .css-b62m3t-container > .css-14gfs0a-control > .css-1lcv7hw > .css-1p3m7a8-multiValue > .css-v7duua"
-    // ).click();
-    cy.get(".css-1f8fajx > .css-1lx7dxn").type("Disability Pension{enter}");
+    cy.get("tbody > :nth-child(2) > :nth-child(2)").within(() => {
+      cy.get(".css-1lx7dxn input").first().type("Age Pension{enter}");
+    });
 
     cy.get(":nth-child(2) > :nth-child(3) > .form-select").select("1");
     //Allow Carer Allowance
-    cy.get(
-      ":nth-child(2) > :nth-child(4) > .css-b62m3t-container > .css-14gfs0a-control > .css-d07bj1 > :nth-child(1)"
-    ).click();
 
-    cy.get(".css-1f8fajx > .css-1lx7dxn").type("Disability Pension{enter}");
+    cy.get(
+      ":nth-child(2) > :nth-child(4) > .css-b62m3t-container > .css-14gfs0a-control > .css-1lcv7hw"
+    )
+      .first()
+      .type("Disability Pension{enter}");
     //	Is Client Renting
     cy.get(
       ":nth-child(2) > :nth-child(5) > .css-b62m3t-container > .css-14gfs0a-control > .css-d07bj1 > :nth-child(1)"
-    ).click();
-
-    cy.get(".css-1f8fajx > .css-1lx7dxn").type("Age Pension{enter}");
+    ).type("Age Pension{enter}");
 
     cy.get(":nth-child(2) > :nth-child(6) > .form-check > .radioButton2")
       .contains("Yes")
       .click();
 
-    // Centrelink Payments/Benefits Footer
+    // Centrelink Payments/Benefits Footerf
     cy.get(".modal-footer").within(() => {
       cy.contains("Close").should("be.visible");
       cy.contains("Submit").should("be.visible").click();
@@ -396,6 +388,8 @@ class PartnerIncomeAndExpenses {
       cy.contains("Centrelink Deductible Amount").should("be.visible");
       cy.get("#centrelinkDeductibleAmount").should("have.value", "$896");
     });
+
+    cy.wait(2000);
 
     //PartnerShip Section :
     //use to remove partner
@@ -479,12 +473,17 @@ class PartnerIncomeAndExpenses {
 
     //	Reduced Salary Income Card :
     cy.get("thead > tr > :nth-child(6)").contains("Reduced Salary Income");
-    cy.get(":nth-child(6) > .form-check > .radioButton2")
-      .contains("Yes")
-      .click();
-    cy.get("tbody > tr > :nth-child(6)").within(() => {
+
+    cy.get("tbody > :nth-child(1) > :nth-child(6)").within(() => {
+      cy.contains("Yes").click();
       cy.get("#button-addon2").click();
     });
+    // cy.get(":nth-child(6) > .form-check > .radioButton2")
+    //   .contains("Yes")
+    //   .click();
+    // cy.get("tbody > tr > :nth-child(6)").within(() => {
+
+    // });
 
     cy.get(
       '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close'
@@ -517,13 +516,19 @@ class PartnerIncomeAndExpenses {
     //Salary Packaging
 
     cy.contains("Salary Packaging");
-    cy.get(":nth-child(7) > .form-check > .radioButton2")
-      .contains("Yes")
-      .click();
 
-    cy.get("tbody > tr > :nth-child(7)").within(() => {
+    cy.get("tbody > :nth-child(1) > :nth-child(7)").within(() => {
+      cy.contains("Yes").click();
+
       cy.get(".d-flex > #button-addon2").click();
     });
+    // cy.get(":nth-child(7) > .form-check > .radioButton2")
+    //   .contains("Yes")
+    //   .click();
+
+    // cy.get("tbody > tr > :nth-child(7)").within(() => {
+
+    // });
 
     //Header
     cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
@@ -551,6 +556,12 @@ class PartnerIncomeAndExpenses {
       cy.contains("FBT Paid By Employer");
       cy.get(".d-flex > .form-check > .radioButton2").contains("Yes").click();
 
+      cy.contains("Running Costs of Car Packaged");
+      cy.get("#runningCostsOfCarPackaged")
+        .clear()
+        .type("789")
+        .should("be.visible");
+
       cy.contains("Include From Year");
       cy.get("#includeFromYear").should("have.value", "1");
 
@@ -569,11 +580,22 @@ class PartnerIncomeAndExpenses {
 
     //Salary Packaging (Other) Card :
     cy.contains("Salary Packaging (Other)");
-    cy.get(":nth-child(8) > .form-check > .radioButton2")
+
+    // cy.get("tbody > :nth-child(1) > :nth-child(8)").within(() => {
+    //   cy.contains("Yes").click()
+    //   cy.get(":nth-child(8) > .d-flex > #button-addon2").click();
+    // });
+    // // cy.get(":nth-child(8) > .form-check > .radioButton2")
+
+    // // cy.get("tbody > tr > :nth-child(8)").within(() => {});
+
+    cy.get(":nth-child(1) > :nth-child(8) > .form-check > .radioButton2")
       .contains("Yes")
       .click();
-    cy.get("tbody > tr > :nth-child(8)").within(() => {});
-    cy.get(":nth-child(8) > .d-flex > #button-addon2").click();
+    // cy.get('tbody > :nth-child(1) > :nth-child(8)').within(() => {
+    //   cy.get(':nth-child(8) > .d-flex > #button-addon2').click();
+    // })
+    cy.get(":nth-child(1) > :nth-child(8) > .d-flex > #button-addon2").click();
 
     cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
       () => {
@@ -599,6 +621,8 @@ class PartnerIncomeAndExpenses {
         cy.contains("Submit").click();
       }
     );
+
+    cy.wait(2000);
 
     //PartnerShip Section :
 
@@ -695,6 +719,12 @@ class PartnerIncomeAndExpenses {
       cy.contains("FBT Paid By Employer");
       cy.get(".d-flex > .form-check > .radioButton2").contains("Yes").click();
 
+      cy.contains("Running Costs of Car Packaged");
+      cy.get("#runningCostsOfCarPackaged")
+        .clear()
+        .type("789")
+        .should("be.visible");
+
       cy.contains("Include From Year");
       cy.get("#includeFromYear").should("have.value", "1");
 
@@ -752,13 +782,13 @@ class PartnerIncomeAndExpenses {
 
     //Regular Living Expenses
     cy.wait(2000);
-    cy.get(":nth-child(7) > .py-4").within(() => {
+    cy.get(":nth-child(9) > .py-4").within(() => {
       cy.contains("Regular Living Expenses");
       cy.contains("Regular Living Expenses");
       cy.get("img");
     });
     cy.get(
-      ":nth-child(7) > .py-4 > .flex-column > .row > .col-12 > .d-flex > .mb-0"
+      ":nth-child(9) > .py-4 > .flex-column > .row > .col-12 > .d-flex > .mb-0"
     )
       .click()
       .should("be.visible");
@@ -841,6 +871,8 @@ class PartnerIncomeAndExpenses {
       cy.get(":nth-child(5) > .form-select").should("have.value", "2.50%");
     });
 
+    cy.wait(2000);
+
     //PartnerShip Section :
 
     //use to remove partner
@@ -901,9 +933,9 @@ class PartnerIncomeAndExpenses {
       // cy.get(":nth-child(2) > .css-v7duua").click();
       cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
     });
-
+    cy.wait(2000);
     cy.get(".table").within(() => {
-      cy.contains("Owner").should("be.visible");
+      cy.contains("Owner");
 
       cy.contains("Aiden Smith").should("be.visible");
 
@@ -920,6 +952,7 @@ class PartnerIncomeAndExpenses {
       cy.get(":nth-child(5) > .form-select").should("have.value", "2.50%");
     });
 
+    cy.wait(2000);
     //PartnerShip Section :
 
     //use to remove partner

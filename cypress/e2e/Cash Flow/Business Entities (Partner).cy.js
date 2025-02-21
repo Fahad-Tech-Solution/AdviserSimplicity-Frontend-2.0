@@ -444,18 +444,9 @@ class PartnerBusinessEntities {
 
     // cy.get("#partnercf_DividendIncome").should("have.value", "$3,535");
 
+    //Bucket Company
 
-
-
-
-
-
-
-
-
-      //Bucket Company 
-
-     // //Business as Trust
+    // //Business as Trust
 
     cy.get(":nth-child(3) > .py-4").within(() => {
       cy.contains("Bucket Company");
@@ -500,31 +491,23 @@ class PartnerBusinessEntities {
     );
     //Dividend Income
     cy.get(".col-md-12 > .row > .mt-4").within(() => {
-
-      cy.contains("Opening Value")
-      cy.get('#openingValue').clear().type("3535");
+      cy.contains("Opening Value");
+      cy.get("#openingValue").clear().type("3535");
 
       cy.contains("Net Trust Distribution");
-      cy.get('#assetValue').should(
-        "have.value",
-        "$6,455"
-      );
-
-     
+      cy.get("#assetValue").should("have.value", "$6,455");
 
       cy.contains("Include From Year");
-      cy.get(':nth-child(3) > .form-select').select("12");
+      cy.get(":nth-child(3) > .form-select").select("12");
 
       cy.contains("Up Until Year");
-      cy.get(':nth-child(4) > .form-select').select("3");
+      cy.get(":nth-child(4) > .form-select").select("3");
 
-    
       cy.contains("Indexation");
-      cy.get(':nth-child(5) > .form-select').select("10.00%");
+      cy.get(":nth-child(5) > .form-select").select("10.00%");
 
       cy.contains("Expected Growth Rate");
-      cy.get('#expectedGrowthRate').clear().type("2.00%");
-
+      cy.get("#expectedGrowthRate").clear().type("2.00%");
     });
     cy.get(
       '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
@@ -533,7 +516,7 @@ class PartnerBusinessEntities {
       cy.contains("Submit").should("be.visible").click();
     });
 
-    cy.get('#netTrustDistribution').should("have.value", "$6,455");
+    cy.get("#netTrustDistribution").should("have.value", "$6,455");
 
     //Asset Value of Company
 
@@ -548,38 +531,36 @@ class PartnerBusinessEntities {
         cy.contains("Dividend Income");
       }
     );
-      //Dividend Income
-      cy.get(".col-md-12 > .row > .mt-4").within(() => {
-        cy.contains("Dividend Income");
-        cy.get('tr > :nth-child(1) > #dividendIncome').clear().type("213")
-  
-        cy.contains("Franking");
-        cy.get('#franking').clear().type("2.00%");
-  
-        cy.contains("Include From Year");
-        cy.get(':nth-child(3) > .form-select').select("23")
-  
-        cy.contains("Up Until Year");
-        cy.get(':nth-child(4) > .form-select').select("21")
-  
-        cy.contains("Indexation")
-        cy.get(':nth-child(5) > .form-select').select("2.00%");
-  
-  
-        cy.contains("Client % of Dividend")
-        cy.get('#clientOfDividend').clear().type("22.00%");
-  
-  
-        cy.contains("Partner % of Dividend")
-        cy.get('#partnerOfDividend').clear().type("20.00%");
-      });
-      cy.get(
-        '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
-      ).within(() => {
-        cy.contains("Close").should("be.visible");
-        cy.contains("Submit").should("be.visible").click();
-      });
-      cy.get('#dividendIncome').should("have.value", "$213");
+    //Dividend Income
+    cy.get(".col-md-12 > .row > .mt-4").within(() => {
+      cy.contains("Dividend Income");
+      cy.get("tr > :nth-child(1) > #dividendIncome").clear().type("213");
+
+      cy.contains("Franking");
+      cy.get("#franking").clear().type("2.00%");
+
+      cy.contains("Include From Year");
+      cy.get(":nth-child(3) > .form-select").select("23");
+
+      cy.contains("Up Until Year");
+      cy.get(":nth-child(4) > .form-select").select("21");
+
+      cy.contains("Indexation");
+      cy.get(":nth-child(5) > .form-select").select("2.00%");
+
+      cy.contains("Client % of Dividend");
+      cy.get("#clientOfDividend").clear().type("22.00%");
+
+      cy.contains("Partner % of Dividend");
+      cy.get("#partnerOfDividend").clear().type("20.00%");
+    });
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
+    ).within(() => {
+      cy.contains("Close").should("be.visible");
+      cy.contains("Submit").should("be.visible").click();
+    });
+    cy.get("#dividendIncome").should("have.value", "$213");
 
     // cy.contains("Close");
     // cy.get(".modal-footer > .bgColor")
@@ -605,26 +586,23 @@ class PartnerBusinessEntities {
     );
     //Dividend Income
     cy.get(".col-md-12 > .row > .mt-4").within(() => {
-      cy.contains("Opening Value")
-      cy.get('#openingValue').clear().type("3535");
+      cy.contains("Opening Value");
+      cy.get("#openingValue").clear().type("3535");
 
       cy.contains("Net Trust Distribution");
-      cy.get('#assetValue').clear().type("32")
-
-     
+      cy.get("#assetValue").clear().type("32");
 
       cy.contains("Include From Year");
-      cy.get(':nth-child(3) > .form-select').select("12");
+      cy.get(":nth-child(3) > .form-select").select("12");
 
       cy.contains("Up Until Year");
-      cy.get(':nth-child(4) > .form-select').select("3");
+      cy.get(":nth-child(4) > .form-select").select("3");
 
-    
       cy.contains("Indexation");
-      cy.get(':nth-child(5) > .form-select').select("10.00%");
+      cy.get(":nth-child(5) > .form-select").select("10.00%");
 
       cy.contains("Expected Growth Rate");
-      cy.get('#expectedGrowthRate').clear().type("2.00%");
+      cy.get("#expectedGrowthRate").clear().type("2.00%");
     });
 
     cy.contains("Close");
@@ -653,27 +631,25 @@ class PartnerBusinessEntities {
     //Dividend Income inner card
     cy.get(".col-md-12 > .row > .mt-4").within(() => {
       cy.contains("Dividend Income");
-      cy.get('tr > :nth-child(1) > #dividendIncome').clear().type("213")
+      cy.get("tr > :nth-child(1) > #dividendIncome").clear().type("213");
 
       cy.contains("Franking");
-      cy.get('#franking').clear().type("2.00%");
+      cy.get("#franking").clear().type("2.00%");
 
       cy.contains("Include From Year");
-      cy.get(':nth-child(3) > .form-select').select("23")
+      cy.get(":nth-child(3) > .form-select").select("23");
 
       cy.contains("Up Until Year");
-      cy.get(':nth-child(4) > .form-select').select("21")
+      cy.get(":nth-child(4) > .form-select").select("21");
 
-      cy.contains("Indexation")
-      cy.get(':nth-child(5) > .form-select').select("2.00%");
+      cy.contains("Indexation");
+      cy.get(":nth-child(5) > .form-select").select("2.00%");
 
+      cy.contains("Client % of Dividend");
+      cy.get("#clientOfDividend").clear().type("22.00%");
 
-      cy.contains("Client % of Dividend")
-      cy.get('#clientOfDividend').clear().type("22.00%");
-
-
-      cy.contains("Partner % of Dividend")
-      cy.get('#partnerOfDividend').clear().type("20.00%");
+      cy.contains("Partner % of Dividend");
+      cy.get("#partnerOfDividend").clear().type("20.00%");
     });
     cy.get(
       '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
@@ -681,7 +657,9 @@ class PartnerBusinessEntities {
       cy.contains("Close").should("be.visible");
       cy.contains("Submit").click();
     });
-    cy.get(':nth-child(2) > :nth-child(3) > .input-group > #dividendIncome').should("have.value", "$213");
+    cy.get(
+      ":nth-child(2) > :nth-child(3) > .input-group > #dividendIncome"
+    ).should("have.value", "$213");
 
     cy.contains("Close");
     cy.get(".modal-footer > .bgColor")
@@ -689,12 +667,9 @@ class PartnerBusinessEntities {
       .should("be.visible")
       .click();
 
-      cy.get('#clientcf_BucketCompany').should("have.value", "$6,455");
+    cy.get("#clientcf_BucketCompany").should("have.value", "$6,455");
 
-      cy.get('#partnercf_BucketCompany').should("have.value", "$32");
-
-
-    
+    cy.get("#partnercf_BucketCompany").should("have.value", "$32");
   }
 }
 export default PartnerBusinessEntities;

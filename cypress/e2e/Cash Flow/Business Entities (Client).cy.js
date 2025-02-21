@@ -43,249 +43,256 @@ class ClientBusinessEntities {
     //Financial Investment
     cy.get(".bgColor").click();
 
-    // //Dividend Income
+    //Dividend Income
 
-    // cy.get(":nth-child(1) > .py-4").within(() => {
-    //   cy.contains("Dividend Income");
-    //   cy.get("img");
-    //   cy.contains("Aiden Smith");
-    //   cy.contains("Emma Taylor");
-    // });
-    // cy.get(
-    //   ":nth-child(1) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0"
-    // ).click();
-    // cy.get(".modal-content").within(() => {
-    //   cy.contains("Dividend Income");
-    //   cy.get(".btn-close");
-    // });
+    cy.get(":nth-child(1) > .py-4").within(() => {
+      cy.contains("Dividend Income");
+      cy.get("img");
+      cy.contains("Aiden Smith");
+      cy.contains("Emma Taylor");
+    });
+    cy.get(
+      ":nth-child(1) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0"
+    ).click();
+    cy.get(".modal-content").within(() => {
+      cy.contains("Dividend Income");
+      cy.get(".btn-close");
+    });
 
-    // cy.get(".col-md-12 > .d-flex").within(() => {
-    //   cy.contains("Owner");
-
-    //   cy.get(".css-v7duua").click();
-
-    //   cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
-    // });
-
-    // cy.get(".modal-content").within(() => {
-    //   cy.contains("Dividend Income");
-    //   cy.get(".btn-close");
-    //   cy.get(".table").within(() => {
-    //     cy.contains("Owner");
-    //     cy.get("tbody > tr > :nth-child(1)").contains("Aiden Smith");
-    //     cy.contains("Dividend Income");
-    //   });
-    // });
-
-    // cy.get(":nth-child(2) > .input-group").within(() => {
-    //   cy.get("#button-addon2").click();
-    // });
-
-    // cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
-    //   () => {
-    //     cy.contains("Dividend Income");
-    //   }
-    // );
-    // //Dividend Income
-    // cy.get(".col-md-12 > .row > .mt-4").within(() => {
-    //   cy.contains("Dividend Income");
-    //   cy.get("tr > :nth-child(1) > #dividendIncome").should(
-    //     "have.value",
-    //     "$213"
-    //   );
-
-    //   cy.contains("Franking");
-    //   cy.get("#franking").clear().type("3535");
-
-    //   cy.contains("Include From Year");
-    //   cy.get(":nth-child(3) > .form-select").select("12");
-
-    //   cy.contains("Up Until Year");
-    //   cy.get(":nth-child(4) > .form-select").select("3");
-
-    //   cy.contains("Take As Cash From Until Year");
-    //   cy.get(":nth-child(5) > .form-select").select("3");
-
-    //   cy.contains("Indexation");
-    //   cy.get(":nth-child(6) > .form-select").select("10.00%");
-    // });
-    // cy.get(
-    //   '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
-    // ).within(() => {
-    //   cy.contains("Close").should("be.visible");
-    //   cy.contains("Submit").should("be.visible").click();
-    // });
-
-    // cy.get("#dividendIncome").should("have.value", "$213");
-
-    // //Asset Value of Company
-
-    // cy.contains("Asset Value of Company");
-
-    // cy.get(":nth-child(3) > .input-group").within(() => {
-    //   cy.get("#button-addon2").click();
-    // });
-
-    // cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
-    //   () => {
-    //     cy.contains("Asset Value of Company");
-    //   }
-    // );
-    // //Dividend Income
-    // cy.get(".col-md-12 > .row > .mt-4").within(() => {
-    //   cy.contains("Asset Value of Company");
-    //   cy.get("#assetValue").should("have.value", "$5,356");
-
-    //   cy.contains("Include From Year");
-    //   cy.get(":nth-child(2) > .form-select").select("12");
-
-    //   cy.contains("Up Until Year");
-    //   cy.get(":nth-child(3) > .form-select").select("3");
-
-    //   cy.contains("Expected Growth Rate");
-    //   cy.get("#expectedGrowthRate").clear().type("3535");
-    // });
-    // cy.get(
-    //   '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
-    // ).within(() => {
-    //   cy.contains("Close").should("be.visible");
-    //   cy.contains("Submit").should("be.visible").click();
-    // });
-    // cy.get("#assetValueOfCompany").should("not.have.value", "$213");
-
-    // cy.contains("Close");
-    // cy.get(".modal-footer > .bgColor")
-    //   .contains("Submit")
-    //   .should("be.visible")
-    //   .click();
-
-    // cy.get("#clientcf_DividendIncome").should("have.value", "$213");
-
-    //cy.wait(1000);
-
-// //Business as Trusts
-
-
-//     cy.get(":nth-child(2) > .py-4").within(() => {
-//       cy.contains("Business as Trusts");
-//       cy.get("img");
-//       cy.contains("Aiden Smith");
-//       cy.contains("Emma Taylor");
-//     });
-//     cy.get(
-//       ":nth-child(2) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0"
-//     ).click();
-//     cy.get(".modal-content").within(() => {
-//       cy.contains("Business as Trusts");
-//       cy.get(".btn-close");
-//     });
-
-//     cy.get(".col-md-12 > .d-flex").within(() => {
-//       cy.contains("Owner");
-
-//       cy.get(".css-v7duua").click();
-
-//       cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
-//     });
-
-//     cy.get(".modal-content").within(() => {
-//       cy.contains("Net Trust Distribution");
-//       cy.get(".btn-close");
-//       cy.get(".table").within(() => {
-//         cy.contains("Owner");
-//         cy.get("tbody > tr > :nth-child(1)").contains("Aiden Smith");
-//         cy.contains("Net Trust Distribution");
-//       });
-//     });
-
-//     cy.get(":nth-child(2) > .input-group").within(() => {
-//       cy.get("#button-addon2").click();
-//     });
-
-//     cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
-//       () => {
-//         cy.contains("Net Trust Distribution");
-//       }
-//     );
-//     //Dividend Income
-//     cy.get(".col-md-12 > .row > .mt-4").within(() => {
-//       cy.contains("Net Trust Distribution");
-//       cy.get('#assetValue').should(
-//         "have.value",
-//         "$6,455"
-//       );
+    cy.get(".col-md-12 > .d-flex").within(() => {
+      cy.contains("Owner");
 
      
 
-//       cy.contains("Include From Year");
-//       cy.get(':nth-child(2) > .form-select').select("12");
+      cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
+    });
 
-//       cy.contains("Up Until Year");
-//       cy.get(':nth-child(3) > .form-select').select("3");
 
-//       cy.contains("Take As Cash From Until Year");
-//       cy.get(':nth-child(4) > .form-select').select("3");
+     //Remove Partner
+     cy.get(":nth-child(2) > .css-v7duua").click();
 
-//       cy.contains("Indexation");
-//       cy.get(':nth-child(5) > .form-select').select("10.00%");
-//     });
-//     cy.get(
-//       '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
-//     ).within(() => {
-//       cy.contains("Close").should("be.visible");
-//       cy.contains("Submit").should("be.visible").click();
-//     });
+    cy.get(".modal-content").within(() => {
+      cy.contains("Dividend Income");
+      cy.get(".btn-close");
+      cy.get(".table").within(() => {
+        cy.contains("Owner");
+        cy.get("tbody > tr > :nth-child(1)").contains("Aiden Smith");
+        cy.contains("Dividend Income");
+      });
+    });
 
-//     cy.get('#netTrustDistribution').should("have.value", "$6,455");
+    cy.get(":nth-child(2) > .input-group").within(() => {
+      cy.get("#button-addon2").click();
+    });
 
-//     //Asset Value of Company
+    cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+      () => {
+        cy.contains("Dividend Income");
+      }
+    );
+    //Dividend Income
+    cy.get(".col-md-12 > .row > .mt-4").within(() => {
+      cy.contains("Dividend Income");
+      cy.get("tr > :nth-child(1) > #dividendIncome").should(
+        "have.value",
+        "$213"
+      );
 
-//     cy.contains("Asset Value of Business Trust");
+      cy.contains("Franking");
+      cy.get("#franking").clear().type("3535");
 
-//     cy.get(":nth-child(3) > .input-group").within(() => {
-//       cy.get("#button-addon2").click();
-//     });
+      cy.contains("Include From Year");
+      cy.get(":nth-child(3) > .form-select").select("12");
 
-//     cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
-//       () => {
-//         cy.contains("Asset Value of Business Trust");
-//       }
-//     );
-//     //Dividend Income
-//     cy.get(".col-md-12 > .row > .mt-4").within(() => {
-//       cy.contains("Asset Value of Business Trust");
-//       cy.get('#assetValue').should("have.value", "$5,356");
+      cy.contains("Up Until Year");
+      cy.get(":nth-child(4) > .form-select").select("3");
 
-//       cy.contains("Include From Year");
-//       cy.get(":nth-child(2) > .form-select").select("12");
+      cy.contains("Take As Cash From Until Year");
+      cy.get(":nth-child(5) > .form-select").select("3");
 
-//       cy.contains("Up Until Year");
-//       cy.get(":nth-child(3) > .form-select").select("3");
+      cy.contains("Indexation");
+      cy.get(":nth-child(6) > .form-select").select("10.00%");
+    });
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
+    ).within(() => {
+      cy.contains("Close").should("be.visible");
+      cy.contains("Submit").should("be.visible").click();
+    });
 
-//       cy.contains("Expected Growth Rate");
-//       cy.get("#expectedGrowthRate").clear().type("3535");
-//     });
-//     cy.get(
-//       '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
-//     ).within(() => {
-//       cy.contains("Close").should("be.visible");
-//       cy.contains("Submit").should("be.visible").click();
-//     });
-//     cy.get('#assetValueOfBusinessTrust').should("have.value", "$5,356");
+    cy.get("#dividendIncome").should("have.value", "$213");
 
-//     cy.contains("Close");
-//     cy.get(".modal-footer > .bgColor")
-//       .contains("Submit")
-//       .should("be.visible")
-//       .click();
+    //Asset Value of Company
 
-//       cy.get('#assetValueOfBusinessTrust').should("have.value", "$5,356");
+    cy.contains("Asset Value of Company");
+
+    cy.get(":nth-child(3) > .input-group").within(() => {
+      cy.get("#button-addon2").click();
+    });
+
+    cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+      () => {
+        cy.contains("Asset Value of Company");
+      }
+    );
+    //Dividend Income
+    cy.get(".col-md-12 > .row > .mt-4").within(() => {
+      cy.contains("Asset Value of Company");
+      cy.get("#assetValue").should("have.value", "$5,356");
+
+      cy.contains("Include From Year");
+      cy.get(":nth-child(2) > .form-select").select("12");
+
+      cy.contains("Up Until Year");
+      cy.get(":nth-child(3) > .form-select").select("3");
+
+      cy.contains("Expected Growth Rate");
+      cy.get("#expectedGrowthRate").clear().type("3535");
+    });
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
+    ).within(() => {
+      cy.contains("Close").should("be.visible");
+      cy.contains("Submit").should("be.visible").click();
+    });
+    cy.get("#assetValueOfCompany").should("not.have.value", "$213");
+
+    cy.contains("Close");
+    cy.get(".modal-footer > .bgColor")
+      .contains("Submit")
+      .should("be.visible")
+      .click();
+
+    cy.get("#clientcf_DividendIncome").should("have.value", "$213");
+
+    cy.wait(1000);
+
+//Business as Trusts
+
+
+    cy.get(":nth-child(2) > .py-4").within(() => {
+      cy.contains("Business as Trusts");
+      cy.get("img");
+      cy.contains("Aiden Smith");
+      cy.contains("Emma Taylor");
+    });
+    cy.get(
+      ":nth-child(2) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0"
+    ).click();
+    cy.get(".modal-content").within(() => {
+      cy.contains("Business as Trusts");
+      cy.get(".btn-close");
+    });
+
+    cy.get(".col-md-12 > .d-flex").within(() => {
+      cy.contains("Owner");
+
+     
+
+      cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
+    });
+
+     //Remove Partner
+     cy.get(":nth-child(2) > .css-v7duua").click();
+     
+    cy.get(".modal-content").within(() => {
+      cy.contains("Net Trust Distribution");
+      cy.get(".btn-close");
+      cy.get(".table").within(() => {
+        cy.contains("Owner");
+        cy.get("tbody > tr > :nth-child(1)").contains("Aiden Smith");
+        cy.contains("Net Trust Distribution");
+      });
+    });
+
+    cy.get(":nth-child(2) > .input-group").within(() => {
+      cy.get("#button-addon2").click();
+    });
+
+    cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+      () => {
+        cy.contains("Net Trust Distribution");
+      }
+    );
+    //Dividend Income
+    cy.get(".col-md-12 > .row > .mt-4").within(() => {
+      cy.contains("Net Trust Distribution");
+      cy.get('#assetValue').should(
+        "have.value",
+        "$6,455"
+      );
+
+     
+
+      cy.contains("Include From Year");
+      cy.get(':nth-child(2) > .form-select').select("12");
+
+      cy.contains("Up Until Year");
+      cy.get(':nth-child(3) > .form-select').select("3");
+
+      cy.contains("Take As Cash From Until Year");
+      cy.get(':nth-child(4) > .form-select').select("3");
+
+      cy.contains("Indexation");
+      cy.get(':nth-child(5) > .form-select').select("10.00%");
+    });
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
+    ).within(() => {
+      cy.contains("Close").should("be.visible");
+      cy.contains("Submit").should("be.visible").click();
+    });
+
+    cy.get('#netTrustDistribution').should("have.value", "$6,455");
+
+    //Asset Value of Company
+
+    cy.contains("Asset Value of Business Trust");
+
+    cy.get(":nth-child(3) > .input-group").within(() => {
+      cy.get("#button-addon2").click();
+    });
+
+    cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+      () => {
+        cy.contains("Asset Value of Business Trust");
+      }
+    );
+    //Dividend Income
+    cy.get(".col-md-12 > .row > .mt-4").within(() => {
+      cy.contains("Asset Value of Business Trust");
+      cy.get('#assetValue').should("have.value", "$5,356");
+
+      cy.contains("Include From Year");
+      cy.get(":nth-child(2) > .form-select").select("12");
+
+      cy.contains("Up Until Year");
+      cy.get(":nth-child(3) > .form-select").select("3");
+
+      cy.contains("Expected Growth Rate");
+      cy.get("#expectedGrowthRate").clear().type("3535");
+    });
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
+    ).within(() => {
+      cy.contains("Close").should("be.visible");
+      cy.contains("Submit").should("be.visible").click();
+    });
+    cy.get('#assetValueOfBusinessTrust').should("have.value", "$5,356");
+
+    cy.contains("Close");
+    cy.get(".modal-footer > .bgColor")
+      .contains("Submit")
+      .should("be.visible")
+      .click();
+
+      cy.get('#assetValueOfBusinessTrust').should("have.value", "$5,356");
 
 
 
       //Bucket Company 
 
-      //Business as Trusts
+   
 
 
     cy.get(":nth-child(3) > .py-4").within(() => {
@@ -302,13 +309,17 @@ class ClientBusinessEntities {
       cy.get(".btn-close");
     });
 
+ 
     cy.get(".col-md-12 > .d-flex").within(() => {
       cy.contains("Owner");
 
-      cy.get(".css-v7duua").click();
+       
 
       cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
     });
+
+ //Remove Partner
+ cy.get(":nth-child(2) > .css-v7duua").click();
 
     cy.get(".modal-content").within(() => {
       cy.contains("Net Trust Distribution");
