@@ -16,7 +16,6 @@ import OtherTaxable from "../Components/Questions/svgs/no-tax.png";
 import moneyBagPng from "../Components/Questions/svgs/money-bag.png";
 import Education from "../Components/Questions/svgs/Education.png";
 
-
 import car from "../Components/Questions/svgs/car.svg";
 import jeep from "../Components/Questions/svgs/jeep-car-svgrepo-com.svg";
 import boat from "../Components/Questions/svgs/boat.svg";
@@ -45,601 +44,606 @@ import Business_fund from "../Components/Questions/svgs/Business-fund.png";
 import SMSFBank from "../Components/Questions/svgs/bank.svg";
 
 export const content = {
-    itemsOpt: [
+  itemsOpt: [
+    {
+      subTitle: "Personal Details",
+      statusStep: 0,
+      icon: "FaUser",
+      route: "/PersonalDetail",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Question",
+      statusStep: 8,
+      icon: "FaPlus",
+      route: "/ImportantQuestion",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Personal Income and Expenses",
+      statusStep: 16,
+      icon: "FaMoneyCheckDollar",
+      route: "/PersonalIncome",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Personal Assets and Debt",
+      statusStep: 24,
+      icon: "FaHome",
+      route: "/PersonalAssets",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Financial Investments",
+      statusStep: 32,
+      icon: "RiCoinsFill",
+      route: "/FinancialInvestments",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    // {
+    //     subTitle: 'Super and Retirement',
+    //     statusStep: 40,
+    //     icon: 'RiCoinsFill',
+    //     route: '/SuperAndRetirement',
+    //     condition: (CRObject) => true // Always true, as this step is always needed.
+    // },
+    // {
+    //     subTitle: 'Property',
+    //     statusStep: 48,
+    //     icon: 'FaKey',
+    //     route: '/Lifestyle',
+    //     condition: (CRObject) => true // Always true, as this step is always needed.
+    // },
+    // {
+    //     subTitle: 'Investment',
+    //     statusStep: 56,
+    //     icon: 'FaKey',
+    //     route: '/Investment',
+    //     condition: (CRObject) => CRObject.investmentPropertyTab === "Yes"
+    // },
+    {
+      subTitle: "Estate Planning & Professional Advisers",
+      statusStep: 40,
+      icon: "FaQuestionCircle",
+      route: "/EstatePlanning",
+      condition: (CRObject) => true,
+    },
+    {
+      subTitle: "Personal Insurance",
+      statusStep: 48,
+      icon: "FaMoneyCheckDollar",
+      route: "/PersonalInsurance",
+      condition: (CRObject) => CRObject?.personalInsuranceTab === "Yes",
+    },
+    {
+      subTitle: "Business Entities",
+      statusStep: 56,
+      icon: "FaBriefcase",
+      route: "/BusinessEntities",
+      condition: (CRObject) =>
+        CRObject?.BusinessAsCompanyStructure === "Yes" ||
+        CRObject?.BusinessAsTrusts === "Yes",
+    },
+    {
+      subTitle: "SMSF",
+      statusStep: 64,
+      icon: "FaGift",
+      route: "/SMSF",
+      condition: (CRObject) => CRObject?.SMSFManagedFundsTab === "Yes",
+    },
+    {
+      subTitle: "Investment Trust",
+      statusStep: 72,
+      icon: "MdFamilyRestroom",
+      route: "/FamilyTrust",
+      condition: (CRObject) => CRObject?.businessAsInvestmentTab === "Yes",
+    },
+  ],
+  itemsQuestion: [
+    {
+      subTitle: "Desired Liquidity",
+      statusStep: 12,
+      icon: "FaMoneyBillWave",
+      route: "/Q1",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Rate of return",
+      statusStep: 24,
+      icon: "FaChartLine",
+      route: "/Q2",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Capital Risk",
+      statusStep: 36,
+      icon: "FaTriangleExclamation",
+      route: "/Q3",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Inflation",
+      statusStep: 48,
+      icon: "RiDiscountPercentFill",
+      route: "/Q4",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Legislative Risk",
+      statusStep: 62,
+      icon: "MdOutlineBalance",
+      route: "/Q5",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Investment knowledge",
+      statusStep: 74,
+      icon: "FaGraduationCap",
+      route: "/Q6",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Volatility",
+      statusStep: 86,
+      icon: "MdOutlineTimeline",
+      route: "/Q7",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Asset allocation",
+      statusStep: 98,
+      icon: "FaChartPie",
+      route: "/Q8",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+  ],
+  RiskGoals: [
+    {
+      title: "Cash Management",
+      value: "Cash Management",
+      img: LOW1,
+      des: "<b>Cash Management</b> - Your responses indicate an extremely low tolerance to investment risk or, alternatively, you have a short investment time frame. The only appropriate investment for this risk profile or time frame is a cash-based investment such as bank accounts, cash management trusts and term deposits.",
+    },
+    {
+      title: "Conservative",
+      value: "Conservative",
+      img: ModeratelyLOW,
+      des: "<b>Conservative</b> - As a Conservative investor, you really don't like risk. Your risk profile suggests you are most concerned with keeping what you have. As a result, you are prepared to accept lower returns to reduce the risk of losing capital. Based on your risk profile you would generally prefer an investment mix that is positioned defensively to produce a stable return with a higher proportion invested in bonds and cash and a smaller proportion of money in shares and property investments. Minimum Investment Term: 2 years",
+    },
+    {
+      title: "Moderately Conservative",
+      value: "Moderately Conservative",
+      img: Moderate,
+      des: "<b>Moderately Conservative</b> - As a Moderately Conservative investor, you seek consistent returns using a steady growth strategy. Your risk profile suggests you want some potential for capital growth, but prefer not to have large fluctuations in short term performance. Based on your risk profile, you would generally prefer a diversified portfolio with a balance of defensive assets, such as bonds and cash and growth assets such as shares and property. Minimum Investment Term: 3 years",
+    },
+    {
+      title: "Balanced",
+      value: "Balanced",
+      img: ModeratelyHigh,
+      des: "<b>Balanced</b> - As a Balanced investor, you seek a portfolio that will give you the best opportunity to achieve your medium to long term financial goals. Your risk profile suggests you are prepared to experience short term fluctuations in performance for potentially higher returns over the long term. Based on your risk profile, you would generally prefer a diversified portfolio with a bias towards growth assets such as shares and property. Minimum Investment Term: 5 years",
+    },
+    {
+      title: "Growth",
+      value: "Growth",
+      img: High,
+      des: "<b>Growth</b> - As a Growth investor, you focus on assets with greater growth potential. Your risk profile suggests you are prepared to accept short term fluctuations in performance for potentially greater returns over the longer term. Based on your risk profile, you would generally prefer a diversified portfolio with a strong bias towards growth investments such as shares and property. Minimum Investment Term: 5 years",
+    },
+    {
+      title: "High Growth",
+      value: "High Growth",
+      img: VeryHigh,
+      des: "<b>High Growth</b> - As a High Growth investor, you are prepared to compromise portfolio balance to pursue potential long-term gains. Your risk profile suggests you acknowledge there will be short term fluctuations in performance and are comfortable to invest in high risk investments. Based on your risk profile you would generally prefer a portfolio comprising solely growth assets such as shares and property. Minimum Investment Term: 7 years. ",
+    },
+  ],
+  superAdmin: [
+    {
+      subTitle: "Financial Institutions",
+      statusStep: 0,
+      icon: "RiCoinsFill",
+      route: "/",
+      key: "FinancialInstitutions",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Investment Platforms",
+      statusStep: 10,
+      icon: "MdFamilyRestroom",
+      route: "/InvestmentPlatforms",
+      key: "InvestmentPlatforms",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Investment Bonds",
+      statusStep: 20,
+      icon: "FaCertificate",
+      route: "/InvestmentBonds",
+      key: "InvestmentBonds",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Superannuation Funds",
+      statusStep: 30,
+      icon: "FaMoneyBillWave",
+      route: "/SuperannuationFunds",
+      key: "SuperannuationFunds",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Account Based Pensions",
+      statusStep: 40,
+      icon: "FaUserShield",
+      route: "/AccountBasedPensions",
+      key: "AccountBasedPensions",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Annuities",
+      statusStep: 50,
+      icon: "BiDollarCircle",
+      route: "/Annuities",
+      key: "Annuities",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Personal Insurances",
+      statusStep: 60,
+      icon: "RiDiscountPercentFill",
+      route: "/PersonalInsurances",
+      key: "PersonalInsurances",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+  ],
+  cashFlow: [
+    {
+      subTitle: "All Users of CashFlow",
+      statusStep: 0,
+      icon: "FaUser",
+      route: "/AllUsers",
+      condition: (CRObject) => false, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Personal Details",
+      statusStep: 0,
+      icon: "FaUser",
+      route: "/PersonalDetail",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Income & Expenses",
+      statusStep: 10,
+      icon: "FaMoneyCheckDollar",
+      route: "/Income-And-Expenses",
+      key: "CashFlow_Income_And_Expenses",
+      QuestionsArray: [
         {
-            subTitle: 'Personal Details',
-            statusStep: 0,
-            icon: 'FaUser',
-            route: '/PersonalDetail',
-            condition: (CRObject) => true // Always true, as this step is always needed.
+          title: "Overseas Pensions",
+          img: overseas,
+          key: "cf_incomeFromOverseas",
         },
         {
-            subTitle: 'Question',
-            statusStep: 8,
-            icon: 'FaPlus',
-            route: '/ImportantQuestion',
-            condition: (CRObject) => true // Always true, as this step is always needed.
+          title: "Sole Trader Income",
+          key: "cf_incomeFromSoleTrade",
+          img: businessIncome,
         },
         {
-            subTitle: 'Personal Income and Expenses',
-            statusStep: 16,
-            icon: 'FaMoneyCheckDollar',
-            route: '/PersonalIncome',
-            condition: (CRObject) => true // Always true, as this step is always needed.
+          title: "Partnership Income",
+          img: businessPartnership,
+          key: "cf_incomeFromPartnership",
         },
         {
-            subTitle: 'Personal Assets and Debt',
-            statusStep: 24,
-            icon: 'FaHome',
-            route: '/PersonalAssets',
-            condition: (CRObject) => true // Always true, as this step is always needed.
+          title: "Centrelink Payments/Benefits",
+          img: Gears,
+          key: "cf_incomeFromCentrelink",
+          info: "This includes Family Tax Benefit (A&B) Payments and any Centrelink Cards",
         },
         {
-            subTitle: 'Financial Investments',
-            statusStep: 32,
-            icon: 'RiCoinsFill',
-            route: '/FinancialInvestments',
-            condition: (CRObject) => true // Always true, as this step is always needed.
-        },
-        // {
-        //     subTitle: 'Super and Retirement',
-        //     statusStep: 40,
-        //     icon: 'RiCoinsFill',
-        //     route: '/SuperAndRetirement',
-        //     condition: (CRObject) => true // Always true, as this step is always needed.
-        // },
-        // {
-        //     subTitle: 'Property',
-        //     statusStep: 48,
-        //     icon: 'FaKey',
-        //     route: '/Lifestyle',
-        //     condition: (CRObject) => true // Always true, as this step is always needed.
-        // },
-        // {
-        //     subTitle: 'Investment',
-        //     statusStep: 56,
-        //     icon: 'FaKey',
-        //     route: '/Investment',
-        //     condition: (CRObject) => CRObject.investmentPropertyTab === "Yes"
-        // },
-        {
-            subTitle: 'Estate Planning & Professional Advisers',
-            statusStep: 40,
-            icon: 'FaQuestionCircle',
-            route: '/EstatePlanning',
-            condition: (CRObject) => true
+          title: "Lifetime Benefits",
+          img: money,
+          key: "cf_incomeFromLifeTimePension",
         },
         {
-            subTitle: 'Personal Insurance',
-            statusStep: 48,
-            icon: 'FaMoneyCheckDollar',
-            route: '/PersonalInsurance',
-            condition: (CRObject) => CRObject?.personalInsuranceTab === "Yes"
+          title: "Employment Income",
+          key: "cf_employmentIncome",
+          img: Businessman,
         },
         {
-            subTitle: 'Business Entities',
-            statusStep: 56,
-            icon: 'FaBriefcase',
-            route: '/BusinessEntities',
-            condition: (CRObject) => CRObject?.BusinessAsCompanyStructure === "Yes" || CRObject?.BusinessAsTrusts === "Yes"
+          title: "Business Income",
+          key: "cf_incomeFromBusiness",
+          img: businessIncomeCase,
         },
         {
-            subTitle: 'SMSF',
-            statusStep: 64,
-            icon: 'FaGift',
-            route: '/SMSF',
-            condition: (CRObject) => CRObject?.SMSFManagedFundsTab === "Yes"
+          title: "Other Non-Taxable",
+          key: "cf_incomeFromOtherNonTaxable",
+          img: OtherTaxable,
         },
         {
-            subTitle: 'Investment Trust',
-            statusStep: 72,
-            icon: 'MdFamilyRestroom',
-            route: '/FamilyTrust',
-            condition: (CRObject) => CRObject?.businessAsInvestmentTab === "Yes"
-        },
-    ],
-    itemsQuestion: [
-        {
-            subTitle: 'Desired Liquidity',
-            statusStep: 12,
-            icon: 'FaMoneyBillWave',
-            route: '/Q1',
-            condition: (CRObject) => true // Always true, as this step is always needed.
+          title: "Regular Living Expenses",
+          key: "cf_incomeFromRegularLivingExpense",
+          img: moneyBagPng,
         },
         {
-            subTitle: 'Rate of return',
-            statusStep: 24,
-            icon: 'FaChartLine',
-            route: '/Q2',
-            condition: (CRObject) => true // Always true, as this step is always needed.
+          title: "Education Expenses",
+          key: "cf_incomeFromEducation",
+          img: Education,
+        },
+      ],
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    }, //? all inner Cards Done without APi
+    {
+      subTitle: "Lifestyle Assets & Debt",
+      statusStep: 20,
+      icon: "FaHome",
+      route: "/Personal-Assets",
+      QuestionsArray: [
+        {
+          title: "Own a Family Home",
+          key: "cf_familyHome",
+          img: Questions_Home,
         },
         {
-            subTitle: 'Capital Risk',
-            statusStep: 36,
-            icon: 'FaTriangleExclamation',
-            route: '/Q3',
-            condition: (CRObject) => true // Always true, as this step is always needed.
+          title: "Contents",
+          key: "cf_contents",
+          img: houseHold,
         },
         {
-            subTitle: 'Inflation',
-            statusStep: 48,
-            icon: 'RiDiscountPercentFill',
-            route: '/Q4',
-            condition: (CRObject) => true // Always true, as this step is always needed.
-        },
-        {
-            subTitle: 'Legislative Risk',
-            statusStep: 62,
-            icon: 'MdOutlineBalance',
-            route: '/Q5',
-            condition: (CRObject) => true // Always true, as this step is always needed.
-        },
-        {
-            subTitle: 'Investment knowledge',
-            statusStep: 74,
-            icon: 'FaGraduationCap',
-            route: '/Q6',
-            condition: (CRObject) => true // Always true, as this step is always needed.
-        },
-        {
-            subTitle: 'Volatility',
-            statusStep: 86,
-            icon: 'MdOutlineTimeline',
-            route: '/Q7',
-            condition: (CRObject) => true // Always true, as this step is always needed.
-        },
-        {
-            subTitle: 'Asset allocation',
-            statusStep: 98,
-            icon: 'FaChartPie',
-            route: '/Q8',
-            condition: (CRObject) => true // Always true, as this step is always needed.
-        },
-    ],
-    RiskGoals: [
-        {
-            title: "Cash Management",
-            value: "Cash Management",
-            img: LOW1,
-            des: "<b>Cash Management</b> - Your responses indicate an extremely low tolerance to investment risk or, alternatively, you have a short investment time frame. The only appropriate investment for this risk profile or time frame is a cash-based investment such as bank accounts, cash management trusts and term deposits."
-        },
-        {
-            title: "Conservative",
-            value: "Conservative",
-            img: ModeratelyLOW,
-            des: "<b>Conservative</b> - As a Conservative investor, you really don't like risk. Your risk profile suggests you are most concerned with keeping what you have. As a result, you are prepared to accept lower returns to reduce the risk of losing capital. Based on your risk profile you would generally prefer an investment mix that is positioned defensively to produce a stable return with a higher proportion invested in bonds and cash and a smaller proportion of money in shares and property investments. Minimum Investment Term: 2 years"
-        },
-        {
-            title: "Moderately Conservative",
-            value: "Moderately Conservative",
-            img: Moderate,
-            des: "<b>Moderately Conservative</b> - As a Moderately Conservative investor, you seek consistent returns using a steady growth strategy. Your risk profile suggests you want some potential for capital growth, but prefer not to have large fluctuations in short term performance. Based on your risk profile, you would generally prefer a diversified portfolio with a balance of defensive assets, such as bonds and cash and growth assets such as shares and property. Minimum Investment Term: 3 years"
-        },
-        {
-            title: "Balanced",
-            value: "Balanced",
-            img: ModeratelyHigh,
-            des: "<b>Balanced</b> - As a Balanced investor, you seek a portfolio that will give you the best opportunity to achieve your medium to long term financial goals. Your risk profile suggests you are prepared to experience short term fluctuations in performance for potentially higher returns over the long term. Based on your risk profile, you would generally prefer a diversified portfolio with a bias towards growth assets such as shares and property. Minimum Investment Term: 5 years"
-        },
-        {
-            title: "Growth",
-            value: "Growth",
-            img: High,
-            des: "<b>Growth</b> - As a Growth investor, you focus on assets with greater growth potential. Your risk profile suggests you are prepared to accept short term fluctuations in performance for potentially greater returns over the longer term. Based on your risk profile, you would generally prefer a diversified portfolio with a strong bias towards growth investments such as shares and property. Minimum Investment Term: 5 years"
-        },
-        {
-            title: "High Growth",
-            value: "High Growth",
-            img: VeryHigh,
-            des: "<b>High Growth</b> - As a High Growth investor, you are prepared to compromise portfolio balance to pursue potential long-term gains. Your risk profile suggests you acknowledge there will be short term fluctuations in performance and are comfortable to invest in high risk investments. Based on your risk profile you would generally prefer a portfolio comprising solely growth assets such as shares and property. Minimum Investment Term: 7 years. "
-        }
-    ],
-    superAdmin: [
-        {
-            subTitle: 'Financial Institutions',
-            statusStep: 0,
-            icon: 'RiCoinsFill',
-            route: '/',
-            key: "FinancialInstitutions",
-            condition: (CRObject) => true // Always true, as this step is always needed.
-        },
-        {
-            subTitle: 'Investment Platforms',
-            statusStep: 10,
-            icon: 'MdFamilyRestroom',
-            route: '/InvestmentPlatforms',
-            key: "InvestmentPlatforms",
-            condition: (CRObject) => true // Always true, as this step is always needed.
-        },
-        {
-            subTitle: 'Investment Bonds',
-            statusStep: 20,
-            icon: 'FaCertificate',
-            route: '/InvestmentBonds',
-            key: "InvestmentBonds",
-            condition: (CRObject) => true // Always true, as this step is always needed.
-        },
-        {
-            subTitle: 'Superannuation Funds',
-            statusStep: 30,
-            icon: 'FaMoneyBillWave',
-            route: '/SuperannuationFunds',
-            key: "SuperannuationFunds",
-            condition: (CRObject) => true // Always true, as this step is always needed.
-        },
-        {
-            subTitle: 'Account Based Pensions',
-            statusStep: 40,
-            icon: 'FaUserShield',
-            route: '/AccountBasedPensions',
-            key: "AccountBasedPensions",
-            condition: (CRObject) => true // Always true, as this step is always needed.
-        },
-        {
-            subTitle: 'Annuities',
-            statusStep: 50,
-            icon: 'BiDollarCircle',
-            route: '/Annuities',
-            key: "Annuities",
-            condition: (CRObject) => true // Always true, as this step is always needed.
-        },
-        {
-            subTitle: 'Personal Insurances',
-            statusStep: 60,
-            icon: 'RiDiscountPercentFill',
-            route: '/PersonalInsurances',
-            key: "PersonalInsurances",
-            condition: (CRObject) => true // Always true, as this step is always needed.
-        },
-    ],
-    cashFlow: [
-        {
-            subTitle: "All Users of CashFlow",
-            statusStep: 0,
-            icon: "FaUser",
-            route: "/AllUsers",
-            condition: (CRObject) => false, // Always true, as this step is always needed.
-        },
-        {
-            subTitle: "Personal Details",
-            statusStep: 0,
-            icon: "FaUser",
-            route: "/PersonalDetail",
-            condition: (CRObject) => true, // Always true, as this step is always needed.
-        },
-        {
-            subTitle: "Income & Expenses",
-            statusStep: 10,
-            icon: "FaMoneyCheckDollar",
-            route: "/Income-And-Expenses",
-            key: "CashFlow_Income_And_Expenses",
-            QuestionsArray: [
-                {
-                    title: "Overseas Pensions",
-                    img: overseas,
-                    key: "cf_incomeFromOverseas",
-                },
-                {
-                    title: "Sole Trader Income",
-                    key: "cf_incomeFromSoleTrade",
-                    img: businessIncome,
-                },
-                {
-                    title: "Partnership Income",
-                    img: businessPartnership,
-                    key: "cf_incomeFromPartnership",
-                },
-                {
-                    title: "Centrelink Payments/Benefits",
-                    img: Gears,
-                    key: "cf_incomeFromCentrelink",
-                    info: "This includes Family Tax Benefit (A&B) Payments and any Centrelink Cards",
-                },
-                {
-                    title: "Lifetime Benefits",
-                    img: money,
-                    key: "cf_incomeFromLifeTimePension",
-                },
-                {
-                    title: "Employment Income",
-                    key: "cf_employmentIncome",
-                    img: Businessman,
-                },
-                {
-                    title: "Business Income",
-                    key: "cf_incomeFromBusiness",
-                    img: businessIncomeCase,
-                },
-                {
-                    title: "Other Non-Taxable",
-                    key: "cf_incomeFromOtherNonTaxable",
-                    img: OtherTaxable,
-                },
-                {
-                    title: "Regular Living Expenses",
-                    key: "cf_incomeFromRegularLivingExpense",
-                    img: moneyBagPng,
-                },
-                {
-                    title: "Education Expenses",
-                    key: "cf_incomeFromEducation",
-                    img: Education,
-                },
-            ],
-            condition: (CRObject) => true, // Always true, as this step is always needed.
-        },  //? all inner Cards Done without APi
-        {
-            subTitle: "Lifestyle Assets & Debt",
-            statusStep: 20,
-            icon: "FaHome",
-            route: "/Personal-Assets",
-            QuestionsArray: [
-                {
-                    title: "Own a Family Home",
-                    key: "cf_familyHome",
-                    img: Questions_Home,
-                },
-                {
-                    title: "Contents",
-                    key: "cf_contents",
-                    img: houseHold,
-                },
-                {
-                    title: "Car",
-                    key: "cf_car",
-                    img: car,
-                },
-                // {
-                //     title: "Motor Vehicle 2",
-                //     key: "cf_motorVehicle2",
-                //     img: jeep,
-                // },
-                {
-                    title: "Boat",
-                    key: "cf_boat",
-                    img: boat,
-                },
-                {
-                    title: "Caravan",
-                    key: "cf_caravan",
-                    img: trailer,
-                },
-                {
-                    title: "Other Assets",
-                    key: "cf_otherAssets",
-                    img: settingMoney,
-                },
-                {
-                    title: "Personal Debt",
-                    key: "cf_personalDebt",
-                    img: PersonalDebt,
-                },
-            ],
-            condition: (CRObject) => true, // Always true, as this step is always needed.
-        },
-        {
-            subTitle: "Financial Investments",
-            statusStep: 30,
-            icon: "RiCoinsFill",
-            route: "/Investments",
-            QuestionsArray: [
-                {
-                    title: "Australian Shares",
-                    img: PortFolio,
-                    key: "cf_AustralianShares",
-                    sourceKey: "australianShareMarket",
-                },
-                {
-                    title: "Platform Investment",
-                    img: funds,
-                    key: "cf_platformInvestment",
-                    sourceKey: "managedFund",
-                },
-                {
-                    title: "Other Investments",
-                    img: otherInvestment,
-                    key: "cf_otherInvestments",
-                    // sourceKey: "otherInvestments",
-                },
-                {
-                    title: "Cash",
-                    img: SMSFBank,
-                    key: "cf_cash",
-                    sourceKey: "bankAccountFinance",
-                },
-                {
-                    title: "Term Deposits",
-                    img: TermImg,
-                    key: "cf_termDeposits",
-                    sourceKey: "termDepositsFinance",
-                },
-                {
-                    title: "Investment Bonds",
-                    img: certificate,
-                    key: "cf_investmentBonds",
-                    sourceKey: "investmentBondFinance",
-                },
-                {
-                    title: "Investment Loans (LOC)",
-                    img: loan,
-                    key: "cf_investmentLoansLOC",
-                    cal: true,
-                },
-                {
-                    title: "Margin Loan",
-                    img: analytics,
-                    key: "cf_marginLoan",
-                },
-                {
-                    title: "Investments Property",
-                    img: property,
-                    key: "cf_investmentsProperty",
-                    cal: true,
-                },
-                {
-                    title: "Super Fund",
-                    img: piggybank1,
-                    key: "cf_superFund",
-                },
-                {
-                    title: "Account Based Pension",
-                    img: piggybank2,
-                    key: "cf_accountBasedPension",
-                },
-                {
-                    title: "Annuities",
-                    img: calender,
-                    key: "cf_annuities",
-                },
-            ],
-            condition: (CRObject) => true, // Always true, as this step is always needed.
-        },
-        {
-            subTitle: "Business Entities",
-            statusStep: 40,
-            icon: "FaBriefcase",
-            route: "/Business-Entitles",
-            QuestionsArray: [
-                {
-                    title: "Dividend Income",
-                    key: "cf_DividendIncome",
-                    img: Business_building,
-                },
-                {
-                    title: "Business as Trusts",
-                    key: "cf_BusinessAsTrusts",
-                    img: BusinessTeam_Handshake,
-                },
-                {
-                    title: "Bucket Company",
-                    key: "cf_BucketCompany",
-                    img: Business_fund,
-                },
-            ],
-            condition: (CRObject) => true, // Always true, as this step is always needed.
-        },
-        {
-            subTitle: "SMSF",
-            statusStep: 50,
-            icon: "FaMoneyCheckDollar",
-            QuestionsArray: [
-                {
-                    title: "SMSF Accumulation Details",
-                    key: "cf_SMSFAccumulationDetails",
-                    img: property,
-                },
-                {
-                    title: "SMSF Pension Account Details",
-                    key: "cf_SMSFPensionAccountDetails",
-                    img: calender,
-                },
-                {
-                    title: "SMSF Bank",
-                    key: "cf_SMSFBank",
-                    img: SMSFBank,
-                    sourceKey: "SMSFBank"
-                },
-                {
-                    title: "SMSF Term Deposit",
-                    key: "cf_SMSFTermDeposit",
-                    img: TermImg,
-                    sourceKey: "SMSFTermDeposits"
-                },
-                {
-                    title: "SMSF Australian Shares",
-                    key: "cf_SMSFAustralianShares",
-                    img: PortFolio,
-                    sourceKey: "SMSFAustralianShares"
-                },
-                {
-                    title: "SMSF Platform Investment",
-                    key: "cf_SMSFPlatformInvestment",
-                    img: funds,
-                    sourceKey: "SMSFManagedFunds"
-                },
-                {
-                    title: "SMSF",
-                    key: "cf_SMSF",
-                    img: otherInvestment,
-                },
-                {
-                    title: "SMSF Investment Loan",
-                    key: "cf_SMSFInvestmentLoan",
-                    img: loan,
-                    sourceKey: "SMSFInvestmentLoan"
-                },
-                {
-                    title: "SMSF Investment Properties",
-                    key: "cf_SMSFInvestmentProperties",
-                    img: property,
-                    sourceKey: "SMSFInvestmentProperties"
-                },
-            ],
-            route: "/SMSF",
-            condition: (CRObject) => true, // Always true, as this step is always needed.
-        },
-        {
-            subTitle: "Investment Trust",
-            statusStep: 60,
-            icon: "FaBriefcase",
-            route: "/InvestmentTrust",
-            QuestionsArray: [
-                {
-                    title: "West Family Trust Investment",
-                    key: "cf_WestFamilyTrustInvestment",
-                    img: BusinessTeam_Handshake,
-                },
-                {
-                    title: "Family Trust Bank Account",
-                    key: "cf_FamilyTrustBankAccount",
-                    img: SMSFBank,
-                    sourceKey: "familyBank"
-                },
-                {
-                    title: "Family Trust Term Deposits",
-                    key: "cf_WestFamilyTrustTermDeposits",
-                    img: TermImg,
-                    sourceKey: "familyTermDeposit"
-                },
-                {
-                    title: "Family Trust Australian Shares",
-                    key: "cf_FamilyTrustAustralianShares",
-                    img: PortFolio,
-                    sourceKey: "familyAustralianShare"
-                },
-                {
-                    title: "Family Trust Platform Investment",
-                    key: "cf_FamilyTrustPlatformInvestment",
-                    img: funds,
-                    sourceKey: "familyMangedFunds"
-                },
-                {
-                    title: "Family Trust",
-                    key: "cf_FamilyTrust",
-                    img: otherInvestment,
-                },
-                {
-                    title: "Family Trust Investment Loan",
-                    key: "cf_FamilyTrustInvestmentLoan",
-                    img: loan,
-                    sourceKey: "familyInvestmentHomeLoan"
-                },
-                {
-                    title: "Family Trust Investment Properties",
-                    key: "cf_FamilyTrustInvestmentProperties",
-                    img: property,
-                    sourceKey: "familyInvestmentProperties"
-                },
-            ],
-            condition: (CRObject) => true, // Always true, as this step is always needed.
+          title: "Car",
+          key: "cf_car",
+          img: car,
         },
         // {
-        //     subTitle: "SMSF",
-        //     statusStep: 70,
-        //     icon: "FaGift",
-        //     route: "/SMSF",
-        //     QuestionsArray: [],
-        //     condition: (CRObject) => true, // Always true, as this step is always needed.
+        //     title: "Motor Vehicle 2",
+        //     key: "cf_motorVehicle2",
+        //     img: jeep,
         // },
-    ],
-}
+        {
+          title: "Boat",
+          key: "cf_boat",
+          img: boat,
+        },
+        {
+          title: "Caravan",
+          key: "cf_caravan",
+          img: trailer,
+        },
+        {
+          title: "Other Assets",
+          key: "cf_otherAssets",
+          img: settingMoney,
+        },
+        {
+          title: "Personal Debt",
+          key: "cf_personalDebt",
+          img: PersonalDebt,
+        },
+      ],
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Financial Investments",
+      statusStep: 30,
+      icon: "RiCoinsFill",
+      route: "/Investments",
+      QuestionsArray: [
+        {
+          title: "Australian Shares",
+          img: PortFolio,
+          key: "cf_AustralianShares",
+          sourceKey: "australianShareMarket",
+        },
+        {
+          title: "Platform Investment",
+          img: funds,
+          key: "cf_platformInvestment",
+          sourceKey: "managedFund",
+        },
+        {
+          title: "Other Investments",
+          img: otherInvestment,
+          key: "cf_otherInvestments",
+          // sourceKey: "otherInvestments",
+        },
+        {
+          title: "Cash",
+          img: SMSFBank,
+          key: "cf_cash",
+          sourceKey: "bankAccountFinance",
+        },
+        {
+          title: "Term Deposits",
+          img: TermImg,
+          key: "cf_termDeposits",
+          sourceKey: "termDepositsFinance",
+        },
+        {
+          title: "Investment Bonds",
+          img: certificate,
+          key: "cf_investmentBonds",
+          sourceKey: "investmentBondFinance",
+        },
+        {
+          title: "Investment Loans (LOC)",
+          img: loan,
+          key: "cf_investmentLoansLOC",
+          cal: true,
+        },
+        {
+          title: "Margin Loan",
+          img: analytics,
+          key: "cf_marginLoan",
+        },
+        {
+          title: "Investments Property",
+          img: property,
+          key: "cf_investmentsProperty",
+          cal: true,
+        },
+        {
+          title: "Super Fund",
+          img: piggybank1,
+          key: "cf_superFund",
+        },
+        {
+          title: "Account Based Pension",
+          img: piggybank2,
+          key: "cf_accountBasedPension",
+        },
+        {
+          title: "Annuities",
+          img: calender,
+          key: "cf_annuities",
+        },
+      ],
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Business Entities",
+      statusStep: 40,
+      icon: "FaBriefcase",
+      route: "/Business-Entitles",
+      QuestionsArray: [
+        {
+          title: "Dividend Income",
+          key: "cf_DividendIncome",
+          img: Business_building,
+        },
+        {
+          title: "Business as Trusts",
+          key: "cf_BusinessAsTrusts",
+          img: BusinessTeam_Handshake,
+        },
+        {
+          title: "Bucket Company",
+          key: "cf_BucketCompany",
+          img: Business_fund,
+        },
+      ],
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "SMSF",
+      statusStep: 50,
+      icon: "FaMoneyCheckDollar",
+      QuestionsArray: [
+        {
+          title: "SMSF Accumulation Details",
+          key: "cf_SMSFAccumulationDetails",
+          img: property,
+        },
+        {
+          title: "SMSF Pension Account Details",
+          key: "cf_SMSFPensionAccountDetails",
+          img: calender,
+        },
+        {
+          title: "SMSF Bank",
+          key: "cf_SMSFBank",
+          img: SMSFBank,
+          sourceKey: "SMSFBank",
+        },
+        {
+          title: "SMSF Term Deposit",
+          key: "cf_SMSFTermDeposit",
+          img: TermImg,
+          sourceKey: "SMSFTermDeposits",
+        },
+        {
+          title: "SMSF Australian Shares",
+          key: "cf_SMSFAustralianShares",
+          img: PortFolio,
+          sourceKey: "SMSFAustralianShares",
+        },
+        {
+          title: "SMSF Platform Investment",
+          key: "cf_SMSFPlatformInvestment",
+          img: funds,
+          sourceKey: "SMSFManagedFunds",
+        },
+        {
+          title: "SMSF",
+          key: "cf_SMSF",
+          img: otherInvestment,
+        },
+        {
+          title: "SMSF Investment Loan",
+          key: "cf_SMSFInvestmentLoan",
+          img: loan,
+          sourceKey: "SMSFInvestmentLoan",
+          cal: true,
+        },
+        {
+          title: "SMSF Investment Properties",
+          key: "cf_SMSFInvestmentProperties",
+          img: property,
+          sourceKey: "SMSFInvestmentProperties",
+        },
+      ],
+      route: "/SMSF",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Investment Trust",
+      statusStep: 60,
+      icon: "FaBriefcase",
+      route: "/InvestmentTrust",
+      QuestionsArray: [
+        {
+          title: "West Family Trust Investment",
+          key: "cf_WestFamilyTrustInvestment",
+          img: BusinessTeam_Handshake,
+          cal: true,
+        },
+        {
+          title: "Family Trust Bank Account",
+          key: "cf_FamilyTrustBankAccount",
+          img: SMSFBank,
+          sourceKey: "familyBank",
+        },
+        {
+          title: "Family Trust Term Deposits",
+          key: "cf_WestFamilyTrustTermDeposits",
+          img: TermImg,
+          sourceKey: "familyTermDeposit",
+        },
+        {
+          title: "Family Trust Australian Shares",
+          key: "cf_FamilyTrustAustralianShares",
+          img: PortFolio,
+          sourceKey: "familyAustralianShare",
+        },
+        {
+          title: "Family Trust Platform Investment",
+          key: "cf_FamilyTrustPlatformInvestment",
+          img: funds,
+          sourceKey: "familyMangedFunds",
+        },
+        {
+          title: "Family Trust",
+          key: "cf_FamilyTrust",
+          img: otherInvestment,
+        },
+        {
+          title: "Family Trust Investment Loan",
+          key: "cf_FamilyTrustInvestmentLoan",
+          img: loan,
+          sourceKey: "familyInvestmentHomeLoan",
+          cal: true,
+        },
+        {
+          title: "Family Trust Investment Properties",
+          key: "cf_FamilyTrustInvestmentProperties",
+          img: property,
+          sourceKey: "familyInvestmentProperties",
+        },
+      ],
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    // {
+    //     subTitle: "SMSF",
+    //     statusStep: 70,
+    //     icon: "FaGift",
+    //     route: "/SMSF",
+    //     QuestionsArray: [],
+    //     condition: (CRObject) => true, // Always true, as this step is always needed.
+    // },
+  ],
+};

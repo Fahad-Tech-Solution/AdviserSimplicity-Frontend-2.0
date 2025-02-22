@@ -160,29 +160,49 @@ const TotalCostBase = (props) => {
 
       console.log(obj[props.modalObject.ParentObject.key]);
 
-      //   throw "Error";
+      let apiKey = {
+        cf_familyHome: { key: "cf_familyHome", param: "" },
+        cf_investmentsProperty: {
+          key: "financialInvestment",
+          param: "INPUTS_Property",
+        },
+        cf_FamilyTrustInvestmentProperties: {
+          key: "investmentsTrust",
+          param: "INPUTS_TRUST_Property",
+        },
+        cf_SMSFInvestmentProperties: {
+          key: "SMSF",
+          param: "INPUTS_SMSF_Property",
+        },
+      };
 
-      let res = await PostAxios(
-        `${DefaultUrl}/api/cal/financialInvestment/INPUTS_Property`,
-        obj
+      console.log(
+        "props.modalObject.ParentObject.key",
+        props.modalObject.ParentObject.key
       );
+
+      let api = `${DefaultUrl}/api/cal/${
+        apiKey[props.modalObject.ParentObject.key].key
+      }/${apiKey[props.modalObject.ParentObject.key].param}`;
+      console.log(api);
+
+      // throw "Error";
+
+      let res = await PostAxios(api, obj);
       if (res) {
         console.log(res.data);
-        let { cf_investmentsProperty } = res.data;
+
+        let DataObj = res.data[props.modalObject.ParentObject.key];
 
         if (values.stampDuty !== "Manual") {
           setFieldValue(
             "stampDutyValue",
-            toCommaAndDollar(
-              cf_investmentsProperty.totalCostBaseObj.stampDutyCalculation
-            )
+            toCommaAndDollar(DataObj.totalCostBaseObj.stampDutyValue)
           );
         }
         setFieldValue(
           "totalCostBase",
-          toCommaAndDollar(
-            cf_investmentsProperty.totalCostBaseObj.totalCostBase
-          )
+          toCommaAndDollar(DataObj.totalCostBaseObj.totalCostBase)
         );
 
         setCashFlowReCalculateLoading(false);

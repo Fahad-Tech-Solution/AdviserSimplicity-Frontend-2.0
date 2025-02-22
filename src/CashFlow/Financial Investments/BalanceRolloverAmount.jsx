@@ -202,7 +202,7 @@ const BalanceRolloverAmount = (props) => {
         props.modalObject.stakeHolder.replace(".", "")
       ][props.modalObject.key + "Obj"]));
 
-      throw new Error("API call not implemented yet");
+      // throw new Error("API call not implemented yet");
 
       let res = await PostAxios(
         `${DefaultUrl}/api/cal/financialInvestment/INPUTS_Super&_Pension`,

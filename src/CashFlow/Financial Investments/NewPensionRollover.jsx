@@ -2,11 +2,27 @@ import React, { useEffect, useState } from "react";
 import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
 import { Form, Formik } from "formik";
 import { Row, Table } from "react-bootstrap";
+import {
+  openNotificationSuccess,
+  PostAxios,
+  toCommaAndDollar,
+} from "../../Components/Assets/Api/Api";
+import {
+  CashFlowData,
+  CashFlowReCalculateLoading,
+  defaultUrl,
+} from "../../Store/Store";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 const NewPensionRollover = (props) => {
   let [disabledFlag, setDisabledFlag] = useState(true);
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
+
+  let DefaultUrl = useRecoilValue(defaultUrl);
+  let cashFlowData = useRecoilValue(CashFlowData);
+  let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
+    useRecoilState(CashFlowReCalculateLoading);
 
   let initialValues = {
     commencePensionInYear: "",
@@ -181,6 +197,105 @@ const NewPensionRollover = (props) => {
     },
   ];
 
+  let handleChildButtonClick = async (values, setFieldValue) => {
+    try {
+      let obj = JSON.parse(JSON.stringify(cashFlowData));
+
+      obj[props.modalObject.sourceObj.key] = props.modalObject.values;
+
+      obj[props.modalObject.sourceObj.key][
+        props.modalObject.stakeHolder.replace(".", "")
+      ][props.modalObject.key + "Obj"] = values;
+
+      let apiKey = {
+        cf_accountBasedPension: {
+          key: "financialInvestment",
+          param: "INPUTS_Super&_Pension",
+        },
+        cf_SMSFPensionAccountDetails: {
+          key: "SMSF",
+          param: "INPUTS_SMSF_Member_Balances",
+        },
+      };
+
+      // throw new Error("API call not implemented yet");
+
+      let res = await PostAxios(
+        `${DefaultUrl}/api/cal/${apiKey[props.modalObject.sourceObj.key].key}/${
+          apiKey[props.modalObject.sourceObj.key].param
+        }`,
+        obj
+      );
+
+      if (res) {
+        console.log(res);
+
+        let DataObj = res.data[props.modalObject.sourceObj.key];
+
+        if (
+          DataObj.currentPensionDetails &&
+          typeof DataObj.currentPensionDetails === "number"
+        ) {
+          setFieldValue("currentPensionDetails", DataObj.currentPensionDetails);
+        } else {
+          setFieldValue("currentPensionDetails", "$0");
+        }
+
+        if (
+          DataObj.totalSuperannuationBenefits &&
+          typeof DataObj.totalSuperannuationBenefits === "number"
+        ) {
+          setFieldValue(
+            "totalSuperannuationBenefits",
+            toCommaAndDollar(DataObj.totalSuperannuationBenefits)
+          );
+        } else {
+          setFieldValue("totalSuperannuationBenefits", "$0");
+        }
+
+        if (
+          DataObj.minimumPension &&
+          typeof DataObj.minimumPension === "number"
+        ) {
+          setFieldValue(
+            "minimumPension",
+            toCommaAndDollar(DataObj.minimumPension)
+          );
+        } else {
+          setFieldValue("minimumPension", "$0");
+        }
+
+        if (
+          DataObj.maximumPension &&
+          typeof DataObj.maximumPension === "number"
+        ) {
+          setFieldValue("maximumPension", DataObj.maximumPension);
+        } else {
+          setFieldValue("maximumPension", "$0");
+        }
+
+        setCashFlowReCalculateLoading(false);
+        openNotificationSuccess(
+          "success",
+          "topRight",
+          "Success Notification",
+          'Data of "' + props.modalObject.title + '" is Saved'
+        );
+      }
+    } catch (error) {
+      console.error("Error occurred while making API call:", error);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        'Data of "' +
+          props.modalObject.title +
+          '" is not Saved Please! try again'
+      );
+      setCashFlowReCalculateLoading(false);
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -228,6 +343,16 @@ const NewPensionRollover = (props) => {
                         />
                       </tbody>
                     </Table>
+                    <button
+                      ref={props.childButtonRef}
+                      onClick={() => {
+                        handleChildButtonClick(values, setFieldValue);
+                      }}
+                      style={{ display: "none" }} // Hidden button
+                      type="button"
+                    >
+                      Hidden Child Button
+                    </button>
                   </div>
                 </div>
               </div>

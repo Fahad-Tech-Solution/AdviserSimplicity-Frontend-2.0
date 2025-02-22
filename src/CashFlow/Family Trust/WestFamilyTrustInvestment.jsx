@@ -5,6 +5,7 @@ import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
 import { Row, Table } from "react-bootstrap";
 import {
   CashFlowData,
+  CashFlowReCalculateLoading,
   CashFlowScenarioData,
   defaultUrl,
   QuestionDetail,
@@ -29,6 +30,8 @@ const WestFamilyTrustInvestment = (props) => {
   let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
 
   let DefaultUrl = useRecoilValue(defaultUrl);
+  let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
+    useRecoilState(CashFlowReCalculateLoading);
 
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
@@ -248,6 +251,65 @@ const WestFamilyTrustInvestment = (props) => {
     },
   ];
 
+  let handleChildButtonClick = async (values, setFieldValue) => {
+    try {
+      let obj = JSON.parse(JSON.stringify(cashFlowData));
+
+      obj[props.modalObject.key] = values;
+
+      let res = await PostAxios(
+        `${DefaultUrl}/api/cal/investmentsTrust/INPUTS_TRUST_Investments`,
+        obj
+      );
+
+      if (res) {
+        // console.log(res);
+        let Data = res.data[props.modalObject.key];
+
+        if (values.owner.includes("client")) {
+          if (typeof Data.totalOfBeneficiaryAccounts === "number") {
+            setFieldValue(
+              "client.totalOfBeneficiaryAccounts",
+              toCommaAndDollar(Data.totalOfBeneficiaryAccounts)
+            );
+          } else {
+            setFieldValue("client.totalOfBeneficiaryAccounts", "$0");
+          }
+        }
+
+        if (values.owner.includes("partner")) {
+          if (typeof Data.totalOfBeneficiaryAccounts === "number") {
+            setFieldValue(
+              "partner.totalOfBeneficiaryAccounts",
+              toCommaAndDollar(Data.totalOfBeneficiaryAccounts)
+            );
+          } else {
+            setFieldValue("partner.totalOfBeneficiaryAccounts", "$0");
+          }
+        }
+
+        setCashFlowReCalculateLoading(false);
+        openNotificationSuccess(
+          "success",
+          "topRight",
+          "Success Notification",
+          'Data of "' + props.modalObject.title + '" is Saved'
+        );
+      }
+    } catch (error) {
+      console.error("Error occurred while making API call:", error);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        'Data of "' +
+          props.modalObject.title +
+          '" is not Saved Please! try again'
+      );
+      setCashFlowReCalculateLoading(false);
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -317,6 +379,16 @@ const WestFamilyTrustInvestment = (props) => {
                         )}
                     </tbody>
                   </Table>
+                  <button
+                    ref={props.childButtonRef}
+                    onClick={() => {
+                      handleChildButtonClick(values, setFieldValue);
+                    }}
+                    style={{ display: "none" }} // Hidden button
+                    type="button"
+                  >
+                    Hidden Child Button
+                  </button>
                 </div>
               )}
             </Row>

@@ -13,6 +13,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import {
   openNotificationSuccess,
   PostAxios,
+  toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
 
 const PensionPayments = (props) => {
@@ -160,45 +161,78 @@ const PensionPayments = (props) => {
     try {
       let obj = JSON.parse(JSON.stringify(cashFlowData));
 
-      obj.cf_accountBasedPension = props.modalObject.values;
-      obj.cf_accountBasedPension[
+      obj[props.modalObject.sourceObj.key] = props.modalObject.values;
+
+      obj[props.modalObject.sourceObj.key][
         props.modalObject.stakeHolder.replace(".", "")
       ][props.modalObject.key + "Obj"] = values;
 
-      console.log(
-        JSON.stringify(
-          obj.cf_accountBasedPension[
-            props.modalObject.stakeHolder.replace(".", "")
-          ][props.modalObject.key + "Obj"]
-        ),
-        values
-      );
+      let apiKey = {
+        cf_accountBasedPension: {
+          key: "financialInvestment",
+          param: "INPUTS_Super&_Pension",
+        },
+        cf_SMSFPensionAccountDetails: {
+          key: "SMSF",
+          param: "INPUTS_SMSF_Member_Balances",
+        },
+      };
 
-    //   throw new Error("API call not implemented yet");
+      // throw new Error("API call not implemented yet");
 
       let res = await PostAxios(
-        `${DefaultUrl}/api/cal/financialInvestment/INPUTS_Super&_Pension`,
+        `${DefaultUrl}/api/cal/${apiKey[props.modalObject.sourceObj.key].key}/${
+          apiKey[props.modalObject.sourceObj.key].param
+        }`,
         obj
       );
 
       if (res) {
         console.log(res);
 
-        let { cf_accountBasedPension } = res.data;
+        let DataObj = res.data[props.modalObject.sourceObj.key];
 
-        setFieldValue(
-          "preservationAge",
-          cf_accountBasedPension.preservationAge
-        );
-        setFieldValue(
-          "preservationAgeYear",
-          cf_accountBasedPension.preservationAgeYear
-        );
-        setFieldValue("minimumPension", cf_accountBasedPension.minimumPension);
-        setFieldValue(
-          "maximumTTRPension",
-          cf_accountBasedPension.maximumTTRPension
-        );
+        if (
+          DataObj.preservationAge &&
+          typeof DataObj.preservationAge === "number"
+        ) {
+          setFieldValue("preservationAge", DataObj.preservationAge);
+        } else {
+          setFieldValue("preservationAge", "0");
+        }
+
+        if (
+          DataObj.preservationAge &&
+          typeof DataObj.preservationAgeYear === "number"
+        ) {
+          setFieldValue("preservationAgeYear", DataObj.preservationAgeYear);
+        } else {
+          setFieldValue("preservationAgeYear", "0");
+        }
+
+        if (
+          DataObj.minimumPension &&
+          typeof DataObj.minimumPension === "number"
+        ) {
+          setFieldValue(
+            "minimumPension",
+            toCommaAndDollar(DataObj.minimumPension)
+          );
+        } else {
+          setFieldValue("minimumPension", "$0");
+        }
+
+        if (
+          DataObj.maximumTTRPension &&
+          typeof DataObj.maximumTTRPension === "number"
+        ) {
+          setFieldValue(
+            "maximumTTRPension",
+            toCommaAndDollar(DataObj.maximumTTRPension)
+          );
+        } else {
+          setFieldValue("maximumTTRPension", "$0");
+        }
 
         setCashFlowReCalculateLoading(false);
         openNotificationSuccess(

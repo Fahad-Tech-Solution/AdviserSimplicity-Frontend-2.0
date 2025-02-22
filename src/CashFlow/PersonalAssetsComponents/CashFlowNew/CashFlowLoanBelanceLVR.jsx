@@ -170,6 +170,14 @@ const CashFlowLoanBelanceLVR = (props) => {
           key: "financialInvestment",
           param: "INPUTS_Property",
         },
+        cf_FamilyTrustInvestmentProperties: {
+          key: "investmentsTrust",
+          param: "INPUTS_TRUST_Property",
+        },
+        cf_SMSFInvestmentProperties: {
+          key: "SMSF",
+          param: "INPUTS_SMSF_Property",
+        },
       };
 
       let res = await PostAxios(

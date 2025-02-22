@@ -5,6 +5,7 @@ import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
 import { Row, Table } from "react-bootstrap";
 import {
   CashFlowData,
+  CashFlowReCalculateLoading,
   CashFlowScenarioData,
   defaultUrl,
   QuestionDetail,
@@ -29,6 +30,9 @@ const SMSFInvestmentLoan = (props) => {
   let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
 
   let DefaultUrl = useRecoilValue(defaultUrl);
+
+  let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
+    useRecoilState(CashFlowReCalculateLoading);
 
   let initialValues = { owner: [] };
 
@@ -224,8 +228,8 @@ const SMSFInvestmentLoan = (props) => {
   });
 
   let loanTypeOptions = [
-    { value: "i/only", label: "i/only" },
-    { value: "P&I", label: "P&I" },
+    { value: "I/Only", label: "I/Only" },
+    { value: "P & I", label: "P & I" },
   ];
 
   const loanTermOptionsWithExisting = Array.from({ length: 31 }, (_, i) => {
@@ -307,6 +311,83 @@ const SMSFInvestmentLoan = (props) => {
     },
   ];
 
+  let handleChildButtonClick = async (values, setFieldValue) => {
+    try {
+      let obj = JSON.parse(JSON.stringify(cashFlowData));
+
+      obj[props.modalObject.key] = values;
+
+      let calculateAPiArray = {
+        cf_SMSFInvestmentLoan: {
+          key: "SMSF",
+          param: "INPUTS_SMSF_Investments",
+        },
+        cf_FamilyTrustInvestmentLoan: {
+          key: "investmentsTrust",
+          param: "INPUTS_TRUST_Investments",
+        },
+      };
+
+      let res = await PostAxios(
+        `${DefaultUrl}/api/cal/${
+          calculateAPiArray[props.modalObject.key].key
+        }/${calculateAPiArray[props.modalObject.key].param}`,
+        obj
+      );
+
+      if (res) {
+        console.log(res);
+        let Data = res.data[props.modalObject.key];
+
+        console.log(
+          typeof Data.minimumRepayments,
+          "cf_FamilyTrustInvestmentLoan.minimumRepayments"
+        );
+
+        if (values.owner.includes("client")) {
+          if (typeof Data.minimumRepayments === "number") {
+            setFieldValue(
+              "client.minimumRepayments",
+              toCommaAndDollar(Data.minimumRepayments)
+            );
+          } else {
+            setFieldValue("client.minimumRepayments", "$0");
+          }
+        }
+
+        if (values.owner.includes("partner")) {
+          if (typeof Data.minimumRepayments === "number") {
+            setFieldValue(
+              "partner.minimumRepayments",
+              toCommaAndDollar(Data.minimumRepayments)
+            );
+          } else {
+            setFieldValue("partner.minimumRepayments", "$0");
+          }
+        }
+
+        setCashFlowReCalculateLoading(false);
+        openNotificationSuccess(
+          "success",
+          "topRight",
+          "Success Notification",
+          'Data of "' + props.modalObject.title + '" is Saved'
+        );
+      }
+    } catch (error) {
+      console.error("Error occurred while making API call:", error);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        'Data of "' +
+          props.modalObject.title +
+          '" is not Saved Please! try again'
+      );
+      setCashFlowReCalculateLoading(false);
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -384,6 +465,16 @@ const SMSFInvestmentLoan = (props) => {
                         )}
                     </tbody>
                   </Table>
+                  <button
+                    ref={props.childButtonRef}
+                    onClick={() => {
+                      handleChildButtonClick(values, setFieldValue);
+                    }}
+                    style={{ display: "none" }} // Hidden button
+                    type="button"
+                  >
+                    Hidden Child Button
+                  </button>
                 </div>
               )}
             </Row>

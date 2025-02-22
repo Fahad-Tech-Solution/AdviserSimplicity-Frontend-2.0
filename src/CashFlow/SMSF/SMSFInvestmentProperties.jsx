@@ -150,7 +150,7 @@ const SMSFInvestmentProperties = (props) => {
           ...cashFlowData,
           [objAndAPIKey]: res,
         };
-        
+
         setCashFlowData(updatedData);
       }
 
@@ -204,6 +204,7 @@ const SMSFInvestmentProperties = (props) => {
       key,
       stakeHolder,
       ParentObject: props.modalObject,
+      cal: true,
     });
     setFlagState(true);
   };

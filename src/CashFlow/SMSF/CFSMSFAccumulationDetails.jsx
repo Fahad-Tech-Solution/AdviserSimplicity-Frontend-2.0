@@ -12,6 +12,7 @@ import {
 import {
   openNotificationSuccess,
   PostAxios,
+  toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
 
 const CFSMSFAccumulationDetails = (props) => {
@@ -105,7 +106,7 @@ const CFSMSFAccumulationDetails = (props) => {
       let obj = JSON.parse(JSON.stringify(cashFlowData));
 
       let FinalObj = props.modalObject.values;
-      
+
       FinalObj[props.modalObject.stakeHolder.replace(".", "")][
         props.modalObject.key + "Obj"
       ] = values;
@@ -114,9 +115,27 @@ const CFSMSFAccumulationDetails = (props) => {
 
       obj.cf_SMSFAccumulationDetails = FinalObj;
 
-      let res = await PostAxios(`${DefaultUrl}/api/cal/SMSF`, obj);
+      let res = await PostAxios(
+        `${DefaultUrl}/api/cal/SMSF/INPUTS_SMSF_Investments`,
+        obj
+      );
       if (res) {
         console.log(res);
+
+        let { cf_SMSFAccumulationDetails } = res.data;
+
+        setFieldValue(
+          "totalFundNetAssetValue",
+          toCommaAndDollar(cf_SMSFAccumulationDetails.totalFundNetAssetValue)
+        );
+        setFieldValue(
+          "actualValueToMember",
+          toCommaAndDollar(cf_SMSFAccumulationDetails.actualValueToMember)
+        );
+        setFieldValue(
+          "taxableComponent",
+          toCommaAndDollar(cf_SMSFAccumulationDetails.taxableComponent)
+        );
 
         setCashFlowReCalculateLoading(false);
         openNotificationSuccess(
