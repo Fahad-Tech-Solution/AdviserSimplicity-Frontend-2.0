@@ -12,5 +12,8 @@
   "devDependencies": {
     "cypress": "^13.17.0",
     "cypress-localstorage-commands": "^2.2.6"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7"
   }
 }

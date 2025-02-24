@@ -1,6 +1,6 @@
 class PersonalInsurance {
   section() {
-    cy.visit("http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com/");
+    cy.visit("http://ec2-54-66-20-19.ap-southeast-2.compute.amazonaws.com/");
     cy.get(":nth-child(6) > :nth-child(7)").click();
     cy.get("#popover > :nth-child(3)").click();
 

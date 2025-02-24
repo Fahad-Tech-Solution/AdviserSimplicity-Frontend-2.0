@@ -2,7 +2,7 @@
 
 import Input_details from "../e2e/SingleClient_Data/Input_details.cy"; 
 import Childern_Details from "../e2e/SingleClient_Data/Childern_details.cy";
-import Questions_section from "./Question's/Question_sections.cy";
+import Questions_section from "./Questions/Questions_section.cy";
 import PersonalIncomeAndExpense from "./Personal Income And Expense/Cards.cy";
 import PersonalAssetsAndDebt from "./Personal Assets And Debt/Cards.cy";
 import FinancialInvestments from "./Financial Investments/Cards.cy";
@@ -28,7 +28,7 @@ describe("Adviser Simplicity", () => {
   const cashFlow = new CashFlow();
 
   it.skip("Adding Single Client Detail's", () => {
-    cy.visit("http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com/");
+    cy.visit("http://ec2-54-66-20-19.ap-southeast-2.compute.amazonaws.com/");
 
     cy.get("img").click();
     cy.get(

@@ -2,7 +2,7 @@
 
 class PersonalDetail {
   section() {
-    cy.visit("http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com/");
+    cy.visit("http://ec2-54-66-20-19.ap-southeast-2.compute.amazonaws.com/");
 
     cy.get("img").click();
     cy.get(

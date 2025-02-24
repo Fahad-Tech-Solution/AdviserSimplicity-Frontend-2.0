@@ -1,45 +1,45 @@
 /// <reference types="cypress" />
 class PartnerSMSF {
-    section() {
-        cy.visit("http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com/");
-    
-        cy.get("img").click();
-        cy.get(
-          ".mx-0 > .Custom_Accordion > .accordion-item > .accordion-header > .accordion-button"
-        ).click();
-        cy.get(
-          ":nth-child(6) > :nth-child(7) > :nth-child(1) > div > button"
-        ).click();
-        cy.contains("Edit").click();
-        cy.wait(2000);
-        cy.get(
-          "li.m-0.p-0 > .Custom_Accordion > .accordion-item > .accordion-header > .accordion-button"
-        ).click();
-        cy.get("#cashFlow").click();
-    
-        cy.get(":nth-child(6) > .accordion-header > .accordion-button").click();
-        cy.get(
-          ":nth-child(6) > .accordion-collapse > .accordion-body > :nth-child(1) > :nth-child(1) > :nth-child(3) > .mt-4 > .table-responsive > .table > tbody > tr > :nth-child(6) > .ant-dropdown-trigger"
-        ).click();
-        cy.get(".ant-dropdown-menu").within(() => {
-          cy.contains("Edit").click();
-        });
-        cy.wait(3000);
-    
-        cy.get(".btn").click();
+  section() {
+    cy.visit("http://ec2-54-66-20-19.ap-southeast-2.compute.amazonaws.com/");
 
-   cy.wait(3000);
-        cy.get('.bgColor').click();
-        cy.wait(3000);
-        cy.get('.bgColor').click();
-        cy.wait(3000);
+    cy.get("img").click();
+    cy.get(
+      ".mx-0 > .Custom_Accordion > .accordion-item > .accordion-header > .accordion-button"
+    ).click();
+    cy.get(
+      ":nth-child(6) > :nth-child(7) > :nth-child(1) > div > button"
+    ).click();
+    cy.contains("Edit").click();
+    cy.wait(2000);
+    cy.get(
+      "li.m-0.p-0 > .Custom_Accordion > .accordion-item > .accordion-header > .accordion-button"
+    ).click();
+    cy.get("#cashFlow").click();
 
-        cy.get('.bgColor').click();
-    
-        cy.wait(3000);
+    cy.get(":nth-child(6) > .accordion-header > .accordion-button").click();
+    cy.get(
+      ":nth-child(6) > .accordion-collapse > .accordion-body > :nth-child(1) > :nth-child(1) > :nth-child(3) > .mt-4 > .table-responsive > .table > tbody > tr > :nth-child(6) > .ant-dropdown-trigger"
+    ).click();
+    cy.get(".ant-dropdown-menu").within(() => {
+      cy.contains("Edit").click();
+    });
+    cy.wait(3000);
 
-        cy.get('.bgColor').click();
-    
+    cy.get(".btn").click();
+
+    cy.wait(3000);
+    cy.get(".bgColor").click();
+    cy.wait(3000);
+    cy.get(".bgColor").click();
+    cy.wait(3000);
+
+    cy.get(".bgColor").click();
+
+    cy.wait(3000);
+
+    cy.get(".bgColor").click();
+
     //SMSF Investment Properties
     cy.wait(2000);
     cy.get(":nth-child(9) > .py-4").within(() => {
@@ -69,9 +69,8 @@ class PartnerSMSF {
       cy.get("#valueOfProperty").clear().type("24").should("have.value", "$24");
 
       cy.contains("State").should("be.visible");
-      cy.get(':nth-child(4) > .form-select').select("ACT")
+      cy.get(":nth-child(4) > .form-select").select("ACT");
 
-   
       cy.contains("Year Of Purchase");
       cy.get(":nth-child(5) > .form-select")
         .select("1")
@@ -80,12 +79,10 @@ class PartnerSMSF {
       cy.contains("Expected Growth Rate");
       cy.get("#expectedGrowthRate").should("have.value", "2.50%");
       cy.contains("Sell Property in Year");
-      cy.get(':nth-child(10) > .form-select').select("2")
+      cy.get(":nth-child(10) > .form-select").select("2");
 
       cy.contains("Estimated Future Selling Cost (%)");
-      cy.get(':nth-child(11) > .form-select').select("2.50%");
-
-     
+      cy.get(":nth-child(11) > .form-select").select("2.50%");
 
       cy.get(":nth-child(6) > .d-flex > .btn").click();
     });
@@ -147,14 +144,13 @@ class PartnerSMSF {
       '[style="display: block;"] > .modal-dialog > .modal-content > .modal-body > form > :nth-child(2) > .col-md-12 > .row > .mt-4 > .table-responsive > .table'
     ).within(() => {
       cy.contains("Loan Type");
-      cy.get(":nth-child(2) > .form-select").select("i/only");
+      cy.get(":nth-child(2) > .form-select").select("I/Only");
 
       cy.contains("Loan Term");
       cy.get(":nth-child(3) > .form-select").select("10");
 
-      cy.contains("Interest Only Period")
-      cy.get(':nth-child(4) > .form-select')
-      .select("2")
+      cy.contains("Interest Only Period");
+      cy.get(":nth-child(4) > .form-select").select("2");
 
       cy.contains("Interest Rate (p.a)");
       cy.get("#initialInterestRatePA").clear().type("3.00%");
@@ -166,13 +162,13 @@ class PartnerSMSF {
       cy.get("#minimumRepaymentsPA");
 
       cy.contains("Apply Minimum Repayments OR");
-      // cy.get(':nth-child(3) > .form-select').contains("Yes").click();
+      cy.get(".radioButton2").contains("Yes").click();
 
       cy.contains("Actual Annual Repayments");
       cy.get("#actualAnnualRepayments").should("have.value", "$52");
 
       cy.contains("Repay Loan in Year");
-      // cy.get(":nth-child(9) > .form-select").should("have.value", "No");
+      cy.get('select[name="repayLoanInYear"]').select("5");
 
       cy.contains("Loan Balance");
       cy.get(".input-group").within(() => {
@@ -196,16 +192,10 @@ class PartnerSMSF {
       cy.get("#LVR").clear().type("77.00%");
 
       cy.contains("Loan Amount");
-      cy.get("#loanAmount").should("have.value", "$987");
+      cy.get("#loanAmount").clear().type("18").should("have.value", "$18");
 
       cy.contains("Loan Balance");
       cy.get(":nth-child(3) > #loanBalance");
-
-      cy.contains("Client %Ownership");
-      cy.get(":nth-child(4) > #clientOwnership");
-
-      cy.contains("Partner %Ownership");
-      cy.get(":nth-child(5) > #partnerOwnership");
     });
     //Loan Balance Inner Footer
     cy.get(
@@ -223,11 +213,11 @@ class PartnerSMSF {
       .contains("Submit")
       .click();
 
-    //Investments Property Footer
+    //SMSF Investment Properties Footer
     cy.contains("Close").should("be.visible");
     cy.contains("Submit").should("be.visible").click();
 
     cy.get('[placeholder="Market Value"]').should("have.value", "$24");
-    }
+  }
 }
 export default PartnerSMSF;

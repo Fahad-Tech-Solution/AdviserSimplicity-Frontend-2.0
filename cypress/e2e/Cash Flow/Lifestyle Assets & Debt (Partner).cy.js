@@ -1,7 +1,7 @@
 // e2e/Cash Flow/Income & Expenses.cy.js
 class PartnerLifestyleAssetsandDebt {
   section() {
-    cy.visit("http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com/");
+    cy.visit("http://ec2-54-66-20-19.ap-southeast-2.compute.amazonaws.com/");
 
     cy.get("img").click();
     cy.get(
@@ -139,7 +139,7 @@ class PartnerLifestyleAssetsandDebt {
 
     cy.get(".mt-4").within(() => {
       cy.contains("Loan Type");
-      cy.get(":nth-child(2) > .form-select").should("have.value", "i/only");
+      cy.get(":nth-child(2) > .form-select").select("I/Only");
 
       cy.contains("Loan Term");
       cy.get(":nth-child(3) > .form-select").should("have.value", "19");

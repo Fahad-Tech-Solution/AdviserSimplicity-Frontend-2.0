@@ -414,7 +414,7 @@ describe("Adviser Simplicity", () => {
   const addClient = new AddClient();
 
   it("passes", () => {
-    cy.visit("http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com/");
+    cy.visit("http://ec2-54-66-20-19.ap-southeast-2.compute.amazonaws.com/");
     cy.get("img").click();
     cy.get(
       ".mx-0 > .Custom_Accordion > .accordion-item > .accordion-header > .accordion-button"
