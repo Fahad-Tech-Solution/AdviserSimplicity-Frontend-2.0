@@ -50,7 +50,7 @@ describe("Adviser Simplicity", () => {
     LifestyleAssetsandDebtClient.section();
   });
 
-  it.only("Financial Investments With Partner", () => {
+  it("Financial Investments With Partner", () => {
     FinancialInvestmentsPartner.section();
   });
 
@@ -67,7 +67,7 @@ describe("Adviser Simplicity", () => {
     BusinessEntitiesClient.section();
   });
 
-  it("SMSF With Partner", () => {
+  it.only("SMSF With Partner", () => {
     SMSFPartner.section();
   });
 
