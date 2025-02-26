@@ -236,7 +236,10 @@ const NewPensionRollover = (props) => {
           DataObj.currentPensionDetails &&
           typeof DataObj.currentPensionDetails === "number"
         ) {
-          setFieldValue("currentPensionDetails", DataObj.currentPensionDetails);
+          setFieldValue(
+            "currentPensionDetails",
+            toCommaAndDollar(DataObj.currentPensionDetails)
+          );
         } else {
           setFieldValue("currentPensionDetails", "$0");
         }
@@ -269,7 +272,10 @@ const NewPensionRollover = (props) => {
           DataObj.maximumPension &&
           typeof DataObj.maximumPension === "number"
         ) {
-          setFieldValue("maximumPension", DataObj.maximumPension);
+          setFieldValue(
+            "maximumPension",
+            toCommaAndDollar(DataObj.maximumPension)
+          );
         } else {
           setFieldValue("maximumPension", "$0");
         }

@@ -7,6 +7,7 @@ import ApplyDeeming from "../Financial Investments/ApplyDeeming";
 import {
   openNotificationSuccess,
   PostAxios,
+  toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
 import {
   CashFlowData,
@@ -69,11 +70,6 @@ const CFSMSFBalance = (props) => {
             Data.nominatedRolloverAmountValue || ""
           );
           setFieldValue("taxFreeComponent", Data.taxFreeComponent || "");
-          setFieldValue("purchasePrice", Data.purchasePrice || "");
-          setFieldValue(
-            "centrelinkRelevantNumber",
-            Data.centrelinkRelevantNumber || ""
-          );
         }
       }
     },
@@ -220,12 +216,20 @@ const CFSMSFBalance = (props) => {
 
         let { cf_SMSFPensionAccountDetails } = res.data;
 
-        setFieldValue(
-          "totalSuperAnnuationBenefits",
-          toCommaAndDollar(
-            cf_SMSFPensionAccountDetails.totalSuperAnnuationBenefits
-          )
-        );
+        if (
+          cf_SMSFPensionAccountDetails.totalSuperAnnuationBenefits &&
+          typeof cf_SMSFPensionAccountDetails.totalSuperAnnuationBenefits ===
+            "number"
+        ) {
+          setFieldValue(
+            "totalSuperAnnuationBenefits",
+            toCommaAndDollar(
+              cf_SMSFPensionAccountDetails.totalSuperAnnuationBenefits
+            )
+          );
+        } else {
+          setFieldValue("totalSuperannuationBenefits", "$0");
+        }
 
         setCashFlowReCalculateLoading(false);
         openNotificationSuccess(

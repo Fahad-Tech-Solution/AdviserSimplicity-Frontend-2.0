@@ -277,8 +277,9 @@ const CashFlowInvestmentLoansLOC = (props) => {
       : [{ value: "client", label: RenderName("client") }];
 
   let loanTypeOptions = [
-    { value: "i/only", label: "i/only" },
-    { value: "P&I", label: "P&I" },
+    { value: "I/Only", label: "I/Only" },
+    { value: "P & I", label: "P & I" },
+    
   ];
 
   const rowConfig = [

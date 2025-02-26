@@ -242,7 +242,7 @@ const SMSFPensionAccountDetails = (props) => {
       key,
       stakeHolder,
       sourceObj: props.modalObject,
-      cal: title !== "withdrawals",
+      cal: title !== "Withdrawals",
     });
     setFlagState(true);
   };
