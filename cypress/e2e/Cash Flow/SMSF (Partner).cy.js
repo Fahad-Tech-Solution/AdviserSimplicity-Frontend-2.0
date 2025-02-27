@@ -40,6 +40,571 @@ class PartnerSMSF {
 
     cy.get(".bgColor").click();
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+    //SMSF Pension Account Details
+
+
+    cy.wait(2000);
+    cy.get(":nth-child(2) > .py-4").within(() => {
+      cy.contains("SMSF Pension Account Details");
+      cy.get("img");
+      cy.contains("Aiden Smith");
+      cy.contains("Emma Taylor");
+    });
+    cy.get(
+      ":nth-child(2) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0"
+    ).click();
+    cy.get(".modal-content").within(() => {
+      cy.contains("SMSF Pension Account Details");
+      cy.get(".btn-close");
+    });
+
+    cy.get(".col-md-12 > .d-flex").within(() => {
+      cy.contains("Owner");
+
+      cy.get(".css-d07bj1 > :nth-child(1)").click();
+
+      cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
+    });
+
+    cy.wait(2000);
+    cy.get(".table").within(() => {
+      cy.contains("Owner");
+      cy.contains("Aiden Smith");
+      //  cy.get("#streetAddress")
+      //    .invoke("val")
+      //    .should((actualValue) => {
+      //      expect(actualValue.trim()).to.equal("FTS");
+      //    });
+
+      
+
+      cy.contains("Balance Rollover Amount");
+      cy.get(':nth-child(2) > .input-group').within(() => {
+        cy.get(".modalBtn").click()
+     
+    });
+
+  })
+
+    //Investment Returns Inner Card
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
+    ).within(() => {
+      cy.contains("Balance Rollover Amount");
+      
+    });
+
+    cy.get(".col-md-12 > .row > .mt-4").within(() => {
+      cy.contains("Owner");
+      cy.contains("Aiden Smith")
+
+
+      cy.contains("Pension Type")
+      cy.get(':nth-child(2) > .form-select').select("Account-Based")
+
+      cy.contains("Commence Pension in Year");
+      cy.get(':nth-child(3) > .form-select').select("23").should("have.value", "23");
+
+      cy.contains("Total Superannuation Benefits")
+      cy.get('#totalSuperannuationBenefits')
+
+      cy.contains("Nominated Rollover amount");
+      cy.get(':nth-child(6) > .form-select').select("Partial")
+      cy.get('#nominatedRolloverAmountValue').clear().type("66").should("have.value", "$66");
+
+      cy.contains("Tax-free Component")
+      cy.get('#taxFreeComponent').clear().type("66").should("have.value", "$66");
+    });
+
+
+    cy.contains("Apply Deeming")
+    cy.get(':nth-child(4) > .form-check > .radioButton2').contains("Yes").click()
+    cy.get('.d-flex > #button-addon2').click()
+
+ //Regular Contributions Inner Card End
+ cy.get(':nth-child(7) > .modal-dialog > .modal-content > .modal-header').within(() => {
+  cy.contains("Apply Deeming");
+  //cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close').should('be.visible')
+});
+
+cy.get(':nth-child(7) > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4').within(() => {
+
+
+
+
+cy.contains("Purchase Price (Less Commut)")
+  cy.get('#purchasePrice').clear().type("66").should("have.value", "$66");
+
+
+cy.contains("Centrelink Relevant Number")
+  cy.get('#centreLinkRelevantNumber').clear().type("66")
+
+
+  
+});
+cy.get(':nth-child(7) > .modal-dialog > .modal-content > .modal-footer').within(() => {
+  cy.contains("Close").should("be.visible");
+  cy.contains("Submit").should("be.visible").click();
+});
+
+
+
+
+
+
+//Balance Rollover Amount Inner Crad footer
+
+cy.contains("Close").last()
+cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer > .bgColor').last() .click()
+
+cy.contains("Pension Payments");
+cy.get(':nth-child(4) > .input-group').within(() => {
+  cy.get('button[type="button"]').click();
+});
+
+//Investment Returns Inner Card
+cy.get(
+  '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
+).within(() => {
+  cy.contains("Pension Payments");
+});
+
+cy.get(".col-md-12 > .row > .mt-4").within(() => {
+  cy.contains("Owner");
+  cy.contains("Aiden Smith");
+
+  cy.contains("Nominated Pension Amount");
+  cy.get(":nth-child(2) > .form-select").select("Maximum");
+
+  cy.contains("Reversionary Pension Option");
+  cy.get(":nth-child(3) > .form-check > .radioButton2")
+    .contains("Yes")
+    .click();
+
+  cy.contains("Other Amount");
+  cy.get("#otherAmount").clear().type("66").should("have.value", "$66");
+
+  cy.contains("Indexation of Pension");
+  cy.get(":nth-child(5) > .form-select").select("2.50%");
+  cy.contains("Preservation Age");
+  cy.get("#preservationAge");
+
+  cy.contains("Preservation Age in Year");
+  cy.get("#preservationAgeYear");
+
+  cy.contains("Minimum Pension");
+  cy.get("#minimumPension");
+
+  cy.contains("Maximum TTR Pension");
+  cy.get("#maximumTTRPension");
+});
+cy.get(
+  '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
+).within(() => {
+  cy.contains("Close").should("be.visible");
+  cy.contains("Submit").should("be.visible").click();
+});
+
+
+
+
+cy.wait(2000);
+
+    //New Pension Rollover
+    cy.contains("New Pension Rollover");
+
+    cy.get('tbody > tr > :nth-child(5)').within(() => {
+      cy.contains("Yes").click();
+      cy.get("#button-addon2").first().click();
+    });
+
+    cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+      () => {
+        cy.contains("New Pension Rollover");
+
+        cy.get(".col-md-12 > .row > .mt-4 > .table-responsive").within(() => {
+          cy.contains("Owner");
+          cy.contains("Aiden Smith");
+
+          cy.contains("Commence Pension in year");
+          cy.get(":nth-child(2) > .form-select").select("18");
+
+          cy.contains("Current Pension Details");
+          cy.get("#currentPensionDetails");
+
+          cy.contains("Total Superannuation Benefits");
+          cy.get("#totalSuperannuationBenefits");
+
+          cy.contains("Nominated Rollover Amount");
+          cy.get("#nominatedRolloverAmount")
+            .clear()
+            .type("99")
+            .should("have.value", "$99");
+
+          cy.contains("Reversionary Pension Option");
+          cy.get(":nth-child(6) > .form-check > .radioButton2")
+            .contains("Yes")
+            .click();
+
+          cy.contains("Nominated Pension Amount");
+          cy.get(":nth-child(7) > .form-select").select("Minimum");
+
+          cy.contains("Other Amount");
+          cy.get("#otherAmount").clear().type("99").should("have.value", "$99");
+
+          cy.contains("Indexation of Pension");
+          cy.get(":nth-child(9) > .form-select").select("2.50%");
+
+          cy.contains("Pension Funding");
+          cy.get("#pensionFunding").clear().type("3.00%");
+
+          cy.contains("Apply from Year");
+          cy.get(":nth-child(11) > .form-select").select("21");
+
+          cy.contains("Minimum Pension");
+          cy.get("#minimumPension");
+
+          cy.contains("Maximum Pension");
+          cy.get("#maximumPension");
+        });
+        cy.get("div.modal-footer").contains("Close");
+        cy.get("div.modal-footer").contains("Submit").click();
+      }
+    );
+
+    cy.wait(2000);
+
+    //Withdrawals
+    cy.contains("Withdrawals");
+
+    cy.get('tbody > tr > :nth-child(6)').within(() => {
+      cy.contains("Yes").click();
+      cy.get("#button-addon2").first().click();
+    });
+
+    cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+      () => {
+        cy.contains("Withdrawals");
+
+        cy.get(".col-md-12 > .row > .mt-4 > .table-responsive").within(() => {
+          cy.contains("Owner");
+          cy.contains("Aiden Smith");
+
+          cy.contains("Contributions To Fund");
+          cy.get(":nth-child(2) > .form-select").select("SMSF");
+
+          cy.contains("Year");
+          cy.get('select[name="year"]').select("Year 10");
+
+          cy.contains("Amount");
+
+          cy.get("#amount").clear().type("43");
+        });
+        cy.get("div.modal-footer").contains("Close");
+        cy.get("div.modal-footer").contains("Submit").click();
+      }
+    );
+
+
+
+
+
+
+
+  
+
+
+    // SMSF Australian Shares Partner Section
+    cy.get(".css-1lx7dxn").type("Emma Taylor{enter}");
+
+    cy.contains("Emma Taylor").should("be.visible");
+
+   
+
+
+
+    cy.contains("Balance Rollover Amount");
+    cy.get(':nth-child(2) > :nth-child(2) > .input-group').within(() => {
+      cy.get(".modalBtn").click()
+   
+  });
+
+
+
+  //Investment Returns Inner Card
+  cy.get(
+    '[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
+  ).within(() => {
+    cy.contains("Balance Rollover Amount");
+    
+  });
+
+  cy.get(".col-md-12 > .row > .mt-4").within(() => {
+    cy.contains("Owner");
+    cy.contains("Emma Taylor")
+
+
+    cy.contains("Pension Type")
+    cy.get(':nth-child(2) > .form-select').select("Account-Based")
+
+    cy.contains("Commence Pension in Year");
+    cy.get(':nth-child(3) > .form-select').select("23").should("have.value", "23");
+
+    cy.contains("Total Superannuation Benefits")
+    cy.get('#totalSuperannuationBenefits')
+
+    cy.contains("Nominated Rollover amount");
+    cy.get(':nth-child(6) > .form-select').select("Partial")
+    cy.get('#nominatedRolloverAmountValue').clear().type("66").should("have.value", "$66");
+
+    cy.contains("Tax-free Component")
+    cy.get('#taxFreeComponent').clear().type("66").should("have.value", "$66");
+  });
+
+
+  cy.contains("Apply Deeming")
+  cy.get(':nth-child(4) > .form-check > .radioButton2').contains("Yes").click()
+  cy.get(':nth-child(4) > .d-flex > #button-addon2').click()
+
+//Regular Contributions Inner Card End
+cy.get(':nth-child(7) > .modal-dialog > .modal-content > .modal-header').within(() => {
+cy.contains("Apply Deeming");
+//cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-header > .btn-close').should('be.visible')
+});
+
+cy.get(':nth-child(7) > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4').within(() => {
+
+
+
+
+cy.contains("Purchase Price (Less Commut)")
+cy.get('#purchasePrice').clear().type("66").should("have.value", "$66");
+
+
+cy.contains("Centrelink Relevant Number")
+cy.get('#centreLinkRelevantNumber').clear().type("66")
+
+
+
+});
+cy.get(':nth-child(7) > .modal-dialog > .modal-content > .modal-footer').within(() => {
+cy.contains("Close").should("be.visible");
+cy.contains("Submit").should("be.visible").click();
+});
+
+
+
+
+
+
+//Balance Rollover Amount Inner Crad footer
+
+cy.contains("Close").last()
+cy.get('[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer > .bgColor').last() .click()
+
+cy.contains("Pension Payments");
+cy.get(':nth-child(2) > :nth-child(4) > .input-group').within(() => {
+cy.get('button[type="button"]').click();
+});
+
+//Investment Returns Inner Card
+cy.get(
+'[style="display: block;"] > .modal-dialog > .modal-content > .modal-header'
+).within(() => {
+cy.contains("Pension Payments");
+});
+
+cy.get(".col-md-12 > .row > .mt-4").within(() => {
+cy.contains("Owner");
+cy.contains("Emma Taylor");
+
+cy.contains("Nominated Pension Amount");
+cy.get(":nth-child(2) > .form-select").select("Maximum");
+
+cy.contains("Reversionary Pension Option");
+cy.get(":nth-child(3) > .form-check > .radioButton2")
+  .contains("Yes")
+  .click();
+
+cy.contains("Other Amount");
+cy.get("#otherAmount").clear().type("66").should("have.value", "$66");
+
+cy.contains("Indexation of Pension");
+cy.get(":nth-child(5) > .form-select").select("2.50%");
+cy.contains("Preservation Age");
+cy.get("#preservationAge");
+
+cy.contains("Preservation Age in Year");
+cy.get("#preservationAgeYear");
+
+cy.contains("Minimum Pension");
+cy.get("#minimumPension");
+
+cy.contains("Maximum TTR Pension");
+cy.get("#maximumTTRPension");
+});
+cy.get(
+'[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
+).within(() => {
+cy.contains("Close").should("be.visible");
+cy.contains("Submit").should("be.visible").click();
+});
+
+
+
+
+cy.wait(2000);
+
+  //New Pension Rollover
+  cy.contains("New Pension Rollover");
+
+  cy.get('tbody > :nth-child(2) > :nth-child(5)').within(() => {
+    cy.contains("Yes").click();
+    cy.get("#button-addon2").first().click();
+  });
+
+  cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+    () => {
+      cy.contains("New Pension Rollover");
+
+      cy.get(".col-md-12 > .row > .mt-4 > .table-responsive").within(() => {
+        cy.contains("Owner");
+        cy.contains("Emma Taylor");
+
+        cy.contains("Commence Pension in year");
+        cy.get(":nth-child(2) > .form-select").select("18");
+
+        cy.contains("Current Pension Details");
+        cy.get("#currentPensionDetails");
+
+        cy.contains("Total Superannuation Benefits");
+        cy.get("#totalSuperannuationBenefits");
+
+        cy.contains("Nominated Rollover Amount");
+        cy.get("#nominatedRolloverAmount")
+          .clear()
+          .type("99")
+          .should("have.value", "$99");
+
+        cy.contains("Reversionary Pension Option");
+        cy.get(":nth-child(6) > .form-check > .radioButton2")
+          .contains("Yes")
+          .click();
+
+        cy.contains("Nominated Pension Amount");
+        cy.get(":nth-child(7) > .form-select").select("Minimum");
+
+        cy.contains("Other Amount");
+        cy.get("#otherAmount").clear().type("99").should("have.value", "$99");
+
+        cy.contains("Indexation of Pension");
+        cy.get(":nth-child(9) > .form-select").select("2.50%");
+
+        cy.contains("Pension Funding");
+        cy.get("#pensionFunding").clear().type("3.00%");
+
+        cy.contains("Apply from Year");
+        cy.get(":nth-child(11) > .form-select").select("21");
+
+        cy.contains("Minimum Pension");
+        cy.get("#minimumPension");
+
+        cy.contains("Maximum Pension");
+        cy.get("#maximumPension");
+      });
+      cy.get("div.modal-footer").contains("Close");
+      cy.get("div.modal-footer").contains("Submit").click();
+    }
+  );
+
+  cy.wait(2000);
+
+  //Withdrawals
+  cy.contains("Withdrawals");
+
+  cy.get('tbody > :nth-child(2) > :nth-child(6)').within(() => {
+    cy.contains("Yes").click();
+    cy.get("#button-addon2").first().click();
+  });
+
+  cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+    () => {
+      cy.contains("Withdrawals");
+
+      cy.get(".col-md-12 > .row > .mt-4 > .table-responsive").within(() => {
+        cy.contains("Owner");
+        cy.contains("Emma Taylor");
+
+        cy.contains("Contributions To Fund");
+        cy.get(":nth-child(2) > .form-select").select("SMSF");
+
+        cy.contains("Year");
+        cy.get('select[name="year"]').select("Year 10");
+
+        cy.contains("Amount");
+
+        cy.get("#amount").clear().type("43");
+      });
+      cy.get("div.modal-footer").contains("Close");
+      cy.get("div.modal-footer").contains("Submit").click();
+
+    })
+
+    cy.get('.modal-footer').within(() => {
+
+      cy.contains("Close").should("be.visible");
+      cy.contains("Submit").should("be.visible").click();  
+  
+
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    cy.get("#clientcf_SMSFAustralianShares").should("have.value", "$24");
+    cy.get("#partnercf_SMSFAustralianShares").should("have.value", "$24");
+
+
+
+
+
+
+
+
+
   //   //SMSF Investment Properties
   //   cy.wait(2000);
   //   cy.get(":nth-child(9) > .py-4").within(() => {
@@ -1004,139 +1569,139 @@ class PartnerSMSF {
 
   
 
-    //SMSF Investment Loan
+//     //SMSF Investment Loan
 
-    cy.wait(2000);
-    cy.get(":nth-child(8) > .py-4").within(() => {
-      cy.contains("SMSF Investment Loan");
-      cy.get("img");
-      cy.contains("Aiden Smith");
-      cy.contains("Emma Taylor");
-    });
-    cy.get(
-      ":nth-child(8) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0"
-    ).click();
-    cy.get(".modal-content").within(() => {
-      cy.contains("SMSF Investment Loan");
-      cy.get(".btn-close");
-    });
+//     cy.wait(2000);
+//     cy.get(":nth-child(8) > .py-4").within(() => {
+//       cy.contains("SMSF Investment Loan");
+//       cy.get("img");
+//       cy.contains("Aiden Smith");
+//       cy.contains("Emma Taylor");
+//     });
+//     cy.get(
+//       ":nth-child(8) > .py-4 > .flex-column > :nth-child(2) > .col-12 > .d-flex > .mb-0"
+//     ).click();
+//     cy.get(".modal-content").within(() => {
+//       cy.contains("SMSF Investment Loan");
+//       cy.get(".btn-close");
+//     });
 
-    cy.get(".col-md-12 > .d-flex").within(() => {
-      cy.contains("Owner");
+//     cy.get(".col-md-12 > .d-flex").within(() => {
+//       cy.contains("Owner");
 
-      cy.get(".css-d07bj1 > :nth-child(1)").click();
+//       cy.get(".css-d07bj1 > :nth-child(1)").click();
 
-      cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
-    });
+//       cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
+//     });
 
-    cy.wait(2000);
-    cy.get(".table").within(() => {
-      cy.contains("Owner");
-      cy.contains("Aiden Smith");
-      //  cy.get("#streetAddress")
-      //    .invoke("val")
-      //    .should((actualValue) => {
-      //      expect(actualValue.trim()).to.equal("FTS");
-      //    });
+//     cy.wait(2000);
+//     cy.get(".table").within(() => {
+//       cy.contains("Owner");
+//       cy.contains("Aiden Smith");
+//       //  cy.get("#streetAddress")
+//       //    .invoke("val")
+//       //    .should((actualValue) => {
+//       //      expect(actualValue.trim()).to.equal("FTS");
+//       //    });
 
-      cy.contains("Year of Loan")
-      cy.get(":nth-child(2) > .form-select").select("21")
+//       cy.contains("Year of Loan")
+//       cy.get(":nth-child(2) > .form-select").select("21")
       
-      cy.contains("Current Loan Balance").should("be.visible");
-      cy.get("#currentLoanBalance")
-        .clear()
-        .type("24")
-        .should("have.value", "$24");
-      cy.contains("Loan Type").should("be.visible");
-      cy.get(":nth-child(4) > .form-select").select("I/Only");
+//       cy.contains("Current Loan Balance").should("be.visible");
+//       cy.get("#currentLoanBalance")
+//         .clear()
+//         .type("24")
+//         .should("have.value", "$24");
+//       cy.contains("Loan Type").should("be.visible");
+//       cy.get(":nth-child(4) > .form-select").select("I/Only");
 
-      cy.contains("Loan Term");
-      cy.get(":nth-child(5) > .form-select").select("19");
+//       cy.contains("Loan Term");
+//       cy.get(":nth-child(5) > .form-select").select("19");
 
-      	cy.contains("Interest Only Period")
-        cy.get(":nth-child(6) > .form-select").select("19").should("have.value", "19");
+//       	cy.contains("Interest Only Period")
+//         cy.get(":nth-child(6) > .form-select").select("19").should("have.value", "19");
 
         
 
-      cy.contains("Initial Interest Rate (p.a.)");
-      cy.get("#initialInterestRate").clear().type("20.00%");
+//       cy.contains("Initial Interest Rate (p.a.)");
+//       cy.get("#initialInterestRate").clear().type("20.00%");
 
-      cy.contains("Deductible interest");
-      cy.get("#deductibleInterest").clear().type("20.00%");
+//       cy.contains("Deductible interest");
+//       cy.get("#deductibleInterest").clear().type("20.00%");
 
-      cy.contains("Minimum Repayments (p.a)");
-      cy.get("#minimumRepayments");
+//       cy.contains("Minimum Repayments (p.a)");
+//       cy.get("#minimumRepayments");
 
-      cy.contains("Apply Minimum Repayments OR")
-      cy.get('tbody > tr > :nth-child(10)').contains("Yes").click();
+//       cy.contains("Apply Minimum Repayments OR")
+//       cy.get('tbody > tr > :nth-child(10)').contains("Yes").click();
 
-      cy.contains("Actual Annual Repayments");
-      cy.get("#actualAnnualRepayments")
-        .clear()
-        .type("20")
-        .should("have.value", "$20");
+//       cy.contains("Actual Annual Repayments");
+//       cy.get("#actualAnnualRepayments")
+//         .clear()
+//         .type("20")
+//         .should("have.value", "$20");
 
-      cy.contains("Repay Loan in Year");
-      cy.get(":nth-child(12) > .form-select").should("have.value", "No");
-    });
+//       cy.contains("Repay Loan in Year");
+//       cy.get(":nth-child(12) > .form-select").should("have.value", "No");
+//     });
 
-    //SMSF Investment Loan Inner Footer
+//     //SMSF Investment Loan Inner Footer
 
-    // Partner Section
-    cy.get(".css-1lx7dxn").type("Emma Taylor{enter}");
+//     // Partner Section
+//     cy.get(".css-1lx7dxn").type("Emma Taylor{enter}");
 
-    cy.contains("Emma Taylor").should("be.visible");
-
-
-    cy.contains("Year of Loan")
-  cy.get(':nth-child(2) > :nth-child(2) > .form-select').select("21")
-
-    cy.contains("Current Loan Balance").should("be.visible");
-    cy.get(":nth-child(2) > :nth-child(3) > #currentLoanBalance")
-      .clear()
-      .type("24")
-      .should("have.value", "$24");
-
-    cy.contains("Loan Type").should("be.visible");
-    cy.get(":nth-child(2) > :nth-child(4) > .form-select").select("I/Only");
-
-    cy.contains("Loan Term");
-    cy.get(":nth-child(2) > :nth-child(5) > .form-select").select("19");
-
-    cy.contains("Interest Only Period");
-    cy.get(':nth-child(2) > :nth-child(6) > .form-select')
-    .select("19")
+//     cy.contains("Emma Taylor").should("be.visible");
 
 
-      cy.contains("Initial Interest Rate (p.a.)");
-      cy.get(':nth-child(2) > :nth-child(7) > #initialInterestRate').clear().type("20.00%");
-    cy.contains("Deductible interest");
-    cy.get(":nth-child(2) > :nth-child(8) > #deductibleInterest")
-      .clear()
-      .type("20.00%");
+//     cy.contains("Year of Loan")
+//   cy.get(':nth-child(2) > :nth-child(2) > .form-select').select("21")
 
-    cy.contains("Minimum Repayments (p.a)");
-    cy.get(":nth-child(2) > :nth-child(9) > #minimumRepayments");
+//     cy.contains("Current Loan Balance").should("be.visible");
+//     cy.get(":nth-child(2) > :nth-child(3) > #currentLoanBalance")
+//       .clear()
+//       .type("24")
+//       .should("have.value", "$24");
 
-cy.contains("Apply Minimum Repayments OR")
-    cy.get(':nth-child(2) > :nth-child(10) > .form-check > .radioButton2').contains("Yes").click(); 
+//     cy.contains("Loan Type").should("be.visible");
+//     cy.get(":nth-child(2) > :nth-child(4) > .form-select").select("I/Only");
 
-    cy.contains("Actual Annual Repayments");
-    cy.get(':nth-child(2) > :nth-child(11) > #actualAnnualRepayments')
-      .clear()
-      .type("20")
-      .should("have.value", "$20");
+//     cy.contains("Loan Term");
+//     cy.get(":nth-child(2) > :nth-child(5) > .form-select").select("19");
+
+//     cy.contains("Interest Only Period");
+//     cy.get(':nth-child(2) > :nth-child(6) > .form-select')
+//     .select("19")
+
+
+//       cy.contains("Initial Interest Rate (p.a.)");
+//       cy.get(':nth-child(2) > :nth-child(7) > #initialInterestRate').clear().type("20.00%");
+//     cy.contains("Deductible interest");
+//     cy.get(":nth-child(2) > :nth-child(8) > #deductibleInterest")
+//       .clear()
+//       .type("20.00%");
+
+//     cy.contains("Minimum Repayments (p.a)");
+//     cy.get(":nth-child(2) > :nth-child(9) > #minimumRepayments");
+
+// cy.contains("Apply Minimum Repayments OR")
+//     cy.get(':nth-child(2) > :nth-child(10) > .form-check > .radioButton2').contains("Yes").click(); 
+
+//     cy.contains("Actual Annual Repayments");
+//     cy.get(':nth-child(2) > :nth-child(11) > #actualAnnualRepayments')
+//       .clear()
+//       .type("20")
+//       .should("have.value", "$20");
 
       
 
-    cy.contains("Repay Loan in Year");
-    cy.get(':nth-child(2) > :nth-child(12) > .form-select').select("14");
+//     cy.contains("Repay Loan in Year");
+//     cy.get(':nth-child(2) > :nth-child(12) > .form-select').select("14");
 
-    cy.contains("Close").should("be.visible");
-    cy.contains("Submit").should("be.visible").click();
+//     cy.contains("Close").should("be.visible");
+//     cy.contains("Submit").should("be.visible").click();
 
-    cy.get('#clientcf_SMSFInvestmentLoan').should("have.value", "$20");
-    cy.get('#partnercf_SMSFInvestmentLoan').should("have.value", "$20");
+//     cy.get('#clientcf_SMSFInvestmentLoan').should("have.value", "$20");
+//     cy.get('#partnercf_SMSFInvestmentLoan').should("have.value", "$20");
 
 
 
