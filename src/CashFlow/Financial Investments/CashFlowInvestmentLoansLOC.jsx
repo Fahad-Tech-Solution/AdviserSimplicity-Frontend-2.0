@@ -234,8 +234,8 @@ const CashFlowInvestmentLoansLOC = (props) => {
 
   const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
     // value: (i + 1).toString(),
-    value: i + 1,
-    label: ("Year " + (i + 1)).toString(),
+    value: i,
+    label: ("Year " + i).toString(),
   }));
 
   const loanTermOptionsWithNo = Array.from({ length: 31 }, (_, i) => {
@@ -279,7 +279,6 @@ const CashFlowInvestmentLoansLOC = (props) => {
   let loanTypeOptions = [
     { value: "I/Only", label: "I/Only" },
     { value: "P & I", label: "P & I" },
-    
   ];
 
   const rowConfig = [
