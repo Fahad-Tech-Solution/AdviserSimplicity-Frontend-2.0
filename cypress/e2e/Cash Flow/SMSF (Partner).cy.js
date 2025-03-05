@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 class PartnerSMSF {
   section() {
-    cy.visit("http://ec2-54-253-45-171.ap-southeast-2.compute.amazonaws.com/");
+    cy.visit(Cypress.env("CashFlowUrl")); // Access URL from cypress.env.json
 
     cy.get("img").click();
     cy.get(
@@ -2162,13 +2162,13 @@ class PartnerSMSF {
       cy.contains("Submit").should("be.visible").click();
     });
 
-     //Partner Section SMSF Platform Investment Inner Footer
+    //Partner Section SMSF Platform Investment Inner Footer
 
-     cy.contains("Close").should("be.visible");
-     cy.contains("Submit").should("be.visible").click();
+    cy.contains("Close").should("be.visible");
+    cy.contains("Submit").should("be.visible").click();
 
-     cy.get('#clientcf_SMSFPlatformInvestment').should("have.value", "$24");
-     cy.get('#partnercf_SMSFPlatformInvestment').should("have.value", "$24");
+    cy.get("#clientcf_SMSFPlatformInvestment").should("have.value", "$24");
+    cy.get("#partnercf_SMSFPlatformInvestment").should("have.value", "$24");
 
     //SMSF
 

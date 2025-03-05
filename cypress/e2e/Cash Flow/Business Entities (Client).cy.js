@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 class ClientBusinessEntities {
   section() {
-    cy.visit("http://ec2-3-25-227-176.ap-southeast-2.compute.amazonaws.com/");
+    cy.visit(Cypress.env('CashFlowUrl'));  // Access URL from cypress.env.json
 
     cy.get("img").click();
     cy.get(

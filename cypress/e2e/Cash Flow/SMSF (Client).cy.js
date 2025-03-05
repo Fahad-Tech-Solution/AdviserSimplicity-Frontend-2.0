@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 class ClientSMSF {
   section() {
-    cy.visit("http://ec2-54-253-45-171.ap-southeast-2.compute.amazonaws.com/");
+    cy.visit(Cypress.env('CashFlowUrl'));  // Access URL from cypress.env.json
 
     cy.get("img").click();
     cy.get(
@@ -1143,7 +1143,7 @@ class ClientSMSF {
     cy.get(".modal-content").within(() => {
       cy.contains("SMSF Australian Shares");
       cy.get(".btn-close");
-    });FFF
+    });
     cy.wait(2000);
     cy.get(".col-md-12 > .d-flex").within(() => {
       cy.contains("Owner");

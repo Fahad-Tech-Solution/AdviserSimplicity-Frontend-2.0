@@ -1,7 +1,7 @@
 // e2e/Cash Flow/Income & Expenses.cy.js
 class PartnerLifestyleAssetsandDebt {
   section() {
-    cy.visit("http://ec2-54-66-20-19.ap-southeast-2.compute.amazonaws.com/");
+    cy.visit(Cypress.env('CashFlowUrl'));  // Access URL from cypress.env.json
 
     cy.get("img").click();
     cy.get(
