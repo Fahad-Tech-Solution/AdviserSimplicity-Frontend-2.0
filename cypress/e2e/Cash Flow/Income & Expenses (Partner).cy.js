@@ -46,8 +46,9 @@ class PartnerIncomeAndExpenses {
     cy.get(".modal-header").contains("Overseas Pensions");
     cy.get(".btn-close").should("be.visible");
     cy.get(".col-md-12 > .d-flex").within(() => {
-      cy.contains("Owner");
-      cy.get(".css-9jq23d").contains("Aiden Smith");
+      cy.get(".css-d07bj1 > :nth-child(1)").click();
+
+      cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
     });
 
     cy.get(".table").within(() => {
@@ -72,7 +73,9 @@ class PartnerIncomeAndExpenses {
     //PartnerShip Section :
     //cy.get(":nth-child(2) > .css-v7duua").click();
 
-    cy.get(".css-1lcv7hw").type("Emma Taylor{enter}");
+     cy.get(".css-1lx7dxn").type("Emma Taylor{enter}");
+
+    cy.contains("Emma Taylor").should("be.visible");
 
     cy.get(".table").within(() => {
       cy.get(":nth-child(2) > :nth-child(1) > th").contains("Emma Taylor");
@@ -120,7 +123,9 @@ class PartnerIncomeAndExpenses {
     cy.get(".btn-close");
     cy.get(".col-md-12 > .d-flex").within(() => {
       cy.contains("Owner");
-      cy.get(".css-9jq23d").contains("Aiden Smith");
+     cy.get(".css-d07bj1 > :nth-child(1)").click();
+
+      cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
     });
 
     cy.get(".table").within(() => {
@@ -145,7 +150,9 @@ class PartnerIncomeAndExpenses {
     //PartnerShip Section :
     //use to remove partner
     // cy.get(":nth-child(2) > .css-v7duua").click();
-    cy.get(".css-1lcv7hw").type("Emma Taylor{enter}");
+     cy.get(".css-1lx7dxn").type("Emma Taylor{enter}");
+
+    cy.contains("Emma Taylor").should("be.visible");
 
     cy.get(".table").within(() => {
       cy.get(":nth-child(2) > :nth-child(1) > th").contains("Emma Taylor");
@@ -196,7 +203,9 @@ class PartnerIncomeAndExpenses {
     cy.get(".btn-close").should("be.visible");
     cy.get(".col-md-12 > .d-flex").within(() => {
       cy.contains("Owner");
-      cy.get(".css-9jq23d").contains("Aiden Smith");
+     cy.get(".css-d07bj1 > :nth-child(1)").click();
+
+      cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
     });
 
     cy.get(".table").within(() => {
@@ -221,7 +230,9 @@ class PartnerIncomeAndExpenses {
     //PartnerShip Section :
     //use to remove partner
     // cy.get(":nth-child(2) > .css-v7duua").click();
-    cy.get(".css-1lcv7hw").type("Emma Taylor{enter}");
+     cy.get(".css-1lx7dxn").type("Emma Taylor{enter}");
+
+    cy.contains("Emma Taylor").should("be.visible");
 
     cy.get(".table").within(() => {
       cy.get(":nth-child(2) > :nth-child(1) > th").contains("Emma Taylor");
@@ -271,7 +282,9 @@ class PartnerIncomeAndExpenses {
     cy.get(".btn-close").should("be.visible");
     cy.get(".col-md-12 > .d-flex").within(() => {
       cy.contains("Owner");
-      cy.get(".css-9jq23d").contains("Aiden Smith");
+    //  cy.get(".css-d07bj1 > :nth-child(1)").click();
+
+      cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
     });
 
     cy.get(".table").within(() => {
@@ -362,7 +375,9 @@ class PartnerIncomeAndExpenses {
     cy.get(".btn-close").should("be.visible");
     cy.get(".col-md-12 > .d-flex").within(() => {
       cy.contains("Owner");
-      cy.get(".css-9jq23d").contains("Aiden Smith");
+     cy.get(".css-d07bj1 > :nth-child(1)").click();
+
+      cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
     });
 
     cy.get(".table").within(() => {
@@ -394,7 +409,9 @@ class PartnerIncomeAndExpenses {
     //PartnerShip Section :
     //use to remove partner
     // cy.get(":nth-child(2) > .css-v7duua").click();
-    cy.get(".css-1lcv7hw").type("Emma Taylor{enter}");
+     cy.get(".css-1lx7dxn").type("Emma Taylor{enter}");
+
+    cy.contains("Emma Taylor").should("be.visible");
 
     cy.get(".table").within(() => {
       cy.get(":nth-child(2) > :nth-child(1) > th").contains("Emma Taylor");
@@ -450,9 +467,12 @@ class PartnerIncomeAndExpenses {
     cy.contains("Employment Income").should("be.visible");
     cy.get(".btn-close").should("be.visible");
 
-    //Use to remove Partner :
-    //cy.get(":nth-child(2) > .css-v7duua").click();
-    cy.contains("Aiden Smith");
+    cy.get(".col-md-12 > .d-flex").within(() => {
+      cy.contains("Owner");
+    // cy.get(".css-d07bj1 > :nth-child(1)").click();
+
+      cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
+    });
 
     //In Table
     cy.get(".table-responsive").within(() => {
@@ -628,7 +648,9 @@ class PartnerIncomeAndExpenses {
 
     //use to remove partner
 
-    cy.get(".css-1lcv7hw").type("Emma Taylor{enter}");
+     cy.get(".css-1lx7dxn").type("Emma Taylor{enter}");
+
+    cy.contains("Emma Taylor").should("be.visible");
 
     cy.contains("Emma Taylor");
 
@@ -877,7 +899,9 @@ class PartnerIncomeAndExpenses {
 
     //use to remove partner
 
-    cy.get(".css-1lcv7hw").type("Emma Taylor{enter}");
+     cy.get(".css-1lx7dxn").type("Emma Taylor{enter}");
+
+    cy.contains("Emma Taylor").should("be.visible");
 
     cy.contains("Emma Taylor");
 
@@ -957,7 +981,9 @@ class PartnerIncomeAndExpenses {
 
     //use to remove partner
 
-    cy.get(".css-1lcv7hw").type("Emma Taylor{enter}");
+     cy.get(".css-1lx7dxn").type("Emma Taylor{enter}");
+
+    cy.contains("Emma Taylor").should("be.visible");
 
     cy.contains("Emma Taylor");
 

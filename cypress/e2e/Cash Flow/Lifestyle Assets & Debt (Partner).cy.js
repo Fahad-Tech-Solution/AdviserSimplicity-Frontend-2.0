@@ -729,6 +729,11 @@ class PartnerLifestyleAssetsandDebt {
     });
 
     cy.get("#clientcf_creditCard").should("have.value", "$97");
+
+
+
+
+    
   }
 }
 

@@ -34,7 +34,7 @@ describe("Adviser Simplicity", () => {
     personalDetail.section();
   });
 
-  it("Income And Expenses With Partner ", () => {
+  it.only("Income And Expenses With Partner ", () => {
     IncomeAndExpensesPartner.section();
   });
 
@@ -50,7 +50,7 @@ describe("Adviser Simplicity", () => {
     LifestyleAssetsandDebtClient.section();
   });
 
-  it.only("Financial Investments With Partner", () => {
+  it("Financial Investments With Partner", () => {
     FinancialInvestmentsPartner.section();
   });
 
