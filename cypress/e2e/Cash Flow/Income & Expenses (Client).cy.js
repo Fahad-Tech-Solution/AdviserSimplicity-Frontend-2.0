@@ -1,7 +1,7 @@
 // e2e/Cash Flow/Income & Expenses.cy.js
 class ClientIncomeAndExpenses {
   section() {
-    cy.visit(Cypress.env('CashFlowUrl'));  // Access URL from cypress.env.json
+    cy.visit(Cypress.env("CashFlowUrl")); // Access URL from cypress.env.json
 
     cy.get("img").click();
     cy.get(
