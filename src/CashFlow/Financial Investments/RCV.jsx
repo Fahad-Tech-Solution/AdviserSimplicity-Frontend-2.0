@@ -109,7 +109,7 @@ const RCV = (props) => {
 
         let { cf_annuities } = res.data;
 
-        setFieldValue("RCVOther", toCommaAndDollar(cf_annuities.RCVOther));
+        setFieldValue("RCVOther", toCommaAndDollar(cf_annuities[props.modalObject.stakeHolder.replace(".", "")].RCVOther));
 
         setCashFlowReCalculateLoading(false);
         openNotificationSuccess(

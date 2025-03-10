@@ -15,6 +15,7 @@ import {
   defaultUrl,
 } from "../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
+import { number } from "yup";
 
 const BalanceRolloverAmount = (props) => {
   let [disabledFlag, setDisabledFlag] = useState(true);
@@ -198,14 +199,18 @@ const BalanceRolloverAmount = (props) => {
         props.modalObject.stakeHolder.replace(".", "")
       ][props.modalObject.key + "Obj"] = values;
 
-      console.log(JSON.stringify(obj.cf_accountBasedPension[
-        props.modalObject.stakeHolder.replace(".", "")
-      ][props.modalObject.key + "Obj"]));
+      console.log(
+        JSON.stringify(
+          obj.cf_accountBasedPension[
+            props.modalObject.stakeHolder.replace(".", "")
+          ][props.modalObject.key + "Obj"]
+        )
+      );
 
       // throw new Error("API call not implemented yet");
 
       let res = await PostAxios(
-        `${DefaultUrl}/api/cal/financialInvestment/INPUTS_Super&_Pension`,
+        `${DefaultUrl}/api/cal/financialInvestment/INPUTS_Super_Pension`,
         obj
       );
 
@@ -214,10 +219,19 @@ const BalanceRolloverAmount = (props) => {
 
         let { cf_accountBasedPension } = res.data;
 
-        setFieldValue(
-          "totalSuperAnnuationBenefits",
-          toCommaAndDollar(cf_accountBasedPension.totalSuperAnnuationBenefits)
-        );
+        let Data = cf_accountBasedPension?.[props.modalObject?.stakeHolder?.replace(".", "")] ?? {};
+
+        if (
+          Data.totalSuperAnnuationBenefits &&
+          typeof Data.totalSuperAnnuationBenefits === "number"
+        ) {
+          setFieldValue(
+            "totalSuperAnnuationBenefits",
+            toCommaAndDollar(Data.totalSuperAnnuationBenefits)
+          );
+        } else {
+          setFieldValue("totalSuperAnnuationBenefits", "$0");
+        }
 
         setCashFlowReCalculateLoading(false);
         openNotificationSuccess(

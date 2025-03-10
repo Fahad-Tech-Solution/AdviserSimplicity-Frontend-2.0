@@ -170,7 +170,7 @@ const PensionPayments = (props) => {
       let apiKey = {
         cf_accountBasedPension: {
           key: "financialInvestment",
-          param: "INPUTS_Super&_Pension",
+          param: "INPUTS_Super_Pension",
         },
         cf_SMSFPensionAccountDetails: {
           key: "SMSF",
@@ -190,7 +190,10 @@ const PensionPayments = (props) => {
       if (res) {
         console.log(res);
 
-        let DataObj = res.data[props.modalObject.sourceObj.key];
+        let DataObj =
+          res.data[props.modalObject.sourceObj.key][
+            props.modalObject.stakeHolder.replace(".", "")
+          ];
 
         if (
           DataObj.preservationAge &&

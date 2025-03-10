@@ -4,11 +4,14 @@ import { Button, Modal } from "react-bootstrap";
 import { FaInfoCircle } from "react-icons/fa";
 import { scroller, Element } from "react-scroll";
 import { useRecoilState } from "recoil";
-import { CashFlowReCalculateLoading } from "../../../../Store/Store";
+import { CashFlowReCalculateLoading, Progress } from "../../../../Store/Store";
+import CustomLoadingBar from "../CustomLoadingBar";
 
 const InnerModal = (props) => {
   const formRef = useRef(null); // Create a ref to store the form instance
   const childButtonRef = useRef(null);
+  const intervalRef = useRef(null); // Store the interval reference
+  const [progress, setProgress] = useRecoilState(Progress);
 
   let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
     useRecoilState(CashFlowReCalculateLoading);
@@ -20,12 +23,31 @@ const InnerModal = (props) => {
   };
 
   const handleParentButtonClick = () => {
-    // alert("Parent button clicked");
     if (childButtonRef.current) {
       setCashFlowReCalculateLoading(true);
       childButtonRef.current.click();
     }
+
+    // Clear any existing interval before starting a new one
+    if (intervalRef.current) clearInterval(intervalRef.current);
+
+    let progressValue = 10;
+    setProgress(progressValue); // Start progress at 10%
+
+    intervalRef.current = setInterval(() => {
+      progressValue += 5;
+      if (progressValue < 95) {
+        setProgress(progressValue);
+      }
+    }, 1000); // Change to 1 second for smoother progress
   };
+
+  useEffect(() => {
+    if (!cashFlowReCalculateLoading) {
+      clearInterval(intervalRef.current);
+      setProgress(0);
+    }
+  }, [cashFlowReCalculateLoading]);
 
   let flagState = props.flagState;
   let setFieldValue = props.setFieldValue;
@@ -142,7 +164,7 @@ const InnerModal = (props) => {
         <Modal.Header closeButton>
           <Modal.Title>{props.modalObject.title}</Modal.Title>
         </Modal.Header>
-
+        {progress !== 0 && <CustomLoadingBar progress={progress} />}
         <Modal.Body>
           {props.children
             ? React.cloneElement(props.children, {

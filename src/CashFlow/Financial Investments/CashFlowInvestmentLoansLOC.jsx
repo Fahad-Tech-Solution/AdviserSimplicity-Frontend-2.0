@@ -377,10 +377,12 @@ const CashFlowInvestmentLoansLOC = (props) => {
         }
 
         if (values.owner.includes("partner")) {
-          if (typeof cf_investmentLoansLOC.minimumRepayments === "number") {
+          if (
+            typeof cf_investmentLoansLOC.minimumRepaymentsPartner === "number"
+          ) {
             setFieldValue(
               "partner.minimumRepayments",
-              toCommaAndDollar(cf_investmentLoansLOC.minimumRepayments)
+              toCommaAndDollar(cf_investmentLoansLOC.minimumRepaymentsPartner)
             );
           } else {
             setFieldValue("partner.minimumRepayments", "$0");

@@ -152,7 +152,7 @@ const CashFlowHomeLoan = (props) => {
     }
   };
 
-  const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
+  const loanTermOptions = Array.from({ length: 31 }, (_, i) => ({
     value: (i).toString(),
     label: ("Year " + (i)).toString(),
   }));
@@ -257,7 +257,7 @@ const CashFlowHomeLoan = (props) => {
       console.log(FullObj, "FullObj", props.modalObject.ParentObject.key);
 
       let apiKey = {
-        cf_familyHome: { key: "cf_familyHome", param: "" },
+        cf_familyHome: { key: "cf_familyHome", param: "INPUTS_Lifestyle_Assets_Debt" },
         cf_investmentsProperty: {
           key: "financialInvestment",
           param: "INPUTS_Property",
@@ -271,6 +271,7 @@ const CashFlowHomeLoan = (props) => {
           param: "INPUTS_SMSF_Property",
         },
       };
+      
 
       obj[props.modalObject.ParentObject.key] = FullObj;
 

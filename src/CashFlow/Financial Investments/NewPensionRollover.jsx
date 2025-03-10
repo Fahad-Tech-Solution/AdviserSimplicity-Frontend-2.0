@@ -230,7 +230,7 @@ const NewPensionRollover = (props) => {
       if (res) {
         console.log(res);
 
-        let DataObj = res.data[props.modalObject.sourceObj.key];
+        let DataObj = res.data[props.modalObject.sourceObj.key][props.modalObject.stakeHolder.replace(".", "")];
 
         if (
           DataObj.currentPensionDetails &&

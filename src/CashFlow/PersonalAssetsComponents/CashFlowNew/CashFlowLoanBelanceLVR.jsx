@@ -165,7 +165,7 @@ const CashFlowLoanBelanceLVR = (props) => {
       console.log(props.modalObject, "props.modalObject");
 
       let apiKey = {
-        cf_familyHome: { key: "cf_familyHome", param: "" },
+        cf_familyHome: { key: "cf_familyHome", param: "INPUTS_Lifestyle_Assets_Debt" },
         cf_investmentsProperty: {
           key: "financialInvestment",
           param: "INPUTS_Property",

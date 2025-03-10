@@ -104,7 +104,10 @@ const DeductibleAmount = (props) => {
 
         setFieldValue(
           "deductibleAmount",
-          toCommaAndDollar(cf_annuities.deductibleAmount)
+          toCommaAndDollar(
+            cf_annuities[props.modalObject.stakeHolder.replace(".", "")]
+              .deductibleAmount
+          )
         );
 
         setCashFlowReCalculateLoading(false);

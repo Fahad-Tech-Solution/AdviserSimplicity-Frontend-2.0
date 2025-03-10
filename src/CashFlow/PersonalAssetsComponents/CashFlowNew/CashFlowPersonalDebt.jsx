@@ -78,6 +78,7 @@ const CashFlowPersonalDebt = (props) => {
           MinimumRepayments: data.MinimumRepayments || "",
           ActualAnnualRepayments:
             data.ActualAnnualRepayments || data.AnnualRepayments || "",
+          applyMinimumRepaymentsOR: data.applyMinimumRepaymentsOR || "",
           RepayLoanInYear:
             data.RepayLoanInYear || data.LoanTermRemaining || "No",
         };
@@ -146,6 +147,7 @@ const CashFlowPersonalDebt = (props) => {
         InterestRate: values[`InterestRate${i}`],
         MinimumRepayments: values[`MinimumRepayments${i}`],
         ActualAnnualRepayments: values[`ActualAnnualRepayments${i}`],
+        applyMinimumRepaymentsOR: values[`applyMinimumRepaymentsOR${i}`],
         RepayLoanInYear: values[`RepayLoanInYear${i}`],
       });
     }
@@ -234,6 +236,7 @@ const CashFlowPersonalDebt = (props) => {
           InterestRate: values[`InterestRate${i}`],
           MinimumRepayments: values[`MinimumRepayments${i}`],
           ActualAnnualRepayments: values[`ActualAnnualRepayments${i}`],
+          applyMinimumRepaymentsOR: values[`applyMinimumRepaymentsOR${i}`],
           RepayLoanInYear: values[`RepayLoanInYear${i}`],
         });
       }
@@ -260,7 +263,10 @@ const CashFlowPersonalDebt = (props) => {
 
       console.log(obj[props.modalObject.key], ":obj");
 
-      let res = await PostAxios(`${DefaultUrl}/api/cal/cf_familyHome`, obj);
+      let res = await PostAxios(
+        `${DefaultUrl}/api/cal/cf_familyHome/INPUTS_Property`,
+        obj
+      );
       if (res) {
         console.log(res.data[props.modalObject.key]);
         let Data = res.data[props.modalObject.key];

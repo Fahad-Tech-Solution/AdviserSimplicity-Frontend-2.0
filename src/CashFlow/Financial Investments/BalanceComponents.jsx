@@ -210,7 +210,7 @@ const BalanceComponents = (props) => {
       ] = values;
 
       let res = await PostAxios(
-        `${DefaultUrl}/api/cal/financialInvestment/INPUTS_Super&_Pension`,
+        `${DefaultUrl}/api/cal/financialInvestment/INPUTS_Super_Pension`,
         obj
       );
 

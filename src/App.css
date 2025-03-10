@@ -1483,3 +1483,9 @@ label {
 .bg-gray {
   background: #a0a0a05d;
 }
+
+.custom-loading-bar{
+  position: absolute !important;
+  top: 0;
+  width: 100%;
+}

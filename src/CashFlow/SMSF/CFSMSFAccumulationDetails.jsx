@@ -116,7 +116,7 @@ const CFSMSFAccumulationDetails = (props) => {
       obj.cf_SMSFAccumulationDetails = FinalObj;
 
       let res = await PostAxios(
-        `${DefaultUrl}/api/cal/SMSF/INPUTS_SMSF_Investments`,
+        `${DefaultUrl}/api/cal/SMSF/INPUTS_SMSF_Member_Balances`,
         obj
       );
       if (res) {

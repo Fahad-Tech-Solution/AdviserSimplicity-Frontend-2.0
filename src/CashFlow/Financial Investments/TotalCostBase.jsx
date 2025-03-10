@@ -161,18 +161,21 @@ const TotalCostBase = (props) => {
       console.log(obj[props.modalObject.ParentObject.key]);
 
       let apiKey = {
-        cf_familyHome: { key: "cf_familyHome", param: "" },
+        cf_familyHome: {
+          key: "cf_familyHome",
+          param: "INPUTS_Lifestyle_Assets_Debt",
+        },
         cf_investmentsProperty: {
           key: "financialInvestment",
           param: "INPUTS_Property",
         },
-        cf_FamilyTrustInvestmentProperties: {
-          key: "investmentsTrust",
-          param: "INPUTS_TRUST_Property",
-        },
         cf_SMSFInvestmentProperties: {
           key: "SMSF",
           param: "INPUTS_SMSF_Property",
+        },
+        cf_FamilyTrustInvestmentProperties: {
+          key: "investmentsTrust",
+          param: "INPUTS_TRUST_Property",
         },
       };
 

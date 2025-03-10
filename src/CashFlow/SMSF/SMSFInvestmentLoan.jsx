@@ -242,8 +242,8 @@ const SMSFInvestmentLoan = (props) => {
 
     return {
       // value: (i + 1).toString(),
-      value: i + 1,
-      label: ("Year " + (i + 1)).toString(),
+      value: i,
+      label: ("Year " + i).toString(),
     };
   });
 

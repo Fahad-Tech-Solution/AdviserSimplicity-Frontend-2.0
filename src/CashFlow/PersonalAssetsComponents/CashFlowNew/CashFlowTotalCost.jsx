@@ -104,7 +104,8 @@ const CashFlowTotalCost = (props) => {
 
       obj.cf_familyHome[props.modalObject.key + "Obj"] = values;
 
-      let res = await PostAxios(`${DefaultUrl}/api/cal/cf_familyHome`, obj);
+      let res = await PostAxios(`${DefaultUrl}/api/cal/cf_familyHome/INPUTS_Lifestyle_Assets_Debt`, obj);
+    
       if (res) {
         let { totalCostBaseObj } = res.data;
 
