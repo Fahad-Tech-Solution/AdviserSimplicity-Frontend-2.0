@@ -216,16 +216,18 @@ const CFSMSFBalance = (props) => {
 
         let { cf_SMSFPensionAccountDetails } = res.data;
 
+        let Data =
+          cf_SMSFPensionAccountDetails?.[
+            props.modalObject.stakeHolder.replace(".", "")
+          ];
+
         if (
-          cf_SMSFPensionAccountDetails.totalSuperAnnuationBenefits &&
-          typeof cf_SMSFPensionAccountDetails.totalSuperAnnuationBenefits ===
-            "number"
+          Data.totalSuperAnnuationBenefits &&
+          typeof Data.totalSuperAnnuationBenefits === "number"
         ) {
           setFieldValue(
             "totalSuperAnnuationBenefits",
-            toCommaAndDollar(
-              cf_SMSFPensionAccountDetails.totalSuperAnnuationBenefits
-            )
+            toCommaAndDollar(Data.totalSuperAnnuationBenefits)
           );
         } else {
           setFieldValue("totalSuperannuationBenefits", "$0");

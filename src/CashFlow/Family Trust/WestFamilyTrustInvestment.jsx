@@ -19,6 +19,7 @@ import {
   PostAxios,
   RenderName,
   toCommaAndDollar,
+  toPercentage,
 } from "../../Components/Assets/Api/Api";
 
 const WestFamilyTrustInvestment = (props) => {
@@ -278,15 +279,35 @@ const WestFamilyTrustInvestment = (props) => {
         }
 
         if (values.owner.includes("partner")) {
-          if (typeof Data.totalOfBeneficiaryAccounts === "number") {
+          if (typeof Data.totalOfBeneficiaryAccountsPartner === "number") {
             setFieldValue(
               "partner.totalOfBeneficiaryAccounts",
-              toCommaAndDollar(Data.totalOfBeneficiaryAccounts)
+              toCommaAndDollar(Data.totalOfBeneficiaryAccountsPartner)
             );
           } else {
             setFieldValue("partner.totalOfBeneficiaryAccounts", "$0");
           }
         }
+        let { client } = values;
+
+        let partnerpercentOfBeneficiaryAccounts =
+          100 -
+          parseFloat(
+            client.percentOfBeneficiaryAccounts.replace(/[^0-9.-]+/g, "")
+          );
+
+        let distributionOfIncomeCGT =
+          100 -
+          parseFloat(client.distributionOfIncomeCGT.replace(/[^0-9.-]+/g, ""));
+
+        setFieldValue(
+          "partner.percentOfBeneficiaryAccounts",
+          toPercentage(partnerpercentOfBeneficiaryAccounts)
+        );
+        setFieldValue(
+          "partner.distributionOfIncomeCGT",
+          toPercentage(distributionOfIncomeCGT)
+        );
 
         setCashFlowReCalculateLoading(false);
         openNotificationSuccess(
@@ -369,7 +390,14 @@ const WestFamilyTrustInvestment = (props) => {
                       {values.owner.includes("partner") &&
                         UserStatus === "Married" && (
                           <DynamicTableRow
-                            rowConfig={rowConfig}
+                            rowConfig={rowConfig.map((field) =>
+                              [
+                                "percentOfBeneficiaryAccounts",
+                                "distributionOfIncomeCGT",
+                              ].includes(field.name)
+                                ? { ...field, disabled: true }
+                                : field
+                            )}
                             values={values}
                             setFieldValue={setFieldValue}
                             handleChange={handleChange}

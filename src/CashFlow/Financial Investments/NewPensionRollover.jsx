@@ -210,7 +210,7 @@ const NewPensionRollover = (props) => {
       let apiKey = {
         cf_accountBasedPension: {
           key: "financialInvestment",
-          param: "INPUTS_Super&_Pension",
+          param: "INPUTS_Super_Pension",
         },
         cf_SMSFPensionAccountDetails: {
           key: "SMSF",

@@ -14,6 +14,7 @@ import {
   PostAxios,
   toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
+import { object } from "yup";
 
 const CFSMSFAccumulationDetails = (props) => {
   let [flagState, setFlagState] = useState(false);
@@ -124,26 +125,34 @@ const CFSMSFAccumulationDetails = (props) => {
 
         let { cf_SMSFAccumulationDetails } = res.data;
 
-        setFieldValue(
-          "totalFundNetAssetValue",
-          toCommaAndDollar(cf_SMSFAccumulationDetails.totalFundNetAssetValue)
-        );
-        setFieldValue(
-          "actualValueToMember",
-          toCommaAndDollar(cf_SMSFAccumulationDetails.actualValueToMember)
-        );
-        setFieldValue(
-          "taxableComponent",
-          toCommaAndDollar(cf_SMSFAccumulationDetails.taxableComponent)
-        );
+        let Data =
+          cf_SMSFAccumulationDetails?.[
+            props.modalObject.stakeHolder.replace(".", "")
+          ];
 
-        setCashFlowReCalculateLoading(false);
-        openNotificationSuccess(
-          "success",
-          "topRight",
-          "Success Notification",
-          'Data of "' + props.modalObject.title + '" is Saved'
-        );
+        if (Data && Object.keys(Data).length > 0) {
+          
+          setFieldValue(
+            "totalFundNetAssetValue",
+            toCommaAndDollar(Data.totalFundNetAssetValue)
+          );
+          setFieldValue(
+            "actualValueToMember",
+            toCommaAndDollar(Data.actualValueToMember)
+          );
+          setFieldValue(
+            "taxableComponent",
+            toCommaAndDollar(Data.taxableComponent)
+          );
+
+          setCashFlowReCalculateLoading(false);
+          openNotificationSuccess(
+            "success",
+            "topRight",
+            "Success Notification",
+            'Data of "' + props.modalObject.title + '" is calculated'
+          );
+        }
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
@@ -153,7 +162,7 @@ const CFSMSFAccumulationDetails = (props) => {
         "Error Notification",
         'Data of "' +
           props.modalObject.title +
-          '" is not Saved Please! try again'
+          '" is not calculated Please! try again'
       );
       setCashFlowReCalculateLoading(false);
     }
