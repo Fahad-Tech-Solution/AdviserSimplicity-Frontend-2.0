@@ -1,6 +1,6 @@
 class Questions_section {
   visitAndCheck() {
-    cy.visit("http://ec2-54-66-20-19.ap-southeast-2.compute.amazonaws.com/ImportantQuestion");
+    cy.visit("http://ec2-54-253-45-171.ap-southeast-2.compute.amazonaws.com/ImportantQuestion");
 
     cy.get(".px-5")
       .should("be.visible")

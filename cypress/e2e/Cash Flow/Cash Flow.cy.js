@@ -15,7 +15,7 @@ import ClientSMSF from "./SMSF (Client).cy.js";
 
 import PersonalDetail from "./Personal Detail.cy.js";
 
-describe("Adviser Simplicity", () => {
+describe("Cash Flow", () => {
   const IncomeAndExpensesPartner = new PartnerIncomeAndExpenses();
   const IncomeAndExpenseClient = new ClientIncomeAndExpenses();
   const LifestyleAssetsandDebtPartner = new PartnerLifestyleAssetsandDebt();
@@ -38,7 +38,7 @@ describe("Adviser Simplicity", () => {
     IncomeAndExpensesPartner.section();
   });
 
-  it("Income And Expenses With Client ", () => {
+  it.only("Income And Expenses With Client ", () => {
     IncomeAndExpenseClient.section();
   });
 
@@ -46,7 +46,7 @@ describe("Adviser Simplicity", () => {
     LifestyleAssetsandDebtPartner.section();
   });
 
-  it("Lifestyle Assets and Debt With Client", () => {
+  it.only("Lifestyle Assets and Debt With Client", () => {
     LifestyleAssetsandDebtClient.section();
   });
 
@@ -54,7 +54,7 @@ describe("Adviser Simplicity", () => {
     FinancialInvestmentsPartner.section();
   });
 
-  it("Financial Investments With Client", () => {
+  it.only("Financial Investments With Client", () => {
     FinancialInvestmentsClient.section();
   });
 
@@ -63,7 +63,7 @@ describe("Adviser Simplicity", () => {
     BusinessEntitiesPartner.section();
   });
 
-  it("Business Entities With Client", () => {
+  it.only("Business Entities With Client", () => {
     BusinessEntitiesClient.section();
   });
 
@@ -71,7 +71,7 @@ describe("Adviser Simplicity", () => {
     SMSFPartner.section();
   });
 
-  it("SMSF With Client", () => {
+  it.only("SMSF With Client", () => {
     SMSFClient.section();
   });
  
