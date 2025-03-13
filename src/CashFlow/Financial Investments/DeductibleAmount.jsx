@@ -26,18 +26,11 @@ const DeductibleAmount = (props) => {
   };
 
   let fillInitialValues = (setFieldValue) => {
-    console.log(props.modalObject);
-    if (
-      props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")]
-    ) {
-      let SubObj =
-        props.modalObject.values[
-          props.modalObject.stakeHolder.replace(".", "")
-        ];
-      if (SubObj[props.modalObject.key + "Obj"]) {
-        let Data = SubObj[props.modalObject.key + "Obj"];
-        setFieldValue("otherDeductibleAmount", Data.otherDeductibleAmount);
-        setFieldValue("deductibleAmount", Data.deductibleAmount);
+    if (props.modalObject.values[props.modalObject.key]) {
+      let SubObj = props.modalObject.values[props.modalObject.key];
+      if (SubObj) {
+        setFieldValue("otherDeductibleAmount", SubObj.otherDeductibleAmount);
+        setFieldValue("deductibleAmount", SubObj.deductibleAmount);
       }
     }
   };
@@ -45,10 +38,7 @@ const DeductibleAmount = (props) => {
   let onSubmit = (values) => {
     console.log(JSON.stringify(values));
 
-    props.setFieldValue(
-      props.modalObject.stakeHolder + props.modalObject.key + "Obj",
-      values
-    );
+    props.setFieldValue(props.modalObject.key, values);
 
     // Reset the flag state if necessary
     if (props.flagState) {

@@ -45,141 +45,87 @@ const CFAnnuities = (props) => {
           joint: [],
         }; // Use an empty object as default if incomeFromOverseasPension is undefined
 
-  let initialValues = {
-    owner: [],
-  };
+  let initialValues = {};
 
   const fillInitialValues = (setFieldValue) => {
     try {
       // Set the object and API key
       setObjAndAPIKey(props.modalObject.key);
 
-      // console.log(annuitiesIssues, "Discovery Form Data " + props.modalObject.key + " and SourceKey " + props.modalObject.sourceKey, annuitiesIssues.client);
-      // console.log(cashFlowData?.[objAndAPIKey].client.investmentFees, "cashFlowData Form Data");
-      // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
-
       const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
 
       // Helper function to update field values
       const updateFields = (data, prefix) => {
-        if (!data || !Object.keys(data).length) return;
+        if (!data || Object.keys(data).length === 0) return;
 
         const fields = {
-          originalInvestmentAmount: data.originalInvestmentAmount || "",
-          sourceOfFunds: data.sourceOfFunds || "",
-          annuityType: data.annuityType || "",
-          IsThisReversionaryAnnuity: data.IsThisReversionaryAnnuity || "No",
-          RCV: data.RCV || "No",
-          RCVObj: data.RCVObj || {},
-          includeFromYear: data.includeFromYear || "1",
-          term: data.term || 30,
-          yearsUntilMaturity: data.yearsUntilMaturity || "30",
-          annualInflationRate: data.annualInflationRate || "",
-          annualPayment: data.annualPayment || "",
-          deductibleAmount: data.deductibleAmount || "No",
-          deductibleAmountObj: data.deductibleAmountObj || {},
+          [`originalInvestmentAmount_${prefix}`]:
+            data.originalInvestmentAmount || "",
+          [`sourceOfFunds_${prefix}`]:
+            data.sourceOfFunds || data.sourceFunds || "",
+          [`annuityType_${prefix}`]: data.annuityType || "",
+          [`IsThisReversionaryAnnuity_${prefix}`]:
+            data.IsThisReversionaryAnnuity || "No",
+          [`RCV_${prefix}`]: data.RCV || "No",
+          [`RCVObj_${prefix}`]: data.RCVObj || {},
+          [`includeFromYear_${prefix}`]: data.includeFromYear || "1",
+          [`term_${prefix}`]: data.term || 30,
+          [`yearsUntilMaturity_${prefix}`]: data.yearsUntilMaturity || "30",
+          [`annualInflationRate_${prefix}`]: data.annualInflationRate || "",
+          [`annualPayment_${prefix}`]: data.annualPayment || "",
+          [`deductibleAmount_${prefix}`]: data.deductibleAmount || "No",
+          [`deductibleAmountObj_${prefix}`]: data.deductibleAmountObj || {},
         };
 
         Object.entries(fields).forEach(([key, value]) => {
-          setFieldValue(`${prefix}.${key}`, value);
+          setFieldValue(key, value);
         });
       };
 
-      // Update owner field
+      // Handle discoveryForm scenario
       if (
         scenarioObj?.selectedSource === "discoveryForm" &&
         annuitiesIssues &&
         annuitiesIssues._id
       ) {
-        // Update client-related fields
-        if (annuitiesIssues?.client.length > 0) {
-          let Obj = {
-            originalInvestmentAmount: toCommaAndDollar(
-              annuitiesIssues.client.reduce(
-                (total, entry) =>
-                  total +
-                  parseFloat(
-                    entry.originalInvestmentAmount.replace(/[^0-9.-]+/g, "")
-                  ),
-                0
-              )
-            ),
-            sourceOfFunds: annuitiesIssues.client[0].sourceFunds,
-            annuityType: annuitiesIssues.client[0].annuityType,
-            includeFromYear: annuitiesIssues.client[0].yearsMaturity,
-            term: annuitiesIssues.client[0].term,
-            annualPayment: toCommaAndDollar(
-              annuitiesIssues.client.reduce(
-                (total, entry) =>
-                  total +
-                  parseFloat(
-                    entry.annualAnnuityPayment.replace(/[^0-9.-]+/g, "")
-                  ),
-                0
-              )
-            ),
-            RCVObj: {
-              RCV: annuitiesIssues.client[0].returnCapitalValue || "",
-            },
-          };
-
-          updateFields(Obj, "client");
+        if (annuitiesIssues.client.length > 0) {
+          annuitiesIssues.client.forEach((clientData, index) => {
+            updateFields(clientData, index);
+          });
         }
 
-        // Update partner-related fields
-        if (
-          UserStatus === "Married" &&
-          annuitiesIssues?.partner &&
-          annuitiesIssues.partner.length > 0
-        ) {
-          let Obj = {
-            originalInvestmentAmount: toCommaAndDollar(
-              annuitiesIssues.partner.reduce(
-                (total, entry) =>
-                  total +
-                  parseFloat(
-                    entry.originalInvestmentAmount.replace(/[^0-9.-]+/g, "")
-                  ),
-                0
-              )
-            ),
-            sourceOfFunds: annuitiesIssues.partner[0].sourceFunds,
-            annuityType: annuitiesIssues.partner[0].annuityType,
-            includeFromYear: annuitiesIssues.partner[0].yearsMaturity,
-            term: annuitiesIssues.partner[0].term,
-            annualAnnuityPayment: toCommaAndDollar(
-              annuitiesIssues.partner.reduce(
-                (total, entry) =>
-                  total +
-                  parseFloat(
-                    entry.annualAnnuityPayment.replace(/[^0-9.-]+/g, "")
-                  ),
-                0
-              )
-            ),
-            RCVObj: {
-              RCV: annuitiesIssues.partner[0].returnCapitalValue || "",
-            },
-          };
-          updateFields(Obj, "partner");
+        if (UserStatus === "Married" && annuitiesIssues?.partner?.length > 0) {
+          annuitiesIssues.partner.forEach((partnerData, index) => {
+            updateFields(partnerData, index);
+          });
         }
       } else {
         // Handle cashFlowData scenario
         const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-        console.log(cashFlowDetails, "cashFlowDetails");
+
         if (cashFlowDetails) {
-          setFieldValue(`owner`, cashFlowDetails.owner || "");
-          if (cashFlowDetails.owner.includes("client")) {
-            // Update client details
-            updateFields(cashFlowDetails.client, "client");
+          setFieldValue(
+            "numberOfProperties",
+            cashFlowDetails[props.modalObject.Input].length || ""
+          );
+
+          if (
+            props.modalObject.Input == "client" &&
+            cashFlowDetails.client.length > 0
+          ) {
+            cashFlowDetails.client.forEach((clientData, index) => {
+              updateFields(clientData, index);
+            });
           }
 
           if (
             UserStatus === "Married" &&
-            cashFlowDetails.owner.includes("partner")
+            props.modalObject.Input == "partner" &&
+            cashFlowDetails?.partner?.length > 0
           ) {
-            // Update partner details
-            updateFields(cashFlowDetails.partner, "partner");
+            cashFlowDetails.partner.forEach((partnerData, index) => {
+              updateFields(partnerData, index);
+            });
           }
         }
       }
@@ -187,19 +133,29 @@ const CFAnnuities = (props) => {
       // Additional data from cashFlowData
       if (cashFlowData?.[objAndAPIKey]?._id) {
         const cashFlowDataDetails = cashFlowData[objAndAPIKey];
-        setFieldValue(`owner`, cashFlowDataDetails.owner || "");
 
-        if (cashFlowDataDetails.owner.includes("client")) {
-          // Update client details
-          updateFields(cashFlowDataDetails.client, "client");
+        setFieldValue(
+          "numberOfProperties",
+          cashFlowDataDetails[props.modalObject.Input].length || ""
+        );
+
+        if (
+          props.modalObject.Input == "client" &&
+          cashFlowDataDetails.client.length > 0
+        ) {
+          cashFlowDataDetails.client.forEach((clientData, index) => {
+            updateFields(clientData, index);
+          });
         }
 
         if (
           UserStatus === "Married" &&
-          cashFlowDataDetails.owner.includes("partner")
+          props.modalObject.Input == "partner" &&
+          cashFlowDataDetails?.partner?.length > 0
         ) {
-          // Update partner details
-          updateFields(cashFlowDataDetails.partner, "partner");
+          cashFlowDataDetails.partner.forEach((partnerData, index) => {
+            updateFields(partnerData, index);
+          });
         }
       }
     } catch (error) {
@@ -208,29 +164,64 @@ const CFAnnuities = (props) => {
   };
 
   let onSubmit = async (values) => {
-    console.log(JSON.stringify(values));
-    // return (false);
-    let obj = values;
+    const numberOfEntries = parseInt(values.numberOfProperties, 10);
+    const newEntries = [];
 
-    obj.scenarioFK = JSON.parse(localStorage.getItem("ScenarioObj"))._id;
+    for (let i = 0; i < numberOfEntries; i++) {
+      const newEntry = {};
 
-    if (values.owner.includes("client")) {
-      obj.clientTotal = values.client.annualPayment || "$0";
-    } else {
-      obj.clientTotal = "";
-      obj.client = {};
+      rowConfig.forEach((config) => {
+        if (config.name) {
+          newEntry[config.name] = values[`${config.name}_${i}`] || "";
+        }
+        if (config?.key) {
+          newEntry[config.key] = values[`${config.key}_${i}`] || "";
+        }
+      });
+
+      newEntries.push(newEntry);
     }
 
-    if (values.owner.includes("partner")) {
-      obj.partnerTotal = values.partner.annualPayment || "$0";
-    } else {
-      obj.partnerTotal = "";
-      obj.partner = {};
+    let obj = {
+      [props.modalObject.Input]: newEntries, // Correct way to dynamically set key
+      scenarioFK: JSON.parse(localStorage.getItem("ScenarioObj"))._id,
+      numberOfProperties: numberOfEntries,
+    };
+
+    // Calculate clientTotal based on `annualPayment`
+    obj[props.modalObject.Input + "Total"] = toCommaAndDollar(
+      newEntries.reduce(
+        (total, entry) =>
+          total + parseFloat(entry.annualPayment?.replace(/[^0-9.-]+/g, "")) ||
+          0,
+        0
+      )
+    );
+
+    if (cashFlowData?.[objAndAPIKey]?._id) {
+      const cashFlowDataDetails = cashFlowData[objAndAPIKey];
+
+      console.log(
+        cashFlowDataDetails,
+        cashFlowDataDetails[props.modalObject.Input],
+        props.modalObject.Input
+      );
+
+      // Determine the input type and set values accordingly
+      if (props.modalObject.Input === "partner") {
+        obj.client = cashFlowDataDetails?.client || []; // Ensure client is empty
+        obj.clientTotal = cashFlowDataDetails?.clientTotal || "0$"; // Ensure clientTotal is empty
+      } else {
+        obj.partner = cashFlowDataDetails?.partner || []; // Ensure partner is empty
+        obj.partnerTotal = cashFlowDataDetails?.partnerTotal || "0$"; // Ensure partnerTotal is empty
+      }
     }
+
+    console.log("Final Object:", JSON.stringify(obj));
+
+    // return false;
 
     const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
-
-    console.log(obj, "final obj");
 
     try {
       let res;
@@ -244,11 +235,13 @@ const CFAnnuities = (props) => {
       }
 
       if (res) {
-        console.log(res);
+        console.log("API Returns Data", res);
+
         const updatedData = {
           ...cashFlowData,
           [objAndAPIKey]: res,
         };
+
         setCashFlowData(updatedData);
       }
 
@@ -256,10 +249,9 @@ const CFAnnuities = (props) => {
         "success",
         "topRight",
         "Success Notification",
-        'Data of "' + props.modalObject.title + '" is Saved'
+        `Data of "${props.modalObject.title}" is Saved`
       );
 
-      // Reset the flag state if necessary
       if (props.flagState) {
         props.setFlagState(false);
       }
@@ -269,32 +261,22 @@ const CFAnnuities = (props) => {
         "error",
         "topRight",
         "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        `Data of "${props.modalObject.title}" is not Saved. Please try again.`
       );
     }
   };
 
-  let handleInnerModal = (title, values, key, stakeHolder) => {
+  let handleInnerModal = (title, values, key) => {
     // console.log(title, values, key);
     setModalObject({
       title,
       values,
       key,
-      stakeHolder,
+      stakeHolder: props.modalObject.Input,
       cal: true,
     });
     setFlagState(true);
   };
-
-  const options =
-    UserStatus !== "Single"
-      ? [
-          { value: "client", label: RenderName("client") },
-          { value: "partner", label: RenderName("partner") },
-        ]
-      : [{ value: "client", label: RenderName("client") }];
 
   let sourceOfFundsOptions = [
     { value: "Ordinary", label: "Ordinary" },
@@ -321,6 +303,10 @@ const CFAnnuities = (props) => {
   const [rowConfig, setRowConfig] = useState(() => {
     let OriginalArray = [
       {
+        value: "1",
+        type: "plainText2.0",
+      },
+      {
         name: "originalInvestmentAmount",
         type: "number-toComma",
         placeholder: "Original Investment Amount",
@@ -345,7 +331,7 @@ const CFAnnuities = (props) => {
         type: "yesnoModal",
         placeholder: "RCV",
         callBack: true,
-        key: "RCV",
+        key: "RCVObj",
         innerModalTitle: "RCV",
         func: handleInnerModal,
       },
@@ -383,7 +369,7 @@ const CFAnnuities = (props) => {
         type: "yesnoModal",
         placeholder: "Deductible Amount",
         callBack: true,
-        key: "deductibleAmount",
+        key: "deductibleAmountObj",
         innerModalTitle: "Deductible Amount",
         func: handleInnerModal,
       },
@@ -395,12 +381,17 @@ const CFAnnuities = (props) => {
   const componentMapping = {
     "Input Override": <InputOverride />,
     "Regular Contributions": <RegularContributions />,
-    "RCV": <RCV />,
+    RCV: <RCV />,
     "Deductible Amount": <DeductibleAmount />,
   };
 
   const ModalContent = (obj) => {
     return componentMapping[obj.title] || null;
+  };
+
+  let handleInput = (e, setFieldValue) => {
+    let value = e.target.value > 3 ? 3 : e.target.value;
+    setFieldValue(e.target.id, value);
   };
 
   return (
@@ -430,20 +421,23 @@ const CFAnnuities = (props) => {
               <div className="col-md-12">
                 <div className="d-flex justify-content-center align-items-center gap-4">
                   <label htmlFor="" className="text-end ">
-                    Owner
+                    Number of Annuities does{" "}
+                    {RenderName(props.modalObject.Input)} have :
                   </label>
 
-                  <div style={{ minWidth: "25%" }}>
+                  <div style={{ minWidth: "5%", maxWidth: "10%" }}>
                     <Field
-                      name={`owner`}
-                      component={CreatableMultiSelectField}
-                      label="Multi Select Field"
-                      options={options}
+                      type="number"
+                      id="numberOfProperties"
+                      name="numberOfProperties"
+                      className="form-control inputDesignDoubleInput"
+                      onChange={(e) => handleInput(e, setFieldValue)}
                     />
                   </div>
                 </div>
               </div>
-              {values.owner.length > 0 && (
+
+              {values.numberOfProperties > 0 && (
                 <div className="mt-4">
                   <Table striped bordered responsive hover>
                     <thead>
@@ -469,30 +463,28 @@ const CFAnnuities = (props) => {
                       </tr>
                     </thead>
                     <tbody>
-                      {values.owner.includes("client") && (
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                          handleInnerModal={handleInnerModal}
-                          stakeHolder="client."
-                        />
-                      )}
+                      {Array.from({
+                        length: values.numberOfProperties,
+                      }).map((_, index) => {
+                        // Ensure each rowConfig object has a name before concatenating the index
+                        const updatedRowConfig = rowConfig.map((row) => ({
+                          ...row,
+                          name: row.name ? `${row.name}_${index}` : row.name,
+                          key: row.key ? `${row.key}_${index}` : row.key,
+                          value: row.value ? index + 1 : row.value,
+                        }));
 
-                      {values.owner.includes("partner") &&
-                        UserStatus === "Married" && (
+                        return (
                           <DynamicTableRow
-                            rowConfig={rowConfig}
+                            rowConfig={updatedRowConfig}
                             values={values}
                             setFieldValue={setFieldValue}
                             handleChange={handleChange}
                             handleBlur={handleBlur}
                             handleInnerModal={handleInnerModal}
-                            stakeHolder="partner."
                           />
-                        )}
+                        );
+                      })}
                     </tbody>
                   </Table>
                 </div>

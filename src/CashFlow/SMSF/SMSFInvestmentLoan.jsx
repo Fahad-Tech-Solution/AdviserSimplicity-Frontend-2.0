@@ -34,7 +34,7 @@ const SMSFInvestmentLoan = (props) => {
   let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
     useRecoilState(CashFlowReCalculateLoading);
 
-  let initialValues = { owner: [] };
+  let initialValues = { owner: ["client"] };
 
   let SMSFInvestmentLoan =
     Object.keys(questionDetail[props.modalObject.sourceKey] || {}).length > 0
@@ -203,14 +203,6 @@ const SMSFInvestmentLoan = (props) => {
     value: i + 1,
     label: ("Year " + (i + 1)).toString(),
   }));
-
-  const options =
-    UserStatus !== "Single"
-      ? [
-          { value: "client", label: RenderName("client") },
-          { value: "partner", label: RenderName("partner") },
-        ]
-      : [{ value: "client", label: RenderName("client") }];
 
   const loanTermOptionsWithNo = Array.from({ length: 31 }, (_, i) => {
     if (i === 0) {
@@ -403,6 +395,7 @@ const SMSFInvestmentLoan = (props) => {
         return (
           <Form>
             <Row>
+              {/*
               <div className="col-md-12">
                 <div className="d-flex justify-content-center align-items-center gap-4">
                   <label htmlFor="" className="text-end ">
@@ -419,6 +412,7 @@ const SMSFInvestmentLoan = (props) => {
                   </div>
                 </div>
               </div>
+                */}
               {values.owner.length > 0 && (
                 <div className="mt-4">
                   <Table striped bordered responsive hover>
@@ -451,7 +445,7 @@ const SMSFInvestmentLoan = (props) => {
                           stakeHolder="client."
                         />
                       )}
-
+                      {/*
                       {values.owner.includes("partner") &&
                         UserStatus === "Married" && (
                           <DynamicTableRow
@@ -463,6 +457,7 @@ const SMSFInvestmentLoan = (props) => {
                             stakeHolder="partner."
                           />
                         )}
+                          */}
                     </tbody>
                   </Table>
                   <button

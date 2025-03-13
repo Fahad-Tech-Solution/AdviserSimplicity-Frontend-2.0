@@ -28,7 +28,23 @@ const CashFlowCarsCards = (props) => {
         "cf_boat",
         "cf_caravan",
         "cf_otherAssets",
-        "cf_familyHome"]
+        "cf_familyHome",
+        "cf_annuities",
+        //show only client in bellow
+        "cf_SMSFBank",
+        "cf_SMSFTermDeposit",
+        "cf_SMSFAustralianShares",
+        "cf_SMSFPlatformInvestment",
+        "cf_SMSF",
+        "cf_SMSFInvestmentLoan",
+        "cf_FamilyTrustBankAccount",
+        "cf_WestFamilyTrustTermDeposits",
+        "cf_FamilyTrustAustralianShares",
+        "cf_FamilyTrustPlatformInvestment",
+        "cf_FamilyTrust",
+        "cf_FamilyTrustInvestmentLoan",
+        
+]
 
     return (
         <div className='row'>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
-import { Form, Formik } from "formik";
+import { Field, Form, Formik } from "formik";
 import { Row, Table } from "react-bootstrap";
 import { FaRegBuilding } from "react-icons/fa6";
 import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
@@ -15,6 +15,7 @@ import {
   openNotificationSuccess,
   PatchAxios,
   PostAxios,
+  toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
 import TotalCostBase from "../Financial Investments/TotalCostBase";
 import CashFlowHomeLoan from "../PersonalAssetsComponents/CashFlowNew/CashFlowHomeLoan";
@@ -58,40 +59,37 @@ const SMSFInvestmentProperties = (props) => {
   const fillInitialValues = (setFieldValue) => {
     try {
       setObjAndAPIKey(props.modalObject.key);
-      // console.log(
-      //   SMSFInvestmentLoan,
-      //   questionDetail[props.modalObject.sourceKey]
-      // );
-
       console.log("cashFlowData:", cashFlowData);
 
       const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
 
-      const updateFields = (data, prefix) => {
-        if (!data || !Object.keys(data).length) return;
+      const updateFields = (data, index) => {
+        if (!data || Object.keys(data).length === 0) return;
 
         const fields = {
-          streetAddress: data.streetAddress || data.PropertyAddress || "",
-          valueOfProperty: data.valueOfProperty || data.CurrentValue || "",
-          state: data.state || "",
-          yearOfPurchase: data.yearOfPurchase || "",
-          totalCostBaseObj: data.totalCostBaseObj || {
+          [`streetAddress_${index}`]:
+            data.streetAddress || data.PropertyAddress || "",
+          [`valueOfProperty_${index}`]:
+            data.valueOfProperty || data.CurrentValue || "",
+          [`state_${index}`]: data.state || "",
+          [`yearOfPurchase_${index}`]: data.yearOfPurchase || "",
+          [`totalCostBaseObj_${index}`]: data.totalCostBaseObj || {
             costBaseExisting: data.costBaseExisting || data.CostBase || "",
           },
-          expectedGrowthRate: data.expectedGrowthRate || "2.50%",
-          loanBalance:
+          [`expectedGrowthRate_${index}`]: data.expectedGrowthRate || "2.50%",
+          [`loanBalance_${index}`]:
             data.loanBalance ||
-            (data.propertyLoanDetailsArray.length > 0 && "Yes") ||
-            "No",
-          loanBalanceObj:
-            data.loanBalanceObj || data.propertyLoanDetailsArray[0] || {},
-          rentalIncome: data.rentalIncome || "",
-          sellPropertyInYear: data.sellPropertyInYear || "No",
-          estimatedFutureSellingCost: data.estimatedFutureSellingCost || "",
+            (data.propertyLoanDetailsArray?.length > 0 ? "Yes" : "No"),
+          [`loanBalanceObj_${index}`]:
+            data.loanBalanceObj || data.propertyLoanDetailsArray?.[0] || {},
+          [`rentalIncome_${index}`]: data.rentalIncome || "",
+          [`sellPropertyInYear_${index}`]: data.sellPropertyInYear || "No",
+          [`estimatedFutureSellingCost_${index}`]:
+            data.estimatedFutureSellingCost || "",
         };
 
         Object.entries(fields).forEach(([key, value]) => {
-          setFieldValue(`${key}`, value);
+          setFieldValue(key, value);
         });
       };
 
@@ -101,22 +99,26 @@ const SMSFInvestmentProperties = (props) => {
         managedFundsLOC._id
       ) {
         if (SMSFInvestmentLoan.client.length > 0) {
-          updateFields(SMSFInvestmentLoan.client[0], "client");
-        }
-
-        if (UserStatus === "Married" && SMSFInvestmentLoan.partner.length > 0) {
-          updateFields(SMSFInvestmentLoan.partner[0], "partner");
+          SMSFInvestmentLoan.client.forEach((clientData, index) => {
+            updateFields(clientData, index);
+          });
         }
       } else {
         const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-        if (cashFlowDetails) {
-          updateFields(cashFlowDetails, "client");
+        if (cashFlowDetails?.client) {
+          cashFlowDetails.client.forEach((clientData, index) => {
+            updateFields(clientData, index);
+          });
         }
       }
 
       if (cashFlowData?.[objAndAPIKey]?._id) {
         const cashFlowDataDetails = cashFlowData[objAndAPIKey];
-        updateFields(cashFlowDataDetails, "client");
+        setFieldValue("numberOfProperties", cashFlowDataDetails.client.length);
+
+        cashFlowDataDetails.client.forEach((clientData, index) => {
+          updateFields(clientData, index);
+        });
       }
     } catch (error) {
       console.error("Error in fillInitialValues:", error);
@@ -124,13 +126,59 @@ const SMSFInvestmentProperties = (props) => {
   };
 
   let onSubmit = async (values) => {
-    let obj = values;
+    const numberOfProperties = parseInt(values.numberOfProperties, 10);
+    const newEntries = [];
+
+    // Iterate through each map entry and create a new object
+    for (let i = 0; i < numberOfProperties; i++) {
+      const newEntry = {
+        streetAddress: values[`streetAddress_${i}`] || "",
+        valueOfProperty: values[`valueOfProperty_${i}`] || "",
+        state: values[`state_${i}`] || "",
+        yearOfPurchase: values[`yearOfPurchase_${i}`] || "",
+        totalCostBaseObj: values[`totalCostBaseObj_${i}`] || "",
+        expectedGrowthRate: values[`expectedGrowthRate_${i}`] || "",
+        loanBalance: values[`loanBalance_${i}`] || "",
+        loanBalanceObj: values[`loanBalanceObj_${i}`] || "",
+        rentalIncome: values[`rentalIncome_${i}`] || "",
+        sellPropertyInYear: values[`sellPropertyInYear_${i}`] || "",
+        estimatedFutureSellingCost:
+          values[`estimatedFutureSellingCost_${i}`] || "",
+      };
+      newEntries.push(newEntry);
+    }
+
+    let obj = {
+      client: newEntries,
+    };
+
+    obj.numberOfProperties = parseInt(values.numberOfProperties, 10);
     obj.scenarioFK = JSON.parse(localStorage.getItem("ScenarioObj"))._id;
-    obj.clientTotal = values.valueOfProperty || "$0";
-    obj.partnerTotal = values.loanBalanceObj.loanBalance || "$0";
+
+    obj.clientTotal = toCommaAndDollar(
+      newEntries.reduce(
+        (total, entry) =>
+          total + parseFloat(entry.valueOfProperty.replace(/[^0-9.-]+/g, "")) ||
+          0,
+        0
+      )
+    );
+    obj.partnerTotal = toCommaAndDollar(
+      newEntries.reduce(
+        (total, entry) =>
+          total +
+            parseFloat(
+              entry.loanBalanceObj.loanBalance.replace(/[^0-9.-]+/g, "")
+            ) || 0,
+        0
+      )
+    );
+
+    console.log(JSON.stringify(obj));
+    // return false;
     const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
 
-    console.log("obj", obj);
+    // console.log("obj", obj);
 
     try {
       let res;
@@ -306,6 +354,16 @@ const SMSFInvestmentProperties = (props) => {
     return componentMapping[obj.title] || null;
   };
 
+  let handleInput = (e, setFieldValue) => {
+    let value = 0;
+    if (props.modalObject.title === "SMSF Investment Properties") {
+      value = e.target.value > 5 ? 5 : e.target.value;
+    } else {
+      value = e.target.value > 10 ? 10 : e.target.value;
+    }
+    setFieldValue(e.target.id, value);
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -331,49 +389,84 @@ const SMSFInvestmentProperties = (props) => {
 
             <Row>
               <div className="col-md-12">
-                <div className="row justify-content-center">
-                  <div className="mt-4">
-                    <Table striped bordered responsive hover>
-                      <thead>
-                        <tr>
-                          <th>No#</th>
-                          <th>Street Address</th>
-                          <th>
-                            Value of Property -{" "}
-                            <a
-                              href="https://www.property.com.au/"
-                              target="_blank"
-                              className="text-white"
-                            >
-                              <FaRegBuilding />
-                            </a>
-                          </th>
-                          <th style={{ color: "black" }}>State</th>
-                          <th>Year Of Purchase</th>
-                          <th>Total Cost Base</th>
-                          <th>Expected Growth Rate</th>
-                          <th>Loan Balance</th>
-                          <th>Rental Income</th>
-                          <th>Sell Property in Year</th>
-                          <th style={{ color: "black" }}>
-                            Estimated Future Selling Cost (%)
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                          handleInnerModal={handleInnerModal}
-                        />
-                      </tbody>
-                    </Table>
+                <div className="d-flex justify-content-center align-items-center gap-4">
+                  <label htmlFor="" className="text-end fw-bold">
+                    Number of properties
+                  </label>
+
+                  <div style={{ minWidth: "5%", maxWidth: "10%" }}>
+                    <Field
+                      type="number"
+                      id="numberOfProperties"
+                      name="numberOfProperties"
+                      className="form-control inputDesignDoubleInput"
+                      onChange={(e) => handleInput(e, setFieldValue)}
+                    />
                   </div>
                 </div>
               </div>
+              {values.numberOfProperties && (
+                <div className="col-md-12">
+                  <div className="row justify-content-center">
+                    <div className="mt-4">
+                      <Table striped bordered responsive hover>
+                        <thead>
+                          <tr>
+                            <th>No#</th>
+                            <th>Street Address</th>
+                            <th>
+                              Value of Property -{" "}
+                              <a
+                                href="https://www.property.com.au/"
+                                target="_blank"
+                                className="text-white"
+                              >
+                                <FaRegBuilding />
+                              </a>
+                            </th>
+                            <th style={{ color: "black" }}>State</th>
+                            <th>Year Of Purchase</th>
+                            <th>Total Cost Base</th>
+                            <th>Expected Growth Rate</th>
+                            <th>Loan Balance</th>
+                            <th>Rental Income</th>
+                            <th>Sell Property in Year</th>
+                            <th style={{ color: "black" }}>
+                              Estimated Future Selling Cost (%)
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Array.from({
+                            length: values.numberOfProperties,
+                          }).map((_, index) => {
+                            // Ensure each rowConfig object has a name before concatenating the index
+                            const updatedRowConfig = rowConfig.map((row) => ({
+                              ...row,
+                              name: row.name
+                                ? `${row.name}_${index}`
+                                : row.name,
+                              key: row.key ? `${row.key}_${index}` : row.key,
+                              value: row.value ? index + 1 : row.value,
+                            }));
+
+                            return (
+                              <DynamicTableRow
+                                rowConfig={updatedRowConfig}
+                                values={values}
+                                setFieldValue={setFieldValue}
+                                handleChange={handleChange}
+                                handleBlur={handleBlur}
+                                handleInnerModal={handleInnerModal}
+                              />
+                            );
+                          })}
+                        </tbody>
+                      </Table>
+                    </div>
+                  </div>
+                </div>
+              )}
             </Row>
           </Form>
         );

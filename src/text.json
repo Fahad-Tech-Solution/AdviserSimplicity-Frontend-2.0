@@ -1,0 +1,48 @@
+{
+    "client": [
+        {
+            "address": "Distinctio Quia adi",
+            "currentValue": "$881,232",
+            "state": "QLD",
+            "clientOwnership": "8.44%",
+            "partnerOwnership": "2.00%",
+            "yearOfPurchase": "1",
+            "totalCostBaseObj": {
+                "stampDuty": "FH Buyer",
+                "stampDutyCalculation": "",
+                "otherPurchaseCosts": "$123,555",
+                "costBaseExisting": "$123,999",
+                "totalCostBase": ""
+            },
+            "loanBalance": "Yes",
+            "familyHomeLoanObj": {},
+            "expectedGrowthRate": "2.50%",
+            "sellPropertyInYear": "No",
+            "estimatedFutureSellingCost": "5.00%"
+        },
+        {
+            "address": "Distinctio Quia adi",
+            "currentValue": "$1,213",
+            "state": "VIC",
+            "clientOwnership": "82.00%",
+            "partnerOwnership": "18.00%",
+            "yearOfPurchase": "9",
+            "totalCostBaseObj": {
+                "stampDuty": "FH Buyer",
+                "stampDutyCalculation": "",
+                "otherPurchaseCosts": "$122",
+                "costBaseExisting": "$2,121",
+                "totalCostBase": ""
+            },
+            "loanBalance": "Yes",
+            "familyHomeLoanObj": {},
+            "expectedGrowthRate": "6.50%",
+            "sellPropertyInYear": "9",
+            "estimatedFutureSellingCost": "5.00%"
+        }
+    ],
+    "scenarioFK": "677f709a5e615599ebcbef79",
+    "numberOfProperties": 2,
+    "clientTotal": "$882,445",
+    "partnerTotal": "$0"
+}

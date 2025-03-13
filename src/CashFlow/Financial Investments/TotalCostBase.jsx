@@ -179,11 +179,6 @@ const TotalCostBase = (props) => {
         },
       };
 
-      console.log(
-        "props.modalObject.ParentObject.key",
-        props.modalObject.ParentObject.key
-      );
-
       let api = `${DefaultUrl}/api/cal/${
         apiKey[props.modalObject.ParentObject.key].key
       }/${apiKey[props.modalObject.ParentObject.key].param}`;

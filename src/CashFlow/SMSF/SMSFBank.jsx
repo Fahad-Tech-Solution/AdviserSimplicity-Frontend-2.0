@@ -36,16 +36,16 @@ const SMSFBank = (props) => {
   );
 
   let initialValues = {
-    owner: [],
+    owner: ["client"],
   };
 
   let SMSFBank =
     Object.keys(questionDetail[props.modalObject.sourceKey] || {}).length > 0
       ? questionDetail[props.modalObject.sourceKey]
       : {
-          client: [],
-          joint: [],
+          client:  [],
           partner: [],
+          joint:   [],
         }; // Use an empty object as default if SMSFBank is undefined
 
   const fillInitialValues = (setFieldValue) => {
@@ -87,18 +87,17 @@ const SMSFBank = (props) => {
           updateFields(Obj, "client");
         }
 
-        // Update partner-related fields
-        if (
-          UserStatus === "Married" &&
-          Object.keys(SMSFBank.partner||{}).length > 0 &&
-          SMSFBank?.partner.length > 0
-        ) {
-          let Obj = {
-            openingBalance: SMSFBank.partnerCurrentBalance || "",
-          };
-
-          updateFields(Obj, "partner");
-        }
+        // // Update partner-related fields
+        // if (
+        //   UserStatus === "Married" &&
+        //   Object.keys(SMSFBank.partner || {}).length > 0 &&
+        //   SMSFBank?.partner.length > 0
+        // ) {
+        //   let Obj = {
+        //     openingBalance: SMSFBank.partnerCurrentBalance || "",
+        //   };
+        //   updateFields(Obj, "partner");
+        // }
       } else {
         const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
         if (cashFlowDetails) {
@@ -106,12 +105,12 @@ const SMSFBank = (props) => {
           if (cashFlowDetails.owner.includes("client")) {
             updateFields(cashFlowDetails.client, "client");
           }
-          if (
-            UserStatus === "Married" &&
-            cashFlowDetails.owner.includes("partner")
-          ) {
-            updateFields(cashFlowDetails.partner, "partner");
-          }
+          // if (
+          //   UserStatus === "Married" &&
+          //   cashFlowDetails.owner.includes("partner")
+          // ) {
+          //   updateFields(cashFlowDetails.partner, "partner");
+          // }
         }
       }
 
@@ -123,12 +122,12 @@ const SMSFBank = (props) => {
           updateFields(cashFlowDataDetails.client, "client");
         }
 
-        if (
-          UserStatus === "Married" &&
-          cashFlowDataDetails.owner.includes("partner")
-        ) {
-          updateFields(cashFlowDataDetails.partner, "partner");
-        }
+        // if (
+        //   UserStatus === "Married" &&
+        //   cashFlowDataDetails.owner.includes("partner")
+        // ) {
+        //   updateFields(cashFlowDataDetails.partner, "partner");
+        // }
       }
     } catch (error) {
       console.error("Error in fillInitialValues:", error);
@@ -147,11 +146,11 @@ const SMSFBank = (props) => {
       obj.clientTotal = "";
     }
 
-    if (values.owner.includes("partner")) {
-      obj.partnerTotal = values.partner.openingBalance || "$0";
-    } else {
-      obj.partnerTotal = "";
-    }
+    // if (values.owner.includes("partner")) {
+    //   obj.partnerTotal = values.partner.openingBalance || "$0";
+    // } else {
+    //   obj.partnerTotal = "";
+    // }
 
     const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
 
@@ -208,13 +207,7 @@ const SMSFBank = (props) => {
     setFlagState(true);
   };
 
-  const options =
-    UserStatus !== "Single"
-      ? [
-          { value: "client", label: RenderName("client") },
-          { value: "partner", label: RenderName("partner") },
-        ]
-      : [{ value: "client", label: RenderName("client") }];
+  const options = [{ value: "client", label: RenderName("client") }];
 
   const indexation = Array.from({ length: 21 }, (_, i) => ({
     value: (i * 0.5).toFixed(2) + "%",
@@ -313,6 +306,7 @@ const SMSFBank = (props) => {
                 {/* Modal content can be added here */}
               </InnerModal>
 
+              {/*
               <div className="col-md-12">
                 <div className="d-flex justify-content-center align-items-center gap-4">
                   <label htmlFor="" className="text-end ">
@@ -329,6 +323,7 @@ const SMSFBank = (props) => {
                   </div>
                 </div>
               </div>
+                    */}
 
               {values.owner.length > 0 && (
                 <div className="mt-4">
@@ -368,7 +363,7 @@ const SMSFBank = (props) => {
                           stakeHolder="client."
                         />
                       )}
-
+                      {/*
                       {values.owner.includes("partner") &&
                         UserStatus === "Married" && (
                           <DynamicTableRow
@@ -391,6 +386,7 @@ const SMSFBank = (props) => {
                             stakeHolder="partner."
                           />
                         )}
+                          */}
                     </tbody>
                   </Table>
                 </div>

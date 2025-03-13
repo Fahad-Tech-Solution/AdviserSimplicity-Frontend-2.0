@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
-import { Form, Formik } from "formik";
+import { Field, Form, Formik } from "formik";
 import { Row, Table } from "react-bootstrap";
 import { FaRegBuilding } from "react-icons/fa6";
 import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
@@ -17,6 +17,7 @@ import {
   openNotificationSuccess,
   PatchAxios,
   PostAxios,
+  toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
 
 const CashFlowInvestmentsProperty = (props) => {
@@ -61,70 +62,76 @@ const CashFlowInvestmentsProperty = (props) => {
       // Set the object and API key
       setObjAndAPIKey(props.modalObject.key);
 
-      // console.log(investmentPropertyDetails, "Discovery Form Data");
-      // console.log(cashFlowData[props.modalObject.key], "cashFlowData Form Data");
-      // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
-
       const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
 
-      // Helper function to update field values
-      const updateFields = (data, prefix) => {
+      // Helper function to update field values dynamically based on index
+      const updateFields = (data, index) => {
         if (!data || !Object.keys(data).length) return;
 
         console.log(data.propertyLoanDetailsArray, "Data");
 
         const fields = {
-          streetAddress: data.streetAddress || data.PropertyAddress || "",
-          valueOfProperty: data.valueOfProperty || data.CurrentValue || "",
-          clientOwnership: data.clientOwnership || data.ClientOwnership || "",
-          partnerOwnership:
-          data.partnerOwnership || data.PartnerOwnership || "",
-          state: data.state || "",
-          yearOfPurchase: data.yearOfPurchase || "",
-          totalCostBaseObj: data.totalCostBaseObj || {
+          [`streetAddress_${index}`]:
+            data.streetAddress || data.PropertyAddress || "",
+          [`valueOfProperty_${index}`]:
+            data.valueOfProperty || data.CurrentValue || "",
+          [`clientOwnership_${index}`]:
+            data.clientOwnership || data.ClientOwnership || "",
+          [`partnerOwnership_${index}`]:
+            data.partnerOwnership || data.PartnerOwnership || "",
+          [`state_${index}`]: data.state || "",
+          [`yearOfPurchase_${index}`]: data.yearOfPurchase || "",
+          [`totalCostBaseObj_${index}`]: data.totalCostBaseObj || {
             costBaseExisting: data.costBaseExisting || data.CostBase || "",
           },
-          expectedGrowthRate: data.expectedGrowthRate || "2.50%",
-          loanBalance:
+          [`expectedGrowthRate_${index}`]: data.expectedGrowthRate || "2.50%",
+          [`loanBalance_${index}`]:
             data.loanBalance ||
-            (data.propertyLoanDetailsArray.length > 0 && "Yes") ||
-            "No",
-          loanBalanceObj:
-            data.loanBalanceObj || data.propertyLoanDetailsArray[0] || {},
-          rentalIncome: data.rentalIncome || "",
-          sellPropertyInYear: data.sellPropertyInYear || "No",
-          convertToPPRYear: data.convertToPPRYear || "No",
-          estimatedFutureSellingCost: data.estimatedFutureSellingCost || "",
+            (data.propertyLoanDetailsArray?.length > 0 ? "Yes" : "No"),
+          [`loanBalanceObj_${index}`]:
+            data.loanBalanceObj || data.propertyLoanDetailsArray?.[0] || {},
+          [`rentalIncome_${index}`]: data.rentalIncome || "",
+          [`sellPropertyInYear_${index}`]: data.sellPropertyInYear || "No",
+          [`convertToPPRYear_${index}`]: data.convertToPPRYear || "No",
+          [`estimatedFutureSellingCost_${index}`]:
+            data.estimatedFutureSellingCost || "",
         };
 
         Object.entries(fields).forEach(([key, value]) => {
-          setFieldValue(`${key}`, value);
+          setFieldValue(key, value);
         });
       };
 
-      // Update owner field
+      // Update owner field based on selected source
       if (
         scenarioObj?.selectedSource === "discoveryForm" &&
         investmentPropertyDetails &&
         investmentPropertyDetails._id
       ) {
-        // setFieldValue(`address`, PersonalData.client.clientHomeAddress || "");
-
-        let Obj = investmentPropertyDetails?.client[0];
-        updateFields(Obj, "client");
+        investmentPropertyDetails.client.forEach((clientData, index) => {
+          updateFields(clientData, index);
+        });
       } else {
         // Handle cashFlowData scenario
         const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
         console.log(cashFlowDetails, "cashFlowDetails");
-        if (cashFlowDetails) {
-          updateFields(cashFlowDetails, "client");
+
+        if (cashFlowDetails?.client) {
+          cashFlowDetails.client.forEach((clientData, index) => {
+            updateFields(clientData, index);
+          });
         }
       }
 
       // Additional data from cashFlowData
       if (cashFlowData?.[objAndAPIKey]?._id) {
         const cashFlowDataDetails = cashFlowData[objAndAPIKey];
-        updateFields(cashFlowDataDetails, "client");
+
+        setFieldValue("numberOfProperties", cashFlowDataDetails.client.length);
+
+        cashFlowDataDetails.client.forEach((clientData, index) => {
+          updateFields(clientData, index);
+        });
       }
     } catch (error) {
       console.error("Error in fillInitialValues:", error);
@@ -132,19 +139,57 @@ const CashFlowInvestmentsProperty = (props) => {
   };
 
   let onSubmit = async (values) => {
-    console.log(JSON.stringify(values));
-    // return (false);
-    let obj = values;
+    const numberOfProperties = parseInt(values.numberOfProperties, 10);
+    const newEntries = [];
 
-    obj.scenarioFK = JSON.parse(localStorage.getItem("ScenarioObj"))._id;
+    // Iterate through properties and structure data
+    for (let i = 0; i < numberOfProperties; i++) {
+      const newEntry = {
+        streetAddress: values[`streetAddress_${i}`] || "",
+        clientOwnership: values[`clientOwnership_${i}`] || "",
+        partnerOwnership: values[`partnerOwnership_${i}`] || "",
+        valueOfProperty: values[`valueOfProperty_${i}`] || "",
+        state: values[`state_${i}`] || "",
+        yearOfPurchase: values[`yearOfPurchase_${i}`] || "",
+        totalCostBaseObj: values[`totalCostBaseObj_${i}`] || "",
+        expectedGrowthRate: values[`expectedGrowthRate_${i}`] || "",
+        loanBalance: values[`loanBalance_${i}`] || "",
+        loanBalanceObj: values[`loanBalanceObj_${i}`] || "",
+        rentalIncome: values[`rentalIncome_${i}`] || "",
+        sellPropertyInYear: values[`sellPropertyInYear_${i}`] || "",
+        estimatedFutureSellingCost:
+          values[`estimatedFutureSellingCost_${i}`] || "",
+      };
+      newEntries.push(newEntry);
+    }
 
-    obj.clientTotal = values.valueOfProperty || "$0";
-
-    obj.partnerTotal = values.loanBalanceObj.loanBalance || "$0";
-
-    const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
+    let obj = {
+      client: newEntries,
+      scenarioFK: JSON.parse(localStorage.getItem("ScenarioObj"))._id,
+      numberOfProperties,
+      clientTotal: toCommaAndDollar(
+        newEntries.reduce(
+          (total, entry) =>
+            total +
+            (parseFloat(entry.valueOfProperty.replace(/[^0-9.-]+/g, "")) || 0),
+          0
+        )
+      ),
+      partnerTotal: toCommaAndDollar(
+        newEntries.reduce(
+          (total, entry) =>
+            total +
+            (parseFloat(
+              entry.loanBalanceObj?.loanBalance?.replace(/[^0-9.-]+/g, "")
+            ) || 0),
+          0
+        )
+      ),
+    };
 
     console.log(JSON.stringify(obj), "final obj");
+
+    const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
 
     try {
       let res;
@@ -158,34 +203,25 @@ const CashFlowInvestmentsProperty = (props) => {
       }
 
       if (res) {
-        console.log(res);
-        const updatedData = {
-          ...cashFlowData,
-          [objAndAPIKey]: res,
-        };
-        setCashFlowData(updatedData);
+        console.log("API Returns Data", res);
+        setCashFlowData({ ...cashFlowData, [objAndAPIKey]: res });
       }
 
       openNotificationSuccess(
         "success",
         "topRight",
         "Success Notification",
-        'Data of "' + props.modalObject.title + '" is Saved'
+        `Data of "${props.modalObject.title}" is Saved`
       );
 
-      // Reset the flag state if necessary
-      if (props.flagState) {
-        props.setFlagState(false);
-      }
+      if (props.flagState) props.setFlagState(false);
     } catch (error) {
       console.error("Error occurred while making API call:", error);
       openNotificationSuccess(
         "error",
         "topRight",
         "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        `Data of "${props.modalObject.title}" is not Saved. Please try again.`
       );
     }
   };
@@ -210,33 +246,29 @@ const CashFlowInvestmentsProperty = (props) => {
     };
   });
 
-  let CalculatePercentage = (
-    values,
-    setFieldValue,
-    CurrentInput,
-    stakeHolder
-  ) => {
-    // console.log(values, setFieldValue, CurrentInput, stakeHolder);
-
-    let clientOwnership = values.clientOwnership.replace(/[^0-9.]+/g, "") || 0;
+  let CalculatePercentage = (values, setFieldValue, CurrentInput, stakeHolder) => {
+    // Extract index from the field name
+    const match = CurrentInput.name.match(/_(\d+)$/);
+    const index = match ? match[1] : 0;
+  
+    let clientOwnership =
+      values[`clientOwnership_${index}`]?.replace(/[^0-9.]+/g, "") || 0;
     let partnerOwnership =
-      values.partnerOwnership.replace(/[^0-9.]+/g, "") || 0;
-
+      values[`partnerOwnership_${index}`]?.replace(/[^0-9.]+/g, "") || 0;
+  
     switch (CurrentInput.name) {
-      case "clientOwnership":
+      case `clientOwnership_${index}`:
         clientOwnership = CurrentInput.value.replace(/[^0-9.]+/g, "");
         setFieldValue(
-          "partnerOwnership",
-          (100 - (clientOwnership > 100 ? 100 : clientOwnership)).toFixed(2) +
-            "%"
+          `partnerOwnership_${index}`,
+          (100 - (clientOwnership > 100 ? 100 : clientOwnership)).toFixed(2) + "%"
         );
         break;
-      case "partnerOwnership":
+      case `partnerOwnership_${index}`:
         partnerOwnership = CurrentInput.value.replace(/[^0-9.]+/g, "");
         setFieldValue(
-          "clientOwnership",
-          (100 - (partnerOwnership > 100 ? 100 : partnerOwnership)).toFixed(2) +
-            "%"
+          `clientOwnership_${index}`,
+          (100 - (partnerOwnership > 100 ? 100 : partnerOwnership)).toFixed(2) + "%"
         );
         break;
       default:
@@ -244,6 +276,7 @@ const CashFlowInvestmentsProperty = (props) => {
         break;
     }
   };
+  
 
   let handleInnerModal = (title, values, key, stakeHolder) => {
     console.log(title, values, key);
@@ -370,6 +403,12 @@ const CashFlowInvestmentsProperty = (props) => {
     return componentMapping[obj.title] || null;
   };
 
+  let handleInput = (e, setFieldValue) => {
+    let value = e.target.value > 10 ? 10 : e.target.value;
+
+    setFieldValue(e.target.id, value);
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -395,62 +434,97 @@ const CashFlowInvestmentsProperty = (props) => {
 
             <Row>
               <div className="col-md-12">
-                <div className="row justify-content-center">
-                  <div className="mt-4">
-                    <Table striped bordered responsive hover>
-                      <thead>
-                        <tr>
-                          <th>No#</th>
-                          <th>Street Address</th>
-                          <th>
-                            Value of Property -{" "}
-                            <a
-                              href="https://www.property.com.au/"
-                              target="_blank"
-                              className="text-white"
-                            >
-                              <FaRegBuilding />
-                            </a>
-                          </th>
-                          <th>Client %Ownership</th>
-                          <th>Partner %Ownership</th>
-                          <th style={{ color: "black" }}>State</th>
-                          <th>Year Of Purchase</th>
-                          <th>Total Cost Base</th>
-                          <th>Expected Growth Rate</th>
-                          <th>Loan Balance</th>
-                          <th>Rental Income</th>
-                          <th>Sell Property in Year</th>
-                          <th>Convert into PPR in year</th>
-                          <th style={{ color: "black" }}>
-                            Estimated Future Sellling Cost (%)
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                          handleInnerModal={handleInnerModal}
-                        />
-                      </tbody>
-                    </Table>
-                    <button
-                      ref={props.childButtonRef}
-                      onClick={() => {
-                        handleChildButtonClick(values, setFieldValue);
-                      }}
-                      style={{ display: "none" }} // Hidden button
-                      type="button"
-                    >
-                      Hidden Child Button
-                    </button>
+                <div className="d-flex justify-content-center align-items-center gap-4">
+                  <label htmlFor="" className="text-end fw-bold">
+                    Number of properties
+                  </label>
+
+                  <div style={{ minWidth: "5%", maxWidth: "10%" }}>
+                    <Field
+                      type="number"
+                      id="numberOfProperties"
+                      name="numberOfProperties"
+                      className="form-control inputDesignDoubleInput"
+                      onChange={(e) => handleInput(e, setFieldValue)}
+                    />
                   </div>
                 </div>
               </div>
+              {values.numberOfProperties && (
+                <div className="col-md-12">
+                  <div className="row justify-content-center">
+                    <div className="mt-4">
+                      <Table striped bordered responsive hover>
+                        <thead>
+                          <tr>
+                            <th>No#</th>
+                            <th>Street Address</th>
+                            <th>
+                              Value of Property -{" "}
+                              <a
+                                href="https://www.property.com.au/"
+                                target="_blank"
+                                className="text-white"
+                              >
+                                <FaRegBuilding />
+                              </a>
+                            </th>
+                            <th>Client %Ownership</th>
+                            <th>Partner %Ownership</th>
+                            <th style={{ color: "black" }}>State</th>
+                            <th>Year Of Purchase</th>
+                            <th>Total Cost Base</th>
+                            <th>Expected Growth Rate</th>
+                            <th>Loan Balance</th>
+                            <th>Rental Income</th>
+                            <th>Sell Property in Year</th>
+                            <th>Convert into PPR in year</th>
+                            <th style={{ color: "black" }}>
+                              Estimated Future Sellling Cost (%)
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Array.from({
+                            length: values.numberOfProperties,
+                          }).map((_, index) => {
+                            // Ensure each rowConfig object has a name before concatenating the index
+                            const updatedRowConfig = rowConfig.map((row) => ({
+                              ...row,
+                              name: row.name
+                                ? `${row.name}_${index}`
+                                : row.name,
+                              key: row.key ? `${row.key}_${index}` : row.key,
+                              value: row.value ? index + 1 : row.value,
+                            }));
+
+                            return (
+                              <DynamicTableRow
+                                rowConfig={updatedRowConfig}
+                                values={values}
+                                setFieldValue={setFieldValue}
+                                handleChange={handleChange}
+                                handleBlur={handleBlur}
+                                handleInnerModal={handleInnerModal}
+                              />
+                            );
+                          })}
+                        </tbody>
+                      </Table>
+                      <button
+                        ref={props.childButtonRef}
+                        onClick={() => {
+                          handleChildButtonClick(values, setFieldValue);
+                        }}
+                        style={{ display: "none" }} // Hidden button
+                        type="button"
+                      >
+                        Hidden Child Button
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </Row>
           </Form>
         );

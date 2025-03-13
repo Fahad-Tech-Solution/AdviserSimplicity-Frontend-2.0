@@ -30,11 +30,15 @@ const CashFlowTotalCost = (props) => {
   let cashFlowData = useRecoilValue(CashFlowData);
 
   const fillInitialValues = (setFieldValue) => {
+    console.log(
+      props.modalObject.values[props.modalObject.key],
+      props.modalObject.key
+    );
     if (
-      Object.keys(props.modalObject.values[props.modalObject.key + "Obj"] || {})
+      Object.keys(props.modalObject.values[props.modalObject.key] || {})
         .length > 0
     ) {
-      let Data = props.modalObject.values[props.modalObject.key + "Obj"];
+      let Data = props.modalObject.values[props.modalObject.key];
       setFieldValue("stampDuty", Data.stampDuty);
       setFieldValue("stampDutyCalculation", Data.stampDutyCalculation);
       setFieldValue("otherPurchaseCosts", Data.otherPurchaseCosts);
@@ -49,8 +53,11 @@ const CashFlowTotalCost = (props) => {
   let onSubmit = async (values) => {
     console.log("values", values);
 
-    props.setFieldValue(props.modalObject.key + "Obj", values);
-    props.setFieldValue(props.modalObject.key, values.costBaseExisting);
+    props.setFieldValue(props.modalObject.key, values);
+    props.setFieldValue(
+      props.modalObject.key.replace(/Obj/, ""),
+      values.costBaseExisting
+    );
 
     // Reset the flag state if necessary
     if (props.flagState) {
@@ -94,51 +101,78 @@ const CashFlowTotalCost = (props) => {
       disabled: true,
     },
   ];
-
-  let handleChildButtonClick = async (values, setFieldValue) => {
-
+  
+  const handleChildButtonClick = async (values, setFieldValue) => {
     try {
-      let obj = JSON.parse(JSON.stringify(cashFlowData));
+      let updatedData = JSON.parse(JSON.stringify(cashFlowData));
 
-      obj.cf_familyHome = props.modalObject.values;
+      const { values: parentValues, key, title } = props.modalObject;
+      const numberOfProperties =
+        parseInt(parentValues.numberOfProperties, 10) || 1;
+      const currentIndex = key.match(/\d+/)?.[0] || 0; // Extract numeric index from key
 
-      obj.cf_familyHome[props.modalObject.key + "Obj"] = values;
+      let structuredEntries = Array.from(
+        { length: numberOfProperties },
+        (_, i) => ({
+          address: parentValues[`address_${i}`] || "",
+          currentValue: parentValues[`currentValue_${i}`] || "",
+          state: parentValues[`state_${i}`] || "",
+          clientOwnership: parentValues[`clientOwnership_${i}`] || "$0",
+          partnerOwnership: parentValues[`partnerOwnership_${i}`] || "",
+          yearOfPurchase: parentValues[`yearOfPurchase_${i}`] || "",
+          totalCostBase: parentValues[`totalCostBase_${i}`] || "",
+          loanBalance: parentValues[`loanBalance_${i}`] || "",
+          familyHomeLoanObj: parentValues[`familyHomeLoanObj_${i}`] || "$0",
+          expectedGrowthRate: parentValues[`expectedGrowthRate_${i}`] || "",
+          sellPropertyInYear: parentValues[`sellPropertyInYear_${i}`] || "",
+          estimatedFutureSellingCost:
+            parentValues[`estimatedFutureSellingCost_${i}`] || "",
+        })
+      );
 
-      let res = await PostAxios(`${DefaultUrl}/api/cal/cf_familyHome/INPUTS_Lifestyle_Assets_Debt`, obj);
-    
+      // Update the correct entry with new child modal values
+      structuredEntries[currentIndex][key.replace(/_\d+/, "")] = values;
+      updatedData.cf_familyHome.client = structuredEntries;
+
+      console.log(JSON.stringify(updatedData.cf_familyHome));
+
+      // Send API request
+      const res = await PostAxios(
+        `${DefaultUrl}/api/cal/cf_familyHome/INPUTS_Lifestyle_Assets_Debt`,
+        updatedData
+      );
+
       if (res) {
-        let { totalCostBaseObj } = res.data;
+        const { totalCostBaseObj } = res.data;
 
         if (values.stampDuty !== "Manual") {
           setFieldValue(
             "stampDutyCalculation",
-            toCommaAndDollar(totalCostBaseObj.stampDutyCalculation)
+            toCommaAndDollar(
+              totalCostBaseObj[currentIndex].stampDutyCalculation
+            )
           );
         }
         setFieldValue(
           "totalCostBase",
-          toCommaAndDollar(totalCostBaseObj.totalCostBase)
+          toCommaAndDollar(totalCostBaseObj[currentIndex].totalCostBase)
         );
 
-        setCashFlowReCalculateLoading(false);
         openNotificationSuccess(
           "success",
           "topRight",
           "Success Notification",
-          'Data of "' + props.modalObject.title + '" is Saved'
+          `Data of "${title}" is Saved`
         );
       }
     } catch (error) {
-      console.error("Error occurred while making API call:", error);
+      console.error("API Error:", error);
       openNotificationSuccess(
         "error",
         "topRight",
         "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        `Data of "${props.modalObject.title}" was not saved. Please try again.`
       );
-      setCashFlowReCalculateLoading(false);
     }
   };
 

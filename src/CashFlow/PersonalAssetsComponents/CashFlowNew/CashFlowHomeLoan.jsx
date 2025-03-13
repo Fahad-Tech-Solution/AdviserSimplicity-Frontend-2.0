@@ -58,9 +58,6 @@ const CashFlowHomeLoan = (props) => {
   ];
 
   const fillInitialValues = (setFieldValue) => {
-    // console.log(props.modalObject.ParentObject, "kuch Chala");
-    // console.log(clientPartnerPercentageFormsArray.includes(props.modalObject.ParentObject.title), "clientPartnerPercentageFormsArray.includes(props.modalObject.ParentObject.title)")
-    // console.log(DeductibleInterestFormsArray.includes(props.modalObject.ParentObject.title), "DeductibleInterestFormsArray.includes(props.modalObject.ParentObject.title)")
 
     setAddInputFlag(
       DeductibleInterestFormsArray.includes(
@@ -79,6 +76,7 @@ const CashFlowHomeLoan = (props) => {
         .length > 0
     ) {
       let Data = props.modalObject.values[props.modalObject.key];
+      console.log(Data, props.modalObject.key);
       setFieldValue("loanBalance", Data.loanBalance || Data.LoanBalance);
       setFieldValue(
         "loanBalanceCashFlowLoanBelanceLVR",
@@ -153,8 +151,8 @@ const CashFlowHomeLoan = (props) => {
   };
 
   const loanTermOptions = Array.from({ length: 31 }, (_, i) => ({
-    value: (i).toString(),
-    label: ("Year " + (i)).toString(),
+    value: i.toString(),
+    label: ("Year " + i).toString(),
   }));
 
   let handleInnerModal = (title, values, key) => {
@@ -257,7 +255,10 @@ const CashFlowHomeLoan = (props) => {
       console.log(FullObj, "FullObj", props.modalObject.ParentObject.key);
 
       let apiKey = {
-        cf_familyHome: { key: "cf_familyHome", param: "INPUTS_Lifestyle_Assets_Debt" },
+        cf_familyHome: {
+          key: "cf_familyHome",
+          param: "INPUTS_Lifestyle_Assets_Debt",
+        },
         cf_investmentsProperty: {
           key: "financialInvestment",
           param: "INPUTS_Property",
@@ -271,7 +272,6 @@ const CashFlowHomeLoan = (props) => {
           param: "INPUTS_SMSF_Property",
         },
       };
-      
 
       obj[props.modalObject.ParentObject.key] = FullObj;
 

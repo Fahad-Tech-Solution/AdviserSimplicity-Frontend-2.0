@@ -34,7 +34,7 @@ const SMSFTermDeposit = (props) => {
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   let initialValues = {
-    owner: [],
+    owner: ["client"],
   };
 
   let SMSFTerm =
@@ -100,12 +100,12 @@ const SMSFTermDeposit = (props) => {
             updateFields(cashFlowDetails.client, "client");
           }
 
-          if (
-            UserStatus === "Married" &&
-            cashFlowDetails.owner.includes("partner")
-          ) {
-            updateFields(cashFlowDetails.partner, "partner");
-          }
+          // if (
+          //   UserStatus === "Married" &&
+          //   cashFlowDetails.owner.includes("partner")
+          // ) {
+          //   updateFields(cashFlowDetails.partner, "partner");
+          // }
         }
       }
 
@@ -117,12 +117,12 @@ const SMSFTermDeposit = (props) => {
           updateFields(cashFlowDataDetails.client, "client");
         }
 
-        if (
-          UserStatus === "Married" &&
-          cashFlowDataDetails.owner.includes("partner")
-        ) {
-          updateFields(cashFlowDataDetails.partner, "partner");
-        }
+        // if (
+        //   UserStatus === "Married" &&
+        //   cashFlowDataDetails.owner.includes("partner")
+        // ) {
+        //   updateFields(cashFlowDataDetails.partner, "partner");
+        // }
       }
     } catch (error) {
       console.error("Error in fillInitialValues:", error);
@@ -137,11 +137,11 @@ const SMSFTermDeposit = (props) => {
 
     let JointCurrentBalance = 0;
 
-    if (values.owner.includes("joint")) {
-      JointCurrentBalance = parseFloat(
-        values.joint.openingBalance.replace(/[^0-9.-]+/g, "")
-      );
-    }
+    // if (values.owner.includes("joint")) {
+    //   JointCurrentBalance = parseFloat(
+    //     values.joint.openingBalance.replace(/[^0-9.-]+/g, "")
+    //   );
+    // }
 
     if (values.owner.includes("client")) {
       obj.clientTotal =
@@ -153,15 +153,15 @@ const SMSFTermDeposit = (props) => {
       obj.clientTotal = "";
     }
 
-    if (values.owner.includes("partner")) {
-      obj.partnerTotal =
-        toCommaAndDollar(
-          parseFloat(values.partner.openingBalance.replace(/[^0-9.-]+/g, "")) +
-            JointCurrentBalance / 2
-        ) || "$0";
-    } else {
-      obj.partnerTotal = "";
-    }
+    // if (values.owner.includes("partner")) {
+    //   obj.partnerTotal =
+    //     toCommaAndDollar(
+    //       parseFloat(values.partner.openingBalance.replace(/[^0-9.-]+/g, "")) +
+    //         JointCurrentBalance / 2
+    //     ) || "$0";
+    // } else {
+    //   obj.partnerTotal = "";
+    // }
 
     const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
 
@@ -207,23 +207,7 @@ const SMSFTermDeposit = (props) => {
     }
   };
 
-  let handleInnerModal = (title, values, key, stakeHolder) => {
-    setModalObject({
-      title,
-      values,
-      key,
-      stakeHolder,
-    });
-    setFlagState(true);
-  };
-
-  const options =
-    UserStatus !== "Single"
-      ? [
-          { value: "client", label: RenderName("client") },
-          { value: "partner", label: RenderName("partner") },
-        ]
-      : [{ value: "client", label: RenderName("client") }];
+  const options = [{ value: "client", label: RenderName("client") }];
 
   const loanTermOptions = Array.from({ length: 31 }, (_, i) => {
     if (i === 0) {
@@ -338,6 +322,7 @@ const SMSFTermDeposit = (props) => {
         return (
           <Form>
             <Row>
+              {/*
               <div className="col-md-12">
                 <div className="d-flex justify-content-center align-items-center gap-4">
                   <label htmlFor="" className="text-end ">
@@ -354,6 +339,8 @@ const SMSFTermDeposit = (props) => {
                   </div>
                 </div>
               </div>
+               */}
+
               {values.owner.length > 0 && (
                 <div className="mt-4">
                   <Table striped bordered responsive hover>
@@ -386,7 +373,7 @@ const SMSFTermDeposit = (props) => {
                           stakeHolder="client."
                         />
                       )}
-
+                      {/*
                       {values.owner.includes("partner") &&
                         UserStatus === "Married" && (
                           <DynamicTableRow
@@ -398,6 +385,7 @@ const SMSFTermDeposit = (props) => {
                             stakeHolder="partner."
                           />
                         )}
+                      */}
                     </tbody>
                   </Table>
                 </div>

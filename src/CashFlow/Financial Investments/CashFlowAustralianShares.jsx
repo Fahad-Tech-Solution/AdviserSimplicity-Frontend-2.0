@@ -91,7 +91,7 @@ const CashFlowAustralianShares = (props) => {
         }; // Use an empty object as default if BankAccountFinance is undefined
 
   let initialValues = {
-    owner: [],
+    owner: layoutSwitchSMSFFlag ? ["client"] : [],
     client: {
       // riskProfile: layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
       cashOutFunds: "No",
@@ -169,11 +169,11 @@ const CashFlowAustralianShares = (props) => {
           updateFields(Obj, "client");
         }
 
-        // Update partner-related fields
         if (
           UserStatus === "Married" &&
           BankAccountFinance?.partner?.length > 0
         ) {
+          // Update partner-related fields
           const Obj = {
             currentBalance: BankAccountFinance.partnerCurrentBalance || 0, // Fallback to 0 if undefined
             costBase: BankAccountFinance.partnerCostBaseTemp || 0, // Fallback to 0 if undefined
@@ -201,27 +201,34 @@ const CashFlowAustralianShares = (props) => {
         // Handle cashFlowData scenario
         const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
         console.log(cashFlowDetails, "cashFlowDetails");
+
         if (cashFlowDetails) {
-          setFieldValue(`owner`, cashFlowDetails.owner || "");
+          setFieldValue(
+            "owner",
+            layoutSwitchSMSFFlag
+              ? cashFlowDetails.owner?.filter((item) => item === "client")
+              : cashFlowDetails.owner || ""
+          );
           if (cashFlowDetails.owner.includes("client")) {
             // Update client details
             updateFields(cashFlowDetails.client, "client");
           }
+          if (!layoutSwitchSMSFFlag) {
+            if (
+              UserStatus === "Married" &&
+              cashFlowDetails.owner.includes("partner")
+            ) {
+              // Update partner details
+              updateFields(cashFlowDetails.partner, "partner");
+            }
 
-          if (
-            UserStatus === "Married" &&
-            cashFlowDetails.owner.includes("partner")
-          ) {
-            // Update partner details
-            updateFields(cashFlowDetails.partner, "partner");
-          }
-
-          if (
-            UserStatus === "Married" &&
-            cashFlowDetails.owner.includes("joint")
-          ) {
-            // Update partner details
-            updateFields(cashFlowDetails.joint, "joint");
+            if (
+              UserStatus === "Married" &&
+              cashFlowDetails.owner.includes("joint")
+            ) {
+              // Update partner details
+              updateFields(cashFlowDetails.joint, "joint");
+            }
           }
         }
       }
@@ -229,27 +236,34 @@ const CashFlowAustralianShares = (props) => {
       // Additional data from cashFlowData
       if (cashFlowData?.[objAndAPIKey]?._id) {
         const cashFlowDataDetails = cashFlowData[objAndAPIKey];
-        setFieldValue(`owner`, cashFlowDataDetails.owner || "");
+        setFieldValue(
+          "owner",
+          layoutSwitchSMSFFlag
+            ? cashFlowDataDetails.owner?.filter((item) => item === "client")
+            : cashFlowDataDetails.owner || ""
+        );
 
         if (cashFlowDataDetails.owner.includes("client")) {
           // Update client details
           updateFields(cashFlowDataDetails.client, "client");
         }
 
-        if (
-          UserStatus === "Married" &&
-          cashFlowDataDetails.owner.includes("partner")
-        ) {
-          // Update partner details
-          updateFields(cashFlowDataDetails.partner, "partner");
-        }
+        if (!layoutSwitchSMSFFlag) {
+          if (
+            UserStatus === "Married" &&
+            cashFlowDataDetails.owner.includes("partner")
+          ) {
+            // Update partner details
+            updateFields(cashFlowDataDetails.partner, "partner");
+          }
 
-        if (
-          UserStatus === "Married" &&
-          cashFlowDataDetails.owner.includes("joint")
-        ) {
-          // Update partner details
-          updateFields(cashFlowDataDetails.joint, "joint");
+          if (
+            UserStatus === "Married" &&
+            cashFlowDataDetails.owner.includes("joint")
+          ) {
+            // Update partner details
+            updateFields(cashFlowDataDetails.joint, "joint");
+          }
         }
       }
     } catch (error) {
@@ -295,6 +309,8 @@ const CashFlowAustralianShares = (props) => {
     if (layoutSwitchSMSFFlag) {
       obj.jointTotal = undefined;
       obj.joint = undefined;
+      obj.partner = undefined;
+      obj.partnerTotal = undefined;
     }
 
     const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
@@ -382,7 +398,7 @@ const CashFlowAustralianShares = (props) => {
       ? layoutSwitchSMSFFlag
         ? [
             { value: "client", label: RenderName("client") },
-            { value: "partner", label: RenderName("partner") },
+            // { value: "partner", label: RenderName("partner") },
           ]
         : [
             { value: "client", label: RenderName("client") },
@@ -528,23 +544,24 @@ const CashFlowAustralianShares = (props) => {
               >
                 {ModalContent(modalObject)}
               </InnerModal>
+              {!layoutSwitchSMSFFlag && (
+                <div className="col-md-12">
+                  <div className="d-flex justify-content-center align-items-center gap-4">
+                    <label htmlFor="" className="text-end ">
+                      Owner
+                    </label>
 
-              <div className="col-md-12">
-                <div className="d-flex justify-content-center align-items-center gap-4">
-                  <label htmlFor="" className="text-end ">
-                    Owner
-                  </label>
-
-                  <div style={{ minWidth: "25%" }}>
-                    <Field
-                      name={`owner`}
-                      component={CreatableMultiSelectField}
-                      label="Multi Select Field"
-                      options={options}
-                    />
+                    <div style={{ minWidth: "25%" }}>
+                      <Field
+                        name={`owner`}
+                        component={CreatableMultiSelectField}
+                        label="Multi Select Field"
+                        options={options}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
               {values.owner.length > 0 && (
                 <div className="mt-4">
                   <Table striped bordered responsive hover>

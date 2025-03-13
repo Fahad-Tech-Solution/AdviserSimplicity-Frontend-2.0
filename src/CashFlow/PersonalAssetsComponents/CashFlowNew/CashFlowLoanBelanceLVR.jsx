@@ -65,13 +65,19 @@ const CashFlowLoanBelanceLVR = (props) => {
   };
 
   let onSubmit = async (values) => {
-    console.log("values", values);
+    console.log(
+      "values",
+      values,
+      props.modalObject.key,
+      props.modalObject.ParentObject
+    );
 
     props.setFieldValue(
       props.modalObject.key + "CashFlowLoanBelanceLVR",
       values
     );
-    props.setFieldValue(props.modalObject.key, values.loanBalance);
+
+    props.setFieldValue(props.modalObject.key, values.loanAmount);
 
     // Reset the flag state if necessary
     if (props.flagState) {
@@ -165,7 +171,10 @@ const CashFlowLoanBelanceLVR = (props) => {
       console.log(props.modalObject, "props.modalObject");
 
       let apiKey = {
-        cf_familyHome: { key: "cf_familyHome", param: "INPUTS_Lifestyle_Assets_Debt" },
+        cf_familyHome: {
+          key: "cf_familyHome",
+          param: "INPUTS_Lifestyle_Assets_Debt",
+        },
         cf_investmentsProperty: {
           key: "financialInvestment",
           param: "INPUTS_Property",
