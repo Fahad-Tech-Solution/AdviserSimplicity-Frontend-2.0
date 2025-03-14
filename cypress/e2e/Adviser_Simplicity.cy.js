@@ -3,7 +3,8 @@
 import Input_details from "../e2e/SingleClient_Data/Input_details.cy";
 import Childern_Details from "../e2e/SingleClient_Data/Childern_details.cy";
 import Questions_section from ".//Question's/Question_Sections.cy.js";
-import PersonalIncomeAndExpense from "./Personal Income And Expense/Cards.cy";
+import PersonalIncomeAndExpense from "./Personal Income And Expense/Client Sectioncy.js";
+import PersonalIncomeAndExpensePartnerSection from "./Personal Income And Expense/Partner Section.cy.js";
 import PersonalAssetsAndDebt from "./Personal Assets And Debt/Cards.cy";
 import FinancialInvestments from "./Financial Investments/Cards.cy";
 import EstatePlanningAndProfessionalAdviser from "./Estate Planning and Professional Advisers/Cards.cy";
@@ -18,6 +19,7 @@ describe("Adviser Simplicity", () => {
   const childrenDetails = new Childern_Details();
   const questionsSection = new Questions_section();
   const personalIncomeExpense = new PersonalIncomeAndExpense();
+  const personalIncomeExpensePartnerSection = new PersonalIncomeAndExpensePartnerSection();
   const personalassetsanddebt = new PersonalAssetsAndDebt();
   const financialInvestments = new FinancialInvestments();
   const adviser = new EstatePlanningAndProfessionalAdviser();
@@ -72,53 +74,61 @@ describe("Adviser Simplicity", () => {
     let dataOf = "client";
     inputDetails.enterSurname(dataOf, "User client");
 
-    // inputDetails.selectTitle("Mr");
-    dataOf = "partner";
-    inputDetails.enterSurname(dataOf, "User Partner");
-    inputDetails.enterGivenname("Quality Assurance");
-    inputDetails.enterGivennameP("Quality Assurance");
-    inputDetails.enterPreferredName("Admin");
-    inputDetails.enterPreferredNameP("Admin");
+
+    inputDetails.enterPreferredName("Aiden Smith");
     inputDetails.enterMiddleName("Admin");
-    inputDetails.enterMiddleNameP("Admin");
     inputDetails.selectGender("Male");
-    inputDetails.selectGenderP("Male");
-    // inputDetails.enterDOB("8/10/2004");
-    // inputDetails.enterDOBP("8/10/2004");
+
     inputDetails.selectMaritalStatus("Partnered");
-    inputDetails.selectMaritalStatusP("Partnered");
     inputDetails.selectEmploymentStatus("Employee");
-    inputDetails.selectEmploymentStatusP("Employee");
     inputDetails.enterOccupationID("Amet ut consectetur");
-    inputDetails.enterOccupationIDP("Amet ut consectetur");
     inputDetails.enterPRAge("65");
-    inputDetails.enterPRAgeP("65");
     inputDetails.selectHealth("Good");
-    inputDetails.selectHealthP("Good");
-    // inputDetails.enterSmoker("Yes");
-    // inputDetails.enterSmokerP("Yes");
+    inputDetails.enterDOB("8/10/2004");
+    // inputDetails.enterSmoker('Yes');  // ✅ Call method from page object
     // inputDetails.enterTax();
-    // inputDetails.enterTaxP();
     // inputDetails.enterphc();
-    // inputDetails.enterphcP();
     // inputDetails.enterhelpdebt();
-    // inputDetails.enterhelpdebtP();
     inputDetails.enterHomeAddress("House NO 2-A , Punjab, Lahore");
-    inputDetails.enterHomeAddressP("House NO 2-A , Punjab, Lahore");
     inputDetails.enterPostCode("99");
-    inputDetails.enterPostCodeP("99");
     inputDetails.enterCheckbox();
-    inputDetails.enterCheckboxP();
     inputDetails.typeMobilenumbr("+71 323 435 1223");
-    inputDetails.typeMobilenumbrP("+71 323 435 1223");
     inputDetails.typeHomePhome("+71 665 432 7896");
-    inputDetails.typeHomePhomeP("+71 665 432 7896");
     inputDetails.typeWorkPhone("+71 009 877 099");
-    inputDetails.typeWorkPhoneP("+71 009 877 099");
     inputDetails.enterEmail("Automation9490785440@gmail.com");
 
-    cy.contains("Submit");
-    cy.get(".btn").click();
+    inputDetails.enterGivenname("Quality Assurance");
+
+
+        // inputDetails.selectTitle("Mr");
+        dataOf = "partner";
+        inputDetails.enterSurname(dataOf, "User Partner");
+    inputDetails.enterGivennameP("Quality Assurance");
+    inputDetails.enterPreferredNameP("Emma Tayler");
+    inputDetails.enterMiddleNameP("Admin");
+    inputDetails.selectGenderP("Male");
+
+    inputDetails.selectMaritalStatusP("Partnered");
+    inputDetails.selectEmploymentStatusP("Employee");
+    inputDetails.enterOccupationIDP("Amet ut consectetur");
+    inputDetails.enterPRAgeP("65");
+    inputDetails.selectHealthP("Good");
+    inputDetails.enterDOBP("8/10/2004");
+    // inputDetails.enterSmokerP("Yes");
+    // inputDetails.enterTaxP();
+    // inputDetails.enterphcP();
+    // inputDetails.enterhelpdebtP();
+    inputDetails.enterHomeAddressP("House NO 2-A , Punjab, Lahore");
+    inputDetails.enterPostCodeP("99");
+    inputDetails.enterPostCodeP("99");
+    inputDetails.enterCheckboxP();
+    inputDetails.typeMobilenumbrP("+71 323 435 1223");
+    inputDetails.typeHomePhomeP("+71 665 432 7896");
+    inputDetails.typeWorkPhoneP("+71 009 877 099");
+    inputDetails.enterEmailP("Automation9490785440@gmail.com");
+
+    // cy.contains("Submit");
+    // cy.get(".btn").click();
   });
 
   it.skip("Childern Detail's", () => {
@@ -129,35 +139,40 @@ describe("Adviser Simplicity", () => {
     questionsSection.visitAndCheck();
   });
 
-  it.only("Personal Income Expense Card's", () => {
+  it.skip("Personal Income Expense Client Section", () => {
     personalIncomeExpense.section();
   });
 
-  it(" Personal Assets And Debt Card's", () => {
+
+  it.only("Personal Income Expense Partner Section", () => {
+    personalIncomeExpensePartnerSection.section();
+  });
+
+  it.skip(" Personal Assets And Debt Card's", () => {
     personalassetsanddebt.section();
   });
 
-  it("Financial Investments Card's", () => {
+  it.skip("Financial Investments Card's", () => {
     financialInvestments.section();
   });
 
-  it("Estate Planning And Professional Adviser Card's", () => {
+  it.skip("Estate Planning And Professional Adviser Card's", () => {
     adviser.section();
   });
 
-  it("Personal Insurance Card's", () => {
+  it.skip("Personal Insurance Card's", () => {
     personalInsurance.section();
   });
 
-  it("Business Entities Card's", () => {
+  it.skip("Business Entities Card's", () => {
     businessEntities.section();
   });
 
-  it("SMSF Card's", () => {
+  it.skip("SMSF Card's", () => {
     smsf.section();
   });
 
-  it("Investment Trust Card's", () => {
+  it.skip("Investment Trust Card's", () => {
     investmentTrust.section();
   });
 

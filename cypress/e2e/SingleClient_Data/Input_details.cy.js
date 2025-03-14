@@ -30,85 +30,46 @@ class Input_details {
     this.typeInput("#clientGivenName", givenname);
   }
 
-  enterGivennameP(givenname) {
-    this.typeInput("#partnerGivenName", givenname);
-  }
-
   enterPreferredName(preferredName) {
     this.typeInput("#clientPreferredName", preferredName);
-  }
-
-  enterPreferredNameP(preferredName) {
-    this.typeInput("#partnerPreferredName", preferredName);
   }
 
   enterMiddleName(middleName) {
     this.typeInput("#clientMiddleName", middleName);
   }
 
-  enterMiddleNameP(middleName) {
-    this.typeInput("#partnerMiddleName", middleName);
-  }
-
   selectGender(gender) {
     this.selectDropdown("#clientGender", gender);
-  }
-
-  selectGenderP(gender) {
-    this.selectDropdown("#partnerGender", gender);
   }
 
   enterDOB(dob) {
     cy.get("#clientDOB").should("be.visible").type(dob);
   }
 
-  enterDOBP(dob) {
-    cy.get("#partnerDOB").should("be.visible").type(dob);
-  }
-
   selectMaritalStatus(maritalStatus) {
     this.selectDropdown("#client.clientMaritalStatus", maritalStatus);
-  }
-
-  selectMaritalStatusP(maritalStatus) {
-    this.selectDropdown("#partnerMaritalStatus", maritalStatus);
   }
 
   selectEmploymentStatus(employmentstatus) {
     this.selectDropdown("#clientEmploymentStatus", employmentstatus);
   }
 
-  selectEmploymentStatusP(employmentstatus) {
-    this.selectDropdown("#partnerEmploymentStatus", employmentstatus);
-  }
-
   enterOccupationID(occupation) {
     this.typeInput("#clientOccupationID", occupation);
-  }
-
-  enterOccupationIDP(occupation) {
-    this.typeInput("#partnerOccupationID", occupation);
   }
 
   enterPRAge(plannedRetirementAge) {
     this.typeInput("#clientPlannedRetirementAge", plannedRetirementAge);
   }
 
-  enterPRAgeP(plannedRetirementAge) {
-    this.typeInput("#partnerPlannedRetirementAge", plannedRetirementAge);
-  }
-
   selectHealth(health) {
     this.selectDropdown("#clientHealth", health);
   }
 
-  selectHealthP(health) {
-    this.selectDropdown("#partnerHealth", health);
-  }
-
-  // // For clicking radio buttons
   // clickRadioButton(selector, value) {
-  //   cy.get(selector).contains(value).click({ force: true });
+  //   console.log('Radio Button Value:', value);
+  //   cy.get(selector).contains(String(value)).click({ force: true });
+
   // }
 
   // clickRadioButtonP(selector, value) {
@@ -117,7 +78,7 @@ class Input_details {
 
   // enterSmoker(smoker) {
   //   this.clickRadioButton(
-  //     ".col-md-8 > .row > :nth-child(30) > .form-check > .radiobutton",
+  //     ".col-md-8 > .row > :nth-child(30) > .form-check > .radiobutton input",
   //     smoker
   //   );
   // }
@@ -175,53 +136,118 @@ class Input_details {
     this.typeInput("#clientHomeAddress", homeAddress);
   }
 
-  enterHomeAddressP(homeAddress) {
-    this.typeInput("#partnerHomeAddress", homeAddress);
-  }
-
   enterPostCode(postcode) {
     this.typeInput("#clientPostcode", postcode);
-  }
-
-  enterPostCodeP(postcode) {
-    this.typeInput("#partnerPostcode", postcode);
   }
 
   enterCheckbox() {
     cy.get("#clientSameAsAbove").click({ force: true });
   }
 
-  enterCheckboxP() {
-    cy.get("#partnerSameAsClient").click({ force: true });
-  }
-
   typeMobilenumbr(number) {
     this.typeInput("#clientMobile", number);
-  }
-
-  typeMobilenumbrP(number) {
-    this.typeInput("#partnerMobile", number);
   }
 
   typeHomePhome(homephone) {
     this.typeInput("#clientHomePhone", homephone);
   }
 
-  typeHomePhomeP(homephone) {
-    this.typeInput("#partnerHomePhone", homephone);
-  }
-
   typeWorkPhone(workphone) {
     this.typeInput("#clientWorkPhone", workphone);
+  }
+
+  enterEmail(Email) {
+    this.typeInput("#Email", Email);
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  enterGivennameP(givenname) {
+    this.typeInput("#partnerGivenName", givenname);
+  }
+
+  enterPreferredNameP(preferredName) {
+    this.typeInput("#partnerPreferredName", preferredName);
+  }
+
+  enterMiddleNameP(middleName) {
+    this.typeInput("#partnerMiddleName", middleName);
+  }
+
+  enterDOBP(dob) {
+    cy.get("#partnerDOB").should("be.visible").type(dob);
+  }
+
+  selectGenderP(gender) {
+    this.selectDropdown("#partnerGender", gender);
+  }
+
+  selectMaritalStatusP(maritalStatus) {
+    this.selectDropdown("#partnerMaritalStatus", maritalStatus);
+  }
+
+  selectEmploymentStatusP(employmentstatus) {
+    this.selectDropdown("#partnerEmploymentStatus", employmentstatus);
+  }
+
+  enterOccupationIDP(occupation) {
+    this.typeInput("#partnerOccupationID", occupation);
+  }
+
+  enterPRAgeP(plannedRetirementAge) {
+    this.typeInput("#partnerPlannedRetirementAge", plannedRetirementAge);
+  }
+
+  selectHealthP(health) {
+    this.selectDropdown("#partnerHealth", health);
+  }
+
+  enterHomeAddressP(homeAddress) {
+    this.typeInput("#partnerHomeAddress", homeAddress);
+  }
+
+  enterPostCodeP(postcode) {
+    this.typeInput("#partnerPostcode", postcode);
+  }
+
+  enterCheckboxP() {
+    cy.get("#partnerSameAsClient").click({ force: true });
+  }
+
+  typeMobilenumbrP(number) {
+    this.typeInput("#partnerMobile", number);
+  }
+
+  typeHomePhomeP(homephone) {
+    this.typeInput("#partnerHomePhone", homephone);
   }
 
   typeWorkPhoneP(workphone) {
     this.typeInput("#partnerWorkPhone", workphone);
   }
 
-  enterEmail(Email) {
-    this.typeInput("#Email", Email);
-  }
   enterEmailP(Email) {
     this.typeInput("#partnerEmail", Email);
   }
