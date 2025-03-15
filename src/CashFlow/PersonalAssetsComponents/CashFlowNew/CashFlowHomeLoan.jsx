@@ -11,6 +11,7 @@ import {
 } from "../../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
+  createStructuredEntries,
   openNotificationSuccess,
   PostAxios,
   toCommaAndDollar,
@@ -58,7 +59,6 @@ const CashFlowHomeLoan = (props) => {
   ];
 
   const fillInitialValues = (setFieldValue) => {
-
     setAddInputFlag(
       DeductibleInterestFormsArray.includes(
         props.modalObject.ParentObject.title
@@ -70,13 +70,12 @@ const CashFlowHomeLoan = (props) => {
       )
     );
 
-    console.log("Home Loan");
     if (
       Object.keys(props.modalObject.values[props.modalObject.key] || {})
         .length > 0
     ) {
       let Data = props.modalObject.values[props.modalObject.key];
-      console.log(Data, props.modalObject.key);
+
       setFieldValue("loanBalance", Data.loanBalance || Data.LoanBalance);
       setFieldValue(
         "loanBalanceCashFlowLoanBelanceLVR",
@@ -156,7 +155,7 @@ const CashFlowHomeLoan = (props) => {
   }));
 
   let handleInnerModal = (title, values, key) => {
-    // console.log(values);
+    console.log(clientPartnerPer);
 
     setModalObject({
       title,
@@ -243,16 +242,37 @@ const CashFlowHomeLoan = (props) => {
 
   let handleChildButtonClick = async (values, setFieldValue) => {
     try {
-      let obj = JSON.parse(JSON.stringify(cashFlowData));
-      let FullObj = props.modalObject.values;
+      let updatedData = JSON.parse(JSON.stringify(cashFlowData));
 
-      FullObj[props.modalObject.key] = values;
+      const {
+        values: parentValues,
+        key,
+        ParentObject,
+        title,
+      } = props.modalObject;
+
+      const numberOfProperties =
+        parseInt(parentValues.numberOfProperties, 10) || 1;
+      const currentIndex = key.match(/\d+/)?.[0] || 0; // Extract numeric index from key
+
+      // **Determine Schema Type Dynamically**
+      let structuredEntries = createStructuredEntries(
+        parentValues,
+        ParentObject.key,
+        numberOfProperties
+      );
+
+      // Update the correct entry with new values
+      structuredEntries[currentIndex][key.replace(/_\d+/, "")] = values;
+      updatedData[ParentObject.key].client = structuredEntries;
+      updatedData[ParentObject.key].numberOfProperties = numberOfProperties;
 
       console.log(
-        props.modalObject.ParentObject.key,
-        "props.modalObject.ParentObject.key"
+        "Updated Data:",
+        JSON.stringify(updatedData[ParentObject.key], null, 2)
       );
-      console.log(FullObj, "FullObj", props.modalObject.ParentObject.key);
+
+      // throw new Error("not working properly");
 
       let apiKey = {
         cf_familyHome: {
@@ -273,53 +293,45 @@ const CashFlowHomeLoan = (props) => {
         },
       };
 
-      obj[props.modalObject.ParentObject.key] = FullObj;
-
+      // Send API request
       let res = await PostAxios(
-        `${DefaultUrl}/api/cal/${
-          apiKey[props.modalObject.ParentObject.key].key
-        }/${apiKey[props.modalObject.ParentObject.key].param}`,
-        obj
+        `${DefaultUrl}/api/cal/${apiKey[ParentObject.key].key}/${
+          apiKey[ParentObject.key].param
+        }`,
+        updatedData
       );
+
       if (res) {
-        console.log(res);
-        let loan = {};
+        console.log("API Response:", res);
 
-        if (props.modalObject.ParentObject.key === "cf_familyHome") {
-          loan = res.data.loan;
-        } else {
-          loan = res.data[props.modalObject.ParentObject.key].loan;
-        }
+        let loanData = res.data[ParentObject.key][currentIndex]?.loan || {};
 
-        if (
-          loan.minimumRepaymentsPA &&
-          typeof loan.minimumRepaymentsPA === "number"
-        ) {
+        const minimumRepaymentsPA = loanData.minimumRepaymentsPA || 0;
+        if (typeof minimumRepaymentsPA === "number") {
           setFieldValue(
             "minimumRepaymentsPA",
-            toCommaAndDollar(loan.minimumRepaymentsPA)
+            toCommaAndDollar(minimumRepaymentsPA)
           );
         } else {
           setFieldValue("minimumRepaymentsPA", "$0");
         }
 
         setCashFlowReCalculateLoading(false);
+
         openNotificationSuccess(
           "success",
           "topRight",
           "Success Notification",
-          'Data of "' + props.modalObject.title + '" is Saved'
+          `Data of "${title}" is Saved`
         );
       }
     } catch (error) {
-      console.error("Error occurred while making API call:", error);
+      console.error("Error during API call:", error);
       openNotificationSuccess(
         "error",
         "topRight",
         "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        `Data of "${props.modalObject.title}" was not saved. Please try again.`
       );
       setCashFlowReCalculateLoading(false);
     }

@@ -1,24 +1,20 @@
 import React, { useEffect, useState } from "react";
-import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
+import DynamicTableRow from "../../../Components/Assets/Dynamic/DynamicTableRow";
 import { Form, Formik } from "formik";
 import { Row, Table } from "react-bootstrap";
-import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
-import ApplyDeeming from "./ApplyDeeming";
-import {
-  openNotificationSuccess,
-  PostAxios,
-  toCommaAndDollar,
-} from "../../Components/Assets/Api/Api";
 import {
   CashFlowData,
   CashFlowReCalculateLoading,
   defaultUrl,
-} from "../../Store/Store";
+} from "../../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { number } from "yup";
+import {
+  openNotificationSuccess,
+  PostAxios,
+  toCommaAndDollar,
+} from "../../../Components/Assets/Api/Api";
 
-const BalanceRolloverAmount = (props) => {
-  let [disabledFlag, setDisabledFlag] = useState(true);
+const AccountBasedPensionPayments = (props) => {
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
 
@@ -28,47 +24,42 @@ const BalanceRolloverAmount = (props) => {
     useRecoilState(CashFlowReCalculateLoading);
 
   let initialValues = {
-    pensionType: "",
-    commencePensionYear: "",
-    applyDeeming: "",
-    applyDeemingObj: {},
-    totalSuperAnnuationBenefits: "",
-    nominatedRolloverAmountType: "No",
-    nominatedRolloverAmount: "",
-    taxFreeComponent: "",
+    nominatedPensionAmount: "Other",
+    reversionaryPensionOption: "",
+    otherAmount: "",
+    indexationPension: "",
+    preservationAge: "",
+    preservationAgeYear: "",
+    minimumPension: "",
+    maximumTTRPension: "",
   };
 
   let fillInitialValues = (setFieldValue) => {
-    console.log(
-      props.modalObject,
-      props.modalObject.key.match(/\d+/)?.[0] || 0
-    );
+    console.log(props.modalObject);
     if (props.modalObject.values[props.modalObject.key]) {
       let Data = props.modalObject.values[props.modalObject.key];
-      setFieldValue("pensionType", Data.pensionType);
-      setFieldValue("commencePensionYear", Data.commencePensionYear);
-      setFieldValue("applyDeeming", Data.applyDeeming);
-      setFieldValue("applyDeemingObj", Data.applyDeemingObj);
+      setFieldValue("nominatedPensionAmount", Data.nominatedPensionAmount);
       setFieldValue(
-        "totalSuperAnnuationBenefits",
-        Data.totalSuperAnnuationBenefits
+        "reversionaryPensionOption",
+        Data.reversionaryPensionOption
       );
-      setFieldValue(
-        "nominatedRolloverAmountType",
-        Data.nominatedRolloverAmountType
-      );
-      setFieldValue("nominatedRolloverAmount", Data.nominatedRolloverAmount);
-      setFieldValue("taxFreeComponent", Data.taxFreeComponent);
+      setFieldValue("otherAmount", Data.otherAmount);
+      setFieldValue("indexationPension", Data.indexationPension);
+      setFieldValue("preservationAge", Data.preservationAge);
+      setFieldValue("preservationAgeYear", Data.preservationAgeYear);
+      setFieldValue("minimumPension", Data.minimumPension);
+      setFieldValue("maximumTTRPension", Data.maximumTTRPension);
     }
   };
 
   let onSubmit = (values) => {
-    console.log(JSON.stringify(values));
+    console.log(JSON.stringify(values), props.modalObject.key);
 
     props.setFieldValue(
       props.modalObject.key.replace("Obj", ""),
-      values.taxFreeComponent
+      values.otherAmount
     );
+
     props.setFieldValue(props.modalObject.key, values);
 
     // Reset the flag state if necessary
@@ -77,22 +68,10 @@ const BalanceRolloverAmount = (props) => {
     }
   };
 
-  const yearsIncludedArray = Array.from({ length: 30 }, (_, i) => {
-    return {
-      value: (i + 1).toString(),
-      label: ("Year " + (i + 1)).toString(),
-    };
-  });
-
-  const nominatedRolloverAmountTypeOptions = [
-    { value: "Partial", label: "Partial" },
-    { value: "No", label: "No" },
-    { value: "Full ", label: "Full " },
-  ];
-
-  const pensionTypeOptions = [
-    { value: "Account Based", label: "Account Based" },
-    { value: "TTR", label: "TTR" },
+  const nominatedPensionAmountOptions = [
+    { value: "Minimum", label: "Minimum" },
+    { value: "Maximum", label: "Maximum" },
+    { value: "Other", label: "Other" },
   ];
 
   let handleInnerModal = (title, values, key, stakeHolder) => {
@@ -106,18 +85,10 @@ const BalanceRolloverAmount = (props) => {
     setFlagState(true);
   };
 
-  let nominatedRolloverAmountDisableHandle = (
-    values,
-    setFieldValue,
-    CurrentInput,
-    stakeHolder
-  ) => {
-    if (CurrentInput.value === "Partial") {
-      setDisabledFlag(false);
-    } else {
-      setDisabledFlag(true);
-    }
-  };
+  const indexation = Array.from({ length: 21 }, (_, i) => ({
+    value: (i * 0.5).toFixed(2) + "%",
+    label: (i * 0.5).toFixed(2) + "%",
+  }));
 
   let rowConfig = [
     {
@@ -126,61 +97,52 @@ const BalanceRolloverAmount = (props) => {
       // styleSet: { fontWeight: "800", fontSize: "16px" },
     },
     {
-      name: "pensionType",
+      name: "nominatedPensionAmount",
       type: "select",
-      options: pensionTypeOptions,
-      placeholder: "Pension Type",
+      options: nominatedPensionAmountOptions,
+      placeholder: "Nominated Pension Amount",
     },
     {
-      name: "commencePensionYear",
-      type: "select",
-      options: yearsIncludedArray,
-      placeholder: "Commence Pension in Year",
+      name: "reversionaryPensionOption",
+      type: "yesno",
+      placeholder: "Reversionary Pension Option",
     },
     {
-      name: "applyDeeming",
-      type: "yesnoModal",
-      placeholder: "Apply Deeming",
-      callBack: true,
-      key: "applyDeeming",
-      innerModalTitle: "Apply Deeming",
-      func: handleInnerModal,
-    },
-    {
-      name: "totalSuperAnnuationBenefits",
+      name: "otherAmount",
       type: "number-toComma",
-      placeholder: "Total Superannuation Benefits",
+      placeholder: "Other Amount",
+    },
+    {
+      name: "indexationPension",
+      type: "select",
+      options: indexation,
+      placeholder: "Indexation of Pension",
+    },
+    {
+      name: "preservationAge",
+      type: "number-toComma",
+      placeholder: "Preservation Age",
       disabled: true,
     },
     {
-      name: "nominatedRolloverAmountType",
-      type: "select",
-      options: nominatedRolloverAmountTypeOptions,
-      placeholder: "Nominated Rollover Amount",
-      styleSet: { minWidth: "10vw" },
-      callBack: true,
-      func: nominatedRolloverAmountDisableHandle,
+      name: "preservationAgeYear",
+      type: "number-toComma",
+      placeholder: "Preservation Age in Year",
+      disabled: true,
     },
     {
-      name: "nominatedRolloverAmount",
+      name: "minimumPension",
       type: "number-toComma",
-      placeholder: "Nominated Rollover Amount",
-      disabled: disabledFlag,
+      placeholder: "Minimum Pension",
+      disabled: true,
     },
     {
-      name: "taxFreeComponent",
+      name: "maximumTTRPension",
       type: "number-toComma",
-      placeholder: "Tax-free Component",
+      placeholder: "Maximum TTR Pension",
+      disabled: true,
     },
   ];
-
-  const componentMapping = {
-    "Apply Deeming": <ApplyDeeming />,
-  };
-
-  const ModalContent = (obj) => {
-    return componentMapping[obj.title] || null;
-  };
 
   let handleChildButtonClick = async (values, setFieldValue) => {
     try {
@@ -225,6 +187,8 @@ const BalanceRolloverAmount = (props) => {
       updatedData[sourceObj.key].numberOfProperties = numberOfProperties;
 
       console.log(JSON.stringify(updatedData[sourceObj.key]));
+
+      
 
       let apiKey = {
         cf_accountBasedPension: {
@@ -331,28 +295,21 @@ const BalanceRolloverAmount = (props) => {
         return (
           <Form>
             <Row>
-              <InnerModal
-                modalObject={modalObject}
-                setFieldValue={setFieldValue}
-                setFlagState={setFlagState}
-                flagState={flagState}
-              >
-                {ModalContent(modalObject)}
-              </InnerModal>
-
               <div className="col-md-12">
                 <div className="row justify-content-center">
                   <div className="mt-4">
                     <Table striped bordered responsive hover>
                       <thead>
                         <tr>
-                          <th>No#</th>
-                          <th>Pension Type</th>
-                          <th>Commence Pension in Year</th>
-                          <th>Apply Deeming</th>
-                          <th>Total Superannuation Benefits</th>
-                          <th colSpan={2}>Nominated Rollover amount</th>
-                          <th>Tax-free Component</th>
+                          <th>Owner</th>
+                          <th>Nominated Pension Amount</th>
+                          <th>Reversionary Pension Option</th>
+                          <th>Other Amount</th>
+                          <th>Indexation of Pension</th>
+                          <th>Preservation Age</th>
+                          <th>Preservation Age in Year</th>
+                          <th>Minimum Pension</th>
+                          <th>Maximum TTR Pension</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -387,4 +344,4 @@ const BalanceRolloverAmount = (props) => {
   );
 };
 
-export default BalanceRolloverAmount;
+export default AccountBasedPensionPayments;

@@ -273,6 +273,7 @@ const CFAnnuities = (props) => {
       values,
       key,
       stakeHolder: props.modalObject.Input,
+      sourceObj: props.modalObject,
       cal: true,
     });
     setFlagState(true);
@@ -447,7 +448,7 @@ const CFAnnuities = (props) => {
                             console.log(values);
                           }}
                         >
-                          Owner
+                          No#
                         </th>
                         <th>Original Investment Amount</th>
                         <th>Source of Funds</th>

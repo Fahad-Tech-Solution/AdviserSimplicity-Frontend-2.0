@@ -1,48 +1,95 @@
 {
+    "_id": "67bbf94453eb401be48c0506",
+    "scenarioFK": "677f709a5e615599ebcbef79",
     "client": [
         {
-            "address": "Distinctio Quia adi",
-            "currentValue": "$881,232",
-            "state": "QLD",
-            "clientOwnership": "8.44%",
-            "partnerOwnership": "2.00%",
-            "yearOfPurchase": "1",
-            "totalCostBaseObj": {
-                "stampDuty": "FH Buyer",
-                "stampDutyCalculation": "",
-                "otherPurchaseCosts": "$123,555",
-                "costBaseExisting": "$123,999",
-                "totalCostBase": ""
+            "originalInvestmentAmount": "$324",
+            "sourceOfFunds": "Ordinary",
+            "annuityType": "Short-Term",
+            "IsThisReversionaryAnnuity": "Yes",
+            "RCV": "Yes",
+            "RCVObj": {
+                "RCV": "100.00%",
+                "communicationEndTerm": "$9,833,223,322,323"
             },
-            "loanBalance": "Yes",
-            "familyHomeLoanObj": {},
-            "expectedGrowthRate": "2.50%",
-            "sellPropertyInYear": "No",
-            "estimatedFutureSellingCost": "5.00%"
+            "includeFromYear": "5",
+            "term": "16",
+            "yearsUntilMaturity": "30",
+            "annualInflationRate": "1.00%",
+            "annualPayment": "$9,879",
+            "deductibleAmount": "Yes",
+            "deductibleAmountObj": {
+                "otherDeductibleAmount": "$12,323,232,223"
+            }
         },
         {
-            "address": "Distinctio Quia adi",
-            "currentValue": "$1,213",
-            "state": "VIC",
-            "clientOwnership": "82.00%",
-            "partnerOwnership": "18.00%",
-            "yearOfPurchase": "9",
-            "totalCostBaseObj": {
-                "stampDuty": "FH Buyer",
-                "stampDutyCalculation": "",
-                "otherPurchaseCosts": "$122",
-                "costBaseExisting": "$2,121",
-                "totalCostBase": ""
+            "originalInvestmentAmount": "$12,323",
+            "sourceOfFunds": "Ordinary",
+            "annuityType": "Life-Time",
+            "IsThisReversionaryAnnuity": "No",
+            "RCV": "Yes",
+            "RCVObj": {
+                "RCV": "100.00%",
+                "RCVOther": "",
+                "communicationEndTerm": "$2,323"
             },
-            "loanBalance": "Yes",
-            "familyHomeLoanObj": {},
-            "expectedGrowthRate": "6.50%",
-            "sellPropertyInYear": "9",
-            "estimatedFutureSellingCost": "5.00%"
+            "includeFromYear": "5",
+            "term": "4",
+            "yearsUntilMaturity": "7",
+            "annualInflationRate": "1.50%",
+            "annualPayment": "$123",
+            "deductibleAmount": "Yes",
+            "deductibleAmountObj": {
+                "otherDeductibleAmount": "$123",
+                "deductibleAmount": ""
+            }
         }
     ],
-    "scenarioFK": "677f709a5e615599ebcbef79",
-    "numberOfProperties": 2,
-    "clientTotal": "$882,445",
-    "partnerTotal": "$0"
+    "clientTotal": "$10,002",
+    "partner": [
+        {
+            "originalInvestmentAmount": "$324",
+            "sourceOfFunds": "Super",
+            "annuityType": "Short-Term",
+            "IsThisReversionaryAnnuity": "Yes",
+            "RCV": "Yes",
+            "RCVObj": {
+                "RCV": "100.00%",
+                "communicationEndTerm": "$12"
+            },
+            "includeFromYear": "1",
+            "term": "14",
+            "yearsUntilMaturity": "30",
+            "annualInflationRate": "4.00%",
+            "annualPayment": "$123",
+            "deductibleAmount": "Yes",
+            "deductibleAmountObj": {
+                "otherDeductibleAmount": "$5,676"
+            }
+        },
+        {
+            "originalInvestmentAmount": "$23,123",
+            "sourceOfFunds": "Ordinary",
+            "annuityType": "Life-Time",
+            "IsThisReversionaryAnnuity": "No",
+            "RCV": "Yes",
+            "RCVObj": {
+                "RCV": "12.00%",
+                "RCVOther": "",
+                "communicationEndTerm": "$123"
+            },
+            "includeFromYear": "12",
+            "term": "12",
+            "yearsUntilMaturity": "11",
+            "annualInflationRate": "3.50%",
+            "annualPayment": "$12,222",
+            "deductibleAmount": "Yes",
+            "deductibleAmountObj": {
+                "otherDeductibleAmount": "$56,756,657",
+                "deductibleAmount": ""
+            }
+        }
+    ],
+    "partnerTotal": "$12,345",
+    "numberOfProperties": 2
 }

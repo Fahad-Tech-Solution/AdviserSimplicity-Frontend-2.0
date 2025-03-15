@@ -68,15 +68,15 @@ const CashFlowFamilyHome = (props) => {
           [`address_${index}`]:
             data.address || PersonalData.client.clientHomeAddress || "",
           [`currentValue_${index}`]: data.currentValue || "$0",
-          [`clientOwnership_${index}`]: data.clientOwnership || "2.50%",
-          [`partnerOwnership_${index}`]: data.partnerOwnership || "2.50%",
+          [`clientOwnership_${index}`]: data.clientOwnership || "0%",
+          [`partnerOwnership_${index}`]: data.partnerOwnership || "0%",
           [`yearOfPurchase_${index}`]: data.yearOfPurchase || "1",
           [`totalCostBase_${index}`]:
             data.totalCostBase || data.costBase || "$0",
           [`totalCostBaseObj_${index}`]: data.totalCostBaseObj || {},
           [`loanBalance_${index}`]: data.loanBalance || data.loanAttached || "",
           [`familyHomeLoanObj_${index}`]:
-            data.familyHomeLoan || data.HomeLoanModal || {},
+            data.familyHomeLoanObj || data.HomeLoanModal || {},
           [`expectedGrowthRate_${index}`]: data.expectedGrowthRate || "2.50%",
           [`sellPropertyInYear_${index}`]: data.sellPropertyInYear || "No",
           [`state_${index}`]: data.state || "",
@@ -101,7 +101,7 @@ const CashFlowFamilyHome = (props) => {
       } else {
         // Handle cashFlowData scenario
         const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-        console.log(cashFlowDetails, "cashFlowDetails");
+        // console.log(cashFlowDetails, "cashFlowDetails");
 
         setFieldValue("numberOfProperties", cashFlowDetails.client.length);
 
@@ -140,9 +140,10 @@ const CashFlowFamilyHome = (props) => {
         clientOwnership: values[`clientOwnership_${i}`] || "$0",
         partnerOwnership: values[`partnerOwnership_${i}`] || "",
         yearOfPurchase: values[`yearOfPurchase_${i}`] || "",
+        totalCostBase: values[`totalCostBase_${i}`] || "",
         totalCostBaseObj: values[`totalCostBaseObj_${i}`] || "",
         loanBalance: values[`loanBalance_${i}`] || "",
-        familyHomeLoanObj: values[`familyHomeLoanObj_${i}`] || "$0",
+        familyHomeLoanObj: values[`familyHomeLoanObj_${i}`] || {},
         expectedGrowthRate: values[`expectedGrowthRate_${i}`] || "",
         sellPropertyInYear: values[`sellPropertyInYear_${i}`] || "",
         estimatedFutureSellingCost:
@@ -168,7 +169,7 @@ const CashFlowFamilyHome = (props) => {
           (total, entry) =>
             total +
             (parseFloat(
-              entry?.familyHomeLoan?.loanBalance?.replace(/[^0-9.-]+/g, "")
+              entry?.familyHomeLoanObj?.loanBalance?.replace(/[^0-9.-]+/g, "")
             ) || 0),
           0
         )
@@ -395,8 +396,6 @@ const CashFlowFamilyHome = (props) => {
       innerRef={props.formRef}
     >
       {({ values, setFieldValue, handleChange, handleBlur }) => {
-     
-
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);

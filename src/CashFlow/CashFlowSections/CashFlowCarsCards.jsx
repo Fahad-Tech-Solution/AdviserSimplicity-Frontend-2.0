@@ -30,6 +30,7 @@ const CashFlowCarsCards = (props) => {
         "cf_otherAssets",
         "cf_familyHome",
         "cf_annuities",
+        "cf_accountBasedPension",
         //show only client in bellow
         "cf_SMSFBank",
         "cf_SMSFTermDeposit",

@@ -68,7 +68,7 @@ const CashFlowInvestmentsProperty = (props) => {
       const updateFields = (data, index) => {
         if (!data || !Object.keys(data).length) return;
 
-        console.log(data.propertyLoanDetailsArray, "Data");
+        // console.log(data.propertyLoanDetailsArray, "Data");
 
         const fields = {
           [`streetAddress_${index}`]:
@@ -81,6 +81,7 @@ const CashFlowInvestmentsProperty = (props) => {
             data.partnerOwnership || data.PartnerOwnership || "",
           [`state_${index}`]: data.state || "",
           [`yearOfPurchase_${index}`]: data.yearOfPurchase || "",
+          [`totalCostBase_${index}`]: data.totalCostBase || "$0",
           [`totalCostBaseObj_${index}`]: data.totalCostBaseObj || {
             costBaseExisting: data.costBaseExisting || data.CostBase || "",
           },
@@ -151,6 +152,7 @@ const CashFlowInvestmentsProperty = (props) => {
         valueOfProperty: values[`valueOfProperty_${i}`] || "",
         state: values[`state_${i}`] || "",
         yearOfPurchase: values[`yearOfPurchase_${i}`] || "",
+        totalCostBase: values[`totalCostBase_${i}`] || "",
         totalCostBaseObj: values[`totalCostBaseObj_${i}`] || "",
         expectedGrowthRate: values[`expectedGrowthRate_${i}`] || "",
         loanBalance: values[`loanBalance_${i}`] || "",
@@ -246,29 +248,36 @@ const CashFlowInvestmentsProperty = (props) => {
     };
   });
 
-  let CalculatePercentage = (values, setFieldValue, CurrentInput, stakeHolder) => {
+  let CalculatePercentage = (
+    values,
+    setFieldValue,
+    CurrentInput,
+    stakeHolder
+  ) => {
     // Extract index from the field name
     const match = CurrentInput.name.match(/_(\d+)$/);
     const index = match ? match[1] : 0;
-  
+
     let clientOwnership =
       values[`clientOwnership_${index}`]?.replace(/[^0-9.]+/g, "") || 0;
     let partnerOwnership =
       values[`partnerOwnership_${index}`]?.replace(/[^0-9.]+/g, "") || 0;
-  
+
     switch (CurrentInput.name) {
       case `clientOwnership_${index}`:
         clientOwnership = CurrentInput.value.replace(/[^0-9.]+/g, "");
         setFieldValue(
           `partnerOwnership_${index}`,
-          (100 - (clientOwnership > 100 ? 100 : clientOwnership)).toFixed(2) + "%"
+          (100 - (clientOwnership > 100 ? 100 : clientOwnership)).toFixed(2) +
+            "%"
         );
         break;
       case `partnerOwnership_${index}`:
         partnerOwnership = CurrentInput.value.replace(/[^0-9.]+/g, "");
         setFieldValue(
           `clientOwnership_${index}`,
-          (100 - (partnerOwnership > 100 ? 100 : partnerOwnership)).toFixed(2) + "%"
+          (100 - (partnerOwnership > 100 ? 100 : partnerOwnership)).toFixed(2) +
+            "%"
         );
         break;
       default:
@@ -276,7 +285,6 @@ const CashFlowInvestmentsProperty = (props) => {
         break;
     }
   };
-  
 
   let handleInnerModal = (title, values, key, stakeHolder) => {
     console.log(title, values, key);

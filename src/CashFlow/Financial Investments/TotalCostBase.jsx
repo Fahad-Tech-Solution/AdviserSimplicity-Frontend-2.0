@@ -29,7 +29,6 @@ const TotalCostBase = (props) => {
   };
 
   let fillInitialValues = (setFieldValue) => {
-    console.log(props.modalObject);
     let SubObj = props.modalObject.values;
     if (SubObj[props.modalObject.key]) {
       let Data = SubObj[props.modalObject.key];
@@ -150,15 +149,54 @@ const TotalCostBase = (props) => {
     },
   ];
 
-  let handleChildButtonClick = async (values, setFieldValue) => {
+  const handleChildButtonClick = async (values, setFieldValue) => {
     try {
-      let obj = JSON.parse(JSON.stringify(cashFlowData));
+      let updatedData = JSON.parse(JSON.stringify(cashFlowData));
 
-      obj[props.modalObject.ParentObject.key] = props.modalObject.values;
+      const {
+        values: parentValues,
+        key,
+        title,
+        ParentObject,
+      } = props.modalObject;
 
-      obj[props.modalObject.ParentObject.key][props.modalObject.key] = values;
+      const numberOfProperties =
+        parseInt(parentValues.numberOfProperties, 10) || 1;
 
-      console.log(obj[props.modalObject.ParentObject.key]);
+      const currentIndex = key.match(/\d+/)?.[0] || 0; // Extract numeric index from key
+
+      let structuredEntries = Array.from(
+        { length: numberOfProperties },
+        (_, i) => ({
+          streetAddress: parentValues[`streetAddress_${i}`] || "",
+          valueOfProperty: parentValues[`valueOfProperty_${i}`] || "",
+          clientOwnership: parentValues[`clientOwnership_${i}`] || "0%",
+          partnerOwnership: parentValues[`partnerOwnership_${i}`] || "0%",
+          state: parentValues[`state_${i}`] || "",
+          yearOfPurchase: parentValues[`yearOfPurchase_${i}`] || "",
+          totalCostBase: parentValues[`totalCostBase_${i}`] || "",
+          totalCostBaseObj: parentValues[`totalCostBaseObj_${i}`] || {},
+          expectedGrowthRate: parentValues[`expectedGrowthRate_${i}`] || "",
+          loanBalance: parentValues[`loanBalance_${i}`] || "",
+          loanBalanceObj: parentValues[`loanBalanceObj_${i}`] || {},
+          rentalIncome: parentValues[`rentalIncome_${i}`] || "",
+          sellPropertyInYear: parentValues[`sellPropertyInYear_${i}`] || "",
+          convertToPPRYear: parentValues[`convertToPPRYear_${i}`] || "",
+          estimatedFutureSellingCost:
+            parentValues[`estimatedFutureSellingCost_${i}`] || "",
+        })
+      );
+
+      // Update the correct entry with new child modal values
+      structuredEntries[currentIndex][key.replace(/_\d+/, "")] = values;
+
+      updatedData[ParentObject.key].client = structuredEntries;
+      updatedData[ParentObject.key].numberOfProperties = numberOfProperties;
+
+      console.log(
+        JSON.stringify(updatedData[ParentObject.key], null, 2),
+        ParentObject.key
+      );
 
       let apiKey = {
         cf_familyHome: {
@@ -179,28 +217,30 @@ const TotalCostBase = (props) => {
         },
       };
 
-      let api = `${DefaultUrl}/api/cal/${
-        apiKey[props.modalObject.ParentObject.key].key
-      }/${apiKey[props.modalObject.ParentObject.key].param}`;
+      let api = `${DefaultUrl}/api/cal/${apiKey[ParentObject.key].key}/${
+        apiKey[ParentObject.key].param
+      }`;
       console.log(api);
 
-      // throw "Error";
+      // throw new Error("An error occurred while processing the data.");
 
-      let res = await PostAxios(api, obj);
+      // Send API request
+      const res = await PostAxios(api, updatedData);
+
       if (res) {
-        console.log(res.data);
-
-        let DataObj = res.data[props.modalObject.ParentObject.key];
+        console.log(res.data, ParentObject.key, currentIndex);
+        const { totalCostBaseObj } = res.data[ParentObject.key][currentIndex];
 
         if (values.stampDuty !== "Manual") {
           setFieldValue(
             "stampDutyValue",
-            toCommaAndDollar(DataObj.totalCostBaseObj.stampDutyValue)
+            toCommaAndDollar(totalCostBaseObj.stampDutyValue)
           );
         }
+
         setFieldValue(
           "totalCostBase",
-          toCommaAndDollar(DataObj.totalCostBaseObj.totalCostBase)
+          toCommaAndDollar(totalCostBaseObj.totalCostBase)
         );
 
         setCashFlowReCalculateLoading(false);
@@ -208,18 +248,16 @@ const TotalCostBase = (props) => {
           "success",
           "topRight",
           "Success Notification",
-          'Data of "' + props.modalObject.title + '" is Saved'
+          `Data of "${title}" is Saved`
         );
       }
     } catch (error) {
-      console.error("Error occurred while making API call:", error);
+      console.error("API Error:", error);
       openNotificationSuccess(
         "error",
         "topRight",
         "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        `Data of "${props.modalObject.title}" was not saved. Please try again.`
       );
       setCashFlowReCalculateLoading(false);
     }

@@ -12,6 +12,7 @@ import {
 import DynamicTableRow from "../../../Components/Assets/Dynamic/DynamicTableRow";
 import InnerModal from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 import {
+  createStructuredEntries,
   openNotificationSuccess,
   PostAxios,
   toCommaAndDollar,
@@ -155,21 +156,81 @@ const CashFlowLoanBelanceLVR = (props) => {
     },
   ];
 
-  let handleChildButtonClick = async (values, setFieldValue) => {
+  const handleChildButtonClick = async (values, setFieldValue) => {
     try {
-      let obj = JSON.parse(JSON.stringify(cashFlowData));
-      let FullObj = props.modalObject.ParentObject.values;
+      let updatedData = JSON.parse(JSON.stringify(cashFlowData));
 
-      props.modalObject.values[
-        props.modalObject.key + "CashFlowLoanBelanceLVR"
+      const {
+        values: parentValues,
+        key,
+        title,
+        ParentObject,
+      } = props.modalObject;
+
+      const {
+        values: grandValues,
+        key: parentKey,
+        title: parentTitle,
+        ParentObject: GrandParentObject,
+      } = ParentObject;
+
+      const numberOfProperties =
+        parseInt(grandValues.numberOfProperties, 10) || 1;
+      const currentIndex = parentKey.match(/\d+/)?.[0] || 0; // Extract numeric index from key
+
+      // // Structured entries for each property
+      // let structuredEntries = Array.from(
+      //   { length: numberOfProperties },
+      //   (_, i) => ({
+      //     address: grandValues[`address_${i}`] || "",
+      //     currentValue: grandValues[`currentValue_${i}`] || "",
+      //     state: grandValues[`state_${i}`] || "",
+      //     clientOwnership: grandValues[`clientOwnership_${i}`] || "0%",
+      //     partnerOwnership: grandValues[`partnerOwnership_${i}`] || "0%",
+      //     yearOfPurchase: grandValues[`yearOfPurchase_${i}`] || "",
+      //     totalCostBase: grandValues[`totalCostBase_${i}`] || "",
+      //     totalCostBaseObj: grandValues[`totalCostBaseObj_${i}`] || {},
+      //     loanBalance: grandValues[`loanBalance_${i}`] || "",
+      //     familyHomeLoanObj: grandValues[`familyHomeLoanObj_${i}`] || {}, // this will be changed for other modals where this modal is called
+      //     expectedGrowthRate: grandValues[`expectedGrowthRate_${i}`] || "",
+      //     sellPropertyInYear: grandValues[`sellPropertyInYear_${i}`] || "",
+      //     estimatedFutureSellingCost:
+      //       grandValues[`estimatedFutureSellingCost_${i}`] || "",
+      //   })
+      // );
+
+      // console.log(GrandParentObject, parentValues);
+
+      let structuredEntries = createStructuredEntries(
+        grandValues,
+        GrandParentObject.key,
+        numberOfProperties
+      );
+
+      // Update the correct entry with new child modal values
+      structuredEntries[currentIndex][ParentObject.key.replace(/_\d+/, "")] =
+        parentValues;
+      structuredEntries[currentIndex][ParentObject.key.replace(/_\d+/, "")][
+        key + "CashFlowLoanBelanceLVR"
       ] = values;
 
-      FullObj[props.modalObject.ParentObject.key] = props.modalObject.values;
+      // console.log(
+      //   structuredEntries[currentIndex][ParentObject.key.replace(/_\d+/, "")],
+      //   ParentObject.key
+      // );
 
-      obj[props.modalObject.ParentObject.ParentObject.key] = FullObj;
+      updatedData[GrandParentObject.key].client = structuredEntries;
+      updatedData[GrandParentObject.key].numberOfProperties =
+        numberOfProperties;
 
-      console.log(props.modalObject, "props.modalObject");
+      // console.log(
+      //   "Updated Data:",
+      //   JSON.stringify(updatedData[GrandParentObject.key], null, 2)
+      // );
 
+      // throw new Error("erorr");
+
+      // API Key Mapping
       let apiKey = {
         cf_familyHome: {
           key: "cf_familyHome",
@@ -189,32 +250,33 @@ const CashFlowLoanBelanceLVR = (props) => {
         },
       };
 
-      let res = await PostAxios(
-        `${DefaultUrl}/api/cal/${
-          apiKey[props.modalObject.ParentObject.ParentObject.key].key
-        }/${apiKey[props.modalObject.ParentObject.ParentObject.key].param}`,
-        obj
+      let apiEndpoint = apiKey[ParentObject.ParentObject.key];
+      console.log(grandValues);
+
+      // API Call
+      const res = await PostAxios(
+        `${DefaultUrl}/api/cal/${apiEndpoint.key}/${apiEndpoint.param}`,
+        updatedData
       );
+
       if (res) {
-        console.log(res);
+        let loanData =
+          res.data[ParentObject.ParentObject.key][currentIndex]?.loan || {};
 
-        let loan = {};
-
-        if (
-          props.modalObject.ParentObject.ParentObject.key === "cf_familyHome"
-        ) {
-          loan = res.data.loan;
-        } else {
-          loan = res.data[props.modalObject.ParentObject.ParentObject.key].loan;
-        }
-
-        // let { loan } = res.data[props.modalObject.ParentObject.ParentObject.key];
-
-        setFieldValue("loanBalance", toCommaAndDollar(loan.LVR.loanBalance));
+        setFieldValue(
+          "loanBalance",
+          toCommaAndDollar(loanData.LVR?.loanBalance || 0)
+        );
 
         if (!props.modalObject.clientPartnerPer) {
-          setFieldValue("clientOwnership", FullObj.clientOwnership);
-          setFieldValue("partnerOwnership", FullObj.partnerOwnership);
+          setFieldValue(
+            "clientOwnership",
+            structuredEntries[currentIndex].clientOwnership
+          );
+          setFieldValue(
+            "partnerOwnership",
+            structuredEntries[currentIndex].partnerOwnership
+          );
         }
 
         setCashFlowReCalculateLoading(false);
@@ -222,18 +284,16 @@ const CashFlowLoanBelanceLVR = (props) => {
           "success",
           "topRight",
           "Success Notification",
-          'Data of "' + props.modalObject.title + '" is Saved'
+          `Data of "${title}" is Saved`
         );
       }
     } catch (error) {
-      console.error("Error occurred while making API call:", error);
+      console.error("API Error:", error);
       openNotificationSuccess(
         "error",
         "topRight",
         "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        `Data of "${props.modalObject.title}" was not saved. Please try again.`
       );
       setCashFlowReCalculateLoading(false);
     }

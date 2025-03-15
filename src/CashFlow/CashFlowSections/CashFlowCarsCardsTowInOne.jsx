@@ -164,6 +164,24 @@ const CashFlowCarsCardsTowInOne = (props) => {
         ModalBtn: true,
       },
     ],
+    cf_accountBasedPension: [
+      {
+        SubTitle: RenderName("client"),
+        title: "Account Based Pension",
+        key: "cf_accountBasedPension",
+        attribute: "clientTotal",
+        Input: "client",
+        ModalBtn: true,
+      },
+      {
+        SubTitle: RenderName("partner"),
+        title: "Account Based Pension",
+        key: "cf_accountBasedPension",
+        attribute: "partnerTotal",
+        Input: "partner",
+        ModalBtn: true,
+      },
+    ],
     //show only client in bellow
     cf_SMSFBank: [
       {

@@ -59,7 +59,7 @@ const SMSFInvestmentProperties = (props) => {
   const fillInitialValues = (setFieldValue) => {
     try {
       setObjAndAPIKey(props.modalObject.key);
-      console.log("cashFlowData:", cashFlowData);
+      // console.log("cashFlowData:", cashFlowData);
 
       const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
 
@@ -136,10 +136,11 @@ const SMSFInvestmentProperties = (props) => {
         valueOfProperty: values[`valueOfProperty_${i}`] || "",
         state: values[`state_${i}`] || "",
         yearOfPurchase: values[`yearOfPurchase_${i}`] || "",
-        totalCostBaseObj: values[`totalCostBaseObj_${i}`] || "",
+        totalCostBase: values[`totalCostBase_${i}`] || "$0",
+        totalCostBaseObj: values[`totalCostBaseObj_${i}`] || {},
         expectedGrowthRate: values[`expectedGrowthRate_${i}`] || "",
-        loanBalance: values[`loanBalance_${i}`] || "",
-        loanBalanceObj: values[`loanBalanceObj_${i}`] || "",
+        loanBalance: values[`loanBalance_${i}`] || "$0",
+        loanBalanceObj: values[`loanBalanceObj_${i}`] || {},
         rentalIncome: values[`rentalIncome_${i}`] || "",
         sellPropertyInYear: values[`sellPropertyInYear_${i}`] || "",
         estimatedFutureSellingCost:

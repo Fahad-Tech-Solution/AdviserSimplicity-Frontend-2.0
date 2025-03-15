@@ -72,7 +72,16 @@ const CashFlowTotalCost = (props) => {
       styleSet: { width: "150px" },
       options: [
         { value: "Standard Rates", label: "Standard Rates" },
-        { value: "FH Buyer", label: "FH Buyer" },
+        {
+          value:
+            props.modalObject.key.match(/\d+/)?.[0] === "0"
+              ? "FH Buyer"
+              : "Pensioner",
+          label:
+            props.modalObject.key.match(/\d+/)?.[0] === "0"
+              ? "FH Buyer"
+              : "Pensioner",
+        },
         { value: "Manual", label: "Manual" },
       ],
     },
@@ -101,15 +110,18 @@ const CashFlowTotalCost = (props) => {
       disabled: true,
     },
   ];
-  
+
   const handleChildButtonClick = async (values, setFieldValue) => {
     try {
       let updatedData = JSON.parse(JSON.stringify(cashFlowData));
 
       const { values: parentValues, key, title } = props.modalObject;
+
       const numberOfProperties =
         parseInt(parentValues.numberOfProperties, 10) || 1;
+
       const currentIndex = key.match(/\d+/)?.[0] || 0; // Extract numeric index from key
+      console.log(currentIndex);
 
       let structuredEntries = Array.from(
         { length: numberOfProperties },
@@ -117,12 +129,13 @@ const CashFlowTotalCost = (props) => {
           address: parentValues[`address_${i}`] || "",
           currentValue: parentValues[`currentValue_${i}`] || "",
           state: parentValues[`state_${i}`] || "",
-          clientOwnership: parentValues[`clientOwnership_${i}`] || "$0",
-          partnerOwnership: parentValues[`partnerOwnership_${i}`] || "",
+          clientOwnership: parentValues[`clientOwnership_${i}`] || "0%",
+          partnerOwnership: parentValues[`partnerOwnership_${i}`] || "0%",
           yearOfPurchase: parentValues[`yearOfPurchase_${i}`] || "",
           totalCostBase: parentValues[`totalCostBase_${i}`] || "",
+          totalCostBaseObj: parentValues[`totalCostBaseObj_${i}`] || "",
           loanBalance: parentValues[`loanBalance_${i}`] || "",
-          familyHomeLoanObj: parentValues[`familyHomeLoanObj_${i}`] || "$0",
+          familyHomeLoanObj: parentValues[`familyHomeLoanObj_${i}`] || {},
           expectedGrowthRate: parentValues[`expectedGrowthRate_${i}`] || "",
           sellPropertyInYear: parentValues[`sellPropertyInYear_${i}`] || "",
           estimatedFutureSellingCost:
@@ -133,8 +146,11 @@ const CashFlowTotalCost = (props) => {
       // Update the correct entry with new child modal values
       structuredEntries[currentIndex][key.replace(/_\d+/, "")] = values;
       updatedData.cf_familyHome.client = structuredEntries;
+      updatedData.cf_familyHome.numberOfProperties = numberOfProperties;
 
       console.log(JSON.stringify(updatedData.cf_familyHome));
+
+      // throw new Error("An error occurred while processing the data.");
 
       // Send API request
       const res = await PostAxios(
@@ -143,21 +159,19 @@ const CashFlowTotalCost = (props) => {
       );
 
       if (res) {
-        const { totalCostBaseObj } = res.data;
+        const { totalCostBaseObj } = res.data.cf_familyHome[currentIndex];
 
         if (values.stampDuty !== "Manual") {
           setFieldValue(
             "stampDutyCalculation",
-            toCommaAndDollar(
-              totalCostBaseObj[currentIndex].stampDutyCalculation
-            )
+            toCommaAndDollar(totalCostBaseObj.stampDutyCalculation)
           );
         }
         setFieldValue(
           "totalCostBase",
-          toCommaAndDollar(totalCostBaseObj[currentIndex].totalCostBase)
+          toCommaAndDollar(totalCostBaseObj.totalCostBase)
         );
-
+        setCashFlowReCalculateLoading(false);
         openNotificationSuccess(
           "success",
           "topRight",
@@ -173,6 +187,7 @@ const CashFlowTotalCost = (props) => {
         "Error Notification",
         `Data of "${props.modalObject.title}" was not saved. Please try again.`
       );
+      setCashFlowReCalculateLoading(false);
     }
   };
 

@@ -40,7 +40,7 @@ const RCV = (props) => {
   let onSubmit = (values) => {
     console.log(JSON.stringify(values));
 
-    props.setFieldValue(props.modalObject.key,values);
+    props.setFieldValue(props.modalObject.key, values);
 
     // Reset the flag state if necessary
     if (props.flagState) {
@@ -74,20 +74,47 @@ const RCV = (props) => {
 
   let handleChildButtonClick = async (values, setFieldValue) => {
     try {
-      let obj = JSON.parse(JSON.stringify(cashFlowData));
+      let updatedData = JSON.parse(JSON.stringify(cashFlowData));
 
-      obj.cf_annuities = props.modalObject.values;
-      obj.cf_annuities[props.modalObject.stakeHolder.replace(".", "")][
-        props.modalObject.key + "Obj"
-      ] = values;
+      const { values: parentValues, key, title, sourceObj } = props.modalObject;
 
-      console.log(
-        JSON.stringify(
-          obj.cf_annuities[props.modalObject.stakeHolder.replace(".", "")]
-        )
+      const numberOfProperties =
+        parseInt(parentValues.numberOfProperties, 10) || 1;
+
+      const currentIndex = key.match(/\d+/)?.[0] || 0; // Extract numeric index from key
+
+      let structuredEntries = Array.from(
+        { length: numberOfProperties },
+        (_, i) => ({
+          originalInvestmentAmount:
+            parentValues[`originalInvestmentAmount_${i}`] || "",
+          sourceOfFunds: parentValues[`sourceOfFunds_${i}`] || "",
+          annuityType: parentValues[`annuityType_${i}`] || "",
+          IsThisReversionaryAnnuity:
+            parentValues[`IsThisReversionaryAnnuity_${i}`] || "",
+          RCV: parentValues[`RCV_${i}`] || "",
+          RCVObj: parentValues[`RCVObj_${i}`] || {},
+          includeFromYear: parentValues[`includeFromYear_${i}`] || "",
+          term: parentValues[`term_${i}`] || "",
+          yearsUntilMaturity: parentValues[`yearsUntilMaturity_${i}`] || "",
+          annualInflationRate: parentValues[`annualInflationRate_${i}`] || "",
+          annualPayment: parentValues[`annualPayment_${i}`] || "",
+          deductibleAmount: parentValues[`deductibleAmount_${i}`] || "",
+          deductibleAmountObj: parentValues[`deductibleAmountObj_${i}`] || {},
+        })
       );
 
-      // throw new Error("API call not implemented yet");
+      // Update the correct entry with new child modal values
+      structuredEntries[currentIndex][key.replace(/_\d+/, "")] = values;
+
+      console.log(sourceObj, key, JSON.stringify(structuredEntries));
+
+      updatedData[sourceObj.key][sourceObj.Input] = structuredEntries;
+      updatedData[sourceObj.key].numberOfProperties = numberOfProperties;
+
+      console.log(JSON.stringify(updatedData[sourceObj.key]));
+
+      throw new Error("API call not implemented yet");
 
       let res = await PostAxios(
         `${DefaultUrl}/api/cal/financialInvestment/INPUTS_Annuities`,
@@ -97,15 +124,50 @@ const RCV = (props) => {
       if (res) {
         console.log(res);
 
-        let { cf_annuities } = res.data;
+        let DataObj =
+          res.data[props.modalObject.sourceObj.key][props.modalObject.key];
 
-        setFieldValue(
-          "RCVOther",
-          toCommaAndDollar(
-            cf_annuities[props.modalObject.stakeHolder.replace(".", "")]
-              .RCVOther
-          )
-        );
+        if (
+          DataObj.preservationAge &&
+          typeof DataObj.preservationAge === "number"
+        ) {
+          setFieldValue("preservationAge", DataObj.preservationAge);
+        } else {
+          setFieldValue("preservationAge", "0");
+        }
+
+        if (
+          DataObj.preservationAge &&
+          typeof DataObj.preservationAgeYear === "number"
+        ) {
+          setFieldValue("preservationAgeYear", DataObj.preservationAgeYear);
+        } else {
+          setFieldValue("preservationAgeYear", "0");
+        }
+
+        if (
+          DataObj.minimumPension &&
+          typeof DataObj.minimumPension === "number"
+        ) {
+          setFieldValue(
+            "minimumPension",
+            toCommaAndDollar(DataObj.minimumPension)
+          );
+        } else {
+          setFieldValue("minimumPension", "$0");
+        }
+
+        if (
+          DataObj.maximumTTRPension &&
+          typeof DataObj.maximumTTRPension === "number"
+        ) {
+          setFieldValue(
+            "maximumTTRPension",
+            toCommaAndDollar(DataObj.maximumTTRPension)
+          );
+        } else {
+          setFieldValue("maximumTTRPension", "$0");
+        }
 
         setCashFlowReCalculateLoading(false);
         openNotificationSuccess(
