@@ -210,9 +210,17 @@ const CashFlowLoanBelanceLVR = (props) => {
       // Update the correct entry with new child modal values
       structuredEntries[currentIndex][ParentObject.key.replace(/_\d+/, "")] =
         parentValues;
+
       structuredEntries[currentIndex][ParentObject.key.replace(/_\d+/, "")][
         key + "CashFlowLoanBelanceLVR"
       ] = values;
+
+      for (let i = 0; i < numberOfProperties; i++) {
+        if (i != currentIndex) {
+          structuredEntries[i].totalCostBaseObj = {};
+          structuredEntries[i].familyHomeLoanObj = {};
+        }
+      }
 
       // console.log(
       //   structuredEntries[currentIndex][ParentObject.key.replace(/_\d+/, "")],
@@ -251,7 +259,7 @@ const CashFlowLoanBelanceLVR = (props) => {
       };
 
       let apiEndpoint = apiKey[ParentObject.ParentObject.key];
-      console.log(grandValues);
+      console.log(updatedData[GrandParentObject.key]);
 
       // API Call
       const res = await PostAxios(

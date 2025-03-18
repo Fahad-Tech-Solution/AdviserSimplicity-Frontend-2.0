@@ -35,17 +35,7 @@ const SMSFInvestmentProperties = (props) => {
 
   let managedFundsLOC = questionDetail?.managedFundsLOC || {};
 
-  let initialValues = {
-    streetAddress: "",
-    valueOfProperty: "",
-    yearOfPurchase: "",
-    totalCostBaseObj: {},
-    expectedGrowthRate: "",
-    loanBalance: "",
-    loanBalanceObj: {},
-    rentalIncome: "",
-    sellPropertyInYear: "",
-  };
+  let initialValues = { numberOfProperties: "" };
 
   let SMSFInvestmentLoan =
     Object.keys(questionDetail[props.modalObject.sourceKey] || {}).length > 0

@@ -224,7 +224,7 @@ const BalanceRolloverAmount = (props) => {
       updatedData[sourceObj.key][sourceObj.Input] = structuredEntries;
       updatedData[sourceObj.key].numberOfProperties = numberOfProperties;
 
-      console.log(JSON.stringify(updatedData[sourceObj.key]));
+      // console.log(JSON.stringify(updatedData[sourceObj.key]));
 
       let apiKey = {
         cf_accountBasedPension: {
@@ -237,61 +237,35 @@ const BalanceRolloverAmount = (props) => {
         },
       };
 
-      throw new Error("API call not implemented yet");
+      // throw new Error("API call not implemented yet");
 
       let res = await PostAxios(
         `${DefaultUrl}/api/cal/${apiKey[props.modalObject.sourceObj.key].key}/${
           apiKey[props.modalObject.sourceObj.key].param
         }`,
-        obj
+        updatedData
       );
 
       if (res) {
-        console.log(res);
+        // console.log(res);
 
         let DataObj =
-          res.data[props.modalObject.sourceObj.key][props.modalObject.key];
+          res.data[props.modalObject.sourceObj.key][
+            props.modalObject.sourceObj.Input
+          ][currentIndex];
+
+        // console.log(DataObj, props.modalObject.sourceObj.key, currentIndex);
 
         if (
-          DataObj.preservationAge &&
-          typeof DataObj.preservationAge === "number"
-        ) {
-          setFieldValue("preservationAge", DataObj.preservationAge);
-        } else {
-          setFieldValue("preservationAge", "0");
-        }
-
-        if (
-          DataObj.preservationAge &&
-          typeof DataObj.preservationAgeYear === "number"
-        ) {
-          setFieldValue("preservationAgeYear", DataObj.preservationAgeYear);
-        } else {
-          setFieldValue("preservationAgeYear", "0");
-        }
-
-        if (
-          DataObj.minimumPension &&
-          typeof DataObj.minimumPension === "number"
+          DataObj?.totalSuperAnnuationBenefits &&
+          typeof DataObj.totalSuperAnnuationBenefits === "number"
         ) {
           setFieldValue(
-            "minimumPension",
-            toCommaAndDollar(DataObj.minimumPension)
+            "totalSuperAnnuationBenefits",
+            DataObj.totalSuperAnnuationBenefits
           );
         } else {
-          setFieldValue("minimumPension", "$0");
-        }
-
-        if (
-          DataObj.maximumTTRPension &&
-          typeof DataObj.maximumTTRPension === "number"
-        ) {
-          setFieldValue(
-            "maximumTTRPension",
-            toCommaAndDollar(DataObj.maximumTTRPension)
-          );
-        } else {
-          setFieldValue("maximumTTRPension", "$0");
+          setFieldValue("totalSuperAnnuationBenefits", "$0");
         }
 
         setCashFlowReCalculateLoading(false);

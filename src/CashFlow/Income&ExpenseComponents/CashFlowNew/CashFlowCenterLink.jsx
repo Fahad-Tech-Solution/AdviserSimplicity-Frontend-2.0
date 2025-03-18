@@ -10,7 +10,12 @@ import {
   toCommaAndDollar,
 } from "../../../Components/Assets/Api/Api";
 import { Row, Table } from "react-bootstrap";
-import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from "../../../Store/Store";
+import {
+  CashFlowData,
+  CashFlowScenarioData,
+  defaultUrl,
+  QuestionDetail,
+} from "../../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 
 const CashFlowCenterLink = (props) => {
@@ -27,28 +32,26 @@ const CashFlowCenterLink = (props) => {
     Object.keys(questionDetail.incomeFromCentrelink || {}).length > 0
       ? questionDetail.incomeFromCentrelink
       : {
-        client: [],
-        partner: [],
-        joint: [],
-      };
+          client: [],
+          partner: [],
+          joint: [],
+        };
 
   let initialValues = {
     owner: [],
     client: {
-
       includeFromYear: 1,
       allowCarerAllowance: ["No"],
       isClientRenting: ["No"],
-      applySeparatedByIllness: "No"
+      applySeparatedByIllness: "No",
     },
     partner: {
       includeFromYear: 1,
       allowCarerAllowance: ["No"],
       isClientRenting: ["No"],
-      applySeparatedByIllness: "No"
+      applySeparatedByIllness: "No",
     },
   };
-
 
   const fillInitialValues = (setFieldValue) => {
     try {
@@ -63,11 +66,11 @@ const CashFlowCenterLink = (props) => {
 
       // Helper function to update field values
       const updateFields = (data, prefix) => {
-
         if (!data || !Object.keys(data).length) return;
         const fields = {
           includeFromYear: data.includeFromYear || 1,
-          allowCarerAllowance: data.allowCarerAllowance || data.paymentType || "",
+          allowCarerAllowance:
+            data.allowCarerAllowance || data.paymentType || "",
           isClientRenting: data.isClientRenting || data.paymentType || "",
           centrelinkPayment: data.centrelinkPayment || data.paymentType || "",
           applySeparatedByIllness: data.applySeparatedByIllness || "",
@@ -79,7 +82,11 @@ const CashFlowCenterLink = (props) => {
       };
 
       // Update owner field
-      if (scenarioObj?.selectedSource === "discoveryForm" && incomeFromCentrelink && incomeFromCentrelink._id) {
+      if (
+        scenarioObj?.selectedSource === "discoveryForm" &&
+        incomeFromCentrelink &&
+        incomeFromCentrelink._id
+      ) {
         setFieldValue(`owner`, incomeFromCentrelink.owner || "");
 
         // Update client-related fields
@@ -88,14 +95,16 @@ const CashFlowCenterLink = (props) => {
         }
 
         // Update partner-related fields
-        if (UserStatus === "Married" && incomeFromCentrelink.owner.includes("partner")) {
+        if (
+          UserStatus === "Married" &&
+          incomeFromCentrelink.owner.includes("partner")
+        ) {
           updateFields(incomeFromCentrelink.partner, "partner");
         }
-      }
-      else {
+      } else {
         // Handle cashFlowData scenario
         const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-        console.log(cashFlowDetails, "cashFlowDetails")
+        console.log(cashFlowDetails, "cashFlowDetails");
         if (cashFlowDetails) {
           setFieldValue(`owner`, cashFlowDetails.owner || "");
           if (cashFlowDetails.owner.includes("client")) {
@@ -103,13 +112,15 @@ const CashFlowCenterLink = (props) => {
             updateFields(cashFlowDetails.client, "client");
           }
 
-          if (UserStatus === "Married" && cashFlowDetails.owner.includes("partner")) {
+          if (
+            UserStatus === "Married" &&
+            cashFlowDetails.owner.includes("partner")
+          ) {
             // Update partner details
             updateFields(cashFlowDetails.partner, "partner");
           }
         }
       }
-
 
       // Additional data from cashFlowData
       if (cashFlowData?.[objAndAPIKey]?._id) {
@@ -121,37 +132,36 @@ const CashFlowCenterLink = (props) => {
           updateFields(cashFlowDataDetails.client, "client");
         }
 
-        if (UserStatus === "Married" && cashFlowDataDetails.owner.includes("partner")) {
+        if (
+          UserStatus === "Married" &&
+          cashFlowDataDetails.owner.includes("partner")
+        ) {
           // Update partner details
           updateFields(cashFlowDataDetails.partner, "partner");
         }
       }
-
     } catch (error) {
       console.error("Error in fillInitialValues:", error);
     }
   };
 
-
   let onSubmit = async (values) => {
     console.log(JSON.stringify(values));
     // return (false);
-    let obj = values
+    let obj = values;
 
-    obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
+    obj.scenarioFK = JSON.parse(localStorage.getItem("ScenarioObj"))._id;
 
     if (values.owner.includes("client")) {
       obj.clientTotal = "Year " + values.client.includeFromYear || "";
-    }
-    else {
-      obj.clientTotal = ""
+    } else {
+      obj.clientTotal = "";
     }
 
     if (values.owner.includes("partner")) {
       obj.partnerTotal = "Year " + values.partner.includeFromYear || "";
-    }
-    else {
-      obj.partnerTotal = ""
+    } else {
+      obj.partnerTotal = "";
     }
 
     const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
@@ -161,10 +171,7 @@ const CashFlowCenterLink = (props) => {
     try {
       let res;
       if (!bankAccountArray) {
-        res = await PostAxios(
-          `${DefaultUrl}/api/CF/${objAndAPIKey}/Add`,
-          obj
-        );
+        res = await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
       } else {
         res = await PatchAxios(
           `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
@@ -199,8 +206,8 @@ const CashFlowCenterLink = (props) => {
         "topRight",
         "Error Notification",
         'Data of "' +
-        props.modalObject.title +
-        '" is not Saved Please! try again'
+          props.modalObject.title +
+          '" is not Saved Please! try again'
       );
     }
   };
@@ -218,13 +225,12 @@ const CashFlowCenterLink = (props) => {
   const options =
     UserStatus !== "Single"
       ? [
-        { value: "client", label: RenderName("client") },
-        { value: "partner", label: RenderName("partner") },
-      ]
+          { value: "client", label: RenderName("client") },
+          { value: "partner", label: RenderName("partner") },
+        ]
       : [{ value: "client", label: RenderName("client") }];
 
   let paymentType = [
-
     { value: "Age Pension", label: "Age Pension" },
     { value: "Disability Pension", label: "Disability Pension" },
     { value: "Carer Payment", label: "Carer Payment" },
@@ -235,7 +241,6 @@ const CashFlowCenterLink = (props) => {
     { value: "Rent Assistance", label: "Rent Assistance" },
     { value: "No", label: "No" },
   ];
-
 
   let CheckMultiSelect = (value, setFieldValue, currentInput) => {
     let selectedArray = currentInput.value;
@@ -280,17 +285,11 @@ const CashFlowCenterLink = (props) => {
     },
     {
       name: "allowCarerAllowance",
-      type: "select-multi",
-      options: paymentType,
-      callBack: true,
-      func: CheckMultiSelect,
+      type: "yesno",
     },
     {
       name: "isClientRenting",
-      type: "select-multi",
-      options: paymentType,
-      callBack: true,
-      func: CheckMultiSelect,
+      type: "yesno",
     },
     {
       name: "applySeparatedByIllness",

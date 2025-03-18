@@ -45,11 +45,7 @@ const CashFlowFamilyHome = (props) => {
           joint: [],
         }; // Use an empty object as default if familyHome is undefined
 
-  let initialValues = {
-    expectedGrowthRate: "2.50%",
-    sellPropertyInYear: "No",
-    yearOfPurchase: familyHome.currentValue ? "Existing" : "",
-  };
+  let initialValues = { numberOfProperties: "" };
 
   const fillInitialValues = (setFieldValue) => {
     try {
@@ -70,7 +66,8 @@ const CashFlowFamilyHome = (props) => {
           [`currentValue_${index}`]: data.currentValue || "$0",
           [`clientOwnership_${index}`]: data.clientOwnership || "0%",
           [`partnerOwnership_${index}`]: data.partnerOwnership || "0%",
-          [`yearOfPurchase_${index}`]: data.yearOfPurchase || "1",
+          [`yearOfPurchase_${index}`]:
+            data.yearOfPurchase || (familyHome.currentValue ? "Existing" : ""),
           [`totalCostBase_${index}`]:
             data.totalCostBase || data.costBase || "$0",
           [`totalCostBaseObj_${index}`]: data.totalCostBaseObj || {},
@@ -139,7 +136,7 @@ const CashFlowFamilyHome = (props) => {
         state: values[`state_${i}`] || "",
         clientOwnership: values[`clientOwnership_${i}`] || "$0",
         partnerOwnership: values[`partnerOwnership_${i}`] || "",
-        yearOfPurchase: values[`yearOfPurchase_${i}`] || "",
+        yearOfPurchase: values[`yearOfPurchase_${i}`] || "Existing",
         totalCostBase: values[`totalCostBase_${i}`] || "",
         totalCostBaseObj: values[`totalCostBaseObj_${i}`] || "",
         loanBalance: values[`loanBalance_${i}`] || "",
@@ -386,6 +383,15 @@ const CashFlowFamilyHome = (props) => {
     let value = e.target.value > 2 ? 2 : e.target.value;
 
     setFieldValue(e.target.id, value);
+
+    Array.from({
+      length: value,
+    }).map((_, index) => {
+      setFieldValue(
+        "address_" + index,
+        PersonalData.client.clientHomeAddress || ""
+      );
+    });
   };
 
   return (
@@ -406,7 +412,7 @@ const CashFlowFamilyHome = (props) => {
               <div className="col-md-12 mb-3">
                 <div className="d-flex justify-content-center align-items-center gap-4">
                   <label htmlFor="" className="text-end fw-bold">
-                    Number of Homes :
+                    Number of Home :
                   </label>
 
                   <div style={{ minWidth: "5%", maxWidth: "10%" }}>

@@ -33,21 +33,8 @@ const CashFlowInvestmentsProperty = (props) => {
 
   let DefaultUrl = useRecoilValue(defaultUrl);
 
-  let initialValues = {
-    streetAddress: "",
-    valueOfProperty: "",
-    clientOwnership: "",
-    partnerOwnership: "",
-    yearOfPurchase: "",
-    totalCostBaseObj: {},
-    expectedGrowthRate: "",
-    loanBalance: "",
-    loanBalanceObj: {},
-    rentalIncome: "",
-    sellPropertyInYear: "",
-    convertToPPRYear: "",
-  };
-
+  let initialValues = { numberOfProperties: "" };
+  
   let investmentPropertyDetails =
     Object.keys(questionDetail.investmentPropertyDetails || {}).length > 0
       ? questionDetail.investmentPropertyDetails

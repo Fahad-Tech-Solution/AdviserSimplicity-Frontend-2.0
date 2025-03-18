@@ -264,6 +264,14 @@ const CashFlowHomeLoan = (props) => {
 
       // Update the correct entry with new values
       structuredEntries[currentIndex][key.replace(/_\d+/, "")] = values;
+
+      for (let i = 0; i < numberOfProperties; i++) {
+        if (i != currentIndex) {
+          structuredEntries[i].totalCostBaseObj = {};
+          structuredEntries[i].familyHomeLoanObj = {};
+        }
+      }
+
       updatedData[ParentObject.key].client = structuredEntries;
       updatedData[ParentObject.key].numberOfProperties = numberOfProperties;
 

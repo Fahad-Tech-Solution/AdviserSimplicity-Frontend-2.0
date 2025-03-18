@@ -222,12 +222,12 @@ const AccountBasedNewPensionRollover = (props) => {
       // Update the correct entry with new child modal values
       structuredEntries[currentIndex][key.replace(/_\d+/, "")] = values;
 
-      console.log(sourceObj, key, JSON.stringify(structuredEntries));
+      // console.log(sourceObj, key, JSON.stringify(structuredEntries));
 
       updatedData[sourceObj.key][sourceObj.Input] = structuredEntries;
       updatedData[sourceObj.key].numberOfProperties = numberOfProperties;
 
-      console.log(JSON.stringify(updatedData[sourceObj.key]));
+      // console.log(JSON.stringify(updatedData[sourceObj.key]));
 
       let apiKey = {
         cf_accountBasedPension: {
@@ -240,37 +240,42 @@ const AccountBasedNewPensionRollover = (props) => {
         },
       };
 
-      throw new Error("API call not implemented yet");
+      // throw new Error("API call not implemented yet");
 
       let res = await PostAxios(
         `${DefaultUrl}/api/cal/${apiKey[props.modalObject.sourceObj.key].key}/${
           apiKey[props.modalObject.sourceObj.key].param
         }`,
-        obj
+        updatedData
       );
 
       if (res) {
-        console.log(res);
+        // console.log(res);
 
         let DataObj =
-          res.data[props.modalObject.sourceObj.key][props.modalObject.key];
+          res.data[props.modalObject.sourceObj.key][
+            props.modalObject.sourceObj.Input
+          ][currentIndex];
 
         if (
-          DataObj.preservationAge &&
-          typeof DataObj.preservationAge === "number"
+          DataObj.currentPensionDetails &&
+          typeof DataObj.currentPensionDetails === "number"
         ) {
-          setFieldValue("preservationAge", DataObj.preservationAge);
+          setFieldValue("currentPensionDetails", DataObj.currentPensionDetails);
         } else {
-          setFieldValue("preservationAge", "0");
+          setFieldValue("currentPensionDetails", "0");
         }
 
         if (
-          DataObj.preservationAge &&
-          typeof DataObj.preservationAgeYear === "number"
+          DataObj.totalSuperannuationBenefits &&
+          typeof DataObj.totalSuperannuationBenefits === "number"
         ) {
-          setFieldValue("preservationAgeYear", DataObj.preservationAgeYear);
+          setFieldValue(
+            "totalSuperannuationBenefits",
+            DataObj.totalSuperannuationBenefits
+          );
         } else {
-          setFieldValue("preservationAgeYear", "0");
+          setFieldValue("totalSuperannuationBenefits", "0");
         }
 
         if (
@@ -286,15 +291,15 @@ const AccountBasedNewPensionRollover = (props) => {
         }
 
         if (
-          DataObj.maximumTTRPension &&
-          typeof DataObj.maximumTTRPension === "number"
+          DataObj.maximumPension &&
+          typeof DataObj.maximumPension === "number"
         ) {
           setFieldValue(
-            "maximumTTRPension",
-            toCommaAndDollar(DataObj.maximumTTRPension)
+            "maximumPension",
+            toCommaAndDollar(DataObj.maximumPension)
           );
         } else {
-          setFieldValue("maximumTTRPension", "$0");
+          setFieldValue("maximumPension", "$0");
         }
 
         setCashFlowReCalculateLoading(false);

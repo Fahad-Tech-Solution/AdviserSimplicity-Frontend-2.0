@@ -100,66 +100,34 @@ const DeductibleAmount = (props) => {
       // Update the correct entry with new child modal values
       structuredEntries[currentIndex][key.replace(/_\d+/, "")] = values;
 
-      console.log(sourceObj, key, JSON.stringify(structuredEntries));
+      // console.log(sourceObj, key, JSON.stringify(structuredEntries));
 
       updatedData[sourceObj.key][sourceObj.Input] = structuredEntries;
       updatedData[sourceObj.key].numberOfProperties = numberOfProperties;
 
-      console.log(JSON.stringify(updatedData[sourceObj.key]));
+      // console.log(JSON.stringify(updatedData[sourceObj.key]));
 
-      throw new Error("API call not implemented yet");
+      // throw new Error("API call not implemented yet");
 
       let res = await PostAxios(
         `${DefaultUrl}/api/cal/financialInvestment/INPUTS_Annuities`,
-        obj
+        updatedData
       );
 
       if (res) {
-        console.log(res);
+        // console.log(res);
 
         let DataObj =
-          res.data[props.modalObject.sourceObj.key][props.modalObject.key];
+          res.data[props.modalObject.sourceObj.key][
+            props.modalObject.sourceObj.Input
+          ][currentIndex];
+        // console.log(DataObj, props.modalObject.sourceObj.key, currentIndex);
 
-        if (
-          DataObj.preservationAge &&
-          typeof DataObj.preservationAge === "number"
-        ) {
-          setFieldValue("preservationAge", DataObj.preservationAge);
-        } else {
-          setFieldValue("preservationAge", "0");
-        }
-
-        if (
-          DataObj.preservationAge &&
-          typeof DataObj.preservationAgeYear === "number"
-        ) {
-          setFieldValue("preservationAgeYear", DataObj.preservationAgeYear);
-        } else {
-          setFieldValue("preservationAgeYear", "0");
-        }
-
-        if (
-          DataObj.minimumPension &&
-          typeof DataObj.minimumPension === "number"
-        ) {
+        if (DataObj?.deductibleAmount) {
           setFieldValue(
-            "minimumPension",
-            toCommaAndDollar(DataObj.minimumPension)
+            "deductibleAmount",
+            toCommaAndDollar(DataObj.deductibleAmount)
           );
-        } else {
-          setFieldValue("minimumPension", "$0");
-        }
-
-        if (
-          DataObj.maximumTTRPension &&
-          typeof DataObj.maximumTTRPension === "number"
-        ) {
-          setFieldValue(
-            "maximumTTRPension",
-            toCommaAndDollar(DataObj.maximumTTRPension)
-          );
-        } else {
-          setFieldValue("maximumTTRPension", "$0");
         }
 
         setCashFlowReCalculateLoading(false);

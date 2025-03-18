@@ -145,6 +145,19 @@ const CashFlowTotalCost = (props) => {
 
       // Update the correct entry with new child modal values
       structuredEntries[currentIndex][key.replace(/_\d+/, "")] = values;
+
+      for (let i = 0; i < numberOfProperties; i++) {
+        if (i != currentIndex) {
+          structuredEntries[i].totalCostBaseObj = {};
+          structuredEntries[i].familyHomeLoanObj = {};
+        } else if (
+          structuredEntries[i]?.familyHomeLoanObj &&
+          !structuredEntries[i].familyHomeLoanObj.interestOnlyPeriod
+        ) {
+          structuredEntries[i].familyHomeLoanObj = {};
+        }
+      }
+
       updatedData.cf_familyHome.client = structuredEntries;
       updatedData.cf_familyHome.numberOfProperties = numberOfProperties;
 
@@ -159,6 +172,7 @@ const CashFlowTotalCost = (props) => {
       );
 
       if (res) {
+        console.log(res);
         const { totalCostBaseObj } = res.data.cf_familyHome[currentIndex];
 
         if (values.stampDuty !== "Manual") {

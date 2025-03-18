@@ -181,14 +181,12 @@ const AccountBasedPensionPayments = (props) => {
       // Update the correct entry with new child modal values
       structuredEntries[currentIndex][key.replace(/_\d+/, "")] = values;
 
-      console.log(sourceObj, key, JSON.stringify(structuredEntries));
+      // console.log(sourceObj, key, JSON.stringify(structuredEntries));
 
       updatedData[sourceObj.key][sourceObj.Input] = structuredEntries;
       updatedData[sourceObj.key].numberOfProperties = numberOfProperties;
 
-      console.log(JSON.stringify(updatedData[sourceObj.key]));
-
-      
+      // console.log(JSON.stringify(updatedData[sourceObj.key]));
 
       let apiKey = {
         cf_accountBasedPension: {
@@ -201,20 +199,22 @@ const AccountBasedPensionPayments = (props) => {
         },
       };
 
-      throw new Error("API call not implemented yet");
+      // throw new Error("API call not implemented yet");
 
       let res = await PostAxios(
         `${DefaultUrl}/api/cal/${apiKey[props.modalObject.sourceObj.key].key}/${
           apiKey[props.modalObject.sourceObj.key].param
         }`,
-        obj
+        updatedData
       );
 
       if (res) {
         console.log(res);
 
         let DataObj =
-          res.data[props.modalObject.sourceObj.key][props.modalObject.key];
+          res.data[props.modalObject.sourceObj.key][
+            props.modalObject.sourceObj.Input
+          ][currentIndex];
 
         if (
           DataObj.preservationAge &&

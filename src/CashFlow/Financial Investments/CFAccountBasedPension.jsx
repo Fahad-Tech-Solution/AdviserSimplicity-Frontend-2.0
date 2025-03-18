@@ -18,11 +18,7 @@ import {
 } from "../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
-// import InputOverride from "./InputOverride";
-import Withdrawals from "./Withdrawals";
 import BalanceRolloverAmount from "./BalanceRolloverAmount";
-import NewPensionRollover from "./NewPensionRollover";
-import PensionPayments from "./PensionPayments";
 import AccountBasedInputOverride from "./accountBasedPension/AccountBasedInputOverride";
 import AccounntBasedWithdrawals from "./accountBasedPension/AccounntBasedWithdrawals";
 import AccountBasedNewPensionRollover from "./accountBasedPension/AccountBasedNewPensionRollover";
@@ -50,9 +46,7 @@ const CFAccountBasedPension = (props) => {
           joint: [],
         }; // Use an empty object as default if accountBasedPensionIssues is undefined
 
-  let initialValues = {
-    owner: [],
-  };
+  let initialValues = {numberOfProperties:""};
 
   const fillInitialValues = (setFieldValue) => {
     try {
@@ -255,7 +249,7 @@ const CFAccountBasedPension = (props) => {
     }
 
     console.log(JSON.stringify(obj), "Final Object");
-    return false;
+    // return false;
 
     const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
 

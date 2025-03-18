@@ -115,13 +115,14 @@ const SalaryPackagingCar = (props) => {
                               className="form-select inputDesignDoubleInput"
                             >
                               <option value={""}>Please Select</option>
-                              <option
-                                value={"Full FBT/Rebatable/Exempt (17K Cap)"}
-                              >
-                                Full FBT/Rebatable/Exempt (17K Cap)
+
+                              <option value={"Full FBT"}>Full FBT</option>
+                              <option value={"Rebatable"}>Rebatable</option>
+                              <option value={"Exempt ($17K Cap)"}>
+                                Exempt ($17K Cap)
                               </option>
-                              <option value={"Exempt (30K Cap)"}>
-                                Exempt (30K Cap)
+                              <option value={"Exempt ($30K Cap)"}>
+                                Exempt ($30K Cap)
                               </option>
                             </Field>
                           </td>
