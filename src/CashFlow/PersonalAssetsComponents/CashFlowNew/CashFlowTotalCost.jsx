@@ -161,7 +161,7 @@ const CashFlowTotalCost = (props) => {
       updatedData.cf_familyHome.client = structuredEntries;
       updatedData.cf_familyHome.numberOfProperties = numberOfProperties;
 
-      console.log(JSON.stringify(updatedData.cf_familyHome));
+      console.log(JSON.stringify(updatedData));
 
       // throw new Error("An error occurred while processing the data.");
 

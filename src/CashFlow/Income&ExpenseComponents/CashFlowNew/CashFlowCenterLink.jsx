@@ -156,12 +156,14 @@ const CashFlowCenterLink = (props) => {
       obj.clientTotal = "Year " + values.client.includeFromYear || "";
     } else {
       obj.clientTotal = "";
+      obj.client = {};
     }
 
     if (values.owner.includes("partner")) {
       obj.partnerTotal = "Year " + values.partner.includeFromYear || "";
     } else {
       obj.partnerTotal = "";
+      partner = {};
     }
 
     const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
@@ -217,11 +219,6 @@ const CashFlowCenterLink = (props) => {
     label: ("Year " + (i + 1)).toString(),
   }));
 
-  const indexation = Array.from({ length: 21 }, (_, i) => ({
-    value: (i * 0.5).toFixed(2) + "%",
-    label: (i * 0.5).toFixed(2) + "%",
-  }));
-
   const options =
     UserStatus !== "Single"
       ? [
@@ -241,36 +238,6 @@ const CashFlowCenterLink = (props) => {
     { value: "Rent Assistance", label: "Rent Assistance" },
     { value: "No", label: "No" },
   ];
-
-  let CheckMultiSelect = (value, setFieldValue, currentInput) => {
-    let selectedArray = currentInput.value;
-
-    // console.log(selectedArray);
-
-    // Check if "No" is selected
-    const hasNoValue = selectedArray.some((item) => item.value === "No");
-    const noIndex = selectedArray.findIndex((item) => item.value === "No");
-
-    // If only "No" is selected or if "No" is the last selection, set only ["No"]
-    if (
-      (selectedArray.length === 1 && hasNoValue) ||
-      (selectedArray.length === 2 && hasNoValue && noIndex === 1)
-    ) {
-      setFieldValue(currentInput.name, ["No"]);
-      return;
-    }
-
-    if (hasNoValue && selectedArray.length > 2) {
-      // If "No" is present in a larger selection, prioritize it and set only ["No"]
-      setFieldValue(currentInput.name, ["No"]);
-    } else {
-      // Filter out any "No" values and use the remaining selected items
-      const filtered = selectedArray
-        .filter((item) => item.value !== "No")
-        .map((item) => item.value);
-      setFieldValue(currentInput.name, filtered);
-    }
-  };
 
   const rowConfig = [
     {

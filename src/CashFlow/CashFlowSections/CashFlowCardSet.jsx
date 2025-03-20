@@ -32,6 +32,7 @@ import CashFlowInvestmentsProperty from "../Financial Investments/CashFlowInvest
 import CFSuperFund from "../Financial Investments/CFSuperFund";
 import CFAccountBasedPension from "../Financial Investments/CFAccountBasedPension";
 import CFAnnuities from "../Financial Investments/CFAnnuities";
+
 import BusinessInvestmentsMiddleware from "../BusinessInvestment/BusinessInvestmentsMiddleware";
 import SMSFAccumulationDetails from "../SMSF/SMSFAccumulationDetails";
 import SMSFPensionAccountDetails from "../SMSF/SMSFPensionAccountDetails";
@@ -66,11 +67,11 @@ const CashFlowCardSet = (props) => {
 
     //Second Section Modals LifeStyle Assets & Debt
     "Own a Family Home": <CashFlowFamilyHome />,
-    "Contents": <CashFlowOtherAsset />,
-    "Car": <CashFlowOtherAsset />,
+    Contents: <CashFlowOtherAsset />,
+    Car: <CashFlowOtherAsset />,
     "Motor Vehicle 2": <CashFlowOtherAsset />,
-    "Boat": <CashFlowOtherAsset />,
-    "Caravan": <CashFlowOtherAsset />,
+    Boat: <CashFlowOtherAsset />,
+    Caravan: <CashFlowOtherAsset />,
     "Other Assets": <CashFlowOtherAsset />,
     "Personal Loans": <CashFlowPersonalDebt />,
     "Credit Card": <CashFlowPersonalDebt />,
@@ -81,7 +82,7 @@ const CashFlowCardSet = (props) => {
     "Other Investments": <CashFlowAustralianShares />,
 
     // Same type of Modal
-    "Cash": <CashFlowCashBankDetails />,
+    Cash: <CashFlowCashBankDetails />,
     "Term Deposits": <CashFlowCashBankDetails />,
     "Investment Bonds": <CashFlowCashBankDetails />,
 
@@ -92,7 +93,7 @@ const CashFlowCardSet = (props) => {
     // Same type of Modal
     "Super Fund": <CFSuperFund />,
     "Account Based Pension": <CFAccountBasedPension />,
-    "Annuities": <CFAnnuities />,
+    Annuities: <CFAnnuities />,
 
     //Business Investments
     "Dividend Income": <BusinessInvestmentsMiddleware />,
@@ -107,7 +108,7 @@ const CashFlowCardSet = (props) => {
 
     "SMSF Australian Shares": <CashFlowAustralianShares />,
     "SMSF Platform Investment": <CashFlowAustralianShares />,
-    "SMSF": <CashFlowAustralianShares />,
+    SMSF: <CashFlowAustralianShares />,
     "SMSF Investment Loan": <SMSFInvestmentLoan />,
     "SMSF Investment Properties": <SMSFInvestmentProperties />,
 

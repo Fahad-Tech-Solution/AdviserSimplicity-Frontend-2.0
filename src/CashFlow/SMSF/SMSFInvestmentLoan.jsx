@@ -143,17 +143,18 @@ const SMSFInvestmentLoan = (props) => {
       obj.clientTotal = "";
     }
 
-    if (values.owner.includes("partner")) {
-      obj.partnerTotal =
-        toCommaAndDollar(
-          parseFloat(
-            values.partner.actualAnnualRepayments.replace(/[^0-9.-]+/g, "")
-          ) +
-            JointActualAnnualRepayments / 2
-        ) || "$0";
-    } else {
-      obj.partnerTotal = "";
-    }
+    // if (values.owner.includes("partner")) {
+    //   obj.partnerTotal =
+    //     toCommaAndDollar(
+    //       parseFloat(
+    //         values.partner.actualAnnualRepayments.replace(/[^0-9.-]+/g, "")
+    //       ) +
+    //         JointActualAnnualRepayments / 2
+    //     ) || "$0";
+    // } else {
+    //   obj.partnerTotal = undefined;
+    //   obj.partner = undefined;
+    // }
 
     const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
 
