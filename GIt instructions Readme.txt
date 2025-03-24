@@ -12,7 +12,8 @@ git add .
 
 git commit -m "Message you want"
 
-
+ 
 #to push your code to online repository 
 
 git push -u origin Wahab-Hameed
+

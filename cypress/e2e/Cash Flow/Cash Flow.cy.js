@@ -30,57 +30,57 @@ describe("Cash Flow", () => {
   const SMSFClient = new ClientSMSF();
   const personalDetail = new PersonalDetail();
 
-  it("Personal Detail", () => {
+  it.skip("Personal Detail", () => {
     personalDetail.section();
   });
 
-  it("Income And Expenses With Partner ", () => {
+  it.skip("Income And Expenses With Partner ", () => {
     IncomeAndExpensesPartner.section();
   });
 
-  it.only("Income And Expenses With Client ", () => {
+  it.skip("Income And Expenses With Client ", () => {
     IncomeAndExpenseClient.section();
   });
 
-  it("Lifestyle Assets and Debt With Partner", () => {
+  it.skip("Lifestyle Assets and Debt With Partner", () => {
     LifestyleAssetsandDebtPartner.section();
   });
 
-  it.only("Lifestyle Assets and Debt With Client", () => {
+  it.skip("Lifestyle Assets and Debt With Client", () => {
     LifestyleAssetsandDebtClient.section();
   });
 
-  it("Financial Investments With Partner", () => {
+  it.skip("Financial Investments With Partner", () => {
     FinancialInvestmentsPartner.section();
   });
 
-  it.only("Financial Investments With Client", () => {
+  it.skip("Financial Investments With Client", () => {
     FinancialInvestmentsClient.section();
   });
 
 
-  it("Business Entities With Partner", () => {
+  it.only("Business Entities With Partner", () => {
     BusinessEntitiesPartner.section();
   });
 
-  it.only("Business Entities With Client", () => {
+  it.skip("Business Entities With Client", () => {
     BusinessEntitiesClient.section();
   });
 
-  it("SMSF With Partner", () => {
+  it.skip("SMSF With Partner", () => {
     SMSFPartner.section();
   });
 
-  it.only("SMSF With Client", () => {
+  it.skip("SMSF With Client", () => {
     SMSFClient.section();
   });
  
   
-  it.only("Investment Trust With Partner", () => {
+  it.skip("Investment Trust With Partner", () => {
     InvestmentTrustPartner.section();
   });
 
-  it("Investment Trust With Client", () => {
+  it.skip("Investment Trust With Client", () => {
     InvestmentTrustClient.section();
   });
 

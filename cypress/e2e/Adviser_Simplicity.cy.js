@@ -30,7 +30,7 @@ describe("Adviser Simplicity", () => {
   //const cashFlow = new CashFlow();
 
   it.skip("Adding Single Client Detail's", () => {
-    cy.visit("http://ec2-54-253-45-171.ap-southeast-2.compute.amazonaws.com/");
+    cy.visit(Cypress.env('CashFlowUrl')); 
 
     cy.get("img").click();
     cy.get(
@@ -139,12 +139,12 @@ describe("Adviser Simplicity", () => {
     questionsSection.visitAndCheck();
   });
 
-  it.skip("Personal Income Expense Client Section", () => {
+  it.only("Personal Income Expense Client Section", () => {
     personalIncomeExpense.section();
   });
 
 
-  it.only("Personal Income Expense Partner Section", () => {
+  it.skip("Personal Income Expense Partner Section", () => {
     personalIncomeExpensePartnerSection.section();
   });
 

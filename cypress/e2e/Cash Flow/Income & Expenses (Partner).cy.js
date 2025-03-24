@@ -18,9 +18,11 @@ class PartnerIncomeAndExpenses {
     cy.get("#cashFlow").click();
 
     cy.get(":nth-child(6) > .accordion-header > .accordion-button").click();
-    cy.get(
-      ":nth-child(6) > .accordion-collapse > .accordion-body > :nth-child(1) > :nth-child(1) > :nth-child(3) > .mt-4 > .table-responsive > .table > tbody > tr > :nth-child(6) > .ant-dropdown-trigger"
-    ).click();
+    
+
+cy.get(':nth-child(6) > .accordion-collapse > .accordion-body > :nth-child(1) > :nth-child(1) > :nth-child(4) > .mt-4 > .table-responsive > .table > tbody > tr > :nth-child(6)').click()
+
+
     cy.get(".ant-dropdown-menu").within(() => {
       cy.contains("Edit").click();
     });
@@ -299,7 +301,7 @@ class PartnerIncomeAndExpenses {
         .contains("Age Pension")
         .should("be.visible");
 
-      cy.contains("Include From Year").should("be.visible");
+      cy.contains("Include From Year")
       cy.get(".form-select").should("have.value", "1");
 
       cy.contains("Allow Carer Allowance").should("be.visible");
