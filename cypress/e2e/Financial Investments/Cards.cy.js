@@ -1,7 +1,9 @@
 class FinancialInvestments {
   section() {
-    cy.visit("http://ec2-54-66-20-19.ap-southeast-2.compute.amazonaws.com/");
-    cy.get(":nth-child(6) > :nth-child(7)").click();
+    cy.visit(Cypress.env("CashFlowUrl"));
+    cy.get(
+      ":nth-child(6) > :nth-child(7) > :nth-child(1) > div > button"
+    ).click();
     cy.get("#popover > :nth-child(3)").click();
     cy.get(
       '[statusstep="32"] > .ant-steps-item-container > .ant-steps-item-icon > .ant-steps-icon > .rounded-circle'
@@ -121,130 +123,130 @@ class FinancialInvestments {
     //   cy.contains("Submit").should("be.visible").click();
     // });
 
-    // Bank Accounts
+    //Bank Accounts
 
-    // cy.get(":nth-child(1) > .py-4").within(() => {
-    //   cy.contains("Bank Accounts");
-    //   cy.get("img");
-    //   cy.contains("Admin");
-    //   cy.get(
-    //     "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
-    //   ).click();
-    // });
+    cy.get(":nth-child(1) > .py-4").within(() => {
+      cy.contains("Bank Accounts");
+      cy.get("img");
+      cy.contains("Aiden Smith");
+      cy.get(
+        "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
+      ).click();
+    });
 
-    // cy.get(".modal-content").within(() => {
-    //   cy.contains("Bank Accounts");
-    //   cy.get(".btn-close");
-    //   cy.get(".table").within(() => {
-    //     cy.contains("Owner");
-    //     cy.get('[style="width: 50%;"]').contains("Admin");
-    //     cy.contains("Current Balance");
-    //   });
-    // });
+    cy.get(".modal-content").within(() => {
+      cy.contains("Bank Accounts");
+      cy.get(".btn-close");
+      cy.get(".table").within(() => {
+        cy.contains("Owner");
+        cy.get('[style="width: 50%;"]').contains("Aiden Smith");
+        cy.contains("Current Balance");
+      });
+    });
 
-    // cy.get("#button-addon2").click();
+    cy.get("#button-addon2").click();
 
-    // cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
-    //   () => {
-    //     cy.contains("Admin_Bank Accounts Detail");
-    //     cy.contains("How many Bank Accounts Detail does Admin have :");
-    //     cy.get("#NumberOfMap").clear().type(1);
-    //   }
-    // );
-    // //Inner Table
-    // cy.get(
-    //   '[style="display: block;"] > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4'
-    // ).within(() => {
-    //   cy.contains("No#");
-    //   cy.contains("1");
+    cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+      () => {
+        cy.contains("Aiden Smith_Bank Accounts Detail");
+        cy.contains("How many Bank Accounts Detail does Aiden Smith have :");
+        cy.get("#NumberOfMap").clear().type(1);
+      }
+    );
+    //Inner Table
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4'
+    ).within(() => {
+      cy.contains("No#");
+      cy.contains("1");
 
-    //   cy.contains("Name of Institution");
-    //   cy.get("#Institution0").select("Testing");
+      cy.contains("Name of Institution");
+      cy.get("#Institution0").select("Testing");
 
-    //   cy.contains("Account number");
-    //   cy.get("#accountNumber0").clear().type("3535");
+      cy.contains("Account number");
+      cy.get("#accountNumber0").clear().type("3535");
 
-    //   cy.contains("Current Balance");
-    //   cy.get("#currentBalance0").clear().type("4536");
-    // });
-    // cy.get(
-    //   '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
-    // ).within(() => {
-    //   cy.contains("Close").should("be.visible");
-    //   cy.contains("Submit").should("be.visible").click();
-    // });
+      cy.contains("Current Balance");
+      cy.get("#currentBalance0").clear().type("4536");
+    });
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
+    ).within(() => {
+      cy.contains("Close").should("be.visible");
+      cy.contains("Submit").should("be.visible").click();
+    });
 
-    // cy.get("#clientCurrentBalance").should("not.have.value", "");
-    // cy.contains("Close");
-    // cy.get(".modal-footer > .bgColor")
-    //   .contains("Submit")
-    //   .should("be.visible")
-    //   .click();
+    cy.get("#clientCurrentBalance").should("not.have.value", "");
+    cy.contains("Close");
+    cy.get(".modal-footer > .bgColor")
+      .contains("Submit")
+      .should("be.visible")
+      .click();
 
-    // cy.get("#clientbankAccountFinance").should("not.have.value", "");
+    cy.get("#clientbankAccountFinance").should("not.have.value", "");
 
-    // cy.wait(1000);
+    cy.wait(1000);
 
-    // //Term Deposits
-    // cy.get(":nth-child(2) > .py-4").within(() => {
-    //   cy.contains("Term Deposits");
-    //   cy.get("img");
-    //   cy.contains("Admin");
-    //   cy.get(
-    //     "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
-    //   ).click();
-    // });
+    //Term Deposits
+    cy.get(":nth-child(2) > .py-4").within(() => {
+      cy.contains("Term Deposits");
+      cy.get("img");
+      cy.contains("Admin");
+      cy.get(
+        "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
+      ).click();
+    });
 
-    // cy.get(".modal-content").within(() => {
-    //   cy.contains("Term Deposits");
-    //   cy.get(".btn-close");
-    //   cy.get(".table").within(() => {
-    //     cy.contains("Owner");
-    //     cy.get('[style="width: 50%;"]').contains("Admin");
-    //     cy.contains("Current Balance");
-    //   });
-    // });
+    cy.get(".modal-content").within(() => {
+      cy.contains("Term Deposits");
+      cy.get(".btn-close");
+      cy.get(".table").within(() => {
+        cy.contains("Owner");
+        cy.get('[style="width: 50%;"]').contains("Admin");
+        cy.contains("Current Balance");
+      });
+    });
 
-    // cy.get("#button-addon2").click();
+    cy.get("#button-addon2").click();
 
-    // cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
-    //   () => {
-    //     cy.contains("Admin_Term Deposits Detail");
-    //     cy.contains("How many Term Deposits Detail does Admin have :");
-    //     cy.get("#NumberOfMap").clear().type(1);
-    //   }
-    // );
-    // //Inner Table
-    // cy.get(
-    //   '[style="display: block;"] > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4'
-    // ).within(() => {
-    //   cy.contains("No#");
-    //   cy.contains("1");
+    cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+      () => {
+        cy.contains("Admin_Term Deposits Detail");
+        cy.contains("How many Term Deposits Detail does Admin have :");
+        cy.get("#NumberOfMap").clear().type(1);
+      }
+    );
+    //Inner Table
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4'
+    ).within(() => {
+      cy.contains("No#");
+      cy.contains("1");
 
-    //   cy.contains("Name of Institution");
-    //   cy.get("#Institution0").select("Testing");
+      cy.contains("Name of Institution");
+      cy.get("#Institution0").select("Testing");
 
-    //   cy.contains("Account number");
-    //   cy.get("#accountNumber0").clear().type("3535");
+      cy.contains("Account number");
+      cy.get("#accountNumber0").clear().type("3535");
 
-    //   cy.contains("Current Balance");
-    //   cy.get("#currentBalance0").clear().type("4536");
-    // });
-    // cy.get(
-    //   '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
-    // ).within(() => {
-    //   cy.contains("Close").should("be.visible");
-    //   cy.contains("Submit").should("be.visible").click();
-    // });
-    // cy.get("#clientCurrentBalance").should("not.have.value", "");
+      cy.contains("Current Balance");
+      cy.get("#currentBalance0").clear().type("4536");
+    });
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-footer'
+    ).within(() => {
+      cy.contains("Close").should("be.visible");
+      cy.contains("Submit").should("be.visible").click();
+    });
+    cy.get("#clientCurrentBalance").should("not.have.value", "");
 
-    // cy.contains("Close");
-    // cy.get(".modal-footer > .bgColor")
-    //   .contains("Submit")
-    //   .should("be.visible")
-    //   .click();
+    cy.contains("Close");
+    cy.get(".modal-footer > .bgColor")
+      .contains("Submit")
+      .should("be.visible")
+      .click();
 
-    // cy.get("#clienttermDepositsFinance").should("not.have.value", "");
+    cy.get("#clienttermDepositsFinance").should("not.have.value", "");
 
     // cy.wait(1000);
 
@@ -810,144 +812,144 @@ class FinancialInvestments {
 
     // cy.wait(1000);
 
-    //Super Funds
+    // //Super Funds
 
-    cy.get(":nth-child(6) > .py-4").within(() => {
-      cy.contains("Super Funds");
-      cy.get("img");
-      cy.contains("Admin");
-      cy.get(
-        "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
-      ).click();
-    });
-
-    cy.get(".modal-content").within(() => {
-      cy.contains("Super Funds");
-      cy.get(".btn-close");
-      cy.get(".table").within(() => {
-        cy.contains("Owner");
-        cy.get('[style="width: 50%;"]').contains("Admin");
-        cy.contains("Current Balance");
-      });
-    });
-
-    cy.get("#button-addon2").click();
-
-    cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
-      () => {
-        cy.contains("Admin_Super Funds Detail");
-        cy.contains("How many Super Funds does Admin have :");
-        cy.get("#NumberOfMap").clear().type(1);
-      }
-    );
-    //Inner Table
-    cy.get(
-      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4'
-    ).within(() => {
-      cy.contains("No#");
-      cy.contains("1");
-
-      cy.contains("Fund Name");
-      cy.get("#platformName0").select("Test");
-
-      cy.contains("Member Number");
-      cy.get("#memberNumber0").clear().type("3535");
-
-      cy.contains("Annual Advice Service Fee");
-      cy.get("#annualAdvice0").clear().type("4536");
-    });
-
-    // PlatForm inner card
-    cy.get("tbody > tr > :nth-child(4)").within(() => {
-      cy.get("#button-addon2").click();
-    });
-
-    cy.contains("Test _Portfolio Value");
-    cy.contains("How many Underlying Investments does Admin have :");
-    cy.get(
-      ":nth-child(7) > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .d-flex > div > #NumberOfMap"
-    )
-      .clear()
-      .type(1);
-
-    cy.contains("No#");
-    cy.contains("1");
-
-    cy.contains("Investment Option");
-
-    //cy.get(".css-b62m3t-container").within(() => {
-    // cy.get('.css-d07bj1 > :nth-child(1)').click();
-
-    // cy.get(".css-1xc3v61-indicatorContainer").click();
+    // cy.get(":nth-child(6) > .py-4").within(() => {
+    //   cy.contains("Super Funds");
+    //   cy.get("img");
+    //   cy.contains("Admin");
+    //   cy.get(
+    //     "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
+    //   ).click();
     // });
-    // cy.get("#react-select-3-option-0").click();
 
-    cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
-      cy.contains("Investment Code");
-      //cy.get("#investmentCode0").should("not.have.value", "");
+    // cy.get(".modal-content").within(() => {
+    //   cy.contains("Super Funds");
+    //   cy.get(".btn-close");
+    //   cy.get(".table").within(() => {
+    //     cy.contains("Owner");
+    //     cy.get('[style="width: 50%;"]').contains("Admin");
+    //     cy.contains("Current Balance");
+    //   });
+    // });
 
-      cy.contains("Investment Value");
-      cy.get("#investmentValue0").clear().type("$22");
+    // cy.get("#button-addon2").click();
 
-      cy.contains("Close");
-      cy.contains("Submit").click();
-    });
+    // cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+    //   () => {
+    //     cy.contains("Admin_Super Funds Detail");
+    //     cy.contains("How many Super Funds does Admin have :");
+    //     cy.get("#NumberOfMap").clear().type(1);
+    //   }
+    // );
+    // //Inner Table
+    // cy.get(
+    //   '[style="display: block;"] > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4'
+    // ).within(() => {
+    //   cy.contains("No#");
+    //   cy.contains("1");
 
-    cy.get("#portfolioValue0").should("not.have.value", "");
+    //   cy.contains("Fund Name");
+    //   cy.get("#platformName0").select("Test");
 
-    // Balance inner card
-    cy.get("tbody > tr > :nth-child(5)").within(() => {
-      cy.get("#button-addon2").click();
-    });
+    //   cy.contains("Member Number");
+    //   cy.get("#memberNumber0").clear().type("3535");
 
-    cy.contains("Admin_Balance & Benefit Details");
+    //   cy.contains("Annual Advice Service Fee");
+    //   cy.get("#annualAdvice0").clear().type("4536");
+    // });
 
-    cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
-      cy.contains("No#");
-      cy.contains("1");
+    // // PlatForm inner card
+    // cy.get("tbody > tr > :nth-child(4)").within(() => {
+    //   cy.get("#button-addon2").click();
+    // });
 
-      cy.contains("Portfolio Value");
-      cy.get('[style="min-width: 8rem;"] > #portfolioValue0').should(
-        "have.value",
-        "$22"
-      );
+    // cy.contains("Test _Portfolio Value");
+    // cy.contains("How many Underlying Investments does Admin have :");
+    // cy.get(
+    //   ":nth-child(7) > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .d-flex > div > #NumberOfMap"
+    // )
+    //   .clear()
+    //   .type(1);
 
-      cy.contains("Commencement Date");
-      cy.get("#eligibleServiceDate0").clear().type("03/08/2024");
+    // cy.contains("No#");
+    // cy.contains("1");
 
-      cy.contains("Eligible Service Date");
-      cy.get("#commencementDate0").clear().type("03/08/2024");
+    // cy.contains("Investment Option");
 
-      cy.contains("Tax Free component");
-      cy.get("#taxFreeComponent0").clear().type("$21");
+    // //cy.get(".css-b62m3t-container").within(() => {
+    // // cy.get('.css-d07bj1 > :nth-child(1)').click();
 
-      cy.contains("Taxable component");
-      cy.get("#taxableComponent0").should("have.value", "$1");
+    // // cy.get(".css-1xc3v61-indicatorContainer").click();
+    // // });
+    // // cy.get("#react-select-3-option-0").click();
 
-      Cypress.on("uncaught:exception", (err, runnable) => {
-        if (err.message.includes("replace")) {
-          return false; // Prevent Cypress from failing the test
-        }
-      });
+    // cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
+    //   cy.contains("Investment Code");
+    //   //cy.get("#investmentCode0").should("not.have.value", "");
 
-      cy.get("#restrictedNonPreserved0").clear().type("123");
+    //   cy.contains("Investment Value");
+    //   cy.get("#investmentValue0").clear().type("$22");
 
-      cy.contains("Unrestricted non preserved");
-      cy.get("#unrestrictedNonPreserved0").clear().type("22");
+    //   cy.contains("Close");
+    //   cy.contains("Submit").click();
+    // });
 
-      cy.contains("Preserved amount");
-      cy.get("#preservedAmount0").should("have.value", "$-123");
+    // cy.get("#portfolioValue0").should("not.have.value", "");
 
-      cy.get(".css-b62m3t-container").within(() => {
-        // cy.get(".css-1xc3v61-indicatorContainer").click();
-        //cy.get("#react-select-4-option-1").click();
-      });
+    // // Balance inner card
+    // cy.get("tbody > tr > :nth-child(5)").within(() => {
+    //   cy.get("#button-addon2").click();
+    // });
 
-      cy.contains("Close");
-      cy.contains("Submit").click();
-    });
+    // cy.contains("Admin_Balance & Benefit Details");
 
-    cy.get("#balanceBenefitDetails0").should("not.have.value", "");
+    // cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
+    //   cy.contains("No#");
+    //   cy.contains("1");
+
+    //   cy.contains("Portfolio Value");
+    //   cy.get('[style="min-width: 8rem;"] > #portfolioValue0').should(
+    //     "have.value",
+    //     "$22"
+    //   );
+
+    //   cy.contains("Commencement Date");
+    //   cy.get("#eligibleServiceDate0").clear().type("03/08/2024");
+
+    //   cy.contains("Eligible Service Date");
+    //   cy.get("#commencementDate0").clear().type("03/08/2024");
+
+    //   cy.contains("Tax Free component");
+    //   cy.get("#taxFreeComponent0").clear().type("$21");
+
+    //   cy.contains("Taxable component");
+    //   cy.get("#taxableComponent0").should("have.value", "$1");
+
+    //   Cypress.on("uncaught:exception", (err, runnable) => {
+    //     if (err.message.includes("replace")) {
+    //       return false; // Prevent Cypress from failing the test
+    //     }
+    //   });
+
+    //   cy.get("#restrictedNonPreserved0").clear().type("123");
+
+    //   cy.contains("Unrestricted non preserved");
+    //   cy.get("#unrestrictedNonPreserved0").clear().type("22");
+
+    //   cy.contains("Preserved amount");
+    //   cy.get("#preservedAmount0").should("have.value", "$-123");
+
+    //   cy.get(".css-b62m3t-container").within(() => {
+    //     // cy.get(".css-1xc3v61-indicatorContainer").click();
+    //     //cy.get("#react-select-4-option-1").click();
+    //   });
+
+    //   cy.contains("Close");
+    //   cy.contains("Submit").click();
+    // });
+
+    // cy.get("#balanceBenefitDetails0").should("not.have.value", "");
 
     // // Group Insurance Attached inner card
     // cy.contains("Group Insurance Attached");
@@ -1102,443 +1104,443 @@ class FinancialInvestments {
     // });
 
     //Super Fund Detail Card Close Section
-    cy.get(".modal-footer")
-      .filter(":visible")
-      .within(() => {
-        cy.contains("Close");
-        cy.contains("Submit").click();
-      });
+    // cy.get(".modal-footer")
+    //   .filter(":visible")
+    //   .within(() => {
+    //     cy.contains("Close");
+    //     cy.contains("Submit").click();
+    //   });
 
-    cy.get("#clientCurrentBalance").should("not.have.value", "");
-    cy.contains("Close");
-    cy.get(".modal-footer > .bgColor")
-      .contains("Submit")
-      .should("be.visible")
-      .click();
+    // cy.get("#clientCurrentBalance").should("not.have.value", "");
+    // cy.contains("Close");
+    // cy.get(".modal-footer > .bgColor")
+    //   .contains("Submit")
+    //   .should("be.visible")
+    //   .click();
 
-    cy.get("#clientsuperAnnuationIssues").should("not.have.value", "");
+    // cy.get("#clientsuperAnnuationIssues").should("not.have.value", "");
 
-    cy.wait(1000);
+    // cy.wait(1000);
 
-    //Account Based Penion
+    // //Account Based Penion
 
-    cy.get(":nth-child(7) > .py-4").within(() => {
-      cy.contains("Account Based Pension");
-      cy.get("img");
-      cy.contains("Admin");
-      cy.get(
-        "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
-      ).click();
-    });
-
-    cy.get(".modal-content").within(() => {
-      cy.contains("Account Based Pension");
-      cy.get(".btn-close");
-      cy.get(".table").within(() => {
-        cy.contains("Owner");
-        cy.get('[style="width: 50%;"]').contains("Admin");
-        cy.contains("Current Balance");
-      });
-    });
-
-    cy.get("#button-addon2").click();
-
-    cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
-      () => {
-        cy.contains("Admin_Account Based Pension Detail");
-        cy.contains("How many Account Based Pension does Admin have :");
-        cy.get("#NumberOfMap").clear().type(1);
-      }
-    );
-    //Inner Table
-    cy.get(
-      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4'
-    ).within(() => {
-      cy.contains("No#");
-      cy.contains("1");
-
-      cy.contains("Fund Name");
-      cy.get("#platformName0").select("Bank For Testing");
-
-      cy.contains("Member Number");
-      cy.get("#memberNumber0").clear().type("3535");
-
-      cy.contains("Annual Advice Service Fee");
-      cy.get("#annualAdvice0").clear().type("4536");
-    });
-
-    // PlatForm inner card
-    cy.get("tbody > tr > :nth-child(4)").within(() => {
-      cy.get("#button-addon2").click();
-    });
-
-    cy.contains("Bank For Testing _Portfolio Value");
-    cy.contains("How many Underlying Investments does Admin have :");
-    cy.get(
-      ":nth-child(7) > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .d-flex > div > #NumberOfMap"
-    )
-      .clear()
-      .type(1);
-
-    cy.contains("No#");
-    cy.contains("1");
-
-    cy.contains("Investment Option");
-
-    //cy.get(".css-b62m3t-container").within(() => {
-    // cy.get('.css-d07bj1 > :nth-child(1)').click();
-
-    // cy.get(".css-1xc3v61-indicatorContainer").click();
+    // cy.get(":nth-child(7) > .py-4").within(() => {
+    //   cy.contains("Account Based Pension");
+    //   cy.get("img");
+    //   cy.contains("Admin");
+    //   cy.get(
+    //     "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
+    //   ).click();
     // });
-    // cy.get("#react-select-3-option-0").click();
 
-    cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
-      cy.contains("Investment Code");
-      //cy.get("#investmentCode0").should("not.have.value", "");
+    // cy.get(".modal-content").within(() => {
+    //   cy.contains("Account Based Pension");
+    //   cy.get(".btn-close");
+    //   cy.get(".table").within(() => {
+    //     cy.contains("Owner");
+    //     cy.get('[style="width: 50%;"]').contains("Admin");
+    //     cy.contains("Current Balance");
+    //   });
+    // });
+
+    // cy.get("#button-addon2").click();
+
+    // cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+    //   () => {
+    //     cy.contains("Admin_Account Based Pension Detail");
+    //     cy.contains("How many Account Based Pension does Admin have :");
+    //     cy.get("#NumberOfMap").clear().type(1);
+    //   }
+    // );
+    // //Inner Table
+    // cy.get(
+    //   '[style="display: block;"] > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4'
+    // ).within(() => {
+    //   cy.contains("No#");
+    //   cy.contains("1");
+
+    //   cy.contains("Fund Name");
+    //   cy.get("#platformName0").select("Bank For Testing");
+
+    //   cy.contains("Member Number");
+    //   cy.get("#memberNumber0").clear().type("3535");
+
+    //   cy.contains("Annual Advice Service Fee");
+    //   cy.get("#annualAdvice0").clear().type("4536");
+    // });
 
-      cy.contains("Investment Value");
-      cy.get("#investmentValue0").clear().type("$22");
+    // // PlatForm inner card
+    // cy.get("tbody > tr > :nth-child(4)").within(() => {
+    //   cy.get("#button-addon2").click();
+    // });
+
+    // cy.contains("Bank For Testing _Portfolio Value");
+    // cy.contains("How many Underlying Investments does Admin have :");
+    // cy.get(
+    //   ":nth-child(7) > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .d-flex > div > #NumberOfMap"
+    // )
+    //   .clear()
+    //   .type(1);
+
+    // cy.contains("No#");
+    // cy.contains("1");
+
+    // cy.contains("Investment Option");
+
+    // //cy.get(".css-b62m3t-container").within(() => {
+    // // cy.get('.css-d07bj1 > :nth-child(1)').click();
 
-      cy.contains("Close");
-      cy.contains("Submit").click();
-    });
+    // // cy.get(".css-1xc3v61-indicatorContainer").click();
+    // // });
+    // // cy.get("#react-select-3-option-0").click();
 
-    cy.get("#portfolioValue0").should("not.have.value", "");
+    // cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
+    //   cy.contains("Investment Code");
+    //   //cy.get("#investmentCode0").should("not.have.value", "");
 
-    // Balance inner card
-    cy.get("tbody > tr > :nth-child(5)").within(() => {
-      cy.get("#button-addon2").click();
-    });
+    //   cy.contains("Investment Value");
+    //   cy.get("#investmentValue0").clear().type("$22");
 
-    cy.contains("Admin_Balance & Benefit Details");
+    //   cy.contains("Close");
+    //   cy.contains("Submit").click();
+    // });
 
-    cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
-      cy.contains("No#");
-      cy.contains("1");
+    // cy.get("#portfolioValue0").should("not.have.value", "");
 
-      cy.contains("Portfolio Value");
-      cy.get('[style="min-width: 90px;"] > #portfolioValue0').should(
-        "have.value",
-        "$22"
-      );
+    // // Balance inner card
+    // cy.get("tbody > tr > :nth-child(5)").within(() => {
+    //   cy.get("#button-addon2").click();
+    // });
 
-      cy.contains("Commencement Date");
-      cy.get("#eligibleServiceDate0").clear().type("03/08/2024");
+    // cy.contains("Admin_Balance & Benefit Details");
 
-      cy.contains("Eligible Service Date");
-      cy.get("#commencementDate0").clear().type("03/08/2024");
+    // cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
+    //   cy.contains("No#");
+    //   cy.contains("1");
 
-      cy.contains("Tax Free %");
-      cy.get("#taxFree0").clear().type("12.00%");
+    //   cy.contains("Portfolio Value");
+    //   cy.get('[style="min-width: 90px;"] > #portfolioValue0').should(
+    //     "have.value",
+    //     "$22"
+    //   );
 
-      Cypress.on("uncaught:exception", (err, runnable) => {
-        if (err.message.includes("replace")) {
-          return false; // Prevent Cypress from failing the test
-        }
+    //   cy.contains("Commencement Date");
+    //   cy.get("#eligibleServiceDate0").clear().type("03/08/2024");
 
-        cy.contains("Tax Free component");
-        cy.get("#taxFreeComponent0", { timeout: 10000 }) // Waits up to 10 seconds
-          .should("have.value", "$3");
+    //   cy.contains("Eligible Service Date");
+    //   cy.get("#commencementDate0").clear().type("03/08/2024");
 
-        cy.contains("Taxable component");
-        cy.get("#taxableComponent0").should("have.value", "$20");
-      });
+    //   cy.contains("Tax Free %");
+    //   cy.get("#taxFree0").clear().type("12.00%");
 
-      cy.get("#restrictedNonPreserved0").clear().type("123");
+    //   Cypress.on("uncaught:exception", (err, runnable) => {
+    //     if (err.message.includes("replace")) {
+    //       return false; // Prevent Cypress from failing the test
+    //     }
 
-      cy.contains("Preserved amount");
-      cy.get("#preservedAmount0").clear().type("22");
+    //     cy.contains("Tax Free component");
+    //     cy.get("#taxFreeComponent0", { timeout: 10000 }) // Waits up to 10 seconds
+    //       .should("have.value", "$3");
 
-      cy.contains("Unrestricted non preserved");
-      cy.get("#unrestrictedNonPreserved0").should("have.value", "$-123");
+    //     cy.contains("Taxable component");
+    //     cy.get("#taxableComponent0").should("have.value", "$20");
+    //   });
 
-      cy.get(".css-b62m3t-container").within(() => {
-        // cy.get(".css-1xc3v61-indicatorContainer").click();
-        //cy.get("#react-select-4-option-1").click();
-      });
+    //   cy.get("#restrictedNonPreserved0").clear().type("123");
 
-      cy.contains("Close");
-      cy.contains("Submit").click();
-    });
+    //   cy.contains("Preserved amount");
+    //   cy.get("#preservedAmount0").clear().type("22");
 
-    cy.get("#balanceBenefitDetails0").should("not.have.value", "");
+    //   cy.contains("Unrestricted non preserved");
+    //   cy.get("#unrestrictedNonPreserved0").should("have.value", "$-123");
 
-    cy.wait(1000);
+    //   cy.get(".css-b62m3t-container").within(() => {
+    //     // cy.get(".css-1xc3v61-indicatorContainer").click();
+    //     //cy.get("#react-select-4-option-1").click();
+    //   });
 
-    // Annual Pension Payment inner card
-    cy.contains("Annual Pension Payment");
-    cy.get("tbody > tr > :nth-child(6)").within(() => {
-      cy.get("#button-addon2").click();
-    });
+    //   cy.contains("Close");
+    //   cy.contains("Submit").click();
+    // });
 
-    cy.contains("Admin_Annual Pension Payment");
+    // cy.get("#balanceBenefitDetails0").should("not.have.value", "");
 
-    cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
-      cy.contains("No#");
-      cy.contains("1");
+    // cy.wait(1000);
 
-      Cypress.on("uncaught:exception", (err, runnable) => {
-        if (err.message.includes("replace")) {
-          return false; // Prevent Cypress from failing the test
-        }
-      });
+    // // Annual Pension Payment inner card
+    // cy.contains("Annual Pension Payment");
+    // cy.get("tbody > tr > :nth-child(6)").within(() => {
+    //   cy.get("#button-addon2").click();
+    // });
 
-      cy.contains("Regular amount");
+    // cy.contains("Admin_Annual Pension Payment");
 
-      cy.get("#regularAmount0").clear().type("22");
+    // cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
+    //   cy.contains("No#");
+    //   cy.contains("1");
 
-      cy.contains("Frequency");
-      cy.get("#frequency0").select("Weekly");
+    //   Cypress.on("uncaught:exception", (err, runnable) => {
+    //     if (err.message.includes("replace")) {
+    //       return false; // Prevent Cypress from failing the test
+    //     }
+    //   });
 
-      cy.contains("Total");
-      cy.get("#total0").should("have.value", "$1,144");
+    //   cy.contains("Regular amount");
 
-      cy.contains("Close");
-      cy.contains("Submit").click();
-    });
+    //   cy.get("#regularAmount0").clear().type("22");
 
-    cy.get("#pensionPayment0").should("not.have.value", "");
+    //   cy.contains("Frequency");
+    //   cy.get("#frequency0").select("Weekly");
 
-    //Nominated Beneficiaries
-
-    cy.get("tbody > tr > :nth-child(7)").contains("Yes").click();
-
-    cy.get(".d-flex > #button-addon2").click();
-
-    cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
-      cy.contains("Admin_Beneficiaries");
-
-      cy.contains("How many beneficiaries do Admin have :");
-
-      cy.get("#NumberOfMap").clear().type("2"); // Types the number 123 into the input field
-
-      cy.contains("No#");
-
-      cy.contains("1");
-      cy.contains("2");
-
-      cy.contains("Nomination Type");
-      cy.get("#nominationType0").select("Binding (Non-Lapsing)");
-
-      Cypress.on("uncaught:exception", (err, runnable) => {
-        // returning false here prevents Cypress from
-        // failing the test
-        return false;
-      });
+    //   cy.contains("Total");
+    //   cy.get("#total0").should("have.value", "$1,144");
 
-      cy.contains("DOB");
-      cy.get("#DOB0").type("21-2-1965");
+    //   cy.contains("Close");
+    //   cy.contains("Submit").click();
+    // });
 
-      cy.contains("Beneficiary Name");
-      cy.get("#beneficiaryName0").type("32");
+    // cy.get("#pensionPayment0").should("not.have.value", "");
 
-      cy.contains("Relationship Status");
-      cy.get("#relationshipStatus0").select("Child");
+    // //Nominated Beneficiaries
 
-      cy.contains("Share of Benefit");
-      cy.get("#shareBenefit0").clear().type("2.00%");
+    // cy.get("tbody > tr > :nth-child(7)").contains("Yes").click();
 
-      cy.contains("Share of Benefit must be 100%");
+    // cy.get(".d-flex > #button-addon2").click();
 
-      cy.get("#nominationType1").select(
-        "Legal Personal Representative (Your Estate)"
-      );
-      cy.get("#DOB1");
-      cy.get("#beneficiaryName1");
-      cy.get("#relationshipStatus1").contains("N/A");
-      cy.get("#shareBenefit1");
+    // cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
+    //   cy.contains("Admin_Beneficiaries");
 
-      cy.contains("Close");
-      cy.contains("Submit").click();
-    });
+    //   cy.contains("How many beneficiaries do Admin have :");
 
-    //Super Fund Detail Card Close Section
-    cy.get(".modal-footer")
-      .filter(":visible")
-      .within(() => {
-        cy.contains("Close");
-        cy.contains("Submit").click();
-      });
+    //   cy.get("#NumberOfMap").clear().type("2"); // Types the number 123 into the input field
 
-    cy.get("#clientCurrentBalance").should("not.have.value", "");
-    cy.contains("Close");
-    cy.get(".modal-footer > .bgColor")
-      .contains("Submit")
-      .should("be.visible")
-      .click();
+    //   cy.contains("No#");
 
-    cy.get("#clientaccountBasedPensionIssues").should("not.have.value", "");
+    //   cy.contains("1");
+    //   cy.contains("2");
 
-    //Account Based Penion
+    //   cy.contains("Nomination Type");
+    //   cy.get("#nominationType0").select("Binding (Non-Lapsing)");
 
-    cy.get(":nth-child(8) > .py-4").within(() => {
-      cy.contains("Annuities");
-      cy.get("img");
-      cy.contains("Admin");
-      cy.get(
-        "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
-      ).click();
-    });
+    //   Cypress.on("uncaught:exception", (err, runnable) => {
+    //     // returning false here prevents Cypress from
+    //     // failing the test
+    //     return false;
+    //   });
 
-    cy.get(".modal-content").within(() => {
-      cy.contains("Annuities");
-      cy.get(".btn-close");
-      cy.get(".table").within(() => {
-        cy.contains("Owner");
-        cy.get('[style="width: 50%;"]').contains("Admin");
-        cy.contains("Current Balance");
-      });
-    });
+    //   cy.contains("DOB");
+    //   cy.get("#DOB0").type("21-2-1965");
 
-    cy.get("#button-addon2").click();
+    //   cy.contains("Beneficiary Name");
+    //   cy.get("#beneficiaryName0").type("32");
 
-    cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
-      () => {
-        cy.contains("Admin_Annuities Detail");
-        cy.contains("How many Annuities does Admin have :");
-        cy.get("#NumberOfMap").clear().type(1);
-      }
-    );
-    //Inner Table
-    cy.get(
-      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4'
-    ).within(() => {
-      cy.contains("No#");
-      cy.contains("1");
+    //   cy.contains("Relationship Status");
+    //   cy.get("#relationshipStatus0").select("Child");
 
-      cy.contains("Product Provider");
-      cy.get("#productProvider0").select("Testing Bank");
+    //   cy.contains("Share of Benefit");
+    //   cy.get("#shareBenefit0").clear().type("2.00%");
 
-      cy.contains("Account Number");
-      cy.get("#accountNumber0").clear().type("3535");
+    //   cy.contains("Share of Benefit must be 100%");
 
-      cy.contains("Source of Funds");
-      cy.get("#sourceFunds0").select("Super");
+    //   cy.get("#nominationType1").select(
+    //     "Legal Personal Representative (Your Estate)"
+    //   );
+    //   cy.get("#DOB1");
+    //   cy.get("#beneficiaryName1");
+    //   cy.get("#relationshipStatus1").contains("N/A");
+    //   cy.get("#shareBenefit1");
 
-      cy.contains("Original Investment Amount");
-      cy.get("#originalInvestmentAmount0").clear().type("$3535");
+    //   cy.contains("Close");
+    //   cy.contains("Submit").click();
+    // });
 
-      cy.contains("Return of Capital Value");
-      cy.get("#returnCapitalValue0").clear().type("$3535");
+    // //Super Fund Detail Card Close Section
+    // cy.get(".modal-footer")
+    //   .filter(":visible")
+    //   .within(() => {
+    //     cy.contains("Close");
+    //     cy.contains("Submit").click();
+    //   });
 
-      cy.contains("Annuity Type");
-      cy.get("#annuityType0").select("Fixed Term");
+    // cy.get("#clientCurrentBalance").should("not.have.value", "");
+    // cy.contains("Close");
+    // cy.get(".modal-footer > .bgColor")
+    //   .contains("Submit")
+    //   .should("be.visible")
+    //   .click();
 
-      cy.contains("Term");
-      cy.get("#term0").select("Year 21");
+    // cy.get("#clientaccountBasedPensionIssues").should("not.have.value", "");
 
-      cy.contains("Years to Maturity");
-      cy.get("#yearsMaturity0").select("Year 11");
+    // //Account Based Penion
 
-      cy.contains("Annual Advice Service Fee");
-      cy.get("#annualAdvice0").clear().type("4536");
-    });
+    // cy.get(":nth-child(8) > .py-4").within(() => {
+    //   cy.contains("Annuities");
+    //   cy.get("img");
+    //   cy.contains("Admin");
+    //   cy.get(
+    //     "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
+    //   ).click();
+    // });
 
-    cy.wait(1000);
+    // cy.get(".modal-content").within(() => {
+    //   cy.contains("Annuities");
+    //   cy.get(".btn-close");
+    //   cy.get(".table").within(() => {
+    //     cy.contains("Owner");
+    //     cy.get('[style="width: 50%;"]').contains("Admin");
+    //     cy.contains("Current Balance");
+    //   });
+    // });
 
-    // Annual Pension Payment inner card
-    cy.contains("Annual Annuity Payment");
-    cy.get("tbody > tr > :nth-child(7)").within(() => {
-      cy.get("#button-addon2").click();
-    });
+    // cy.get("#button-addon2").click();
 
-    cy.contains("Admin_Annual Pension Payment");
+    // cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+    //   () => {
+    //     cy.contains("Admin_Annuities Detail");
+    //     cy.contains("How many Annuities does Admin have :");
+    //     cy.get("#NumberOfMap").clear().type(1);
+    //   }
+    // );
+    // //Inner Table
+    // cy.get(
+    //   '[style="display: block;"] > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4'
+    // ).within(() => {
+    //   cy.contains("No#");
+    //   cy.contains("1");
 
-    cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
-      cy.contains("No#");
-      cy.contains("1");
+    //   cy.contains("Product Provider");
+    //   cy.get("#productProvider0").select("Testing Bank");
 
-      Cypress.on("uncaught:exception", (err, runnable) => {
-        if (err.message.includes("replace")) {
-          return false; // Prevent Cypress from failing the test
-        }
-      });
+    //   cy.contains("Account Number");
+    //   cy.get("#accountNumber0").clear().type("3535");
 
-      cy.contains("Regular amount");
+    //   cy.contains("Source of Funds");
+    //   cy.get("#sourceFunds0").select("Super");
 
-      cy.get("#regularAmount0").clear().type("22");
+    //   cy.contains("Original Investment Amount");
+    //   cy.get("#originalInvestmentAmount0").clear().type("$3535");
 
-      cy.contains("Frequency");
-      cy.get("#frequency0").select("Weekly");
+    //   cy.contains("Return of Capital Value");
+    //   cy.get("#returnCapitalValue0").clear().type("$3535");
 
-      cy.contains("Total");
-      cy.get("#total0").should("have.value", "$1,144");
+    //   cy.contains("Annuity Type");
+    //   cy.get("#annuityType0").select("Fixed Term");
 
-      cy.contains("Close");
-      cy.contains("Submit").click();
-    });
+    //   cy.contains("Term");
+    //   cy.get("#term0").select("Year 21");
 
-    cy.get("#annualAnnuityPayment0").should("not.have.value", "");
+    //   cy.contains("Years to Maturity");
+    //   cy.get("#yearsMaturity0").select("Year 11");
 
-    //Nominated Beneficiaries
+    //   cy.contains("Annual Advice Service Fee");
+    //   cy.get("#annualAdvice0").clear().type("4536");
+    // });
 
-    cy.get("tbody > tr > :nth-child(11)").contains("Yes").click();
+    // cy.wait(1000);
 
-    cy.get(".d-flex > #button-addon2").click();
+    // // Annual Pension Payment inner card
+    // cy.contains("Annual Annuity Payment");
+    // cy.get("tbody > tr > :nth-child(7)").within(() => {
+    //   cy.get("#button-addon2").click();
+    // });
 
-    cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
-      cy.contains("Admin_Beneficiaries");
+    // cy.contains("Admin_Annual Pension Payment");
 
-      cy.contains("How many beneficiaries do Admin have :");
+    // cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
+    //   cy.contains("No#");
+    //   cy.contains("1");
 
-      cy.get("#NumberOfMap").clear().type("2"); // Types the number 123 into the input field
+    //   Cypress.on("uncaught:exception", (err, runnable) => {
+    //     if (err.message.includes("replace")) {
+    //       return false; // Prevent Cypress from failing the test
+    //     }
+    //   });
 
-      cy.contains("No#");
+    //   cy.contains("Regular amount");
 
-      cy.contains("1");
-      cy.contains("2");
+    //   cy.get("#regularAmount0").clear().type("22");
 
-      cy.contains("Nomination Type");
-      cy.get("#nominationType0").select("Binding (Non-Lapsing)");
+    //   cy.contains("Frequency");
+    //   cy.get("#frequency0").select("Weekly");
 
-      Cypress.on("uncaught:exception", (err, runnable) => {
-        // returning false here prevents Cypress from
-        // failing the test
-        return false;
-      });
+    //   cy.contains("Total");
+    //   cy.get("#total0").should("have.value", "$1,144");
 
-      cy.contains("DOB");
-      cy.get("#DOB0").type("21-2-1965");
+    //   cy.contains("Close");
+    //   cy.contains("Submit").click();
+    // });
 
-      cy.contains("Beneficiary Name");
-      cy.get("#beneficiaryName0").type("32");
+    // cy.get("#annualAnnuityPayment0").should("not.have.value", "");
 
-      cy.contains("Relationship Status");
-      cy.get("#relationshipStatus0").select("Child");
+    // //Nominated Beneficiaries
 
-      cy.contains("Share of Benefit");
-      cy.get("#shareBenefit0").clear().type("2.00%");
+    // cy.get("tbody > tr > :nth-child(11)").contains("Yes").click();
 
-      cy.contains("Share of Benefit must be 100%");
+    // cy.get(".d-flex > #button-addon2").click();
 
-      cy.get("#nominationType1").select(
-        "Legal Personal Representative (Your Estate)"
-      );
-      cy.get("#DOB1");
-      cy.get("#beneficiaryName1");
-      cy.get("#relationshipStatus1").contains("N/A");
-      cy.get("#shareBenefit1");
+    // cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
+    //   cy.contains("Admin_Beneficiaries");
 
-      cy.contains("Close");
-      cy.contains("Submit").click();
-    });
+    //   cy.contains("How many beneficiaries do Admin have :");
 
-    //Super Fund Detail Card Close Section
-    cy.get(".modal-footer")
-      .filter(":visible")
-      .within(() => {
-        cy.contains("Close");
-        cy.contains("Submit").click();
-      });
+    //   cy.get("#NumberOfMap").clear().type("2"); // Types the number 123 into the input field
 
-    cy.get("#clientCurrentBalance").should("not.have.value", "");
-    cy.contains("Close");
-    cy.get(".modal-footer > .bgColor")
-      .contains("Submit")
-      .should("be.visible")
-      .click();
+    //   cy.contains("No#");
 
-    cy.get("#annualAnnuityPayment0").should("not.have.value", "");
+    //   cy.contains("1");
+    //   cy.contains("2");
+
+    //   cy.contains("Nomination Type");
+    //   cy.get("#nominationType0").select("Binding (Non-Lapsing)");
+
+    //   Cypress.on("uncaught:exception", (err, runnable) => {
+    //     // returning false here prevents Cypress from
+    //     // failing the test
+    //     return false;
+    //   });
+
+    //   cy.contains("DOB");
+    //   cy.get("#DOB0").type("21-2-1965");
+
+    //   cy.contains("Beneficiary Name");
+    //   cy.get("#beneficiaryName0").type("32");
+
+    //   cy.contains("Relationship Status");
+    //   cy.get("#relationshipStatus0").select("Child");
+
+    //   cy.contains("Share of Benefit");
+    //   cy.get("#shareBenefit0").clear().type("2.00%");
+
+    //   cy.contains("Share of Benefit must be 100%");
+
+    //   cy.get("#nominationType1").select(
+    //     "Legal Personal Representative (Your Estate)"
+    //   );
+    //   cy.get("#DOB1");
+    //   cy.get("#beneficiaryName1");
+    //   cy.get("#relationshipStatus1").contains("N/A");
+    //   cy.get("#shareBenefit1");
+
+    //   cy.contains("Close");
+    //   cy.contains("Submit").click();
+    // });
+
+    // //Super Fund Detail Card Close Section
+    // cy.get(".modal-footer")
+    //   .filter(":visible")
+    //   .within(() => {
+    //     cy.contains("Close");
+    //     cy.contains("Submit").click();
+    //   });
+
+    // cy.get("#clientCurrentBalance").should("not.have.value", "");
+    // cy.contains("Close");
+    // cy.get(".modal-footer > .bgColor")
+    //   .contains("Submit")
+    //   .should("be.visible")
+    //   .click();
+
+    // cy.get("#annualAnnuityPayment0").should("not.have.value", "");
   }
 }
 

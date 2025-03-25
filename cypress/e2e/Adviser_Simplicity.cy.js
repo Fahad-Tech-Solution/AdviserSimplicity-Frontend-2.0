@@ -6,6 +6,7 @@ import Questions_section from ".//Question's/Question_Sections.cy.js";
 import PersonalIncomeAndExpense from "./Personal Income And Expense/Client Sectioncy.js";
 import PersonalIncomeAndExpensePartnerSection from "./Personal Income And Expense/Partner Section.cy.js";
 import PersonalAssetsAndDebt from "./Personal Assets And Debt/Cards.cy";
+import PersonalAssetsAndDebtPartnerSection from "./Personal Assets And Debt/Partner Section.cy.js";
 import FinancialInvestments from "./Financial Investments/Cards.cy";
 import EstatePlanningAndProfessionalAdviser from "./Estate Planning and Professional Advisers/Cards.cy";
 import PersonalInsurance from "./Personal Insurance/Cards.cy";
@@ -19,8 +20,11 @@ describe("Adviser Simplicity", () => {
   const childrenDetails = new Childern_Details();
   const questionsSection = new Questions_section();
   const personalIncomeExpense = new PersonalIncomeAndExpense();
-  const personalIncomeExpensePartnerSection = new PersonalIncomeAndExpensePartnerSection();
+  const personalIncomeExpensePartnerSection =
+    new PersonalIncomeAndExpensePartnerSection();
   const personalassetsanddebt = new PersonalAssetsAndDebt();
+  const personalassetsanddebtPartnerSection =
+    new PersonalAssetsAndDebtPartnerSection();
   const financialInvestments = new FinancialInvestments();
   const adviser = new EstatePlanningAndProfessionalAdviser();
   const personalInsurance = new PersonalInsurance();
@@ -30,7 +34,7 @@ describe("Adviser Simplicity", () => {
   //const cashFlow = new CashFlow();
 
   it.skip("Adding Single Client Detail's", () => {
-    cy.visit(Cypress.env('CashFlowUrl')); 
+    cy.visit(Cypress.env("CashFlowUrl"));
 
     cy.get("img").click();
     cy.get(
@@ -74,7 +78,6 @@ describe("Adviser Simplicity", () => {
     let dataOf = "client";
     inputDetails.enterSurname(dataOf, "User client");
 
-
     inputDetails.enterPreferredName("Aiden Smith");
     inputDetails.enterMiddleName("Admin");
     inputDetails.selectGender("Male");
@@ -99,10 +102,9 @@ describe("Adviser Simplicity", () => {
 
     inputDetails.enterGivenname("Quality Assurance");
 
-
-        // inputDetails.selectTitle("Mr");
-        dataOf = "partner";
-        inputDetails.enterSurname(dataOf, "User Partner");
+    // inputDetails.selectTitle("Mr");
+    dataOf = "partner";
+    inputDetails.enterSurname(dataOf, "User Partner");
     inputDetails.enterGivennameP("Quality Assurance");
     inputDetails.enterPreferredNameP("Emma Tayler");
     inputDetails.enterMiddleNameP("Admin");
@@ -139,20 +141,23 @@ describe("Adviser Simplicity", () => {
     questionsSection.visitAndCheck();
   });
 
-  it.only("Personal Income Expense Client Section", () => {
-    personalIncomeExpense.section();
-  });
-
-
-  it.skip("Personal Income Expense Partner Section", () => {
+  it("Personal Income Expense Partner Section", () => {
     personalIncomeExpensePartnerSection.section();
   });
 
-  it.skip(" Personal Assets And Debt Card's", () => {
+  it("Personal Income Expense Client Section", () => {
+    personalIncomeExpense.section();
+  });
+
+  it("Personal Assets And Debt Partner Section", () => {
+    personalassetsanddebtPartnerSection.section();
+  });
+
+  it("Personal Assets And Debt Card's", () => {
     personalassetsanddebt.section();
   });
 
-  it.skip("Financial Investments Card's", () => {
+  it.only("Financial Investments Card's", () => {
     financialInvestments.section();
   });
 

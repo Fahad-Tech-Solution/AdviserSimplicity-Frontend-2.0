@@ -68,11 +68,14 @@ class PersonalIncomeAndExpensePartnerSection {
     //   .and("not.be.disabled")
     //   .click();
 
+
     // //Question Selection End Here
 
     cy.wait(2000);
     cy.get(":nth-child(1) > .py-4").within(() => {
       cy.contains("Employement Income");
+      cy.contains("Aiden Smith");
+      cy.contains("Emma Taylor");
       cy.get("img");
 
       cy.get(
@@ -398,7 +401,11 @@ class PersonalIncomeAndExpensePartnerSection {
       .should("be.visible")
       .within(() => {
         cy.contains("Sole Trader");
+
+        
         cy.get("img");
+        cy.contains("Aiden Smith");
+      cy.contains("Emma Taylor");
 
         cy.get(
           "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
@@ -478,6 +485,8 @@ class PersonalIncomeAndExpensePartnerSection {
     cy.get(":nth-child(3) > .py-4").within(() => {
       cy.contains("Partnership");
       cy.get("img");
+      cy.contains("Aiden Smith");
+      cy.contains("Emma Taylor");
     });
     cy.get(":nth-child(3) > .py-4 > :nth-child(3) > .col-12 > .d-flex > .mb-0")
       .click()
@@ -570,6 +579,8 @@ class PersonalIncomeAndExpensePartnerSection {
     cy.get(":nth-child(5) > .py-4").within(() => {
       cy.contains("LifeTime Benefits");
       cy.get("img");
+      cy.contains("Aiden Smith");
+      cy.contains("Emma Taylor");
     });
     cy.get(":nth-child(5) > .py-4 > :nth-child(3) > .col-12 > .d-flex > .mb-0")
       .click()
@@ -647,6 +658,8 @@ class PersonalIncomeAndExpensePartnerSection {
     cy.get(":nth-child(6) > .py-4").within(() => {
       cy.contains("Overseas Pension");
       cy.get("img");
+      cy.contains("Aiden Smith");
+      cy.contains("Emma Taylor");
     });
     cy.get(":nth-child(6) > .py-4 > :nth-child(3) > .col-12 > .d-flex > .mb-0")
       .click()
@@ -702,6 +715,8 @@ class PersonalIncomeAndExpensePartnerSection {
     cy.get(":nth-child(4) > .py-4").within(() => {
       cy.contains("Centerlink Payments");
       cy.get("img");
+      cy.contains("Aiden Smith");
+      cy.contains("Emma Taylor");
     });
     cy.get(":nth-child(4) > .py-4 > :nth-child(3) > .col-12 > .d-flex > .mb-0")
       .click()
@@ -730,12 +745,9 @@ class PersonalIncomeAndExpensePartnerSection {
 
     
     cy.get(':nth-child(1) > :nth-child(3) > .css-b62m3t-container > .css-14gfs0a-control > .css-d07bj1 > :nth-child(1)').first().click();
-    // cy.get(
-    //   ":nth-child(3) > .css-b62m3t-container > .css-14gfs0a-control > .css-d07bj1 > :nth-child(1)"
-    // ).click();
+ 
     cy.get(".css-1f8fajx > .css-1lx7dxn").type("Age Pension{enter}");
-    //  cy.wait(1000);
-    //  cy.get("#react-select-6-option-0").contains("Age Pension").click();
+
 
     cy.contains("Fortnightly Payment").should("be.visible");
     cy.get("#fortnightlyPayment").clear().type("987").should("be.visible");
@@ -752,6 +764,9 @@ class PersonalIncomeAndExpensePartnerSection {
       .should("be.visible");
 
     //Partner section
+
+
+    
     cy.get(
       '[style="min-width: 25%;"] > .css-b62m3t-container > .css-14gfs0a-control > .css-1lcv7hw'
     ).type("Emma Taylor{enter}");
@@ -765,9 +780,11 @@ class PersonalIncomeAndExpensePartnerSection {
       .should("be.visible");
 
     cy.contains("Payment Type").should("be.visible");
+
+   // cy.get(':nth-child(2) > :nth-child(3) > .css-b62m3t-container > .css-14gfs0a-control > .css-d07bj1 > :nth-child(1)').first().click();
   
-    cy.get(':nth-child(2) > :nth-child(3) > .css-b62m3t-container > .css-14gfs0a-control > .css-d07bj1 > :nth-child(1)').first().click();
-    cy.get('.css-1f8fajx > .css-1lx7dxn').type("Carer Payment{enter}");
+
+   cy.get(':nth-child(3) > .css-b62m3t-container > .css-1dq17ye-control > .css-1f8fajx > .css-1lx7dxn').type("Carer Payment{enter}");
 
     cy.contains("Fortnightly Payment").should("be.visible");
     cy.get(":nth-child(2) > :nth-child(4) > #fortnightlyPayment")
@@ -783,10 +800,11 @@ class PersonalIncomeAndExpensePartnerSection {
 
     cy.contains("Centrelink Cards Held").should("be.visible");
     cy.wait(1000);
-    cy.get(
-      ":nth-child(2) > :nth-child(6) > .css-b62m3t-container > .css-14gfs0a-control > .css-d07bj1 > :nth-child(1)"
-    ).click();
-    cy.get(".css-kva4ii-control > .css-1f8fajx > .css-1lx7dxn")
+   
+  //  cy.get(':nth-child(2) > :nth-child(6) > .css-b62m3t-container > .css-14gfs0a-control > .css-d07bj1 > :nth-child(1)').click();
+    
+  
+  cy.get(':nth-child(6) > .css-b62m3t-container > .css-1dq17ye-control > .css-1f8fajx > .css-1lx7dxn')
       .type("Pensioner Card{enter}")
       .should("be.visible");
 
@@ -802,3 +820,7 @@ class PersonalIncomeAndExpensePartnerSection {
 }
 
 export default PersonalIncomeAndExpensePartnerSection;
+
+//Info:
+// Clear Centrelink Payment Partner dropdown to resolve Douget error
+
