@@ -221,7 +221,7 @@ class PersonalAssetsAndDebt {
     cy.contains("Car");
 
     cy.get(".css-d07bj1 > :nth-child(1)").click();
-    
+
     cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
     cy.contains("Owner");
     cy.get("tbody > tr > :nth-child(1)").contains("Aiden Smith");
@@ -241,59 +241,51 @@ class PersonalAssetsAndDebt {
       .should("be.visible")
       .click();
 
+    cy.get("#clientfamilyHome").should("have.value", "$77");
 
-      cy.get('#clientfamilyHome').should("have.value", "$77");
-     
-
-
- //Car Card
-      cy.wait(1000);
-      cy.get(":nth-child(2) > .py-4").within(() => {
-        cy.contains("Car");
-        cy.get("img");
-        cy.contains("Aiden Smith");
-        cy.contains("Emma Taylor");
-        cy.get(
-          "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
-        ).click();
-      });
-      //Car Card Selection
+    //Car Card
+    cy.wait(1000);
+    cy.get(":nth-child(2) > .py-4").within(() => {
       cy.contains("Car");
-  
-      cy.get(".css-d07bj1 > :nth-child(1)").click();
-      cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
-      cy.contains("Owner");
-      cy.get("tbody > tr > :nth-child(1)").contains("Aiden Smith");
-      cy.contains("Model of Car");
-      cy.get("#modelOfCar").clear().type("77").blur().should("have.value", "77");
-  
-      cy.contains("Current Value");
-      cy.get("#currentValue")
-        .clear()
-        .type("77")
-        .blur()
-        .should("have.value", "$77");
+      cy.get("img");
+      cy.contains("Aiden Smith");
+      cy.contains("Emma Taylor");
+      cy.get(
+        "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
+      ).click();
+    });
+    //Car Card Selection
+    cy.contains("Car");
 
+    cy.get(".css-d07bj1 > :nth-child(1)").click();
+    cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
+    cy.contains("Owner");
+    cy.get("tbody > tr > :nth-child(1)").contains("Aiden Smith");
+    cy.contains("Model of Car");
+    cy.get("#modelOfCar").clear().type("77").blur().should("have.value", "77");
 
-      //Footer
-      cy.contains("Close").should("be.visible");
-      cy.get(".modal-footer > .bgColor")
-        .contains("Submit")
-        .should("be.visible")
-        .click();
+    cy.contains("Current Value");
+    cy.get("#currentValue")
+      .clear()
+      .type("77")
+      .blur()
+      .should("have.value", "$77");
 
+    //Footer
+    cy.contains("Close").should("be.visible");
+    cy.get(".modal-footer > .bgColor")
+      .contains("Submit")
+      .should("be.visible")
+      .click();
 
-        cy.get('#clientcar').should("have.value", "$77");
-       
-  
-
+    cy.get("#clientcar").should("have.value", "$77");
 
     //House Hold
     cy.wait(1000);
     cy.get(":nth-child(3) > .py-4").within(() => {
       cy.contains("House hold");
       cy.get("img");
-      cy.contains("Aiden Smith & Emma Taylor")
+      cy.contains("Aiden Smith & Emma Taylor");
       cy.get(
         "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
       ).click();
@@ -316,16 +308,14 @@ class PersonalAssetsAndDebt {
       .should("be.visible")
       .click();
 
-
-      cy.get('#jointhouseHold').should("have.value", "$98");
-
+    cy.get("#jointhouseHold").should("have.value", "$98");
 
     //Boat;
     cy.wait(1000);
     cy.get(":nth-child(4) > .py-4").within(() => {
       cy.contains("Boat");
       cy.get("img");
-      cy.contains("Aiden Smith & Emma Taylor")
+      cy.contains("Aiden Smith & Emma Taylor");
       cy.get(
         "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
       )
@@ -353,14 +343,14 @@ class PersonalAssetsAndDebt {
       cy.contains("Submit").should("be.visible").click();
     });
 
-    cy.get('#jointboat').should("have.value", "$45");
+    cy.get("#jointboat").should("have.value", "$45");
 
     //Caravan;
     cy.wait(1000);
     cy.get(":nth-child(5) > .py-4").within(() => {
       cy.contains("Caravan");
       cy.get("img");
-      cy.contains("Aiden Smith & Emma Taylor")
+      cy.contains("Aiden Smith & Emma Taylor");
       cy.get(
         "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
       )
@@ -397,14 +387,14 @@ class PersonalAssetsAndDebt {
       cy.contains("Submit").should("be.visible").click();
     });
 
-    cy.get('#jointcaravan').should("have.value", "$77");
+    cy.get("#jointcaravan").should("have.value", "$77");
 
     //Other Assets
     cy.wait(1000);
     cy.get(":nth-child(6) > .py-4").within(() => {
       cy.contains("Other Assets");
       cy.get("img");
-      cy.contains("Aiden Smith")
+      cy.contains("Aiden Smith");
       cy.get(
         "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
       )
@@ -419,7 +409,6 @@ class PersonalAssetsAndDebt {
 
     cy.get(".modal-body").within(() => {
       cy.contains("Owner");
-
     });
 
     cy.get(".css-d07bj1 > :nth-child(1)").click();
@@ -444,7 +433,7 @@ class PersonalAssetsAndDebt {
       cy.contains("Submit").should("be.visible").click();
     });
 
-    cy.get('#clientotherAssets').should("have.value", "$9,654");
+    cy.get("#clientotherAssets").should("have.value", "$9,654");
 
     cy.wait(1000);
     cy.get(":nth-child(7) > .py-4").within(() => {

@@ -8,6 +8,8 @@ import PersonalIncomeAndExpensePartnerSection from "./Personal Income And Expens
 import PersonalAssetsAndDebt from "./Personal Assets And Debt/Cards.cy";
 import PersonalAssetsAndDebtPartnerSection from "./Personal Assets And Debt/Partner Section.cy.js";
 import FinancialInvestments from "./Financial Investments/Cards.cy";
+import FinancialInvestmentsPartnerSection from "./Financial Investments/Partner Section.cy.js";
+import FinancialInvestmentsJoinSection from "./Financial Investments/Join Section.cy.js";
 import EstatePlanningAndProfessionalAdviser from "./Estate Planning and Professional Advisers/Cards.cy";
 import PersonalInsurance from "./Personal Insurance/Cards.cy";
 import BusinessEntities from "./Business Entities/Cards.cy";
@@ -26,6 +28,9 @@ describe("Adviser Simplicity", () => {
   const personalassetsanddebtPartnerSection =
     new PersonalAssetsAndDebtPartnerSection();
   const financialInvestments = new FinancialInvestments();
+  const financialInvestmentsPartnerSection =
+    new FinancialInvestmentsPartnerSection();
+  const financialInvestmentsJoinSection = new FinancialInvestmentsJoinSection();
   const adviser = new EstatePlanningAndProfessionalAdviser();
   const personalInsurance = new PersonalInsurance();
   const businessEntities = new BusinessEntities();
@@ -159,6 +164,14 @@ describe("Adviser Simplicity", () => {
 
   it.only("Financial Investments Card's", () => {
     financialInvestments.section();
+  });
+
+  it.only("Financial Investments Partner Section", () => {
+    financialInvestmentsPartnerSection.section();
+  });
+
+  it.only("Financial Investments Join Section", () => {
+    financialInvestmentsJoinSection.section();
   });
 
   it.skip("Estate Planning And Professional Adviser Card's", () => {
