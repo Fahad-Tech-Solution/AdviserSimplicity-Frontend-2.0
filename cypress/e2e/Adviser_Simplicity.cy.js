@@ -7,7 +7,7 @@ import PersonalIncomeAndExpense from "./Personal Income And Expense/Client Secti
 import PersonalIncomeAndExpensePartnerSection from "./Personal Income And Expense/Partner Section.cy.js";
 import PersonalAssetsAndDebt from "./Personal Assets And Debt/Cards.cy";
 import PersonalAssetsAndDebtPartnerSection from "./Personal Assets And Debt/Partner Section.cy.js";
-import FinancialInvestments from "./Financial Investments/Cards.cy";
+import FinancialInvestments from "./Financial Investments/Client Section.cy.js";
 import FinancialInvestmentsPartnerSection from "./Financial Investments/Partner Section.cy.js";
 import FinancialInvestmentsJoinSection from "./Financial Investments/Join Section.cy.js";
 import EstatePlanningAndProfessionalAdviser from "./Estate Planning and Professional Advisers/Cards.cy";
@@ -166,11 +166,11 @@ describe("Adviser Simplicity", () => {
     financialInvestments.section();
   });
 
-  it.only("Financial Investments Partner Section", () => {
+  it("Financial Investments Partner Section", () => {
     financialInvestmentsPartnerSection.section();
   });
 
-  it.only("Financial Investments Join Section", () => {
+  it("Financial Investments Join Section", () => {
     financialInvestmentsJoinSection.section();
   });
 
