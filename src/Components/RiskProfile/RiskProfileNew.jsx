@@ -377,12 +377,9 @@ const RiskProfileNew = () => {
                 setFieldValue("client.confirmRiskProfileCheck2", data.client.confirmRiskProfileCheck2)
                 setFieldValue("client.confirmRiskProfileCheck3", data.client.confirmRiskProfileCheck3)
                 setFieldValue("client.addNoteDescription", data.client.addNoteDescription)
-
-
             }
 
             if (riskQuestion.joinedProfile == "No" && data.partner) {
-
                 setFieldValue("partner.question1", data.partner.question1)
                 setFieldValue("partner.question2", data.partner.question2)
                 setFieldValue("partner.question3", data.partner.question3)

@@ -69,10 +69,9 @@ const CashFlowCenterLink = (props) => {
         if (!data || !Object.keys(data).length) return;
         const fields = {
           includeFromYear: data.includeFromYear || 1,
-          allowCarerAllowance:
-            data.allowCarerAllowance || data.paymentType || "",
-          isClientRenting: data.isClientRenting || data.paymentType || "",
-          centrelinkPayment: data.centrelinkPayment || data.paymentType || "",
+          allowCarerAllowance: data.allowCarerAllowance || "",
+          isClientRenting: data.isClientRenting || "",
+          centrelinkPayment: data.centrelinkPayment || "",
           applySeparatedByIllness: data.applySeparatedByIllness || "",
         };
 
@@ -163,7 +162,7 @@ const CashFlowCenterLink = (props) => {
       obj.partnerTotal = "Year " + values.partner.includeFromYear || "";
     } else {
       obj.partnerTotal = "";
-      partner = {};
+      obj.partner = {};
     }
 
     const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
@@ -214,10 +213,13 @@ const CashFlowCenterLink = (props) => {
     }
   };
 
-  const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
-    value: (i + 1).toString(),
-    label: ("Year " + (i + 1)).toString(),
-  }));
+  const loanTermOptions = Array.from({ length: 31 }, (_, i) => {
+    if (i === 0) return { value: "Existing", label: "Existing" };
+    return {
+      value: i.toString(),
+      label: ("Year " + i).toString(),
+    };
+  });
 
   const options =
     UserStatus !== "Single"

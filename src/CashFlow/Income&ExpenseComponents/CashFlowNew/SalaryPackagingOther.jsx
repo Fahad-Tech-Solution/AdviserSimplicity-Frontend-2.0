@@ -45,9 +45,9 @@ const SalaryPackagingOther = (props) => {
     }
   };
 
-  const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
-    value: (i + 1).toString(),
-    label: ("Year " + (i + 1)).toString(),
+  const loanTermOptions = Array.from({ length: 31 }, (_, i) => ({
+    value: i.toString(),
+    label: ("Year " + i).toString(),
   }));
 
   return (

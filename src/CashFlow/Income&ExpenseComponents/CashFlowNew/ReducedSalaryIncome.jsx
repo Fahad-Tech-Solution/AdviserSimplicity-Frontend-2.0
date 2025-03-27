@@ -12,7 +12,6 @@ const reducedSalaryIncome = (props) => {
         upUntilYear: "30",
     };
 
-
     const fillInitialValues = (setFieldValue) => {
         let SourceObj = props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")] || {}
         if (Object.keys(SourceObj).length > 0) {
@@ -26,8 +25,6 @@ const reducedSalaryIncome = (props) => {
         }
     };
 
-
-
     let onSubmit = async (values) => {
         console.log(values);
 
@@ -37,17 +34,12 @@ const reducedSalaryIncome = (props) => {
         if (props.flagState) {
             props.setFlagState(false);
         }
-
     };
 
-
-    const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
-        value: (i + 1).toString(),
-        label: ("Year " + (i + 1)).toString(),
+    const loanTermOptions = Array.from({ length: 31 }, (_, i) => ({
+        value: (i).toString(),
+        label: ("Year " + (i)).toString(),
     }));
-
-
-
 
     return (
         <Formik
