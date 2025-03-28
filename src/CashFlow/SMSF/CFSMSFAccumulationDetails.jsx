@@ -132,18 +132,9 @@ const CFSMSFAccumulationDetails = (props) => {
 
         if (Data && Object.keys(Data).length > 0) {
           
-          setFieldValue(
-            "totalFundNetAssetValue",
-            toCommaAndDollar(Data.totalFundNetAssetValue)
-          );
-          setFieldValue(
-            "actualValueToMember",
-            toCommaAndDollar(Data.actualValueToMember)
-          );
-          setFieldValue(
-            "taxableComponent",
-            toCommaAndDollar(Data.taxableComponent)
-          );
+          setFieldValue("totalFundNetAssetValue", Data.totalFundNetAssetValue);
+          setFieldValue("actualValueToMember", Data.actualValueToMember);
+          setFieldValue("taxableComponent", Data.taxableComponent);
 
           setCashFlowReCalculateLoading(false);
           openNotificationSuccess(

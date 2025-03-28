@@ -230,55 +230,18 @@ const NewPensionRollover = (props) => {
       if (res) {
         console.log(res);
 
-        let DataObj = res.data[props.modalObject.sourceObj.key][props.modalObject.stakeHolder.replace(".", "")];
+        let DataObj =
+          res.data[props.modalObject.sourceObj.key][
+            props.modalObject.stakeHolder.replace(".", "")
+          ];
 
-        if (
-          DataObj.currentPensionDetails &&
-          typeof DataObj.currentPensionDetails === "number"
-        ) {
-          setFieldValue(
-            "currentPensionDetails",
-            toCommaAndDollar(DataObj.currentPensionDetails)
-          );
-        } else {
-          setFieldValue("currentPensionDetails", "$0");
-        }
-
-        if (
-          DataObj.totalSuperannuationBenefits &&
-          typeof DataObj.totalSuperannuationBenefits === "number"
-        ) {
-          setFieldValue(
-            "totalSuperannuationBenefits",
-            toCommaAndDollar(DataObj.totalSuperannuationBenefits)
-          );
-        } else {
-          setFieldValue("totalSuperannuationBenefits", "$0");
-        }
-
-        if (
-          DataObj.minimumPension &&
-          typeof DataObj.minimumPension === "number"
-        ) {
-          setFieldValue(
-            "minimumPension",
-            toCommaAndDollar(DataObj.minimumPension)
-          );
-        } else {
-          setFieldValue("minimumPension", "$0");
-        }
-
-        if (
-          DataObj.maximumPension &&
-          typeof DataObj.maximumPension === "number"
-        ) {
-          setFieldValue(
-            "maximumPension",
-            toCommaAndDollar(DataObj.maximumPension)
-          );
-        } else {
-          setFieldValue("maximumPension", "$0");
-        }
+        setFieldValue("currentPensionDetails", DataObj.currentPensionDetails);
+        setFieldValue(
+          "totalSuperannuationBenefits",
+          DataObj.totalSuperAnnuationBenefits
+        );
+        setFieldValue("minimumPension", DataObj.minimumPension);
+        setFieldValue("maximumPension", DataObj.maximumPension);
 
         setCashFlowReCalculateLoading(false);
         openNotificationSuccess(

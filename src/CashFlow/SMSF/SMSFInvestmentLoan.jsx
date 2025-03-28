@@ -76,49 +76,42 @@ const SMSFInvestmentLoan = (props) => {
       };
 
       if (scenarioObj?.selectedSource === "discoveryForm") {
-        setFieldValue(`owner`, SMSFInvestmentLoan.owner || "");
+        // setFieldValue(`owner`, SMSFInvestmentLoan.owner || "");
 
-        if (SMSFInvestmentLoan.owner.includes("client")) {
-          updateFields(SMSFInvestmentLoan.client, "client");
-        }
-
-        if (
-          UserStatus === "Married" &&
-          SMSFInvestmentLoan.owner.includes("partner")
-        ) {
-          updateFields(SMSFInvestmentLoan.partner, "partner");
-        }
+        // if (SMSFInvestmentLoan.owner.includes("client")) {
+        updateFields(SMSFInvestmentLoan.client, "client");
+        // }
       } else {
         const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
         if (cashFlowDetails) {
-          setFieldValue(`owner`, cashFlowDetails.owner || "");
+          // setFieldValue(`owner`, cashFlowDetails.owner || "");
           if (cashFlowDetails.owner.includes("client")) {
             updateFields(cashFlowDetails.client, "client");
           }
 
-          if (
-            UserStatus === "Married" &&
-            cashFlowDetails.owner.includes("partner")
-          ) {
-            updateFields(cashFlowDetails.partner, "partner");
-          }
+          // if (
+          //   UserStatus === "Married" &&
+          //   cashFlowDetails.owner.includes("partner")
+          // ) {
+          //   updateFields(cashFlowDetails.partner, "partner");
+          // }
         }
       }
 
       if (cashFlowData?.[objAndAPIKey]?._id) {
         const cashFlowDataDetails = cashFlowData[objAndAPIKey];
-        setFieldValue(`owner`, cashFlowDataDetails.owner || "");
+        // setFieldValue(`owner`, cashFlowDataDetails.owner || "");
 
         if (cashFlowDataDetails.owner.includes("client")) {
           updateFields(cashFlowDataDetails.client, "client");
         }
 
-        if (
-          UserStatus === "Married" &&
-          cashFlowDataDetails.owner.includes("partner")
-        ) {
-          updateFields(cashFlowDataDetails.partner, "partner");
-        }
+        // if (
+        //   UserStatus === "Married" &&
+        //   cashFlowDataDetails.owner.includes("partner")
+        // ) {
+        //   updateFields(cashFlowDataDetails.partner, "partner");
+        // }
       }
     } catch (error) {
       console.error("Error in fillInitialValues:", error);
@@ -338,25 +331,11 @@ const SMSFInvestmentLoan = (props) => {
         );
 
         if (values.owner.includes("client")) {
-          if (typeof Data.minimumRepayments === "number") {
-            setFieldValue(
-              "client.minimumRepayments",
-              toCommaAndDollar(Data.minimumRepayments)
-            );
-          } else {
-            setFieldValue("client.minimumRepayments", "$0");
-          }
+          setFieldValue("client.minimumRepayments", Data.minimumRepayments);
         }
 
         if (values.owner.includes("partner")) {
-          if (typeof Data.minimumRepayments === "number") {
-            setFieldValue(
-              "partner.minimumRepayments",
-              toCommaAndDollar(Data.minimumRepayments)
-            );
-          } else {
-            setFieldValue("partner.minimumRepayments", "$0");
-          }
+          setFieldValue("partner.minimumRepayments", Data.minimumRepayments);
         }
 
         setCashFlowReCalculateLoading(false);

@@ -178,29 +178,6 @@ const CashFlowLoanBelanceLVR = (props) => {
         parseInt(grandValues.numberOfProperties, 10) || 1;
       const currentIndex = parentKey.match(/\d+/)?.[0] || 0; // Extract numeric index from key
 
-      // // Structured entries for each property
-      // let structuredEntries = Array.from(
-      //   { length: numberOfProperties },
-      //   (_, i) => ({
-      //     address: grandValues[`address_${i}`] || "",
-      //     currentValue: grandValues[`currentValue_${i}`] || "",
-      //     state: grandValues[`state_${i}`] || "",
-      //     clientOwnership: grandValues[`clientOwnership_${i}`] || "0%",
-      //     partnerOwnership: grandValues[`partnerOwnership_${i}`] || "0%",
-      //     yearOfPurchase: grandValues[`yearOfPurchase_${i}`] || "",
-      //     totalCostBase: grandValues[`totalCostBase_${i}`] || "",
-      //     totalCostBaseObj: grandValues[`totalCostBaseObj_${i}`] || {},
-      //     loanBalance: grandValues[`loanBalance_${i}`] || "",
-      //     familyHomeLoanObj: grandValues[`familyHomeLoanObj_${i}`] || {}, // this will be changed for other modals where this modal is called
-      //     expectedGrowthRate: grandValues[`expectedGrowthRate_${i}`] || "",
-      //     sellPropertyInYear: grandValues[`sellPropertyInYear_${i}`] || "",
-      //     estimatedFutureSellingCost:
-      //       grandValues[`estimatedFutureSellingCost_${i}`] || "",
-      //   })
-      // );
-
-      // console.log(GrandParentObject, parentValues);
-
       let structuredEntries = createStructuredEntries(
         grandValues,
         GrandParentObject.key,
@@ -222,21 +199,9 @@ const CashFlowLoanBelanceLVR = (props) => {
         }
       }
 
-      // console.log(
-      //   structuredEntries[currentIndex][ParentObject.key.replace(/_\d+/, "")],
-      //   ParentObject.key
-      // );
-
       updatedData[GrandParentObject.key].client = structuredEntries;
       updatedData[GrandParentObject.key].numberOfProperties =
         numberOfProperties;
-
-      // console.log(
-      //   "Updated Data:",
-      //   JSON.stringify(updatedData[GrandParentObject.key], null, 2)
-      // );
-
-      // throw new Error("erorr");
 
       // API Key Mapping
       let apiKey = {
@@ -271,10 +236,7 @@ const CashFlowLoanBelanceLVR = (props) => {
         let loanData =
           res.data[ParentObject.ParentObject.key][currentIndex]?.loan || {};
 
-        setFieldValue(
-          "loanBalance",
-          toCommaAndDollar(loanData.LVR?.loanBalance || 0)
-        );
+        setFieldValue("loanBalance", loanData.LVR?.loanBalance || 0);
 
         if (!props.modalObject.clientPartnerPer) {
           setFieldValue(

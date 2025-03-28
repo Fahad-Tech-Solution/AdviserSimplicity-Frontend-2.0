@@ -221,17 +221,12 @@ const CFSMSFBalance = (props) => {
             props.modalObject.stakeHolder.replace(".", "")
           ];
 
-        if (
-          Data.totalSuperAnnuationBenefits &&
-          typeof Data.totalSuperAnnuationBenefits === "number"
-        ) {
-          setFieldValue(
-            "totalSuperAnnuationBenefits",
-            toCommaAndDollar(Data.totalSuperAnnuationBenefits)
-          );
-        } else {
-          setFieldValue("totalSuperannuationBenefits", "$0");
-        }
+        console.log(Data);
+
+        setFieldValue(
+          "totalSuperannuationBenefits",
+          Data.totalSuperannuationBenefits
+        );
 
         setCashFlowReCalculateLoading(false);
         openNotificationSuccess(

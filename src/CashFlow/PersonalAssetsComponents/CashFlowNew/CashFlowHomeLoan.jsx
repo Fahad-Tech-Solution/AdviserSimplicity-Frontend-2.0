@@ -315,14 +315,8 @@ const CashFlowHomeLoan = (props) => {
         let loanData = res.data[ParentObject.key][currentIndex]?.loan || {};
 
         const minimumRepaymentsPA = loanData.minimumRepaymentsPA || 0;
-        if (typeof minimumRepaymentsPA === "number") {
-          setFieldValue(
-            "minimumRepaymentsPA",
-            toCommaAndDollar(minimumRepaymentsPA)
-          );
-        } else {
-          setFieldValue("minimumRepaymentsPA", "$0");
-        }
+
+        setFieldValue("minimumRepaymentsPA", minimumRepaymentsPA);
 
         setCashFlowReCalculateLoading(false);
 

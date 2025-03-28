@@ -178,13 +178,10 @@ const CashFlowTotalCost = (props) => {
         if (values.stampDuty !== "Manual") {
           setFieldValue(
             "stampDutyCalculation",
-            toCommaAndDollar(totalCostBaseObj.stampDutyCalculation)
+            totalCostBaseObj.stampDutyCalculation
           );
         }
-        setFieldValue(
-          "totalCostBase",
-          toCommaAndDollar(totalCostBaseObj.totalCostBase)
-        );
+        setFieldValue("totalCostBase", totalCostBaseObj.totalCostBase);
         setCashFlowReCalculateLoading(false);
         openNotificationSuccess(
           "success",

@@ -232,16 +232,10 @@ const TotalCostBase = (props) => {
         const { totalCostBaseObj } = res.data[ParentObject.key][currentIndex];
 
         if (values.stampDuty !== "Manual") {
-          setFieldValue(
-            "stampDutyValue",
-            toCommaAndDollar(totalCostBaseObj.stampDutyValue)
-          );
+          setFieldValue("stampDutyValue", totalCostBaseObj.stampDutyValue);
         }
 
-        setFieldValue(
-          "totalCostBase",
-          toCommaAndDollar(totalCostBaseObj.totalCostBase)
-        );
+        setFieldValue("totalCostBase", totalCostBaseObj.totalCostBase);
 
         setCashFlowReCalculateLoading(false);
         openNotificationSuccess(
