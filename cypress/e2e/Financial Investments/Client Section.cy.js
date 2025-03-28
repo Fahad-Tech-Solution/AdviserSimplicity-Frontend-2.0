@@ -539,283 +539,282 @@ class FinancialInvestments {
 
     // // End Investment Bond
 
-    cy.wait(1000);
+    // cy.wait(1000);
 
-    //Investment Properties
-    cy.get(":nth-child(9) > .py-4").within(() => {
-      cy.contains("Investment Properties");
-      cy.get("img");
-      cy.contains("Total Market Value");
-      cy.contains("Total Loans");
-
-      cy.get(
-        ".mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
-      ).click({ multiple: true, force: true });
-    });
-    //Header
-    cy.get(".modal-header").within(() => {
-      cy.contains("Investment Properties");
-      cy.get(".btn-close");
-    });
-
-    cy.get(".modal-body").within(() => {
-      cy.contains("How many Investment Properties does Aiden Smith have :");
-    });
-    cy.get("#NumberOfMap").clear().type("1");
-
-    cy.get(".table").within(() => {
-      cy.contains("No#");
-      cy.contains("1");
-
-      cy.contains("Property Address");
-      cy.get("#PropertyAddress0").clear().type("FTS ");
-
-      cy.contains("Current Value - ");
-      cy.get("#CurrentValue0").clear().type("$2,022");
-
-      cy.contains("Cost base");
-      cy.get("#CostBase0").clear().type("$567");
-
-      cy.contains("Client Ownership");
-      cy.get('#ClientOwnership0').clear().type('20.00%');
-
-cy.contains("Partner Ownership");
-      cy.get('#PartnerOwnership0').should('have.value', '80.00%');
-
-      cy.contains("Weekly Rental Income");
-      cy.get("#weeklyRentalIncome0").clear().type("23");
-    });
-    // Loan Balance
-    cy.contains("Loan Balance");
-
-    cy.get("#button-addon2").click();
-    //Loan Balance Header
-    cy.get(':nth-child(5) > .modal-dialog > .modal-content').within(
-      () => {
-        cy.contains("Property Loan Details");
-        cy.get(".btn-close");
-
-        cy.contains("Lender");
-        cy.get("#LenderCurrent0").select("Testing");
-
-        cy.contains("Loan Balance");
-        cy.get("#LoanBalance0").clear().type("$987").blur();
-
-        cy.contains("Loan Type");
-        cy.get("#LoanType0").select("i/only");
-
-        cy.contains("Repayments Amount");
-        cy.get("#RepaymentsAmount0").clear().type("$2022").blur();
-
-        cy.contains("Frequency");
-        cy.get("#Frequency0").select("Annually");
-
-        cy.contains("Annual Repayments");
-        cy.get("#AnnualRepayments0");
-
-        cy.contains("Interest Rate (p.a)");
-        cy.get("#InterestRate0").clear().type("22.00%").blur();
-
-        cy.contains("Loan Term");
-        cy.get("#LoanTerm0").select("Year 19");
-
-        cy.contains("Loan Term Remaining");
-        cy.get("#LoanTermRemaining0").select("Year 22");
-
-        cy.contains("Deductible Loan Amount");
-        cy.get("#DeductibleLoanAmount0").clear().type("33.00%").blur();
-
-        cy.contains("Close");
-        cy.contains("Submit").click();
-      }
-    );
-    cy.get("#propertyLoanBalance0").should("not.have.value", "");
-    //Expense Detail Card's
-    cy.get("tbody > tr > :nth-child(9)")
-      .filter(":visible")
-      .within(() => {
-        cy.get("#button-addon2").click();
-      });
-
-    cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
-      () => {
-        cy.contains("Expense Details");
-
-        cy.contains("No#");
-        cy.contains("1");
-
-        cy.contains("Council Rates");
-        cy.get("#councilRates0").clear().type("$3").blur();
-
-        cy.contains("Water Rates");
-        cy.get("#waterRates0").clear().type("$9").blur();
-
-        cy.contains("Land tax");
-        cy.get("#landTax0").clear().type("$98").blur();
-
-        cy.contains("Insurance/Body Corporate");
-        cy.get("#insuranceCorporate0").clear().type("$7").blur();
-
-        cy.contains("Repairs and Maintenance");
-        cy.get("#repairsMaintenance0").clear().type("$9").blur();
-
-        cy.contains("All Other");
-        cy.get("#allOther0").clear().type("$2").blur();
-
-        cy.contains("Total Expenses");
-        cy.get("#totalExpance0").should("not.have.value", "");
-
-        cy.contains("Close");
-        cy.contains("Submit").click();
-      }
-    );
-    //Footer
-    cy.contains("Close").should("be.visible");
-    cy.contains("Submit").should("be.visible").click();
-
-    cy.contains("Total Market Value");
-    cy.get("#clientinvestmentPropertyDetails").should("not.have.value", "");
-    cy.contains("Total Loans");
-    cy.get("#partnerinvestmentPropertyDetails").should("not.have.value", "");
-
-    cy.wait(1000);
-
-    // //Investment Loan:
-    // cy.get(":nth-child(10) > .py-4").within(() => {
-    //   cy.contains("Investment Loan");
+    // //Investment Properties
+    // cy.get(":nth-child(9) > .py-4").within(() => {
+    //   cy.contains("Investment Properties");
     //   cy.get("img");
-    //   cy.contains("Admin");
+    //   cy.contains("Total Market Value");
+    //   cy.contains("Total Loans");
+
     //   cy.get(
     //     ".mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
-    //   )
-    //     .click()
-    //     .should("be.visible");
+    //   ).click({ multiple: true, force: true });
     // });
-    // //Investment Loan Card Header
+    // //Header
     // cy.get(".modal-header").within(() => {
-    //   cy.contains("Investment Loan");
-    //   cy.get(".btn-close").should("be.visible");
+    //   cy.contains("Investment Properties");
+    //   cy.get(".btn-close");
     // });
 
     // cy.get(".modal-body").within(() => {
-    //   cy.contains("Owner").should("be.visible");
+    //   cy.contains("How many Investment Properties does Aiden Smith have :");
     // });
-
-    // cy.get(".css-1xc3v61-indicatorContainer").click();
-    // cy.get('#react-select-6-option-0').click();
-
-    // //Investment Loan Card Section
+    // cy.get("#NumberOfMap").clear().type("1");
 
     // cy.get(".table").within(() => {
-    //   cy.contains("Owner");
-    //   cy.get("tbody > tr > :nth-child(1)");
-    //   cy.contains("Admin");
+    //   cy.contains("No#");
+    //   cy.contains("1");
+
+    //   cy.contains("Property Address");
+    //   cy.get("#PropertyAddress0").clear().type("FTS ");
+
+    //   cy.contains("Current Value - ");
+    //   cy.get("#CurrentValue0").clear().type("$2,022");
+
+    //   cy.contains("Cost base");
+    //   cy.get("#CostBase0").clear().type("$567");
+
+    //   cy.contains("Client Ownership");
+    //   cy.get("#ClientOwnership0").clear().type("20.00%");
+
+    //   cy.contains("Partner Ownership");
+    //   cy.get("#PartnerOwnership0").should("have.value", "80.00%");
+
+    //   cy.contains("Weekly Rental Income");
+    //   cy.get("#weeklyRentalIncome0").clear().type("23");
+    // });
+    // // Loan Balance
+    // cy.contains("Loan Balance");
+
+    // cy.get("#button-addon2").click();
+    // //Loan Balance Header
+    // cy.get(":nth-child(5) > .modal-dialog > .modal-content").within(() => {
+    //   cy.contains("Property Loan Details");
+    //   cy.get(".btn-close");
 
     //   cy.contains("Lender");
-    //   cy.get(":nth-child(2) > .form-select").select("Testing");
+    //   cy.get("#LenderCurrent0").select("Testing");
 
     //   cy.contains("Loan Balance");
-    //   cy.get("#loanBalance").clear().type("$987").blur();
+    //   cy.get("#LoanBalance0").clear().type("$987").blur();
 
     //   cy.contains("Loan Type");
-    //   cy.get(":nth-child(4) > .form-select").select("i/only");
+    //   cy.get("#LoanType0").select("i/only");
 
     //   cy.contains("Repayments Amount");
-    //   cy.get("#repaymentsAmount").clear().type("$222").blur();
+    //   cy.get("#RepaymentsAmount0").clear().type("$2022").blur();
 
     //   cy.contains("Frequency");
-    //   cy.get(":nth-child(6) > .form-select").select("Weekly");
+    //   cy.get("#Frequency0").select("Annually");
 
     //   cy.contains("Annual Repayments");
-    //   cy.get(" #annualRepayments").clear().type("22").blur();
-    //   cy.get("#serviceFeeType").select("Weekly");
+    //   cy.get("#AnnualRepayments0");
 
     //   cy.contains("Interest Rate (p.a)");
-    //   cy.get("#interestRate").clear().type("202").blur();
+    //   cy.get("#InterestRate0").clear().type("22.00%").blur();
 
     //   cy.contains("Loan Term");
-    //   cy.get(":nth-child(9) > .form-select").select("Year 19");
+    //   cy.get("#LoanTerm0").select("Year 19");
 
     //   cy.contains("Loan Term Remaining");
-    //   cy.get(":nth-child(10) > .form-select").select("Year 22");
+    //   cy.get("#LoanTermRemaining0").select("Year 22");
 
     //   cy.contains("Deductible Loan Amount");
-    //   cy.get("#deductibleLoanAmount").clear().type("33.00%").blur();
-    // });
+    //   cy.get("#DeductibleLoanAmount0").clear().type("33.00%").blur();
 
-    // //Investment LoanCard Footer
-    // cy.get(".modal-footer").within(() => {
-    //   cy.contains("Close").should("be.visible");
-    //   cy.contains("Submit").should("be.visible").click();
+    //   cy.contains("Close");
+    //   cy.contains("Submit").click();
     // });
+    // cy.get("#propertyLoanBalance0").should("not.have.value", "");
+    // //Expense Detail Card's
+    // cy.get("tbody > tr > :nth-child(9)")
+    //   .filter(":visible")
+    //   .within(() => {
+    //     cy.get("#button-addon2").click();
+    //   });
 
-    // cy.get("#clientmanagedFundsLOC").should("not.have.value", "");
+    // cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+    //   () => {
+    //     cy.contains("Expense Details");
+
+    //     cy.contains("No#");
+    //     cy.contains("1");
+
+    //     cy.contains("Council Rates");
+    //     cy.get("#councilRates0").clear().type("$3").blur();
+
+    //     cy.contains("Water Rates");
+    //     cy.get("#waterRates0").clear().type("$9").blur();
+
+    //     cy.contains("Land tax");
+    //     cy.get("#landTax0").clear().type("$98").blur();
+
+    //     cy.contains("Insurance/Body Corporate");
+    //     cy.get("#insuranceCorporate0").clear().type("$7").blur();
+
+    //     cy.contains("Repairs and Maintenance");
+    //     cy.get("#repairsMaintenance0").clear().type("$9").blur();
+
+    //     cy.contains("All Other");
+    //     cy.get("#allOther0").clear().type("$2").blur();
+
+    //     cy.contains("Total Expenses");
+    //     cy.get("#totalExpance0").should("not.have.value", "");
+
+    //     cy.contains("Close");
+    //     cy.contains("Submit").click();
+    //   }
+    // );
+    // //Footer
+    // cy.contains("Close").should("be.visible");
+    // cy.contains("Submit").should("be.visible").click();
+
+    // cy.contains("Total Market Value");
+    // cy.get("#clientinvestmentPropertyDetails").should("not.have.value", "");
+    // cy.contains("Total Loans");
+    // cy.get("#partnerinvestmentPropertyDetails").should("not.have.value", "");
 
     // cy.wait(1000);
 
-    // //Margin Loan :
-    // cy.get(":nth-child(11) > .py-4").within(() => {
-    //   cy.contains("Margin Loan");
-    //   cy.get("img");
-    //   cy.contains("Admin");
-    //   cy.get(
-    //     ".mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
-    //   )
-    //     .click()
-    //     .should("be.visible");
-    // });
-    // //Margin Loan Card Header
-    // cy.get(".modal-header").within(() => {
-    //   cy.contains("Margin Loan");
-    //   cy.get(".btn-close").should("be.visible");
-    // });
+    //Investment Loan:
+    cy.get(":nth-child(10) > .py-4").within(() => {
+      cy.contains("Investment Loan");
+      cy.get("img");
+      cy.contains("Aiden Smith");
+      cy.get(
+        ".mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
+      )
+        .click()
+        .should("be.visible");
+    });
+    //Investment Loan Card Header
+    cy.get(".modal-header").within(() => {
+      cy.contains("Investment Loan");
+      cy.get(".btn-close").should("be.visible");
+    });
 
-    // cy.get(".modal-body").within(() => {
-    //   cy.contains("Owner").should("be.visible");
-    // });
+    cy.get(".modal-body").within(() => {
+      cy.contains("Owner").should("be.visible");
+    });
 
-    // cy.get(".css-1xc3v61-indicatorContainer").click();
-    // cy.get('#react-select-7-option-0').click();
+    cy.get(".css-d07bj1 > :nth-child(1)").click();
+    cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
 
-    // //Margin Loan Card Section
+    //Investment Loan Card Section
 
-    // cy.get(".table").within(() => {
-    //   cy.contains("Owner");
-    //   cy.get("tbody > tr > :nth-child(1)");
-    //   cy.contains("Admin");
+    cy.get(".table").within(() => {
+      cy.contains("Owner");
+      cy.get("tbody > tr > :nth-child(1)");
+      cy.contains("Aiden Smith");
 
-    //   cy.contains("Lender");
-    //   cy.get('[style="width: 15rem;"] > .form-select').select("Testing");
+      cy.contains("Lender");
+      cy.get(":nth-child(2) > .form-select").select("Testing");
 
-    //   cy.contains("Loan Balance");
-    //   cy.get("#loanBalance").clear().type("$987").blur();
+      cy.contains("Loan Balance");
+      cy.get("#loanBalance").clear().type("$987").blur();
 
-    //   cy.contains("Monthly Contribution");
-    //   cy.get("#monthlyContribution").clear().type("$987").blur();
+      cy.contains("Loan Type");
+      cy.get(":nth-child(4) > .form-select").select("i/only");
 
-    //   cy.contains("Annual Loan Contributions");
-    //   cy.get("#annualLoan").should("not.have.value", "");
+      cy.contains("Repayments Amount");
+      cy.get("#repaymentsAmount").clear().type("$222").blur();
 
-    //   cy.contains("Loan Term");
-    //   cy.get(":nth-child(7) > .form-select").select("Year 19");
+      cy.contains("Frequency");
+      cy.get(":nth-child(6) > .form-select").select("Weekly");
 
-    //   cy.contains("Interest Rate (p.a)");
-    //   cy.get("#interestRate").clear().type("202").blur();
+      cy.contains("Annual Repayments");
+      cy.get(" #annualRepayments").clear().type("22").blur();
+      cy.get("#serviceFeeType").select("Weekly");
 
-    //   cy.contains("Loan Term Remaining");
-    //   cy.get(":nth-child(8) > .form-select").select("Year 22");
+      cy.contains("Interest Rate (p.a)");
+      cy.get("#interestRate").clear().type("202").blur();
 
-    //   cy.contains("Deductible Loan Amount");
-    //   cy.get("#deductibleLoanAmount").clear().type("202").blur();
-    // });
+      cy.contains("Loan Term");
+      cy.get(":nth-child(9) > .form-select").select("Year 19");
 
-    // //Margin Loan Card Footer
-    // cy.get(".modal-footer").within(() => {
-    //   cy.contains("Close").should("be.visible");
-    //   cy.contains("Submit").should("be.visible").click();
-    // });
+      cy.contains("Loan Term Remaining");
+      cy.get(":nth-child(10) > .form-select").select("Year 22");
 
-    // cy.get("#clientmanagedFundsMarginLoan").should("not.have.value", "");
+      cy.contains("Deductible Loan Amount");
+      cy.get("#deductibleLoanAmount").clear().type("33.00%").blur();
+    });
+
+    //Investment Loan Card Footer
+    cy.get(".modal-footer").within(() => {
+      cy.contains("Close").should("be.visible");
+      cy.contains("Submit").should("be.visible").click();
+    });
+
+    cy.get('#clientmanagedFundsLOC').should("have.value", "$1,144");
+
+    cy.wait(1000);
+
+    //Margin Loan :
+    cy.get(":nth-child(11) > .py-4").within(() => {
+      cy.contains("Margin Loan");
+      cy.get("img");
+      cy.contains("Aiden Smith");
+      cy.contains("Emma Taylor");
+      cy.get(
+        ".mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
+      )
+        .click()
+        .should("be.visible");
+    });
+    //Margin Loan Card Header
+    cy.get(".modal-header").within(() => {
+      cy.contains("Margin Loan");
+      cy.get(".btn-close").should("be.visible");
+    });
+
+  cy.get(".modal-body").within(() => {
+      cy.contains("Owner").should("be.visible");
+    });
+
+    cy.get(".css-d07bj1 > :nth-child(1)").click();
+    cy.get(".css-1lx7dxn").type("Aiden Smith{enter}");
+
+    //Margin Loan Card Section
+
+    cy.get(".table").within(() => {
+      cy.contains("Owner");
+      cy.get("tbody > tr > :nth-child(1)");
+      cy.contains("Aiden Smith");
+
+      cy.contains("Lender");
+      cy.get('[style="width: 15rem;"] > .form-select').select("Testing");
+
+      cy.contains("Loan Balance");
+      cy.get("#loanBalance").clear().type("$987").blur();
+
+      cy.contains("Monthly Contribution");
+      cy.get("#monthlyContribution").clear().type("$85").blur();
+
+      cy.contains("Annual Loan Contributions");
+      cy.get("#annualLoan").should("have.value", "$1,020");
+
+      cy.contains("Loan Term");
+      cy.get(":nth-child(7) > .form-select").select("Year 19");
+
+      cy.contains("Interest Rate (p.a)");
+      cy.get("#interestRate").clear().type("202").blur();
+
+      cy.contains("Loan Term Remaining");
+      cy.get(":nth-child(8) > .form-select").select("Year 22");
+
+      cy.contains("Deductible Loan Amount");
+      cy.get("#deductibleLoanAmount").clear().type("202").blur();
+    });
+
+    //Margin Loan Card Footer
+    cy.get(".modal-footer").within(() => {
+      cy.contains("Close").should("be.visible");
+      cy.contains("Submit").should("be.visible").click();
+    });
+
+    // cy.get('#clientmanagedFundsMarginLoan').should("have.value", "$1,020");
 
     // cy.wait(1000);
 
@@ -1378,176 +1377,186 @@ cy.contains("Partner Ownership");
 
     // cy.get("#clientaccountBasedPensionIssues").should("not.have.value", "");
 
-    // //Account Based Penion
+    //Annuities
 
-    // cy.get(":nth-child(8) > .py-4").within(() => {
-    //   cy.contains("Annuities");
-    //   cy.get("img");
-    //   cy.contains("Admin");
-    //   cy.get(
-    //     "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
-    //   ).click();
-    // });
+    cy.get(":nth-child(8) > .py-4").within(() => {
+      cy.contains("Annuities");
+      cy.get("img");
+      cy.contains("Aiden Smith");
+      cy.contains("Emma Taylor");
+      cy.get(
+        "label.mb-0.bg-secondary.rounded-circle.text-light.py-1.px-2.curser-pointer"
+      ).click();
+    });
 
-    // cy.get(".modal-content").within(() => {
-    //   cy.contains("Annuities");
-    //   cy.get(".btn-close");
-    //   cy.get(".table").within(() => {
-    //     cy.contains("Owner");
-    //     cy.get('[style="width: 50%;"]').contains("Admin");
-    //     cy.contains("Current Balance");
-    //   });
-    // });
+    Cypress.on("uncaught:exception", (err, runnable) => {
+      console.warn("Ignoring uncaught exception:", err.message);
+      return false; // Prevents Cypress from failing the test
+    });
 
-    // cy.get("#button-addon2").click();
+    cy.get(".modal-content").within(() => {
+      cy.contains("Annuities");
+      cy.get(".btn-close");
+      cy.get(".table").within(() => {
+        cy.contains("Owner");
+        cy.get(':nth-child(1) > [style="width: 50%;"]').contains("Aiden Smith");
+        cy.contains("Current Balance");
+      });
+    });
 
-    // cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
-    //   () => {
-    //     cy.contains("Admin_Annuities Detail");
-    //     cy.contains("How many Annuities does Admin have :");
-    //     cy.get("#NumberOfMap").clear().type(1);
-    //   }
-    // );
-    // //Inner Table
-    // cy.get(
-    //   '[style="display: block;"] > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4'
-    // ).within(() => {
-    //   cy.contains("No#");
-    //   cy.contains("1");
+    cy.get(":nth-child(1) > :nth-child(2) > .input-group").within(() => {
+      cy.get("#button-addon2").click();
+    });
 
-    //   cy.contains("Product Provider");
-    //   cy.get("#productProvider0").select("Testing Bank");
+    cy.get('[style="display: block;"] > .modal-dialog > .modal-content').within(
+      () => {
+        cy.contains("Aiden Smith_Annuities Detail");
+        cy.contains("How many Annuities does Aiden Smith have :");
+        cy.get("#NumberOfMap").clear().type(1);
+      }
+    );
+    //Inner Table
+    cy.get(
+      '[style="display: block;"] > .modal-dialog > .modal-content > .modal-body > form > :nth-child(1) > .col-md-12 > .row > .mt-4'
+    ).within(() => {
+      cy.contains("No#");
+      cy.contains("1");
 
-    //   cy.contains("Account Number");
-    //   cy.get("#accountNumber0").clear().type("3535");
+      cy.contains("Product Provider");
+      cy.get("#productProvider0").select("Testing Bank");
 
-    //   cy.contains("Source of Funds");
-    //   cy.get("#sourceFunds0").select("Super");
+      cy.contains("Account Number");
+      cy.get("#accountNumber0").clear().type("5000");
 
-    //   cy.contains("Original Investment Amount");
-    //   cy.get("#originalInvestmentAmount0").clear().type("$3535");
+      cy.contains("Source of Funds");
+      cy.get("#sourceFunds0").select("Super");
 
-    //   cy.contains("Return of Capital Value");
-    //   cy.get("#returnCapitalValue0").clear().type("$3535");
+      cy.contains("Original Investment Amount");
+      cy.get("#originalInvestmentAmount0").clear().type("$5000");
 
-    //   cy.contains("Annuity Type");
-    //   cy.get("#annuityType0").select("Fixed Term");
+      cy.contains("Return of Capital Value");
+      cy.get("#returnCapitalValue0").clear().type("$3535");
 
-    //   cy.contains("Term");
-    //   cy.get("#term0").select("Year 21");
+      cy.contains("Annuity Type");
+      cy.get("#annuityType0").select("Fixed Term");
 
-    //   cy.contains("Years to Maturity");
-    //   cy.get("#yearsMaturity0").select("Year 11");
+      cy.contains("Term");
+      cy.get("#term0").select("Year 21");
 
-    //   cy.contains("Annual Advice Service Fee");
-    //   cy.get("#annualAdvice0").clear().type("4536");
-    // });
+      cy.contains("Years to Maturity");
+      cy.get("#yearsMaturity0").select("Year 11");
 
-    // cy.wait(1000);
+      cy.contains("Annual Advice Service Fee");
+      cy.get("#annualAdvice0").clear().type("4536");
+    });
 
-    // // Annual Pension Payment inner card
-    // cy.contains("Annual Annuity Payment");
-    // cy.get("tbody > tr > :nth-child(7)").within(() => {
-    //   cy.get("#button-addon2").click();
-    // });
+    cy.wait(1000);
 
-    // cy.contains("Admin_Annual Pension Payment");
+    // Annual Pension Payment inner card
+    cy.contains("Annual Annuity Payment");
+    cy.get("tbody > tr > :nth-child(7)").within(() => {
+      cy.get("#button-addon2").click();
+    });
 
-    // cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
-    //   cy.contains("No#");
-    //   cy.contains("1");
+    cy.contains("Aiden Smith_Annual Pension Payment");
 
-    //   Cypress.on("uncaught:exception", (err, runnable) => {
-    //     if (err.message.includes("replace")) {
-    //       return false; // Prevent Cypress from failing the test
-    //     }
-    //   });
+    cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
+      cy.contains("No#");
+      cy.contains("1");
 
-    //   cy.contains("Regular amount");
+      Cypress.on("uncaught:exception", (err, runnable) => {
+        if (err.message.includes("replace")) {
+          return false; // Prevent Cypress from failing the test
+        }
+      });
 
-    //   cy.get("#regularAmount0").clear().type("22");
+      cy.contains("Regular amount");
 
-    //   cy.contains("Frequency");
-    //   cy.get("#frequency0").select("Weekly");
+      cy.get("#regularAmount0").clear().type("22");
 
-    //   cy.contains("Total");
-    //   cy.get("#total0").should("have.value", "$1,144");
+      cy.contains("Frequency");
+      cy.get("#frequency0").select("Weekly");
 
-    //   cy.contains("Close");
-    //   cy.contains("Submit").click();
-    // });
+      cy.contains("Total");
+      cy.get("#total0").should("have.value", "$1,144");
 
-    // cy.get("#annualAnnuityPayment0").should("not.have.value", "");
+      cy.contains("Close");
+      cy.contains("Submit").click();
+    });
 
-    // //Nominated Beneficiaries
+    cy.get("#annualAnnuityPayment0").should("not.have.value", "");
 
-    // cy.get("tbody > tr > :nth-child(11)").contains("Yes").click();
+    //Nominated Beneficiaries
 
-    // cy.get(".d-flex > #button-addon2").click();
+    cy.get("tbody > tr > :nth-child(11)").contains("Yes").click();
 
-    // cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
-    //   cy.contains("Admin_Beneficiaries");
+    cy.get(".d-flex > #button-addon2").click();
 
-    //   cy.contains("How many beneficiaries do Admin have :");
+    cy.get(":nth-child(7) > .modal-dialog > .modal-content").within(() => {
+      cy.contains("Aiden Smith_Beneficiaries");
 
-    //   cy.get("#NumberOfMap").clear().type("2"); // Types the number 123 into the input field
+      cy.contains("How many beneficiaries do Aiden Smith have :");
 
-    //   cy.contains("No#");
+      cy.get("#NumberOfMap").clear().type("1"); // Types the number 123 into the input field
 
-    //   cy.contains("1");
-    //   cy.contains("2");
+      cy.contains("No#");
 
-    //   cy.contains("Nomination Type");
-    //   cy.get("#nominationType0").select("Binding (Non-Lapsing)");
+      cy.contains("1");
+      // cy.contains("2");
 
-    //   Cypress.on("uncaught:exception", (err, runnable) => {
-    //     // returning false here prevents Cypress from
-    //     // failing the test
-    //     return false;
-    //   });
+      cy.contains("Nomination Type");
+      cy.get("#nominationType0").select("Non-Binding");
 
-    //   cy.contains("DOB");
-    //   cy.get("#DOB0").type("21-2-1965");
+      Cypress.on("uncaught:exception", (err, runnable) => {
+        // returning false here prevents Cypress from
+        // failing the test
+        return false;
+      });
 
-    //   cy.contains("Beneficiary Name");
-    //   cy.get("#beneficiaryName0").type("32");
+      cy.contains("DOB");
+      cy.get("#DOB0").clear().type("21/03/2025");
 
-    //   cy.contains("Relationship Status");
-    //   cy.get("#relationshipStatus0").select("Child");
+      cy.contains("Beneficiary Name");
+      cy.get("#beneficiaryName0").clear().type("32");
 
-    //   cy.contains("Share of Benefit");
-    //   cy.get("#shareBenefit0").clear().type("2.00%");
+      cy.contains("Relationship Status");
+      cy.get("#relationshipStatus0").select("Child");
 
-    //   cy.contains("Share of Benefit must be 100%");
+      cy.contains("Share of Benefit");
+      cy.get("#shareBenefit0").clear().type("2.00%");
 
-    //   cy.get("#nominationType1").select(
-    //     "Legal Personal Representative (Your Estate)"
-    //   );
-    //   cy.get("#DOB1");
-    //   cy.get("#beneficiaryName1");
-    //   cy.get("#relationshipStatus1").contains("N/A");
-    //   cy.get("#shareBenefit1");
+      cy.contains("Share of Benefit must be 100%");
 
-    //   cy.contains("Close");
-    //   cy.contains("Submit").click();
-    // });
+      //   cy.get("#nominationType1").select(
+      //     "Legal Personal Representative (Your Estate)"
+      //   );
+      // //   cy.get("#DOB1");
+      // //   cy.get("#beneficiaryName1");
+      // //   cy.get("#relationshipStatus1").contains("N/A");
+      // //   cy.get("#shareBenefit1");
 
-    // //Super Fund Detail Card Close Section
-    // cy.get(".modal-footer")
-    //   .filter(":visible")
-    //   .within(() => {
-    //     cy.contains("Close");
-    //     cy.contains("Submit").click();
-    //   });
+      cy.contains("Close");
+      cy.contains("Submit").click();
+    });
 
-    // cy.get("#clientCurrentBalance").should("not.have.value", "");
-    // cy.contains("Close");
-    // cy.get(".modal-footer > .bgColor")
-    //   .contains("Submit")
-    //   .should("be.visible")
-    //   .click();
+    //Close Inner Card
+    cy.get(".modal-footer")
+      .filter(":visible")
+      .within(() => {
+        cy.contains("Close");
+        cy.contains("Submit").click();
+      });
 
-    // cy.get("#annualAnnuityPayment0").should("not.have.value", "");
+    cy.get("#clientCurrentBalance").should("have.value", "$5,000");
+    //Footer
+    cy.get("#clientCurrentBalance").should("not.have.value", "");
+    cy.contains("Close");
+    cy.get(".modal-footer > .bgColor")
+      .contains("Submit")
+      .should("be.visible")
+      .click();
+
+    
   }
 }
 
