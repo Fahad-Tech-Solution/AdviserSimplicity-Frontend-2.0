@@ -115,7 +115,7 @@ const DeductibleAmount = (props) => {
       );
 
       if (res) {
-        // console.log(res);
+        console.log(res);
 
         let DataObj =
           res.data[props.modalObject.sourceObj.key][
@@ -124,10 +124,7 @@ const DeductibleAmount = (props) => {
         // console.log(DataObj, props.modalObject.sourceObj.key, currentIndex);
 
         if (DataObj?.deductibleAmount) {
-          setFieldValue(
-            "deductibleAmount",
-            toCommaAndDollar(DataObj.deductibleAmount)
-          );
+          setFieldValue("deductibleAmount", DataObj.deductibleAmount);
         }
 
         setCashFlowReCalculateLoading(false);

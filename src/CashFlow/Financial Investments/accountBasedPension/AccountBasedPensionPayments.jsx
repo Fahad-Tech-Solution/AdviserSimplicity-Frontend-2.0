@@ -216,47 +216,10 @@ const AccountBasedPensionPayments = (props) => {
             props.modalObject.sourceObj.Input
           ][currentIndex];
 
-        if (
-          DataObj.preservationAge &&
-          typeof DataObj.preservationAge === "number"
-        ) {
-          setFieldValue("preservationAge", DataObj.preservationAge);
-        } else {
-          setFieldValue("preservationAge", "0");
-        }
-
-        if (
-          DataObj.preservationAge &&
-          typeof DataObj.preservationAgeYear === "number"
-        ) {
-          setFieldValue("preservationAgeYear", DataObj.preservationAgeYear);
-        } else {
-          setFieldValue("preservationAgeYear", "0");
-        }
-
-        if (
-          DataObj.minimumPension &&
-          typeof DataObj.minimumPension === "number"
-        ) {
-          setFieldValue(
-            "minimumPension",
-            toCommaAndDollar(DataObj.minimumPension)
-          );
-        } else {
-          setFieldValue("minimumPension", "$0");
-        }
-
-        if (
-          DataObj.maximumTTRPension &&
-          typeof DataObj.maximumTTRPension === "number"
-        ) {
-          setFieldValue(
-            "maximumTTRPension",
-            toCommaAndDollar(DataObj.maximumTTRPension)
-          );
-        } else {
-          setFieldValue("maximumTTRPension", "$0");
-        }
+        setFieldValue("preservationAge", DataObj.preservationAge);
+        setFieldValue("preservationAgeYear", DataObj.preservationAgeYear);
+        setFieldValue("minimumPension", DataObj.minimumPension);
+        setFieldValue("maximumTTRPension", DataObj.maximumTTRPension);
 
         setCashFlowReCalculateLoading(false);
         openNotificationSuccess(

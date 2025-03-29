@@ -57,13 +57,6 @@ const CashFlowPersonalDebt = (props) => {
       // Set the object and API key
       setObjAndAPIKey(props.modalObject.key);
 
-      // console.log(personalLoans, "Discovery Form Data");
-      // console.log(
-      //   cashFlowData[props.modalObject.key],
-      //   "cashFlowData Form Data"
-      // );
-      // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
-
       const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
 
       // Helper function to update field values
@@ -273,18 +266,12 @@ const CashFlowPersonalDebt = (props) => {
 
         if (values.NumberOfMap > 0) {
           for (let i = 0; i < values.NumberOfMap; i++) {
-            console.log(Data["MinimumRepayments" + (i + 1)]);
-            if (
-              Data["MinimumRepayments" + (i + 1)] &&
-              typeof Data["MinimumRepayments" + (i + 1)] == "number"
-            ) {
-              setFieldValue(
-                `MinimumRepayments${i}`,
-                toCommaAndDollar(Data["MinimumRepayments" + (i + 1)])
-              );
-            } else {
-              setFieldValue(`MinimumRepayments${i}`, "$0");
-            }
+            // console.log(Data["MinimumRepayments" + (i + 1)]);
+
+            setFieldValue(
+              `MinimumRepayments${i}`,
+              Data["MinimumRepayments" + (i + 1)]
+            );
           }
         }
 

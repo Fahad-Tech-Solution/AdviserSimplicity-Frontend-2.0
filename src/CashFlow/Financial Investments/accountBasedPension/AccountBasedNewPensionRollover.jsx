@@ -257,50 +257,13 @@ const AccountBasedNewPensionRollover = (props) => {
             props.modalObject.sourceObj.Input
           ][currentIndex];
 
-        if (
-          DataObj.currentPensionDetails &&
-          typeof DataObj.currentPensionDetails === "number"
-        ) {
-          setFieldValue("currentPensionDetails", DataObj.currentPensionDetails);
-        } else {
-          setFieldValue("currentPensionDetails", "0");
-        }
-
-        if (
-          DataObj.totalSuperannuationBenefits &&
-          typeof DataObj.totalSuperannuationBenefits === "number"
-        ) {
-          setFieldValue(
-            "totalSuperannuationBenefits",
-            DataObj.totalSuperannuationBenefits
-          );
-        } else {
-          setFieldValue("totalSuperannuationBenefits", "0");
-        }
-
-        if (
-          DataObj.minimumPension &&
-          typeof DataObj.minimumPension === "number"
-        ) {
-          setFieldValue(
-            "minimumPension",
-            toCommaAndDollar(DataObj.minimumPension)
-          );
-        } else {
-          setFieldValue("minimumPension", "$0");
-        }
-
-        if (
-          DataObj.maximumPension &&
-          typeof DataObj.maximumPension === "number"
-        ) {
-          setFieldValue(
-            "maximumPension",
-            toCommaAndDollar(DataObj.maximumPension)
-          );
-        } else {
-          setFieldValue("maximumPension", "$0");
-        }
+        setFieldValue("currentPensionDetails", DataObj.currentPensionDetails);
+        setFieldValue(
+          "totalSuperannuationBenefits",
+          DataObj.totalSuperannuationBenefits
+        );
+        setFieldValue("minimumPension", DataObj.minimumPension);
+        setFieldValue("maximumPension", DataObj.maximumPension);
 
         setCashFlowReCalculateLoading(false);
         openNotificationSuccess(

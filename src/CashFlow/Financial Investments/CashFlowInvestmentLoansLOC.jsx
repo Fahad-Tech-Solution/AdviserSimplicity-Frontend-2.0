@@ -357,36 +357,21 @@ const CashFlowInvestmentLoansLOC = (props) => {
       );
 
       if (res) {
-        // console.log(res);
+        console.log(res);
         let { cf_investmentLoansLOC } = res.data;
 
-        // console.log(
-        //   typeof cf_investmentLoansLOC.minimumRepayments,
-        //   "cf_investmentLoansLOC.minimumRepayments"
-        // );
-
         if (values.owner.includes("client")) {
-          if (typeof cf_investmentLoansLOC.minimumRepayments === "number") {
-            setFieldValue(
-              "client.minimumRepayments",
-              toCommaAndDollar(cf_investmentLoansLOC.minimumRepayments)
-            );
-          } else {
-            setFieldValue("client.minimumRepayments", "$0");
-          }
+          setFieldValue(
+            "client.minimumRepayments",
+            cf_investmentLoansLOC.minimumRepayments
+          );
         }
 
         if (values.owner.includes("partner")) {
-          if (
-            typeof cf_investmentLoansLOC.minimumRepaymentsPartner === "number"
-          ) {
-            setFieldValue(
-              "partner.minimumRepayments",
-              toCommaAndDollar(cf_investmentLoansLOC.minimumRepaymentsPartner)
-            );
-          } else {
-            setFieldValue("partner.minimumRepayments", "$0");
-          }
+          setFieldValue(
+            "partner.minimumRepayments",
+            cf_investmentLoansLOC.minimumRepaymentsPartner
+          );
         }
 
         setCashFlowReCalculateLoading(false);

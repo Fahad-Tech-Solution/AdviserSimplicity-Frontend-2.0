@@ -129,10 +129,10 @@ const RCV = (props) => {
             props.modalObject.sourceObj.Input
           ][currentIndex];
 
-        // console.log(DataObj, props.modalObject.sourceObj.key, currentIndex);
+        console.log(DataObj, props.modalObject.sourceObj.key, currentIndex);
 
         if (DataObj?.RCVOther) {
-          setFieldValue("RCVOther", toCommaAndDollar(DataObj.RCVOther));
+          setFieldValue("RCVOther", DataObj.RCVOther);
         }
 
         setCashFlowReCalculateLoading(false);

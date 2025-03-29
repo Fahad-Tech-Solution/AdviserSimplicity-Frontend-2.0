@@ -268,25 +268,16 @@ const WestFamilyTrustInvestment = (props) => {
         let Data = res.data[props.modalObject.key];
 
         if (values.owner.includes("client")) {
-          if (typeof Data.totalOfBeneficiaryAccounts === "number") {
-            setFieldValue(
-              "client.totalOfBeneficiaryAccounts",
-              toCommaAndDollar(Data.totalOfBeneficiaryAccounts)
-            );
-          } else {
-            setFieldValue("client.totalOfBeneficiaryAccounts", "$0");
-          }
+          setFieldValue(
+            "client.totalOfBeneficiaryAccounts",
+            Data.totalOfBeneficiaryAccounts
+          );
         }
-
         if (values.owner.includes("partner")) {
-          if (typeof Data.totalOfBeneficiaryAccountsPartner === "number") {
-            setFieldValue(
-              "partner.totalOfBeneficiaryAccounts",
-              toCommaAndDollar(Data.totalOfBeneficiaryAccountsPartner)
-            );
-          } else {
-            setFieldValue("partner.totalOfBeneficiaryAccounts", "$0");
-          }
+          setFieldValue(
+            "partner.totalOfBeneficiaryAccounts",
+            Data.totalOfBeneficiaryAccountsPartner
+          );
         }
         let { client } = values;
 

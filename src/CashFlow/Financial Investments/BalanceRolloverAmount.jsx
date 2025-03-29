@@ -247,7 +247,7 @@ const BalanceRolloverAmount = (props) => {
       );
 
       if (res) {
-        // console.log(res);
+        console.log(res);
 
         let DataObj =
           res.data[props.modalObject.sourceObj.key][
@@ -256,17 +256,10 @@ const BalanceRolloverAmount = (props) => {
 
         // console.log(DataObj, props.modalObject.sourceObj.key, currentIndex);
 
-        if (
-          DataObj?.totalSuperAnnuationBenefits &&
-          typeof DataObj.totalSuperAnnuationBenefits === "number"
-        ) {
-          setFieldValue(
-            "totalSuperAnnuationBenefits",
-            DataObj.totalSuperAnnuationBenefits
-          );
-        } else {
-          setFieldValue("totalSuperAnnuationBenefits", "$0");
-        }
+        setFieldValue(
+          "totalSuperAnnuationBenefits",
+          DataObj.totalSuperAnnuationBenefits
+        );
 
         setCashFlowReCalculateLoading(false);
         openNotificationSuccess(

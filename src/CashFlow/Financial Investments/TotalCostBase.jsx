@@ -193,10 +193,10 @@ const TotalCostBase = (props) => {
       updatedData[ParentObject.key].client = structuredEntries;
       updatedData[ParentObject.key].numberOfProperties = numberOfProperties;
 
-      console.log(
-        JSON.stringify(updatedData[ParentObject.key], null, 2),
-        ParentObject.key
-      );
+      // console.log(
+      //   JSON.stringify(updatedData[ParentObject.key], null, 2),
+      //   ParentObject.key
+      // );
 
       let apiKey = {
         cf_familyHome: {

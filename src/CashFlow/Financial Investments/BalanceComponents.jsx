@@ -221,22 +221,16 @@ const BalanceComponents = (props) => {
 
         setFieldValue(
           "totalTaxFreeComponent",
-          toCommaAndDollar(cf_superFund.totalTaxFreeComponent)
+          cf_superFund.totalTaxFreeComponent
         );
-        setFieldValue(
-          "taxableComponent",
-          toCommaAndDollar(cf_superFund.taxableComponent)
-        );
+        setFieldValue("taxableComponent", cf_superFund.taxableComponent);
 
         if (doubleRowFLag) {
           setFieldValue(
             "totalTaxFreeComponent1",
-            toCommaAndDollar(cf_superFund.totalTaxFreeComponent1)
+            cf_superFund.totalTaxFreeComponent1
           );
-          setFieldValue(
-            "taxableComponent1",
-            toCommaAndDollar(cf_superFund.taxableComponent1)
-          );
+          setFieldValue("taxableComponent1", cf_superFund.taxableComponent1);
         }
 
         setCashFlowReCalculateLoading(false);
