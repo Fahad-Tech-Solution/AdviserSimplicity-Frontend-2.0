@@ -1489,3 +1489,7 @@ label {
   top: 0;
   width: 100%;
 }
+
+.borderColor_Green {
+  border: 1px solid #36b446 !important;
+}

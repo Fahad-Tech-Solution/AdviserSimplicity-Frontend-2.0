@@ -6,6 +6,7 @@ import InnerModal from "../../../Components/Questions/FinancialInvestments/Quest
 import CashFlowLoanBelanceLVR from "./CashFlowLoanBelanceLVR";
 import {
   CashFlowData,
+  CashFlowDownloading,
   CashFlowReCalculateLoading,
   defaultUrl,
 } from "../../../Store/Store";
@@ -14,8 +15,10 @@ import {
   createStructuredEntries,
   openNotificationSuccess,
   PostAxios,
+  RenderName,
   toCommaAndDollar,
 } from "../../../Components/Assets/Api/Api";
+import axios from "axios";
 
 const CashFlowHomeLoan = (props) => {
   /*
@@ -35,6 +38,9 @@ const CashFlowHomeLoan = (props) => {
   let cashFlowData = useRecoilValue(CashFlowData);
   let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
     useRecoilState(CashFlowReCalculateLoading);
+
+  let [cashFlowDownloading, setCashFlowDownloading] =
+    useRecoilState(CashFlowDownloading);
 
   let initialValues = {
     loanTerm: "30",
@@ -339,6 +345,109 @@ const CashFlowHomeLoan = (props) => {
     }
   };
 
+  let handleChildButtonDownloadClick = async (values, setFieldValue) => {
+    try {
+      let updatedData = JSON.parse(JSON.stringify(cashFlowData));
+
+      const {
+        values: parentValues,
+        key,
+        ParentObject,
+        title,
+      } = props.modalObject;
+
+      const numberOfProperties =
+        parseInt(parentValues.numberOfProperties, 10) || 1;
+      const currentIndex = key.match(/\d+/)?.[0] || 0; // Extract numeric index from key
+
+      // **Determine Schema Type Dynamically**
+      let structuredEntries = createStructuredEntries(
+        parentValues,
+        ParentObject.key,
+        numberOfProperties
+      );
+
+      // Update the correct entry with new values
+      structuredEntries[currentIndex][key.replace(/_\d+/, "")] = values;
+
+      for (let i = 0; i < numberOfProperties; i++) {
+        if (i != currentIndex) {
+          structuredEntries[i].totalCostBaseObj = {};
+          structuredEntries[i].familyHomeLoanObj = {};
+        }
+      }
+
+      updatedData[ParentObject.key].client = structuredEntries;
+      updatedData[ParentObject.key].numberOfProperties = numberOfProperties;
+
+      console.log(
+        "Updated Data:",
+        JSON.stringify(updatedData[ParentObject.key], null, 2)
+      );
+
+      // throw new Error("not working properly");
+
+      let apiKey = {
+        cf_familyHome: {
+          key: "cf_familyHome",
+          param: "INPUTS_Lifestyle_Assets_Debt",
+        },
+        cf_investmentsProperty: {
+          key: "financialInvestment",
+          param: "INPUTS_Property",
+        },
+        cf_FamilyTrustInvestmentProperties: {
+          key: "investmentsTrust",
+          param: "INPUTS_TRUST_Property",
+        },
+        cf_SMSFInvestmentProperties: {
+          key: "SMSF",
+          param: "INPUTS_SMSF_Property",
+        },
+      };
+
+      const response = await axios.post(
+        `${DefaultUrl}/api/cal/workBookDownload`,
+        updatedData,
+        {
+          responseType: "blob", // This ensures the response is treated as binary data
+        }
+      );
+
+      // Create a URL for the Blob object from the response
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+
+      // Create a temporary link element to trigger the file download
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "UpdatedWorkbook_of_" + RenderName("client") + ".xlsx"; // You can customize the filename here
+      document.body.appendChild(a);
+      a.click(); // Trigger the download
+      a.remove(); // Remove the link element
+
+      window.URL.revokeObjectURL(url);
+
+      setCashFlowDownloading(false);
+      openNotificationSuccess(
+        "success",
+        "topRight",
+        "Success Notification",
+        `Excel file of UpdatedWorkbook_of_${RenderName(
+          "client"
+        )}.xlsx is Downloaded`
+      );
+    } catch (error) {
+      console.error("Error during API call:", error);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        `Data of "${props.modalObject.title}" was not saved. Please try again.`
+      );
+      setCashFlowReCalculateLoading(false);
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -419,6 +528,16 @@ const CashFlowHomeLoan = (props) => {
                       type="button"
                     >
                       Hidden Child Button
+                    </button>
+                    <button
+                      ref={props.childButtonDownloadRef}
+                      onClick={() => {
+                        handleChildButtonDownloadClick(values, setFieldValue);
+                      }}
+                      style={{ display: "none" }} // Hidden button
+                      type="button"
+                    >
+                      Hidden Child Button Download
                     </button>
                   </div>
                 </div>

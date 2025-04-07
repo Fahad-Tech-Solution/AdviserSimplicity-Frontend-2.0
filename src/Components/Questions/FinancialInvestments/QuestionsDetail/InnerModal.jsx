@@ -1,20 +1,28 @@
 import { ConfigProvider, Spin } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
-import { FaInfoCircle } from "react-icons/fa";
+import { FaDownload, FaInfoCircle } from "react-icons/fa";
 import { scroller, Element } from "react-scroll";
 import { useRecoilState } from "recoil";
-import { CashFlowReCalculateLoading, Progress } from "../../../../Store/Store";
+import {
+  CashFlowDownloading,
+  CashFlowReCalculateLoading,
+  Progress,
+} from "../../../../Store/Store";
 import CustomLoadingBar from "../CustomLoadingBar";
 
 const InnerModal = (props) => {
   const formRef = useRef(null); // Create a ref to store the form instance
   const childButtonRef = useRef(null);
+  const childButtonDownloadRef = useRef(null);
   const intervalRef = useRef(null); // Store the interval reference
   const [progress, setProgress] = useRecoilState(Progress);
 
   let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
     useRecoilState(CashFlowReCalculateLoading);
+
+  let [cashFlowDownloading, setCashFlowDownloading] =
+    useRecoilState(CashFlowDownloading);
 
   const handleOk = () => {
     if (formRef.current) {
@@ -42,12 +50,39 @@ const InnerModal = (props) => {
     }, 1000); // Change to 1 second for smoother progress
   };
 
+  const handleParentButton2Click = () => {
+    if (childButtonDownloadRef.current) {
+      setCashFlowDownloading(true);
+      childButtonDownloadRef.current.click();
+    }
+
+    // Clear any existing interval before starting a new one
+    if (intervalRef.current) clearInterval(intervalRef.current);
+
+    let progressValue = 10;
+    setProgress(progressValue); // Start progress at 10%
+
+    intervalRef.current = setInterval(() => {
+      progressValue += 5;
+      if (progressValue < 95) {
+        setProgress(progressValue);
+      }
+    }, 1000); // Change to 1 second for smoother progress
+  };
+
   useEffect(() => {
     if (!cashFlowReCalculateLoading) {
       clearInterval(intervalRef.current);
       setProgress(0);
     }
   }, [cashFlowReCalculateLoading]);
+
+  useEffect(() => {
+    if (!cashFlowDownloading) {
+      clearInterval(intervalRef.current);
+      setProgress(0);
+    }
+  }, [cashFlowDownloading]);
 
   let flagState = props.flagState;
   let setFieldValue = props.setFieldValue;
@@ -175,6 +210,7 @@ const InnerModal = (props) => {
                 setQuestionChange,
                 setFieldValue,
                 childButtonRef,
+                childButtonDownloadRef,
               })
             : "no Child exist"}
         </Modal.Body>
@@ -208,6 +244,30 @@ const InnerModal = (props) => {
                 >
                   &nbsp; <Spin size="small" />
                 </ConfigProvider>
+              )}
+            </Button>
+          )}
+
+          {props.modalObject?.cal && (
+            <Button
+              variant="secondary"
+              style={{ width: "fit-content", minWidth: "fit-content" }}
+              onClick={handleParentButton2Click}
+              disabled={cashFlowDownloading}
+            >
+              {cashFlowDownloading ? (
+                <ConfigProvider
+                  theme={{
+                    token: {
+                      /* here is your global tokens */
+                      colorPrimary: "#fff",
+                    },
+                  }}
+                >
+                  <Spin size="small" />
+                </ConfigProvider>
+              ) : (
+                <FaDownload size={14} style={{ marginBottom: "4px" }} />
               )}
             </Button>
           )}

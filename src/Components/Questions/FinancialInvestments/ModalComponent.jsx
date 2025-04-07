@@ -1,8 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { scroller, Element } from "react-scroll";
-import { FaInfoCircle } from "react-icons/fa";
-import { CashFlowReCalculateLoading, Progress } from "../../../Store/Store";
+import { FaDownload, FaInfoCircle } from "react-icons/fa";
+import {
+  CashFlowDownloading,
+  CashFlowReCalculateLoading,
+  Progress,
+} from "../../../Store/Store";
 import { useRecoilState } from "recoil";
 import { ConfigProvider, Spin } from "antd";
 import CustomLoadingBar from "./CustomLoadingBar";
@@ -10,11 +14,15 @@ import CustomLoadingBar from "./CustomLoadingBar";
 const ModalComponent = (props) => {
   const formRef = useRef(null); // Create a ref to store the form instance
   const childButtonRef = useRef(null);
+  const childButtonDownloadRef = useRef(null);
   const intervalRef = useRef(null); // Store the interval reference
   const [progress, setProgress] = useRecoilState(Progress);
 
   let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
     useRecoilState(CashFlowReCalculateLoading);
+
+  let [cashFlowDownloading, setCashFlowDownloading] =
+    useRecoilState(CashFlowDownloading);
 
   const handleOk = () => {
     if (formRef.current) {
@@ -42,12 +50,39 @@ const ModalComponent = (props) => {
     }, 1000); // Change to 1 second for smoother progress
   };
 
+  const handleParentButton2Click = () => {
+    if (childButtonRef.current) {
+      setCashFlowDownloading(true);
+      childButtonRef.current.click();
+    }
+
+    // Clear any existing interval before starting a new one
+    if (intervalRef.current) clearInterval(intervalRef.current);
+
+    let progressValue = 10;
+    setProgress(progressValue); // Start progress at 10%
+
+    intervalRef.current = setInterval(() => {
+      progressValue += 5;
+      if (progressValue < 95) {
+        setProgress(progressValue);
+      }
+    }, 1000); // Change to 1 second for smoother progress
+  };
+
   useEffect(() => {
     if (!cashFlowReCalculateLoading) {
       clearInterval(intervalRef.current);
       setProgress(0);
     }
   }, [cashFlowReCalculateLoading]);
+
+  useEffect(() => {
+    if (!cashFlowDownloading) {
+      clearInterval(intervalRef.current);
+      setProgress(0);
+    }
+  }, [cashFlowDownloading]);
 
   let flagState = props.flagState;
   let setFlagState = props.setFlagState;
@@ -241,6 +276,7 @@ const ModalComponent = (props) => {
                 modalObject,
                 setQuestionChange,
                 childButtonRef,
+                childButtonDownloadRef,
               })
             : "no Child exist"}
         </Modal.Body>
@@ -274,6 +310,32 @@ const ModalComponent = (props) => {
                 >
                   &nbsp; <Spin size="small" />
                 </ConfigProvider>
+              )}
+            </Button>
+          )}
+
+          {props.modalObject?.cal && (
+            <Button
+              variant="secondary"
+              style={{ width: "12.5%", minWidth: "fit-content" }}
+              onClick={handleParentButton2Click}
+              disabled={cashFlowDownloading}
+            >
+              {cashFlowDownloading ? (
+                <ConfigProvider
+                  theme={{
+                    token: {
+                      /* here is your global tokens */
+                      colorPrimary: "#fff",
+                    },
+                  }}
+                >
+                  <Spin size="small" />
+                </ConfigProvider>
+              ) : (
+                <span>
+                  <FaDownload size={14} style={{ marginBottom: "4px" }} />
+                </span>
               )}
             </Button>
           )}

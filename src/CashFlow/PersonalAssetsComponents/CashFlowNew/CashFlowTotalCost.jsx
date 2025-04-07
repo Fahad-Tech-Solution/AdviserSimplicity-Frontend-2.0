@@ -5,18 +5,24 @@ import DynamicTableRow from "../../../Components/Assets/Dynamic/DynamicTableRow"
 import {
   openNotificationSuccess,
   PostAxios,
+  RenderName,
   toCommaAndDollar,
 } from "../../../Components/Assets/Api/Api";
 import {
   CashFlowData,
+  CashFlowDownloading,
   CashFlowReCalculateLoading,
   defaultUrl,
 } from "../../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
+import axios from "axios";
 
 const CashFlowTotalCost = (props) => {
   let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
     useRecoilState(CashFlowReCalculateLoading);
+
+  let [cashFlowDownloading, setCashFlowDownloading] =
+    useRecoilState(CashFlowDownloading);
 
   let initialValues = {
     stampDuty: "",
@@ -202,6 +208,100 @@ const CashFlowTotalCost = (props) => {
     }
   };
 
+  const handleChildButtonDownloadClick = async (values, setFieldValue) => {
+    try {
+      let updatedData = JSON.parse(JSON.stringify(cashFlowData));
+
+      const { values: parentValues, key, title } = props.modalObject;
+
+      const numberOfProperties =
+        parseInt(parentValues.numberOfProperties, 10) || 1;
+
+      const currentIndex = key.match(/\d+/)?.[0] || 0; // Extract numeric index from key
+      // console.log(currentIndex);
+
+      let structuredEntries = Array.from(
+        { length: numberOfProperties },
+        (_, i) => ({
+          address: parentValues[`address_${i}`] || "",
+          currentValue: parentValues[`currentValue_${i}`] || "",
+          state: parentValues[`state_${i}`] || "",
+          clientOwnership: parentValues[`clientOwnership_${i}`] || "0%",
+          partnerOwnership: parentValues[`partnerOwnership_${i}`] || "0%",
+          yearOfPurchase: parentValues[`yearOfPurchase_${i}`] || "",
+          totalCostBase: parentValues[`totalCostBase_${i}`] || "",
+          totalCostBaseObj: parentValues[`totalCostBaseObj_${i}`] || "",
+          loanBalance: parentValues[`loanBalance_${i}`] || "",
+          familyHomeLoanObj: parentValues[`familyHomeLoanObj_${i}`] || {},
+          expectedGrowthRate: parentValues[`expectedGrowthRate_${i}`] || "",
+          sellPropertyInYear: parentValues[`sellPropertyInYear_${i}`] || "",
+          estimatedFutureSellingCost:
+            parentValues[`estimatedFutureSellingCost_${i}`] || "",
+        })
+      );
+
+      // Update the correct entry with new child modal values
+      structuredEntries[currentIndex][key.replace(/_\d+/, "")] = values;
+
+      for (let i = 0; i < numberOfProperties; i++) {
+        if (i != currentIndex) {
+          structuredEntries[i].totalCostBaseObj = {};
+          structuredEntries[i].familyHomeLoanObj = {};
+        } else if (
+          structuredEntries[i]?.familyHomeLoanObj &&
+          !structuredEntries[i].familyHomeLoanObj.interestOnlyPeriod
+        ) {
+          structuredEntries[i].familyHomeLoanObj = {};
+        }
+      }
+
+      updatedData.cf_familyHome.client = structuredEntries;
+      updatedData.cf_familyHome.numberOfProperties = numberOfProperties;
+
+      // console.log(JSON.stringify(updatedData));
+
+      const response = await axios.post(
+        `${DefaultUrl}/api/cal/workBookDownload`,
+        updatedData,
+        {
+          responseType: "blob", // This ensures the response is treated as binary data
+        }
+      );
+
+      // Create a URL for the Blob object from the response
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+
+      // Create a temporary link element to trigger the file download
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "UpdatedWorkbook_of_" + RenderName("client") + ".xlsx"; // You can customize the filename here
+      document.body.appendChild(a);
+      a.click(); // Trigger the download
+      a.remove(); // Remove the link element
+
+      window.URL.revokeObjectURL(url);
+
+      setCashFlowDownloading(false);
+      openNotificationSuccess(
+        "success",
+        "topRight",
+        "Success Notification",
+        `Excel file of UpdatedWorkbook_of_${RenderName(
+          "client"
+        )}.xlsx is Downloaded`
+      );
+    } catch (error) {
+      console.error("API Error:", error);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        `Data of "${props.modalObject.title}" was not saved. Please try again.`
+      );
+      setCashFlowDownloading(false);
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -257,6 +357,16 @@ const CashFlowTotalCost = (props) => {
                       type="button"
                     >
                       Hidden Child Button
+                    </button>
+                    <button
+                      ref={props.childButtonDownloadRef}
+                      onClick={() => {
+                        handleChildButtonDownloadClick(values, setFieldValue);
+                      }}
+                      style={{ display: "none" }} // Hidden button
+                      type="button"
+                    >
+                      Hidden Child Button Download
                     </button>
                   </div>
                 </div>
