@@ -66,6 +66,20 @@ let DeleteAxios = async (Api) => {
   }
 };
 
+const PostAxiosBlob = async (Api, data) => {
+  console.log("Post Blob Chala");
+  try {
+    const response = await axios.post(Api, data, {
+      responseType: "blob", // This ensures the response is binary (e.g., Excel, PDF)
+    });
+    return response;
+  } catch (error) {
+    console.error("Blob Error:", error.message);
+    console.error("Blob Response:", error.response);
+    throw error;
+  }
+};
+
 let DateHandler = async (value) => {
   // console.log("DateHandler Chal gaya", value);
   let a = await new Date(value);
@@ -312,6 +326,7 @@ export {
   PostAxios,
   PutAxios,
   PatchAxios,
+  PostAxiosBlob,
   DateHandler,
   openNotificationSuccess,
   toCommaAndDollar,

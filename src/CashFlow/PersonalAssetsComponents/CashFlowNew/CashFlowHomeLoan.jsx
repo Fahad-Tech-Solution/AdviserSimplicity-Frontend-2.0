@@ -15,6 +15,7 @@ import {
   createStructuredEntries,
   openNotificationSuccess,
   PostAxios,
+  PostAxiosBlob,
   RenderName,
   toCommaAndDollar,
 } from "../../../Components/Assets/Api/Api";
@@ -387,55 +388,40 @@ const CashFlowHomeLoan = (props) => {
 
       // throw new Error("not working properly");
 
-      let apiKey = {
-        cf_familyHome: {
-          key: "cf_familyHome",
-          param: "INPUTS_Lifestyle_Assets_Debt",
-        },
-        cf_investmentsProperty: {
-          key: "financialInvestment",
-          param: "INPUTS_Property",
-        },
-        cf_FamilyTrustInvestmentProperties: {
-          key: "investmentsTrust",
-          param: "INPUTS_TRUST_Property",
-        },
-        cf_SMSFInvestmentProperties: {
-          key: "SMSF",
-          param: "INPUTS_SMSF_Property",
-        },
-      };
+      try {
+        const response = await PostAxiosBlob(
+          `${DefaultUrl}/api/cal/workBookDownload`,
+          updatedData
+        );
 
-      const response = await axios.post(
-        `${DefaultUrl}/api/cal/workBookDownload`,
-        updatedData,
-        {
-          responseType: "blob", // This ensures the response is treated as binary data
-        }
-      );
+        const fileName = `UpdatedWorkbook_of_${RenderName("client")}.xlsx`;
 
-      // Create a URL for the Blob object from the response
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
 
-      // Create a temporary link element to trigger the file download
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "UpdatedWorkbook_of_" + RenderName("client") + ".xlsx"; // You can customize the filename here
-      document.body.appendChild(a);
-      a.click(); // Trigger the download
-      a.remove(); // Remove the link element
-
-      window.URL.revokeObjectURL(url);
-
-      setCashFlowDownloading(false);
-      openNotificationSuccess(
-        "success",
-        "topRight",
-        "Success Notification",
-        `Excel file of UpdatedWorkbook_of_${RenderName(
-          "client"
-        )}.xlsx is Downloaded`
-      );
+        openNotificationSuccess(
+          "success",
+          "topRight",
+          "Success Notification",
+          `Excel file "${fileName}" is downloaded.`
+        );
+      } catch (error) {
+        console.error("Download Error:", error);
+        openNotificationSuccess(
+          "error",
+          "topRight",
+          "Download Failed",
+          "Something went wrong while downloading the Excel file."
+        );
+      } finally {
+        setCashFlowDownloading(false); // Always hide loading spinner
+      }
     } catch (error) {
       console.error("Error during API call:", error);
       openNotificationSuccess(

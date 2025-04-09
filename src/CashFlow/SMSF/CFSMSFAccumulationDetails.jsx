@@ -6,24 +6,28 @@ import InnerModal from "../../Components/Questions/FinancialInvestments/Question
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   CashFlowData,
+  CashFlowDownloading,
   CashFlowReCalculateLoading,
   defaultUrl,
 } from "../../Store/Store";
 import {
   openNotificationSuccess,
   PostAxios,
+  PostAxiosBlob,
+  RenderName,
   toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
 import { object } from "yup";
 
 const CFSMSFAccumulationDetails = (props) => {
-  let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
   let DefaultUrl = useRecoilValue(defaultUrl);
   let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
 
   let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
     useRecoilState(CashFlowReCalculateLoading);
+
+  let [cashFlowDownloading, setCashFlowDownloading] =
+    useRecoilState(CashFlowDownloading);
 
   let initialValues = {
     totalFundNetAssetValue: "",
@@ -120,6 +124,7 @@ const CFSMSFAccumulationDetails = (props) => {
         `${DefaultUrl}/api/cal/SMSF/INPUTS_SMSF_Member_Balances`,
         obj
       );
+
       if (res) {
         console.log(res);
 
@@ -131,8 +136,10 @@ const CFSMSFAccumulationDetails = (props) => {
           ];
 
         if (Data && Object.keys(Data).length > 0) {
-          
-          setFieldValue("totalFundNetAssetValue", Data.totalFundNetAssetValue);
+          setFieldValue(
+            "totalFundNetAssetValue",
+            cf_SMSFAccumulationDetails?.client?.totalFundNetAssetValue
+          );
           setFieldValue("actualValueToMember", Data.actualValueToMember);
           setFieldValue("taxableComponent", Data.taxableComponent);
 
@@ -144,6 +151,67 @@ const CFSMSFAccumulationDetails = (props) => {
             'Data of "' + props.modalObject.title + '" is calculated'
           );
         }
+      }
+    } catch (error) {
+      console.error("Error occurred while making API call:", error);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        'Data of "' +
+          props.modalObject.title +
+          '" is not calculated Please! try again'
+      );
+      setCashFlowReCalculateLoading(false);
+    }
+  };
+
+  let handleChildButtonDownloadClick = async (values, setFieldValue) => {
+    try {
+      let obj = JSON.parse(JSON.stringify(cashFlowData));
+
+      let FinalObj = props.modalObject.values;
+
+      FinalObj[props.modalObject.stakeHolder.replace(".", "")][
+        props.modalObject.key + "Obj"
+      ] = values;
+
+      console.log(FinalObj);
+
+      obj.cf_SMSFAccumulationDetails = FinalObj;
+      try {
+        const response = await PostAxiosBlob(
+          `${DefaultUrl}/api/cal/workBookDownload`,
+          obj
+        );
+
+        const fileName = `UpdatedWorkbook_of_${RenderName("client")}.xlsx`;
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+        openNotificationSuccess(
+          "success",
+          "topRight",
+          "Success Notification",
+          `Excel file "${fileName}" is downloaded.`
+        );
+      } catch (error) {
+        console.error("Download Error:", error);
+        openNotificationSuccess(
+          "error",
+          "topRight",
+          "Download Failed",
+          "Something went wrong while downloading the Excel file."
+        );
+      } finally {
+        setCashFlowDownloading(false); // Always hide loading spinner
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
@@ -207,6 +275,16 @@ const CFSMSFAccumulationDetails = (props) => {
                       type="button"
                     >
                       Hidden Child Button
+                    </button>
+                    <button
+                      ref={props.childButtonDownloadRef}
+                      onClick={() => {
+                        handleChildButtonDownloadClick(values, setFieldValue);
+                      }}
+                      style={{ display: "none" }} // Hidden button
+                      type="button"
+                    >
+                      Hidden Child Button Download
                     </button>
                   </div>
                 </div>

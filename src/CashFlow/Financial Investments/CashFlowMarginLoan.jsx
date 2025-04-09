@@ -114,6 +114,14 @@ const CashFlowMarginLoan = (props) => {
             // Update partner details
             updateFields(cashFlowDetails.partner, "partner");
           }
+
+          if (
+            UserStatus === "Married" &&
+            cashFlowDetails.owner.includes("joint")
+          ) {
+            // Update joint details
+            updateFields(cashFlowDetails.joint, "joint");
+          }
         }
       }
 
@@ -133,6 +141,14 @@ const CashFlowMarginLoan = (props) => {
         ) {
           // Update partner details
           updateFields(cashFlowDataDetails.partner, "partner");
+        }
+
+        if (
+          UserStatus === "Married" &&
+          cashFlowDataDetails.owner.includes("joint")
+        ) {
+          // Update joint details
+          updateFields(cashFlowDataDetails.joint, "joint");
         }
       }
     } catch (error) {
@@ -259,6 +275,7 @@ const CashFlowMarginLoan = (props) => {
       ? [
           { value: "client", label: RenderName("client") },
           { value: "partner", label: RenderName("partner") },
+          { value: "joint", label: RenderName("joint") },
         ]
       : [{ value: "client", label: RenderName("client") }];
 

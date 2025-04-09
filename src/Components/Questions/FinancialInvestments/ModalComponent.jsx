@@ -51,9 +51,9 @@ const ModalComponent = (props) => {
   };
 
   const handleParentButton2Click = () => {
-    if (childButtonRef.current) {
+    if (childButtonDownloadRef.current) {
       setCashFlowDownloading(true);
-      childButtonRef.current.click();
+      childButtonDownloadRef.current.click();
     }
 
     // Clear any existing interval before starting a new one
@@ -317,7 +317,7 @@ const ModalComponent = (props) => {
           {props.modalObject?.cal && (
             <Button
               variant="secondary"
-              style={{ width: "12.5%", minWidth: "fit-content" }}
+              style={{ width: "fit-content", minWidth: "fit-content" }}
               onClick={handleParentButton2Click}
               disabled={cashFlowDownloading}
             >
@@ -333,9 +333,7 @@ const ModalComponent = (props) => {
                   <Spin size="small" />
                 </ConfigProvider>
               ) : (
-                <span>
-                  <FaDownload size={14} style={{ marginBottom: "4px" }} />
-                </span>
+                <FaDownload size={14} style={{ marginBottom: "4px" }} />
               )}
             </Button>
           )}

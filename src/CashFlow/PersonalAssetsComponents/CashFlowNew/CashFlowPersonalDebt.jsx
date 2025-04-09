@@ -9,12 +9,15 @@ import {
   openNotificationSuccess,
   PatchAxios,
   PostAxios,
+  PostAxiosBlob,
+  RenderName,
   toCommaAndDollar,
   toPercentage,
 } from "../../../Components/Assets/Api/Api";
 import DynamicYesNo from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/DynamicYesNo";
 import {
   CashFlowData,
+  CashFlowDownloading,
   CashFlowReCalculateLoading,
   CashFlowScenarioData,
   defaultUrl,
@@ -34,6 +37,9 @@ const CashFlowPersonalDebt = (props) => {
   let DefaultUrl = useRecoilValue(defaultUrl);
   let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
     useRecoilState(CashFlowReCalculateLoading);
+
+  let [cashFlowDownloading, setCashFlowDownloading] =
+    useRecoilState(CashFlowDownloading);
 
   let personalLoans =
     Object.keys(questionDetail?.[props.modalObject.discoveryKey] || {}).length >
@@ -267,7 +273,6 @@ const CashFlowPersonalDebt = (props) => {
         if (values.NumberOfMap > 0) {
           for (let i = 0; i < values.NumberOfMap; i++) {
             // console.log(Data["MinimumRepayments" + (i + 1)]);
-
             setFieldValue(
               `MinimumRepayments${i}`,
               Data["MinimumRepayments" + (i + 1)]
@@ -282,6 +287,96 @@ const CashFlowPersonalDebt = (props) => {
           "Success Notification",
           'Data of "' + props.modalObject.title + '" is Saved'
         );
+      }
+    } catch (error) {
+      console.error("Error occurred while making API call:", error);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        'Data of "' +
+          props.modalObject.title +
+          '" is not Saved Please! try again'
+      );
+      setCashFlowReCalculateLoading(false);
+    }
+  };
+
+  let handleChildButtonDownloadClick = async (values, setFieldValue) => {
+    try {
+      // alert("Download Clicked");
+      let obj = JSON.parse(JSON.stringify(cashFlowData));
+
+      const personalLoansArray = [];
+      for (let i = 0; i < values.NumberOfMap; i++) {
+        personalLoansArray.push({
+          YearLoan: values[`YearLoan${i}`],
+          CurrentLoanBalance: values[`CurrentLoanBalance${i}`],
+          LoanType: values[`LoanType${i}`],
+          LoanTerm: values[`LoanTerm${i}`],
+          InterestRate: values[`InterestRate${i}`],
+          MinimumRepayments: values[`MinimumRepayments${i}`],
+          ActualAnnualRepayments: values[`ActualAnnualRepayments${i}`],
+          applyMinimumRepaymentsOR: values[`applyMinimumRepaymentsOR${i}`],
+          RepayLoanInYear: values[`RepayLoanInYear${i}`],
+        });
+      }
+
+      let FullObj = {
+        NumberOfMap: values.NumberOfMap,
+        client: personalLoansArray,
+        clientTotal:
+          toCommaAndDollar(
+            personalLoansArray.reduce(
+              (total, entry) =>
+                total +
+                parseFloat(
+                  entry.CurrentLoanBalance.replace(/[^0-9.-]+/g, "") || 0
+                ),
+              0
+            )
+          ) || "$0",
+      };
+
+      FullObj.scenarioFK = JSON.parse(localStorage.getItem("ScenarioObj"))._id;
+
+      obj[props.modalObject.key] = FullObj;
+
+      console.log(obj[props.modalObject.key], ":obj");
+
+      try {
+        const response = await PostAxiosBlob(
+          `${DefaultUrl}/api/cal/workBookDownload`,
+          obj
+        );
+
+        const fileName = `UpdatedWorkbook_of_${RenderName("client")}.xlsx`;
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+        openNotificationSuccess(
+          "success",
+          "topRight",
+          "Success Notification",
+          `Excel file "${fileName}" is downloaded.`
+        );
+      } catch (error) {
+        console.error("Download Error:", error);
+        openNotificationSuccess(
+          "error",
+          "topRight",
+          "Download Failed",
+          "Something went wrong while downloading the Excel file."
+        );
+      } finally {
+        setCashFlowDownloading(false); // Always hide loading spinner
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
@@ -549,6 +644,16 @@ const CashFlowPersonalDebt = (props) => {
                         type="button"
                       >
                         Hidden Child Button
+                      </button>
+                      <button
+                        ref={props.childButtonDownloadRef}
+                        onClick={() => {
+                          handleChildButtonDownloadClick(values, setFieldValue);
+                        }}
+                        style={{ display: "none" }} // Hidden button
+                        type="button"
+                      >
+                        Hidden Child Button Download
                       </button>
                     </div>
                   )}

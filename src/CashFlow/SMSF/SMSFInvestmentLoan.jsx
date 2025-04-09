@@ -5,6 +5,7 @@ import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
 import { Row, Table } from "react-bootstrap";
 import {
   CashFlowData,
+  CashFlowDownloading,
   CashFlowReCalculateLoading,
   CashFlowScenarioData,
   defaultUrl,
@@ -16,6 +17,7 @@ import {
   openNotificationSuccess,
   PatchAxios,
   PostAxios,
+  PostAxiosBlob,
   RenderName,
   toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
@@ -33,6 +35,9 @@ const SMSFInvestmentLoan = (props) => {
 
   let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
     useRecoilState(CashFlowReCalculateLoading);
+
+  let [cashFlowDownloading, setCashFlowDownloading] =
+    useRecoilState(CashFlowDownloading);
 
   let initialValues = { owner: ["client"] };
 
@@ -360,6 +365,60 @@ const SMSFInvestmentLoan = (props) => {
     }
   };
 
+  let handleChildButtonDownloadClick = async (values, setFieldValue) => {
+    try {
+      let obj = JSON.parse(JSON.stringify(cashFlowData));
+
+      obj[props.modalObject.key] = values;
+
+      try {
+        const response = await PostAxiosBlob(
+          `${DefaultUrl}/api/cal/workBookDownload`,
+          obj
+        );
+
+        const fileName = `UpdatedWorkbook_of_${RenderName("client")}.xlsx`;
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+        openNotificationSuccess(
+          "success",
+          "topRight",
+          "Success Notification",
+          `Excel file "${fileName}" is downloaded.`
+        );
+      } catch (error) {
+        console.error("Download Error:", error);
+        openNotificationSuccess(
+          "error",
+          "topRight",
+          "Download Failed",
+          "Something went wrong while downloading the Excel file."
+        );
+      } finally {
+        setCashFlowDownloading(false); // Always hide loading spinner
+      }
+    } catch (error) {
+      console.error("Error occurred while making API call:", error);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        'Data of "' +
+          props.modalObject.title +
+          '" is not Saved Please! try again'
+      );
+      setCashFlowReCalculateLoading(false);
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -449,6 +508,16 @@ const SMSFInvestmentLoan = (props) => {
                     type="button"
                   >
                     Hidden Child Button
+                  </button>
+                  <button
+                    ref={props.childButtonDownloadRef}
+                    onClick={() => {
+                      handleChildButtonDownloadClick(values, setFieldValue);
+                    }}
+                    style={{ display: "none" }} // Hidden button
+                    type="button"
+                  >
+                    Hidden Child Button Download
                   </button>
                 </div>
               )}

@@ -5,10 +5,13 @@ import { Row, Table } from "react-bootstrap";
 import {
   openNotificationSuccess,
   PostAxios,
+  PostAxiosBlob,
+  RenderName,
   toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
 import {
   CashFlowData,
+  CashFlowDownloading,
   CashFlowReCalculateLoading,
   defaultUrl,
 } from "../../Store/Store";
@@ -21,6 +24,9 @@ const BalanceComponents = (props) => {
   let cashFlowData = useRecoilValue(CashFlowData);
   let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
     useRecoilState(CashFlowReCalculateLoading);
+
+  let [cashFlowDownloading, setCashFlowDownloading] =
+    useRecoilState(CashFlowDownloading);
 
   let initialValues = {};
 
@@ -209,6 +215,8 @@ const BalanceComponents = (props) => {
         props.modalObject.key + "Obj"
       ] = values;
 
+      console.log(obj.cf_superFund);
+
       let res = await PostAxios(
         `${DefaultUrl}/api/cal/financialInvestment/INPUTS_Super_Pension`,
         obj
@@ -221,16 +229,26 @@ const BalanceComponents = (props) => {
 
         setFieldValue(
           "totalTaxFreeComponent",
-          cf_superFund.totalTaxFreeComponent
+          cf_superFund[props.modalObject.stakeHolder.replace(".", "")]
+            .totalTaxFreeComponent
         );
-        setFieldValue("taxableComponent", cf_superFund.taxableComponent);
+        setFieldValue(
+          "taxableComponent",
+          cf_superFund[props.modalObject.stakeHolder.replace(".", "")]
+            .taxableComponent
+        );
 
         if (doubleRowFLag) {
           setFieldValue(
             "totalTaxFreeComponent1",
-            cf_superFund.totalTaxFreeComponent1
+            cf_superFund[props.modalObject.stakeHolder.replace(".", "")]
+              .totalTaxFreeComponent1
           );
-          setFieldValue("taxableComponent1", cf_superFund.taxableComponent1);
+          setFieldValue(
+            "taxableComponent1",
+            cf_superFund[props.modalObject.stakeHolder.replace(".", "")]
+              .taxableComponent1
+          );
         }
 
         setCashFlowReCalculateLoading(false);
@@ -240,6 +258,63 @@ const BalanceComponents = (props) => {
           "Success Notification",
           'Data of "' + props.modalObject.title + '" is Saved'
         );
+      }
+    } catch (error) {
+      console.error("Error occurred while making API call:", error);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        'Data of "' +
+          props.modalObject.title +
+          '" is not Saved Please! try again'
+      );
+      setCashFlowReCalculateLoading(false);
+    }
+  };
+
+  let handleChildButtonDownloadClick = async (values, setFieldValue) => {
+    try {
+      let obj = JSON.parse(JSON.stringify(cashFlowData));
+
+      obj.cf_superFund = props.modalObject.values;
+      obj.cf_superFund[props.modalObject.stakeHolder.replace(".", "")][
+        props.modalObject.key + "Obj"
+      ] = values;
+
+      try {
+        const response = await PostAxiosBlob(
+          `${DefaultUrl}/api/cal/workBookDownload`,
+          obj
+        );
+
+        const fileName = `UpdatedWorkbook_of_${RenderName("client")}.xlsx`;
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+        openNotificationSuccess(
+          "success",
+          "topRight",
+          "Success Notification",
+          `Excel file "${fileName}" is downloaded.`
+        );
+      } catch (error) {
+        console.error("Download Error:", error);
+        openNotificationSuccess(
+          "error",
+          "topRight",
+          "Download Failed",
+          "Something went wrong while downloading the Excel file."
+        );
+      } finally {
+        setCashFlowDownloading(false); // Always hide loading spinner
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
@@ -314,6 +389,17 @@ const BalanceComponents = (props) => {
                       type="button"
                     >
                       Hidden Child Button
+                    </button>
+
+                    <button
+                      ref={props.childButtonDownloadRef}
+                      onClick={() => {
+                        handleChildButtonDownloadClick(values, setFieldValue);
+                      }}
+                      style={{ display: "none" }} // Hidden button
+                      type="button"
+                    >
+                      Hidden Child Button Download
                     </button>
                   </div>
                 </div>

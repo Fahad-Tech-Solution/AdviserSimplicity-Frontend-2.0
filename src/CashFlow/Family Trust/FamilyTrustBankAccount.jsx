@@ -80,16 +80,6 @@ const FamilyTrustBankAccount = (props) => {
         } else {
           console.warn("No client data available in familyBank.");
         }
-
-        // // Update partner-related fields
-        // if (UserStatus === "Married" && familyBank?.partner?.length > 0) {
-        //   const Obj = {
-        //     openingCashAtBank: familyBank.partnerCurrentBalance || "", // Fallback to an empty string if undefined
-        //   };
-        //   updateFields(Obj, "partner");
-        // } else if (UserStatus === "Married") {
-        //   console.warn("No partner data available in familyBank.");
-        // }
       } else {
         const cashFlowScenarioDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
 
@@ -101,14 +91,6 @@ const FamilyTrustBankAccount = (props) => {
           if (cashFlowScenarioDetails.owner?.includes("client")) {
             updateFields(cashFlowScenarioDetails.client || {}, "client");
           }
-
-          // Update partner-related fields
-          //   if (
-          //     UserStatus === "Married" &&
-          //     cashFlowScenarioDetails.owner?.includes("partner")
-          //   ) {
-          //     updateFields(cashFlowScenarioDetails.partner || {}, "partner");
-          //   }
         } else {
           console.warn(
             "No cash flow scenario details found for the provided key."
@@ -148,11 +130,8 @@ const FamilyTrustBankAccount = (props) => {
       obj.clientTotal = "";
     }
 
-    if (values.owner.includes("partner")) {
-      obj.partnerTotal = values.partner.openingCashAtBank || "$0";
-    } else {
-      obj.partnerTotal = "";
-    }
+    obj.partner = undefined;
+    obj.partnerTotal = undefined;
 
     const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
 

@@ -143,14 +143,13 @@ const CashFlowCardSet = (props) => {
     );
     let nextIndex = currentIndex + 1;
 
-    if(nextIndex > cashFlow.length) {
-      const nextItem = cashFlow[nextIndex]; 
+    const nextItem = cashFlow[nextIndex];
+
+    if (!nextItem) {
+      Navigation(`/Cash-Flow/Reports/`);
+    } else {
       Navigation(`/Cash-Flow` + nextItem.route);
     }
-    else{
-      Navigation(`/Cash-Flow/Reports/Funnal`);
-    }
-
   };
 
   const BackHandle = () => {

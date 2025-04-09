@@ -10,6 +10,7 @@ import DatePicker from "react-datepicker";
 import { differenceInYears } from "date-fns";
 import {
   CashFlowData,
+  CashFlowDownloading,
   CashFlowScenarioData,
   defaultUrl,
   Loading,
@@ -22,9 +23,14 @@ import {
   openNotificationSuccess,
   PatchAxios,
   PostAxios,
+  PostAxiosBlob,
+  RenderName,
   validateName,
 } from "../../../Components/Assets/Api/Api";
 import { useNavigate } from "react-router-dom";
+import { Button } from "react-bootstrap";
+import { ConfigProvider, Divider, Spin } from "antd";
+import { FaDownload } from "react-icons/fa";
 
 const PersonalDetails_cashFlow = (Props) => {
   let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
@@ -36,6 +42,9 @@ const PersonalDetails_cashFlow = (Props) => {
 
   let PersonalDetailObj = useRecoilValue(PersonalDetailsData);
   let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+
+  let [cashFlowDownloading, setCashFlowDownloading] =
+    useRecoilState(CashFlowDownloading);
 
   let singleArray = ["Single", "Widowed"];
 
@@ -266,7 +275,7 @@ const PersonalDetails_cashFlow = (Props) => {
                 onChange={(date) => {
                   setFieldValue(`${sectionName}.${input.name}`, date); // Set date in form
                   const age = differenceInYears(new Date(), date) || 0; // Calculate age
-                  setFieldValue(`${sectionName}.age`, parseFloat(age)-1); // Store age separately
+                  setFieldValue(`${sectionName}.age`, parseFloat(age) - 1); // Store age separately
                 }}
                 dateFormat="dd/MM/yyyy"
                 placeholderText="dd/mm/yyyy"
@@ -536,6 +545,48 @@ const PersonalDetails_cashFlow = (Props) => {
     }
   };
 
+  const DownloadExcelSheet = async (valeus) => {
+    setCashFlowDownloading(true); // Show loading spinner
+    setLoadingState(true); // Show loading spinner
+    const updatedData = { ...cashFlowData, cf_personalDetails: valeus };
+
+    try {
+      const response = await PostAxiosBlob(
+        `${DefaultUrl}/api/cal/workBookDownload`,
+        updatedData
+      );
+
+      const fileName = `UpdatedWorkbook_of_${RenderName("client")}.xlsx`;
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+
+      openNotificationSuccess(
+        "success",
+        "topRight",
+        "Success Notification",
+        `Excel file "${fileName}" is downloaded.`
+      );
+    } catch (error) {
+      console.error("Download Error:", error);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Download Failed",
+        "Something went wrong while downloading the Excel file."
+      );
+    } finally {
+      setCashFlowDownloading(false); // Always hide loading spinner
+      setLoadingState(false); // Always hide loading spinner
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -620,6 +671,33 @@ const PersonalDetails_cashFlow = (Props) => {
                 <button type="submit" className=" btn w-100  bgColor modalBtn">
                   Next
                 </button>
+              </div>
+            </div>
+            <div className="row justify-content-center gap-2 mb-4">
+              <Divider />
+              <div className={`col-md-4 cashFlowNextBtn`}>
+                <Button
+                  variant="secondary"
+                  style={{ width: "100%", minWidth: "fit-content" }}
+                  onClick={() => DownloadExcelSheet(values)}
+                  disabled={cashFlowDownloading}
+                >
+                  Download Report &nbsp;
+                  {cashFlowDownloading ? (
+                    <ConfigProvider
+                      theme={{
+                        token: {
+                          /* here is your global tokens */
+                          colorPrimary: "#fff",
+                        },
+                      }}
+                    >
+                      <Spin size="small" />
+                    </ConfigProvider>
+                  ) : (
+                    <FaDownload size={14} style={{ marginBottom: "4px" }} />
+                  )}
+                </Button>
               </div>
             </div>
           </Form>

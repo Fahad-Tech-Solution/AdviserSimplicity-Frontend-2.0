@@ -6,12 +6,14 @@ import {
   openNotificationSuccess,
   PatchAxios,
   PostAxios,
+  PostAxiosBlob,
   RenderName,
   toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
 import { Row, Table } from "react-bootstrap";
 import {
   CashFlowData,
+  CashFlowDownloading,
   CashFlowReCalculateLoading,
   CashFlowScenarioData,
   defaultUrl,
@@ -31,6 +33,9 @@ const CashFlowInvestmentLoansLOC = (props) => {
 
   let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
     useRecoilState(CashFlowReCalculateLoading);
+
+  let [cashFlowDownloading, setCashFlowDownloading] =
+    useRecoilState(CashFlowDownloading);
 
   let managedFundsLOC =
     Object.keys(questionDetail.managedFundsLOC || {}).length > 0
@@ -119,6 +124,14 @@ const CashFlowInvestmentLoansLOC = (props) => {
             // Update partner details
             updateFields(cashFlowDetails.partner, "partner");
           }
+
+          if (
+            UserStatus === "Married" &&
+            cashFlowDetails.owner.includes("joint")
+          ) {
+            // Update joint details
+            updateFields(cashFlowDetails.joint, "joint");
+          }
         }
       }
 
@@ -138,6 +151,13 @@ const CashFlowInvestmentLoansLOC = (props) => {
         ) {
           // Update partner details
           updateFields(cashFlowDataDetails.partner, "partner");
+        }
+        if (
+          UserStatus === "Married" &&
+          cashFlowDataDetails.owner.includes("joint")
+        ) {
+          // Update joint details
+          updateFields(cashFlowDataDetails.joint, "joint");
         }
       }
     } catch (error) {
@@ -273,6 +293,7 @@ const CashFlowInvestmentLoansLOC = (props) => {
       ? [
           { value: "client", label: RenderName("client") },
           { value: "partner", label: RenderName("partner") },
+          { value: "joint", label: RenderName("joint") },
         ]
       : [{ value: "client", label: RenderName("client") }];
 
@@ -374,6 +395,13 @@ const CashFlowInvestmentLoansLOC = (props) => {
           );
         }
 
+        if (values.owner.includes("joint")) {
+          setFieldValue(
+            "joint.minimumRepayments",
+            cf_investmentLoansLOC.minimumRepaymentsJoint
+          );
+        }
+
         setCashFlowReCalculateLoading(false);
         openNotificationSuccess(
           "success",
@@ -381,6 +409,60 @@ const CashFlowInvestmentLoansLOC = (props) => {
           "Success Notification",
           'Data of "' + props.modalObject.title + '" is Saved'
         );
+      }
+    } catch (error) {
+      console.error("Error occurred while making API call:", error);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        'Data of "' +
+          props.modalObject.title +
+          '" is not Saved Please! try again'
+      );
+      setCashFlowReCalculateLoading(false);
+    }
+  };
+
+  let handleChildButtonDownloadClick = async (values, setFieldValue) => {
+    try {
+      let obj = JSON.parse(JSON.stringify(cashFlowData));
+
+      obj.cf_investmentLoansLOC = values;
+
+      try {
+        const response = await PostAxiosBlob(
+          `${DefaultUrl}/api/cal/workBookDownload`,
+          obj
+        );
+
+        const fileName = `UpdatedWorkbook_of_${RenderName("client")}.xlsx`;
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+        openNotificationSuccess(
+          "success",
+          "topRight",
+          "Success Notification",
+          `Excel file "${fileName}" is downloaded.`
+        );
+      } catch (error) {
+        console.error("Download Error:", error);
+        openNotificationSuccess(
+          "error",
+          "topRight",
+          "Download Failed",
+          "Something went wrong while downloading the Excel file."
+        );
+      } finally {
+        setCashFlowDownloading(false); // Always hide loading spinner
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
@@ -503,6 +585,16 @@ const CashFlowInvestmentLoansLOC = (props) => {
                     type="button"
                   >
                     Hidden Child Button
+                  </button>
+                  <button
+                    ref={props.childButtonDownloadRef}
+                    onClick={() => {
+                      handleChildButtonDownloadClick(values, setFieldValue);
+                    }}
+                    style={{ display: "none" }} // Hidden button
+                    type="button"
+                  >
+                    Hidden Child Button Download
                   </button>
                 </div>
               )}

@@ -5,6 +5,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import {
   BankDetail,
   CashFlowData,
+  CashFlowDownloading,
   CashFlowReCalculateLoading,
   defaultUrl,
   QuestionDetail,
@@ -15,6 +16,8 @@ import {
   createStructuredEntries,
   openNotificationSuccess,
   PostAxios,
+  PostAxiosBlob,
+  RenderName,
   toCommaAndDollar,
 } from "../../../Components/Assets/Api/Api";
 
@@ -23,6 +26,9 @@ const CashFlowLoanBelanceLVR = (props) => {
   let cashFlowData = useRecoilValue(CashFlowData);
   let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
     useRecoilState(CashFlowReCalculateLoading);
+
+  let [cashFlowDownloading, setCashFlowDownloading] =
+    useRecoilState(CashFlowDownloading);
 
   let initialValues = {};
 
@@ -269,6 +275,101 @@ const CashFlowLoanBelanceLVR = (props) => {
     }
   };
 
+  const handleChildButtonDownloadClick = async (values, setFieldValue) => {
+    try {
+      let updatedData = JSON.parse(JSON.stringify(cashFlowData));
+
+      const {
+        values: parentValues,
+        key,
+        title,
+        ParentObject,
+      } = props.modalObject;
+
+      const {
+        values: grandValues,
+        key: parentKey,
+        title: parentTitle,
+        ParentObject: GrandParentObject,
+      } = ParentObject;
+
+      const numberOfProperties =
+        parseInt(grandValues.numberOfProperties, 10) || 1;
+      const currentIndex = parentKey.match(/\d+/)?.[0] || 0; // Extract numeric index from key
+
+      let structuredEntries = createStructuredEntries(
+        grandValues,
+        GrandParentObject.key,
+        numberOfProperties
+      );
+
+      // Update the correct entry with new child modal values
+      structuredEntries[currentIndex][ParentObject.key.replace(/_\d+/, "")] =
+        parentValues;
+
+      structuredEntries[currentIndex][ParentObject.key.replace(/_\d+/, "")][
+        key + "CashFlowLoanBelanceLVR"
+      ] = values;
+
+      for (let i = 0; i < numberOfProperties; i++) {
+        if (i != currentIndex) {
+          structuredEntries[i].totalCostBaseObj = {};
+          structuredEntries[i].familyHomeLoanObj = {};
+        }
+      }
+
+      updatedData[GrandParentObject.key].client = structuredEntries;
+      updatedData[GrandParentObject.key].numberOfProperties =
+        numberOfProperties;
+
+      try {
+        const response = await PostAxiosBlob(
+          `${DefaultUrl}/api/cal/workBookDownload`,
+          updatedData
+        );
+
+        console.log(response, "response");
+
+        const fileName = `UpdatedWorkbook_of_${RenderName("client")}.xlsx`;
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+        openNotificationSuccess(
+          "success",
+          "topRight",
+          "Success Notification",
+          `Excel file "${fileName}" is downloaded.`
+        );
+      } catch (error) {
+        console.error("Download Error:", error);
+        openNotificationSuccess(
+          "error",
+          "topRight",
+          "Download Failed",
+          "Something went wrong while downloading the Excel file."
+        );
+      } finally {
+        setCashFlowDownloading(false); // Always hide loading spinner
+      }
+    } catch (error) {
+      console.error("API Error:", error);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        `Data of "${props.modalObject.title}" was not saved. Please try again.`
+      );
+      setCashFlowReCalculateLoading(false);
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -331,6 +432,16 @@ const CashFlowLoanBelanceLVR = (props) => {
                       type="button"
                     >
                       Hidden Child Button
+                    </button>
+                    <button
+                      ref={props.childButtonDownloadRef}
+                      onClick={() => {
+                        handleChildButtonDownloadClick(values, setFieldValue);
+                      }}
+                      style={{ display: "none" }} // Hidden button
+                      type="button"
+                    >
+                      Hidden Child Button Download
                     </button>
                   </div>
                 </div>

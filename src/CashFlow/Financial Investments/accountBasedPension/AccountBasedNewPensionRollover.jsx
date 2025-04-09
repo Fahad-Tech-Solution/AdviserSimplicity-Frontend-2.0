@@ -5,10 +5,13 @@ import { Row, Table } from "react-bootstrap";
 import {
   openNotificationSuccess,
   PostAxios,
+  PostAxiosBlob,
+  RenderName,
   toCommaAndDollar,
 } from "../../../Components/Assets/Api/Api";
 import {
   CashFlowData,
+  CashFlowDownloading,
   CashFlowReCalculateLoading,
   defaultUrl,
 } from "../../../Store/Store";
@@ -22,6 +25,9 @@ const AccountBasedNewPensionRollover = (props) => {
   let cashFlowData = useRecoilValue(CashFlowData);
   let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
     useRecoilState(CashFlowReCalculateLoading);
+
+  let [cashFlowDownloading, setCashFlowDownloading] =
+    useRecoilState(CashFlowDownloading);
 
   let initialValues = {
     commencePensionInYear: "",
@@ -287,6 +293,96 @@ const AccountBasedNewPensionRollover = (props) => {
     }
   };
 
+  let handleChildButtonDownloadClick = async (values, setFieldValue) => {
+    try {
+      let updatedData = JSON.parse(JSON.stringify(cashFlowData));
+
+      const { values: parentValues, key, title, sourceObj } = props.modalObject;
+
+      const numberOfProperties =
+        parseInt(parentValues.numberOfProperties, 10) || 1;
+
+      const currentIndex = key.match(/\d+/)?.[0] || 0; // Extract numeric index from key
+
+      let structuredEntries = Array.from(
+        { length: numberOfProperties },
+        (_, i) => ({
+          balanceRolloverAmount:
+            parentValues[`balanceRolloverAmount_${i}`] || "",
+          balanceRolloverAmountObj:
+            parentValues[`balanceRolloverAmountObj_${i}`] || {},
+          yearToCommence: parentValues[`yearToCommence_${i}`] || "",
+          riskProfile: parentValues[`riskProfile_${i}`] || "",
+          investmentReturns: parentValues[`investmentReturns_${i}`] || "",
+          investmentReturnsObj: parentValues[`investmentReturnsObj_${i}`] || {},
+          investmentFees: parentValues[`investmentFees_${i}`] || "",
+          adviserServiceFee: parentValues[`adviserServiceFee_${i}`] || "",
+          pensionPayments: parentValues[`pensionPayments_${i}`] || "",
+          pensionPaymentsObj: parentValues[`pensionPaymentsObj_${i}`] || {},
+          newPensionRollover: parentValues[`newPensionRollover_${i}`] || "",
+          newPensionRolloverObj:
+            parentValues[`newPensionRolloverObj_${i}`] || {},
+          withdrawals: parentValues[`withdrawals_${i}`] || "",
+          withdrawalsObj: parentValues[`withdrawalsObj_${i}`] || {},
+        })
+      );
+
+      // Update the correct entry with new child modal values
+      structuredEntries[currentIndex][key.replace(/_\d+/, "")] = values;
+
+      // console.log(sourceObj, key, JSON.stringify(structuredEntries));
+
+      updatedData[sourceObj.key][sourceObj.Input] = structuredEntries;
+      updatedData[sourceObj.key].numberOfProperties = numberOfProperties;
+
+      try {
+        const response = await PostAxiosBlob(
+          `${DefaultUrl}/api/cal/workBookDownload`,
+          updatedData
+        );
+
+        const fileName = `UpdatedWorkbook_of_${RenderName("client")}.xlsx`;
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+        openNotificationSuccess(
+          "success",
+          "topRight",
+          "Success Notification",
+          `Excel file "${fileName}" is downloaded.`
+        );
+      } catch (error) {
+        console.error("Download Error:", error);
+        openNotificationSuccess(
+          "error",
+          "topRight",
+          "Download Failed",
+          "Something went wrong while downloading the Excel file."
+        );
+      } finally {
+        setCashFlowDownloading(false); // Always hide loading spinner
+      }
+    } catch (error) {
+      console.error("Error occurred while making API call:", error);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        'Data of "' +
+          props.modalObject.title +
+          '" is not Saved Please! try again'
+      );
+      setCashFlowReCalculateLoading(false);
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -343,6 +439,16 @@ const AccountBasedNewPensionRollover = (props) => {
                       type="button"
                     >
                       Hidden Child Button
+                    </button>
+                    <button
+                      ref={props.childButtonDownloadRef}
+                      onClick={() => {
+                        handleChildButtonDownloadClick(values, setFieldValue);
+                      }}
+                      style={{ display: "none" }} // Hidden button
+                      type="button"
+                    >
+                      Hidden Child Button Download
                     </button>
                   </div>
                 </div>

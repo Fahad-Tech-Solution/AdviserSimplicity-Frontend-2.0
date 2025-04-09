@@ -34,7 +34,7 @@ const CashFlowInvestmentsProperty = (props) => {
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   let initialValues = { numberOfProperties: "" };
-  
+
   let investmentPropertyDetails =
     Object.keys(questionDetail.investmentPropertyDetails || {}).length > 0
       ? questionDetail.investmentPropertyDetails
