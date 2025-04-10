@@ -356,17 +356,10 @@ const CashFlowCashBankDetails = (props) => {
       : [{ value: "client", label: RenderName("client") }];
 
   const loanTermOptions = Array.from({ length: 31 }, (_, i) => {
-    if (i === 0) {
-      return {
-        value: "No",
-        label: "No",
-      };
-    } else {
-      return {
-        value: i.toString(),
-        label: ("Year " + i).toString(),
-      };
-    }
+    return {
+      value: i.toString(),
+      label: ("Year " + i).toString(),
+    };
   });
 
   let InvestmentReturnsOptions = [
@@ -423,11 +416,6 @@ const CashFlowCashBankDetails = (props) => {
         type: "number-toComma",
         placeholder: "Current Balance",
       },
-      // {
-      //     name: "costBase",
-      //     type: "number-toComma",
-      //     placeholder: "Cost Base",
-      // },
       {
         name: "investmentReturns",
         type: "select",
@@ -442,18 +430,6 @@ const CashFlowCashBankDetails = (props) => {
         placeholder: layoutSwitchFlag2 ? "Earnings Rate" : "Income Yield",
         disabled: isDisabled, // Configurable based on the initial state
       },
-      // {
-      //     name: "reinvestIncome",
-      //     type: "yesno",
-      //     placeholder: "Reinvest income",
-      // },
-
-      // {
-      //     name: "reinvestUpUntil",
-      //     type: "select",
-      //     options: reinvestUpUntilOptions,
-      //     placeholder: "Reinvest Up Until",
-      //   },
       {
         name: "regularContributions",
         type: "yesnoModal",
@@ -467,7 +443,19 @@ const CashFlowCashBankDetails = (props) => {
         name: "riskProfile",
         type: "select",
         placeholder: "Risk Profile",
-        options: RiskProfileOptions,
+        options:
+          props.modalObject.title === "Cash"
+            ? [{ value: "Cash", label: "Cash", selected: true }]
+            : props.modalObject.title === "Term Deposits"
+            ? [
+                { value: "Cash", label: "Cash" },
+                {
+                  value: "Australian Fixed Interest",
+                  label: "Australian Fixed Interest",
+                  selected: true,
+                },
+              ]
+            : RiskProfileOptions,
       },
     ];
 

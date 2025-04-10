@@ -76,10 +76,10 @@ const ConcessionalContributions = (props) => {
     }
   };
 
-  const yearsIncludedArray = Array.from({ length: 30 }, (_, i) => {
+  const yearsIncludedArray = Array.from({ length: 31 }, (_, i) => {
     return {
-      value: (i + 1).toString(),
-      label: ("Year " + (i + 1)).toString(),
+      value: i.toString(),
+      label: ("Year " + i).toString(),
     };
   });
 

@@ -294,10 +294,23 @@ const CFAnnuities = (props) => {
     label: (i * 0.5).toFixed(2) + "%",
   }));
 
-  const yearsIncludedArray = Array.from({ length: 30 }, (_, i) => {
+  const yearsIncludedArray = Array.from({ length: 31 }, (_, i) => {
     return {
-      value: (i + 1).toString(),
-      label: ("Year " + (i + 1)).toString(),
+      value: i.toString(),
+      label: ("Year " + i).toString(),
+    };
+  });
+
+  const yearsIncludedArrayWithExisting = Array.from({ length: 32 }, (_, i) => {
+    if (i === 0) {
+      return {
+        value: "Existing",
+        label: "Existing",
+      };
+    }
+    return {
+      value: (i - 1).toString(),
+      label: ("Year " + (i - 1)).toString(),
     };
   });
 
@@ -339,13 +352,13 @@ const CFAnnuities = (props) => {
       {
         name: "includeFromYear",
         type: "select",
-        options: yearsIncludedArray,
+        options: yearsIncludedArrayWithExisting,
         placeholder: "Include From Year",
       },
       {
         name: "term",
         type: "select",
-        options: yearsIncludedArray,
+        options: yearsIncludedArrayWithExisting,
         placeholder: "Term",
       },
       {

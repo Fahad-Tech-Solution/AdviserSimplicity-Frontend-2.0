@@ -10,7 +10,12 @@ import {
   toCommaAndDollar,
 } from "../../../Components/Assets/Api/Api";
 import { Row, Table } from "react-bootstrap";
-import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from "../../../Store/Store";
+import {
+  CashFlowData,
+  CashFlowScenarioData,
+  defaultUrl,
+  QuestionDetail,
+} from "../../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 
 const CashFlowLifetimeBenefit = (props) => {
@@ -28,11 +33,10 @@ const CashFlowLifetimeBenefit = (props) => {
     Object.keys(questionDetail.incomeFromSuperPayment || {}).length > 0
       ? questionDetail.incomeFromSuperPayment
       : {
-        client: [],
-        partner: [],
-        joint: [],
-      };
-
+          client: [],
+          partner: [],
+          joint: [],
+        };
 
   let initialValues = {
     owner: [],
@@ -61,10 +65,10 @@ const CashFlowLifetimeBenefit = (props) => {
 
       // Helper function to update field values
       const updateFields = (data, prefix) => {
-
         if (!data || !Object.keys(data).length) return;
         const fields = {
-          lifetimePensionIncome: data.lifetimePensionIncome || data.regularIncomePA || "",
+          lifetimePensionIncome:
+            data.lifetimePensionIncome || data.regularIncomePA || "",
           includeFromYear: data.includeFromYear || 1,
           upUntillYear: data.upUntillYear || 30,
           indexation: data.indexation || "2.50%",
@@ -78,7 +82,11 @@ const CashFlowLifetimeBenefit = (props) => {
       };
 
       // Update owner field
-      if (scenarioObj?.selectedSource === "discoveryForm" && incomeFromSuperPayment && incomeFromSuperPayment._id) {
+      if (
+        scenarioObj?.selectedSource === "discoveryForm" &&
+        incomeFromSuperPayment &&
+        incomeFromSuperPayment._id
+      ) {
         setFieldValue(`owner`, incomeFromSuperPayment.owner || "");
 
         // Update client-related fields
@@ -87,14 +95,16 @@ const CashFlowLifetimeBenefit = (props) => {
         }
 
         // Update partner-related fields
-        if (UserStatus === "Married" && incomeFromSuperPayment.owner.includes("partner")) {
+        if (
+          UserStatus === "Married" &&
+          incomeFromSuperPayment.owner.includes("partner")
+        ) {
           updateFields(incomeFromSuperPayment.partner, "partner");
         }
-      }
-      else {
+      } else {
         // Handle cashFlowData scenario
         const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-        console.log(cashFlowDetails, "cashFlowDetails")
+        console.log(cashFlowDetails, "cashFlowDetails");
         if (cashFlowDetails) {
           setFieldValue(`owner`, cashFlowDetails.owner || "");
           if (cashFlowDetails.owner.includes("client")) {
@@ -102,13 +112,15 @@ const CashFlowLifetimeBenefit = (props) => {
             updateFields(cashFlowDetails.client, "client");
           }
 
-          if (UserStatus === "Married" && cashFlowDetails.owner.includes("partner")) {
+          if (
+            UserStatus === "Married" &&
+            cashFlowDetails.owner.includes("partner")
+          ) {
             // Update partner details
             updateFields(cashFlowDetails.partner, "partner");
           }
         }
       }
-
 
       // Additional data from cashFlowData
       if (cashFlowData?.[objAndAPIKey]?._id) {
@@ -120,37 +132,35 @@ const CashFlowLifetimeBenefit = (props) => {
           updateFields(cashFlowDataDetails.client, "client");
         }
 
-        if (UserStatus === "Married" && cashFlowDataDetails.owner.includes("partner")) {
+        if (
+          UserStatus === "Married" &&
+          cashFlowDataDetails.owner.includes("partner")
+        ) {
           // Update partner details
           updateFields(cashFlowDataDetails.partner, "partner");
         }
       }
-
     } catch (error) {
       console.error("Error in fillInitialValues:", error);
     }
   };
 
-
-
   let onSubmit = async (values) => {
     console.log(JSON.stringify(values));
     // return (false);
-    let obj = values
+    let obj = values;
 
-    obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
+    obj.scenarioFK = JSON.parse(localStorage.getItem("ScenarioObj"))._id;
     if (values.owner.includes("client")) {
       obj.clientTotal = values.client.lifetimePensionIncome || "$0";
-    }
-    else {
-      obj.clientTotal = ""
+    } else {
+      obj.clientTotal = "";
     }
 
     if (values.owner.includes("partner")) {
       obj.partnerTotal = values.partner.lifetimePensionIncome || "$0";
-    }
-    else {
-      obj.partnerTotal = ""
+    } else {
+      obj.partnerTotal = "";
     }
 
     const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
@@ -160,10 +170,7 @@ const CashFlowLifetimeBenefit = (props) => {
     try {
       let res;
       if (!bankAccountArray) {
-        res = await PostAxios(
-          `${DefaultUrl}/api/CF/${objAndAPIKey}/Add`,
-          obj
-        );
+        res = await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
       } else {
         res = await PatchAxios(
           `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
@@ -198,15 +205,15 @@ const CashFlowLifetimeBenefit = (props) => {
         "topRight",
         "Error Notification",
         'Data of "' +
-        props.modalObject.title +
-        '" is not Saved Please! try again'
+          props.modalObject.title +
+          '" is not Saved Please! try again'
       );
     }
   };
 
-  const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
-    value: (i + 1).toString(),
-    label: ("Year " + (i + 1)).toString(),
+  const loanTermOptions = Array.from({ length: 31 }, (_, i) => ({
+    value: i,
+    label: ("Year " + i).toString(),
   }));
 
   const indexation = Array.from({ length: 21 }, (_, i) => ({
@@ -217,9 +224,9 @@ const CashFlowLifetimeBenefit = (props) => {
   const options =
     UserStatus !== "Single"
       ? [
-        { value: "client", label: RenderName("client") },
-        { value: "partner", label: RenderName("partner") },
-      ]
+          { value: "client", label: RenderName("client") },
+          { value: "partner", label: RenderName("partner") },
+        ]
       : [{ value: "client", label: RenderName("client") }];
 
   const rowConfig = [
@@ -246,7 +253,6 @@ const CashFlowLifetimeBenefit = (props) => {
     {
       name: "taxFree",
       type: "yesno",
-
     },
     {
       name: "centrelinkDeductibleAmount",

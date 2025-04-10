@@ -1484,7 +1484,7 @@ label {
   background: #a0a0a05d;
 }
 
-.custom-loading-bar{
+.custom-loading-bar {
   position: absolute !important;
   top: 0;
   width: 100%;
@@ -1492,4 +1492,186 @@ label {
 
 .borderColor_Green {
   border: 1px solid #36b446 !important;
+}
+
+@media only screen and (min-width: 425px) {
+  .funnel-container .leftside {
+    margin-top: 0vh !important;
+    padding-right: 10px !important;
+    /* margin-right: 10px; */
+  }
+
+  .funnel-container .rightside {
+    margin-top: 0vh !important;
+    padding-left: 10px !important;
+    align-items: start !important;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .funnel-container .leftside {
+    margin-top: 30vh !important;
+    padding-right: 48px !important;
+    margin-right: 0px;
+  }
+
+  .funnel-container .rightside {
+    margin-top: 30vh !important;
+    padding-left: 48px !important;
+    align-items: end !important;
+  }
+
+  .funnel-container .Aworrow1 {
+    z-index: -1;
+    top: 54%;
+    left: -15%;
+    transform: translateY(-50%);
+    width: 50%;
+  }
+  .funnel-container .Aworrow2 {
+    z-index: -1;
+    top: 77%;
+    left: -15%;
+    transform: translateY(-50%);
+    width: 50%;
+  }
+  .funnel-container .Aworrow3 {
+    z-index: -1;
+    top: 67%;
+    left: 65%;
+    transform: translateY(-50%) scaleX(-1);
+    width: 50%;
+  }
+  .funnel-container .Aworrow4 {
+    z-index: -1;
+    top: 90%;
+    left: 65%;
+    transform: translateY(-50%) scaleX(-1);
+    width: 50%;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .funnel-container .leftside {
+    margin-top: 30vh !important;
+    padding-right: 48px !important;
+  }
+
+  .funnel-container .rightside {
+    margin-top: 30vh !important;
+    padding-left: 48px !important;
+    background: none;
+  }
+
+  .funnel-container .Aworrow1 {
+    z-index: -1;
+    top: 54%;
+    left: -15%;
+    transform: translateY(-50%);
+    width: 50%;
+  }
+  .funnel-container .Aworrow2 {
+    z-index: -1;
+    top: 77%;
+    left: -15%;
+    transform: translateY(-50%);
+    width: 50%;
+  }
+  .funnel-container .Aworrow3 {
+    z-index: -1;
+    top: 67%;
+    left: 65%;
+    transform: translateY(-50%) scaleX(-1);
+    width: 50%;
+  }
+  .funnel-container .Aworrow4 {
+    z-index: -1;
+    top: 90%;
+    left: 65%;
+    transform: translateY(-50%) scaleX(-1);
+    width: 50%;
+  }
+}
+
+@media only screen and (min-width: 1440px) {
+  .funnel-container .leftside {
+    margin-top: 30vh !important;
+    padding-right: 50px !important;
+  }
+
+  .funnel-container .rightside {
+    margin-top: 30vh !important;
+    padding-left: 50px !important;
+  }
+
+  .funnel-container .Aworrow1 {
+    z-index: -1;
+    top: 53%;
+    left: -12%;
+    transform: translateY(-50%);
+    width: 50%;
+  }
+  .funnel-container .Aworrow2 {
+    z-index: -1;
+    top: 73%;
+    left: -12%;
+    transform: translateY(-50%);
+    width: 50%;
+  }
+  .funnel-container .Aworrow3 {
+    z-index: -1;
+    top: 72%;
+    left: 62%;
+    transform: translateY(-50%) scaleX(-1);
+    width: 50%;
+  }
+  .funnel-container .Aworrow4 {
+    z-index: -1;
+    top: 92%;
+    left: 62%;
+    transform: translateY(-50%) scaleX(-1);
+    width: 50%;
+  }
+}
+
+@media only screen and (min-width: 1920px) {
+  .funnel-container .leftside {
+    margin-top: 30vh !important;
+    padding-right: 4.5% !important;
+  }
+
+  .funnel-container .rightside {
+    margin-bottom: 15vh !important;
+    padding-left: 4.5% !important;
+  }
+
+  .funnel-container .Aworrow1 {
+    z-index: -1;
+    top: 59%;
+    left: -15%;
+    transform: translateY(-50%);
+    width: 50%;
+  }
+  .funnel-container .Aworrow2 {
+    z-index: -1;
+    top: 67%;
+    left: -15%;
+    transform: translateY(-50%);
+    width: 50%;
+  }
+
+  .funnel-container .Aworrow3 {
+    z-index: -1;
+    top: 61%;
+    left: 65%;
+    transform: translateY(-50%) scaleX(-1);
+    width: 50%;
+  }
+  .funnel-container .Aworrow4 {
+    z-index: -1;
+    top: 72%;
+    left: 65%;
+    transform: translateY(-50%) scaleX(-1);
+    width: 50%;
+  }
 }

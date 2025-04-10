@@ -10,7 +10,12 @@ import {
   toCommaAndDollar,
 } from "../../../Components/Assets/Api/Api";
 import { Row, Table } from "react-bootstrap";
-import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from "../../../Store/Store";
+import {
+  CashFlowData,
+  CashFlowScenarioData,
+  defaultUrl,
+  QuestionDetail,
+} from "../../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 
 const CashFlowBusinessIncome = (props) => {
@@ -27,19 +32,19 @@ const CashFlowBusinessIncome = (props) => {
     Object.keys(questionDetail.incomeFromSoleTrader || {}).length > 0
       ? questionDetail.incomeFromSoleTrader
       : {
-        client: [],
-        partner: [],
-        joint: [],
-      };
+          client: [],
+          partner: [],
+          joint: [],
+        };
 
   let incomeFromPartnership =
     Object.keys(questionDetail.incomeFromPartnership || {}).length > 0
       ? questionDetail.incomeFromPartnership
       : {
-        client: [],
-        partner: [],
-        joint: [],
-      };
+          client: [],
+          partner: [],
+          joint: [],
+        };
 
   let initialValues = {
     owner: [],
@@ -68,10 +73,10 @@ const CashFlowBusinessIncome = (props) => {
 
       // Helper function to update field values
       const updateFields = (data, prefix) => {
-
         if (!data || !Object.keys(data).length) return;
         const fields = {
-          lifetimePensionIncome: data.lifetimePensionIncome || data.regularIncomePA || "",
+          lifetimePensionIncome:
+            data.lifetimePensionIncome || data.regularIncomePA || "",
           includeFromYear: data.includeFromYear || 1,
           upUntillYear: data.upUntillYear || 30,
           indexation: data.indexation || "2.50%",
@@ -82,46 +87,57 @@ const CashFlowBusinessIncome = (props) => {
         });
       };
 
-
       // incomeFromSoleTrader
       // incomeFromPartnership
 
       // Update owner field
-      if (scenarioObj?.selectedSource === "discoveryForm" && incomeFromSoleTrader && incomeFromSoleTrader._id) {
+      if (
+        scenarioObj?.selectedSource === "discoveryForm" &&
+        incomeFromSoleTrader &&
+        incomeFromSoleTrader._id
+      ) {
         setFieldValue(`owner`, incomeFromSoleTrader.owner || "");
 
         // Update client-related fields
         if (incomeFromSoleTrader.owner.includes("client")) {
-
           let obj = {
             netSoleTrader: incomeFromSoleTrader.client.netBusinessIncome,
-            netPartnerShipTrader: incomeFromPartnership.client.totalNetPartnershipIncome,
-          }
+            netPartnerShipTrader:
+              incomeFromPartnership.client.totalNetPartnershipIncome,
+          };
 
-          obj.lifetimePensionIncome = toCommaAndDollar(parseFloat(obj.netSoleTrader.replace(/[^0-9.-]+/g, "")) + parseFloat(obj.netPartnerShipTrader.replace(/[^0-9.-]+/g, "")))
+          obj.lifetimePensionIncome = toCommaAndDollar(
+            parseFloat(obj.netSoleTrader.replace(/[^0-9.-]+/g, "")) +
+              parseFloat(obj.netPartnerShipTrader.replace(/[^0-9.-]+/g, ""))
+          );
 
           updateFields(obj, "client");
         }
 
         // Update partner-related fields
-        if (UserStatus === "Married" && incomeFromSoleTrader.owner.includes("partner")) {
-
+        if (
+          UserStatus === "Married" &&
+          incomeFromSoleTrader.owner.includes("partner")
+        ) {
           let obj = {
             netSoleTrader: incomeFromSoleTrader.partner.netBusinessIncome,
-            netPartnerShipTrader: incomeFromPartnership.partner.totalNetPartnershipIncome,
-          }
+            netPartnerShipTrader:
+              incomeFromPartnership.partner.totalNetPartnershipIncome,
+          };
 
-          obj.lifetimePensionIncome = toCommaAndDollar(parseFloat(obj.netSoleTrader.replace(/[^0-9.-]+/g, "")) + parseFloat(obj.netPartnerShipTrader.replace(/[^0-9.-]+/g, "")))
+          obj.lifetimePensionIncome = toCommaAndDollar(
+            parseFloat(obj.netSoleTrader.replace(/[^0-9.-]+/g, "")) +
+              parseFloat(obj.netPartnerShipTrader.replace(/[^0-9.-]+/g, ""))
+          );
 
           updateFields(obj, "partner");
 
           // updateFields(incomeFromSoleTrader.partner, "partner");
         }
-      }
-      else {
+      } else {
         // Handle cashFlowData scenario
         const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-        console.log(cashFlowDetails, "cashFlowDetails")
+        console.log(cashFlowDetails, "cashFlowDetails");
         if (cashFlowDetails) {
           setFieldValue(`owner`, cashFlowDetails.owner || "");
           if (cashFlowDetails.owner.includes("client")) {
@@ -129,13 +145,15 @@ const CashFlowBusinessIncome = (props) => {
             updateFields(cashFlowDetails.client, "client");
           }
 
-          if (UserStatus === "Married" && cashFlowDetails.owner.includes("partner")) {
+          if (
+            UserStatus === "Married" &&
+            cashFlowDetails.owner.includes("partner")
+          ) {
             // Update partner details
             updateFields(cashFlowDetails.partner, "partner");
           }
         }
       }
-
 
       // Additional data from cashFlowData
       if (cashFlowData?.[objAndAPIKey]?._id) {
@@ -147,12 +165,14 @@ const CashFlowBusinessIncome = (props) => {
           updateFields(cashFlowDataDetails.client, "client");
         }
 
-        if (UserStatus === "Married" && cashFlowDataDetails.owner.includes("partner")) {
+        if (
+          UserStatus === "Married" &&
+          cashFlowDataDetails.owner.includes("partner")
+        ) {
           // Update partner details
           updateFields(cashFlowDataDetails.partner, "partner");
         }
       }
-
     } catch (error) {
       console.error("Error in fillInitialValues:", error);
     }
@@ -161,21 +181,19 @@ const CashFlowBusinessIncome = (props) => {
   let onSubmit = async (values) => {
     console.log(JSON.stringify(values));
     // return (false);
-    let obj = values
+    let obj = values;
 
-    obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
+    obj.scenarioFK = JSON.parse(localStorage.getItem("ScenarioObj"))._id;
     if (values.owner.includes("client")) {
       obj.clientTotal = values.client.lifetimePensionIncome || "$0";
-    }
-    else {
-      obj.clientTotal = ""
+    } else {
+      obj.clientTotal = "";
     }
 
     if (values.owner.includes("partner")) {
       obj.partnerTotal = values.partner.lifetimePensionIncome || "$0";
-    }
-    else {
-      obj.partnerTotal = ""
+    } else {
+      obj.partnerTotal = "";
     }
 
     const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
@@ -185,10 +203,7 @@ const CashFlowBusinessIncome = (props) => {
     try {
       let res;
       if (!bankAccountArray) {
-        res = await PostAxios(
-          `${DefaultUrl}/api/CF/${objAndAPIKey}/Add`,
-          obj
-        );
+        res = await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
       } else {
         res = await PatchAxios(
           `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
@@ -223,15 +238,15 @@ const CashFlowBusinessIncome = (props) => {
         "topRight",
         "Error Notification",
         'Data of "' +
-        props.modalObject.title +
-        '" is not Saved Please! try again'
+          props.modalObject.title +
+          '" is not Saved Please! try again'
       );
     }
   };
 
-  const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
-    value: (i + 1).toString(),
-    label: ("Year " + (i + 1)).toString(),
+  const loanTermOptions = Array.from({ length: 31 }, (_, i) => ({
+    value: i,
+    label: ("Year " + i).toString(),
   }));
 
   const indexation = Array.from({ length: 21 }, (_, i) => ({
@@ -242,13 +257,10 @@ const CashFlowBusinessIncome = (props) => {
   const options =
     UserStatus !== "Single"
       ? [
-        { value: "client", label: RenderName("client") },
-        { value: "partner", label: RenderName("partner") },
-      ]
+          { value: "client", label: RenderName("client") },
+          { value: "partner", label: RenderName("partner") },
+        ]
       : [{ value: "client", label: RenderName("client") }];
-
-
-
 
   const rowConfig = [
     {

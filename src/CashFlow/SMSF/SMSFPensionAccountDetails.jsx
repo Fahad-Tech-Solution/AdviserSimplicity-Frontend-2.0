@@ -12,17 +12,13 @@ import {
 import { useRecoilState, useRecoilValue } from "recoil";
 import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 
-// import Balance from "./Balance";
-// import RolloverAmount from "./RolloverAmount";
-// import PensionPayments from "./PensionPayments";
-// import NewPensionRollover from "./NewPensionRollover";
-
 import {
   openNotificationSuccess,
   PatchAxios,
   PostAxios,
   RenderName,
 } from "../../Components/Assets/Api/Api";
+
 import Withdrawals from "../Financial Investments/Withdrawals";
 import CFSMSFBalance from "./CFSMSFBalance";
 import PensionPayments from "../Financial Investments/PensionPayments";
@@ -40,10 +36,6 @@ const SMSFPensionAccountDetails = (props) => {
 
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
-
-  let [layoutSwitchFlag, setLayoutSwitchFlag] = useState(
-    props.modalObject.title
-  );
 
   let initialValues = {
     owner: [],

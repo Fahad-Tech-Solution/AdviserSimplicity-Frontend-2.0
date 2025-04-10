@@ -19,7 +19,10 @@ const ContributionSplittingInner = (props) => {
       setFieldValue("yearToCommence", Data.yearToCommence);
       setFieldValue("yearsToInclude", Data.yearsToInclude);
       setFieldValue("contributionsToFund", Data.contributionsToFund);
-      setFieldValue("previousLumpsumWithdrawals", Data.previousLumpsumWithdrawals);
+      setFieldValue(
+        "previousLumpsumWithdrawals",
+        Data.previousLumpsumWithdrawals
+      );
     }
   };
 
@@ -32,10 +35,10 @@ const ContributionSplittingInner = (props) => {
     }
   };
 
-  const yearsIncludedArray = Array.from({ length: 30 }, (_, i) => {
+  const yearsIncludedArray = Array.from({ length: 31 }, (_, i) => {
     return {
-      value: (i + 1).toString(),
-      label: ("Year " + (i + 1)).toString(),
+      value: i.toString(),
+      label: ("Year " + i).toString(),
     };
   });
 
@@ -53,7 +56,7 @@ const ContributionSplittingInner = (props) => {
     },
     {
       name: "contributionSplitting",
-      type: "number-toComma",
+      type: "number-toPercent",
       placeholder: "Contribution Splitting",
     },
     {
@@ -107,7 +110,9 @@ const ContributionSplittingInner = (props) => {
                           <th>Year to Commence</th>
                           <th>Years to Include</th>
                           <th>Contributions To Fund</th>
-                          <th style={{ color: "black" }}>Previous Lumpsum Withdrawals</th>
+                          <th style={{ color: "black" }}>
+                            Previous Lumpsum Withdrawals
+                          </th>
                         </tr>
                       </thead>
                       <tbody>

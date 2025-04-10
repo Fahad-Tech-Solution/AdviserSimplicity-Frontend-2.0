@@ -202,17 +202,10 @@ const WestFamilyTrustInvestment = (props) => {
   };
 
   const loanTermOptions = Array.from({ length: 31 }, (_, i) => {
-    if (i === 0) {
-      return {
-        value: "No",
-        label: "No",
-      };
-    } else {
-      return {
-        value: i.toString(),
-        label: ("Year " + i).toString(),
-      };
-    }
+    return {
+      value: i.toString(),
+      label: ("Year " + i).toString(),
+    };
   });
 
   const options =

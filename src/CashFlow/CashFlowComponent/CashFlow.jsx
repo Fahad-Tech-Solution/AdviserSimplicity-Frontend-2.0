@@ -30,6 +30,7 @@ const CashFlow = () => {
       <RecoilStateManage />
 
       <div
+        className="d-none d-md-block"
         style={{
           width: sidePadding,
           transition: "width 0.3s", // Smooth transition for width change

@@ -198,9 +198,9 @@ const SMSFInvestmentLoan = (props) => {
     }
   };
 
-  const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
-    value: i + 1,
-    label: ("Year " + (i + 1)).toString(),
+  const loanTermOptions = Array.from({ length: 31 }, (_, i) => ({
+    value: i,
+    label: ("Year " + i).toString(),
   }));
 
   const loanTermOptionsWithNo = Array.from({ length: 31 }, (_, i) => {
@@ -213,8 +213,8 @@ const SMSFInvestmentLoan = (props) => {
 
     return {
       // value: (i + 1).toString(),
-      value: i + 1,
-      label: ("Year " + (i + 1)).toString(),
+      value: i,
+      label: ("Year " + i).toString(),
     };
   });
 

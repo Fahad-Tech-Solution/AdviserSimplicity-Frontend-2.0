@@ -101,7 +101,7 @@ const CFSMSFBalance = (props) => {
   const pensionTypeOptions = [
     { value: "Account-Based", label: "Account-Based" },
     { value: "Transition to Retirement", label: "Transition to Retirement" },
-    { value: "Defined Benefit", label: "Defined Benefit" },
+    // { value: "Defined Benefit", label: "Defined Benefit" },
   ];
 
   const nominatedRolloverAmountOptions = [

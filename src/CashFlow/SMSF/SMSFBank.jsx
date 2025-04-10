@@ -43,9 +43,9 @@ const SMSFBank = (props) => {
     Object.keys(questionDetail[props.modalObject.sourceKey] || {}).length > 0
       ? questionDetail[props.modalObject.sourceKey]
       : {
-          client:  [],
+          client: [],
           partner: [],
-          joint:   [],
+          joint: [],
         }; // Use an empty object as default if SMSFBank is undefined
 
   const fillInitialValues = (setFieldValue) => {
@@ -209,7 +209,7 @@ const SMSFBank = (props) => {
 
   const options = [{ value: "client", label: RenderName("client") }];
 
-  const indexation = Array.from({ length: 21 }, (_, i) => ({
+  const indexation = Array.from({ length: 11 }, (_, i) => ({
     value: (i * 0.5).toFixed(2) + "%",
     label: (i * 0.5).toFixed(2) + "%",
   }));
@@ -226,13 +226,12 @@ const SMSFBank = (props) => {
         label: "No",
       };
     }
-
+    if (i === 1) return; // skip Year 1
     return {
-      // value: (i + 1).toString(),
-      value: i + 1,
-      label: ("Year " + (i + 1)).toString(),
+      value: i,
+      label: `Year ${i}`,
     };
-  });
+  }).filter(Boolean);
 
   const [rowConfig, setRowConfig] = useState(() => {
     return [

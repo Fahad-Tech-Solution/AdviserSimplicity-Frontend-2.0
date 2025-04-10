@@ -5,7 +5,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 // import DynamicYesNo from './DynamicYesNo';
 import Button from "react-bootstrap/Button";
-import { toPercentage, handleInputChange, handleInputFocus, handleInputKeyDown, handleInputBlur, toCommaAndDollar, } from "../Api/Api";
+import {
+  toPercentage,
+  handleInputChange,
+  handleInputFocus,
+  handleInputKeyDown,
+  handleInputBlur,
+  toCommaAndDollar,
+} from "../Api/Api";
 import DynamicYesNo from "../../Questions/FinancialInvestments/QuestionsDetail/DynamicYesNo";
 import { CreatableMultiSelectField } from "../../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import CreatableSelectField from "./DynamicCreatableSelect/CreatableSelectField";
@@ -26,7 +33,6 @@ const DynamicFormField = ({
   innerModalTitle,
   all,
 }) => {
-
   switch (fieldType) {
     case "number":
       return (
@@ -43,13 +49,11 @@ const DynamicFormField = ({
               all.func(values, setFieldValue, e.target, stakeHolder);
             }
           }}
-          onBlur={
-            (e) => {
-              if (all.BlurHandler) {
-                all.BlurHandler(values, setFieldValue, e.target, stakeHolder)
-              }
+          onBlur={(e) => {
+            if (all.BlurHandler) {
+              all.BlurHandler(values, setFieldValue, e.target, stakeHolder);
             }
-          }
+          }}
           disabled={all?.disabled ? all.disabled : false}
         />
       );
@@ -73,14 +77,12 @@ const DynamicFormField = ({
       );
 
     case "number-toPercent":
-
-      let FormulaSetting = () => { };
+      let FormulaSetting = () => {};
 
       if (all.callBack) {
         // alert(all.callBack);
         FormulaSetting = all.func;
       }
-
 
       return (
         <Field
@@ -89,10 +91,27 @@ const DynamicFormField = ({
           name={stakeHolder ? stakeHolder + name : name}
           id={name}
           className="form-control inputDesignDoubleInput"
-          onChange={(e) => handleInputChange(e, setFieldValue, FormulaSetting, values, stakeHolder)}
+          onChange={(e) =>
+            handleInputChange(
+              e,
+              setFieldValue,
+              FormulaSetting,
+              values,
+              stakeHolder
+            )
+          }
           onFocus={(e) => handleInputFocus(e, setFieldValue)}
           onKeyDown={(e) => handleInputKeyDown(e)}
-          onBlur={(e) => handleInputBlur(e, setFieldValue, toPercentage, FormulaSetting, values, stakeHolder)}
+          onBlur={(e) =>
+            handleInputBlur(
+              e,
+              setFieldValue,
+              toPercentage,
+              FormulaSetting,
+              values,
+              stakeHolder
+            )
+          }
           disabled={all?.disabled ? all.disabled : false}
         />
       );
@@ -108,18 +127,18 @@ const DynamicFormField = ({
             className={`form-control inputDesignDoubleInput ${all.extraClass}`}
             onChange={(e) => {
               const value = e.target.value.replace(/[^0-9.-]+/g, "");
-              setFieldValue(stakeHolder ? stakeHolder + name : name, toCommaAndDollar(value));
+              setFieldValue(
+                stakeHolder ? stakeHolder + name : name,
+                toCommaAndDollar(value)
+              );
 
               if (all.callBack) {
                 all.func(values, setFieldValue, e.target, stakeHolder);
               }
-
             }}
             disabled={all?.disabled ? all.disabled : false}
           />
-          <div className="invalid-feedback">
-            {all.invalidMessage}
-          </div>
+          <div className="invalid-feedback">{all.invalidMessage}</div>
         </React.Fragment>
       );
 
@@ -135,26 +154,34 @@ const DynamicFormField = ({
               className={`form-control inputDesignDoubleInput ${all.extraClass}`}
               onChange={(e) => {
                 const value = e.target.value.replace(/[^0-9.-]+/g, "");
-                setFieldValue(stakeHolder ? stakeHolder + name : name, toCommaAndDollar(value));
+                setFieldValue(
+                  stakeHolder ? stakeHolder + name : name,
+                  toCommaAndDollar(value)
+                );
 
                 if (all.callBack) {
-                  all.inputChangeFunc(values, setFieldValue, e.target, stakeHolder);
+                  all.inputChangeFunc(
+                    values,
+                    setFieldValue,
+                    e.target,
+                    stakeHolder
+                  );
                 }
               }}
               disabled={all?.disabled ? all.disabled : false}
             />
 
-            <Button className='btn bgColor modalBtn border-0' id="button-addon2"
+            <Button
+              className="btn bgColor modalBtn border-0"
+              id="button-addon2"
               onClick={() => {
-                all.func(innerModalTitle, values, all.key, stakeHolder)
+                all.func(innerModalTitle, values, all.key, stakeHolder);
               }}
             >
               <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
             </Button>
           </InputGroup>
-          <div className="invalid-feedback">
-            {all.invalidMessage}
-          </div>
+          <div className="invalid-feedback">{all.invalidMessage}</div>
         </React.Fragment>
       );
 
@@ -165,11 +192,9 @@ const DynamicFormField = ({
           // Correctly handle selected date value
           selected={
             stakeHolder
-              ? (values?.[stakeHolder?.replace(".", "")]?.[name] || "")
-              : (values?.[name] || "")
+              ? values?.[stakeHolder?.replace(".", "")]?.[name] || ""
+              : values?.[name] || ""
           }
-
-
           onChange={(date) => {
             const fieldName = stakeHolder ? stakeHolder + name : name; // Determine correct field name
 
@@ -181,8 +206,8 @@ const DynamicFormField = ({
             let e = {
               target: {
                 name: fieldName, // Use correct field name
-                value: date // The selected date value
-              }
+                value: date, // The selected date value
+              },
             };
 
             // Call the callback if provided
@@ -198,12 +223,10 @@ const DynamicFormField = ({
           name={stakeHolder ? stakeHolder + name : name}
           disabled={all?.disabled ? all.disabled : false} // Disable input based on props
         />
-
       );
 
     case "number-toComma-and-MultiSelect":
       return (
-
         <React.Fragment>
           <InputGroup className="mb-3 flex-nowrap">
             <Field
@@ -214,7 +237,10 @@ const DynamicFormField = ({
               className={`form-control inputDesignDoubleInput ${all.extraClass}`}
               onChange={(e) => {
                 const value = e.target.value.replace(/[^0-9.-]+/g, "");
-                setFieldValue(stakeHolder ? stakeHolder + name : name, toCommaAndDollar(value));
+                setFieldValue(
+                  stakeHolder ? stakeHolder + name : name,
+                  toCommaAndDollar(value)
+                );
 
                 if (all.callBack) {
                   all.func(values, setFieldValue, e.target, stakeHolder);
@@ -235,17 +261,17 @@ const DynamicFormField = ({
               <option value={12}>Monthly</option>
               <option value={1}>Year</option>
             </Field>
-
           </InputGroup>
-          <div className="invalid-feedback">
-            {all.invalidMessage}
-          </div>
+          <div className="invalid-feedback">{all.invalidMessage}</div>
         </React.Fragment>
       );
 
     case "select":
       return (
-        <Field as="select" name={stakeHolder ? stakeHolder + name : name} className="form-select inputDesignDoubleInput"
+        <Field
+          as="select"
+          name={stakeHolder ? stakeHolder + name : name}
+          className="form-select inputDesignDoubleInput"
           disabled={all?.disabled ? all.disabled : false}
           onChange={(e) => {
             handleChange(e);
@@ -256,7 +282,11 @@ const DynamicFormField = ({
         >
           <option value="">Select</option>
           {options.map((option) => (
-            <option key={option.value} value={option.value}>
+            <option
+              key={option.value}
+              value={option.value}
+              selected={option?.selected}
+            >
               {option.label}
             </option>
           ))}
@@ -266,8 +296,19 @@ const DynamicFormField = ({
     case "selectModal":
       return (
         <React.Fragment>
-          <InputGroup className={((stakeHolder ? values?.[stakeHolder.slice(0, -1)]?.[name] : values?.[name]) === all.ModalOption) ? "GInputSelect" : ""}>
-            <Field as="select" name={stakeHolder ? stakeHolder + name : name} className="form-select inputDesignDoubleInput"
+          <InputGroup
+            className={
+              (stakeHolder
+                ? values?.[stakeHolder.slice(0, -1)]?.[name]
+                : values?.[name]) === all.ModalOption
+                ? "GInputSelect"
+                : ""
+            }
+          >
+            <Field
+              as="select"
+              name={stakeHolder ? stakeHolder + name : name}
+              className="form-select inputDesignDoubleInput"
               disabled={all?.disabled ? all.disabled : false}
               onChange={(e) => {
                 handleChange(e);
@@ -278,20 +319,33 @@ const DynamicFormField = ({
             >
               <option value="">Select</option>
               {options.map((option) => (
-                <option key={option.value} value={option.value}>
+                <option
+                  key={option.value}
+                  value={option.value}
+                  selected={option?.selected}
+                >
                   {option.label}
                 </option>
               ))}
             </Field>
 
-            {(stakeHolder ? values?.[stakeHolder.slice(0, -1)]?.[name] : values?.[name]) === all.ModalOption &&
+            {(stakeHolder
+              ? values?.[stakeHolder.slice(0, -1)]?.[name]
+              : values?.[name]) === all.ModalOption && (
               <Button
                 className="btn bgColor modalBtn border-0"
-                onClick={() => handleInnerModal(innerModalTitle, values, all.key, stakeHolder)}
+                onClick={() =>
+                  handleInnerModal(
+                    innerModalTitle,
+                    values,
+                    all.key,
+                    stakeHolder
+                  )
+                }
               >
                 <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
               </Button>
-            }
+            )}
           </InputGroup>
         </React.Fragment>
       );
@@ -305,7 +359,7 @@ const DynamicFormField = ({
           options={options}
           disabled={all?.disabled ? all.disabled : false}
           onChange={(e) => {
-            console.log(e)
+            console.log(e);
             if (all.callBack) {
               all.func(values, setFieldValue, e.target, stakeHolder);
             }
@@ -338,7 +392,11 @@ const DynamicFormField = ({
 
     case "yesno":
       return (
-        <DynamicYesNo name={stakeHolder ? stakeHolder + name : name} values={values} handleChange={handleChange} />
+        <DynamicYesNo
+          name={stakeHolder ? stakeHolder + name : name}
+          values={values}
+          handleChange={handleChange}
+        />
       );
 
     case "yesnoModal":
@@ -349,7 +407,9 @@ const DynamicFormField = ({
             values={values}
             handleChange={handleChange}
           />
-          {(stakeHolder ? values?.[stakeHolder.slice(0, -1)]?.[name] : values?.[name]) === "Yes" && (
+          {(stakeHolder
+            ? values?.[stakeHolder.slice(0, -1)]?.[name]
+            : values?.[name]) === "Yes" && (
             <div className="d-flex justify-content-center align-items-center pt-2">
               <Button
                 className="btn bgColor modalBtn border-0"
@@ -372,7 +432,9 @@ const DynamicFormField = ({
         <div className="d-flex justify-content-center align-items-center ">
           <Button
             className="btn bgColor modalBtn border-0"
-            onClick={() => handleInnerModal(innerModalTitle, values, all.key, stakeHolder)}
+            onClick={() =>
+              handleInnerModal(innerModalTitle, values, all.key, stakeHolder)
+            }
           >
             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
           </Button>

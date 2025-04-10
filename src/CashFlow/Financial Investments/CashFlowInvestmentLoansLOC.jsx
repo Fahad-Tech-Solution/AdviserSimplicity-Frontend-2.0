@@ -252,26 +252,11 @@ const CashFlowInvestmentLoansLOC = (props) => {
     }
   };
 
-  const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
+  const loanTermOptions = Array.from({ length: 31 }, (_, i) => ({
     // value: (i + 1).toString(),
     value: i,
     label: ("Year " + i).toString(),
   }));
-
-  const loanTermOptionsWithNo = Array.from({ length: 31 }, (_, i) => {
-    if (i === 0) {
-      return {
-        value: "No",
-        label: "No",
-      };
-    }
-
-    return {
-      // value: (i + 1).toString(),
-      value: i + 1,
-      label: ("Year " + (i + 1)).toString(),
-    };
-  });
 
   const loanTermOptionsWithExisting = Array.from({ length: 31 }, (_, i) => {
     if (i === 0) {
@@ -283,8 +268,8 @@ const CashFlowInvestmentLoansLOC = (props) => {
 
     return {
       // value: (i + 1).toString(),
-      value: i + 1,
-      label: ("Year " + (i + 1)).toString(),
+      value: i,
+      label: ("Year " + i).toString(),
     };
   });
 
@@ -362,7 +347,7 @@ const CashFlowInvestmentLoansLOC = (props) => {
       name: "repayLoanYear",
       placeholder: "Repay Loan in Year",
       type: "select",
-      options: loanTermOptionsWithNo,
+      options: loanTermOptions,
     },
   ];
 

@@ -207,20 +207,11 @@ const SMSFTermDeposit = (props) => {
     }
   };
 
-  const options = [{ value: "client", label: RenderName("client") }];
-
-  const loanTermOptions = Array.from({ length: 31 }, (_, i) => {
-    if (i === 0) {
-      return {
-        value: "No",
-        label: "No",
-      };
-    } else {
-      return {
-        value: i.toString(),
-        label: ("Year " + i).toString(),
-      };
-    }
+  const loanTermOptionswithZero = Array.from({ length: 31 }, (_, i) => {
+    return {
+      value: i.toString(),
+      label: ("Year " + i).toString(),
+    };
   });
 
   let InvestmentReturnsOptions = [
@@ -273,7 +264,7 @@ const SMSFTermDeposit = (props) => {
         name: "reinvestUpUntil",
         type: "select",
         placeholder: "Reinvest Up Until",
-        options: loanTermOptions,
+        options: loanTermOptionswithZero,
       },
       {
         name: "riskProfile",
@@ -285,7 +276,7 @@ const SMSFTermDeposit = (props) => {
         name: "cashOutYear",
         type: "select",
         placeholder: "Cashout Year",
-        options: loanTermOptions,
+        options: loanTermOptionswithZero,
       },
     ];
 

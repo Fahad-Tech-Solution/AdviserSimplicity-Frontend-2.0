@@ -245,7 +245,7 @@ const CashFlowEmploymentIncome = (props) => {
     }
 
     const loanTermOptions =  Array.from({ length: 31 }, (_, i) => ({
-        value: (i).toString(),
+        value: i,
         label: ("Year " + (i)).toString(),
     }));
 

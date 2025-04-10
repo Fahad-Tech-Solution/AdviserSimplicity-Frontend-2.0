@@ -1,6 +1,7 @@
 import React from "react";
 import FunnalComp from "./FunnalComp";
 import { Route, Routes } from "react-router-dom";
+import AssetsAndLiabilities from "./AssetsAndLiabilities";
 
 const Reports = () => {
   return (
@@ -8,6 +9,10 @@ const Reports = () => {
       {/* <h1>Reports</h1> */}
       <Routes>
         <Route path={"/"} element={<FunnalComp />} />
+        <Route
+          path={"/AssetsAndLiabilities"}
+          element={<AssetsAndLiabilities />}
+        />
       </Routes>
     </div>
   );

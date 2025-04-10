@@ -9,7 +9,12 @@ import {
   RenderName,
 } from "../../../Components/Assets/Api/Api";
 import { Row, Table } from "react-bootstrap";
-import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from "../../../Store/Store";
+import {
+  CashFlowData,
+  CashFlowScenarioData,
+  defaultUrl,
+  QuestionDetail,
+} from "../../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 
 const CashFlowPartnership = (props) => {
@@ -27,26 +32,24 @@ const CashFlowPartnership = (props) => {
     Object.keys(questionDetail.incomeFromPartnership || {}).length > 0
       ? questionDetail.incomeFromPartnership
       : {
-        client: [],
-        partner: [],
-        joint: [],
-      }; // Use an empty object as default if incomeFromPartnership is undefined
-
+          client: [],
+          partner: [],
+          joint: [],
+        }; // Use an empty object as default if incomeFromPartnership is undefined
 
   let initialValues = {
     owner: [],
     client: {
       includeFromYear: 1,
-      "upUntillYear": 30,
-      "indexation": "2.50%",
+      upUntillYear: 30,
+      indexation: "2.50%",
     },
     partner: {
       includeFromYear: 1,
-      "upUntillYear": 30,
-      "indexation": '2.50%'
+      upUntillYear: 30,
+      indexation: "2.50%",
     },
   };
-
 
   const fillInitialValues = (setFieldValue) => {
     try {
@@ -62,7 +65,8 @@ const CashFlowPartnership = (props) => {
         if (!data || !Object.keys(data).length) return;
 
         const fields = {
-          netBusinessIncome: data.netBusinessIncome || data.totalNetPartnershipIncome || "",
+          netBusinessIncome:
+            data.netBusinessIncome || data.totalNetPartnershipIncome || "",
           includeFromYear: data.includeFromYear || 1,
           upUntillYear: data.upUntillYear || 30,
           indexation: data.indexation || "2.50%",
@@ -74,7 +78,11 @@ const CashFlowPartnership = (props) => {
       };
 
       // Update owner field
-      if (scenarioObj?.selectedSource === "discoveryForm" && incomeFromPartnership && incomeFromPartnership._id) {
+      if (
+        scenarioObj?.selectedSource === "discoveryForm" &&
+        incomeFromPartnership &&
+        incomeFromPartnership._id
+      ) {
         setFieldValue(`owner`, incomeFromPartnership.owner || "");
 
         // Update client-related fields
@@ -83,14 +91,16 @@ const CashFlowPartnership = (props) => {
         }
 
         // Update partner-related fields
-        if (UserStatus === "Married" && incomeFromPartnership.owner.includes("partner")) {
+        if (
+          UserStatus === "Married" &&
+          incomeFromPartnership.owner.includes("partner")
+        ) {
           updateFields(incomeFromPartnership.partner, "partner");
         }
-      }
-      else {
+      } else {
         // Handle cashFlowData scenario
         const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-        console.log(cashFlowDetails, "cashFlowDetails")
+        console.log(cashFlowDetails, "cashFlowDetails");
         if (cashFlowDetails) {
           setFieldValue(`owner`, cashFlowDetails.owner || "");
           if (cashFlowDetails.owner.includes("client")) {
@@ -98,7 +108,10 @@ const CashFlowPartnership = (props) => {
             updateFields(cashFlowDetails.client, "client");
           }
 
-          if (UserStatus === "Married" && cashFlowDetails.owner.includes("partner")) {
+          if (
+            UserStatus === "Married" &&
+            cashFlowDetails.owner.includes("partner")
+          ) {
             // Update partner details
             updateFields(cashFlowDetails.partner, "partner");
           }
@@ -115,12 +128,14 @@ const CashFlowPartnership = (props) => {
           updateFields(cashFlowDataDetails.client, "client");
         }
 
-        if (UserStatus === "Married" && cashFlowDataDetails.owner.includes("partner")) {
+        if (
+          UserStatus === "Married" &&
+          cashFlowDataDetails.owner.includes("partner")
+        ) {
           // Update partner details
           updateFields(cashFlowDataDetails.partner, "partner");
         }
       }
-
     } catch (error) {
       console.error("Error in fillInitialValues:", error);
     }
@@ -129,22 +144,20 @@ const CashFlowPartnership = (props) => {
   let onSubmit = async (values) => {
     console.log(JSON.stringify(values));
     // return (false);
-    let obj = values
+    let obj = values;
 
-    obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
+    obj.scenarioFK = JSON.parse(localStorage.getItem("ScenarioObj"))._id;
 
     if (values.owner.includes("client")) {
       obj.clientTotal = values.client.netBusinessIncome || "$0";
+    } else {
+      obj.clientTotal = "";
     }
-    else {
-      obj.clientTotal = ""
-    }
-    
+
     if (values.owner.includes("partner")) {
       obj.partnerTotal = values.partner.netBusinessIncome || "$0";
-    }
-    else {
-      obj.partnerTotal = ""
+    } else {
+      obj.partnerTotal = "";
     }
 
     const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
@@ -154,10 +167,7 @@ const CashFlowPartnership = (props) => {
     try {
       let res;
       if (!bankAccountArray) {
-        res = await PostAxios(
-          `${DefaultUrl}/api/CF/${objAndAPIKey}/Add`,
-          obj
-        );
+        res = await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
       } else {
         res = await PatchAxios(
           `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
@@ -192,15 +202,15 @@ const CashFlowPartnership = (props) => {
         "topRight",
         "Error Notification",
         'Data of "' +
-        props.modalObject.title +
-        '" is not Saved Please! try again'
+          props.modalObject.title +
+          '" is not Saved Please! try again'
       );
     }
   };
 
-  const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
-    value: (i + 1).toString(),
-    label: ("Year " + (i + 1)).toString(),
+  const loanTermOptions = Array.from({ length: 31 }, (_, i) => ({
+    value: i,
+    label: ("Year " + i).toString(),
   }));
 
   const indexation = Array.from({ length: 21 }, (_, i) => ({
@@ -211,9 +221,9 @@ const CashFlowPartnership = (props) => {
   const options =
     UserStatus !== "Single"
       ? [
-        { value: "client", label: RenderName("client") },
-        { value: "partner", label: RenderName("partner") },
-      ]
+          { value: "client", label: RenderName("client") },
+          { value: "partner", label: RenderName("partner") },
+        ]
       : [{ value: "client", label: RenderName("client") }];
 
   const rowConfig = [

@@ -9,7 +9,12 @@ import {
   RenderName,
 } from "../../../Components/Assets/Api/Api";
 import { Row, Table } from "react-bootstrap";
-import { CashFlowData, CashFlowScenarioData, defaultUrl, QuestionDetail } from "../../../Store/Store";
+import {
+  CashFlowData,
+  CashFlowScenarioData,
+  defaultUrl,
+  QuestionDetail,
+} from "../../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 
 const CashFlowSoleTradeIncome = (props) => {
@@ -18,36 +23,32 @@ const CashFlowSoleTradeIncome = (props) => {
   let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
   let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
 
-
   let [UserStatus] = useState(localStorage.getItem("UserStatus"));
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
 
-
   let incomeFromSoleTrader =
     Object.keys(questionDetail.incomeFromSoleTrader || {}).length > 0
       ? questionDetail.incomeFromSoleTrader
       : {
-        client: [],
-        partner: [],
-        joint: [],
-      }; // Use an empty object as default if incomeFromSoleTrader is undefined
-
+          client: [],
+          partner: [],
+          joint: [],
+        }; // Use an empty object as default if incomeFromSoleTrader is undefined
 
   let initialValues = {
     owner: [],
     client: {
       includeFromYear: 1,
-      "upUntillYear": 30,
-      "indexation": "2.50%",
+      upUntillYear: 30,
+      indexation: "2.50%",
     },
     partner: {
       includeFromYear: 1,
-      "upUntillYear": 30,
-      "indexation": '2.50%'
+      upUntillYear: 30,
+      indexation: "2.50%",
     },
-
   };
 
   const fillInitialValues = (setFieldValue) => {
@@ -78,7 +79,11 @@ const CashFlowSoleTradeIncome = (props) => {
       };
 
       // Update owner field
-      if (scenarioObj?.selectedSource === "discoveryForm" && incomeFromSoleTrader && incomeFromSoleTrader._id) {
+      if (
+        scenarioObj?.selectedSource === "discoveryForm" &&
+        incomeFromSoleTrader &&
+        incomeFromSoleTrader._id
+      ) {
         setFieldValue(`owner`, incomeFromSoleTrader.owner || "");
 
         // Update client-related fields
@@ -87,14 +92,16 @@ const CashFlowSoleTradeIncome = (props) => {
         }
 
         // Update partner-related fields
-        if (UserStatus === "Married" && incomeFromSoleTrader.owner.includes("partner")) {
+        if (
+          UserStatus === "Married" &&
+          incomeFromSoleTrader.owner.includes("partner")
+        ) {
           updateFields(incomeFromSoleTrader.partner, "partner");
         }
-      }
-      else {
+      } else {
         // Handle cashFlowData scenario
         const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-        console.log(cashFlowDetails, "cashFlowDetails")
+        console.log(cashFlowDetails, "cashFlowDetails");
         if (cashFlowDetails) {
           setFieldValue(`owner`, cashFlowDetails.owner || "");
           if (cashFlowDetails.owner.includes("client")) {
@@ -102,7 +109,10 @@ const CashFlowSoleTradeIncome = (props) => {
             updateFields(cashFlowDetails.client, "client");
           }
 
-          if (UserStatus === "Married" && cashFlowDetails.owner.includes("partner")) {
+          if (
+            UserStatus === "Married" &&
+            cashFlowDetails.owner.includes("partner")
+          ) {
             // Update partner details
             updateFields(cashFlowDetails.partner, "partner");
           }
@@ -119,12 +129,14 @@ const CashFlowSoleTradeIncome = (props) => {
           updateFields(cashFlowDataDetails.client, "client");
         }
 
-        if (UserStatus === "Married" && cashFlowDataDetails.owner.includes("partner")) {
+        if (
+          UserStatus === "Married" &&
+          cashFlowDataDetails.owner.includes("partner")
+        ) {
           // Update partner details
           updateFields(cashFlowDataDetails.partner, "partner");
         }
       }
-
     } catch (error) {
       console.error("Error in fillInitialValues:", error);
     }
@@ -133,22 +145,20 @@ const CashFlowSoleTradeIncome = (props) => {
   let onSubmit = async (values) => {
     console.log(JSON.stringify(values));
     // return (false);
-    let obj = values
+    let obj = values;
 
-    obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
+    obj.scenarioFK = JSON.parse(localStorage.getItem("ScenarioObj"))._id;
 
     if (values.owner.includes("client")) {
       obj.clientTotal = values.client.netBusinessIncome || "$0";
-    }
-    else {
-      obj.clientTotal = ""
+    } else {
+      obj.clientTotal = "";
     }
 
     if (values.owner.includes("partner")) {
       obj.partnerTotal = values.partner.netBusinessIncome || "$0";
-    }
-    else {
-      obj.partnerTotal = ""
+    } else {
+      obj.partnerTotal = "";
     }
 
     const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
@@ -158,10 +168,7 @@ const CashFlowSoleTradeIncome = (props) => {
     try {
       let res;
       if (!bankAccountArray) {
-        res = await PostAxios(
-          `${DefaultUrl}/api/CF/${objAndAPIKey}/Add`,
-          obj
-        );
+        res = await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
       } else {
         res = await PatchAxios(
           `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
@@ -196,16 +203,15 @@ const CashFlowSoleTradeIncome = (props) => {
         "topRight",
         "Error Notification",
         'Data of "' +
-        props.modalObject.title +
-        '" is not Saved Please! try again'
+          props.modalObject.title +
+          '" is not Saved Please! try again'
       );
     }
   };
 
-  const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
-    // value: (i + 1).toString(),
-    value: (i + 1),
-    label: ("Year " + (i + 1)).toString(),
+  const loanTermOptions = Array.from({ length: 31 }, (_, i) => ({
+    value: i,
+    label: ("Year " + i).toString(),
   }));
 
   const indexation = Array.from({ length: 21 }, (_, i) => ({
@@ -216,9 +222,9 @@ const CashFlowSoleTradeIncome = (props) => {
   const options =
     UserStatus !== "Single"
       ? [
-        { value: "client", label: RenderName("client") },
-        { value: "partner", label: RenderName("partner") },
-      ]
+          { value: "client", label: RenderName("client") },
+          { value: "partner", label: RenderName("partner") },
+        ]
       : [{ value: "client", label: RenderName("client") }];
 
   const rowConfig = [

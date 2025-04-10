@@ -31,10 +31,6 @@ const FamilyTrustBankAccount = (props) => {
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
 
-  let [layoutSwitchFlag, setLayoutSwitchFlag] = useState(
-    props.modalObject.title
-  );
-
   let familyBank =
     Object.keys(questionDetail[props.modalObject.sourceKey] || {}).length > 0
       ? questionDetail[props.modalObject.sourceKey]
@@ -190,7 +186,7 @@ const FamilyTrustBankAccount = (props) => {
 
   const options = [{ value: "client", label: RenderName("client") }];
 
-  const indexation = Array.from({ length: 21 }, (_, i) => ({
+  const indexation = Array.from({ length: 11 }, (_, i) => ({
     value: (i * 0.5).toFixed(2) + "%",
     label: (i * 0.5).toFixed(2) + "%",
   }));

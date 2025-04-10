@@ -9,7 +9,13 @@ import {
   RenderName,
 } from "../../../Components/Assets/Api/Api";
 import { Card, Row, Table } from "react-bootstrap";
-import { CashFlowData, CashFlowScenarioData, defaultUrl, GoalsDetail, QuestionDetail } from "../../../Store/Store";
+import {
+  CashFlowData,
+  CashFlowScenarioData,
+  defaultUrl,
+  GoalsDetail,
+  QuestionDetail,
+} from "../../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 
 const CashFlowOtherAsset = (props) => {
@@ -20,18 +26,18 @@ const CashFlowOtherAsset = (props) => {
   let [UserStatus] = useState(localStorage.getItem("UserStatus"));
   let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
 
-
   let goalsDetail = useRecoilValue(GoalsDetail);
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   let other =
-    Object.keys(questionDetail[props.modalObject.key.replace("cf_", "")] || {}).length > 0
+    Object.keys(questionDetail[props.modalObject.key.replace("cf_", "")] || {})
+      .length > 0
       ? questionDetail[props.modalObject.key.replace("cf_", "")]
       : {
-        client: [],
-        partner: [],
-        joint: [],
-      };
+          client: [],
+          partner: [],
+          joint: [],
+        };
 
   let initialValues = {
     owner: [],
@@ -67,7 +73,6 @@ const CashFlowOtherAsset = (props) => {
 
       // Helper function to update field values
       const updateFields = (data, prefix) => {
-
         if (!data || !Object.keys(data).length) return;
         const fields = {
           currentValue: data.currentValue || "",
@@ -77,9 +82,14 @@ const CashFlowOtherAsset = (props) => {
           indexation: data.indexation || "2.50%",
         };
 
-        if (props.modalObject.title === "Car" && goalsDetail.carGoal && goalsDetail.carGoal.estimatedValue) {
+        if (
+          props.modalObject.title === "Car" &&
+          goalsDetail.carGoal &&
+          goalsDetail.carGoal.estimatedValue
+        ) {
           fields.newPurchase = goalsDetail.carGoal.estimatedValue || "";
-          fields.purchaseInYear = parseFloat(goalsDetail.carGoal.when.match(/\d+/g).join('')) || 30;
+          fields.purchaseInYear =
+            parseFloat(goalsDetail.carGoal.when.match(/\d+/g).join("")) || 30;
         }
 
         Object.entries(fields).forEach(([key, value]) => {
@@ -88,7 +98,11 @@ const CashFlowOtherAsset = (props) => {
       };
 
       // Update owner field
-      if (scenarioObj?.selectedSource === "discoveryForm" && other && other._id) {
+      if (
+        scenarioObj?.selectedSource === "discoveryForm" &&
+        other &&
+        other._id
+      ) {
         setFieldValue(`owner`, other.owner || "");
 
         if (onlyJoint.includes(props.modalObject.title)) {
@@ -99,7 +113,6 @@ const CashFlowOtherAsset = (props) => {
           }
         }
 
-
         // Update client-related fields
         if (other.owner.includes("client")) {
           updateFields(other.client, "client");
@@ -109,12 +122,10 @@ const CashFlowOtherAsset = (props) => {
         if (UserStatus === "Married" && other.owner.includes("partner")) {
           updateFields(other.partner, "partner");
         }
-
-      }
-      else {
+      } else {
         // Handle cashFlowData scenario
         const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-        console.log(cashFlowDetails, "cashFlowDetails")
+        console.log(cashFlowDetails, "cashFlowDetails");
         if (cashFlowDetails) {
           setFieldValue(`owner`, cashFlowDetails.owner || "");
           if (cashFlowDetails.owner.includes("client")) {
@@ -122,7 +133,10 @@ const CashFlowOtherAsset = (props) => {
             updateFields(cashFlowDetails.client, "client");
           }
 
-          if (UserStatus === "Married" && cashFlowDetails.owner.includes("partner")) {
+          if (
+            UserStatus === "Married" &&
+            cashFlowDetails.owner.includes("partner")
+          ) {
             // Update partner details
             updateFields(cashFlowDetails.partner, "partner");
           }
@@ -134,7 +148,6 @@ const CashFlowOtherAsset = (props) => {
         }
       }
 
-
       // Additional data from cashFlowData
       if (cashFlowData?.[objAndAPIKey]?._id) {
         const cashFlowDataDetails = cashFlowData[objAndAPIKey];
@@ -145,7 +158,10 @@ const CashFlowOtherAsset = (props) => {
           updateFields(cashFlowDataDetails.client, "client");
         }
 
-        if (UserStatus === "Married" && cashFlowDataDetails.owner.includes("partner")) {
+        if (
+          UserStatus === "Married" &&
+          cashFlowDataDetails.owner.includes("partner")
+        ) {
           // Update partner details
           updateFields(cashFlowDataDetails.partner, "partner");
         }
@@ -163,25 +179,22 @@ const CashFlowOtherAsset = (props) => {
   let onSubmit = async (values) => {
     console.log(JSON.stringify(values));
     // return (false);
-    let obj = values
+    let obj = values;
 
-    obj.scenarioFK = (JSON.parse(localStorage.getItem("ScenarioObj")))._id;
+    obj.scenarioFK = JSON.parse(localStorage.getItem("ScenarioObj"))._id;
 
     if (values.owner.includes("client")) {
       obj.clientTotal = values.client.currentValue || "$0";
-    }
-    else if (values.owner.includes("joint")) {
+    } else if (values.owner.includes("joint")) {
       obj.clientTotal = values.joint.currentValue || "$0";
-    }
-    else {
-      obj.clientTotal = ""
+    } else {
+      obj.clientTotal = "";
     }
 
     if (values.owner.includes("partner")) {
       obj.partnerTotal = values.partner.currentValue || "$0";
-    }
-    else {
-      obj.partnerTotal = ""
+    } else {
+      obj.partnerTotal = "";
     }
 
     const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
@@ -191,10 +204,7 @@ const CashFlowOtherAsset = (props) => {
     try {
       let res;
       if (!bankAccountArray) {
-        res = await PostAxios(
-          `${DefaultUrl}/api/CF/${objAndAPIKey}/Add`,
-          obj
-        );
+        res = await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
       } else {
         res = await PatchAxios(
           `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
@@ -229,54 +239,57 @@ const CashFlowOtherAsset = (props) => {
         "topRight",
         "Error Notification",
         'Data of "' +
-        props.modalObject.title +
-        '" is not Saved Please! try again'
+          props.modalObject.title +
+          '" is not Saved Please! try again'
       );
     }
   };
 
   const loanTermOptions = Array.from({ length: 31 }, (_, i) => {
+    return {
+      value: i.toString(),
+      label: `Year ${i}`,
+    };
+  });
 
+  const loanTermOptionsWithNo = Array.from({ length: 32 }, (_, i) => {
     if (i === 0) {
-      return ({
+      return {
         value: "No",
-        label: "No"
-      });
+        label: "No",
+      };
     }
 
-    return ({
-      value: i.toString(),
-      label: `Year ${i}`
-    })
+    return {
+      value: (i - 1).toString(),
+      label: `Year ${i - 1}`,
+    };
   });
 
   const indexation = [
     // Negative values from -0.00% to -5.00% in increments of 0.50%
     ...Array.from({ length: 11 }, (_, i) => ({
       value: `-${(i * 0.5).toFixed(2)}%`,
-      label: `-${(i * 0.5).toFixed(2)}%`
+      label: `-${(i * 0.5).toFixed(2)}%`,
     })),
 
     // Positive values from 0.00% to 5.00% in increments of 0.50%
     ...Array.from({ length: 11 }, (_, i) => ({
       value: (i * 0.5).toFixed(2) + "%",
-      label: (i * 0.5).toFixed(2) + "%"
-    }))
+      label: (i * 0.5).toFixed(2) + "%",
+    })),
   ];
 
-
-  const options = onlyJoint.includes(props.modalObject.title) ? [
-    { value: "joint", label: RenderName("joint") }
-  ] :
-    onlyClient.includes(props.modalObject.title) ? [
-      { value: "client", label: RenderName("client") }
-    ] :
-      (UserStatus === "Married") ?
-
-        [{ value: "client", label: RenderName("client") },
-        { value: "partner", label: RenderName("partner") }] :
-
-        [{ value: "client", label: RenderName("client") },];
+  const options = onlyJoint.includes(props.modalObject.title)
+    ? [{ value: "joint", label: RenderName("joint") }]
+    : onlyClient.includes(props.modalObject.title)
+    ? [{ value: "client", label: RenderName("client") }]
+    : UserStatus === "Married"
+    ? [
+        { value: "client", label: RenderName("client") },
+        { value: "partner", label: RenderName("partner") },
+      ]
+    : [{ value: "client", label: RenderName("client") }];
 
   const rowConfig = [
     {
@@ -287,7 +300,7 @@ const CashFlowOtherAsset = (props) => {
     {
       name: "sellInYear",
       type: "select",
-      options: loanTermOptions,
+      options: loanTermOptionsWithNo,
     },
     {
       name: "newPurchase",
@@ -359,7 +372,6 @@ const CashFlowOtherAsset = (props) => {
                       </tr>
                     </thead>
                     <tbody>
-
                       {values.owner.includes("client") && (
                         <DynamicTableRow
                           rowConfig={rowConfig}

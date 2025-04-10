@@ -101,7 +101,21 @@ const AccountBasedNewPensionRollover = (props) => {
     label: (i * 0.5).toFixed(2) + "%",
   }));
 
-  const commencePensionInYearOptions = Array.from({ length: 31 }, (_, i) => {
+  const commencePensionInYearOptions = Array.from({ length: 30 }, (_, i) => {
+    if (i == 0) {
+      return {
+        value: "No".toString(),
+        label: "No ".toString(),
+      };
+    } else {
+      return {
+        value: (i + 1).toString(),
+        label: ("Year " + (i + 1)).toString(),
+      };
+    }
+  });
+
+  const YearOptionsWithNo = Array.from({ length: 31 }, (_, i) => {
     if (i == 0) {
       return {
         value: "No".toString(),
@@ -174,7 +188,7 @@ const AccountBasedNewPensionRollover = (props) => {
     {
       name: "applyFromYear",
       type: "select",
-      options: commencePensionInYearOptions,
+      options: YearOptionsWithNo,
       placeholder: "Apply from Year",
     },
     {

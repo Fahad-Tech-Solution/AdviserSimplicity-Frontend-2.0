@@ -29,7 +29,7 @@ const AssetValueOfCompany = (props) => {
         setFieldValue("assetValue", Data.assetValue);
         setFieldValue("includeFromYear", Data.includeFromYear);
         setFieldValue("upUntilYear", Data.upUntilYear);
-        
+
         if (
           props.modalObject.title === "Net Trust Distribution" &&
           props.modalObject.sourceObj.title === "Bucket Company"
@@ -71,10 +71,16 @@ const AssetValueOfCompany = (props) => {
     }
   };
 
-  const yearsArray = Array.from({ length: 30 }, (_, i) => {
+  const yearsIncludedArrayWithExisting = Array.from({ length: 31 }, (_, i) => {
+    if (i === 0) {
+      return {
+        value: "Existing",
+        label: "Existing",
+      };
+    }
     return {
-      value: (i + 1).toString(),
-      label: ("Year " + (i + 1)).toString(),
+      value: i.toString(),
+      label: ("Year " + i).toString(),
     };
   });
 
@@ -94,17 +100,18 @@ const AssetValueOfCompany = (props) => {
         name: "includeFromYear",
         placeholder: "Include From Year",
         type: "select",
-        options: yearsArray,
+        options: yearsIncludedArrayWithExisting,
       },
       {
         name: "upUntilYear",
         placeholder: "Up Until Year",
         type: "select",
-        options: yearsArray,
+        options: yearsIncludedArrayWithExisting,
       },
       {
         name: "expectedGrowthRate",
-        type: "number-toPercent",
+        type: "select",
+        options: indexation,
         placeholder: "Expected Growth Rate",
       },
     ];
@@ -122,7 +129,7 @@ const AssetValueOfCompany = (props) => {
           name: "takeAsCashFromUntilYear",
           placeholder: "Take As Cash From Until Year",
           type: "select",
-          options: yearsArray,
+          options: yearsIncludedArrayWithExisting,
         },
         {
           name: "indexation",

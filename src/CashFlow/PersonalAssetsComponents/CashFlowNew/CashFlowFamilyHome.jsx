@@ -364,8 +364,8 @@ const CashFlowFamilyHome = (props) => {
     },
     {
       name: "expectedGrowthRate",
-      type: "select",
-      options: indexation,
+      type: "number-toPercent",
+      placeholder: "Expected Growth Rate",
     },
     {
       name: "sellPropertyInYear",

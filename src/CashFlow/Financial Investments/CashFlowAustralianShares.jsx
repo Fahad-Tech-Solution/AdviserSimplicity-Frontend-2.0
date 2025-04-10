@@ -373,17 +373,10 @@ const CashFlowAustralianShares = (props) => {
   };
 
   const loanTermOptions = Array.from({ length: 31 }, (_, i) => {
-    if (i === 0) {
-      return {
-        value: "No",
-        label: "No",
-      };
-    } else {
-      return {
-        value: i.toString(),
-        label: ("Year " + i).toString(),
-      };
-    }
+    return {
+      value: i.toString(),
+      label: ("Year " + i).toString(),
+    };
   });
 
   const reinvestUpUntilOptions = Array.from({ length: 31 }, (_, i) => {
@@ -428,6 +421,12 @@ const CashFlowAustralianShares = (props) => {
     },
     { value: "Other", label: "Other" },
     { value: "Australian Shares", label: "Australian Shares" },
+  ];
+
+  let RiskProfileOnlyAustralianOptionArray = [
+    "Family Trust Australian Shares",
+    "SMSF Australian Shares",
+    "Australian Shares",
   ];
 
   const [rowConfig, setRowConfig] = useState(() => {
@@ -480,7 +479,11 @@ const CashFlowAustralianShares = (props) => {
         name: "riskProfile",
         type: "select",
         placeholder: "Risk Profile",
-        options: riskProfileOptions,
+        options: RiskProfileOnlyAustralianOptionArray.includes(
+          props.modalObject.title
+        )
+          ? [{ value: "Australian Shares", label: "Australian Shares" }]
+          : riskProfileOptions,
       },
       {
         name: "cashOutFunds",

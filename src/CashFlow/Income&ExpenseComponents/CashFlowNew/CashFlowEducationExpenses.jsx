@@ -463,15 +463,6 @@ const CashFlowEducationExpenses = (props) => {
                                       ))}
                                     </Field>
                                   </td>
-                                  {/* <td>
-                                    <div className="d-flex flex-column justify-content-center align-items-center gap-2">
-                                      <DynamicYesNo
-                                        name={`depenantChild${i}`}
-                                        values={values}
-                                        handleChange={handleChange}
-                                      />
-                                    </div>
-                                  </td> */}
                                 </tr>
                               );
                             }
