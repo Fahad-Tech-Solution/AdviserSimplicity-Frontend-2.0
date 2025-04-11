@@ -73,7 +73,7 @@ const FunnalComp = () => {
                     }}
                   />
                 </div>
-                <h3 className="fw-bold text-success mb-0">{item.amount}</h3>
+                <h3 className="fw-bold  text-green mb-0">{item.amount}</h3>
               </Card.Body>
             </Card>
           </Col>
@@ -107,7 +107,7 @@ const FunnalComp = () => {
                   />
                   <div>
                     <h6 className="fw-bold mb-0">{item.title}</h6>
-                    <h4 className="fw-bold text-success mb-0">{item.amount}</h4>
+                    <h4 className="fw-bold text-green mb-0">{item.amount}</h4>
                   </div>
                 </Card.Body>
               </Card>
@@ -186,7 +186,7 @@ const FunnalComp = () => {
                   />
                   <div>
                     <h6 className="fw-bold mb-0">{item.title}</h6>
-                    <h4 className="fw-bold text-success mb-0">{item.amount}</h4>
+                    <h4 className="fw-bold text-green mb-0">{item.amount}</h4>
                   </div>
                 </Card.Body>
               </Card>

@@ -1494,6 +1494,12 @@ label {
   border: 1px solid #36b446 !important;
 }
 
+@media only screen and (max-width: 425px) {
+  .funnel-container .LibilityHead {
+    padding: 0px 20px 0px 35px;
+  }
+}
+
 @media only screen and (min-width: 425px) {
   .funnel-container .leftside {
     margin-top: 0vh !important;
@@ -1548,6 +1554,10 @@ label {
     left: 65%;
     transform: translateY(-50%) scaleX(-1);
     width: 50%;
+  }
+
+  .funnel-container .LibilityHead {
+    padding: 0px 20px 0px 35px;
   }
 }
 
