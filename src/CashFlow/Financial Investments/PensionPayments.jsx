@@ -138,13 +138,13 @@ const PensionPayments = (props) => {
     },
     {
       name: "preservationAge",
-      type: "number-toComma",
+      type: "number",
       placeholder: "Preservation Age",
       disabled: true,
     },
     {
       name: "preservationAgeYear",
-      type: "number-toComma",
+      type: "number",
       placeholder: "Preservation Age in Year",
       disabled: true,
     },
@@ -200,10 +200,34 @@ const PensionPayments = (props) => {
             props.modalObject.stakeHolder.replace(".", "")
           ];
 
-        setFieldValue("preservationAge", DataObj.preservationAge);
-        setFieldValue("preservationAgeYear", DataObj.preservationAgeYear);
-        setFieldValue("minimumPension", DataObj.minimumPension);
-        setFieldValue("maximumTTRPension", DataObj.maximumTTRPension);
+        setFieldValue(
+          "preservationAge",
+          isNaN(parseFloat(DataObj.preservationAge)) ||
+            DataObj.preservationAge === "#N/A"
+            ? 0
+            : parseFloat(DataObj.preservationAge)
+        );
+        setFieldValue(
+          "preservationAgeYear",
+          isNaN(parseFloat(DataObj.preservationAgeYear)) ||
+            DataObj.preservationAgeYear === "#N/A"
+            ? 0
+            : parseFloat(DataObj.preservationAgeYear)
+        );
+        setFieldValue(
+          "minimumPension",
+          isNaN(parseFloat(DataObj.minimumPension)) ||
+            DataObj.minimumPension === "#N/A"
+            ? "$0"
+            : DataObj.minimumPension
+        );
+        setFieldValue(
+          "maximumTTRPension",
+          isNaN(parseFloat(DataObj.maximumTTRPension)) ||
+            DataObj.maximumTTRPension === "#N/A"
+            ? "$0"
+            : DataObj.maximumTTRPension
+        );
 
         setCashFlowReCalculateLoading(false);
         openNotificationSuccess(
@@ -253,7 +277,6 @@ const PensionPayments = (props) => {
           `${DefaultUrl}/api/cal/workBookDownload`,
           obj
         );
-
         const fileName = `UpdatedWorkbook_of_${RenderName("client")}.xlsx`;
 
         const url = window.URL.createObjectURL(new Blob([response.data]));

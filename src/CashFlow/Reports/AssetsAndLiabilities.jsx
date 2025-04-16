@@ -262,10 +262,10 @@ const AssetsAndLiabilities = () => {
         <button
           className="btn w-25 btn-outline backBtn"
           onClick={() => {
-            Nev("/Cash-Flow/Reports/AssetsAndLiabilities");
+            Nev("/Cash-Flow/Reports/CashFlow");
           }}
         >
-          Assets and Liabilities
+         Cash Flow
         </button>
       </div>
     </Container>

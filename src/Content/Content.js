@@ -522,7 +522,7 @@ export const content = {
     {
       subTitle: "SMSF",
       statusStep: 50,
-      icon: "FaMoneyCheckDollar",
+      icon: "FaGift",
       QuestionsArray: [
         {
           title: "SMSF Accumulation Details",
@@ -583,7 +583,7 @@ export const content = {
     {
       subTitle: "Investment Trust",
       statusStep: 60,
-      icon: "FaBriefcase",
+      icon: "MdFamilyRestroom",
       route: "/InvestmentTrust",
       QuestionsArray: [
         {
@@ -637,13 +637,50 @@ export const content = {
       ],
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
-    // {
-    //     subTitle: "SMSF",
-    //     statusStep: 70,
-    //     icon: "FaGift",
-    //     route: "/SMSF",
-    //     QuestionsArray: [],
-    //     condition: (CRObject) => true, // Always true, as this step is always needed.
-    // },
+  ],
+  cashFlowReport: [
+    {
+      subTitle: "Income & Expenses",
+      statusStep: 10,
+      icon: "FaMoneyCheckDollar",
+      stepNumber: 0,
+      key: "CashFlow_Income_And_Expenses",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Lifestyle Assets & Debt",
+      statusStep: 20,
+      icon: "FaHome",
+      stepNumber: 1,
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Financial Investments",
+      statusStep: 30,
+      icon: "RiCoinsFill",
+      stepNumber: 2,
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Business Entities",
+      statusStep: 40,
+      icon: "FaBriefcase",
+      stepNumber: 3,
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "SMSF",
+      statusStep: 50,
+      icon: "FaGift",
+      stepNumber: 4,
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Investment Trust",
+      statusStep: 60,
+      icon: "MdFamilyRestroom",
+      stepNumber: 5,
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
   ],
 };

@@ -1685,3 +1685,34 @@ label {
     width: 50%;
   }
 }
+
+.reportSection span {
+  display: inline;
+  height: auto;
+  width: auto;
+  justify-content: normal;
+  align-items: normal;
+  font-family: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+}
+
+.reportSection .custom-pagination {
+  /* border: 1px solid black; */
+  /* width: 10vh; */
+  width: 40vh;
+  /* height: 20vh !important; */
+  float: inline-end;
+}
+
+.reportSection .ant-table,
+.reportSection .ant-table-container,
+.reportSection .ant-table-thead > tr > th,
+.reportSection .ant-table-tbody > tr > td {
+  border: none !important;
+  /* box-shadow: none !important; */
+}
+
+.reportSection .ant-table-tbody > tr:nth-child(odd) > td {
+  background: #ececec !important;
+}

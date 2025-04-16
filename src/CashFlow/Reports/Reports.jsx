@@ -2,10 +2,11 @@ import React from "react";
 import FunnalComp from "./FunnalComp";
 import { Route, Routes } from "react-router-dom";
 import AssetsAndLiabilities from "./AssetsAndLiabilities";
+import CashFlowReport from "./CashFlowReport";
 
 const Reports = () => {
   return (
-    <div className="container-fluid p-0 reports d-flex flex-column">
+    <div className="container-fluid p-0 reports d-flex flex-column " >
       {/* <h1>Reports</h1> */}
       <Routes>
         <Route path={"/"} element={<FunnalComp />} />
@@ -13,9 +14,12 @@ const Reports = () => {
           path={"/AssetsAndLiabilities"}
           element={<AssetsAndLiabilities />}
         />
+        <Route path={"/CashFlow"} element={<CashFlowReport />} />
       </Routes>
     </div>
   );
 };
+
+// add button on FunnalComp to go in single sceinaro flow
 
 export default Reports;
