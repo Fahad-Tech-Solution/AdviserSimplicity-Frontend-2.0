@@ -1716,3 +1716,27 @@ label {
 .reportSection .ant-table-tbody > tr:nth-child(odd) > td {
   background: #ececec !important;
 }
+
+.reportSection .ant-table-thead > tr > th {
+  background: #36b446 !important;
+  color: white;
+  font-weight: 700;
+}
+
+.reportSection .ant-table-summary > tr {
+  background: #36b446 !important;
+  color: white;
+  font-weight: 700;
+}
+
+.reportSection .ant-table-summary > tr > td {
+  background: #36b446 !important;
+  color: white;
+  font-weight: 700;
+}
+
+.reportSection .ant-table-tbody > tr.green-summary-row > td {
+  background: #36b446 !important;
+  color: white;
+  font-weight: 700;
+}

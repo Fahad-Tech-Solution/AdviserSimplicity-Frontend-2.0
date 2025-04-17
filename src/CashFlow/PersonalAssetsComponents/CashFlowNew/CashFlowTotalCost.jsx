@@ -259,42 +259,6 @@ const CashFlowTotalCost = (props) => {
       updatedData.cf_familyHome.client = structuredEntries;
       updatedData.cf_familyHome.numberOfProperties = numberOfProperties;
 
-      // console.log(JSON.stringify(updatedData));
-
-      // try {
-      //   const response = await PostAxiosBlob(
-      //     `${DefaultUrl}/api/cal/workBookDownload`,
-      //     updatedData
-      //   );
-
-      //   const fileName = `UpdatedWorkbook_of_${RenderName("client")}.xlsx`;
-
-      //   const url = window.URL.createObjectURL(new Blob([response.data]));
-      //   const a = document.createElement("a");
-      //   a.href = url;
-      //   a.download = fileName;
-      //   document.body.appendChild(a);
-      //   a.click();
-      //   a.remove();
-      //   window.URL.revokeObjectURL(url);
-
-      //   openNotificationSuccess(
-      //     "success",
-      //     "topRight",
-      //     "Success Notification",
-      //     `Excel file "${fileName}" is downloaded.`
-      //   );
-      // } catch (error) {
-      //   openNotificationSuccess(
-      //     "error",
-      //     "topRight",
-      //     "Download Failed",
-      //     "Something went wrong while downloading the Excel file."
-      //   );
-      // } finally {
-      //   setCashFlowDownloading(false); // Always hide loading spinner
-      // }
-
       const response = await axios.post(
         `${DefaultUrl}/api/cal/workBookDownload`,
         updatedData,

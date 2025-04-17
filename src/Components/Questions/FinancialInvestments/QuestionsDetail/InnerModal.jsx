@@ -27,6 +27,9 @@ const InnerModal = (props) => {
   const handleOk = () => {
     if (formRef.current) {
       formRef.current.handleSubmit(); // Trigger Formik's handleSubmit
+      setProgress(0);
+      setCashFlowReCalculateLoading(false);
+      setCashFlowDownloading(false);
     }
   };
 
@@ -193,6 +196,9 @@ const InnerModal = (props) => {
         show={props.flagState}
         onHide={() => {
           props.setFlagState(false);
+          setProgress(0);
+          setCashFlowReCalculateLoading(false);
+          setCashFlowDownloading(false);
         }}
       >
         <Element id="modal-container"></Element>
@@ -219,7 +225,12 @@ const InnerModal = (props) => {
           <Button
             variant="secondary"
             style={{ width: "12.5%", minWidth: "fit-content" }}
-            onClick={() => props.setFlagState(false)}
+            onClick={() => {
+              props.setFlagState(false);
+              setProgress(0);
+              setCashFlowReCalculateLoading(false);
+              setCashFlowDownloading(false);
+            }}
           >
             Close
           </Button>

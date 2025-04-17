@@ -344,6 +344,9 @@ const CashFlowHomeLoan = (props) => {
       );
       setCashFlowReCalculateLoading(false);
     }
+    finally{
+      setCashFlowReCalculateLoading(false);
+    }
   };
 
   let handleChildButtonDownloadClick = async (values, setFieldValue) => {
@@ -430,6 +433,9 @@ const CashFlowHomeLoan = (props) => {
         "Error Notification",
         `Data of "${props.modalObject.title}" was not saved. Please try again.`
       );
+      setCashFlowReCalculateLoading(false);
+    }
+    finally{
       setCashFlowReCalculateLoading(false);
     }
   };
