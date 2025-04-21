@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Children, useEffect, useState } from "react";
 import { Form, Formik } from "formik";
 import CashReport from "./TableReports/CashReport";
 import AssetLiabilitiesReport from "./TableReports/AssetLiabilitiesReport";
@@ -12,6 +12,7 @@ import {
   PostAxios,
   toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
+import { ConfigProvider } from "antd";
 
 const CashFlowReport = () => {
   let initialValues = {
@@ -23,12 +24,13 @@ const CashFlowReport = () => {
 
   let onSubmit = (values, resetForm) => {};
 
+  const [fullTableCashFlow, setFullTableCashFlow] = useState([]);
+
   const [inflow, setInflow] = useState([]);
 
   const [outFlow, setOutFlow] = useState([]);
 
   const [surplus, setSurplus] = useState([]);
-  
 
   const [clientData, setClientData] = useState([
     {
@@ -1373,12 +1375,64 @@ const CashFlowReport = () => {
         scenarioID: scenarioObj._id,
       });
       if (response) {
-        console.log("Usama", response.REPORTS_Cashflow.surplusDeficit);
+        // console.log("Usama", response.REPORTS_Cashflow.surplusDeficit);
         // console.log(transformInflowsData(response.REPORTS_Cashflow.outflows));
-        setInflow(transformInflowsData(response.REPORTS_Cashflow.inflows));
-        setOutFlow(transformInflowsData(response.REPORTS_Cashflow.outflows));
-        let Surplus = removeNullRows(response.REPORTS_Cashflow.surplusDeficit);
-        setSurplus(transformInflowsData(Surplus));
+        let InFlow = transformInflowsData(response.REPORTS_Cashflow.inflows);
+        let OutFlow = transformInflowsData(response.REPORTS_Cashflow.outflows);
+        let Surplus = transformInflowsData(
+          removeNullRows(response.REPORTS_Cashflow.surplusDeficit)
+        );
+
+        let fullTable = [
+          {
+            key: "1",
+            type: "Total Inflows",
+            children: InFlow,
+            ...Array.from({ length: 30 }, (_, i) => i + 1).reduce(
+              (acc, year) => {
+                acc[`year${year}`] =
+                  InFlow[InFlow.length - 1]?.[`year${year}`] || "$0";
+                return acc;
+              },
+              {}
+            ),
+          },
+          {
+            key: "2",
+            type: "Total Outflows",
+            children: OutFlow,
+            ...Array.from({ length: 30 }, (_, i) => i + 1).reduce(
+              (acc, year) => {
+                acc[`year${year}`] =
+                  OutFlow[OutFlow.length - 1]?.[`year${year}`] || "$0";
+                return acc;
+              },
+              {}
+            ),
+          },
+          {
+            key: "3",
+            type: "Total Surplus",
+            children: Surplus,
+            ...Array.from({ length: 30 }, (_, i) => i + 1).reduce(
+              (acc, year) => {
+                acc[`year${year}`] =
+                  Surplus[Surplus.length - 1]?.[`year${year}`] || "$0";
+                return acc;
+              },
+              {}
+            ),
+          },
+        ];
+
+        console.log("Usama", fullTable);
+
+        setFullTableCashFlow(fullTable);
+
+        // setInflow();
+        // setOutFlow();
+        // let Surplus = ;
+        // setSurplus(transformInflowsData(Surplus));
         // response.REPORTS_Cashflow;
       }
     } catch (error) {
@@ -1393,25 +1447,6 @@ const CashFlowReport = () => {
       setLoading(false);
     }
   };
-
-  // function transformInflowsData(inflows = []) {
-  //   const result = inflows.map((row) => {
-  //     const [type, ...values] = row;
-  //     const formatted = { type };
-
-  //     for (let i = 0; i < 10; i++) {
-  //       if (isNaN(values[i])) {
-  //         formatted[`year${i + 1}`] = `${toCommaAndDollar(0)}`;
-  //       } else {
-  //         formatted[`year${i + 1}`] = `${toCommaAndDollar(values[i] || 0)}`;
-  //       }
-  //     }
-
-  //     return formatted;
-  //   });
-
-  //   return result;
-  // }
 
   function removeNullRows(data) {
     return data.filter((row) => {
@@ -1430,7 +1465,7 @@ const CashFlowReport = () => {
       const [type, ...values] = row;
       const formatted = { type };
 
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 30; i++) {
         const val = Number(values[i]);
         const safeVal = isNaN(val) ? 0 : val;
         formatted[`year${i + 1}`] = toCommaAndDollar(safeVal);
@@ -1472,82 +1507,88 @@ const CashFlowReport = () => {
               <div name="topSection">
                 <CashFlowReportOptions step={step} setStep={setStep} />
               </div>
+              <ConfigProvider
+                theme={{
+                  token: {
+                    colorPrimary: "#36b446",
+                    colorLink: "#36b446",
+                  },
+                }}
+              >
+                <div className="px-0 px-md-4 reportSection">
+                  {step == 0 && (
+                    <>
+                      <CashReport
+                        showFilters={showFilters}
+                        setShowFilters={setShowFilters}
+                        fullTableCashFlow={fullTableCashFlow}
+                        clientData={clientData}
+                        assetsTestPensionAllowance={assetsTestPensionAllowance}
+                        incomeTestPensionsAllowances={
+                          incomeTestPensionsAllowances
+                        }
+                        allowance={allowance}
+                        clientIncome={clientIncome}
+                        // partnerIncome={partnerIncome}
+                        clientPayment={clientPayment}
+                        familyTaxBenefitPartA={familyTaxBenefitPartA}
+                        values={values}
+                        setFieldValue={setFieldValue}
+                      />
+                    </>
+                  )}
 
-              <div className="px-0 px-md-4 reportSection">
-                {step == 0 && (
-                  <>
-                    <CashReport
-                      showFilters={showFilters}
-                      setShowFilters={setShowFilters}
-                      inflow={inflow}
-                      outFlow={outFlow}
-                      surplus={surplus}
-                      clientData={clientData}
-                      assetsTestPensionAllowance={assetsTestPensionAllowance}
-                      incomeTestPensionsAllowances={
-                        incomeTestPensionsAllowances
-                      }
-                      allowance={allowance}
-                      clientIncome={clientIncome}
-                      // partnerIncome={partnerIncome}
-                      clientPayment={clientPayment}
-                      familyTaxBenefitPartA={familyTaxBenefitPartA}
-                      values={values}
-                      setFieldValue={setFieldValue}
-                    />
-                  </>
-                )}
+                  {step == 1 && (
+                    <>
+                      <AssetLiabilitiesReport
+                        showFilters={showFilters}
+                        setShowFilters={setShowFilters}
+                        asset={asset}
+                        setInflow={setInflow}
+                        liabilities={liabilities}
+                        setOutFlow={setOutFlow}
+                        surplus={surplus}
+                        setSurplus={setSurplus}
+                        values={values}
+                        setFieldValue={setFieldValue}
+                      />
+                    </>
+                  )}
 
-                {step == 1 && (
-                  <>
-                    <AssetLiabilitiesReport
-                      showFilters={showFilters}
-                      setShowFilters={setShowFilters}
-                      asset={asset}
-                      setInflow={setInflow}
-                      liabilities={liabilities}
-                      setOutFlow={setOutFlow}
-                      surplus={surplus}
-                      setSurplus={setSurplus}
-                      values={values}
-                      setFieldValue={setFieldValue}
-                    />
-                  </>
-                )}
-
-                <div className="row justify-content-between px-2 my-5">
-                  <button
-                    className="btn btn-outline w-25 backBtn"
-                    onClick={() => {
-                      if (step <= 0) {
-                        // Nev("/Cash-Flow/Reports/");
-                        Nev(-1);
-                      }
-                      setStep(step - 1);
-                      scroller.scrollTo("topSection", {
-                        duration: 500,
-                        delay: 0,
-                        smooth: "easeInOutQuad",
-                      });
-                    }}
-                  >
-                    Back
-                  </button>
-                  <button
-                    className="btn bgColor w-25 modalBtn"
-                    onClick={() => {
-                      setStep(step + 1);
-                      scroller.scrollTo("topSection", {
-                        duration: 500,
-                        delay: 0,
-                        smooth: "easeInOutQuad",
-                      });
-                    }}
-                  >
-                    Next
-                  </button>
+                  <div className="row justify-content-between px-2 my-5">
+                    <button
+                      className="btn btn-outline w-25 backBtn"
+                      onClick={() => {
+                        if (step <= 0) {
+                          // Nev("/Cash-Flow/Reports/");
+                          Nev(-1);
+                        }
+                        setStep(step - 1);
+                        scroller.scrollTo("topSection", {
+                          duration: 500,
+                          delay: 0,
+                          smooth: "easeInOutQuad",
+                        });
+                      }}
+                    >
+                      Back
+                    </button>
+                    <button
+                      className="btn bgColor w-25 modalBtn"
+                      onClick={() => {
+                        setStep(step + 1);
+                        scroller.scrollTo("topSection", {
+                          duration: 500,
+                          delay: 0,
+                          smooth: "easeInOutQuad",
+                        });
+                      }}
+                    >
+                      Next
+                    </button>
+                  </div>
                 </div>
-              </div>
+              </ConfigProvider>
             </Form>
           );
         }}

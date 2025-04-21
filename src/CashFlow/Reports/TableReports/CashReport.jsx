@@ -1,4 +1,4 @@
-import { Table } from "antd";
+import { Table, Tooltip } from "antd";
 import { Field } from "formik";
 import React, { useState } from "react";
 import { Button, Card, Col, Row } from "react-bootstrap";
@@ -12,9 +12,7 @@ const CashReport = (props) => {
   let {
     showFilters,
     setShowFilters,
-    inflow,
-    outFlow,
-    surplus,
+    fullTableCashFlow,
     clientData,
     assetsTestPensionAllowance,
     incomeTestPensionsAllowances,
@@ -37,6 +35,25 @@ const CashReport = (props) => {
       key: "type",
       width: 250, // 👈 Set fixed width
       fixed: "left", // 👈 Fix column to the left
+      render: (text, record) => {
+        const isParentRow = record.children && Array.isArray(record.children);
+
+        return (
+          <Tooltip title={text}>
+            <div
+              style={{
+                fontWeight: isParentRow ? "bold" : "normal",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                fontFamily: '"Inter", sans-serif',
+              }}
+            >
+              {text}
+            </div>
+          </Tooltip>
+        );
+      },
     },
     ...[1, 2, 3, 4, 5, 6].map((year, i) => {
       if (year === 6) {
@@ -102,8 +119,27 @@ const CashReport = (props) => {
             title: "Year",
             dataIndex: "type",
             key: "type",
-            width: 250,
-            fixed: "left",
+            width: 250, // 👈 Set fixed width
+            fixed: "left", // 👈 Fix column to the left
+            render: (text, record) => {
+              const isParentRow =
+                record.children && Array.isArray(record.children);
+
+              return (
+                <Tooltip title={text}>
+                  <div
+                    style={{
+                      fontWeight: isParentRow ? "bold" : "normal",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {text}
+                  </div>
+                </Tooltip>
+              );
+            },
           },
           ...dynamicYearColumns,
         ];
@@ -208,85 +244,16 @@ const CashReport = (props) => {
       {(values.category === "" || values.category === "Cashflow") && (
         <>
           <div className="mt-4 porsition-relative">
-            <h4 className="text-green fw-bold">Inflows</h4>
+            {/* <h4 className="text-green fw-bold">Cashflow</h4> */}
 
             <Table
-              dataSource={inflow.slice(0, -1)} // 👈 Removes the last row from the table
+              dataSource={fullTableCashFlow} // 👈 Removes the last row from the table
               columns={columns}
               scroll={{ x: "max-content" }}
               pagination={{
                 pageSize: 50,
                 position: ["bottomRight"],
                 className: "custom-pagination",
-              }}
-              summary={() => {
-                if (inflow.length > 0) {
-                  const totalRowInflow = inflow[inflow.length - 1]; // 👈 Get the last row as footer
-                  return (
-                    <Table.Summary.Row>
-                      {columns.map((col, index) => (
-                        <Table.Summary.Cell key={index} index={index}>
-                          {totalRowInflow[col.dataIndex]}
-                        </Table.Summary.Cell>
-                      ))}
-                    </Table.Summary.Row>
-                  );
-                }
-              }}
-            />
-          </div>
-          <div className="mt-2 porsition-relative table-responcive">
-            <h4 className="text-green fw-bold">Outflows</h4>
-            <Table
-              dataSource={outFlow.slice(0, -1)}
-              columns={columns}
-              scroll={{ x: "max-content" }}
-              pagination={{
-                pageSize: 50,
-                position: ["bottomRight"],
-                className: "custom-pagination",
-              }}
-              summary={() => {
-                if (outFlow.length > 0) {
-                  const totalRowOutFlow = outFlow[outFlow.length - 1]; // 👈 Get the last row as footer
-                  return (
-                    <Table.Summary.Row>
-                      {columns.map((col, index) => (
-                        <Table.Summary.Cell key={index} index={index}>
-                          {totalRowOutFlow[col.dataIndex]}
-                        </Table.Summary.Cell>
-                      ))}
-                    </Table.Summary.Row>
-                  );
-                }
-              }}
-            />
-          </div>
-          <div className="mt-2 porsition-relative table-responcive">
-            <h4 className="text-green fw-bold">Surplus/Deficit </h4>
-            <Table
-              dataSource={surplus.slice(1)}
-              bordered={false}
-              columns={columns}
-              scroll={{ x: "max-content" }}
-              pagination={{
-                pageSize: 50,
-                position: ["bottomRight"],
-                className: "custom-pagination",
-              }}
-              summary={() => {
-                if (surplus.length > 0) {
-                  const totalRowSurplus = surplus[0]; // 👈 Get the last row as footer
-                  return (
-                    <Table.Summary.Row>
-                      {columns.map((col, index) => (
-                        <Table.Summary.Cell key={index} index={index}>
-                          {totalRowSurplus[col.dataIndex]}
-                        </Table.Summary.Cell>
-                      ))}
-                    </Table.Summary.Row>
-                  );
-                }
               }}
             />
           </div>
