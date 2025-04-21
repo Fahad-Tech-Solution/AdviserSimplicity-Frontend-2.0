@@ -96,7 +96,7 @@ const AccountBasedNewPensionRollover = (props) => {
     setFlagState(true);
   };
 
-  const indexation = Array.from({ length: 21 }, (_, i) => ({
+  const indexation = Array.from({ length: 11 }, (_, i) => ({
     value: (i * 0.5).toFixed(2) + "%",
     label: (i * 0.5).toFixed(2) + "%",
   }));

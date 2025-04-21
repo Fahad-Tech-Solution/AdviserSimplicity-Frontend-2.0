@@ -220,16 +220,18 @@ const CashReport = (props) => {
                 className: "custom-pagination",
               }}
               summary={() => {
-                const totalRowInflow = inflow[inflow.length - 1]; // 👈 Get the last row as footer
-                return (
-                  <Table.Summary.Row>
-                    {columns.map((col, index) => (
-                      <Table.Summary.Cell key={index} index={index}>
-                        {totalRowInflow[col.dataIndex]}
-                      </Table.Summary.Cell>
-                    ))}
-                  </Table.Summary.Row>
-                );
+                if (inflow.length > 0) {
+                  const totalRowInflow = inflow[inflow.length - 1]; // 👈 Get the last row as footer
+                  return (
+                    <Table.Summary.Row>
+                      {columns.map((col, index) => (
+                        <Table.Summary.Cell key={index} index={index}>
+                          {totalRowInflow[col.dataIndex]}
+                        </Table.Summary.Cell>
+                      ))}
+                    </Table.Summary.Row>
+                  );
+                }
               }}
             />
           </div>
@@ -245,16 +247,18 @@ const CashReport = (props) => {
                 className: "custom-pagination",
               }}
               summary={() => {
-                const totalRowOutFlow = outFlow[outFlow.length - 1]; // 👈 Get the last row as footer
-                return (
-                  <Table.Summary.Row>
-                    {columns.map((col, index) => (
-                      <Table.Summary.Cell key={index} index={index}>
-                        {totalRowOutFlow[col.dataIndex]}
-                      </Table.Summary.Cell>
-                    ))}
-                  </Table.Summary.Row>
-                );
+                if (outFlow.length > 0) {
+                  const totalRowOutFlow = outFlow[outFlow.length - 1]; // 👈 Get the last row as footer
+                  return (
+                    <Table.Summary.Row>
+                      {columns.map((col, index) => (
+                        <Table.Summary.Cell key={index} index={index}>
+                          {totalRowOutFlow[col.dataIndex]}
+                        </Table.Summary.Cell>
+                      ))}
+                    </Table.Summary.Row>
+                  );
+                }
               }}
             />
           </div>
@@ -271,16 +275,18 @@ const CashReport = (props) => {
                 className: "custom-pagination",
               }}
               summary={() => {
-                const totalRowSurplus = surplus[0]; // 👈 Get the last row as footer
-                return (
-                  <Table.Summary.Row>
-                    {columns.map((col, index) => (
-                      <Table.Summary.Cell key={index} index={index}>
-                        {totalRowSurplus[col.dataIndex]}
-                      </Table.Summary.Cell>
-                    ))}
-                  </Table.Summary.Row>
-                );
+                if (surplus.length > 0) {
+                  const totalRowSurplus = surplus[0]; // 👈 Get the last row as footer
+                  return (
+                    <Table.Summary.Row>
+                      {columns.map((col, index) => (
+                        <Table.Summary.Cell key={index} index={index}>
+                          {totalRowSurplus[col.dataIndex]}
+                        </Table.Summary.Cell>
+                      ))}
+                    </Table.Summary.Row>
+                  );
+                }
               }}
             />
           </div>
@@ -374,17 +380,19 @@ const CashReport = (props) => {
                 className: "custom-pagination",
               }}
               summary={() => {
-                const totalRowClientIncome =
-                  clientIncome[clientIncome.length - 1]; // 👈 Get the last row as footer
-                return (
-                  <Table.Summary.Row>
-                    {columns.map((col, index) => (
-                      <Table.Summary.Cell key={index} index={index}>
-                        {totalRowClientIncome[col.dataIndex]}
-                      </Table.Summary.Cell>
-                    ))}
-                  </Table.Summary.Row>
-                );
+                if (clientIncome.length > 0) {
+                  const totalRowClientIncome =
+                    clientIncome[clientIncome.length - 1]; // 👈 Get the last row as footer
+                  return (
+                    <Table.Summary.Row>
+                      {columns.map((col, index) => (
+                        <Table.Summary.Cell key={index} index={index}>
+                          {totalRowClientIncome[col.dataIndex]}
+                        </Table.Summary.Cell>
+                      ))}
+                    </Table.Summary.Row>
+                  );
+                }
               }}
             />
           </div>

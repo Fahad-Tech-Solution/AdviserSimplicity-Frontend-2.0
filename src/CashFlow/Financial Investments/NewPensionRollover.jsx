@@ -113,19 +113,15 @@ const NewPensionRollover = (props) => {
     label: (i * 0.5).toFixed(2) + "%",
   }));
 
-  const commencePensionInYearOptions = Array.from({ length: 31 }, (_, i) => {
-    if (i == 0) {
+  const commencePensionInYearOptions = [
+    { value: "No", label: "No" },
+    ...Array.from({ length: 29 }, (_, i) => {
       return {
-        value: "No".toString(),
-        label: "No ".toString(),
+        value: (i + 2).toString(),
+        label: `Year ${i + 2}`,
       };
-    } else {
-      return {
-        value: (i + 1).toString(),
-        label: ("Year " + (i + 1)).toString(),
-      };
-    }
-  });
+    }),
+  ];
 
   let rowConfig = [
     {

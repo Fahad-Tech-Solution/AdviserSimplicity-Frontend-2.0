@@ -192,25 +192,6 @@ const CashFlowSections = (props) => {
         try {
             const response = await GetAxios(`${DefaultUrl}/api/CF/dataOfAllSection/${scenarioId}`);
             if (response) {
-                // // Filter out empty objects
-                // const filteredResponse = Object.keys(response).reduce((acc, key) => {
-                //     const item = response[key];
-                //     if (item && Object.keys(item).length > 0) { // Check if the nested object is non-empty
-                //         acc[key] = item;
-                //     }
-                //     return acc;
-                // }, {});
-
-                // console.log("Fetched cash flow data:", filteredResponse);
-                // // Update only the filtered keys in cashFlowData
-                // setCashFlowData(prevData => {
-                //     const updatedData = { ...prevData }; // Create a shallow copy of the existing state
-                //     Object.keys(filteredResponse).forEach(key => {
-                //         updatedData[key] = filteredResponse[key]; // Replace only the filtered keys
-                //     });
-                //     return updatedData;
-                // });
-
                 setCashFlowData(response)
 
             }

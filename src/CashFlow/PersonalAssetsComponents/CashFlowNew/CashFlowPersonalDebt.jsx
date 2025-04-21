@@ -529,12 +529,14 @@ const CashFlowPersonalDebt = (props) => {
                                       }}
                                     >
                                       <option value={""}>Please Select</option>
-                                      {Array.from({ length: 30 }).map(
-                                        (_, i) => (
-                                          <option key={i} value={i + 1}>
-                                            Year {i + 1}
-                                          </option>
-                                        )
+                                      {Array.from({ length: 31 }).map(
+                                        (_, i) => {
+                                          return (
+                                            <option key={i} value={i}>
+                                              Year {i}
+                                            </option>
+                                          );
+                                        }
                                       )}
                                     </Field>
                                   </td>

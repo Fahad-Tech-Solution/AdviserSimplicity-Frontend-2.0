@@ -82,6 +82,7 @@ const LiabilitiesTotalData = [
 
 const AssetsAndLiabilities = () => {
   let Nev = useNavigate();
+
   return (
     <Container fluid className="p-0 p-md-3 funnel-container">
       {/* Income Cards Section */}
@@ -255,7 +256,14 @@ const AssetsAndLiabilities = () => {
 
       {/* Navigation Buttons */}
       <div className="row justify-content-around my-5">
-        <button className="btn w-25 btn-outline backBtn">Back</button>
+        <button
+          className="btn w-25 btn-outline backBtn"
+          onClick={() => {
+            Nev("/Cash-Flow/Reports");
+          }}
+        >
+          Back
+        </button>
         <button className="btn w-25 bgColor modalBtn">
           Scenario Comparison
         </button>
@@ -265,7 +273,7 @@ const AssetsAndLiabilities = () => {
             Nev("/Cash-Flow/Reports/CashFlow");
           }}
         >
-         Cash Flow
+          Cash Flow
         </button>
       </div>
     </Container>

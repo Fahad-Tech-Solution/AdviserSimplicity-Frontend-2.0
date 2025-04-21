@@ -358,7 +358,7 @@ const CFAnnuities = (props) => {
       {
         name: "term",
         type: "select",
-        options: yearsIncludedArrayWithExisting,
+        options: yearsIncludedArray,
         placeholder: "Term",
       },
       {

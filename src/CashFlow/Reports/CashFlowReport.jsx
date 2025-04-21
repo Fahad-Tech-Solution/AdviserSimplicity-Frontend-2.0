@@ -1,10 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Formik } from "formik";
-import { openNotificationSuccess } from "../../Components/Assets/Api/Api";
 import CashReport from "./TableReports/CashReport";
 import AssetLiabilitiesReport from "./TableReports/AssetLiabilitiesReport";
 import { scroller } from "react-scroll";
 import CashFlowReportOptions from "../CashFlowOptions/CashFlowReportOptions";
+import { useNavigate } from "react-router-dom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { CashFlowData, defaultUrl, Loading } from "../../Store/Store";
+import {
+  openNotificationSuccess,
+  PostAxios,
+  toCommaAndDollar,
+} from "../../Components/Assets/Api/Api";
 
 const CashFlowReport = () => {
   let initialValues = {
@@ -16,360 +23,12 @@ const CashFlowReport = () => {
 
   let onSubmit = (values, resetForm) => {};
 
-  const [inflow, setInflow] = useState([
-    {
-      type: "Salary Income",
-      year1: "$908,223",
-      year2: "$908,223",
-      year3: "$908,223",
-      year4: "$908,223",
-      year5: "$908,223",
-      year6: "$908,223",
-      year7: "$908,223",
-      year8: "$908,223",
-      year9: "$908,223",
-      year10: "$908,223",
-    },
-    {
-      type: "Other Taxable income",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Net Business Income",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Net Income From Business (Coy & Trust)",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Other Non-Taxable income",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Rental Income",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Investment Income",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Interest Income",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Trust Distributions",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Family Tax Payments (A & B)",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Centrelink Payments",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Child Maintenance Received",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Super Pensions",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Annuity Income",
-      year1: "$12",
-      year2: "$13",
-      year3: "$13",
-      year4: "$14",
-      year5: "$15",
-      year6: "$0",
-    },
-    {
-      type: "Lumpsum Super & Pension W/Drawals",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Investment Redemptions",
-      year1: "$881,232",
-      year2: "$81",
-      year3: "$81",
-      year4: "$81",
-      year5: "$81",
-      year6: "$81",
-    },
-    {
-      type: "Loan Additions",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Other Lumpsum Additions",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Total Inflows",
-      year1: "$881,244",
-      year2: "$13",
-      year3: "$13",
-      year4: "$14",
-      year5: "$15",
-      year6: "$223",
-    },
-  ]);
+  const [inflow, setInflow] = useState([]);
 
-  const [outFlow, setOutFlow] = useState([
-    {
-      type: "General Living Expenses",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Holidays",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Otder Expenses",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Personal Insurances",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Education Expenses",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Child Maintenance Payed",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Other Lumpsum Purchases",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Property Expenses",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Non-Deductible Loan Repayments",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Loan Repayments (Property Loans)",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Investment Loan Repayments",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Additional Purchases of Investments",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Tax",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Concessional Super Contributions",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Non-Concessional Super Contributions",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Total Inflows",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-  ]);
+  const [outFlow, setOutFlow] = useState([]);
 
-  const [surplus, setSurplus] = useState([
-    {
-      type: "Surplus/Deficit",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Home Loan End",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Cash Savings Year End",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-  ]);
+  const [surplus, setSurplus] = useState([]);
+  
 
   const [clientData, setClientData] = useState([
     {
@@ -913,10 +572,6 @@ const CashFlowReport = () => {
       year4: "$0",
       year5: "$0",
       year6: "$0",
-    },
-    {
-      isHeader: true,
-      type: "Liabilities ", // This will act like a sub-header inside tbody
     },
   ]);
 
@@ -1632,7 +1287,7 @@ const CashFlowReport = () => {
 
   const [liabilities, setLiabilities] = useState([
     {
-      type: "Lifestyle Assets",
+      type: "Home Loan",
       existing: "$0",
       year1: "$0",
       year2: "$0",
@@ -1642,7 +1297,7 @@ const CashFlowReport = () => {
       year6: "$0",
     },
     {
-      type: "",
+      type: "Personal Loans",
       existing: "$0",
       year1: "$0",
       year2: "$0",
@@ -1652,7 +1307,7 @@ const CashFlowReport = () => {
       year6: "$0",
     },
     {
-      type: "",
+      type: "Credit Cards",
       existing: "$0",
       year1: "$0",
       year2: "$0",
@@ -1662,7 +1317,7 @@ const CashFlowReport = () => {
       year6: "$0",
     },
     {
-      type: "",
+      type: "Investment Loans",
       existing: "$0",
       year1: "$0",
       year2: "$0",
@@ -1672,7 +1327,7 @@ const CashFlowReport = () => {
       year6: "$0",
     },
     {
-      type: "Other Investments",
+      type: "Investment Property Loans",
       existing: "$0",
       year1: "$0",
       year2: "$0",
@@ -1682,117 +1337,7 @@ const CashFlowReport = () => {
       year6: "$0",
     },
     {
-      type: "Cash",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Term Deposits",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Insurance Bonds",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Investment Properties",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Superannuation",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Account Based Pensions",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Annuity Investments",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Trading Company",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Business Trust",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "SMSF Net Assets",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Family Trust Net Assets",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Total Assets",
+      type: "Total Liabilities",
       existing: "$0",
       year1: "$0",
       year2: "$0",
@@ -1802,6 +1347,117 @@ const CashFlowReport = () => {
       year6: "$0",
     },
   ]);
+
+  let DefaultUrl = useRecoilValue(defaultUrl);
+  let cashFlowData = useRecoilValue(CashFlowData);
+  let [loading, setLoading] = useRecoilState(Loading);
+
+  useEffect(() => {
+    if (
+      typeof cashFlowData !== "object" ||
+      !cashFlowData ||
+      !Object.keys(cashFlowData).length
+    ) {
+      console.warn("cashFlowData is not a valid object or is empty.");
+      return;
+    }
+    FetchReports();
+  }, []);
+
+  let FetchReports = async () => {
+    setLoading(true);
+    // Data is in cashFlowData
+    const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+    try {
+      const response = await PostAxios(`${DefaultUrl}/api/cal/report`, {
+        scenarioID: scenarioObj._id,
+      });
+      if (response) {
+        console.log("Usama", response.REPORTS_Cashflow.surplusDeficit);
+        // console.log(transformInflowsData(response.REPORTS_Cashflow.outflows));
+        setInflow(transformInflowsData(response.REPORTS_Cashflow.inflows));
+        setOutFlow(transformInflowsData(response.REPORTS_Cashflow.outflows));
+        let Surplus = removeNullRows(response.REPORTS_Cashflow.surplusDeficit);
+        setSurplus(transformInflowsData(Surplus));
+        // response.REPORTS_Cashflow;
+      }
+    } catch (error) {
+      console.error("Report Error:", error);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Report Failed",
+        "Something went wrong Fetching Data Please! Try Later."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // function transformInflowsData(inflows = []) {
+  //   const result = inflows.map((row) => {
+  //     const [type, ...values] = row;
+  //     const formatted = { type };
+
+  //     for (let i = 0; i < 10; i++) {
+  //       if (isNaN(values[i])) {
+  //         formatted[`year${i + 1}`] = `${toCommaAndDollar(0)}`;
+  //       } else {
+  //         formatted[`year${i + 1}`] = `${toCommaAndDollar(values[i] || 0)}`;
+  //       }
+  //     }
+
+  //     return formatted;
+  //   });
+
+  //   return result;
+  // }
+
+  function removeNullRows(data) {
+    return data.filter((row) => {
+      // Keep the row if it has any non-null and non-undefined value (excluding the first item)
+      return row
+        .slice(1)
+        .some((value) => value !== null && value !== undefined);
+    });
+  }
+
+  function transformInflowsData(inflows = []) {
+    const result = [];
+    const yearSums = new Array(10).fill(0);
+
+    inflows.forEach((row) => {
+      const [type, ...values] = row;
+      const formatted = { type };
+
+      for (let i = 0; i < 10; i++) {
+        const val = Number(values[i]);
+        const safeVal = isNaN(val) ? 0 : val;
+        formatted[`year${i + 1}`] = toCommaAndDollar(safeVal);
+        yearSums[i] += safeVal;
+      }
+
+      result.push(formatted);
+    });
+
+    // ✅ Update the last row (Total Inflows)
+    const lastRow = result[result.length - 1];
+    // if (lastRow?.type === "Total Inflows") {
+    for (let i = 0; i < 10; i++) {
+      const key = `year${i + 1}`;
+      const currentVal = Number((lastRow[key] || "").replace(/[^0-9.-]+/g, ""));
+
+      // Update only if value is 0 or NaN
+      if (isNaN(currentVal) || currentVal === 0) {
+        lastRow[key] = toCommaAndDollar(yearSums[i]);
+      }
+    }
+    // }
+
+    return result;
+  }
+
+  let Nev = useNavigate();
 
   return (
     <div className="container-fluid  ">
@@ -1863,6 +1519,10 @@ const CashFlowReport = () => {
                   <button
                     className="btn btn-outline w-25 backBtn"
                     onClick={() => {
+                      if (step <= 0) {
+                        // Nev("/Cash-Flow/Reports/");
+                        Nev(-1);
+                      }
                       setStep(step - 1);
                       scroller.scrollTo("topSection", {
                         duration: 500,

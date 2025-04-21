@@ -93,10 +93,18 @@ const CFSMSFBalance = (props) => {
     }
   };
 
-  const yearsIncludedArray = Array.from({ length: 30 }, (_, i) => ({
-    value: (i + 1).toString(),
-    label: `Year ${i + 1}`,
-  }));
+  const yearsIncludedArray = Array.from({ length: 32 }, (_, i) => {
+    if (i === 0) {
+      return {
+        value: "Existing",
+        label: "Existing",
+      };
+    }
+    return {
+      value: (i - 1).toString(),
+      label: `Year ${i - 1}`,
+    };
+  });
 
   const pensionTypeOptions = [
     { value: "Account-Based", label: "Account-Based" },

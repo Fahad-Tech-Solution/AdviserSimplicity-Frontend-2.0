@@ -63,7 +63,7 @@ const RegularContributions = (props) => {
     {
       name: "regularContributions",
       type: "number-toComma",
-      placeholder: "Regular contributions p.a",
+      placeholder: props.modalObject.title + " p.a",
     },
     {
       name: "contributeFromYear",
@@ -107,7 +107,7 @@ const RegularContributions = (props) => {
                       <thead>
                         <tr>
                           <th>Contribution</th>
-                          <th>Regular contributions p.a</th>
+                          <th>{props.modalObject.title} p.a</th>
                           <th>Contribute from Year</th>
                           <th>Contribute Up Until</th>
                           <th>Indexation</th>

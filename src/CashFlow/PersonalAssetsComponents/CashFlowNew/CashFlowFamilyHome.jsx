@@ -233,6 +233,13 @@ const CashFlowFamilyHome = (props) => {
     })),
   ];
 
+  const yearOfPurchase = [
+    ...Array.from({ length: 30 }, (_, i) => ({
+      value: (i + 1).toString(),
+      label: "Year " + (i + 1),
+    })),
+  ];
+
   const estimatedFutureSellingCostOptions = [
     { value: "0.00%", label: "0.00%" },
     { value: "1.00%", label: "1.00%" },
@@ -478,6 +485,10 @@ const CashFlowFamilyHome = (props) => {
                               key: row.key ? `${row.key}_${index}` : row.key,
                               value: row.value ? index + 1 : row.value,
                             }));
+
+                            if (index == 1) {
+                              updatedRowConfig[5].options = yearOfPurchase;
+                            }
 
                             return (
                               <DynamicTableRow

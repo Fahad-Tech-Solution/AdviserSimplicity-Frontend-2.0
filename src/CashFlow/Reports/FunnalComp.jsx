@@ -207,7 +207,11 @@ const FunnalComp = () => {
 
       {/* Navigation Buttons */}
       <div className="row justify-content-around gap-2 my-5">
-        <button className="btn btn-outline w-25 backBtn">Back</button>
+        <button className="btn btn-outline w-25 backBtn"
+        onClick={()=>{
+          Nev("/Cash-Flow/InvestmentTrust")
+        }}
+        >Back</button>
         <button className="btn bgColor w-25 modalBtn">
           Scenario Comparison
         </button>

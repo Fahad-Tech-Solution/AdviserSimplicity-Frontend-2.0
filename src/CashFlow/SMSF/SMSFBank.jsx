@@ -248,7 +248,7 @@ const SMSFBank = (props) => {
       },
       {
         name: "incomeYield",
-        type: "number-toComma",
+        type: "number-toPercent",
         placeholder: "Income Yield",
       },
       {

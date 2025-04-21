@@ -214,8 +214,8 @@ const CashFlowRegularLiving = (props) => {
     "Holidays",
     "Other",
     "Personal Insurance",
-    "Income Protection",
-    "Other Deductible",
+    // "Income Protection",
+    // "Other Deductible",
   ];
 
   const ArrayOfExpenses = optionOfExpenses.map((key) => ({

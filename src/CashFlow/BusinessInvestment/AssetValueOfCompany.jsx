@@ -84,6 +84,13 @@ const AssetValueOfCompany = (props) => {
     };
   });
 
+  const yearsIncludedArray = Array.from({ length: 31 }, (_, i) => {
+    return {
+      value: i.toString(),
+      label: ("Year " + i).toString(),
+    };
+  });
+
   const indexation = Array.from({ length: 21 }, (_, i) => ({
     value: (i * 0.5).toFixed(2) + "%",
     label: (i * 0.5).toFixed(2) + "%",
@@ -106,7 +113,7 @@ const AssetValueOfCompany = (props) => {
         name: "upUntilYear",
         placeholder: "Up Until Year",
         type: "select",
-        options: yearsIncludedArrayWithExisting,
+        options: yearsIncludedArray,
       },
       {
         name: "expectedGrowthRate",
