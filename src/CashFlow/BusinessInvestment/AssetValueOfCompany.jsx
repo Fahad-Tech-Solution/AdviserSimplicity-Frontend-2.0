@@ -107,7 +107,7 @@ const AssetValueOfCompany = (props) => {
         name: "includeFromYear",
         placeholder: "Include From Year",
         type: "select",
-        options: yearsIncludedArrayWithExisting,
+        options: yearsIncludedArray,
       },
       {
         name: "upUntilYear",
@@ -136,7 +136,7 @@ const AssetValueOfCompany = (props) => {
           name: "takeAsCashFromUntilYear",
           placeholder: "Take As Cash From Until Year",
           type: "select",
-          options: yearsIncludedArrayWithExisting,
+          options: yearsIncludedArray,
         },
         {
           name: "indexation",
@@ -167,7 +167,7 @@ const AssetValueOfCompany = (props) => {
         // alert(2323);
 
         OriginalArray.splice(0, 0, {
-          name: "openingValue",
+          name: "openingValue", 
           type: "number-toComma",
           placeholder: "Opening  Value",
         });

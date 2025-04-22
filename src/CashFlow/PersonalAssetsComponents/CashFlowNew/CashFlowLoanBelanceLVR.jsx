@@ -311,13 +311,6 @@ const CashFlowLoanBelanceLVR = (props) => {
         key + "CashFlowLoanBelanceLVR"
       ] = values;
 
-      for (let i = 0; i < numberOfProperties; i++) {
-        if (i != currentIndex) {
-          structuredEntries[i].totalCostBaseObj = {};
-          structuredEntries[i].familyHomeLoanObj = {};
-        }
-      }
-
       updatedData[GrandParentObject.key].client = structuredEntries;
       updatedData[GrandParentObject.key].numberOfProperties =
         numberOfProperties;

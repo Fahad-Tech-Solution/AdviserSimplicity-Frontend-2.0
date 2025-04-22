@@ -346,11 +346,11 @@ export const content = {
           key: "cf_employmentIncome",
           img: Businessman,
         },
-        {
-          title: "Business Income",
-          key: "cf_incomeFromBusiness",
-          img: businessIncomeCase,
-        },
+        // {
+        //   title: "Business Income",
+        //   key: "cf_incomeFromBusiness",
+        //   img: businessIncomeCase,
+        // },
         {
           title: "Other Non-Taxable",
           key: "cf_incomeFromOtherNonTaxable",
