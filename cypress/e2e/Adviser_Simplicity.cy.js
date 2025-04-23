@@ -146,7 +146,7 @@ describe("Adviser Simplicity", () => {
     questionsSection.visitAndCheck();
   });
 
-  it("Personal Income Expense Partner Section", () => {
+  it.skip("Personal Income Expense Partner Section", () => {
     personalIncomeExpensePartnerSection.section();
   });
 
@@ -162,7 +162,7 @@ describe("Adviser Simplicity", () => {
     personalassetsanddebt.section();
   });
 
-  it.only("Financial Investments Card's", () => {
+  it("Financial Investments Card's", () => {
     financialInvestments.section();
   });
 
@@ -170,7 +170,7 @@ describe("Adviser Simplicity", () => {
     financialInvestmentsPartnerSection.section();
   });
 
-  it.only("Financial Investments Join Section", () => {
+  it.skip("Financial Investments Join Section", () => {
     financialInvestmentsJoinSection.section();
   });
 

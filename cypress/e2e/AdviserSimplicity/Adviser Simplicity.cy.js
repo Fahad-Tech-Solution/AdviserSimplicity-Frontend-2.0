@@ -2,10 +2,12 @@
 
 describe("Adviser Simplicity", () => {
   it("Test 1", () => {
-    cy.visit("http://ec2-54-66-20-19.ap-southeast-2.compute.amazonaws.com/");
+    cy.visit(Cypress.env('CashFlowUrl')); 
 
     cy.get(":nth-child(6) > :nth-child(7)").click();
-    cy.get("#popover > :nth-child(3)").click();
+
+    cy.get(':nth-child(6) > :nth-child(7) > :nth-child(1) > div > button').click();
+    cy.get('#popover > :nth-child(3)').click();
 
     cy.get(":nth-child(2) > .btn").click();
 
