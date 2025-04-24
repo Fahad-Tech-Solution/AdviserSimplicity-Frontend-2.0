@@ -1,6 +1,6 @@
 import { Table, Tooltip } from "antd";
 import { Field } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Card, Col, Row } from "react-bootstrap";
 import { FaMagnifyingGlass, FaXmark } from "react-icons/fa6";
 import {
@@ -14,6 +14,7 @@ const CashReport = (props) => {
     setShowFilters,
     fullTableCashFlow,
     clientData,
+    partnerData,
     assetsTestPensionAllowance,
     incomeTestPensionsAllowances,
     allowance,
@@ -24,6 +25,7 @@ const CashReport = (props) => {
     familyTaxBenefitPartA,
     values,
     setFieldValue,
+    handleChange,
   } = props;
 
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
@@ -62,29 +64,70 @@ const CashReport = (props) => {
           dataIndex: `year${year}`,
           key: String(year),
           align: "left",
-          sorter: (a, b) =>
-            a[`year${year}`]?.replace(/[^0-9.-]+/g, "") -
-            b[`year${year}`]?.replace(/[^0-9.-]+/g, ""),
-          render: (_, row) => (row.isHeader ? { props: { colSpan: 0 } } : _),
+          render: (text, record) => {
+            const isParentRow =
+              record.children && Array.isArray(record.children);
+
+            return (
+              <div
+                style={{
+                  fontWeight: isParentRow ? "bold" : "normal",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  fontFamily: '"Inter", sans-serif',
+                }}
+              >
+                {text}
+              </div>
+            );
+          },
         };
       }
-
       return {
         title: String(year) + " (" + (currentYear + i) + ")",
         dataIndex: `year${year}`,
         key: String(year),
-        sorter: (a, b) =>
-          a[`year${year}`]?.replace(/[^0-9.-]+/g, "") -
-          b[`year${year}`]?.replace(/[^0-9.-]+/g, ""),
-        render: (_, row) => (row.isHeader ? { props: { colSpan: 0 } } : _),
+        render: (text, record) => {
+          const isParentRow = record.children && Array.isArray(record.children);
+
+          return (
+            <div
+              style={{
+                fontWeight: isParentRow ? "bold" : "normal",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                fontFamily: '"Inter", sans-serif',
+              }}
+            >
+              {text}
+            </div>
+          );
+        },
       };
     }),
   ]);
 
-  const applyFilter = (values) => {
+  const applyFilter = (values, currentInput) => {
     if (values.yearFrom !== "" && values.yearTo !== "") {
-      const yearFrom = parseInt(values.yearFrom, 10);
-      const yearTo = parseInt(values.yearTo, 10);
+      const yearFrom =
+        currentInput.name === "yearFrom"
+          ? parseInt(currentInput.value, 10)
+          : currentInput.name === "yearTo"
+          ? parseInt(currentInput.value, 10) - 5 < 1
+            ? 1
+            : parseInt(currentInput.value, 10) - 5
+          : parseInt(values.yearFrom, 10);
+
+      const yearTo =
+        currentInput.name === "yearFrom"
+          ? parseInt(currentInput.value, 10) + 5 > 10 && currentInput.value < 10
+            ? 10
+            : parseInt(currentInput.value, 10) + 5
+          : currentInput.name === "yearTo"
+          ? parseInt(currentInput.value, 10)
+          : parseInt(values.yearTo, 10);
       // let currentYearWithFilter = currentYear + yearFrom;
 
       if (!isNaN(yearFrom) && !isNaN(yearTo) && yearFrom <= yearTo) {
@@ -97,18 +140,48 @@ const CashReport = (props) => {
               dataIndex: `year${year}`, // You may need to match this with your data source
               key: year.toString(),
               align: "left",
-              sorter: (a, b) =>
-                (a[`year${year}`]?.replace?.(/[^0-9.-]+/g, "") || 0) -
-                (b[`year${year}`]?.replace?.(/[^0-9.-]+/g, "") || 0),
+              render: (text, record) => {
+                const isParentRow =
+                  record.children && Array.isArray(record.children);
+
+                return (
+                  <div
+                    style={{
+                      fontWeight: isParentRow ? "bold" : "normal",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      fontFamily: '"Inter", sans-serif',
+                    }}
+                  >
+                    {text}
+                  </div>
+                );
+              },
             });
           } else {
             dynamicYearColumns.push({
               title: year.toString() + " (" + (currentYear + year) + ")",
               dataIndex: `year${year}`, // You may need to match this with your data source
               key: year.toString(),
-              sorter: (a, b) =>
-                (a[`year${year}`]?.replace?.(/[^0-9.-]+/g, "") || 0) -
-                (b[`year${year}`]?.replace?.(/[^0-9.-]+/g, "") || 0),
+              render: (text, record) => {
+                const isParentRow =
+                  record.children && Array.isArray(record.children);
+
+                return (
+                  <div
+                    style={{
+                      fontWeight: isParentRow ? "bold" : "normal",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      fontFamily: '"Inter", sans-serif',
+                    }}
+                  >
+                    {text}
+                  </div>
+                );
+              },
             });
           }
         }
@@ -158,10 +231,26 @@ const CashReport = (props) => {
     }
   };
 
+  useEffect(() => {
+    setFieldValue("category", "Cashflow"); // Set default value for category
+  }, []);
+
   return (
     <React.Fragment>
       <div className="d-flex flex-row justify-content-between align-items-center">
-        <h2 className="text-green mt-3 fw-bold">Cash Flow</h2>
+        <h2 className="text-green mt-3 fw-bold">
+          Cash Flow&nbsp;{" "}
+          {(values.category === "Client Tax" ||
+            values.category === "Partner Tax") && (
+            <span className="text-green fw-bold fs-5">
+              (
+              {RenderName(
+                values.category === "Client Tax" ? "client" : "partner"
+              )}
+              's Tax Position)
+            </span>
+          )}
+        </h2>
         <span
           role="button"
           className="text-green"
@@ -172,8 +261,11 @@ const CashReport = (props) => {
       </div>
       {showFilters && (
         <Card className="my-4 shadow-sm p-3 rounded">
-          <Row gutter={16}>
-            <Col md={3}>
+          <Row
+            gutter={16}
+            className="justify-content-around align-items-center"
+          >
+            <Col md={6}>
               <label htmlFor="category">Category:</label>
               <Field
                 as="select"
@@ -197,15 +289,24 @@ const CashReport = (props) => {
                 onChange={(e) => {
                   const newYearFrom = parseInt(e.target.value);
                   setFieldValue("yearFrom", newYearFrom); // update yearFrom
-                  setFieldValue("yearTo", newYearFrom + 5); // update yearTo
+                  setFieldValue(
+                    "yearTo",
+                    parseInt(newYearFrom, 10) + 5 > 10 && newYearFrom < 10
+                      ? 10
+                      : parseInt(newYearFrom, 10) + 5
+                  ); // update yearFrom
+
+                  applyFilter(values, e.target); // apply filter with new yearFrom
                 }}
               >
                 <option value="">Select</option>
-                {Array.from({ length: 30 }, (_, i) => (
-                  <option key={i + 1} value={i + 1}>
-                    {i + 1}
-                  </option>
-                ))}
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30].map(
+                  (value) => (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  )
+                )}
               </Field>
             </Col>
             <Col md={3}>
@@ -214,20 +315,33 @@ const CashReport = (props) => {
                 as="select"
                 name="yearTo"
                 className="form-select inputDesignDoubleInput"
+                onChange={(e) => {
+                  handleChange(e);
+                  const newYearTo = parseInt(e.target.value, 10);
+                  setFieldValue(
+                    "yearFrom",
+                    parseInt(newYearTo, 10) - 5 < 1
+                      ? 1
+                      : parseInt(newYearTo, 10) - 5
+                  ); // update yearFrom
+
+                  applyFilter(values, e.target);
+                }}
               >
                 <option value="">Select</option>
-                {Array.from({ length: 10 }, (_, i) => {
-                  const year = parseInt(values.yearFrom || "1") + i;
-                  if (year <= 30)
-                    return (
-                      <option key={year} value={year}>
-                        {year}
-                      </option>
-                    );
-                })}
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30]
+                  .filter((year) => {
+                    const fromYear = parseInt(values.yearFrom || "1");
+                    return year >= fromYear && year <= fromYear + 30;
+                  })
+                  .map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
               </Field>
             </Col>
-            <Col md={3}>
+            <Col md={3} className="d-none">
               <Button
                 className="modalBtn mt-4 w-100"
                 onClick={() => {
@@ -264,15 +378,10 @@ const CashReport = (props) => {
         values.category === "Partner Tax") && (
         <>
           <div className="mt-4 porsition-relative">
-            <h4 className="text-green fw-bold">
-              {RenderName(
-                values.category === "Client Tax" ? "client" : "partner"
-              )}
-              's Tax Position
-            </h4>
-
             <Table
-              dataSource={clientData} // 👈 Removes the last row from the table
+              dataSource={
+                values.category === "Partner Tax" ? partnerData : clientData
+              } // 👈 Removes the last row from the table
               columns={columns}
               scroll={{ x: "max-content" }}
               pagination={{

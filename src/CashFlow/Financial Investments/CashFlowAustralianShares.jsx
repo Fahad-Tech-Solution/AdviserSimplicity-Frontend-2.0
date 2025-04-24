@@ -53,6 +53,7 @@ const CashFlowAustralianShares = (props) => {
     "Other Investments",
     "SMSF Platform Investment",
     "SMSF Australian Shares",
+    "SMSF",
     "Family Trust Australian Shares",
     "Family Trust Platform Investment",
     "Family Trust",

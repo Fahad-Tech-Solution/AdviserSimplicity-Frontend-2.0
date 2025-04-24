@@ -1737,3 +1737,14 @@ label {
   color: white;
   font-weight: 700;
 }
+
+.reportSection p,
+.reportSection h1,
+.reportSection h2,
+.reportSection h3,
+.reportSection h4,
+.reportSection h5,
+.reportSection h6 .reportSection span,
+.reportSection label {
+  font-family: "Inter", sans-serif !important;
+}

@@ -8,11 +8,17 @@ import { useNavigate } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { CashFlowData, defaultUrl, Loading } from "../../Store/Store";
 import {
+  createTableSection,
+  createTaxSection,
+  extractIndexesByType,
   openNotificationSuccess,
   PostAxios,
+  removeNullRows,
   toCommaAndDollar,
+  transformInflowsData,
 } from "../../Components/Assets/Api/Api";
 import { ConfigProvider } from "antd";
+import { content } from "../../Content/Content";
 
 const CashFlowReport = () => {
   let initialValues = {
@@ -32,377 +38,8 @@ const CashFlowReport = () => {
 
   const [surplus, setSurplus] = useState([]);
 
-  const [clientData, setClientData] = useState([
-    {
-      type: "Age",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Gross Employment Income",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Other taxable Income",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Investment Income(Shares & Mgd Funds)",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Interest Income",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Other Investment Income",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Franking Credits",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Capital Gains Tax",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Rental Income",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Net Trust Distribution",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Centrelink",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Annuity Income",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Lifetime Pension",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Super Pension",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Total Assessable income",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Deductible Superannuation Contributions",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Other Deductible Expenses",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Deductible interest Costs",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Income Protection Insurance",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Annuity Deductible Amount",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Lifetime Pension",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Tax Free Pension Amount",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Total Allowable Deductions",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Total Taxable Income",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Basic Tax payable",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Budget Repair Levy",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Medicare levy",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Medicare Levy Surcharge",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Total Tax payable",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "15% Pension Rebate",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "10% Pension Rebate",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Spouse Super Rebate",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "SAPTO",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "30% Rebate for insurance Bonds",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "LITO",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Total Rebates",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Franking Credits",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Total Tax payable",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Reportable Fringe Benefits",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Unused SAPTO",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Additional Contributions Tax",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-  ]);
+  const [clientData, setClientData] = useState([]);
+  const [partnerData, setPartnerData] = useState([]);
 
   const [asset, setAssets] = useState([
     {
@@ -1366,74 +1003,54 @@ const CashFlowReport = () => {
     FetchReports();
   }, []);
 
-  let FetchReports = async () => {
+  const FetchReports = async () => {
     setLoading(true);
-    // Data is in cashFlowData
     const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+
     try {
       const response = await PostAxios(`${DefaultUrl}/api/cal/report`, {
         scenarioID: scenarioObj._id,
       });
+
       if (response) {
-        // console.log("Usama", response.REPORTS_Cashflow.surplusDeficit);
-        // console.log(transformInflowsData(response.REPORTS_Cashflow.outflows));
-        let InFlow = transformInflowsData(response.REPORTS_Cashflow.inflows);
-        let OutFlow = transformInflowsData(response.REPORTS_Cashflow.outflows);
-        let Surplus = transformInflowsData(
+        const InFlow = transformInflowsData(response.REPORTS_Cashflow.inflows);
+        const OutFlow = transformInflowsData(
+          response.REPORTS_Cashflow.outflows
+        );
+        const Surplus = transformInflowsData(
           removeNullRows(response.REPORTS_Cashflow.surplusDeficit)
         );
 
-        let fullTable = [
-          {
-            key: "1",
-            type: "Total Inflows",
-            children: InFlow,
-            ...Array.from({ length: 30 }, (_, i) => i + 1).reduce(
-              (acc, year) => {
-                acc[`year${year}`] =
-                  InFlow[InFlow.length - 1]?.[`year${year}`] || "$0";
-                return acc;
-              },
-              {}
-            ),
-          },
-          {
-            key: "2",
-            type: "Total Outflows",
-            children: OutFlow,
-            ...Array.from({ length: 30 }, (_, i) => i + 1).reduce(
-              (acc, year) => {
-                acc[`year${year}`] =
-                  OutFlow[OutFlow.length - 1]?.[`year${year}`] || "$0";
-                return acc;
-              },
-              {}
-            ),
-          },
-          {
-            key: "3",
-            type: "Total Surplus",
-            children: Surplus,
-            ...Array.from({ length: 30 }, (_, i) => i + 1).reduce(
-              (acc, year) => {
-                acc[`year${year}`] =
-                  Surplus[Surplus.length - 1]?.[`year${year}`] || "$0";
-                return acc;
-              },
-              {}
-            ),
-          },
+        const client_Tax = transformInflowsData(
+          removeNullRows(response.REPORTS_Tax_Summary.clientTaxPosition)
+        );
+
+        const partner_Tax = transformInflowsData(
+          removeNullRows(response.REPORTS_Tax_Summary.partnerTaxPosition)
+        );
+
+        const fullTable = [
+          createTableSection("1", "Total Inflows", InFlow, true),
+          createTableSection("2", "Total Outflows", OutFlow, true),
+          createTableSection("3", "Total Surplus", Surplus),
         ];
 
-        console.log("Usama", fullTable);
+        let client_Tax_SessionObj =
+          content.cashFlowReport[0].reportsArray.clientTaxPosition;
+
+        const clinet_Tax_Table = createTaxSection(
+          client_Tax,
+          client_Tax_SessionObj
+        );
+
+        const partner_Tax_Table = createTaxSection(
+          partner_Tax,
+          client_Tax_SessionObj
+        );
 
         setFullTableCashFlow(fullTable);
-
-        // setInflow();
-        // setOutFlow();
-        // let Surplus = ;
-        // setSurplus(transformInflowsData(Surplus));
-        // response.REPORTS_Cashflow;
+        setClientData(clinet_Tax_Table);
+        setPartnerData(partner_Tax_Table);
       }
     } catch (error) {
       console.error("Report Error:", error);
@@ -1447,50 +1064,6 @@ const CashFlowReport = () => {
       setLoading(false);
     }
   };
-
-  function removeNullRows(data) {
-    return data.filter((row) => {
-      // Keep the row if it has any non-null and non-undefined value (excluding the first item)
-      return row
-        .slice(1)
-        .some((value) => value !== null && value !== undefined);
-    });
-  }
-
-  function transformInflowsData(inflows = []) {
-    const result = [];
-    const yearSums = new Array(10).fill(0);
-
-    inflows.forEach((row) => {
-      const [type, ...values] = row;
-      const formatted = { type };
-
-      for (let i = 0; i < 30; i++) {
-        const val = Number(values[i]);
-        const safeVal = isNaN(val) ? 0 : val;
-        formatted[`year${i + 1}`] = toCommaAndDollar(safeVal);
-        yearSums[i] += safeVal;
-      }
-
-      result.push(formatted);
-    });
-
-    // ✅ Update the last row (Total Inflows)
-    const lastRow = result[result.length - 1];
-    // if (lastRow?.type === "Total Inflows") {
-    for (let i = 0; i < 10; i++) {
-      const key = `year${i + 1}`;
-      const currentVal = Number((lastRow[key] || "").replace(/[^0-9.-]+/g, ""));
-
-      // Update only if value is 0 or NaN
-      if (isNaN(currentVal) || currentVal === 0) {
-        lastRow[key] = toCommaAndDollar(yearSums[i]);
-      }
-    }
-    // }
-
-    return result;
-  }
 
   let Nev = useNavigate();
 
@@ -1523,6 +1096,7 @@ const CashFlowReport = () => {
                         setShowFilters={setShowFilters}
                         fullTableCashFlow={fullTableCashFlow}
                         clientData={clientData}
+                        partnerData={partnerData}
                         assetsTestPensionAllowance={assetsTestPensionAllowance}
                         incomeTestPensionsAllowances={
                           incomeTestPensionsAllowances
@@ -1534,6 +1108,8 @@ const CashFlowReport = () => {
                         familyTaxBenefitPartA={familyTaxBenefitPartA}
                         values={values}
                         setFieldValue={setFieldValue}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
                       />
                     </>
                   )}
@@ -1560,8 +1136,21 @@ const CashFlowReport = () => {
                       className="btn btn-outline w-25 backBtn"
                       onClick={() => {
                         if (step <= 0) {
-                          // Nev("/Cash-Flow/Reports/");
-                          Nev(-1);
+                          //  Here, we need a way to check if Nev(-1) is empty.
+                          //  The method to check if Nev(-1) is empty is not standard and depends on how Nev function works
+                          //  I am making an assumption that Nev is a function that changes the route, similar to react-router-dom
+                          //  Assumming Nev returns the route
+                          const previousRoute = Nev(-1); // Get the previous route
+                          if (
+                            previousRoute === undefined ||
+                            previousRoute === null ||
+                            previousRoute === ""
+                          ) {
+                            // If Nev(-1) is undefined, null, or an empty string, go to '/Cash-Flow/Reports/'
+                            Nev("/Cash-Flow/Reports/");
+                          } else {
+                            Nev(-1);
+                          }
                         }
                         setStep(step - 1);
                         scroller.scrollTo("topSection", {

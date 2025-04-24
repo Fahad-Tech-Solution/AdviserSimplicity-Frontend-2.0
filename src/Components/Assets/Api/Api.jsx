@@ -320,6 +320,75 @@ const createStructuredEntries = (values, schemaType, numberOfProperties) => {
   });
 };
 
+const generateYearData = (source, yearCount = 30) => {
+  return Array.from({ length: yearCount }, (_, i) => i + 1).reduce(
+    (acc, year) => {
+      acc[`year${year}`] = source?.[`year${year}`] || "$0";
+      return acc;
+    },
+    {}
+  );
+};
+
+const createTableSection = (key, label, data, excludeLast = false) => {
+  const lastItem = data[data.length - 1];
+  const children = excludeLast ? data.slice(0, -1) : data.slice(1); // fallback to slice(1) for Surplus
+
+  return {
+    key,
+    type: label,
+    children,
+    ...generateYearData(lastItem),
+  };
+};
+
+const createTaxSection = (data, taxHierarchy) => {
+  return taxHierarchy.map((section, index) => {
+    const childrenData = section.children
+      .map((childLabel) => data.find((item) => item.type === childLabel))
+      .filter(Boolean); // remove undefined if a label didn't match
+
+    const sectionData = {
+      key: `${index + 1}`,
+      type: section.parent,
+      ...generateYearData({ type: section.parent }),
+    };
+
+    if (childrenData.length > 0) {
+      sectionData.children = childrenData; // Add children only if it's not empty
+    }
+
+    return sectionData;
+  });
+};
+
+const removeNullRows = (data) =>
+  data.filter((row) => row.slice(1).some((val) => val != null));
+
+const transformInflowsData = (inflows = []) =>
+  inflows.map(([type, ...values]) => {
+    const formatted = { type };
+    for (let i = 0; i < 30; i++) {
+      const val = Number(values[i]);
+      formatted[`year${i + 1}`] = toCommaAndDollar(isNaN(val) ? 0 : val);
+    }
+    return formatted;
+  });
+
+const extractIndexesByType = (dataArray, typeArray) =>
+  dataArray.reduce((acc, item, i) => {
+    if (typeArray.includes(item.type)) acc.push(i);
+    return acc;
+  }, []);
+
+const sliceDataArrayRange = (arr, start, end) => {
+  if (start < 0 || end >= arr.length || start > end) {
+    console.error("Invalid slice range");
+    return [];
+  }
+  return arr.slice(start, end + 1);
+};
+
 export {
   DeleteAxios,
   GetAxios,
@@ -340,4 +409,11 @@ export {
   validateName,
   ConvertDate,
   createStructuredEntries,
+  generateYearData,
+  createTableSection,
+  createTaxSection,
+  removeNullRows,
+  transformInflowsData,
+  extractIndexesByType,
+  sliceDataArrayRange,
 };

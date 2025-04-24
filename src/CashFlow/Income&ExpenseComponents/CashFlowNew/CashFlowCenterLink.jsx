@@ -69,8 +69,20 @@ const CashFlowCenterLink = (props) => {
         if (!data || !Object.keys(data).length) return;
         const fields = {
           includeFromYear: data.includeFromYear || 1,
-          allowCarerAllowance: data.allowCarerAllowance || "",
-          isClientRenting: data.isClientRenting || "",
+          allowCarerAllowance:
+            data.allowCarerAllowance !== undefined
+              ? data.allowCarerAllowance
+              : data.paymentType.includes("Carer Allowance")
+              ? "Yes"
+              : "No",
+
+          isClientRenting:
+            data.isClientRenting !== undefined
+              ? data.isClientRenting
+              : data.paymentType.includes("Rent Assistance")
+              ? "Yes"
+              : "No",
+
           centrelinkPayment: data.centrelinkPayment || "",
           applySeparatedByIllness: data.applySeparatedByIllness || "",
         };
@@ -90,6 +102,7 @@ const CashFlowCenterLink = (props) => {
 
         // Update client-related fields
         if (incomeFromCentrelink.owner.includes("client")) {
+          console.log(incomeFromCentrelink.client, "client data");
           updateFields(incomeFromCentrelink.client, "client");
         }
 
@@ -249,7 +262,7 @@ const CashFlowCenterLink = (props) => {
   const rowConfig = [
     {
       name: "centrelinkPayment",
-      type: "select-multi",
+      type: "select",
       options: paymentType,
     },
     {

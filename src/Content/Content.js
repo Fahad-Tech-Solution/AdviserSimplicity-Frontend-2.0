@@ -645,6 +645,73 @@ export const content = {
       icon: "FaMoneyCheckDollar",
       stepNumber: 0,
       key: "CashFlow_Income_And_Expenses",
+      reportsArray: {
+        clientTaxPosition: [
+          {
+            parent: "Total Assessable income",
+            children: [
+              "Gross Employment Income",
+              "Other taxable Income",
+              "Investment Income(Shares & Mgd Funds)",
+              "Interest Income",
+              "Other Investment Income",
+              "Franking Credits",
+              "Capital Gains Tax",
+              "Rental Income",
+              "Net Trust Distribution",
+              "Centrelink",
+              "Annuity Income",
+              "Lifetime Pension",
+              "Super Pension",
+            ],
+          },
+          {
+            parent: "Total Allowable Deductions",
+            children: [
+              "Deductible Superannuation Contributions",
+              "Other Deductible Expenses",
+              "Deductible interest Costs",
+              "Income Protection Insurance",
+              "Annuity Deductible Amount",
+              "Lifetime Pension",
+              "Tax Free Pension Amount",
+            ],
+          },
+          {
+            parent: "Total Taxable Income",
+            children: [], // no child, appears standalone
+          },
+          {
+            parent: "Total Tax payable",
+            children: [
+              "Basic Tax payable",
+              "Budget Repair Levy",
+              "Medicare levy",
+              "Medicare Levy Surcharge",
+            ],
+          },
+          {
+            parent: "Total Rebates",
+            children: [
+              "15% Pension Rebate",
+              "10% Pension Rebate",
+              "Spouse Super Rebate",
+              "SAPTO",
+              "30% Rebate for insurance Bonds",
+              "LITO",
+            ],
+          },
+          {
+            parent: "Total Tax payable", // repeated title, distinguish if needed
+            children: [
+              "Franking Credits",
+              "Reportable Fringe Benefits",
+              "Unused SAPTO",
+              "Additional Contributions Tax",
+            ],
+          },
+        ],
+      },
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
     {

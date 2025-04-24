@@ -146,6 +146,7 @@ const CashFlowInvestmentsProperty = (props) => {
         loanBalanceObj: values[`loanBalanceObj_${i}`] || "",
         rentalIncome: values[`rentalIncome_${i}`] || "",
         sellPropertyInYear: values[`sellPropertyInYear_${i}`] || "",
+        convertToPPRYear: values[`convertToPPRYear_${i}`] || "",
         estimatedFutureSellingCost:
           values[`estimatedFutureSellingCost_${i}`] || "",
       };
