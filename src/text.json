@@ -1,160 +1,34 @@
-{
-    "_id": "679a06bf5d7bdb00c6cee4ea",
-    "scenarioFK": "678e0aeba9b6ea3b7985d682",
-    "streetAddress": "FTS ",
-    "valueOfProperty": "$24",
-    "clientOwnership": "23.00%",
-    "partnerOwnership": "77.00%",
-    "yearOfPurchase": "1",
-    "totalCostBaseObj": {
-        "stampDutyType": "Standard Rates",
-        "stampDutyValue": "$1,675",
-        "otherPurchaseCosts": "$100",
-        "costBaseExisting": "$567",
-        "totalCostBase": "$1,799"
-    },
-    "expectedGrowthRate": "2.50%",
-    "loanBalance": "Yes",
-    "loanBalanceObj": {
-        "loanBalance": "$19",
-        "loanType": "I/Only",
-        "loanTerm": "19",
-        "initialInterestRatePA": "22.00%",
-        "deductibleInterest": "33.00%",
-        "minimumRepaymentsPA": "$5",
-        "actualAnnualRepayments": "$105,144",
-        "repayLoanInYear": "No",
-        "interestOnlyPeriod": "10",
-        "applyMinimumRepaymentsOR": "Yes",
-        "loanBalanceCashFlowLoanBelanceLVR": {
-            "LVR": "77.00%",
-            "loanAmount": "$987",
-            "loanBalance": "$19",
-            "clientOwnership": "23.00%",
-            "partnerOwnership": "77.00%"
-        }
-    },
-    "rentalIncome": "No",
-    "sellPropertyInYear": "No",
-    "convertToPPRYear": "No",
-    "clientTotal": "$1,045,391",
-    "partnerTotal": "$92,320,033",
-    "__v": 9,
-    "estimatedFutureSellingCost": "2.50%",
-    "state": "ACT",
-    "client": [
-        {
-            "streetAddress": "FTS ",
-            "clientOwnership": "60.00%",
-            "partnerOwnership": "40.00%",
-            "valueOfProperty": "$12,312",
-            "state": "TAS",
-            "yearOfPurchase": "11",
-            "totalCostBase": "$0",
-            "totalCostBaseObj": {
-                "stampDutyType": "Standard Rates",
-                "stampDutyValue": "$620",
-                "otherPurchaseCosts": "$12",
-                "costBaseExisting": "$12",
-                "totalCostBase": "$12,944"
-            },
-            "expectedGrowthRate": "100.00%",
-            "loanBalance": "Yes",
-            "loanBalanceObj": {
-                "loanTerm": "28",
-                "repayLoanInYear": "10",
-                "deductibleInterest": "100.00%",
-                "applyMinimumRepaymentsOR": "No",
-                "loanBalance": "$123",
-                "loanBalanceCashFlowLoanBelanceLVR": {
-                    "LVR": "12.00%",
-                    "loanAmount": "$123",
-                    "loanBalance": "$1,477",
-                    "clientOwnership": "60.00%",
-                    "partnerOwnership": "40.00%"
-                },
-                "loanType": "I/Only",
-                "interestOnlyPeriod": "8",
-                "initialInterestRatePA": "100.00%",
-                "minimumRepaymentsPA": "$1,477",
-                "actualAnnualRepayments": "$123"
-            },
-            "rentalIncome": "Yes",
-            "sellPropertyInYear": "10",
-            "estimatedFutureSellingCost": "2.50%"
-        },
-        {
-            "streetAddress": "Gut Pag",
-            "clientOwnership": "78.00%",
-            "partnerOwnership": "22.00%",
-            "valueOfProperty": "$123,189",
-            "state": "NT",
-            "yearOfPurchase": "2",
-            "totalCostBase": "$0",
-            "totalCostBaseObj": {
-                "stampDutyType": "Standard Rates",
-                "stampDutyValue": "",
-                "otherPurchaseCosts": "$123",
-                "costBaseExisting": "$123",
-                "totalCostBase": ""
-            },
-            "expectedGrowthRate": "100.00%",
-            "loanBalance": "Yes",
-            "loanBalanceObj": {
-                "loanTerm": "30",
-                "repayLoanInYear": "15",
-                "deductibleInterest": "100%",
-                "applyMinimumRepaymentsOR": "Yes",
-                "loanBalanceCashFlowLoanBelanceLVR": {
-                    "loanAmount": "$92,221,112",
-                    "LVR": "88.00%"
-                },
-                "loanBalance": "$92,221,112",
-                "loanType": "P & I",
-                "interestOnlyPeriod": "15",
-                "initialInterestRatePA": "99.00%",
-                "actualAnnualRepayments": "$5,538"
-            },
-            "rentalIncome": "Yes",
-            "sellPropertyInYear": "14",
-            "estimatedFutureSellingCost": "4.00%"
-        },
-        {
-            "streetAddress": "Gul Bag",
-            "clientOwnership": "21.00%",
-            "partnerOwnership": "79.00%",
-            "valueOfProperty": "$909,890",
-            "state": "VIC",
-            "yearOfPurchase": "5",
-            "totalCostBase": "$0",
-            "totalCostBaseObj": {
-                "stampDutyType": "Standard Rates",
-                "stampDutyValue": "",
-                "otherPurchaseCosts": "$111",
-                "costBaseExisting": "$11,111,111",
-                "totalCostBase": ""
-            },
-            "expectedGrowthRate": "99.00%",
-            "loanBalance": "Yes",
-            "loanBalanceObj": {
-                "loanTerm": "27",
-                "repayLoanInYear": "15",
-                "deductibleInterest": "100.00%",
-                "applyMinimumRepaymentsOR": "Yes",
-                "loanBalanceCashFlowLoanBelanceLVR": {
-                    "loanAmount": "$98,798",
-                    "LVR": "12.00%"
-                },
-                "loanBalance": "$98,798",
-                "loanType": "I/Only",
-                "interestOnlyPeriod": "29",
-                "initialInterestRatePA": "100.00%",
-                "actualAnnualRepayments": "$121"
-            },
-            "rentalIncome": "No",
-            "sellPropertyInYear": "17",
-            "estimatedFutureSellingCost": "4.50%"
-        }
+[
+    [
+        "Aiden Smith's Centrelink Eligibility"
     ],
-    "numberOfProperties": 3
-}
+    [
+        "Age"
+    ],
+    [
+        "Payment Amount"
+    ],
+    [
+        "Asset Test Reduction "
+    ],
+    [
+        "Under Asset Test"
+    ],
+    [
+        "Income Test Reduction "
+    ],
+    [
+        "Under Income Test"
+    ],
+    [
+        "Actual Payment"
+    ]
+
+    
+    
+    
+    
+    
+    
+
+]

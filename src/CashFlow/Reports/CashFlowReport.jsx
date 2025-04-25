@@ -14,6 +14,7 @@ import {
   openNotificationSuccess,
   PostAxios,
   removeNullRows,
+  removeZeroRows,
   toCommaAndDollar,
   transformInflowsData,
 } from "../../Components/Assets/Api/Api";
@@ -33,389 +34,21 @@ const CashFlowReport = () => {
   const [fullTableCashFlow, setFullTableCashFlow] = useState([]);
 
   const [inflow, setInflow] = useState([]);
-
   const [outFlow, setOutFlow] = useState([]);
-
   const [surplus, setSurplus] = useState([]);
 
   const [clientData, setClientData] = useState([]);
   const [partnerData, setPartnerData] = useState([]);
+  const [allowance, setAllowance] = useState([]);
+  const [assetsTestPensionAllowance, setAssetsTestPensionAllowance] = useState(
+    []
+  );
+  const [clientIncome, setClientIncome] = useState([]);
+  const [partnerIncome, setPartnerIncome] = useState([]);
+  const [clientPayment, setClientPayment] = useState([]);
+  const [partnerPayment, setPartnerPayment] = useState([]);
 
-  const [asset, setAssets] = useState([
-    {
-      type: "Lifestyle Assets",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Family Home",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Direct Share Portfolios",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Managed Funds",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Other Investments",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Cash",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Term Deposits",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Insurance Bonds",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Investment Properties",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Superannuation",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Account Based Pensions",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Annuity Investments",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Trading Company",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Business Trust",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "SMSF Net Assets",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Family Trust Net Assets",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Total Assets",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-  ]);
-
-  const [assetsTestPensionAllowance, setAssetsTestPensionAllowance] = useState([
-    {
-      type: "Personal Assets",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Lynda Financial Assets",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "abc Financial Assets",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Lynda Superannuation",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "abc Superannuation",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Lynda Pension Assets",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "abc Pension Assets",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Lynda Annuity",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "abc Annuity",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Rental Properties",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Trading Company Net Assets",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Business Trust Net Assets",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Family Trust Net Assets",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Investment Loans",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Investment Property Loan",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Total Assets",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Lower - Pensions",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Lower - Allowance",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Upper",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Excess Assets",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-  ]);
+  const [asset, setAssets] = useState([]);
 
   const [incomeTestPensionsAllowances, setIncomeTestPensionsAllowances] =
     useState([
@@ -621,235 +254,6 @@ const CashFlowReport = () => {
       },
     ]);
 
-  const [allowance, setAllowance] = useState([
-    {
-      type: "Total Income",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Lower",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Upper",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Partner Balance over",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-  ]);
-
-  const [clientIncome, setClientIncome] = useState([
-    {
-      type: "Deemed Income",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Net Rental Income",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Trust Distributions & Company Income",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Salary Income",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Other Income",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Annuity Income",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Pension Income",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Less",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Deductible Pension Income",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Total Income",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-  ]);
-
-  const [clientPayment, setClientPayment] = useState([
-    {
-      type: "Client",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Age",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Payment Amount",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Asset Test Reduction",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Under Asset Test",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Income Test Reduction",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Under Income Test",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Actual Payment",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-  ]);
-
   const [familyTaxBenefitPartA, setFamilyTaxBenefitPartA] = useState([
     {
       type: "Total Maximum rate of FTB- Part A",
@@ -988,18 +392,9 @@ const CashFlowReport = () => {
   ]);
 
   let DefaultUrl = useRecoilValue(defaultUrl);
-  let cashFlowData = useRecoilValue(CashFlowData);
   let [loading, setLoading] = useRecoilState(Loading);
 
   useEffect(() => {
-    if (
-      typeof cashFlowData !== "object" ||
-      !cashFlowData ||
-      !Object.keys(cashFlowData).length
-    ) {
-      console.warn("cashFlowData is not a valid object or is empty.");
-      return;
-    }
     FetchReports();
   }, []);
 
@@ -1013,20 +408,78 @@ const CashFlowReport = () => {
       });
 
       if (response) {
-        const InFlow = transformInflowsData(response.REPORTS_Cashflow.inflows);
+        console.log("Report Response:", response);
+
+        const InFlow = transformInflowsData(
+          removeZeroRows(response.REPORTS_Cashflow.inflows)
+        );
         const OutFlow = transformInflowsData(
-          response.REPORTS_Cashflow.outflows
+          removeZeroRows(response.REPORTS_Cashflow.outflows)
         );
         const Surplus = transformInflowsData(
-          removeNullRows(response.REPORTS_Cashflow.surplusDeficit)
+          removeZeroRows(
+            removeNullRows(response.REPORTS_Cashflow.surplusDeficit)
+          )
         );
 
         const client_Tax = transformInflowsData(
-          removeNullRows(response.REPORTS_Tax_Summary.clientTaxPosition)
+          removeZeroRows(
+            removeNullRows(response.REPORTS_Tax_Summary.clientTaxPosition)
+          )
         );
 
         const partner_Tax = transformInflowsData(
-          removeNullRows(response.REPORTS_Tax_Summary.partnerTaxPosition)
+          removeZeroRows(
+            removeNullRows(response.REPORTS_Tax_Summary.partnerTaxPosition)
+          )
+        );
+
+        const CenterlinkAllowance_excelRows = transformInflowsData(
+          removeZeroRows(
+            removeNullRows(
+              response.REPORTS_Centrelink_Summary.assetsTestPensionAllowance
+            )
+          )
+        );
+
+        const CenterlinkIncome_excelRows = transformInflowsData(
+          removeZeroRows(
+            removeNullRows(
+              response.REPORTS_Centrelink_Summary.incomeTestAssessment
+            )
+          )
+        );
+
+        const CenterlinkIncomeTestAllowence_excelRows = transformInflowsData(
+          removeZeroRows(
+            removeNullRows(
+              response.REPORTS_Centrelink_Summary.incomeTestAllowances
+            )
+          )
+        );
+
+        const CenterlinkClientIncome_excelRows = transformInflowsData(
+          removeZeroRows(
+            removeNullRows(response.REPORTS_Centrelink_Summary.clientIncome)
+          )
+        );
+
+        const CenterlinkPartnerIncome_excelRows = transformInflowsData(
+          removeZeroRows(
+            removeNullRows(response.REPORTS_Centrelink_Summary.partnerIncome)
+          )
+        );
+
+        const CenterlinkClientPaymnet_excelRows = transformInflowsData(
+          removeZeroRows(
+            removeNullRows(response.REPORTS_Centrelink_Summary.clientPayment)
+          )
+        );
+
+        const CenterlinkPartnerPaymnet_excelRows = transformInflowsData(
+          removeZeroRows(
+            removeNullRows(response.REPORTS_Centrelink_Summary.partnerPayment)
+          )
         );
 
         const fullTable = [
@@ -1038,6 +491,25 @@ const CashFlowReport = () => {
         let client_Tax_SessionObj =
           content.cashFlowReport[0].reportsArray.clientTaxPosition;
 
+        let centerLinkAllowance_SessionObj =
+          content.cashFlowReport[0].reportsArray.centerLinkAllowanceDataSet;
+
+        let centerLinkIncome_SessionObj =
+          content.cashFlowReport[0].reportsArray.centerLinkIncomeDataSet;
+
+        let centerLinkAllowances_SessionObj =
+          content.cashFlowReport[0].reportsArray
+            .centerLinkIncomeTestAllowancesDataSet;
+
+        let centerLinkClientIncome_SessionObj =
+          content.cashFlowReport[0].reportsArray.centerLinkClientIncomeDataSet;
+
+        let centerLinkPartnerIncome_SessionObj =
+          content.cashFlowReport[0].reportsArray.centerLinkPartnerIncomeDataSet;
+
+        let centerLinkClientPaymnet_SessionObj =
+          content.cashFlowReport[0].reportsArray.centerLinkClientPaymnetDataSet;
+
         const clinet_Tax_Table = createTaxSection(
           client_Tax,
           client_Tax_SessionObj
@@ -1048,9 +520,52 @@ const CashFlowReport = () => {
           client_Tax_SessionObj
         );
 
+        const AssetsTestPensionAllowanceData = createTaxSection(
+          CenterlinkAllowance_excelRows,
+          centerLinkAllowance_SessionObj
+        );
+
+        const IncomeTestPensionsAllowancesData = createTaxSection(
+          CenterlinkIncome_excelRows,
+          centerLinkIncome_SessionObj
+        );
+
+        const IncomeTestAllowancesData = createTaxSection(
+          CenterlinkIncomeTestAllowence_excelRows,
+          centerLinkAllowances_SessionObj
+        );
+
+        const ClientIncome = createTaxSection(
+          CenterlinkClientIncome_excelRows,
+          centerLinkClientIncome_SessionObj
+        );
+
+        const partnerIncome = createTaxSection(
+          CenterlinkPartnerIncome_excelRows,
+          centerLinkPartnerIncome_SessionObj
+        );
+
+        const clientPaymnet = createTaxSection(
+          CenterlinkClientPaymnet_excelRows,
+          centerLinkClientPaymnet_SessionObj
+        );
+
+        const partnerPaymnet = createTaxSection(
+          CenterlinkPartnerPaymnet_excelRows,
+          centerLinkClientPaymnet_SessionObj
+        );
+
         setFullTableCashFlow(fullTable);
+
         setClientData(clinet_Tax_Table);
         setPartnerData(partner_Tax_Table);
+        setAssetsTestPensionAllowance(AssetsTestPensionAllowanceData);
+        setIncomeTestPensionsAllowances(IncomeTestPensionsAllowancesData);
+        setAllowance(IncomeTestAllowancesData);
+        setClientIncome(ClientIncome);
+        setPartnerIncome(partnerIncome);
+        setClientPayment(clientPaymnet);
+        setPartnerPayment(partnerPaymnet);
       }
     } catch (error) {
       console.error("Report Error:", error);
@@ -1103,8 +618,9 @@ const CashFlowReport = () => {
                         }
                         allowance={allowance}
                         clientIncome={clientIncome}
-                        // partnerIncome={partnerIncome}
+                        partnerIncome={partnerIncome}
                         clientPayment={clientPayment}
+                        partnerPayment={partnerPayment}
                         familyTaxBenefitPartA={familyTaxBenefitPartA}
                         values={values}
                         setFieldValue={setFieldValue}

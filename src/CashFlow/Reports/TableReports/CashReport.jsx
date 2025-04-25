@@ -19,9 +19,9 @@ const CashReport = (props) => {
     incomeTestPensionsAllowances,
     allowance,
     clientIncome,
-    // partnerIncome,
+    partnerIncome,
     clientPayment,
-    // partnerPayment,
+    partnerPayment,
     familyTaxBenefitPartA,
     values,
     setFieldValue,
@@ -39,7 +39,6 @@ const CashReport = (props) => {
       fixed: "left", // 👈 Fix column to the left
       render: (text, record) => {
         const isParentRow = record.children && Array.isArray(record.children);
-
         return (
           <Tooltip title={text}>
             <div
@@ -250,6 +249,11 @@ const CashReport = (props) => {
               's Tax Position)
             </span>
           )}
+          {values.category === "Centrelink" && (
+            <span className="text-green fw-bold fs-5">
+              (Centrelink Summary)
+            </span>
+          )}
         </h2>
         <span
           role="button"
@@ -266,7 +270,7 @@ const CashReport = (props) => {
             className="justify-content-around align-items-center"
           >
             <Col md={6}>
-              <label htmlFor="category">Category:</label>
+              <label htmlFor="category">Report Type:</label>
               <Field
                 as="select"
                 name="category"
@@ -274,8 +278,12 @@ const CashReport = (props) => {
               >
                 <option value="">Select</option>
                 <option value="Cashflow">Cashflow</option>
-                <option value="Client Tax">Client Tax</option>
-                <option value="Partner Tax">Partner Tax</option>
+                <option value="Client Tax">{RenderName("client")}'s Tax</option>
+                {localStorage.getItem("UserStatus") === "Married" && (
+                  <option value="Partner Tax">
+                    {RenderName("partner")}'s Tax
+                  </option>
+                )}
                 <option value="Centrelink">Centrelink</option>
                 <option value="Family Tax Benefits">Family Tax Benefits</option>
               </Field>
@@ -397,11 +405,9 @@ const CashReport = (props) => {
       {values.category === "Centrelink" && (
         <>
           <div className="mt-4 porsition-relative">
-            <h3 className="text-green fw-bold">Centrelink Summary</h3>
             <h4 className="text-green fw-bold">
               Assets Test-Pension/Allowance{" "}
             </h4>
-
             <Table
               dataSource={assetsTestPensionAllowance} // 👈 Removes the last row from the table
               columns={columns}
@@ -447,55 +453,26 @@ const CashReport = (props) => {
             <h4 className="text-green fw-bold">Client Income </h4>
 
             <Table
-              dataSource={clientIncome.slice(0, -1)} // 👈 Removes the last row from the table
+              dataSource={clientIncome} // 👈 Removes the last row from the table
               columns={columns}
               scroll={{ x: "max-content" }}
               pagination={{
                 pageSize: 50,
                 position: ["bottomRight"],
                 className: "custom-pagination",
-              }}
-              summary={() => {
-                if (clientIncome.length > 0) {
-                  const totalRowClientIncome =
-                    clientIncome[clientIncome.length - 1]; // 👈 Get the last row as footer
-                  return (
-                    <Table.Summary.Row>
-                      {columns.map((col, index) => (
-                        <Table.Summary.Cell key={index} index={index}>
-                          {totalRowClientIncome[col.dataIndex]}
-                        </Table.Summary.Cell>
-                      ))}
-                    </Table.Summary.Row>
-                  );
-                }
               }}
             />
           </div>
           <div className="mt-4 porsition-relative">
             <h4 className="text-green fw-bold">Partner Income </h4>
-
             <Table
-              dataSource={clientIncome.slice(0, -1)} // 👈 Removes the last row from the table
+              dataSource={partnerIncome} // 👈 Removes the last row from the table
               columns={columns}
               scroll={{ x: "max-content" }}
               pagination={{
                 pageSize: 50,
                 position: ["bottomRight"],
                 className: "custom-pagination",
-              }}
-              summary={() => {
-                const totalRowClientIncome =
-                  clientIncome[clientIncome.length - 1]; // 👈 Get the last row as footer
-                return (
-                  <Table.Summary.Row>
-                    {columns.map((col, index) => (
-                      <Table.Summary.Cell key={index} index={index}>
-                        {totalRowClientIncome[col.dataIndex]}
-                      </Table.Summary.Cell>
-                    ))}
-                  </Table.Summary.Row>
-                );
               }}
             />
           </div>
@@ -503,26 +480,13 @@ const CashReport = (props) => {
             <h4 className="text-green fw-bold">Client Payment</h4>
 
             <Table
-              dataSource={clientPayment.slice(0, -1)} // 👈 Removes the last row from the table
+              dataSource={clientPayment} // 👈 Removes the last row from the table
               columns={columns}
               scroll={{ x: "max-content" }}
               pagination={{
                 pageSize: 50,
                 position: ["bottomRight"],
                 className: "custom-pagination",
-              }}
-              summary={() => {
-                const totalRowClientPayment =
-                  clientPayment[clientPayment.length - 1]; // 👈 Get the last row as footer
-                return (
-                  <Table.Summary.Row>
-                    {columns.map((col, index) => (
-                      <Table.Summary.Cell key={index} index={index}>
-                        {totalRowClientPayment[col.dataIndex]}
-                      </Table.Summary.Cell>
-                    ))}
-                  </Table.Summary.Row>
-                );
               }}
             />
           </div>
@@ -530,26 +494,13 @@ const CashReport = (props) => {
             <h4 className="text-green fw-bold">Partner Payment</h4>
 
             <Table
-              dataSource={clientPayment.slice(0, -1)} // 👈 Removes the last row from the table
+              dataSource={partnerPayment} // 👈 Removes the last row from the table
               columns={columns}
               scroll={{ x: "max-content" }}
               pagination={{
                 pageSize: 50,
                 position: ["bottomRight"],
                 className: "custom-pagination",
-              }}
-              summary={() => {
-                const totalRowClientPayment =
-                  clientPayment[clientPayment.length - 1]; // 👈 Get the last row as footer
-                return (
-                  <Table.Summary.Row>
-                    {columns.map((col, index) => (
-                      <Table.Summary.Cell key={index} index={index}>
-                        {totalRowClientPayment[col.dataIndex]}
-                      </Table.Summary.Cell>
-                    ))}
-                  </Table.Summary.Row>
-                );
               }}
             />
           </div>

@@ -348,10 +348,12 @@ const createTaxSection = (data, taxHierarchy) => {
       .map((childLabel) => data.find((item) => item.type === childLabel))
       .filter(Boolean); // remove undefined if a label didn't match
 
+    let HeadData = data.find((item) => item.type === section.parent);
+
     const sectionData = {
       key: `${index + 1}`,
       type: section.parent,
-      ...generateYearData({ type: section.parent }),
+      ...generateYearData(HeadData),
     };
 
     if (childrenData.length > 0) {
@@ -364,6 +366,17 @@ const createTaxSection = (data, taxHierarchy) => {
 
 const removeNullRows = (data) =>
   data.filter((row) => row.slice(1).some((val) => val != null));
+
+const removeZeroRows = (data) =>
+  data.filter((row) =>
+    row.slice(1).some((val) => {
+      const num = Number(val);
+      return (
+        (typeof val === "number" && val !== 0) ||
+        (typeof val === "string" && !isNaN(num) && num !== 0)
+      );
+    })
+  );
 
 const transformInflowsData = (inflows = []) =>
   inflows.map(([type, ...values]) => {
@@ -416,4 +429,5 @@ export {
   transformInflowsData,
   extractIndexesByType,
   sliceDataArrayRange,
+  removeZeroRows,
 };

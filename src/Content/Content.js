@@ -42,6 +42,7 @@ import BusinessTeam_Handshake from "../Components/Questions/svgs/team_Handshake.
 import Business_fund from "../Components/Questions/svgs/Business-fund.png";
 
 import SMSFBank from "../Components/Questions/svgs/bank.svg";
+import { RenderName } from "../Components/Assets/Api/Api";
 
 export const content = {
   itemsOpt: [
@@ -709,6 +710,119 @@ export const content = {
               "Unused SAPTO",
               "Additional Contributions Tax",
             ],
+          },
+        ],
+        centerLinkAllowanceDataSet: [
+          {
+            parent: "Total Assets",
+            children: [
+              "Personal Assets",
+              `${RenderName("client")}'s Financial Assets`,
+              `${RenderName("partner")}'s Financial Assets`,
+              `${RenderName("client")}'s Superannuation`,
+              `${RenderName("partner")}'s Superannuation`,
+              `${RenderName("client")}'s Pension Assets`,
+              `${RenderName("partner")}'s Pension Assets`,
+              `${RenderName("client")}'s Annuity`,
+              `${RenderName("partner")}'s Annuity`,
+              "Rental Properties",
+              "Trading Company Net Assets",
+              "Business Trust Net Assets",
+              "Family Trust Net Assets",
+              "Less",
+              "Investment Loans",
+              "Investment Property Loan",
+              "Lower - Pensions",
+              "Lower - Allowance",
+              "Upper",
+              "Excess Assets",
+            ],
+          },
+        ],
+        centerLinkIncomeDataSet: [
+          {
+            parent: "Total Income",
+            children: [
+              "Deemed Financial Income",
+              "Net Rental Income",
+              "Trust Distributions & Company Income",
+              `${RenderName("client")}'s Salary Income`,
+              `${RenderName("partner")}'s Salary Income`,
+              `${RenderName("client")}'s Other Income`,
+              `${RenderName("partner")}'s Other Income`,
+              `${RenderName("client")}'s Pension Income`,
+              `${RenderName("partner")}'s Pension Income`,
+              `${RenderName("client")}'s Annuity Income`,
+              `${RenderName("partner")}'s Annuity Income`,
+              "Less",
+              `${RenderName("client")}'s Deductible Pension Income`,
+              `${RenderName("partner")}'s Deductible Pension Income`,
+              `${RenderName("client")}'s Work Bonus`,
+              `${RenderName("partner")}'s Work Bonus`,
+              "Lower",
+              "Upper",
+              "Excess Income",
+            ],
+          },
+        ],
+        centerLinkIncomeTestAllowancesDataSet: [
+          {
+            parent: "Total Income",
+            children: ["Lower ", "Upper", "Partner Balance over"],
+          },
+        ],
+        centerLinkClientIncomeDataSet: [
+          {
+            parent: "Total Income",
+            children: [
+              "Deemed Income ",
+              "Net Rental Income",
+              "Trust Distributions & Company Income",
+              "Salary Income",
+              "Other Income ",
+              "Annuity Income",
+              "Pension Income",
+              "Less",
+              "Deductible Pension Income",
+            ],
+          },
+        ],
+        centerLinkPartnerIncomeDataSet: [
+          {
+            parent: "Total Income",
+            children: [
+              "Deemed Income ",
+              "Net Rental Income",
+              "Trust Distributions & Company Income",
+              "Salary Income",
+              "Other Income ",
+              "Annuity Income",
+              "Pension Income",
+              "Less",
+              "Deductible Pension Income",
+              "Total Income",
+              "Lower ",
+              "Upper",
+              "Partner Balance Over",
+            ],
+          },
+        ],
+        centerLinkClientPaymnetDataSet: [
+          {
+            parent: "Payment Amount",
+            children: ["Asset Test Reduction "],
+          },
+          {
+            parent: "Under Asset Test",
+            children: ["Income Test Reduction "],
+          },
+          {
+            parent: "Under Income Test",
+            children: [],
+          },
+          {
+            parent: "Actual Payment",
+            children: [],
           },
         ],
       },
