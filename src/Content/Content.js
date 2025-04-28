@@ -825,6 +825,39 @@ export const content = {
             children: [],
           },
         ],
+        familyTaxBanifit: [
+          {
+            parent: "Total Adjusted Family Income",
+            children: [
+              "Total Maximum rate of FTB- Part A",
+              "Base Rate of FTB-Part A",
+            ],
+          },
+          {
+            parent: "Total FTB- Part A (including Supplement)",
+            children: [
+              "Income Level For Maximum Rate of FTB-Part A",
+              "Income Level For Base Rate of FTB-Part A",
+              "Income Mantaince Free Area",
+            ],
+          },
+          {
+            parent: "Total Income For Primary Income Earner",
+            children: ["Total Payment rate of FTB-Part B"],
+          },
+          {
+            parent: "Total Income For Secondary Income Earner",
+            children: ["Income Level Threshold"],
+          },
+          {
+            parent: "Total FTB- Part B (including Supplement)",
+            children: ["Income Level Threshold"],
+          },
+          {
+            parent: "Total Family tax Benefits (Part A & B)",
+            children: [],
+          },
+        ],
       },
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
@@ -834,6 +867,49 @@ export const content = {
       icon: "FaHome",
       stepNumber: 1,
       condition: (CRObject) => true, // Always true, as this step is always needed.
+      reportsArray: {
+        assets: [
+          {
+            parent: "Total Assets",
+            children: [
+              "Lifestyle Assets",
+              "Family Home",
+              "Direct Share Portfolios",
+              "Managed Funds",
+              "Other Investments",
+              "Cash",
+              "Term Deposits",
+              "Insurance Bonds",
+              "Investment Properties",
+              "Superannuation",
+              "Account Based Pensions",
+              "Annuity Investments",
+              "Trading Company",
+              "Business Trust",
+              "SMSF Net Assets",
+              "Family Trust Net Assets",
+            ],
+          },
+          {
+            parent: "Total Liabilities",
+            children: [
+              "Home Loan",
+              "Personal Loans",
+              "Credit Cards",
+              "Investment Loans",
+              "Investment Property Loans",
+            ],
+          },
+          {
+            parent: "Total Net Worth",
+            children: [],
+          },
+          {
+            parent: "Total Net Worth (PV)",
+            children: [],
+          },
+        ],
+      },
     },
     {
       subTitle: "Financial Investments",

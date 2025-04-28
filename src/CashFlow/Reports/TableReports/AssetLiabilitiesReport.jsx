@@ -27,14 +27,17 @@ import PersonalLoansSVG from "../../CashFlowAssets/Asset_and_Libility/SVG/Person
 import CreditCardsSVG from "../../CashFlowAssets/Asset_and_Libility/SVG/Credit_Cards.svg";
 import InvestmentPropertySVG from "../../CashFlowAssets/Asset_and_Libility/SVG/Investment_Property.svg";
 import InvestmentLoansSVG from "../../CashFlowAssets/Asset_and_Libility/SVG/Investment_Loans.svg";
+import {
+  openNotificationSuccess,
+  RenderName,
+} from "../../../Components/Assets/Api/Api";
 
 const AssetLiabilitiesReport = (props) => {
   let {
     showFilters,
     setShowFilters,
     asset,
-    liabilities,
-    surplus,
+    handleChange,
     values,
     setFieldValue,
   } = props;
@@ -63,6 +66,8 @@ const AssetLiabilitiesReport = (props) => {
     InvestmentLoansSVG,
   ];
 
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+
   const [columns, setColumn] = useState([
     {
       title: "Year",
@@ -74,12 +79,22 @@ const AssetLiabilitiesReport = (props) => {
         if (row.isHeader) {
           return { props: { colSpan: 0 } };
         }
+        const isParentRow = row?.children && Array.isArray(row.children);
 
         return (
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div style={{ width: "25px" }}>
-              <Image src={ImageArray[index]} fluid />
-            </div>
+          <div
+            style={{
+              fontWeight: isParentRow ? "bold" : "normal",
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            {!isParentRow && (
+              <div style={{ width: "25px" }}>
+                <Image src={ImageArray[index]} fluid />
+              </div>
+            )}
             {text}
           </div>
         );
@@ -90,50 +105,74 @@ const AssetLiabilitiesReport = (props) => {
       dataIndex: "existing",
       key: "existing",
       fixed: "left", // 👈 Fix column to the left
+      render: (text, record) => {
+        const isParentRow = record.children && Array.isArray(record.children);
+
+        return (
+          <div
+            style={{
+              fontWeight: isParentRow ? "bold" : "normal",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              fontFamily: '"Inter", sans-serif',
+            }}
+          >
+            {text}
+          </div>
+        );
+      },
     },
-    {
-      title: "1",
-      dataIndex: "year1",
-      key: "1",
-      sorter: (a, b) =>
-        a.year1.replace(/[^0-9.-]+/g, "") - b.year1.replace(/[^0-9.-]+/g, ""),
-    },
-    {
-      title: "2",
-      dataIndex: "year2",
-      key: "2",
-      sorter: (a, b) =>
-        a.year2.replace(/[^0-9.-]+/g, "") - b.year2.replace(/[^0-9.-]+/g, ""),
-    },
-    {
-      title: "3",
-      dataIndex: "year3",
-      key: "3",
-      sorter: (a, b) =>
-        a.year3.replace(/[^0-9.-]+/g, "") - b.year3.replace(/[^0-9.-]+/g, ""),
-    },
-    {
-      title: "4",
-      dataIndex: "year4",
-      key: "4",
-      sorter: (a, b) =>
-        a.year4.replace(/[^0-9.-]+/g, "") - b.year4.replace(/[^0-9.-]+/g, ""),
-    },
-    {
-      title: "5",
-      dataIndex: "year5",
-      key: "5",
-      sorter: (a, b) =>
-        a.year5.replace(/[^0-9.-]+/g, "") - b.year5.replace(/[^0-9.-]+/g, ""),
-    },
-    {
-      title: "6",
-      dataIndex: "year6",
-      key: "6",
-      align: "left",
-      sorter: (a, b) =>
-        a.year6.replace(/[^0-9.-]+/g, "") - b.year6.replace(/[^0-9.-]+/g, ""),
-    },
+    ...[1, 2, 3, 4, 5, 6].map((year, i) => {
+      if (year === 6) {
+        return {
+          title: String(year) + " (" + (currentYear + i) + ")",
+          dataIndex: `year${year}`,
+          key: String(year),
+          align: "left",
+          render: (text, record) => {
+            const isParentRow =
+              record.children && Array.isArray(record.children);
+
+            return (
+              <div
+                style={{
+                  fontWeight: isParentRow ? "bold" : "normal",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  fontFamily: '"Inter", sans-serif',
+                }}
+              >
+                {text}
+              </div>
+            );
+          },
+        };
+      }
+      return {
+        title: String(year) + " (" + (currentYear + i) + ")",
+        dataIndex: `year${year}`,
+        key: String(year),
+        render: (text, record) => {
+          const isParentRow = record.children && Array.isArray(record.children);
+
+          return (
+            <div
+              style={{
+                fontWeight: isParentRow ? "bold" : "normal",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                fontFamily: '"Inter", sans-serif',
+              }}
+            >
+              {text}
+            </div>
+          );
+        },
+      };
+    }),
   ]);
 
   const applyFilter = (values) => {
@@ -145,14 +184,56 @@ const AssetLiabilitiesReport = (props) => {
         const dynamicYearColumns = [];
 
         for (let year = yearFrom; year <= yearTo; year++) {
-          dynamicYearColumns.push({
-            title: year.toString(),
-            dataIndex: `year${year}`, // You may need to match this with your data source
-            key: year.toString(),
-            sorter: (a, b) =>
-              (a[`year${year}`]?.replace?.(/[^0-9.-]+/g, "") || 0) -
-              (b[`year${year}`]?.replace?.(/[^0-9.-]+/g, "") || 0),
-          });
+          if (year === yearTo) {
+            dynamicYearColumns.push({
+              title: year.toString() + " (" + (currentYear + year) + ")",
+              dataIndex: `year${year}`, // You may need to match this with your data source
+              key: year.toString(),
+              align: "left",
+              render: (text, record) => {
+                const isParentRow =
+                  record.children && Array.isArray(record.children);
+
+                return (
+                  <div
+                    style={{
+                      fontWeight: isParentRow ? "bold" : "normal",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      fontFamily: '"Inter", sans-serif',
+                    }}
+                  >
+                    {text}
+                  </div>
+                );
+              },
+            });
+          } else {
+            dynamicYearColumns.push({
+              title: year.toString() + " (" + (currentYear + year) + ")",
+              dataIndex: `year${year}`, // You may need to match this with your data source
+              key: year.toString(),
+              render: (text, record) => {
+                const isParentRow =
+                  record.children && Array.isArray(record.children);
+
+                return (
+                  <div
+                    style={{
+                      fontWeight: isParentRow ? "bold" : "normal",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      fontFamily: '"Inter", sans-serif',
+                    }}
+                  >
+                    {text}
+                  </div>
+                );
+              },
+            });
+          }
         }
 
         // Combine the fixed left column with the dynamic years
@@ -161,14 +242,56 @@ const AssetLiabilitiesReport = (props) => {
             title: "Year",
             dataIndex: "type",
             key: "type",
-            width: 250,
-            fixed: "left",
+            width: 250, // 👈 Set fixed width
+            fixed: "left", // 👈 Fix column to the left
+            render: (text, row, index) => {
+              if (row.isHeader) {
+                return { props: { colSpan: 0 } };
+              }
+              const isParentRow = row?.children && Array.isArray(row.children);
+
+              return (
+                <div
+                  style={{
+                    fontWeight: isParentRow ? "bold" : "normal",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                  }}
+                >
+                  {!isParentRow && (
+                    <div style={{ width: "25px" }}>
+                      <Image src={ImageArray[index]} fluid />
+                    </div>
+                  )}
+                  {text}
+                </div>
+              );
+            },
           },
           {
             title: "Existing",
             dataIndex: "existing",
             key: "existing",
             fixed: "left", // 👈 Fix column to the left
+            render: (text, record) => {
+              const isParentRow =
+                record.children && Array.isArray(record.children);
+
+              return (
+                <div
+                  style={{
+                    fontWeight: isParentRow ? "bold" : "normal",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    fontFamily: '"Inter", sans-serif',
+                  }}
+                >
+                  {text}
+                </div>
+              );
+            },
           },
           ...dynamicYearColumns,
         ];
@@ -201,18 +324,21 @@ const AssetLiabilitiesReport = (props) => {
       </div>
       {showFilters && (
         <Card className="my-4 shadow-sm p-3 rounded">
-          <Row gutter={16}>
-            <Col md={3}>
-              <label htmlFor="category">Category:</label>
+          <Row
+            gutter={16}
+            className="justify-content-around align-items-center"
+          >
+            <Col md={6}>
+              <label htmlFor="category">Report Type:</label>
               <Field
                 as="select"
                 name="category"
                 className="form-select inputDesignDoubleInput"
               >
                 <option value="">Select</option>
-                <option value="Cashflow">Net Worth</option>
-                <option value="Client Tax">
-                  Personal Assets and liability
+                <option value="Net Worth">Net Worth</option>
+                <option value="Persona Assets & Liabilities">
+                  Persona Assets & Liabilities
                 </option>
               </Field>
             </Col>
@@ -225,38 +351,59 @@ const AssetLiabilitiesReport = (props) => {
                 onChange={(e) => {
                   const newYearFrom = parseInt(e.target.value);
                   setFieldValue("yearFrom", newYearFrom); // update yearFrom
-                  setFieldValue("yearTo", newYearFrom + 5); // update yearTo
+                  setFieldValue(
+                    "yearTo",
+                    parseInt(newYearFrom, 10) + 5 > 10 && newYearFrom < 10
+                      ? 10
+                      : parseInt(newYearFrom, 10) + 5
+                  ); // update yearFrom
+
+                  applyFilter(values, e.target); // apply filter with new yearFrom
                 }}
               >
                 <option value="">Select</option>
-                {Array.from({ length: 30 }, (_, i) => (
-                  <option key={i + 1} value={i + 1}>
-                    {i + 1}
-                  </option>
-                ))}
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30].map(
+                  (value) => (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  )
+                )}
               </Field>
             </Col>
-
             <Col md={3}>
               <label htmlFor="yearTo">Year To:</label>
               <Field
                 as="select"
                 name="yearTo"
                 className="form-select inputDesignDoubleInput"
+                onChange={(e) => {
+                  handleChange(e);
+                  const newYearTo = parseInt(e.target.value, 10);
+                  setFieldValue(
+                    "yearFrom",
+                    parseInt(newYearTo, 10) - 5 < 1
+                      ? 1
+                      : parseInt(newYearTo, 10) - 5
+                  ); // update yearFrom
+
+                  applyFilter(values, e.target);
+                }}
               >
                 <option value="">Select</option>
-                {Array.from({ length: 10 }, (_, i) => {
-                  const year = parseInt(values.yearFrom || "1") + i;
-                  if (year <= 30)
-                    return (
-                      <option key={year} value={year}>
-                        {year}
-                      </option>
-                    );
-                })}
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30]
+                  .filter((year) => {
+                    const fromYear = parseInt(values.yearFrom || "1");
+                    return year >= fromYear && year <= fromYear + 30;
+                  })
+                  .map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
               </Field>
             </Col>
-            <Col md={3}>
+            <Col md={3} className="d-none">
               <Button
                 className="modalBtn mt-4 w-100"
                 onClick={() => {
@@ -269,58 +416,36 @@ const AssetLiabilitiesReport = (props) => {
           </Row>
         </Card>
       )}
-      <div className="mt-4 porsition-relative">
-        <h4 className="text-green fw-bold">Assets</h4>
-
-        <Table
-          // bordered
-          dataSource={asset.slice(0, -1)}
-          columns={columns}
-          scroll={{ x: "max-content" }}
-          pagination={{
-            pageSize: 50,
-            position: ["bottomRight"],
-            className: "custom-pagination",
-          }}
-          summary={() => {
-            const totalRowAsset = asset[asset.length - 1]; // 👈 Get the last row as footer
-            return (
-              <Table.Summary.Row>
-                {columns.map((col, index) => (
-                  <Table.Summary.Cell key={index} index={index}>
-                    {totalRowAsset[col.dataIndex]}
-                  </Table.Summary.Cell>
-                ))}
-              </Table.Summary.Row>
-            );
-          }}
-        />
-      </div>
-      <div className="mt-2 porsition-relative table-responcive">
-        <h4 className="text-green fw-bold">Liabilities</h4>
-        <Table
-          dataSource={liabilities.slice(0, -1)}
-          columns={columns}
-          scroll={{ x: "max-content" }}
-          pagination={{
-            pageSize: 50,
-            position: ["bottomRight"],
-            className: "custom-pagination",
-          }}
-          summary={() => {
-            const totalRowLiabilities = liabilities[liabilities.length - 1]; // 👈 Get the last row as footer
-            return (
-              <Table.Summary.Row>
-                {columns.map((col, index) => (
-                  <Table.Summary.Cell key={index} index={index}>
-                    {totalRowLiabilities[col.dataIndex]}
-                  </Table.Summary.Cell>
-                ))}
-              </Table.Summary.Row>
-            );
-          }}
-        />
-      </div>
+      {values.category === "Net Worth" && (
+        <div className="mt-4 porsition-relative">
+          <Table
+            // bordered
+            dataSource={asset}
+            columns={columns}
+            scroll={{ x: "max-content" }}
+            pagination={{
+              pageSize: 50,
+              position: ["bottomRight"],
+              className: "custom-pagination",
+            }}
+          />
+        </div>
+      )}
+      {values.category === "Persona Assets & Liabilities" && (
+        <div className="mt-4 porsition-relative">
+          <Table
+            // bordered
+            dataSource={asset}
+            columns={columns}
+            scroll={{ x: "max-content" }}
+            pagination={{
+              pageSize: 50,
+              position: ["bottomRight"],
+              className: "custom-pagination",
+            }}
+          />
+        </div>
+      )}
     </React.Fragment>
   );
 };

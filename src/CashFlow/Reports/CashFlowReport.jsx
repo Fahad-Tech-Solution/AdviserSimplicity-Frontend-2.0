@@ -47,6 +47,7 @@ const CashFlowReport = () => {
   const [partnerIncome, setPartnerIncome] = useState([]);
   const [clientPayment, setClientPayment] = useState([]);
   const [partnerPayment, setPartnerPayment] = useState([]);
+  const [familyTaxBenefit, setFamilyTaxBenefit] = useState([]);
 
   const [asset, setAssets] = useState([]);
 
@@ -254,80 +255,6 @@ const CashFlowReport = () => {
       },
     ]);
 
-  const [familyTaxBenefitPartA, setFamilyTaxBenefitPartA] = useState([
-    {
-      type: "Total Maximum rate of FTB- Part A",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Base Rate of FTB-Part A",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Total Adjusted Family Income",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-      rowGreen: "true",
-    },
-    {
-      type: "Income Level For Maximum Rate of FTB-Part A",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Income Level For Base Rate of FTB-Part A",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Income Mantaince Free Area",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Total FTB- Part A (including Supplement)",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-  ]);
-
   const [liabilities, setLiabilities] = useState([
     {
       type: "Home Loan",
@@ -482,6 +409,28 @@ const CashFlowReport = () => {
           )
         );
 
+        const FamilyTaxBanifit_excelRows = transformInflowsData(
+          removeZeroRows(
+            removeNullRows(response.REPORTS_Centrelink_Summary.familyTaxBenefit)
+          )
+        );
+
+        const Assests_excelRows = transformInflowsData(
+          removeZeroRows(removeNullRows(response.REPORTS_Networth.assets))
+        );
+
+        const Liabilities_excelRows = transformInflowsData(
+          removeZeroRows(removeNullRows(response.REPORTS_Networth.liabilities))
+        );
+
+        // const personalDebet_excelRows = transformInflowsData(
+        //   removeZeroRows(
+        //     removeNullRows(response.REPORTS_Networth.personalDebet)
+        //   )
+        // );
+
+        // console.log("Liabilities_excelRows:", Liabilities_excelRows);
+
         const fullTable = [
           createTableSection("1", "Total Inflows", InFlow, true),
           createTableSection("2", "Total Outflows", OutFlow, true),
@@ -509,6 +458,14 @@ const CashFlowReport = () => {
 
         let centerLinkClientPaymnet_SessionObj =
           content.cashFlowReport[0].reportsArray.centerLinkClientPaymnetDataSet;
+
+        let FamilyTaxBanifit_SessionObj =
+          content.cashFlowReport[0].reportsArray.familyTaxBanifit;
+
+        let Assets_SessionObj = content.cashFlowReport[1].reportsArray.assets;
+
+        let Liabilities_SessionObj =
+          content.cashFlowReport[1].reportsArray.assets;
 
         const clinet_Tax_Table = createTaxSection(
           client_Tax,
@@ -555,8 +512,24 @@ const CashFlowReport = () => {
           centerLinkClientPaymnet_SessionObj
         );
 
-        setFullTableCashFlow(fullTable);
+        const familyTaxBanifit = createTaxSection(
+          FamilyTaxBanifit_excelRows,
+          FamilyTaxBanifit_SessionObj
+        );
 
+        const assets = createTaxSection(Assests_excelRows, Assets_SessionObj);
+
+        const liabilities = createTaxSection(
+          Liabilities_excelRows,
+          Liabilities_SessionObj
+        );
+        liabilities[0] = assets[0];
+
+        console.log("liabilities:", liabilities);
+
+        setAssets(liabilities);
+
+        setFullTableCashFlow(fullTable);
         setClientData(clinet_Tax_Table);
         setPartnerData(partner_Tax_Table);
         setAssetsTestPensionAllowance(AssetsTestPensionAllowanceData);
@@ -566,6 +539,10 @@ const CashFlowReport = () => {
         setPartnerIncome(partnerIncome);
         setClientPayment(clientPaymnet);
         setPartnerPayment(partnerPaymnet);
+        setFamilyTaxBenefit(familyTaxBanifit);
+
+        // Assets and Liabilities Report
+        // setAssets(assets);
       }
     } catch (error) {
       console.error("Report Error:", error);
@@ -621,7 +598,7 @@ const CashFlowReport = () => {
                         partnerIncome={partnerIncome}
                         clientPayment={clientPayment}
                         partnerPayment={partnerPayment}
-                        familyTaxBenefitPartA={familyTaxBenefitPartA}
+                        familyTaxBenefit={familyTaxBenefit}
                         values={values}
                         setFieldValue={setFieldValue}
                         handleChange={handleChange}
@@ -643,6 +620,8 @@ const CashFlowReport = () => {
                         setSurplus={setSurplus}
                         values={values}
                         setFieldValue={setFieldValue}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
                       />
                     </>
                   )}

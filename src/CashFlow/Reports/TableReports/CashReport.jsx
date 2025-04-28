@@ -22,7 +22,7 @@ const CashReport = (props) => {
     partnerIncome,
     clientPayment,
     partnerPayment,
-    familyTaxBenefitPartA,
+    familyTaxBenefit,
     values,
     setFieldValue,
     handleChange,
@@ -252,6 +252,11 @@ const CashReport = (props) => {
           {values.category === "Centrelink" && (
             <span className="text-green fw-bold fs-5">
               (Centrelink Summary)
+            </span>
+          )}
+          {values.category === "Family Tax Benefits" && (
+            <span className="text-green fw-bold fs-5">
+              (Family Tax Benefits)
             </span>
           )}
         </h2>
@@ -510,11 +515,8 @@ const CashReport = (props) => {
       {values.category === "Family Tax Benefits" && (
         <>
           <div className="mt-4 porsition-relative">
-            <h3 className="text-green fw-bold">Family Tax Benefits</h3>
-            <h4 className="text-green fw-bold">Family Tax Benefit- Part A </h4>
-
             <Table
-              dataSource={familyTaxBenefitPartA.slice(0, -1)} // 👈 Removes the last row from the table
+              dataSource={familyTaxBenefit} // 👈 Removes the last row from the table
               columns={columns}
               scroll={{ x: "max-content" }}
               pagination={{
@@ -522,51 +524,7 @@ const CashReport = (props) => {
                 position: ["bottomRight"],
                 className: "custom-pagination",
               }}
-              summary={() => {
-                const totalRowFamilyTaxBenefitPartA =
-                  familyTaxBenefitPartA[familyTaxBenefitPartA.length - 1]; // 👈 Get the last row as footer
-                return (
-                  <Table.Summary.Row>
-                    {columns.map((col, index) => (
-                      <Table.Summary.Cell key={index} index={index}>
-                        {totalRowFamilyTaxBenefitPartA[col.dataIndex]}
-                      </Table.Summary.Cell>
-                    ))}
-                  </Table.Summary.Row>
-                );
-              }}
             />
-          </div>
-          <div className="mt-3 porsition-relative">
-            <h4 className="text-green fw-bold">Family Tax Benefit- Part B </h4>
-
-            <Table
-              dataSource={familyTaxBenefitPartA.slice(0, -1)} // 👈 Removes the last row from the table
-              columns={columns}
-              scroll={{ x: "max-content" }}
-              rowClassName={(record) =>
-                record.rowGreen === "true" ? "green-summary-row" : ""
-              }
-              pagination={{
-                pageSize: 50,
-                position: ["bottomRight"],
-                className: "custom-pagination",
-              }}
-              summary={() => {
-                const totalRowFamilyTaxBenefitPartA =
-                  familyTaxBenefitPartA[familyTaxBenefitPartA.length - 1]; // 👈 Get the last row as footer
-                return (
-                  <Table.Summary.Row>
-                    {columns.map((col, index) => (
-                      <Table.Summary.Cell key={index} index={index}>
-                        {totalRowFamilyTaxBenefitPartA[col.dataIndex]}
-                      </Table.Summary.Cell>
-                    ))}
-                  </Table.Summary.Row>
-                );
-              }}
-            />
-            {/* Total Family tax Benefits (Part A & B) we Havent added this row dont forget to add it in final version */}
           </div>
         </>
       )}
