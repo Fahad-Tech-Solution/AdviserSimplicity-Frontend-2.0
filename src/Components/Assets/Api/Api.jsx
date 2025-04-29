@@ -364,8 +364,13 @@ const createTaxSection = (data, taxHierarchy) => {
   });
 };
 
-const removeNullRows = (data) =>
-  data.filter((row) => row.slice(1).some((val) => val != null));
+const removeNullRows = (data) => {
+  if (!Array.isArray(data)) {
+    console.warn("Expected array but got:", data);
+    return [];
+  }
+  return data.filter((row) => row !== null && row !== undefined);
+};
 
 const removeZeroRows = (data) =>
   data.filter((row) =>

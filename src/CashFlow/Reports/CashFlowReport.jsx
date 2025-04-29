@@ -50,6 +50,7 @@ const CashFlowReport = () => {
   const [familyTaxBenefit, setFamilyTaxBenefit] = useState([]);
 
   const [asset, setAssets] = useState([]);
+  const [asstesAndLiabilities, setAsstesAndLiabilities] = useState([]);
 
   const [incomeTestPensionsAllowances, setIncomeTestPensionsAllowances] =
     useState([
@@ -255,75 +256,21 @@ const CashFlowReport = () => {
       },
     ]);
 
-  const [liabilities, setLiabilities] = useState([
-    {
-      type: "Home Loan",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Personal Loans",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Credit Cards",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Investment Loans",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Investment Property Loans",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-    {
-      type: "Total Liabilities",
-      existing: "$0",
-      year1: "$0",
-      year2: "$0",
-      year3: "$0",
-      year4: "$0",
-      year5: "$0",
-      year6: "$0",
-    },
-  ]);
-
   let DefaultUrl = useRecoilValue(defaultUrl);
   let [loading, setLoading] = useRecoilState(Loading);
 
   useEffect(() => {
     FetchReports();
   }, []);
+
+  const processData = (data, ...keys) => {
+    let result = data;
+    for (const key of keys) {
+      result = result?.[key] ?? {};
+    }
+    // console.log(keys);
+    return transformInflowsData(removeZeroRows(removeNullRows(result)));
+  };
 
   const FetchReports = async () => {
     setLoading(true);
@@ -334,216 +281,127 @@ const CashFlowReport = () => {
         scenarioID: scenarioObj._id,
       });
 
-      if (response) {
-        console.log("Report Response:", response);
+      if (!response) return;
 
-        const InFlow = transformInflowsData(
-          removeZeroRows(response.REPORTS_Cashflow.inflows)
-        );
-        const OutFlow = transformInflowsData(
-          removeZeroRows(response.REPORTS_Cashflow.outflows)
-        );
-        const Surplus = transformInflowsData(
-          removeZeroRows(
-            removeNullRows(response.REPORTS_Cashflow.surplusDeficit)
-          )
-        );
+      console.log("Report Response:", response);
 
-        const client_Tax = transformInflowsData(
-          removeZeroRows(
-            removeNullRows(response.REPORTS_Tax_Summary.clientTaxPosition)
-          )
-        );
+      const cashflow = response.REPORTS_Cashflow;
+      const taxSummary = response.REPORTS_Tax_Summary;
+      const centrelink = response.REPORTS_Centrelink_Summary;
+      const networth = response.REPORTS_Networth;
+      const lifestyleAssets = response.REPORTS_Lifestyle_Assets_Debts;
 
-        const partner_Tax = transformInflowsData(
-          removeZeroRows(
-            removeNullRows(response.REPORTS_Tax_Summary.partnerTaxPosition)
-          )
-        );
+      const InFlow = processData(cashflow, "inflows");
+      const OutFlow = processData(cashflow, "outflows");
+      const Surplus = processData(cashflow, "surplusDeficit");
 
-        const CenterlinkAllowance_excelRows = transformInflowsData(
-          removeZeroRows(
-            removeNullRows(
-              response.REPORTS_Centrelink_Summary.assetsTestPensionAllowance
-            )
-          )
-        );
+      const client_Tax = processData(taxSummary, "clientTaxPosition");
+      const partner_Tax = processData(taxSummary, "partnerTaxPosition");
 
-        const CenterlinkIncome_excelRows = transformInflowsData(
-          removeZeroRows(
-            removeNullRows(
-              response.REPORTS_Centrelink_Summary.incomeTestAssessment
-            )
-          )
-        );
+      const sections = {
+        AssetsTestPensionAllowanceData: [
+          "assetsTestPensionAllowance",
+          "centerLinkAllowanceDataSet",
+          0,
+        ],
+        IncomeTestPensionsAllowancesData: [
+          "incomeTestAssessment",
+          "centerLinkIncomeDataSet",
+          0,
+        ],
+        IncomeTestAllowancesData: [
+          "incomeTestAllowances",
+          "centerLinkIncomeTestAllowancesDataSet",
+          0,
+        ],
+        ClientIncome: ["clientIncome", "centerLinkClientIncomeDataSet", 0],
+        PartnerIncome: ["partnerIncome", "centerLinkPartnerIncomeDataSet", 0],
+        ClientPayment: ["clientPayment", "centerLinkClientPaymnetDataSet", 0],
+        PartnerPayment: ["partnerPayment", "centerLinkClientPaymnetDataSet", 0], // <- Possibly a mistake in your original code
+        FamilyTaxBenefit: ["familyTaxBenefit", "familyTaxBanifit", 0],
+      };
 
-        const CenterlinkIncomeTestAllowence_excelRows = transformInflowsData(
-          removeZeroRows(
-            removeNullRows(
-              response.REPORTS_Centrelink_Summary.incomeTestAllowances
-            )
-          )
-        );
+      const processedSections = Object.entries(sections).reduce(
+        (acc, [stateKey, [apiKey, sessionKey, index]]) => {
+          acc[stateKey] = createTaxSection(
+            processData(centrelink, apiKey),
+            content.cashFlowReport[index].reportsArray[sessionKey]
+          );
+          return acc;
+        },
+        {}
+      );
 
-        const CenterlinkClientIncome_excelRows = transformInflowsData(
-          removeZeroRows(
-            removeNullRows(response.REPORTS_Centrelink_Summary.clientIncome)
-          )
-        );
+      const fullTable = [
+        createTableSection("1", "Total Inflows", InFlow, true),
+        createTableSection("2", "Total Outflows", OutFlow, true),
+        createTableSection("3", "Total Surplus", Surplus),
+      ];
 
-        const CenterlinkPartnerIncome_excelRows = transformInflowsData(
-          removeZeroRows(
-            removeNullRows(response.REPORTS_Centrelink_Summary.partnerIncome)
-          )
-        );
-
-        const CenterlinkClientPaymnet_excelRows = transformInflowsData(
-          removeZeroRows(
-            removeNullRows(response.REPORTS_Centrelink_Summary.clientPayment)
-          )
-        );
-
-        const CenterlinkPartnerPaymnet_excelRows = transformInflowsData(
-          removeZeroRows(
-            removeNullRows(response.REPORTS_Centrelink_Summary.partnerPayment)
-          )
-        );
-
-        const FamilyTaxBanifit_excelRows = transformInflowsData(
-          removeZeroRows(
-            removeNullRows(response.REPORTS_Centrelink_Summary.familyTaxBenefit)
-          )
-        );
-
-        const Assests_excelRows = transformInflowsData(
-          removeZeroRows(removeNullRows(response.REPORTS_Networth.assets))
-        );
-
-        const Liabilities_excelRows = transformInflowsData(
-          removeZeroRows(removeNullRows(response.REPORTS_Networth.liabilities))
-        );
-
-        // const personalDebet_excelRows = transformInflowsData(
-        //   removeZeroRows(
-        //     removeNullRows(response.REPORTS_Networth.personalDebet)
-        //   )
-        // );
-
-        // console.log("Liabilities_excelRows:", Liabilities_excelRows);
-
-        const fullTable = [
-          createTableSection("1", "Total Inflows", InFlow, true),
-          createTableSection("2", "Total Outflows", OutFlow, true),
-          createTableSection("3", "Total Surplus", Surplus),
-        ];
-
-        let client_Tax_SessionObj =
-          content.cashFlowReport[0].reportsArray.clientTaxPosition;
-
-        let centerLinkAllowance_SessionObj =
-          content.cashFlowReport[0].reportsArray.centerLinkAllowanceDataSet;
-
-        let centerLinkIncome_SessionObj =
-          content.cashFlowReport[0].reportsArray.centerLinkIncomeDataSet;
-
-        let centerLinkAllowances_SessionObj =
-          content.cashFlowReport[0].reportsArray
-            .centerLinkIncomeTestAllowancesDataSet;
-
-        let centerLinkClientIncome_SessionObj =
-          content.cashFlowReport[0].reportsArray.centerLinkClientIncomeDataSet;
-
-        let centerLinkPartnerIncome_SessionObj =
-          content.cashFlowReport[0].reportsArray.centerLinkPartnerIncomeDataSet;
-
-        let centerLinkClientPaymnet_SessionObj =
-          content.cashFlowReport[0].reportsArray.centerLinkClientPaymnetDataSet;
-
-        let FamilyTaxBanifit_SessionObj =
-          content.cashFlowReport[0].reportsArray.familyTaxBanifit;
-
-        let Assets_SessionObj = content.cashFlowReport[1].reportsArray.assets;
-
-        let Liabilities_SessionObj =
-          content.cashFlowReport[1].reportsArray.assets;
-
-        const clinet_Tax_Table = createTaxSection(
+      setFullTableCashFlow(fullTable);
+      setClientData(
+        createTaxSection(
           client_Tax,
-          client_Tax_SessionObj
-        );
-
-        const partner_Tax_Table = createTaxSection(
+          content.cashFlowReport[0].reportsArray.clientTaxPosition
+        )
+      );
+      setPartnerData(
+        createTaxSection(
           partner_Tax,
-          client_Tax_SessionObj
-        );
+          content.cashFlowReport[0].reportsArray.clientTaxPosition
+        )
+      );
 
-        const AssetsTestPensionAllowanceData = createTaxSection(
-          CenterlinkAllowance_excelRows,
-          centerLinkAllowance_SessionObj
-        );
+      // Set Centrelink-related states
+      setAssetsTestPensionAllowance(
+        processedSections.AssetsTestPensionAllowanceData
+      );
+      setIncomeTestPensionsAllowances(
+        processedSections.IncomeTestPensionsAllowancesData
+      );
+      setAllowance(processedSections.IncomeTestAllowancesData);
+      setClientIncome(processedSections.ClientIncome);
+      setPartnerIncome(processedSections.PartnerIncome);
+      setClientPayment(processedSections.ClientPayment);
+      setPartnerPayment(processedSections.PartnerPayment);
+      setFamilyTaxBenefit(processedSections.FamilyTaxBenefit);
 
-        const IncomeTestPensionsAllowancesData = createTaxSection(
-          CenterlinkIncome_excelRows,
-          centerLinkIncome_SessionObj
-        );
+      //Assets and Liabilities
+      const Assests_excelRows = processData(networth, "assets");
+      const Liabilities_excelRows = processData(networth, "liabilities");
 
-        const IncomeTestAllowancesData = createTaxSection(
-          CenterlinkIncomeTestAllowence_excelRows,
-          centerLinkAllowances_SessionObj
-        );
+      const Assets_SessionObj = content.cashFlowReport[1].reportsArray.assets;
+      const Liabilities_SessionObj =
+        content.cashFlowReport[1].reportsArray.assets; // <- Likely a mistake; probably should be liabilities
 
-        const ClientIncome = createTaxSection(
-          CenterlinkClientIncome_excelRows,
-          centerLinkClientIncome_SessionObj
-        );
+      const assets = createTaxSection(Assests_excelRows, Assets_SessionObj);
+      const liabilities = createTaxSection(
+        Liabilities_excelRows,
+        Liabilities_SessionObj
+      );
 
-        const partnerIncome = createTaxSection(
-          CenterlinkPartnerIncome_excelRows,
-          centerLinkPartnerIncome_SessionObj
-        );
+      liabilities[0] = assets[0]; // <- Still questionable logic, but retained
 
-        const clientPaymnet = createTaxSection(
-          CenterlinkClientPaymnet_excelRows,
-          centerLinkClientPaymnet_SessionObj
-        );
+      setAssets(liabilities);
 
-        const partnerPaymnet = createTaxSection(
-          CenterlinkPartnerPaymnet_excelRows,
-          centerLinkClientPaymnet_SessionObj
-        );
+      const home = createTaxSection(
+        processData(lifestyleAssets, "home"),
+        content.cashFlowReport[1].reportsArray.home
+      );
 
-        const familyTaxBanifit = createTaxSection(
-          FamilyTaxBanifit_excelRows,
-          FamilyTaxBanifit_SessionObj
-        );
+      const personalAsset = createTaxSection(
+        processData(lifestyleAssets, "personalAsset"),
+        content.cashFlowReport[1].reportsArray.personalAsset
+      );
 
-        const assets = createTaxSection(Assests_excelRows, Assets_SessionObj);
+      console.log(home, personalAsset);
 
-        const liabilities = createTaxSection(
-          Liabilities_excelRows,
-          Liabilities_SessionObj
-        );
-        liabilities[0] = assets[0];
+      let lifestyleAssetsArray = [...home, ...personalAsset];
 
-        console.log("liabilities:", liabilities);
-
-        setAssets(liabilities);
-
-        setFullTableCashFlow(fullTable);
-        setClientData(clinet_Tax_Table);
-        setPartnerData(partner_Tax_Table);
-        setAssetsTestPensionAllowance(AssetsTestPensionAllowanceData);
-        setIncomeTestPensionsAllowances(IncomeTestPensionsAllowancesData);
-        setAllowance(IncomeTestAllowancesData);
-        setClientIncome(ClientIncome);
-        setPartnerIncome(partnerIncome);
-        setClientPayment(clientPaymnet);
-        setPartnerPayment(partnerPaymnet);
-        setFamilyTaxBenefit(familyTaxBanifit);
-
-        // Assets and Liabilities Report
-        // setAssets(assets);
-      }
+      setAsstesAndLiabilities(lifestyleAssetsArray);
+      // const home = processData(lifestyleAssets, "home");
+      // const personalAsset = processData(lifestyleAssets, "personalAsset");
+      // const personalLoan = processData(lifestyleAssets, "personalLoan");
     } catch (error) {
       console.error("Report Error:", error);
       openNotificationSuccess(
@@ -613,11 +471,7 @@ const CashFlowReport = () => {
                         showFilters={showFilters}
                         setShowFilters={setShowFilters}
                         asset={asset}
-                        setInflow={setInflow}
-                        liabilities={liabilities}
-                        setOutFlow={setOutFlow}
-                        surplus={surplus}
-                        setSurplus={setSurplus}
+                        asstesAndLiabilities={asstesAndLiabilities}
                         values={values}
                         setFieldValue={setFieldValue}
                         handleChange={handleChange}

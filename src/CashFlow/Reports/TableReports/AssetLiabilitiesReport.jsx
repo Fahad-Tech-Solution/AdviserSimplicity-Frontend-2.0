@@ -37,6 +37,7 @@ const AssetLiabilitiesReport = (props) => {
     showFilters,
     setShowFilters,
     asset,
+    asstesAndLiabilities,
     handleChange,
     values,
     setFieldValue,
@@ -336,7 +337,9 @@ const AssetLiabilitiesReport = (props) => {
                 className="form-select inputDesignDoubleInput"
               >
                 <option value="">Select</option>
-                <option value="Net Worth">Net Worth</option>
+                <option selected value="Net Worth">
+                  Net Worth
+                </option>
                 <option value="Persona Assets & Liabilities">
                   Persona Assets & Liabilities
                 </option>
@@ -435,7 +438,7 @@ const AssetLiabilitiesReport = (props) => {
         <div className="mt-4 porsition-relative">
           <Table
             // bordered
-            dataSource={asset}
+            dataSource={asstesAndLiabilities}
             columns={columns}
             scroll={{ x: "max-content" }}
             pagination={{

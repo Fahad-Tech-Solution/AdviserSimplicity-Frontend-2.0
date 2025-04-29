@@ -909,6 +909,34 @@ export const content = {
             children: [],
           },
         ],
+        home: [
+          {
+            parent: "Closing Value",
+            children: ["Opening Value", "Growth", "Costbase"],
+          },
+          {
+            parent: "Year End Loan Balance",
+            children: [
+              "Opening Balance",
+              "Principal Repayments/Withdrawals",
+              "Interest Repayments",
+              "Net proceeds after Sale",
+            ],
+          },
+        ],
+        personalAsset: [
+          {
+            parent: "Total Personal Assets",
+            children: [
+              "Contents",
+              "Cleint - Motor Vehicle ",
+              "Partner - Motor Vehicle ",
+              "Boat",
+              "Caravan",
+              "Other",
+            ],
+          },
+        ],
       },
     },
     {
