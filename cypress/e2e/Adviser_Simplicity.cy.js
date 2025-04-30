@@ -166,7 +166,7 @@ describe("Adviser Simplicity", () => {
     financialInvestments.section();
   });
 
-  it.only("Financial Investments Partner Section", () => {
+  it("Financial Investments Partner Section", () => {
     financialInvestmentsPartnerSection.section();
   });
 
@@ -174,7 +174,7 @@ describe("Adviser Simplicity", () => {
     financialInvestmentsJoinSection.section();
   });
 
-  it.skip("Estate Planning And Professional Adviser Card's", () => {
+  it.only("Estate Planning And Professional Adviser Card's", () => {
     adviser.section();
   });
 
