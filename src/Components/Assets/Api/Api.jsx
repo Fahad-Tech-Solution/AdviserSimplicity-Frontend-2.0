@@ -393,6 +393,16 @@ const transformInflowsData = (inflows = []) =>
     return formatted;
   });
 
+const transformInflowsData2 = (inflows = []) =>
+  inflows.map(([type, ...values]) => {
+    const formatted = { type };
+    for (let i = 0; i < 30; i++) {
+      const val = Number(values[i]);
+      formatted[`year${i + 1}`] = (isNaN(val) ? 0 : val);
+    }
+    return formatted;
+  });
+
 const extractIndexesByType = (dataArray, typeArray) =>
   dataArray.reduce((acc, item, i) => {
     if (typeArray.includes(item.type)) acc.push(i);
@@ -432,6 +442,7 @@ export {
   createTaxSection,
   removeNullRows,
   transformInflowsData,
+  transformInflowsData2,
   extractIndexesByType,
   sliceDataArrayRange,
   removeZeroRows,

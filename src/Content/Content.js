@@ -647,6 +647,75 @@ export const content = {
       stepNumber: 0,
       key: "CashFlow_Income_And_Expenses",
       reportsArray: {
+        Age: [
+          {
+            parent: RenderName("client"),
+            children: [],
+          },
+          {
+            parent: RenderName("partner"),
+            children: [],
+          },
+        ],
+        inflows: [
+          {
+            parent: "Total Inflows",
+            children: [
+              "Salary Income",
+              "Other Taxable income",
+              "Net Business Income",
+              "Net Income From Business (Coy & Trust)",
+              "Other Non-Taxable income",
+              "Rental Income",
+              "Investment Income",
+              "Interest Income ",
+              "Trust Distributions",
+              "Family Tax Payments (A & B)",
+              "Centrelink Payments",
+              "Child Maintenance Received",
+              "Super Pensions",
+              "Annuity Income",
+              "Lumpsum Super & Pension W/Drawals",
+              "Investment Redemptions",
+              "Loan Additions",
+              "Other Lumpsum Additions",
+              "Total Inflows",
+            ],
+          },
+        ],
+        outFlow: [
+          {
+            parent: "Total Outflows",
+            children: [
+              "General Living Expenses",
+              "Holidays",
+              "Other Expenses",
+              "Personal Insurances",
+              "Education Expenses",
+              "Child Maintenance Payed",
+              "Other Lumpsum Purchases",
+              "Property Expenses",
+              "Non-Deductible Loan Repayments",
+              "Loan Repayments (Property Loans)",
+              "Investment Loan Repayments",
+              "Additional Purchases of Investments",
+              "Tax ",
+              "Concessional Super Contributions",
+              "Non-Concessional/Downsizer Super Contributions",
+              "Total Outflows",
+            ],
+          },
+        ],
+        surplus: [
+          {
+            parent: "Surplus/Deficit",
+            children: [
+              "Surplus/Deficit",
+              "Home Loan End",
+              "Cash Savings Year End",
+            ],
+          },
+        ],
         clientTaxPosition: [
           {
             parent: "Total Assessable income",
@@ -921,6 +990,16 @@ export const content = {
               "Principal Repayments/Withdrawals",
               "Interest Repayments",
               "Net proceeds after Sale",
+            ],
+          },
+        ],
+        personalLoan: [
+          {
+            parent: "Year End Loan Balance",
+            children: [
+              "Opening Balance",
+              "Principal Repayments",
+              "Interest Repayments",
             ],
           },
         ],

@@ -17,9 +17,11 @@ import {
   removeZeroRows,
   toCommaAndDollar,
   transformInflowsData,
+  transformInflowsData2,
 } from "../../Components/Assets/Api/Api";
 import { ConfigProvider } from "antd";
 import { content } from "../../Content/Content";
+import FinancialInvestmentsReport from "./TableReports/FinancialInvestmentsReport";
 
 const CashFlowReport = () => {
   let initialValues = {
@@ -272,6 +274,15 @@ const CashFlowReport = () => {
     return transformInflowsData(removeZeroRows(removeNullRows(result)));
   };
 
+  const processData2 = (data, ...keys) => {
+    let result = data;
+    for (const key of keys) {
+      result = result?.[key] ?? {};
+    }
+    // console.log(keys);
+    return transformInflowsData2(removeZeroRows(removeNullRows(result)));
+  };
+
   const FetchReports = async () => {
     setLoading(true);
     const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
@@ -291,6 +302,7 @@ const CashFlowReport = () => {
       const networth = response.REPORTS_Networth;
       const lifestyleAssets = response.REPORTS_Lifestyle_Assets_Debts;
 
+      const Age = processData2(cashflow, "Age");
       const InFlow = processData(cashflow, "inflows");
       const OutFlow = processData(cashflow, "outflows");
       const Surplus = processData(cashflow, "surplusDeficit");
@@ -332,11 +344,42 @@ const CashFlowReport = () => {
         {}
       );
 
+      let AgeArray = createTaxSection(
+        Age,
+        content.cashFlowReport[0].reportsArray.Age
+      );
+
+      let inFlowArray = createTaxSection(
+        InFlow,
+        content.cashFlowReport[0].reportsArray.inflows
+      );
+      let outFlowArray = createTaxSection(
+        OutFlow,
+        content.cashFlowReport[0].reportsArray.outFlow
+      );
+      let surplusArray = createTaxSection(
+        Surplus,
+        content.cashFlowReport[0].reportsArray.surplus
+      );
+
       const fullTable = [
-        createTableSection("1", "Total Inflows", InFlow, true),
-        createTableSection("2", "Total Outflows", OutFlow, true),
-        createTableSection("3", "Total Surplus", Surplus),
-      ];
+        // createTableSection("1", "Total Inflows", InFlow, true),
+        // createTableSection("2", "Total Outflows", OutFlow, true),
+        // createTableSection("3", "Total Surplus", Surplus),
+        ...AgeArray,
+        ...inFlowArray,
+        ...outFlowArray,
+        ...surplusArray,
+      ].map((item, index) => {
+        let section = ["", "", "InFlow", "OutFlow", "Surplus"];
+        let typeAddision = section[index] !== "" ? section[index] : item.type;
+        return {
+          ...item,
+          key: (index + 1).toString(), // key as string from 1, 2, 3, ...
+          type: typeAddision, // Adding section to type
+        };
+      });
+      console.log("full Table Array:", fullTable);
 
       setFullTableCashFlow(fullTable);
       setClientData(
@@ -394,14 +437,53 @@ const CashFlowReport = () => {
         content.cashFlowReport[1].reportsArray.personalAsset
       );
 
-      console.log(home, personalAsset);
+      const personalLoan1 = createTaxSection(
+        processData(lifestyleAssets, "personalLoan1"),
+        content.cashFlowReport[1].reportsArray.personalLoan
+      );
 
-      let lifestyleAssetsArray = [...home, ...personalAsset];
+      const personalLoan2 = createTaxSection(
+        processData(lifestyleAssets, "personalLoan2"),
+        content.cashFlowReport[1].reportsArray.personalLoan
+      );
+
+      const creditCard1 = createTaxSection(
+        processData(lifestyleAssets, "creditCard1"),
+        content.cashFlowReport[1].reportsArray.personalLoan
+      );
+
+      const creditCard2 = createTaxSection(
+        processData(lifestyleAssets, "creditCard2"),
+        content.cashFlowReport[1].reportsArray.personalLoan
+      );
+
+      let lifestyleAssetsArray = [
+        ...home,
+        ...personalAsset,
+        ...personalLoan1,
+        ...personalLoan2,
+        ...creditCard1,
+        ...creditCard2,
+      ].map((item, index) => {
+        let section = [
+          "",
+          "",
+          "",
+          "Personal Loan 1",
+          "Personal Loan 2",
+          "Credit Card 1",
+          "Credit Card 2",
+        ];
+        let typeAddision =
+          section[index] !== "" ? "(" + section[index] + ")  " : "";
+        return {
+          ...item,
+          key: (index + 1).toString(), // key as string from 1, 2, 3, ...
+          type: typeAddision + item.type, // Adding section to type
+        };
+      });
 
       setAsstesAndLiabilities(lifestyleAssetsArray);
-      // const home = processData(lifestyleAssets, "home");
-      // const personalAsset = processData(lifestyleAssets, "personalAsset");
-      // const personalLoan = processData(lifestyleAssets, "personalLoan");
     } catch (error) {
       console.error("Report Error:", error);
       openNotificationSuccess(
@@ -472,6 +554,32 @@ const CashFlowReport = () => {
                         setShowFilters={setShowFilters}
                         asset={asset}
                         asstesAndLiabilities={asstesAndLiabilities}
+                        values={values}
+                        setFieldValue={setFieldValue}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                      />
+                    </>
+                  )}
+
+                  {step == 2 && (
+                    <>
+                      <FinancialInvestmentsReport
+                        showFilters={showFilters}
+                        setShowFilters={setShowFilters}
+                        fullTableCashFlow={fullTableCashFlow}
+                        clientData={clientData}
+                        partnerData={partnerData}
+                        assetsTestPensionAllowance={assetsTestPensionAllowance}
+                        incomeTestPensionsAllowances={
+                          incomeTestPensionsAllowances
+                        }
+                        allowance={allowance}
+                        clientIncome={clientIncome}
+                        partnerIncome={partnerIncome}
+                        clientPayment={clientPayment}
+                        partnerPayment={partnerPayment}
+                        familyTaxBenefit={familyTaxBenefit}
                         values={values}
                         setFieldValue={setFieldValue}
                         handleChange={handleChange}

@@ -1,6 +1,6 @@
 import { Table } from "antd";
 import { Field } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Card, Col, Image, Row } from "react-bootstrap";
 import { FaMagnifyingGlass, FaXmark } from "react-icons/fa6";
 
@@ -176,140 +176,236 @@ const AssetLiabilitiesReport = (props) => {
     }),
   ]);
 
-  const applyFilter = (values) => {
-    if (values.yearFrom !== "" && values.yearTo !== "") {
-      const yearFrom = parseInt(values.yearFrom, 10);
-      const yearTo = parseInt(values.yearTo, 10);
-
-      if (!isNaN(yearFrom) && !isNaN(yearTo) && yearFrom <= yearTo) {
-        const dynamicYearColumns = [];
-
-        for (let year = yearFrom; year <= yearTo; year++) {
-          if (year === yearTo) {
-            dynamicYearColumns.push({
-              title: year.toString() + " (" + (currentYear + year) + ")",
-              dataIndex: `year${year}`, // You may need to match this with your data source
-              key: year.toString(),
-              align: "left",
-              render: (text, record) => {
-                const isParentRow =
-                  record.children && Array.isArray(record.children);
-
-                return (
-                  <div
-                    style={{
-                      fontWeight: isParentRow ? "bold" : "normal",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      fontFamily: '"Inter", sans-serif',
-                    }}
-                  >
-                    {text}
-                  </div>
-                );
-              },
-            });
-          } else {
-            dynamicYearColumns.push({
-              title: year.toString() + " (" + (currentYear + year) + ")",
-              dataIndex: `year${year}`, // You may need to match this with your data source
-              key: year.toString(),
-              render: (text, record) => {
-                const isParentRow =
-                  record.children && Array.isArray(record.children);
-
-                return (
-                  <div
-                    style={{
-                      fontWeight: isParentRow ? "bold" : "normal",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      fontFamily: '"Inter", sans-serif',
-                    }}
-                  >
-                    {text}
-                  </div>
-                );
-              },
-            });
-          }
+  const [columns2, setColumn2] = useState([
+    {
+      title: "Year",
+      dataIndex: "type",
+      key: "type",
+      width: 250, // 👈 Set fixed width
+      fixed: "left", // 👈 Fix column to the left
+      render: (text, row, index) => {
+        if (row.isHeader) {
+          return { props: { colSpan: 0 } };
         }
+        const isParentRow = row?.children && Array.isArray(row.children);
 
-        // Combine the fixed left column with the dynamic years
-        const updatedColumns = [
-          {
-            title: "Year",
-            dataIndex: "type",
-            key: "type",
-            width: 250, // 👈 Set fixed width
-            fixed: "left", // 👈 Fix column to the left
-            render: (text, row, index) => {
-              if (row.isHeader) {
-                return { props: { colSpan: 0 } };
-              }
-              const isParentRow = row?.children && Array.isArray(row.children);
-
-              return (
-                <div
-                  style={{
-                    fontWeight: isParentRow ? "bold" : "normal",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 8,
-                  }}
-                >
-                  {!isParentRow && (
-                    <div style={{ width: "25px" }}>
-                      <Image src={ImageArray[index]} fluid />
-                    </div>
-                  )}
-                  {text}
-                </div>
-              );
-            },
-          },
-          {
-            title: "Existing",
-            dataIndex: "existing",
-            key: "existing",
-            fixed: "left", // 👈 Fix column to the left
-            render: (text, record) => {
-              const isParentRow =
-                record.children && Array.isArray(record.children);
-
-              return (
-                <div
-                  style={{
-                    fontWeight: isParentRow ? "bold" : "normal",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    fontFamily: '"Inter", sans-serif',
-                  }}
-                >
-                  {text}
-                </div>
-              );
-            },
-          },
-          ...dynamicYearColumns,
-        ];
-
-        setColumn(updatedColumns);
-      } else {
-        openNotificationSuccess(
-          "error",
-          "topRight",
-          "Error Notification",
-          "Please! Enter valid year range"
+        return (
+          <div
+            style={{
+              fontWeight: isParentRow ? "bold" : "normal",
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            {!isParentRow && (
+              <div style={{ width: "25px" }}>
+                <Image src={ImageArray[index]} fluid />
+              </div>
+            )}
+            {text}
+          </div>
         );
+      },
+    },
+    ...[1, 2, 3, 4, 5, 6].map((year, i) => {
+      if (year === 6) {
+        return {
+          title: String(year) + " (" + (currentYear + i) + ")",
+          dataIndex: `year${year}`,
+          key: String(year),
+          align: "left",
+          render: (text, record) => {
+            const isParentRow =
+              record.children && Array.isArray(record.children);
+
+            return (
+              <div
+                style={{
+                  fontWeight: isParentRow ? "bold" : "normal",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  fontFamily: '"Inter", sans-serif',
+                }}
+              >
+                {text}
+              </div>
+            );
+          },
+        };
       }
-    } else {
+      return {
+        title: String(year) + " (" + (currentYear + i) + ")",
+        dataIndex: `year${year}`,
+        key: String(year),
+        render: (text, record) => {
+          const isParentRow = record.children && Array.isArray(record.children);
+
+          return (
+            <div
+              style={{
+                fontWeight: isParentRow ? "bold" : "normal",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                fontFamily: '"Inter", sans-serif',
+              }}
+            >
+              {text}
+            </div>
+          );
+        },
+      };
+    }),
+  ]);
+
+  const applyFilter = (values, currentInput) => {
+    if (values.yearFrom === "" || values.yearTo === "") {
       console.warn("Invalid year range");
+      return;
+    }
+
+    const { yearFrom, yearTo } = getYearRange(values, currentInput);
+    if (isNaN(yearFrom) || isNaN(yearTo) || yearFrom > yearTo) {
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        "Please! Enter valid year range"
+      );
+      return;
+    }
+
+    const dynamicYearColumns = generateDynamicYearColumns(yearFrom, yearTo);
+    const baseColumns = getBaseColumns(values.category === "Net Worth");
+
+    const updatedColumns = [...baseColumns, ...dynamicYearColumns];
+
+    if (values.category === "Net Worth") {
+      setColumn(updatedColumns);
+    } else {
+      setColumn2(updatedColumns);
     }
   };
+
+  // Helpers
+
+  const getYearRange = (values, currentInput) => {
+    const value = parseInt(currentInput.value, 10);
+    const name = currentInput.name;
+
+    let yearFrom = parseInt(values.yearFrom, 10);
+    let yearTo = parseInt(values.yearTo, 10);
+
+    if (name === "yearFrom") {
+      yearFrom = value;
+      yearTo = Math.min(value + 5, 10);
+    } else if (name === "yearTo") {
+      yearTo = value;
+      yearFrom = Math.max(value - 5, 1);
+    }
+
+    return { yearFrom, yearTo };
+  };
+
+  const generateDynamicYearColumns = (from, to) => {
+    const columns = [];
+
+    for (let year = from; year <= to; year++) {
+      columns.push({
+        title: `${year} (${currentYear + year})`,
+        dataIndex: `year${year}`,
+        key: year.toString(),
+        align: year === to ? "left" : undefined,
+        render: (text, record) => {
+          const isParentRow = record.children && Array.isArray(record.children);
+          return (
+            <div
+              style={{
+                fontWeight: isParentRow ? "bold" : "normal",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                fontFamily: '"Inter", sans-serif',
+              }}
+            >
+              {text}
+            </div>
+          );
+        },
+      });
+    }
+
+    return columns;
+  };
+
+  const getBaseColumns = (isNetWorth) => {
+    const columns = [
+      {
+        title: "Year",
+        dataIndex: "type",
+        key: "type",
+        width: 250,
+        fixed: "left",
+        render: (text, row, index) => {
+          if (row.isHeader) return { props: { colSpan: 0 } };
+          const isParentRow = row?.children && Array.isArray(row.children);
+
+          return (
+            <div
+              style={{
+                fontWeight: isParentRow ? "bold" : "normal",
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+              }}
+            >
+              {!isParentRow && (
+                <div style={{ width: "25px" }}>
+                  <Image src={ImageArray[index]} fluid />
+                </div>
+              )}
+              {text}
+            </div>
+          );
+        },
+      },
+    ];
+
+    if (isNetWorth) {
+      columns.push({
+        title: "Existing",
+        dataIndex: "existing",
+        key: "existing",
+        fixed: "left",
+        render: (text, record) => {
+          const isParentRow = record.children && Array.isArray(record.children);
+          return (
+            <div
+              style={{
+                fontWeight: isParentRow ? "bold" : "normal",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                fontFamily: '"Inter", sans-serif',
+              }}
+            >
+              {text}
+            </div>
+          );
+        },
+      });
+    }
+
+    return columns;
+  };
+
+  useEffect(() => {
+    setFieldValue("category", "Net Worth"); // Set default value for category
+    setFieldValue("yearFrom", 1); // Set default value for yearFrom
+    setFieldValue("yearTo", 6); // Set default value for yearTo
+  }, []);
 
   return (
     <React.Fragment>
@@ -439,7 +535,7 @@ const AssetLiabilitiesReport = (props) => {
           <Table
             // bordered
             dataSource={asstesAndLiabilities}
-            columns={columns}
+            columns={columns2}
             scroll={{ x: "max-content" }}
             pagination={{
               pageSize: 50,

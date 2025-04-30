@@ -1714,10 +1714,20 @@ label {
   float: inline-end;
 }
 
+.reportSection .ant-table-title {
+  padding: 0px !important;
+}
+
+.reportSection table thead tr:first-child th:first-child,
+.reportSection table thead tr:last-child th:last-child {
+  border-radius: 0px !important;
+}
+
 .reportSection .ant-table-thead > tr > th {
   background: #36b446 !important;
   color: white;
   font-weight: 700;
+  border-radius: 0px !important;
 }
 
 .reportSection .ant-table-summary > tr {

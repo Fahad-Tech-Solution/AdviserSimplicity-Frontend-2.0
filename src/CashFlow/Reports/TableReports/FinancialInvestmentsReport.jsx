@@ -8,7 +8,7 @@ import {
   RenderName,
 } from "../../../Components/Assets/Api/Api";
 
-const CashReport = (props) => {
+const FinancialInvestmentsReport = (props) => {
   let {
     showFilters,
     setShowFilters,
@@ -32,7 +32,7 @@ const CashReport = (props) => {
 
   const [columns, setColumn] = useState([
     {
-      title: "Financial Year Ending 30 June Year",
+      title: "Year",
       dataIndex: "type",
       key: "type",
       width: 250, // 👈 Set fixed width
@@ -188,7 +188,7 @@ const CashReport = (props) => {
         // Combine the fixed left column with the dynamic years
         const updatedColumns = [
           {
-            title: "Financial Year Ending 30 June Year",
+            title: "Year",
             dataIndex: "type",
             key: "type",
             width: 250, // 👈 Set fixed width
@@ -236,9 +236,9 @@ const CashReport = (props) => {
 
   return (
     <React.Fragment>
-      <div className="d-flex flex-row justify-content-between align-items-center d-none">
+      <div className="d-flex flex-row justify-content-between align-items-center">
         <h2 className="text-green mt-3 fw-bold">
-          Cash Flow&nbsp;{" "}
+          Financial Investments &nbsp;{" "}
           {(values.category === "Client Tax" ||
             values.category === "Partner Tax") && (
             <span className="text-green fw-bold fs-5">
@@ -269,7 +269,7 @@ const CashReport = (props) => {
         </span>
       </div>
       {showFilters && (
-        <Card className="my-4 shadow-sm p-3 rounded ">
+        <Card className="my-4 shadow-sm p-3 rounded">
           <Row
             gutter={16}
             className="justify-content-around align-items-center"
@@ -377,39 +377,11 @@ const CashReport = (props) => {
               dataSource={fullTableCashFlow} // 👈 Removes the last row from the table
               columns={columns}
               scroll={{ x: "max-content" }}
-              // size="small"
               pagination={{
                 pageSize: 50,
                 position: ["bottomRight"],
                 className: "custom-pagination",
               }}
-              title={() => (
-                <>
-                  <div
-                    style={{
-                      background: "#36b446",
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      padding: "10px",
-                      borderBottom: "1px solid white",
-                      borderTopLeftRadius: "10px",
-                      borderTopRightRadius: "10px",
-                    }}
-                  >
-                    <div className="d-flex justify-content-between align-items-center w-100">
-                      <h4 className=" ms-2 mt-3 fw-bold">Cash Flow</h4>
-                      <span
-                        role="button"
-                        className="me-3"
-                        onClick={() => setShowFilters(!showFilters)}
-                      >
-                        {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
             />
           </div>
         </>
@@ -430,40 +402,6 @@ const CashReport = (props) => {
                 position: ["bottomRight"],
                 className: "custom-pagination",
               }}
-              title={() => (
-                <>
-                  <div
-                    style={{
-                      background: "#36b446",
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      padding: "10px",
-                      borderBottom: "1px solid white",
-                      borderTopLeftRadius: "10px",
-                      borderTopRightRadius: "10px",
-                    }}
-                  >
-                    <div className="d-flex justify-content-between align-items-center w-100">
-                      <h4 className=" ms-2 mt-3 fw-bold">
-                        {RenderName(
-                          values.category === "Partner Tax"
-                            ? "partner"
-                            : "client"
-                        )}
-                        's Tax Position
-                      </h4>
-                      <span
-                        role="button"
-                        className="me-3"
-                        onClick={() => setShowFilters(!showFilters)}
-                      >
-                        {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
             />
           </div>
         </>
@@ -472,6 +410,9 @@ const CashReport = (props) => {
       {values.category === "Centrelink" && (
         <>
           <div className="mt-4 porsition-relative">
+            <h4 className="text-green fw-bold">
+              Assets Test-Pension/Allowance{" "}
+            </h4>
             <Table
               dataSource={assetsTestPensionAllowance} // 👈 Removes the last row from the table
               columns={columns}
@@ -481,41 +422,13 @@ const CashReport = (props) => {
                 position: ["bottomRight"],
                 className: "custom-pagination",
               }}
-              title={() => (
-                <>
-                  <div
-                    style={{
-                      background: "#36b446",
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      padding: "10px",
-                      borderBottom: "1px solid white",
-                      borderTopLeftRadius: "10px",
-                      borderTopRightRadius: "10px",
-                    }}
-                  >
-                    <div className="d-flex justify-content-between align-items-center w-100">
-                      <h4 className=" ms-2 mt-3 fw-bold">
-                        Centrelink Summary
-                        <span className=" fw-bold fs-5">
-                          (Assets Test-Pension/Allowance)
-                        </span>
-                      </h4>
-                      <span
-                        role="button"
-                        className="me-3"
-                        onClick={() => setShowFilters(!showFilters)}
-                      >
-                        {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
             />
           </div>
           <div className="mt-4 porsition-relative">
+            <h4 className="text-green fw-bold">
+              Income Test- Pensions/Allowances{" "}
+            </h4>
+
             <Table
               dataSource={incomeTestPensionsAllowances} // 👈 Removes the last row from the table
               columns={columns}
@@ -525,41 +438,11 @@ const CashReport = (props) => {
                 position: ["bottomRight"],
                 className: "custom-pagination",
               }}
-              title={() => (
-                <>
-                  <div
-                    style={{
-                      background: "#36b446",
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      padding: "10px",
-                      borderBottom: "1px solid white",
-                      borderTopLeftRadius: "10px",
-                      borderTopRightRadius: "10px",
-                    }}
-                  >
-                    <div className="d-flex justify-content-between align-items-center w-100">
-                      <h4 className=" ms-2 mt-3 fw-bold">
-                        Centrelink Summary
-                        <span className=" fw-bold fs-5">
-                          (Income Test- Pensions/Allowances)
-                        </span>
-                      </h4>
-                      <span
-                        role="button"
-                        className="me-3"
-                        onClick={() => setShowFilters(!showFilters)}
-                      >
-                        {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
             />
           </div>
           <div className="mt-4 porsition-relative">
+            <h4 className="text-green fw-bold">Allowance </h4>
+
             <Table
               dataSource={allowance} // 👈 Removes the last row from the table
               columns={columns}
@@ -569,39 +452,11 @@ const CashReport = (props) => {
                 position: ["bottomRight"],
                 className: "custom-pagination",
               }}
-              title={() => (
-                <>
-                  <div
-                    style={{
-                      background: "#36b446",
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      padding: "10px",
-                      borderBottom: "1px solid white",
-                      borderTopLeftRadius: "10px",
-                      borderTopRightRadius: "10px",
-                    }}
-                  >
-                    <div className="d-flex justify-content-between align-items-center w-100">
-                      <h4 className=" ms-2 mt-3 fw-bold">
-                        Centrelink Summary
-                        <span className=" fw-bold fs-5">(Allowance)</span>
-                      </h4>
-                      <span
-                        role="button"
-                        className="me-3"
-                        onClick={() => setShowFilters(!showFilters)}
-                      >
-                        {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
             />
           </div>
           <div className="mt-4 porsition-relative">
+            <h4 className="text-green fw-bold">Client Income </h4>
+
             <Table
               dataSource={clientIncome} // 👈 Removes the last row from the table
               columns={columns}
@@ -611,41 +466,10 @@ const CashReport = (props) => {
                 position: ["bottomRight"],
                 className: "custom-pagination",
               }}
-              title={() => (
-                <>
-                  <div
-                    style={{
-                      background: "#36b446",
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      padding: "10px",
-                      borderBottom: "1px solid white",
-                      borderTopLeftRadius: "10px",
-                      borderTopRightRadius: "10px",
-                    }}
-                  >
-                    <div className="d-flex justify-content-between align-items-center w-100">
-                      <h4 className=" ms-2 mt-3 fw-bold">
-                        Centrelink Summary
-                        <span className=" fw-bold fs-5">
-                          ({RenderName("client")} Income)
-                        </span>
-                      </h4>
-                      <span
-                        role="button"
-                        className="me-3"
-                        onClick={() => setShowFilters(!showFilters)}
-                      >
-                        {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
             />
           </div>
           <div className="mt-4 porsition-relative">
+            <h4 className="text-green fw-bold">Partner Income </h4>
             <Table
               dataSource={partnerIncome} // 👈 Removes the last row from the table
               columns={columns}
@@ -655,41 +479,11 @@ const CashReport = (props) => {
                 position: ["bottomRight"],
                 className: "custom-pagination",
               }}
-              title={() => (
-                <>
-                  <div
-                    style={{
-                      background: "#36b446",
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      padding: "10px",
-                      borderBottom: "1px solid white",
-                      borderTopLeftRadius: "10px",
-                      borderTopRightRadius: "10px",
-                    }}
-                  >
-                    <div className="d-flex justify-content-between align-items-center w-100">
-                      <h4 className=" ms-2 mt-3 fw-bold">
-                        Centrelink Summary
-                        <span className=" fw-bold fs-5">
-                          ({RenderName("partner")} Income)
-                        </span>
-                      </h4>
-                      <span
-                        role="button"
-                        className="me-3"
-                        onClick={() => setShowFilters(!showFilters)}
-                      >
-                        {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
             />
           </div>
           <div className="mt-4 porsition-relative">
+            <h4 className="text-green fw-bold">Client Payment</h4>
+
             <Table
               dataSource={clientPayment} // 👈 Removes the last row from the table
               columns={columns}
@@ -699,41 +493,11 @@ const CashReport = (props) => {
                 position: ["bottomRight"],
                 className: "custom-pagination",
               }}
-              title={() => (
-                <>
-                  <div
-                    style={{
-                      background: "#36b446",
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      padding: "10px",
-                      borderBottom: "1px solid white",
-                      borderTopLeftRadius: "10px",
-                      borderTopRightRadius: "10px",
-                    }}
-                  >
-                    <div className="d-flex justify-content-between align-items-center w-100">
-                      <h4 className=" ms-2 mt-3 fw-bold">
-                        Centrelink Summary
-                        <span className=" fw-bold fs-5">
-                          ({RenderName("client")} Payment)
-                        </span>
-                      </h4>
-                      <span
-                        role="button"
-                        className="me-3"
-                        onClick={() => setShowFilters(!showFilters)}
-                      >
-                        {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
             />
           </div>
           <div className="mt-4 porsition-relative">
+            <h4 className="text-green fw-bold">Partner Payment</h4>
+
             <Table
               dataSource={partnerPayment} // 👈 Removes the last row from the table
               columns={columns}
@@ -743,38 +507,6 @@ const CashReport = (props) => {
                 position: ["bottomRight"],
                 className: "custom-pagination",
               }}
-              title={() => (
-                <>
-                  <div
-                    style={{
-                      background: "#36b446",
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      padding: "10px",
-                      borderBottom: "1px solid white",
-                      borderTopLeftRadius: "10px",
-                      borderTopRightRadius: "10px",
-                    }}
-                  >
-                    <div className="d-flex justify-content-between align-items-center w-100">
-                      <h4 className=" ms-2 mt-3 fw-bold">
-                        Centrelink Summary
-                        <span className=" fw-bold fs-5">
-                          ({RenderName("partner")} Payment)
-                        </span>
-                      </h4>
-                      <span
-                        role="button"
-                        className="me-3"
-                        onClick={() => setShowFilters(!showFilters)}
-                      >
-                        {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
             />
           </div>
         </>
@@ -792,35 +524,6 @@ const CashReport = (props) => {
                 position: ["bottomRight"],
                 className: "custom-pagination",
               }}
-              title={() => (
-                <>
-                  <div
-                    style={{
-                      background: "#36b446",
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      padding: "10px",
-                      borderBottom: "1px solid white",
-                      borderTopLeftRadius: "10px",
-                      borderTopRightRadius: "10px",
-                    }}
-                  >
-                    <div className="d-flex justify-content-between align-items-center w-100">
-                      <h4 className=" ms-2 mt-3 fw-bold">
-                        Family Tax Benefits
-                      </h4>
-                      <span
-                        role="button"
-                        className="me-3"
-                        onClick={() => setShowFilters(!showFilters)}
-                      >
-                        {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
             />
           </div>
         </>
@@ -829,4 +532,4 @@ const CashReport = (props) => {
   );
 };
 
-export default CashReport;
+export default FinancialInvestmentsReport;
