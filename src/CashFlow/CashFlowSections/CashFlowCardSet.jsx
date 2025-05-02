@@ -88,7 +88,7 @@ const CashFlowCardSet = (props) => {
 
     "Investment Loans (LOC)": <CashFlowInvestmentLoansLOC />,
     "Margin Loan": <CashFlowMarginLoan />,
-    "Investments Property": <CashFlowInvestmentsProperty />,
+    "Investments Property": <CashFlownvestmentsProperty />,
 
     // Same type of Modal
     "Super Fund": <CFSuperFund />,

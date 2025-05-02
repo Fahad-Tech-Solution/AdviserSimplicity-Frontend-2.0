@@ -1758,3 +1758,14 @@ label {
 .reportSection label {
   font-family: "Inter", sans-serif !important;
 }
+
+
+.reportSection .highlight-green-row {
+  background-color: #36b446 !important;
+  color: white !important;
+}
+
+.reportSection .highlight-green-row > td {
+  background-color: #36b446 !important;
+  color: white !important;
+}

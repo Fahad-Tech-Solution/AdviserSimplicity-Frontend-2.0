@@ -1,265 +1,109 @@
-import { Table, Tooltip } from "antd";
-import { Field } from "formik";
 import React, { useEffect, useState } from "react";
-import { Button, Card, Col, Row } from "react-bootstrap";
+import { Field } from "formik";
+import { Card, Col, Row } from "react-bootstrap";
 import { FaMagnifyingGlass, FaXmark } from "react-icons/fa6";
 import {
+  generateReportColumns,
   openNotificationSuccess,
   RenderName,
 } from "../../../Components/Assets/Api/Api";
+import AntTableDynamicReportTable from "../../../Components/Assets/Table/AntTableDynamicReportTable";
+import { Tooltip } from "antd";
 
-const CashReport = (props) => {
-  let {
-    showFilters,
-    setShowFilters,
-    fullTableCashFlow,
-    clientData,
-    partnerData,
-    assetsTestPensionAllowance,
-    incomeTestPensionsAllowances,
-    allowance,
-    clientIncome,
-    partnerIncome,
-    clientPayment,
-    partnerPayment,
-    familyTaxBenefit,
-    values,
-    setFieldValue,
-    handleChange,
-  } = props;
-
-  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-
-  const [columns, setColumn] = useState([
-    {
-      title: "Financial Year Ending 30 June Year",
-      dataIndex: "type",
-      key: "type",
-      width: 250, // 👈 Set fixed width
-      fixed: "left", // 👈 Fix column to the left
-      render: (text, record) => {
-        const isParentRow = record.children && Array.isArray(record.children);
-        return (
-          <Tooltip title={text}>
-            <div
-              style={{
-                fontWeight: isParentRow ? "bold" : "normal",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                fontFamily: '"Inter", sans-serif',
-              }}
-            >
-              {text}
-            </div>
-          </Tooltip>
-        );
-      },
-    },
-    ...[1, 2, 3, 4, 5, 6].map((year, i) => {
-      if (year === 6) {
-        return {
-          title: String(year) + " (" + (currentYear + i) + ")",
-          dataIndex: `year${year}`,
-          key: String(year),
-          align: "left",
-          render: (text, record) => {
-            const isParentRow =
-              record.children && Array.isArray(record.children);
-
-            return (
-              <div
-                style={{
-                  fontWeight: isParentRow ? "bold" : "normal",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  fontFamily: '"Inter", sans-serif',
-                }}
-              >
-                {text}
-              </div>
-            );
-          },
-        };
-      }
-      return {
-        title: String(year) + " (" + (currentYear + i) + ")",
-        dataIndex: `year${year}`,
-        key: String(year),
-        render: (text, record) => {
-          const isParentRow = record.children && Array.isArray(record.children);
-
-          return (
-            <div
-              style={{
-                fontWeight: isParentRow ? "bold" : "normal",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                fontFamily: '"Inter", sans-serif',
-              }}
-            >
-              {text}
-            </div>
-          );
-        },
-      };
-    }),
-  ]);
+const CashReport = ({
+  showFilters,
+  setShowFilters,
+  fullTableCashFlow,
+  clientData,
+  partnerData,
+  centrelinkCombined,
+  familyTaxBenefit,
+  values,
+  setFieldValue,
+  handleChange,
+}) => {
+  const [currentYear] = useState(new Date().getFullYear());
+  const [columns, setColumns] = useState(
+    generateReportColumns({
+      startYear: values.yearFrom || 1,
+      endYear: values.yearTo || 6,
+    })
+  );
 
   const applyFilter = (values, currentInput) => {
-    if (values.yearFrom !== "" && values.yearTo !== "") {
-      const yearFrom =
-        currentInput.name === "yearFrom"
-          ? parseInt(currentInput.value, 10)
-          : currentInput.name === "yearTo"
-          ? parseInt(currentInput.value, 10) - 5 < 1
-            ? 1
-            : parseInt(currentInput.value, 10) - 5
-          : parseInt(values.yearFrom, 10);
+    const yearFrom = parseInt(currentInput?.value || values.yearFrom, 10);
+    const yearTo = parseInt(values.yearTo || yearFrom + 5, 10);
 
-      const yearTo =
-        currentInput.name === "yearFrom"
-          ? parseInt(currentInput.value, 10) + 5 > 10 && currentInput.value < 10
-            ? 10
-            : parseInt(currentInput.value, 10) + 5
-          : currentInput.name === "yearTo"
-          ? parseInt(currentInput.value, 10)
-          : parseInt(values.yearTo, 10);
-      // let currentYearWithFilter = currentYear + yearFrom;
-
-      if (!isNaN(yearFrom) && !isNaN(yearTo) && yearFrom <= yearTo) {
-        const dynamicYearColumns = [];
-
-        for (let year = yearFrom; year <= yearTo; year++) {
-          if (year === yearTo) {
-            dynamicYearColumns.push({
-              title: year.toString() + " (" + (currentYear + year) + ")",
-              dataIndex: `year${year}`, // You may need to match this with your data source
-              key: year.toString(),
-              align: "left",
-              render: (text, record) => {
-                const isParentRow =
-                  record.children && Array.isArray(record.children);
-
-                return (
-                  <div
-                    style={{
-                      fontWeight: isParentRow ? "bold" : "normal",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      fontFamily: '"Inter", sans-serif',
-                    }}
-                  >
-                    {text}
-                  </div>
-                );
-              },
-            });
-          } else {
-            dynamicYearColumns.push({
-              title: year.toString() + " (" + (currentYear + year) + ")",
-              dataIndex: `year${year}`, // You may need to match this with your data source
-              key: year.toString(),
-              render: (text, record) => {
-                const isParentRow =
-                  record.children && Array.isArray(record.children);
-
-                return (
-                  <div
-                    style={{
-                      fontWeight: isParentRow ? "bold" : "normal",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      fontFamily: '"Inter", sans-serif',
-                    }}
-                  >
-                    {text}
-                  </div>
-                );
-              },
-            });
-          }
-        }
-
-        // Combine the fixed left column with the dynamic years
-        const updatedColumns = [
-          {
-            title: "Financial Year Ending 30 June Year",
-            dataIndex: "type",
-            key: "type",
-            width: 250, // 👈 Set fixed width
-            fixed: "left", // 👈 Fix column to the left
-            render: (text, record) => {
-              const isParentRow =
-                record.children && Array.isArray(record.children);
-
-              return (
-                <Tooltip title={text}>
-                  <div
-                    style={{
-                      fontWeight: isParentRow ? "bold" : "normal",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                    }}
-                  >
-                    {text}
-                  </div>
-                </Tooltip>
-              );
-            },
-          },
-          ...dynamicYearColumns,
-        ];
-
-        setColumn(updatedColumns);
-      } else {
-        openNotificationSuccess(
-          "error",
-          "topRight",
-          "Error Notification",
-          "Please! Enter valid year range"
-        );
-      }
-    } else {
-      console.warn("Invalid year range");
+    if (isNaN(yearFrom) || isNaN(yearTo) || yearFrom > yearTo) {
+      return openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error",
+        "Invalid year range"
+      );
     }
+
+    setColumns(generateReportColumns(yearFrom, yearTo, currentYear));
   };
 
   useEffect(() => {
-    setFieldValue("category", "Cashflow"); // Set default value for category
+    setFieldValue("category", "Cashflow");
   }, []);
 
+  const categoryTables = {
+    Cashflow: {
+      data: fullTableCashFlow,
+      title: "Cash Flow",
+      highlight: ["Total Inflows", "Total Outflows", "Surplus/Deficit"],
+    },
+    "Client Tax": {
+      data: clientData,
+      title: `${RenderName("client")}'s Tax Position`,
+      highlight: [
+        "Total Assessable income",
+        "Total Allowable Deductions",
+        "Total Taxable Income",
+        "Total Tax payable",
+        "Total Rebates",
+      ],
+    },
+    "Partner Tax": {
+      data: partnerData,
+      title: `${RenderName("partner")}'s Tax Position`,
+      highlight: [
+        "Total Assessable income",
+        "Total Allowable Deductions",
+        "Total Taxable Income",
+        "Total Tax payable",
+        "Total Rebates",
+      ],
+    },
+    Centrelink: [
+      {
+        data: centrelinkCombined,
+        title: "Centrelink Summary",
+        highlight: [
+          "Total Assets",
+          "Total Income",
+          "Total Adjusted Family Income",
+          "Total FTB- Part A (including Supplement)",
+          "Total Income For Primary Income Earner",
+          "Total Income For Secondary Income Earner",
+          "Total FTB- Part B (including Supplement)",
+          "Total Family tax Benefits (Part A & B)",
+        ],
+      },
+    ],
+    "Family Tax Benefits": {
+      data: familyTaxBenefit,
+      title: "Family Tax Benefits",
+    },
+  };
+
   return (
-    <React.Fragment>
-      <div className="d-flex flex-row justify-content-between align-items-center d-none">
-        <h2 className="text-green mt-3 fw-bold">
-          Cash Flow&nbsp;{" "}
-          {(values.category === "Client Tax" ||
-            values.category === "Partner Tax") && (
-            <span className="text-green fw-bold fs-5">
-              (
-              {RenderName(
-                values.category === "Client Tax" ? "client" : "partner"
-              )}
-              's Tax Position)
-            </span>
-          )}
-          {values.category === "Centrelink" && (
-            <span className="text-green fw-bold fs-5">
-              (Centrelink Summary)
-            </span>
-          )}
-          {values.category === "Family Tax Benefits" && (
-            <span className="text-green fw-bold fs-5">
-              (Family Tax Benefits)
-            </span>
-          )}
-        </h2>
+    <>
+      <div className="d-flex justify-content-between align-items-center">
+        <h2 className="text-green mt-3 fw-bold">Income and Expance</h2>
         <span
           role="button"
           className="text-green"
@@ -268,12 +112,10 @@ const CashReport = (props) => {
           {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
         </span>
       </div>
+
       {showFilters && (
-        <Card className="my-4 shadow-sm p-3 rounded ">
-          <Row
-            gutter={16}
-            className="justify-content-around align-items-center"
-          >
+        <Card className="my-4 shadow-sm p-3 rounded">
+          <Row className="justify-content-around align-items-center">
             <Col md={6}>
               <label htmlFor="category">Report Type:</label>
               <Field
@@ -300,26 +142,20 @@ const CashReport = (props) => {
                 name="yearFrom"
                 className="form-select inputDesignDoubleInput"
                 onChange={(e) => {
-                  const newYearFrom = parseInt(e.target.value);
-                  setFieldValue("yearFrom", newYearFrom); // update yearFrom
+                  setFieldValue("yearFrom", parseInt(e.target.value));
                   setFieldValue(
                     "yearTo",
-                    parseInt(newYearFrom, 10) + 5 > 10 && newYearFrom < 10
-                      ? 10
-                      : parseInt(newYearFrom, 10) + 5
-                  ); // update yearFrom
-
-                  applyFilter(values, e.target); // apply filter with new yearFrom
+                    Math.min(10, parseInt(e.target.value) + 5)
+                  );
+                  applyFilter(values, e.target);
                 }}
               >
                 <option value="">Select</option>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30].map(
-                  (value) => (
-                    <option key={value} value={value}>
-                      {value}
-                    </option>
-                  )
-                )}
+                {[...Array(10)].map((_, i) => (
+                  <option key={i + 1} value={i + 1}>
+                    {i + 1}
+                  </option>
+                ))}
               </Field>
             </Col>
             <Col md={3}>
@@ -331,501 +167,52 @@ const CashReport = (props) => {
                 onChange={(e) => {
                   handleChange(e);
                   const newYearTo = parseInt(e.target.value, 10);
-                  setFieldValue(
-                    "yearFrom",
-                    parseInt(newYearTo, 10) - 5 < 1
-                      ? 1
-                      : parseInt(newYearTo, 10) - 5
-                  ); // update yearFrom
-
+                  setFieldValue("yearFrom", Math.max(1, newYearTo - 5));
                   applyFilter(values, e.target);
                 }}
               >
                 <option value="">Select</option>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30]
-                  .filter((year) => {
-                    const fromYear = parseInt(values.yearFrom || "1");
-                    return year >= fromYear && year <= fromYear + 30;
-                  })
-                  .map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
+                {[...Array(30)].map((_, i) => {
+                  const y = i + 1;
+                  if (!values.yearFrom || y >= values.yearFrom) {
+                    return (
+                      <option key={y} value={y}>
+                        {y}
+                      </option>
+                    );
+                  }
+                  return null;
+                })}
               </Field>
-            </Col>
-            <Col md={3} className="d-none">
-              <Button
-                className="modalBtn mt-4 w-100"
-                onClick={() => {
-                  applyFilter(values);
-                }}
-              >
-                Submit
-              </Button>
             </Col>
           </Row>
         </Card>
       )}
 
-      {(values.category === "" || values.category === "Cashflow") && (
-        <>
-          <div className="mt-4 porsition-relative">
-            {/* <h4 className="text-green fw-bold">Cashflow</h4> */}
-
-            <Table
-              dataSource={fullTableCashFlow} // 👈 Removes the last row from the table
+      {/* Render the correct table(s) */}
+      {Array.isArray(categoryTables[values.category])
+        ? categoryTables[values.category].map((table, idx) => (
+            <AntTableDynamicReportTable
+              key={idx}
+              title={table.title}
+              dataSource={table.data}
               columns={columns}
-              scroll={{ x: "max-content" }}
-              // size="small"
-              pagination={{
-                pageSize: 50,
-                position: ["bottomRight"],
-                className: "custom-pagination",
-              }}
-              title={() => (
-                <>
-                  <div
-                    style={{
-                      background: "#36b446",
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      padding: "10px",
-                      borderBottom: "1px solid white",
-                      borderTopLeftRadius: "10px",
-                      borderTopRightRadius: "10px",
-                    }}
-                  >
-                    <div className="d-flex justify-content-between align-items-center w-100">
-                      <h4 className=" ms-2 mt-3 fw-bold">Cash Flow</h4>
-                      <span
-                        role="button"
-                        className="me-3"
-                        onClick={() => setShowFilters(!showFilters)}
-                      >
-                        {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
+              showFilters={showFilters}
+              setShowFilters={setShowFilters}
             />
-          </div>
-        </>
-      )}
-
-      {(values.category === "Client Tax" ||
-        values.category === "Partner Tax") && (
-        <>
-          <div className="mt-4 porsition-relative">
-            <Table
-              dataSource={
-                values.category === "Partner Tax" ? partnerData : clientData
-              } // 👈 Removes the last row from the table
+          ))
+        : values.category &&
+          categoryTables[values.category] && (
+            <AntTableDynamicReportTable
+              title={categoryTables[values.category].title}
+              dataSource={categoryTables[values.category].data}
               columns={columns}
-              scroll={{ x: "max-content" }}
-              pagination={{
-                pageSize: 50,
-                position: ["bottomRight"],
-                className: "custom-pagination",
-              }}
-              title={() => (
-                <>
-                  <div
-                    style={{
-                      background: "#36b446",
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      padding: "10px",
-                      borderBottom: "1px solid white",
-                      borderTopLeftRadius: "10px",
-                      borderTopRightRadius: "10px",
-                    }}
-                  >
-                    <div className="d-flex justify-content-between align-items-center w-100">
-                      <h4 className=" ms-2 mt-3 fw-bold">
-                        {RenderName(
-                          values.category === "Partner Tax"
-                            ? "partner"
-                            : "client"
-                        )}
-                        's Tax Position
-                      </h4>
-                      <span
-                        role="button"
-                        className="me-3"
-                        onClick={() => setShowFilters(!showFilters)}
-                      >
-                        {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
+              highlightTypes={categoryTables[values.category].highlight || []}
+              showFilters={showFilters}
+              setShowFilters={setShowFilters}
             />
-          </div>
-        </>
-      )}
-
-      {values.category === "Centrelink" && (
-        <>
-          <div className="mt-4 porsition-relative">
-            <Table
-              dataSource={assetsTestPensionAllowance} // 👈 Removes the last row from the table
-              columns={columns}
-              scroll={{ x: "max-content" }}
-              pagination={{
-                pageSize: 50,
-                position: ["bottomRight"],
-                className: "custom-pagination",
-              }}
-              title={() => (
-                <>
-                  <div
-                    style={{
-                      background: "#36b446",
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      padding: "10px",
-                      borderBottom: "1px solid white",
-                      borderTopLeftRadius: "10px",
-                      borderTopRightRadius: "10px",
-                    }}
-                  >
-                    <div className="d-flex justify-content-between align-items-center w-100">
-                      <h4 className=" ms-2 mt-3 fw-bold">
-                        Centrelink Summary
-                        <span className=" fw-bold fs-5">
-                          (Assets Test-Pension/Allowance)
-                        </span>
-                      </h4>
-                      <span
-                        role="button"
-                        className="me-3"
-                        onClick={() => setShowFilters(!showFilters)}
-                      >
-                        {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
-            />
-          </div>
-          <div className="mt-4 porsition-relative">
-            <Table
-              dataSource={incomeTestPensionsAllowances} // 👈 Removes the last row from the table
-              columns={columns}
-              scroll={{ x: "max-content" }}
-              pagination={{
-                pageSize: 50,
-                position: ["bottomRight"],
-                className: "custom-pagination",
-              }}
-              title={() => (
-                <>
-                  <div
-                    style={{
-                      background: "#36b446",
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      padding: "10px",
-                      borderBottom: "1px solid white",
-                      borderTopLeftRadius: "10px",
-                      borderTopRightRadius: "10px",
-                    }}
-                  >
-                    <div className="d-flex justify-content-between align-items-center w-100">
-                      <h4 className=" ms-2 mt-3 fw-bold">
-                        Centrelink Summary
-                        <span className=" fw-bold fs-5">
-                          (Income Test- Pensions/Allowances)
-                        </span>
-                      </h4>
-                      <span
-                        role="button"
-                        className="me-3"
-                        onClick={() => setShowFilters(!showFilters)}
-                      >
-                        {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
-            />
-          </div>
-          <div className="mt-4 porsition-relative">
-            <Table
-              dataSource={allowance} // 👈 Removes the last row from the table
-              columns={columns}
-              scroll={{ x: "max-content" }}
-              pagination={{
-                pageSize: 50,
-                position: ["bottomRight"],
-                className: "custom-pagination",
-              }}
-              title={() => (
-                <>
-                  <div
-                    style={{
-                      background: "#36b446",
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      padding: "10px",
-                      borderBottom: "1px solid white",
-                      borderTopLeftRadius: "10px",
-                      borderTopRightRadius: "10px",
-                    }}
-                  >
-                    <div className="d-flex justify-content-between align-items-center w-100">
-                      <h4 className=" ms-2 mt-3 fw-bold">
-                        Centrelink Summary
-                        <span className=" fw-bold fs-5">(Allowance)</span>
-                      </h4>
-                      <span
-                        role="button"
-                        className="me-3"
-                        onClick={() => setShowFilters(!showFilters)}
-                      >
-                        {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
-            />
-          </div>
-          <div className="mt-4 porsition-relative">
-            <Table
-              dataSource={clientIncome} // 👈 Removes the last row from the table
-              columns={columns}
-              scroll={{ x: "max-content" }}
-              pagination={{
-                pageSize: 50,
-                position: ["bottomRight"],
-                className: "custom-pagination",
-              }}
-              title={() => (
-                <>
-                  <div
-                    style={{
-                      background: "#36b446",
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      padding: "10px",
-                      borderBottom: "1px solid white",
-                      borderTopLeftRadius: "10px",
-                      borderTopRightRadius: "10px",
-                    }}
-                  >
-                    <div className="d-flex justify-content-between align-items-center w-100">
-                      <h4 className=" ms-2 mt-3 fw-bold">
-                        Centrelink Summary
-                        <span className=" fw-bold fs-5">
-                          ({RenderName("client")} Income)
-                        </span>
-                      </h4>
-                      <span
-                        role="button"
-                        className="me-3"
-                        onClick={() => setShowFilters(!showFilters)}
-                      >
-                        {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
-            />
-          </div>
-          <div className="mt-4 porsition-relative">
-            <Table
-              dataSource={partnerIncome} // 👈 Removes the last row from the table
-              columns={columns}
-              scroll={{ x: "max-content" }}
-              pagination={{
-                pageSize: 50,
-                position: ["bottomRight"],
-                className: "custom-pagination",
-              }}
-              title={() => (
-                <>
-                  <div
-                    style={{
-                      background: "#36b446",
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      padding: "10px",
-                      borderBottom: "1px solid white",
-                      borderTopLeftRadius: "10px",
-                      borderTopRightRadius: "10px",
-                    }}
-                  >
-                    <div className="d-flex justify-content-between align-items-center w-100">
-                      <h4 className=" ms-2 mt-3 fw-bold">
-                        Centrelink Summary
-                        <span className=" fw-bold fs-5">
-                          ({RenderName("partner")} Income)
-                        </span>
-                      </h4>
-                      <span
-                        role="button"
-                        className="me-3"
-                        onClick={() => setShowFilters(!showFilters)}
-                      >
-                        {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
-            />
-          </div>
-          <div className="mt-4 porsition-relative">
-            <Table
-              dataSource={clientPayment} // 👈 Removes the last row from the table
-              columns={columns}
-              scroll={{ x: "max-content" }}
-              pagination={{
-                pageSize: 50,
-                position: ["bottomRight"],
-                className: "custom-pagination",
-              }}
-              title={() => (
-                <>
-                  <div
-                    style={{
-                      background: "#36b446",
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      padding: "10px",
-                      borderBottom: "1px solid white",
-                      borderTopLeftRadius: "10px",
-                      borderTopRightRadius: "10px",
-                    }}
-                  >
-                    <div className="d-flex justify-content-between align-items-center w-100">
-                      <h4 className=" ms-2 mt-3 fw-bold">
-                        Centrelink Summary
-                        <span className=" fw-bold fs-5">
-                          ({RenderName("client")} Payment)
-                        </span>
-                      </h4>
-                      <span
-                        role="button"
-                        className="me-3"
-                        onClick={() => setShowFilters(!showFilters)}
-                      >
-                        {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
-            />
-          </div>
-          <div className="mt-4 porsition-relative">
-            <Table
-              dataSource={partnerPayment} // 👈 Removes the last row from the table
-              columns={columns}
-              scroll={{ x: "max-content" }}
-              pagination={{
-                pageSize: 50,
-                position: ["bottomRight"],
-                className: "custom-pagination",
-              }}
-              title={() => (
-                <>
-                  <div
-                    style={{
-                      background: "#36b446",
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      padding: "10px",
-                      borderBottom: "1px solid white",
-                      borderTopLeftRadius: "10px",
-                      borderTopRightRadius: "10px",
-                    }}
-                  >
-                    <div className="d-flex justify-content-between align-items-center w-100">
-                      <h4 className=" ms-2 mt-3 fw-bold">
-                        Centrelink Summary
-                        <span className=" fw-bold fs-5">
-                          ({RenderName("partner")} Payment)
-                        </span>
-                      </h4>
-                      <span
-                        role="button"
-                        className="me-3"
-                        onClick={() => setShowFilters(!showFilters)}
-                      >
-                        {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
-            />
-          </div>
-        </>
-      )}
-
-      {values.category === "Family Tax Benefits" && (
-        <>
-          <div className="mt-4 porsition-relative">
-            <Table
-              dataSource={familyTaxBenefit} // 👈 Removes the last row from the table
-              columns={columns}
-              scroll={{ x: "max-content" }}
-              pagination={{
-                pageSize: 50,
-                position: ["bottomRight"],
-                className: "custom-pagination",
-              }}
-              title={() => (
-                <>
-                  <div
-                    style={{
-                      background: "#36b446",
-                      color: "white",
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      padding: "10px",
-                      borderBottom: "1px solid white",
-                      borderTopLeftRadius: "10px",
-                      borderTopRightRadius: "10px",
-                    }}
-                  >
-                    <div className="d-flex justify-content-between align-items-center w-100">
-                      <h4 className=" ms-2 mt-3 fw-bold">
-                        Family Tax Benefits
-                      </h4>
-                      <span
-                        role="button"
-                        className="me-3"
-                        onClick={() => setShowFilters(!showFilters)}
-                      >
-                        {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
-                      </span>
-                    </div>
-                  </div>
-                </>
-              )}
-            />
-          </div>
-        </>
-      )}
-    </React.Fragment>
+          )}
+    </>
   );
 };
 

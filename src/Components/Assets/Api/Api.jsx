@@ -342,7 +342,12 @@ const createTableSection = (key, label, data, excludeLast = false) => {
   };
 };
 
-const createTaxSection = (data, taxHierarchy) => {
+const buildReportTree = (data, taxHierarchy) => {
+  if (!Array.isArray(taxHierarchy)) {
+    console.warn("Invalid taxHierarchy:", taxHierarchy);
+    return [];
+  }
+
   return taxHierarchy.map((section, index) => {
     const childrenData = section.children
       .map((childLabel) => data.find((item) => item.type === childLabel))
@@ -383,25 +388,33 @@ const removeZeroRows = (data) =>
     })
   );
 
-const transformInflowsData = (inflows = []) =>
+const transformInflows = (inflows = [], formatAsCurrency = true) =>
   inflows.map(([type, ...values]) => {
     const formatted = { type };
     for (let i = 0; i < 30; i++) {
       const val = Number(values[i]);
-      formatted[`year${i + 1}`] = toCommaAndDollar(isNaN(val) ? 0 : val);
+      if (formatAsCurrency) {
+        if (val < 0) {
+          formatted[`year${i + 1}`] = `(${toCommaAndDollar(
+            Math.abs(isNaN(val) ? 0 : val)
+          )})`;
+        } else {
+          formatted[`year${i + 1}`] = toCommaAndDollar(isNaN(val) ? 0 : val);
+        }
+      } else {
+        formatted[`year${i + 1}`] = isNaN(val) ? 0 : val;
+      }
     }
     return formatted;
   });
 
-const transformInflowsData2 = (inflows = []) =>
-  inflows.map(([type, ...values]) => {
-    const formatted = { type };
-    for (let i = 0; i < 30; i++) {
-      const val = Number(values[i]);
-      formatted[`year${i + 1}`] = (isNaN(val) ? 0 : val);
-    }
-    return formatted;
-  });
+const processDataGeneric = (data, transformer, ...keys) => {
+  let result = data;
+  for (const key of keys) {
+    result = result?.[key] ?? {};
+  }
+  return transformer(removeZeroRows(removeNullRows(result)));
+};
 
 const extractIndexesByType = (dataArray, typeArray) =>
   dataArray.reduce((acc, item, i) => {
@@ -415,6 +428,117 @@ const sliceDataArrayRange = (arr, start, end) => {
     return [];
   }
   return arr.slice(start, end + 1);
+};
+
+const generateReportColumns = ({
+  startYear = 1,
+  endYear = 6,
+  currentYear = new Date().getFullYear(),
+  withExisting = false,
+  imageMap = {}, // <-- image mapping by `type`
+  fixedTypeLabel = "type",
+}) => {
+  const columns = [
+    {
+      title: "Type",
+      dataIndex: fixedTypeLabel,
+      key: fixedTypeLabel,
+      width: 250,
+      fixed: "left",
+      render: (text, row) => {
+        if (row.isHeader) return { props: { colSpan: 0 } };
+
+        const isParentRow = row?.children && Array.isArray(row.children);
+        const icon = imageMap?.[text];
+
+        return (
+          <div
+            style={{
+              fontWeight: isParentRow ? "bold" : "normal",
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            {!isParentRow && icon && (
+              <div style={{ width: "25px" }}>
+                <img src={icon} alt="icon" width={20} />
+              </div>
+            )}
+            {text}
+          </div>
+        );
+      },
+    },
+  ];
+
+  if (withExisting) {
+    columns.push({
+      title: "Existing",
+      dataIndex: "existing",
+      key: "existing",
+      fixed: "left",
+      render: (text, record) => {
+        const isParentRow = record.children && Array.isArray(record.children);
+        return (
+          <div
+            style={{
+              fontWeight: isParentRow ? "bold" : "normal",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              fontFamily: '"Inter", sans-serif',
+            }}
+          >
+            {text}
+          </div>
+        );
+      },
+    });
+  }
+
+  for (let year = startYear; year <= endYear; year++) {
+    columns.push({
+      title: (
+        <>
+          <div className="w-100 text-center">{currentYear + (year - 1)}</div>
+          <div className="w-100 text-center">{year}</div>
+        </>
+      ),
+      dataIndex: `year${year}`,
+      key: `year${year}`,
+      render: (text, record) => {
+        const isParentRow = record.children && Array.isArray(record.children);
+        return (
+          <div
+            style={{
+              fontWeight: isParentRow ? "bold" : "normal",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              fontFamily: '"Inter", sans-serif',
+            }}
+          >
+            {text}
+          </div>
+        );
+      },
+    });
+  }
+
+  return columns;
+};
+
+const changeHeadNames = (mainarray, HeadNamesArray) => {
+  return mainarray.map((item, index) => {
+    let typeAddision =
+      HeadNamesArray[index] !== "" ? HeadNamesArray[index] : item.type;
+    return {
+      ...item,
+      key: (index + 1).toString(), // key as string from 1, 2, 3, ...
+      type: typeAddision, // Adding section to type
+    };
+  });
 };
 
 export {
@@ -439,11 +563,13 @@ export {
   createStructuredEntries,
   generateYearData,
   createTableSection,
-  createTaxSection,
+  buildReportTree,
   removeNullRows,
-  transformInflowsData,
-  transformInflowsData2,
+  transformInflows,
+  processDataGeneric,
   extractIndexesByType,
   sliceDataArrayRange,
   removeZeroRows,
+  generateReportColumns,
+  changeHeadNames,
 };

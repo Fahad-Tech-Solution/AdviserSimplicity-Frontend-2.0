@@ -733,6 +733,7 @@ export const content = {
               "Annuity Income",
               "Lifetime Pension",
               "Super Pension",
+              "Total Assessable income",
             ],
           },
           {
@@ -745,6 +746,7 @@ export const content = {
               "Annuity Deductible Amount",
               "Lifetime Pension",
               "Tax Free Pension Amount",
+              "Total Allowable Deductions",
             ],
           },
           {
@@ -758,6 +760,7 @@ export const content = {
               "Budget Repair Levy",
               "Medicare levy",
               "Medicare Levy Surcharge",
+              "Total Tax payable",
             ],
           },
           {
@@ -769,15 +772,17 @@ export const content = {
               "SAPTO",
               "30% Rebate for insurance Bonds",
               "LITO",
+              "Total Rebates",
             ],
           },
           {
-            parent: "Total Tax payable", // repeated title, distinguish if needed
+            parent: "Total Tax payable", 
             children: [
               "Franking Credits",
               "Reportable Fringe Benefits",
               "Unused SAPTO",
               "Additional Contributions Tax",
+              "Total Tax payable",
             ],
           },
         ],
@@ -801,6 +806,7 @@ export const content = {
               "Less",
               "Investment Loans",
               "Investment Property Loan",
+              "Total Assets",
               "Lower - Pensions",
               "Lower - Allowance",
               "Upper",
@@ -828,6 +834,7 @@ export const content = {
               `${RenderName("partner")}'s Deductible Pension Income`,
               `${RenderName("client")}'s Work Bonus`,
               `${RenderName("partner")}'s Work Bonus`,
+              "Total Income",
               "Lower",
               "Upper",
               "Excess Income",
@@ -837,7 +844,12 @@ export const content = {
         centerLinkIncomeTestAllowancesDataSet: [
           {
             parent: "Total Income",
-            children: ["Lower ", "Upper", "Partner Balance over"],
+            children: [
+              "Total Income",
+              "Lower ",
+              "Upper",
+              "Partner Balance over",
+            ],
           },
         ],
         centerLinkClientIncomeDataSet: [
@@ -853,6 +865,7 @@ export const content = {
               "Pension Income",
               "Less",
               "Deductible Pension Income",
+              "Total Income",
             ],
           },
         ],
@@ -879,11 +892,11 @@ export const content = {
         centerLinkClientPaymnetDataSet: [
           {
             parent: "Payment Amount",
-            children: ["Asset Test Reduction "],
+            children: ["Payment Amount", "Asset Test Reduction "],
           },
           {
             parent: "Under Asset Test",
-            children: ["Income Test Reduction "],
+            children: ["Under Asset Test", "Income Test Reduction "],
           },
           {
             parent: "Under Income Test",
@@ -959,6 +972,8 @@ export const content = {
               "Family Trust Net Assets",
             ],
           },
+        ],
+        liabilities: [
           {
             parent: "Total Liabilities",
             children: [
@@ -993,7 +1008,17 @@ export const content = {
             ],
           },
         ],
-        personalLoan: [
+        personalLoan1: [
+          {
+            parent: "Year End Loan Balance",
+            children: [
+              "Opening Balance",
+              "Principal Repayments",
+              "Interest Repayments",
+            ],
+          },
+        ],
+        personalLoan2: [
           {
             parent: "Year End Loan Balance",
             children: [
@@ -1013,6 +1038,26 @@ export const content = {
               "Boat",
               "Caravan",
               "Other",
+            ],
+          },
+        ],
+        creditCard1: [
+          {
+            parent: "Year End Loan Balance",
+            children: [
+              "Opening Balance",
+              "Principal Repayments",
+              "Interest Repayments",
+            ],
+          },
+        ],
+        creditCard2: [
+          {
+            parent: "Year End Loan Balance",
+            children: [
+              "Opening Balance",
+              "Principal Repayments",
+              "Interest Repayments",
             ],
           },
         ],
