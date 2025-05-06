@@ -34,6 +34,7 @@ import PersonalLoansSVG from "../../CashFlowAssets/Asset_and_Libility/SVG/Person
 import CreditCardsSVG from "../../CashFlowAssets/Asset_and_Libility/SVG/Credit_Cards.svg";
 import InvestmentPropertySVG from "../../CashFlowAssets/Asset_and_Libility/SVG/Investment_Property.svg";
 import InvestmentLoansSVG from "../../CashFlowAssets/Asset_and_Libility/SVG/Investment_Loans.svg";
+import { Tooltip } from "antd";
 
 const assetTypeIconsMap = {
   LifestyleAssets: LifestyleAssetsSVG,
@@ -82,38 +83,134 @@ const AssetLiabilitiesReport = ({
   );
 
   const applyFilter = (values, currentInput) => {
-    const inputYear = parseInt(currentInput?.value, 10);
-    let yearFrom = parseInt(values.yearFrom || "1", 10);
-    let yearTo = parseInt(values.yearTo || "6", 10);
+    if (values.yearFrom !== "" && values.yearTo !== "") {
+      const currentValue = parseInt(currentInput.value, 10);
 
-    if (currentInput?.name === "yearFrom") {
-      yearFrom = inputYear;
-      yearTo = Math.min(inputYear + 5, 10);
-    } else if (currentInput?.name === "yearTo") {
-      yearTo = inputYear;
-      yearFrom = Math.max(inputYear - 5, 1);
+      let yearFrom = parseInt(values.yearFrom, 10);
+      let yearTo = parseInt(values.yearTo, 10);
+
+      if (currentInput.name === "yearFrom") {
+        yearFrom = currentValue;
+        yearTo = Math.min(currentValue + 5, 30);
+      } else if (currentInput.name === "yearTo") {
+        yearTo = currentValue;
+        yearFrom = Math.max(currentValue - 5, 1);
+      }
+
+      if (!isNaN(yearFrom) && !isNaN(yearTo)) {
+        const dynamicYearColumns = [];
+
+        for (let year = yearFrom; year <= yearTo; year++) {
+          dynamicYearColumns.push({
+            title: (
+              <>
+                <div className="w-100 text-center">{currentYear + year}</div>
+                <div className="w-100 text-center">{year}</div>
+              </>
+            ),
+            dataIndex: `year${year}`,
+            key: year.toString(),
+            align: "center",
+            render: (text, record) => {
+              const isParentRow =
+                record.children && Array.isArray(record.children);
+              return (
+                <div
+                  style={{
+                    fontWeight: isParentRow ? "bold" : "normal",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    fontFamily: '"Inter", sans-serif',
+                    textAlign: "center",
+                  }}
+                >
+                  {text}
+                </div>
+              );
+            },
+          });
+        }
+
+        const updatedColumns = [
+          {
+            title: (
+              <>
+                <div className="w-100">Financial Year Ending 30 June</div>
+                <div className="w-100">Year</div>
+              </>
+            ),
+            dataIndex: "type",
+            key: "type",
+            width: 253,
+            fixed: "left",
+            render: (text, record) => {
+              const isParentRow =
+                record.children && Array.isArray(record.children);
+              return (
+                <Tooltip title={text}>
+                  <div
+                    style={{
+                      fontWeight: isParentRow ? "bold" : "normal",
+                      overflow: "hidden",
+                      fontFamily: '"Inter", sans-serif',
+                    }}
+                  >
+                    {text}
+                  </div>
+                </Tooltip>
+              );
+            },
+          },
+          {
+            title: (
+              <>
+                <div className="w-100">Existing</div>
+              </>
+            ),
+            dataIndex: "existing",
+            key: "existing",
+            width: 253,
+            fixed: "left",
+            render: (text, record) => {
+              const isParentRow =
+                record.children && Array.isArray(record.children);
+              return (
+                <Tooltip title={text}>
+                  <div
+                    style={{
+                      fontWeight: isParentRow ? "bold" : "normal",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      fontFamily: '"Inter", sans-serif',
+                    }}
+                  >
+                    {text}
+                  </div>
+                </Tooltip>
+              );
+            },
+          },
+          ...dynamicYearColumns,
+        ];
+
+        if (values.category === "Persona Assets & Liabilities") {
+          updatedColumns.filter((_, index) => index !== 1);
+        }
+
+        setColumns(updatedColumns);
+      } else {
+        openNotificationSuccess(
+          "error",
+          "topRight",
+          "Error Notification",
+          "Please! Enter valid year range"
+        );
+      }
+    } else {
+      console.warn("Invalid year range");
     }
-
-    if (isNaN(yearFrom) || isNaN(yearTo) || yearFrom > yearTo) {
-      openNotificationSuccess(
-        "error",
-        "topRight",
-        "Error",
-        "Invalid year range"
-      );
-      return;
-    }
-
-    const isNetWorth = values.category === "Net Worth";
-    const newColumns = generateReportColumns({
-      startYear: yearFrom,
-      endYear: yearTo,
-      currentYear,
-      withExisting: isNetWorth,
-      imageMap: assetTypeIconsMap,
-    });
-
-    setColumns(newColumns);
   };
 
   useEffect(() => {
@@ -160,18 +257,27 @@ const AssetLiabilitiesReport = ({
                 name="yearFrom"
                 className="form-select inputDesignDoubleInput"
                 onChange={(e) => {
-                  const newYearFrom = parseInt(e.target.value, 10);
-                  setFieldValue("yearFrom", newYearFrom);
-                  setFieldValue("yearTo", Math.min(newYearFrom + 5, 10));
+                  const value = parseInt(e.target.value);
+                  setFieldValue("yearFrom", value);
+
+                  const calculatedTo = value + 5;
+
+                  if (calculatedTo > 10 && calculatedTo < 15) {
+                    setFieldValue("yearTo", 15);
+                  } else {
+                    setFieldValue("yearTo", Math.min(30, calculatedTo));
+                  }
                   applyFilter(values, e.target);
                 }}
               >
                 <option value="">Select</option>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((val) => (
-                  <option key={val} value={val}>
-                    {val}
-                  </option>
-                ))}
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30].map(
+                  (value) => (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  )
+                )}
               </Field>
             </Col>
 
@@ -189,11 +295,13 @@ const AssetLiabilitiesReport = ({
                 }}
               >
                 <option value="">Select</option>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((val) => (
-                  <option key={val} value={val}>
-                    {val}
-                  </option>
-                ))}
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30].map(
+                  (value) => (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  )
+                )}
               </Field>
             </Col>
           </Row>
@@ -207,6 +315,12 @@ const AssetLiabilitiesReport = ({
           columns={columns}
           showFilters={showFilters}
           setShowFilters={setShowFilters}
+          highlightTypes={[
+            "Total Assets",
+            "Total Liabilities",
+            "Total Net Worth",
+            "Total Net Worth (PV)",
+          ]}
         />
       )}
 
@@ -214,9 +328,15 @@ const AssetLiabilitiesReport = ({
         <AntTableDynamicReportTable
           title="Personal Assets & Liabilities"
           dataSource={asstesAndLiabilities}
-          columns={columns}
+          columns={columns.filter((_, index) => index !== 1)}
           showFilters={showFilters}
           setShowFilters={setShowFilters}
+          highlightTypes={[
+            "Closing Value",
+            "Year End Loan Balance",
+            "Total Personal Assets",
+            "Year End Loan Balance",
+          ]}
         />
       )}
     </>

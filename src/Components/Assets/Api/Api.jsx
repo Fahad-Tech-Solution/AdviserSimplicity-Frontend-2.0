@@ -1,4 +1,4 @@
-import { notification } from "antd";
+import { notification, Tooltip } from "antd";
 import axios from "axios";
 
 let GetAxios = async (Api) => {
@@ -330,18 +330,6 @@ const generateYearData = (source, yearCount = 30) => {
   );
 };
 
-const createTableSection = (key, label, data, excludeLast = false) => {
-  const lastItem = data[data.length - 1];
-  const children = excludeLast ? data.slice(0, -1) : data.slice(1); // fallback to slice(1) for Surplus
-
-  return {
-    key,
-    type: label,
-    children,
-    ...generateYearData(lastItem),
-  };
-};
-
 const buildReportTree = (data, taxHierarchy) => {
   if (!Array.isArray(taxHierarchy)) {
     console.warn("Invalid taxHierarchy:", taxHierarchy);
@@ -416,20 +404,6 @@ const processDataGeneric = (data, transformer, ...keys) => {
   return transformer(removeZeroRows(removeNullRows(result)));
 };
 
-const extractIndexesByType = (dataArray, typeArray) =>
-  dataArray.reduce((acc, item, i) => {
-    if (typeArray.includes(item.type)) acc.push(i);
-    return acc;
-  }, []);
-
-const sliceDataArrayRange = (arr, start, end) => {
-  if (start < 0 || end >= arr.length || start > end) {
-    console.error("Invalid slice range");
-    return [];
-  }
-  return arr.slice(start, end + 1);
-};
-
 const generateReportColumns = ({
   startYear = 1,
   endYear = 6,
@@ -452,21 +426,27 @@ const generateReportColumns = ({
         const icon = imageMap?.[text];
 
         return (
-          <div
-            style={{
-              fontWeight: isParentRow ? "bold" : "normal",
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-            }}
-          >
-            {!isParentRow && icon && (
-              <div style={{ width: "25px" }}>
-                <img src={icon} alt="icon" width={20} />
-              </div>
-            )}
-            {text}
-          </div>
+          <Tooltip title={text}>
+            <div
+              style={{
+                fontWeight: isParentRow ? "bold" : "normal",
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                fontFamily: '"Inter", sans-serif',
+              }}
+            >
+              {!isParentRow && icon && (
+                <div style={{ width: "25px" }}>
+                  <img src={icon} alt="icon" width={20} />
+                </div>
+              )}
+              {text}
+            </div>
+          </Tooltip>
         );
       },
     },
@@ -517,6 +497,7 @@ const generateReportColumns = ({
               overflow: "hidden",
               textOverflow: "ellipsis",
               fontFamily: '"Inter", sans-serif',
+              textAlign: "center",
             }}
           >
             {text}
@@ -532,13 +513,49 @@ const generateReportColumns = ({
 const changeHeadNames = (mainarray, HeadNamesArray) => {
   return mainarray.map((item, index) => {
     let typeAddision =
-      HeadNamesArray[index] !== "" ? HeadNamesArray[index] : item.type;
+      HeadNamesArray.length > 0 && HeadNamesArray[index] !== ""
+        ? HeadNamesArray[index]
+        : item.type;
     return {
       ...item,
       key: (index + 1).toString(), // key as string from 1, 2, 3, ...
       type: typeAddision, // Adding section to type
     };
   });
+};
+
+const renameYearKeys = (data) => {
+  return data.map((item) => {
+    const renamedItem = { ...item };
+
+    // Move year1 to existing
+    renamedItem.existing = renamedItem.year1;
+
+    // Shift year2 → year1, ..., year30 → year29
+    for (let i = 2; i <= 30; i++) {
+      renamedItem[`year${i - 1}`] = renamedItem[`year${i}`];
+    }
+
+    // Remove original year30
+    delete renamedItem[`year30`];
+
+    // Recursively process children if they exist
+    if (Array.isArray(renamedItem.children)) {
+      renamedItem.children = renameYearKeys(renamedItem.children);
+    }
+
+    return renamedItem;
+  });
+};
+
+const percentTransforme = (data) => {
+  const transformed = data.map(([investment, _, details]) => ({
+    investment,
+    details:
+      typeof details === "number" ? toPercentage(details * 100) : details,
+  }));
+
+  return transformed;
 };
 
 export {
@@ -562,14 +579,13 @@ export {
   ConvertDate,
   createStructuredEntries,
   generateYearData,
-  createTableSection,
   buildReportTree,
   removeNullRows,
   transformInflows,
   processDataGeneric,
-  extractIndexesByType,
-  sliceDataArrayRange,
   removeZeroRows,
   generateReportColumns,
   changeHeadNames,
+  renameYearKeys,
+  percentTransforme,
 };

@@ -1,7 +1,3 @@
-// 🚨 Assumes you've created utils/helpers for:
-// - transformInflowsData, transformInflowsData2
-// - buildReportTree, removeNullRows, removeZeroRows, PostAxios, etc.
-
 import React, { useEffect, useState } from "react";
 import { Form, Formik } from "formik";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +16,9 @@ import {
   PostAxios,
   processDataGeneric,
   changeHeadNames,
+  renameYearKeys,
+  RenderName,
+  percentTransforme,
 } from "../../Components/Assets/Api/Api";
 import { content } from "../../Content/Content";
 
@@ -52,7 +51,12 @@ const CashFlowReport = () => {
         REPORTS_Centrelink_Summary,
         REPORTS_Networth,
         REPORTS_Lifestyle_Assets_Debts,
+        REPORTS_Client_Investments,
+        REPORTS_Partner_Investments,
+        REPORTS_Joint_Investments,
       } = response;
+
+      console.log(response);
 
       const Age = processDataGeneric(
         REPORTS_Cashflow,
@@ -78,7 +82,16 @@ const CashFlowReport = () => {
       // console.log(Age);
 
       const cashflowSections = [
-        buildReportTree(Age, content.cashFlowReport[0].reportsArray.Age),
+        buildReportTree(
+          Age,
+          content.cashFlowReport[0].reportsArray.Age.map((item, index) => {
+            let clientAndPartner = ["client", "partner", "joint"];
+            return {
+              ...item,
+              parent: RenderName(clientAndPartner[index]),
+            };
+          })
+        ),
         buildReportTree(InFlow, content.cashFlowReport[0].reportsArray.inflows),
         buildReportTree(
           OutFlow,
@@ -221,6 +234,33 @@ const CashFlowReport = () => {
           };
         });
 
+      // Step 1: Extract the last item (familyTaxBenefit row)
+      const familyTaxBenefitRow = changeHeadNames(
+        fullCentrelinkTable.slice(-6),
+        [
+          "Total Adjusted Family Income ",
+          "Total FTB- Part A (including Supplement) ",
+          "Total Income For Primary Income Earner ",
+          "Total Income For Secondary Income Earner ",
+          "Total FTB- Part B (including Supplement) ",
+          "Total Family tax Benefits (Part A & B)",
+        ]
+      );
+
+      // Step 2: Remove it from the fullCentrelinkTable (non-mutating way)
+      const filteredCentrelinkTable = fullCentrelinkTable.slice(0, -6);
+
+      filteredCentrelinkTable.unshift(
+        cashflowSections[0][0],
+        cashflowSections[0][1]
+      );
+
+      familyTaxBenefitRow.unshift(
+        cashflowSections[0][0],
+        cashflowSections[0][1]
+      );
+
+      //Assets and Liabilities
       const assets = buildReportTree(
         processDataGeneric(
           REPORTS_Networth,
@@ -239,58 +279,319 @@ const CashFlowReport = () => {
         content.cashFlowReport[1].reportsArray.liabilities
       );
 
-      liabilities.unshift(assets[0]);
+      const newLiabilities = [
+        cashflowSections[0][1],
+        cashflowSections[0][0],
+        ...changeHeadNames(
+          renameYearKeys([
+            assets[0], // already unshifted into liabilities originally
+            ...liabilities,
+          ]),
+          ["Assets", "Liabilities", "", ""]
+        ),
+      ];
 
       const lifestyleAssetsArray = [
-        "home",
-        "personalAsset",
-        "personalLoan1",
-        "personalLoan2",
-        "creditCard1",
-        "creditCard2",
-      ]
-        .flatMap((key) => {
-          return buildReportTree(
-            processDataGeneric(
-              REPORTS_Lifestyle_Assets_Debts,
-              (d) => transformInflows(d, true),
-              key
-            ),
-            content.cashFlowReport[1].reportsArray[key]
-          );
-        })
-        .map((item, index) => {
-          let newtypeArray = [
-            "Home",
-            "Home Loan",
-            "Personal Asset",
-            "Personal Loan 1",
-            "Personal Loan 2",
-            "Credit Card 1",
-            "Credit Card 2",
-          ];
-          let typeAddision = newtypeArray[index] !== "" ? newtypeArray[index] : item.type;
-          return {
-            ...item,
-            key: (index + 1).toString(), // key as string from 1, 2, 3, ...
-            type: typeAddision, // Adding newtypeArray to type
-          };
-        });
+        cashflowSections[0][1],
+        cashflowSections[0][0],
+        ...[
+          "home",
+          "personalAsset",
+          "personalLoan1",
+          "personalLoan2",
+          "creditCard1",
+          "creditCard2",
+        ]
+          .flatMap((key) => {
+            return buildReportTree(
+              processDataGeneric(
+                REPORTS_Lifestyle_Assets_Debts,
+                (d) => transformInflows(d, true),
+                key
+              ),
+              content.cashFlowReport[1].reportsArray[key]
+            );
+          })
+          .map((item, index) => {
+            const newtypeArray = [
+              "Home",
+              "Home Loan",
+              "Personal Asset",
+              "Personal Loan 1",
+              "Personal Loan 2",
+              "Credit Card 1",
+              "Credit Card 2",
+            ];
+            return {
+              ...item,
+              key: (index + 1).toString(),
+              type: newtypeArray[index] || item.type,
+            };
+          }),
+      ];
 
-      // Step 1: Extract the last item (familyTaxBenefit row)
-      const familyTaxBenefitRow = fullCentrelinkTable
-        .slice(-6)
-        .map((item, index) => {
-          return {
-            ...item,
-            key: (index + 1).toString(),
-          };
-        }); // Get the last row
+      // Financial Investments
 
-      // Step 2: Remove it from the fullCentrelinkTable (non-mutating way)
-      const filteredCentrelinkTable = fullCentrelinkTable.slice(0, -6);
+      let clientDirectShare = buildReportTree(
+        processDataGeneric(
+          REPORTS_Client_Investments,
+          (d) => transformInflows(d, true),
+          "directShares2"
+        ),
+        content.cashFlowReport[2].reportsArray["Direct Shares"]
+      );
 
-      console.log(lifestyleAssetsArray, "lifestyleAssetsArray Data");
+      let partnerDirectShare =
+        localStorage.getItem("UserStatus") === "Married"
+          ? buildReportTree(
+              processDataGeneric(
+                REPORTS_Partner_Investments,
+                (d) => transformInflows(d, true),
+                "directShares2"
+              ),
+              content.cashFlowReport[2].reportsArray["Direct Shares"]
+            )
+          : [];
+
+      let jointDirectShare =
+        localStorage.getItem("UserStatus") === "Married"
+          ? buildReportTree(
+              processDataGeneric(
+                REPORTS_Joint_Investments,
+                (d) => transformInflows(d, true),
+                "directShares2"
+              ),
+              content.cashFlowReport[2].reportsArray["Direct Shares"]
+            )
+          : [];
+
+      let clientManagedFunds = buildReportTree(
+        processDataGeneric(
+          REPORTS_Client_Investments,
+          (d) => transformInflows(d, true),
+          "managedFunds2"
+        ),
+        content.cashFlowReport[2].reportsArray["Managed Funds"]
+      );
+
+      let partnerManagedFunds =
+        localStorage.getItem("UserStatus") === "Married"
+          ? buildReportTree(
+              processDataGeneric(
+                REPORTS_Partner_Investments,
+                (d) => transformInflows(d, true),
+                "managedFunds2"
+              ),
+              content.cashFlowReport[2].reportsArray["Managed Funds"]
+            )
+          : [];
+
+      let jointManagedFunds =
+        localStorage.getItem("UserStatus") === "Married"
+          ? buildReportTree(
+              processDataGeneric(
+                REPORTS_Joint_Investments,
+                (d) => transformInflows(d, true),
+                "managedFunds2"
+              ),
+              content.cashFlowReport[2].reportsArray["Managed Funds"]
+            )
+          : [];
+
+      let clientInvestmentBonds = buildReportTree(
+        processDataGeneric(
+          REPORTS_Client_Investments,
+          (d) => transformInflows(d, true),
+          "investmentBonds2"
+        ),
+        content.cashFlowReport[2].reportsArray["Investment Bonds"]
+      );
+
+      let partnerInvestmentBonds =
+        localStorage.getItem("UserStatus") === "Married"
+          ? buildReportTree(
+              processDataGeneric(
+                REPORTS_Partner_Investments,
+                (d) => transformInflows(d, true),
+                "investmentBonds2"
+              ),
+              content.cashFlowReport[2].reportsArray["Investment Bonds"]
+            )
+          : [];
+
+      let jointInvestmentBonds =
+        localStorage.getItem("UserStatus") === "Married"
+          ? buildReportTree(
+              processDataGeneric(
+                REPORTS_Joint_Investments,
+                (d) => transformInflows(d, true),
+                "investmentBonds2"
+              ),
+              content.cashFlowReport[2].reportsArray["Investment Bonds"]
+            )
+          : [];
+
+      let clientOther = buildReportTree(
+        processDataGeneric(
+          REPORTS_Client_Investments,
+          (d) => transformInflows(d, true),
+          "other2"
+        ),
+        content.cashFlowReport[2].reportsArray["Other"]
+      );
+
+      let partnerOther =
+        localStorage.getItem("UserStatus") === "Married"
+          ? buildReportTree(
+              processDataGeneric(
+                REPORTS_Partner_Investments,
+                (d) => transformInflows(d, true),
+                "other2"
+              ),
+              content.cashFlowReport[2].reportsArray["Other"]
+            )
+          : [];
+
+      let jointOther =
+        localStorage.getItem("UserStatus") === "Married"
+          ? buildReportTree(
+              processDataGeneric(
+                REPORTS_Joint_Investments,
+                (d) => transformInflows(d, true),
+                "other2"
+              ),
+              content.cashFlowReport[2].reportsArray["Other"]
+            )
+          : [];
+
+      let clientCash = buildReportTree(
+        processDataGeneric(
+          REPORTS_Client_Investments,
+          (d) => transformInflows(d, true),
+          "cash2"
+        ),
+        content.cashFlowReport[2].reportsArray["Cash"]
+      );
+
+      let partnerCash =
+        localStorage.getItem("UserStatus") === "Married"
+          ? buildReportTree(
+              processDataGeneric(
+                REPORTS_Partner_Investments,
+                (d) => transformInflows(d, true),
+                "cash2"
+              ),
+              content.cashFlowReport[2].reportsArray["Cash"]
+            )
+          : [];
+
+      let jointCash =
+        localStorage.getItem("UserStatus") === "Married"
+          ? buildReportTree(
+              processDataGeneric(
+                REPORTS_Joint_Investments,
+                (d) => transformInflows(d, true),
+                "cash2"
+              ),
+              content.cashFlowReport[2].reportsArray["Cash"]
+            )
+          : [];
+
+      let FullFinansialInvestmentObject = {
+        DirectShares: {
+          client: changeHeadNames(clientDirectShare, ["Value at Year End "]),
+          partner:
+            changeHeadNames(partnerDirectShare, ["Value at Year End "]) || [],
+          joint:
+            changeHeadNames(jointDirectShare, ["Value at Year End "]) || [],
+        },
+        DirectSharesPercent: {
+          client: percentTransforme(REPORTS_Client_Investments.directShares1),
+          partner:
+            localStorage.getItem("UserStatus") === "Married"
+              ? percentTransforme(REPORTS_Partner_Investments.directShares1)
+              : [],
+          joint:
+            localStorage.getItem("UserStatus") === "Married"
+              ? percentTransforme(REPORTS_Joint_Investments.directShares1)
+              : [],
+        },
+        ManagedFunds: {
+          client: changeHeadNames(clientManagedFunds, ["Value at Year End "]),
+          partner:
+            changeHeadNames(partnerManagedFunds, ["Value at Year End "]) || [],
+          joint:
+            changeHeadNames(jointManagedFunds, ["Value at Year End "]) || [],
+        },
+        ManagedFundsPercent: {
+          client: percentTransforme(REPORTS_Client_Investments.managedFunds1),
+          partner:
+            localStorage.getItem("UserStatus") === "Married"
+              ? percentTransforme(REPORTS_Partner_Investments.managedFunds1)
+              : [],
+          joint:
+            localStorage.getItem("UserStatus") === "Married"
+              ? percentTransforme(REPORTS_Joint_Investments.managedFunds1)
+              : [],
+        },
+        InvestmentBonds: {
+          client: changeHeadNames(clientInvestmentBonds, [
+            "Value at Year End ",
+          ]),
+          partner:
+            changeHeadNames(partnerInvestmentBonds, ["Value at Year End "]) ||
+            [],
+          joint:
+            changeHeadNames(jointInvestmentBonds, ["Value at Year End "]) || [],
+        },
+        InvestmentBondsPercent: {
+          client: percentTransforme(
+            REPORTS_Client_Investments.investmentBonds1
+          ),
+          partner:
+            localStorage.getItem("UserStatus") === "Married"
+              ? percentTransforme(REPORTS_Partner_Investments.investmentBonds1)
+              : [],
+          joint:
+            localStorage.getItem("UserStatus") === "Married"
+              ? percentTransforme(REPORTS_Joint_Investments.investmentBonds1)
+              : [],
+        },
+        Other: {
+          client: changeHeadNames(clientOther, ["Value at Year End "]),
+          partner: changeHeadNames(partnerOther, ["Value at Year End "]) || [],
+          joint: changeHeadNames(jointOther, ["Value at Year End "]) || [],
+        },
+        OtherPercent: {
+          client: percentTransforme(REPORTS_Client_Investments.other1),
+          partner:
+            localStorage.getItem("UserStatus") === "Married"
+              ? percentTransforme(REPORTS_Partner_Investments.other1)
+              : [],
+          joint:
+            localStorage.getItem("UserStatus") === "Married"
+              ? percentTransforme(REPORTS_Joint_Investments.other1)
+              : [],
+        },
+        Cash: {
+          client: changeHeadNames(clientCash, ["Value at Year End "]),
+          partner: changeHeadNames(partnerCash, ["Value at Year End "]) || [],
+          joint: changeHeadNames(jointCash, ["Value at Year End "]) || [],
+        },
+        CashPercent: {
+          client: percentTransforme(REPORTS_Client_Investments.cash1),
+          partner:
+            localStorage.getItem("UserStatus") === "Married"
+              ? percentTransforme(REPORTS_Partner_Investments.cash1)
+              : [],
+          joint:
+            localStorage.getItem("UserStatus") === "Married"
+              ? percentTransforme(REPORTS_Joint_Investments.cash1)
+              : [],
+        },
+      };
+
+      console.log(FullFinansialInvestmentObject);
 
       setReportSections({
         fullTableCashFlow,
@@ -298,8 +599,9 @@ const CashFlowReport = () => {
         partnerData,
         centrelinkCombined: filteredCentrelinkTable,
         familyTaxBenefit: familyTaxBenefitRow,
-        asset: liabilities,
+        asset: newLiabilities,
         asstesAndLiabilities: lifestyleAssetsArray,
+        FullFinansialInvestmentObject,
       });
     } catch (err) {
       console.error("Report Error", err);

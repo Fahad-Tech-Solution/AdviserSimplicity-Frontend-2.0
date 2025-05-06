@@ -9,45 +9,52 @@ const AntTableDynamicReportTable = ({
   showFilters,
   setShowFilters,
   highlightTypes = [],
+  pagination,
 }) => (
   <div className="mt-4 porsition-relative">
     <Table
       dataSource={dataSource}
       columns={columns}
       scroll={{ x: "max-content" }}
-      pagination={{
-        pageSize: 50,
-        position: ["bottomRight"],
-        className: "custom-pagination",
-      }}
+      pagination={
+        pagination === false
+          ? false
+          : {
+              pageSize: 50,
+              position: ["bottomRight"],
+              className: "custom-pagination",
+            }
+      }
       rowClassName={(record) =>
         highlightTypes.includes(record.type) ? "highlight-green-row" : ""
       }
-      title={() => (
-        <div
-          style={{
-            background: "#36b446",
-            color: "white",
-            fontWeight: "bold",
-            fontSize: "16px",
-            padding: "10px",
-            borderBottom: "1px solid white",
-            borderTopLeftRadius: "10px",
-            borderTopRightRadius: "10px",
-          }}
-        >
-          <div className="d-flex justify-content-between align-items-center w-100">
-            <h4 className="ms-2 mt-3 fw-bold">{title}</h4>
-            <span
-              role="button"
-              className="me-3"
-              onClick={() => setShowFilters(!showFilters)}
-            >
-              {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
-            </span>
+      title={() =>
+        title && (
+          <div
+            style={{
+              background: "#36b446",
+              color: "white",
+              fontWeight: "bold",
+              fontSize: "16px",
+              padding: "10px",
+              borderBottom: "1px solid white",
+              borderTopLeftRadius: "10px",
+              borderTopRightRadius: "10px",
+            }}
+          >
+            <div className="d-flex justify-content-between align-items-center w-100">
+              <h4 className="ms-2 mt-3 fw-bold">{title}</h4>
+              <span
+                role="button"
+                className="me-3"
+                onClick={() => setShowFilters(!showFilters)}
+              >
+                {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
+              </span>
+            </div>
           </div>
-        </div>
-      )}
+        )
+      }
     />
   </div>
 );

@@ -1,202 +1,119 @@
-import { Table, Tooltip } from "antd";
-import { Field } from "formik";
 import React, { useEffect, useState } from "react";
-import { Button, Card, Col, Row } from "react-bootstrap";
+import { Field } from "formik";
+import { Card, Col, Row } from "react-bootstrap";
 import { FaMagnifyingGlass, FaXmark } from "react-icons/fa6";
 import {
+  generateReportColumns,
   openNotificationSuccess,
   RenderName,
 } from "../../../Components/Assets/Api/Api";
+import AntTableDynamicReportTable from "../../../Components/Assets/Table/AntTableDynamicReportTable";
+import { Tooltip } from "antd";
 
-const FinancialInvestmentsReport = (props) => {
-  let {
-    showFilters,
-    setShowFilters,
-    fullTableCashFlow,
-    clientData,
-    partnerData,
-    assetsTestPensionAllowance,
-    incomeTestPensionsAllowances,
-    allowance,
-    clientIncome,
-    partnerIncome,
-    clientPayment,
-    partnerPayment,
-    familyTaxBenefit,
-    values,
-    setFieldValue,
-    handleChange,
-  } = props;
-
-  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-
-  const [columns, setColumn] = useState([
+const FinancialInvestmentsReport = ({
+  showFilters,
+  setShowFilters,
+  FullFinansialInvestmentObject,
+  values,
+  setFieldValue,
+  handleChange,
+}) => {
+  const [currentYear] = useState(new Date().getFullYear());
+  const [columns, setColumns] = useState(
+    generateReportColumns({
+      startYear: values.yearFrom || 1,
+      endYear: values.yearTo || 6,
+    })
+  );
+  const [columnsPercent, setColumnsPercent] = useState([
     {
-      title: "Year",
-      dataIndex: "type",
-      key: "type",
-      width: 250, // 👈 Set fixed width
-      fixed: "left", // 👈 Fix column to the left
-      render: (text, record) => {
-        const isParentRow = record.children && Array.isArray(record.children);
-        return (
-          <Tooltip title={text}>
-            <div
-              style={{
-                fontWeight: isParentRow ? "bold" : "normal",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                fontFamily: '"Inter", sans-serif',
-              }}
-            >
-              {text}
-            </div>
-          </Tooltip>
-        );
-      },
+      title: "Investment Metric",
+      dataIndex: "investment",
+      key: "investment",
+      width: 253,
+      fixed: "left",
+      render: (text) => (
+        <div style={{ fontFamily: "Inter, sans-serif" }}>{text}</div>
+      ),
     },
-    ...[1, 2, 3, 4, 5, 6].map((year, i) => {
-      if (year === 6) {
-        return {
-          title: String(year) + " (" + (currentYear + i) + ")",
-          dataIndex: `year${year}`,
-          key: String(year),
-          align: "left",
-          render: (text, record) => {
-            const isParentRow =
-              record.children && Array.isArray(record.children);
-
-            return (
-              <div
-                style={{
-                  fontWeight: isParentRow ? "bold" : "normal",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  fontFamily: '"Inter", sans-serif',
-                }}
-              >
-                {text}
-              </div>
-            );
-          },
-        };
-      }
-      return {
-        title: String(year) + " (" + (currentYear + i) + ")",
-        dataIndex: `year${year}`,
-        key: String(year),
-        render: (text, record) => {
-          const isParentRow = record.children && Array.isArray(record.children);
-
-          return (
-            <div
-              style={{
-                fontWeight: isParentRow ? "bold" : "normal",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                fontFamily: '"Inter", sans-serif',
-              }}
-            >
-              {text}
-            </div>
-          );
-        },
-      };
-    }),
+    {
+      title: "Details / Allocation",
+      dataIndex: "details",
+      key: "details",
+      width: 253,
+      fixed: "left",
+      align: "left",
+      render: (text) => (
+        <div style={{ fontFamily: "Inter, sans-serif" }}>{text}</div>
+      ),
+    },
   ]);
 
   const applyFilter = (values, currentInput) => {
     if (values.yearFrom !== "" && values.yearTo !== "") {
-      const yearFrom =
-        currentInput.name === "yearFrom"
-          ? parseInt(currentInput.value, 10)
-          : currentInput.name === "yearTo"
-          ? parseInt(currentInput.value, 10) - 5 < 1
-            ? 1
-            : parseInt(currentInput.value, 10) - 5
-          : parseInt(values.yearFrom, 10);
+      const currentValue = parseInt(currentInput.value, 10);
 
-      const yearTo =
-        currentInput.name === "yearFrom"
-          ? parseInt(currentInput.value, 10) + 5 > 10 && currentInput.value < 10
-            ? 10
-            : parseInt(currentInput.value, 10) + 5
-          : currentInput.name === "yearTo"
-          ? parseInt(currentInput.value, 10)
-          : parseInt(values.yearTo, 10);
-      // let currentYearWithFilter = currentYear + yearFrom;
+      let yearFrom = parseInt(values.yearFrom, 10);
+      let yearTo = parseInt(values.yearTo, 10);
 
-      if (!isNaN(yearFrom) && !isNaN(yearTo) && yearFrom <= yearTo) {
+      if (currentInput.name === "yearFrom") {
+        yearFrom = currentValue;
+        yearTo = Math.min(currentValue + 5, 30);
+      } else if (currentInput.name === "yearTo") {
+        yearTo = currentValue;
+        yearFrom = Math.max(currentValue - 5, 1);
+      }
+
+      if (!isNaN(yearFrom) && !isNaN(yearTo)) {
         const dynamicYearColumns = [];
 
         for (let year = yearFrom; year <= yearTo; year++) {
-          if (year === yearTo) {
-            dynamicYearColumns.push({
-              title: year.toString() + " (" + (currentYear + year) + ")",
-              dataIndex: `year${year}`, // You may need to match this with your data source
-              key: year.toString(),
-              align: "left",
-              render: (text, record) => {
-                const isParentRow =
-                  record.children && Array.isArray(record.children);
-
-                return (
-                  <div
-                    style={{
-                      fontWeight: isParentRow ? "bold" : "normal",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      fontFamily: '"Inter", sans-serif',
-                    }}
-                  >
-                    {text}
-                  </div>
-                );
-              },
-            });
-          } else {
-            dynamicYearColumns.push({
-              title: year.toString() + " (" + (currentYear + year) + ")",
-              dataIndex: `year${year}`, // You may need to match this with your data source
-              key: year.toString(),
-              render: (text, record) => {
-                const isParentRow =
-                  record.children && Array.isArray(record.children);
-
-                return (
-                  <div
-                    style={{
-                      fontWeight: isParentRow ? "bold" : "normal",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      fontFamily: '"Inter", sans-serif',
-                    }}
-                  >
-                    {text}
-                  </div>
-                );
-              },
-            });
-          }
-        }
-
-        // Combine the fixed left column with the dynamic years
-        const updatedColumns = [
-          {
-            title: "Year",
-            dataIndex: "type",
-            key: "type",
-            width: 250, // 👈 Set fixed width
-            fixed: "left", // 👈 Fix column to the left
+          dynamicYearColumns.push({
+            title: (
+              <>
+                <div className="w-100 text-center">{currentYear + year}</div>
+                <div className="w-100 text-center">{year}</div>
+              </>
+            ),
+            dataIndex: `year${year}`,
+            key: year.toString(),
+            align: "center",
             render: (text, record) => {
               const isParentRow =
                 record.children && Array.isArray(record.children);
+              return (
+                <div
+                  style={{
+                    fontWeight: isParentRow ? "bold" : "normal",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    fontFamily: '"Inter", sans-serif',
+                    textAlign: "center",
+                  }}
+                >
+                  {text}
+                </div>
+              );
+            },
+          });
+        }
 
+        const updatedColumns = [
+          {
+            title: (
+              <>
+                <div className="w-100">Financial Year Ending 30 June</div>
+                <div className="w-100">Year</div>
+              </>
+            ),
+            dataIndex: "type",
+            key: "type",
+            width: 253,
+            fixed: "left",
+            render: (text, record) => {
+              const isParentRow =
+                record.children && Array.isArray(record.children);
               return (
                 <Tooltip title={text}>
                   <div
@@ -205,6 +122,7 @@ const FinancialInvestmentsReport = (props) => {
                       whiteSpace: "nowrap",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
+                      fontFamily: '"Inter", sans-serif',
                     }}
                   >
                     {text}
@@ -216,7 +134,7 @@ const FinancialInvestmentsReport = (props) => {
           ...dynamicYearColumns,
         ];
 
-        setColumn(updatedColumns);
+        setColumns(updatedColumns);
       } else {
         openNotificationSuccess(
           "error",
@@ -231,35 +149,70 @@ const FinancialInvestmentsReport = (props) => {
   };
 
   useEffect(() => {
-    setFieldValue("category", "Cashflow"); // Set default value for category
+    setFieldValue("reportOwner", "client");
+    setFieldValue("category", "Direct Shares");
   }, []);
 
+  const categoryTables = {
+    "Direct Shares": {
+      data: FullFinansialInvestmentObject.DirectShares,
+      title: "Direct Shares",
+      highlight: ["Value at Year End"],
+    },
+    "Managed Funds": {
+      data: FullFinansialInvestmentObject.ManagedFunds,
+      title: "Managed Funds",
+      highlight: ["Value at Year End"],
+    },
+    "Investment Bonds": {
+      data: FullFinansialInvestmentObject.InvestmentBonds,
+      title: "Investment Bonds",
+      highlight: ["Value at Year End"],
+    },
+    Other: {
+      data: FullFinansialInvestmentObject.Other,
+      title: "Other",
+      highlight: ["Value at Year End"],
+    },
+    "Cash": {
+      data: FullFinansialInvestmentObject.Cash,
+      title: "Cash",
+      highlight: ["Value at Year End"],
+    },
+  };
+
+  const categoryPercentTables = {
+    "Direct Shares": {
+      data: FullFinansialInvestmentObject.DirectSharesPercent,
+      title: "Direct Shares",
+      highlight: ["Value at Year End"],
+    },
+    "Managed Funds": {
+      data: FullFinansialInvestmentObject.ManagedFundsPercent,
+      title: "Managed Funds",
+      highlight: ["Value at Year End"],
+    },
+    "Investment Bonds": {
+      data: FullFinansialInvestmentObject.InvestmentBondsPercent,
+      title: "Investment Bonds",
+      highlight: ["Value at Year End"],
+    },
+    Other: {
+      data: FullFinansialInvestmentObject.OtherPercent,
+      title: "Other",
+      highlight: ["Value at Year End"],
+    },
+    "Cash": {
+      data: FullFinansialInvestmentObject.CashPercent,
+      title: "Cash",
+      highlight: ["Value at Year End"],
+    },
+  };
+
   return (
-    <React.Fragment>
-      <div className="d-flex flex-row justify-content-between align-items-center">
-        <h2 className="text-green mt-3 fw-bold">
-          Financial Investments &nbsp;{" "}
-          {(values.category === "Client Tax" ||
-            values.category === "Partner Tax") && (
-            <span className="text-green fw-bold fs-5">
-              (
-              {RenderName(
-                values.category === "Client Tax" ? "client" : "partner"
-              )}
-              's Tax Position)
-            </span>
-          )}
-          {values.category === "Centrelink" && (
-            <span className="text-green fw-bold fs-5">
-              (Centrelink Summary)
-            </span>
-          )}
-          {values.category === "Family Tax Benefits" && (
-            <span className="text-green fw-bold fs-5">
-              (Family Tax Benefits)
-            </span>
-          )}
-        </h2>
+    <>
+      <div className="d-flex justify-content-between align-items-center">
+        <h2 className="text-green mt-3 fw-bold">Financial Investments</h2>
         <span
           role="button"
           className="text-green"
@@ -268,13 +221,34 @@ const FinancialInvestmentsReport = (props) => {
           {!showFilters ? <FaMagnifyingGlass /> : <FaXmark />}
         </span>
       </div>
+
       {showFilters && (
         <Card className="my-4 shadow-sm p-3 rounded">
-          <Row
-            gutter={16}
-            className="justify-content-around align-items-center"
-          >
-            <Col md={6}>
+          <Row className="justify-content-around align-items-center">
+            <Col md={3}>
+              <label htmlFor="reportOwner">Report Owner:</label>
+              <Field
+                as="select"
+                name="reportOwner"
+                className="form-select inputDesignDoubleInput"
+              >
+                <option value="">Select</option>
+                <option value="client">
+                  {RenderName("client")}'s Investment
+                </option>
+                {localStorage.getItem("UserStatus") === "Married" && (
+                  <>
+                    <option value="partner">
+                      {RenderName("partner")}'s Investment
+                    </option>
+                    <option value="joint">
+                      {RenderName("joint")}'s Investment
+                    </option>
+                  </>
+                )}
+              </Field>
+            </Col>
+            <Col md={3}>
               <label htmlFor="category">Report Type:</label>
               <Field
                 as="select"
@@ -282,15 +256,14 @@ const FinancialInvestmentsReport = (props) => {
                 className="form-select inputDesignDoubleInput"
               >
                 <option value="">Select</option>
-                <option value="Cashflow">Cashflow</option>
-                <option value="Client Tax">{RenderName("client")}'s Tax</option>
-                {localStorage.getItem("UserStatus") === "Married" && (
-                  <option value="Partner Tax">
-                    {RenderName("partner")}'s Tax
-                  </option>
-                )}
-                <option value="Centrelink">Centrelink</option>
-                <option value="Family Tax Benefits">Family Tax Benefits</option>
+                <option value="Direct Shares">Direct Shares</option>
+                <option value="Managed Funds">Managed Funds</option>
+                <option value="Investment Bonds">Investment Bonds</option>
+                <option value="Other">Other</option>
+                <option value="Cash">Cash</option>
+                <option value="Term Deposits">Term Deposits</option>
+                <option value="Investment Loans">Investment Loans</option>
+                <option value="Margin Loans">Margin Loans</option>
               </Field>
             </Col>
             <Col md={3}>
@@ -300,16 +273,17 @@ const FinancialInvestmentsReport = (props) => {
                 name="yearFrom"
                 className="form-select inputDesignDoubleInput"
                 onChange={(e) => {
-                  const newYearFrom = parseInt(e.target.value);
-                  setFieldValue("yearFrom", newYearFrom); // update yearFrom
-                  setFieldValue(
-                    "yearTo",
-                    parseInt(newYearFrom, 10) + 5 > 10 && newYearFrom < 10
-                      ? 10
-                      : parseInt(newYearFrom, 10) + 5
-                  ); // update yearFrom
+                  const value = parseInt(e.target.value);
+                  setFieldValue("yearFrom", value);
 
-                  applyFilter(values, e.target); // apply filter with new yearFrom
+                  const calculatedTo = value + 5;
+
+                  if (calculatedTo > 10 && calculatedTo < 15) {
+                    setFieldValue("yearTo", 15);
+                  } else {
+                    setFieldValue("yearTo", Math.min(30, calculatedTo));
+                  }
+                  applyFilter(values, e.target);
                 }}
               >
                 <option value="">Select</option>
@@ -331,13 +305,7 @@ const FinancialInvestmentsReport = (props) => {
                 onChange={(e) => {
                   handleChange(e);
                   const newYearTo = parseInt(e.target.value, 10);
-                  setFieldValue(
-                    "yearFrom",
-                    parseInt(newYearTo, 10) - 5 < 1
-                      ? 1
-                      : parseInt(newYearTo, 10) - 5
-                  ); // update yearFrom
-
+                  setFieldValue("yearFrom", Math.max(1, newYearTo - 5));
                   applyFilter(values, e.target);
                 }}
               >
@@ -354,181 +322,74 @@ const FinancialInvestmentsReport = (props) => {
                   ))}
               </Field>
             </Col>
-            <Col md={3} className="d-none">
-              <Button
-                className="modalBtn mt-4 w-100"
-                onClick={() => {
-                  applyFilter(values);
-                }}
-              >
-                Submit
-              </Button>
-            </Col>
           </Row>
         </Card>
       )}
 
-      {(values.category === "" || values.category === "Cashflow") && (
-        <>
-          <div className="mt-4 porsition-relative">
-            {/* <h4 className="text-green fw-bold">Cashflow</h4> */}
+      <div className="mb-5">
+        {/* Render the correct table(s) */}
+        {Array.isArray(categoryPercentTables[values.category])
+          ? categoryPercentTables[values.category].map((table, idx) => (
+              <AntTableDynamicReportTable
+                key={idx}
+                dataSource={table.data[values.reportOwner]}
+                columns={columnsPercent}
+                showFilters={showFilters}
+                setShowFilters={setShowFilters}
+                highlightTypes={table.highlight || []}
+                pagination={false}
+              />
+            ))
+          : values.category &&
+            categoryPercentTables[values.category] && (
+              <AntTableDynamicReportTable
+                dataSource={
+                  categoryPercentTables[values.category].data[
+                    values.reportOwner
+                  ]
+                }
+                columns={columnsPercent}
+                highlightTypes={
+                  categoryPercentTables[values.category].highlight || []
+                }
+                showFilters={showFilters}
+                setShowFilters={setShowFilters}
+                pagination={false}
+              />
+            )}
+      </div>
 
-            <Table
-              dataSource={fullTableCashFlow} // 👈 Removes the last row from the table
+      {/* Render the correct table(s) */}
+      {Array.isArray(categoryTables[values.category])
+        ? categoryTables[values.category].map((table, idx) => (
+            <AntTableDynamicReportTable
+              key={idx}
+              title={RenderName(values.reportOwner) + "'s " + table.title}
+              dataSource={table.data[values.reportOwner]}
               columns={columns}
-              scroll={{ x: "max-content" }}
-              pagination={{
-                pageSize: 50,
-                position: ["bottomRight"],
-                className: "custom-pagination",
-              }}
+              showFilters={showFilters}
+              setShowFilters={setShowFilters}
+              highlightTypes={table.highlight || []}
             />
-          </div>
-        </>
-      )}
-
-      {(values.category === "Client Tax" ||
-        values.category === "Partner Tax") && (
-        <>
-          <div className="mt-4 porsition-relative">
-            <Table
+          ))
+        : values.category &&
+          categoryTables[values.category] && (
+            <AntTableDynamicReportTable
+              title={
+                RenderName(values.reportOwner) +
+                "'s " +
+                categoryTables[values.category].title
+              }
               dataSource={
-                values.category === "Partner Tax" ? partnerData : clientData
-              } // 👈 Removes the last row from the table
+                categoryTables[values.category].data[values.reportOwner]
+              }
               columns={columns}
-              scroll={{ x: "max-content" }}
-              pagination={{
-                pageSize: 50,
-                position: ["bottomRight"],
-                className: "custom-pagination",
-              }}
+              highlightTypes={categoryTables[values.category].highlight || []}
+              showFilters={showFilters}
+              setShowFilters={setShowFilters}
             />
-          </div>
-        </>
-      )}
-
-      {values.category === "Centrelink" && (
-        <>
-          <div className="mt-4 porsition-relative">
-            <h4 className="text-green fw-bold">
-              Assets Test-Pension/Allowance{" "}
-            </h4>
-            <Table
-              dataSource={assetsTestPensionAllowance} // 👈 Removes the last row from the table
-              columns={columns}
-              scroll={{ x: "max-content" }}
-              pagination={{
-                pageSize: 50,
-                position: ["bottomRight"],
-                className: "custom-pagination",
-              }}
-            />
-          </div>
-          <div className="mt-4 porsition-relative">
-            <h4 className="text-green fw-bold">
-              Income Test- Pensions/Allowances{" "}
-            </h4>
-
-            <Table
-              dataSource={incomeTestPensionsAllowances} // 👈 Removes the last row from the table
-              columns={columns}
-              scroll={{ x: "max-content" }}
-              pagination={{
-                pageSize: 50,
-                position: ["bottomRight"],
-                className: "custom-pagination",
-              }}
-            />
-          </div>
-          <div className="mt-4 porsition-relative">
-            <h4 className="text-green fw-bold">Allowance </h4>
-
-            <Table
-              dataSource={allowance} // 👈 Removes the last row from the table
-              columns={columns}
-              scroll={{ x: "max-content" }}
-              pagination={{
-                pageSize: 50,
-                position: ["bottomRight"],
-                className: "custom-pagination",
-              }}
-            />
-          </div>
-          <div className="mt-4 porsition-relative">
-            <h4 className="text-green fw-bold">Client Income </h4>
-
-            <Table
-              dataSource={clientIncome} // 👈 Removes the last row from the table
-              columns={columns}
-              scroll={{ x: "max-content" }}
-              pagination={{
-                pageSize: 50,
-                position: ["bottomRight"],
-                className: "custom-pagination",
-              }}
-            />
-          </div>
-          <div className="mt-4 porsition-relative">
-            <h4 className="text-green fw-bold">Partner Income </h4>
-            <Table
-              dataSource={partnerIncome} // 👈 Removes the last row from the table
-              columns={columns}
-              scroll={{ x: "max-content" }}
-              pagination={{
-                pageSize: 50,
-                position: ["bottomRight"],
-                className: "custom-pagination",
-              }}
-            />
-          </div>
-          <div className="mt-4 porsition-relative">
-            <h4 className="text-green fw-bold">Client Payment</h4>
-
-            <Table
-              dataSource={clientPayment} // 👈 Removes the last row from the table
-              columns={columns}
-              scroll={{ x: "max-content" }}
-              pagination={{
-                pageSize: 50,
-                position: ["bottomRight"],
-                className: "custom-pagination",
-              }}
-            />
-          </div>
-          <div className="mt-4 porsition-relative">
-            <h4 className="text-green fw-bold">Partner Payment</h4>
-
-            <Table
-              dataSource={partnerPayment} // 👈 Removes the last row from the table
-              columns={columns}
-              scroll={{ x: "max-content" }}
-              pagination={{
-                pageSize: 50,
-                position: ["bottomRight"],
-                className: "custom-pagination",
-              }}
-            />
-          </div>
-        </>
-      )}
-
-      {values.category === "Family Tax Benefits" && (
-        <>
-          <div className="mt-4 porsition-relative">
-            <Table
-              dataSource={familyTaxBenefit} // 👈 Removes the last row from the table
-              columns={columns}
-              scroll={{ x: "max-content" }}
-              pagination={{
-                pageSize: 50,
-                position: ["bottomRight"],
-                className: "custom-pagination",
-              }}
-            />
-          </div>
-        </>
-      )}
-    </React.Fragment>
+          )}
+    </>
   );
 };
 

@@ -731,7 +731,7 @@ export const content = {
               "Net Trust Distribution",
               "Centrelink",
               "Annuity Income",
-              "Lifetime Pension",
+              "Lifetime Pension ",
               "Super Pension",
               "Total Assessable income",
             ],
@@ -744,7 +744,7 @@ export const content = {
               "Deductible interest Costs",
               "Income Protection Insurance",
               "Annuity Deductible Amount",
-              "Lifetime Pension",
+              "Lifetime Pension ",
               "Tax Free Pension Amount",
               "Total Allowable Deductions",
             ],
@@ -776,7 +776,7 @@ export const content = {
             ],
           },
           {
-            parent: "Total Tax payable", 
+            parent: "Total Tax payable",
             children: [
               "Franking Credits",
               "Reportable Fringe Benefits",
@@ -913,6 +913,7 @@ export const content = {
             children: [
               "Total Maximum rate of FTB- Part A",
               "Base Rate of FTB-Part A",
+              "Total Adjusted Family Income",
             ],
           },
           {
@@ -921,19 +922,29 @@ export const content = {
               "Income Level For Maximum Rate of FTB-Part A",
               "Income Level For Base Rate of FTB-Part A",
               "Income Mantaince Free Area",
+              "Total FTB- Part A (including Supplement)",
             ],
           },
           {
             parent: "Total Income For Primary Income Earner",
-            children: ["Total Payment rate of FTB-Part B"],
+            children: [
+              "Total Payment rate of FTB-Part B",
+              "Total Income For Primary Income Earner",
+            ],
           },
           {
             parent: "Total Income For Secondary Income Earner",
-            children: ["Income Level Threshold"],
+            children: [
+              "Income Level Threshold",
+              "Total Income For Secondary Income Earner",
+            ],
           },
           {
             parent: "Total FTB- Part B (including Supplement)",
-            children: ["Income Level Threshold"],
+            children: [
+              "Income Level Threshold",
+              "Total FTB- Part B (including Supplement)",
+            ],
           },
           {
             parent: "Total Family tax Benefits (Part A & B)",
@@ -970,6 +981,7 @@ export const content = {
               "Business Trust",
               "SMSF Net Assets",
               "Family Trust Net Assets",
+              "Total Assets",
             ],
           },
         ],
@@ -982,6 +994,7 @@ export const content = {
               "Credit Cards",
               "Investment Loans",
               "Investment Property Loans",
+              "Total Liabilities",
             ],
           },
           {
@@ -996,7 +1009,7 @@ export const content = {
         home: [
           {
             parent: "Closing Value",
-            children: ["Opening Value", "Growth", "Costbase"],
+            children: ["Opening Value", "Growth", "Closing Value", "Costbase"],
           },
           {
             parent: "Year End Loan Balance",
@@ -1004,6 +1017,7 @@ export const content = {
               "Opening Balance",
               "Principal Repayments/Withdrawals",
               "Interest Repayments",
+              "Year End Loan Balance",
               "Net proceeds after Sale",
             ],
           },
@@ -1015,6 +1029,7 @@ export const content = {
               "Opening Balance",
               "Principal Repayments",
               "Interest Repayments",
+              "Year End Loan Balance",
             ],
           },
         ],
@@ -1025,6 +1040,7 @@ export const content = {
               "Opening Balance",
               "Principal Repayments",
               "Interest Repayments",
+              "Year End Loan Balance",
             ],
           },
         ],
@@ -1038,6 +1054,7 @@ export const content = {
               "Boat",
               "Caravan",
               "Other",
+              "Total Personal Assets",
             ],
           },
         ],
@@ -1048,6 +1065,7 @@ export const content = {
               "Opening Balance",
               "Principal Repayments",
               "Interest Repayments",
+              "Year End Loan Balance",
             ],
           },
         ],
@@ -1058,6 +1076,7 @@ export const content = {
               "Opening Balance",
               "Principal Repayments",
               "Interest Repayments",
+              "Year End Loan Balance",
             ],
           },
         ],
@@ -1069,6 +1088,93 @@ export const content = {
       icon: "RiCoinsFill",
       stepNumber: 2,
       condition: (CRObject) => true, // Always true, as this step is always needed.
+      reportsArray: {
+        "Direct Shares": [
+          {
+            parent: "Value at Year End",
+            children: [
+              "Opening Balance",
+              "Regular Additions",
+              "Lumpsum Additions",
+              "Lumpsum Withdrawals",
+              "Income Reinvested",
+              "Growth",
+              "Value at Year End",
+              "Cost base",
+              "Unrealised Capital Gain/Loss",
+              "Actual Realised CG",
+            ],
+          },
+        ],
+        "Managed Funds": [
+          {
+            parent: "Value at Year End",
+            children: [
+              "Opening Balance",
+              "Regular Additions",
+              "Lumpsum Additions",
+              "Lumpsum Withdrawals",
+              "Income Reinvested",
+              "Managment Fees",
+              "Growth ",
+              "Value at Year End",
+              "Cost base",
+              "Unrealised Capital Gain/Loss",
+              "Actual Realised CG ",
+            ],
+          },
+        ],
+        "Investment Bonds": [
+          {
+            parent: "Value at Year End",
+            children: [
+              "Opening Balance",
+              "Regular Additions",
+              "Lumpsum Additions",
+              "Lumpsum Withdrawals",
+              "Managment Fees",
+              "Net Earnings (After 30%)",
+              "Value at Year End",
+              "Gross Contributions",
+              "Taxable Component (All earnings)",
+              "Actual Assessable Amount",
+            ],
+          },
+        ],
+        Other: [
+          {
+            parent: "Value at Year End",
+            children: [
+              "Opening Balance",
+              "Regular Additions",
+              "Lumpsum Additions",
+              "Lumpsum Withdrawals",
+              "Income Reinvested",
+              "Managment Fees",
+              "Growth",
+              "Value at Year End",
+              "Cost base",
+              "Unrealised Capital Gain/Loss",
+              "Actual Realised CG ",
+            ],
+          },
+        ],
+        Cash: [
+          {
+            parent: "Value at Year End",
+            children: [
+              "Opening Balance",
+              "Regular Additions",
+              "Lumpsum Additions",
+              "Lumpsum Withdrawals",
+              "Income Reinvested",
+              "Value at Year End",
+              "Additional Surplus/Defict From CF",
+              "Value at Year End",
+            ],
+          },
+        ],
+      },
     },
     {
       subTitle: "Business Entities",
