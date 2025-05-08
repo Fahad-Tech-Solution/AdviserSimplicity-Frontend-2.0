@@ -332,7 +332,7 @@ const generateYearData = (source, yearCount = 30) => {
 
 const buildReportTree = (data, taxHierarchy) => {
   if (!Array.isArray(taxHierarchy)) {
-    console.warn("Invalid taxHierarchy:", taxHierarchy);
+    // console.warn("Invalid taxHierarchy:", taxHierarchy);
     return [];
   }
 
@@ -359,7 +359,7 @@ const buildReportTree = (data, taxHierarchy) => {
 
 const removeNullRows = (data) => {
   if (!Array.isArray(data)) {
-    console.warn("Expected array but got:", data);
+    // console.warn("Expected array but got:", data);
     return [];
   }
   return data.filter((row) => row !== null && row !== undefined);
@@ -414,10 +414,15 @@ const generateReportColumns = ({
 }) => {
   const columns = [
     {
-      title: "Type",
+      title: (
+        <>
+          <div className="w-100">Financial Year Ending 30th June</div>
+          <div className="w-100">Year</div>
+        </>
+      ),
       dataIndex: fixedTypeLabel,
       key: fixedTypeLabel,
-      width: 250,
+      width: 280,
       fixed: "left",
       render: (text, row) => {
         if (row.isHeader) return { props: { colSpan: 0 } };
@@ -549,10 +554,9 @@ const renameYearKeys = (data) => {
 };
 
 const percentTransforme = (data) => {
-  const transformed = data.map(([investment, _, details]) => ({
+  const transformed = data.map(([investment, details]) => ({
     investment,
-    details:
-      typeof details === "number" ? toPercentage(details * 100) : details,
+    details: typeof details === "number" ? toPercentage(details) : details,
   }));
 
   return transformed;

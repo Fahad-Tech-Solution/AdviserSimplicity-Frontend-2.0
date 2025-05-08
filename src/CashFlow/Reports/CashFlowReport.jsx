@@ -21,6 +21,7 @@ import {
   percentTransforme,
 } from "../../Components/Assets/Api/Api";
 import { content } from "../../Content/Content";
+import BusinessReport from "./TableReports/BusinessReport";
 
 const CashFlowReport = () => {
   const initialValues = { category: "" };
@@ -54,6 +55,7 @@ const CashFlowReport = () => {
         REPORTS_Client_Investments,
         REPORTS_Partner_Investments,
         REPORTS_Joint_Investments,
+        REPORTS_Direct_Property,
       } = response;
 
       console.log(response);
@@ -85,10 +87,11 @@ const CashFlowReport = () => {
         buildReportTree(
           Age,
           content.cashFlowReport[0].reportsArray.Age.map((item, index) => {
-            let clientAndPartner = ["client", "partner", "joint"];
             return {
               ...item,
-              parent: RenderName(clientAndPartner[index]),
+              parent: item.parent
+                .replace("{{client}}", RenderName("client"))
+                .replace("{{partner}}", RenderName("partner")),
             };
           })
         ),
@@ -217,7 +220,17 @@ const CashFlowReport = () => {
               (d) => transformInflows(d, true),
               apiKey
             ),
-            content.cashFlowReport[0].reportsArray[sessionKey]
+            content.cashFlowReport[0].reportsArray[sessionKey].map(
+              (section) => ({
+                ...section,
+                children: section.children.map((label) =>
+                  label
+                    .replace("{{client}}", RenderName("client"))
+                    .replace("{{partner}}", RenderName("partner"))
+                    .replace("{{joint}}", RenderName("joint"))
+                ),
+              })
+            )
           );
 
           // Optionally label the top row if needed
@@ -280,8 +293,8 @@ const CashFlowReport = () => {
       );
 
       const newLiabilities = [
-        cashflowSections[0][1],
         cashflowSections[0][0],
+        cashflowSections[0][1],
         ...changeHeadNames(
           renameYearKeys([
             assets[0], // already unshifted into liabilities originally
@@ -330,268 +343,110 @@ const CashFlowReport = () => {
           }),
       ];
 
-      // Financial Investments
+      const isMarried = localStorage.getItem("UserStatus") === "Married";
 
-      let clientDirectShare = buildReportTree(
-        processDataGeneric(
-          REPORTS_Client_Investments,
-          (d) => transformInflows(d, true),
-          "directShares2"
-        ),
-        content.cashFlowReport[2].reportsArray["Direct Shares"]
-      );
+      const investmentTypes = [
+        { key: "directShares", title: "Direct Shares" },
+        { key: "managedFunds", title: "Managed Funds" },
+        { key: "investmentBonds", title: "Investment Bonds" },
+        { key: "other", title: "Other" },
+        { key: "cash", title: "Cash" },
+        { key: "termDeposits", title: "Term Deposits" },
+        { key: "investmentLoans", title: "Investment Loans" },
+        { key: "marginLoans", title: "Margin Loans" },
+      ];
 
-      let partnerDirectShare =
-        localStorage.getItem("UserStatus") === "Married"
-          ? buildReportTree(
-              processDataGeneric(
-                REPORTS_Partner_Investments,
-                (d) => transformInflows(d, true),
-                "directShares2"
-              ),
-              content.cashFlowReport[2].reportsArray["Direct Shares"]
-            )
-          : [];
-
-      let jointDirectShare =
-        localStorage.getItem("UserStatus") === "Married"
-          ? buildReportTree(
-              processDataGeneric(
-                REPORTS_Joint_Investments,
-                (d) => transformInflows(d, true),
-                "directShares2"
-              ),
-              content.cashFlowReport[2].reportsArray["Direct Shares"]
-            )
-          : [];
-
-      let clientManagedFunds = buildReportTree(
-        processDataGeneric(
-          REPORTS_Client_Investments,
-          (d) => transformInflows(d, true),
-          "managedFunds2"
-        ),
-        content.cashFlowReport[2].reportsArray["Managed Funds"]
-      );
-
-      let partnerManagedFunds =
-        localStorage.getItem("UserStatus") === "Married"
-          ? buildReportTree(
-              processDataGeneric(
-                REPORTS_Partner_Investments,
-                (d) => transformInflows(d, true),
-                "managedFunds2"
-              ),
-              content.cashFlowReport[2].reportsArray["Managed Funds"]
-            )
-          : [];
-
-      let jointManagedFunds =
-        localStorage.getItem("UserStatus") === "Married"
-          ? buildReportTree(
-              processDataGeneric(
-                REPORTS_Joint_Investments,
-                (d) => transformInflows(d, true),
-                "managedFunds2"
-              ),
-              content.cashFlowReport[2].reportsArray["Managed Funds"]
-            )
-          : [];
-
-      let clientInvestmentBonds = buildReportTree(
-        processDataGeneric(
-          REPORTS_Client_Investments,
-          (d) => transformInflows(d, true),
-          "investmentBonds2"
-        ),
-        content.cashFlowReport[2].reportsArray["Investment Bonds"]
-      );
-
-      let partnerInvestmentBonds =
-        localStorage.getItem("UserStatus") === "Married"
-          ? buildReportTree(
-              processDataGeneric(
-                REPORTS_Partner_Investments,
-                (d) => transformInflows(d, true),
-                "investmentBonds2"
-              ),
-              content.cashFlowReport[2].reportsArray["Investment Bonds"]
-            )
-          : [];
-
-      let jointInvestmentBonds =
-        localStorage.getItem("UserStatus") === "Married"
-          ? buildReportTree(
-              processDataGeneric(
-                REPORTS_Joint_Investments,
-                (d) => transformInflows(d, true),
-                "investmentBonds2"
-              ),
-              content.cashFlowReport[2].reportsArray["Investment Bonds"]
-            )
-          : [];
-
-      let clientOther = buildReportTree(
-        processDataGeneric(
-          REPORTS_Client_Investments,
-          (d) => transformInflows(d, true),
-          "other2"
-        ),
-        content.cashFlowReport[2].reportsArray["Other"]
-      );
-
-      let partnerOther =
-        localStorage.getItem("UserStatus") === "Married"
-          ? buildReportTree(
-              processDataGeneric(
-                REPORTS_Partner_Investments,
-                (d) => transformInflows(d, true),
-                "other2"
-              ),
-              content.cashFlowReport[2].reportsArray["Other"]
-            )
-          : [];
-
-      let jointOther =
-        localStorage.getItem("UserStatus") === "Married"
-          ? buildReportTree(
-              processDataGeneric(
-                REPORTS_Joint_Investments,
-                (d) => transformInflows(d, true),
-                "other2"
-              ),
-              content.cashFlowReport[2].reportsArray["Other"]
-            )
-          : [];
-
-      let clientCash = buildReportTree(
-        processDataGeneric(
-          REPORTS_Client_Investments,
-          (d) => transformInflows(d, true),
-          "cash2"
-        ),
-        content.cashFlowReport[2].reportsArray["Cash"]
-      );
-
-      let partnerCash =
-        localStorage.getItem("UserStatus") === "Married"
-          ? buildReportTree(
-              processDataGeneric(
-                REPORTS_Partner_Investments,
-                (d) => transformInflows(d, true),
-                "cash2"
-              ),
-              content.cashFlowReport[2].reportsArray["Cash"]
-            )
-          : [];
-
-      let jointCash =
-        localStorage.getItem("UserStatus") === "Married"
-          ? buildReportTree(
-              processDataGeneric(
-                REPORTS_Joint_Investments,
-                (d) => transformInflows(d, true),
-                "cash2"
-              ),
-              content.cashFlowReport[2].reportsArray["Cash"]
-            )
-          : [];
-
-      let FullFinansialInvestmentObject = {
-        DirectShares: {
-          client: changeHeadNames(clientDirectShare, ["Value at Year End "]),
-          partner:
-            changeHeadNames(partnerDirectShare, ["Value at Year End "]) || [],
-          joint:
-            changeHeadNames(jointDirectShare, ["Value at Year End "]) || [],
-        },
-        DirectSharesPercent: {
-          client: percentTransforme(REPORTS_Client_Investments.directShares1),
-          partner:
-            localStorage.getItem("UserStatus") === "Married"
-              ? percentTransforme(REPORTS_Partner_Investments.directShares1)
-              : [],
-          joint:
-            localStorage.getItem("UserStatus") === "Married"
-              ? percentTransforme(REPORTS_Joint_Investments.directShares1)
-              : [],
-        },
-        ManagedFunds: {
-          client: changeHeadNames(clientManagedFunds, ["Value at Year End "]),
-          partner:
-            changeHeadNames(partnerManagedFunds, ["Value at Year End "]) || [],
-          joint:
-            changeHeadNames(jointManagedFunds, ["Value at Year End "]) || [],
-        },
-        ManagedFundsPercent: {
-          client: percentTransforme(REPORTS_Client_Investments.managedFunds1),
-          partner:
-            localStorage.getItem("UserStatus") === "Married"
-              ? percentTransforme(REPORTS_Partner_Investments.managedFunds1)
-              : [],
-          joint:
-            localStorage.getItem("UserStatus") === "Married"
-              ? percentTransforme(REPORTS_Joint_Investments.managedFunds1)
-              : [],
-        },
-        InvestmentBonds: {
-          client: changeHeadNames(clientInvestmentBonds, [
-            "Value at Year End ",
-          ]),
-          partner:
-            changeHeadNames(partnerInvestmentBonds, ["Value at Year End "]) ||
-            [],
-          joint:
-            changeHeadNames(jointInvestmentBonds, ["Value at Year End "]) || [],
-        },
-        InvestmentBondsPercent: {
-          client: percentTransforme(
-            REPORTS_Client_Investments.investmentBonds1
+      // Helper to get reports
+      const getReport = (source, key, keyAddition = "") => {
+        console.log(key.replace(/[^a-zA-Z]/g, ""));
+        buildReportTree(
+          processDataGeneric(
+            source,
+            (d) => transformInflows(d, true),
+            key + keyAddition
           ),
-          partner:
-            localStorage.getItem("UserStatus") === "Married"
-              ? percentTransforme(REPORTS_Partner_Investments.investmentBonds1)
-              : [],
-          joint:
-            localStorage.getItem("UserStatus") === "Married"
-              ? percentTransforme(REPORTS_Joint_Investments.investmentBonds1)
-              : [],
-        },
-        Other: {
-          client: changeHeadNames(clientOther, ["Value at Year End "]),
-          partner: changeHeadNames(partnerOther, ["Value at Year End "]) || [],
-          joint: changeHeadNames(jointOther, ["Value at Year End "]) || [],
-        },
-        OtherPercent: {
-          client: percentTransforme(REPORTS_Client_Investments.other1),
-          partner:
-            localStorage.getItem("UserStatus") === "Married"
-              ? percentTransforme(REPORTS_Partner_Investments.other1)
-              : [],
-          joint:
-            localStorage.getItem("UserStatus") === "Married"
-              ? percentTransforme(REPORTS_Joint_Investments.other1)
-              : [],
-        },
-        Cash: {
-          client: changeHeadNames(clientCash, ["Value at Year End "]),
-          partner: changeHeadNames(partnerCash, ["Value at Year End "]) || [],
-          joint: changeHeadNames(jointCash, ["Value at Year End "]) || [],
-        },
-        CashPercent: {
-          client: percentTransforme(REPORTS_Client_Investments.cash1),
-          partner:
-            localStorage.getItem("UserStatus") === "Married"
-              ? percentTransforme(REPORTS_Partner_Investments.cash1)
-              : [],
-          joint:
-            localStorage.getItem("UserStatus") === "Married"
-              ? percentTransforme(REPORTS_Joint_Investments.cash1)
-              : [],
-        },
+          content.cashFlowReport[2].reportsArray[
+            keyMap[key.replace(/[^a-zA-Z]/g, "")]
+          ]
+        );
       };
 
-      console.log(FullFinansialInvestmentObject);
+      // Title mapping for reportsArray access
+      const keyMap = {
+        directShares: "Direct Shares",
+        managedFunds: "Managed Funds",
+        investmentBonds: "Investment Bonds",
+        other: "Other",
+        cash: "Cash",
+        termDeposits: "Term Deposits",
+        investmentLoans: "Investment Loans",
+        marginLoans: "Margin Loans",
+      };
+
+      // Build Full Object
+      const FullFinansialInvestmentObject = {};
+
+      investmentTypes.forEach(({ key, title }) => {
+        FullFinansialInvestmentObject[keyMap[key]] = {
+          client: changeHeadNames(
+            getReport(REPORTS_Client_Investments, key, "2"),
+            ["Value at Year End "]
+          ),
+          partner: isMarried
+            ? changeHeadNames(
+                getReport(REPORTS_Partner_Investments, key, "2"),
+                ["Value at Year End "]
+              )
+            : [],
+          joint: isMarried
+            ? changeHeadNames(getReport(REPORTS_Joint_Investments, key, "2"), [
+                "Value at Year End ",
+              ])
+            : [],
+        };
+
+        // Percentage reports only for specific types
+        if (
+          [
+            "directShares",
+            "managedFunds",
+            "investmentBonds",
+            "other",
+            "cash",
+            "termDeposits",
+          ].includes(key)
+        ) {
+          FullFinansialInvestmentObject[`${keyMap[key]}Percent`] = {
+            client: percentTransforme(REPORTS_Client_Investments[`${key}1`]),
+            partner: isMarried
+              ? percentTransforme(REPORTS_Partner_Investments[`${key}1`])
+              : [],
+            joint: isMarried
+              ? percentTransforme(REPORTS_Joint_Investments[`${key}1`])
+              : [],
+          };
+        }
+      });
+
+      //Business Investment Property
+      const BusinessReportObject = {};
+
+      const directProperty = Array.from({ length: 10 }).map((_, index) => ({
+        key: `Property${index + 1}`,
+        title: `Direct Property ${index + 1}`,
+      }));
+
+      directProperty.forEach(({ key, title }) => {
+        console.log(getReport(REPORTS_Direct_Property, key));
+
+        BusinessReportObject[title] = changeHeadNames(
+          getReport(REPORTS_Direct_Property, key),
+          ["Total Expenses ", ""]
+        );
+        
+      });
+
+      console.log(BusinessReportObject);
 
       setReportSections({
         fullTableCashFlow,
@@ -602,6 +457,7 @@ const CashFlowReport = () => {
         asset: newLiabilities,
         asstesAndLiabilities: lifestyleAssetsArray,
         FullFinansialInvestmentObject,
+        BusinessReportObject,
       });
     } catch (err) {
       console.error("Report Error", err);
@@ -664,6 +520,19 @@ const CashFlowReport = () => {
                 )}
                 {step === 2 && (
                   <FinancialInvestmentsReport
+                    {...{
+                      showFilters,
+                      setShowFilters,
+                      values,
+                      setFieldValue,
+                      handleChange,
+                      handleBlur,
+                    }}
+                    {...reportSections}
+                  />
+                )}
+                {step === 3 && (
+                  <BusinessReport
                     {...{
                       showFilters,
                       setShowFilters,

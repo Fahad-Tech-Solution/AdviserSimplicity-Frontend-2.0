@@ -10,10 +10,10 @@ import {
 import AntTableDynamicReportTable from "../../../Components/Assets/Table/AntTableDynamicReportTable";
 import { Tooltip } from "antd";
 
-const FinancialInvestmentsReport = ({
+const BusinessReport = ({
   showFilters,
   setShowFilters,
-  FullFinansialInvestmentObject,
+  BusinessReportObject,
   values,
   setFieldValue,
   handleChange,
@@ -26,158 +26,22 @@ const FinancialInvestmentsReport = ({
     })
   );
 
-  const columnsPercent = [
-    {
-      title: "Investment Metric",
-      dataIndex: "investment",
-      key: "investment",
-      width: 253,
-      fixed: "left",
-      render: (text) => (
-        <div style={{ fontFamily: "Inter, sans-serif" }}>{text}</div>
-      ),
-    },
-    {
-      title: "Details / Allocation",
-      dataIndex: "details",
-      key: "details",
-      width: 253,
-      fixed: "left",
-      align: "left",
-      render: (text) => (
-        <div style={{ fontFamily: "Inter, sans-serif" }}>{text}</div>
-      ),
-    },
-  ];
-
   const categoryTables = {
-    "Direct Shares": {
-      data: FullFinansialInvestmentObject?.["Direct Shares"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Direct Shares",
-      highlight: ["Value at Year End"],
-    },
-    "Managed Funds": {
-      data: FullFinansialInvestmentObject?.["Managed Funds"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Managed Funds",
-      highlight: ["Value at Year End"],
-    },
-    "Investment Bonds": {
-      data: FullFinansialInvestmentObject?.["Investment Bonds"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Investment Bonds",
-      highlight: ["Value at Year End"],
-    },
-    Other: {
-      data: FullFinansialInvestmentObject?.["Other"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Other",
-      highlight: ["Value at Year End"],
-    },
-    Cash: {
-      data: FullFinansialInvestmentObject?.["Cash"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Cash",
-      highlight: ["Value at Year End"],
-    },
-    "Term Deposits": {
-      data: FullFinansialInvestmentObject?.["Term Deposits"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Term Deposits",
-      highlight: ["Value at Year End"],
-    },
-    "Investment Loans": {
-      data: FullFinansialInvestmentObject?.["Investment Loans"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Investment Loans",
-      highlight: ["Value at Year End"],
-    },
-    "Margin Loans": {
-      data: FullFinansialInvestmentObject?.["Margin Loans"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Margin Loans",
-      highlight: ["Value at Year End"],
+    "Direct Property 1": {
+      data: BusinessReportObject,
+      title: "Net Rental Position",
+      highlight: ["Total Expenses", ""],
     },
   };
 
-  const categoryPercentTables = {
-    "Direct Shares": {
-      data: FullFinansialInvestmentObject?.["Direct SharesPercent"] || {
+  const categoryTables2 = {
+    "Direct Property 1": {
+      data: BusinessReportObject || {
         client: [],
         partner: [],
         joint: [],
       },
-      title: "Direct Shares",
-      highlight: ["Value at Year End"],
-    },
-    "Managed Funds": {
-      data: FullFinansialInvestmentObject?.["Managed FundsPercent"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Managed Funds",
-      highlight: ["Value at Year End"],
-    },
-    "Investment Bonds": {
-      data: FullFinansialInvestmentObject?.["Investment BondsPercent"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Investment Bonds",
-      highlight: ["Value at Year End"],
-    },
-    Other: {
-      data: FullFinansialInvestmentObject?.["OtherPercent"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Other",
-      highlight: ["Value at Year End"],
-    },
-    Cash: {
-      data: FullFinansialInvestmentObject?.["CashPercent"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Cash",
-      highlight: ["Value at Year End"],
-    },
-    "Term Deposits": {
-      data: FullFinansialInvestmentObject?.["Term DepositsPercent"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Term Deposits",
+      title: "Debt and Equity Position",
       highlight: ["Value at Year End"],
     },
   };
@@ -271,8 +135,7 @@ const FinancialInvestmentsReport = ({
   };
 
   useEffect(() => {
-    setFieldValue("reportOwner", "client");
-    setFieldValue("category", "Direct Shares");
+    setFieldValue("category", "Direct Property 1");
   }, [setFieldValue]);
 
   const renderReportTable = (tables, isPercent = false) => {
@@ -281,19 +144,16 @@ const FinancialInvestmentsReport = ({
 
     const data = tableInfo.data?.[values.reportOwner] || [];
     const highlight = tableInfo.highlight || [];
-    const title = !isPercent
-      ? `${RenderName(values.reportOwner)}'s ${tableInfo.title}`
-      : undefined;
+    const title = `${tableInfo.title}`;
 
     return (
       <AntTableDynamicReportTable
         title={title}
         dataSource={data}
-        columns={isPercent ? columnsPercent : columns}
+        columns={columns}
         highlightTypes={highlight}
         showFilters={showFilters}
         setShowFilters={setShowFilters}
-        pagination={isPercent ? false : undefined}
       />
     );
   };
@@ -301,7 +161,7 @@ const FinancialInvestmentsReport = ({
   return (
     <>
       <div className="d-flex justify-content-between align-items-center">
-        <h2 className="text-green mt-3 fw-bold">Financial Investments</h2>
+        <h2 className="text-green mt-3 fw-bold">Direct Property Summary</h2>
         <span
           role="button"
           className="text-green"
@@ -314,30 +174,7 @@ const FinancialInvestmentsReport = ({
       {showFilters && (
         <Card className="my-4 shadow-sm p-3 rounded">
           <Row className="justify-content-around align-items-center">
-            <Col md={3}>
-              <label htmlFor="reportOwner">Report Owner:</label>
-              <Field
-                as="select"
-                name="reportOwner"
-                className="form-select inputDesignDoubleInput"
-              >
-                <option value="">Select</option>
-                <option value="client">
-                  {RenderName("client")}'s Investment
-                </option>
-                {localStorage.getItem("UserStatus") === "Married" && (
-                  <>
-                    <option value="partner">
-                      {RenderName("partner")}'s Investment
-                    </option>
-                    <option value="joint">
-                      {RenderName("joint")}'s Investment
-                    </option>
-                  </>
-                )}
-              </Field>
-            </Col>
-            <Col md={3}>
+            <Col md={6}>
               <label htmlFor="category">Report Type:</label>
               <Field
                 as="select"
@@ -345,18 +182,9 @@ const FinancialInvestmentsReport = ({
                 className="form-select inputDesignDoubleInput"
               >
                 <option value="">Select</option>
-                {[
-                  "Direct Shares",
-                  "Managed Funds",
-                  "Investment Bonds",
-                  "Other",
-                  "Cash",
-                  "Term Deposits",
-                  "Investment Loans",
-                  "Margin Loans",
-                ].map((type) => (
-                  <option key={type} value={type}>
-                    {type}
+                {Array.from({ length: 10 }).map((_, index) => (
+                  <option key={index} value={`Direct Property ${index + 1}`}>
+                    Direct Property {index + 1}
                   </option>
                 ))}
               </Field>
@@ -414,13 +242,11 @@ const FinancialInvestmentsReport = ({
         </Card>
       )}
 
-      <div className="mb-5">
-        {renderReportTable(categoryPercentTables, true)}
-      </div>
+      <div className="mb-5">{renderReportTable(categoryTables)}</div>
 
-      <div>{renderReportTable(categoryTables)}</div>
+      <div>{renderReportTable(categoryTables2)}</div>
     </>
   );
 };
 
-export default FinancialInvestmentsReport;
+export default BusinessReport;

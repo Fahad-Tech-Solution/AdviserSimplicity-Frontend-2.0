@@ -90,7 +90,7 @@ const CashReport = ({
             ),
             dataIndex: "type",
             key: "type",
-            width: 253,
+            width: 255,
             fixed: "left",
             render: (text, record) => {
               const isParentRow =
@@ -191,7 +191,7 @@ const CashReport = ({
   return (
     <>
       <div className="d-flex justify-content-between align-items-center">
-        <h2 className="text-green mt-3 fw-bold">Income and Expanses</h2>
+        <h2 className="text-green mt-3 fw-bold">Income and Expenses</h2>
         <span
           role="button"
           className="text-green"
