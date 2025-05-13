@@ -1759,7 +1759,6 @@ label {
   font-family: "Inter", sans-serif !important;
 }
 
-
 .reportSection .highlight-green-row {
   background-color: #36b446 !important;
   color: white !important;
@@ -1768,4 +1767,55 @@ label {
 .reportSection .highlight-green-row > td {
   background-color: #36b446 !important;
   color: white !important;
+}
+
+.custom-dropdown-scope li,
+.ant-dropdown-menu-submenu li {
+  list-style: initial !important;
+  margin-top: inherit !important;
+  padding-left: 0 !important;
+  /* font-weight: normal !important; */
+
+  display: inline;
+  height: auto;
+  width: auto;
+  justify-content: normal;
+  align-items: normal;
+  font-family: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+}
+
+.custom-dropdown-scope span,
+.ant-dropdown-menu-submenu span {
+  /* all: unset !important;
+  font: inherit !important;
+  color: inherit !important; */
+
+  display: inline;
+  height: auto;
+  width: auto;
+  justify-content: normal;
+  align-items: normal;
+  font-family: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+}
+
+.ant-dropdown-menu-submenu li {
+  padding-left: inherit !important;
+}
+
+.inputlikeButton {
+  padding: 20px !important;
+  width: 100%;
+  border-color: #36b446 !important;
+  &&::placeholder {
+    color: #949494 !important;
+  }
+}
+
+.inputlikeButton .ant-space {
+  display: flex;
+  justify-content: space-between;
 }

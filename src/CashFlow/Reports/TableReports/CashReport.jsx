@@ -244,7 +244,7 @@ const CashReport = ({
                 }}
               >
                 <option value="">Select</option>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30].map(
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25].map(
                   (value) => (
                     <option key={value} value={value}>
                       {value}

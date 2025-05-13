@@ -1,22 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import "../../Components/options.css";
 
-import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  UserName,
-  CurrentPage,
-  OptionRender,
-  CRState,
-  StepsStatus,
-} from "../../Store/Store";
-import { Breadcrumb, Card } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBars,
-  faCircleUser,
-  faMoon,
-} from "@fortawesome/free-solid-svg-icons";
+import { useRecoilState } from "recoil";
+import { OptionRender } from "../../Store/Store";
 import { ConfigProvider, Steps } from "antd";
 import {
   FaBriefcase,
@@ -43,20 +30,12 @@ import { RiCoinsFill, RiDiscountPercentFill } from "react-icons/ri";
 import { content } from "../../Content/Content";
 
 function CashFlowReportOptions(props) {
-
-  let [optRender, setOptRender] = useRecoilState(OptionRender);
-
-
   let [items, setItems] = useState([]);
   let { cashFlowReport } = content;
 
-  let location = useLocation();
-
   useEffect(() => {
-
     let Opt = "Opt1";
     let stepComplete = 0;
-
 
     switch (props.step) {
       case 0:

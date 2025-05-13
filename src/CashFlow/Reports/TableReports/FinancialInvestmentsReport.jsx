@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Field } from "formik";
 import { Card, Col, Row } from "react-bootstrap";
-import { FaMagnifyingGlass, FaXmark } from "react-icons/fa6";
+import {
+  FaAngleDown,
+  FaAngleUp,
+  FaMagnifyingGlass,
+  FaXmark,
+} from "react-icons/fa6";
 import {
   generateReportColumns,
   openNotificationSuccess,
   RenderName,
 } from "../../../Components/Assets/Api/Api";
 import AntTableDynamicReportTable from "../../../Components/Assets/Table/AntTableDynamicReportTable";
-import { Tooltip } from "antd";
+import { Dropdown, Menu, Space, Button, Tooltip } from "antd";
 
 const FinancialInvestmentsReport = ({
   showFilters,
@@ -24,6 +29,69 @@ const FinancialInvestmentsReport = ({
       startYear: values.yearFrom || 1,
       endYear: values.yearTo || 6,
     })
+  );
+
+  const [directProperty, setDirectProperty] = useState(false);
+  const [superPension, setSuperPension] = useState(true);
+
+  const menu = (
+    <Menu
+      items={[
+        {
+          key: "1",
+          label: "Investment",
+          popupOffset: [10, 0],
+          children: [
+            { key: "Direct Shares", label: "Direct Shares" },
+            { key: "Managed Funds", label: "Managed Funds" },
+            { key: "Investment Bonds", label: "Investment Bonds" },
+            { key: "Other", label: "Other" },
+            { key: "Cash", label: "Cash" },
+            { key: "Term Deposits", label: "Term Deposits" },
+            { key: "Investment Loans", label: "Investment Loans" },
+            { key: "Margin Loans", label: "Margin Loans" },
+          ],
+        },
+        {
+          key: "2",
+          label: "Direct Property Summary",
+          popupOffset: [10, 0], // 👈 horizontal space between parent and submenu
+          children: Array.from({ length: 10 }, (_, i) => ({
+            key: `Property ${i + 1}`,
+            label: `Property ${i + 1}`,
+          })),
+        },
+        {
+          key: "3",
+          label: "Super Annuation",
+          popupOffset: [10, 0],
+          children: [
+            { key: "Super", label: "Super" },
+            { key: "Pension", label: "Pension" },
+            { key: "Annuities", label: "Annuities" },
+          ],
+        },
+      ]}
+      onClick={({ key }) => {
+        let directPropertyOption = Array.from(
+          { length: 10 },
+          (_, i) => `Property ${i + 1}`
+        );
+        if (directPropertyOption.includes(key)) {
+          setFieldValue("category", key);
+          setFieldValue("reportOwner", "client");
+          setDirectProperty(true);
+        } else if (["Super", "Pension", "Annuities"].includes(key)) {
+          setFieldValue("category", key);
+          setFieldValue("reportOwner", "client");
+          setDirectProperty(false);
+          setSuperPension(true);
+        } else {
+          setFieldValue("category", key);
+          setDirectProperty(false);
+        }
+      }}
+    />
   );
 
   const columnsPercent = [
@@ -123,6 +191,38 @@ const FinancialInvestmentsReport = ({
       title: "Margin Loans",
       highlight: ["Value at Year End"],
     },
+    Super: {
+      data: FullFinansialInvestmentObject?.["Super"] || {
+        client: [],
+        partner: [],
+        joint: [],
+      },
+      title: "Super",
+      highlight: ["Opening Balance", "Closing Member Balance"],
+    },
+    ...Array.from({ length: 10 }).reduce((acc, _, i) => {
+      const label = `Property ${i + 1}`;
+      acc[label] = {
+        data: FullFinansialInvestmentObject?.[label] || { client: [] },
+        title: `Net Rental Position (${label})`,
+        highlight: ["Total Expenses"],
+      };
+      return acc;
+    }, {}),
+  };
+
+  const directPropertyCategoryTable = {
+    ...Array.from({ length: 10 }).reduce((acc, _, i) => {
+      const label = `Property ${i + 1}`;
+      acc[label] = {
+        data: FullFinansialInvestmentObject?.["Position" + label] || {
+          client: [],
+        },
+        title: `Equity & Debt Position (Property ${i + 1})`,
+        highlight: ["Year End Loan Balance", "Closing Value"],
+      };
+      return acc;
+    }, {}),
   };
 
   const categoryPercentTables = {
@@ -180,6 +280,27 @@ const FinancialInvestmentsReport = ({
       title: "Term Deposits",
       highlight: ["Value at Year End"],
     },
+    Super: {
+      data: FullFinansialInvestmentObject?.["SuperPercent"] || {
+        client: [],
+        partner: [],
+        joint: [],
+      },
+      title: "Super",
+      highlight: ["Opening Balance", "Closing Member Balance"],
+    },
+  };
+
+  const categoryPercentSPATables = {
+    Super: {
+      data: FullFinansialInvestmentObject?.["SuperPercent1"] || {
+        client: [],
+        partner: [],
+        joint: [],
+      },
+      title: "Super",
+      highlight: ["Opening Balance", "Closing Member Balance"],
+    },
   };
 
   const applyFilter = (values, currentInput) => {
@@ -211,16 +332,24 @@ const FinancialInvestmentsReport = ({
               dataIndex: `year${year}`,
               key: year.toString(),
               align: "center",
-              render: (text) => (
-                <div
-                  style={{
-                    fontFamily: '"Inter", sans-serif',
-                    textAlign: "center",
-                  }}
-                >
-                  {text}
-                </div>
-              ),
+              render: (text, record) => {
+                const isParentRow =
+                  record.children && Array.isArray(record.children);
+                return (
+                  <div
+                    style={{
+                      fontWeight: isParentRow ? "bold" : "normal",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      fontFamily: '"Inter", sans-serif',
+                      textAlign: "center",
+                    }}
+                  >
+                    {text}
+                  </div>
+                );
+              },
             };
           }
         );
@@ -237,15 +366,30 @@ const FinancialInvestmentsReport = ({
             key: "type",
             width: 253,
             fixed: "left",
-            render: (text) => (
-              <div
-                style={{
-                  fontFamily: '"Inter", sans-serif',
-                }}
-              >
-                {text}
-              </div>
-            ),
+            render: (text, row) => {
+              if (row.isHeader) return { props: { colSpan: 0 } };
+
+              const isParentRow = row?.children && Array.isArray(row.children);
+
+              return (
+                <Tooltip title={text}>
+                  <div
+                    style={{
+                      fontWeight: isParentRow ? "bold" : "normal",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      fontFamily: '"Inter", sans-serif',
+                    }}
+                  >
+                    {text}
+                  </div>
+                </Tooltip>
+              );
+            },
           },
           ...dynamicYearColumns,
         ];
@@ -315,51 +459,48 @@ const FinancialInvestmentsReport = ({
         <Card className="my-4 shadow-sm p-3 rounded">
           <Row className="justify-content-around align-items-center">
             <Col md={3}>
-              <label htmlFor="reportOwner">Report Owner:</label>
+              <label
+                htmlFor="reportOwner"
+                onClick={() => {
+                  alert(directProperty);
+                }}
+              >
+                Report Owner:
+              </label>
               <Field
                 as="select"
                 name="reportOwner"
                 className="form-select inputDesignDoubleInput"
               >
                 <option value="">Select</option>
-                <option value="client">
-                  {RenderName("client")}'s Investment
-                </option>
-                {localStorage.getItem("UserStatus") === "Married" && (
-                  <>
-                    <option value="partner">
-                      {RenderName("partner")}'s Investment
-                    </option>
-                    <option value="joint">
-                      {RenderName("joint")}'s Investment
-                    </option>
-                  </>
-                )}
+                <option value="client">{RenderName("client")}'s</option>
+                {localStorage.getItem("UserStatus") === "Married" &&
+                  directProperty === false && (
+                    <>
+                      <option value="partner">{RenderName("partner")}'s</option>
+                      {!superPension && (
+                        <option value="joint">{RenderName("joint")}'s</option>
+                      )}
+                    </>
+                  )}
               </Field>
             </Col>
             <Col md={3}>
               <label htmlFor="category">Report Type:</label>
-              <Field
-                as="select"
-                name="category"
-                className="form-select inputDesignDoubleInput"
+              <Dropdown
+                overlay={menu}
+                trigger={["click"]}
+                dropdownRender={(menu) => (
+                  <div className="custom-dropdown-scope">{menu}</div>
+                )}
               >
-                <option value="">Select</option>
-                {[
-                  "Direct Shares",
-                  "Managed Funds",
-                  "Investment Bonds",
-                  "Other",
-                  "Cash",
-                  "Term Deposits",
-                  "Investment Loans",
-                  "Margin Loans",
-                ].map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </Field>
+                <Button className="inputlikeButton">
+                  <Space style={{ width: "100%" }} justify="space-between">
+                    {values.category || "Select Report Type"}
+                    <FaAngleDown />
+                  </Space>
+                </Button>
+              </Dropdown>
             </Col>
             <Col md={3}>
               <label htmlFor="yearFrom">Year From:</label>
@@ -380,7 +521,7 @@ const FinancialInvestmentsReport = ({
                 }}
               >
                 <option value="">Select</option>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30].map((val) => (
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25].map((val) => (
                   <option key={val} value={val}>
                     {val}
                   </option>
@@ -418,7 +559,17 @@ const FinancialInvestmentsReport = ({
         {renderReportTable(categoryPercentTables, true)}
       </div>
 
+      {superPension && (
+        <div className="mb-5">
+          {renderReportTable(categoryPercentSPATables, true)}
+        </div>
+      )}
+
       <div>{renderReportTable(categoryTables)}</div>
+
+      {directProperty && (
+        <div>{renderReportTable(directPropertyCategoryTable)}</div>
+      )}
     </>
   );
 };

@@ -320,7 +320,7 @@ const createStructuredEntries = (values, schemaType, numberOfProperties) => {
   });
 };
 
-const generateYearData = (source, yearCount = 30) => {
+const generateYearData = (source, yearCount = 31) => {
   return Array.from({ length: yearCount }, (_, i) => i + 1).reduce(
     (acc, year) => {
       acc[`year${year}`] = source?.[`year${year}`] || "$0";
@@ -379,7 +379,7 @@ const removeZeroRows = (data) =>
 const transformInflows = (inflows = [], formatAsCurrency = true) =>
   inflows.map(([type, ...values]) => {
     const formatted = { type };
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 31; i++) {
       const val = Number(values[i]);
       if (formatAsCurrency) {
         if (val < 0) {
@@ -537,12 +537,12 @@ const renameYearKeys = (data) => {
     renamedItem.existing = renamedItem.year1;
 
     // Shift year2 → year1, ..., year30 → year29
-    for (let i = 2; i <= 30; i++) {
+    for (let i = 2; i <= 31; i++) {
       renamedItem[`year${i - 1}`] = renamedItem[`year${i}`];
     }
 
     // Remove original year30
-    delete renamedItem[`year30`];
+    // delete renamedItem[`year30`];
 
     // Recursively process children if they exist
     if (Array.isArray(renamedItem.children)) {

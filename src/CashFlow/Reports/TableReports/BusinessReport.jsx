@@ -208,7 +208,7 @@ const BusinessReport = ({
                 }}
               >
                 <option value="">Select</option>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30].map((val) => (
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25].map((val) => (
                   <option key={val} value={val}>
                     {val}
                   </option>

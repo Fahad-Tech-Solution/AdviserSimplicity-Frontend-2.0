@@ -1214,15 +1214,6 @@ export const content = {
             ],
           },
         ],
-      },
-    },
-    {
-      subTitle: "Business Entities",
-      statusStep: 40,
-      icon: "FaBriefcase",
-      stepNumber: 3,
-      condition: (CRObject) => true, // Always true, as this step is always needed.
-      reportsArray: {
         Property: [
           {
             parent: "Total Expenses",
@@ -1239,20 +1230,103 @@ export const content = {
             children: [],
           },
         ],
+        PositionProperty: [
+          {
+            parent: "Closing Value",
+            children: [
+              "Opening Value",
+              "Growth",
+              "Closing Value",
+              "Costbase",
+              "Unrealised Capital Gain/Loss at Year End",
+              "Realised Capital Gain/Loss",
+            ],
+          },
+          {
+            parent: "Year End Loan Balance",
+            children: [
+              "Opening Balance",
+              "Principal Repayments",
+              "Interest Repayments",
+              "Year End Loan Balance",
+              "Deductible Interest",
+              "Net proceeds after Sale",
+            ],
+          },
+        ],
+        Superannuation: [
+          {
+            parent: "Non Conessional Contributions Cap",
+            children: [],
+          },
+          {
+            parent: "Concessional Contributions Cap",
+            children: [],
+          },
+          {
+            parent: "Opening Balance",
+            children: [
+              "Opening Balance",
+              "Rollovers-transfer in",
+              "Employer Contributions",
+              "Salary Sacrfice/Personal Deductible",
+              "Spouse Splitting",
+              "Non Concessional Contributions",
+              "Government Co-Contribution/Low income",
+              "Income Received",
+              "Growth",
+            ],
+          },
+          {
+            parent: "Closing Member Balance",
+            children: [
+              "Fees",
+              "Insurance",
+              "Tax payable",
+              "Other Lumpsum Withdrawals",
+              "Rollover to another Fund",
+              "Closing Member Balance",
+              "Franking Credits",
+              "Tax-free Component",
+              "Taxable Component",
+            ],
+          },
+        ],
+        Pensionannuation: [
+          {
+            parent: "Opening Balance",
+            children: ["Opening Balance", "Income Received", "Growth"],
+          },
+          {
+            parent: "Closing Member Balance",
+            children: [
+              "Fees",
+              "Tax payable",
+              "Lumpsum Commutations",
+              "Pension Payments",
+              "Closing Member Balance",
+              "Franking Credits",
+              "Tax-free Component",
+              "Taxable Component",
+              "Centrelink Deductible Amount",
+              "Tax Free Pension Amount",
+            ],
+          },
+        ],
       },
     },
     {
       subTitle: "SMSF",
-      statusStep: 50,
+      statusStep: 40,
       icon: "FaGift",
-      stepNumber: 4,
+      stepNumber: 3,
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
     {
       subTitle: "Investment Trust",
-      statusStep: 60,
+      statusStep: 50,
       icon: "MdFamilyRestroom",
-      stepNumber: 5,
+      stepNumber: 4,
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
   ],

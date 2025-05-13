@@ -56,6 +56,8 @@ const CashFlowReport = () => {
         REPORTS_Partner_Investments,
         REPORTS_Joint_Investments,
         REPORTS_Direct_Property,
+        REPORTS_Client_Super_Pension,
+        REPORTS_Partner_Super_Pension,
       } = response;
 
       console.log(response);
@@ -80,8 +82,6 @@ const CashFlowReport = () => {
         (d) => transformInflows(d, true),
         "surplusDeficit"
       );
-
-      // console.log(Age);
 
       const cashflowSections = [
         buildReportTree(
@@ -345,78 +345,91 @@ const CashFlowReport = () => {
 
       const isMarried = localStorage.getItem("UserStatus") === "Married";
 
-      const investmentTypes = [
-        { key: "directShares", title: "Direct Shares" },
-        { key: "managedFunds", title: "Managed Funds" },
-        { key: "investmentBonds", title: "Investment Bonds" },
-        { key: "other", title: "Other" },
-        { key: "cash", title: "Cash" },
-        { key: "termDeposits", title: "Term Deposits" },
-        { key: "investmentLoans", title: "Investment Loans" },
-        { key: "marginLoans", title: "Margin Loans" },
+      // Unified meta array for all investment types
+      const investmentMeta = [
+        {
+          key: "directShares",
+          title: "Direct Shares",
+          keyMapping: "Direct Shares",
+        },
+        {
+          key: "managedFunds",
+          title: "Managed Funds",
+          keyMapping: "Managed Funds",
+        },
+        {
+          key: "investmentBonds",
+          title: "Investment Bonds",
+          keyMapping: "Investment Bonds",
+        },
+        { key: "other", title: "Other", keyMapping: "Other" },
+        { key: "cash", title: "Cash", keyMapping: "Cash" },
+        {
+          key: "termDeposits",
+          title: "Term Deposits",
+          keyMapping: "Term Deposits",
+        },
+        {
+          key: "investmentLoans",
+          title: "Investment Loans",
+          keyMapping: "Investment Loans",
+        },
+        {
+          key: "marginLoans",
+          title: "Margin Loans",
+          keyMapping: "Margin Loans",
+        },
       ];
 
-      // Helper to get reports
-      const getReport = (source, key, keyAddition = "") => {
-        console.log(key.replace(/[^a-zA-Z]/g, ""));
-        buildReportTree(
+      // Enhanced helper function
+      const getReport = (source, key, keyMapping, keyAddition = "") => {
+        return buildReportTree(
           processDataGeneric(
             source,
             (d) => transformInflows(d, true),
             key + keyAddition
           ),
-          content.cashFlowReport[2].reportsArray[
-            keyMap[key.replace(/[^a-zA-Z]/g, "")]
-          ]
+          content.cashFlowReport[2].reportsArray[keyMapping]
         );
       };
 
-      // Title mapping for reportsArray access
-      const keyMap = {
-        directShares: "Direct Shares",
-        managedFunds: "Managed Funds",
-        investmentBonds: "Investment Bonds",
-        other: "Other",
-        cash: "Cash",
-        termDeposits: "Term Deposits",
-        investmentLoans: "Investment Loans",
-        marginLoans: "Margin Loans",
-      };
-
-      // Build Full Object
+      // Main financial investment object
       const FullFinansialInvestmentObject = {};
 
-      investmentTypes.forEach(({ key, title }) => {
-        FullFinansialInvestmentObject[keyMap[key]] = {
+      // Loop through each investment type
+      investmentMeta.forEach(({ key, title, keyMapping }) => {
+        // Main investment report
+        FullFinansialInvestmentObject[title] = {
           client: changeHeadNames(
-            getReport(REPORTS_Client_Investments, key, "2"),
+            getReport(REPORTS_Client_Investments, key, keyMapping, "2"),
             ["Value at Year End "]
           ),
           partner: isMarried
             ? changeHeadNames(
-                getReport(REPORTS_Partner_Investments, key, "2"),
+                getReport(REPORTS_Partner_Investments, key, keyMapping, "2"),
                 ["Value at Year End "]
               )
             : [],
           joint: isMarried
-            ? changeHeadNames(getReport(REPORTS_Joint_Investments, key, "2"), [
-                "Value at Year End ",
-              ])
+            ? changeHeadNames(
+                getReport(REPORTS_Joint_Investments, key, keyMapping, "2"),
+                ["Value at Year End "]
+              )
             : [],
         };
 
-        // Percentage reports only for specific types
-        if (
-          [
-            "directShares",
-            "managedFunds",
-            "investmentBonds",
-            "other",
-            "cash",
-            "termDeposits",
-          ].includes(key)
-        ) {
-          FullFinansialInvestmentObject[`${keyMap[key]}Percent`] = {
+        // Percent report if applicable
+        const showPercent = [
+          "directShares",
+          "managedFunds",
+          "investmentBonds",
+          "other",
+          "cash",
+          "termDeposits",
+        ].includes(key);
+
+        if (showPercent) {
+          FullFinansialInvestmentObject[`${title}Percent`] = {
             client: percentTransforme(REPORTS_Client_Investments[`${key}1`]),
             partner: isMarried
               ? percentTransforme(REPORTS_Partner_Investments[`${key}1`])
@@ -428,25 +441,115 @@ const CashFlowReport = () => {
         }
       });
 
-      //Business Investment Property
-      const BusinessReportObject = {};
-
+      // Direct properties (Property 1 to 10)
       const directProperty = Array.from({ length: 10 }).map((_, index) => ({
         key: `Property${index + 1}`,
-        title: `Direct Property ${index + 1}`,
+        title: `Property ${index + 1}`,
       }));
 
       directProperty.forEach(({ key, title }) => {
-        console.log(getReport(REPORTS_Direct_Property, key));
-
-        BusinessReportObject[title] = changeHeadNames(
-          getReport(REPORTS_Direct_Property, key),
-          ["Total Expenses ", ""]
-        );
-        
+        FullFinansialInvestmentObject[title] = {
+          client: changeHeadNames(
+            getReport(REPORTS_Direct_Property, key, "Property"),
+            ["Total Expenses ", ""]
+          ),
+        };
       });
 
-      console.log(BusinessReportObject);
+      directProperty.forEach(({ key, title }) => {
+        FullFinansialInvestmentObject["Position" + title] = {
+          client: changeHeadNames(
+            getReport(REPORTS_Direct_Property, key, "PositionProperty"),
+            ["Property Value", "Loan Balance"]
+          ),
+        };
+      });
+
+      const SuperPensionAnnutiesMeta = [
+        {
+          key: "superFund",
+          title: "Super 1",
+          keyMapping: "Superannuation",
+          objNo: "1",
+          Headers: ["", "", "Inflow", "Outflow"],
+        },
+        {
+          key: "superFund",
+          title: "Super 2",
+          keyMapping: "Superannuation",
+          objNo: "2",
+          Headers: ["", "", "Inflow", "Outflow"],
+        },
+        // {
+        //   key: "pensionFund",
+        //   title: "Pension 2",
+        //   keyMapping: "Pensionannuation",
+        //   objNo: "2",
+        //   Headers: ["", "", "Inflow", "Outflow"],
+        // },
+      ];
+
+      const SuperPensionMeta = {};
+
+      // ✅ Deep clone with unique keys for each row and nested child
+      const deepCloneWithKeys = (rows, parentTitle) =>
+        rows?.map((row, rowIndex) => ({
+          ...row,
+          key: `${parentTitle}_row_${rowIndex}`,
+          children: row.children
+            ? row.children.map((child, childIndex) => ({
+                ...child,
+                key: `${parentTitle}_row_${rowIndex}_child_${childIndex}`,
+              }))
+            : undefined,
+        })) || [];
+
+      SuperPensionAnnutiesMeta.forEach(
+        ({ key, title, keyMapping, objNo, Headers }) => {
+          const profileKey = `${key}${objNo}Profile`;
+
+          const clientData = changeHeadNames(
+            getReport(REPORTS_Client_Super_Pension, key, keyMapping, objNo),
+            Headers
+          );
+
+          SuperPensionMeta[title] = {
+            client: deepCloneWithKeys(clientData, title),
+          };
+
+          SuperPensionMeta[`${title}Percent`] = {
+            client: percentTransforme(
+              REPORTS_Client_Super_Pension[profileKey] || []
+            ),
+          };
+        }
+      );
+
+      // ✅ Unique key for each parent row and its children
+      const superFund = SuperPensionAnnutiesMeta.map(({ title }, index) => ({
+        key: `super_${index + 1}`,
+        type: title,
+        children: deepCloneWithKeys(
+          SuperPensionMeta?.[title]?.client || [],
+          title
+        ),
+        ...Object.fromEntries(
+          Array.from({ length: 10 }, (_, i) => [`year${i + 1}`, ""])
+        ),
+      }));
+
+      // ✅ Final assignment
+      FullFinansialInvestmentObject["Super"] = { client: superFund };
+
+      FullFinansialInvestmentObject["SuperPercent"] = {
+        client: SuperPensionMeta["Super 1Percent"]?.client || [],
+      };
+
+      FullFinansialInvestmentObject["SuperPercent1"] = {
+        client: SuperPensionMeta["Super 2Percent"]?.client || [],
+      };
+
+      console.log(FullFinansialInvestmentObject, SuperPensionMeta);
 
       setReportSections({
         fullTableCashFlow,
@@ -457,7 +560,6 @@ const CashFlowReport = () => {
         asset: newLiabilities,
         asstesAndLiabilities: lifestyleAssetsArray,
         FullFinansialInvestmentObject,
-        BusinessReportObject,
       });
     } catch (err) {
       console.error("Report Error", err);
