@@ -180,7 +180,7 @@ const AssetsAndLiabilities = () => {
                   xs={12}
                   sm={6}
                   md={4}
-                  lg={4}
+                  lg={3}
                   className="mb-3"
                   // style={{ minWidth: "160px", maxWidth: "200px" }}
                 >
@@ -211,15 +211,22 @@ const AssetsAndLiabilities = () => {
             })}
           </Row>
         </Col>
-        <Col md={4}>
+        <Col sm={12} md={4}>
           <Row>
             {LiabilitiesTotalData.map((item, index) => {
               if (item?.layout == "2") {
                 return (
-                  <Col key={index} md={12} className="mb-3 pt-2 px-3 px-md-2">
+                  <Col
+                    key={index}
+                    sm={6}
+                    md={12}
+                    className="mb-3 pt-2 px-3 px-md-2"
+                  >
                     <Card
-                      className="border-0 shadow-sm text-center modalBG"
-                      style={{ height: "30vh", borderRadius: "15px" }}
+                      className="border-0 shadow-sm text-center modalBG liabilityCardHeight"
+                      style={{
+                        borderRadius: "15px",
+                      }}
                     >
                       <Card.Body className=" h-100 d-flex flex-column justify-content-center align-items-center">
                         <Card.Title className="fw-bold fs-3">
@@ -233,10 +240,12 @@ const AssetsAndLiabilities = () => {
               }
 
               return (
-                <Col key={index} md={12} className="mb-3 px-3 px-md-2">
+                <Col key={index} sm={6} md={12} className="mb-3 px-3 px-md-2">
                   <Card
-                    className=" border-success shadow-sm text-center"
-                    style={{ height: "30vh", borderRadius: "15px" }}
+                    className=" border-success shadow-sm text-center  liabilityCardHeight"
+                    style={{
+                      borderRadius: "15px",
+                    }}
                   >
                     <Card.Body className="d-flex flex-column justify-content-center align-items-center">
                       <Card.Title className="fw-bold fs-3 text-green">

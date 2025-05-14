@@ -221,10 +221,10 @@ export const CurrentPage = atom({
 export const defaultUrl = atom({
   key: "defaultUrl",
 
-  default: "http://localhost:7000",
+  // default: "http://localhost:7000",
 
   // default: "http://192.168.3.210:7000",    // Usama Faheem Ahmed
-  // default: "http://192.168.3.124:7000",    // Usama bhai growWork_Beta
+  default: "http://192.168.1.36:7000", // Usama bhai growWork_Beta
   // default: "http://192.168.14.244:7000",   // Usama bhai mara Mobile k sath
   // default: "http://192.168.227.244:7000",  // Usama bhai Fahad bhai k sath
   // default: "http://192.168.3.137:7000",    //
@@ -437,4 +437,9 @@ export const CashFlowDownloading = atom({
 export const Progress = atom({
   key: "Progress",
   default: 0,
+});
+
+export const ReportsData = atom({
+  key: "ReportsData",
+  default: {},
 });

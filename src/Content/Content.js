@@ -1313,6 +1313,20 @@ export const content = {
             ],
           },
         ],
+        annuities: [
+          {
+            parent: "Value at Year End",
+            children: [
+              "Centrelink Value",
+              "Deductible Amount (ROC)",
+              "Value at Year End",
+              "Annuity Income",
+              "Assessable Annuity Income",
+              "Centrelink Deemed Investments",
+              "Centrelink Assesable income",
+            ],
+          },
+        ],
       },
     },
     {

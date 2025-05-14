@@ -48,6 +48,12 @@ const FunnalComp = () => {
     <Container fluid className="p-3 funnel-container">
       {/* Income Cards Section */}
       <Row className="mb-4 justify-content-center gap-lg-4 ">
+        <Col md={12}>
+          <h2 className={"fw-bold text-green text-center"}>
+            Cash Flow Reports
+          </h2>
+        </Col>
+
         {incomeData.map((item, index) => (
           <Col
             key={index}
@@ -207,11 +213,14 @@ const FunnalComp = () => {
 
       {/* Navigation Buttons */}
       <div className="row justify-content-around gap-2 my-5">
-        <button className="btn btn-outline w-25 backBtn"
-        onClick={()=>{
-          Nev("/Cash-Flow/InvestmentTrust")
-        }}
-        >Back</button>
+        <button
+          className="btn btn-outline w-25 backBtn"
+          onClick={() => {
+            Nev("/Cash-Flow/InvestmentTrust");
+          }}
+        >
+          Back
+        </button>
         <button className="btn bgColor w-25 modalBtn">
           Scenario Comparison
         </button>
@@ -224,7 +233,7 @@ const FunnalComp = () => {
         >
           Assets and Liabilities
         </button>
-        
+
         <button
           className="btn btn-outline w-25 backBtn"
           onClick={() => {

@@ -85,10 +85,12 @@ const FinancialInvestmentsReport = ({
           setFieldValue("category", key);
           setFieldValue("reportOwner", "client");
           setDirectProperty(false);
-          setSuperPension(true);
+          setSuperPension(false);
+          // alert("Super clicked")
         } else {
           setFieldValue("category", key);
           setDirectProperty(false);
+          setSuperPension(true);
         }
       }}
     />
@@ -200,6 +202,24 @@ const FinancialInvestmentsReport = ({
       title: "Super",
       highlight: ["Opening Balance", "Closing Member Balance"],
     },
+    Pension: {
+      data: FullFinansialInvestmentObject?.["Pension"] || {
+        client: [],
+        partner: [],
+        joint: [],
+      },
+      title: "Pension",
+      highlight: ["Opening Balance", "Closing Member Balance"],
+    },
+    Annuities: {
+      data: FullFinansialInvestmentObject?.["Annuities"] || {
+        client: [],
+        partner: [],
+        joint: [],
+      },
+      title: "Annuities",
+      highlight: ["Value at Year End"],
+    },
     ...Array.from({ length: 10 }).reduce((acc, _, i) => {
       const label = `Property ${i + 1}`;
       acc[label] = {
@@ -281,25 +301,39 @@ const FinancialInvestmentsReport = ({
       highlight: ["Value at Year End"],
     },
     Super: {
-      data: FullFinansialInvestmentObject?.["SuperPercent"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Super",
-      highlight: ["Opening Balance", "Closing Member Balance"],
-    },
-  };
-
-  const categoryPercentSPATables = {
-    Super: {
       data: FullFinansialInvestmentObject?.["SuperPercent1"] || {
         client: [],
         partner: [],
         joint: [],
       },
       title: "Super",
-      highlight: ["Opening Balance", "Closing Member Balance"],
+    },
+    Pension: {
+      data: FullFinansialInvestmentObject?.["PensionPercent1"] || {
+        client: [],
+        partner: [],
+        joint: [],
+      },
+      title: "Pension",
+    },
+  };
+
+  const categoryPercentSPATables = {
+    Super: {
+      data: FullFinansialInvestmentObject?.["SuperPercent2"] || {
+        client: [],
+        partner: [],
+        joint: [],
+      },
+      title: "Super",
+    },
+    Pension: {
+      data: FullFinansialInvestmentObject?.["PensionPercent2"] || {
+        client: [],
+        partner: [],
+        joint: [],
+      },
+      title: "Pension",
     },
   };
 
@@ -478,7 +512,7 @@ const FinancialInvestmentsReport = ({
                   directProperty === false && (
                     <>
                       <option value="partner">{RenderName("partner")}'s</option>
-                      {!superPension && (
+                      {superPension && (
                         <option value="joint">{RenderName("joint")}'s</option>
                       )}
                     </>
@@ -559,7 +593,7 @@ const FinancialInvestmentsReport = ({
         {renderReportTable(categoryPercentTables, true)}
       </div>
 
-      {superPension && (
+      {!superPension && (
         <div className="mb-5">
           {renderReportTable(categoryPercentSPATables, true)}
         </div>

@@ -1495,6 +1495,10 @@ label {
   border: 1px solid #36b446 !important;
 }
 
+.liabilityCardHeight {
+  height: 36vh !important;
+}
+
 @media only screen and (max-width: 425px) {
   .funnel-container .LibilityHead {
     padding: 0px 20px 0px 35px;
@@ -1559,6 +1563,24 @@ label {
 
   .funnel-container .LibilityHead {
     padding: 0px 20px 0px 35px;
+  }
+}
+
+@media screen and (min-width: 425px) and (max-width: 768px) {
+  .liabilityCardHeight {
+    height: 10vh !important;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  .liabilityCardHeight {
+    height: 14.5vh !important;
+  }
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1440px) {
+  .liabilityCardHeight {
+    height: 220px !important;
   }
 }
 
@@ -1642,6 +1664,10 @@ label {
     left: 62%;
     transform: translateY(-50%) scaleX(-1);
     width: 50%;
+  }
+
+  .liabilityCardHeight {
+    height: 13.5vh !important;
   }
 }
 
