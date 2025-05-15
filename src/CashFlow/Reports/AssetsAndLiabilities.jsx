@@ -1,6 +1,6 @@
 // Import necessary libraries and components
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Button, Card } from "react-bootstrap";
 
 // Import SVGs
@@ -29,59 +29,108 @@ import InvestmentLoansSVG from "../CashFlowAssets/Asset_and_Libility/SVG/Investm
 
 import { useNavigate } from "react-router-dom";
 import { ConfigProvider, Divider } from "antd";
-
-// Data for income cards10
-const AssetData = [
-  { title: "Lifestyle Assets", amount: "$11,500", icon: LifestyleAssetsSVG },
-  { title: "Family Home", amount: "$816,000", icon: FamilyHomeSVG },
-  {
-    title: "Direct Share Portfolios",
-    amount: "$0",
-    icon: DirectSharePortfoliosSVG,
-  },
-  { title: "Managed Funds", amount: "$0", icon: ManagedFundsSVG },
-  { title: "Other Investments", amount: "$0", icon: OtherInvestmentsSVG },
-  { title: "Cash", amount: "$14,800", icon: CashSVG },
-  { title: "Term Deposits", amount: "$78,123", icon: TermDepositsSVG },
-  { title: "Insurance Bonds", amount: "$0", icon: InsuranceBondsSVG },
-  {
-    title: "Investment Properties",
-    amount: "$0",
-    icon: InvestmentPropertiesSVG,
-  },
-  { title: "Superannuation", amount: "$0", icon: SuperannuationSVG },
-  {
-    title: "Account Based Pensions",
-    amount: "$175,937",
-    icon: AccountBasedSVG,
-  },
-  { title: "Annuity Investments", amount: "$0", icon: AnnuityInvestmentsSVG },
-  { title: "Trading Company", amount: "$0", icon: TradingCompanySVG },
-  { title: "Business Trust", amount: "$0", icon: BusinessTrustSVG },
-  { title: "SMSF Net Assets", amount: "$0", icon: SMSFNetAssetsSVG },
-  {
-    title: "Family Trust Net Assets",
-    amount: "$0",
-    icon: FamilyTrustNetAssetsSVG,
-  },
-  { layout: "2", title: "Total Assets", amount: "$1,116,693" },
-];
-
-const LiabilitiesData = [
-  { title: "Home Loan", amount: "$46,002", icon: HomeLoanSVG },
-  { title: "Personal Loans", amount: "$0", icon: PersonalLoansSVG },
-  { title: "Credit Cards", amount: "$0", icon: CreditCardsSVG },
-  { title: "Investment Property", amount: "$0", icon: InvestmentPropertySVG },
-  { title: "Investment Loans", amount: "$0", icon: InvestmentLoansSVG },
-];
-
-const LiabilitiesTotalData = [
-  { layout: "2", title: "Total Liabilities", amount: "$1,116,693" },
-  { title: "Net worth", amount: "$46,002" },
-];
+import {
+  updateCardBySingleEntry,
+  updateCardByTitle,
+} from "../../Components/Assets/Api/Api";
+import { useRecoilValue } from "recoil";
+import { ReportsData } from "../../Store/Store";
 
 const AssetsAndLiabilities = () => {
   let Nev = useNavigate();
+
+  let [yearSelected, setYearSelected] = useState("1");
+  const reportSections = useRecoilValue(ReportsData);
+
+  // Data for income cards10
+  const [AssetData, setAssetData] = useState([
+    { title: "Lifestyle Assets", amount: "$11,500", icon: LifestyleAssetsSVG },
+    { title: "Family Home", amount: "$816,000", icon: FamilyHomeSVG },
+    {
+      title: "Direct Share Portfolios",
+      amount: "$0",
+      icon: DirectSharePortfoliosSVG,
+    },
+    { title: "Managed Funds", amount: "$0", icon: ManagedFundsSVG },
+    { title: "Other Investments", amount: "$0", icon: OtherInvestmentsSVG },
+    { title: "Cash", amount: "$14,800", icon: CashSVG },
+    { title: "Term Deposits", amount: "$78,123", icon: TermDepositsSVG },
+    { title: "Insurance Bonds", amount: "$0", icon: InsuranceBondsSVG },
+    {
+      title: "Investment Properties",
+      amount: "$0",
+      icon: InvestmentPropertiesSVG,
+    },
+    { title: "Superannuation", amount: "$0", icon: SuperannuationSVG },
+    {
+      title: "Account Based Pensions",
+      amount: "$175,937",
+      icon: AccountBasedSVG,
+    },
+    { title: "Annuity Investments", amount: "$0", icon: AnnuityInvestmentsSVG },
+    { title: "Trading Company", amount: "$0", icon: TradingCompanySVG },
+    { title: "Business Trust", amount: "$0", icon: BusinessTrustSVG },
+    { title: "SMSF Net Assets", amount: "$0", icon: SMSFNetAssetsSVG },
+    {
+      title: "Family Trust Net Assets",
+      amount: "$0",
+      icon: FamilyTrustNetAssetsSVG,
+    },
+    { layout: "2", title: "Total Assets", amount: "$1,116,693" },
+  ]);
+
+  const [LiabilitiesData, setLiabilitiesData] = useState([
+    { title: "Home Loan", amount: "$46,002", icon: HomeLoanSVG },
+    { title: "Personal Loans", amount: "$0", icon: PersonalLoansSVG },
+    { title: "Credit Cards", amount: "$0", icon: CreditCardsSVG },
+    { title: "Investment Property", amount: "$0", icon: InvestmentPropertySVG },
+    { title: "Investment Loans", amount: "$0", icon: InvestmentLoansSVG },
+  ]);
+
+  const [LiabilitiesTotalData, setLiabilitiesTotalData] = useState([
+    { layout: "2", title: "Total Liabilities", amount: "$1,116,693" },
+    { title: "Net worth", amount: "$46,002" },
+  ]);
+
+  useEffect(() => {
+    if (reportSections && Object.keys(reportSections).length > 0) {
+      const createCardConfig = (title, index, updateState) => ({
+        selectedYearIndex: yearSelected,
+        DataSource: reportSections.asset[index].children,
+        targetTitle: title,
+        updateState,
+        matchType: title,
+      });
+
+      let ObjArray = [
+        ...AssetData.map((item, index) =>
+          createCardConfig(item.title, 2, setAssetData)
+        ),
+      ];
+
+      ObjArray = ObjArray.map((config) =>
+        config.targetTitle === "Total Assets"
+          ? {
+              layout: "2",
+              selectedYearIndex: yearSelected,
+              DataSource: reportSections.asset[2].children,
+              targetTitle: "Total Assets",
+              updateState: setAssetData,
+              filterTypes: [...AssetData.map((item, index) => item.title)],
+            }
+          : config
+      );
+
+      ObjArray.forEach((item) => {
+        // console.log(item.layout);
+        if (item?.layout === "2") {
+          updateCardByTitle(item);
+        } else {
+          updateCardBySingleEntry(item);
+        }
+      });
+    }
+  }, [reportSections, yearSelected]);
 
   return (
     <Container fluid className="p-0 p-md-3 funnel-container">
@@ -91,6 +140,32 @@ const AssetsAndLiabilities = () => {
           <h2 className={"fw-bold text-green text-center"}>
             Assets And Liabilities
           </h2>
+
+          <Row className="justify-content-center">
+            <Col md={1}>
+              <label htmlFor="YearInput" className="fw-bold mt-2">
+                {" "}
+                Year :
+              </label>
+            </Col>
+
+            <Col md={1}>
+              <select
+                className="form-select inputDesign"
+                name="YearFrom"
+                value={yearSelected}
+                onChange={(e) => {
+                  setYearSelected(e.target.value);
+                }}
+              >
+                <option value={""}>Select</option>
+                {Array.from({ length: 30 }).map((_, index) => {
+                  return <option value={index + 1}>{index + 1}</option>;
+                })}
+              </select>
+            </Col>
+          </Row>
+
           <h3 className={"fw-bold"}>Asset</h3>
         </Col>
 

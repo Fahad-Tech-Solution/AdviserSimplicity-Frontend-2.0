@@ -562,6 +562,70 @@ const percentTransforme = (data) => {
   return transformed;
 };
 
+const updateCardByTitle = ({
+  selectedYearIndex,
+  DataSource,
+  targetTitle,
+  updateState,
+  filterTypes = [],
+}) => {
+  const matchingEntries = DataSource.filter((item) =>
+    filterTypes.includes(item.type)
+  );
+
+  const totalAmount = matchingEntries.reduce((sum, entry) => {
+    const rawValue = entry[`year${selectedYearIndex}`] || "$0";
+    const isNegative = rawValue.includes("(") && rawValue.includes(")");
+    const numericValue = parseFloat(rawValue.replace(/[^0-9.]+/g, ""));
+    return sum + (isNegative ? -numericValue : numericValue);
+  }, 0);
+
+  const useCustomFormat = filterTypes.includes(targetTitle);
+
+  const formattedAmount = useCustomFormat
+    ? totalAmount < 0
+      ? `(${toCommaAndDollar(Math.abs(totalAmount))})`
+      : `${toCommaAndDollar(totalAmount)}`
+    : totalAmount < 0
+    ? `($${Math.abs(totalAmount).toLocaleString()})`
+    : `$${totalAmount.toLocaleString()}`;
+
+  updateState((previousIncomeList) =>
+    previousIncomeList.map((card) =>
+      card.title === targetTitle
+        ? {
+            ...card,
+            amount: formattedAmount,
+            popupArray: matchingEntries,
+          }
+        : card
+    )
+  );
+};
+
+const updateCardBySingleEntry = ({
+  selectedYearIndex,
+  DataSource,
+  targetTitle,
+  updateState,
+  matchType,
+}) => {
+  const entry = DataSource.find((item) => item.type === matchType);
+
+  const rawValue = entry?.[`year${selectedYearIndex}`] || "$0";
+
+  updateState((previousList) =>
+    previousList.map((card) =>
+      card.title === targetTitle
+        ? {
+            ...card,
+            amount: rawValue,
+          }
+        : card
+    )
+  );
+};
+
 export {
   DeleteAxios,
   GetAxios,
@@ -592,4 +656,6 @@ export {
   changeHeadNames,
   renameYearKeys,
   percentTransforme,
+  updateCardByTitle,
+  updateCardBySingleEntry,
 };

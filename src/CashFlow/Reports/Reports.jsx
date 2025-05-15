@@ -743,7 +743,7 @@ const Reports = () => {
         partner: deepCloneWithKeys(partnerAnnutiesArray, "annuties"),
       };
 
-      console.log(FullFinansialInvestmentObject);
+      // console.log(FullFinansialInvestmentObject);
 
       setReportSections({
         fullTableCashFlow,

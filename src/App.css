@@ -1845,3 +1845,13 @@ label {
   display: flex;
   justify-content: space-between;
 }
+
+.funnel-container .CardActive {
+  background-color: #36b446 !important;
+  color: white !important;
+  border: none;
+}
+
+.funnel-container .CardActive .text-green {
+  color: white !important;
+}

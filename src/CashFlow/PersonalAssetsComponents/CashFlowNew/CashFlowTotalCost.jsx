@@ -188,6 +188,7 @@ const CashFlowTotalCost = (props) => {
             totalCostBaseObj.stampDutyCalculation
           );
         }
+        
         setFieldValue("totalCostBase", totalCostBaseObj.totalCostBase);
         setCashFlowReCalculateLoading(false);
         openNotificationSuccess(

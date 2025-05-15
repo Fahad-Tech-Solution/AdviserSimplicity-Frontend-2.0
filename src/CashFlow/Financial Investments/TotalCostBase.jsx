@@ -236,7 +236,7 @@ const TotalCostBase = (props) => {
         console.log(res.data, ParentObject.key, currentIndex);
         const { totalCostBaseObj } = res.data[ParentObject.key][currentIndex];
 
-        if (values.stampDuty !== "Manual") {
+        if (values.stampDutyType !== "Manual") {
           setFieldValue("stampDutyValue", totalCostBaseObj.stampDutyValue);
         }
 
