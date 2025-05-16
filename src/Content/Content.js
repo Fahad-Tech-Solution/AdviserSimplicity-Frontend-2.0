@@ -1330,17 +1330,59 @@ export const content = {
       },
     },
     {
-      subTitle: "SMSF",
+      subTitle: "Business Entities",
       statusStep: 40,
-      icon: "FaGift",
+      icon: "FaBriefcase",
       stepNumber: 3,
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+      reportsArray: {
+        tradingCompany: [
+          {
+            parent: "Value at Year End",
+            children: [
+              "{{client}}'s  Net Equity Value",
+              "{{partner}}'s  Net Equity Value",
+              "Value at Year End",
+            ],
+          },
+        ],
+        businessTrust: [
+          {
+            parent: "Value at Year End",
+            children: [
+              "{{client}}'s  Net Equity Value",
+              "{{partner}}'s  Net Equity Value",
+              "Value at Year End",
+            ],
+          },
+        ],
+        bucketCompany: [
+          {
+            parent: "Value at Year End",
+            children: [
+              "Opening Balance",
+              "Distribution Received",
+              "Growth",
+              "Tax",
+              "Dividend Paid",
+              "Value at Year End",
+            ],
+          },
+        ],
+      },
+    },
+    {
+      subTitle: "SMSF",
+      statusStep: 50,
+      icon: "FaGift",
+      stepNumber: 4,
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
     {
       subTitle: "Investment Trust",
-      statusStep: 50,
+      statusStep: 60,
       icon: "MdFamilyRestroom",
-      stepNumber: 4,
+      stepNumber: 5,
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
   ],

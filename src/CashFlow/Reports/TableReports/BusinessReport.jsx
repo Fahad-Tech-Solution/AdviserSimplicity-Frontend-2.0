@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Field } from "formik";
+import { Field, isObject } from "formik";
 import { Card, Col, Row } from "react-bootstrap";
 import { FaMagnifyingGlass, FaXmark } from "react-icons/fa6";
 import {
@@ -13,7 +13,7 @@ import { Tooltip } from "antd";
 const BusinessReport = ({
   showFilters,
   setShowFilters,
-  BusinessReportObject,
+  FullBusinessObject,
   values,
   setFieldValue,
   handleChange,
@@ -27,21 +27,19 @@ const BusinessReport = ({
   );
 
   const categoryTables = {
-    "Direct Property 1": {
-      data: BusinessReportObject,
-      title: "Net Rental Position",
-      highlight: ["Total Expenses", ""],
+    "Trading Company": {
+      data: FullBusinessObject?.["Trading Company"] || [],
+      title: "Trading Company",
+      highlight: ["Value at Year End"],
     },
-  };
-
-  const categoryTables2 = {
-    "Direct Property 1": {
-      data: BusinessReportObject || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Debt and Equity Position",
+    "Business Trust": {
+      data: FullBusinessObject?.["Business Trust"] || [],
+      title: "Business Trust",
+      highlight: ["Value at Year End"],
+    },
+    "Bucket Company": {
+      data: FullBusinessObject?.["Bucket Company"] || [],
+      title: "Bucket Company",
       highlight: ["Value at Year End"],
     },
   };
@@ -75,16 +73,24 @@ const BusinessReport = ({
               dataIndex: `year${year}`,
               key: year.toString(),
               align: "center",
-              render: (text) => (
-                <div
-                  style={{
-                    fontFamily: '"Inter", sans-serif',
-                    textAlign: "center",
-                  }}
-                >
-                  {text}
-                </div>
-              ),
+              render: (text, record) => {
+                const isParentRow =
+                  record.children && Array.isArray(record.children);
+                return (
+                  <div
+                    style={{
+                      fontWeight: isParentRow ? "bold" : "normal",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      fontFamily: '"Inter", sans-serif',
+                      textAlign: "center",
+                    }}
+                  >
+                    {text}
+                  </div>
+                );
+              },
             };
           }
         );
@@ -101,15 +107,30 @@ const BusinessReport = ({
             key: "type",
             width: 253,
             fixed: "left",
-            render: (text) => (
-              <div
-                style={{
-                  fontFamily: '"Inter", sans-serif',
-                }}
-              >
-                {text}
-              </div>
-            ),
+            render: (text, row) => {
+              if (row.isHeader) return { props: { colSpan: 0 } };
+
+              const isParentRow = row?.children && Array.isArray(row.children);
+
+              return (
+                <Tooltip title={text}>
+                  <div
+                    style={{
+                      fontWeight: isParentRow ? "bold" : "normal",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      fontFamily: '"Inter", sans-serif',
+                    }}
+                  >
+                    {text}
+                  </div>
+                </Tooltip>
+              );
+            },
           },
           ...dynamicYearColumns,
         ];
@@ -135,14 +156,14 @@ const BusinessReport = ({
   };
 
   useEffect(() => {
-    setFieldValue("category", "Direct Property 1");
+    setFieldValue("category", "Trading Company");
   }, [setFieldValue]);
 
   const renderReportTable = (tables, isPercent = false) => {
     const tableInfo = tables[values.category];
     if (!values.category || !tableInfo) return null;
 
-    const data = tableInfo.data?.[values.reportOwner] || [];
+    const data = tableInfo.data || [];
     const highlight = tableInfo.highlight || [];
     const title = `${tableInfo.title}`;
 
@@ -161,7 +182,7 @@ const BusinessReport = ({
   return (
     <>
       <div className="d-flex justify-content-between align-items-center">
-        <h2 className="text-green mt-3 fw-bold">Direct Property Summary</h2>
+        <h2 className="text-green mt-3 fw-bold">Business Entities</h2>
         <span
           role="button"
           className="text-green"
@@ -182,11 +203,9 @@ const BusinessReport = ({
                 className="form-select inputDesignDoubleInput"
               >
                 <option value="">Select</option>
-                {Array.from({ length: 10 }).map((_, index) => (
-                  <option key={index} value={`Direct Property ${index + 1}`}>
-                    Direct Property {index + 1}
-                  </option>
-                ))}
+                <option value={`Trading Company`}>Trading Company</option>
+                <option value={`Business Trust`}>Business Trust</option>
+                <option value={`Bucket Company`}>Bucket Company</option>
               </Field>
             </Col>
             <Col md={3}>
@@ -242,9 +261,7 @@ const BusinessReport = ({
         </Card>
       )}
 
-      <div className="mb-5">{renderReportTable(categoryTables)}</div>
-
-      <div>{renderReportTable(categoryTables2)}</div>
+      <div>{renderReportTable(categoryTables)}</div>
     </>
   );
 };

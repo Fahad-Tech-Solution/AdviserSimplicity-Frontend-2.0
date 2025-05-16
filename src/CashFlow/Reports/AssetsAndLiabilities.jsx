@@ -93,42 +93,76 @@ const AssetsAndLiabilities = () => {
   ]);
 
   useEffect(() => {
-    if (reportSections && Object.keys(reportSections).length > 0) {
+    try {
+      // Ensure reportSections has data
+      if (!reportSections || Object.keys(reportSections).length === 0) return;
+
+      // Debug log safely
+      const assetSection3 = reportSections.asset?.[3]?.children;
+      console.log("Asset Section [3] Children:", assetSection3 || "No Data");
+
       const createCardConfig = (title, index, updateState) => ({
         selectedYearIndex: yearSelected,
-        DataSource: reportSections.asset[index].children,
+        DataSource: reportSections.asset?.[index]?.children || [],
         targetTitle: title,
         updateState,
         matchType: title,
       });
 
-      let ObjArray = [
-        ...AssetData.map((item, index) =>
-          createCardConfig(item.title, 2, setAssetData)
-        ),
-      ];
+      // Create initial array safely
+      let ObjArray = [];
 
-      ObjArray = ObjArray.map((config) =>
-        config.targetTitle === "Total Assets"
-          ? {
-              layout: "2",
-              selectedYearIndex: yearSelected,
-              DataSource: reportSections.asset[2].children,
-              targetTitle: "Total Assets",
-              updateState: setAssetData,
-              filterTypes: [...AssetData.map((item, index) => item.title)],
-            }
-          : config
-      );
+      try {
+        ObjArray = [
+          ...AssetData.map((item) =>
+            createCardConfig(item.title, 2, setAssetData)
+          ),
+          ...LiabilitiesData.map((item) =>
+            createCardConfig(item.title, 3, setLiabilitiesData)
+          ),
+          ...LiabilitiesTotalData.map((item) =>
+            createCardConfig(item.title, 3, setLiabilitiesTotalData)
+          ),
+        ];
+      } catch (innerError) {
+        console.error("Error while building ObjArray:", innerError);
+      }
 
+      // Modify Total Assets structure safely
+      ObjArray = ObjArray.map((config) => {
+        if (config?.targetTitle === "Total Assets") {
+          return {
+            layout: "2",
+            selectedYearIndex: yearSelected,
+            DataSource: reportSections.asset?.[2]?.children || [],
+            targetTitle: "Total Assets",
+            updateState: setAssetData,
+            filterTypes: AssetData.map((item) => item.title),
+          };
+        }
+        return config;
+      });
+
+      // Loop and process each config safely
       ObjArray.forEach((item) => {
-        // console.log(item.layout);
-        if (item?.layout === "2") {
-          updateCardByTitle(item);
-        } else {
-          updateCardBySingleEntry(item);
+        try {
+          if (item?.layout === "2") {
+            updateCardByTitle(item);
+          } else {
+            updateCardBySingleEntry(item);
+          }
+        } catch (processError) {
+          console.error(
+            `Error updating card: ${item?.targetTitle}`,
+            processError
+          );
         }
       });
+    } catch (outerError) {
+      console.error(
+        "Unexpected error in Asset & Liability useEffect:",
+        outerError
+      );
     }
   }, [reportSections, yearSelected]);
 
@@ -174,7 +208,7 @@ const AssetsAndLiabilities = () => {
             return (
               <Col key={index} xs={12} sm={6} md={4} lg={4} className="mb-3">
                 <Card
-                  className="h-100 border-0 shadow-sm text-center modalBG"
+                  className={`h-100 border-0 shadow-sm text-center modalBG `}
                   style={{ borderRadius: "15px" }}
                 >
                   <Card.Body className=" h-100 d-flex flex-column justify-content-center align-items-center">
@@ -198,7 +232,11 @@ const AssetsAndLiabilities = () => {
               className="mb-3"
               // style={{ minWidth: "160px", maxWidth: "200px" }}
             >
-              <Card className="h-100 border-success shadow-sm text-center">
+              <Card
+                className={`h-100 border-success shadow-sm text-center ${
+                  item.amount !== "$0" ? "CardActive" : ""
+                }`}
+              >
                 <Card.Body className="d-flex flex-column">
                   <Card.Title className="fw-bold fs-6">{item.title}</Card.Title>
                   <div className="flex-grow-1 d-flex flex-column justify-content-center align-items-center my-2">
@@ -259,7 +297,11 @@ const AssetsAndLiabilities = () => {
                   className="mb-3"
                   // style={{ minWidth: "160px", maxWidth: "200px" }}
                 >
-                  <Card className="h-100 border-success shadow-sm text-center">
+                  <Card
+                    className={`h-100 border-success shadow-sm text-center ${
+                      item.amount !== "$0" ? "CardActive" : ""
+                    }`}
+                  >
                     <Card.Body className="d-flex flex-column">
                       <Card.Title className="fw-bold fs-6">
                         {item.title}
@@ -298,7 +340,7 @@ const AssetsAndLiabilities = () => {
                     className="mb-3 pt-2 px-3 px-md-2"
                   >
                     <Card
-                      className="border-0 shadow-sm text-center modalBG liabilityCardHeight"
+                      className={`border-0 shadow-sm text-center modalBG liabilityCardHeight`}
                       style={{
                         borderRadius: "15px",
                       }}

@@ -309,7 +309,7 @@ const AssetLiabilitiesReport = ({
       {values.category === "Net Worth" && (
         <AntTableDynamicReportTable
           title="Net Worth"
-          dataSource={asset}
+          dataSource={asset || []}
           columns={columns}
           showFilters={showFilters}
           setShowFilters={setShowFilters}
@@ -325,7 +325,7 @@ const AssetLiabilitiesReport = ({
       {values.category === "Persona Assets & Liabilities" && (
         <AntTableDynamicReportTable
           title="Personal Assets & Liabilities"
-          dataSource={asstesAndLiabilities}
+          dataSource={asstesAndLiabilities || []}
           columns={columns.filter((_, index) => index !== 1)}
           showFilters={showFilters}
           setShowFilters={setShowFilters}

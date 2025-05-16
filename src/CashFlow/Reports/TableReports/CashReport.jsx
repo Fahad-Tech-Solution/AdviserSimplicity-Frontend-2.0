@@ -135,13 +135,13 @@ const CashReport = ({
 
   const categoryTables = {
     Cashflow: {
-      data: fullTableCashFlow,
+      data: fullTableCashFlow || [],
       title: "Cash Flow",
       highlight: ["Total Inflows", "Total Outflows", "Surplus/Deficit"],
     },
     "Client Tax": {
-      data: clientData,
-      title: `${RenderName("client")}'s Tax Position`,
+      data: clientData || [],
+      title: `${RenderName?.("client") || "Client"}'s Tax Position`,
       highlight: [
         "Total Assessable income",
         "Total Allowable Deductions",
@@ -151,8 +151,8 @@ const CashReport = ({
       ],
     },
     "Partner Tax": {
-      data: partnerData,
-      title: `${RenderName("partner")}'s Tax Position`,
+      data: partnerData || [],
+      title: `${RenderName?.("partner") || "Partner"}'s Tax Position`,
       highlight: [
         "Total Assessable income",
         "Total Allowable Deductions",
@@ -163,7 +163,7 @@ const CashReport = ({
     },
     Centrelink: [
       {
-        data: centrelinkCombined,
+        data: centrelinkCombined || [],
         title: "Centrelink Summary",
         highlight: [
           "Total Assets",
@@ -175,7 +175,7 @@ const CashReport = ({
       },
     ],
     "Family Tax Benefits": {
-      data: familyTaxBenefit,
+      data: familyTaxBenefit || [],
       title: "Family Tax Benefits",
       highlight: [
         "Total Adjusted Family Income",
@@ -244,13 +244,11 @@ const CashReport = ({
                 }}
               >
                 <option value="">Select</option>
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25].map(
-                  (value) => (
-                    <option key={value} value={value}>
-                      {value}
-                    </option>
-                  )
-                )}
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25].map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
               </Field>
             </Col>
             <Col md={3}>

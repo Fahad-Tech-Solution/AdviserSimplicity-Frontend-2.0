@@ -19,14 +19,19 @@ import { useNavigate } from "react-router-dom";
 import { ReportsData } from "../../Store/Store";
 import { useRecoilValue } from "recoil";
 import {
+  openNotificationSuccess,
   toCommaAndDollar,
   updateCardByTitle,
 } from "../../Components/Assets/Api/Api";
+import ModalComponent from "../../Components/Questions/FinancialInvestments/ModalComponent";
+import FunnalPopups from "./TableReports/FunnalPopups";
 
 const FunnalComp = () => {
   let Nev = useNavigate();
 
   let [yearSelected, setYearSelected] = useState("1");
+  let [flagState, setFlagState] = useState(false);
+  let [modalObject, setModalObject] = useState({});
 
   const reportSections = useRecoilValue(ReportsData);
 
@@ -67,11 +72,17 @@ const FunnalComp = () => {
   ]);
 
   useEffect(() => {
-    if (reportSections && Object.keys(reportSections).length > 0) {
-      let ObjArray = [
+    try {
+      if (!reportSections || Object.keys(reportSections).length === 0) return;
+
+      // Safe extractors
+      const getChildrenSafely = (section, index) =>
+        section?.[index]?.children || [];
+
+      const ObjArray = [
         {
           selectedYearIndex: yearSelected,
-          DataSource: reportSections.fullTableCashFlow[2].children,
+          DataSource: getChildrenSafely(reportSections.fullTableCashFlow, 2),
           targetTitle: "Active Income",
           updateState: setIncomeData,
           filterTypes: [
@@ -83,7 +94,7 @@ const FunnalComp = () => {
         },
         {
           selectedYearIndex: yearSelected,
-          DataSource: reportSections.fullTableCashFlow[2].children,
+          DataSource: getChildrenSafely(reportSections.fullTableCashFlow, 2),
           targetTitle: "Passive Income",
           updateState: setIncomeData,
           filterTypes: [
@@ -95,7 +106,7 @@ const FunnalComp = () => {
         },
         {
           selectedYearIndex: yearSelected,
-          DataSource: reportSections.fullTableCashFlow[2].children,
+          DataSource: getChildrenSafely(reportSections.fullTableCashFlow, 2),
           targetTitle: "Retirement Income Streams",
           updateState: setIncomeData,
           filterTypes: [
@@ -106,14 +117,14 @@ const FunnalComp = () => {
         },
         {
           selectedYearIndex: yearSelected,
-          DataSource: reportSections.fullTableCashFlow[2].children,
+          DataSource: getChildrenSafely(reportSections.fullTableCashFlow, 2),
           targetTitle: "Centrelink",
           updateState: setIncomeData,
           filterTypes: ["Family Tax Payments (A & B)", "Centrelink Payments"],
         },
         {
           selectedYearIndex: yearSelected,
-          DataSource: reportSections.fullTableCashFlow[2].children,
+          DataSource: getChildrenSafely(reportSections.fullTableCashFlow, 2),
           targetTitle: "Others",
           updateState: setIncomeData,
           filterTypes: [
@@ -126,7 +137,7 @@ const FunnalComp = () => {
         },
         {
           selectedYearIndex: yearSelected,
-          DataSource: reportSections.fullTableCashFlow[3].children,
+          DataSource: getChildrenSafely(reportSections.fullTableCashFlow, 3),
           targetTitle: "Living Expenses",
           updateState: setExpenseData,
           filterTypes: [
@@ -140,7 +151,7 @@ const FunnalComp = () => {
         },
         {
           selectedYearIndex: yearSelected,
-          DataSource: reportSections.fullTableCashFlow[3].children,
+          DataSource: getChildrenSafely(reportSections.fullTableCashFlow, 3),
           targetTitle: "Other Expenses",
           updateState: setExpenseData,
           filterTypes: [
@@ -152,7 +163,7 @@ const FunnalComp = () => {
         },
         {
           selectedYearIndex: yearSelected,
-          DataSource: reportSections.fullTableCashFlow[3].children,
+          DataSource: getChildrenSafely(reportSections.fullTableCashFlow, 3),
           targetTitle: "Super Contributions",
           updateState: setAllocationData,
           filterTypes: [
@@ -162,7 +173,7 @@ const FunnalComp = () => {
         },
         {
           selectedYearIndex: yearSelected,
-          DataSource: reportSections.fullTableCashFlow[3].children,
+          DataSource: getChildrenSafely(reportSections.fullTableCashFlow, 3),
           targetTitle: "Loan Repayment",
           updateState: setAllocationData,
           filterTypes: [
@@ -173,7 +184,7 @@ const FunnalComp = () => {
         },
         {
           selectedYearIndex: yearSelected,
-          DataSource: reportSections.fullTableCashFlow[4].children,
+          DataSource: getChildrenSafely(reportSections.fullTableCashFlow, 4),
           targetTitle: "Surplus/Deficit",
           updateState: setSuperTotalData,
           filterTypes: [
@@ -184,12 +195,42 @@ const FunnalComp = () => {
         },
       ];
 
-      ObjArray.forEach(updateCardByTitle);
+      ObjArray.forEach((config) => {
+        try {
+          updateCardByTitle(config);
+        } catch (err) {
+          console.error("Error processing config:", config.targetTitle, err);
+        }
+      });
+    } catch (error) {
+      console.error("Error in processing report sections:", error);
     }
   }, [reportSections, yearSelected]);
 
+  let OpenModal = (item) => {
+    if (item.amount === "$0") {
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "No Data exists",
+        `${item.title} data not found`
+      );
+    } else {
+      setModalObject({ title: item.title, small: true, item, yearSelected });
+      setFlagState(true);
+    }
+  };
+
   return (
     <Container fluid className="p-3 funnel-container">
+      <ModalComponent
+        modalObject={modalObject}
+        setFlagState={setFlagState}
+        flagState={flagState}
+      >
+        <FunnalPopups />
+      </ModalComponent>
+
       {/* Income Cards Section */}
       <Row className="mb-4 justify-content-center gap-lg-4 ">
         <Col md={12}>
@@ -227,11 +268,12 @@ const FunnalComp = () => {
         {incomeData.map((item, index) => (
           <Col key={index} xs={12} sm={6} md={4} lg={2} className="mb-3">
             <Card
+              role={"button"}
               className={`h-100 border-success shadow-sm text-center   ${
                 item.amount !== "$0" ? "CardActive" : ""
               }`}
               onClick={() => {
-                console.log(item);
+                OpenModal(item);
               }}
             >
               <Card.Body className="d-flex flex-column">
@@ -270,11 +312,12 @@ const FunnalComp = () => {
             {expenseData.map((item, index) => (
               <Card
                 key={index}
+                role={"button"}
                 className={`border-success shadow-sm text-center   ${
                   item.amount !== "$0" ? "CardActive" : ""
                 }`}
                 onClick={() => {
-                  console.log(item);
+                  OpenModal(item);
                 }}
               >
                 <Card.Body className="d-flex align-items-center p-2 p-sm-3">
@@ -357,11 +400,12 @@ const FunnalComp = () => {
             {allocationData.map((item, index) => (
               <Card
                 key={index}
+                role={"button"}
                 className={`border-success shadow-sm  ${
                   item.amount !== "$0" ? "CardActive" : ""
                 }`}
                 onClick={() => {
-                  console.log(item);
+                  OpenModal(item);
                 }}
               >
                 <Card.Body className="d-flex align-items-center p-2 p-sm-3">
@@ -392,13 +436,18 @@ const FunnalComp = () => {
           {superTotalData.map((item, index) => {
             return (
               <div
+                role={"button"}
                 className="modalBG p-3 text-center rounded shadow"
                 onClick={() => {
-                  console.log(item);
+                  OpenModal(item);
                 }}
               >
                 <h2 className="fw-bold mb-1">{item.amount}</h2>
-                <h5 className="fw-bold">{item.title}</h5>
+                <h5 className="fw-bold">
+                  {item.amount?.startsWith("(") && item.amount?.endsWith(")")
+                    ? "Deficit"
+                    : "Surplus"}
+                </h5>
               </div>
             );
           })}

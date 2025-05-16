@@ -240,7 +240,11 @@ const ModalComponent = (props) => {
     "car",
   ];
 
-  const size = fullTitles.includes(props.modalObject.title)
+  let smallModal = props.modalObject.small || false;
+
+  const size = smallModal
+    ? ""
+    : fullTitles.includes(props.modalObject.title)
     ? "xxl"
     : xlTitles.includes(props.modalObject.title)
     ? "xl"

@@ -49,6 +49,7 @@ const Reports = () => {
         REPORTS_Direct_Property,
         REPORTS_Client_Super_Pension,
         REPORTS_Partner_Super_Pension,
+        REPORTS_Business_Entities,
       } = response;
 
       console.log(response);
@@ -373,14 +374,31 @@ const Reports = () => {
       ];
 
       // Enhanced helper function
-      const getReport = (source, key, keyMapping, keyAddition = "") => {
+      const getReport = (
+        source,
+        key,
+        keyMapping,
+        keyAddition = "",
+        contentblock
+      ) => {
+        let contentIndex = contentblock || 2;
         return buildReportTree(
           processDataGeneric(
             source,
             (d) => transformInflows(d, true),
             key + keyAddition
           ),
-          content.cashFlowReport[2].reportsArray[keyMapping]
+          content.cashFlowReport[contentIndex].reportsArray[keyMapping].map(
+            (section) => ({
+              ...section,
+              children: section.children.map((label) =>
+                label
+                  .replace("{{client}}", RenderName("client"))
+                  .replace("{{partner}}", RenderName("partner"))
+                  .replace("{{joint}}", RenderName("joint"))
+              ),
+            })
+          )
         );
       };
 
@@ -455,117 +473,6 @@ const Reports = () => {
           ),
         };
       });
-
-      // const InvestmentMetaConfig = [
-      //   {
-      //     groupKey: "Super",
-      //     key: "superFund",
-      //     title: "Super 1",
-      //     keyMapping: "Superannuation",
-      //     objNo: "1",
-      //     Headers: ["", "", "Inflow", "Outflow"],
-      //   },
-      //   {
-      //     groupKey: "Super",
-      //     key: "superFund",
-      //     title: "Super 2",
-      //     keyMapping: "Superannuation",
-      //     objNo: "2",
-      //     Headers: ["", "", "Inflow", "Outflow"],
-      //   },
-      //   {
-      //     groupKey: "Pension",
-      //     key: "pensionFund",
-      //     title: "Pension 1",
-      //     keyMapping: "Pensionannuation",
-      //     objNo: "1",
-      //     Headers: ["Inflow", "Outflow"],
-      //   },
-      //   {
-      //     groupKey: "Pension",
-      //     key: "pensionFund",
-      //     title: "Pension 2",
-      //     keyMapping: "Pensionannuation",
-      //     objNo: "2",
-      //     Headers: ["Inflow", "Outflow"],
-      //   },
-      // ];
-
-      // // Store processed data by title and percent
-      // const InvestmentMeta = {};
-
-      // // Deep clone rows and assign unique keys
-      // const deepCloneWithKeys = (rows, parentTitle) =>
-      //   rows?.map((row, rowIndex) => ({
-      //     ...row,
-      //     key: `${parentTitle}_row_${rowIndex}`,
-      //     children: row.children
-      //       ? row.children.map((child, childIndex) => ({
-      //           ...child,
-      //           key: `${parentTitle}_row_${rowIndex}_child_${childIndex}`,
-      //         }))
-      //       : undefined,
-      //   })) || [];
-
-      // // 🧠 Helper to cleanly extract numeric index from title like "Super 1Percent"
-      // const buildPercentKey = (groupKey, rawTitle) => {
-      //   const numberMatch = rawTitle.match(/\d+/);
-      //   const number = numberMatch ? numberMatch[0] : "";
-      //   return `${groupKey}Percent${number}`;
-      // };
-
-      // // Process all investment types
-      // InvestmentMetaConfig.forEach(
-      //   ({ groupKey, key, title, keyMapping, objNo, Headers }) => {
-      //     const profileKey = `${key}${objNo}Profile`;
-
-      //     const clientData = changeHeadNames(
-      //       getReport(REPORTS_Client_Super_Pension, key, keyMapping, objNo),
-      //       Headers
-      //     );
-
-      //     if (!InvestmentMeta[groupKey]) InvestmentMeta[groupKey] = {};
-      //     InvestmentMeta[groupKey][title] = {
-      //       client: deepCloneWithKeys(clientData, title),
-      //     };
-
-      //     InvestmentMeta[groupKey][`${title}Percent`] = {
-      //       client: percentTransforme(
-      //         REPORTS_Client_Super_Pension[profileKey] || []
-      //       ),
-      //     };
-      //   }
-      // );
-
-      // // Final assignment loop per group
-      // Object.entries(InvestmentMeta).forEach(([groupKey, reports]) => {
-      //   // Main Table rows
-      //   const mainRows = Object.entries(reports)
-      //     .filter(([k]) => !k.includes("Percent"))
-      //     .map(([title, data], index) => ({
-      //       key: `${groupKey.toLowerCase()}_${index + 1}`,
-      //       type: title,
-      //       children: deepCloneWithKeys(data.client, title),
-      //       ...Object.fromEntries(
-      //         Array.from({ length: 10 }, (_, i) => [`year${i + 1}`, ""])
-      //       ),
-      //     }));
-
-      //   // Add to final object
-      //   FullFinansialInvestmentObject[groupKey] = {
-      //     client: mainRows,
-      //   };
-
-      //   // Add percent data
-      //   Object.entries(reports)
-      //     .filter(([k]) => k.includes("Percent"))
-      //     .forEach(([title, percentData]) => {
-      //       const finalKey = buildPercentKey(groupKey, title); // 🔥 clean key
-      //       FullFinansialInvestmentObject[finalKey] = {
-      //         client: [...percentData.client],
-      //       };
-      //     });
-      // });
 
       const InvestmentMetaConfig = [
         {
@@ -743,7 +650,41 @@ const Reports = () => {
         partner: deepCloneWithKeys(partnerAnnutiesArray, "annuties"),
       };
 
-      // console.log(FullFinansialInvestmentObject);
+      // Business Entities
+      const BusinessEntitesMetaConfig = [
+        {
+          key: "tradingCompany",
+          title: "Trading Company",
+          keyMapping: "tradingCompany",
+          Headers: ["Trading Company"],
+        },
+        {
+          key: "businessTrust",
+          title: "Business Trust",
+          keyMapping: "businessTrust",
+          Headers: ["Business Trust"],
+        },
+        {
+          key: "bucketCompany",
+          title: "Bucket Company",
+          keyMapping: "bucketCompany",
+          Headers: ["Bucket Company"],
+        },
+      ];
+
+      const FullBusinessObject = {};
+
+      BusinessEntitesMetaConfig.forEach(
+        ({ key, title, keyMapping, Headers }) => {
+          // Main investment report
+          FullBusinessObject[title] = changeHeadNames(
+            getReport(REPORTS_Business_Entities, key, keyMapping, "", 3),
+            Headers
+          );
+        }
+      );
+
+      console.log(FullBusinessObject, "FullBusinessObject");
 
       setReportSections({
         fullTableCashFlow,
@@ -754,6 +695,7 @@ const Reports = () => {
         asset: newLiabilities,
         asstesAndLiabilities: lifestyleAssetsArray,
         FullFinansialInvestmentObject,
+        FullBusinessObject,
       });
     } catch (err) {
       console.error("Report Error", err);
