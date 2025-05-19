@@ -1384,6 +1384,114 @@ export const content = {
       icon: "MdFamilyRestroom",
       stepNumber: 5,
       condition: (CRObject) => true, // Always true, as this step is always needed.
+      reportsArray: {
+        cashFlow: [
+          {
+            parent: "Total Inflows",
+            children: [
+              "Rental Income",
+              "Investment Income",
+              "Interest Income",
+              "Other",
+              "Investment Redemptions",
+              "Loan Additions",
+              "Total Inflows",
+            ],
+          },
+          {
+            parent: "Total Outflows",
+            children: [
+              "Property Expenses",
+              "Loan Repayments (Property Loans)",
+              "Loan Repayments (Investment Loan)",
+              "Selling Cost on Sale of Properties",
+              "Additional Purchases of Investments",
+              "Accouting & Auditing",
+              "Total Outflows",
+            ],
+          },
+          {
+            parent: "Surplus/Deficit",
+            children: [],
+          },
+        ],
+        "Profit and Loss": [
+          {
+            parent: "Investment Income Received",
+            children: [
+              "Net Rental Income",
+              "Investment Income",
+              "Interest Income",
+              "Other",
+              "Investment Income Received",
+            ],
+          },
+          {
+            parent: "Total Deductions",
+            children: [
+              "Rental Expenses",
+              "Interest on Property Loans",
+              "Loan interest",
+              "Accounting and Auditing Fees",
+              "Total Deductions",
+            ],
+          },
+          {
+            parent: "Net Income",
+            children: [],
+          },
+          {
+            parent: "Total Trust Net Income",
+            children: [
+              "Net Capital Gains",
+              "Franking Credits",
+              "Total Trust Net Income",
+            ],
+          },
+          {
+            parent: "Actual Trust Distribution",
+            children: ["Accumlated Losses", "Actual Trust Distribution"],
+          },
+        ],
+        "Balance Sheets": [
+          {
+            parent: "Total Assets",
+            children: [
+              "Property Value",
+              "Share Portfolo",
+              "Managed Funds",
+              "Other",
+              "Term Deposit",
+              "Cash at Bank",
+              "Total Assets",
+            ],
+          },
+          {
+            parent: "Total Liabilities",
+            children: [
+              "Property Loans",
+              "Investment Loans",
+              "Total Liabilities",
+            ],
+          },
+          {
+            parent: "Total Net Trust Assets",
+            children: [],
+          },
+          {
+            parent: "Total Beneficay Loans",
+            children: [
+              "Beneficiary Loan-{{client}}",
+              "Beneficiary Loan-{{partner}}",
+              "Total Beneficay Loans",
+            ],
+          },
+          {
+            parent: "Difference",
+            children: [],
+          },
+        ],
+      },
     },
   ],
 };

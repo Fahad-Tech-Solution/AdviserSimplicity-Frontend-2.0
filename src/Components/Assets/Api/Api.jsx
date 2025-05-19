@@ -459,10 +459,10 @@ const generateReportColumns = ({
 
   if (withExisting) {
     columns.push({
-      title: "Existing",
+      title: <div className="w-100 text-center">Existing</div>,
       dataIndex: "existing",
       key: "existing",
-      fixed: "left",
+      fixed: "center",
       render: (text, record) => {
         const isParentRow = record.children && Array.isArray(record.children);
         return (
@@ -473,6 +473,7 @@ const generateReportColumns = ({
               overflow: "hidden",
               textOverflow: "ellipsis",
               fontFamily: '"Inter", sans-serif',
+              textAlign: "center",
             }}
           >
             {text}

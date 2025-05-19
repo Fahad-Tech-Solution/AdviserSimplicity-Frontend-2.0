@@ -103,9 +103,17 @@ const FinancialInvestmentsReport = ({
       key: "investment",
       width: 253,
       fixed: "left",
-      render: (text) => (
-        <div style={{ fontFamily: "Inter, sans-serif" }}>{text}</div>
-      ),
+      render: (text, record) => {
+        const isParentRow = record.children && Array.isArray(record.children);
+        return (
+          <div
+            className={isParentRow && "fw-bold"}
+            style={{ fontFamily: "Inter, sans-serif" }}
+          >
+            {text}
+          </div>
+        );
+      },
     },
     {
       title: "Details / Allocation",
@@ -310,25 +318,6 @@ const FinancialInvestmentsReport = ({
     },
     Pension: {
       data: FullFinansialInvestmentObject?.["PensionPercent1"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Pension",
-    },
-  };
-
-  const categoryPercentSPATables = {
-    Super: {
-      data: FullFinansialInvestmentObject?.["SuperPercent2"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Super",
-    },
-    Pension: {
-      data: FullFinansialInvestmentObject?.["PensionPercent2"] || {
         client: [],
         partner: [],
         joint: [],
@@ -592,12 +581,6 @@ const FinancialInvestmentsReport = ({
       <div className="mb-5">
         {renderReportTable(categoryPercentTables, true)}
       </div>
-
-      {!superPension && (
-        <div className="mb-5">
-          {renderReportTable(categoryPercentSPATables, true)}
-        </div>
-      )}
 
       <div>{renderReportTable(categoryTables)}</div>
 

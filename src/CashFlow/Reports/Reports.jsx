@@ -50,9 +50,10 @@ const Reports = () => {
         REPORTS_Client_Super_Pension,
         REPORTS_Partner_Super_Pension,
         REPORTS_Business_Entities,
+        REPORTS_TRUST_Assets_and_Income,
       } = response;
 
-      console.log(response);
+      console.log(response.REPORTS_TRUST_Assets_and_Income);
 
       const Age = processDataGeneric(
         REPORTS_Cashflow,
@@ -536,13 +537,6 @@ const Reports = () => {
             : undefined,
         })) || [];
 
-      // Helper to build keys like SuperPercent1
-      const buildPercentKey = (groupKey, rawTitle) => {
-        const numberMatch = rawTitle.match(/\d+/);
-        const number = numberMatch ? numberMatch[0] : "";
-        return `${groupKey}Percent${number}`;
-      };
-
       // Step 1: Collect data into InvestmentMeta
       InvestmentMetaConfig.forEach(
         ({ groupKey, key, title, keyMapping, objNo, Headers }) => {
@@ -610,14 +604,46 @@ const Reports = () => {
         };
 
         // Add percent data
+        // Object.entries(reports)
+        //   .filter(([k]) => k.includes("Percent"))
+        //   .forEach(([title, percentData]) => {
+        //     const finalKey = buildPercentKey(groupKey, title);
+        //     FullFinansialInvestmentObject[finalKey] = {
+        //       client: [...percentData.client],
+        //       partner: [...percentData.partner],
+        //     };
+        //   });
+
+        // Add combined percent data (like main structure)
+        const combinedPercentKey = `${groupKey}Percent1`;
+        if (!FullFinansialInvestmentObject[combinedPercentKey]) {
+          FullFinansialInvestmentObject[combinedPercentKey] = {
+            client: [],
+            partner: [],
+          };
+        }
+
         Object.entries(reports)
           .filter(([k]) => k.includes("Percent"))
-          .forEach(([title, percentData]) => {
-            const finalKey = buildPercentKey(groupKey, title);
-            FullFinansialInvestmentObject[finalKey] = {
-              client: [...percentData.client],
-              partner: [...percentData.partner],
+          .forEach(([title, percentData], index) => {
+            const cleanedTitle = title.replace("Percent", ""); // e.g., Super 1
+
+            const entryBase = {
+              investment: cleanedTitle,
+              details: "",
             };
+
+            FullFinansialInvestmentObject[combinedPercentKey].client.push({
+              ...entryBase,
+              key: `${combinedPercentKey.toLowerCase()}_client_${index + 1}`,
+              children: [...(percentData.client || [])],
+            });
+
+            FullFinansialInvestmentObject[combinedPercentKey].partner.push({
+              ...entryBase,
+              key: `${combinedPercentKey.toLowerCase()}_partner_${index + 1}`,
+              children: [...(percentData.partner || [])],
+            });
           });
       });
 
@@ -684,7 +710,55 @@ const Reports = () => {
         }
       );
 
-      console.log(FullBusinessObject, "FullBusinessObject");
+      // Family Trust
+      const FamilyTrustMetaConfig = [
+        {
+          key: "cashFlow",
+          title: "Cashflow",
+          keyMapping: "cashFlow",
+          Headers: ["Inflow", "Outflow", "Surplus/deficit"],
+        },
+        {
+          key: "profitAndLoss",
+          title: "Profit and Loss",
+          keyMapping: "Profit and Loss",
+          Headers: [
+            "Income",
+            "Less Deductions",
+            "",
+            "Total Trust Net Income ",
+            "Actual Trust Distribution ",
+          ],
+        },
+      ];
+      const FullFamilyTrustObj = {};
+
+      FamilyTrustMetaConfig.forEach(({ key, title, keyMapping, Headers }) => {
+        // Main investment report
+        FullFamilyTrustObj[title] = changeHeadNames(
+          getReport(REPORTS_TRUST_Assets_and_Income, key, keyMapping, "", 5),
+          Headers
+        );
+      });
+
+      [
+        {
+          key: "balanceSheet",
+          title: "Balance Sheets",
+          keyMapping: "Balance Sheets",
+          Headers: ["Assets", "Liabilities", "", "Beneficiary Loans", ""],
+        },
+      ].forEach(({ key, title, keyMapping, Headers }) => {
+        // Main investment report
+        FullFamilyTrustObj[title] = changeHeadNames(
+          renameYearKeys(
+            getReport(REPORTS_TRUST_Assets_and_Income, key, keyMapping, "", 5)
+          ),
+          Headers
+        );
+      });
+
+      console.log(FullFamilyTrustObj, "FullFamilyTrustObj");
 
       setReportSections({
         fullTableCashFlow,
@@ -696,6 +770,7 @@ const Reports = () => {
         asstesAndLiabilities: lifestyleAssetsArray,
         FullFinansialInvestmentObject,
         FullBusinessObject,
+        FullFamilyTrustObj,
       });
     } catch (err) {
       console.error("Report Error", err);
