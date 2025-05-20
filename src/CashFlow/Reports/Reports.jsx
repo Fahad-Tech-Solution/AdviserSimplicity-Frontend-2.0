@@ -17,6 +17,7 @@ import {
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, Loading, ReportsData } from "../../Store/Store";
 import { content } from "../../Content/Content";
+import { Percent } from "antd/es/progress/style";
 
 const Reports = () => {
   const [reportSections, setReportSections] = useRecoilState(ReportsData);
@@ -717,6 +718,7 @@ const Reports = () => {
           title: "Cashflow",
           keyMapping: "cashFlow",
           Headers: ["Inflow", "Outflow", "Surplus/deficit"],
+          keyAddition: "",
         },
         {
           key: "profitAndLoss",
@@ -729,34 +731,106 @@ const Reports = () => {
             "Total Trust Net Income ",
             "Actual Trust Distribution ",
           ],
+          keyAddition: "",
         },
-      ];
-      const FullFamilyTrustObj = {};
-
-      FamilyTrustMetaConfig.forEach(({ key, title, keyMapping, Headers }) => {
-        // Main investment report
-        FullFamilyTrustObj[title] = changeHeadNames(
-          getReport(REPORTS_TRUST_Assets_and_Income, key, keyMapping, "", 5),
-          Headers
-        );
-      });
-
-      [
         {
           key: "balanceSheet",
           title: "Balance Sheets",
           keyMapping: "Balance Sheets",
           Headers: ["Assets", "Liabilities", "", "Beneficiary Loans", ""],
+          existingYear: true,
         },
-      ].forEach(({ key, title, keyMapping, Headers }) => {
-        // Main investment report
-        FullFamilyTrustObj[title] = changeHeadNames(
-          renameYearKeys(
-            getReport(REPORTS_TRUST_Assets_and_Income, key, keyMapping, "", 5)
-          ),
-          Headers
-        );
-      });
+        {
+          key: "directShares2",
+          title: "Direct Shares",
+          keyMapping: "Direct Shares",
+          Headers: ["Value at Year End "],
+          keyAddition: "",
+        },
+        {
+          key: "directShares1",
+          title: "Direct Shares Percent",
+          keyMapping: "Direct Shares",
+          Headers: [],
+          keyAddition: "",
+          Percent: true,
+        },
+        {
+          key: "managedFunds2",
+          title: "Managed Funds",
+          keyMapping: "Managed Funds",
+          Headers: ["Value at Year End "],
+          keyAddition: "",
+        },
+        {
+          key: "managedFunds1",
+          title: "Managed Funds Percent",
+          keyMapping: "Managed Funds",
+          Headers: [],
+          keyAddition: "",
+          Percent: true,
+        },
+        {
+          key: "other2",
+          title: "Other",
+          keyMapping: "Other",
+          Headers: ["Value at Year End "],
+          keyAddition: "",
+        },
+        {
+          key: "other1",
+          title: "Other Percent",
+          keyMapping: "Other",
+          Headers: [],
+          keyAddition: "",
+          Percent: true,
+        },
+      ];
+      const FullFamilyTrustObj = {};
+
+      FamilyTrustMetaConfig.forEach(
+        ({
+          key,
+          title,
+          keyMapping,
+          keyAddition,
+          Headers,
+          existingYear = false,
+          Percent = false,
+        }) => {
+          if (Percent) {
+            // percent report
+            FullFamilyTrustObj[title] = percentTransforme(
+              REPORTS_TRUST_Assets_and_Income[key]
+            );
+          } else if (existingYear) {
+            // Main investment report
+            FullFamilyTrustObj[title] = changeHeadNames(
+              renameYearKeys(
+                getReport(
+                  REPORTS_TRUST_Assets_and_Income,
+                  key,
+                  keyMapping,
+                  keyAddition,
+                  5
+                )
+              ),
+              Headers
+            );
+          } else {
+            FullFamilyTrustObj[title] = changeHeadNames(
+              getReport(
+                REPORTS_TRUST_Assets_and_Income,
+                key,
+                keyMapping,
+                keyAddition,
+                5
+              ),
+              Headers
+            );
+          }
+        }
+      );
 
       console.log(FullFamilyTrustObj, "FullFamilyTrustObj");
 

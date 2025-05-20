@@ -26,6 +26,39 @@ const FamilyTrustReport = ({
       endYear: values.yearTo || 6,
     })
   );
+  const [percentTable, setPercentTable] = useState(false);
+
+  const columnsPercent = [
+    {
+      title: "Investment Metric",
+      dataIndex: "investment",
+      key: "investment",
+      width: 253,
+      fixed: "left",
+      render: (text, record) => {
+        const isParentRow = record.children && Array.isArray(record.children);
+        return (
+          <div
+            className={isParentRow && "fw-bold"}
+            style={{ fontFamily: "Inter, sans-serif" }}
+          >
+            {text}
+          </div>
+        );
+      },
+    },
+    {
+      title: "Details / Allocation",
+      dataIndex: "details",
+      key: "details",
+      width: 253,
+      fixed: "left",
+      align: "left",
+      render: (text) => (
+        <div style={{ fontFamily: "Inter, sans-serif" }}>{text}</div>
+      ),
+    },
+  ];
 
   const menu = (
     <Menu
@@ -118,6 +151,12 @@ const FamilyTrustReport = ({
             })
           );
         }
+
+        if (["Direct Shares", "Managed Funds","Other"].includes(key)) {
+          setPercentTable(true);
+        } else {
+          setPercentTable(false);
+        }
       }}
     />
   );
@@ -149,6 +188,39 @@ const FamilyTrustReport = ({
         "Total Beneficay Loans",
         "Difference",
       ],
+    },
+    "Direct Shares": {
+      data: FullFamilyTrustObj?.["Direct Shares"] || [],
+      title: "Direct Shares",
+      highlight: ["Value at Year End"],
+    },
+    "Managed Funds": {
+      data: FullFamilyTrustObj?.["Managed Funds"] || [],
+      title: "Managed Funds",
+      highlight: ["Value at Year End"],
+    },
+    Other: {
+      data: FullFamilyTrustObj?.["Other"] || [],
+      title: "Other",
+      highlight: ["Value at Year End"],
+    },
+  };
+
+  const categoryPercentTables = {
+    "Direct Shares": {
+      data: FullFamilyTrustObj?.["Direct Shares Percent"] || [],
+      title: "Direct Shares",
+      highlight: ["Value at Year End"],
+    },
+    "Managed Funds": {
+      data: FullFamilyTrustObj?.["Managed Funds Percent"] || [],
+      title: "Managed Funds",
+      highlight: ["Value at Year End"],
+    },
+    Other: {
+      data: FullFamilyTrustObj?.["Other Percent"] || [],
+      title: "Other",
+      highlight: ["Value at Year End"],
     },
   };
 
@@ -307,16 +379,17 @@ const FamilyTrustReport = ({
 
     const data = tableInfo.data || [];
     const highlight = tableInfo.highlight || [];
-    const title = `${tableInfo.title}`;
+    const title = !isPercent ? `${tableInfo.title}` : undefined;
 
     return (
       <AntTableDynamicReportTable
         title={title}
         dataSource={data}
-        columns={columns}
+        columns={isPercent ? columnsPercent : columns}
         highlightTypes={highlight}
         showFilters={showFilters}
         setShowFilters={setShowFilters}
+        pagination={isPercent ? false : undefined}
       />
     );
   };
@@ -406,6 +479,8 @@ const FamilyTrustReport = ({
           </Row>
         </Card>
       )}
+
+      {percentTable && renderReportTable(categoryPercentTables, true)}
 
       <div>{renderReportTable(categoryTables)}</div>
     </>
