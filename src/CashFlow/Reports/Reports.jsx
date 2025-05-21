@@ -785,7 +785,53 @@ const Reports = () => {
           keyAddition: "",
           Percent: true,
         },
+        {
+          key: "cash2",
+          title: "Cash",
+          keyMapping: "Cash",
+          Headers: ["Value at Year End "],
+          keyAddition: "",
+        },
+        {
+          key: "cash1",
+          title: "Cash Percent",
+          keyMapping: "Cash",
+          Headers: [],
+          keyAddition: "",
+          Percent: true,
+        },
+        {
+          key: "termDeposit2",
+          title: "Term Deposits",
+          keyMapping: "Term Deposits",
+          Headers: ["Value at Year End "],
+          keyAddition: "",
+        },
+        {
+          key: "termDeposit1",
+          title: "Term Deposits Percent",
+          keyMapping: "Term Deposits",
+          Headers: [],
+          keyAddition: "",
+          Percent: true,
+        },
+        {
+          key: "investmentLoans",
+          title: "Investment Loans",
+          keyMapping: "Investment Loans",
+          Headers: ["Value at Year End "],
+          keyAddition: "",
+        },
+
+        ...Array.from({ length: 3 }).map((_, index) => ({
+          key: "Property" + (index + 1),
+          title: "Trust Property " + (index + 1),
+          keyMapping: "Trust Property",
+          Headers: ["Less Expenses", "", "Equity & Debt Position", "Loan"],
+          keyAddition: "",
+        })),
       ];
+
       const FullFamilyTrustObj = {};
 
       FamilyTrustMetaConfig.forEach(
@@ -832,7 +878,7 @@ const Reports = () => {
         }
       );
 
-      console.log(FullFamilyTrustObj, "FullFamilyTrustObj");
+      // console.log(FullFamilyTrustObj, "FullFamilyTrustObj");
 
       setReportSections({
         fullTableCashFlow,

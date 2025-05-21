@@ -1544,6 +1544,85 @@ export const content = {
             ],
           },
         ],
+        Cash: [
+          {
+            parent: "Value at Year End",
+            children: [
+              "Opening Balance",
+              "Surplus/Deficit From Cashflow",
+              "Lumpsum Additions",
+              "Lumpsum Withdrawals",
+              "Distribution taken as cash",
+              "Value at Year End",
+              "Income Reinvested",
+            ],
+          },
+        ],
+        "Term Deposits": [
+          {
+            parent: "Value at Year End",
+            children: [
+              "Opening Balance",
+              "Lumpsum Additions",
+              "Lumpsum Withdrawals",
+              "Income Reinvested",
+              "Value at Year End",
+              "Income Reinvested",
+              "Income",
+            ],
+          },
+        ],
+        "Investment Loans": [
+          {
+            parent: "Value at Year End",
+            children: [
+              "Opening Balance",
+              "Principal Repayments",
+              "Interest Repayments",
+              "Loan Additions",
+              "Year End Loan Balance",
+              "Deductible Interest",
+            ],
+          },
+        ],
+        "Trust Property": [
+          {
+            parent: "Total Expenses",
+            children: [
+              "Rental Income",
+              "Agent Commisions",
+              "Interest Expenses",
+              "Annual Expenses",
+              "Total Expenses",
+            ],
+          },
+          {
+            parent: "Net Rental Income/Loss",
+            children: [],
+          },
+          {
+            parent: "Closing Value",
+            children: [
+              "Opening Value",
+              "Growth",
+              "Closing Value",
+              "Costbase",
+              "Unrealised Capital Gain/Loss at Year End",
+              "Realised Capital Gain/Loss",
+            ],
+          },
+          {
+            parent: "Year End Loan Balance",
+            children: [
+              "Opening Balance",
+              "Principal Repayments",
+              "Interest Repayments",
+              "Year End Loan Balance",
+              "Deductible Interest",
+              "Net proceeds after Sale",
+            ],
+          },
+        ],
       },
     },
   ],

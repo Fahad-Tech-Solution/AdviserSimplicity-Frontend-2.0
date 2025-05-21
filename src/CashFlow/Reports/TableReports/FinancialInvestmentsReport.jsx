@@ -14,6 +14,8 @@ import {
 } from "../../../Components/Assets/Api/Api";
 import AntTableDynamicReportTable from "../../../Components/Assets/Table/AntTableDynamicReportTable";
 import { Dropdown, Menu, Space, Button, Tooltip } from "antd";
+import ModalComponent from "../../../Components/Questions/FinancialInvestments/ModalComponent";
+import FunnalPopups from "./FunnalPopups";
 
 const FinancialInvestmentsReport = ({
   showFilters,
@@ -33,6 +35,9 @@ const FinancialInvestmentsReport = ({
 
   const [directProperty, setDirectProperty] = useState(false);
   const [superPension, setSuperPension] = useState(true);
+
+  let [flagState, setFlagState] = useState(false);
+  let [modalObject, setModalObject] = useState({});
 
   const menu = (
     <Menu
@@ -86,7 +91,6 @@ const FinancialInvestmentsReport = ({
           setFieldValue("reportOwner", "client");
           setDirectProperty(false);
           setSuperPension(false);
-          // alert("Super clicked")
         } else {
           setFieldValue("category", key);
           setDirectProperty(false);
@@ -308,6 +312,9 @@ const FinancialInvestmentsReport = ({
       title: "Term Deposits",
       highlight: ["Value at Year End"],
     },
+  };
+
+  const PopUpCategoryData = {
     Super: {
       data: FullFinansialInvestmentObject?.["SuperPercent1"] || {
         client: [],
@@ -465,8 +472,28 @@ const FinancialInvestmentsReport = ({
     );
   };
 
+  const openModal = (item, index) => {
+    setModalObject({
+      title: values.category,
+      small: true,
+      item: {
+        popupArray: item.data[values.reportOwner][index - 1].children || [],
+      },
+      Style2: true,
+    });
+    setFlagState(true);
+  };
+
   return (
     <>
+      <ModalComponent
+        modalObject={modalObject}
+        setFlagState={setFlagState}
+        flagState={flagState}
+      >
+        <FunnalPopups />
+      </ModalComponent>
+
       <div className="d-flex justify-content-between align-items-center">
         <h2 className="text-green mt-3 fw-bold">Financial Investments</h2>
         <span
@@ -581,6 +608,36 @@ const FinancialInvestmentsReport = ({
       <div className="mb-5">
         {renderReportTable(categoryPercentTables, true)}
       </div>
+
+      {(values.category === "Super" || values.category == "Pension") && (
+        <div className="row justify-content-center">
+          <div className="col-md-12">
+            <h4 className="text-green fw-bold text-center">
+              Investment Matric
+            </h4>
+          </div>
+          <div className="col-md-2">
+            <Button
+              className="w-100 modalBtn"
+              onClick={() => {
+                openModal(PopUpCategoryData[values.category], 1);
+              }}
+            >
+              {values.category} 1
+            </Button>
+          </div>
+          <div className="col-md-2">
+            <Button
+              className="w-100 modalBtn"
+              onClick={() => {
+                openModal(PopUpCategoryData[values.category], 2);
+              }}
+            >
+              {values.category} 2
+            </Button>
+          </div>
+        </div>
+      )}
 
       <div>{renderReportTable(categoryTables)}</div>
 

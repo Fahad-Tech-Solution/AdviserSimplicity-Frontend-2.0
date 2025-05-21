@@ -152,7 +152,15 @@ const FamilyTrustReport = ({
           );
         }
 
-        if (["Direct Shares", "Managed Funds","Other"].includes(key)) {
+        if (
+          [
+            "Direct Shares",
+            "Managed Funds",
+            "Other",
+            "Cash",
+            "Term Deposits",
+          ].includes(key)
+        ) {
           setPercentTable(true);
         } else {
           setPercentTable(false);
@@ -204,6 +212,35 @@ const FamilyTrustReport = ({
       title: "Other",
       highlight: ["Value at Year End"],
     },
+    Cash: {
+      data: FullFamilyTrustObj?.["Cash"] || [],
+      title: "Cash",
+      highlight: ["Value at Year End"],
+    },
+    "Term Deposits": {
+      data: FullFamilyTrustObj?.["Term Deposits"] || [],
+      title: "Term Deposits",
+      highlight: ["Value at Year End"],
+    },
+    "Investment Loans": {
+      data: FullFamilyTrustObj?.["Investment Loans"] || [],
+      title: "Investment Loans",
+      highlight: ["Value at Year End"],
+    },
+    ...Array.from({ length: 10 }).reduce((acc, _, i) => {
+      const label = `Trust Property ${i + 1}`;
+      acc[label] = {
+        data: FullFamilyTrustObj?.[label] || [],
+        title: label,
+        highlight: [
+          "Total Expenses",
+          "Net Rental Income/Loss",
+          "Closing Value",
+          "Year End Loan Balance",
+        ],
+      };
+      return acc;
+    }, {}),
   };
 
   const categoryPercentTables = {
@@ -220,6 +257,16 @@ const FamilyTrustReport = ({
     Other: {
       data: FullFamilyTrustObj?.["Other Percent"] || [],
       title: "Other",
+      highlight: ["Value at Year End"],
+    },
+    Cash: {
+      data: FullFamilyTrustObj?.["Cash Percent"] || [],
+      title: "Cash",
+      highlight: ["Value at Year End"],
+    },
+    "Term Deposits": {
+      data: FullFamilyTrustObj?.["Term Deposits Percent"] || [],
+      title: "Term Deposits",
       highlight: ["Value at Year End"],
     },
   };
