@@ -16,7 +16,6 @@ const FunnalPopups = (props) => {
   const { item = {}, yearSelected = 1 } = modalObject;
   const popupArray = item.popupArray || [];
 
-  console.log("popupArray", popupArray);
   return (
     <Formik
       initialValues={initialValues}

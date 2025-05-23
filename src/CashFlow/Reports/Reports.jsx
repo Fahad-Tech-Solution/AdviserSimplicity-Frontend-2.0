@@ -52,9 +52,13 @@ const Reports = () => {
         REPORTS_Partner_Super_Pension,
         REPORTS_Business_Entities,
         REPORTS_TRUST_Assets_and_Income,
+        REPORTS_SMSF_Assets_and_Income,
       } = response;
 
-      console.log(response.REPORTS_TRUST_Assets_and_Income);
+      console.log(
+        response.REPORTS_SMSF_Assets_and_Income,
+        "SMSF Assets and Income"
+      );
 
       const Age = processDataGeneric(
         REPORTS_Cashflow,
@@ -711,6 +715,167 @@ const Reports = () => {
         }
       );
 
+      // SMSF
+      const SMSFMetaConfig = [
+        {
+          key: "cashFlow",
+          title: "Cashflow",
+          keyMapping: "cashFlow",
+          Headers: ["Inflow", "Outflow", "Surplus/deficit"],
+          keyAddition: "",
+        },
+        {
+          key: "tax",
+          title: "Tax",
+          keyMapping: "Tax",
+          Headers: ["Income", "Less Deductions", "Total Taxable income"],
+          keyAddition: "",
+        },
+        {
+          key: "balanceSheet",
+          title: "Balance Sheets",
+          keyMapping: "Balance Sheets",
+          Headers: ["Assets", "Liabilities", "", "Beneficiary Loans", ""],
+          existingYear: true,
+        },
+        // {
+        //   key: "directShares2",
+        //   title: "Direct Shares",
+        //   keyMapping: "Direct Shares",
+        //   Headers: ["Value at Year End "],
+        //   keyAddition: "",
+        // },
+        // {
+        //   key: "directShares1",
+        //   title: "Direct Shares Percent",
+        //   keyMapping: "Direct Shares",
+        //   Headers: [],
+        //   keyAddition: "",
+        //   Percent: true,
+        // },
+        // {
+        //   key: "managedFunds2",
+        //   title: "Managed Funds",
+        //   keyMapping: "Managed Funds",
+        //   Headers: ["Value at Year End "],
+        //   keyAddition: "",
+        // },
+        // {
+        //   key: "managedFunds1",
+        //   title: "Managed Funds Percent",
+        //   keyMapping: "Managed Funds",
+        //   Headers: [],
+        //   keyAddition: "",
+        //   Percent: true,
+        // },
+        // {
+        //   key: "other2",
+        //   title: "Other",
+        //   keyMapping: "Other",
+        //   Headers: ["Value at Year End "],
+        //   keyAddition: "",
+        // },
+        // {
+        //   key: "other1",
+        //   title: "Other Percent",
+        //   keyMapping: "Other",
+        //   Headers: [],
+        //   keyAddition: "",
+        //   Percent: true,
+        // },
+        // {
+        //   key: "cash2",
+        //   title: "Cash",
+        //   keyMapping: "Cash",
+        //   Headers: ["Value at Year End "],
+        //   keyAddition: "",
+        // },
+        // {
+        //   key: "cash1",
+        //   title: "Cash Percent",
+        //   keyMapping: "Cash",
+        //   Headers: [],
+        //   keyAddition: "",
+        //   Percent: true,
+        // },
+        // {
+        //   key: "termDeposit2",
+        //   title: "Term Deposits",
+        //   keyMapping: "Term Deposits",
+        //   Headers: ["Value at Year End "],
+        //   keyAddition: "",
+        // },
+        // {
+        //   key: "termDeposit1",
+        //   title: "Term Deposits Percent",
+        //   keyMapping: "Term Deposits",
+        //   Headers: [],
+        //   keyAddition: "",
+        //   Percent: true,
+        // },
+        // {
+        //   key: "investmentLoans",
+        //   title: "Investment Loans",
+        //   keyMapping: "Investment Loans",
+        //   Headers: ["Value at Year End "],
+        //   keyAddition: "",
+        // },
+
+        // ...Array.from({ length: 10 }).map((_, index) => ({
+        //   key: "Property" + (index + 1),
+        //   title: "Trust Property " + (index + 1),
+        //   keyMapping: "Trust Property",
+        //   Headers: ["Less Expenses", "", "Equity & Debt Position", "Loan"],
+        //   keyAddition: "",
+        // })),
+      ];
+
+      const FullSMSFObj = {};
+
+      SMSFMetaConfig.forEach(
+        ({
+          key,
+          title,
+          keyMapping,
+          keyAddition,
+          Headers,
+          existingYear = false,
+          Percent = false,
+        }) => {
+          if (Percent) {
+            // percent report
+            FullSMSFObj[title] = percentTransforme(
+              REPORTS_SMSF_Assets_and_Income[key]
+            );
+          } else if (existingYear) {
+            // Main investment report
+            FullSMSFObj[title] = changeHeadNames(
+              renameYearKeys(
+                getReport(
+                  REPORTS_SMSF_Assets_and_Income,
+                  key,
+                  keyMapping,
+                  keyAddition,
+                  4
+                )
+              ),
+              Headers
+            );
+          } else {
+            FullSMSFObj[title] = changeHeadNames(
+              getReport(
+                REPORTS_SMSF_Assets_and_Income,
+                key,
+                keyMapping,
+                keyAddition,
+                4
+              ),
+              Headers
+            );
+          }
+        }
+      );
+
       // Family Trust
       const FamilyTrustMetaConfig = [
         {
@@ -823,7 +988,7 @@ const Reports = () => {
           keyAddition: "",
         },
 
-        ...Array.from({ length: 3 }).map((_, index) => ({
+        ...Array.from({ length: 10 }).map((_, index) => ({
           key: "Property" + (index + 1),
           title: "Trust Property " + (index + 1),
           keyMapping: "Trust Property",
@@ -878,7 +1043,7 @@ const Reports = () => {
         }
       );
 
-      // console.log(FullFamilyTrustObj, "FullFamilyTrustObj");
+      console.log(FullSMSFObj, "FullSMSFObj");
 
       setReportSections({
         fullTableCashFlow,
@@ -891,6 +1056,7 @@ const Reports = () => {
         FullFinansialInvestmentObject,
         FullBusinessObject,
         FullFamilyTrustObj,
+        FullSMSFObj,
       });
     } catch (err) {
       console.error("Report Error", err);

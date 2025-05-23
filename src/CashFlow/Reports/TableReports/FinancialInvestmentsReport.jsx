@@ -16,6 +16,7 @@ import AntTableDynamicReportTable from "../../../Components/Assets/Table/AntTabl
 import { Dropdown, Menu, Space, Button, Tooltip } from "antd";
 import ModalComponent from "../../../Components/Questions/FinancialInvestments/ModalComponent";
 import FunnalPopups from "./FunnalPopups";
+import { FaInfoCircle } from "react-icons/fa";
 
 const FinancialInvestmentsReport = ({
   showFilters,
@@ -38,6 +39,25 @@ const FinancialInvestmentsReport = ({
 
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
+
+  const PopUpCategoryData = {
+    Super: {
+      data: FullFinansialInvestmentObject?.["SuperPercent1"] || {
+        client: [],
+        partner: [],
+        joint: [],
+      },
+      title: "Super",
+    },
+    Pension: {
+      data: FullFinansialInvestmentObject?.["PensionPercent1"] || {
+        client: [],
+        partner: [],
+        joint: [],
+      },
+      title: "Pension",
+    },
+  };
 
   const menu = (
     <Menu
@@ -91,10 +111,37 @@ const FinancialInvestmentsReport = ({
           setFieldValue("reportOwner", "client");
           setDirectProperty(false);
           setSuperPension(false);
+          // setColumns
         } else {
           setFieldValue("category", key);
           setDirectProperty(false);
           setSuperPension(true);
+        }
+
+        if (["Super", "Pension"].includes(key)) {
+          setColumns(
+            generateReportColumns({
+              startYear: values.yearFrom || 1,
+              endYear: values.yearTo || 6,
+              showInfoIcon: true,
+              onInfoClick: (row, index) => {
+                openModal(PopUpCategoryData[key], index + 1, key);
+              },
+              onInfoIconsArray: [
+                "Super 1",
+                "Super 2",
+                "Pension 1",
+                "Pension 2",
+              ],
+            })
+          );
+        } else {
+          setColumns(
+            generateReportColumns({
+              startYear: values.yearFrom || 1,
+              endYear: values.yearTo || 6,
+            })
+          );
         }
       }}
     />
@@ -314,25 +361,6 @@ const FinancialInvestmentsReport = ({
     },
   };
 
-  const PopUpCategoryData = {
-    Super: {
-      data: FullFinansialInvestmentObject?.["SuperPercent1"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Super",
-    },
-    Pension: {
-      data: FullFinansialInvestmentObject?.["PensionPercent1"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Pension",
-    },
-  };
-
   const applyFilter = (values, currentInput) => {
     try {
       const currentValue = parseInt(currentInput.value, 10);
@@ -396,13 +424,21 @@ const FinancialInvestmentsReport = ({
             key: "type",
             width: 253,
             fixed: "left",
-            render: (text, row) => {
+            render: (text, row, index) => {
               if (row.isHeader) return { props: { colSpan: 0 } };
 
               const isParentRow = row?.children && Array.isArray(row.children);
 
               return (
-                <Tooltip title={text}>
+                <Tooltip
+                  title={
+                    ["Super 1", "Super 2", "Pension 1", "Pension 2"].includes(
+                      text
+                    )
+                      ? "Click on i button to reveal investment details"
+                      : text
+                  }
+                >
                   <div
                     style={{
                       fontWeight: isParentRow ? "bold" : "normal",
@@ -416,6 +452,19 @@ const FinancialInvestmentsReport = ({
                     }}
                   >
                     {text}
+
+                    {isParentRow &&
+                      ["Super 1", "Super 2", "Pension 1", "Pension 2"].includes(
+                        text
+                      ) && (
+                        <FaInfoCircle
+                          className="info-icon"
+                          onClick={() =>
+                            openModal(PopUpCategoryData[key], index + 1, key)
+                          }
+                          title="View Details"
+                        />
+                      )}
                   </div>
                 </Tooltip>
               );
@@ -472,9 +521,9 @@ const FinancialInvestmentsReport = ({
     );
   };
 
-  const openModal = (item, index) => {
+  const openModal = (item, index, key) => {
     setModalObject({
-      title: values.category,
+      title: key,
       small: true,
       item: {
         popupArray: item.data[values.reportOwner][index - 1].children || [],
@@ -608,36 +657,6 @@ const FinancialInvestmentsReport = ({
       <div className="mb-5">
         {renderReportTable(categoryPercentTables, true)}
       </div>
-
-      {(values.category === "Super" || values.category == "Pension") && (
-        <div className="row justify-content-center">
-          <div className="col-md-12">
-            <h4 className="text-green fw-bold text-center">
-              Investment Matric
-            </h4>
-          </div>
-          <div className="col-md-2">
-            <Button
-              className="w-100 modalBtn"
-              onClick={() => {
-                openModal(PopUpCategoryData[values.category], 1);
-              }}
-            >
-              {values.category} 1
-            </Button>
-          </div>
-          <div className="col-md-2">
-            <Button
-              className="w-100 modalBtn"
-              onClick={() => {
-                openModal(PopUpCategoryData[values.category], 2);
-              }}
-            >
-              {values.category} 2
-            </Button>
-          </div>
-        </div>
-      )}
 
       <div>{renderReportTable(categoryTables)}</div>
 

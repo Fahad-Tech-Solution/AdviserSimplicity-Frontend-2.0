@@ -11,6 +11,7 @@ import BusinessReport from "./TableReports/BusinessReport";
 import { useRecoilValue } from "recoil";
 import { ReportsData } from "../../Store/Store";
 import FamilyTrustReport from "./TableReports/FamilyTrustReport";
+import SMSFReport from "./TableReports/SMSFReport";
 
 const CashFlowReport = () => {
   const initialValues = { category: "" };
@@ -82,6 +83,19 @@ const CashFlowReport = () => {
                 )}
                 {step === 3 && (
                   <BusinessReport
+                    {...{
+                      showFilters,
+                      setShowFilters,
+                      values,
+                      setFieldValue,
+                      handleChange,
+                      handleBlur,
+                    }}
+                    {...reportSections}
+                  />
+                )}
+                {step === 4 && (
+                  <SMSFReport
                     {...{
                       showFilters,
                       setShowFilters,

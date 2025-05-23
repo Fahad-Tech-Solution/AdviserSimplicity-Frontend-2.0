@@ -1377,6 +1377,118 @@ export const content = {
       icon: "FaGift",
       stepNumber: 4,
       condition: (CRObject) => true, // Always true, as this step is always needed.
+      reportsArray: {
+        cashFlow: [
+          {
+            parent: "Total Inflows",
+            children: [
+              "Rental Income",
+              "Investment Income",
+              "Interest Income ",
+              "Other ",
+              "Super Rollovers Transferred in",
+              "Contributions",
+              "Investment Redemptions",
+              "Loan Additions",
+              "Total Inflows",
+            ],
+          },
+          {
+            parent: "Total Outflows",
+            children: [
+              "Property Expenses",
+              "Loan Repayments (Property Loans)",
+              "Loan Repayments (Investment Loan)",
+              "Selling Cost on Sale of Properties",
+              "Additional Purchases of Investments",
+              "Insurance Premiums",
+              "Accounting & Auditing",
+              "Adviser Service Fees ",
+              "Tax ",
+              "Pensions ",
+              "Lumpsum Super & Pension Withdrawals",
+              "Total Outflows",
+            ],
+          },
+          {
+            parent: "Surplus/Deficit",
+            children: [],
+          },
+        ],
+        Tax: [
+          {
+            parent: "Total Assessable Fund Income",
+            children: [
+              "Net Rental Income",
+              "Investment Income",
+              "Interest Income ",
+              "Concessional Contributions",
+              "Other ",
+              "Investment Income Received",
+              "Capital Gains ",
+              "Franking Credits",
+              "Total Assessable Fund Income",
+            ],
+          },
+          {
+            parent: "Total Deductions",
+            children: [
+              "Rental Expenses",
+              "Insurance Premiums",
+              "Interest on Property Loans",
+              "Loan interest",
+              "Accounting and Auditing Fees",
+              "ATO Levy",
+              "Adviser Service Fees ",
+              "Total Deductions",
+            ],
+          },
+          {
+            parent: "Total Taxable income",
+            children: [],
+          },
+        ],
+        "Balance Sheets": [
+          {
+            parent: "Total Assets",
+            children: [
+              "Property Value",
+              "Share Portfolo",
+              "Managed Funds",
+              "Other",
+              "Term Deposit",
+              "Cash at Bank",
+              "Total Assets",
+            ],
+          },
+          {
+            parent: "Total Liabilities",
+            children: [
+              "Property Loans",
+              "Investment Loans",
+              "Total Liabilities",
+            ],
+          },
+          {
+            parent: "Total Net Asset",
+            children: [],
+          },
+          {
+            parent: "Total Member Balance",
+            children: [
+              "{{client}}'s Accumulation Balance",
+              "{{partner}}'s Accumulation Balance",
+              "{{client}}'s Pension Balance",
+              "{{partner}}'s Pension Balance",
+              "Total Member Balance",
+            ],
+          },
+          {
+            parent: "Difference",
+            children: [],
+          },
+        ],
+      },
     },
     {
       subTitle: "Investment Trust",

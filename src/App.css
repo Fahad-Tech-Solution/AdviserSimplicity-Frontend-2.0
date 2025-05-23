@@ -1855,3 +1855,11 @@ label {
 .funnel-container .CardActive .text-green {
   color: white !important;
 }
+
+.info-icon {
+  cursor: pointer !important;
+  color: #36b446 !important;
+  &&:is(:hover, :focus, :active) {
+    color: #265527 !important;
+  }
+}

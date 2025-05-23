@@ -11,15 +11,14 @@ import AntTableDynamicReportTable from "../../../Components/Assets/Table/AntTabl
 import { Button, Dropdown, Menu, Space, Tooltip } from "antd";
 import { FaAngleDown } from "react-icons/fa";
 
-const FamilyTrustReport = ({
+const SMSFReport = ({
   showFilters,
   setShowFilters,
-  FullFamilyTrustObj,
+  FullSMSFObj,
   values,
   setFieldValue,
   handleChange,
 }) => {
-
   const [currentYear] = useState(new Date().getFullYear());
   const [columns, setColumns] = useState(
     generateReportColumns({
@@ -80,7 +79,7 @@ const FamilyTrustReport = ({
           ),
         },
         {
-          key: "Profit and Loss",
+          key: "Tax",
           label: (
             <div
               style={{
@@ -90,7 +89,7 @@ const FamilyTrustReport = ({
                 marginLeft: 13,
               }}
             >
-              Profit and Loss
+              Tax
             </div>
           ),
         },
@@ -110,6 +109,36 @@ const FamilyTrustReport = ({
           ),
         },
         {
+          key: "Accumilation Account",
+          label: (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                marginLeft: 13,
+              }}
+            >
+              Accumilation Account
+            </div>
+          ),
+        },
+        {
+          key: "Pension Account",
+          label: (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                marginLeft: 13,
+              }}
+            >
+              Pension Account
+            </div>
+          ),
+        },
+        {
           key: "4",
           label: "Investment",
           popupOffset: [10, 0],
@@ -124,11 +153,11 @@ const FamilyTrustReport = ({
         },
         {
           key: "5",
-          label: "Trust Property",
+          label: "SMSF Property",
           popupOffset: [10, 0], // 👈 horizontal space between parent and submenu
-          children: Array.from({ length: 10 }, (_, i) => ({
-            key: `Trust Property ${i + 1}`,
-            label: `Trust Property ${i + 1}`,
+          children: Array.from({ length: 5 }, (_, i) => ({
+            key: `SMSF Property ${i + 1}`,
+            label: `SMSF Property ${i + 1}`,
           })),
         },
       ]}
@@ -172,66 +201,65 @@ const FamilyTrustReport = ({
 
   const categoryTables = {
     Cashflow: {
-      data: FullFamilyTrustObj?.["Cashflow"] || [],
+      data: FullSMSFObj?.["Cashflow"] || [],
       title: "Cashflow",
       highlight: ["Total Inflows", "Total Outflows", "Surplus/deficit"],
     },
-    "Profit and Loss": {
-      data: FullFamilyTrustObj?.["Profit and Loss"] || [],
-      title: "Profit and Loss",
+    Tax: {
+      data: FullSMSFObj?.["Tax"] || [],
+      title: "Tax",
       highlight: [
         "Investment Income Received",
+        "Total Assessable Fund Income",
         "Total Deductions",
-        "Net Income",
-        "Total Trust Net Income",
-        "Actual Trust Distribution",
+        "Total Taxable income",
       ],
     },
     "Balance Sheets": {
-      data: FullFamilyTrustObj?.["Balance Sheets"] || [],
+      data: FullSMSFObj?.["Balance Sheets"] || [],
       title: "Balance Sheets",
       highlight: [
         "Total Assets",
         "Total Liabilities",
-        "Total Net Trust Assets",
-        "Total Beneficay Loans",
+        "Total Net Asset",
+        "Total Member Balance",
         "Difference",
       ],
     },
     "Direct Shares": {
-      data: FullFamilyTrustObj?.["Direct Shares"] || [],
+      data: FullSMSFObj?.["Direct Shares"] || [],
       title: "Direct Shares",
       highlight: ["Value at Year End"],
     },
     "Managed Funds": {
-      data: FullFamilyTrustObj?.["Managed Funds"] || [],
+      data: FullSMSFObj?.["Managed Funds"] || [],
       title: "Managed Funds",
       highlight: ["Value at Year End"],
     },
     Other: {
-      data: FullFamilyTrustObj?.["Other"] || [],
+      data: FullSMSFObj?.["Other"] || [],
       title: "Other",
       highlight: ["Value at Year End"],
     },
     Cash: {
-      data: FullFamilyTrustObj?.["Cash"] || [],
+      data: FullSMSFObj?.["Cash"] || [],
       title: "Cash",
       highlight: ["Value at Year End"],
     },
     "Term Deposits": {
-      data: FullFamilyTrustObj?.["Term Deposits"] || [],
+      data: FullSMSFObj?.["Term Deposits"] || [],
       title: "Term Deposits",
       highlight: ["Value at Year End"],
     },
     "Investment Loans": {
-      data: FullFamilyTrustObj?.["Investment Loans"] || [],
+      data: FullSMSFObj?.["Investment Loans"] || [],
       title: "Investment Loans",
       highlight: ["Value at Year End"],
     },
     ...Array.from({ length: 10 }).reduce((acc, _, i) => {
       const label = `Trust Property ${i + 1}`;
       acc[label] = {
-        data: FullFamilyTrustObj?.[label] || [],
+        data: FullSMSFObj?.[label] || [],
         title: label,
         highlight: [
           "Total Expenses",
@@ -246,27 +274,27 @@ const FamilyTrustReport = ({
 
   const categoryPercentTables = {
     "Direct Shares": {
-      data: FullFamilyTrustObj?.["Direct Shares Percent"] || [],
+      data: FullSMSFObj?.["Direct Shares Percent"] || [],
       title: "Direct Shares",
       highlight: ["Value at Year End"],
     },
     "Managed Funds": {
-      data: FullFamilyTrustObj?.["Managed Funds Percent"] || [],
+      data: FullSMSFObj?.["Managed Funds Percent"] || [],
       title: "Managed Funds",
       highlight: ["Value at Year End"],
     },
     Other: {
-      data: FullFamilyTrustObj?.["Other Percent"] || [],
+      data: FullSMSFObj?.["Other Percent"] || [],
       title: "Other",
       highlight: ["Value at Year End"],
     },
     Cash: {
-      data: FullFamilyTrustObj?.["Cash Percent"] || [],
+      data: FullSMSFObj?.["Cash Percent"] || [],
       title: "Cash",
       highlight: ["Value at Year End"],
     },
     "Term Deposits": {
-      data: FullFamilyTrustObj?.["Term Deposits Percent"] || [],
+      data: FullSMSFObj?.["Term Deposits Percent"] || [],
       title: "Term Deposits",
       highlight: ["Value at Year End"],
     },
@@ -535,4 +563,4 @@ const FamilyTrustReport = ({
   );
 };
 
-export default FamilyTrustReport;
+export default SMSFReport;

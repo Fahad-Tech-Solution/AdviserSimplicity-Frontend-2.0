@@ -1,5 +1,6 @@
 import { notification, Tooltip } from "antd";
 import axios from "axios";
+import { FaInfoCircle } from "react-icons/fa";
 
 let GetAxios = async (Api) => {
   console.log("Get api Chali");
@@ -409,8 +410,11 @@ const generateReportColumns = ({
   endYear = 6,
   currentYear = new Date().getFullYear(),
   withExisting = false,
-  imageMap = {}, // <-- image mapping by `type`
+  imageMap = {},
   fixedTypeLabel = "type",
+  showInfoIcon = false, // <-- NEW FLAG
+  onInfoClick = () => {}, // <-- NEW FUNCTION
+  onInfoIconsArray = [],
 }) => {
   const columns = [
     {
@@ -424,14 +428,20 @@ const generateReportColumns = ({
       key: fixedTypeLabel,
       width: 280,
       fixed: "left",
-      render: (text, row) => {
+      render: (text, row, index) => {
         if (row.isHeader) return { props: { colSpan: 0 } };
 
         const isParentRow = row?.children && Array.isArray(row.children);
-        const icon = imageMap?.[text];
+        const icon = imageMap?.[text] || "";
 
         return (
-          <Tooltip title={text}>
+          <Tooltip
+            title={
+              onInfoIconsArray.includes(text)
+                ? "Click on i button to reveal investment details"
+                : text
+            }
+          >
             <div
               style={{
                 fontWeight: isParentRow ? "bold" : "normal",
@@ -444,12 +454,26 @@ const generateReportColumns = ({
                 fontFamily: '"Inter", sans-serif',
               }}
             >
+              {/* Optional Image Icon */}
               {!isParentRow && icon && (
                 <div style={{ width: "25px" }}>
                   <img src={icon} alt="icon" width={20} />
                 </div>
               )}
-              {text}
+
+              {/* Text */}
+              <span>{text}</span>
+
+              {/* Info Icon for Parent Rows */}
+              {showInfoIcon &&
+                isParentRow &&
+                onInfoIconsArray.includes(text) && (
+                  <FaInfoCircle
+                    className="info-icon"
+                    onClick={() => onInfoClick(row, index)}
+                    title="View Details"
+                  />
+                )}
             </div>
           </Tooltip>
         );
@@ -612,8 +636,12 @@ const updateCardBySingleEntry = ({
   matchType,
 }) => {
   const entry = DataSource.find((item) => item.type === matchType);
-
-  const rawValue = entry?.[`year${selectedYearIndex}`] || "$0";
+  const rawValue =
+    entry?.[
+      selectedYearIndex == "existing"
+        ? selectedYearIndex
+        : `year${selectedYearIndex}`
+    ] || "$0";
 
   updateState((previousList) =>
     previousList.map((card) =>

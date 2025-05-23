@@ -53,7 +53,7 @@ const AssetsAndLiabilities = () => {
     },
     { title: "Managed Funds", amount: "$0", icon: ManagedFundsSVG },
     { title: "Other Investments", amount: "$0", icon: OtherInvestmentsSVG },
-    { title: "Cash", amount: "$14,800", icon: CashSVG },
+    { title: "Cash ", amount: "$14,800", icon: CashSVG },
     { title: "Term Deposits", amount: "$78,123", icon: TermDepositsSVG },
     { title: "Insurance Bonds", amount: "$0", icon: InsuranceBondsSVG },
     {
@@ -99,7 +99,6 @@ const AssetsAndLiabilities = () => {
 
       // Debug log safely
       const assetSection3 = reportSections.asset?.[3]?.children;
-      console.log("Asset Section [3] Children:", assetSection3 || "No Data");
 
       const createCardConfig = (title, index, updateState) => ({
         selectedYearIndex: yearSelected,
@@ -193,6 +192,7 @@ const AssetsAndLiabilities = () => {
                 }}
               >
                 <option value={""}>Select</option>
+                <option value={"existing"}>Existing</option>
                 {Array.from({ length: 30 }).map((_, index) => {
                   return <option value={index + 1}>{index + 1}</option>;
                 })}
