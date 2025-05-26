@@ -81,27 +81,6 @@ export const content = {
       route: "/FinancialInvestments",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
-    // {
-    //     subTitle: 'Super and Retirement',
-    //     statusStep: 40,
-    //     icon: 'RiCoinsFill',
-    //     route: '/SuperAndRetirement',
-    //     condition: (CRObject) => true // Always true, as this step is always needed.
-    // },
-    // {
-    //     subTitle: 'Property',
-    //     statusStep: 48,
-    //     icon: 'FaKey',
-    //     route: '/Lifestyle',
-    //     condition: (CRObject) => true // Always true, as this step is always needed.
-    // },
-    // {
-    //     subTitle: 'Investment',
-    //     statusStep: 56,
-    //     icon: 'FaKey',
-    //     route: '/Investment',
-    //     condition: (CRObject) => CRObject.investmentPropertyTab === "Yes"
-    // },
     {
       subTitle: "Estate Planning & Professional Advisers",
       statusStep: 40,
@@ -745,7 +724,7 @@ export const content = {
               "Income Protection Insurance",
               "Annuity Deductible Amount",
               "Lifetime Pension ",
-              "Tax Free Pension Amount",
+              "Tax Free Pension amount",
               "Total Allowable Deductions",
             ],
           },
@@ -1488,6 +1467,188 @@ export const content = {
             children: [],
           },
         ],
+        "Accumilation Account": [
+          {
+            parent: "Non Concessional Contributions Cap",
+            children: [],
+          },
+          {
+            parent: "Concessional Contributions Cap",
+            children: [],
+          },
+          {
+            parent: "Opening Balance",
+            children: [
+              "Opening Balance",
+              "Rollovers-transfer in",
+              "Employer Contributions",
+              "Salary Sacrifice/Personal Deductible",
+              "Spouse Splitting",
+              "Non Concessional Contributions",
+              "Government Co-Contribution/Low income ",
+              "Share of Profit",
+            ],
+          },
+          {
+            parent: "Closing Member Balance",
+            children: [
+              "Insurance",
+              "Tax payable",
+              "Other Lumpsum Withdrawals",
+              "Closing Member Balance",
+              "Tax-free Component",
+              "Taxable Component",
+            ],
+          },
+        ],
+        "Pension Account": [
+          {
+            parent: "Opening Balance",
+            children: ["Opening Balance", "Share of Profit"],
+          },
+          {
+            parent: "Closing Member Balance",
+            children: [
+              "Tax payable",
+              "Lumpsum Commutations",
+              "Pension Payments",
+              "Closing Member Balance",
+              "Tax-free Component",
+              "Taxable Component",
+              "Centrelink Deductible Amount",
+              "Tax Free Pension Amount",
+            ],
+          },
+        ],
+        "Direct Shares": [
+          {
+            parent: "Value at Year End",
+            children: [
+              "Opening Balance",
+              "Regular Additions",
+              "Lumpsum Additions",
+              "Lumpsum Withdrawals",
+              "Income Reinvested",
+              "Growth",
+              "Value at Year End",
+              "Cost base",
+              "Unrealised Capital Gain/Loss",
+              "Actual Realised CG ",
+            ],
+          },
+        ],
+        "Managed Funds": [
+          {
+            parent: "Value at Year End",
+            children: [
+              "Opening Balance",
+              "Regular Additions",
+              "Lumpsum Additions",
+              "Lumpsum Withdrawals",
+              "Income Reinvested",
+              "Managment Fees",
+              "Growth",
+              "Value at Year End",
+              "Cost base",
+              "Unrealised Capital Gain/Loss",
+              "Actual Realised CG ",
+            ],
+          },
+        ],
+        Other: [
+          {
+            parent: "Value at Year End",
+            children: [
+              "Opening Balance",
+              "Regular Additions",
+              "Lumpsum Additions",
+              "Lumpsum Withdrawals",
+              "Income Reinvested",
+              "Managment Fees",
+              "Growth",
+              "Value at Year End",
+              "Cost base",
+              "Unrealised Capital Gain/Loss",
+              "Actual Realised CG ",
+            ],
+          },
+        ],
+        Cash: [
+          {
+            parent: "Value at Year End",
+            children: [
+              "Opening Balance",
+              "Surplus/Deficit From Cashflow",
+              "Value at Year End",
+              "Income Reinvested",
+            ],
+          },
+        ],
+        "Term Deposits": [
+          {
+            parent: "Value at Year End",
+            children: [
+              "Opening Balance",
+              "Lumpsum Additions",
+              "Lumpsum Withdrawals",
+              "Income Reinvested",
+              "Value at Year End",
+              "Income Reinvested",
+              "Income",
+            ],
+          },
+        ],
+        "Investment Loans": [
+          {
+            parent: "Year End Loan Balance",
+            children: [
+              "Opening Balance",
+              "Principal Repayments",
+              "Interest Repayments",
+              "Loan Additions",
+              "Year End Loan Balance",
+              "Deductible Interest",
+            ],
+          },
+        ],
+        "SMSF Property": [
+          {
+            parent: "Total Expenses",
+            children: [
+              "Rental Income",
+              "Agent Commisions",
+              "Interest Expenses",
+              "Annual Expenses",
+              "Total Expenses",
+            ],
+          },
+          {
+            parent: "Net Rental Income/Loss",
+            children: [],
+          },
+          {
+            parent: "Closing Value",
+            children: [
+              "Opening Value",
+              "Growth",
+              "Closing Value",
+              "Costbase",
+              "Unrealised Capital Gain/Loss at Year End",
+              "Realised Capital Gain/Loss",
+            ],
+          },
+          {
+            parent: "Year End Loan Balance",
+            children: [
+              "Opening Balance",
+              "Principal Repayments",
+              "Interest Repayments",
+              "Year End Loan Balance",
+              "Deductible Interest",
+              "Net proceeds after Sale",
+            ],
+          },
+        ],
       },
     },
     {
@@ -1616,7 +1777,7 @@ export const content = {
               "Value at Year End",
               "Cost base",
               "Unrealised Capital Gain/Loss",
-              "Actual Realised CG",
+              "Actual Realised CG ",
             ],
           },
         ],
@@ -1634,7 +1795,7 @@ export const content = {
               "Value at Year End",
               "Cost base",
               "Unrealised Capital Gain/Loss",
-              "Actual Realised CG",
+              "Actual Realised CG ",
             ],
           },
         ],

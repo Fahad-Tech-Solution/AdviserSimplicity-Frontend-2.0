@@ -655,6 +655,19 @@ const updateCardBySingleEntry = ({
   );
 };
 
+// Deep clone rows and assign unique keys
+const deepCloneWithKeys = (rows, parentTitle) =>
+  rows?.map((row, rowIndex) => ({
+    ...row,
+    key: `${parentTitle}_row_${rowIndex}`,
+    children: row.children
+      ? row.children.map((child, childIndex) => ({
+          ...child,
+          key: `${parentTitle}_row_${rowIndex}_child_${childIndex}`,
+        }))
+      : undefined,
+  })) || [];
+
 export {
   DeleteAxios,
   GetAxios,
@@ -687,4 +700,5 @@ export {
   percentTransforme,
   updateCardByTitle,
   updateCardBySingleEntry,
+  deepCloneWithKeys,
 };

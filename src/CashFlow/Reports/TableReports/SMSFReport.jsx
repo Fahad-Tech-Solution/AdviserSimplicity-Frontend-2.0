@@ -162,7 +162,7 @@ const SMSFReport = ({
         },
       ]}
       onClick={({ key }) => {
-        console.log("Selected key:", key);
+        // console.log("Selected key:", key);
         setFieldValue("category", key);
         if (key === "Balance Sheets") {
           setColumns(
@@ -226,6 +226,16 @@ const SMSFReport = ({
         "Difference",
       ],
     },
+    "Accumilation Account": {
+      data: FullSMSFObj?.["Accumilation Account"] || [],
+      title: "Accumilation Account",
+      highlight: ["Closing Member Balance"],
+    },
+    "Pension Account": {
+      data: FullSMSFObj?.["Pension Account"] || [],
+      title: "Pension Account",
+      highlight: ["Closing Member Balance"],
+    },
     "Direct Shares": {
       data: FullSMSFObj?.["Direct Shares"] || [],
       title: "Direct Shares",
@@ -254,10 +264,10 @@ const SMSFReport = ({
     "Investment Loans": {
       data: FullSMSFObj?.["Investment Loans"] || [],
       title: "Investment Loans",
-      highlight: ["Value at Year End"],
+      highlight: ["Year End Loan Balance"],
     },
-    ...Array.from({ length: 10 }).reduce((acc, _, i) => {
-      const label = `Trust Property ${i + 1}`;
+    ...Array.from({ length: 5 }).reduce((acc, _, i) => {
+      const label = `SMSF Property ${i + 1}`;
       acc[label] = {
         data: FullSMSFObj?.[label] || [],
         title: label,
@@ -473,7 +483,7 @@ const SMSFReport = ({
   return (
     <>
       <div className="d-flex justify-content-between align-items-center">
-        <h2 className="text-green mt-3 fw-bold">Family Investment Trust</h2>
+        <h2 className="text-green mt-3 fw-bold">SMSF</h2>
         <span
           role="button"
           className="text-green"

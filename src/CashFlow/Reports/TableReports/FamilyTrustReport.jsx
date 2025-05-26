@@ -19,7 +19,6 @@ const FamilyTrustReport = ({
   setFieldValue,
   handleChange,
 }) => {
-
   const [currentYear] = useState(new Date().getFullYear());
   const [columns, setColumns] = useState(
     generateReportColumns({
@@ -226,7 +225,7 @@ const FamilyTrustReport = ({
     "Investment Loans": {
       data: FullFamilyTrustObj?.["Investment Loans"] || [],
       title: "Investment Loans",
-      highlight: ["Value at Year End"],
+      highlight: ["Year End Loan Balance"],
     },
     ...Array.from({ length: 10 }).reduce((acc, _, i) => {
       const label = `Trust Property ${i + 1}`;

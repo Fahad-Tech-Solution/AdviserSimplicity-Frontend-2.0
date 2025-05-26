@@ -6,6 +6,7 @@ import CashFlowReport from "./CashFlowReport";
 import {
   buildReportTree,
   changeHeadNames,
+  deepCloneWithKeys,
   openNotificationSuccess,
   percentTransforme,
   PostAxios,
@@ -303,8 +304,8 @@ const Reports = () => {
       ];
 
       const lifestyleAssetsArray = [
-        cashflowSections[0][1],
         cashflowSections[0][0],
+        cashflowSections[0][1],
         ...[
           "home",
           "personalAsset",
@@ -412,23 +413,51 @@ const Reports = () => {
       const FullFinansialInvestmentObject = {};
 
       // Loop through each investment type
-      investmentMeta.forEach(({ key, title, keyMapping }) => {
+      investmentMeta.forEach(({ key, title, keyMapping }, index) => {
         // Main investment report
         FullFinansialInvestmentObject[title] = {
-          client: changeHeadNames(
-            getReport(REPORTS_Client_Investments, key, keyMapping, "2"),
-            ["Value at Year End "]
+          client: deepCloneWithKeys(
+            [
+              cashflowSections?.[0]?.[0] || {}, // insert at 0
+              ...changeHeadNames(
+                getReport(REPORTS_Client_Investments, key, keyMapping, "2"),
+                ["Value at Year End "]
+              ),
+            ],
+            title + index
           ),
           partner: isMarried
-            ? changeHeadNames(
-                getReport(REPORTS_Partner_Investments, key, keyMapping, "2"),
-                ["Value at Year End "]
+            ? deepCloneWithKeys(
+                [
+                  cashflowSections?.[0]?.[1] || {},
+                  ...changeHeadNames(
+                    getReport(
+                      REPORTS_Partner_Investments,
+                      key,
+                      keyMapping,
+                      "2"
+                    ),
+                    ["Value at Year End "]
+                  ),
+                ],
+                title + index
               )
             : [],
           joint: isMarried
-            ? changeHeadNames(
-                getReport(REPORTS_Joint_Investments, key, keyMapping, "2"),
-                ["Value at Year End "]
+            ? deepCloneWithKeys(
+                [
+                  ...(cashflowSections?.[0]?.[0]
+                    ? [cashflowSections[0][0]]
+                    : []),
+                  ...(cashflowSections?.[0]?.[1]
+                    ? [cashflowSections[0][1]]
+                    : []),
+                  ...changeHeadNames(
+                    getReport(REPORTS_Joint_Investments, key, keyMapping, "2"),
+                    ["Value at Year End "]
+                  ),
+                ],
+                title + index
               )
             : [],
         };
@@ -462,20 +491,34 @@ const Reports = () => {
         title: `Property ${index + 1}`,
       }));
 
-      directProperty.forEach(({ key, title }) => {
+      directProperty.forEach(({ key, title }, index) => {
         FullFinansialInvestmentObject[title] = {
-          client: changeHeadNames(
-            getReport(REPORTS_Direct_Property, key, "Property"),
-            ["Total Expenses ", ""]
+          client: deepCloneWithKeys(
+            [
+              ...(cashflowSections?.[0]?.[0] ? [cashflowSections[0][0]] : []),
+              ...(cashflowSections?.[0]?.[1] ? [cashflowSections[0][1]] : []),
+              ...changeHeadNames(
+                getReport(REPORTS_Direct_Property, key, "Property"),
+                ["Total Expenses ", ""]
+              ),
+            ],
+            title + index
           ),
         };
       });
 
-      directProperty.forEach(({ key, title }) => {
+      directProperty.forEach(({ key, title }, index) => {
         FullFinansialInvestmentObject["Position" + title] = {
-          client: changeHeadNames(
-            getReport(REPORTS_Direct_Property, key, "PositionProperty"),
-            ["Property Value", "Loan Balance"]
+          client: deepCloneWithKeys(
+            [
+              ...(cashflowSections?.[0]?.[0] ? [cashflowSections[0][0]] : []),
+              ...(cashflowSections?.[0]?.[1] ? [cashflowSections[0][1]] : []),
+              ...changeHeadNames(
+                getReport(REPORTS_Direct_Property, key, "PositionProperty"),
+                ["Property Value", "Loan Balance"]
+              ),
+            ],
+            "Position" + title + index
           ),
         };
       });
@@ -529,19 +572,6 @@ const Reports = () => {
 
       const InvestmentMeta = {};
 
-      // Deep clone rows and assign unique keys
-      const deepCloneWithKeys = (rows, parentTitle) =>
-        rows?.map((row, rowIndex) => ({
-          ...row,
-          key: `${parentTitle}_row_${rowIndex}`,
-          children: row.children
-            ? row.children.map((child, childIndex) => ({
-                ...child,
-                key: `${parentTitle}_row_${rowIndex}_child_${childIndex}`,
-              }))
-            : undefined,
-        })) || [];
-
       // Step 1: Collect data into InvestmentMeta
       InvestmentMetaConfig.forEach(
         ({ groupKey, key, title, keyMapping, objNo, Headers }) => {
@@ -555,10 +585,13 @@ const Reports = () => {
 
           // Loop over both client and partner
           sourceTypes.forEach(({ label, report }) => {
-            const mainData = changeHeadNames(
-              getReport(report, key, keyMapping, objNo),
-              Headers
-            );
+            const mainData = [
+              cashflowSections[0][0],
+              ...changeHeadNames(
+                getReport(report, key, keyMapping, objNo),
+                Headers
+              ),
+            ];
 
             InvestmentMeta[groupKey][title][label] = deepCloneWithKeys(
               mainData,
@@ -738,96 +771,123 @@ const Reports = () => {
           Headers: ["Assets", "Liabilities", "", "Beneficiary Loans", ""],
           existingYear: true,
         },
-        // {
-        //   key: "directShares2",
-        //   title: "Direct Shares",
-        //   keyMapping: "Direct Shares",
-        //   Headers: ["Value at Year End "],
-        //   keyAddition: "",
-        // },
-        // {
-        //   key: "directShares1",
-        //   title: "Direct Shares Percent",
-        //   keyMapping: "Direct Shares",
-        //   Headers: [],
-        //   keyAddition: "",
-        //   Percent: true,
-        // },
-        // {
-        //   key: "managedFunds2",
-        //   title: "Managed Funds",
-        //   keyMapping: "Managed Funds",
-        //   Headers: ["Value at Year End "],
-        //   keyAddition: "",
-        // },
-        // {
-        //   key: "managedFunds1",
-        //   title: "Managed Funds Percent",
-        //   keyMapping: "Managed Funds",
-        //   Headers: [],
-        //   keyAddition: "",
-        //   Percent: true,
-        // },
-        // {
-        //   key: "other2",
-        //   title: "Other",
-        //   keyMapping: "Other",
-        //   Headers: ["Value at Year End "],
-        //   keyAddition: "",
-        // },
-        // {
-        //   key: "other1",
-        //   title: "Other Percent",
-        //   keyMapping: "Other",
-        //   Headers: [],
-        //   keyAddition: "",
-        //   Percent: true,
-        // },
-        // {
-        //   key: "cash2",
-        //   title: "Cash",
-        //   keyMapping: "Cash",
-        //   Headers: ["Value at Year End "],
-        //   keyAddition: "",
-        // },
-        // {
-        //   key: "cash1",
-        //   title: "Cash Percent",
-        //   keyMapping: "Cash",
-        //   Headers: [],
-        //   keyAddition: "",
-        //   Percent: true,
-        // },
-        // {
-        //   key: "termDeposit2",
-        //   title: "Term Deposits",
-        //   keyMapping: "Term Deposits",
-        //   Headers: ["Value at Year End "],
-        //   keyAddition: "",
-        // },
-        // {
-        //   key: "termDeposit1",
-        //   title: "Term Deposits Percent",
-        //   keyMapping: "Term Deposits",
-        //   Headers: [],
-        //   keyAddition: "",
-        //   Percent: true,
-        // },
-        // {
-        //   key: "investmentLoans",
-        //   title: "Investment Loans",
-        //   keyMapping: "Investment Loans",
-        //   Headers: ["Value at Year End "],
-        //   keyAddition: "",
-        // },
-
-        // ...Array.from({ length: 10 }).map((_, index) => ({
-        //   key: "Property" + (index + 1),
-        //   title: "Trust Property " + (index + 1),
-        //   keyMapping: "Trust Property",
-        //   Headers: ["Less Expenses", "", "Equity & Debt Position", "Loan"],
-        //   keyAddition: "",
-        // })),
+        {
+          key: "clientAccountBalance",
+          title: "client Accumilation Account",
+          keyMapping: "Accumilation Account",
+          Headers: ["", "", "Inflow", "Outflow"],
+          keyAddition: "",
+        },
+        {
+          key: "partnerAccountBalance",
+          title: "partner Accumilation Account",
+          keyMapping: "Accumilation Account",
+          Headers: ["", "", "Inflow", "Outflow"],
+          keyAddition: "",
+        },
+        {
+          key: "clientPensionBalance",
+          title: "client Pension Account",
+          keyMapping: "Pension Account",
+          Headers: ["Inflow", "Outflow"],
+          keyAddition: "",
+        },
+        {
+          key: "partnerPensionBalance",
+          title: "partner Pension Account",
+          keyMapping: "Pension Account",
+          Headers: ["Inflow", "Outflow"],
+          keyAddition: "",
+        },
+        {
+          key: "directShares2",
+          title: "Direct Shares",
+          keyMapping: "Direct Shares",
+          Headers: ["Value at Year End "],
+          keyAddition: "",
+        },
+        {
+          key: "directShares1",
+          title: "Direct Shares Percent",
+          keyMapping: "Direct Shares",
+          Headers: [],
+          keyAddition: "",
+          Percent: true,
+        },
+        {
+          key: "managedFunds2",
+          title: "Managed Funds",
+          keyMapping: "Managed Funds",
+          Headers: ["Value at Year End "],
+          keyAddition: "",
+        },
+        {
+          key: "managedFunds1",
+          title: "Managed Funds Percent",
+          keyMapping: "Managed Funds",
+          Headers: [],
+          keyAddition: "",
+          Percent: true,
+        },
+        {
+          key: "other2",
+          title: "Other",
+          keyMapping: "Other",
+          Headers: ["Value at Year End "],
+          keyAddition: "",
+        },
+        {
+          key: "other1",
+          title: "Other Percent",
+          keyMapping: "Other",
+          Headers: [],
+          keyAddition: "",
+          Percent: true,
+        },
+        {
+          key: "cash2",
+          title: "Cash",
+          keyMapping: "Cash",
+          Headers: ["Value at Year End "],
+          keyAddition: "",
+        },
+        {
+          key: "cash1",
+          title: "Cash Percent",
+          keyMapping: "Cash",
+          Headers: [],
+          keyAddition: "",
+          Percent: true,
+        },
+        {
+          key: "termDeposit2",
+          title: "Term Deposits",
+          keyMapping: "Term Deposits",
+          Headers: ["Value at Year End "],
+          keyAddition: "",
+        },
+        {
+          key: "termDeposit1",
+          title: "Term Deposits Percent",
+          keyMapping: "Term Deposits",
+          Headers: [],
+          keyAddition: "",
+          Percent: true,
+        },
+        {
+          key: "investmentLoans",
+          title: "Investment Loans",
+          keyMapping: "Investment Loans",
+          Headers: ["Year End Loan Balance "],
+          keyAddition: "",
+        },
+        ...Array.from({ length: 5 }).map((_, index) => ({
+          key: "Property" + (index + 1),
+          title: "SMSF Property " + (index + 1),
+          keyMapping: "SMSF Property",
+          Headers: ["Less Expenses", "", "Equity & Debt Position", "Loan"],
+          keyAddition: "",
+        })),
       ];
 
       const FullSMSFObj = {};
@@ -874,6 +934,38 @@ const Reports = () => {
             );
           }
         }
+      );
+
+      FullSMSFObj["Accumilation Account"] = deepCloneWithKeys(
+        [
+          {
+            key: "client 1",
+            type: RenderName("client") + " Accumilation Account",
+            children: FullSMSFObj["client Accumilation Account"],
+          },
+          {
+            key: "partner 1",
+            type: RenderName("partner") + " Accumilation Account",
+            children: FullSMSFObj["partner Accumilation Account"],
+          },
+        ],
+        "Accumilation Account"
+      );
+
+      FullSMSFObj["Pension Account"] = deepCloneWithKeys(
+        [
+          {
+            key: "client 1",
+            type: RenderName("client") + " Pension Account",
+            children: FullSMSFObj["client Pension Account"],
+          },
+          {
+            key: "partner 1",
+            type: RenderName("partner") + " Pension Account",
+            children: FullSMSFObj["partner Pension Account"],
+          },
+        ],
+        "Pension Account"
       );
 
       // Family Trust
@@ -1043,7 +1135,7 @@ const Reports = () => {
         }
       );
 
-      console.log(FullSMSFObj, "FullSMSFObj");
+      // console.log(FullSMSFObj, "FullSMSFObj");
 
       setReportSections({
         fullTableCashFlow,
