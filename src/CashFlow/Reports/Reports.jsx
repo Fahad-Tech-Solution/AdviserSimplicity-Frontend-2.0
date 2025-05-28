@@ -56,10 +56,7 @@ const Reports = () => {
         REPORTS_SMSF_Assets_and_Income,
       } = response;
 
-      console.log(
-        response.REPORTS_SMSF_Assets_and_Income,
-        "SMSF Assets and Income"
-      );
+      console.log(response.REPORTS_Tax_Summary, "REPORTS_Tax_Summary");
 
       const Age = processDataGeneric(
         REPORTS_Cashflow,
@@ -165,7 +162,7 @@ const Reports = () => {
           key: "assetsTestPensionAllowance",
           apiKey: "assetsTestPensionAllowance",
           sessionKey: "centerLinkAllowanceDataSet",
-          label: "Assets Test Pension Allowance",
+          label: "Assets Test-Pension/Allowance",
         },
         {
           key: "incomeTestPensionsAllowances",
@@ -195,13 +192,17 @@ const Reports = () => {
           key: "clientPayment",
           apiKey: "clientPayment",
           sessionKey: "centerLinkClientPaymnetDataSet",
-          label: "Client Payment",
+          label:
+            "Income Test- Allowances Only " + RenderName("client") + " Payment",
         },
         {
           key: "partnerPayment",
           apiKey: "partnerPayment",
           sessionKey: "centerLinkClientPaymnetDataSet",
-          label: "Partner Payment",
+          label:
+            "Income Test- Allowances Only " +
+            RenderName("partner") +
+            " Payment",
         },
         {
           key: "familyTaxBenefit",
@@ -388,7 +389,7 @@ const Reports = () => {
         keyAddition = "",
         contentblock
       ) => {
-        let contentIndex = contentblock || 2;
+        let contentIndex = contentblock ?? 2;
         return buildReportTree(
           processDataGeneric(
             source,
@@ -641,17 +642,6 @@ const Reports = () => {
           })),
         };
 
-        // Add percent data
-        // Object.entries(reports)
-        //   .filter(([k]) => k.includes("Percent"))
-        //   .forEach(([title, percentData]) => {
-        //     const finalKey = buildPercentKey(groupKey, title);
-        //     FullFinansialInvestmentObject[finalKey] = {
-        //       client: [...percentData.client],
-        //       partner: [...percentData.partner],
-        //     };
-        //   });
-
         // Add combined percent data (like main structure)
         const combinedPercentKey = `${groupKey}Percent1`;
         if (!FullFinansialInvestmentObject[combinedPercentKey]) {
@@ -881,8 +871,9 @@ const Reports = () => {
           Headers: ["Year End Loan Balance "],
           keyAddition: "",
         },
+
         ...Array.from({ length: 5 }).map((_, index) => ({
-          key: "Property" + (index + 1),
+          key: "property" + (index + 1),
           title: "SMSF Property " + (index + 1),
           keyMapping: "SMSF Property",
           Headers: ["Less Expenses", "", "Equity & Debt Position", "Loan"],
@@ -1081,7 +1072,7 @@ const Reports = () => {
         },
 
         ...Array.from({ length: 10 }).map((_, index) => ({
-          key: "Property" + (index + 1),
+          key: "property" + (index + 1),
           title: "Trust Property " + (index + 1),
           keyMapping: "Trust Property",
           Headers: ["Less Expenses", "", "Equity & Debt Position", "Loan"],
@@ -1135,7 +1126,101 @@ const Reports = () => {
         }
       );
 
-      // console.log(FullSMSFObj, "FullSMSFObj");
+      const IncomeExpensesMetaConfig = [
+        {
+          key: "inflows",
+          title: "Inflows",
+          keyMapping: "inflows",
+          Headers: ["Inflow"],
+          keyAddition: "",
+          ApiKey: REPORTS_Cashflow,
+        },
+        {
+          key: "outflows",
+          title: "Outflows",
+          keyMapping: "outFlow",
+          Headers: ["Outflows"],
+          keyAddition: "",
+          ApiKey: REPORTS_Cashflow,
+        },
+        {
+          key: "surplus",
+          title: "Surplus",
+          keyMapping: "surplus",
+          Headers: ["Surplus/deficit"],
+          keyAddition: "",
+          ApiKey: REPORTS_Cashflow,
+        },
+        {
+          key: "clientTaxPosition",
+          title: "Client's Tax",
+          keyMapping: "clientTaxPosition",
+          Headers:  [
+          "",
+          "Total Assessable income ",
+          "Total Allowable Deductions ",
+          "Total Taxable Income",
+          "Total Tax payable ",
+          "Total Rebates ",
+          "Total Tax payable ",
+        ],
+          keyAddition: "",
+          ApiKey: REPORTS_Tax_Summary,
+        },
+      ];
+
+      const FullIncomeExpensesObj = {};
+
+      IncomeExpensesMetaConfig.forEach(
+        (
+          {
+            key,
+            title,
+            keyMapping,
+            keyAddition,
+            Headers,
+            existingYear = false,
+            Percent = false,
+            ApiKey,
+          },
+          index
+        ) => {
+          if (Percent) {
+            // percent report
+            FullIncomeExpensesObj[title] = percentTransforme(ApiKey[key]);
+          } else if (existingYear) {
+            // Main investment report
+            FullIncomeExpensesObj[title] = changeHeadNames(
+              renameYearKeys(
+                getReport(ApiKey, key, keyMapping, keyAddition, 0)
+              ),
+              Headers
+            );
+          } else {
+            FullIncomeExpensesObj[title] = changeHeadNames(
+              getReport(ApiKey, key, keyMapping, keyAddition, 0),
+              Headers
+            );
+          }
+        }
+      );
+
+      FullIncomeExpensesObj["Cashflow"] = deepCloneWithKeys(
+        ["client", "partner", "Inflows", "Outflows", "Surplus"].map(
+          (item, index) => {
+            if (item === "client") {
+              return Age[0] || {};
+            } else if (item === "partner") {
+              return Age[1] || {};
+            } else {
+              return FullIncomeExpensesObj[item][0] || {};
+            }
+          }
+        ),
+        "Cashflow"
+      );
+
+      console.log(FullIncomeExpensesObj, "FullIncomeExpensesObj");
 
       setReportSections({
         fullTableCashFlow,
@@ -1149,6 +1234,7 @@ const Reports = () => {
         FullBusinessObject,
         FullFamilyTrustObj,
         FullSMSFObj,
+        FullIncomeExpensesObj,
       });
     } catch (err) {
       console.error("Report Error", err);

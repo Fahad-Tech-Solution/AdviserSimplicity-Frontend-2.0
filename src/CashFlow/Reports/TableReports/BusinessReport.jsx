@@ -201,6 +201,17 @@ const BusinessReport = ({
                 as="select"
                 name="category"
                 className="form-select inputDesignDoubleInput"
+                onChange={(e) => {
+                  handleChange(e);
+                  setFieldValue("yearFrom", 1);
+                  setFieldValue("yearTo", 6);
+                  setColumns(
+                    generateReportColumns({
+                      startYear: 1,
+                      endYear: 6,
+                    })
+                  );
+                }}
               >
                 <option value="">Select</option>
                 <option value={`Trading Company`}>Trading Company</option>

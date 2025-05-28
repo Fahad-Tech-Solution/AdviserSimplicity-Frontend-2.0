@@ -11,10 +11,10 @@ import AntTableDynamicReportTable from "../../../Components/Assets/Table/AntTabl
 import { Button, Dropdown, Menu, Space, Tooltip } from "antd";
 import { FaAngleDown } from "react-icons/fa";
 
-const SMSFReport = ({
+const IncomeExpensesReports = ({
   showFilters,
   setShowFilters,
-  FullSMSFObj,
+  FullIncomeExpensesObj,
   values,
   setFieldValue,
   handleChange,
@@ -60,258 +60,20 @@ const SMSFReport = ({
     },
   ];
 
-  const menu = (
-    <Menu
-      items={[
-        {
-          key: "Cashflow",
-          label: (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                marginLeft: 13,
-              }}
-            >
-              Cashflow
-            </div>
-          ),
-        },
-        {
-          key: "Tax",
-          label: (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                marginLeft: 13,
-              }}
-            >
-              Tax
-            </div>
-          ),
-        },
-        {
-          key: "Balance Sheets",
-          label: (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                marginLeft: 13,
-              }}
-            >
-              Balance Sheets
-            </div>
-          ),
-        },
-        {
-          key: "Accumilation Account",
-          label: (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                marginLeft: 13,
-              }}
-            >
-              Accumilation Account
-            </div>
-          ),
-        },
-        {
-          key: "Pension Account",
-          label: (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                marginLeft: 13,
-              }}
-            >
-              Pension Account
-            </div>
-          ),
-        },
-        {
-          key: "4",
-          label: "Investment",
-          popupOffset: [10, 0],
-          children: [
-            { key: "Direct Shares", label: "Direct Shares" },
-            { key: "Managed Funds", label: "Managed Funds" },
-            { key: "Other", label: "Other" },
-            { key: "Cash", label: "Cash" },
-            { key: "Term Deposits", label: "Term Deposits" },
-            { key: "Investment Loans", label: "Investment Loans" },
-          ],
-        },
-        {
-          key: "5",
-          label: "SMSF Property",
-          popupOffset: [10, 0], // 👈 horizontal space between parent and submenu
-          children: Array.from({ length: 5 }, (_, i) => ({
-            key: `SMSF Property ${i + 1}`,
-            label: `SMSF Property ${i + 1}`,
-          })),
-        },
-      ]}
-      onClick={({ key }) => {
-        // console.log("Selected key:", key);
-        setFieldValue("category", key);
-        if (key === "Balance Sheets") {
-          setColumns(
-            generateReportColumns({
-              startYear: 1,
-              endYear: 6,
-              currentYear,
-              withExisting: true,
-            })
-          );
-        } else {
-          setColumns(
-            generateReportColumns({
-              startYear: 1,
-              endYear: 6,
-            })
-          );
-        }
-
-        if (
-          [
-            "Direct Shares",
-            "Managed Funds",
-            "Other",
-            "Cash",
-            "Term Deposits",
-          ].includes(key)
-        ) {
-          setPercentTable(true);
-        } else {
-          setPercentTable(false);
-        }
-
-        setFieldValue("yearFrom", 1);
-        setFieldValue("yearTo", 6);
-      }}
-    />
-  );
-
   const categoryTables = {
     Cashflow: {
-      data: FullSMSFObj?.["Cashflow"] || [],
+      data: FullIncomeExpensesObj?.["Cashflow"] || [],
       title: "Cashflow",
       highlight: ["Total Inflows", "Total Outflows", "Surplus/deficit"],
     },
-    Tax: {
-      data: FullSMSFObj?.["Tax"] || [],
-      title: "Tax",
-      highlight: [
-        "Investment Income Received",
-        "Total Assessable Fund Income",
-        "Total Deductions",
-        "Total Taxable income",
-      ],
+    "Client's Tax": {
+      data: FullIncomeExpensesObj?.["Client's Tax"] || [],
+      title: `${RenderName("client")}'s Tax`,
+      highlight: ["Total Income", "Total Deductions", "Tax Payable"],
     },
-    "Balance Sheets": {
-      data: FullSMSFObj?.["Balance Sheets"] || [],
-      title: "Balance Sheets",
-      highlight: [
-        "Total Assets",
-        "Total Liabilities",
-        "Total Net Asset",
-        "Total Member Balance",
-        "Difference",
-      ],
-    },
-    "Accumilation Account": {
-      data: FullSMSFObj?.["Accumilation Account"] || [],
-      title: "Accumilation Account",
-      highlight: ["Closing Member Balance"],
-    },
-    "Pension Account": {
-      data: FullSMSFObj?.["Pension Account"] || [],
-      title: "Pension Account",
-      highlight: ["Closing Member Balance"],
-    },
-    "Direct Shares": {
-      data: FullSMSFObj?.["Direct Shares"] || [],
-      title: "Direct Shares",
-      highlight: ["Value at Year End"],
-    },
-    "Managed Funds": {
-      data: FullSMSFObj?.["Managed Funds"] || [],
-      title: "Managed Funds",
-      highlight: ["Value at Year End"],
-    },
-    Other: {
-      data: FullSMSFObj?.["Other"] || [],
-      title: "Other",
-      highlight: ["Value at Year End"],
-    },
-    Cash: {
-      data: FullSMSFObj?.["Cash"] || [],
-      title: "Cash",
-      highlight: ["Value at Year End"],
-    },
-    "Term Deposits": {
-      data: FullSMSFObj?.["Term Deposits"] || [],
-      title: "Term Deposits",
-      highlight: ["Value at Year End"],
-    },
-    "Investment Loans": {
-      data: FullSMSFObj?.["Investment Loans"] || [],
-      title: "Investment Loans",
-      highlight: ["Year End Loan Balance"],
-    },
-    ...Array.from({ length: 5 }).reduce((acc, _, i) => {
-      const label = `SMSF Property ${i + 1}`;
-      acc[label] = {
-        data: FullSMSFObj?.[label] || [],
-        title: label,
-        highlight: [
-          "Total Expenses",
-          "Net Rental Income/Loss",
-          "Closing Value",
-          "Year End Loan Balance",
-        ],
-      };
-      return acc;
-    }, {}),
   };
 
-  const categoryPercentTables = {
-    "Direct Shares": {
-      data: FullSMSFObj?.["Direct Shares Percent"] || [],
-      title: "Direct Shares",
-      highlight: ["Value at Year End"],
-    },
-    "Managed Funds": {
-      data: FullSMSFObj?.["Managed Funds Percent"] || [],
-      title: "Managed Funds",
-      highlight: ["Value at Year End"],
-    },
-    Other: {
-      data: FullSMSFObj?.["Other Percent"] || [],
-      title: "Other",
-      highlight: ["Value at Year End"],
-    },
-    Cash: {
-      data: FullSMSFObj?.["Cash Percent"] || [],
-      title: "Cash",
-      highlight: ["Value at Year End"],
-    },
-    "Term Deposits": {
-      data: FullSMSFObj?.["Term Deposits Percent"] || [],
-      title: "Term Deposits",
-      highlight: ["Value at Year End"],
-    },
-  };
+  const categoryPercentTables = {};
 
   const applyFilter = (values, currentInput) => {
     try {
@@ -486,7 +248,7 @@ const SMSFReport = ({
   return (
     <>
       <div className="d-flex justify-content-between align-items-center">
-        <h2 className="text-green mt-3 fw-bold">SMSF</h2>
+        <h2 className="text-green mt-3 fw-bold">Income & Expance</h2>
         <span
           role="button"
           className="text-green"
@@ -501,20 +263,35 @@ const SMSFReport = ({
           <Row className="justify-content-around align-items-center">
             <Col md={6}>
               <label htmlFor="category">Report Type:</label>
-              <Dropdown
-                overlay={menu}
-                trigger={["click"]}
-                dropdownRender={(menu) => (
-                  <div className="custom-dropdown-scope">{menu}</div>
-                )}
+              <Field
+                as="select"
+                name="category"
+                className="form-select inputDesignDoubleInput"
+                onChange={(e) => {
+                  handleChange(e);
+                  setFieldValue("yearFrom", 1);
+                  setFieldValue("yearTo", 6);
+                  setColumns(
+                    generateReportColumns({
+                      startYear: 1,
+                      endYear: 6,
+                    })
+                  );
+                }}
               >
-                <Button className="inputlikeButton">
-                  <Space style={{ width: "100%" }} justify="space-between">
-                    {values.category || "Select Report Type"}
-                    <FaAngleDown />
-                  </Space>
-                </Button>
-              </Dropdown>
+                <option value="">Select</option>
+                <option value="Cashflow">Cashflow</option>
+                <option value="Client's Tax">
+                  {RenderName("client")}'s Tax
+                </option>
+                {localStorage.getItem("UserStatus") === "Married" && (
+                  <option value="Partner's Tax">
+                    {RenderName("partner")}'s Tax
+                  </option>
+                )}
+                <option value="Centrelink">Centrelink</option>
+                <option value="Family Tax Benefits">Family Tax Benefits</option>
+              </Field>
             </Col>
             <Col md={3}>
               <label htmlFor="yearFrom">Year From:</label>
@@ -576,4 +353,4 @@ const SMSFReport = ({
   );
 };
 
-export default SMSFReport;
+export default IncomeExpensesReports;

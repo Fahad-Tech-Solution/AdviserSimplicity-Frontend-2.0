@@ -31,7 +31,7 @@ const CashReport = ({
   );
 
   const applyFilter = (values, currentInput) => {
-    if (values.yearFrom !== "" && values.yearTo !== "") {
+    try {
       const currentValue = parseInt(currentInput.value, 10);
 
       let yearFrom = parseInt(values.yearFrom, 10);
@@ -46,39 +46,41 @@ const CashReport = ({
       }
 
       if (!isNaN(yearFrom) && !isNaN(yearTo)) {
-        const dynamicYearColumns = [];
-
-        for (let year = yearFrom; year <= yearTo; year++) {
-          dynamicYearColumns.push({
-            title: (
-              <>
-                <div className="w-100 text-center">{currentYear + year}</div>
-                <div className="w-100 text-center">{year}</div>
-              </>
-            ),
-            dataIndex: `year${year}`,
-            key: year.toString(),
-            align: "center",
-            render: (text, record) => {
-              const isParentRow =
-                record.children && Array.isArray(record.children);
-              return (
-                <div
-                  style={{
-                    fontWeight: isParentRow ? "bold" : "normal",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    fontFamily: '"Inter", sans-serif',
-                    textAlign: "center",
-                  }}
-                >
-                  {text}
-                </div>
-              );
-            },
-          });
-        }
+        const dynamicYearColumns = Array.from(
+          { length: yearTo - yearFrom + 1 },
+          (_, i) => {
+            const year = yearFrom + i;
+            return {
+              title: (
+                <>
+                  <div className="w-100 text-center">{currentYear + year}</div>
+                  <div className="w-100 text-center">{year}</div>
+                </>
+              ),
+              dataIndex: `year${year}`,
+              key: year.toString(),
+              align: "center",
+              render: (text, record) => {
+                const isParentRow =
+                  record.children && Array.isArray(record.children);
+                return (
+                  <div
+                    style={{
+                      fontWeight: isParentRow ? "bold" : "normal",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      fontFamily: '"Inter", sans-serif',
+                      textAlign: "center",
+                    }}
+                  >
+                    {text}
+                  </div>
+                );
+              },
+            };
+          }
+        );
 
         const updatedColumns = [
           {
@@ -90,16 +92,29 @@ const CashReport = ({
             ),
             dataIndex: "type",
             key: "type",
-            width: 255,
+            width: 253,
             fixed: "left",
-            render: (text, record) => {
-              const isParentRow =
-                record.children && Array.isArray(record.children);
+            render: (text, row, index) => {
+              if (row.isHeader) return { props: { colSpan: 0 } };
+
+              const isParentRow = row?.children && Array.isArray(row.children);
+
               return (
-                <Tooltip title={text}>
+                <Tooltip
+                  title={
+                    ["Super 1", "Super 2", "Pension 1", "Pension 2"].includes(
+                      text
+                    )
+                      ? "Click on i button to reveal investment details"
+                      : text
+                  }
+                >
                   <div
                     style={{
                       fontWeight: isParentRow ? "bold" : "normal",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
                       whiteSpace: "nowrap",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
@@ -107,6 +122,19 @@ const CashReport = ({
                     }}
                   >
                     {text}
+
+                    {isParentRow &&
+                      ["Super 1", "Super 2", "Pension 1", "Pension 2"].includes(
+                        text
+                      ) && (
+                        <FaInfoCircle
+                          className="info-icon"
+                          onClick={() =>
+                            openModal(PopUpCategoryData[key], index + 1, key)
+                          }
+                          title="View Details"
+                        />
+                      )}
                   </div>
                 </Tooltip>
               );
@@ -121,11 +149,17 @@ const CashReport = ({
           "error",
           "topRight",
           "Error Notification",
-          "Please! Enter valid year range"
+          "Please enter a valid year range."
         );
       }
-    } else {
-      console.warn("Invalid year range");
+    } catch (err) {
+      console.error("Error in applyFilter:", err);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error",
+        "An unexpected error occurred while applying filter."
+      );
     }
   };
 
@@ -210,6 +244,17 @@ const CashReport = ({
                 as="select"
                 name="category"
                 className="form-select inputDesignDoubleInput"
+                onChange={(e) => {
+                  handleChange(e);
+                  setFieldValue("yearFrom", 1);
+                  setFieldValue("yearTo", 6);
+                  setColumns(
+                    generateReportColumns({
+                      startYear: 1,
+                      endYear: 6,
+                    })
+                  );
+                }}
               >
                 <option value="">Select</option>
                 <option value="Cashflow">Cashflow</option>

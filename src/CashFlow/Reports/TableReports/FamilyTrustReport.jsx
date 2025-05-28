@@ -137,8 +137,8 @@ const FamilyTrustReport = ({
         if (key === "Balance Sheets") {
           setColumns(
             generateReportColumns({
-              startYear: values.yearFrom || 1,
-              endYear: values.yearTo || 6,
+              startYear: 1,
+              endYear: 6,
               currentYear,
               withExisting: true,
             })
@@ -146,8 +146,8 @@ const FamilyTrustReport = ({
         } else {
           setColumns(
             generateReportColumns({
-              startYear: values.yearFrom || 1,
-              endYear: values.yearTo || 6,
+              startYear: 1,
+              endYear: 6,
             })
           );
         }
@@ -165,6 +165,9 @@ const FamilyTrustReport = ({
         } else {
           setPercentTable(false);
         }
+
+        setFieldValue("yearFrom", 1);
+        setFieldValue("yearTo", 6);
       }}
     />
   );

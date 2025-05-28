@@ -121,8 +121,8 @@ const FinancialInvestmentsReport = ({
         if (["Super", "Pension"].includes(key)) {
           setColumns(
             generateReportColumns({
-              startYear: values.yearFrom || 1,
-              endYear: values.yearTo || 6,
+              startYear: 1,
+              endYear: 6,
               showInfoIcon: true,
               onInfoClick: (row, index) => {
                 openModal(PopUpCategoryData[key], index + 1, key);
@@ -138,11 +138,13 @@ const FinancialInvestmentsReport = ({
         } else {
           setColumns(
             generateReportColumns({
-              startYear: values.yearFrom || 1,
-              endYear: values.yearTo || 6,
+              startYear: 1,
+              endYear: 6,
             })
           );
         }
+        setFieldValue("yearFrom", 1);
+        setFieldValue("yearTo", 6);
       }}
     />
   );
@@ -570,6 +572,17 @@ const FinancialInvestmentsReport = ({
                 as="select"
                 name="reportOwner"
                 className="form-select inputDesignDoubleInput"
+                onChange={(e) => {
+                  handleChange(e);
+                  setFieldValue("yearFrom", 1);
+                  setFieldValue("yearTo", 6);
+                  setColumns(
+                    generateReportColumns({
+                      startYear: 1,
+                      endYear: 6,
+                    })
+                  );
+                }}
               >
                 <option value="">Select</option>
                 <option value="client">{RenderName("client")}'s</option>
