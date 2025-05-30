@@ -27,10 +27,28 @@ const FinancialInvestmentsReport = ({
   handleChange,
 }) => {
   const [currentYear] = useState(new Date().getFullYear());
+  const [ArrayOfPopupIcons] = useState([
+    "Super Fund 1",
+    "Super Fund 2",
+    "Pension Fund 1",
+    "Pension Fund 2",
+    "Value at Year End ",
+  ]);
+
   const [columns, setColumns] = useState(
     generateReportColumns({
-      startYear: values.yearFrom || 1,
-      endYear: values.yearTo || 6,
+      startYear: 1,
+      endYear: 6,
+      showInfoIcon: true,
+      onInfoClick: (row, title) => {
+        openModal(
+          PopUpCategoryData["Direct Shares"],
+          title,
+          "Direct Shares",
+          "client"
+        );
+      },
+      onInfoIconsArray: ArrayOfPopupIcons,
     })
   );
 
@@ -39,6 +57,17 @@ const FinancialInvestmentsReport = ({
 
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
+
+  let PopUpsArray = [
+    "Super",
+    "Pension",
+    "Direct Shares",
+    "Managed Funds",
+    "Investment Bonds",
+    "Other",
+    "Cash",
+    "Term Deposits",
+  ];
 
   const PopUpCategoryData = {
     Super: {
@@ -56,6 +85,59 @@ const FinancialInvestmentsReport = ({
         joint: [],
       },
       title: "Pension",
+    },
+    "Direct Shares": {
+      data: FullFinansialInvestmentObject?.["Direct SharesPercent"] || {
+        client: [],
+        partner: [],
+        joint: [],
+      },
+      title: "Direct Shares",
+    },
+    "Managed Funds": {
+      data: FullFinansialInvestmentObject?.["Managed FundsPercent"] || {
+        client: [],
+        partner: [],
+        joint: [],
+      },
+      title: "Managed Funds",
+      highlight: ["Value at Year End"],
+    },
+    "Investment Bonds": {
+      data: FullFinansialInvestmentObject?.["Investment BondsPercent"] || {
+        client: [],
+        partner: [],
+        joint: [],
+      },
+      title: "Investment Bonds",
+      highlight: ["Value at Year End"],
+    },
+    Other: {
+      data: FullFinansialInvestmentObject?.["OtherPercent"] || {
+        client: [],
+        partner: [],
+        joint: [],
+      },
+      title: "Other",
+      highlight: ["Value at Year End"],
+    },
+    Cash: {
+      data: FullFinansialInvestmentObject?.["CashPercent"] || {
+        client: [],
+        partner: [],
+        joint: [],
+      },
+      title: "Cash",
+      highlight: ["Value at Year End"],
+    },
+    "Term Deposits": {
+      data: FullFinansialInvestmentObject?.["Term DepositsPercent"] || {
+        client: [],
+        partner: [],
+        joint: [],
+      },
+      title: "Term Deposits",
+      highlight: ["Value at Year End"],
     },
   };
 
@@ -118,21 +200,21 @@ const FinancialInvestmentsReport = ({
           setSuperPension(true);
         }
 
-        if (["Super", "Pension"].includes(key)) {
+        if (PopUpsArray.includes(key)) {
           setColumns(
             generateReportColumns({
               startYear: 1,
               endYear: 6,
               showInfoIcon: true,
-              onInfoClick: (row, index) => {
-                openModal(PopUpCategoryData[key], index + 1, key);
+              onInfoClick: (row, title) => {
+                openModal(
+                  PopUpCategoryData[key],
+                  title,
+                  key,
+                  values.reportOwner
+                );
               },
-              onInfoIconsArray: [
-                "Super 1",
-                "Super 2",
-                "Pension 1",
-                "Pension 2",
-              ],
+              onInfoIconsArray: ArrayOfPopupIcons,
             })
           );
         } else {
@@ -225,7 +307,10 @@ const FinancialInvestmentsReport = ({
         joint: [],
       },
       title: "Cash",
-      highlight: ["Value at Year End","Value at Year End (Post surplus/Defict)"],
+      highlight: [
+        "Value at Year End",
+        "Value at Year End (Post surplus/Defict)",
+      ],
     },
     "Term Deposits": {
       data: FullFinansialInvestmentObject?.["Term Deposits"] || {
@@ -304,63 +389,6 @@ const FinancialInvestmentsReport = ({
       };
       return acc;
     }, {}),
-  };
-
-  const categoryPercentTables = {
-    "Direct Shares": {
-      data: FullFinansialInvestmentObject?.["Direct SharesPercent"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Direct Shares",
-      highlight: ["Value at Year End"],
-    },
-    "Managed Funds": {
-      data: FullFinansialInvestmentObject?.["Managed FundsPercent"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Managed Funds",
-      highlight: ["Value at Year End"],
-    },
-    "Investment Bonds": {
-      data: FullFinansialInvestmentObject?.["Investment BondsPercent"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Investment Bonds",
-      highlight: ["Value at Year End"],
-    },
-    Other: {
-      data: FullFinansialInvestmentObject?.["OtherPercent"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Other",
-      highlight: ["Value at Year End"],
-    },
-    Cash: {
-      data: FullFinansialInvestmentObject?.["CashPercent"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Cash",
-      highlight: ["Value at Year End"],
-    },
-    "Term Deposits": {
-      data: FullFinansialInvestmentObject?.["Term DepositsPercent"] || {
-        client: [],
-        partner: [],
-        joint: [],
-      },
-      title: "Term Deposits",
-      highlight: ["Value at Year End"],
-    },
   };
 
   const applyFilter = (values, currentInput) => {
@@ -523,15 +551,29 @@ const FinancialInvestmentsReport = ({
     );
   };
 
-  const openModal = (item, index, key) => {
+  const openModal = (item, type, key, reportOwner) => {
+    let matchedItem;
+    if (["Super", "Pension"].includes(key)) {
+      matchedItem = item.data[reportOwner]?.find(
+        (child) => child.investment === type
+      );
+    } else {
+      matchedItem = { children: item.data[reportOwner || "client"] } || {
+        children: [],
+      };
+    }
+
+    // console.log(item, type, key, matchedItem, "reportOwner = " + reportOwner);
+
     setModalObject({
       title: key,
       small: true,
       item: {
-        popupArray: item.data[values.reportOwner][index - 1].children || [],
+        popupArray: matchedItem?.children || [],
       },
       Style2: true,
     });
+
     setFlagState(true);
   };
 
@@ -560,14 +602,7 @@ const FinancialInvestmentsReport = ({
         <Card className="my-4 shadow-sm p-3 rounded">
           <Row className="justify-content-around align-items-center">
             <Col md={3}>
-              <label
-                htmlFor="reportOwner"
-                onClick={() => {
-                  alert(directProperty);
-                }}
-              >
-                Report Owner:
-              </label>
+              <label htmlFor="reportOwner">Report Owner:</label>
               <Field
                 as="select"
                 name="reportOwner"
@@ -576,12 +611,32 @@ const FinancialInvestmentsReport = ({
                   handleChange(e);
                   setFieldValue("yearFrom", 1);
                   setFieldValue("yearTo", 6);
-                  setColumns(
-                    generateReportColumns({
-                      startYear: 1,
-                      endYear: 6,
-                    })
-                  );
+
+                  if (PopUpsArray.includes(values.category)) {
+                    setColumns(
+                      generateReportColumns({
+                        startYear: 1,
+                        endYear: 6,
+                        showInfoIcon: true,
+                        onInfoClick: (row, title) => {
+                          openModal(
+                            PopUpCategoryData[values.category],
+                            title,
+                            values.category,
+                            e.target.value
+                          );
+                        },
+                        onInfoIconsArray: ArrayOfPopupIcons,
+                      })
+                    );
+                  } else {
+                    setColumns(
+                      generateReportColumns({
+                        startYear: 1,
+                        endYear: 6,
+                      })
+                    );
+                  }
                 }}
               >
                 <option value="">Select</option>
@@ -666,10 +721,6 @@ const FinancialInvestmentsReport = ({
           </Row>
         </Card>
       )}
-
-      <div className="mb-5">
-        {renderReportTable(categoryPercentTables, true)}
-      </div>
 
       <div>{renderReportTable(categoryTables)}</div>
 

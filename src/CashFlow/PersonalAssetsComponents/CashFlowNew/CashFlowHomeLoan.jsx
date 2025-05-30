@@ -238,13 +238,13 @@ const CashFlowHomeLoan = (props) => {
   ];
 
   const rowConfigWithDeductibleInterest = [
-    ...rowConfig.slice(0, 4), // Slice the array up to the index of 'initialInterestRatePA'
+    ...rowConfig.slice(0, 5), // Slice the array up to the index of 'initialInterestRatePA'
     {
       name: "deductibleInterest",
       type: "number-toPercent",
       placeholder: "Deductible Interest %",
     },
-    ...rowConfig.slice(4).filter((row) => row.name !== "surplusToHomeLoan"), // Slice the array from the index of 'minimumRepaymentsPA' onwards and filter out 'surplusToHomeLoan'
+    ...rowConfig.slice(5).filter((row) => row.name !== "surplusToHomeLoan"), // Slice the array from the index of 'minimumRepaymentsPA' onwards and filter out 'surplusToHomeLoan'
   ];
 
   let handleChildButtonClick = async (values, setFieldValue) => {

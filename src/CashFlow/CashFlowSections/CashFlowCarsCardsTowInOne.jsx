@@ -307,7 +307,7 @@ const CashFlowCarsCardsTowInOne = (props) => {
 
   return (
     <React.Fragment key={index}>
-      <div className={`col-md-3 mb-4`}>
+      <div className={`col-md-4 mb-4`}>
         <Card
           className="py-4 shadow borderOverAll GoalsobjectiveCard d-flex"
           style={{ borderRadius: "20px", height: "100%" }}
@@ -358,19 +358,21 @@ const CashFlowCarsCardsTowInOne = (props) => {
                         )}
                       </div>
                     </div>
-                    <input
-                      type="text"
-                      className="form-control inputDesign"
-                      id={"client" + elem.key}
-                      placeholder={elem.SubTitle ? elem.SubTitle : elem.title}
-                      name={"client" + elem.key}
-                      value={
-                        (cashFlowData &&
-                          cashFlowData[elem.key] &&
-                          cashFlowData[elem.key][elem.attribute]) ||
-                        ""
-                      }
-                    />
+                    <div className="d-flex justify-content-center flex-column">
+                      <input
+                        type="text"
+                        className="form-control inputDesign "
+                        id={"client" + elem.key}
+                        placeholder={elem.SubTitle ? elem.SubTitle : elem.title}
+                        name={"client" + elem.key}
+                        value={
+                          (cashFlowData &&
+                            cashFlowData[elem.key] &&
+                            cashFlowData[elem.key][elem.attribute]) ||
+                          ""
+                        }
+                      />
+                    </div>
                   </React.Fragment>
                 );
               })}

@@ -60,7 +60,7 @@ const CashFlowCarsCards = (props) => {
 
                     return (
                         <React.Fragment key={index}>
-                            <div className={`col-md-3 mb-4`}>
+                            <div className={`col-md-4 mb-4`}>
 
                                 <Card className="py-4 shadow borderOverAll GoalsobjectiveCard d-flex" style={{ borderRadius: "20px", height: "100%" }}>
                                     <h5 className='text-center' onClick={() => { console.log(questionDetail[CashFlowElem.key]) }}>{CashFlowElem.title}

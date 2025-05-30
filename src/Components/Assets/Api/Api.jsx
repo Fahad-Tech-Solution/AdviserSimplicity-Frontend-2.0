@@ -1,6 +1,9 @@
 import { notification, Tooltip } from "antd";
 import axios from "axios";
+import { Image } from "react-bootstrap";
 import { FaInfoCircle } from "react-icons/fa";
+
+import SVGCoin from "../../../CashFlow/CashFlowAssets/Cast_Flow/SVG/SVG-Doller-Coin.svg";
 
 let GetAxios = async (Api) => {
   console.log("Get api Chali");
@@ -468,11 +471,21 @@ const generateReportColumns = ({
               {showInfoIcon &&
                 isParentRow &&
                 onInfoIconsArray.includes(text) && (
-                  <FaInfoCircle
-                    className="info-icon"
-                    onClick={() => onInfoClick(row, index)}
-                    title="View Details"
-                  />
+                  <div
+                    style={{
+                      cursor: "pointer",
+                      width: "25px",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Image
+                      src={SVGCoin}
+                      fluid
+                      onClick={() => onInfoClick(row, text)}
+                      title="View Details"
+                    />
+                  </div>
                 )}
             </div>
           </Tooltip>
@@ -656,7 +669,7 @@ const updateCardBySingleEntry = ({
 };
 
 // Deep clone rows and assign unique keys
-const deepCloneWithKeys = (rows, parentTitle, parentPath = '') =>
+const deepCloneWithKeys = (rows, parentTitle, parentPath = "") =>
   rows?.map((row, rowIndex) => {
     const currentPath = `${parentPath}${parentTitle}_row_${rowIndex}`;
     return {
@@ -667,7 +680,6 @@ const deepCloneWithKeys = (rows, parentTitle, parentPath = '') =>
         : undefined,
     };
   }) || [];
-
 
 export {
   DeleteAxios,

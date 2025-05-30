@@ -76,13 +76,19 @@ const FunnalComp = () => {
       if (!reportSections || Object.keys(reportSections).length === 0) return;
 
       // Safe extractors
-      const getChildrenSafely = (section, index) =>
-        section?.[index]?.children || [];
+      const getChildrenSafely = (section, index) => section[0]?.children || [];
+
+      console.log(
+        getChildrenSafely(reportSections.FullIncomeExpensesObj.Inflows, 2)
+      );
 
       const ObjArray = [
         {
           selectedYearIndex: yearSelected,
-          DataSource: getChildrenSafely(reportSections.fullTableCashFlow, 2),
+          DataSource: getChildrenSafely(
+            reportSections.FullIncomeExpensesObj.Inflows,
+            2
+          ),
           targetTitle: "Active Income",
           updateState: setIncomeData,
           filterTypes: [
@@ -94,7 +100,10 @@ const FunnalComp = () => {
         },
         {
           selectedYearIndex: yearSelected,
-          DataSource: getChildrenSafely(reportSections.fullTableCashFlow, 2),
+          DataSource: getChildrenSafely(
+            reportSections.FullIncomeExpensesObj.Inflows,
+            2
+          ),
           targetTitle: "Passive Income",
           updateState: setIncomeData,
           filterTypes: [
@@ -106,7 +115,10 @@ const FunnalComp = () => {
         },
         {
           selectedYearIndex: yearSelected,
-          DataSource: getChildrenSafely(reportSections.fullTableCashFlow, 2),
+          DataSource: getChildrenSafely(
+            reportSections.FullIncomeExpensesObj.Inflows,
+            2
+          ),
           targetTitle: "Retirement Income Streams",
           updateState: setIncomeData,
           filterTypes: [
@@ -117,14 +129,20 @@ const FunnalComp = () => {
         },
         {
           selectedYearIndex: yearSelected,
-          DataSource: getChildrenSafely(reportSections.fullTableCashFlow, 2),
+          DataSource: getChildrenSafely(
+            reportSections.FullIncomeExpensesObj.Inflows,
+            2
+          ),
           targetTitle: "Centrelink",
           updateState: setIncomeData,
           filterTypes: ["Family Tax Payments (A & B)", "Centrelink Payments"],
         },
         {
           selectedYearIndex: yearSelected,
-          DataSource: getChildrenSafely(reportSections.fullTableCashFlow, 2),
+          DataSource: getChildrenSafely(
+            reportSections.FullIncomeExpensesObj.Inflows,
+            2
+          ),
           targetTitle: "Others",
           updateState: setIncomeData,
           filterTypes: [
@@ -137,7 +155,10 @@ const FunnalComp = () => {
         },
         {
           selectedYearIndex: yearSelected,
-          DataSource: getChildrenSafely(reportSections.fullTableCashFlow, 3),
+          DataSource: getChildrenSafely(
+            reportSections.FullIncomeExpensesObj.Outflows,
+            3
+          ),
           targetTitle: "Living Expenses",
           updateState: setExpenseData,
           filterTypes: [
@@ -151,7 +172,10 @@ const FunnalComp = () => {
         },
         {
           selectedYearIndex: yearSelected,
-          DataSource: getChildrenSafely(reportSections.fullTableCashFlow, 3),
+          DataSource: getChildrenSafely(
+            reportSections.FullIncomeExpensesObj.Outflows,
+            3
+          ),
           targetTitle: "Other Expenses",
           updateState: setExpenseData,
           filterTypes: [
@@ -163,7 +187,10 @@ const FunnalComp = () => {
         },
         {
           selectedYearIndex: yearSelected,
-          DataSource: getChildrenSafely(reportSections.fullTableCashFlow, 3),
+          DataSource: getChildrenSafely(
+            reportSections.FullIncomeExpensesObj.Outflows,
+            3
+          ),
           targetTitle: "Super Contributions",
           updateState: setAllocationData,
           filterTypes: [
@@ -173,7 +200,10 @@ const FunnalComp = () => {
         },
         {
           selectedYearIndex: yearSelected,
-          DataSource: getChildrenSafely(reportSections.fullTableCashFlow, 3),
+          DataSource: getChildrenSafely(
+            reportSections.FullIncomeExpensesObj.Outflows,
+            3
+          ),
           targetTitle: "Loan Repayment",
           updateState: setAllocationData,
           filterTypes: [
@@ -184,7 +214,10 @@ const FunnalComp = () => {
         },
         {
           selectedYearIndex: yearSelected,
-          DataSource: getChildrenSafely(reportSections.fullTableCashFlow, 4),
+          DataSource: getChildrenSafely(
+            reportSections.FullIncomeExpensesObj.Surplus,
+            4
+          ),
           targetTitle: "Surplus/Deficit",
           updateState: setSuperTotalData,
           filterTypes: [
@@ -194,6 +227,8 @@ const FunnalComp = () => {
           ],
         },
       ];
+
+      console.log(ObjArray);
 
       ObjArray.forEach((config) => {
         try {
