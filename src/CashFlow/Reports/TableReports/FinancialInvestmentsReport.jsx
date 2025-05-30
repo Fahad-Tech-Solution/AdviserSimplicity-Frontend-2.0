@@ -225,7 +225,7 @@ const FinancialInvestmentsReport = ({
         joint: [],
       },
       title: "Cash",
-      highlight: ["Value at Year End"],
+      highlight: ["Value at Year End","Value at Year End (Post surplus/Defict)"],
     },
     "Term Deposits": {
       data: FullFinansialInvestmentObject?.["Term Deposits"] || {

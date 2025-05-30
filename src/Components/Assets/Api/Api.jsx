@@ -656,17 +656,18 @@ const updateCardBySingleEntry = ({
 };
 
 // Deep clone rows and assign unique keys
-const deepCloneWithKeys = (rows, parentTitle) =>
-  rows?.map((row, rowIndex) => ({
-    ...row,
-    key: `${parentTitle}_row_${rowIndex}`,
-    children: row.children
-      ? row.children.map((child, childIndex) => ({
-          ...child,
-          key: `${parentTitle}_row_${rowIndex}_child_${childIndex}`,
-        }))
-      : undefined,
-  })) || [];
+const deepCloneWithKeys = (rows, parentTitle, parentPath = '') =>
+  rows?.map((row, rowIndex) => {
+    const currentPath = `${parentPath}${parentTitle}_row_${rowIndex}`;
+    return {
+      ...row,
+      key: currentPath,
+      children: Array.isArray(row.children)
+        ? deepCloneWithKeys(row.children, parentTitle, `${currentPath}_child_`)
+        : undefined,
+    };
+  }) || [];
+
 
 export {
   DeleteAxios,

@@ -69,7 +69,47 @@ const IncomeExpensesReports = ({
     "Client's Tax": {
       data: FullIncomeExpensesObj?.["Client's Tax"] || [],
       title: `${RenderName("client")}'s Tax`,
-      highlight: ["Total Income", "Total Deductions", "Tax Payable"],
+      highlight: [
+        "Total Assessable income",
+        "Total Allowable Deductions",
+        "Total Taxable Income",
+        "Total Tax payable",
+        "Total Rebates",
+      ],
+    },
+    "Partner's Tax": {
+      data: FullIncomeExpensesObj?.["Partner's Tax"] || [],
+      title: `${RenderName("partner")}'s Tax`,
+      highlight: [
+        "Total Assessable income",
+        "Total Allowable Deductions",
+        "Total Taxable Income",
+        "Total Tax payable",
+        "Total Rebates",
+      ],
+    },
+    Centrelink: {
+      data: FullIncomeExpensesObj?.["Centrelink"] || [],
+      title: `Centrelink Summary`,
+      highlight: [
+        "Total Assets",
+        "Total Income",
+        "Actual Payment",
+        "Payment Amount",
+        "Under Income Test",
+      ],
+    },
+    "Family Tax Benefits": {
+      data: FullIncomeExpensesObj?.["Family Tax Benefits"] || [],
+      title: `Family Tax Benefits`,
+      highlight: [
+        "Total Adjusted Family Income",
+        "Total FTB- Part A (including Supplement)",
+        "Total Income For Primary Income Earner",
+        "Total Income For Secondary Income Earner",
+        "Total FTB- Part B (including Supplement)",
+        "Total Family tax Benefits (Part A & B)",
+      ],
     },
   };
 
@@ -97,7 +137,9 @@ const IncomeExpensesReports = ({
             return {
               title: (
                 <>
-                  <div className="w-100 text-center">{currentYear + year}</div>
+                  <div className="w-100 text-center">
+                    {currentYear + (year - 1)}
+                  </div>
                   <div className="w-100 text-center">{year}</div>
                 </>
               ),

@@ -335,7 +335,9 @@ const SMSFReport = ({
             return {
               title: (
                 <>
-                  <div className="w-100 text-center">{currentYear + year}</div>
+                  <div className="w-100 text-center">
+                    {currentYear + (year - 1)}
+                  </div>
                   <div className="w-100 text-center">{year}</div>
                 </>
               ),

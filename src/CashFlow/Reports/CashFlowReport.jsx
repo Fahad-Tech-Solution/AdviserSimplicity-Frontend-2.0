@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { scroller } from "react-scroll";
 import { ConfigProvider } from "antd";
 import CashFlowReportOptions from "../CashFlowOptions/CashFlowReportOptions";
-import CashReport from "./TableReports/CashReport";
 import AssetLiabilitiesReport from "./TableReports/AssetLiabilitiesReport";
 import FinancialInvestmentsReport from "./TableReports/FinancialInvestmentsReport";
 import BusinessReport from "./TableReports/BusinessReport";
@@ -43,20 +42,6 @@ const CashFlowReport = () => {
             >
               <div className="px-0 px-md-4 reportSection">
                 {step === 0 && (
-                  <CashReport
-                    {...{
-                      showFilters,
-                      setShowFilters,
-                      values,
-                      setFieldValue,
-                      handleChange,
-                      handleBlur,
-                    }}
-                    {...reportSections}
-                  />
-                )}
-{/* 
-                {step === 0 && (
                   <IncomeExpensesReports
                     {...{
                       showFilters,
@@ -68,7 +53,8 @@ const CashFlowReport = () => {
                     }}
                     {...reportSections}
                   />
-                )} */}
+                )}
+
                 {step === 1 && (
                   <AssetLiabilitiesReport
                     {...{
@@ -83,6 +69,7 @@ const CashFlowReport = () => {
                     asstesAndLiabilities={reportSections.asstesAndLiabilities}
                   />
                 )}
+
                 {step === 2 && (
                   <FinancialInvestmentsReport
                     {...{
@@ -96,6 +83,7 @@ const CashFlowReport = () => {
                     {...reportSections}
                   />
                 )}
+
                 {step === 3 && (
                   <BusinessReport
                     {...{
@@ -109,6 +97,7 @@ const CashFlowReport = () => {
                     {...reportSections}
                   />
                 )}
+
                 {step === 4 && (
                   <SMSFReport
                     {...{
@@ -122,6 +111,7 @@ const CashFlowReport = () => {
                     {...reportSections}
                   />
                 )}
+
                 {step === 5 && (
                   <FamilyTrustReport
                     {...{

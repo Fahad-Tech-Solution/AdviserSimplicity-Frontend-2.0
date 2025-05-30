@@ -56,222 +56,315 @@ const Reports = () => {
         REPORTS_SMSF_Assets_and_Income,
       } = response;
 
-      console.log(response.REPORTS_Tax_Summary, "REPORTS_Tax_Summary");
+      console.log(
+        response.REPORTS_Joint_Investments,
+        "REPORTS_Joint_Investments"
+      );
 
       const Age = processDataGeneric(
         REPORTS_Cashflow,
         (d) => transformInflows(d, false),
         "Age"
       );
-      const InFlow = processDataGeneric(
-        REPORTS_Cashflow,
-        (d) => transformInflows(d, true),
-        "inflows"
-      );
-      const OutFlow = processDataGeneric(
-        REPORTS_Cashflow,
-        (d) => transformInflows(d, true),
-        "outflows"
-      );
-      const Surplus = processDataGeneric(
-        REPORTS_Cashflow,
-        (d) => transformInflows(d, true),
-        "surplusDeficit"
-      );
 
-      const cashflowSections = [
-        buildReportTree(
-          Age,
-          content.cashFlowReport[0].reportsArray.Age.map((item, index) => {
-            return {
-              ...item,
-              parent: item.parent
-                .replace("{{client}}", RenderName("client"))
-                .replace("{{partner}}", RenderName("partner")),
-            };
-          })
-        ),
-        buildReportTree(InFlow, content.cashFlowReport[0].reportsArray.inflows),
-        buildReportTree(
-          OutFlow,
-          content.cashFlowReport[0].reportsArray.outFlow
-        ),
-        buildReportTree(
-          Surplus,
-          content.cashFlowReport[0].reportsArray.surplus
-        ),
-      ];
-
-      const fullTableCashFlow = cashflowSections.flat().map((item, index) => ({
-        ...item,
-        key: (index + 1).toString(),
-        type:
-          ["", "", "Inflow", "Outflow", "Surplus/Deficit "][index] || item.type,
-      }));
-
-      const processTaxSection = (key, section) =>
-        buildReportTree(
+      // Enhanced helper function
+      const getReport = (
+        source,
+        key,
+        keyMapping,
+        keyAddition = "",
+        contentblock
+      ) => {
+        let contentIndex = contentblock ?? 2;
+        return buildReportTree(
           processDataGeneric(
-            REPORTS_Tax_Summary,
+            source,
             (d) => transformInflows(d, true),
-            key
+            key + keyAddition
           ),
-          section
+          content.cashFlowReport[contentIndex].reportsArray[keyMapping].map(
+            (section) => ({
+              ...section,
+              children: section.children.map((label) =>
+                label
+                  .replace("{{client}}", RenderName("client"))
+                  .replace("{{partner}}", RenderName("partner"))
+                  .replace("{{joint}}", RenderName("joint"))
+              ),
+            })
+          )
         );
+      };
 
-      const clientData = changeHeadNames(
-        [
-          { ...cashflowSections[0][0] },
-          ...processTaxSection(
-            "clientTaxPosition",
-            content.cashFlowReport[0].reportsArray.clientTaxPosition
-          ),
-        ],
-        [
-          "",
-          "Total Assessable income ",
-          "Total Allowable Deductions ",
-          "Total Taxable Income",
-          "Total Tax payable ",
-          "Total Rebates ",
-          "Total Tax payable ",
-        ]
-      );
-
-      const partnerData = changeHeadNames(
-        [
-          { ...cashflowSections[0][1] },
-          ...processTaxSection(
-            "partnerTaxPosition",
-            content.cashFlowReport[0].reportsArray.clientTaxPosition
-          ),
-        ],
-        [
-          "",
-          "Total Assessable income ",
-          "Total Allowable Deductions ",
-          "Total Taxable Income",
-          "Total Tax payable ",
-          "Total Rebates ",
-          "Total Tax payable ",
-        ]
-      );
-
-      const centrelinkSections = [
+      const IncomeExpensesMetaConfig = [
+        {
+          key: "inflows",
+          title: "Inflows",
+          keyMapping: "inflows",
+          Headers: ["Inflow"],
+          keyAddition: "",
+          ApiKey: REPORTS_Cashflow,
+        },
+        {
+          key: "outflows",
+          title: "Outflows",
+          keyMapping: "outFlow",
+          Headers: ["Outflows"],
+          keyAddition: "",
+          ApiKey: REPORTS_Cashflow,
+        },
+        {
+          key: "surplus",
+          title: "Surplus",
+          keyMapping: "surplus",
+          Headers: ["Surplus/deficit"],
+          keyAddition: "",
+          ApiKey: REPORTS_Cashflow,
+        },
+        {
+          key: "clientTaxPosition",
+          title: "Client's Tax",
+          keyMapping: "clientTaxPosition",
+          Headers: [
+            "Total Assessable income ",
+            "Total Allowable Deductions ",
+            "Total Taxable Income",
+            "Total Tax payable ",
+            "Total Rebates ",
+            "Total Tax payable ",
+          ],
+          keyAddition: "",
+          ApiKey: REPORTS_Tax_Summary,
+        },
+        {
+          key: "partnerTaxPosition",
+          title: "Partner's Tax",
+          keyMapping: "clientTaxPosition",
+          Headers: [
+            "Total Assessable income ",
+            "Total Allowable Deductions ",
+            "Total Taxable Income",
+            "Total Tax payable ",
+            "Total Rebates ",
+            "Total Tax payable ",
+          ],
+          keyAddition: "",
+          ApiKey: REPORTS_Tax_Summary,
+        },
         {
           key: "assetsTestPensionAllowance",
-          apiKey: "assetsTestPensionAllowance",
-          sessionKey: "centerLinkAllowanceDataSet",
-          label: "Assets Test-Pension/Allowance",
+          title: "Centrelink Assets Test Pension Allowance",
+          keyMapping: "centerLinkAllowanceDataSet",
+          Headers: ["Assets Test-Pension/Allowance"],
+          keyAddition: "",
+          ApiKey: REPORTS_Centrelink_Summary,
         },
         {
-          key: "incomeTestPensionsAllowances",
-          apiKey: "incomeTestAssessment",
-          sessionKey: "centerLinkIncomeDataSet",
-          label: "Income Test Pensions & Allowances",
+          key: "incomeTestAssessment",
+          title: "Centrelink Income Test Assessment",
+          keyMapping: "centerLinkIncomeDataSet",
+          Headers: ["Income Test Pensions & Allowances"],
+          keyAddition: "",
+          ApiKey: REPORTS_Centrelink_Summary,
         },
         {
-          key: "allowance",
-          apiKey: "incomeTestAllowances",
-          sessionKey: "centerLinkIncomeTestAllowancesDataSet",
-          label: "Income Test Allowances",
+          key: "incomeTestAllowances",
+          title: "Centrelink Income Test Allowances",
+          keyMapping: "centerLinkIncomeTestAllowancesDataSet",
+          Headers: ["Income Test Allowances"],
+          keyAddition: "",
+          ApiKey: REPORTS_Centrelink_Summary,
         },
         {
           key: "clientIncome",
-          apiKey: "clientIncome",
-          sessionKey: "centerLinkClientIncomeDataSet",
-          label: "Client Income",
+          title: "Centrelink Client Income",
+          keyMapping: "centerLinkClientIncomeDataSet",
+          Headers: [RenderName("client") + " Income"],
+          keyAddition: "",
+          ApiKey: REPORTS_Centrelink_Summary,
         },
         {
           key: "partnerIncome",
-          apiKey: "partnerIncome",
-          sessionKey: "centerLinkPartnerIncomeDataSet",
-          label: "Partner Income",
+          title: "Centrelink Partner Income",
+          keyMapping: "centerLinkPartnerIncomeDataSet",
+          Headers: [RenderName("partner") + " Income"],
+          keyAddition: "",
+          ApiKey: REPORTS_Centrelink_Summary,
         },
         {
           key: "clientPayment",
-          apiKey: "clientPayment",
-          sessionKey: "centerLinkClientPaymnetDataSet",
-          label:
-            "Income Test- Allowances Only " + RenderName("client") + " Payment",
+          title: "Centrelink client Payment",
+          keyMapping: "centerLinkClientPaymnetDataSet",
+          Headers: [RenderName("client") + " Payment", "", "", ""],
+          keyAddition: "",
+          ApiKey: REPORTS_Centrelink_Summary,
         },
         {
           key: "partnerPayment",
-          apiKey: "partnerPayment",
-          sessionKey: "centerLinkClientPaymnetDataSet",
-          label:
-            "Income Test- Allowances Only " +
-            RenderName("partner") +
-            " Payment",
+          title: "Centrelink Partner Payment",
+          keyMapping: "centerLinkClientPaymnetDataSet",
+          Headers: [RenderName("partner") + " Payment", "", "", ""],
+          keyAddition: "",
+          ApiKey: REPORTS_Centrelink_Summary,
         },
         {
           key: "familyTaxBenefit",
-          apiKey: "familyTaxBenefit",
-          sessionKey: "familyTaxBanifit",
-          label: "Family Tax Benefit",
+          title: "Family Tax Benefits",
+          keyMapping: "familyTaxBanifit",
+          Headers: [
+            "Total Adjusted Family Income ",
+            "Total FTB- Part A (including Supplement) ",
+            "Total Income For Primary Income Earner ",
+            "Total Income For Secondary Income Earner ",
+            "Total FTB- Part B (including Supplement) ",
+            "Total Family tax Benefits (Part A & B)",
+          ],
+          keyAddition: "",
+          ApiKey: REPORTS_Centrelink_Summary,
         },
       ];
 
-      const fullCentrelinkTable = centrelinkSections
-        .flatMap(({ apiKey, sessionKey, label }) => {
-          const sectionData = buildReportTree(
-            processDataGeneric(
-              REPORTS_Centrelink_Summary,
-              (d) => transformInflows(d, true),
-              apiKey
-            ),
-            content.cashFlowReport[0].reportsArray[sessionKey].map(
-              (section) => ({
-                ...section,
-                children: section.children.map((label) =>
-                  label
-                    .replace("{{client}}", RenderName("client"))
-                    .replace("{{partner}}", RenderName("partner"))
-                    .replace("{{joint}}", RenderName("joint"))
-                ),
-              })
-            )
-          );
+      const FullIncomeExpensesObj = {};
 
-          // Optionally label the top row if needed
-          if (sectionData.length > 0) {
-            sectionData[0].type = label;
+      IncomeExpensesMetaConfig.forEach(
+        (
+          {
+            key,
+            title,
+            keyMapping,
+            keyAddition,
+            Headers,
+            existingYear = false,
+            Percent = false,
+            ApiKey,
+          },
+          index
+        ) => {
+          if (Percent) {
+            // percent report
+            FullIncomeExpensesObj[title] = percentTransforme(ApiKey[key]);
+          } else if (existingYear) {
+            // Main investment report
+            FullIncomeExpensesObj[title] = changeHeadNames(
+              renameYearKeys(
+                getReport(ApiKey, key, keyMapping, keyAddition, 0)
+              ),
+              Headers
+            );
+          } else {
+            FullIncomeExpensesObj[title] = changeHeadNames(
+              getReport(ApiKey, key, keyMapping, keyAddition, 0),
+              Headers
+            );
+          }
+        }
+      );
+
+      let IncomeExpensesDataFormArray = [
+        {
+          parentHead: "Cashflow",
+          children: ["client", "partner", "Inflows", "Outflows", "Surplus"],
+        },
+        {
+          parentHead: "Client's Tax",
+          children: ["client", "Client's Tax"],
+        },
+        {
+          parentHead: "Partner's Tax",
+          children: ["partner", "Partner's Tax"],
+        },
+        {
+          parentHead: "Centrelink",
+          children: [
+            "client",
+            "partner",
+            "Centrelink Assets Test Pension Allowance",
+            "Centrelink Income Test Assessment",
+            "Centrelink Income Test Allowances",
+            "Centrelink Client Income",
+            "Centrelink Partner Income",
+          ],
+        },
+        {
+          parentHead: "Centrelink",
+          children: ["Centrelink client Payment", "Centrelink Partner Payment"],
+          reset: true,
+          reFormingObj: {
+            type: "Income Test- Allowances Only",
+            children: [
+              RenderName("client") + "'s ",
+              RenderName("partner") + "'s ",
+            ],
+          },
+        },
+        {
+          parentHead: "Family Tax Benefits",
+          children: ["client", "partner", "Family Tax Benefits"],
+        },
+      ];
+
+      const groupedIncomeExpenses = {};
+
+      IncomeExpensesDataFormArray.forEach(
+        ({ parentHead, children, reset = false, reFormingObj = {} }) => {
+          // Initialize group if not already
+          if (!groupedIncomeExpenses[parentHead]) {
+            groupedIncomeExpenses[parentHead] = [];
           }
 
-          return sectionData;
-        })
-        .map((item, index) => {
-          return {
-            ...item,
-            key: (index + 1).toString(),
-          };
-        });
+          if (reset) {
+            // Create reformatted children block
+            const formattedGroup = {
+              type: reFormingObj.type || "",
+              children: children.map((item, idx) => ({
+                type: reFormingObj.children?.[idx] || item,
+                children: Array.isArray(FullIncomeExpensesObj[item])
+                  ? FullIncomeExpensesObj[item]
+                  : [],
+              })),
+            };
 
-      // Step 1: Extract the last item (familyTaxBenefit row)
-      const familyTaxBenefitRow = changeHeadNames(
-        fullCentrelinkTable.slice(-6),
-        [
-          "Total Adjusted Family Income ",
-          "Total FTB- Part A (including Supplement) ",
-          "Total Income For Primary Income Earner ",
-          "Total Income For Secondary Income Earner ",
-          "Total FTB- Part B (including Supplement) ",
-          "Total Family tax Benefits (Part A & B)",
-        ]
+            groupedIncomeExpenses[parentHead].push(formattedGroup);
+          } else {
+            const mergedData = [];
+
+            children.forEach((item) => {
+              if (item === "client") {
+                if (Age[0] && typeof Age[0] === "object")
+                  mergedData.push(Age[0]);
+              } else if (item === "partner") {
+                if (Age[1] && typeof Age[1] === "object")
+                  mergedData.push(Age[1]);
+              } else if (Array.isArray(FullIncomeExpensesObj[item])) {
+                FullIncomeExpensesObj[item].forEach((entry) => {
+                  if (
+                    entry &&
+                    typeof entry === "object" &&
+                    !Array.isArray(entry)
+                  ) {
+                    mergedData.push(entry);
+                  }
+                });
+              }
+            });
+
+            // Only add if there's actual data
+            if (mergedData.length > 0) {
+              groupedIncomeExpenses[parentHead].push(
+                ...deepCloneWithKeys(mergedData, parentHead)
+              );
+            }
+          }
+        }
       );
 
-      // Step 2: Remove it from the fullCentrelinkTable (non-mutating way)
-      const filteredCentrelinkTable = fullCentrelinkTable.slice(0, -6);
-
-      filteredCentrelinkTable.unshift(
-        cashflowSections[0][0],
-        cashflowSections[0][1]
-      );
-
-      familyTaxBenefitRow.unshift(
-        cashflowSections[0][0],
-        cashflowSections[0][1]
-      );
+      // Assign the final merged structure back into FullIncomeExpensesObj
+      Object.keys(groupedIncomeExpenses).forEach((key, index) => {
+        FullIncomeExpensesObj[key] = deepCloneWithKeys(
+          groupedIncomeExpenses[key],
+          key + index
+        );
+      });
 
       //Assets and Liabilities
       const assets = buildReportTree(
@@ -293,8 +386,8 @@ const Reports = () => {
       );
 
       const newLiabilities = [
-        cashflowSections[0][0],
-        cashflowSections[0][1],
+        Age[0],
+        Age[1],
         ...changeHeadNames(
           renameYearKeys([
             assets[0], // already unshifted into liabilities originally
@@ -305,8 +398,8 @@ const Reports = () => {
       ];
 
       const lifestyleAssetsArray = [
-        cashflowSections[0][0],
-        cashflowSections[0][1],
+        Age[0],
+        Age[1],
         ...[
           "home",
           "personalAsset",
@@ -351,78 +444,65 @@ const Reports = () => {
           key: "directShares",
           title: "Direct Shares",
           keyMapping: "Direct Shares",
+          headings: ["Value at Year End "],
         },
         {
           key: "managedFunds",
           title: "Managed Funds",
           keyMapping: "Managed Funds",
+          headings: ["Value at Year End "],
         },
         {
           key: "investmentBonds",
           title: "Investment Bonds",
           keyMapping: "Investment Bonds",
+          headings: ["Value at Year End "],
         },
-        { key: "other", title: "Other", keyMapping: "Other" },
-        { key: "cash", title: "Cash", keyMapping: "Cash" },
+        {
+          key: "other",
+          title: "Other",
+          keyMapping: "Other",
+          headings: ["Value at Year End "],
+        },
+        {
+          key: "cash",
+          title: "Cash",
+          keyMapping: "Cash",
+          headings: ["Value at Year End "],
+        },
         {
           key: "termDeposits",
           title: "Term Deposits",
           keyMapping: "Term Deposits",
+          headings: ["Value at Year End "],
         },
         {
           key: "investmentLoans",
           title: "Investment Loans",
           keyMapping: "Investment Loans",
+          headings: ["Year End Loan Balance"],
         },
         {
           key: "marginLoans",
           title: "Margin Loans",
           keyMapping: "Margin Loans",
+          headings: ["Year End Loan Balance"],
         },
       ];
-
-      // Enhanced helper function
-      const getReport = (
-        source,
-        key,
-        keyMapping,
-        keyAddition = "",
-        contentblock
-      ) => {
-        let contentIndex = contentblock ?? 2;
-        return buildReportTree(
-          processDataGeneric(
-            source,
-            (d) => transformInflows(d, true),
-            key + keyAddition
-          ),
-          content.cashFlowReport[contentIndex].reportsArray[keyMapping].map(
-            (section) => ({
-              ...section,
-              children: section.children.map((label) =>
-                label
-                  .replace("{{client}}", RenderName("client"))
-                  .replace("{{partner}}", RenderName("partner"))
-                  .replace("{{joint}}", RenderName("joint"))
-              ),
-            })
-          )
-        );
-      };
 
       // Main financial investment object
       const FullFinansialInvestmentObject = {};
 
       // Loop through each investment type
-      investmentMeta.forEach(({ key, title, keyMapping }, index) => {
+      investmentMeta.forEach(({ key, title, keyMapping, headings }, index) => {
         // Main investment report
         FullFinansialInvestmentObject[title] = {
           client: deepCloneWithKeys(
             [
-              cashflowSections?.[0]?.[0] || {}, // insert at 0
+              Age?.[0] || {}, // insert at 0
               ...changeHeadNames(
                 getReport(REPORTS_Client_Investments, key, keyMapping, "2"),
-                ["Value at Year End "]
+                headings
               ),
             ],
             title + index
@@ -430,7 +510,7 @@ const Reports = () => {
           partner: isMarried
             ? deepCloneWithKeys(
                 [
-                  cashflowSections?.[0]?.[1] || {},
+                  Age?.[1] || {},
                   ...changeHeadNames(
                     getReport(
                       REPORTS_Partner_Investments,
@@ -438,7 +518,7 @@ const Reports = () => {
                       keyMapping,
                       "2"
                     ),
-                    ["Value at Year End "]
+                    headings
                   ),
                 ],
                 title + index
@@ -447,15 +527,11 @@ const Reports = () => {
           joint: isMarried
             ? deepCloneWithKeys(
                 [
-                  ...(cashflowSections?.[0]?.[0]
-                    ? [cashflowSections[0][0]]
-                    : []),
-                  ...(cashflowSections?.[0]?.[1]
-                    ? [cashflowSections[0][1]]
-                    : []),
+                  ...(Age?.[0] ? [Age[0]] : []),
+                  ...(Age?.[1] ? [Age[1]] : []),
                   ...changeHeadNames(
                     getReport(REPORTS_Joint_Investments, key, keyMapping, "2"),
-                    ["Value at Year End "]
+                    headings
                   ),
                 ],
                 title + index
@@ -496,8 +572,8 @@ const Reports = () => {
         FullFinansialInvestmentObject[title] = {
           client: deepCloneWithKeys(
             [
-              ...(cashflowSections?.[0]?.[0] ? [cashflowSections[0][0]] : []),
-              ...(cashflowSections?.[0]?.[1] ? [cashflowSections[0][1]] : []),
+              ...(Age[0] ? [Age[0]] : []),
+              ...(Age[1] ? [Age[1]] : []),
               ...changeHeadNames(
                 getReport(REPORTS_Direct_Property, key, "Property"),
                 ["Total Expenses ", ""]
@@ -512,8 +588,8 @@ const Reports = () => {
         FullFinansialInvestmentObject["Position" + title] = {
           client: deepCloneWithKeys(
             [
-              ...(cashflowSections?.[0]?.[0] ? [cashflowSections[0][0]] : []),
-              ...(cashflowSections?.[0]?.[1] ? [cashflowSections[0][1]] : []),
+              ...(Age?.[0] ? [Age[0]] : []),
+              ...(Age?.[1] ? [Age[1]] : []),
               ...changeHeadNames(
                 getReport(REPORTS_Direct_Property, key, "PositionProperty"),
                 ["Property Value", "Loan Balance"]
@@ -528,7 +604,7 @@ const Reports = () => {
         {
           groupKey: "Super",
           key: "superFund",
-          title: "Super 1",
+          title: "Super Fund 1",
           keyMapping: "Superannuation",
           objNo: "1",
           Headers: ["", "", "Inflow", "Outflow"],
@@ -536,7 +612,7 @@ const Reports = () => {
         {
           groupKey: "Super",
           key: "superFund",
-          title: "Super 2",
+          title: "Super Fund 2",
           keyMapping: "Superannuation",
           objNo: "2",
           Headers: ["", "", "Inflow", "Outflow"],
@@ -544,7 +620,7 @@ const Reports = () => {
         {
           groupKey: "Pension",
           key: "pensionFund",
-          title: "Pension 1",
+          title: "Pension Fund 1",
           keyMapping: "Pensionannuation",
           objNo: "1",
           Headers: ["Inflow", "Outflow"],
@@ -552,7 +628,7 @@ const Reports = () => {
         {
           groupKey: "Pension",
           key: "pensionFund",
-          title: "Pension 2",
+          title: "Pension Fund 2",
           keyMapping: "Pensionannuation",
           objNo: "2",
           Headers: ["Inflow", "Outflow"],
@@ -586,13 +662,10 @@ const Reports = () => {
 
           // Loop over both client and partner
           sourceTypes.forEach(({ label, report }) => {
-            const mainData = [
-              cashflowSections[0][0],
-              ...changeHeadNames(
-                getReport(report, key, keyMapping, objNo),
-                Headers
-              ),
-            ];
+            const mainData = changeHeadNames(
+              getReport(report, key, keyMapping, objNo),
+              Headers
+            );
 
             InvestmentMeta[groupKey][title][label] = deepCloneWithKeys(
               mainData,
@@ -624,22 +697,28 @@ const Reports = () => {
           }));
 
         FullFinansialInvestmentObject[groupKey] = {
-          client: mainRows.map((row) => ({
-            key: row.key,
-            type: row.type,
-            children: row.client,
-            ...Object.fromEntries(
-              Array.from({ length: 10 }, (_, i) => [`year${i + 1}`, ""])
-            ),
-          })),
-          partner: mainRows.map((row) => ({
-            key: row.key,
-            type: row.type,
-            children: row.partner,
-            ...Object.fromEntries(
-              Array.from({ length: 10 }, (_, i) => [`year${i + 1}`, ""])
-            ),
-          })),
+          client: [
+            Age?.[0] || {},
+            ...mainRows.map((row) => ({
+              key: row.key,
+              type: row.type,
+              children: row.client,
+              ...Object.fromEntries(
+                Array.from({ length: 10 }, (_, i) => [`year${i + 1}`, ""])
+              ),
+            })),
+          ],
+          partner: [
+            Age?.[1] || {},
+            ...mainRows.map((row) => ({
+              key: row.key,
+              type: row.type,
+              children: row.partner,
+              ...Object.fromEntries(
+                Array.from({ length: 10 }, (_, i) => [`year${i + 1}`, ""])
+              ),
+            })),
+          ],
         };
 
         // Add combined percent data (like main structure)
@@ -700,8 +779,11 @@ const Reports = () => {
       });
 
       FullFinansialInvestmentObject["Annuities"] = {
-        client: deepCloneWithKeys(clientAnnutiesArray, "annuties"),
-        partner: deepCloneWithKeys(partnerAnnutiesArray, "annuties"),
+        client: deepCloneWithKeys([Age[0], ...clientAnnutiesArray], "annuties"),
+        partner: deepCloneWithKeys(
+          [Age[1], ...partnerAnnutiesArray],
+          "annuties"
+        ),
       };
 
       // Business Entities
@@ -731,10 +813,13 @@ const Reports = () => {
       BusinessEntitesMetaConfig.forEach(
         ({ key, title, keyMapping, Headers }) => {
           // Main investment report
-          FullBusinessObject[title] = changeHeadNames(
-            getReport(REPORTS_Business_Entities, key, keyMapping, "", 3),
-            Headers
-          );
+          FullBusinessObject[title] = [
+            ...Age,
+            ...changeHeadNames(
+              getReport(REPORTS_Business_Entities, key, keyMapping, "", 3),
+              Headers
+            ),
+          ];
         }
       );
 
@@ -1126,115 +1211,16 @@ const Reports = () => {
         }
       );
 
-      const IncomeExpensesMetaConfig = [
-        {
-          key: "inflows",
-          title: "Inflows",
-          keyMapping: "inflows",
-          Headers: ["Inflow"],
-          keyAddition: "",
-          ApiKey: REPORTS_Cashflow,
-        },
-        {
-          key: "outflows",
-          title: "Outflows",
-          keyMapping: "outFlow",
-          Headers: ["Outflows"],
-          keyAddition: "",
-          ApiKey: REPORTS_Cashflow,
-        },
-        {
-          key: "surplus",
-          title: "Surplus",
-          keyMapping: "surplus",
-          Headers: ["Surplus/deficit"],
-          keyAddition: "",
-          ApiKey: REPORTS_Cashflow,
-        },
-        {
-          key: "clientTaxPosition",
-          title: "Client's Tax",
-          keyMapping: "clientTaxPosition",
-          Headers:  [
-          "",
-          "Total Assessable income ",
-          "Total Allowable Deductions ",
-          "Total Taxable Income",
-          "Total Tax payable ",
-          "Total Rebates ",
-          "Total Tax payable ",
-        ],
-          keyAddition: "",
-          ApiKey: REPORTS_Tax_Summary,
-        },
-      ];
-
-      const FullIncomeExpensesObj = {};
-
-      IncomeExpensesMetaConfig.forEach(
-        (
-          {
-            key,
-            title,
-            keyMapping,
-            keyAddition,
-            Headers,
-            existingYear = false,
-            Percent = false,
-            ApiKey,
-          },
-          index
-        ) => {
-          if (Percent) {
-            // percent report
-            FullIncomeExpensesObj[title] = percentTransforme(ApiKey[key]);
-          } else if (existingYear) {
-            // Main investment report
-            FullIncomeExpensesObj[title] = changeHeadNames(
-              renameYearKeys(
-                getReport(ApiKey, key, keyMapping, keyAddition, 0)
-              ),
-              Headers
-            );
-          } else {
-            FullIncomeExpensesObj[title] = changeHeadNames(
-              getReport(ApiKey, key, keyMapping, keyAddition, 0),
-              Headers
-            );
-          }
-        }
-      );
-
-      FullIncomeExpensesObj["Cashflow"] = deepCloneWithKeys(
-        ["client", "partner", "Inflows", "Outflows", "Surplus"].map(
-          (item, index) => {
-            if (item === "client") {
-              return Age[0] || {};
-            } else if (item === "partner") {
-              return Age[1] || {};
-            } else {
-              return FullIncomeExpensesObj[item][0] || {};
-            }
-          }
-        ),
-        "Cashflow"
-      );
-
-      console.log(FullIncomeExpensesObj, "FullIncomeExpensesObj");
+      // console.log(FullIncomeExpensesObj, "FullIncomeExpensesObj");
 
       setReportSections({
-        fullTableCashFlow,
-        clientData,
-        partnerData,
-        centrelinkCombined: filteredCentrelinkTable,
-        familyTaxBenefit: familyTaxBenefitRow,
+        FullIncomeExpensesObj,
         asset: newLiabilities,
         asstesAndLiabilities: lifestyleAssetsArray,
         FullFinansialInvestmentObject,
         FullBusinessObject,
         FullFamilyTrustObj,
         FullSMSFObj,
-        FullIncomeExpensesObj,
       });
     } catch (err) {
       console.error("Report Error", err);
