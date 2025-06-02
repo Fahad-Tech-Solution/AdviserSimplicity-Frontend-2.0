@@ -222,6 +222,8 @@ const AccountBasedPensionPayments = (props) => {
             props.modalObject.sourceObj.Input
           ][currentIndex];
 
+        console.log(DataObj, "DataObj");
+
         setFieldValue("preservationAge", DataObj.preservationAge);
         setFieldValue("preservationAgeYear", DataObj.preservationAgeYear);
         setFieldValue("minimumPension", DataObj.minimumPension);

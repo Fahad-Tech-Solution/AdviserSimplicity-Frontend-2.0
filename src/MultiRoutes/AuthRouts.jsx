@@ -37,103 +37,197 @@ import ImportantQuestion from "../Components/Questions/ImportantQuestion/Importa
 import PersonalDetailNew from "../Components/PersonalDetails/PersonalDetailNew";
 
 import PersonalInsuranceLife from "../Components/Questions/PersonalInsurance/LifeInsurance";
+import CDFclients from "../Components/CDFclients/CDFclients";
 
 function AuthRouts() {
+  const [switchState, setSwitchState] = useState("true");
+  const [sideSwitchMenu, setSideSwitchMenu] = useState(true);
+  // const [side, setSide] = useState(false);
+  const [sidePadding, setSidePadding] = useState("4rem");
 
-    const [switchState, setSwitchState] = useState("true");
-    const [sideSwitchMenu, setSideSwitchMenu] = useState(true);
-    // const [side, setSide] = useState(false);
-    const [sidePadding, setSidePadding] = useState('4rem');
+  let [CurrentP] = useRecoilState(CurrentPage);
 
-    let [CurrentP] = useRecoilState(CurrentPage);
+  let switchStateHandler = (elem) => {
+    setSwitchState(elem);
+  };
 
-    let switchStateHandler = (elem) => {
-        setSwitchState(elem)
+  let sideSwitch = (elem) => {
+    setSideSwitchMenu(elem);
+    if (elem) {
+      setSidePadding("4rem");
+    } else {
+      setSidePadding("17rem");
     }
+  };
 
-    let sideSwitch = (elem) => {
-        setSideSwitchMenu(elem)
-        if (elem) {
-            setSidePadding('4rem');
-        }
-        else {
-            setSidePadding('17rem');
-        }
-    }
+  let topMenuArray = ["/", "/Goals-And-Objectives", "/All-Clients"];
 
-    let topMenuArray = ['/', '/Goals-And-Objectives',
-        '/All-Clients',
-    ]
+  return (
+    <div className="container-fluid">
+      <div className="row">
+        <RecoilStateManage />
 
-    return (
-        <div className="container-fluid">
-            <div className="row" >
-                <RecoilStateManage />
+        {/*<div className={sideSwitchMenu ? "col-md-1 m-0 p-0" : "col-md-2 m-0 p-0 "}>*/}
+        <div className="p-0 m-0">
+          <SideBar onSubmit={switchStateHandler} Side={sideSwitch} />
+        </div>
 
-                {/*<div className={sideSwitchMenu ? "col-md-1 m-0 p-0" : "col-md-2 m-0 p-0 "}>*/}
-                <div className="p-0 m-0">
-                    <SideBar onSubmit={switchStateHandler} Side={sideSwitch} />
-                </div>
+        {/*<div className={sideSwitchMenu ? "col-md-11 m-0 p-0" : "col-md-10 m-0 p-0 "}>*/}
+        <div
+          className="container-fluid pr-0 py-0 m-0 topMaiBody"
+          style={{ paddingLeft: sidePadding }}
+        >
+          {/* <Topbar SidebarSwitch={sideSwitchMenu} />*/}
+          <Options opt={switchState} SidebarSwitch={sideSwitchMenu} />
 
-                {/*<div className={sideSwitchMenu ? "col-md-11 m-0 p-0" : "col-md-10 m-0 p-0 "}>*/}
-                <div className="container-fluid pr-0 py-0 m-0 topMaiBody" style={{ paddingLeft: sidePadding }}>
-                    {/* <Topbar SidebarSwitch={sideSwitchMenu} />*/}
-                    <Options opt={switchState} SidebarSwitch={sideSwitchMenu} />
+          <div
+            className={`py-0 mx-0 mb-0 ${
+              topMenuArray.includes(CurrentP) ? "mainBody2" : "mainBody"
+            } `}
+          >
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
 
-                    <div className={`py-0 mx-0 mb-0 ${topMenuArray.includes(CurrentP) ? 'mainBody2' : 'mainBody'} `}>
-                        <Routes>
+              {/* GET ROUTING */}
+              <Route path="/All-Clients" element={<AllClients />} />
+              <Route path="/View-Client" element={<ViewClient />} />
 
-                            <Route path="/" element={<Dashboard />} />
+              {/* POST ROUTING */}
+              <Route path="/PersonalDetail" element={<PersonalDetailNew />} />
+              <Route
+                path="/PersonalDetailOld"
+                element={<PersonalDetail_Edit />}
+              />
 
-                            {/* GET ROUTING */}
-                            <Route path="/All-Clients" element={<AllClients />} />
-                            <Route path="/View-Client" element={<ViewClient />} />
-
-
-                            {/* POST ROUTING */}
-                            <Route path="/PersonalDetail" element={<PersonalDetailNew />} />
-                            <Route path="/PersonalDetailOld" element={<PersonalDetail_Edit />} />
-
-
-                            {/* POST ROUTING
+              {/* POST ROUTING
                                 <Route path="/NewPersonalDetail" element={<HOCLoader><PersonalDetails /></HOCLoader>} />
                                 */}
 
-                            <Route path="/ImportantQuestion" element={<ImportantQuestion />} />
+              <Route
+                path="/ImportantQuestion"
+                element={<ImportantQuestion />}
+              />
 
-                            {/* Questions ROUTING */}
-                            <Route path="/Questions" element={<Questions />} />
-                            <Route path="/PersonalIncome" element={<QuestionsNew><PersonalIncome /></QuestionsNew>} />
-                            <Route path="/PersonalAssets" element={<QuestionsNew><AdditionalQueriesPersonalAssets /></QuestionsNew>} />
-                            <Route path="/FinancialInvestments" element={<QuestionsNew><FinancialInvestments /></QuestionsNew>} />
-                            <Route path="/SuperAndRetirement" element={<QuestionsNew><AdditionalQueriesSuperAndRetirement /></QuestionsNew>} />
-                            <Route path="/Lifestyle" element={<QuestionsNew><LifestyleAssetsAndDebt /></QuestionsNew>} />
-                            <Route path="/Investment" element={<QuestionsNew><AdditionalQueriesInvestment /></QuestionsNew>} />
-                            <Route path="/EstatePlanning" element={<QuestionsNew><EstatePlanning /></QuestionsNew>} />
-                            <Route path="/ProfessionalAdvisor" element={<QuestionsNew><AdditionalQueriesProfessionalAdvisor /></QuestionsNew>} />
+              {/* Questions ROUTING */}
+              <Route path="/Questions" element={<Questions />} />
+              <Route
+                path="/PersonalIncome"
+                element={
+                  <QuestionsNew>
+                    <PersonalIncome />
+                  </QuestionsNew>
+                }
+              />
+              <Route
+                path="/PersonalAssets"
+                element={
+                  <QuestionsNew>
+                    <AdditionalQueriesPersonalAssets />
+                  </QuestionsNew>
+                }
+              />
+              <Route
+                path="/FinancialInvestments"
+                element={
+                  <QuestionsNew>
+                    <FinancialInvestments />
+                  </QuestionsNew>
+                }
+              />
+              <Route
+                path="/SuperAndRetirement"
+                element={
+                  <QuestionsNew>
+                    <AdditionalQueriesSuperAndRetirement />
+                  </QuestionsNew>
+                }
+              />
+              <Route
+                path="/Lifestyle"
+                element={
+                  <QuestionsNew>
+                    <LifestyleAssetsAndDebt />
+                  </QuestionsNew>
+                }
+              />
+              <Route
+                path="/Investment"
+                element={
+                  <QuestionsNew>
+                    <AdditionalQueriesInvestment />
+                  </QuestionsNew>
+                }
+              />
+              <Route
+                path="/EstatePlanning"
+                element={
+                  <QuestionsNew>
+                    <EstatePlanning />
+                  </QuestionsNew>
+                }
+              />
+              <Route
+                path="/ProfessionalAdvisor"
+                element={
+                  <QuestionsNew>
+                    <AdditionalQueriesProfessionalAdvisor />
+                  </QuestionsNew>
+                }
+              />
 
-                            {/* APi Integration Left */}
-                            <Route path="/PersonalInsurance" element={<QuestionsNew><PersonalInsuranceLife /></QuestionsNew>} />
-                            <Route path="/BusinessEntities" element={<QuestionsNew><BusinessEntities /></QuestionsNew>} />
-                            <Route path="/SMSF" element={<QuestionsNew><QuestionsSMSF /></QuestionsNew>} />
-                            <Route path="/FamilyTrust" element={<QuestionsNew><QuestionsFamily /></QuestionsNew>} />
+              {/* APi Integration Left */}
+              <Route
+                path="/PersonalInsurance"
+                element={
+                  <QuestionsNew>
+                    <PersonalInsuranceLife />
+                  </QuestionsNew>
+                }
+              />
+              <Route
+                path="/BusinessEntities"
+                element={
+                  <QuestionsNew>
+                    <BusinessEntities />
+                  </QuestionsNew>
+                }
+              />
+              <Route
+                path="/SMSF"
+                element={
+                  <QuestionsNew>
+                    <QuestionsSMSF />
+                  </QuestionsNew>
+                }
+              />
+              <Route
+                path="/FamilyTrust"
+                element={
+                  <QuestionsNew>
+                    <QuestionsFamily />
+                  </QuestionsNew>
+                }
+              />
 
-                            <Route path="/Goals-And-Objectives" element={<GoalsObjectiveNew />} />
+              <Route
+                path="/Goals-And-Objectives"
+                element={<GoalsObjectiveNew />}
+              />
 
-                            <Route path="/Risk-Profile/*" element={<RiskProfileNew />} />
+              <Route path="/Risk-Profile/*" element={<RiskProfileNew />} />
 
+              <Route path="/CDFclients" element={<CDFclients />} />
 
-                            {/*
+              {/*
                                 <Route path="/Risk-Profile-Cards/" element={<RiskProfileCards />} />
                                 <Route path="/PDF-Test" element={<Contact />} />
                                 */}
-
-                        </Routes>
-                    </div>
-                </div>
-            </div>
+            </Routes>
+          </div>
         </div>
-    )
+      </div>
+    </div>
+  );
 }
 
-export default AuthRouts
+export default AuthRouts;

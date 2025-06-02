@@ -10,6 +10,8 @@ import {
 import AntTableDynamicReportTable from "../../../Components/Assets/Table/AntTableDynamicReportTable";
 import { Button, Dropdown, Menu, Space, Tooltip } from "antd";
 import { FaAngleDown } from "react-icons/fa";
+import ModalComponent from "../../../Components/Questions/FinancialInvestments/ModalComponent";
+import FunnalPopups from "./FunnalPopups";
 
 const SMSFReport = ({
   showFilters,
@@ -20,13 +22,24 @@ const SMSFReport = ({
   handleChange,
 }) => {
   const [currentYear] = useState(new Date().getFullYear());
+  const [ArrayOfPopupIcons] = useState(["Value at Year End "]);
+  let PopUpsArray = [
+    "Direct Shares",
+    "Managed Funds",
+    "Other",
+    "Cash",
+    "Term Deposits",
+  ];
+
+  let [flagState, setFlagState] = useState(false);
+  let [modalObject, setModalObject] = useState({});
+
   const [columns, setColumns] = useState(
     generateReportColumns({
       startYear: values.yearFrom || 1,
       endYear: values.yearTo || 6,
     })
   );
-  const [percentTable, setPercentTable] = useState(false);
 
   const columnsPercent = [
     {
@@ -59,6 +72,34 @@ const SMSFReport = ({
       ),
     },
   ];
+
+  const PopUpCategoryData = {
+    "Direct Shares": {
+      data: FullSMSFObj?.["Direct Shares Percent"] || [],
+      title: "Direct Shares",
+      highlight: ["Value at Year End"],
+    },
+    "Managed Funds": {
+      data: FullSMSFObj?.["Managed Funds Percent"] || [],
+      title: "Managed Funds",
+      highlight: ["Value at Year End"],
+    },
+    Other: {
+      data: FullSMSFObj?.["Other Percent"] || [],
+      title: "Other",
+      highlight: ["Value at Year End"],
+    },
+    Cash: {
+      data: FullSMSFObj?.["Cash Percent"] || [],
+      title: "Cash",
+      highlight: ["Value at Year End"],
+    },
+    "Term Deposits": {
+      data: FullSMSFObj?.["Term Deposits Percent"] || [],
+      title: "Term Deposits",
+      highlight: ["Value at Year End"],
+    },
+  };
 
   const menu = (
     <Menu
@@ -164,7 +205,25 @@ const SMSFReport = ({
       onClick={({ key }) => {
         // console.log("Selected key:", key);
         setFieldValue("category", key);
-        if (key === "Balance Sheets") {
+
+        if (PopUpsArray.includes(key)) {
+          setColumns(
+            generateReportColumns({
+              startYear: 1,
+              endYear: 6,
+              showInfoIcon: true,
+              onInfoClick: (row, title) => {
+                openModal(
+                  PopUpCategoryData[key],
+                  title,
+                  key,
+                  values.reportOwner
+                );
+              },
+              onInfoIconsArray: ArrayOfPopupIcons,
+            })
+          );
+        } else if (key === "Balance Sheets") {
           setColumns(
             generateReportColumns({
               startYear: 1,
@@ -180,20 +239,6 @@ const SMSFReport = ({
               endYear: 6,
             })
           );
-        }
-
-        if (
-          [
-            "Direct Shares",
-            "Managed Funds",
-            "Other",
-            "Cash",
-            "Term Deposits",
-          ].includes(key)
-        ) {
-          setPercentTable(true);
-        } else {
-          setPercentTable(false);
         }
 
         setFieldValue("yearFrom", 1);
@@ -285,34 +330,6 @@ const SMSFReport = ({
     }, {}),
   };
 
-  const categoryPercentTables = {
-    "Direct Shares": {
-      data: FullSMSFObj?.["Direct Shares Percent"] || [],
-      title: "Direct Shares",
-      highlight: ["Value at Year End"],
-    },
-    "Managed Funds": {
-      data: FullSMSFObj?.["Managed Funds Percent"] || [],
-      title: "Managed Funds",
-      highlight: ["Value at Year End"],
-    },
-    Other: {
-      data: FullSMSFObj?.["Other Percent"] || [],
-      title: "Other",
-      highlight: ["Value at Year End"],
-    },
-    Cash: {
-      data: FullSMSFObj?.["Cash Percent"] || [],
-      title: "Cash",
-      highlight: ["Value at Year End"],
-    },
-    "Term Deposits": {
-      data: FullSMSFObj?.["Term Deposits Percent"] || [],
-      title: "Term Deposits",
-      highlight: ["Value at Year End"],
-    },
-  };
-
   const applyFilter = (values, currentInput) => {
     try {
       const currentValue = parseInt(currentInput.value, 10);
@@ -328,113 +345,40 @@ const SMSFReport = ({
       }
 
       if (!isNaN(yearFrom) && !isNaN(yearTo)) {
-        const dynamicYearColumns = Array.from(
-          { length: yearTo - yearFrom + 1 },
-          (_, i) => {
-            const year = yearFrom + i;
-            return {
-              title: (
-                <>
-                  <div className="w-100 text-center">
-                    {currentYear + (year - 1)}
-                  </div>
-                  <div className="w-100 text-center">{year}</div>
-                </>
-              ),
-              dataIndex: `year${year}`,
-              key: year.toString(),
-              align: "center",
-              render: (text, record) => {
-                const isParentRow =
-                  record.children && Array.isArray(record.children);
-                return (
-                  <div
-                    style={{
-                      fontWeight: isParentRow ? "bold" : "normal",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      fontFamily: '"Inter", sans-serif',
-                      textAlign: "center",
-                    }}
-                  >
-                    {text}
-                  </div>
+        if (PopUpsArray.includes(values.category)) {
+          setColumns(
+            generateReportColumns({
+              startYear: yearFrom,
+              endYear: yearTo,
+              showInfoIcon: true,
+              onInfoClick: (row, title) => {
+                openModal(
+                  PopUpCategoryData[values.category],
+                  title,
+                  values.category,
+                  values.reportOwner
                 );
               },
-            };
-          }
-        );
-
-        const updatedColumns = [
-          {
-            title: (
-              <>
-                <div className="w-100">Financial Year Ending 30 June</div>
-                <div className="w-100">Year</div>
-              </>
-            ),
-            dataIndex: "type",
-            key: "type",
-            width: 280,
-            fixed: "left",
-            render: (text, row) => {
-              if (row.isHeader) return { props: { colSpan: 0 } };
-
-              const isParentRow = row?.children && Array.isArray(row.children);
-
-              return (
-                <Tooltip title={text}>
-                  <div
-                    style={{
-                      fontWeight: isParentRow ? "bold" : "normal",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      fontFamily: '"Inter", sans-serif',
-                    }}
-                  >
-                    {text}
-                  </div>
-                </Tooltip>
-              );
-            },
-          },
-          {
-            title: <div className="w-100 text-center">Existing</div>,
-            dataIndex: "existing",
-            key: "existing",
-            fixed: "center",
-            render: (text, record) => {
-              const isParentRow =
-                record.children && Array.isArray(record.children);
-              return (
-                <div
-                  style={{
-                    fontWeight: isParentRow ? "bold" : "normal",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    fontFamily: '"Inter", sans-serif',
-                    textAlign: "center",
-                  }}
-                >
-                  {text}
-                </div>
-              );
-            },
-          },
-          ...dynamicYearColumns,
-        ];
-
-        if (values.category !== "Balance Sheets") {
-          updatedColumns.splice(1, 1);
+              onInfoIconsArray: ArrayOfPopupIcons,
+            })
+          );
+        } else if (values.category == "Balance Sheets") {
+          setColumns(
+            generateReportColumns({
+              startYear: yearFrom,
+              endYear: yearTo,
+              currentYear,
+              withExisting: true,
+            })
+          );
+        } else {
+          setColumns(
+            generateReportColumns({
+              startYear: yearFrom,
+              endYear: yearTo,
+            })
+          );
         }
-
-        setColumns(updatedColumns);
       } else {
         openNotificationSuccess(
           "error",
@@ -485,8 +429,35 @@ const SMSFReport = ({
     );
   };
 
+  const openModal = (item, type, key, reportOwner) => {
+    let matchedItem = { children: item.data } || {
+      children: [],
+    };
+
+    // console.log(item, type, key, matchedItem, "reportOwner = " + reportOwner);
+
+    setModalObject({
+      title: key,
+      small: true,
+      item: {
+        popupArray: matchedItem?.children || [],
+      },
+      Style2: true,
+    });
+
+    setFlagState(true);
+  };
+
   return (
     <>
+      <ModalComponent
+        modalObject={modalObject}
+        setFlagState={setFlagState}
+        flagState={flagState}
+      >
+        <FunnalPopups />
+      </ModalComponent>
+
       <div className="d-flex justify-content-between align-items-center">
         <h2 className="text-green mt-3 fw-bold">SMSF</h2>
         <span
@@ -570,8 +541,6 @@ const SMSFReport = ({
           </Row>
         </Card>
       )}
-
-      {percentTable && renderReportTable(categoryPercentTables, true)}
 
       <div>{renderReportTable(categoryTables)}</div>
     </>

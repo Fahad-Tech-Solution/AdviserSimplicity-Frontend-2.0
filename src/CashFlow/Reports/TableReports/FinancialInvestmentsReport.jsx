@@ -406,104 +406,32 @@ const FinancialInvestmentsReport = ({
       }
 
       if (!isNaN(yearFrom) && !isNaN(yearTo)) {
-        const dynamicYearColumns = Array.from(
-          { length: yearTo - yearFrom + 1 },
-          (_, i) => {
-            const year = yearFrom + i;
-            return {
-              title: (
-                <>
-                  <div className="w-100 text-center">{currentYear + year}</div>
-                  <div className="w-100 text-center">{year}</div>
-                </>
-              ),
-              dataIndex: `year${year}`,
-              key: year.toString(),
-              align: "center",
-              render: (text, record) => {
-                const isParentRow =
-                  record.children && Array.isArray(record.children);
-                return (
-                  <div
-                    style={{
-                      fontWeight: isParentRow ? "bold" : "normal",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      fontFamily: '"Inter", sans-serif',
-                      textAlign: "center",
-                    }}
-                  >
-                    {text}
-                  </div>
+        // setColumns(updatedColumns);
+        if (PopUpsArray.includes(values.category)) {
+          setColumns(
+            generateReportColumns({
+              startYear: yearFrom,
+              endYear: yearTo,
+              showInfoIcon: true,
+              onInfoClick: (row, title) => {
+                openModal(
+                  PopUpCategoryData[values.category],
+                  title,
+                  values.category,
+                  values.reportOwner
                 );
               },
-            };
-          }
-        );
-
-        const updatedColumns = [
-          {
-            title: (
-              <>
-                <div className="w-100">Financial Year Ending 30 June</div>
-                <div className="w-100">Year</div>
-              </>
-            ),
-            dataIndex: "type",
-            key: "type",
-            width: 253,
-            fixed: "left",
-            render: (text, row, index) => {
-              if (row.isHeader) return { props: { colSpan: 0 } };
-
-              const isParentRow = row?.children && Array.isArray(row.children);
-
-              return (
-                <Tooltip
-                  title={
-                    ["Super 1", "Super 2", "Pension 1", "Pension 2"].includes(
-                      text
-                    )
-                      ? "Click on i button to reveal investment details"
-                      : text
-                  }
-                >
-                  <div
-                    style={{
-                      fontWeight: isParentRow ? "bold" : "normal",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      fontFamily: '"Inter", sans-serif',
-                    }}
-                  >
-                    {text}
-
-                    {isParentRow &&
-                      ["Super 1", "Super 2", "Pension 1", "Pension 2"].includes(
-                        text
-                      ) && (
-                        <FaInfoCircle
-                          className="info-icon"
-                          onClick={() =>
-                            openModal(PopUpCategoryData[key], index + 1, key)
-                          }
-                          title="View Details"
-                        />
-                      )}
-                  </div>
-                </Tooltip>
-              );
-            },
-          },
-          ...dynamicYearColumns,
-        ];
-
-        setColumns(updatedColumns);
+              onInfoIconsArray: ArrayOfPopupIcons,
+            })
+          );
+        } else {
+          setColumns(
+            generateReportColumns({
+              startYear: yearFrom,
+              endYear: yearTo,
+            })
+          );
+        }
       } else {
         openNotificationSuccess(
           "error",

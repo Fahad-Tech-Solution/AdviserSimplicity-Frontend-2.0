@@ -505,6 +505,7 @@ const QuestionCards = (props) => {
         })
         setFlagState(true);
     }
+    
     let OpenModal2 = (title, Input, index) => {
         // alert(title + " ++ " + Input);
         setModalObject({
@@ -514,6 +515,7 @@ const QuestionCards = (props) => {
         })
         setFlagState(true);
     }
+
     let OpenReuseModal = (title, Input, key) => {
         // alert(title + " ++ " + Input);
         setModalObject({
@@ -523,6 +525,7 @@ const QuestionCards = (props) => {
         })
         setFlagState(true);
     }
+
     let DefaultUrl = useRecoilValue(defaultUrl)
 
     // const CardForms = ["car", "boat", "caravan", "personalAssets"]; // add "Key" of Question on which you want to add Form in Cards only no pop ups

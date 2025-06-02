@@ -262,6 +262,12 @@ const AccountBasedNewPensionRollover = (props) => {
 
       // throw new Error("API call not implemented yet");
 
+      // console.log(
+      //   `${DefaultUrl}/api/cal/${apiKey[props.modalObject.sourceObj.key].key}/${
+      //     apiKey[props.modalObject.sourceObj.key].param
+      //   }`
+      // );
+
       let res = await PostAxios(
         `${DefaultUrl}/api/cal/${apiKey[props.modalObject.sourceObj.key].key}/${
           apiKey[props.modalObject.sourceObj.key].param
@@ -277,12 +283,14 @@ const AccountBasedNewPensionRollover = (props) => {
             props.modalObject.sourceObj.Input
           ][currentIndex];
 
+        console.log(DataObj, "DataObj");
+
         setFieldValue("currentPensionDetails", DataObj.currentPensionDetails);
         setFieldValue(
           "totalSuperannuationBenefits",
           DataObj.totalSuperannuationBenefits
         );
-        setFieldValue("minimumPension", DataObj.minimumPension);
+        setFieldValue("minimumPension", DataObj.newMinimumPension);
         setFieldValue("maximumPension", DataObj.maximumPension);
 
         setCashFlowReCalculateLoading(false);
