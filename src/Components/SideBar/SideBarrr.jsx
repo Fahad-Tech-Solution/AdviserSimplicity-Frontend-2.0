@@ -136,8 +136,8 @@ const SideBarrr = (props) => {
               }}
             >
               <li
-                className=" py-0 pe-0"
-                style={{ paddingLeft: sidebar ? "20px" : "0px" }}
+                className={" py-0 pe-0 "}
+                style={{ paddingLeft: sidebar ? "20px" : "0px",  }}
               >
                 <FaPeopleGroup />{" "}
                 {sidebar ? (

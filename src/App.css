@@ -1863,3 +1863,19 @@ label {
     color: #265527 !important;
   }
 }
+
+.ClearDropDownSpan .custom-danger-option {
+  color: #cf1322 !important; /* Set the text color to red */
+  &&:is(:hover, :focus, :active) {
+    background-color: #cf1322; /* Set the background to red  d20303*/
+    color: white !important; /* Set the text color to white */
+  }
+}
+
+.ClearDropDownSpan .custom-success-option {
+  color: #36b446 !important; /* Set the text color to red */
+  &&:is(:hover, :focus, :active) {
+    background-color: #36b446; /* Set the background to red  d20303*/
+    color: white !important; /* Set the text color to white */
+  }
+}

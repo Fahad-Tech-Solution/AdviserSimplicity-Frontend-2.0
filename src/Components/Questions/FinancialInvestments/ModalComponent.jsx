@@ -203,6 +203,7 @@ const ModalComponent = (props) => {
     "Family Trust Platform Investment",
     "Family Trust",
     "SMSF Pension Account Details",
+    "CDF Details"
   ]; // Add other titles that should use "xl" here
 
   let fullTitles = [

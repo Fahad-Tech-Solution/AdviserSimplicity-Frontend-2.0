@@ -13,7 +13,13 @@ const DropDownOptions = ({ row, heading, CallBack, menuItems }) => {
           onClick={() => CallBack(option.label, row, option.action)}
           icon={option.icon}
           style={option.style}
-          className={option.danger ? "custom-danger-option" : ""}
+          className={
+            option.category == "danger"
+              ? "custom-danger-option"
+              : option.category == "success"
+              ? "custom-success-option"
+              : ""
+          }
         >
           {option.label}
         </Menu.Item>
@@ -23,7 +29,13 @@ const DropDownOptions = ({ row, heading, CallBack, menuItems }) => {
 
   return (
     <div>
-      <Dropdown overlay={menu} trigger={["click"]}>
+      <Dropdown
+        overlay={menu}
+        trigger={["click"]}
+        dropdownRender={(menu) => (
+          <div className="custom-dropdown-scope">{menu}</div>
+        )}
+      >
         <FaGear style={{ cursor: "pointer" }} />
       </Dropdown>
     </div>
