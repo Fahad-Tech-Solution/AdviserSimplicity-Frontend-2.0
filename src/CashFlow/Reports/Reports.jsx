@@ -1044,6 +1044,95 @@ const Reports = () => {
         "Pension Account"
       );
 
+      let SMSFDataFormArray = [
+        {
+          parentHead: "Cashflow",
+          children: ["client", "partner", "Cashflow"],
+        },
+        {
+          parentHead: "Tax",
+          children: ["client", "partner", "Tax"],
+        },
+        {
+          parentHead: "Balance Sheets",
+          children: ["client", "partner", "Balance Sheets"],
+        },
+        {
+          parentHead: "Accumilation Account",
+          children: ["client", "partner", "Accumilation Account"],
+        },
+        {
+          parentHead: "Pension Account",
+          children: ["client", "partner", "Pension Account"],
+        },
+        {
+          parentHead: "Direct Shares",
+          children: ["client", "partner", "Direct Shares"],
+        },
+        {
+          parentHead: "Managed Funds",
+          children: ["client", "partner", "Managed Funds"],
+        },
+        {
+          parentHead: "Other",
+          children: ["client", "partner", "Other"],
+        },
+        {
+          parentHead: "Cash",
+          children: ["client", "partner", "Cash"],
+        },
+        {
+          parentHead: "Term Deposits",
+          children: ["client", "partner", "Term Deposits"],
+        },
+        {
+          parentHead: "Investment Loans",
+          children: ["client", "partner", "Investment Loans"],
+        },
+
+        ...Array.from({ length: 5 }).map((_, index) => ({
+          parentHead: "SMSF Property " + (index + 1),
+          children: ["client", "partner", "SMSF Property " + (index + 1)],
+        })),
+      ];
+
+      const groupedSMSF = {};
+
+      SMSFDataFormArray.forEach(({ parentHead, children }) => {
+        // Initialize group if not already
+        if (!groupedSMSF[parentHead]) {
+          groupedSMSF[parentHead] = [];
+        }
+
+        const mergedData = [];
+
+        children.forEach((item) => {
+          if (item === "client") {
+            if (Age[0] && typeof Age[0] === "object") mergedData.push(Age[0]);
+          } else if (item === "partner") {
+            if (Age[1] && typeof Age[1] === "object") mergedData.push(Age[1]);
+          } else if (Array.isArray(FullSMSFObj[item])) {
+            FullSMSFObj[item].forEach((entry) => {
+              if (entry && typeof entry === "object" && !Array.isArray(entry)) {
+                mergedData.push(entry);
+              }
+            });
+          }
+        });
+
+        // Only add if there's actual data
+        if (mergedData.length > 0) {
+          groupedSMSF[parentHead].push(
+            ...deepCloneWithKeys(mergedData, parentHead)
+          );
+        }
+      });
+
+      // Assign the final merged structure back into FullSMSFObj
+      Object.keys(groupedSMSF).forEach((key, index) => {
+        FullSMSFObj[key] = deepCloneWithKeys(groupedSMSF[key], key + index);
+      });
+
       // Family Trust
       const FamilyTrustMetaConfig = [
         {
@@ -1210,6 +1299,98 @@ const Reports = () => {
           }
         }
       );
+
+      let FamilyTrustDataFormArray = [
+        {
+          parentHead: "Cashflow",
+          children: ["client", "partner", "Cashflow"],
+        },
+        {
+          parentHead: "Profit and Loss",
+          children: ["client", "partner", "Profit and Loss"],
+        },
+        {
+          parentHead: "Balance Sheets",
+          children: ["client", "partner", "Balance Sheets"],
+        },
+        {
+          parentHead: "Accumilation Account",
+          children: ["client", "partner", "Accumilation Account"],
+        },
+        {
+          parentHead: "Pension Account",
+          children: ["client", "partner", "Pension Account"],
+        },
+        {
+          parentHead: "Direct Shares",
+          children: ["client", "partner", "Direct Shares"],
+        },
+        {
+          parentHead: "Managed Funds",
+          children: ["client", "partner", "Managed Funds"],
+        },
+        {
+          parentHead: "Other",
+          children: ["client", "partner", "Other"],
+        },
+        {
+          parentHead: "Cash",
+          children: ["client", "partner", "Cash"],
+        },
+        {
+          parentHead: "Term Deposits",
+          children: ["client", "partner", "Term Deposits"],
+        },
+        {
+          parentHead: "Investment Loans",
+          children: ["client", "partner", "Investment Loans"],
+        },
+
+        ...Array.from({ length: 10 }).map((_, index) => ({
+          parentHead: "Trust Property " + (index + 1),
+          children: ["client", "partner", "Trust Property " + (index + 1)],
+        })),
+      ];
+
+      const groupedFamilyTrust = {};
+
+      FamilyTrustDataFormArray.forEach(({ parentHead, children }) => {
+        // Initialize group if not already
+        if (!groupedFamilyTrust[parentHead]) {
+          groupedFamilyTrust[parentHead] = [];
+        }
+
+        const mergedData = [];
+
+        children.forEach((item) => {
+          if (item === "client") {
+            if (Age[0] && typeof Age[0] === "object") mergedData.push(Age[0]);
+          } else if (item === "partner") {
+            if (Age[1] && typeof Age[1] === "object") mergedData.push(Age[1]);
+          } else if (Array.isArray(FullFamilyTrustObj[item])) {
+            FullFamilyTrustObj[item].forEach((entry) => {
+              if (entry && typeof entry === "object" && !Array.isArray(entry)) {
+                mergedData.push(entry);
+              }
+            });
+          }
+        });
+
+        // Only add if there's actual data
+        if (mergedData.length > 0) {
+          groupedFamilyTrust[parentHead].push(
+            ...deepCloneWithKeys(mergedData, parentHead)
+          );
+        }
+      });
+
+      // Assign the final merged structure back into FullFamilyTrustObj
+      Object.keys(groupedFamilyTrust).forEach((key, index) => {
+        FullFamilyTrustObj[key] = deepCloneWithKeys(
+          groupedFamilyTrust[key],
+          key + index
+        );
+      });
 
       // console.log(FullIncomeExpensesObj, "FullIncomeExpensesObj");
 
