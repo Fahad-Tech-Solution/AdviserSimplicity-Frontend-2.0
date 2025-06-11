@@ -231,7 +231,6 @@ export const defaultUrl = atom({
   // default: "http://192.168.211.242:7000",  //
   // default: "http://13.239.170.76",         // Live link
 
-  
   default: "",
 });
 

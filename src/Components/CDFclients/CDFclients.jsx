@@ -130,7 +130,8 @@ const CDFclients = () => {
           }}
         >
           {row?.client?.preferredName || "--"}
-          {row?.client?.relationshipStatus.toLowerCase() !== "single" &&
+          {row?.client?.relationshipStatus.toLowerCase() == "couple" &&
+            row?.partner?.preferredName !== "" &&
             ` & ${row?.partner?.preferredName || "--"}`}{" "}
           <FaInfoCircle
             onClick={() => {

@@ -319,12 +319,12 @@ function Options(props) {
       <div
         className="container-fluid"
         id="OptionsBar"
-        style={{ paddingLeft: leftPadding }}
+        style={{ paddingLeft: leftPadding, zIndex: 1000  }}
       >
         <div className="container-fluid" style={{ marginLeft: "1.8rem" }}>
           <div className="row pe-4">
             <div className="col-md-12 p-0">
-              <div className="Top_Nav">
+              <div className="Top_Nav ">
                 <div className="d-flex justify-content-between">
                   <div>
                     <Breadcrumb className="BreadcrumbCustom">

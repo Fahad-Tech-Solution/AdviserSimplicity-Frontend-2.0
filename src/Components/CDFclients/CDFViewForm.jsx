@@ -1,7 +1,7 @@
 import { ConfigProvider, Descriptions, Divider } from "antd";
 import { Form, Formik } from "formik";
 import React from "react";
-import { toCommaAndDollar } from "../Assets/Api/Api";
+import { ConvertDate, toCommaAndDollar } from "../Assets/Api/Api";
 
 const CDFViewForm = (props) => {
   const Data = props?.modalObject?.row || {};
@@ -23,7 +23,7 @@ const CDFViewForm = (props) => {
     },
     {
       label: "Date of Birth",
-      children: Data.client?.dateOfBirth || "--",
+      children: ConvertDate(Data.client?.dateOfBirth) || "--",
       ...sharedItemStyle,
     },
     {
@@ -46,7 +46,9 @@ const CDFViewForm = (props) => {
   const clientIncomeItems = [
     {
       label: "Employment Income",
-      children: toCommaAndDollar(parseFloat(Data.client?.employmentIncome || 0)),
+      children: toCommaAndDollar(
+        parseFloat(Data.client?.employmentIncome || 0)
+      ),
       ...sharedItemStyle,
     },
     {
@@ -56,12 +58,16 @@ const CDFViewForm = (props) => {
     },
     {
       label: "Centrelink Payments",
-      children: toCommaAndDollar(parseFloat(Data.client?.centrelinkPayments || 0)),
+      children: toCommaAndDollar(
+        parseFloat(Data.client?.centrelinkPayments || 0)
+      ),
       ...sharedItemStyle,
     },
     {
       label: "Super Payments",
-      children: toCommaAndDollar(parseFloat(Data.client?.superannuationPayments || 0)),
+      children: toCommaAndDollar(
+        parseFloat(Data.client?.superannuationPayments || 0)
+      ),
       ...sharedItemStyle,
     },
   ];
@@ -69,7 +75,9 @@ const CDFViewForm = (props) => {
   const partnerItems = [
     {
       label: "Name",
-      children: `${Data.partner?.firstName || ""} ${Data.partner?.surname || ""}`,
+      children: `${Data.partner?.firstName || ""} ${
+        Data.partner?.surname || ""
+      }`,
       ...sharedItemStyle,
     },
     {
@@ -79,7 +87,7 @@ const CDFViewForm = (props) => {
     },
     {
       label: "Date of Birth",
-      children: Data.partner?.dateOfBirth || "--",
+      children: ConvertDate(Data.partner?.dateOfBirth) || "--",
       ...sharedItemStyle,
     },
     {
@@ -102,7 +110,9 @@ const CDFViewForm = (props) => {
   const partnerIncomeItems = [
     {
       label: "Employment Income",
-      children: toCommaAndDollar(parseFloat(Data.partner?.employmentIncome || 0)),
+      children: toCommaAndDollar(
+        parseFloat(Data.partner?.employmentIncome || 0)
+      ),
       ...sharedItemStyle,
     },
     {
@@ -112,12 +122,16 @@ const CDFViewForm = (props) => {
     },
     {
       label: "Centrelink Payments",
-      children: toCommaAndDollar(parseFloat(Data.partner?.centrelinkPayments || 0)),
+      children: toCommaAndDollar(
+        parseFloat(Data.partner?.centrelinkPayments || 0)
+      ),
       ...sharedItemStyle,
     },
     {
       label: "Super Payments",
-      children: toCommaAndDollar(parseFloat(Data.partner?.superannuationPayments || 0)),
+      children: toCommaAndDollar(
+        parseFloat(Data.partner?.superannuationPayments || 0)
+      ),
       ...sharedItemStyle,
     },
   ];
@@ -154,22 +168,28 @@ const CDFViewForm = (props) => {
               size="small"
               items={clientIncomeItems}
             />
+            {(Data.client?.relationshipStatus).toLowerCase() === "couple" &&
+              Data?.partner?.preferredName !== "" && (
+                <>
+                  <Divider orientation="left">Partner Data</Divider>
+                  <Descriptions
+                    bordered
+                    column={2}
+                    size="small"
+                    items={partnerItems}
+                  />
 
-            <Divider orientation="left">Partner Data</Divider>
-            <Descriptions
-              bordered
-              column={2}
-              size="small"
-              items={partnerItems}
-            />
-
-            <Divider orientation="left">Partner Employment & Income</Divider>
-            <Descriptions
-              bordered
-              column={2}
-              size="small"
-              items={partnerIncomeItems}
-            />
+                  <Divider orientation="left">
+                    Partner Employment & Income
+                  </Divider>
+                  <Descriptions
+                    bordered
+                    column={2}
+                    size="small"
+                    items={partnerIncomeItems}
+                  />
+                </>
+              )}
           </div>
         </Form>
       )}
