@@ -128,16 +128,16 @@ const SideBarrr = (props) => {
             <ul
               className={`m-0 p-0 ${
                 sidebar ? "dropdown d-block " : "dropdown d-block text-center"
-              } ${CurrentP === "/CDFclients" && "active"} `}
+              } ${CurrentP === "/CDF_Clients" && "active"} `}
               id="home"
               onClick={() => {
-                setCurrentP("/CDFclients");
-                Navigate("/CDFclients");
+                setCurrentP("/CDF_Clients");
+                Navigate("/CDF_Clients");
               }}
             >
               <li
                 className={" py-0 pe-0 "}
-                style={{ paddingLeft: sidebar ? "20px" : "0px",  }}
+                style={{ paddingLeft: sidebar ? "20px" : "0px" }}
               >
                 <FaPeopleGroup />{" "}
                 {sidebar ? (

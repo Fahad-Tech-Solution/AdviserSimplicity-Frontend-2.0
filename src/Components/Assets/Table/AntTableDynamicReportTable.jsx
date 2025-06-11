@@ -10,6 +10,7 @@ const AntTableDynamicReportTable = ({
   setShowFilters,
   highlightTypes = [],
   pagination,
+  customPagination = {},
 }) => (
   <div className="mt-4 porsition-relative">
     <Table
@@ -19,6 +20,8 @@ const AntTableDynamicReportTable = ({
       pagination={
         pagination === false
           ? false
+          : Object.keys(customPagination).length > 0
+          ? customPagination
           : {
               pageSize: 50,
               position: ["bottomRight"],

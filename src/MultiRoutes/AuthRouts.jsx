@@ -216,7 +216,7 @@ function AuthRouts() {
 
               <Route path="/Risk-Profile/*" element={<RiskProfileNew />} />
 
-              <Route path="/CDFclients" element={<CDFclients />} />
+              <Route path="/CDF_Clients" element={<CDFclients />} />
 
               {/*
                                 <Route path="/Risk-Profile-Cards/" element={<RiskProfileCards />} />

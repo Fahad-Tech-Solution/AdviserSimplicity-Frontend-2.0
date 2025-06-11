@@ -311,7 +311,7 @@ function Options(props) {
     "/",
     "/All-Clients",
     "/Cash-Flow/AllUsers",
-    "/CDFclients",
+    "/CDF_Clients",
   ];
 
   if (topMenuArray.includes(CurrentP)) {
