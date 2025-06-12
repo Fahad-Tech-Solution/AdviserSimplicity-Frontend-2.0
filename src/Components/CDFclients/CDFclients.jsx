@@ -174,14 +174,14 @@ const CDFclients = () => {
             text: "Pending",
             icon: <FaClock />,
           },
-          complete: {
+          approved: {
             color: "green",
             text: "Approved",
             icon: <FaCircleCheck />,
           },
-          canceled: {
+          rejected: {
             color: "red",
-            text: "Canceled",
+            text: "Rejected",
             icon: <FaCircleXmark />,
           },
         };
@@ -256,12 +256,12 @@ const CDFclients = () => {
       if (responce && responce.length > 0) {
         setCDFData(responce);
         setCDFData2(responce);
-        openNotificationSuccess(
-          "success",
-          "topRight",
-          "Data Refreshed",
-          "The data has been updated and you're now viewing the latest information."
-        );
+        // openNotificationSuccess(
+        //   "success",
+        //   "topRight",
+        //   "Data Refreshed",
+        //   "The data has been updated and you're now viewing the latest information."
+        // );
       }
     } catch (err) {
       console.error("Report Error", err);

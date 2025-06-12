@@ -11,9 +11,11 @@ const AntTableDynamicReportTable = ({
   highlightTypes = [],
   pagination,
   customPagination = {},
+  rowSelection = null,
 }) => (
   <div className="mt-4 porsition-relative">
     <Table
+      rowSelection={rowSelection}
       dataSource={dataSource}
       columns={columns}
       scroll={{ x: "max-content" }}

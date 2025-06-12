@@ -1,177 +1,150 @@
-import {
-  faBanSmoking,
-  faChildren,
-  faEnvelope,
-  faMobile,
-  faSmoking,
-  faUser,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import "./ViewClient.css";
-import { defaultUrl } from "../Store/Store";
-import { useRecoilValue } from "recoil";
+import { ConfigProvider, Descriptions, Divider } from "antd";
+import { Form, Formik } from "formik";
+import React from "react";
+import { ConvertDate } from "../Components/Assets/Api/Api";
 
-function ViewClient() {
-  
-  let DefaultUrl = useRecoilValue(defaultUrl)
+const ViewClient = (props) => {
+  const Data = props?.modalObject?.row || {};
+  const sharedItemStyle = { style: { textAlign: "left" } };
 
-  const [Client, setClient] = useState([]);
+  const clientItems = [
+    {
+      label: "Preferred Name",
+      children: Data.client?.clientPreferredName || "--",
+      ...sharedItemStyle,
+    },
+    {
+      label: "Date of Birth",
+      children: ConvertDate(Data.client?.clientDOB) || "--",
+      ...sharedItemStyle,
+    },
+    {
+      label: "Age",
+      children: Data.client?.clientAge || "--",
+      ...sharedItemStyle,
+    },
+    {
+      label: "Gender",
+      children: Data.client?.clientGender || "--",
+      ...sharedItemStyle,
+    },
+    {
+      label: "Marital Status",
+      children: Data.client?.clientMaritalStatus || "--",
+      ...sharedItemStyle,
+    },
+    {
+      label: "Employment Status",
+      children: Data.client?.clientEmploymentStatus || "--",
+      ...sharedItemStyle,
+    },
+    {
+      label: "Email",
+      children: Data.client?.Email || "--",
+      ...sharedItemStyle,
+    },
+    {
+      label: "Mobile",
+      children: Data.client?.clientMobile || "--",
+      ...sharedItemStyle,
+    },
+    {
+      label: "Home Address",
+      children: Data.client?.clientHomeAddress || "--",
+      ...sharedItemStyle,
+    },
+  ];
 
-  let DOB = new Date(Client.DOB);
-  Client.DOB = DOB.getDate() + "-" + DOB.getMonth() + "-" + DOB.getFullYear();
+  const partnerItems = [
+    {
+      label: "Preferred Name",
+      children: Data.partner?.partnerPreferredName || "--",
+      ...sharedItemStyle,
+    },
+    {
+      label: "Date of Birth",
+      children: ConvertDate(Data.partner?.partnerDOB) || "--",
+      ...sharedItemStyle,
+    },
+    {
+      label: "Age",
+      children: Data.partner?.partnerAge || "--",
+      ...sharedItemStyle,
+    },
+    {
+      label: "Gender",
+      children: Data.partner?.partnerGender || "--",
+      ...sharedItemStyle,
+    },
+    {
+      label: "Marital Status",
+      children: Data.partner?.partnerMaritalStatus || "--",
+      ...sharedItemStyle,
+    },
+    {
+      label: "Employment Status",
+      children: Data.partner?.partnerEmploymentStatus || "--",
+      ...sharedItemStyle,
+    },
+    {
+      label: "Email",
+      children: Data.partner?.partnerEmail || "--",
+      ...sharedItemStyle,
+    },
+    {
+      label: "Mobile",
+      children: Data.partner?.partnerMobile || "--",
+      ...sharedItemStyle,
+    },
+    {
+      label: "Home Address",
+      children: Data.partner?.partnerHomeAddress || "--",
+      ...sharedItemStyle,
+    },
+  ];
 
-  const [Partner, setPartner] = useState([]);
-  DOB = new Date(Partner.DOB);
-  Partner.DOB = DOB.getDate() + "-" + DOB.getMonth() + "-" + DOB.getFullYear();
-
-  const [Children] = useState([]);
-  const [NoOfChild, setNoOfChild] = useState(0);
-
-  useEffect(() => {
-    axios.get(`${DefaultUrl}/api/Client`).then((res) => {
-      for (let i = 0; i < res.data.length; i++) {
-        if (res.data[i].Email === localStorage.getItem("ViewClient")) {
-          setClient(res.data[i]);
-        }
-      }
-    });
-
-    axios.get(`${DefaultUrl}/api/Partner`).then((res) => {
-      for (let i = 0; i < res.data.length; i++) {
-        if (res.data[i].ClientEmail === localStorage.getItem("ViewClient")) {
-          setPartner(res.data[i]);
-        }
-      }
-    });
-
-    axios.get(`${DefaultUrl}/api/Child`).then((res) => {
-      for (let i = 0; i < res.data.length; i++) {
-        if (res.data[i].Email === localStorage.getItem("ViewClient")) {
-          setNoOfChild(NoOfChild + 1);
-        }
-      }
-    });
-  }, []);  // eslint-disable-line react-hooks/exhaustive-deps
-  
   return (
-    <div className="container">
-      <div className="row">
-        <div className="col-md-4">
-          <div className="card">
-            <div className="card-header CardHead">
-              <h5>
-                <b>Client Details</b>
-              </h5>
-            </div>
-            <div className="card-body">
-              <h5 className="card-title">
-                <FontAwesomeIcon icon={faUser} /> {Client.Title}{" "}
-                {Client.GivenName}
-              </h5>
-              <p className="card-text">
-                {" " +
-                  Client.Age +
-                  " years old    /    " +
-                  Client.MaritalStatus +
-                  "    /    " +
-                  Client.EmploymentStatus}
-              </p>
-              <p className="card-text">
-                {" " + Client.Health + "    /    "}{" "}
-                {Client.Smoker !== "true" ? (
-                  <FontAwesomeIcon icon={faSmoking} />
-                ) : (
-                  <FontAwesomeIcon icon={faBanSmoking} />
-                )}
-              </p>
-            </div>
-            <div className="card-header CardHead">
-              <h5>
-                <b>Partner Details</b>
-              </h5>
-            </div>
-            <div className="card-body">
-              <h5 className="card-title">
-                <FontAwesomeIcon icon={faUser} /> {Partner.Title}{" "}
-                {Partner.GivenName}
-              </h5>
-              <p className="card-text">
-                {" " +
-                  Partner.Age +
-                  " years old    /    " +
-                  Partner.MaritalStatus +
-                  "    /    " +
-                  Partner.EmploymentStatus}
-              </p>
-              <p className="card-text">
-                {" " + Partner.Health + "    /    "}{" "}
-                {Partner.Smoker !== "true" ? (
-                  <FontAwesomeIcon icon={faSmoking} />
-                ) : (
-                  <FontAwesomeIcon icon={faBanSmoking} />
-                )}
-              </p>
-            </div>
-          </div>
-        </div>
+    <Formik
+      initialValues={{}}
+      onSubmit={() => {
+        if (props.flagState) {
+          props.setFlagState(false);
+        }
+      }}
+      innerRef={props.formRef}
+    >
+      {() => (
+        <Form className="w-100 reportSection">
+          <div className="row">
+            <h5 className="text-green fontFamily-Inter fw-bold">
+              Client & Partner Information
+            </h5>
 
-        <div className="col-md-4">
-          <div className="card">
-            <div className="card-header CardHead">
-              <h5>
-                <b>Contact Details</b>
-              </h5>
-            </div>
-            <div className="card-body">
-              <h5 className="card-title">
-                {" "}
-                {Client.HomeAddress} {Client.Postcode}
-              </h5>
-              <p className="card-text">
-                {" "}
-                <FontAwesomeIcon icon={faMobile} /> &nbsp;{Client.Mobile}
-              </p>
-              <p className="card-text">
-                {" "}
-                <FontAwesomeIcon icon={faEnvelope} /> {Client.Email}
-              </p>
-            </div>
+            <Divider orientation="left">Client Information</Divider>
+            <Descriptions
+              bordered
+              column={2}
+              size="small"
+              items={clientItems}
+            />
+            {(Data.client?.clientMaritalStatus).toLowerCase() !== "single" &&
+              (Data.client?.clientMaritalStatus).toLowerCase() !== "widowed" &&
+              Data?.partner?.preferredName !== "" && (
+                <>
+                  <Divider orientation="left">Partner Information</Divider>
+                  <Descriptions
+                    bordered
+                    column={2}
+                    size="small"
+                    items={partnerItems}
+                  />
+                </>
+              )}
           </div>
-        </div>
-
-        <div className="col-md-4">
-          <div className="card card-block">
-            <div className="card-header CardHead">
-              <h5>
-                <b>Children Details</b>
-              </h5>
-            </div>
-            <div className="card-body">
-              <h5 className="card-title">
-                <FontAwesomeIcon icon={faChildren} /> {NoOfChild + " Child(s)"}
-              </h5>
-              <p className="card-text">
-                {Client.ExpandFamily === "Yes" ? (
-                  <>Planning to expand family</>
-                ) : (
-                  <>No Plan to expand family</>
-                )}
-              </p>
-              <p className="card-text">
-                {Children.ChildFinancialyDependent === "Yes" ? (
-                  <>Dependent</>
-                ) : (
-                  <>Not Dependent</>
-                )}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+        </Form>
+      )}
+    </Formik>
   );
-}
+};
 
 export default ViewClient;

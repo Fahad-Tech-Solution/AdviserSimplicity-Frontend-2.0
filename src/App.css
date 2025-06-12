@@ -1749,6 +1749,13 @@ label {
   border-radius: 0px !important;
 }
 
+.reportSection.All_Client table thead tr:first-child th:first-child {
+  border-top-left-radius: 8px !important;
+}
+.reportSection.All_Client table thead tr:last-child th:last-child {
+  border-top-right-radius: 8px !important;
+}
+
 .reportSection .ant-table-thead > tr > th {
   background: #36b446 !important;
   color: white;
@@ -1880,6 +1887,6 @@ label {
   }
 }
 
-.fontFamily-Inter{
+.fontFamily-Inter {
   font-family: "Inter", sans-serif !important;
 }

@@ -9,6 +9,7 @@ const DropDownOptions = ({ row, heading, CallBack, menuItems }) => {
     <Menu className="ClearDropDownSpan">
       {options.map((option, index) => (
         <Menu.Item
+          disabled={option?.disabled || false}
           key={index}
           onClick={() => CallBack(option.label, row, option.action)}
           icon={option.icon}
@@ -32,6 +33,7 @@ const DropDownOptions = ({ row, heading, CallBack, menuItems }) => {
       <Dropdown
         overlay={menu}
         trigger={["click"]}
+        placement="bottomRight" // ⬅️ this changes the position
         dropdownRender={(menu) => (
           <div className="custom-dropdown-scope">{menu}</div>
         )}
