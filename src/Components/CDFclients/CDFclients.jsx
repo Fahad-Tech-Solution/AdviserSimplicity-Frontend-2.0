@@ -42,7 +42,7 @@ const CDFclients = () => {
         break;
       case "Approved":
         setCDFData(
-          CDFData2.filter((item) => item.status?.toLowerCase() === "complete")
+          CDFData2.filter((item) => item.status?.toLowerCase() === "approved")
         );
         break;
       case "Canceled":
@@ -222,6 +222,8 @@ const CDFclients = () => {
   let [modalObject, setModalObject] = useState({});
 
   var OpenModel = (text, row, index) => {
+    console.log(text, row, index);
+
     if (index === "View") {
       setModalObject({
         title: "CDF View Details",
@@ -292,7 +294,7 @@ const CDFclients = () => {
         )}
       </ModalComponent>
       <Row>
-        <Col md={12} style={{ minHeight: "20vh" }}></Col>
+        <Col md={12} ></Col>
         <Col md={12} style={{ minHeight: "80vh" }}>
           <Row className="justify-content-amount align-items-center reportSection">
             <Col md={6}>

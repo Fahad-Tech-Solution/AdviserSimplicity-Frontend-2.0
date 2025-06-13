@@ -38,196 +38,312 @@ import PersonalDetailNew from "../Components/PersonalDetails/PersonalDetailNew";
 
 import PersonalInsuranceLife from "../Components/Questions/PersonalInsurance/LifeInsurance";
 import CDFclients from "../Components/CDFclients/CDFclients";
+import AdminSideBar from "../Components/SideBar/AdminSideBar";
 
 function AuthRouts() {
-  const [switchState, setSwitchState] = useState("true");
-  const [sideSwitchMenu, setSideSwitchMenu] = useState(true);
-  // const [side, setSide] = useState(false);
-  const [sidePadding, setSidePadding] = useState("4rem");
-
-  let [CurrentP] = useRecoilState(CurrentPage);
-
-  let switchStateHandler = (elem) => {
-    setSwitchState(elem);
-  };
-
-  let sideSwitch = (elem) => {
-    setSideSwitchMenu(elem);
-    if (elem) {
-      setSidePadding("4rem");
-    } else {
-      setSidePadding("17rem");
-    }
-  };
-
-  let topMenuArray = ["/", "/Goals-And-Objectives", "/All-Clients"];
+  const [collapsed, setCollapsed] = useState(true);
 
   return (
-    <div className="container-fluid">
-      <div className="row">
-        <RecoilStateManage />
+    <div className="container-fluid p-0 d-flex flex-row align-items-stretch">
+      <div>
+        <AdminSideBar collapsed={collapsed} setCollapsed={setCollapsed} />
+      </div>
+      <div className={`flex-grow-1 w-100`}>
+        <Options collapsed={collapsed} />
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
 
-        {/*<div className={sideSwitchMenu ? "col-md-1 m-0 p-0" : "col-md-2 m-0 p-0 "}>*/}
-        <div className="p-0 m-0">
-          <SideBar onSubmit={switchStateHandler} Side={sideSwitch} />
-        </div>
+          <Route path="/All-Clients" element={<AllClients />} />
+          <Route path="/View-Client" element={<ViewClient />} />
 
-        {/*<div className={sideSwitchMenu ? "col-md-11 m-0 p-0" : "col-md-10 m-0 p-0 "}>*/}
+          <Route path="/PersonalDetail" element={<PersonalDetailNew />} />
+          <Route path="/PersonalDetailOld" element={<PersonalDetail_Edit />} />
+
+          <Route path="/ImportantQuestion" element={<ImportantQuestion />} />
+          {/* Questions ROUTING */}
+          <Route path="/Questions" element={<Questions />} />
+          <Route
+            path="/PersonalIncome"
+            element={
+              <QuestionsNew>
+                <PersonalIncome />
+              </QuestionsNew>
+            }
+          />
+          <Route
+            path="/PersonalAssets"
+            element={
+              <QuestionsNew>
+                <AdditionalQueriesPersonalAssets />
+              </QuestionsNew>
+            }
+          />
+          <Route
+            path="/FinancialInvestments"
+            element={
+              <QuestionsNew>
+                <FinancialInvestments />
+              </QuestionsNew>
+            }
+          />
+          <Route
+            path="/SuperAndRetirement"
+            element={
+              <QuestionsNew>
+                <AdditionalQueriesSuperAndRetirement />
+              </QuestionsNew>
+            }
+          />
+          <Route
+            path="/Lifestyle"
+            element={
+              <QuestionsNew>
+                <LifestyleAssetsAndDebt />
+              </QuestionsNew>
+            }
+          />
+          <Route
+            path="/Investment"
+            element={
+              <QuestionsNew>
+                <AdditionalQueriesInvestment />
+              </QuestionsNew>
+            }
+          />
+          <Route
+            path="/EstatePlanning"
+            element={
+              <QuestionsNew>
+                <EstatePlanning />
+              </QuestionsNew>
+            }
+          />
+          <Route
+            path="/ProfessionalAdvisor"
+            element={
+              <QuestionsNew>
+                <AdditionalQueriesProfessionalAdvisor />
+              </QuestionsNew>
+            }
+          />
+          {/* APi Integration Left */}
+          <Route
+            path="/PersonalInsurance"
+            element={
+              <QuestionsNew>
+                <PersonalInsuranceLife />
+              </QuestionsNew>
+            }
+          />
+          <Route
+            path="/BusinessEntities"
+            element={
+              <QuestionsNew>
+                <BusinessEntities />
+              </QuestionsNew>
+            }
+          />
+          <Route
+            path="/SMSF"
+            element={
+              <QuestionsNew>
+                <QuestionsSMSF />
+              </QuestionsNew>
+            }
+          />
+          <Route
+            path="/FamilyTrust"
+            element={
+              <QuestionsNew>
+                <QuestionsFamily />
+              </QuestionsNew>
+            }
+          />
+          <Route path="/Goals-And-Objectives" element={<GoalsObjectiveNew />} />
+          <Route path="/Risk-Profile/*" element={<RiskProfileNew />} />
+          <Route path="/CDF_Clients" element={<CDFclients />} />
+        </Routes>
+
         <div
-          className="container-fluid pr-0 py-0 m-0 topMaiBody"
-          style={{ paddingLeft: sidePadding }}
+          style={{ backgroundColor: "lightgray", fontSize: "13px" }}
+          className="w-100 py-2 mt-4 d-flex justify-content-center align-items-center"
         >
-          {/* <Topbar SidebarSwitch={sideSwitchMenu} />*/}
-          <Options opt={switchState} SidebarSwitch={sideSwitchMenu} />
-
-          <div
-            className={`py-0 mx-0 mb-0 ${
-              topMenuArray.includes(CurrentP) ? "mainBody2" : "mainBody"
-            } `}
-          >
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-
-              {/* GET ROUTING */}
-              <Route path="/All-Clients" element={<AllClients />} />
-              <Route path="/View-Client" element={<ViewClient />} />
-
-              {/* POST ROUTING */}
-              <Route path="/PersonalDetail" element={<PersonalDetailNew />} />
-              <Route
-                path="/PersonalDetailOld"
-                element={<PersonalDetail_Edit />}
-              />
-
-              {/* POST ROUTING
-                                <Route path="/NewPersonalDetail" element={<HOCLoader><PersonalDetails /></HOCLoader>} />
-                                */}
-
-              <Route
-                path="/ImportantQuestion"
-                element={<ImportantQuestion />}
-              />
-
-              {/* Questions ROUTING */}
-              <Route path="/Questions" element={<Questions />} />
-              <Route
-                path="/PersonalIncome"
-                element={
-                  <QuestionsNew>
-                    <PersonalIncome />
-                  </QuestionsNew>
-                }
-              />
-              <Route
-                path="/PersonalAssets"
-                element={
-                  <QuestionsNew>
-                    <AdditionalQueriesPersonalAssets />
-                  </QuestionsNew>
-                }
-              />
-              <Route
-                path="/FinancialInvestments"
-                element={
-                  <QuestionsNew>
-                    <FinancialInvestments />
-                  </QuestionsNew>
-                }
-              />
-              <Route
-                path="/SuperAndRetirement"
-                element={
-                  <QuestionsNew>
-                    <AdditionalQueriesSuperAndRetirement />
-                  </QuestionsNew>
-                }
-              />
-              <Route
-                path="/Lifestyle"
-                element={
-                  <QuestionsNew>
-                    <LifestyleAssetsAndDebt />
-                  </QuestionsNew>
-                }
-              />
-              <Route
-                path="/Investment"
-                element={
-                  <QuestionsNew>
-                    <AdditionalQueriesInvestment />
-                  </QuestionsNew>
-                }
-              />
-              <Route
-                path="/EstatePlanning"
-                element={
-                  <QuestionsNew>
-                    <EstatePlanning />
-                  </QuestionsNew>
-                }
-              />
-              <Route
-                path="/ProfessionalAdvisor"
-                element={
-                  <QuestionsNew>
-                    <AdditionalQueriesProfessionalAdvisor />
-                  </QuestionsNew>
-                }
-              />
-
-              {/* APi Integration Left */}
-              <Route
-                path="/PersonalInsurance"
-                element={
-                  <QuestionsNew>
-                    <PersonalInsuranceLife />
-                  </QuestionsNew>
-                }
-              />
-              <Route
-                path="/BusinessEntities"
-                element={
-                  <QuestionsNew>
-                    <BusinessEntities />
-                  </QuestionsNew>
-                }
-              />
-              <Route
-                path="/SMSF"
-                element={
-                  <QuestionsNew>
-                    <QuestionsSMSF />
-                  </QuestionsNew>
-                }
-              />
-              <Route
-                path="/FamilyTrust"
-                element={
-                  <QuestionsNew>
-                    <QuestionsFamily />
-                  </QuestionsNew>
-                }
-              />
-
-              <Route
-                path="/Goals-And-Objectives"
-                element={<GoalsObjectiveNew />}
-              />
-
-              <Route path="/Risk-Profile/*" element={<RiskProfileNew />} />
-
-              <Route path="/CDF_Clients" element={<CDFclients />} />
-
-              {/*
-                                <Route path="/Risk-Profile-Cards/" element={<RiskProfileCards />} />
-                                <Route path="/PDF-Test" element={<Contact />} />
-                                */}
-            </Routes>
-          </div>
+          © Fahad Tech Solution. All rights reserved.
         </div>
       </div>
     </div>
   );
+
+  // return (
+  //   <div className="container-fluid">
+  //     <div className="row">
+  //       <RecoilStateManage />
+
+  //       {/*<div className={sideSwitchMenu ? "col-md-1 m-0 p-0" : "col-md-2 m-0 p-0 "}>*/}
+  //       <div className="p-0 m-0">
+  //         {/* <SideBar onSubmit={switchStateHandler} Side={sideSwitch} /> */}
+  //         <AdminSideBar
+  //           setCollapsed={switchStateHandler}
+  //           collapsed={sideSwitch}
+  //         />
+  //       </div>
+
+  //       {/*<div className={sideSwitchMenu ? "col-md-11 m-0 p-0" : "col-md-10 m-0 p-0 "}>*/}
+  //       <div
+  //         className="container-fluid pr-0 py-0 m-0 topMaiBody"
+  //         style={{ paddingLeft: sidePadding }}
+  //       >
+  //         {/* <Topbar SidebarSwitch={sideSwitchMenu} />*/}
+  //         <Options opt={switchState} SidebarSwitch={sideSwitchMenu} />
+
+  //         <div
+  //           className={`py-0 mx-0 mb-0 ${
+  //             topMenuArray.includes(CurrentP) ? "mainBody2" : "mainBody"
+  //           } `}
+  //         >
+  //           <Routes>
+  //             <Route path="/" element={<Dashboard />} />
+
+  //             {/* GET ROUTING */}
+  //             <Route path="/All-Clients" element={<AllClients />} />
+  //             <Route path="/View-Client" element={<ViewClient />} />
+
+  //             {/* POST ROUTING */}
+  //             <Route path="/PersonalDetail" element={<PersonalDetailNew />} />
+  //             <Route
+  //               path="/PersonalDetailOld"
+  //               element={<PersonalDetail_Edit />}
+  //             />
+
+  //             {/* POST ROUTING
+  //                               <Route path="/NewPersonalDetail" element={<HOCLoader><PersonalDetails /></HOCLoader>} />
+  //                               */}
+
+  //             <Route
+  //               path="/ImportantQuestion"
+  //               element={<ImportantQuestion />}
+  //             />
+
+  //             {/* Questions ROUTING */}
+  //             <Route path="/Questions" element={<Questions />} />
+  //             <Route
+  //               path="/PersonalIncome"
+  //               element={
+  //                 <QuestionsNew>
+  //                   <PersonalIncome />
+  //                 </QuestionsNew>
+  //               }
+  //             />
+  //             <Route
+  //               path="/PersonalAssets"
+  //               element={
+  //                 <QuestionsNew>
+  //                   <AdditionalQueriesPersonalAssets />
+  //                 </QuestionsNew>
+  //               }
+  //             />
+  //             <Route
+  //               path="/FinancialInvestments"
+  //               element={
+  //                 <QuestionsNew>
+  //                   <FinancialInvestments />
+  //                 </QuestionsNew>
+  //               }
+  //             />
+  //             <Route
+  //               path="/SuperAndRetirement"
+  //               element={
+  //                 <QuestionsNew>
+  //                   <AdditionalQueriesSuperAndRetirement />
+  //                 </QuestionsNew>
+  //               }
+  //             />
+  //             <Route
+  //               path="/Lifestyle"
+  //               element={
+  //                 <QuestionsNew>
+  //                   <LifestyleAssetsAndDebt />
+  //                 </QuestionsNew>
+  //               }
+  //             />
+  //             <Route
+  //               path="/Investment"
+  //               element={
+  //                 <QuestionsNew>
+  //                   <AdditionalQueriesInvestment />
+  //                 </QuestionsNew>
+  //               }
+  //             />
+  //             <Route
+  //               path="/EstatePlanning"
+  //               element={
+  //                 <QuestionsNew>
+  //                   <EstatePlanning />
+  //                 </QuestionsNew>
+  //               }
+  //             />
+  //             <Route
+  //               path="/ProfessionalAdvisor"
+  //               element={
+  //                 <QuestionsNew>
+  //                   <AdditionalQueriesProfessionalAdvisor />
+  //                 </QuestionsNew>
+  //               }
+  //             />
+
+  //             {/* APi Integration Left */}
+  //             <Route
+  //               path="/PersonalInsurance"
+  //               element={
+  //                 <QuestionsNew>
+  //                   <PersonalInsuranceLife />
+  //                 </QuestionsNew>
+  //               }
+  //             />
+  //             <Route
+  //               path="/BusinessEntities"
+  //               element={
+  //                 <QuestionsNew>
+  //                   <BusinessEntities />
+  //                 </QuestionsNew>
+  //               }
+  //             />
+  //             <Route
+  //               path="/SMSF"
+  //               element={
+  //                 <QuestionsNew>
+  //                   <QuestionsSMSF />
+  //                 </QuestionsNew>
+  //               }
+  //             />
+  //             <Route
+  //               path="/FamilyTrust"
+  //               element={
+  //                 <QuestionsNew>
+  //                   <QuestionsFamily />
+  //                 </QuestionsNew>
+  //               }
+  //             />
+
+  //             <Route
+  //               path="/Goals-And-Objectives"
+  //               element={<GoalsObjectiveNew />}
+  //             />
+
+  //             <Route path="/Risk-Profile/*" element={<RiskProfileNew />} />
+
+  //             <Route path="/CDF_Clients" element={<CDFclients />} />
+
+  //             {/*
+  //                               <Route path="/Risk-Profile-Cards/" element={<RiskProfileCards />} />
+  //                               <Route path="/PDF-Test" element={<Contact />} />
+  //                               */}
+  //           </Routes>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   </div>
+  // );
 }
 
 export default AuthRouts;

@@ -92,8 +92,6 @@ const AdminTopMenu = (props) => {
 
     }, [location])
 
-
-
     let Nev = useNavigate();
     let handleStepClick = (props) => {
         Nev(props)

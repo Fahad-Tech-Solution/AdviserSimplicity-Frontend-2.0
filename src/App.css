@@ -284,7 +284,7 @@ input[type="radio"] {
   right: 0;
 }
 
-span {
+/* span {
   display: flex;
   height: 35px;
   width: 75px;
@@ -293,7 +293,7 @@ span {
   font-family: "Montserrat", sans-serif;
   font-weight: bold;
   font-size: 15px;
-}
+} */
 
 input:checked + label.noShadow {
   all: unset;
@@ -659,9 +659,8 @@ h6 {
 }
 
 /* Goalskichus */
-.GoalsObjectives {
-  margin-top: -60px;
-  z-index: 1000;
+.minheight73 {
+  min-height: 73vh;
 }
 
 .cashFlowCardHead {
@@ -715,12 +714,8 @@ h6 {
   font-size: 40px;
 }
 
-.Top_Nav .rightBlock .menu {
-  display: none;
-}
-
 .DashBoard {
-  padding: 10px 10px 10px 10px;
+  padding: 10px 20px 10px 20px;
 }
 
 .DashBoard .Greetings {

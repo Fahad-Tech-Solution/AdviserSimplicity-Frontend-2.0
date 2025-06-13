@@ -290,7 +290,7 @@ const IncomeExpensesReports = ({
   return (
     <>
       <div className="d-flex justify-content-between align-items-center">
-        <h2 className="text-green mt-3 fw-bold">Income & Expance</h2>
+        <h2 className="text-green mt-3 fw-bold">Income & Expenses</h2>
         <span
           role="button"
           className="text-green"

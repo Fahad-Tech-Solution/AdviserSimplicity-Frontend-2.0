@@ -314,48 +314,53 @@ function Options(props) {
     "/CDF_Clients",
   ];
 
+  const sidebarWidth = props.collapsed ? "" : "sidebar-collapsed"; // Change these values as needed
+
   if (topMenuArray.includes(CurrentP)) {
     return (
       <div
-        className="container-fluid"
-        id="OptionsBar"
-        style={{ paddingLeft: leftPadding, zIndex: 1000  }}
+        className="container-fluid "
+        // id="OptionsBar"
+        style={{ position: "relative" }}
       >
-        <div className="container-fluid" style={{ marginLeft: "1.8rem" }}>
+        <div className="container-fluid">
           <div className="row pe-4">
             <div className="col-md-12 p-0">
-              <div className="Top_Nav ">
-                <div className="d-flex justify-content-between">
-                  <div>
-                    <Breadcrumb className="BreadcrumbCustom">
-                      <Breadcrumb.Item
-                        active
-                        linkAs={Link}
-                        linkProps={{ to: "/" }}
-                        className="p-0 m-0 LeagueSpartanFamily"
-                      >
-                        Dashboard
-                      </Breadcrumb.Item>
-                      <Breadcrumb.Item
-                        active
-                        linkAs={Link}
-                        linkProps={{ to: "/" }}
-                        className="p-0 m-0 LeagueSpartanFamily"
-                      >
-                        {currentPCLassSwitch}
-                      </Breadcrumb.Item>
-                    </Breadcrumb>
-                    <h5 className="Page LeagueSpartanFamily">
-                      {currentTabName || "Dashboard"}
-                    </h5>
-                  </div>
-                  <div className="rightBlock">
-                    <FontAwesomeIcon icon={faMoon} className="moon" />
-                    <FontAwesomeIcon icon={faCircleUser} className="user" />
-                    <FontAwesomeIcon icon={faBars} className="menu" />
+              <div className={sidebarWidth} id="OptionsBar">
+                <div className="Top_Nav">
+                  <div className="d-flex justify-content-between">
+                    <div>
+                      <Breadcrumb className="BreadcrumbCustom">
+                        <Breadcrumb.Item
+                          active
+                          linkAs={Link}
+                          linkProps={{ to: "/" }}
+                          className="p-0 m-0 LeagueSpartanFamily"
+                        >
+                          Dashboard
+                        </Breadcrumb.Item>
+                        <Breadcrumb.Item
+                          active
+                          linkAs={Link}
+                          linkProps={{ to: "/" }}
+                          className="p-0 m-0 LeagueSpartanFamily"
+                        >
+                          {currentPCLassSwitch}
+                        </Breadcrumb.Item>
+                      </Breadcrumb>
+                      <h5 className="Page LeagueSpartanFamily">
+                        {currentTabName || "Dashboard"}
+                      </h5>
+                    </div>
+                    <div className="rightBlock">
+                      <FontAwesomeIcon icon={faBars} className="menu" />
+                      <FontAwesomeIcon icon={faMoon} className="moon" />
+                      <FontAwesomeIcon icon={faCircleUser} className="user" />
+                    </div>
                   </div>
                 </div>
               </div>
+              <div style={{ height: "6.5rem" }}></div>
             </div>
           </div>
         </div>
