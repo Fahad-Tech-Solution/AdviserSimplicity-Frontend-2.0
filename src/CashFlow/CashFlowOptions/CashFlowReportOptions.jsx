@@ -115,7 +115,14 @@ function CashFlowReportOptions(props) {
               onClick={() => {
                 handleStepClick(item.stepNumber);
               }}
-              style={{ height: "2rem", width: "6rem" }}
+                style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "16px",
+                width: "2rem",
+                height: "2rem",
+              }}
             >
               <IconComponent />
             </span>

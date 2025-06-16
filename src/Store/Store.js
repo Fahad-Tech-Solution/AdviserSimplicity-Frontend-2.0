@@ -1,5 +1,12 @@
 import { atom } from "recoil";
 
+import { recoilPersist } from "recoil-persist";
+
+// Tell it to use sessionStorage instead of localStorage
+const { persistAtom } = recoilPersist({
+  storage: sessionStorage, // ✅ use session storage
+});
+
 export const QuestionShift = atom({
   key: "QuestionShift",
   default: "FinancialInvestments",
@@ -406,7 +413,7 @@ export const StepsStatus = atom({
 
 export const BankDetail = atom({
   key: "BankDetail",
-  default: [],
+  default: {},
 });
 
 export const CashFlowData = atom({
@@ -442,4 +449,15 @@ export const Progress = atom({
 export const ReportsData = atom({
   key: "ReportsData",
   default: {},
+});
+
+export const SelectedClientDetails = atom({
+  key: "SelectedClientDetails",
+  default: {},
+  effects_UNSTABLE: [persistAtom], // enables localStorage persistence
+});
+export const SelectedSenario = atom({
+  key: "SelectedSenario",
+  default: {},
+  effects_UNSTABLE: [persistAtom], // enables localStorage persistence
 });

@@ -41,7 +41,7 @@ const InstituteAndOffer = (props) => {
             const res = await GetAxios(`${DefaultUrl}/api/investmentoffer/`);
             if (res) {
                 // console.log(JSON.stringify(res))
-                setBankDetailObj(res)
+                setBankDetailObj(res||{})
             }
         } catch (error) {
             console.error("Error fetching questions:", error);

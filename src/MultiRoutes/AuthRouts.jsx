@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 import PersonalDetail_Edit from "../Components/PersonalDetails/PersonalDetail_Edit";
-import SideBar from "../Components/SideBar/SideBarrr";
 
 import { Route, Routes } from "react-router-dom";
 
@@ -48,8 +47,8 @@ function AuthRouts() {
       <div>
         <AdminSideBar collapsed={collapsed} setCollapsed={setCollapsed} />
       </div>
-      <div className={`flex-grow-1 w-100`}>
-        <Options collapsed={collapsed} />
+      <div className={`flex-grow-1 w-100 px-3`}>
+        <Options collapsed={collapsed} setCollapsed={setCollapsed} />
         <Routes>
           <Route path="/" element={<Dashboard />} />
 
@@ -163,14 +162,9 @@ function AuthRouts() {
           <Route path="/Risk-Profile/*" element={<RiskProfileNew />} />
           <Route path="/CDF_Clients" element={<CDFclients />} />
         </Routes>
-
-        <div
-          style={{ backgroundColor: "lightgray", fontSize: "13px" }}
-          className="w-100 py-2 mt-4 d-flex justify-content-center align-items-center"
-        >
-          © Fahad Tech Solution. All rights reserved.
-        </div>
+        
       </div>
+      
     </div>
   );
 

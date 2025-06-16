@@ -29,9 +29,13 @@ const Dashboard = () => {
       </div>
       <div className="row mt-4">
         <div className="col-md-12">
-          <Card className="custom_Shadow p-3 mb-5 ">
-            <h5 className="PoppinsFamily navy_Text fw-bold ">All Clients</h5>
-            <NewAllClients />
+          <Card className="custom_Shadow mb-5">
+            <div className="d-flex flex-column justify-content-center align-items-center py-3">
+              <h5 className="PoppinsFamily navy_Text fw-bold w-100 text-start ps-3 m-0">All Clients</h5>
+              <div style={{width:"98%"}}>
+                <NewAllClients />
+              </div>
+            </div>
           </Card>
         </div>
       </div>

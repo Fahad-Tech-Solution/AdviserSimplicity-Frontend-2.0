@@ -4,15 +4,22 @@ import Options from "../../Components/Options";
 
 import { useRecoilState, useRecoilValue } from "recoil";
 import { GetAxios } from "../../Components/Assets/Api/Api";
-import { AllUsers, CashFlowData, defaultUrl } from "../../Store/Store";
+import {
+  AllUsers,
+  CashFlowData,
+  defaultUrl,
+  SelectedClientDetails,
+} from "../../Store/Store";
 import AccordionItems from "./AccordionItems";
 import ModalComponent from "../../Components/Questions/FinancialInvestments/ModalComponent";
 import ScenarioForm from "./ScenarioForm";
 
-const CashFlowAllUsers = (props) => {
+const CashFlowOneClient = (props) => {
   const [PersonalDetail2, setPersonalDetail] = useRecoilState(AllUsers);
   let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
   let DefaultUrl = useRecoilValue(defaultUrl);
+  let selectedClientDetails = useRecoilValue(SelectedClientDetails);
+  let [accordianIndex, setAccordianIndex] = useState(0);
 
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
@@ -94,23 +101,31 @@ const CashFlowAllUsers = (props) => {
               <h5 className="cashFlowCardHead LeagueSpartanFamily">
                 Users List
               </h5>
-              <Accordion defaultActiveKey="0">
+              <Accordion
+                defaultActiveKey={PersonalDetail2.findIndex(
+                  (elem) => elem._id === selectedClientDetails._id
+                )}
+              >
                 {PersonalDetail2.map((elem, index) => {
                   // Filter scenarios that have the same clientFK as the current client's ID
                   const filteredScenarios = (
                     cashFlowData.Scenarios || []
                   ).filter((scenario) => scenario.clientFK == elem._id);
 
-                  return (
-                    <AccordionItems
-                      CallBack={OpenModal}
-                      fullData={elem}
-                      client={elem.client}
-                      partner={elem.partner}
-                      tableData={filteredScenarios || []}
-                      index={index}
-                    />
-                  );
+                  if (elem._id === selectedClientDetails._id) {
+                    return (
+                      <AccordionItems
+                        CallBack={OpenModal}
+                        fullData={elem}
+                        client={elem.client}
+                        partner={elem.partner}
+                        tableData={filteredScenarios || []}
+                        index={index}
+                        key={index} // Unique key per item
+                        eventKey={`${index}`} // Ensure eventKey is string, and matches defaultActiveKey
+                      />
+                    );
+                  }
                 })}
               </Accordion>
             </Card.Body>
@@ -121,4 +136,4 @@ const CashFlowAllUsers = (props) => {
   );
 };
 
-export default CashFlowAllUsers;
+export default CashFlowOneClient;

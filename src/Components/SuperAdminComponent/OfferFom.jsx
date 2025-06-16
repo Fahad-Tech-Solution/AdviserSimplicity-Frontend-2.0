@@ -187,7 +187,7 @@ const OfferFom = (props) => {
         try {
             const res = await GetAxios(`${DefaultUrl}/api/investmentoffer/`);
             if (res) {
-                setBankDetailObj(res); // Update bankDetailObj with new data
+                setBankDetailObj(res||{}); // Update bankDetailObj with new data
             }
         } catch (error) {
             console.error("Error fetching data:", error);

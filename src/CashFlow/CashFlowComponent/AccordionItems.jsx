@@ -1,72 +1,106 @@
-import React from 'react';
-import { Accordion, Button, Table } from 'react-bootstrap';
-import { MdMale, MdCake, MdAdd, MdEdit } from 'react-icons/md';
-import { FaArrowRotateRight, FaClipboardList, FaFileLines, FaGear, FaLock, FaRegCopy, FaRing } from 'react-icons/fa6'
-
+import React from "react";
+import { Accordion, Button, Table } from "react-bootstrap";
+import { MdMale, MdCake, MdAdd, MdEdit } from "react-icons/md";
+import {
+  FaArrowRotateRight,
+  FaClipboardList,
+  FaFileLines,
+  FaGear,
+  FaLock,
+  FaRegCopy,
+  FaRing,
+} from "react-icons/fa6";
 
 import single from "../../Components/Svgs/single-2.svg";
 import couple from "../../Components/Svgs/couple-2.svg";
-import { ConvertDate, DeleteAxios, openNotificationSuccess, PatchAxios } from '../../Components/Assets/Api/Api';
-import { FaEdit, FaTrashAlt, } from 'react-icons/fa';
-import { Dropdown, Menu } from 'antd';
-import { useNavigate } from 'react-router-dom';
-import { content } from '../../Content/Content';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { CashFlowData, CashFlowScenarioData, CashFlowScenarioType, CFQObject, defaultUrl, PersonalDetailsData, QuestionDetail } from '../../Store/Store';
+import {
+  ConvertDate,
+  DeleteAxios,
+  openNotificationSuccess,
+  PatchAxios,
+} from "../../Components/Assets/Api/Api";
+import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { Dropdown, Menu } from "antd";
+import { useNavigate } from "react-router-dom";
+import { content } from "../../Content/Content";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  CashFlowData,
+  CashFlowScenarioData,
+  CashFlowScenarioType,
+  CFQObject,
+  defaultUrl,
+  PersonalDetailsData,
+  QuestionDetail,
+  SelectedSenario,
+} from "../../Store/Store";
 
-const AccordionItems = ({ client, partner, tableData, index, fullData, CallBack }) => {
-
+const AccordionItems = ({
+  client,
+  partner,
+  tableData,
+  index,
+  fullData,
+  CallBack,
+}) => {
   let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
-  let [PersonalDetailObj, setPersonalDetailObj] = useRecoilState(PersonalDetailsData);
-  let [cashFlowScenarioData, setCashFlowScenarioData] = useRecoilState(CashFlowScenarioData);
-  let [cashFlowScenarioType, setCashFlowScenarioType] = useRecoilState(CashFlowScenarioType);
+  let [PersonalDetailObj, setPersonalDetailObj] =
+    useRecoilState(PersonalDetailsData);
+  let [cashFlowScenarioData, setCashFlowScenarioData] =
+    useRecoilState(CashFlowScenarioData);
+  let [cashFlowScenarioType, setCashFlowScenarioType] =
+    useRecoilState(CashFlowScenarioType);
+  let [selectedSenario, setSelectedSenario] = useRecoilState(SelectedSenario);
   let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
   let [CFObject, setCFObject] = useRecoilState(CFQObject);
 
   let DefaultUrl = useRecoilValue(defaultUrl);
 
-  let Nav = useNavigate()
+  let Nav = useNavigate();
 
   let { cashFlow } = content;
 
   async function menuClicked(fullData, row, operation) {
     localStorage.setItem("ScenarioObj", JSON.stringify(row));
 
-    setQuestionDetail({})
-    setPersonalDetailObj({})
-    setCashFlowScenarioData({})
-    setCashFlowScenarioType("")
+    setQuestionDetail({});
+    setPersonalDetailObj({});
+    setCashFlowScenarioData({});
+    setCashFlowScenarioType("");
     setCFObject({});
-
 
     switch (operation) {
       case "Edit":
       case "Update":
         if (row?.lastModuleEdited && row.lastModuleEdited !== "") {
+          const route = cashFlow.find(
+            (module) => module.subTitle === row.lastModuleEdited
+          )?.route;
 
-          const route = cashFlow.find((module) => module.subTitle === row.lastModuleEdited)?.route;
           if (route) {
             Nav("/Cash-Flow" + route);
-          }
-          else {
+          } else {
+            setSelectedSenario(row);
             Nav("/Cash-Flow/PersonalDetail" + "#" + row._id);
           }
-        }
-        else {
+        } else {
+          setSelectedSenario(fullData);
           Nav("/Cash-Flow/PersonalDetail" + "#" + fullData._id);
         }
         break;
 
       case "lock":
         try {
-          const lockData = await PatchAxios(DefaultUrl + "/api/CF/scenario/lockedScenario/" + row._id);
+          const lockData = await PatchAxios(
+            DefaultUrl + "/api/CF/scenario/lockedScenario/" + row._id
+          );
 
           if (lockData) {
             console.log(lockData);
 
-            setCashFlowData(prevData => {
+            setCashFlowData((prevData) => {
               if (prevData && Array.isArray(prevData.Scenarios)) {
-                const updatedScenarios = prevData.Scenarios.map(item =>
+                const updatedScenarios = prevData.Scenarios.map((item) =>
                   item._id === row._id ? lockData : item
                 );
                 return {
@@ -74,7 +108,9 @@ const AccordionItems = ({ client, partner, tableData, index, fullData, CallBack 
                   Scenarios: updatedScenarios,
                 };
               }
-              console.error("Scenarios is not an array or cashFlowData is invalid. Resetting state.");
+              console.error(
+                "Scenarios is not an array or cashFlowData is invalid. Resetting state."
+              );
               return { ...prevData, Scenarios: [] }; // Fallback if something is wrong
             });
 
@@ -94,7 +130,9 @@ const AccordionItems = ({ client, partner, tableData, index, fullData, CallBack 
             );
           }
         } catch (error) {
-          console.log("An error occurred while locking the scenario: " + error.message);
+          console.log(
+            "An error occurred while locking the scenario: " + error.message
+          );
           openNotificationSuccess(
             "error",
             "topRight",
@@ -106,7 +144,6 @@ const AccordionItems = ({ client, partner, tableData, index, fullData, CallBack 
         break;
 
       case "delete":
-
         if (row.isLocked) {
           openNotificationSuccess(
             "error",
@@ -117,22 +154,27 @@ const AccordionItems = ({ client, partner, tableData, index, fullData, CallBack 
           return false;
         }
 
-
         try {
-          let deleteData = await DeleteAxios(DefaultUrl + "/api/CF/scenario/softDelete/" + row._id);
+          let deleteData = await DeleteAxios(
+            DefaultUrl + "/api/CF/scenario/softDelete/" + row._id
+          );
 
           if (deleteData) {
             console.log(deleteData);
 
-            setCashFlowData(prevData => {
+            setCashFlowData((prevData) => {
               if (prevData && Array.isArray(prevData.Scenarios)) {
-                const updatedScenarios = prevData.Scenarios.filter(item => item._id !== row._id);
+                const updatedScenarios = prevData.Scenarios.filter(
+                  (item) => item._id !== row._id
+                );
                 return {
                   ...prevData,
                   Scenarios: updatedScenarios,
                 };
               }
-              console.error("Scenarios is not an array or cashFlowData is invalid. Resetting state.");
+              console.error(
+                "Scenarios is not an array or cashFlowData is invalid. Resetting state."
+              );
               return { ...prevData, Scenarios: [] }; // Fallback if something is wrong
             });
 
@@ -152,7 +194,9 @@ const AccordionItems = ({ client, partner, tableData, index, fullData, CallBack 
             );
           }
         } catch (error) {
-          console.log("An error occurred while deleting the scenario: " + error.message);
+          console.log(
+            "An error occurred while deleting the scenario: " + error.message
+          );
           openNotificationSuccess(
             "error",
             "topRight",
@@ -166,49 +210,83 @@ const AccordionItems = ({ client, partner, tableData, index, fullData, CallBack 
       default:
         break;
     }
-
-
   }
 
-
   const getMenu = (row) => (
-    <Menu className={
-      row.isLocked ?
-        "ClearDropDownSpanSingle"
-        :
-        'ClearDropDownSpanDouble'
-    }>
-      {(!row.isLocked) &&
+    <Menu
+      className={
+        row.isLocked ? "ClearDropDownSpanSingle" : "ClearDropDownSpanDouble"
+      }
+    >
+      {!row.isLocked && (
         <React.Fragment>
-          <Menu.Item key="1" icon={<FaEdit />} onClick={() => menuClicked(fullData, row, "Edit")}> Edit </Menu.Item>
-          <Menu.Item key="3" icon={<FaEdit />} onClick={() => CallBack(fullData, row, "Edit")}>Edit Name  </Menu.Item>
-        </React.Fragment>}
+          <Menu.Item
+            key="1"
+            icon={<FaEdit />}
+            onClick={() => menuClicked(fullData, row, "Edit")}
+          >
+            {" "}
+            Edit{" "}
+          </Menu.Item>
+          <Menu.Item
+            key="3"
+            icon={<FaEdit />}
+            onClick={() => CallBack(fullData, row, "Edit")}
+          >
+            Edit Name{" "}
+          </Menu.Item>
+        </React.Fragment>
+      )}
 
-      {(row.isLocked) &&
-        <Menu.Item key="1" icon={<FaFileLines />} onClick={() => menuClicked(fullData, row, "Edit")}> View </Menu.Item>
-      }
-      <Menu.Item key="5" icon={<FaRegCopy />} onClick={() => CallBack(fullData, row, "duplicate")}>Duplicate </Menu.Item>
+      {row.isLocked && (
+        <Menu.Item
+          key="1"
+          icon={<FaFileLines />}
+          onClick={() => menuClicked(fullData, row, "Edit")}
+        >
+          {" "}
+          View{" "}
+        </Menu.Item>
+      )}
+      <Menu.Item
+        key="5"
+        icon={<FaRegCopy />}
+        onClick={() => CallBack(fullData, row, "duplicate")}
+      >
+        Duplicate{" "}
+      </Menu.Item>
 
-      {(!row.isLocked) &&
-        <Menu.Item key="4" icon={<FaLock />} onClick={() => menuClicked(fullData, row, "lock")}>Lock </Menu.Item>
-      }
-      <Menu.Item key="6" icon={<FaTrashAlt />} onClick={() => menuClicked(fullData, row, "delete")}>Delete </Menu.Item>
+      {!row.isLocked && (
+        <Menu.Item
+          key="4"
+          icon={<FaLock />}
+          onClick={() => menuClicked(fullData, row, "lock")}
+        >
+          Lock{" "}
+        </Menu.Item>
+      )}
+      <Menu.Item
+        key="6"
+        icon={<FaTrashAlt />}
+        onClick={() => menuClicked(fullData, row, "delete")}
+      >
+        Delete{" "}
+      </Menu.Item>
     </Menu>
   );
 
-
   return (
     <Accordion.Item eventKey={index}>
-      <Accordion.Header>{client.clientGivenName}  Age#{client.clientAge}</Accordion.Header>
+      <Accordion.Header>
+        {client.clientGivenName} Age#{client.clientAge}
+      </Accordion.Header>
       <Accordion.Body>
         <div className="w-100">
           <div className="row">
-
             {/* Client Card */}
             <div className="col-md-6">
               <div className="card w-100 rounded shadow-sm bg-Custom-green text-dark p-4">
                 <div className="row g-3">
-
                   {/* Client Column 1 */}
                   <div className="col-12 col-md-8">
                     <div className="row align-items-center">
@@ -228,9 +306,7 @@ const AccordionItems = ({ client, partner, tableData, index, fullData, CallBack 
                       <div className="col-2">
                         <MdMale size={20} />
                       </div>
-                      <div className="col fw-bold">
-                        {client.clientGender}
-                      </div>
+                      <div className="col fw-bold">{client.clientGender}</div>
                     </div>
                     <div className="row align-items-center mt-2">
                       <div className="col-2">
@@ -248,9 +324,7 @@ const AccordionItems = ({ client, partner, tableData, index, fullData, CallBack 
                       <div className="col-2">
                         <FaArrowRotateRight size={20} />
                       </div>
-                      <div className="col fw-bold">
-                        {client.clientAge}
-                      </div>
+                      <div className="col fw-bold">{client.clientAge}</div>
                     </div>
                     <div className="row align-items-center mt-2">
                       <div className="col-2">
@@ -309,9 +383,7 @@ const AccordionItems = ({ client, partner, tableData, index, fullData, CallBack 
                         <div className="col-2">
                           <FaArrowRotateRight size={20} />
                         </div>
-                        <div className="col fw-bold">
-                          {partner.partnerAge}
-                        </div>
+                        <div className="col fw-bold">{partner.partnerAge}</div>
                       </div>
                       <div className="row align-items-center mt-2">
                         <div className="col-2">
@@ -327,20 +399,27 @@ const AccordionItems = ({ client, partner, tableData, index, fullData, CallBack 
               </div>
             )}
 
-
-            <div className='col-md-12 mt-3'>
-              <div className='row justify-content-between '>
-                <div className='pt-2' style={{ width: "fit-content" }}>
+            <div className="col-md-12 mt-3">
+              <div className="row justify-content-between ">
+                <div className="pt-2" style={{ width: "fit-content" }}>
                   <h5>Scenario List :</h5>
                 </div>
                 <div style={{ width: "fit-content" }}>
-                  <button className='btn bgColor modalBtn' onClick={() => { CallBack(fullData, {}, "New") }} > Add New <MdAdd />  </button>
+                  <button
+                    className="btn bgColor modalBtn"
+                    onClick={() => {
+                      CallBack(fullData, {}, "New");
+                    }}
+                  >
+                    {" "}
+                    Add New <MdAdd />{" "}
+                  </button>
                 </div>
               </div>
             </div>
 
             {/* Table */}
-            {tableData.length > 0 &&
+            {tableData.length > 0 && (
               <div className="col-md-12">
                 <div className="mt-4">
                   <Table striped bordered responsive hover>
@@ -363,26 +442,36 @@ const AccordionItems = ({ client, partner, tableData, index, fullData, CallBack 
                           <td>{ConvertDate(row.createdAt)}</td>
                           <td>{ConvertDate(row.updatedAt)}</td>
                           <td>
-                            <Dropdown overlay={getMenu(row)} trigger={["click"]}
+                            <Dropdown
+                              overlay={getMenu(row)}
+                              trigger={["click"]}
                             >
-                              {row.isLocked ?
-                                <div style={{ position: 'relative', display: 'inline-block' }}>
+                              {row.isLocked ? (
+                                <div
+                                  style={{
+                                    position: "relative",
+                                    display: "inline-block",
+                                  }}
+                                >
                                   <FaGear size={20} />
                                   <FaLock
                                     size={10}
                                     style={{
-                                      position: 'absolute',
-                                      top: '75%',
-                                      left: '95%',
-                                      transform: 'translate(-50%, -50%)',
-                                      border: '20px solid inherit',
-                                      borderRadius: '50%',
-                                      backgroundColor: 'white', // Optional for better visibility
-                                      color: "#ac0202"
+                                      position: "absolute",
+                                      top: "75%",
+                                      left: "95%",
+                                      transform: "translate(-50%, -50%)",
+                                      border: "20px solid inherit",
+                                      borderRadius: "50%",
+                                      backgroundColor: "white", // Optional for better visibility
+                                      color: "#ac0202",
                                     }}
                                   />
                                 </div>
-                                : <FaGear size={20} />}</Dropdown>
+                              ) : (
+                                <FaGear size={20} />
+                              )}
+                            </Dropdown>
                           </td>
                         </tr>
                       ))}
@@ -390,8 +479,7 @@ const AccordionItems = ({ client, partner, tableData, index, fullData, CallBack 
                   </Table>
                 </div>
               </div>
-            }
-
+            )}
           </div>
         </div>
       </Accordion.Body>

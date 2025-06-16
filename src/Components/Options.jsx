@@ -1,15 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import "./options.css";
-
 import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  UserName,
-  CurrentPage,
-  OptionRender,
-  CRState,
-  StepsStatus,
-} from "../Store/Store";
 import { Breadcrumb, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -40,157 +31,111 @@ import {
   MdOutlineTimeline,
 } from "react-icons/md";
 import { RiCoinsFill, RiDiscountPercentFill } from "react-icons/ri";
+
 import { content } from "../Content/Content";
 import { openNotificationSuccess } from "./Assets/Api/Api";
+import {
+  UserName,
+  CurrentPage,
+  OptionRender,
+  CRState,
+  StepsStatus,
+} from "../Store/Store";
+
+import "./options.css";
+
+const iconMap = {
+  FaBriefcase,
+  FaCheck,
+  FaGift,
+  FaKey,
+  FaMoneyCheckDollar,
+  FaMoneyBillWave,
+  FaPlus,
+  FaUser,
+  FaChartLine,
+  FaTriangleExclamation,
+  FaGraduationCap,
+  FaChartPie,
+  FaHome,
+  FaQuestionCircle,
+  MdFamilyRestroom,
+  MdWaterDrop,
+  MdOutlineBalance,
+  MdOutlineTimeline,
+  RiCoinsFill,
+  RiDiscountPercentFill,
+};
 
 function Options(props) {
-  let Nev = useNavigate();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  let [userName] = useRecoilState(UserName); // eslint-disable-line no-unused-vars
-  let [CurrentP] = useRecoilState(CurrentPage);
-  let [optRender, setOptRender] = useRecoilState(OptionRender);
-  let CRObject = useRecoilValue(CRState);
+  const [userName] = useRecoilState(UserName);
+  const [CurrentP] = useRecoilState(CurrentPage);
+  const [optRender, setOptRender] = useRecoilState(OptionRender);
+  const CRObject = useRecoilValue(CRState);
+  const stepsStatus = useRecoilValue(StepsStatus);
 
-  let [leftPadding, setLeftPadding] = useState("18rem");
-  let [currentTabName, setCurrentTabName] = useState("Home");
-
-  let [stepCompleted, setStepCompleted] = useState(8);
-  let [currentPCLassSwitch, setCurrentPCLassSwitch] =
+  const [leftPadding, setLeftPadding] = useState("18rem");
+  const [currentTabName, setCurrentTabName] = useState("Home");
+  const [stepCompleted, setStepCompleted] = useState(8);
+  const [currentPCLassSwitch, setCurrentPCLassSwitch] =
     useState("PersonalDetail");
-
-  let [items, setItems] = useState([]);
-  let { itemsOpt } = content;
-  let { itemsQuestion } = content;
-
-  let stepsStatus = useRecoilValue(StepsStatus); // eslint-disable-line no-unused-vars
+  const [items, setItems] = useState([]);
 
   useEffect(() => {
-    if (props.SidebarSwitch === true) {
-      // alert(props.SidebarSwitch );
-      setLeftPadding("5rem");
-    } else {
-      // alert(props.SidebarSwitch );
-      setLeftPadding("18rem");
-    }
+    setLeftPadding(props.SidebarSwitch ? "5rem" : "18rem");
   }, [props.SidebarSwitch]);
 
-  let location = useLocation();
-
   useEffect(() => {
-    let cLocation = location.pathname.replace("/", "");
-    console.log(location.pathname);
-
+    const cLocation = location.pathname.replace("/", "");
     let Opt = "Opt1";
     let stepComplete = 0;
     let Risk = false;
-    let cashFlow = false;
 
-    setCurrentPCLassSwitch(cLocation.trim());
+    setCurrentPCLassSwitch(cLocation);
 
-    switch (cLocation) {
-      case "PersonalDetail":
-        stepComplete = 0;
-        break;
-      case "ImportantQuestion":
-        stepComplete = 8;
-        break;
-      case "PersonalIncome":
-        stepComplete = 16;
-        Opt = "Opt1";
-        break;
-      case "PersonalAssets":
-        Opt = "Opt1";
-        stepComplete = 24;
-        break;
-      case "FinancialInvestments":
-        stepComplete = 32;
-        Opt = "Opt1";
-        break;
-      // case "SuperAndRetirement":
-      //   stepComplete = 40;
-      //   Opt = "Opt1"
-      //   break;
-      // case "Lifestyle": //Property
-      //   Opt = "Opt1"
-      //   stepComplete = 48;
-      //   break;
-      // case "Investment": //Property investment
-      //   Opt = "Opt2"
-      //   stepComplete = 56;
-      //   break;
-      case "EstatePlanning":
-        // Opt = "Opt2"
-        stepComplete = 40;
-        break;
-      case "PersonalInsurance":
-        // Opt = "Opt2"
-        stepComplete = 48;
-        break;
-      case "BusinessEntities":
-        Opt = "Opt2";
-        stepComplete = 56;
-        break;
-      case "SMSF":
-        Opt = "Opt2";
-        stepComplete = 64;
-        break;
-      case "FamilyTrust":
-        Opt = "Opt2";
-        stepComplete = 72;
-        break;
-      case "Goals-And-Objectives":
-        Opt = "Opt2";
-        stepComplete = 80;
-        break;
-      case "Risk-Profile/Q1":
-        Opt = "Opt3";
-        stepComplete = 12;
-        Risk = true;
-        break;
-      case "Risk-Profile/Q2":
-        Opt = "Opt3";
-        stepComplete = 24;
-        Risk = true;
-        break;
-      case "Risk-Profile/Q3":
-        Opt = "Opt3";
-        stepComplete = 36;
-        Risk = true;
-        break;
-      case "Risk-Profile/Q4":
-        Opt = "Opt3";
-        stepComplete = 48;
-        Risk = true;
-        break;
-      case "Risk-Profile/Q5":
-        Opt = "Opt3";
-        stepComplete = 62;
-        Risk = true;
-        break;
-      case "Risk-Profile/Q6":
-        Opt = "Opt3";
-        stepComplete = 74;
-        Risk = true;
-        break;
-      case "Risk-Profile/Q7":
-        Opt = "Opt3";
-        stepComplete = 86;
-        Risk = true;
-        break;
-      case "Risk-Profile/Q8":
-        Opt = "Opt3";
-        stepComplete = 98;
-        Risk = true;
-        break;
-      default:
-        let a = cLocation.split("/")[0];
-        setCurrentTabName(a.replaceAll("-", " "));
-        break;
-    }
+    const stepMap = {
+      PersonalDetail: 0,
+      ImportantQuestion: 8,
+      PersonalIncome: 16,
+      PersonalAssets: 24,
+      FinancialInvestments: 32,
+      EstatePlanning: 40,
+      PersonalInsurance: 48,
+      BusinessEntities: 56,
+      SMSF: 64,
+      FamilyTrust: 72,
+      "Goals-And-Objectives": 80,
+      "Risk-Profile/Q1": 12,
+      "Risk-Profile/Q2": 24,
+      "Risk-Profile/Q3": 36,
+      "Risk-Profile/Q4": 48,
+      "Risk-Profile/Q5": 62,
+      "Risk-Profile/Q6": 74,
+      "Risk-Profile/Q7": 86,
+      "Risk-Profile/Q8": 98,
+    };
+
+    stepComplete = stepMap[cLocation] || 0;
+    Risk = cLocation.startsWith("Risk-Profile");
+
+    if (
+      [
+        "BusinessEntities",
+        "SMSF",
+        "FamilyTrust",
+        "Goals-And-Objectives",
+      ].includes(cLocation)
+    )
+      Opt = "Opt2";
+    if (Risk) Opt = "Opt3";
 
     setOptRender(Opt);
     setStepCompleted(stepComplete);
 
+    const { itemsOpt, itemsQuestion } = content;
     const itemsToRender =
       Opt === "Opt3"
         ? itemsQuestion
@@ -198,42 +143,17 @@ function Options(props) {
         ? itemsOpt.slice(0, 7)
         : itemsOpt.slice(7, 14);
 
-    let conditionCheck = Opt === "Opt3" ? true : CRObject;
+    const conditionCheck = Opt === "Opt3" ? true : CRObject;
 
     const updatedItems = itemsToRender
       .filter((item) => item.condition(conditionCheck))
       .map((item) => {
+        const IconComponent = iconMap[item.icon] || FaUser;
         const isPersonalDetails = item.subTitle === "Personal Details";
         const currentEmail = localStorage.getItem("UserID");
-
-        const iconMap = {
-          FaBriefcase,
-          FaCheck,
-          FaGift,
-          FaKey,
-          FaMoneyCheckDollar,
-          FaUser,
-          FaHome,
-          FaQuestionCircle,
-          MdFamilyRestroom,
-          RiCoinsFill,
-          FaPlus,
-          FaChartLine,
-          MdWaterDrop,
-          FaTriangleExclamation,
-          RiDiscountPercentFill,
-          MdOutlineBalance,
-          FaGraduationCap,
-          FaChartPie,
-          MdOutlineTimeline,
-          FaMoneyBillWave,
-        };
-
-        const IconComponent = iconMap[item.icon] || FaUser; // Default to FaUser if not found
         let isCurrentStep =
           cLocation ===
           (isPersonalDetails ? "PersonalDetail" : item.route.replace("/", ""));
-
         if (Opt === "Opt3") {
           isCurrentStep =
             cLocation.replace("Risk-Profile/", "") ===
@@ -241,13 +161,12 @@ function Options(props) {
               ? "PersonalDetail"
               : item.route.replace("/", ""));
         }
-
-        let Status =
+        const status =
           stepComplete < item.statusStep
             ? "wait"
             : stepComplete > item.statusStep
             ? "finish"
-            : "processing";
+            : "process";
 
         return {
           ...item,
@@ -258,33 +177,35 @@ function Options(props) {
               }`}
               role="button"
               onClick={() => {
-                if (Risk) {
-                  handleStepClick(`/Risk-Profile${item.route}`);
-                } else {
-                  handleStepClick(
-                    isPersonalDetails
-                      ? `/PersonalDetail#${currentEmail}`
-                      : item.route
-                  );
-                }
+                const path = Risk
+                  ? `/Risk-Profile${item.route}`
+                  : isPersonalDetails
+                  ? `/PersonalDetail#${currentEmail}`
+                  : item.route;
+                if (!stepsStatus) navigate(path);
               }}
-              style={{ height: "2rem", width: "6rem" }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "16px",
+                width: "2rem",
+                height: "2rem",
+              }}
             >
               <IconComponent />
             </span>
           ),
-          status: Status,
+          status,
           subTitle: (
             <span
               style={{
                 color: isCurrentStep ? "#000" : "#808080",
-                fontSize: "12px",
-                width: "100%",
+                fontSize: "11px",
                 fontWeight: isCurrentStep ? "600" : "500",
               }}
             >
-              {" "}
-              {item.subTitle}{" "}
+              {item.subTitle}
             </span>
           ),
         };
@@ -293,13 +214,14 @@ function Options(props) {
     setItems(updatedItems);
   }, [location, CRObject]);
 
-  let handleStepClick = (props) => {
-    if (!stepsStatus) {
-      Nev(props);
-    }
-  };
-
-  let NoTopBarArray = [
+  const topMenuArray = [
+    "/",
+    "/All-Clients",
+    "/Cash-Flow/AllUsers",
+    "/Cash-Flow/oneClient",
+    "/CDF_Clients",
+  ];
+  const noTopBarArray = [
     "/Goals-And-Objectives",
     "/Risk-Profile",
     "/Risk-Profile/",
@@ -307,26 +229,16 @@ function Options(props) {
     "/Risk-Profile/Cards",
   ];
 
-  let topMenuArray = [
-    "/",
-    "/All-Clients",
-    "/Cash-Flow/AllUsers",
-    "/CDF_Clients",
-  ];
-
-  const sidebarWidth = props.collapsed ? "" : "sidebar-collapsed"; // Change these values as needed
-
-  if (topMenuArray.includes(CurrentP)) {
+  if (topMenuArray.includes(location.pathname)) {
     return (
-      <div
-        className="container-fluid "
-        // id="OptionsBar"
-        style={{ position: "relative" }}
-      >
+      <div className="container-fluid" style={{ position: "relative" }}>
         <div className="container-fluid">
           <div className="row pe-4">
             <div className="col-md-12 p-0">
-              <div className={sidebarWidth} id="OptionsBar">
+              <div
+                className={props.collapsed ? "" : "sidebar-collapsed"}
+                id="OptionsBar"
+              >
                 <div className="Top_Nav">
                   <div className="d-flex justify-content-between">
                     <div>
@@ -353,69 +265,71 @@ function Options(props) {
                       </h5>
                     </div>
                     <div className="rightBlock">
-                      <FontAwesomeIcon icon={faBars} className="menu" />
+                      <FontAwesomeIcon
+                        role="button"
+                        icon={faBars}
+                        className="menu"
+                        onClick={() => props.setCollapsed(!props.collapsed)}
+                      />
                       <FontAwesomeIcon icon={faMoon} className="moon" />
                       <FontAwesomeIcon icon={faCircleUser} className="user" />
                     </div>
                   </div>
                 </div>
               </div>
-              <div style={{ height: "6.5rem" }}></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  } else if (NoTopBarArray.includes(CurrentP)) {
-    return <div></div>;
-  } else {
-    return (
-      <div className="container-fluid ps-md-5 ps-0">
-        <div className="row m-0 px-0 pt-0 ">
-          <div className="col-md-12">
-            <div className="row">
               <div
-                className="col-md-12"
-                style={{ padding: "10px 0px 0px 1.5px" }}
-              >
-                <div className="row">
-                  <div
-                    className="col-md-12 overflow-auto customScroll"
-                    style={{ padding: "20px 30px 0px 30px" }}
-                  >
-                    <ConfigProvider
-                      theme={{
-                        components: {
-                          Steps: {
-                            customIconFontSize: 30,
-                          },
-                        },
-                        token: {
-                          /* here is your global tokens */
-                          colorPrimary: "#36b446",
-                          fontSize: 12,
-                          lineWidth: 4,
-                        },
-                      }}
-                    >
-                      <Steps
-                        // items={optRender === 'Opt1' ? itemsOpt1 : optRender === 'Opt2' ? itemsOpt2 : optRender === 'Opt3' ? itemsOpt1 : itemsOpt2}
-                        items={items}
-                        labelPlacement={"vertical"}
-                        initial={0}
-                        responsive={false}
-                        status={"process"}
-                      />
-                    </ConfigProvider>
-                  </div>
-                </div>
-              </div>
+                className="d-none d-md-block"
+                style={{ height: "6.5rem" }}
+              ></div>
             </div>
           </div>
         </div>
       </div>
     );
   }
+
+  if (noTopBarArray.includes(location.pathname)) return <div></div>;
+
+  return (
+    <div className="container-fluid">
+      <div className="row">
+        <div className="col-md-12">
+          <div className="row">
+            <div
+              className="col-md-12"
+              style={{ padding: "10px 0px 0px 1.5px" }}
+            >
+              <div className="row">
+                <div
+                  className="col-md-12 overflow-auto customScroll"
+                  style={{ padding: "20px 20px 0px 20px" }}
+                >
+                  <ConfigProvider
+                    theme={{
+                      components: { Steps: { customIconFontSize: 30 } },
+                      token: {
+                        colorPrimary: "#36b446",
+                        fontSize: 12,
+                        lineWidth: 4,
+                      },
+                    }}
+                  >
+                    <Steps
+                      items={items}
+                      labelPlacement="vertical"
+                      initial={0}
+                      responsive={false}
+                      status="process"
+                    />
+                  </ConfigProvider>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default Options;

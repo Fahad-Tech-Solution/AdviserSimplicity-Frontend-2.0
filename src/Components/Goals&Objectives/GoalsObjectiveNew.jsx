@@ -695,7 +695,7 @@ const GoalsObjectiveNew = () => {
 
       <div className="row">
         <div className="col-md-12">
-          <div className="pb-4 px-4 mb-3">
+          <div className="pb-4 px-4 my-3">
             <h3
               className="text-center GreenColor"
               onClick={() => {

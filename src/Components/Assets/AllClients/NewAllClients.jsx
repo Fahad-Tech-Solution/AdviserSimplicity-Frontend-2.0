@@ -4,6 +4,7 @@ import {
   defaultUrl,
   Loading,
   QuestionDetail,
+  SelectedClientDetails,
   StepsStatus,
 } from "../../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -31,8 +32,8 @@ const NewAllClients = (props) => {
   const [showFilters, setShowFilters] = useState(false);
   let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
   let [stepsStatus, setStepsStatus] = useRecoilState(StepsStatus);
-  let [selectedRow, setSelectedRow] = useState(
-    JSON.parse(localStorage.getItem("selected client")) || []
+  let [selectedClientDetails, setSelectedClientDetails] = useRecoilState(
+    SelectedClientDetails
   );
 
   let [flagState, setFlagState] = useState(false);
@@ -76,7 +77,6 @@ const NewAllClients = (props) => {
     },
     {
       action: "select",
-      disabled: true,
       label: (
         <div
           style={{
@@ -211,14 +211,15 @@ const NewAllClients = (props) => {
         localStorage.setItem("Email", row.Email);
         setQuestionDetail({});
         setStepsStatus(false);
-        setSelectedRow([row.key]);
+        setSelectedClientDetails(row);
         Navigate("/PersonalDetail#" + row._id);
         break;
       case "select":
         localStorage.setItem("UserID", row._id);
         localStorage.setItem("selected client", JSON.stringify([row.key]));
         localStorage.setItem("Email", row.client.Email);
-        setSelectedRow([row.key]);
+        setSelectedClientDetails(row);
+
         break;
       case "delete":
         DeleteData(text, row, index);
@@ -251,17 +252,14 @@ const NewAllClients = (props) => {
 
   // rowSelection object indicates the need for row selection
   const rowSelection = {
-    selectedRowKeys: selectedRow,
+    selectedRowKeys: [selectedClientDetails.key],
     onChange: (selectedRowKeys, selectedRows) => {
-      // console.log(
-      //   `selectedRowKeys: ${selectedRowKeys}`,
-      //   "selectedRows: ",
-      //   selectedRows
-      // );
       localStorage.setItem("selected client", JSON.stringify(selectedRowKeys));
-      setSelectedRow(selectedRowKeys);
+      // setSelectedRow(selectedRowKeys);
       localStorage.setItem("UserID", selectedRows[0]?._id || "");
       localStorage.setItem("Email", selectedRows[0]?.client?.Email || "");
+
+      setSelectedClientDetails(selectedRows[0]);
     },
     getCheckboxProps: (record) => ({
       disabled: record.name === "Disabled User",
@@ -280,7 +278,7 @@ const NewAllClients = (props) => {
       </ModalComponent>
 
       <AntTableDynamicReportTable
-        // rowSelection={Object.assign({ type: "radio" }, rowSelection)}  //This feture is comming up in Next Miled Stone
+        rowSelection={Object.assign({ type: "radio" }, rowSelection)} //This feture is comming up in Next Miled Stone
         dataSource={PerosnalDetail}
         columns={columns}
         showFilters={showFilters}
