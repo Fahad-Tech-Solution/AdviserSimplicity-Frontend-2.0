@@ -44,7 +44,7 @@ const CDFForm = (props) => {
       img: Time,
     },
     {
-      key: "centrelinkEligibility",
+      key: "centreLinkEligibility",
       title: "Eligibility To Centrelink",
       img: Gear,
     },

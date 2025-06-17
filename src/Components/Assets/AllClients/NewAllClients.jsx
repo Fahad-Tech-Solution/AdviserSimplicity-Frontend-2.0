@@ -121,14 +121,20 @@ const NewAllClients = (props) => {
     {
       title: "Name",
       key: "clientGivenName",
-      render: (text, row) =>
-        row?.client?.clientTitle +
-          ". " +
-          row?.client?.clientGivenName +
-          (row?.client?.clientMaritalStatus !== "Single" &&
-            row?.client?.clientMaritalStatus !== "widowed" &&
-            row?.partner?.partnerGivenName !== "" &&
-            " & " + row?.partner?.partnerGivenName) || "--",
+      render: (text, row) => {
+        const clientName = `${row?.client?.clientTitle || ""}. ${
+          row?.client?.clientGivenName || ""
+        }`;
+        const shouldShowPartner =
+          row?.client?.clientMaritalStatus !== "Single" &&
+          row?.client?.clientMaritalStatus !== "widowed" &&
+          row?.partner?.partnerGivenName;
+        const partnerName = shouldShowPartner
+          ? ` & ${row.partner.partnerGivenName}`
+          : "";
+
+        return clientName.trim() || "--" + partnerName;
+      },
     },
     {
       title: "Marital Status",

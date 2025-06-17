@@ -240,7 +240,7 @@ function Options(props) {
                 id="OptionsBar"
               >
                 <div className="Top_Nav">
-                  <div className="d-flex justify-content-between">
+                  <div className="d-flex justify-content-between align-items-center">
                     <div>
                       <Breadcrumb className="BreadcrumbCustom">
                         <Breadcrumb.Item
@@ -302,7 +302,7 @@ function Options(props) {
               <div className="row">
                 <div
                   className="col-md-12 overflow-auto customScroll"
-                  style={{ padding: "20px 20px 0px 20px" }}
+                  style={{ padding: "10px 20px 0px 20px" }}
                 >
                   <ConfigProvider
                     theme={{

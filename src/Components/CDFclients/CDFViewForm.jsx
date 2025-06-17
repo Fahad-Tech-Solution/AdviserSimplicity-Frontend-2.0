@@ -47,26 +47,28 @@ const CDFViewForm = (props) => {
     {
       label: "Employment Income",
       children: toCommaAndDollar(
-        parseFloat(Data.client?.employmentIncome || 0)
+        parseFloat(Data.client?.incomeDetails?.employmentIncome || 0)
       ),
       ...sharedItemStyle,
     },
     {
       label: "Business Income",
-      children: toCommaAndDollar(parseFloat(Data.client?.businessIncome || 0)),
+      children: toCommaAndDollar(
+        parseFloat(Data.client?.incomeDetails?.businessIncome || 0)
+      ),
       ...sharedItemStyle,
     },
     {
       label: "Centrelink Payments",
       children: toCommaAndDollar(
-        parseFloat(Data.client?.centrelinkPayments || 0)
+        parseFloat(Data.client?.incomeDetails?.centreLinkPayments || 0)
       ),
       ...sharedItemStyle,
     },
     {
       label: "Super Payments",
       children: toCommaAndDollar(
-        parseFloat(Data.client?.superannuationPayments || 0)
+        parseFloat(Data.client?.incomeDetails?.superPensionPayments || 0)
       ),
       ...sharedItemStyle,
     },
@@ -111,26 +113,28 @@ const CDFViewForm = (props) => {
     {
       label: "Employment Income",
       children: toCommaAndDollar(
-        parseFloat(Data.partner?.employmentIncome || 0)
+        parseFloat(Data.partner?.incomeDetails?.employmentIncome || 0)
       ),
       ...sharedItemStyle,
     },
     {
       label: "Business Income",
-      children: toCommaAndDollar(parseFloat(Data.partner?.businessIncome || 0)),
+      children: toCommaAndDollar(
+        parseFloat(Data.partner?.incomeDetails?.businessIncome || 0)
+      ),
       ...sharedItemStyle,
     },
     {
       label: "Centrelink Payments",
       children: toCommaAndDollar(
-        parseFloat(Data.partner?.centrelinkPayments || 0)
+        parseFloat(Data.partner?.incomeDetails?.centreLinkPayments || 0)
       ),
       ...sharedItemStyle,
     },
     {
       label: "Super Payments",
       children: toCommaAndDollar(
-        parseFloat(Data.partner?.superannuationPayments || 0)
+        parseFloat(Data.partner?.incomeDetails?.superPensionPayments || 0)
       ),
       ...sharedItemStyle,
     },

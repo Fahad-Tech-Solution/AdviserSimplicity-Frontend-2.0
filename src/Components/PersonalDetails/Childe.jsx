@@ -28,7 +28,10 @@ const Childe = (props) => {
 
   const [initialValues, setInitialValues] = useState(() => {
     try {
-      let Data = { numberOfChildren: "" }; // Default initial state
+      let Data = {
+        numberOfChildren: props.values?.children?.numberOfChildren || "",
+        haveAnyChildren: props.values?.haveAnyChildren || "No",
+      }; // Default initial state
       console.log("props.FoundData", props.FoundData);
       // Check if the FoundData object has an ID
       if (props.FoundData) {
@@ -133,6 +136,7 @@ const Childe = (props) => {
                         <div
                           className="QuestionIconChild"
                           onClick={() => {
+                            console.log(props.values);
                             setShow(true);
                           }}
                         >

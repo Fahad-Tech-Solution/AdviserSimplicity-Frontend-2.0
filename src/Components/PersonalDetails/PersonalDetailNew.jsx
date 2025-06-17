@@ -365,7 +365,8 @@ const PersonalDetailNew = () => {
           "children.arrayOfChildren",
           data.children?.arrayOfChildren || ""
         );
-        setFieldValue("haveAnyChildren", data.haveAnyChildren || "");
+        alert(data.haveAnyChildren);
+        setFieldValue("haveAnyChildren", data.haveAnyChildren.trim() || "No");
         setSwitch(3);
       }
     } catch (error) {
@@ -395,7 +396,6 @@ const PersonalDetailNew = () => {
 
         return (
           <Form className="PersonalDetailsForm">
-         
             {Switch == 1 && (
               <PersonalDetailsClientPartner
                 values={values}

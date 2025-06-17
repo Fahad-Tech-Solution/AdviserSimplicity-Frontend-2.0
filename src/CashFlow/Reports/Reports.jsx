@@ -16,7 +16,12 @@ import {
   transformInflows,
 } from "../../Components/Assets/Api/Api";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { defaultUrl, Loading, ReportsData } from "../../Store/Store";
+import {
+  defaultUrl,
+  Loading,
+  ReportsData,
+  SelectedSenario,
+} from "../../Store/Store";
 import { content } from "../../Content/Content";
 import { Percent } from "antd/es/progress/style";
 
@@ -24,6 +29,7 @@ const Reports = () => {
   const [reportSections, setReportSections] = useRecoilState(ReportsData);
   const DefaultUrl = useRecoilValue(defaultUrl);
   const [loading, setLoading] = useRecoilState(Loading);
+  const selectedSenario = useRecoilValue(SelectedSenario);
 
   useEffect(() => {
     fetchReports();
@@ -32,7 +38,7 @@ const Reports = () => {
   const fetchReports = async () => {
     setLoading(true);
     try {
-      const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+      const scenarioObj = selectedSenario;
       const response = await PostAxios(`${DefaultUrl}/api/cal/report`, {
         scenarioID: scenarioObj._id,
       });

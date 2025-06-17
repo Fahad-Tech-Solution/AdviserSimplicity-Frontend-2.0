@@ -183,8 +183,11 @@ const AdminSideBar = (props) => {
             >
               Scenarios
             </Menu.Item>
-            <Menu.Item key="/Reports" disabled={Object.keys(selectedSenario).length>0?false:true}
-             onClick={() => nav("/Reports")}>
+            <Menu.Item
+              key="/Cash-Flow/Reports/"
+              disabled={Object.keys(selectedSenario).length > 0 ? false : true}
+              onClick={() => nav("/Cash-Flow/Reports/")}
+            >
               Reports
             </Menu.Item>
           </SubMenu>

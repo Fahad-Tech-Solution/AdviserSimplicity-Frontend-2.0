@@ -84,7 +84,7 @@ const AccordionItems = ({
             Nav("/Cash-Flow/PersonalDetail" + "#" + row._id);
           }
         } else {
-          setSelectedSenario(fullData);
+          setSelectedSenario(row);
           Nav("/Cash-Flow/PersonalDetail" + "#" + fullData._id);
         }
         break;

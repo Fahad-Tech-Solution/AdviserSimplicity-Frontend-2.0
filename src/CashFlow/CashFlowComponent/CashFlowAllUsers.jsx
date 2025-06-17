@@ -89,7 +89,7 @@ const CashFlowAllUsers = (props) => {
 
       <div className="row mt-2">
         <div className="col-md-12 ">
-          <Card className="shadow cashFlowAllUsers ">
+          <Card className="shadow cashFlowAllUsers mb-3">
             <Card.Body>
               <h5 className="cashFlowCardHead LeagueSpartanFamily">
                 Users List

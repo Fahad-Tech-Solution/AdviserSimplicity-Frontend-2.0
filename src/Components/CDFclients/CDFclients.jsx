@@ -16,6 +16,8 @@ import {
   ConvertDate,
   GetAxios,
   openNotificationSuccess,
+  PatchAxios,
+  PostAxios,
   toSentenceCase,
 } from "../Assets/Api/Api";
 import { Field, Form, Formik } from "formik";
@@ -47,7 +49,7 @@ const CDFclients = () => {
         break;
       case "Canceled":
         setCDFData(
-          CDFData2.filter((item) => item.status?.toLowerCase() === "canceled")
+          CDFData2.filter((item) => item.status?.toLowerCase() === "rejected")
         );
         break;
       default:
@@ -221,22 +223,30 @@ const CDFclients = () => {
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
 
-  var OpenModel = (text, row, index) => {
-    console.log(text, row, index);
+  const OpenModel = (text, row, action) => {
+    console.log(text, row, action);
 
-    if (index === "View") {
-      setModalObject({
-        title: "CDF View Details",
-        row,
-      });
-    } else {
-      setModalObject({
-        title: "CDF Details",
-        row,
-      });
-    }
+    const isPending = row.status === "pending";
 
-    setFlagState(true);
+    const actionsMap = {
+      View: () => {
+        setModalObject({ title: "CDF View Details", row });
+        setFlagState(true);
+      },
+      Approved: () => {
+        if (isPending) statusChange("approved", row);
+      },
+      Rejected: () => {
+        if (isPending) statusChange("rejected", row);
+      },
+      default: () => {
+        setModalObject({ title: "CDF Details", row });
+        setFlagState(true);
+      },
+    };
+
+    const executeAction = actionsMap[action] || actionsMap.default;
+    executeAction();
   };
 
   let apiFetch = true;
@@ -278,6 +288,41 @@ const CDFclients = () => {
     }
   };
 
+  let statusChange = async (status, row) => {
+    try {
+      setLoading(true);
+
+      let data = {
+        ...row,
+        status,
+      };
+
+      let responce = await PatchAxios(`${DefaultUrl}/api/CDF/Update`, data);
+      console.log(responce);
+      if (responce) {
+        setCDFData((prev) =>
+          prev.map((item) => (item._id === row._id ? data : item))
+        );
+        openNotificationSuccess(
+          "success",
+          "topRight",
+          "Client Approved",
+          "Now you can see this client in Adviser simplicity's discovery Form"
+        );
+      }
+    } catch (err) {
+      console.error("Report Error", err);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Report Failed",
+        "Something went wrong. Please try later."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Container fluid>
       <ModalComponent
@@ -294,7 +339,7 @@ const CDFclients = () => {
         )}
       </ModalComponent>
       <Row>
-        <Col md={12} ></Col>
+        <Col md={12}></Col>
         <Col md={12} style={{ minHeight: "80vh" }}>
           <Row className="justify-content-amount align-items-center reportSection">
             <Col md={6}>
