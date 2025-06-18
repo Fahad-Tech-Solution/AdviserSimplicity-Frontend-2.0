@@ -34,13 +34,13 @@ const CDFclients = () => {
 
   const [CDFData, setCDFData] = useState([]);
   const [CDFData2, setCDFData2] = useState([]);
-  const [selectedSegment, setSelectedSegment] = useState("New Clients");
+  const [selectedSegment, setSelectedSegment] = useState("New Prospects");
   const [showFilters, setShowFilters] = useState(false);
 
   const getFilteredData = (value) => {
     setSelectedSegment(value);
     switch (value) {
-      case "New Clients":
+      case "New Prospects":
         setCDFData(
           CDFData2.filter((item) => item.status?.toLowerCase() === "pending")
         );
@@ -62,62 +62,70 @@ const CDFclients = () => {
     }
   };
 
-  const menuItems = [
-    {
-      action: "View",
-      category: "",
-      label: (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            marginLeft: 13,
-          }}
-          className="fw-bold"
-        >
-          <FaRegFileAlt /> View
-        </div>
-      ),
-      onClick: (heading, row) => CallBack(heading, row, "View"),
-    },
-    {
-      action: "Successful",
-      category: "success",
-      label: (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            marginLeft: 13,
-          }}
-          className="fw-bold"
-        >
-          <FaCircleCheck /> Successful
-        </div>
-      ),
-      onClick: (heading, row) => CallBack(heading, row, "successful"),
-    },
-    {
-      action: "Unsuccessful",
-      label: (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            marginLeft: 13,
-          }}
-          className="fw-bold"
-        >
-          <FaCircleXmark /> Unsuccessful
-        </div>
-      ),
-      category: "danger",
-      onClick: (heading, row) => CallBack(heading, row, "unsuccessful"),
-    },
-  ];
+  const getMenuItems = (row) => {
+    const status = row?.status?.toLowerCase();
+
+    const menuItems = [
+      {
+        action: "View",
+        category: "",
+        label: (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              marginLeft: 13,
+            }}
+            className="fw-bold"
+          >
+            <FaRegFileAlt /> View
+          </div>
+        ),
+        onClick: (heading, row) => CallBack(heading, row, "View"),
+      },
+      {
+        action: "Successful",
+        category: status !== "pending" ? "" : "success",
+        disabled: status !== "pending" && true,
+        label: (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              marginLeft: 13,
+            }}
+            className="fw-bold"
+          >
+            <FaCircleCheck /> Successful
+          </div>
+        ),
+        onClick: (heading, row) => CallBack(heading, row, "successful"),
+      },
+      {
+        action: "Unsuccessful",
+        label: (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              marginLeft: 13,
+            }}
+            className="fw-bold"
+          >
+            <FaCircleXmark /> Unsuccessful
+          </div>
+        ),
+        category: status !== "pending" ? "" : "danger",
+        disabled: status !== "pending" && true,
+        onClick: (heading, row) => CallBack(heading, row, "unsuccessful"),
+      },
+    ];
+
+    return menuItems;
+  };
 
   let columns = [
     {
@@ -226,7 +234,7 @@ const CDFclients = () => {
       key: "operation",
       render: (text, row, index) => (
         <DropDownOptions
-          menuItems={menuItems}
+          menuItems={getMenuItems(row)}
           CallBack={OpenModel}
           heading={row}
           row={row} // ✅ Proper row data
@@ -273,7 +281,7 @@ const CDFclients = () => {
           )
         );
         setCDFData2(prospectsCDF);
-        setSelectedSegment("New Clients");
+        setSelectedSegment("New Prospects");
         apiFetch = false;
         // setApiFetch(false);
       } else {
@@ -352,7 +360,12 @@ const CDFclients = () => {
             <Row className="justify-content-center align-items-center reportSection ">
               <Col md={6}>
                 <Segmented
-                  options={["New Clients", "Successful", "Unsuccessful", "All"]}
+                  options={[
+                    "New Prospects",
+                    "Successful",
+                    "Unsuccessful",
+                    "All",
+                  ]}
                   value={selectedSegment}
                   onChange={getFilteredData}
                 />
@@ -399,7 +412,7 @@ const CDFclients = () => {
               <Col md={12}>
                 <div>
                   <AntTableDynamicReportTable
-                    title={`CDF prospect - ${selectedSegment}`}
+                    title={`CDF Prospects - ${selectedSegment}`}
                     dataSource={CDFData}
                     columns={columns}
                     showFilters={showFilters}

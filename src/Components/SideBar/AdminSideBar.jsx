@@ -139,11 +139,11 @@ const AdminSideBar = (props) => {
       </Menu.Item>
 
       <Menu.Item
-        key="/CDF_Prospect"
+        key="/CDF_Prospects"
         icon={<FaPeopleGroup />}
-        onClick={() => nav("/CDF_Prospect")}
+        onClick={() => nav("/CDF_Prospects")}
       >
-        CDF prospect
+        CDF Prospects
       </Menu.Item>
 
       <SubMenu key="sub1" icon={<RiAppsLine />} title="Discovery">

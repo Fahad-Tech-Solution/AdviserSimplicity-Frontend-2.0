@@ -160,7 +160,7 @@ function AuthRouts() {
           />
           <Route path="/Goals-And-Objectives" element={<GoalsObjectiveNew />} />
           <Route path="/Risk-Profile/*" element={<RiskProfileNew />} />
-          <Route path="/CDF_Prospect" element={<CDFclients />} />
+          <Route path="/CDF_Prospects" element={<CDFclients />} />
         </Routes>
       </div>
     </div>

@@ -224,7 +224,7 @@ function Options(props) {
     "/All-Clients",
     "/Cash-Flow/AllUsers",
     "/Cash-Flow/oneClient",
-    "/CDF_Prospect",
+    "/CDF_Prospects",
   ];
   const noTopBarArray = [
     "/Goals-And-Objectives",
@@ -276,7 +276,7 @@ function Options(props) {
                         className="menu"
                         onClick={() => props.setCollapsed(!props.collapsed)}
                       />
-                      <FontAwesomeIcon icon={faMoon} className="moon" />
+                      {/* <FontAwesomeIcon icon={faMoon} className="moon" /> */}
                       <FontAwesomeIcon icon={faCircleUser} className="user" />
                     </div>
                   </div>

@@ -300,7 +300,7 @@ const NewAllClients = (props) => {
         setShowFilters={setShowFilters}
         pagination={true}
         customPagination={{
-          pageSize: 20,
+          pageSize: 10,
           position: ["bottomRight"],
           className: "custom-pagination",
         }}

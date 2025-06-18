@@ -65,7 +65,7 @@ const Dashboard = (props) => {
               style={{ fontSize: "18px" }}
             >
               {" "}
-              Client's Approved{" "}
+              Prospects Summary{" "}
             </h4>
           </Card>
         </div>
