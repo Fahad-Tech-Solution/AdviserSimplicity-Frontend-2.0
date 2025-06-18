@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import PersonalDetail_Edit from "../Components/PersonalDetails/PersonalDetail_Edit";
 
@@ -11,11 +11,11 @@ import ViewClient from "../GetComponents/ViewClient";
 
 import Questions from "../Components/Questions/Questoins";
 
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 import Dashboard from "../Components/Dashboard/Dashboard";
 
-import { CurrentPage } from "../Store/Store";
+import { CurrentPage, defaultUrl, Loading, ProspectsCDF } from "../Store/Store";
 
 import QuestionsNew from "../Components/Questions_New/QuestionsNew";
 import FinancialInvestments from "../Components/Questions/FinancialInvestments/FinancialInvestments";
@@ -50,7 +50,7 @@ function AuthRouts() {
       <div className={`flex-grow-1 w-100 px-3`}>
         <Options collapsed={collapsed} setCollapsed={setCollapsed} />
         <Routes>
-          <Route path="/" element={<Dashboard  collapsed={collapsed} />} />
+          <Route path="/" element={<Dashboard collapsed={collapsed} />} />
 
           <Route path="/All-Clients" element={<AllClients />} />
           <Route path="/View-Client" element={<ViewClient />} />
@@ -160,14 +160,11 @@ function AuthRouts() {
           />
           <Route path="/Goals-And-Objectives" element={<GoalsObjectiveNew />} />
           <Route path="/Risk-Profile/*" element={<RiskProfileNew />} />
-          <Route path="/CDF_Clients" element={<CDFclients />} />
+          <Route path="/CDF_Prospect" element={<CDFclients />} />
         </Routes>
-        
       </div>
-      
     </div>
   );
-
 }
 
 export default AuthRouts;

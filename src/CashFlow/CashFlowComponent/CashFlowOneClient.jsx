@@ -19,7 +19,6 @@ const CashFlowOneClient = (props) => {
   let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
   let DefaultUrl = useRecoilValue(defaultUrl);
   let selectedClientDetails = useRecoilValue(SelectedClientDetails);
-  let [accordianIndex, setAccordianIndex] = useState(0);
 
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});

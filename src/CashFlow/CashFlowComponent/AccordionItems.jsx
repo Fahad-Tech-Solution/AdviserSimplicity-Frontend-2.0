@@ -34,6 +34,7 @@ import {
   QuestionDetail,
   SelectedSenario,
 } from "../../Store/Store";
+import AntTableDynamicReportTable from "../../Components/Assets/Table/AntTableDynamicReportTable";
 
 const AccordionItems = ({
   client,
@@ -43,16 +44,16 @@ const AccordionItems = ({
   fullData,
   CallBack,
 }) => {
-  let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
+  let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail); // eslint-disable-line no-unused-vars
   let [PersonalDetailObj, setPersonalDetailObj] =
-    useRecoilState(PersonalDetailsData);
+    useRecoilState(PersonalDetailsData); // eslint-disable-line no-unused-vars
   let [cashFlowScenarioData, setCashFlowScenarioData] =
-    useRecoilState(CashFlowScenarioData);
+    useRecoilState(CashFlowScenarioData); // eslint-disable-line no-unused-vars
   let [cashFlowScenarioType, setCashFlowScenarioType] =
-    useRecoilState(CashFlowScenarioType);
-  let [selectedSenario, setSelectedSenario] = useRecoilState(SelectedSenario);
-  let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
-  let [CFObject, setCFObject] = useRecoilState(CFQObject);
+    useRecoilState(CashFlowScenarioType); // eslint-disable-line no-unused-vars
+  let [selectedSenario, setSelectedSenario] = useRecoilState(SelectedSenario); // eslint-disable-line no-unused-vars
+  let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData); // eslint-disable-line no-unused-vars
+  let [CFObject, setCFObject] = useRecoilState(CFQObject); // eslint-disable-line no-unused-vars
 
   let DefaultUrl = useRecoilValue(defaultUrl);
 
@@ -275,6 +276,67 @@ const AccordionItems = ({
     </Menu>
   );
 
+  const columns = [
+    {
+      title: "No#",
+      key: "index",
+      render: (text, row, index) => index + 1,
+      width: 60,
+    },
+    {
+      title: "Scenario",
+      key: "scenarioName",
+      dataIndex: "scenarioName",
+      render: (text) => text || "--",
+    },
+    {
+      title: "Last Module Edited",
+      key: "lastModuleEdited",
+      dataIndex: "lastModuleEdited",
+      render: (text) => text || "Not Available",
+    },
+    {
+      title: "Date of Creation",
+      key: "createdAt",
+      dataIndex: "createdAt",
+      render: (text) => ConvertDate(text) || "--",
+    },
+    {
+      title: "Date of Update",
+      key: "updatedAt",
+      dataIndex: "updatedAt",
+      render: (text) => ConvertDate(text) || "--",
+    },
+    {
+      title: "Operation",
+      key: "operation",
+      render: (text, row) => (
+        <Dropdown overlay={getMenu(row)} trigger={["click"]}>
+          {row.isLocked ? (
+            <div style={{ position: "relative", display: "inline-block" }}>
+              <FaGear size={20} />
+              <FaLock
+                size={10}
+                style={{
+                  position: "absolute",
+                  top: "75%",
+                  left: "95%",
+                  transform: "translate(-50%, -50%)",
+                  border: "20px solid inherit",
+                  borderRadius: "50%",
+                  backgroundColor: "white",
+                  color: "#ac0202",
+                }}
+              />
+            </div>
+          ) : (
+            <FaGear size={20} />
+          )}
+        </Dropdown>
+      ),
+    },
+  ];
+
   return (
     <Accordion.Item eventKey={index}>
       <Accordion.Header>
@@ -340,64 +402,68 @@ const AccordionItems = ({
             </div>
 
             {/* Partner Card */}
-            {partner && (
-              <div className="col-md-6">
-                <div className="card w-100 rounded shadow-sm bg-Custom-green text-dark p-4">
-                  <div className="row g-3">
-                    {/* Partner Column 1 */}
-                    <div className="col-12 col-md-8">
-                      <div className="row align-items-center">
-                        <div className="col-2">
-                          <img
-                            alt="Partner"
-                            className="img-fluid"
-                            src={couple} // Update this to the partner image source
-                            style={{ height: "18px", width: "18px" }}
-                          />
+            {client.clientMaritalStatus !== "Single" &&
+              client.clientMaritalStatus !== "Widowed" &&
+              partner && (
+                <div className="col-md-6">
+                  <div className="card w-100 rounded shadow-sm bg-Custom-green text-dark p-4">
+                    <div className="row g-3">
+                      {/* Partner Column 1 */}
+                      <div className="col-12 col-md-8">
+                        <div className="row align-items-center">
+                          <div className="col-2">
+                            <img
+                              alt="Partner"
+                              className="img-fluid"
+                              src={couple} // Update this to the partner image source
+                              style={{ height: "18px", width: "18px" }}
+                            />
+                          </div>
+                          <div className="col fw-bold">
+                            {partner.partnerGivenName}
+                          </div>
                         </div>
-                        <div className="col fw-bold">
-                          {partner.partnerGivenName}
+                        <div className="row align-items-center mt-2">
+                          <div className="col-2">
+                            <MdMale size={20} />
+                          </div>
+                          <div className="col fw-bold">
+                            {partner.partnerGender}
+                          </div>
+                        </div>
+                        <div className="row align-items-center mt-2">
+                          <div className="col-2">
+                            <MdCake size={20} />
+                          </div>
+                          <div className="col fw-bold">
+                            {ConvertDate(partner.partnerDOB)}
+                          </div>
                         </div>
                       </div>
-                      <div className="row align-items-center mt-2">
-                        <div className="col-2">
-                          <MdMale size={20} />
-                        </div>
-                        <div className="col fw-bold">
-                          {partner.partnerGender}
-                        </div>
-                      </div>
-                      <div className="row align-items-center mt-2">
-                        <div className="col-2">
-                          <MdCake size={20} />
-                        </div>
-                        <div className="col fw-bold">
-                          {ConvertDate(partner.partnerDOB)}
-                        </div>
-                      </div>
-                    </div>
 
-                    {/* Partner Column 2 */}
-                    <div className="col-12 col-md-4">
-                      <div className="row align-items-center">
-                        <div className="col-2">
-                          <FaArrowRotateRight size={20} />
+                      {/* Partner Column 2 */}
+                      <div className="col-12 col-md-4">
+                        <div className="row align-items-center">
+                          <div className="col-2">
+                            <FaArrowRotateRight size={20} />
+                          </div>
+                          <div className="col fw-bold">
+                            {partner.partnerAge}
+                          </div>
                         </div>
-                        <div className="col fw-bold">{partner.partnerAge}</div>
-                      </div>
-                      <div className="row align-items-center mt-2">
-                        <div className="col-2">
-                          <FaRing size={20} />
-                        </div>
-                        <div className="col fw-bold">
-                          {partner.partnerMaritalStatus}
+                        <div className="row align-items-center mt-2">
+                          <div className="col-2">
+                            <FaRing size={20} />
+                          </div>
+                          <div className="col fw-bold">
+                            {partner.partnerMaritalStatus}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
             <div className="col-md-12 mt-3">
               <div className="row justify-content-between ">
@@ -421,62 +487,17 @@ const AccordionItems = ({
             {/* Table */}
             {tableData.length > 0 && (
               <div className="col-md-12">
-                <div className="mt-4">
-                  <Table striped bordered responsive hover>
-                    <thead>
-                      <tr>
-                        <th>No#</th>
-                        <th>Scenario</th>
-                        <th>Last Module Edited</th>
-                        <th>Date of Creation</th>
-                        <th>Date of Update</th>
-                        <th>Operation</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {tableData.map((row, index) => (
-                        <tr key={index}>
-                          <td>{index + 1} </td>
-                          <td>{row.scenarioName}</td>
-                          <td>{row.lastModuleEdited || "not Available"}</td>
-                          <td>{ConvertDate(row.createdAt)}</td>
-                          <td>{ConvertDate(row.updatedAt)}</td>
-                          <td>
-                            <Dropdown
-                              overlay={getMenu(row)}
-                              trigger={["click"]}
-                            >
-                              {row.isLocked ? (
-                                <div
-                                  style={{
-                                    position: "relative",
-                                    display: "inline-block",
-                                  }}
-                                >
-                                  <FaGear size={20} />
-                                  <FaLock
-                                    size={10}
-                                    style={{
-                                      position: "absolute",
-                                      top: "75%",
-                                      left: "95%",
-                                      transform: "translate(-50%, -50%)",
-                                      border: "20px solid inherit",
-                                      borderRadius: "50%",
-                                      backgroundColor: "white", // Optional for better visibility
-                                      color: "#ac0202",
-                                    }}
-                                  />
-                                </div>
-                              ) : (
-                                <FaGear size={20} />
-                              )}
-                            </Dropdown>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
+                <div className="mt-4 All_Client reportSection">
+                  <AntTableDynamicReportTable
+                    dataSource={tableData.reverse()}
+                    columns={columns}
+                    pagination={true}
+                    customPagination={{
+                      pageSize: 10,
+                      position: ["bottomRight"],
+                      className: "custom-pagination",
+                    }}
+                  />
                 </div>
               </div>
             )}

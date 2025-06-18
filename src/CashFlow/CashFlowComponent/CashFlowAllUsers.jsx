@@ -23,7 +23,7 @@ const CashFlowAllUsers = (props) => {
         try {
           let res = await GetAxios(`${DefaultUrl}/api/personalDetails`);
           if (res) {
-            setPersonalDetail(res);
+            setPersonalDetail(res.reverse());
           }
           // console.log(JSON.stringify(res[0]), "Cash Grow Work");
         } catch (error) {

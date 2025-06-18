@@ -18,8 +18,6 @@ const CashFlow = () => {
 
   return (
     <div className="container-fluid p-0 d-flex flex-row align-items-stretch">
-      <RecoilStateManage />
-
       <div>
         {/* <SideBar onSubmit={setSwitchState} Side={sideSwitch} /> */}
         <AdminSideBar collapsed={collapsed} setCollapsed={setCollapsed} />

@@ -1,15 +1,49 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Card } from "react-bootstrap";
 import NewAllClients from "../Assets/AllClients/NewAllClients";
 import CustomApexChart from "../Assets/ApexChart/CustomApexChart";
+import { ProspectsCDF } from "../../Store/Store";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 const Dashboard = (props) => {
+  let prospectsCDF = useRecoilValue(ProspectsCDF);
+
   const dataSeries = [
     { name: "Orders", data: [31, 40, 28, 51, 42, 109, 100] },
     { name: "Revenue", data: [11, 32, 45, 32, 34, 52, 41] },
   ];
 
   const xLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+  const statusPercentages = useMemo(() => {
+    const counts = {
+      successful: 0,
+      pending: 0,
+      unsuccessful: 0,
+    };
+
+    if (prospectsCDF.length > 0) {
+      // Count statuses
+      prospectsCDF.forEach((item) => {
+        const status = item.status?.toLowerCase();
+        if (status === "successful" || status === "approved")
+          counts.successful++;
+        else if (status === "pending") counts.pending++;
+        else if (status === "unsuccessful" || status === "rejected")
+          counts.unsuccessful++;
+      });
+
+      const total =
+        counts.successful + counts.pending + counts.unsuccessful || 1; // Avoid division by 0
+
+      // Convert counts to percentages
+      return [
+        ((counts.successful / total) * 100).toFixed(1),
+        ((counts.pending / total) * 100).toFixed(1),
+        ((counts.unsuccessful / total) * 100).toFixed(1),
+      ];
+    }
+  }, [prospectsCDF]);
 
   return (
     <div className="DashBoard">
@@ -20,8 +54,8 @@ const Dashboard = (props) => {
             <div className="mt-4">
               <CustomApexChart
                 type="radialBar"
-                series={["90", "65", "50"]}
-                categories={["Aproved", "Pending", "Rejected"]}
+                series={statusPercentages}
+                categories={["Successful", "Pending", "Unsuccessful"]}
                 height={300}
                 colors={["#52c41a", "#faad14", "#ff4d4f"]}
               />

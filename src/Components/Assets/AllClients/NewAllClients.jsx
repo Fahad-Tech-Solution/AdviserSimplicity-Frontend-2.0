@@ -3,6 +3,7 @@ import {
   AllUsers,
   defaultUrl,
   Loading,
+  ProspectsCDF,
   QuestionDetail,
   SelectedClientDetails,
   StepsStatus,
@@ -31,6 +32,8 @@ const NewAllClients = (props) => {
   const [loading, setLoading] = useRecoilState(Loading);
   const [showFilters, setShowFilters] = useState(false);
   let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
+  let [prospectsCDF, setProspectsCDF] = useRecoilState(ProspectsCDF);
+
   let [stepsStatus, setStepsStatus] = useRecoilState(StepsStatus);
   let [selectedClientDetails, setSelectedClientDetails] = useRecoilState(
     SelectedClientDetails
@@ -188,7 +191,13 @@ const NewAllClients = (props) => {
           "userData"
         );
 
-        setPersonalDetail(adjustment);
+        setPersonalDetail(adjustment.reverse());
+      }
+
+      res = await GetAxios(`${DefaultUrl}/api/CDF/`);
+      // console.log(res,"cdf");
+      if (res && res.length > 0) {
+        setProspectsCDF(res.reverse());
       }
     } catch (error) {
       console.log("Error message:", error);
@@ -290,6 +299,11 @@ const NewAllClients = (props) => {
         showFilters={showFilters}
         setShowFilters={setShowFilters}
         pagination={true}
+        customPagination={{
+          pageSize: 20,
+          position: ["bottomRight"],
+          className: "custom-pagination",
+        }}
       />
     </div>
   );

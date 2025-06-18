@@ -138,7 +138,6 @@ const PersonalDetailNew = () => {
     });
 
     let Id = hashing.replace("#", "");
-    // alert(Id);
 
     if (Id) {
       GetApiFunction(Id);
@@ -365,7 +364,6 @@ const PersonalDetailNew = () => {
           "children.arrayOfChildren",
           data.children?.arrayOfChildren || ""
         );
-        alert(data.haveAnyChildren);
         setFieldValue("haveAnyChildren", data.haveAnyChildren.trim() || "No");
         setSwitch(3);
       }

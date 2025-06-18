@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, Container, Row } from "react-bootstrap";
+import { Card, Col, Container, Row } from "react-bootstrap";
 import DynamicTableRow from "../Assets/Dynamic/DynamicTableRow";
 import AntTableDynamicReportTable from "../Assets/Table/AntTableDynamicReportTable";
 import { FaCircleCheck, FaCircleXmark, FaGear } from "react-icons/fa6";
@@ -11,7 +11,7 @@ import { Segmented, Tag } from "antd";
 import { icon } from "@fortawesome/fontawesome-svg-core";
 import CDFViewForm from "./CDFViewForm";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { defaultUrl, Loading } from "../../Store/Store";
+import { defaultUrl, Loading, ProspectsCDF } from "../../Store/Store";
 import {
   ConvertDate,
   GetAxios,
@@ -25,13 +25,16 @@ import {
   CreatableSelectField,
   SimpleSelectField,
 } from "../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import { MdOutlineWarningAmber } from "react-icons/md";
 
 const CDFclients = () => {
   const DefaultUrl = useRecoilValue(defaultUrl);
   const [loading, setLoading] = useRecoilState(Loading);
+  const [prospectsCDF, setProspectsCDF] = useRecoilState(ProspectsCDF);
+
   const [CDFData, setCDFData] = useState([]);
   const [CDFData2, setCDFData2] = useState([]);
-  const [selectedSegment, setSelectedSegment] = useState("All");
+  const [selectedSegment, setSelectedSegment] = useState("New Clients");
   const [showFilters, setShowFilters] = useState(false);
 
   const getFilteredData = (value) => {
@@ -42,14 +45,16 @@ const CDFclients = () => {
           CDFData2.filter((item) => item.status?.toLowerCase() === "pending")
         );
         break;
-      case "Approved":
+      case "Successful":
         setCDFData(
-          CDFData2.filter((item) => item.status?.toLowerCase() === "approved")
+          CDFData2.filter((item) => item.status?.toLowerCase() === "successful")
         );
         break;
-      case "Canceled":
+      case "Unsuccessful":
         setCDFData(
-          CDFData2.filter((item) => item.status?.toLowerCase() === "rejected")
+          CDFData2.filter(
+            (item) => item.status?.toLowerCase() === "unsuccessful"
+          )
         );
         break;
       default:
@@ -77,7 +82,7 @@ const CDFclients = () => {
       onClick: (heading, row) => CallBack(heading, row, "View"),
     },
     {
-      action: "Approved",
+      action: "Successful",
       category: "success",
       label: (
         <div
@@ -89,13 +94,13 @@ const CDFclients = () => {
           }}
           className="fw-bold"
         >
-          <FaCircleCheck /> Approved
+          <FaCircleCheck /> Successful
         </div>
       ),
-      onClick: (heading, row) => CallBack(heading, row, "Approved"),
+      onClick: (heading, row) => CallBack(heading, row, "successful"),
     },
     {
-      action: "Rejected",
+      action: "Unsuccessful",
       label: (
         <div
           style={{
@@ -106,15 +111,20 @@ const CDFclients = () => {
           }}
           className="fw-bold"
         >
-          <FaCircleXmark /> Rejected
+          <FaCircleXmark /> Unsuccessful
         </div>
       ),
       category: "danger",
-      onClick: (heading, row) => CallBack(heading, row, "Rejected"),
+      onClick: (heading, row) => CallBack(heading, row, "unsuccessful"),
     },
   ];
 
   let columns = [
+    {
+      title: "#",
+      key: "index",
+      render: (text, row, index) => index + 1 || "--",
+    },
     {
       title: <div className="w-100">Name</div>,
       key: "preferredName",
@@ -143,11 +153,11 @@ const CDFclients = () => {
         </div>
       ),
     },
-    {
-      title: "Date of Birth",
-      key: "DOB",
-      render: (text, row) => ConvertDate(row?.client?.dateOfBirth) || "--",
-    },
+    // {
+    //   title: "Date of Birth",
+    //   key: "DOB",
+    //   render: (text, row) => ConvertDate(row?.client?.dateOfBirth) || "--",
+    // },
     {
       title: "Phone Number",
       key: "phoneNumber",
@@ -176,19 +186,24 @@ const CDFclients = () => {
             text: "Pending",
             icon: <FaClock />,
           },
-          approved: {
+          successful: {
             color: "green",
-            text: "Approved",
+            text: "Successful",
             icon: <FaCircleCheck />,
           },
-          rejected: {
+          unsuccessful: {
             color: "red",
-            text: "Rejected",
+            text: "Unsuccessful",
             icon: <FaCircleXmark />,
+          },
+          default: {
+            color: "lightgray",
+            text: "unspesified",
+            icon: <MdOutlineWarningAmber />,
           },
         };
 
-        const tag = statusMap[status] || statusMap["pending"];
+        const tag = statusMap[status] || statusMap["default"];
 
         return (
           <Tag
@@ -224,8 +239,6 @@ const CDFclients = () => {
   let [modalObject, setModalObject] = useState({});
 
   const OpenModel = (text, row, action) => {
-    console.log(text, row, action);
-
     const isPending = row.status === "pending";
 
     const actionsMap = {
@@ -233,11 +246,11 @@ const CDFclients = () => {
         setModalObject({ title: "CDF View Details", row });
         setFlagState(true);
       },
-      Approved: () => {
-        if (isPending) statusChange("approved", row);
+      Successful: () => {
+        if (isPending) statusChange("successful", row);
       },
-      Rejected: () => {
-        if (isPending) statusChange("rejected", row);
+      Unsuccessful: () => {
+        if (isPending) statusChange("unsuccessful", row);
       },
       default: () => {
         setModalObject({ title: "CDF Details", row });
@@ -253,40 +266,20 @@ const CDFclients = () => {
 
   useEffect(() => {
     if (apiFetch) {
-      fetchData();
-      apiFetch = false;
-      // setApiFetch(false);
-    }
-  }, [apiFetch]);
-
-  let fetchData = async () => {
-    try {
-      setLoading(true);
-      console.log(`${DefaultUrl}/api/CDF/`);
-      let responce = await GetAxios(`${DefaultUrl}/api/CDF/`);
-      console.log(responce);
-      if (responce && responce.length > 0) {
-        setCDFData(responce);
-        setCDFData2(responce);
-        // openNotificationSuccess(
-        //   "success",
-        //   "topRight",
-        //   "Data Refreshed",
-        //   "The data has been updated and you're now viewing the latest information."
-        // );
+      if (prospectsCDF.length > 0) {
+        setCDFData(
+          prospectsCDF.filter(
+            (item) => item.status?.toLowerCase() === "pending"
+          )
+        );
+        setCDFData2(prospectsCDF);
+        setSelectedSegment("New Clients");
+        apiFetch = false;
+        // setApiFetch(false);
+      } else {
       }
-    } catch (err) {
-      console.error("Report Error", err);
-      openNotificationSuccess(
-        "error",
-        "topRight",
-        "Report Failed",
-        "Something went wrong. Please try later."
-      );
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [apiFetch, prospectsCDF]);
 
   let statusChange = async (status, row) => {
     try {
@@ -298,17 +291,32 @@ const CDFclients = () => {
       };
 
       let responce = await PatchAxios(`${DefaultUrl}/api/CDF/Update`, data);
-      console.log(responce);
+      // console.log(responce);
       if (responce) {
         setCDFData((prev) =>
           prev.map((item) => (item._id === row._id ? data : item))
         );
-        openNotificationSuccess(
-          "success",
-          "topRight",
-          "Client Approved",
-          "Now you can see this client in Adviser simplicity's discovery Form"
-        );
+
+        const notifications = {
+          successful: {
+            head: "Client marked as Successful",
+            note: "You can now find this client in Adviser Simplicity's Discovery Form.",
+          },
+          unsuccessful: {
+            head: "Client marked as Unsuccessful",
+            note: "The client is now marked as unsuccessful until they submit their data again.",
+          },
+        };
+
+        const defaultNotification = {
+          head: "Client Status Updated",
+          note: "The status of the client has been updated successfully.",
+        };
+
+        // Ensure a valid notification exists
+        const { head, note } = notifications[status] || defaultNotification;
+
+        openNotificationSuccess("success", "topRight", head, note);
       }
     } catch (err) {
       console.error("Report Error", err);
@@ -324,7 +332,7 @@ const CDFclients = () => {
   };
 
   return (
-    <Container fluid>
+    <div className="contianer-fluid">
       <ModalComponent
         modalObject={modalObject}
         setFlagState={setFlagState}
@@ -338,73 +346,78 @@ const CDFclients = () => {
           ""
         )}
       </ModalComponent>
-      <Row>
-        <Col md={12}></Col>
-        <Col md={12} style={{ minHeight: "80vh" }}>
-          <Row className="justify-content-amount align-items-center reportSection">
-            <Col md={6}>
-              {/* <h6 className="fw-bold mb-2">Filter by Status</h6> */}
-              <Segmented
-                options={["All", "New Clients", "Approved", "Canceled"]}
-                value={selectedSegment}
-                onChange={getFilteredData}
-              />
-            </Col>
-            <Col md={3}></Col>
-            <Col md={3}>
-              {showFilters && (
-                <Formik
-                  initialValues={{}}
-                  onSubmit={() => {}}
-                  enableReinitialize
-                >
-                  {({ values, setFieldValue, handleChange, handleBlur }) => (
-                    <Form>
-                      <Field
-                        name={`Name`}
-                        component={SimpleSelectField}
-                        label="Multi Select Field"
-                        options={[
-                          ...CDFData2.map((item, index) => {
-                            return {
-                              value: item.client.preferredName,
-                              label: item.client.preferredName,
-                            };
-                          }),
-                        ]}
-                        onChange={(selected) => {
-                          // console.log("Selected:", selected);
-
-                          if (selected?.value) {
-                            const filtered = CDFData2.filter(
-                              (item) =>
-                                item.client.preferredName === selected.value
-                            );
-                            setCDFData(filtered);
-                          } else {
-                            setCDFData(CDFData2);
-                          }
-                        }}
-                      />
-                    </Form>
-                  )}
-                </Formik>
-              )}
-            </Col>
-            <Col md={12}>
-              <AntTableDynamicReportTable
-                title={`CDF Clients - ${selectedSegment}`}
-                dataSource={CDFData}
-                columns={columns}
-                showFilters={showFilters}
-                setShowFilters={setShowFilters}
-                pagination={true}
-              />
-            </Col>
-          </Row>
-        </Col>
-      </Row>
-    </Container>
+      <div className="d-flex justify-content-center">
+        <div className="col-md-11 mt-3">
+          <Card className="custom_Shadow p-3 mt-3">
+            <Row className="justify-content-center align-items-center reportSection ">
+              <Col md={6}>
+                <Segmented
+                  options={["New Clients", "Successful", "Unsuccessful", "All"]}
+                  value={selectedSegment}
+                  onChange={getFilteredData}
+                />
+              </Col>
+              <Col md={3}></Col>
+              <Col md={3}>
+                {showFilters && (
+                  <Formik
+                    initialValues={{}}
+                    onSubmit={() => {}}
+                    enableReinitialize
+                  >
+                    {({ values, setFieldValue, handleChange, handleBlur }) => (
+                      <Form>
+                        <Field
+                          name={`Name`}
+                          component={SimpleSelectField}
+                          label="Multi Select Field"
+                          options={[
+                            ...CDFData2.map((item, index) => {
+                              return {
+                                value: item.client.preferredName,
+                                label: item.client.preferredName,
+                              };
+                            }),
+                          ]}
+                          onChange={(selected) => {
+                            if (selected?.value) {
+                              const filtered = CDFData2.filter(
+                                (item) =>
+                                  item.client.preferredName === selected.value
+                              );
+                              setCDFData(filtered);
+                            } else {
+                              setCDFData(CDFData2);
+                            }
+                          }}
+                        />
+                      </Form>
+                    )}
+                  </Formik>
+                )}
+              </Col>
+              <Col md={12}>
+                <div>
+                  <AntTableDynamicReportTable
+                    title={`CDF prospect - ${selectedSegment}`}
+                    dataSource={CDFData}
+                    columns={columns}
+                    showFilters={showFilters}
+                    setShowFilters={setShowFilters}
+                    pagination={true}
+                    customPagination={{
+                      pageSize: 20,
+                      position: ["bottomRight"],
+                      className: "custom-pagination",
+                    }}
+                  />
+                </div>
+              </Col>
+            </Row>
+          </Card>
+        </div>
+      </div>
+    </div>
   );
 };
 

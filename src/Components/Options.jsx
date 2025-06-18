@@ -96,6 +96,11 @@ function Options(props) {
 
     setCurrentPCLassSwitch(cLocation);
 
+    setCurrentTabName(
+      cLocation?.split("/").filter(Boolean).join(" ").replace(/[_-]/g, " ") ||
+        "Dashboard"
+    );
+
     const stepMap = {
       PersonalDetail: 0,
       ImportantQuestion: 8,
@@ -219,7 +224,7 @@ function Options(props) {
     "/All-Clients",
     "/Cash-Flow/AllUsers",
     "/Cash-Flow/oneClient",
-    "/CDF_Clients",
+    "/CDF_Prospect",
   ];
   const noTopBarArray = [
     "/Goals-And-Objectives",

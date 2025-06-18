@@ -63,10 +63,8 @@ const RiskProfileNew = () => {
         try {
             // Make the GET request to fetch risk data
             const res = await GetAxios(`${DefaultUrl}/api/riskProfile/${localStorage.getItem("UserID")}`);
-
             // Check if the response is successful and contains data
             if (res && res._id) {
-                // console.log('Risk Data:', res);
                 setRiskQuestion(res);  // Assuming response data contains the risk question
                 Nav("/Risk-Profile/Cards")
 
@@ -122,7 +120,7 @@ const RiskProfileNew = () => {
 
     const onSubmit = async (values) => {
         try {
-            console.log(JSON.stringify(values));
+            // console.log(JSON.stringify(values));
 
             const obj = { ...values, clientFK: localStorage.getItem("UserID") };
 
@@ -145,7 +143,7 @@ const RiskProfileNew = () => {
                 const res = await PostAxios(`${DefaultUrl}/api/riskProfile/Add`, obj);
 
                 if (res && res._id) {
-                    console.log('Add Response:', res);
+                    // console.log('Add Response:', res);
                     setRiskQuestion(res);  // Assuming response data contains the updated risk question
                     // Nav("/Risk-Profile/Cards")
                 } else {
@@ -186,8 +184,6 @@ const RiskProfileNew = () => {
             // Optionally, you might want to provide user feedback here
         }
     };
-
-    // let validationSchema = {}
 
     let QuestionArray = [
         {
@@ -421,7 +417,6 @@ const RiskProfileNew = () => {
                     .required('Required'),
             }),
         })
-
         : Yup.object({
             client: Yup.object({
                 happyWithResult: Yup.boolean()
@@ -519,7 +514,6 @@ const RiskProfileNew = () => {
                                                     :
                                                     <React.Fragment>Next <FaArrowRightLong /></React.Fragment>
                                                 }
-
                                             </button>
                                         }
 

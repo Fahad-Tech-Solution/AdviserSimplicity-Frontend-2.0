@@ -17,6 +17,7 @@ import {
 import { useRecoilState, useRecoilValue } from "recoil";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { FaTachometerAlt } from "react-icons/fa";
+import { openNotificationSuccess } from "../Assets/Api/Api";
 
 const { SubMenu } = Menu;
 
@@ -138,15 +139,37 @@ const AdminSideBar = (props) => {
       </Menu.Item>
 
       <Menu.Item
-        key="/CDF_Clients"
+        key="/CDF_Prospect"
         icon={<FaPeopleGroup />}
-        onClick={() => nav("/CDF_Clients")}
+        onClick={() => nav("/CDF_Prospect")}
       >
-        CDF Clients
+        CDF prospect
       </Menu.Item>
 
       <SubMenu key="sub1" icon={<RiAppsLine />} title="Discovery">
-        <Menu.Item key="/All-Clients" onClick={() => nav("/All-Clients")}>
+        <Menu.Item
+          key="/All-Clients"
+          onClick={() => {
+            if (selectedClientDetails?._id) {
+              localStorage.setItem("UserID", selectedClientDetails._id);
+              localStorage.setItem(
+                "selected client",
+                JSON.stringify([selectedClientDetails.key])
+              );
+              localStorage.setItem("Email", selectedClientDetails.client.Email);
+              setQuestionDetail({});
+              setStepsStatus(false);
+              nav("/PersonalDetail#" + selectedClientDetails._id);
+            } else {
+              openNotificationSuccess(
+                "warning",
+                "topRight",
+                "No Client Selected",
+                "Please select a client before proceeding."
+              );
+            }
+          }}
+        >
           Financial Details
         </Menu.Item>
         <Menu.Item
