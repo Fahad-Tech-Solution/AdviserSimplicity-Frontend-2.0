@@ -63,8 +63,8 @@ const Reports = () => {
       } = response;
 
       console.log(
-        response.REPORTS_Joint_Investments,
-        "REPORTS_Joint_Investments"
+        response.REPORTS_TRUST_Assets_and_Income,
+        "REPORTS_TRUST_Assets_and_Income"
       );
 
       const Age = processDataGeneric(

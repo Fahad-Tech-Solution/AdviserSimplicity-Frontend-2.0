@@ -11,7 +11,13 @@ import { Segmented, Tag } from "antd";
 import { icon } from "@fortawesome/fontawesome-svg-core";
 import CDFViewForm from "./CDFViewForm";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { defaultUrl, Loading, ProspectsCDF } from "../../Store/Store";
+import {
+  defaultUrl,
+  Loading,
+  ProspectsCDF,
+  QuestionDetail,
+  StepsStatus,
+} from "../../Store/Store";
 import {
   ConvertDate,
   GetAxios,
@@ -26,16 +32,21 @@ import {
   SimpleSelectField,
 } from "../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import { MdOutlineWarningAmber } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 const CDFclients = () => {
   const DefaultUrl = useRecoilValue(defaultUrl);
   const [loading, setLoading] = useRecoilState(Loading);
   const [prospectsCDF, setProspectsCDF] = useRecoilState(ProspectsCDF);
+  const [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
+  const [stepsStatus, setStepsStatus] = useRecoilState(StepsStatus);
 
   const [CDFData, setCDFData] = useState([]);
   const [CDFData2, setCDFData2] = useState([]);
   const [selectedSegment, setSelectedSegment] = useState("New Prospects");
   const [showFilters, setShowFilters] = useState(false);
+
+  let nav = useNavigate();
 
   const getFilteredData = (value) => {
     setSelectedSegment(value);
@@ -123,6 +134,25 @@ const CDFclients = () => {
         onClick: (heading, row) => CallBack(heading, row, "unsuccessful"),
       },
     ];
+    if (status === "successful") {
+      menuItems.splice(1, 0, {
+        action: "Edit",
+        label: (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              marginLeft: 13,
+            }}
+            className="fw-bold"
+          >
+            <FaEdit /> Edit
+          </div>
+        ),
+        onClick: (heading, row) => CallBack(heading, row, "Edit"),
+      });
+    }
 
     return menuItems;
   };
@@ -161,16 +191,6 @@ const CDFclients = () => {
         </div>
       ),
     },
-    // {
-    //   title: "Date of Birth",
-    //   key: "DOB",
-    //   render: (text, row) => ConvertDate(row?.client?.dateOfBirth) || "--",
-    // },
-    {
-      title: "Phone Number",
-      key: "phoneNumber",
-      render: (text, row) => row?.client?.phoneNumber || "--",
-    },
     {
       title: "Relationship Status",
       key: "relationshipStatus",
@@ -181,6 +201,12 @@ const CDFclients = () => {
       title: "Email",
       key: "email",
       render: (text, row) => row?.client?.email || "--",
+    },
+    {
+      title: "Date",
+      key: "createdAt",
+      render: (text, row) =>
+        row?.createdAt ? ConvertDate(row?.createdAt) : "--",
     },
     {
       title: "Status",
@@ -260,6 +286,16 @@ const CDFclients = () => {
       Unsuccessful: () => {
         if (isPending) statusChange("unsuccessful", row);
       },
+      Edit: () => {
+        if (row.status === "successful") {
+          localStorage.setItem("UserID", row.client_FK);
+          localStorage.setItem("selected client", JSON.stringify([row.key]));
+          localStorage.setItem("Email", row.client.Email);
+          setQuestionDetail({});
+          setStepsStatus(false);
+          nav("/PersonalDetail#" + row.client_FK);
+        }
+      },
       default: () => {
         setModalObject({ title: "CDF Details", row });
         setFlagState(true);
@@ -299,8 +335,10 @@ const CDFclients = () => {
       };
 
       let responce = await PatchAxios(`${DefaultUrl}/api/CDF/Update`, data);
-      // console.log(responce);
+      console.log(responce);
       if (responce) {
+        data.client_FK = responce.client_FK;
+
         setCDFData((prev) =>
           prev.map((item) => (item._id === row._id ? data : item))
         );
