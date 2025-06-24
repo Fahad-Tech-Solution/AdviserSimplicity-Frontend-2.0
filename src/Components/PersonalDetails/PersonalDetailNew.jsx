@@ -12,12 +12,15 @@ import {
   StepsStatus,
 } from "../../Store/Store";
 import {
+  ConvertDate,
   GetAxios,
   openNotificationSuccess,
   PatchAxios,
   PostAxios,
+  touchFields,
 } from "../Assets/Api/Api";
 import { useLocation, useNavigate } from "react-router-dom";
+import { differenceInYears, isValid } from "date-fns";
 
 const PersonalDetailNew = () => {
   let formRef = useRef(null);
@@ -185,6 +188,156 @@ const PersonalDetailNew = () => {
       .required("This field is required"),
   });
 
+  const validateForm = (values) => {
+    const errors = {};
+    const client = values.client || {};
+    const partner = values.partner || {};
+
+    const clientErrors = {};
+    const partnerErrors = {};
+
+    const maritalStatus = client.clientMaritalStatus?.toLowerCase();
+
+    // === Reusable Validators ===
+    const required = (value, msg) => (!value ? msg : undefined);
+    const isAlphaSpace = (value, msg) =>
+      value && !/^[a-zA-Z\s]+$/.test(value) ? msg : undefined;
+    const isValidEmail = (value) =>
+      value && !Yup.string().email().isValidSync(value)
+        ? "Invalid email format"
+        : undefined;
+    const isValidDOB = (value) =>
+      value && !/^\d{2}\/\d{2}\/\d{4}$/.test(ConvertDate(value))
+        ? "Date must be in DD/MM/YYYY format"
+        : undefined;
+    const isPositiveNumber = (value, msg) =>
+      value !== 0 && (!value || isNaN(value) || value < 0) ? msg : undefined;
+
+    // === Client Field Configs ===
+    const clientFields = [
+      {
+        key: "Email",
+        validator: (val) =>
+          required(val, "Email is required") || isValidEmail(val),
+      },
+      {
+        key: "clientSurname",
+        validator: (val) =>
+          required(val, "Surname is required") ||
+          isAlphaSpace(val, "Surname must contain only letters and spaces"),
+      },
+      {
+        key: "clientGivenName",
+        validator: (val) =>
+          required(val, "Given name is required") ||
+          isAlphaSpace(val, "Given name must contain only letters and spaces"),
+      },
+      {
+        key: "clientPreferredName",
+        validator: (val) =>
+          required(val, "Preferred name is required") ||
+          isAlphaSpace(
+            val,
+            "Preferred name must contain only letters and spaces"
+          ),
+      },
+      {
+        key: "clientDOB",
+        validator: (val) =>
+          required(val, "Date of birth is required") || isValidDOB(val),
+      },
+      {
+        key: "clientAge",
+        validator: (val) =>
+          isPositiveNumber(val, "Age must be a valid positive number"),
+      },
+      {
+        key: "clientMaritalStatus",
+        validator: (val) => required(val, "Marital status is required"),
+      },
+      {
+        key: "clientHomeAddress",
+        validator: (val) => required(val, "Home address is required"),
+      },
+    ];
+
+    // === Partner Field Configs (conditionally validated) ===
+
+    const partnerFields = [
+      {
+        key: "partnerEmail",
+        validator: (val) =>
+          required(val, "Email is required") || isValidEmail(val),
+      },
+      {
+        key: "partnerSurname",
+        validator: (val) =>
+          required(val, "Surname is required") ||
+          isAlphaSpace(val, "Surname must contain only letters and spaces"),
+      },
+      {
+        key: "partnerGivenName",
+        validator: (val) =>
+          required(val, "Given name is required") ||
+          isAlphaSpace(val, "Given name must contain only letters and spaces"),
+      },
+      {
+        key: "partnerPreferredName",
+        validator: (val) =>
+          required(val, "Preferred name is required") ||
+          isAlphaSpace(
+            val,
+            "Preferred name must contain only letters and spaces"
+          ),
+      },
+      {
+        key: "partnerDOB",
+        validator: (val) =>
+          required(val, "Date of birth is required") || isValidDOB(val),
+      },
+      {
+        key: "partnerAge",
+        validator: (val) =>
+          isPositiveNumber(val, "Age must be a valid positive number"),
+      },
+      {
+        key: "partnerMaritalStatus",
+        validator: (val) => required(val, "Marital status is required"),
+      },
+      {
+        key: "partnerHomeAddress",
+        validator: (val) => required(val, "Home address is required"),
+      },
+    ];
+
+    // === Run Validation Loop for Client
+    clientFields.forEach(({ key, validator }) => {
+      const error = validator(client[key]);
+      if (error) clientErrors[key] = error;
+    });
+
+    // === Conditional Partner Validation
+    if (maritalStatus !== "single" && maritalStatus !== "widowed") {
+      partnerFields.forEach(({ key, validator }) => {
+        const error = validator(partner[key]);
+        if (error) partnerErrors[key] = error;
+      });
+    }
+
+    // === Children Section
+    if (!values.haveAnyChildren) {
+      errors.haveAnyChildren = "This field is required";
+    } else if (!["Yes", "No"].includes(values.haveAnyChildren)) {
+      errors.haveAnyChildren = "Please select Yes or No";
+    }
+
+    // === Merge Errors
+    if (Object.keys(clientErrors).length > 0) errors.client = clientErrors;
+    if (Object.keys(partnerErrors).length > 0) errors.partner = partnerErrors;
+
+    return errors;
+  };
+
   let includeArray = [
     "clientAge",
     "partnerAge",
@@ -317,7 +470,7 @@ const PersonalDetailNew = () => {
 
   const StoreData = (setFieldValue) => {
     try {
-      const data = PersonalDetailObj || {};
+      const data = JSON.parse(JSON.stringify(PersonalDetailObj)) || {};
 
       // Function to set field values dynamically
       const setFields = (prefix, obj) => {
@@ -340,6 +493,21 @@ const PersonalDetailNew = () => {
           }
         });
       };
+
+      if (data?.client?.clientDOB) {
+        const clientDOB = new Date(data.client.clientDOB);
+        if (isValid(clientDOB)) {
+          data.client.clientAge = differenceInYears(new Date(), clientDOB) || 0;
+        }
+      }
+
+      if (data?.partner?.partnerDOB) {
+        const partnerDOB = new Date(data.partner.partnerDOB);
+        if (isValid(partnerDOB)) {
+          data.partner.partnerAge =
+            differenceInYears(new Date(), partnerDOB) || 0;
+        }
+      }
 
       // Check if the user data has an ID
       if (data._id) {
@@ -382,11 +550,19 @@ const PersonalDetailNew = () => {
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
+      validate={validateForm}
       onSubmit={onSubmit}
       innerRef={formRef}
       enableReinitialize
     >
-      {({ values, setFieldValue, handleChange, errors, handleBlur }) => {
+      {({
+        values,
+        setFieldValue,
+        handleChange,
+        errors,
+        handleBlur,
+        setFieldTouched,
+      }) => {
         useEffect(() => {
           // Store Usre Data
           StoreData(setFieldValue);
@@ -437,7 +613,44 @@ const PersonalDetailNew = () => {
                   Switch !== 1 ? "col-md-3" : "col-md-4 submitPadding"
                 } `}
               >
-                {Switch === 2 ? (
+                {Switch === 1 ? (
+                  <button
+                    type="button"
+                    className=" btn w-100  bgColor modalBtn"
+                    onClick={async () => {
+                      let isValud = await touchFields(
+                        setFieldTouched,
+                        [
+                          "client.Email",
+                          "client.clientSurname",
+                          "client.clientGivenName",
+                          "client.clientPreferredName",
+                          "client.clientDOB",
+                          "client.clientAge",
+                          "client.clientHomeAddress",
+                          //partners
+                          "partner.Email",
+                          "partner.partnerSurname",
+                          "partner.partnerGivenName",
+                          "partner.partnerPreferredName",
+                          "partner.partnerDOB",
+                          "partner.partnerAge",
+                          "partner.partnerHomeAddress",
+                        ],
+                        values,
+                        validateForm
+                      );
+
+                      console.log("isValud : ", isValud);
+
+                      if (isValud) {
+                        setSwitch(++Switch);
+                      }
+                    }}
+                  >
+                    Submit
+                  </button>
+                ) : Switch === 2 ? (
                   <button
                     type="button"
                     className=" btn w-100  bgColor modalBtn"

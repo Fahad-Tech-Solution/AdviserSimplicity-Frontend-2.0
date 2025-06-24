@@ -686,6 +686,49 @@ function toSentenceCase(str) {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
+const touchFields = async (
+  setFieldTouched,
+  fieldNames,
+  values,
+  validateForm
+) => {
+  let isValid = true;
+  let firstInvalidMessage = null;
+
+  // Mark fields as touched
+  for (const fieldName of fieldNames) {
+    await setFieldTouched(fieldName, true); //
+  }
+
+  const fieldErrors = await validateForm(values);
+
+  // Helper to get nested value by path (e.g. "client.Email")
+  const getNested = (obj, path) =>
+    path.split(".").reduce((acc, part) => (acc && acc[part] ? acc[part] : null), obj);
+
+  for (const fieldName of fieldNames) {
+    const errorMessage = getNested(fieldErrors, fieldName);
+    if (errorMessage) {
+      isValid = false;
+      if (!firstInvalidMessage) {
+        firstInvalidMessage = errorMessage;
+      }
+    }
+  }
+
+  if (!isValid && firstInvalidMessage) {
+    openNotificationSuccess(
+      "error",
+      "topRight",
+      "Validation Error",
+      firstInvalidMessage
+    );
+  }
+
+  return isValid;
+};
+
+
 export {
   DeleteAxios,
   GetAxios,
@@ -720,4 +763,5 @@ export {
   updateCardBySingleEntry,
   deepCloneWithKeys,
   toSentenceCase,
+  touchFields,
 };

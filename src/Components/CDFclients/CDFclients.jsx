@@ -310,20 +310,32 @@ const CDFclients = () => {
 
   useEffect(() => {
     if (apiFetch) {
-      if (prospectsCDF.length > 0) {
+      fetchCDFData();
+    }
+  }, [apiFetch]);
+
+  const fetchCDFData = async () => {
+    try {
+      setLoading(true);
+      let res = await GetAxios(`${DefaultUrl}/api/CDF/`);
+      // console.log(res,"cdf");
+      if (res && res.length > 0) {
+        // setProspectsCDF(res.reverse());
         setCDFData(
-          prospectsCDF.filter(
-            (item) => item.status?.toLowerCase() === "pending"
-          )
+          res
+            .reverse()
+            .filter((item) => item.status?.toLowerCase() === "pending")
         );
-        setCDFData2(prospectsCDF);
+        setCDFData2(res);
         setSelectedSegment("New Prospects");
         apiFetch = false;
-        // setApiFetch(false);
-      } else {
       }
+    } catch (error) {
+      console.log("Error message:", error);
+    } finally {
+      setLoading(false);
     }
-  }, [apiFetch, prospectsCDF]);
+  };
 
   let statusChange = async (status, row) => {
     try {
