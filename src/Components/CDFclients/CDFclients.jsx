@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { Card, Col, Container, Row } from "react-bootstrap";
-import DynamicTableRow from "../Assets/Dynamic/DynamicTableRow";
+import { useEffect, useState } from "react";
+import { Card, Col, Row } from "react-bootstrap";
 import AntTableDynamicReportTable from "../Assets/Table/AntTableDynamicReportTable";
 import { FaCircleCheck, FaCircleXmark, FaGear } from "react-icons/fa6";
 import DropDownOptions from "../Assets/DropDownOptions/DropDownOptions";
 import { FaClock, FaEdit, FaInfoCircle, FaRegFileAlt } from "react-icons/fa";
 import ModalComponent from "../Questions/FinancialInvestments/ModalComponent";
 import CDFForm from "./CDFForm";
-import { Segmented, Tag } from "antd";
-import { icon } from "@fortawesome/fontawesome-svg-core";
+import { Button, Segmented, Tag } from "antd";
 import CDFViewForm from "./CDFViewForm";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
@@ -23,21 +21,18 @@ import {
   GetAxios,
   openNotificationSuccess,
   PatchAxios,
-  PostAxios,
   toSentenceCase,
 } from "../Assets/Api/Api";
 import { Field, Form, Formik } from "formik";
-import {
-  CreatableSelectField,
-  SimpleSelectField,
-} from "../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import { SimpleSelectField } from "../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import { MdOutlineWarningAmber } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { AiOutlineReload } from "react-icons/ai";
 
 const CDFclients = () => {
   const DefaultUrl = useRecoilValue(defaultUrl);
   const [loading, setLoading] = useRecoilState(Loading);
-  const [prospectsCDF, setProspectsCDF] = useRecoilState(ProspectsCDF);
+  // const [prospectsCDF, setProspectsCDF] = useRecoilState(ProspectsCDF);
   const [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
   const [stepsStatus, setStepsStatus] = useRecoilState(StepsStatus);
 
@@ -203,10 +198,10 @@ const CDFclients = () => {
       render: (text, row) => row?.client?.email || "--",
     },
     {
-      title: "Date",
-      key: "createdAt",
+      title: "Last updated at",
+      key: "updatedAt",
       render: (text, row) =>
-        row?.createdAt ? ConvertDate(row?.createdAt) : "--",
+        row?.updatedAt ? ConvertDate(row?.updatedAt) : "--",
     },
     {
       title: "Status",
@@ -306,10 +301,11 @@ const CDFclients = () => {
     executeAction();
   };
 
-  let apiFetch = true;
+  let [apiFetch, setApiFetch] = useState(true);
 
   useEffect(() => {
     if (apiFetch) {
+      console.log("Fetching CDF Data");
       fetchCDFData();
     }
   }, [apiFetch]);
@@ -328,7 +324,7 @@ const CDFclients = () => {
         );
         setCDFData2(res);
         setSelectedSegment("New Prospects");
-        apiFetch = false;
+        setApiFetch(!apiFetch); // Toggle apiFetch to prevent infinite loop
       }
     } catch (error) {
       console.log("Error message:", error);
@@ -407,7 +403,7 @@ const CDFclients = () => {
       <div className="d-flex justify-content-center">
         <div className="col-md-11 mt-3">
           <Card className="custom_Shadow p-3 mt-3">
-            <Row className="justify-content-center align-items-center reportSection ">
+            <Row className="justify-content-between align-items-center reportSection ">
               <Col md={6}>
                 <Segmented
                   options={[
@@ -420,44 +416,62 @@ const CDFclients = () => {
                   onChange={getFilteredData}
                 />
               </Col>
-              <Col md={3}></Col>
-              <Col md={3}>
-                {showFilters && (
-                  <Formik
-                    initialValues={{}}
-                    onSubmit={() => {}}
-                    enableReinitialize
+
+              <Col md={3} className="">
+                <div className="d-flex justify-content-end gap-3 align-items-center">
+                  <Button
+                    onClick={() => {
+                      setApiFetch(!apiFetch); // Toggle apiFetch to trigger useEffect
+                    }}
+                    className="m-0"
                   >
-                    {({ values, setFieldValue, handleChange, handleBlur }) => (
-                      <Form>
-                        <Field
-                          name={`Name`}
-                          component={SimpleSelectField}
-                          label="Multi Select Field"
-                          options={[
-                            ...CDFData2.map((item, index) => {
-                              return {
-                                value: item.client.preferredName,
-                                label: item.client.preferredName,
-                              };
-                            }),
-                          ]}
-                          onChange={(selected) => {
-                            if (selected?.value) {
-                              const filtered = CDFData2.filter(
-                                (item) =>
-                                  item.client.preferredName === selected.value
-                              );
-                              setCDFData(filtered);
-                            } else {
-                              setCDFData(CDFData2);
-                            }
-                          }}
-                        />
-                      </Form>
-                    )}
-                  </Formik>
-                )}
+                    <AiOutlineReload />
+                  </Button>
+                  {showFilters && (
+                    <div className="w-75">
+                      <Formik
+                        initialValues={{}}
+                        onSubmit={() => {}}
+                        enableReinitialize
+                      >
+                        {({
+                          values,
+                          setFieldValue,
+                          handleChange,
+                          handleBlur,
+                        }) => (
+                          <Form className="w-100">
+                            <Field
+                              name={`Name`}
+                              component={SimpleSelectField}
+                              label="Multi Select Field"
+                              options={[
+                                ...CDFData2.map((item, index) => {
+                                  return {
+                                    value: item.client.preferredName,
+                                    label: item.client.preferredName,
+                                  };
+                                }),
+                              ]}
+                              onChange={(selected) => {
+                                if (selected?.value) {
+                                  const filtered = CDFData2.filter(
+                                    (item) =>
+                                      item.client.preferredName ===
+                                      selected.value
+                                  );
+                                  setCDFData(filtered);
+                                } else {
+                                  setCDFData(CDFData2);
+                                }
+                              }}
+                            />
+                          </Form>
+                        )}
+                      </Formik>
+                    </div>
+                  )}
+                </div>
               </Col>
               <Col md={12}>
                 <div>

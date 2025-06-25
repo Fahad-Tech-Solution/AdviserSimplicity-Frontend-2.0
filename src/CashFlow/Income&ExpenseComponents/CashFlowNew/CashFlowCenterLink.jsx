@@ -243,16 +243,6 @@ const CashFlowCenterLink = (props) => {
       : [{ value: "client", label: RenderName("client") }];
 
   let paymentType = [
-    // { value: "Age Pension", label: "Age Pension" },
-    // { value: "Disability Pension", label: "Disability Pension" },
-    // { value: "Carer Payment", label: "Carer Payment" },
-    // { value: "Carer Allowance", label: "Carer Allowance" },
-    // { value: "Jobseeker", label: "Jobseeker" },
-    // { value: "Family Tax Benefit A", label: "Family Tax Benefit A" },
-    // { value: "Family Tax Benefit B", label: "Family Tax Benefit B" },
-    // { value: "Rent Assistance", label: "Rent Assistance" },
-    // { value: "No", label: "No" },
-    // { value: "No", label: "No" },
     { value: "Not Eligible", label: "Not Eligible" },
     { value: "Disability Pension", label: "Disability Pension" },
     { value: "Carers Payment", label: "Carers Payment" },

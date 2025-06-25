@@ -63,8 +63,8 @@ const Reports = () => {
       } = response;
 
       console.log(
-        response.REPORTS_TRUST_Assets_and_Income,
-        "REPORTS_TRUST_Assets_and_Income"
+        response.REPORTS_SMSF_Assets_and_Income,
+        "REPORTS_SMSF_Assets_and_Income"
       );
 
       const Age = processDataGeneric(

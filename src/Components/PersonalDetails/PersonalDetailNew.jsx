@@ -480,7 +480,7 @@ const PersonalDetailNew = () => {
 
         Object.keys(obj).forEach((key) => {
           try {
-            if (key === "clientSameAsAbove") {
+            if (key === "clientSameAsAbove" || key === "partnerSameAsClient") {
               setFieldValue(`${prefix}.${key}`, obj[key] || false);
             } else {
               setFieldValue(`${prefix}.${key}`, obj[key] || "");
@@ -497,7 +497,8 @@ const PersonalDetailNew = () => {
       if (data?.client?.clientDOB) {
         const clientDOB = new Date(data.client.clientDOB);
         if (isValid(clientDOB)) {
-          data.client.clientAge = differenceInYears(new Date(), clientDOB) || 0;
+          data.client.clientAge =
+            differenceInYears(new Date(), clientDOB) || "0";
         }
       }
 
@@ -505,7 +506,7 @@ const PersonalDetailNew = () => {
         const partnerDOB = new Date(data.partner.partnerDOB);
         if (isValid(partnerDOB)) {
           data.partner.partnerAge =
-            differenceInYears(new Date(), partnerDOB) || 0;
+            differenceInYears(new Date(), partnerDOB) || "0";
         }
       }
 

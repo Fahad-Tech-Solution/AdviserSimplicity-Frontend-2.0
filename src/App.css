@@ -1721,11 +1721,6 @@ label {
   font-size: inherit;
 }
 
-.reportSection .custom-pagination {
-  width: 40vh;
-  float: inline-end;
-}
-
 .reportSection .ant-table-title {
   padding: 0px !important;
 }

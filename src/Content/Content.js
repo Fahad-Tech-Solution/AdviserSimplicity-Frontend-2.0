@@ -969,14 +969,14 @@ export const content = {
           {
             parent: "Total Income For Secondary Income Earner",
             children: [
-              "Income Level Threshold",
+              "Income Level Threshold Primary",
               "Total Income For Secondary Income Earner",
             ],
           },
           {
             parent: "Total FTB- Part B (including Supplement)",
             children: [
-              "Income Level Threshold",
+              "Income Level Threshold Secondary",
               "Total FTB- Part B (including Supplement)",
             ],
           },
@@ -1488,7 +1488,7 @@ export const content = {
             parent: "Total Assets",
             children: [
               "Property Value",
-              "Share Portfolo",
+              "Share Portfolio",
               "Managed Funds",
               "Other",
               "Term Deposit",
@@ -1536,9 +1536,9 @@ export const content = {
             parent: "Opening Balance",
             children: [
               "Opening Balance",
-              "Rollovers-transfer in",
+              "Rollovers-tranfer in",
               "Employer Contributions",
-              "Salary Sacrifice/Personal Deductible",
+              "Salary Sacrfice/Personal Deductible",
               "Spouse Splitting",
               "Non Concessional Contributions",
               "Government Co-Contribution/Low income ",

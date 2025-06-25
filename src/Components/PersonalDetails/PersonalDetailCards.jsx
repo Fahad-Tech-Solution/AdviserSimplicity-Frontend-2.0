@@ -166,7 +166,7 @@ function PersonalDetailCards(props) {
                     width={"24px"}
                   />
 
-                  {data.client.clientMobile}
+                  {data.client.clientWorkPhone}
                 </div>
               </div>
               <div className="col-6 mb-3">
@@ -314,7 +314,7 @@ function PersonalDetailCards(props) {
                         className="me-2"
                         width={"24px"}
                       />
-                      {data.partner.partnerMobile}
+                      {data.partner.partnerWorkPhone}
                     </div>
                   </div>
                   <div className="col-12 mb-3">
