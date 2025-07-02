@@ -8,7 +8,7 @@ import {
   faCircleUser,
   faMoon,
 } from "@fortawesome/free-solid-svg-icons";
-import { ConfigProvider, Steps } from "antd";
+import { ConfigProvider, Dropdown, Menu, Steps } from "antd";
 import {
   FaBriefcase,
   FaCheck,
@@ -23,7 +23,13 @@ import {
   FaGraduationCap,
   FaChartPie,
 } from "react-icons/fa6";
-import { FaHome, FaQuestionCircle } from "react-icons/fa";
+import {
+  FaEdit,
+  FaHome,
+  FaPowerOff,
+  FaQuestionCircle,
+  FaUserAlt,
+} from "react-icons/fa";
 import {
   MdFamilyRestroom,
   MdWaterDrop,
@@ -43,6 +49,7 @@ import {
 } from "../Store/Store";
 
 import "./options.css";
+import { FiLogOut } from "react-icons/fi";
 
 const iconMap = {
   FaBriefcase,
@@ -96,10 +103,11 @@ function Options(props) {
 
     setCurrentPCLassSwitch(cLocation);
 
-    setCurrentTabName(
+    let title =
       cLocation?.split("/").filter(Boolean).join(" ").replace(/[_-]/g, " ") ||
-        "Dashboard"
-    );
+      "Dashboard";
+
+    setCurrentTabName(title == "profile" ? "Profile" : title);
 
     const stepMap = {
       PersonalDetail: 0,
@@ -225,6 +233,7 @@ function Options(props) {
     "/Cash-Flow/AllUsers",
     "/Cash-Flow/oneClient",
     "/CDF_Prospects",
+    "/profile",
   ];
   const noTopBarArray = [
     "/Goals-And-Objectives",
@@ -233,6 +242,42 @@ function Options(props) {
     "/Risk-Profile-Cards",
     "/Risk-Profile/Cards",
   ];
+
+  const getMenu = (row) => (
+    <Menu
+      style={{
+        minWidth: "150px",
+        marginTop: "10px",
+      }}
+    >
+      <React.Fragment>
+        <Menu.Item
+          key="1"
+          style={{
+            minHeight: "40px",
+            fontSize: "14px",
+            fontWeight: "600",
+          }}
+          onClick={() => {
+            navigate("/profile");
+          }}
+        >
+          Profile
+        </Menu.Item>
+        <Menu.Item
+          key="3"
+          style={{
+            minHeight: "40px",
+            color: "#FF4D4F",
+            fontSize: "14px",
+            fontWeight: "600",
+          }}
+        >
+          Logout <FiLogOut />
+        </Menu.Item>
+      </React.Fragment>
+    </Menu>
+  );
 
   if (topMenuArray.includes(location.pathname)) {
     return (
@@ -277,7 +322,16 @@ function Options(props) {
                         onClick={() => props.setCollapsed(!props.collapsed)}
                       />
                       {/* <FontAwesomeIcon icon={faMoon} className="moon" /> */}
-                      <FontAwesomeIcon icon={faCircleUser} className="user" />
+                      <div className="d-flex justify-content-center align-items-center">
+                        <Dropdown overlay={getMenu()}>
+                          <img
+                            src="https://demos.creative-tim.com/muse-ant-design-dashboard/static/media/face-1.d85d07a1.jpg"
+                            alt="Profile"
+                            className="rounded-circle"
+                            style={{ width: "35px" }}
+                          />
+                        </Dropdown>
+                      </div>
                     </div>
                   </div>
                 </div>

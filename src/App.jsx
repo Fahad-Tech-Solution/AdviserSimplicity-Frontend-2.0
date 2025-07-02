@@ -14,12 +14,13 @@ import SuperAdminRouts from "./MultiRoutes/SuperAdminRouts";
 import Aos from "aos";
 import "aos/dist/aos.css";
 import CashFlow from "./CashFlow/CashFlowComponent/CashFlow";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { Loading } from "./Store/Store";
 import { Spin } from "antd";
+import ProfileTemp from "./Components/Assets/ProfileSection/ProfileTemp";
 
 function App() {
-  let loadingState = useRecoilValue(Loading);
+  let [loadingState, setLoading] = useRecoilState(Loading);
 
   useEffect(() => {
     Aos.init({
@@ -48,6 +49,7 @@ function App() {
         </div>
       )}
       <Routes>
+        
         <Route path="/Login" element={<LoginForm />} />
         <Route path="/Register" element={<Register />} />
         <Route path="/VerifyEmail" element={<VerifyEmail />} />

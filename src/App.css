@@ -1773,6 +1773,17 @@ label {
   font-family: "Inter", sans-serif !important;
 }
 
+.profile-temp-container p,
+.profile-temp-container h1,
+.profile-temp-container h2,
+.profile-temp-container h3,
+.profile-temp-container h4,
+.profile-temp-container h5,
+.profile-temp-container h6 .profile-temp-container span,
+.profile-temp-container label {
+  font-family: "Inter", sans-serif !important;
+}
+
 .reportSection .highlight-green-row {
   background-color: #36b446 !important;
   color: white !important;
@@ -1870,4 +1881,20 @@ label {
 
 .fontFamily-Inter {
   font-family: "Inter", sans-serif !important;
+}
+
+.profile-temp-container .profile-card {
+  border-radius: 12px;
+  overflow: hidden;
+  height: fit-content;
+  margin-top: -40px;
+  background-color: #ffffff;
+  padding: 10px;
+}
+
+@media only screen and (max-width: 425px) {
+  .profile-temp-container .profile-card {
+    margin-top: -100px;
+    background-color: #36b446;
+  }
 }

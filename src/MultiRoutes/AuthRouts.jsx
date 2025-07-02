@@ -38,6 +38,7 @@ import PersonalDetailNew from "../Components/PersonalDetails/PersonalDetailNew";
 import PersonalInsuranceLife from "../Components/Questions/PersonalInsurance/LifeInsurance";
 import CDFclients from "../Components/CDFclients/CDFclients";
 import AdminSideBar from "../Components/SideBar/AdminSideBar";
+import ProfileTemp from "../Components/Assets/ProfileSection/ProfileTemp";
 
 function AuthRouts() {
   const [collapsed, setCollapsed] = useState(true);
@@ -161,6 +162,7 @@ function AuthRouts() {
           <Route path="/Goals-And-Objectives" element={<GoalsObjectiveNew />} />
           <Route path="/Risk-Profile/*" element={<RiskProfileNew />} />
           <Route path="/CDF_Prospects" element={<CDFclients />} />
+          <Route path="/profile" element={<ProfileTemp />} />
         </Routes>
       </div>
     </div>
