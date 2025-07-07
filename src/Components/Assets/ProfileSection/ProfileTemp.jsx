@@ -1,6 +1,7 @@
 import React from "react";
 import banner from "../Adviser-Simplicity-Profile-Green-Banner.png";
 import { Image } from "react-bootstrap";
+import { Image as AntdImage } from "antd";
 import { Button, ConfigProvider, Descriptions } from "antd";
 import { FaEdit, FaPowerOff } from "react-icons/fa";
 import Dynamiclist from "./Dynamiclist";
@@ -83,12 +84,15 @@ const ProfileTemp = () => {
         <div className="col-md-11">
           <div className="shadow d-flex flex-wrap-reverse align-items-center justify-content-center profile-card">
             <div className="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between w-100 gap-2 px-3 ">
-              <div className="d-flex align-items-center ">
-                <img
+              <div className="d-flex align-items-center gap-3">
+                <AntdImage
                   src="https://demos.creative-tim.com/muse-ant-design-dashboard/static/media/face-1.d85d07a1.jpg"
                   alt="Profile"
                   className="rounded-3 me-3"
-                  style={{ width: "50px", height: "50px" }}
+                  width={50}
+                  height={50}
+                  style={{ objectFit: "cover" }}
+                  preview={{ mask: null }}
                 />
                 <div>
                   <h5 className="mb-0">John Doe</h5>

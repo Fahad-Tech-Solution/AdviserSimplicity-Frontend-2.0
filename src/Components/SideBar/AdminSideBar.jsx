@@ -15,8 +15,8 @@ import {
   StepsStatus,
 } from "../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { FaPeopleGroup } from "react-icons/fa6";
-import { FaTachometerAlt } from "react-icons/fa";
+import { FaGear, FaPeopleGroup, FaUserTag } from "react-icons/fa6";
+import { FaRegCreditCard, FaTachometerAlt, FaUserTie } from "react-icons/fa";
 import { openNotificationSuccess } from "../Assets/Api/Api";
 
 const { SubMenu } = Menu;
@@ -216,6 +216,39 @@ const AdminSideBar = (props) => {
           </SubMenu>
         )}
       </SubMenu>
+      {(location.pathname.includes("SuperAdmin") ||
+        location.pathname.includes("superadmin")) && (
+        <>
+          <SubMenu
+            className="subSubMenu"
+            key="sub3"
+            title={`System Management`}
+            icon={<FaGear />}
+          >
+            <Menu.Item
+              key="/SuperAdmin/All_Subscriptions"
+              onClick={() => nav("/SuperAdmin/All_Subscriptions")}
+              icon={<FaRegCreditCard />}
+            >
+              All Subscriptions
+            </Menu.Item>
+            <Menu.Item
+              key="/SuperAdmin/All_Advisers"
+              onClick={() => nav("/SuperAdmin/All_Advisers")}
+              icon={<FaUserTie />}
+            >
+              All Advisers
+            </Menu.Item>
+            <Menu.Item
+              key="/SuperAdmin/All_Roles"
+              onClick={() => nav("/SuperAdmin/All_Roles")}
+              icon={<FaUserTag />}
+            >
+              All Roles
+            </Menu.Item>
+          </SubMenu>
+        </>
+      )}
     </Menu>
   );
 

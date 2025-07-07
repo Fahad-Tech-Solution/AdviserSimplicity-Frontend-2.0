@@ -704,7 +704,9 @@ const touchFields = async (
 
   // Helper to get nested value by path (e.g. "client.Email")
   const getNested = (obj, path) =>
-    path.split(".").reduce((acc, part) => (acc && acc[part] ? acc[part] : null), obj);
+    path
+      .split(".")
+      .reduce((acc, part) => (acc && acc[part] ? acc[part] : null), obj);
 
   for (const fieldName of fieldNames) {
     const errorMessage = getNested(fieldErrors, fieldName);
@@ -728,6 +730,35 @@ const touchFields = async (
   return isValid;
 };
 
+const passwordGenerator = (length = 12) => {
+  const charUppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const charLowercase = "abcdefghijklmnopqrstuvwxyz";
+  const charNumber = "0123456789";
+  const charSpecial = "~!@#$%^&*_+:?";
+
+  const allChars = charUppercase + charLowercase + charNumber + charSpecial;
+
+  let password = "";
+
+  // Ensure at least one character from each type
+  password += charUppercase[Math.floor(Math.random() * charUppercase.length)];
+  password += charLowercase[Math.floor(Math.random() * charLowercase.length)];
+  password += charNumber[Math.floor(Math.random() * charNumber.length)];
+  password += charSpecial[Math.floor(Math.random() * charSpecial.length)];
+
+  // Fill the rest with random characters
+  for (let i = 4; i < length; i++) {
+    password += allChars[Math.floor(Math.random() * allChars.length)];
+  }
+
+  // Shuffle the password so first 4 chars aren't predictable
+  password = password
+    .split("")
+    .sort(() => 0.5 - Math.random())
+    .join("");
+
+  return password;
+};
 
 export {
   DeleteAxios,
@@ -764,4 +795,5 @@ export {
   deepCloneWithKeys,
   toSentenceCase,
   touchFields,
+  passwordGenerator,
 };

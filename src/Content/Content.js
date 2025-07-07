@@ -43,6 +43,7 @@ import Business_fund from "../Components/Questions/svgs/Business-fund.png";
 
 import SMSFBank from "../Components/Questions/svgs/bank.svg";
 import { RenderName } from "../Components/Assets/Api/Api";
+import AllSubscriptions from "../Components/SuperAdminComponent/AllSubscriptions";
 
 export const content = {
   itemsOpt: [
