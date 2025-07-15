@@ -226,8 +226,8 @@ const AdminSideBar = (props) => {
             icon={<FaGear />}
           >
             <Menu.Item
-              key="/SuperAdmin/All_Subscriptions"
-              onClick={() => nav("/SuperAdmin/All_Subscriptions")}
+              key="/SuperAdmin/Adviser_Simplilcity_Packages"
+              onClick={() => nav("/SuperAdmin/Adviser_Simplilcity_Packages")}
               icon={<FaRegCreditCard />}
             >
               All Subscriptions

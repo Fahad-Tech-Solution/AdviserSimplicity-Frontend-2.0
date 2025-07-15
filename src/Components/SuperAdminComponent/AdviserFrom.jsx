@@ -10,6 +10,7 @@ import {
   PatchAxios,
   PostAxios,
 } from "../Assets/Api/Api";
+import { ConfigProvider, Input, Select } from "antd";
 
 const AdviserFrom = (props) => {
   let initialValues = {
@@ -18,9 +19,6 @@ const AdviserFrom = (props) => {
     email: "",
     phoneNumber: "",
     address: "",
-    paymentMethod: "",
-    paymentRaferenceNo: "",
-    planID: "",
   };
 
   let DefaultUrl = useRecoilValue(defaultUrl);
@@ -57,12 +55,8 @@ const AdviserFrom = (props) => {
         res = await PostAxios(DefaultUrl + "/api/user/Add/Adviser", values);
         if (res) {
           console.log(res);
-          let obj = {
-            ...res.user,
-            ...res.subscription,
-          };
 
-          setAdvisers((prev) => [...prev, obj]);
+          setAdvisers((prev) => [res, ...prev]);
           openNotificationSuccess(
             "success",
             "topRight",
@@ -125,44 +119,24 @@ const AdviserFrom = (props) => {
       placeholder: "Phone Number",
     },
     {
-      name: "address",
+      name: "companyName",
       type: "text",
-      placeholder: "Address",
+      placeholder: "Company Name",
     },
     {
-      name: "paymentMethod",
-      type: "select",
-      placeholder: "Payment Method",
-      options: [
-        { value: "Cash", label: "Cash" },
-        { value: "Online", label: "Online" },
-      ],
-    },
-    {
-      name: "paymentRaferenceNo",
+      name: "aBN",
       type: "text",
-      placeholder: "Payment Raference No",
-      disabled: true,
+      placeholder: "ABN",
     },
     {
-      name: "planID",
-      type: "select",
-      placeholder: "Subscription Plan Name",
-      options: subscriptions
-        .filter((item) => item.isActive)
-        .map((item) => ({
-          value: item._id,
-          label: `${item.planName} (${item.planCode})`,
-        })),
+      name: "streatAddress",
+      type: "text",
+      placeholder: "Street Address",
     },
     {
-      name: "subscriptionMonths",
-      type: "select",
-      placeholder: "Subscription Months",
-      options: Array.from({ length: 12 }, (_, i) => ({
-        value: (i + 1).toString(), // e.g., "1", "2", ...
-        label: `${i + 1} Month${i === 0 ? "" : "s"}`, // "1 Month", "2 Months", ...
-      })),
+      name: "state",
+      type: "text",
+      placeholder: "State",
     },
   ];
 
@@ -182,7 +156,7 @@ const AdviserFrom = (props) => {
           <Form>
             <Row>
               <div className="col-md-12 All_Client reportSection">
-                <div className="row justify-content-center mt-4">
+                <div className="row justify-content-center mt-4 d-none">
                   <Table striped bordered responsive hover>
                     <thead>
                       <tr>
@@ -191,10 +165,6 @@ const AdviserFrom = (props) => {
                         <th>Email Address</th>
                         <th>Phone number</th>
                         <th>Address</th>
-                        <th>Payment Method</th>
-                        <th>Payment Raference No</th>
-                        <th>Subscription Plan Name</th>
-                        <th>Subscription Months</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -214,6 +184,80 @@ const AdviserFrom = (props) => {
                       />
                     </tbody>
                   </Table>
+                </div>
+                <div className="d-flex flex-wrap gap-3">
+                  {rowConfig.map((item, index) => {
+                    // Check if it's the last field and there are odd number of fields
+                    const isLast = index === rowConfig.length - 1;
+                    const isOdd = rowConfig.length % 2 !== 0;
+                    const shouldTakeFullWidth = isOdd && isLast;
+
+                    return (
+                      <div
+                        key={index}
+                        className="form-item"
+                        style={{
+                          flex: shouldTakeFullWidth
+                            ? "1 1 100%"
+                            : "1 1 calc(50% - 0.75rem)",
+                          minWidth: "250px",
+                        }}
+                      >
+                        <label
+                          htmlFor={item.name}
+                          className="fw-bold"
+                          style={{ fontSize: "15px" }}
+                        >
+                          {item.placeholder}:
+                        </label>
+
+                        <Field name={item.name}>
+                          {({ field, form }) =>
+                            item.type === "select" ? (
+                              <ConfigProvider
+                                getPopupContainer={(trigger) =>
+                                  trigger.parentNode
+                                }
+                              >
+                                <Select
+                                  {...field}
+                                  id={item.name}
+                                  style={{ width: "100%" }}
+                                  placeholder={item.placeholder}
+                                  size="large"
+                                  options={item.options}
+                                  onChange={(value) =>
+                                    form.setFieldValue(item.name, value)
+                                  }
+                                  onBlur={() =>
+                                    form.setFieldTouched(item.name, true)
+                                  }
+                                  getPopupContainer={(triggerNode) =>
+                                    triggerNode.parentNode
+                                  }
+                                />
+                              </ConfigProvider>
+                            ) : (
+                              <Input
+                                {...field}
+                                id={item.name}
+                                type={item.type}
+                                placeholder={item.placeholder}
+                                size="large"
+                                className="w-100"
+                              />
+                            )
+                          }
+                        </Field>
+
+                        <ErrorMessage
+                          name={item.name}
+                          component="div"
+                          className="text-danger mt-1"
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </Row>

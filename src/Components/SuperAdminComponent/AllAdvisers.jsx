@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import AntTableDynamicReportTable from "../Assets/Table/AntTableDynamicReportTable";
 import DropDownOptions from "../Assets/DropDownOptions/DropDownOptions";
 import { FaRegEdit, FaRegFileAlt, FaTrashAlt } from "react-icons/fa";
-import { Button, Modal, Tag } from "antd";
+import { Button, Input, Modal, Tag } from "antd";
 import ModalComponent from "../Questions/FinancialInvestments/ModalComponent";
 import SubscriptionForms from "./SubscriptionForms";
 import { openNotificationSuccess } from "../Assets/Api/Api";
@@ -14,7 +14,8 @@ import {
   Subscriptions,
 } from "../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { FaCircleCheck, FaCircleXmark } from "react-icons/fa6";
+import { FaCircleCheck, FaCircleXmark, FaXmark } from "react-icons/fa6";
+import { MdMarkAsUnread, MdSearch } from "react-icons/md";
 
 const AllAdvisers = () => {
   const { confirm } = Modal;
@@ -23,6 +24,19 @@ const AllAdvisers = () => {
   let subscriptions = useRecoilValue(Subscriptions);
   let [loading, setLoading] = useRecoilState(Loading);
   let [advisers, setAdvisers] = useRecoilState(Advisers);
+
+  const [expanded, setExpanded] = useState(false);
+  const [value, setValue] = useState("");
+
+  const handleSearchClick = () => setExpanded(true);
+  const handleCloseClick = () => {
+    setExpanded(false);
+    setValue("");
+  };
+
+  const handleSearch = () => {
+    if (onSearch) onSearch(value);
+  };
 
   const columns = [
     {
@@ -331,7 +345,36 @@ const AllAdvisers = () => {
                 <h5 className="PoppinsFamily green_Text fw-bold fs-4">
                   All Advisers
                 </h5>
-                <div className="d-flex align-items-center">
+                <div className="d-flex align-items-center gap-3">
+                  <div className="SearchAnimate">
+                    <div
+                      className={`expandable-search ${
+                        expanded ? "expanded" : ""
+                      }`}
+                    >
+                      <Button
+                        icon={<MdSearch size={18} />}
+                        onClick={handleSearchClick}
+                        className="search-icon-btn"
+                      />
+
+                      <div className="input-wrapper">
+                        <Input
+                          size="middle"
+                          placeholder="Search..."
+                          value={value}
+                          onChange={(e) => setValue(e.target.value)}
+                          onPressEnter={handleSearch}
+                        />
+                        <Button
+                          icon={<FaXmark />}
+                          onClick={handleCloseClick}
+                          type="text"
+                          className="close-btn"
+                        />
+                      </div>
+                    </div>
+                  </div>
                   <Button
                     className="me-2"
                     onClick={() => CallBack("", "", "newAdviser")}

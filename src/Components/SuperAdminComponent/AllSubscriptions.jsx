@@ -22,6 +22,7 @@ import {
   FaCircleXmark,
   FaRegCircleXmark,
 } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
 
 const AllSubscriptions = () => {
   const { confirm } = Modal;
@@ -334,6 +335,8 @@ const AllSubscriptions = () => {
     }
   };
 
+  let Nav = useNavigate();
+
   return (
     <div className="container-fluid All_Client reportSection">
       <ModalComponent
@@ -358,6 +361,14 @@ const AllSubscriptions = () => {
                     onClick={() => CallBack("", "", "newSubscription")}
                   >
                     Add Subscription
+                  </Button>
+                </div>
+                <div className="d-flex align-items-center">
+                  <Button
+                    className="me-2"
+                    onClick={() => Nav("/SuperAdmin/Stripe_Test")}
+                  >
+                    Strip Subscriptions
                   </Button>
                 </div>
               </div>

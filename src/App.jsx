@@ -18,6 +18,9 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { Loading } from "./Store/Store";
 import { Spin } from "antd";
 import ProfileTemp from "./Components/Assets/ProfileSection/ProfileTemp";
+import StripeRedirect from "./Components/SuperAdminComponent/StripeRedirect";
+import PasswordChange from "./Components/Auth/PasswordChange";
+import PricingTable from "./Components/SuperAdminComponent/PricingTable";
 
 function App() {
   let [loadingState, setLoading] = useRecoilState(Loading);
@@ -49,11 +52,14 @@ function App() {
         </div>
       )}
       <Routes>
-        
         <Route path="/Login" element={<LoginForm />} />
         <Route path="/Register" element={<Register />} />
         <Route path="/VerifyEmail" element={<VerifyEmail />} />
         <Route path="/ForgetPassword" element={<ForgetPassword />} />
+        <Route path="/ChangePassword" element={<PasswordChange />} />
+        <Route path="/PricingTable" element={<PricingTable />} />
+        <Route path="/stripe-redirect" element={<StripeRedirect />} />
+        <Route path="/stripe-redirect" element={<StripeRedirect />} />
         <Route path="/SuperAdmin/*" element={<SuperAdminRouts />} />
         <Route path="/Cash-Flow/*" element={<CashFlow />} />
         <Route path="/*" element={<AuthRouts />} />

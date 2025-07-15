@@ -204,9 +204,9 @@ const ModalComponent = (props) => {
     "Family Trust",
     "SMSF Pension Account Details",
     "CDF Details",
-    "Add New Adviser",
-    "Edit Adviser",
-    "View Adviser",
+    // "Add New Adviser",
+    // "Edit Adviser",
+    // "View Adviser",
   ]; // Add other  /ntitles that should use "xl" here
 
   let fullTitles = [

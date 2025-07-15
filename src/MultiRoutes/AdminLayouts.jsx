@@ -46,8 +46,10 @@ const AdminLayouts = () => {
 
       res = await GetAxios(DefaultUrl + "/api/user");
       if (res) {
-        console.log(res);
-        setAdvisers(res);
+        // console.log(res);
+        setAdvisers(
+          res.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        );
       }
 
       res = await GetAxios(DefaultUrl + "/api/role");
