@@ -9,7 +9,12 @@ import { Container, Image } from "react-bootstrap";
 
 import pricingimage from "../Assets/Adviser-Simpilicity.png";
 import { FaCheckSquare } from "react-icons/fa";
-import { GetAxios, PostAxios, toCommaAndDollar } from "../Assets/Api/Api";
+import {
+  GetAxios,
+  PostAxios,
+  toCommaAndDollar,
+  toSentenceCase,
+} from "../Assets/Api/Api";
 import { FaArrowRight, FaCheck } from "react-icons/fa6";
 
 const stripePromise = loadStripe(
@@ -74,12 +79,19 @@ export default function PricingTable() {
 
   let FetchData = async () => {
     try {
+      setLoading(true);
       let res = await GetAxios(DefaultUrl + "/api/products-with-prices");
-      if (res) {
-        console.log(res.products);
-        setPricingPlans(res.products);
+
+      if (!res?.products || !Array.isArray(res.products)) {
+        throw new Error("Invalid response from pricing API.");
       }
+
+      setPricingPlans(res.products);
     } catch (error) {
+      console.error("❌ Failed to fetch pricing plans:", error.message);
+      alert(
+        "Something went wrong while loading pricing data. Please try again later."
+      );
     } finally {
       setLoading(false);
     }
@@ -87,29 +99,33 @@ export default function PricingTable() {
 
   const handleSubscribe = async (priceId) => {
     try {
-      const email = sessionStorage.getItem("email");
-      const successUrl =
-        window.location.origin + "/stripe-redirect?status=success";
-      const cancelUrl =
-        window.location.origin + "/stripe-redirect?status=cancel";
-      const Obj = {
-        priceId,
-        email,
-        successUrl,
-        cancelUrl,
-      };
-      console.log(Obj);
-      const res = await PostAxios(
-        DefaultUrl + "/api/create-checkout-session",
-        Obj
-      );
-      if (res?.url) {
-        window.location.href = res.url;
-      } else {
-        console.error("No checkout URL received");
+      const email = localStorage.getItem("loggedInEmail");
+
+      if (!email) {
+        throw new Error("User email is missing. Please log in.");
       }
+
+      const successUrl = `${window.location.origin}/stripe-redirect?status=success`;
+      const cancelUrl = `${window.location.origin}/stripe-redirect?status=cancel`;
+
+      const payload = { priceId, email, successUrl, cancelUrl };
+
+      const res = await PostAxios(
+        `${DefaultUrl}/api/create-checkout-session`,
+        payload
+      );
+
+      if (!res?.checkoutUrl) {
+        throw new Error("No checkout URL returned by server.");
+      }
+
+      window.location.href = res.checkoutUrl;
     } catch (error) {
-      console.error(error);
+      console.error("❌ Subscription failed:", error.message);
+      alert(
+        error.message ||
+          "Something went wrong while creating the checkout session."
+      );
     }
   };
 
@@ -156,6 +172,7 @@ export default function PricingTable() {
           Yearly
         </span>
       </div>
+
       <Row
         gutter={[16, 16]}
         justify="center"
@@ -171,17 +188,34 @@ export default function PricingTable() {
             : null;
 
           const activePrice = isYearly ? yearlyPrice : monthlyPrice;
-          const monthlyTotal = monthlyPrice.amount * 12;
-          const yearlyTotal = yearlyPrice.amount;
-          const discount = ((monthlyTotal - yearlyTotal) / monthlyTotal) * 100;
+
+          const monthlyTotal = monthlyPrice?.amount
+            ? monthlyPrice.amount * 12
+            : 0;
+          const yearlyTotal = yearlyPrice?.amount || 0;
+          const discount =
+            monthlyTotal && yearlyTotal
+              ? ((monthlyTotal - yearlyTotal) / monthlyTotal) * 100
+              : 0;
 
           return (
-            <Col key={plan.id} xs={24} sm={12} md={8} className="d-flex">
+            <Col
+              key={plan?.id || Math.random()}
+              xs={24}
+              sm={12}
+              md={8}
+              className="d-flex"
+            >
               <Card
+                onClick={() =>
+                  activePrice?.price_id
+                    ? handleSubscribe(activePrice.price_id)
+                    : null
+                }
                 role="button"
                 className="slide-top d-flex flex-column w-100"
                 bordered
-                title={plan.name}
+                title={toSentenceCase(plan?.name || "--")}
                 headStyle={{
                   fontSize: "20px",
                   textAlign: "center",
@@ -192,12 +226,12 @@ export default function PricingTable() {
                   padding: "1.5rem",
                   display: "flex",
                   flexDirection: "column",
-                  flex: "1 1 auto", // necessary!
-                  height: "100%", // ensure body stretches
+                  flex: "1 1 auto",
+                  height: "100%",
                 }}
                 cover={
                   <Image
-                    src={plan?.images[0] || ""}
+                    src={plan?.images?.[0] || ""}
                     alt="Pricing Table image"
                     style={{
                       width: "100%",
@@ -208,18 +242,17 @@ export default function PricingTable() {
                   />
                 }
               >
-                {/* This wrapper ensures correct stretch */}
                 <div className="d-flex flex-column justify-content-start align-items-center flex-grow-1 w-100">
                   {/* Price */}
                   <div className="d-flex justify-content-center align-items-center mb-3 w-100">
                     <div style={{ fontSize: "32px", fontWeight: "bold" }}>
-                      ${activePrice.amount.toFixed(2)}
+                      ${activePrice?.amount?.toFixed(2) || "--"}
                     </div>
                     <div
                       className="text-muted text-start ms-2"
                       style={{ fontSize: "14px", lineHeight: "1.2" }}
                     >
-                      per <br /> {activePrice.interval}
+                      per <br /> {activePrice?.interval || "--"}
                     </div>
                   </div>
 
@@ -236,8 +269,9 @@ export default function PricingTable() {
                     >
                       Save{" "}
                       <strong>
-                        {toCommaAndDollar(monthlyTotal - yearlyTotal)}{" "}
-                      </strong>
+                        {toCommaAndDollar(monthlyTotal - yearlyTotal || 0) ||
+                          "--"}
+                      </strong>{" "}
                       compared to monthly
                     </div>
                   )}
@@ -248,18 +282,19 @@ export default function PricingTable() {
                     style={{ paddingLeft: 0, listStyle: "none" }}
                   >
                     <li className="fw-bold">Features</li>
-                    {plan.marketing_features?.map((feature, idx) => (
-                      <li
-                        key={idx}
-                        className="text-muted mb-1"
-                        style={{ display: "flex", alignItems: "center" }}
-                      >
-                        <FaCheck
-                          style={{ color: "#36b446", marginRight: "6px" }}
-                        />
-                        {feature}
-                      </li>
-                    ))}
+                    {Array.isArray(plan?.marketing_features) &&
+                      plan.marketing_features.map((feature, idx) => (
+                        <li
+                          key={idx}
+                          className="text-muted mb-1"
+                          style={{ display: "flex", alignItems: "center" }}
+                        >
+                          <FaCheck
+                            style={{ color: "#36b446", marginRight: "6px" }}
+                          />
+                          {feature || "--"}
+                        </li>
+                      ))}
                   </ul>
 
                   {/* Push content above */}
@@ -267,9 +302,14 @@ export default function PricingTable() {
 
                   {/* Subscribe button */}
                   <Button
+                    disabled={!activePrice?.price_id}
                     className="w-100 p-3"
                     type="primary"
-                    onClick={() => handleSubscribe(activePrice.price_id)}
+                    onClick={() =>
+                      activePrice?.price_id
+                        ? handleSubscribe(activePrice.price_id)
+                        : null
+                    }
                   >
                     Subscribe <FaArrowRight />
                   </Button>

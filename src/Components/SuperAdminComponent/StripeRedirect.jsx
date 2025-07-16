@@ -7,9 +7,8 @@ const StripeRedirect = () => {
   const [searchParams] = useSearchParams();
   const status = searchParams.get("status");
 
-//   success_url: 'https://your-app.com/stripe-redirect?status=success',
-//   cancel_url: 'https://your-app.com/stripe-redirect?status=cancel',
-
+  //   success_url: 'https://your-app.com/stripe-redirect?status=success',
+  //   cancel_url: 'https://your-app.com/stripe-redirect?status=cancel',
 
   if (status === "success") {
     return (
@@ -19,8 +18,8 @@ const StripeRedirect = () => {
         subTitle="Thank you for your purchase. Your subscription is now active."
         icon={<SmileOutlined />}
         extra={
-          <Button type="primary" href="/">
-            Go to Dashboard
+          <Button type="primary" href="/Dashboard">
+            Next step
           </Button>
         }
       />
@@ -35,7 +34,7 @@ const StripeRedirect = () => {
         subTitle="Your payment was cancelled. You can try again anytime."
         icon={<FrownOutlined />}
         extra={
-          <Button type="primary" href="/pricing">
+          <Button type="primary" href="/PricingTable">
             Go Back to Pricing
           </Button>
         }

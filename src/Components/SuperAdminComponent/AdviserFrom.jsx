@@ -18,7 +18,10 @@ const AdviserFrom = (props) => {
     lastName: "",
     email: "",
     phoneNumber: "",
-    address: "",
+    companyName: "",
+    ABN: "",
+    streetAddress: "",
+    state: "",
   };
 
   let DefaultUrl = useRecoilValue(defaultUrl);
@@ -34,6 +37,11 @@ const AdviserFrom = (props) => {
       setFieldValue("firstName", Data.firstName);
       setFieldValue("lastName", Data.lastName);
       setFieldValue("email", Data.email);
+      setFieldValue("phoneNumber", Data.phoneNumber);
+      setFieldValue("companyName", Data.companyName);
+      setFieldValue("ABN", Data.ABN);
+      setFieldValue("streetAddress", Data.streetAddress);
+      setFieldValue("state", Data.state);
       // setFieldValue("subscriptionName", Data.subscriptionName);
       setIsdisabledPlanCod(true);
     } else if (props.modalObject.Action.toLowerCase() == "view") {
@@ -41,6 +49,11 @@ const AdviserFrom = (props) => {
       setFieldValue("firstName", Data.firstName);
       setFieldValue("lastName", Data.lastName);
       setFieldValue("email", Data.email);
+      setFieldValue("phoneNumber", Data.phoneNumber);
+      setFieldValue("companyName", Data.companyName);
+      setFieldValue("ABN", Data.ABN);
+      setFieldValue("streetAddress", Data.streetAddress);
+      setFieldValue("state", Data.state);
       // setFieldValue("subscriptionName", Data.subscriptionName);
       setIsdisabled(true);
     }
@@ -124,12 +137,12 @@ const AdviserFrom = (props) => {
       placeholder: "Company Name",
     },
     {
-      name: "aBN",
+      name: "ABN",
       type: "text",
       placeholder: "ABN",
     },
     {
-      name: "streatAddress",
+      name: "streetAddress",
       type: "text",
       placeholder: "Street Address",
     },

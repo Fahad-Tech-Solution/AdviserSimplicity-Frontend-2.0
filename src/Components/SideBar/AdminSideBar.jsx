@@ -134,7 +134,11 @@ const AdminSideBar = (props) => {
           </div>
         </Menu.Item>
       )}
-      <Menu.Item key="/" icon={<FaTachometerAlt />} onClick={() => nav("/")}>
+      <Menu.Item
+        key="/Dashboard"
+        icon={<FaTachometerAlt />}
+        onClick={() => nav("/")}
+      >
         Dashboard
       </Menu.Item>
 

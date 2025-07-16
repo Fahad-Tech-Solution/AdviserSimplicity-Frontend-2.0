@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import AntTableDynamicReportTable from "../Assets/Table/AntTableDynamicReportTable";
 import DropDownOptions from "../Assets/DropDownOptions/DropDownOptions";
 import { FaRegEdit, FaRegFileAlt, FaTrashAlt } from "react-icons/fa";
-import { Button, Input, Modal, Tag } from "antd";
+import { Button, Input, Modal, Select, Tag } from "antd";
 import ModalComponent from "../Questions/FinancialInvestments/ModalComponent";
 import SubscriptionForms from "./SubscriptionForms";
-import { openNotificationSuccess } from "../Assets/Api/Api";
+import { openNotificationSuccess, toSentenceCase } from "../Assets/Api/Api";
 import AdviserFrom from "./AdviserFrom";
 import {
   Advisers,
@@ -24,18 +24,25 @@ const AllAdvisers = () => {
   let subscriptions = useRecoilValue(Subscriptions);
   let [loading, setLoading] = useRecoilState(Loading);
   let [advisers, setAdvisers] = useRecoilState(Advisers);
-
+  const [selectedValue, setSelectedValue] = useState(null);
   const [expanded, setExpanded] = useState(false);
-  const [value, setValue] = useState("");
 
-  const handleSearchClick = () => setExpanded(true);
+  const handleSearchClick = () => {
+    if (!expanded) {
+      setExpanded(true);
+    } else {
+      handleChange(selectedValue);
+    }
+  };
   const handleCloseClick = () => {
     setExpanded(false);
-    setValue("");
+    setSelectedValue(null);
   };
 
-  const handleSearch = () => {
-    if (onSearch) onSearch(value);
+  const handleChange = (value) => {
+    setSelectedValue(value);
+    // You can trigger a search API here
+    console.log("Selected:", value);
   };
 
   const columns = [
@@ -359,12 +366,35 @@ const AllAdvisers = () => {
                       />
 
                       <div className="input-wrapper">
-                        <Input
-                          size="middle"
-                          placeholder="Search..."
-                          value={value}
-                          onChange={(e) => setValue(e.target.value)}
-                          onPressEnter={handleSearch}
+                        <Select
+                          showSearch
+                          value={selectedValue}
+                          style={{ width: 200 }}
+                          placeholder="Search to Select"
+                          optionFilterProp="label"
+                          filterOption={(input, option) =>
+                            option?.label
+                              ?.toLowerCase()
+                              .includes(input.toLowerCase())
+                          }
+                          filterSort={(optionA, optionB) =>
+                            (optionA?.label ?? "")
+                              .toLowerCase()
+                              .localeCompare(
+                                (optionB?.label ?? "").toLowerCase()
+                              )
+                          }
+                          onChange={handleChange}
+                          options={[
+                            ...advisers.map((item, index) => {
+                              return {
+                                value: item.email,
+                                label: toSentenceCase(
+                                  item.firstName + " " + item.lastName
+                                ),
+                              };
+                            }),
+                          ]}
                         />
                         <Button
                           icon={<FaXmark />}
@@ -385,7 +415,11 @@ const AllAdvisers = () => {
               </div>
 
               <AntTableDynamicReportTable
-                dataSource={advisers}
+                dataSource={
+                  selectedValue
+                    ? advisers.filter((item) => item.email === selectedValue)
+                    : advisers
+                }
                 columns={columns}
                 pagination={true}
                 customPagination={{

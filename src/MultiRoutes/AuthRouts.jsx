@@ -51,7 +51,10 @@ function AuthRouts() {
       <div className={`flex-grow-1 w-100 px-3`}>
         <Options collapsed={collapsed} setCollapsed={setCollapsed} />
         <Routes>
-          <Route path="/" element={<Dashboard collapsed={collapsed} />} />
+          <Route
+            path="/Dashboard"
+            element={<Dashboard collapsed={collapsed} />}
+          />
 
           <Route path="/All-Clients" element={<AllClients />} />
           <Route path="/View-Client" element={<ViewClient />} />

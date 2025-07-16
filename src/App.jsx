@@ -52,7 +52,7 @@ function App() {
         </div>
       )}
       <Routes>
-        <Route path="/Login" element={<LoginForm />} />
+        <Route path="/" element={<LoginForm />} />
         <Route path="/Register" element={<Register />} />
         <Route path="/VerifyEmail" element={<VerifyEmail />} />
         <Route path="/ForgetPassword" element={<ForgetPassword />} />

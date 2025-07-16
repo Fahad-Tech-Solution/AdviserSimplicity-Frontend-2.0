@@ -12,10 +12,12 @@ import { Image } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   defaultUrl,
+  Loading,
   LoggedInUserData,
   LoggedInUserTokenJwt,
 } from "../../Store/Store";
 import { ErrorMessage, Field, Form, Formik } from "formik";
+import { PostAxios } from "../Assets/Api/Api";
 
 const LoginForm = () => {
   var navigate = useNavigate();
@@ -23,7 +25,7 @@ const LoginForm = () => {
   let [loggedUser, setLoggedUser] = useRecoilState(LoggedInUserData);
   let [loggedUserToken, setLoggedUserToken] =
     useRecoilState(LoggedInUserTokenJwt);
-
+  let [loading, setLoading] = useRecoilState(Loading);
   let [SuperAdminFlag, seSuperAdminFlag] = useState(false);
 
   let initialValues = {
@@ -38,13 +40,42 @@ const LoginForm = () => {
     }
   }, [location]);
 
-  let onSubmit = (values) => {
+  let onSubmit = async (values) => {
     console.log(values);
     try {
-      sessionStorage.setItem("email", values.email);
-      navigate("/ChangePassword");
+      setLoading(true);
+      let res = await PostAxios(defaultApi + "/api/auth/login", values);
+      console.log(res);
+      if (res?.user) {
+        localStorage.setItem("loggedInEmail", values.email);
+        let userData = res.user;
+        // Compare timestamps (convert to string or number if needed)
+        if (userData?.passwordUpdatedAt && userData?.createdAt) {
+          const createdAt = new Date(userData.createdAt);
+          const passwordUpdatedAt = new Date(userData.passwordUpdatedAt);
+          const diffMs = Math.abs(passwordUpdatedAt - createdAt);
+
+          if (diffMs < 2 * 60 * 1000) {
+            // less than 2 minutes
+            console.log("pricingTable");
+            localStorage.setItem("dummyPassword", true);
+            navigate("/PricingTable");
+          } else {
+            console.log("Dashboard");
+            navigate("/Dashboard");
+          }
+        } else {
+          // fallback if timestamps are missing
+          // navigate("/Dashboard");
+        }
+      }
+
+      // sessionStorage.setItem("email", values.email);
+      // navigate("/ChangePassword");
     } catch (error) {
+      console.log(error);
     } finally {
+      setLoading(false);
     }
   };
 
@@ -61,7 +92,7 @@ const LoginForm = () => {
             <Formik
               initialValues={initialValues}
               onSubmit={onSubmit}
-              validationSchema={validationSchema}
+              // validationSchema={validationSchema}
             >
               {({ values, handleChange, setFieldValue }) => {
                 return (
@@ -102,13 +133,13 @@ const LoginForm = () => {
                           </div>
 
                           <div className="col-md-12 ">
-                            <label htmlFor="password">Password</label>
+                            <label htmlFor="passwordHash">Password</label>
                             <Field
                               className="form-control"
                               type="password"
-                              id="password"
+                              id="passwordHash"
                               placeholder="Password"
-                              name="password"
+                              name="passwordHash"
                             />
                             <ErrorMessage
                               component={"div"}

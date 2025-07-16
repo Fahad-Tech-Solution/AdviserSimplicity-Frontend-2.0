@@ -228,7 +228,7 @@ function Options(props) {
   }, [location, CRObject]);
 
   const topMenuArray = [
-    "/",
+    "/Dashboard",
     "/All-Clients",
     "/Cash-Flow/AllUsers",
     "/Cash-Flow/oneClient",
