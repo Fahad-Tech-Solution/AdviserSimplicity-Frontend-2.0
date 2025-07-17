@@ -2,11 +2,12 @@ import React, { useMemo } from "react";
 import { Card } from "react-bootstrap";
 import NewAllClients from "../Assets/AllClients/NewAllClients";
 import CustomApexChart from "../Assets/ApexChart/CustomApexChart";
-import { ProspectsCDF } from "../../Store/Store";
+import { LoggedInUserData, ProspectsCDF } from "../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 
 const Dashboard = (props) => {
   let prospectsCDF = useRecoilValue(ProspectsCDF);
+  let loggedInUserData = useRecoilValue(LoggedInUserData);
 
   const dataSeries = [
     { name: "Orders", data: [31, 40, 28, 51, 42, 109, 100] },
@@ -47,7 +48,16 @@ const Dashboard = (props) => {
 
   return (
     <div className="DashBoard">
-      <h5 className="Greetings PoppinsFamily">👋 Welcome, Usama Faheem</h5>
+      <h5 className="Greetings PoppinsFamily">
+        👋 Welcome,{" "}
+        {loggedInUserData &&
+        typeof loggedInUserData === "object" &&
+        Object.keys(loggedInUserData).length > 0
+          ? `${loggedInUserData.firstName || ""} ${
+              loggedInUserData.lastName || ""
+            }`.trim()
+          : "Guest"}
+      </h5>
       <div className="row justify-content-stretch">
         <div className={"col-md-3 mt-3 mt-md-0"}>
           <Card className=" overflow-hidden custom_Shadow pb-3 h-100 d-flex flex-column justify-content-center align-items-center">

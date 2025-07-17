@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import InternetSVG from "../Questions/svgs/Enter OTP-pana.svg";
 
-import { Field, Form, Formik } from "formik";
+import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { Card, Spin, Input as AntInput, Button } from "antd";
 
@@ -11,6 +11,7 @@ import { useRecoilValue } from "recoil";
 
 import { defaultUrl } from "../../Store/Store";
 import { FaArrowLeft } from "react-icons/fa";
+import { openNotificationSuccess, PatchAxios } from "../Assets/Api/Api";
 
 const ForgetPassword = () => {
   var navigate = useNavigate();
@@ -26,11 +27,35 @@ const ForgetPassword = () => {
     email: "",
   };
 
-  let onSubmit = (values) => {};
-
-  let validationSchema = {
-    email: Yup.string().email("Invalid email format").required("Required"),
+  let onSubmit = async (values) => {
+    try {
+      setLoading(true);
+      let res = await PatchAxios(defaultApi + "/api/auth/forgot-password", {
+        email: values.email,
+      });
+      if (res) {
+        openNotificationSuccess(
+          "success",
+          "topRight",
+          "OTP Sent",
+          "An OTP has been sent to your email."
+        );
+      }
+    } catch (error) {
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Failed",
+        error?.response?.data?.error || "Something went wrong."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
+
+  let validationSchema = Yup.object({
+    email: Yup.string().email("Invalid email format").required("Required"),
+  });
 
   return (
     <div className="container-fluid">
@@ -80,6 +105,11 @@ const ForgetPassword = () => {
                                     placeholder="someone@example.com"
                                     name="email"
                                   />
+                                  <ErrorMessage
+                                    name="email"
+                                    className="text-danger"
+                                    component={"div"}
+                                  />
                                 </div>
                               </div>
 
@@ -104,7 +134,7 @@ const ForgetPassword = () => {
                         <div className="col-md-12 mt-md-4">
                           <div
                             className="row justify-content-center align-items-center"
-                            style={{ height: "20rem" }}
+                            style={{ height: "15rem" }}
                           >
                             <Spin
                               tip="Checking and Sending OTP, please wait..."

@@ -6,11 +6,17 @@ import InternetSVG from "../Questions/svgs/Reset password-pana.svg";
 import axios from "axios";
 import * as Yup from "yup";
 import { Card } from "antd";
+import {
+  openNotificationSuccess,
+  PatchAxios,
+  PostAxios,
+} from "../Assets/Api/Api";
 
 import { Image } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   defaultUrl,
+  Loading,
   LoggedInUserData,
   LoggedInUserTokenJwt,
 } from "../../Store/Store";
@@ -23,46 +29,89 @@ const PasswordChange = () => {
   let [loggedUser, setLoggedUser] = useRecoilState(LoggedInUserData);
   let [loggedUserToken, setLoggedUserToken] =
     useRecoilState(LoggedInUserTokenJwt);
+  let [loading, setLoading] = useRecoilState(Loading);
 
   const [showOld, setShowOld] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
   let [SuperAdminFlag, seSuperAdminFlag] = useState(false);
+  let [disclamerFlag, setDisclamerFlag] = useState(false);
+  let [loginError, setLoginError] = useState(false);
 
   let initialValues = {
-    oldPassword: "",
-    password: "",
+    currentPassword: "",
+    newPassword: "",
     confirmPassword: "",
   };
 
   let location = useLocation();
   useEffect(() => {
+    setDisclamerFlag(false);
     if (location.pathname === "/SuperAdmin/Login") {
       seSuperAdminFlag(true);
     }
+    let userData = loggedUser;
+    const createdAt = new Date(userData.createdAt);
+    const passwordUpdatedAt = new Date(userData.passwordUpdatedAt);
+    const diffMs = Math.abs(passwordUpdatedAt - createdAt);
+
+    if (diffMs < 2 * 60 * 1000) {
+      setDisclamerFlag(true);
+    }
   }, [location]);
 
-  let onSubmit = (values) => {
-    console.log(values);
+  let onSubmit = async (values, { resetForm }) => {
     try {
-      navigate("/PricingTable");
+      setLoginError(false);
+      setLoading(true);
+      const payload = {
+        email: loggedUser.email,
+        currentPassword: values.currentPassword,
+        newPassword: values.newPassword,
+      };
+      console.log(payload);
+      const res = await PatchAxios(
+        defaultApi + "/api/auth/update-password",
+        payload
+      );
+      console.log(res);
+      if (res) {
+        openNotificationSuccess(
+          "success",
+          "topRight",
+          "Password Updated",
+          "Your password has been updated successfully."
+        );
+        resetForm();
+        navigate("/Dashboard");
+      }
     } catch (error) {
+      setLoginError(true);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Update Failed",
+        error?.response?.data?.error || "Failed to update password."
+      );
     } finally {
+      setLoading(false);
     }
   };
 
   let validationSchema = Yup.object({
-    oldpassword: Yup.string().required("Please enter your old password"),
-    password: Yup.string()
+    currentPassword: Yup.string().required(
+      "Please enter your current password"
+    ),
+    newPassword: Yup.string()
       .min(8, "Password must be at least 8 characters")
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
         "Password must contain uppercase, lowercase, number, and special character"
       )
-      .required("Please enter your password"),
+      .required("Please enter your new password"),
     confirmPassword: Yup.string()
-      .oneOf([Yup.ref("password"), null], "Passwords must match")
+      .oneOf([Yup.ref("newPassword"), null], "Passwords must match")
       .required("Please confirm your password"),
   });
 
@@ -90,16 +139,50 @@ const PasswordChange = () => {
                             </div>
                           </div>
 
+                          {disclamerFlag && (
+                            <div
+                              className="ant-alert ant-alert-error w-100 mb-2"
+                              role="alert"
+                              style={{
+                                color: "#cf1322",
+                                background: "#fff1f0",
+                                border: "1px solid #ffa39e",
+                                padding: "8px 16px",
+                                borderRadius: "4px",
+                              }}
+                            >
+                              <strong>Warning:</strong> You're using a
+                              system-generated password. Please update it.
+                            </div>
+                          )}
+
+                          {loginError && (
+                            <div
+                              className="ant-alert ant-alert-error w-100"
+                              role="alert"
+                              style={{
+                                color: "#cf1322",
+                                background: "#fff1f0",
+                                border: "1px solid #ffa39e",
+                                padding: "8px 16px",
+                                borderRadius: "4px",
+                              }}
+                            >
+                              <strong>Login failed:</strong> Incorrect current
+                              password.
+                            </div>
+                          )}
+
                           <div className="col-md-12 my-2">
                             <label htmlFor="oldpassword">Old Password</label>
                             <div className="position-relative">
-                              <Field name="oldpassword">
+                              <Field name="currentPassword">
                                 {({ field }) => (
                                   <input
                                     {...field}
                                     type={showOld ? "text" : "password"}
-                                    id="oldpassword"
-                                    placeholder="Old Password"
+                                    id="currentPassword"
+                                    placeholder="Current Password"
                                     className="form-control pe-5"
                                   />
                                 )}
@@ -118,7 +201,7 @@ const PasswordChange = () => {
                               </span>
                             </div>
                             <ErrorMessage
-                              name="oldpassword"
+                              name="currentPassword"
                               component="div"
                               className="text-danger"
                             />
@@ -126,14 +209,14 @@ const PasswordChange = () => {
 
                           {/* New Password */}
                           <div className="col-md-12">
-                            <label htmlFor="password">New Password</label>
+                            <label htmlFor="newPassword">New Password</label>
                             <div className="position-relative">
-                              <Field name="password">
+                              <Field name="newPassword">
                                 {({ field }) => (
                                   <input
                                     {...field}
                                     type={showNew ? "text" : "password"}
-                                    id="password"
+                                    id="newPassword"
                                     placeholder="New Password"
                                     className="form-control pe-5"
                                   />
@@ -153,7 +236,7 @@ const PasswordChange = () => {
                               </span>
                             </div>
                             <ErrorMessage
-                              name="password"
+                              name="newPassword"
                               component="div"
                               className="text-danger"
                             />

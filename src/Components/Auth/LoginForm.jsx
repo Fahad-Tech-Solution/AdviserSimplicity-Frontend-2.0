@@ -17,7 +17,7 @@ import {
   LoggedInUserTokenJwt,
 } from "../../Store/Store";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import { PostAxios } from "../Assets/Api/Api";
+import { openNotificationSuccess, PostAxios } from "../Assets/Api/Api";
 
 const LoginForm = () => {
   var navigate = useNavigate();
@@ -26,7 +26,8 @@ const LoginForm = () => {
   let [loggedUserToken, setLoggedUserToken] =
     useRecoilState(LoggedInUserTokenJwt);
   let [loading, setLoading] = useRecoilState(Loading);
-  let [SuperAdminFlag, seSuperAdminFlag] = useState(false);
+  let [SuperAdminFlag, setSuperAdminFlag] = useState(false);
+  let [loginError, setLoginError] = useState(false);
 
   let initialValues = {
     email: "",
@@ -36,7 +37,7 @@ const LoginForm = () => {
   let location = useLocation();
   useEffect(() => {
     if (location.pathname === "/SuperAdmin/Login") {
-      seSuperAdminFlag(true);
+      setSuperAdminFlag(true);
     }
   }, [location]);
 
@@ -44,11 +45,13 @@ const LoginForm = () => {
     console.log(values);
     try {
       setLoading(true);
+      setLoginError(false);
       let res = await PostAxios(defaultApi + "/api/auth/login", values);
       console.log(res);
       if (res?.user) {
         localStorage.setItem("loggedInEmail", values.email);
         let userData = res.user;
+        setLoggedUser(userData);
         // Compare timestamps (convert to string or number if needed)
         if (userData?.passwordUpdatedAt && userData?.createdAt) {
           const createdAt = new Date(userData.createdAt);
@@ -74,6 +77,22 @@ const LoginForm = () => {
       // navigate("/ChangePassword");
     } catch (error) {
       console.log(error);
+      if (error.status == 401) {
+        setLoginError(true);
+        openNotificationSuccess(
+          "error",
+          "topRight",
+          "Login failed",
+          "Incorrect email or password."
+        );
+      } else {
+        openNotificationSuccess(
+          "error",
+          "topRight",
+          "Login failed",
+          "Something went wrong."
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -92,7 +111,7 @@ const LoginForm = () => {
             <Formik
               initialValues={initialValues}
               onSubmit={onSubmit}
-              // validationSchema={validationSchema}
+              validationSchema={validationSchema}
             >
               {({ values, handleChange, setFieldValue }) => {
                 return (
@@ -114,6 +133,23 @@ const LoginForm = () => {
                               </h3>
                             </div>
                           </div>
+
+                          {loginError && (
+                            <div
+                              className="ant-alert ant-alert-error w-100"
+                              role="alert"
+                              style={{
+                                color: "#cf1322",
+                                background: "#fff1f0",
+                                border: "1px solid #ffa39e",
+                                padding: "8px 16px",
+                                borderRadius: "4px",
+                              }}
+                            >
+                              <strong>Login failed:</strong> Incorrect email or
+                              password.
+                            </div>
+                          )}
 
                           <div className="col-md-12 my-2">
                             <label htmlFor="email">Email</label>

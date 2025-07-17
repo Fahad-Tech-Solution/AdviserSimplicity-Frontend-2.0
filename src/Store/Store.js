@@ -398,7 +398,8 @@ export const RiskQuestion = atom({
 
 export const LoggedInUserData = atom({
   key: "LoggedInUserData",
-  default: "",
+  default: {},
+  effects_UNSTABLE: [persistAtom], // enables localStorage persistence
 });
 
 export const LoggedInUserTokenJwt = atom({
