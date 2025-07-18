@@ -18,6 +18,7 @@ import {
 } from "../../Store/Store";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { openNotificationSuccess, PostAxios } from "../Assets/Api/Api";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const LoginForm = () => {
   var navigate = useNavigate();
@@ -28,6 +29,7 @@ const LoginForm = () => {
   let [loading, setLoading] = useRecoilState(Loading);
   let [SuperAdminFlag, setSuperAdminFlag] = useState(false);
   let [loginError, setLoginError] = useState(false);
+  const [showNew, setShowNew] = useState(false);
 
   let initialValues = {
     email: "",
@@ -36,7 +38,7 @@ const LoginForm = () => {
 
   let location = useLocation();
   useEffect(() => {
-    if (location.pathname === "/SuperAdmin/Login") {
+    if (location.pathname === "/AdminLogin") {
       setSuperAdminFlag(true);
     }
   }, [location]);
@@ -100,7 +102,7 @@ const LoginForm = () => {
 
   let validationSchema = Yup.object({
     email: Yup.string().email("Invalid email format").required("Required"),
-    password: Yup.string().min(6).required("Please enter your password"),
+    passwordHash: Yup.string().min(8).required("Please enter your password"),
   });
 
   return (
@@ -170,16 +172,34 @@ const LoginForm = () => {
 
                           <div className="col-md-12 ">
                             <label htmlFor="passwordHash">Password</label>
-                            <Field
-                              className="form-control"
-                              type="password"
-                              id="passwordHash"
-                              placeholder="Password"
-                              name="passwordHash"
-                            />
+                            <div className="position-relative">
+                              <Field name="passwordHash">
+                                {({ field }) => (
+                                  <input
+                                    {...field}
+                                    type={showNew ? "text" : "password"}
+                                    id="passwordHash"
+                                    placeholder="Password"
+                                    className="form-control pe-5"
+                                  />
+                                )}
+                              </Field>
+                              <span
+                                className="position-absolute"
+                                style={{
+                                  right: "15px",
+                                  top: "50%",
+                                  transform: "translateY(-50%)",
+                                  cursor: "pointer",
+                                }}
+                                onClick={() => setShowNew(!showNew)}
+                              >
+                                {showNew ? <FaEyeSlash /> : <FaEye />}
+                              </span>
+                            </div>
                             <ErrorMessage
                               component={"div"}
-                              name="email"
+                              name="passwordHash"
                               className="text-danger"
                             />
                           </div>
