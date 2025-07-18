@@ -93,7 +93,7 @@ const ForgetPassword = () => {
           openNotificationSuccess(
             "success",
             "topRight",
-            "OTP Varification",
+            "OTP Verification",
             "OTP is varified"
           );
           setStep(3);
