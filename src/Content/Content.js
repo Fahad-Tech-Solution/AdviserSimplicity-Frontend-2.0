@@ -221,7 +221,7 @@ export const content = {
       subTitle: "Financial Institutions",
       statusStep: 0,
       icon: "RiCoinsFill",
-      route: "/",
+      route: "/FinancialInstitutions",
       key: "FinancialInstitutions",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },

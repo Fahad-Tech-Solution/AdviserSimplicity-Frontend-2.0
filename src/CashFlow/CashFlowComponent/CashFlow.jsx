@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Route, Routes } from "react-router-dom";
-import RecoilStateManage from "../../RecoilStateManage/RecoilStateManage";
 import { content } from "../../Content/Content";
 import CashFlowLayout from "./CashFlowLayout";
 import CashFlowAllUsers from "./CashFlowAllUsers";

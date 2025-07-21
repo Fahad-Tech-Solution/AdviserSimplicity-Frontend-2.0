@@ -31,7 +31,6 @@ import BusinessEntities from "../Components/Questions/BusinessEntities/BusinessE
 import QuestionsFamily from "../Components/Questions/QuestoinsFamilyTrust/QuestoinsFamily";
 import GoalsObjectiveNew from "../Components/Goals&Objectives/GoalsObjectiveNew";
 import RiskProfileNew from "../Components/RiskProfile/RiskProfileNew";
-import RecoilStateManage from "../RecoilStateManage/RecoilStateManage";
 import ImportantQuestion from "../Components/Questions/ImportantQuestion/ImportantQuestion";
 import PersonalDetailNew from "../Components/PersonalDetails/PersonalDetailNew";
 
@@ -39,6 +38,8 @@ import PersonalInsuranceLife from "../Components/Questions/PersonalInsurance/Lif
 import CDFclients from "../Components/CDFclients/CDFclients";
 import AdminSideBar from "../Components/SideBar/AdminSideBar";
 import ProfileTemp from "../Components/Assets/ProfileSection/ProfileTemp";
+import AllAdvisers from "../Components/SuperAdminComponent/AllAdvisers";
+import MyTeam from "../Components/SuperAdminComponent/myTeam";
 
 function AuthRouts() {
   const [collapsed, setCollapsed] = useState(true);
@@ -166,6 +167,7 @@ function AuthRouts() {
           <Route path="/Risk-Profile/*" element={<RiskProfileNew />} />
           <Route path="/CDF_Prospects" element={<CDFclients />} />
           <Route path="/profile" element={<ProfileTemp />} />
+          <Route path="/My-Team" element={<MyTeam />} />
         </Routes>
       </div>
     </div>

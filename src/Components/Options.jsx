@@ -46,6 +46,7 @@ import {
   OptionRender,
   CRState,
   StepsStatus,
+  LoggedInUserData,
 } from "../Store/Store";
 
 import "./options.css";
@@ -81,6 +82,8 @@ function Options(props) {
   const [userName] = useRecoilState(UserName);
   const [CurrentP] = useRecoilState(CurrentPage);
   const [optRender, setOptRender] = useRecoilState(OptionRender);
+  let [loggedInUserData, setLoggedInUserData] =
+    useRecoilState(LoggedInUserData);
   const CRObject = useRecoilValue(CRState);
   const stepsStatus = useRecoilValue(StepsStatus);
 
@@ -234,13 +237,17 @@ function Options(props) {
     "/Cash-Flow/oneClient",
     "/CDF_Prospects",
     "/profile",
+    "/My-Team",
   ];
+
   const noTopBarArray = [
     "/Goals-And-Objectives",
     "/Risk-Profile",
     "/Risk-Profile/",
     "/Risk-Profile-Cards",
     "/Risk-Profile/Cards",
+    "/PricingTable",
+    "/",
   ];
 
   const getMenu = (row) => (
@@ -271,6 +278,10 @@ function Options(props) {
             color: "#FF4D4F",
             fontSize: "14px",
             fontWeight: "600",
+          }}
+          onClick={() => {
+            setLoggedInUserData({});
+            navigate("/");
           }}
         >
           Logout <FiLogOut />

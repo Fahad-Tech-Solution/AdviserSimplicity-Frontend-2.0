@@ -54,6 +54,15 @@ const LoginForm = () => {
         localStorage.setItem("loggedInEmail", values.email);
         let userData = res.user;
         setLoggedUser(userData);
+
+        if (
+          SuperAdminFlag &&
+          userData.role.Permissions.includes("SuperAdmin")
+        ) {
+          navigate("/SuperAdmin/Dashboard");
+          return false;
+        }
+
         // Compare timestamps (convert to string or number if needed)
         if (userData?.passwordUpdatedAt && userData?.createdAt) {
           const createdAt = new Date(userData.createdAt);
@@ -62,11 +71,9 @@ const LoginForm = () => {
 
           if (diffMs < 2 * 60 * 1000) {
             // less than 2 minutes
-            console.log("pricingTable");
             localStorage.setItem("dummyPassword", true);
             navigate("/PricingTable");
           } else {
-            console.log("Dashboard");
             navigate("/Dashboard");
           }
         } else {
@@ -79,13 +86,20 @@ const LoginForm = () => {
       // navigate("/ChangePassword");
     } catch (error) {
       console.log(error);
-      if (error.status == 401) {
+      if (error.status === 401) {
         setLoginError(true);
         openNotificationSuccess(
           "error",
           "topRight",
           "Login failed",
           "Incorrect email or password."
+        );
+      } else if (error.status === 403) {
+        openNotificationSuccess(
+          "error",
+          "topRight",
+          "Login failed",
+          error?.response?.data?.message || "Something went wrong."
         );
       } else {
         openNotificationSuccess(
@@ -131,7 +145,7 @@ const LoginForm = () => {
                           <div className="mt-4">
                             <div className="col-md-12 text-center">
                               <h3>
-                                <b>LOGIN</b>
+                                <b> {SuperAdminFlag && "Admin"} LOGIN</b>
                               </h3>
                             </div>
                           </div>

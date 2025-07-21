@@ -17,12 +17,10 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { FaCircleCheck, FaCircleXmark, FaXmark } from "react-icons/fa6";
 import { MdMarkAsUnread, MdSearch } from "react-icons/md";
 
-const AllAdvisers = () => {
+const MyTeam = () => {
   const { confirm } = Modal;
 
   let DefaultUrl = useRecoilValue(defaultUrl);
-  let subscriptions = useRecoilValue(Subscriptions);
-  let [loading, setLoading] = useRecoilState(Loading);
   let [advisers, setAdvisers] = useRecoilState(Advisers);
   const [selectedValue, setSelectedValue] = useState(null);
   const [expanded, setExpanded] = useState(false);
@@ -34,7 +32,7 @@ const AllAdvisers = () => {
       handleChange(selectedValue);
     }
   };
-  
+
   const handleCloseClick = () => {
     setExpanded(false);
     setSelectedValue(null);
@@ -73,17 +71,6 @@ const AllAdvisers = () => {
       },
     },
     {
-      title: "Verified",
-      key: "emailVerification",
-      render: (text, row) => {
-        return (
-          <span className="fw-bold">
-            {row.emailVerification ? "verified" : "not verified"}
-          </span>
-        );
-      },
-    },
-    {
       title: "Account Status",
       key: "isActive",
       render: (row) => {
@@ -103,74 +90,6 @@ const AllAdvisers = () => {
         };
 
         const tag = statusMap[status ? "Active" : "Disabled"];
-
-        return (
-          <Tag
-            color={tag.color}
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: "10px",
-            }}
-          >
-            {tag.icon} {tag.text}
-          </Tag>
-        );
-      },
-    },
-    {
-      title: "Subscription Name",
-      key: "planID",
-      render: (text, row) => {
-        const subscription = subscriptions.find(
-          (sub) => sub._id === row.planID
-        );
-        return (
-          <span>
-            {subscription
-              ? `${subscription.planName} (${subscription.planCode})`
-              : "N/A"}
-          </span>
-        );
-      },
-    },
-    {
-      title: "Subscription Status",
-      key: "subscriptionStatus",
-      render: (row) => {
-        const { createdAt, subscriptionMonths } = row;
-
-        if (!createdAt || !subscriptionMonths) {
-          return <Tag color="gray">Invalid Data</Tag>;
-        }
-
-        const createdDate = new Date(createdAt);
-        const months = parseInt(subscriptionMonths, 10);
-
-        // Calculate expiration date by adding months
-        const expirationDate = new Date(createdDate);
-        expirationDate.setMonth(expirationDate.getMonth() + months);
-
-        const now = new Date();
-
-        const isActive = now <= expirationDate;
-
-        const statusMap = {
-          Active: {
-            color: "green",
-            text: "Active",
-            icon: <FaCircleCheck />,
-          },
-          Disabled: {
-            color: "red",
-            text: "Disabled",
-            icon: <FaCircleXmark />,
-          },
-        };
-
-        const tag = isActive ? statusMap.Active : statusMap.Disabled;
 
         return (
           <Tag
@@ -336,7 +255,7 @@ const AllAdvisers = () => {
   };
 
   return (
-    <div className="container-fluid All_Client reportSection">
+    <div className="container All_Client reportSection">
       <ModalComponent
         modalObject={modalObject}
         setFlagState={setFlagState}
@@ -346,12 +265,12 @@ const AllAdvisers = () => {
       </ModalComponent>
 
       <div className="row justify-content-center">
-        <div className="col-md-10 py-3" style={{ minHeight: "76vh" }}>
+        <div className="col-md-12 py-3" style={{ minHeight: "76vh" }}>
           <div className="card">
             <div className="card-body">
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h5 className="PoppinsFamily green_Text fw-bold fs-4">
-                  All Advisers
+                  My Team
                 </h5>
                 <div className="d-flex align-items-center gap-3">
                   <div className="SearchAnimate">
@@ -437,4 +356,4 @@ const AllAdvisers = () => {
   );
 };
 
-export default AllAdvisers;
+export default MyTeam;

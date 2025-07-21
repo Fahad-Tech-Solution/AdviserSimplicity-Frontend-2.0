@@ -7,6 +7,7 @@ import AdviserS1 from "../Assets/Adviser-Simpilicity1.png";
 import AdviserSmini from "../Assets/Adviser-Simpilicity-mini.png";
 import {
   CRState,
+  LoggedInUserData,
   OptionRender,
   PersonalDetailsData,
   QuestionDetail,
@@ -18,6 +19,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { FaGear, FaPeopleGroup, FaUserTag } from "react-icons/fa6";
 import { FaRegCreditCard, FaTachometerAlt, FaUserTie } from "react-icons/fa";
 import { openNotificationSuccess } from "../Assets/Api/Api";
+import { AiOutlineBank } from "react-icons/ai";
 
 const { SubMenu } = Menu;
 
@@ -33,6 +35,9 @@ const AdminSideBar = (props) => {
   const [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
   const selectedClientDetails = useRecoilValue(SelectedClientDetails);
   const selectedSenario = useRecoilValue(SelectedSenario);
+  const loggedUser = useRecoilValue(LoggedInUserData);
+
+  let superAdmin = loggedUser?.role?.Permissions.includes("SuperAdmin");
 
   const nav = useNavigate();
   const location = useLocation();
@@ -135,9 +140,9 @@ const AdminSideBar = (props) => {
         </Menu.Item>
       )}
       <Menu.Item
-        key="/Dashboard"
+        key={superAdmin ? "/SuperAdmin/Dashboard" : "/Dashboard"}
         icon={<FaTachometerAlt />}
-        onClick={() => nav("/")}
+        onClick={() => nav(superAdmin ? "/SuperAdmin/Dashboard" : "/Dashboard")}
       >
         Dashboard
       </Menu.Item>
@@ -148,6 +153,22 @@ const AdminSideBar = (props) => {
         onClick={() => nav("/CDF_Prospects")}
       >
         CDF Prospects
+      </Menu.Item>
+
+      <Menu.Item
+        key="/My-Team"
+        onClick={() => nav("/My-Team")}
+        icon={<FaUserTie />}
+      >
+        My Team
+      </Menu.Item>
+
+      <Menu.Item
+        key="/SuperAdmin/FinancialInstitutions"
+        onClick={() => nav("/SuperAdmin/FinancialInstitutions")}
+        icon={<AiOutlineBank />}
+      >
+        Financial Entities & Offerings
       </Menu.Item>
 
       <SubMenu key="sub1" icon={<RiAppsLine />} title="Discovery">
@@ -220,6 +241,7 @@ const AdminSideBar = (props) => {
           </SubMenu>
         )}
       </SubMenu>
+
       {(location.pathname.includes("SuperAdmin") ||
         location.pathname.includes("superadmin")) && (
         <>

@@ -26,11 +26,14 @@ import {
 } from "react-icons/md";
 import { BiDollarCircle } from "react-icons/bi";
 import { FiLogOut } from "react-icons/fi";
+import { useRecoilState } from "recoil";
+import { LoggedInUserData } from "../../Store/Store";
 
 const AdminTopMenu = (props) => {
   // let [currentPCLassSwitch, setCurrentPCLassSwitch] = useState("Admin Panel");
 
-  // let [currentTabName, setCurrentTabName] = useState("Admin Panel");
+  let [loggedInUserData, setLoggedInUserData] =
+    useRecoilState(LoggedInUserData);
 
   let [items, setItems] = useState([]);
   let { superAdmin } = content;
@@ -151,6 +154,7 @@ const AdminTopMenu = (props) => {
     "/SuperAdmin/Adviser_Simplilcity_Packages",
     "/SuperAdmin/All_Advisers",
     "/SuperAdmin/All_Roles",
+    "/SuperAdmin/Dashboard",
   ];
 
   const getMenu = (row) => (
@@ -181,6 +185,10 @@ const AdminTopMenu = (props) => {
             color: "#FF4D4F",
             fontSize: "14px",
             fontWeight: "600",
+          }}
+          onClick={() => {
+            setLoggedInUserData({});
+            Nev("/");
           }}
         >
           Logout <FiLogOut />
