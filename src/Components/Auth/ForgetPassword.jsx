@@ -112,7 +112,7 @@ const ForgetPassword = () => {
             "Password updated",
             "Password is update successfully"
           );
-          navigate("/");
+          navigate("user/login");
         }
       }
     } catch (error) {
@@ -166,7 +166,7 @@ const ForgetPassword = () => {
                           </div>
                           <div className="col-md-6">
                             <div className="d-flex justify-content-end align-item-end">
-                              <Button onClick={() => navigate("/")}>
+                              <Button onClick={() => navigate("/user/login")}>
                                 {" "}
                                 <FaArrowLeft />{" "}
                               </Button>

@@ -4,11 +4,18 @@ import { Image } from "react-bootstrap";
 import { FaInfoCircle } from "react-icons/fa";
 
 import SVGCoin from "../../../CashFlow/CashFlowAssets/Cast_Flow/SVG/SVG-Doller-Coin.svg";
+import { getJwtToken } from "../../../Store/recoilUtils";
+
+const getAuthHeaders = () => {
+  const token = getJwtToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
 
 let GetAxios = async (Api) => {
   console.log("Get api Chali");
   try {
-    const response = await axios.get(Api);
+    const headers = getAuthHeaders();
+    const response = await axios.get(Api, { headers });
     // console.log(response.data);
     return response.data;
   } catch (error) {
@@ -21,7 +28,8 @@ let GetAxios = async (Api) => {
 const PostAxios = async (Api, data) => {
   console.log("Post Chala ");
   try {
-    const response = await axios.post(Api, data);
+    const headers = getAuthHeaders();
+    const response = await axios.post(Api, data, { headers });
     // console.log(response.data);
     return response.data;
   } catch (error) {
@@ -34,7 +42,8 @@ const PostAxios = async (Api, data) => {
 let PutAxios = async (Api, data) => {
   console.log("Put api Chali");
   try {
-    const response = await axios.put(Api, data);
+    const headers = getAuthHeaders();
+    const response = await axios.put(Api, data, { headers });
     // console.log(response.data);
     return response.data;
   } catch (error) {
@@ -47,7 +56,8 @@ let PutAxios = async (Api, data) => {
 let PatchAxios = async (Api, data) => {
   console.log("Patch api Chali");
   try {
-    const response = await axios.patch(Api, data);
+    const headers = getAuthHeaders();
+    const response = await axios.patch(Api, data, { headers });
     // console.log(response.data);
     return response.data;
   } catch (error) {
@@ -60,7 +70,8 @@ let PatchAxios = async (Api, data) => {
 let DeleteAxios = async (Api) => {
   console.log("Delete api Chali");
   try {
-    const response = await axios.delete(Api);
+    const headers = getAuthHeaders();
+    const response = await axios.delete(Api, { headers });
     // console.log(response.data);
     return response.data;
   } catch (error) {

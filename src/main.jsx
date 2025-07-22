@@ -5,6 +5,7 @@ import "./index.css";
 import { RecoilRoot } from "recoil";
 import { ConfigProvider, notification } from "antd";
 import { BrowserRouter } from "react-router-dom";
+import RecoilNexus from "recoil-nexus";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -18,6 +19,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       }}
     >
       <RecoilRoot>
+        <RecoilNexus />
         <BrowserRouter>
           <App />
         </BrowserRouter>

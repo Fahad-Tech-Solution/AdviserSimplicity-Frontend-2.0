@@ -15,7 +15,7 @@ import Aos from "aos";
 import "aos/dist/aos.css";
 import CashFlow from "./CashFlow/CashFlowComponent/CashFlow";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { Loading, LoggedInUserData } from "./Store/Store";
+import { Loading, LoggedInUserData, LoggedInUserTokenJwt } from "./Store/Store";
 import { Spin } from "antd";
 import ProfileTemp from "./Components/Assets/ProfileSection/ProfileTemp";
 import StripeRedirect from "./Components/SuperAdminComponent/StripeRedirect";
@@ -25,6 +25,7 @@ import PricingTable from "./Components/SuperAdminComponent/PricingTable";
 function App() {
   let [loadingState, setLoading] = useRecoilState(Loading);
   let loggedUser = useRecoilValue(LoggedInUserData);
+  let loggedUserJWT = useRecoilValue(LoggedInUserTokenJwt);
   let [authLoading, setAuthLoading] = useState(true);
 
   let location = useLocation();
@@ -38,26 +39,31 @@ function App() {
     });
   }, []);
 
-  useEffect(() => {
-    const allowedPaths = [
-      "/",
-      "/VerifyEmail",
-      "/ForgetPassword",
-      "/ChangePassword",
-      "/PricingTable",
-      "/stripe-redirect",
-      "/AdminLogin",
-    ];
+  // useEffect(() => {
+  //   const allowedPaths = [
+  //     "/user/login",
+  //     "/user/register",
+  //     "/user/verify-email",
+  //     "/forget-password",
+  //     "/change-password",
+  //     "/pricing-table",
+  //     "/admin/login",
+  //     "/stripe-redirect",
+  //     "/stripe-redirect",
+  //   ];
 
-    const isLoggedIn = loggedUser && loggedUser._id;
+  //   const isLoggedIn = loggedUser && loggedUser.roleID && loggedUserJWT;
 
-    if (!allowedPaths.includes(location.pathname)) {
-      if (!isLoggedIn) {
-        Nav("/");
-      }
-      setAuthLoading(false);
-    }
-  }, [location, loggedUser]);
+  //   if (!allowedPaths.includes(location.pathname)) {
+  //     if (!isLoggedIn) {
+  //       Nav("/user/login");
+  //     } else {
+  //       // here i want to add route ristrictions according to user roles
+  //       // if (){}
+  //     }
+  //     setAuthLoading(false);
+  //   }
+  // }, [location, loggedUser]);
 
   return (
     <div className="position-relative">
@@ -79,21 +85,21 @@ function App() {
       )}
 
       <Routes>
-        <Route path="/" element={<LoginForm />} />
-        <Route path="/AdminLogin" element={<LoginForm />} />
-        <Route path="/Register" element={<Register />} />
-        <Route path="/VerifyEmail" element={<VerifyEmail />} />
-        <Route path="/ForgetPassword" element={<ForgetPassword />} />
-        <Route path="/ChangePassword" element={<PasswordChange />} />
-        <Route path="/PricingTable" element={<PricingTable />} />
-        <Route path="/stripe-redirect" element={<StripeRedirect />} />
-        <Route path="/stripe-redirect" element={<StripeRedirect />} />
+        <Route path="/user/login" element={<LoginForm />} />
+        <Route path="/user/register" element={<Register />} />
+        <Route path="/user/verify_email" element={<VerifyEmail />} />
+        <Route path="/forget_password" element={<ForgetPassword />} />
+        <Route path="/change_password" element={<PasswordChange />} />
+        <Route path="/pricing_table" element={<PricingTable />} />
+        <Route path="/admin/login" element={<LoginForm />} />
+        <Route path="/stripe_redirect" element={<StripeRedirect />} />
+        <Route path="/stripe_redirect" element={<StripeRedirect />} />
       </Routes>
       {!authLoading && (
         <Routes>
-          <Route path="/SuperAdmin/*" element={<SuperAdminRouts />} />
-          <Route path="/Cash-Flow/*" element={<CashFlow />} />
-          <Route path="/*" element={<AuthRouts />} />
+          <Route path="/super/admin/*" element={<SuperAdminRouts />} />
+          <Route path="/user/cashflow/*" element={<CashFlow />} />
+          <Route path="/user/*" element={<AuthRouts />} />
         </Routes>
       )}
     </div>

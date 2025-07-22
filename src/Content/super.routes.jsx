@@ -9,28 +9,28 @@ import SuperAdminDashboard from "../Components/Dashboard/SuperAdminDashboard";
 const CompRoutes = {
   SuperAdminPages: [
     {
-      Title: "Dashboard",
-      route: "/Dashboard",
+      Title: "dashboard",
+      route: "/dashboard",
       element: <SuperAdminDashboard />,
     },
     {
-      Title: "All_Subscriptions",
-      route: "/All_Subscriptions",
+      Title: "all-subscriptions",
+      route: "/all-subscriptions",
       element: <StripsOwnPricingTable />,
     },
     {
-      Title: "All_Advisers",
-      route: "/All_Advisers",
+      Title: "all-advisers",
+      route: "/all_advisers",
       element: <AllAdvisers />,
     },
     {
-      Title: "All_Roles",
-      route: "/All_Roles",
+      Title: "all_roles",
+      route: "/all_roles",
       element: <AllRoles />,
     },
     {
-      Title: "Adviser_Simplilcity_Packages",
-      route: "/Adviser_Simplilcity_Packages",
+      Title: "adviser-simplicity-packages",
+      route: "/adviser_simplicity-packages",
       element: <PricingTable />,
     },
     // {

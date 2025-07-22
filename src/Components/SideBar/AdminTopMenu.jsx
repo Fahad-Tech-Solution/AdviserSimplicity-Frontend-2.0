@@ -151,7 +151,7 @@ const AdminTopMenu = (props) => {
   };
 
   let topMenuArray = [
-    "/SuperAdmin/Adviser_Simplilcity_Packages",
+    "/SuperAdmin/Adviser_Simplicity_Packages",
     "/SuperAdmin/All_Advisers",
     "/SuperAdmin/All_Roles",
     "/SuperAdmin/Dashboard",

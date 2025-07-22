@@ -37,7 +37,8 @@ const AdminSideBar = (props) => {
   const selectedSenario = useRecoilValue(SelectedSenario);
   const loggedUser = useRecoilValue(LoggedInUserData);
 
-  let superAdmin = loggedUser?.role?.Permissions.includes("SuperAdmin");
+  let superAdmin =
+    loggedUser?.roleID?.permissions.includes("SuperAdmin") || false;
 
   const nav = useNavigate();
   const location = useLocation();
@@ -139,6 +140,7 @@ const AdminSideBar = (props) => {
           </div>
         </Menu.Item>
       )}
+
       <Menu.Item
         key={superAdmin ? "/SuperAdmin/Dashboard" : "/Dashboard"}
         icon={<FaTachometerAlt />}
@@ -147,21 +149,25 @@ const AdminSideBar = (props) => {
         Dashboard
       </Menu.Item>
 
-      <Menu.Item
-        key="/CDF_Prospects"
-        icon={<FaPeopleGroup />}
-        onClick={() => nav("/CDF_Prospects")}
-      >
-        CDF Prospects
-      </Menu.Item>
+      {!superAdmin && (
+        <>
+          <Menu.Item
+            key="/CDF_Prospects"
+            icon={<FaPeopleGroup />}
+            onClick={() => nav("/CDF_Prospects")}
+          >
+            CDF Prospects
+          </Menu.Item>
 
-      <Menu.Item
-        key="/My-Team"
-        onClick={() => nav("/My-Team")}
-        icon={<FaUserTie />}
-      >
-        My Team
-      </Menu.Item>
+          <Menu.Item
+            key="/My-Team"
+            onClick={() => nav("/My-Team")}
+            icon={<FaUserTie />}
+          >
+            My Team
+          </Menu.Item>
+        </>
+      )}
 
       <Menu.Item
         key="/SuperAdmin/FinancialInstitutions"
@@ -171,108 +177,109 @@ const AdminSideBar = (props) => {
         Financial Entities & Offerings
       </Menu.Item>
 
-      <SubMenu key="sub1" icon={<RiAppsLine />} title="Discovery">
-        <Menu.Item
-          key="/All-Clients"
-          onClick={() => {
-            if (selectedClientDetails?._id) {
-              localStorage.setItem("UserID", selectedClientDetails._id);
-              localStorage.setItem(
-                "selected client",
-                JSON.stringify([selectedClientDetails.key])
-              );
-              localStorage.setItem("Email", selectedClientDetails.client.Email);
-              setQuestionDetail({});
-              setStepsStatus(false);
-              nav("/PersonalDetail#" + selectedClientDetails._id);
-            } else {
-              openNotificationSuccess(
-                "warning",
-                "topRight",
-                "No Client Selected",
-                "Please select a client before proceeding."
-              );
-            }
-          }}
-        >
-          Financial Details
-        </Menu.Item>
-        <Menu.Item
-          key="/Goals-And-Objectives"
-          onClick={() => nav("/Goals-And-Objectives")}
-        >
-          Goals and Objectives
-        </Menu.Item>
-        <Menu.Item key="/Risk-Profile" onClick={() => nav("/Risk-Profile")}>
-          Risk Profile
-        </Menu.Item>
-        <Menu.Item key="/PersonalDetail" onClick={handleAddClientClick}>
-          Add Client
-        </Menu.Item>
-      </SubMenu>
-
-      <SubMenu key="sub2" icon={<RiExchange2Line />} title="Cash Flow">
-        <Menu.Item
-          key="/Cash-Flow/AllUsers"
-          onClick={() => nav("/Cash-Flow/AllUsers")}
-        >
-          All Cash Flow Scenarios
-        </Menu.Item>
-
-        {selectedClientDetails?.client && (
-          <SubMenu
-            className="subSubMenu"
-            key="sub3"
-            title={`${selectedClientDetails.client.clientGivenName} - Scenario`}
-          >
-            <Menu.Item
-              key="/Cash-Flow/oneClient"
-              onClick={() => nav("/Cash-Flow/oneClient")}
-            >
-              Scenarios
-            </Menu.Item>
-            <Menu.Item
-              key="/Cash-Flow/Reports/"
-              disabled={Object.keys(selectedSenario).length > 0 ? false : true}
-              onClick={() => nav("/Cash-Flow/Reports/")}
-            >
-              Reports
-            </Menu.Item>
-          </SubMenu>
-        )}
-      </SubMenu>
-
-      {(location.pathname.includes("SuperAdmin") ||
-        location.pathname.includes("superadmin")) && (
+      {!superAdmin && (
         <>
-          <SubMenu
-            className="subSubMenu"
-            key="sub3"
-            title={`System Management`}
-            icon={<FaGear />}
-          >
+          <SubMenu key="sub1" icon={<RiAppsLine />} title="Discovery">
             <Menu.Item
-              key="/SuperAdmin/Adviser_Simplilcity_Packages"
-              onClick={() => nav("/SuperAdmin/Adviser_Simplilcity_Packages")}
-              icon={<FaRegCreditCard />}
+              key="/All-Clients"
+              onClick={() => {
+                if (selectedClientDetails?._id) {
+                  localStorage.setItem("UserID", selectedClientDetails._id);
+                  localStorage.setItem(
+                    "selected client",
+                    JSON.stringify([selectedClientDetails.key])
+                  );
+                  localStorage.setItem(
+                    "Email",
+                    selectedClientDetails.client.Email
+                  );
+                  setQuestionDetail({});
+                  setStepsStatus(false);
+                  nav("/PersonalDetail#" + selectedClientDetails._id);
+                } else {
+                  openNotificationSuccess(
+                    "warning",
+                    "topRight",
+                    "No Client Selected",
+                    "Please select a client before proceeding."
+                  );
+                }
+              }}
             >
-              All Subscriptions
+              Financial Details
             </Menu.Item>
             <Menu.Item
-              key="/SuperAdmin/All_Advisers"
-              onClick={() => nav("/SuperAdmin/All_Advisers")}
-              icon={<FaUserTie />}
+              key="/Goals-And-Objectives"
+              onClick={() => nav("/Goals-And-Objectives")}
             >
-              All Advisers
+              Goals and Objectives
             </Menu.Item>
-            <Menu.Item
-              key="/SuperAdmin/All_Roles"
-              onClick={() => nav("/SuperAdmin/All_Roles")}
-              icon={<FaUserTag />}
-            >
-              All Roles
+            <Menu.Item key="/Risk-Profile" onClick={() => nav("/Risk-Profile")}>
+              Risk Profile
+            </Menu.Item>
+            <Menu.Item key="/PersonalDetail" onClick={handleAddClientClick}>
+              Add Client
             </Menu.Item>
           </SubMenu>
+
+          <SubMenu key="sub2" icon={<RiExchange2Line />} title="Cash Flow">
+            <Menu.Item
+              key="/Cash-Flow/AllUsers"
+              onClick={() => nav("/Cash-Flow/AllUsers")}
+            >
+              All Cash Flow Scenarios
+            </Menu.Item>
+
+            {selectedClientDetails?.client && (
+              <SubMenu
+                className="subSubMenu"
+                key="sub3"
+                title={`${selectedClientDetails.client.clientGivenName} - Scenario`}
+              >
+                <Menu.Item
+                  key="/Cash-Flow/oneClient"
+                  onClick={() => nav("/Cash-Flow/oneClient")}
+                >
+                  Scenarios
+                </Menu.Item>
+                <Menu.Item
+                  key="/Cash-Flow/Reports/"
+                  disabled={
+                    Object.keys(selectedSenario).length > 0 ? false : true
+                  }
+                  onClick={() => nav("/Cash-Flow/Reports/")}
+                >
+                  Reports
+                </Menu.Item>
+              </SubMenu>
+            )}
+          </SubMenu>
+        </>
+      )}
+
+      {superAdmin && (
+        <>
+          <Menu.Item
+            key="/SuperAdmin/Adviser_Simplicity_Packages"
+            onClick={() => nav("/SuperAdmin/Adviser_Simplicity_Packages")}
+            icon={<FaRegCreditCard />}
+          >
+            All Subscriptions
+          </Menu.Item>
+          <Menu.Item
+            key="/SuperAdmin/All_Advisers"
+            onClick={() => nav("/SuperAdmin/All_Advisers")}
+            icon={<FaUserTie />}
+          >
+            All Advisers
+          </Menu.Item>
+          <Menu.Item
+            key="/SuperAdmin/All_Roles"
+            onClick={() => nav("/SuperAdmin/All_Roles")}
+            icon={<FaUserTag />}
+          >
+            All Roles
+          </Menu.Item>
         </>
       )}
     </Menu>

@@ -11,66 +11,20 @@ import pricingimage from "../Assets/Adviser-Simpilicity.png";
 import { FaCheckSquare } from "react-icons/fa";
 import {
   GetAxios,
+  openNotificationSuccess,
   PostAxios,
   toCommaAndDollar,
   toSentenceCase,
 } from "../Assets/Api/Api";
 import { FaArrowRight, FaCheck } from "react-icons/fa6";
-
-const stripePromise = loadStripe(
-  "pk_test_51RiX6vQ1Wy1AZlw01EIMxbIqvnkm8Y9dO4nXYgQgJUsOazKp80ig15Pg8JiI8KaPT8WMVwyOVOM5uB9HvnBbXXLt006O5kzyWi"
-);
-
-const dummyPlans = [
-  {
-    monthly: {
-      priceId: "price_monthly_starter",
-      unit_amount: 1000,
-    },
-    yearly: {
-      priceId: "price_yearly_starter",
-      unit_amount: 10000,
-    },
-    nickname: "Starter",
-    interval: "month",
-    features: ["1 Project", "Email Support", "Basic Analytics"],
-    image: pricingimage,
-  },
-  {
-    monthly: {
-      priceId: "price_monthly_pro",
-      unit_amount: 2000,
-    },
-    yearly: {
-      priceId: "price_yearly_pro",
-      unit_amount: 18000,
-    },
-    nickname: "Pro",
-    interval: "month",
-    features: ["Unlimited Projects", "Priority Support", "Advanced Analytics"],
-    image: pricingimage,
-  },
-  {
-    monthly: {
-      priceId: "price_monthly_enterprise",
-      unit_amount: 5000,
-    },
-    yearly: {
-      priceId: "price_yearly_enterprise",
-      unit_amount: 45000,
-    },
-    nickname: "Enterprise",
-    interval: "month",
-    features: ["All Features", "Dedicated Manager", "Custom Integrations"],
-    image: pricingimage,
-  },
-];
+import { useLocation } from "react-router-dom";
 
 export default function PricingTable() {
   const [pricingPlans, setPricingPlans] = useState([]);
   const [loading, setLoading] = useRecoilState(Loading);
   const [isYearly, setIsYearly] = useState(false);
   let DefaultUrl = useRecoilValue(defaultUrl);
+  let location = useLocation();
 
   useEffect(() => {
     setLoading(true);
@@ -89,8 +43,11 @@ export default function PricingTable() {
       setPricingPlans(res.products);
     } catch (error) {
       console.error("❌ Failed to fetch pricing plans:", error.message);
-      alert(
-        "Something went wrong while loading pricing data. Please try again later."
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        error.message || "Failed to load pricing plans."
       );
     } finally {
       setLoading(false);
@@ -103,6 +60,15 @@ export default function PricingTable() {
 
       if (!email) {
         throw new Error("User email is missing. Please log in.");
+      }
+      if (location.pathname === "/SuperAdmin/Adviser_Simplilcity_Packages") {
+        openNotificationSuccess(
+          "error",
+          "topRight",
+          "Error Notification",
+          "You are not allowed to subscribe from here, please go to the client dashboard."
+        );
+        return;
       }
 
       const successUrl = `${window.location.origin}/stripe-redirect?status=success`;
@@ -122,9 +88,11 @@ export default function PricingTable() {
       window.location.href = res.checkoutUrl;
     } catch (error) {
       console.error("❌ Subscription failed:", error.message);
-      alert(
-        error.message ||
-          "Something went wrong while creating the checkout session."
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Subscription Error",
+        error.message || "Failed to initiate subscription."
       );
     }
   };

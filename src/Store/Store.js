@@ -405,6 +405,7 @@ export const LoggedInUserData = atom({
 export const LoggedInUserTokenJwt = atom({
   key: "LoggedInUserTokenJwt",
   default: "",
+  effects_UNSTABLE: [persistAtom], // enables localStorage persistence
 });
 
 export const StepsStatus = atom({

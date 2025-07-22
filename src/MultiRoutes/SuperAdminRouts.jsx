@@ -17,7 +17,7 @@ const SuperAdminRoutes = () => {
   return (
     <div>
       <Routes>
-        <Route path="/Login" element={<LoginForm />} />
+        <Route path="/login" element={<LoginForm />} />
         <Route path="/*" element={<AdminLayouts />} />
       </Routes>
     </div>

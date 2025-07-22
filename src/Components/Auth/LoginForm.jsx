@@ -45,21 +45,27 @@ const LoginForm = () => {
 
   let onSubmit = async (values) => {
     console.log(values);
+    let payload = {
+      email: values.email.toLowerCase(),
+      passwordHash: values.passwordHash.trim(),
+    };
     try {
       setLoading(true);
       setLoginError(false);
-      let res = await PostAxios(defaultApi + "/api/auth/login", values);
+      let res = await PostAxios(defaultApi + "/api/auth/login", payload);
       console.log(res);
       if (res?.user) {
-        localStorage.setItem("loggedInEmail", values.email);
-        let userData = res.user;
+        localStorage.setItem("loggedInEmail", payload.email);
+        let userData = res?.user;
+
         setLoggedUser(userData);
+        setLoggedUserToken(res.token);
 
         if (
           SuperAdminFlag &&
-          userData.role.Permissions.includes("SuperAdmin")
+          userData?.roleID?.permissions.includes("SuperAdmin")
         ) {
-          navigate("/SuperAdmin/Dashboard");
+          navigate("/superadmin/dashboard");
           return false;
         }
 
@@ -72,9 +78,9 @@ const LoginForm = () => {
           if (diffMs < 2 * 60 * 1000) {
             // less than 2 minutes
             localStorage.setItem("dummyPassword", true);
-            navigate("/PricingTable");
+            navigate("/pricing-table");
           } else {
-            navigate("/Dashboard");
+            navigate("/user/dashboard");
           }
         } else {
           // fallback if timestamps are missing
@@ -220,7 +226,10 @@ const LoginForm = () => {
 
                           <div className="col-md-12">
                             <p>
-                              <Link to="/ForgetPassword" className="text-green">
+                              <Link
+                                to="/forget-password"
+                                className="text-green"
+                              >
                                 Forgot Password
                               </Link>
                             </p>
@@ -238,7 +247,7 @@ const LoginForm = () => {
                           <div className="col-md-12 mt-2 d-none">
                             <p>
                               I don't have Account{" "}
-                              <Link to="/Register" className="text-green">
+                              <Link to="/user/register" className="text-green">
                                 Register
                               </Link>
                             </p>

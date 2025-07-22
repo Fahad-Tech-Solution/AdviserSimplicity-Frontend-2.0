@@ -221,7 +221,7 @@ export const content = {
       subTitle: "Financial Institutions",
       statusStep: 0,
       icon: "RiCoinsFill",
-      route: "/FinancialInstitutions",
+      route: "/financial-institutions",
       key: "FinancialInstitutions",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
@@ -229,7 +229,7 @@ export const content = {
       subTitle: "Investment Platforms",
       statusStep: 10,
       icon: "MdFamilyRestroom",
-      route: "/InvestmentPlatforms",
+      route: "/investmen-platforms",
       key: "InvestmentPlatforms",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
@@ -237,7 +237,7 @@ export const content = {
       subTitle: "Investment Bonds",
       statusStep: 20,
       icon: "FaCertificate",
-      route: "/InvestmentBonds",
+      route: "/investment-bonds",
       key: "InvestmentBonds",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
@@ -245,7 +245,7 @@ export const content = {
       subTitle: "Superannuation Funds",
       statusStep: 30,
       icon: "FaMoneyBillWave",
-      route: "/SuperannuationFunds",
+      route: "/super-annuation-funds",
       key: "SuperannuationFunds",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
@@ -253,7 +253,7 @@ export const content = {
       subTitle: "Account Based Pensions",
       statusStep: 40,
       icon: "FaUserShield",
-      route: "/AccountBasedPensions",
+      route: "/account-based-pensions",
       key: "AccountBasedPensions",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
@@ -261,7 +261,7 @@ export const content = {
       subTitle: "Annuities",
       statusStep: 50,
       icon: "BiDollarCircle",
-      route: "/Annuities",
+      route: "/annuities",
       key: "Annuities",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
@@ -269,7 +269,7 @@ export const content = {
       subTitle: "Personal Insurances",
       statusStep: 60,
       icon: "RiDiscountPercentFill",
-      route: "/PersonalInsurances",
+      route: "/personal-insurances",
       key: "PersonalInsurances",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
