@@ -34,7 +34,7 @@ const AllAdvisers = () => {
       handleChange(selectedValue);
     }
   };
-  
+
   const handleCloseClick = () => {
     setExpanded(false);
     setSelectedValue(null);
@@ -50,13 +50,13 @@ const AllAdvisers = () => {
     {
       title: "#",
       key: "index",
-      fixed: "left",
+      // fixed: "left",
       render: (text, _, index) => index + 1 || "--",
     },
     {
       title: "Name",
       key: "name",
-      fixed: "left",
+      // fixed: "left",
       render: (text, row) => {
         return (
           <span>
@@ -70,17 +70,6 @@ const AllAdvisers = () => {
       key: "email",
       render: (text, row) => {
         return <span>{row.email}</span>;
-      },
-    },
-    {
-      title: "Verified",
-      key: "emailVerification",
-      render: (text, row) => {
-        return (
-          <span className="fw-bold">
-            {row.emailVerification ? "verified" : "not verified"}
-          </span>
-        );
       },
     },
     {
@@ -137,73 +126,9 @@ const AllAdvisers = () => {
       },
     },
     {
-      title: "Subscription Status",
-      key: "subscriptionStatus",
-      render: (row) => {
-        const { createdAt, subscriptionMonths } = row;
-
-        if (!createdAt || !subscriptionMonths) {
-          return <Tag color="gray">Invalid Data</Tag>;
-        }
-
-        const createdDate = new Date(createdAt);
-        const months = parseInt(subscriptionMonths, 10);
-
-        // Calculate expiration date by adding months
-        const expirationDate = new Date(createdDate);
-        expirationDate.setMonth(expirationDate.getMonth() + months);
-
-        const now = new Date();
-
-        const isActive = now <= expirationDate;
-
-        const statusMap = {
-          Active: {
-            color: "green",
-            text: "Active",
-            icon: <FaCircleCheck />,
-          },
-          Disabled: {
-            color: "red",
-            text: "Disabled",
-            icon: <FaCircleXmark />,
-          },
-        };
-
-        const tag = isActive ? statusMap.Active : statusMap.Disabled;
-
-        return (
-          <Tag
-            color={tag.color}
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: "10px",
-            }}
-          >
-            {tag.icon} {tag.text}
-          </Tag>
-        );
-      },
-    },
-    {
-      title: "Created at",
-      key: "createdAt",
-      render: (text, row) => {
-        const date = new Date(row.createdAt);
-        return date.toLocaleDateString("en-Au", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-        });
-      },
-    },
-    {
       title: "Operations",
       key: "operations",
-      fixed: "right",
+      // fixed: "right",
       render: (text, row, index) => (
         <DropDownOptions
           menuItems={getDowpdownOptions(row)}
@@ -387,14 +312,14 @@ const AllAdvisers = () => {
                           }
                           onChange={handleChange}
                           options={[
-                            ...advisers.map((item, index) => {
-                              return {
+                            ...(Array.isArray(advisers) ? advisers : []).map(
+                              (item) => ({
                                 value: item.email,
                                 label: toSentenceCase(
                                   item.firstName + " " + item.lastName
                                 ),
-                              };
-                            }),
+                              })
+                            ),
                           ]}
                         />
                         <Button
@@ -417,9 +342,11 @@ const AllAdvisers = () => {
 
               <AntTableDynamicReportTable
                 dataSource={
-                  selectedValue
-                    ? advisers.filter((item) => item.email === selectedValue)
-                    : advisers
+                  Array.isArray(advisers)
+                    ? selectedValue
+                      ? advisers.filter((item) => item.email === selectedValue)
+                      : advisers
+                    : []
                 }
                 columns={columns}
                 pagination={true}

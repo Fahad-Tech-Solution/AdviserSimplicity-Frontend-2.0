@@ -38,7 +38,7 @@ const LoginForm = () => {
 
   let location = useLocation();
   useEffect(() => {
-    if (location.pathname === "/AdminLogin") {
+    if (location.pathname === "/admin/login") {
       setSuperAdminFlag(true);
     }
   }, [location]);
@@ -63,9 +63,10 @@ const LoginForm = () => {
 
         if (
           SuperAdminFlag &&
-          userData?.roleID?.permissions.includes("SuperAdmin")
+          userData?.roleID?.permissions.includes("superAdmin")
         ) {
-          navigate("/superadmin/dashboard");
+          console.log("superAdmin logged in");
+          navigate("/super/admin/dashboard");
           return false;
         }
 

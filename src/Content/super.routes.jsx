@@ -20,17 +20,17 @@ const CompRoutes = {
     },
     {
       Title: "all-advisers",
-      route: "/all_advisers",
+      route: "/all-advisers",
       element: <AllAdvisers />,
     },
     {
-      Title: "all_roles",
-      route: "/all_roles",
+      Title: "all-roles",
+      route: "/all-roles",
       element: <AllRoles />,
     },
     {
       Title: "adviser-simplicity-packages",
-      route: "/adviser_simplicity-packages",
+      route: "/adviser-simplicity-packages",
       element: <PricingTable />,
     },
     // {

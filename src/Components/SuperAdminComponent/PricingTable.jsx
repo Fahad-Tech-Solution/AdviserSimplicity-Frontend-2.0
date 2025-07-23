@@ -1,14 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { loadStripe } from "@stripe/stripe-js";
-import { Elements } from "@stripe/react-stripe-js";
-// import "./PricingTable.css"; // optional for custom styles
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, Loading } from "../../Store/Store";
 import { Skeleton, Card, Row, Col, Switch, Button } from "antd";
 import { Container, Image } from "react-bootstrap";
-
-import pricingimage from "../Assets/Adviser-Simpilicity.png";
-import { FaCheckSquare } from "react-icons/fa";
 import {
   GetAxios,
   openNotificationSuccess,

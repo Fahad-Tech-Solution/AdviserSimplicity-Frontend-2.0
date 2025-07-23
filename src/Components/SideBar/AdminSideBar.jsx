@@ -38,7 +38,7 @@ const AdminSideBar = (props) => {
   const loggedUser = useRecoilValue(LoggedInUserData);
 
   let superAdmin =
-    loggedUser?.roleID?.permissions.includes("SuperAdmin") || false;
+    loggedUser?.roleID?.permissions.includes("superAdmin") || false;
 
   const nav = useNavigate();
   const location = useLocation();
@@ -142,9 +142,11 @@ const AdminSideBar = (props) => {
       )}
 
       <Menu.Item
-        key={superAdmin ? "/SuperAdmin/Dashboard" : "/Dashboard"}
+        key={superAdmin ? "/super/admin/dashboard" : "/Dashboard"}
         icon={<FaTachometerAlt />}
-        onClick={() => nav(superAdmin ? "/SuperAdmin/Dashboard" : "/Dashboard")}
+        onClick={() =>
+          nav(superAdmin ? "/super/admin/dashboard" : "/Dashboard")
+        }
       >
         Dashboard
       </Menu.Item>
@@ -170,8 +172,8 @@ const AdminSideBar = (props) => {
       )}
 
       <Menu.Item
-        key="/SuperAdmin/FinancialInstitutions"
-        onClick={() => nav("/SuperAdmin/FinancialInstitutions")}
+        key="/super/admin/financial-institutions"
+        onClick={() => nav("/super/admin/financial-institutions")}
         icon={<AiOutlineBank />}
       >
         Financial Entities & Offerings
@@ -260,22 +262,22 @@ const AdminSideBar = (props) => {
       {superAdmin && (
         <>
           <Menu.Item
-            key="/SuperAdmin/Adviser_Simplicity_Packages"
-            onClick={() => nav("/SuperAdmin/Adviser_Simplicity_Packages")}
+            key="/super/admin/adviser-simplicity-packages"
+            onClick={() => nav("/super/admin/adviser-simplicity-packages")}
             icon={<FaRegCreditCard />}
           >
             All Subscriptions
           </Menu.Item>
           <Menu.Item
-            key="/SuperAdmin/All_Advisers"
-            onClick={() => nav("/SuperAdmin/All_Advisers")}
+            key="/super/admin/all-advisers"
+            onClick={() => nav("/super/admin/all-advisers")}
             icon={<FaUserTie />}
           >
             All Advisers
           </Menu.Item>
           <Menu.Item
-            key="/SuperAdmin/All_Roles"
-            onClick={() => nav("/SuperAdmin/All_Roles")}
+            key="/super/admin/all-roles"
+            onClick={() => nav("/super/admin/all-roles")}
             icon={<FaUserTag />}
           >
             All Roles
@@ -318,20 +320,15 @@ const AdminSideBar = (props) => {
       ) : (
         // Desktop Sidebar
         <div
-          className="AdminSideBar"
-          style={{
-            width: props.collapsed ? "80px" : "250px",
-            height: "100%",
-            transition: "width 0.3s",
-          }}
+          className={`AdminSideBar ${props.collapsed ? "collapsed" : ""}`}
         >
           <Menu
             mode="inline"
             inlineCollapsed={props.collapsed}
             selectedKeys={[location.pathname]}
             style={{
-              position: "fixed",
-              width: props.collapsed ? "80px" : "250px",
+              position: "sticky",
+              minHeight: "100vh",
             }}
           >
             {menuItems.props.children}

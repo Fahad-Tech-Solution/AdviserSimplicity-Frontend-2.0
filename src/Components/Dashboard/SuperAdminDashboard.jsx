@@ -4,6 +4,7 @@ import NewAllClients from "../Assets/AllClients/NewAllClients";
 import CustomApexChart from "../Assets/ApexChart/CustomApexChart";
 import { LoggedInUserData, ProspectsCDF } from "../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
+import AllAdvisers from "../SuperAdminComponent/AllAdvisers";
 
 const SuperAdminDashboard = (props) => {
   let prospectsCDF = useRecoilValue(ProspectsCDF);
@@ -49,7 +50,7 @@ const SuperAdminDashboard = (props) => {
   return (
     <div className="DashBoard">
       <h5 className="Greetings PoppinsFamily">
-        👋 Welcome admin,{" "}
+        👋 Welcome ,{" "}
         {loggedInUserData &&
         typeof loggedInUserData === "object" &&
         Object.keys(loggedInUserData).length > 0
@@ -59,7 +60,7 @@ const SuperAdminDashboard = (props) => {
           : "Guest"}
       </h5>
       <div className="row justify-content-stretch">
-      
+        <AllAdvisers />
       </div>
     </div>
   );

@@ -28,6 +28,7 @@ import { BiDollarCircle } from "react-icons/bi";
 import { FiLogOut } from "react-icons/fi";
 import { useRecoilState } from "recoil";
 import { LoggedInUserData } from "../../Store/Store";
+import { toSentenceCase } from "../Assets/Api/Api";
 
 const AdminTopMenu = (props) => {
   // let [currentPCLassSwitch, setCurrentPCLassSwitch] = useState("Admin Panel");
@@ -42,31 +43,31 @@ const AdminTopMenu = (props) => {
 
   useEffect(() => {
     let cLocation =
-      location.pathname === "/SuperAdmin" ||
-      location.pathname === "/SuperAdmin/"
+      location.pathname === "/super/admin" ||
+      location.pathname === "/super/admin/"
         ? ""
-        : location.pathname.replace("/SuperAdmin/", "");
+        : location.pathname.replace("/super/admin/", "");
     console.log(location.pathname, cLocation);
 
     let stepComplete = 0;
 
     switch (cLocation) {
-      case "InvestmentPlatforms":
+      case "investmen-platforms":
         stepComplete = 10;
         break;
-      case "InvestmentBonds":
+      case "investment-bonds":
         stepComplete = 20;
         break;
-      case "SuperannuationFunds":
+      case "super-annuation-funds":
         stepComplete = 30;
         break;
-      case "AccountBasedPensions":
+      case "account-based-pensions":
         stepComplete = 40;
         break;
-      case "Annuities":
+      case "annuities":
         stepComplete = 50;
         break;
-      case "PersonalInsurances":
+      case "personal-insurances":
         stepComplete = 60;
         break;
       default:
@@ -111,7 +112,7 @@ const AdminTopMenu = (props) => {
               }`}
               role="button"
               onClick={() => {
-                handleStepClick(`/SuperAdmin${item.route}`);
+                handleStepClick(`/super/admin${item.route}`);
               }}
               style={{
                 display: "flex",
@@ -151,10 +152,10 @@ const AdminTopMenu = (props) => {
   };
 
   let topMenuArray = [
-    "/SuperAdmin/Adviser_Simplicity_Packages",
-    "/SuperAdmin/All_Advisers",
-    "/SuperAdmin/All_Roles",
-    "/SuperAdmin/Dashboard",
+    "/super/admin/adviser-simplicity-packages",
+    "/super/admin/all-advisers",
+    "/super/admin/all-roles",
+    "/super/admin/dashboard",
   ];
 
   const getMenu = (row) => (
@@ -217,7 +218,7 @@ const AdminTopMenu = (props) => {
                           linkProps={{ to: "/" }}
                           className="p-0 m-0 LeagueSpartanFamily"
                         >
-                          Dashboard
+                          Admin
                         </Breadcrumb.Item>
                         <Breadcrumb.Item
                           active
@@ -225,16 +226,23 @@ const AdminTopMenu = (props) => {
                           linkProps={{ to: "/" }}
                           className="p-0 m-0 LeagueSpartanFamily"
                         >
-                          {location.pathname.replace("/", "")}
+                          {toSentenceCase(
+                            location.pathname
+                              .split("/")
+                              .filter(Boolean)
+                              .pop()
+                              .replaceAll("-", " ")
+                          )}
                         </Breadcrumb.Item>
                       </Breadcrumb>
                       <h5 className="Page LeagueSpartanFamily">
-                        {location.pathname
-                          .replace("/SuperAdmin", "")
-                          ?.split("/")
-                          .filter(Boolean)
-                          .join(" ")
-                          .replace(/[_-]/g, " ") || "Dashboard"}
+                        {toSentenceCase(
+                          location.pathname
+                            .split("/")
+                            .filter(Boolean)
+                            .pop()
+                            .replaceAll("-", " ")
+                        )}
                       </h5>
                     </div>
                     <div className="rightBlock">

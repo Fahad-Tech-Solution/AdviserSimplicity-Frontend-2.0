@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
+import { Layout } from "antd";
 import AdminSideBar from "../Components/SideBar/AdminSideBar";
 import AdminTopMenu from "../Components/SideBar/AdminTopMenu";
 import InstituteAndOffer from "../Components/SuperAdminComponent/InstituteAndOffer";
@@ -18,16 +19,18 @@ import {
   Subscriptions,
 } from "../Store/Store";
 
+const { Sider, Header, Content } = Layout;
+
 const AdminLayouts = () => {
   const [collapsed, setCollapsed] = useState(true);
   const [reload, setReload] = useState(true);
-  let { superAdmin } = content;
-  let { SuperAdminPages } = CompRoutes;
-  let DefaultUrl = useRecoilValue(defaultUrl);
-  let [loading, setLoading] = useRecoilState(Loading);
-  let [subscriptions, setSubscriptions] = useRecoilState(Subscriptions);
-  let [advisers, setAdvisers] = useRecoilState(Advisers);
-  let [role, setRoles] = useRecoilState(Roles);
+  const { superAdmin } = content;
+  const { SuperAdminPages } = CompRoutes;
+  const DefaultUrl = useRecoilValue(defaultUrl);
+  const [loading, setLoading] = useRecoilState(Loading);
+  const [subscriptions, setSubscriptions] = useRecoilState(Subscriptions);
+  const [advisers, setAdvisers] = useRecoilState(Advisers);
+  const [role, setRoles] = useRecoilState(Roles);
 
   useEffect(() => {
     if (reload) {
@@ -35,18 +38,16 @@ const AdminLayouts = () => {
     }
   }, [reload]);
 
-  let FetchData = async () => {
+  const FetchData = async () => {
     setLoading(true);
     try {
       let res = await GetAxios(DefaultUrl + "/api/subscriptionPlan");
       if (res) {
-        // console.log(res);
         setSubscriptions(res);
       }
 
       res = await GetAxios(DefaultUrl + "/api/user");
       if (res) {
-        // console.log(res);
         setAdvisers(
           res.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         );
@@ -54,7 +55,6 @@ const AdminLayouts = () => {
 
       res = await GetAxios(DefaultUrl + "/api/role");
       if (res) {
-        // console.log(res);
         setRoles(res);
       }
     } catch (error) {
@@ -63,7 +63,7 @@ const AdminLayouts = () => {
         "error",
         "topRight",
         "Error Notification",
-        "Some thing went wrrong"
+        "Something went wrong"
       );
     } finally {
       setReload(false);
@@ -72,25 +72,42 @@ const AdminLayouts = () => {
   };
 
   return (
-    <div className="container-fluid p-0 d-flex flex-row">
-      <AdminSideBar collapsed={collapsed} setCollapsed={setCollapsed} />
-      <div className={`flex-grow-1`}>
-        <AdminTopMenu collapsed={collapsed} setCollapsed={setCollapsed} />
-        <Routes>
-          {superAdmin.map((elem, index) => {
-            return (
+    <Layout style={{ minHeight: "100vh" }}>
+      <Sider
+        collapsible
+        collapsed={collapsed}
+        onCollapse={(val) => setCollapsed(val)}
+        width={250}
+        style={{
+          background: "#fff",
+          transition: "width 0.2s ease",
+          boxShadow: "2px 0 6px rgba(0,0,0,0.1)",
+        }}
+      >
+        <AdminSideBar collapsed={collapsed} setCollapsed={setCollapsed} />
+      </Sider>
+
+      <Layout >
+        <Header style={{ background: "#fff", padding: 0 }}>
+          <AdminTopMenu collapsed={collapsed} setCollapsed={setCollapsed} />
+        </Header>
+
+        <Content style={{ margin: "16px", padding: 16, background: "#fff" }}>
+          <Routes>
+            {superAdmin.map((elem, index) => (
               <Route
+                key={index}
                 path={elem.route}
                 element={<InstituteAndOffer Data={elem} />}
               />
-            );
-          })}
-          {SuperAdminPages.map((elem, index) => {
-            return <Route path={elem.route} element={elem.element} />;
-          })}
-        </Routes>
-      </div>
-    </div>
+            ))}
+            {SuperAdminPages.map((elem, index) => (
+              <Route key={index} path={elem.route} element={elem.element} />
+            ))}
+          </Routes>
+        </Content>
+      </Layout>
+    </Layout>
   );
 };
 
