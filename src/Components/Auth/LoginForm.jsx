@@ -68,6 +68,15 @@ const LoginForm = () => {
           console.log("superAdmin logged in");
           navigate("/super/admin/dashboard");
           return false;
+        } else if (
+          !SuperAdminFlag &&
+          userData?.roleID?.permissions.includes("superAdmin")
+        ) {
+          // throw error with status = 403
+          throw {
+            status: 401,
+            response: { data: { message: "Access denied" } },
+          };
         }
 
         // Compare timestamps (convert to string or number if needed)
@@ -116,6 +125,8 @@ const LoginForm = () => {
           "Something went wrong."
         );
       }
+      setLoggedUser({});
+      setLoggedUserToken("");
     } finally {
       setLoading(false);
     }

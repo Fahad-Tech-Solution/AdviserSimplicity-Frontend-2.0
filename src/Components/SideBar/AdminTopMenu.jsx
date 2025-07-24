@@ -200,77 +200,72 @@ const AdminTopMenu = (props) => {
 
   if (topMenuArray.includes(location.pathname)) {
     return (
-      <div className="container-fluid" style={{ position: "relative" }}>
-        <div className="container-fluid">
-          <div className="row pe-4">
-            <div className="col-md-12 p-0">
-              <div
-                className={props.collapsed ? "" : "sidebar-collapsed"}
-                id="OptionsBar"
-              >
-                <div className="Top_Nav">
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div>
-                      <Breadcrumb className="BreadcrumbCustom">
-                        <Breadcrumb.Item
-                          active
-                          linkAs={Link}
-                          linkProps={{ to: "/" }}
-                          className="p-0 m-0 LeagueSpartanFamily"
-                        >
-                          Admin
-                        </Breadcrumb.Item>
-                        <Breadcrumb.Item
-                          active
-                          linkAs={Link}
-                          linkProps={{ to: "/" }}
-                          className="p-0 m-0 LeagueSpartanFamily"
-                        >
-                          {toSentenceCase(
-                            location.pathname
-                              .split("/")
-                              .filter(Boolean)
-                              .pop()
-                              .replaceAll("-", " ")
-                          )}
-                        </Breadcrumb.Item>
-                      </Breadcrumb>
-                      <h5 className="Page LeagueSpartanFamily">
-                        {toSentenceCase(
-                          location.pathname
-                            .split("/")
-                            .filter(Boolean)
-                            .pop()
-                            .replaceAll("-", " ")
-                        )}
-                      </h5>
-                    </div>
-                    <div className="rightBlock">
-                      <FontAwesomeIcon
-                        role="button"
-                        icon={faBars}
-                        className="menu"
-                        onClick={() => props.setCollapsed(!props.collapsed)}
-                      />
-                      {/* <FontAwesomeIcon icon={faMoon} className="moon" /> */}
-                      <div className="d-flex justify-content-center align-items-center">
-                        <Dropdown overlay={getMenu()}>
-                          <img
-                            src="https://demos.creative-tim.com/muse-ant-design-dashboard/static/media/face-1.d85d07a1.jpg"
-                            alt="Profile"
-                            className="rounded-circle"
-                            style={{ width: "35px" }}
-                          />
-                        </Dropdown>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+      <div
+        style={{
+          position: "fixed",
+          top: 10,
+          zIndex: 100,
+          background: "transparent",
+          padding: 0,
+          height: "fit-content",
+          width: props.collapsed ? "calc(100% - 80px)" : "calc(100% - 250px)", // adjust width based on sidebar
+        }}
+      >
+        <div className="Top_Nav">
+          <div className="d-flex justify-content-between align-items-center">
+            <div>
+              <Breadcrumb className="BreadcrumbCustom">
+                <Breadcrumb.Item
+                  active
+                  linkAs={Link}
+                  linkProps={{ to: "/" }}
+                  className="p-0 m-0 LeagueSpartanFamily"
+                >
+                  Admin
+                </Breadcrumb.Item>
+                <Breadcrumb.Item
+                  active
+                  linkAs={Link}
+                  linkProps={{ to: "/" }}
+                  className="p-0 m-0 LeagueSpartanFamily"
+                >
+                  {toSentenceCase(
+                    location.pathname
+                      .split("/")
+                      .filter(Boolean)
+                      .pop()
+                      .replaceAll("-", " ")
+                  )}
+                </Breadcrumb.Item>
+              </Breadcrumb>
+              <h5 className="Page LeagueSpartanFamily">
+                {toSentenceCase(
+                  location.pathname
+                    .split("/")
+                    .filter(Boolean)
+                    .pop()
+                    .replaceAll("-", " ")
+                )}
+              </h5>
+            </div>
+            <div className="rightBlock">
+              <FontAwesomeIcon
+                role="button"
+                icon={faBars}
+                className="menu"
+                onClick={() => props.setCollapsed(!props.collapsed)}
+              />
+              {/* <FontAwesomeIcon icon={faMoon} className="moon" /> */}
+              <div className="d-flex justify-content-center align-items-center">
+                <Dropdown overlay={getMenu()}>
+                  <img
+                    src="https://demos.creative-tim.com/muse-ant-design-dashboard/static/media/face-1.d85d07a1.jpg"
+                    alt="Profile"
+                    className="rounded-circle"
+                    style={{ width: "35px" }}
+                  />
+                </Dropdown>
               </div>
-              <div
-                className="d-none d-md-block"
-                style={{ height: "6.5rem" }}
-              ></div>
             </div>
           </div>
         </div>

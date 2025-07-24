@@ -256,6 +256,9 @@ const ModalComponent = (props) => {
     ? "xl"
     : "lg";
 
+  let submitButtonRender =
+    props?.modalObject?.Action?.toLowerCase() == "view" ? false : true;
+
   return (
     <div>
       <Modal
@@ -356,15 +359,16 @@ const ModalComponent = (props) => {
               )}
             </Button>
           )}
-
-          <button
-            type="button"
-            className="btn bgColor modalBtn"
-            style={{ width: "12.5%", minWidth: "fit-content" }}
-            onClick={handleOk}
-          >
-            Submit
-          </button>
+          {submitButtonRender && (
+            <button
+              type="button"
+              className="btn bgColor modalBtn"
+              style={{ width: "12.5%", minWidth: "fit-content" }}
+              onClick={handleOk}
+            >
+              Submit
+            </button>
+          )}
         </Modal.Footer>
       </Modal>
     </div>

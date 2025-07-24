@@ -8,6 +8,7 @@ import AdviserSmini from "../Assets/Adviser-Simpilicity-mini.png";
 import {
   CRState,
   LoggedInUserData,
+  LoggedInUserTokenJwt,
   OptionRender,
   PersonalDetailsData,
   QuestionDetail,
@@ -20,6 +21,7 @@ import { FaGear, FaPeopleGroup, FaUserTag } from "react-icons/fa6";
 import { FaRegCreditCard, FaTachometerAlt, FaUserTie } from "react-icons/fa";
 import { openNotificationSuccess } from "../Assets/Api/Api";
 import { AiOutlineBank } from "react-icons/ai";
+import { FiLogOut } from "react-icons/fi";
 
 const { SubMenu } = Menu;
 
@@ -35,7 +37,9 @@ const AdminSideBar = (props) => {
   const [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
   const selectedClientDetails = useRecoilValue(SelectedClientDetails);
   const selectedSenario = useRecoilValue(SelectedSenario);
-  const loggedUser = useRecoilValue(LoggedInUserData);
+  const [loggedUser, setLoggedInUserData] = useRecoilState(LoggedInUserData);
+  const [loginTokenJwt, setLoginTokenJwt] =
+    useRecoilState(LoggedInUserTokenJwt);
 
   let superAdmin =
     loggedUser?.roleID?.permissions.includes("superAdmin") || false;
@@ -284,6 +288,22 @@ const AdminSideBar = (props) => {
           </Menu.Item>
         </>
       )}
+
+      {isMobile && (
+        <>
+          <Menu.Item
+            key="/"
+            onClick={() => {
+              setLoggedInUserData({});
+              setLoginTokenJwt({});
+              nav("/");
+            }}
+            icon={<FiLogOut />}
+          >
+           Logout
+          </Menu.Item>
+        </>
+      )}
     </Menu>
   );
 
@@ -319,9 +339,7 @@ const AdminSideBar = (props) => {
         </Drawer>
       ) : (
         // Desktop Sidebar
-        <div
-          className={`AdminSideBar ${props.collapsed ? "collapsed" : ""}`}
-        >
+        <div className={`AdminSideBar ${props.collapsed ? "collapsed" : ""}`}>
           <Menu
             mode="inline"
             inlineCollapsed={props.collapsed}

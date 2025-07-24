@@ -336,9 +336,34 @@ const InstituteAndOffer = (props) => {
             {!listArray.includes(Data.key) ? (
               <div className="row">
                 <div className={`col-md-12 superAdminAccordian mb-4`}>
-                  <Collapse accordion className="superAdminCollapse">
+                  <Collapse
+                    accordion
+                    className="superAdminCollapse"
+                    expandIconPosition="right"
+                    bordered={false}
+                    styles={{
+                      header: {
+                        background: "#36b446",
+                      },
+                    }}
+                  >
                     {bankDetailObj[`${Data.key}`]?.map((elem, index) => (
-                      <Panel header={elem.platformName} key={index}>
+                      <Panel
+                        header={elem.platformName}
+                        key={index}
+                        styles={{
+                          header: {
+                            background: "#36b446",
+                            color: "white",
+                            borderRadius: "10px",
+                          },
+                          body: {
+                            borderRadius: "0px 0px 10px 10px",
+                            border: "1px solid #36b446",
+                            borderTop: "none",
+                          },
+                        }}
+                      >
                         <div className="row">
                           <div className="col-md-4">
                             <div className="customCard">

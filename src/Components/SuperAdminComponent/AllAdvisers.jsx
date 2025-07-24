@@ -5,7 +5,12 @@ import { FaRegEdit, FaRegFileAlt, FaTrashAlt } from "react-icons/fa";
 import { Button, Input, Modal, Select, Tag } from "antd";
 import ModalComponent from "../Questions/FinancialInvestments/ModalComponent";
 import SubscriptionForms from "./SubscriptionForms";
-import { openNotificationSuccess, toSentenceCase } from "../Assets/Api/Api";
+import {
+  openNotificationSuccess,
+  PatchAxios,
+  PostAxios,
+  toSentenceCase,
+} from "../Assets/Api/Api";
 import AdviserFrom from "./AdviserFrom";
 import {
   Advisers,
@@ -50,13 +55,13 @@ const AllAdvisers = () => {
     {
       title: "#",
       key: "index",
-      // fixed: "left",
+      fixed: "left",
       render: (text, _, index) => index + 1 || "--",
     },
     {
       title: "Name",
       key: "name",
-      // fixed: "left",
+      fixed: "left",
       render: (text, row) => {
         return (
           <span>
@@ -79,9 +84,9 @@ const AllAdvisers = () => {
         const status = row.isActive;
 
         const statusMap = {
-          Active: {
+          Enabled: {
             color: "green",
-            text: "Active",
+            text: "Enabled",
             icon: <FaCircleCheck />,
           },
           Disabled: {
@@ -91,7 +96,7 @@ const AllAdvisers = () => {
           },
         };
 
-        const tag = statusMap[status ? "Active" : "Disabled"];
+        const tag = statusMap[status ? "Enabled" : "Disabled"];
 
         return (
           <Tag
@@ -126,9 +131,21 @@ const AllAdvisers = () => {
       },
     },
     {
+      title: "Created at",
+      key: "createdAt",
+      render: (text, row) => {
+        const date = new Date(row.createdAt);
+        return date.toLocaleDateString("en-Au", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        });
+      },
+    },
+    {
       title: "Operations",
       key: "operations",
-      // fixed: "right",
+      fixed: "right",
       render: (text, row, index) => (
         <DropDownOptions
           menuItems={getDowpdownOptions(row)}
@@ -250,12 +267,31 @@ const AllAdvisers = () => {
       cancelText: "Cancel",
       centered: true,
       onOk: async () => {
-        openNotificationSuccess(
-          "error",
-          "topRight",
-          "Delete Failed",
-          "An error occurred while deleting the order."
-        );
+        try {
+          setLoading(true);
+          let res = await PatchAxios(DefaultUrl + "/api/user/softDelete", {
+            _id: id,
+          });
+          if (res) {
+            setAdvisers((prev) => prev.filter((item) => item._id !== id));
+            openNotificationSuccess(
+              "success",
+              "topRight",
+              "Adviser Deleted",
+              "Adviser is deleted successfully"
+            );
+          }
+        } catch (error) {
+          console.log(error);
+          openNotificationSuccess(
+            "error",
+            "topRight",
+            "Delete Failed",
+            "An error occurred while deleting the adviser."
+          );
+        } finally {
+          setLoading(false);
+        }
       },
     });
   };

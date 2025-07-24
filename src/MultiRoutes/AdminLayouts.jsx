@@ -74,7 +74,6 @@ const AdminLayouts = () => {
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
-        collapsible
         collapsed={collapsed}
         onCollapse={(val) => setCollapsed(val)}
         width={250}
@@ -87,12 +86,28 @@ const AdminLayouts = () => {
         <AdminSideBar collapsed={collapsed} setCollapsed={setCollapsed} />
       </Sider>
 
-      <Layout >
-        <Header style={{ background: "#fff", padding: 0 }}>
+      <Layout
+        style={{
+          background: "#fff",
+        }}
+      >
+        <Header
+          style={{
+            background: "#fff",
+            padding: 0,
+          }}
+        >
           <AdminTopMenu collapsed={collapsed} setCollapsed={setCollapsed} />
         </Header>
 
-        <Content style={{ margin: "16px", padding: 16, background: "#fff" }}>
+        <Content
+          style={{
+            margin: "16px",
+            background: "#fff",
+            height: "100%", // allow scrolling inside
+            padding: "1rem 0rem",
+          }}
+        >
           <Routes>
             {superAdmin.map((elem, index) => (
               <Route

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import { Row, Table } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 import { Advisers, defaultUrl, Subscriptions } from "../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
@@ -10,18 +10,26 @@ import {
   PatchAxios,
   PostAxios,
 } from "../Assets/Api/Api";
-import { ConfigProvider, Input, Select } from "antd";
+import { Col, ConfigProvider, Input, Select, Row } from "antd";
+import { content } from "../../Content/Content";
 
 const AdviserFrom = (props) => {
+  const { AdviserObject } = content;
+  const { TextArea } = Input;
+
   let initialValues = {
     firstName: "",
     lastName: "",
     email: "",
     phoneNumber: "",
     companyName: "",
+    LicenseeName: "",
     ABN: "",
-    streetAddress: "",
+    companyAddress: "",
     state: "",
+    ASIC: "",
+    AFSNumber: "",
+    AFSName: "",
   };
 
   let DefaultUrl = useRecoilValue(defaultUrl);
@@ -30,31 +38,33 @@ const AdviserFrom = (props) => {
   let [isDisabled, setIsdisabled] = useState(false);
   let [isDisabledPlanCod, setIsdisabledPlanCod] = useState(false);
 
-  let fillInitialValues = (setFieldValue) => {
-    // console.log(props.modalObject);
-    if (props.modalObject.Action.toLowerCase() == "edit") {
-      let Data = props.modalObject.row;
-      setFieldValue("firstName", Data.firstName);
-      setFieldValue("lastName", Data.lastName);
-      setFieldValue("email", Data.email);
-      setFieldValue("phoneNumber", Data.phoneNumber);
-      setFieldValue("companyName", Data.companyName);
-      setFieldValue("ABN", Data.ABN);
-      setFieldValue("streetAddress", Data.streetAddress);
-      setFieldValue("state", Data.state);
-      // setFieldValue("subscriptionName", Data.subscriptionName);
+  const fillInitialValues = (setFieldValue) => {
+    const { Action, row: Data } = props.modalObject;
+    const action = Action.toLowerCase();
+
+    const fieldsToSet = [
+      "firstName",
+      "lastName",
+      "email",
+      "phoneNumber",
+      "companyName",
+      "LicenseeName",
+      "ABN",
+      "companyAddress",
+      "state",
+      "ASIC",
+      "AFSNumber",
+      "AFSName",
+      // "subscriptionName", // Uncomment if needed
+    ];
+
+    fieldsToSet.forEach((field) => {
+      setFieldValue(field, Data[field] ?? "");
+    });
+
+    if (action === "edit") {
       setIsdisabledPlanCod(true);
-    } else if (props.modalObject.Action.toLowerCase() == "view") {
-      let Data = props.modalObject.row;
-      setFieldValue("firstName", Data.firstName);
-      setFieldValue("lastName", Data.lastName);
-      setFieldValue("email", Data.email);
-      setFieldValue("phoneNumber", Data.phoneNumber);
-      setFieldValue("companyName", Data.companyName);
-      setFieldValue("ABN", Data.ABN);
-      setFieldValue("streetAddress", Data.streetAddress);
-      setFieldValue("state", Data.state);
-      // setFieldValue("subscriptionName", Data.subscriptionName);
+    } else if (action === "view") {
       setIsdisabled(true);
     }
   };
@@ -115,41 +125,103 @@ const AdviserFrom = (props) => {
       name: "firstName",
       type: "text",
       placeholder: "First Name",
+      column: 3,
+      disabled: isDisabled,
     },
     {
       name: "lastName",
       type: "text",
       placeholder: "Last Name",
+      column: 3,
+      disabled: isDisabled,
     },
     {
       name: "email",
       type: "text",
       placeholder: "Email Address",
+      column: 3,
+      disabled: isDisabled,
     },
     {
       name: "phoneNumber",
       type: "text",
       placeholder: "Phone Number",
+      column: 3,
+      disabled: isDisabled,
     },
     {
       name: "companyName",
       type: "text",
       placeholder: "Company Name",
+      column: 3,
+      disabled: isDisabled,
+    },
+    {
+      name: "LicenseeName",
+      type: "text",
+      placeholder: "Licensee Name",
+      column: 3,
+      disabled: isDisabled,
     },
     {
       name: "ABN",
       type: "text",
       placeholder: "ABN",
+      column: 3,
+      disabled: isDisabled,
     },
     {
-      name: "streetAddress",
+      name: "companyAddress",
       type: "text",
-      placeholder: "Street Address",
+      placeholder: "Company Address",
+      column: 3,
+      disabled: isDisabled,
     },
     {
       name: "state",
       type: "text",
       placeholder: "State",
+      column: 3,
+      disabled: isDisabled,
+    },
+    {
+      name: "ASIC",
+      type: "text",
+      placeholder: "ASIC Number",
+      column: 3,
+      disabled: isDisabled,
+    },
+    {
+      name: "AFSNumber",
+      type: "select",
+      placeholder: "AFS Number",
+      options: [
+        ...AdviserObject.map((item) => ({
+          label: item.AFSNumber,
+          value: item.AFSNumber,
+        })),
+      ],
+      action: (setFieldvalue, value) => {
+        if (value) {
+          let selectedAdviser = AdviserObject.find(
+            (item) => item.AFSNumber === value
+          );
+          if (selectedAdviser) {
+            setFieldvalue("AFSName", selectedAdviser.AFSName);
+          }
+        }
+      },
+      column: 3,
+      disabled: isDisabled,
+    },
+    {
+      name: "AFSName",
+      type: "textarea",
+      readOnly: true,
+      placeholder: "AFS Name",
+      column: 3,
+      rows: 3,
+      disabled: isDisabled,
     },
   ];
 
@@ -167,113 +239,140 @@ const AdviserFrom = (props) => {
 
         return (
           <Form>
-            <Row>
-              <div className="col-md-12 All_Client reportSection">
-                <div className="row justify-content-center mt-4 d-none">
-                  <Table striped bordered responsive hover>
-                    <thead>
-                      <tr>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Email Address</th>
-                        <th>Phone number</th>
-                        <th>Address</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <DynamicTableRow
-                        rowConfig={rowConfig.map((row) =>
-                          row.name === "paymentRaferenceNo"
-                            ? {
-                                ...row,
-                                disabled: values.paymentMethod !== "Online",
-                              }
-                            : row
-                        )}
-                        values={values}
-                        setFieldValue={setFieldValue}
-                        handleChange={handleChange}
-                        handleBlur={handleBlur}
-                      />
-                    </tbody>
-                  </Table>
-                </div>
-                <div className="d-flex flex-wrap gap-3">
-                  {rowConfig.map((item, index) => {
-                    // Check if it's the last field and there are odd number of fields
-                    const isLast = index === rowConfig.length - 1;
-                    const isOdd = rowConfig.length % 2 !== 0;
-                    const shouldTakeFullWidth = isOdd && isLast;
-
-                    return (
-                      <div
-                        key={index}
-                        className="form-item"
-                        style={{
-                          flex: shouldTakeFullWidth
-                            ? "1 1 100%"
-                            : "1 1 calc(50% - 0.75rem)",
-                          minWidth: "250px",
-                        }}
+            <div className="col-md-12 All_Client reportSection">
+              <div className="row justify-content-center mt-4 d-none">
+                <Table striped bordered responsive hover>
+                  <thead>
+                    <tr>
+                      <th>First Name</th>
+                      <th>Last Name</th>
+                      <th>Email Address</th>
+                      <th>Phone number</th>
+                      <th>Address</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <DynamicTableRow
+                      rowConfig={rowConfig.map((row) =>
+                        row.name === "paymentRaferenceNo"
+                          ? {
+                              ...row,
+                              disabled: values.paymentMethod !== "Online",
+                            }
+                          : row
+                      )}
+                      values={values}
+                      setFieldValue={setFieldValue}
+                      handleChange={handleChange}
+                      handleBlur={handleBlur}
+                    />
+                  </tbody>
+                </Table>
+              </div>
+              <Row gutter={[16, 16]}>
+                {rowConfig.map((item, index) => {
+                  // Check if it's the last field and there are odd number of fields
+                  const isLast = index === rowConfig.length - 1;
+                  const isOdd = rowConfig.length % 2 !== 0;
+                  const shouldTakeFullWidth = isOdd && isLast;
+                  const columnSpan = Math.floor(24 / item.column);
+                  return (
+                    <Col
+                      key={index}
+                      xs={24}
+                      sm={24}
+                      md={columnSpan}
+                      lg={columnSpan}
+                      xl={columnSpan}
+                      style={{ minWidth: 250 }}
+                    >
+                      <label
+                        htmlFor={item.name}
+                        className="fw-bold"
+                        style={{ fontSize: "15px" }}
                       >
-                        <label
-                          htmlFor={item.name}
-                          className="fw-bold"
-                          style={{ fontSize: "15px" }}
-                        >
-                          {item.placeholder}:
-                        </label>
+                        {item.placeholder}:
+                      </label>
 
-                        <Field name={item.name}>
-                          {({ field, form }) =>
-                            item.type === "select" ? (
-                              <ConfigProvider
-                                getPopupContainer={(trigger) =>
-                                  trigger.parentNode
-                                }
-                              >
-                                <Select
-                                  {...field}
-                                  id={item.name}
-                                  style={{ width: "100%" }}
-                                  placeholder={item.placeholder}
-                                  size="large"
-                                  options={item.options}
-                                  onChange={(value) =>
-                                    form.setFieldValue(item.name, value)
-                                  }
-                                  onBlur={() =>
-                                    form.setFieldTouched(item.name, true)
-                                  }
-                                  getPopupContainer={(triggerNode) =>
-                                    triggerNode.parentNode
-                                  }
-                                />
-                              </ConfigProvider>
-                            ) : (
-                              <Input
+                      <Field name={item.name}>
+                        {({ field, form }) =>
+                          item.type === "select" ? (
+                            <ConfigProvider
+                              getPopupContainer={(trigger) =>
+                                trigger.parentNode
+                              }
+                            >
+                              <Select
                                 {...field}
                                 id={item.name}
-                                type={item.type}
+                                style={{ width: "100%" }}
                                 placeholder={item.placeholder}
                                 size="large"
-                                className="w-100"
+                                options={item.options}
+                                showSearch
+                                optionFilterProp="label"
+                                filterOption={(input, option) =>
+                                  (option?.label ?? "")
+                                    .toLowerCase()
+                                    .includes(input.toLowerCase())
+                                }
+                                filterSort={(optionA, optionB) =>
+                                  (optionA?.label ?? "")
+                                    .toLowerCase()
+                                    .localeCompare(
+                                      (optionB?.label ?? "").toLowerCase()
+                                    )
+                                }
+                                onChange={(value) => {
+                                  form.setFieldValue(item.name, value);
+                                  item.action?.(form.setFieldValue, value); // optional chaining in case action is not provided
+                                }}
+                                onBlur={() =>
+                                  form.setFieldTouched(item.name, true)
+                                }
+                                getPopupContainer={(triggerNode) =>
+                                  triggerNode.parentNode
+                                }
+                                disabled={item.disabled}
+                                readOnly={item.readOnly}
                               />
-                            )
-                          }
-                        </Field>
+                            </ConfigProvider>
+                          ) : item.type === "textarea" ? (
+                            <TextArea
+                              {...field}
+                              id={item.name}
+                              placeholder={item.placeholder}
+                              size="large"
+                              rows={item.rows || 4} // You can customize the number of rows from config
+                              className="w-100"
+                              disabled={item.disabled}
+                              readOnly={item.readOnly}
+                            />
+                          ) : (
+                            <Input
+                              {...field}
+                              id={item.name}
+                              type={item.type}
+                              placeholder={item.placeholder}
+                              size="large"
+                              className="w-100"
+                              disabled={item.disabled}
+                              readOnly={item.readOnly}
+                            />
+                          )
+                        }
+                      </Field>
 
-                        <ErrorMessage
-                          name={item.name}
-                          component="div"
-                          className="text-danger mt-1"
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </Row>
+                      <ErrorMessage
+                        name={item.name}
+                        component="div"
+                        className="text-danger mt-1"
+                      />
+                    </Col>
+                  );
+                })}
+              </Row>
+            </div>
           </Form>
         );
       }}
