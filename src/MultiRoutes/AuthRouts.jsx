@@ -53,21 +53,24 @@ function AuthRouts() {
         <Options collapsed={collapsed} setCollapsed={setCollapsed} />
         <Routes>
           <Route
-            path="/Dashboard"
+            path="/dashboard"
             element={<Dashboard collapsed={collapsed} />}
           />
 
-          <Route path="/All-Clients" element={<AllClients />} />
-          <Route path="/View-Client" element={<ViewClient />} />
+          <Route path="/all-client" element={<AllClients />} />
+          <Route path="/view-client" element={<ViewClient />} />
 
-          <Route path="/PersonalDetail" element={<PersonalDetailNew />} />
-          <Route path="/PersonalDetailOld" element={<PersonalDetail_Edit />} />
-
-          <Route path="/ImportantQuestion" element={<ImportantQuestion />} />
-          {/* Questions ROUTING */}
-          <Route path="/Questions" element={<Questions />} />
+          <Route path="/personal-detail" element={<PersonalDetailNew />} />
           <Route
-            path="/PersonalIncome"
+            path="/personal-detail-old"
+            element={<PersonalDetail_Edit />}
+          />
+
+          <Route path="/important-question" element={<ImportantQuestion />} />
+          {/* Questions ROUTING */}
+          <Route path="/questions" element={<Questions />} />
+          <Route
+            path="/personal-income"
             element={
               <QuestionsNew>
                 <PersonalIncome />
@@ -75,7 +78,7 @@ function AuthRouts() {
             }
           />
           <Route
-            path="/PersonalAssets"
+            path="/personal-assets"
             element={
               <QuestionsNew>
                 <AdditionalQueriesPersonalAssets />
@@ -83,7 +86,7 @@ function AuthRouts() {
             }
           />
           <Route
-            path="/FinancialInvestments"
+            path="/financial-investments"
             element={
               <QuestionsNew>
                 <FinancialInvestments />
@@ -91,7 +94,7 @@ function AuthRouts() {
             }
           />
           <Route
-            path="/SuperAndRetirement"
+            path="/super-and-retirement"
             element={
               <QuestionsNew>
                 <AdditionalQueriesSuperAndRetirement />
@@ -99,7 +102,7 @@ function AuthRouts() {
             }
           />
           <Route
-            path="/Lifestyle"
+            path="/life-Style"
             element={
               <QuestionsNew>
                 <LifestyleAssetsAndDebt />
@@ -107,7 +110,7 @@ function AuthRouts() {
             }
           />
           <Route
-            path="/Investment"
+            path="/investment"
             element={
               <QuestionsNew>
                 <AdditionalQueriesInvestment />
@@ -115,7 +118,7 @@ function AuthRouts() {
             }
           />
           <Route
-            path="/EstatePlanning"
+            path="/estate-planning"
             element={
               <QuestionsNew>
                 <EstatePlanning />
@@ -123,7 +126,7 @@ function AuthRouts() {
             }
           />
           <Route
-            path="/ProfessionalAdvisor"
+            path="/professional-advisor"
             element={
               <QuestionsNew>
                 <AdditionalQueriesProfessionalAdvisor />
@@ -132,7 +135,7 @@ function AuthRouts() {
           />
           {/* APi Integration Left */}
           <Route
-            path="/PersonalInsurance"
+            path="/personal-insurance"
             element={
               <QuestionsNew>
                 <PersonalInsuranceLife />
@@ -140,7 +143,7 @@ function AuthRouts() {
             }
           />
           <Route
-            path="/BusinessEntities"
+            path="/business-entities"
             element={
               <QuestionsNew>
                 <BusinessEntities />
@@ -156,18 +159,18 @@ function AuthRouts() {
             }
           />
           <Route
-            path="/FamilyTrust"
+            path="/family-trust"
             element={
               <QuestionsNew>
                 <QuestionsFamily />
               </QuestionsNew>
             }
           />
-          <Route path="/Goals-And-Objectives" element={<GoalsObjectiveNew />} />
-          <Route path="/Risk-Profile/*" element={<RiskProfileNew />} />
-          <Route path="/CDF_Prospects" element={<CDFclients />} />
+          <Route path="/goals-and-objectives" element={<GoalsObjectiveNew />} />
+          <Route path="/risk-profile/*" element={<RiskProfileNew />} />
+          <Route path="/CDF-prospects" element={<CDFclients />} />
           <Route path="/profile" element={<ProfileTemp />} />
-          <Route path="/My-Team" element={<MyTeam />} />
+          <Route path="/my-team" element={<MyTeam />} />
         </Routes>
       </div>
     </div>

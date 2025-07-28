@@ -355,12 +355,11 @@ const InstituteAndOffer = (props) => {
                           header: {
                             background: "#36b446",
                             color: "white",
-                            borderRadius: "10px",
                           },
                           body: {
-                            borderRadius: "0px 0px 10px 10px",
                             border: "1px solid #36b446",
                             borderTop: "none",
+                            paddingTop: "1rem",
                           },
                         }}
                       >

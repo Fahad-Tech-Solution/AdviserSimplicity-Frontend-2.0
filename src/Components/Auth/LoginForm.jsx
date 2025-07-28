@@ -43,88 +43,94 @@ const LoginForm = () => {
     }
   }, [location]);
 
-  let onSubmit = async (values) => {
-    console.log(values);
-    let payload = {
+  const onSubmit = async (values) => {
+    console.log("Form Values:", values);
+
+    const payload = {
       email: values.email.toLowerCase(),
       passwordHash: values.passwordHash.trim(),
     };
+
     try {
       setLoading(true);
       setLoginError(false);
-      let res = await PostAxios(defaultApi + "/api/auth/login", payload);
-      console.log(res);
-      if (res?.user) {
-        localStorage.setItem("loggedInEmail", payload.email);
-        let userData = res?.user;
 
-        setLoggedUser(userData);
-        setLoggedUserToken(res.token);
+      const res = await PostAxios(`${defaultApi}/api/auth/login`, payload);
+      console.log("Login Response:", res);
 
-        if (
-          SuperAdminFlag &&
-          userData?.roleID?.permissions.includes("superAdmin")
-        ) {
-          console.log("superAdmin logged in");
-          navigate("/super/admin/dashboard");
-          return false;
-        } else if (
-          !SuperAdminFlag &&
-          userData?.roleID?.permissions.includes("superAdmin")
-        ) {
-          // throw error with status = 403
-          throw {
-            status: 401,
-            response: { data: { message: "Access denied" } },
-          };
-        }
+      const userData = res?.user;
+      const token = res?.token;
 
-        // Compare timestamps (convert to string or number if needed)
-        if (userData?.passwordUpdatedAt && userData?.createdAt) {
-          const createdAt = new Date(userData.createdAt);
-          const passwordUpdatedAt = new Date(userData.passwordUpdatedAt);
-          const diffMs = Math.abs(passwordUpdatedAt - createdAt);
-
-          if (diffMs < 2 * 60 * 1000) {
-            // less than 2 minutes
-            localStorage.setItem("dummyPassword", true);
-            navigate("/pricing-table");
-          } else {
-            navigate("/user/dashboard");
-          }
-        } else {
-          // fallback if timestamps are missing
-          // navigate("/Dashboard");
-        }
+      if (!userData || !token) {
+        throw {
+          status: 401,
+          response: { data: { message: "Invalid login response" } },
+        };
       }
 
-      // sessionStorage.setItem("email", values.email);
-      // navigate("/ChangePassword");
-    } catch (error) {
-      console.log(error);
-      if (error.status === 401) {
-        setLoginError(true);
-        openNotificationSuccess(
-          "error",
-          "topRight",
-          "Login failed",
-          "Incorrect email or password."
-        );
-      } else if (error.status === 403) {
-        openNotificationSuccess(
-          "error",
-          "topRight",
-          "Login failed",
-          error?.response?.data?.message || "Something went wrong."
-        );
+      userData.subscription = res?.subscription || null;
+
+      // Store data
+      localStorage.setItem("loggedInEmail", payload.email);
+      setLoggedUser(userData);
+      setLoggedUserToken(token);
+
+      const isSuperAdmin = userData?.roleID?.permissions.includes("superAdmin");
+
+      // Handle SuperAdminFlag logic
+      if (SuperAdminFlag && isSuperAdmin) {
+        console.log("SuperAdmin logged in");
+        return navigate("/super/admin/dashboard");
+      }
+
+      if (SuperAdminFlag && !isSuperAdmin) {
+        throw {
+          status: 401,
+          response: { data: { message: "Access denied" } },
+        };
+      }
+
+      if (!SuperAdminFlag && isSuperAdmin) {
+        throw {
+          status: 401,
+          response: { data: { message: "Access denied" } },
+        };
+      }
+
+      // Dates
+      const createdAt = new Date(userData.createdAt);
+      const passwordUpdatedAt = new Date(userData.passwordUpdatedAt || 0);
+      const passwordUpdated = passwordUpdatedAt - createdAt > 2 * 60 * 1000;
+
+      // REDIRECT PRIORITY HANDLING
+
+      if (!userData?.subscription?.valid) {
+        // Case 1: No subscription
+        localStorage.setItem("dummyPassword", true);
+        navigate("/pricing-table");
+      } else if (!passwordUpdated) {
+        // Case 2: Password not updated
+        navigate("/change-password");
+      } else if (!userData.isActive) {
+        // Case 3: User not active
+        setLoggedUserToken(""); // optionally clear token
+        navigate(`/user/warning?message=${res.action}`);
       } else {
-        openNotificationSuccess(
-          "error",
-          "topRight",
-          "Login failed",
-          "Something went wrong."
-        );
+        // Case 4: All good
+        navigate("/user/dashboard");
       }
+    } catch (error) {
+      console.error("Login error:", error);
+
+      const message = error?.response?.data?.message || "Something went wrong.";
+
+      if (error.status === 401 || error.status === 403) {
+        setLoginError(true);
+        openNotificationSuccess("error", "topRight", "Login failed", message);
+      } else {
+        openNotificationSuccess("error", "topRight", "Login failed", message);
+      }
+
       setLoggedUser({});
       setLoggedUserToken("");
     } finally {

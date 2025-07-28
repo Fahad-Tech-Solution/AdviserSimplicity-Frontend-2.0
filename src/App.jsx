@@ -29,6 +29,7 @@ import { Spin } from "antd";
 import "./App.css";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import Unauthorized from "./Components/Auth/Unauthorized";
+import Warning from "./Components/SuperAdminComponent/Warning";
 
 function ProtectedRoute({ element: Element, requiredPermissions = [] }) {
   const user = useRecoilValue(LoggedInUserData);
@@ -80,6 +81,7 @@ function App() {
       <Routes>
         {/* ✅ Public Routes */}
         <Route path="/user/login" element={<LoginForm />} />
+        <Route path="/user/warning" element={<Warning />} />
         <Route path="/user/register" element={<Register />} />
         <Route path="/user/verify-email" element={<VerifyEmail />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
@@ -101,7 +103,10 @@ function App() {
         <Route
           path="/user/cashflow/*"
           element={
-            <ProtectedRoute element={CashFlow} requiredPermissions={["user"]} />
+            <ProtectedRoute
+              element={CashFlow}
+              requiredPermissions={["cashflow"]}
+            />
           }
         />
         <Route
@@ -109,7 +114,7 @@ function App() {
           element={
             <ProtectedRoute
               element={AuthRouts}
-              requiredPermissions={["user", "admin"]}
+              requiredPermissions={["fact find", "prospects"]}
             />
           }
         />

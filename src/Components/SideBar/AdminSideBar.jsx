@@ -21,7 +21,7 @@ import { FaGear, FaPeopleGroup, FaUserTag } from "react-icons/fa6";
 import { FaRegCreditCard, FaTachometerAlt, FaUserTie } from "react-icons/fa";
 import { openNotificationSuccess } from "../Assets/Api/Api";
 import { AiOutlineBank } from "react-icons/ai";
-import { FiLogOut } from "react-icons/fi";
+import { FiLogOut, FiUser } from "react-icons/fi";
 
 const { SubMenu } = Menu;
 
@@ -154,6 +154,20 @@ const AdminSideBar = (props) => {
       >
         Dashboard
       </Menu.Item>
+
+      {isMobile && (
+        <>
+          <Menu.Item
+            key={superAdmin ? "/super/admin/profile" : "/user/profile"}
+            onClick={() => {
+              nav(superAdmin ? "/super/admin/profile" : "/user/profile");
+            }}
+            icon={<FiUser />}
+          >
+            Profile
+          </Menu.Item>
+        </>
+      )}
 
       {!superAdmin && (
         <>
@@ -300,7 +314,7 @@ const AdminSideBar = (props) => {
             }}
             icon={<FiLogOut />}
           >
-           Logout
+            Logout
           </Menu.Item>
         </>
       )}

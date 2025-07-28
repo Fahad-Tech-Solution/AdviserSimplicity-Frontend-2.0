@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { Table } from "react-bootstrap";
-import { Advisers, defaultUrl, Subscriptions } from "../../Store/Store";
+import { Advisers, defaultUrl, Roles, Subscriptions } from "../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   openNotificationSuccess,
@@ -35,6 +35,7 @@ const AdviserFrom = (props) => {
   let DefaultUrl = useRecoilValue(defaultUrl);
   let subscriptions = useRecoilValue(Subscriptions);
   let [advisers, setAdvisers] = useRecoilState(Advisers);
+  let roles = useRecoilValue(Roles);
   let [isDisabled, setIsdisabled] = useState(false);
   let [isDisabledPlanCod, setIsdisabledPlanCod] = useState(false);
 
@@ -75,6 +76,12 @@ const AdviserFrom = (props) => {
       values.passwordHash = passwordGenerator(12);
       console.log(values);
       if (props.modalObject.Action.toLowerCase() == "newadviser") {
+        values.roleID = roles.find(
+          (item) =>
+            item.permissions.include("fact find") &&
+            item.permissions.include("cashflow") &&
+            item.permissions.include("prospects")
+        )._id;
         res = await PostAxios(DefaultUrl + "/api/user/Add/Adviser", values);
         if (res) {
           console.log(res);

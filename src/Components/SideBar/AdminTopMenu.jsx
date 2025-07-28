@@ -36,6 +36,9 @@ const AdminTopMenu = (props) => {
   let [loggedInUserData, setLoggedInUserData] =
     useRecoilState(LoggedInUserData);
 
+  let superAdminRole =
+    loggedInUserData?.roleID?.permissions.includes("superAdmin") || false;
+
   let [items, setItems] = useState([]);
   let { superAdmin } = content;
 
@@ -156,6 +159,7 @@ const AdminTopMenu = (props) => {
     "/super/admin/all-advisers",
     "/super/admin/all-roles",
     "/super/admin/dashboard",
+    "/super/admin/profile",
   ];
 
   const getMenu = (row) => (
@@ -174,7 +178,7 @@ const AdminTopMenu = (props) => {
             fontWeight: "600",
           }}
           onClick={() => {
-            Nev("/profile");
+            Nev(superAdminRole ? "/super/admin/profile" : "/user/profile");
           }}
         >
           Profile
@@ -189,7 +193,7 @@ const AdminTopMenu = (props) => {
           }}
           onClick={() => {
             setLoggedInUserData({});
-            Nev("/");
+            Nev("/admin/login");
           }}
         >
           Logout <FiLogOut />
@@ -210,6 +214,7 @@ const AdminTopMenu = (props) => {
           height: "fit-content",
           width: props.collapsed ? "calc(100% - 80px)" : "calc(100% - 250px)", // adjust width based on sidebar
         }}
+        className="d-md-block d-none"
       >
         <div className="Top_Nav">
           <div className="d-flex justify-content-between align-items-center">
@@ -248,7 +253,7 @@ const AdminTopMenu = (props) => {
                 )}
               </h5>
             </div>
-            <div className="rightBlock">
+            <div className="rightBlock d-flex justify-content-around align-items-center">
               <FontAwesomeIcon
                 role="button"
                 icon={faBars}
@@ -259,7 +264,7 @@ const AdminTopMenu = (props) => {
               <div className="d-flex justify-content-center align-items-center">
                 <Dropdown overlay={getMenu()}>
                   <img
-                    src="https://demos.creative-tim.com/muse-ant-design-dashboard/static/media/face-1.d85d07a1.jpg"
+                    src="https://i.pinimg.com/736x/c7/9a/37/c79a37e13ef14be556b51143bcbb1b01.jpg"
                     alt="Profile"
                     className="rounded-circle"
                     style={{ width: "35px" }}
@@ -276,7 +281,10 @@ const AdminTopMenu = (props) => {
   return (
     <div className="container-fluid overflow-hidden">
       <div className="row">
-        <div className="col-md-12" style={{ padding: "20px 0px 0px 0px" }}>
+        <div
+          className="col-md-12 overflow-auto"
+          style={{ padding: "20px 0px 0px 0px" }}
+        >
           <ConfigProvider
             theme={{
               components: {

@@ -18,7 +18,7 @@ const StripeRedirect = () => {
         subTitle="Thank you for your purchase. Your subscription is now active."
         icon={<SmileOutlined />}
         extra={
-          <Button type="primary" href="/ChangePassword">
+          <Button type="primary" href="/change-password">
             Next step
           </Button>
         }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
-import { Layout } from "antd";
+import { Grid, Layout } from "antd";
 import AdminSideBar from "../Components/SideBar/AdminSideBar";
 import AdminTopMenu from "../Components/SideBar/AdminTopMenu";
 import InstituteAndOffer from "../Components/SuperAdminComponent/InstituteAndOffer";
@@ -18,10 +18,15 @@ import {
   Roles,
   Subscriptions,
 } from "../Store/Store";
+import ProfileTemp from "../Components/Assets/ProfileSection/ProfileTemp";
 
 const { Sider, Header, Content } = Layout;
+const { useBreakpoint } = Grid;
 
 const AdminLayouts = () => {
+  const screens = useBreakpoint();
+  const isMobile = !screens.md; // consider below md as mobile
+
   const [collapsed, setCollapsed] = useState(true);
   const [reload, setReload] = useState(true);
   const { superAdmin } = content;
@@ -73,18 +78,22 @@ const AdminLayouts = () => {
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Sider
-        collapsed={collapsed}
-        onCollapse={(val) => setCollapsed(val)}
-        width={250}
-        style={{
-          background: "#fff",
-          transition: "width 0.2s ease",
-          boxShadow: "2px 0 6px rgba(0,0,0,0.1)",
-        }}
-      >
+      {!isMobile ? (
+        <Sider
+          collapsed={collapsed}
+          onCollapse={(val) => setCollapsed(val)}
+          width={250}
+          style={{
+            background: "#fff",
+            transition: "width 0.2s ease",
+            boxShadow: "2px 0 6px rgba(0,0,0,0.1)",
+          }}
+        >
+          <AdminSideBar collapsed={collapsed} setCollapsed={setCollapsed} />
+        </Sider>
+      ) : (
         <AdminSideBar collapsed={collapsed} setCollapsed={setCollapsed} />
-      </Sider>
+      )}
 
       <Layout
         style={{
@@ -97,7 +106,11 @@ const AdminLayouts = () => {
             padding: 0,
           }}
         >
-          <AdminTopMenu collapsed={collapsed} setCollapsed={setCollapsed} />
+          <AdminTopMenu
+            isMobile={isMobile}
+            collapsed={collapsed}
+            setCollapsed={setCollapsed}
+          />
         </Header>
 
         <Content
@@ -119,6 +132,7 @@ const AdminLayouts = () => {
             {SuperAdminPages.map((elem, index) => (
               <Route key={index} path={elem.route} element={elem.element} />
             ))}
+            <Route path="/profile" element={<ProfileTemp />} />
           </Routes>
         </Content>
       </Layout>

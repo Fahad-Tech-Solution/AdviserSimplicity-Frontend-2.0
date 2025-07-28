@@ -336,7 +336,7 @@ function Options(props) {
                       <div className="d-flex justify-content-center align-items-center">
                         <Dropdown overlay={getMenu()}>
                           <img
-                            src="https://demos.creative-tim.com/muse-ant-design-dashboard/static/media/face-1.d85d07a1.jpg"
+                            src="https://i.pinimg.com/736x/c7/9a/37/c79a37e13ef14be556b51143bcbb1b01.jpg"
                             alt="Profile"
                             className="rounded-circle"
                             style={{ width: "35px" }}

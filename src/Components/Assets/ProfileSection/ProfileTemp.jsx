@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import banner from "../Adviser-Simplicity-Profile-Green-Banner.png";
 import { Image } from "react-bootstrap";
 import { Image as AntdImage } from "antd";
@@ -7,46 +7,73 @@ import { FaEdit, FaPowerOff } from "react-icons/fa";
 import Dynamiclist from "./Dynamiclist";
 import { FiLogOut } from "react-icons/fi";
 import { MdEdit } from "react-icons/md";
+import { useRecoilState } from "recoil";
+import { LoggedInUserData, LoggedInUserTokenJwt } from "../../../Store/Store";
+import { useNavigate } from "react-router-dom";
+import { toSentenceCase } from "../Api/Api";
+import ModalComponent from "../../Questions/FinancialInvestments/ModalComponent";
+import AdviserFrom from "../../SuperAdminComponent/AdviserFrom";
 
 const ProfileTemp = () => {
   const sharedItemStyle = {
     style: { textAlign: "left" }, // style for the content cell (children)
   };
+  let Nev = useNavigate();
+  let [flagState, setFlagState] = useState(false);
+  let [modalObject, setModalObject] = useState({});
 
+  let [loggedInUserData, setLoggedInUserData] =
+    useRecoilState(LoggedInUserData);
+
+  let [loggedInUserTokken, setLoggedInUserTokken] =
+    useRecoilState(LoggedInUserTokenJwt);
+
+  let superAdminRole =
+    loggedInUserData?.roleID?.permissions.includes("superAdmin") || false;
   const userItems = [
     {
       label: "First Name",
-      children: "John",
+      children: toSentenceCase(loggedInUserData?.firstName) || "Guest",
       ...sharedItemStyle,
     },
     {
       label: "Last Name",
-      children: "Doe",
+      children: toSentenceCase(loggedInUserData?.lastName) || " ",
       ...sharedItemStyle,
     },
     {
       label: "Email",
-      children: "example@gmail.com",
+      children: loggedInUserData?.email || "guest@gmail.com",
       ...sharedItemStyle,
     },
     {
       label: "Phone Number",
-      children: "+92 312 4514576",
+      children: loggedInUserData?.phoneNumber || "xxx-xxx-xxxx",
+      ...sharedItemStyle,
+    },
+    {
+      label: "Company Name",
+      children: loggedInUserData?.companyName || "--",
+      ...sharedItemStyle,
+    },
+    {
+      label: "Licensee Name",
+      children: loggedInUserData?.LicenseeName || "--",
+      ...sharedItemStyle,
+    },
+    {
+      label: "Company Address",
+      children: loggedInUserData?.companyAddress || "--",
+      ...sharedItemStyle,
+    },
+    {
+      label: "AFS Name",
+      children: loggedInUserData?.AFSName || "--",
       ...sharedItemStyle,
     },
     {
       label: "Role ID",
-      children: "Adviser",
-      ...sharedItemStyle,
-    },
-    {
-      label: "Email Verified",
-      children: "Pending",
-      ...sharedItemStyle,
-    },
-    {
-      label: "Last Login",
-      children: "02/10/2023 12:00 PM",
+      children: loggedInUserData?.roleID?.name || "Adviser",
       ...sharedItemStyle,
     },
     {
@@ -55,19 +82,39 @@ const ProfileTemp = () => {
       ...sharedItemStyle,
     },
     {
-      label: "Subscription Status",
-      children: "Active",
-      ...sharedItemStyle,
-    },
-    {
-      label: "Subscription Ending Date",
-      children: "02/10/2025",
+      label: "Subscription Days Left",
+      children: loggedInUserData?.subscription?.subscriptionDaysLeft || "--",
       ...sharedItemStyle,
     },
   ];
 
+  let logoutFun = () => {
+    setLoggedInUserTokken("");
+    setLoggedInUserData({});
+    Nev("/");
+  };
+
+  let UpdateUser = () => {
+    let userData = JSON.parse(JSON.stringify(loggedInUserData));
+    console.log(userData);
+    setFlagState(true);
+    setModalObject({
+      title: "Edit User",
+      type: "newAdviser",
+      Action: "edit",
+      row: userData,
+    });
+  };
+
   return (
-    <div className="container-fluid profile-temp-container">
+    <div className="container-fluid profile-temp-container mt-3">
+      <ModalComponent
+        modalObject={modalObject}
+        setFlagState={setFlagState}
+        flagState={flagState}
+      >
+        <AdviserFrom />
+      </ModalComponent>
       <div className="row justify-content-center ">
         <div className="col-md-12">
           <div
@@ -86,7 +133,7 @@ const ProfileTemp = () => {
             <div className="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between w-100 gap-2 px-3 ">
               <div className="d-flex align-items-center gap-3">
                 <AntdImage
-                  src="https://demos.creative-tim.com/muse-ant-design-dashboard/static/media/face-1.d85d07a1.jpg"
+                  src="https://i.pinimg.com/736x/c7/9a/37/c79a37e13ef14be556b51143bcbb1b01.jpg"
                   alt="Profile"
                   className="rounded-3 me-3"
                   width={50}
@@ -95,15 +142,31 @@ const ProfileTemp = () => {
                   preview={{ mask: null }}
                 />
                 <div>
-                  <h5 className="mb-0">John Doe</h5>
-                  <p className="mb-0 text-muted">example@gmail.com</p>
+                  <h5 className="mb-0">
+                    {loggedInUserData &&
+                    typeof loggedInUserData === "object" &&
+                    Object.keys(loggedInUserData).length > 0
+                      ? `${toSentenceCase(
+                          loggedInUserData.firstName || ""
+                        )} ${toSentenceCase(
+                          loggedInUserData.lastName || ""
+                        )}`.trim()
+                      : "Guest"}
+                  </h5>
+                  <p className="mb-0 text-muted">
+                    {loggedInUserData &&
+                    typeof loggedInUserData === "object" &&
+                    Object.keys(loggedInUserData).length > 0
+                      ? `${loggedInUserData.email || ""}`.trim()
+                      : "email@gamil.com"}
+                  </p>
                 </div>
               </div>
               <div className="d-flex gap-2">
-                <Button>
+                <Button disabled={superAdminRole || false} onClick={UpdateUser}>
                   <MdEdit /> Edit
                 </Button>
-                <Button type="primary" danger>
+                <Button type="primary" danger onClick={logoutFun}>
                   <FiLogOut /> Logout
                 </Button>
               </div>
@@ -112,7 +175,7 @@ const ProfileTemp = () => {
         </div>
       </div>
       <div className="row justify-content-center mt-4">
-        <div className="col-md-8">
+        <div className={!superAdminRole ? "col-md-8" : "col-md-12"}>
           <div className="shadow p-3 rounded-3 mb-5">
             <ConfigProvider
               theme={{
@@ -142,26 +205,28 @@ const ProfileTemp = () => {
             </ConfigProvider>
           </div>
         </div>
-        <div className="col-md-4">
-          <div
-            className="shadow p-3 rounded-3 mb-5"
-            style={{ height: "430px" }}
-          >
-            <h5 className="mb-3">Your Connections</h5>
-
-            {/* This div wraps your list and becomes the scrollable container */}
+        {!superAdminRole && (
+          <div className="col-md-4">
             <div
-              id="connectionsScrollContainer"
-              style={{
-                height: "calc(100% - 40px)", // subtract header height
-                overflow: "auto",
-                borderRadius: "8px",
-              }}
+              className="shadow p-3 rounded-3 mb-5"
+              style={{ height: "430px" }}
             >
-              <Dynamiclist scrollTarget="connectionsScrollContainer" />
+              <h5 className="mb-3">Your Connections</h5>
+
+              {/* This div wraps your list and becomes the scrollable container */}
+              <div
+                id="connectionsScrollContainer"
+                style={{
+                  height: "calc(100% - 40px)", // subtract header height
+                  overflow: "auto",
+                  borderRadius: "8px",
+                }}
+              >
+                <Dynamiclist scrollTarget="connectionsScrollContainer" />
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
