@@ -51,7 +51,7 @@ const AdminLayouts = () => {
         setSubscriptions(res);
       }
 
-      res = await GetAxios(DefaultUrl + "/api/user");
+      res = await GetAxios(DefaultUrl + "/api/user/Advisers");
       if (res) {
         setAdvisers(
           res.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))

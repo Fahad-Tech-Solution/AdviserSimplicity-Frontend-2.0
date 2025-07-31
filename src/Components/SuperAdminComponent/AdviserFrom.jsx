@@ -96,7 +96,7 @@ const AdviserFrom = (props) => {
         }
       } else if (props.modalObject.Action.toLowerCase() == "edit") {
         values._id = props.modalObject.row._id;
-        res = await PatchAxios(DefaultUrl + "/api/user/Update", values);
+        res = await PatchAxios(DefaultUrl + "/api/user/Update/Adviser", values);
         if (res) {
           setAdvisers((prev) =>
             prev.map((item) =>
