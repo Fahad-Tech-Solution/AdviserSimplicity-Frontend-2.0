@@ -24,7 +24,11 @@ import {
   PatchAxios,
   PostAxios,
 } from "../Assets/Api/Api";
-import { defaultUrl, RiskQuestion } from "../../Store/Store";
+import {
+  defaultUrl,
+  RiskQuestion,
+  SelectedClientDetails,
+} from "../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { Image } from "react-bootstrap";
 import RiskProfileCards from "./RiskProfileCards";
@@ -35,6 +39,7 @@ import * as Yup from "yup";
 const RiskProfileNew = () => {
   let DefaultUrl = useRecoilValue(defaultUrl);
   let [riskQuestion, setRiskQuestion] = useRecoilState(RiskQuestion);
+  let selectedClientDetails = useRecoilValue(SelectedClientDetails);
 
   let [UserStatus] = useState(localStorage.getItem("UserStatus"));
 
@@ -50,7 +55,7 @@ const RiskProfileNew = () => {
   let renderOnce = 1;
 
   useEffect(() => {
-    if (localStorage.getItem("UserID")) {
+    if (selectedClientDetails?._id) {
       GetRiskData();
     } else {
       if (renderOnce == 1) {
@@ -61,7 +66,7 @@ const RiskProfileNew = () => {
           "Info Notification",
           "Please! select a user first"
         );
-        Nav("/");
+        Nav("/user/dashboard");
       }
     }
   }, []);

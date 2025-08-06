@@ -113,7 +113,9 @@ const LoginForm = () => {
         navigate("/change-password");
       } else if (!userData.isActive) {
         // Case 3: User not active
-        setLoggedUserToken(""); // optionally clear token
+        if(userData.action!=="pricing table"){
+          setLoggedUserToken(""); // optionally clear token
+        }
         navigate(`/user/warning?message=${res.action}`);
       } else {
         // Case 4: All good

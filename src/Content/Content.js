@@ -51,7 +51,7 @@ export const content = {
       subTitle: "Personal Details",
       statusStep: 0,
       icon: "FaUser",
-      route: "/PersonalDetail",
+      route: "/user/personal-detail",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
     {
@@ -279,21 +279,21 @@ export const content = {
       subTitle: "All Users of CashFlow",
       statusStep: 0,
       icon: "FaUser",
-      route: "/AllUsers",
+      route: "/allusers",
       condition: (CRObject) => false, // Always true, as this step is always needed.
     },
     {
       subTitle: "Personal Details",
       statusStep: 0,
       icon: "FaUser",
-      route: "/PersonalDetail",
+      route: "/personal-detail",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
     {
       subTitle: "Income & Expenses",
       statusStep: 10,
       icon: "FaMoneyCheckDollar",
-      route: "/Income-And-Expenses",
+      route: "/income-and-expenses",
       key: "CashFlow_Income_And_Expenses",
       QuestionsArray: [
         {

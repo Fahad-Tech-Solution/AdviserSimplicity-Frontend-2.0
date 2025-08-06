@@ -39,7 +39,7 @@ import {
 import { RiCoinsFill, RiDiscountPercentFill } from "react-icons/ri";
 
 import { content } from "../Content/Content";
-import { openNotificationSuccess } from "./Assets/Api/Api";
+import { openNotificationSuccess, toSentenceCase } from "./Assets/Api/Api";
 import {
   UserName,
   CurrentPage,
@@ -113,7 +113,7 @@ function Options(props) {
     setCurrentTabName(title == "profile" ? "Profile" : title);
 
     const stepMap = {
-      PersonalDetail: 0,
+      "/user/personal-detail": 0,
       ImportantQuestion: 8,
       PersonalIncome: 16,
       PersonalAssets: 24,
@@ -169,12 +169,12 @@ function Options(props) {
         const currentEmail = localStorage.getItem("UserID");
         let isCurrentStep =
           cLocation ===
-          (isPersonalDetails ? "PersonalDetail" : item.route.replace("/", ""));
+          (isPersonalDetails ? "/user/personal-detail" : item.route.replace("/", ""));
         if (Opt === "Opt3") {
           isCurrentStep =
             cLocation.replace("Risk-Profile/", "") ===
             (isPersonalDetails
-              ? "PersonalDetail"
+              ? "/user/personal-detail"
               : item.route.replace("/", ""));
         }
         const status =
@@ -196,9 +196,10 @@ function Options(props) {
                 const path = Risk
                   ? `/Risk-Profile${item.route}`
                   : isPersonalDetails
-                  ? `/PersonalDetail#${currentEmail}`
+                  ? `/user/personal-detail#${currentEmail}`
                   : item.route;
-                if (!stepsStatus) navigate(path);
+                // if (!stepsStatus) navigate(path);
+                console.log(path);
               }}
               style={{
                 display: "flex",
@@ -231,19 +232,19 @@ function Options(props) {
   }, [location, CRObject]);
 
   const topMenuArray = [
-    "/Dashboard",
-    "/All-Clients",
-    "/Cash-Flow/AllUsers",
-    "/Cash-Flow/oneClient",
-    "/CDF_Prospects",
+    "/user/dashboard",
+    "/user/all-client",
+    "/user/cashflow/allusers",
+    "/user/cashflow/one-client",
+    "/user/CDF-prospects",
     "/profile",
-    "/My-Team",
+    "/user/my-team",
   ];
 
   const noTopBarArray = [
-    "/Goals-And-Objectives",
-    "/Risk-Profile",
-    "/Risk-Profile/",
+    "/user/goals-and-objectives",
+    "/user/risk-profile",
+    "/user/risk-profile/",
     "/Risk-Profile-Cards",
     "/Risk-Profile/Cards",
     "/PricingTable",
@@ -292,65 +293,73 @@ function Options(props) {
 
   if (topMenuArray.includes(location.pathname)) {
     return (
-      <div className="container-fluid" style={{ position: "relative" }}>
-        <div className="container-fluid">
-          <div className="row pe-4">
-            <div className="col-md-12 p-0">
-              <div
-                className={props.collapsed ? "" : "sidebar-collapsed"}
-                id="OptionsBar"
-              >
-                <div className="Top_Nav">
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div>
-                      <Breadcrumb className="BreadcrumbCustom">
-                        <Breadcrumb.Item
-                          active
-                          linkAs={Link}
-                          linkProps={{ to: "/" }}
-                          className="p-0 m-0 LeagueSpartanFamily"
-                        >
-                          Dashboard
-                        </Breadcrumb.Item>
-                        <Breadcrumb.Item
-                          active
-                          linkAs={Link}
-                          linkProps={{ to: "/" }}
-                          className="p-0 m-0 LeagueSpartanFamily"
-                        >
-                          {currentPCLassSwitch}
-                        </Breadcrumb.Item>
-                      </Breadcrumb>
-                      <h5 className="Page LeagueSpartanFamily">
-                        {currentTabName || "Dashboard"}
-                      </h5>
-                    </div>
-                    <div className="rightBlock">
-                      <FontAwesomeIcon
-                        role="button"
-                        icon={faBars}
-                        className="menu"
-                        onClick={() => props.setCollapsed(!props.collapsed)}
-                      />
-                      {/* <FontAwesomeIcon icon={faMoon} className="moon" /> */}
-                      <div className="d-flex justify-content-center align-items-center">
-                        <Dropdown overlay={getMenu()}>
-                          <img
-                            src="https://i.pinimg.com/736x/c7/9a/37/c79a37e13ef14be556b51143bcbb1b01.jpg"
-                            alt="Profile"
-                            className="rounded-circle"
-                            style={{ width: "35px" }}
-                          />
-                        </Dropdown>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+      <div
+        style={{
+          position: "fixed",
+          top: 10,
+          zIndex: 100,
+          background: "transparent",
+          padding: 0,
+          height: "fit-content",
+          width: props.collapsed ? "calc(100% - 80px)" : "calc(100% - 250px)", // adjust width based on sidebar
+        }}
+        className="d-md-block d-none"
+      >
+        <div className="Top_Nav">
+          <div className="d-flex justify-content-between align-items-center">
+            <div>
+              <Breadcrumb className="BreadcrumbCustom">
+                <Breadcrumb.Item
+                  active
+                  linkAs={Link}
+                  linkProps={{ to: "/" }}
+                  className="p-0 m-0 LeagueSpartanFamily"
+                >
+                  Admin
+                </Breadcrumb.Item>
+                <Breadcrumb.Item
+                  active
+                  linkAs={Link}
+                  linkProps={{ to: "/" }}
+                  className="p-0 m-0 LeagueSpartanFamily"
+                >
+                  {toSentenceCase(
+                    location.pathname
+                      .split("/")
+                      .filter(Boolean)
+                      .pop()
+                      .replaceAll("-", " ")
+                  )}
+                </Breadcrumb.Item>
+              </Breadcrumb>
+              <h5 className="Page LeagueSpartanFamily">
+                {toSentenceCase(
+                  location.pathname
+                    .split("/")
+                    .filter(Boolean)
+                    .pop()
+                    .replaceAll("-", " ")
+                )}
+              </h5>
+            </div>
+            <div className="rightBlock d-flex justify-content-around align-items-center">
+              <FontAwesomeIcon
+                role="button"
+                icon={faBars}
+                className="menu"
+                onClick={() => props.setCollapsed(!props.collapsed)}
+              />
+              {/* <FontAwesomeIcon icon={faMoon} className="moon" /> */}
+              <div className="d-flex justify-content-center align-items-center">
+                <Dropdown overlay={getMenu()}>
+                  <img
+                    src="https://i.pinimg.com/736x/c7/9a/37/c79a37e13ef14be556b51143bcbb1b01.jpg"
+                    alt="Profile"
+                    className="rounded-circle"
+                    style={{ width: "35px" }}
+                  />
+                </Dropdown>
               </div>
-              <div
-                className="d-none d-md-block"
-                style={{ height: "6.5rem" }}
-              ></div>
             </div>
           </div>
         </div>

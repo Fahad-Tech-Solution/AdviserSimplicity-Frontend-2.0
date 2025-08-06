@@ -8,6 +8,7 @@ import { AllUsers, CashFlowData, defaultUrl } from "../../Store/Store";
 import AccordionItems from "./AccordionItems";
 import ModalComponent from "../../Components/Questions/FinancialInvestments/ModalComponent";
 import ScenarioForm from "./ScenarioForm";
+import { Content, Header } from "antd/es/layout/layout";
 
 const CashFlowAllUsers = (props) => {
   const [PersonalDetail2, setPersonalDetail] = useRecoilState(AllUsers);
@@ -76,7 +77,7 @@ const CashFlowAllUsers = (props) => {
   };
 
   return (
-    <div className="container-fluid  ps-4 position-relative ">
+    <>
       <ModalComponent
         modalObject={modalObject}
         setFlagState={setFlagState}
@@ -84,40 +85,54 @@ const CashFlowAllUsers = (props) => {
       >
         <ScenarioForm />
       </ModalComponent>
+      <Header
+        style={{
+          background: "#fff",
+          padding: 0,
+        }}
+      >
+        <Options collapsed={props.collapsed} />
+      </Header>
+      <Content
+        style={{
+          margin: "16px",
+          background: "#fff",
+          height: "100%",
+          padding: "1rem 0rem",
+        }}
+      >
+        <div className="row mt-2">
+          <div className="col-md-12 ">
+            <Card className="shadow cashFlowAllUsers mb-3">
+              <Card.Body>
+                <h5 className="cashFlowCardHead LeagueSpartanFamily">
+                  Users List
+                </h5>
+                <Accordion defaultActiveKey="0">
+                  {PersonalDetail2.map((elem, index) => {
+                    // Filter scenarios that have the same clientFK as the current client's ID
+                    const filteredScenarios = (
+                      cashFlowData.Scenarios || []
+                    ).filter((scenario) => scenario.clientFK == elem._id);
 
-      <Options collapsed={props.collapsed} />
-
-      <div className="row mt-2">
-        <div className="col-md-12 ">
-          <Card className="shadow cashFlowAllUsers mb-3">
-            <Card.Body>
-              <h5 className="cashFlowCardHead LeagueSpartanFamily">
-                Users List
-              </h5>
-              <Accordion defaultActiveKey="0">
-                {PersonalDetail2.map((elem, index) => {
-                  // Filter scenarios that have the same clientFK as the current client's ID
-                  const filteredScenarios = (
-                    cashFlowData.Scenarios || []
-                  ).filter((scenario) => scenario.clientFK == elem._id);
-
-                  return (
-                    <AccordionItems
-                      CallBack={OpenModal}
-                      fullData={elem}
-                      client={elem.client}
-                      partner={elem.partner}
-                      tableData={filteredScenarios || []}
-                      index={index}
-                    />
-                  );
-                })}
-              </Accordion>
-            </Card.Body>
-          </Card>
+                    return (
+                      <AccordionItems
+                        CallBack={OpenModal}
+                        fullData={elem}
+                        client={elem.client}
+                        partner={elem.partner}
+                        tableData={filteredScenarios || []}
+                        index={index}
+                      />
+                    );
+                  })}
+                </Accordion>
+              </Card.Body>
+            </Card>
+          </div>
         </div>
-      </div>
-    </div>
+      </Content>
+    </>
   );
 };
 

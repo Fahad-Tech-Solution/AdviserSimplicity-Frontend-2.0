@@ -106,7 +106,7 @@ const AdminSideBar = (props) => {
     });
 
     setQuestionDetail({});
-    nav("/PersonalDetail");
+    nav("/user/personal-detail");
     if (isMobile) setDrawerVisible(false);
   };
 
@@ -146,10 +146,10 @@ const AdminSideBar = (props) => {
       )}
 
       <Menu.Item
-        key={superAdmin ? "/super/admin/dashboard" : "/Dashboard"}
+        key={superAdmin ? "/super/admin/dashboard" : "/user/dashboard"}
         icon={<FaTachometerAlt />}
         onClick={() =>
-          nav(superAdmin ? "/super/admin/dashboard" : "/Dashboard")
+          nav(superAdmin ? "/super/admin/dashboard" : "/user/dashboard")
         }
       >
         Dashboard
@@ -172,16 +172,16 @@ const AdminSideBar = (props) => {
       {!superAdmin && (
         <>
           <Menu.Item
-            key="/CDF_Prospects"
+            key="/user/CDF-prospects"
             icon={<FaPeopleGroup />}
-            onClick={() => nav("/CDF_Prospects")}
+            onClick={() => nav("/user/CDF-prospects")}
           >
             CDF Prospects
           </Menu.Item>
 
           <Menu.Item
-            key="/My-Team"
-            onClick={() => nav("/My-Team")}
+            key="/user/my-team"
+            onClick={() => nav("/user/my-team")}
             icon={<FaUserTie />}
           >
             My Team
@@ -189,19 +189,21 @@ const AdminSideBar = (props) => {
         </>
       )}
 
-      <Menu.Item
-        key="/super/admin/financial-institutions"
-        onClick={() => nav("/super/admin/financial-institutions")}
-        icon={<AiOutlineBank />}
-      >
-        Financial Entities & Offerings
-      </Menu.Item>
+      {superAdmin && (
+        <Menu.Item
+          key="/super/admin/financial-institutions"
+          onClick={() => nav("/super/admin/financial-institutions")}
+          icon={<AiOutlineBank />}
+        >
+          Financial Entities & Offerings
+        </Menu.Item>
+      )}
 
       {!superAdmin && (
         <>
           <SubMenu key="sub1" icon={<RiAppsLine />} title="Discovery">
             <Menu.Item
-              key="/All-Clients"
+              key="/user/all-client"
               onClick={() => {
                 if (selectedClientDetails?._id) {
                   localStorage.setItem("UserID", selectedClientDetails._id);
@@ -215,7 +217,7 @@ const AdminSideBar = (props) => {
                   );
                   setQuestionDetail({});
                   setStepsStatus(false);
-                  nav("/PersonalDetail#" + selectedClientDetails._id);
+                  nav("/user/personal-detail#" + selectedClientDetails._id);
                 } else {
                   openNotificationSuccess(
                     "warning",
@@ -229,23 +231,29 @@ const AdminSideBar = (props) => {
               Financial Details
             </Menu.Item>
             <Menu.Item
-              key="/Goals-And-Objectives"
-              onClick={() => nav("/Goals-And-Objectives")}
+              key="/user/goals-and-objectives"
+              onClick={() => nav("/user/goals-and-objectives")}
             >
               Goals and Objectives
             </Menu.Item>
-            <Menu.Item key="/Risk-Profile" onClick={() => nav("/Risk-Profile")}>
+            <Menu.Item
+              key="/user/risk-profile"
+              onClick={() => nav("/user/risk-profile")}
+            >
               Risk Profile
             </Menu.Item>
-            <Menu.Item key="/PersonalDetail" onClick={handleAddClientClick}>
+            <Menu.Item
+              key="/user/personal-detail"
+              onClick={handleAddClientClick}
+            >
               Add Client
             </Menu.Item>
           </SubMenu>
 
           <SubMenu key="sub2" icon={<RiExchange2Line />} title="Cash Flow">
             <Menu.Item
-              key="/Cash-Flow/AllUsers"
-              onClick={() => nav("/Cash-Flow/AllUsers")}
+              key="/user/cashflow/allusers"
+              onClick={() => nav("/user/cashflow/allusers")}
             >
               All Cash Flow Scenarios
             </Menu.Item>
@@ -257,17 +265,17 @@ const AdminSideBar = (props) => {
                 title={`${selectedClientDetails.client.clientGivenName} - Scenario`}
               >
                 <Menu.Item
-                  key="/Cash-Flow/oneClient"
-                  onClick={() => nav("/Cash-Flow/oneClient")}
+                  key="/user/cashflow/one-client"
+                  onClick={() => nav("/user/cashflow/one-client")}
                 >
                   Scenarios
                 </Menu.Item>
                 <Menu.Item
-                  key="/Cash-Flow/Reports/"
+                  key="/user/cashflow/reports/"
                   disabled={
                     Object.keys(selectedSenario).length > 0 ? false : true
                   }
-                  onClick={() => nav("/Cash-Flow/Reports/")}
+                  onClick={() => nav("/user/cashflow/reports/")}
                 >
                   Reports
                 </Menu.Item>

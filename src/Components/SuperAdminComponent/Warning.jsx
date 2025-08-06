@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Card, Alert, Button } from "antd";
 import { IoWarningOutline } from "react-icons/io5";
+import { useLocation, useNavigate } from "react-router-dom";
+import { FaRegBell } from "react-icons/fa";
 
 // Mock useLocation hook for demonstration (in real app, import from react-router-dom)
-const useLocation = () => {
-  return {
-    search:
-      "?message=System maintenance in progress. Please save your work and try again later.&type=warning",
-  };
-};
+// const useLocation = () => {
+//   return {
+//     search:
+//       "?message=System maintenance in progress. Please save your work and try again later.&type=warning",
+//   };
+// };
 
 const WarningScreen = () => {
   const location = useLocation();
+  const Nev = useNavigate();
   const [particles, setParticles] = useState([]);
   const [warningMessage, setWarningMessage] = useState("");
   const [alertType, setAlertType] = useState("warning");
@@ -19,13 +22,17 @@ const WarningScreen = () => {
   // Extract message and type from URL params
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
-    const message =
-      urlParams.get("message") ||
-      "An unexpected issue has occurred. Please contact support if this persists.";
-    const type = urlParams.get("type") || "warning";
-
-    setWarningMessage(message);
-    setAlertType(type);
+    if (urlParams.get("message") === "warning alert") {
+      const message =
+        "Your access has been restricted by the Super Admin. Reach out to them to restore your account.";
+      setWarningMessage(message);
+      setAlertType("warning");
+    } else if (urlParams.get("message") === "pricing table") {
+      const message =
+        "Your current subscription has ended. Visit the billing section to renew or upgrade your plan.";
+      setWarningMessage(message);
+      setAlertType("error");
+    }
   }, [location.search]);
 
   // Generate floating particles for background animation
@@ -49,11 +56,11 @@ const WarningScreen = () => {
   }, []);
 
   const handleGoBack = () => {
-    window.history.back();
+    Nev(-1);
   };
 
   const handleRetry = () => {
-    window.location.reload();
+    Nev("/pricing-table");
   };
 
   return (
@@ -93,7 +100,21 @@ const WarningScreen = () => {
         >
           <div className="warning-content">
             <div className="warning-icon">
-              <IoWarningOutline className="text-6xl text-orange-500 mx-auto mb-4" />
+              {alertType == "warning" ? (
+                <>
+                  <IoWarningOutline
+                    className="text-warning"
+                    style={{ fontSize: 45, marginBottom: 16 }}
+                  />
+                </>
+              ) : (
+                <>
+                  <FaRegBell
+                    className="text-danger"
+                    style={{ fontSize: 45, marginBottom: 16 }}
+                  />
+                </>
+              )}
             </div>
 
             <h2 className="warning-title">System Notice</h2>
@@ -118,9 +139,16 @@ const WarningScreen = () => {
               >
                 Go Back
               </Button>
-              <Button type="primary" size="large" onClick={handleRetry}>
-                Retry
-              </Button>
+              {alertType == "error" && (
+                <Button
+                  type="primary"
+                  size="large"
+                  onClick={handleRetry}
+                  style={{ marginRight: "12px" }}
+                >
+                  Buy Subscription
+                </Button>
+              )}
             </div>
           </div>
         </Card>
@@ -144,10 +172,10 @@ const WarningScreen = () => {
           height: 100%;
           background: linear-gradient(
             45deg,
-            #10b981,
-            #059669,
-            #047857,
-            #065f46
+            #36b446,
+            #2da23b,
+            #1f742a,
+            #36b446
           );
           background-size: 400% 400%;
           animation: gradientShift 8s ease-in-out infinite;
@@ -159,17 +187,17 @@ const WarningScreen = () => {
           height: 100%;
           background: radial-gradient(
               circle at 30% 70%,
-              rgba(16, 185, 129, 0.3) 0%,
+              rgba(54, 180, 70, 0.3) 0%,
               transparent 50%
             ),
             radial-gradient(
               circle at 70% 30%,
-              rgba(5, 150, 105, 0.3) 0%,
+              rgba(45, 162, 59, 0.3) 0%,
               transparent 50%
             ),
             radial-gradient(
               circle at 50% 50%,
-              rgba(4, 120, 87, 0.2) 0%,
+              rgba(31, 116, 42, 0.2) 0%,
               transparent 50%
             );
           animation: overlayPulse 6s ease-in-out infinite alternate;
