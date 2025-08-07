@@ -237,8 +237,8 @@ export const defaultUrl = atom({
   // default: "http://192.168.3.137:7000",    //
   // default: "http://192.168.211.242:7000",  //
 
-  default: "http://13.239.170.76:7000", // Live link
-  // default: "",
+  // default: "http://13.239.170.76:7000", // Live link
+  default: "",
 });
 
 export const allAPIs = atom({

@@ -58,7 +58,7 @@ export const content = {
       subTitle: "Question",
       statusStep: 8,
       icon: "FaPlus",
-      route: "/ImportantQuestion",
+      route: "/user/important-question",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
     {

@@ -154,7 +154,7 @@ function AuthRouts() {
       <Sider
         collapsed={collapsed}
         onCollapse={setCollapsed}
-        width={220}
+        width={250}
         style={{ background: "#fff", borderRight: "1px solid #f0f0f0" }}
       >
         <AdminSideBar collapsed={collapsed} setCollapsed={setCollapsed} />

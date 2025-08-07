@@ -79,8 +79,6 @@ function Options(props) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [userName] = useRecoilState(UserName);
-  const [CurrentP] = useRecoilState(CurrentPage);
   const [optRender, setOptRender] = useRecoilState(OptionRender);
   let [loggedInUserData, setLoggedInUserData] =
     useRecoilState(LoggedInUserData);
@@ -99,10 +97,11 @@ function Options(props) {
   }, [props.SidebarSwitch]);
 
   useEffect(() => {
-    const cLocation = location.pathname.replace("/", "");
+    const cLocation = location.pathname;
     let Opt = "Opt1";
     let stepComplete = 0;
     let Risk = false;
+    console.log(cLocation)
 
     setCurrentPCLassSwitch(cLocation);
 
@@ -114,7 +113,7 @@ function Options(props) {
 
     const stepMap = {
       "/user/personal-detail": 0,
-      ImportantQuestion: 8,
+      "/user/important-question": 8,
       PersonalIncome: 16,
       PersonalAssets: 24,
       FinancialInvestments: 32,
@@ -198,8 +197,8 @@ function Options(props) {
                   : isPersonalDetails
                   ? `/user/personal-detail#${currentEmail}`
                   : item.route;
-                // if (!stepsStatus) navigate(path);
-                console.log(path);
+                if (!stepsStatus) navigate(path);
+                // console.log(path);
               }}
               style={{
                 display: "flex",
@@ -237,7 +236,7 @@ function Options(props) {
     "/user/cashflow/allusers",
     "/user/cashflow/one-client",
     "/user/CDF-prospects",
-    "/profile",
+    "/user/profile",
     "/user/my-team",
   ];
 
@@ -267,7 +266,7 @@ function Options(props) {
             fontWeight: "600",
           }}
           onClick={() => {
-            navigate("/profile");
+            navigate("/user/profile");
           }}
         >
           Profile
