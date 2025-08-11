@@ -80,7 +80,7 @@ const RiskProfileNew = () => {
       // Check if the response is successful and contains data
       if (res && res._id) {
         setRiskQuestion(res); // Assuming response data contains the risk question
-        Nav("/risk-profile/Cards");
+        Nav("/user/risk-profile/cards");
       } else {
         console.error("Unexpected response format:", res);
       }
@@ -162,7 +162,7 @@ const RiskProfileNew = () => {
         if (res && res._id) {
           // console.log('Add Response:', res);
           setRiskQuestion(res); // Assuming response data contains the updated risk question
-          // Nav("/risk-profile/Cards")
+          // Nav("/risk-profile/cards")
         } else {
           console.error("Unexpected response format for Add:", res);
         }
@@ -198,7 +198,7 @@ const RiskProfileNew = () => {
             "Success Notification",
             "Data of Risk Profile is Saved"
           );
-          // Nav("/risk-profile/Cards")
+          // Nav("/risk-profile/cards")
         } else {
           console.error("Unexpected response format for Update:", res);
           openNotificationSuccess(
@@ -331,7 +331,7 @@ const RiskProfileNew = () => {
       imgUrl: Risk8,
     },
     {
-      route: "/Cards",
+      route: "/cards",
       key: "cardSet",
       question: "",
       choices: [
@@ -348,9 +348,9 @@ const RiskProfileNew = () => {
 
   useEffect(() => {
     const currentPath =
-      loc.pathname === "/risk-profile" ? "/risk-profile/" : loc.pathname;
+      loc.pathname === "/user/risk-profile" ? "/user/risk-profile/" : loc.pathname;
     const currentIndex = QuestionArray.findIndex(
-      (q) => "/risk-profile" + q.route === currentPath
+      (q) => "/user/risk-profile" + q.route === currentPath
     );
 
     if (currentIndex >= 0 && currentIndex < QuestionArray.length) {
@@ -370,14 +370,17 @@ const RiskProfileNew = () => {
 
   const BackHandle = () => {
     const currentPath =
-      loc.pathname === "/risk-profile" ? "/risk-profile/" : loc.pathname;
+      loc.pathname === "/user/risk-profile" ? "/user/risk-profile/" : loc.pathname;
 
+    // console.log(currentPath);
     const currentIndex = QuestionArray.findIndex(
-      (q) => "/risk-profile" + q.route === currentPath
+      (q) => "/user/risk-profile" + q.route === currentPath
     );
 
+    // console.log(currentIndex);
     if (currentIndex > 0) {
-      Nav("/risk-profile" + QuestionArray[currentIndex - 1].route);
+      console.log(QuestionArray[currentIndex - 1].route);
+      Nav("/user/risk-profile" + QuestionArray[currentIndex - 1].route);
     } else {
       console.log("Already at the starting point");
     }
@@ -387,14 +390,17 @@ const RiskProfileNew = () => {
     //yahan kuch karo ga taka first time ma Data Sheet show ho
 
     const currentPath =
-      loc.pathname === "/risk-profile" ? "/risk-profile/" : loc.pathname;
+      loc.pathname === "/user/risk-profile"
+        ? "/user/risk-profile/"
+        : loc.pathname;
+
     const currentIndex = QuestionArray.findIndex(
-      (q) => "/risk-profile" + q.route === currentPath
+      (q) => "/user/risk-profile" + q.route === currentPath
     );
 
     if (currentIndex < QuestionArray.length - 1) {
       setBackButton(true);
-      Nav("/risk-profile" + QuestionArray[currentIndex + 1].route);
+      Nav("/user/risk-profile" + QuestionArray[currentIndex + 1].route);
     } else {
       console.log("Form submitted or navigate to the summary page");
       // Form.current.handleSubmit();
@@ -632,7 +638,7 @@ const RiskProfileNew = () => {
                           type="Submit"
                           className="float-center btn w-100  bgColor modalBtn"
                         >
-                          Submit
+                          Submit 
                         </button>
                       )}
                     </div>

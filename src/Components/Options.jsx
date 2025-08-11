@@ -101,7 +101,7 @@ function Options(props) {
     let Opt = "Opt1";
     let stepComplete = 0;
     let Risk = false;
-    console.log(cLocation)
+    // console.log(cLocation)
 
     setCurrentPCLassSwitch(cLocation);
 
@@ -114,33 +114,34 @@ function Options(props) {
     const stepMap = {
       "/user/personal-detail": 0,
       "/user/important-question": 8,
-      PersonalIncome: 16,
-      PersonalAssets: 24,
-      FinancialInvestments: 32,
-      EstatePlanning: 40,
-      PersonalInsurance: 48,
-      BusinessEntities: 56,
-      SMSF: 64,
-      FamilyTrust: 72,
+      "/user/personal-income": 16,
+      "/user/personal-assets": 24,
+      "/user/financial-investments": 32,
+      "/user/estate-planning": 40,
+      "/user/personal-insurance": 48,
+      "/user/business-entities": 56,
+      "/user/SMSF": 64,
+      "/user/family-trust": 72,
       "Goals-And-Objectives": 80,
-      "Risk-Profile/Q1": 12,
-      "Risk-Profile/Q2": 24,
-      "Risk-Profile/Q3": 36,
-      "Risk-Profile/Q4": 48,
-      "Risk-Profile/Q5": 62,
-      "Risk-Profile/Q6": 74,
-      "Risk-Profile/Q7": 86,
-      "Risk-Profile/Q8": 98,
+      "/user/risk-profile/Q1": 12,
+      "/user/risk-profile/Q2": 24,
+      "/user/risk-profile/Q3": 36,
+      "/user/risk-profile/Q4": 48,
+      "/user/risk-profile/Q5": 62,
+      "/user/risk-profile/Q6": 74,
+      "/user/risk-profile/Q7": 86,
+      "/user/risk-profile/Q8": 98,
     };
 
     stepComplete = stepMap[cLocation] || 0;
-    Risk = cLocation.startsWith("Risk-Profile");
+    
+    Risk = cLocation.startsWith("/user/risk-profile");
 
     if (
       [
-        "BusinessEntities",
-        "SMSF",
-        "FamilyTrust",
+        "/user/business-entities",
+        "/user/SMSF",
+        "/user/family-trust",
         "Goals-And-Objectives",
       ].includes(cLocation)
     )
@@ -166,12 +167,13 @@ function Options(props) {
         const IconComponent = iconMap[item.icon] || FaUser;
         const isPersonalDetails = item.subTitle === "Personal Details";
         const currentEmail = localStorage.getItem("UserID");
+        console.log(item.route,"item.route");
         let isCurrentStep =
           cLocation ===
-          (isPersonalDetails ? "/user/personal-detail" : item.route.replace("/", ""));
+          (isPersonalDetails ? "/user/personal-detail" : item.route);
         if (Opt === "Opt3") {
           isCurrentStep =
-            cLocation.replace("Risk-Profile/", "") ===
+            cLocation.replace("/user/risk-profile/", "") ===
             (isPersonalDetails
               ? "/user/personal-detail"
               : item.route.replace("/", ""));
@@ -193,7 +195,7 @@ function Options(props) {
               role="button"
               onClick={() => {
                 const path = Risk
-                  ? `/Risk-Profile${item.route}`
+                  ? `/user/risk-profile${item.route}`
                   : isPersonalDetails
                   ? `/user/personal-detail#${currentEmail}`
                   : item.route;
@@ -245,7 +247,7 @@ function Options(props) {
     "/user/risk-profile",
     "/user/risk-profile/",
     "/Risk-Profile-Cards",
-    "/Risk-Profile/Cards",
+    "/user/risk-profile/cards",
     "/PricingTable",
     "/",
   ];

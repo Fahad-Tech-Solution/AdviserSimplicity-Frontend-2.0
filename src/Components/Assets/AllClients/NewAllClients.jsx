@@ -242,7 +242,7 @@ const NewAllClients = (props) => {
         setQuestionDetail({});
         setStepsStatus(false);
         setSelectedClientDetails(row);
-        Navigate("/PersonalDetail#" + row._id);
+        Navigate("/user/personal-detail#" + row._id);
         break;
       case "select":
         localStorage.setItem("UserID", row._id);

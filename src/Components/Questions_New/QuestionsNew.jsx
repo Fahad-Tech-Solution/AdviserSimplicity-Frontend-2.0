@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from "react";
 
 import { useRecoilState, useRecoilValue } from "recoil";
-import { BankDetail, CRState, defaultUrl, QuestionDetail, QuestionShift } from "../../Store/Store";
-import './Questions.css'
+import {
+  BankDetail,
+  CRState,
+  defaultUrl,
+  QuestionDetail,
+  QuestionShift,
+} from "../../Store/Store";
+import "./Questions.css";
 
 // import QuestionCards from "./FinancialInvestments/QuestionCards";
 
@@ -10,14 +16,13 @@ import Add from "../Questions/svgs/add-circle-solid-svgrepo-com.svg";
 
 import ModalComponent from "../Questions/FinancialInvestments/ModalComponent";
 
-import { Element, scroller } from 'react-scroll';
+import { Element, scroller } from "react-scroll";
 import { useLocation, useNavigate } from "react-router-dom";
 import { GetAxios } from "../Assets/Api/Api";
 import QuestionCards from "../Questions/FinancialInvestments/QuestionCards";
 import { content } from "../../Content/Content";
 
 const QuestionsNew = (props) => {
-
   let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
   let [QuestionChange, setQuestionChange] = useRecoilState(QuestionShift);
   let CRObject = useRecoilValue(CRState);
@@ -27,7 +32,7 @@ const QuestionsNew = (props) => {
 
   let [modalObject, setModalObject] = useState({
     title: "Questions",
-    Input: "Name"
+    Input: "Name",
   });
 
   let location = useLocation();
@@ -35,26 +40,21 @@ const QuestionsNew = (props) => {
   let { itemsOpt } = content;
 
   useEffect(() => {
-
     // console.log(location)
-    selectQuestionSet(location.pathname)
-    if (location.pathname === "/BusinessEntities") {
+    selectQuestionSet(location.pathname);
+    if (location.pathname === "/user/business-entities") {
       // alert("ma chala")
       setFlagState2(false);
-    }
-    else {
+    } else {
       setFlagState2(true);
     }
-
-  }, [location])
+  }, [location]);
 
   let selectQuestionSet = async (path) => {
-    let cLocation = path.replace("/", "");
+    let cLocation = path;
     // console.log("Question Setting:", cLocation, CRObjectNoUse);
 
-
-
-    setQuestionChange(cLocation)
+    setQuestionChange(cLocation);
 
     // console.log("QuestionDetails Data condition :", Object.keys(questionDetail).length)
 
@@ -65,16 +65,15 @@ const QuestionsNew = (props) => {
     if (!CRObjectNoUse?._id) {
       FetchQuestions();
     }
-
-
-  }
+  };
 
   let [CRObjectNoUse, setCRObject] = useRecoilState(CRState);
 
-
   const FetchQuestions = async () => {
     try {
-      const res = await GetAxios(`${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`);
+      const res = await GetAxios(
+        `${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`
+      );
       if (res) {
         setCRObject(res);
       }
@@ -85,7 +84,9 @@ const QuestionsNew = (props) => {
 
   const fetchDataAllInOne = async () => {
     try {
-      const res = await GetAxios(`${DefaultUrl}/api/dataOfAllSection/${localStorage.getItem("UserID")}`);
+      const res = await GetAxios(
+        `${DefaultUrl}/api/dataOfAllSection/${localStorage.getItem("UserID")}`
+      );
       // console.log(JSON.stringify(res), ":res of get all inner Question Data")
       if (res) {
         setQuestionDetail(res);
@@ -97,10 +98,11 @@ const QuestionsNew = (props) => {
 
   let Navigation = useNavigate();
 
-
   const HandleSubmit = () => {
     // Find the current item index based on the QuestionChange state
-    const currentIndex = content.itemsOpt.findIndex(item => item.route === `/${QuestionChange}`);
+    const currentIndex = content.itemsOpt.findIndex(
+      (item) => item.route === `${QuestionChange}`
+    );
     // alert("Current Index :" + currentIndex);
     // Find the next valid route by incrementing the index and checking the condition
     let nextIndex = currentIndex + 1;
@@ -118,8 +120,7 @@ const QuestionsNew = (props) => {
 
     // Handle case where no next route is found (end of the list)
     if (nextIndex >= itemsOpt.length) {
-
-      Navigation("/Goals-And-Objectives");
+      Navigation("/user/goals-and-objectives");
 
       console.log("End of navigation, no further steps.");
     }
@@ -127,33 +128,30 @@ const QuestionsNew = (props) => {
 
   const BackHandle = () => {
     // Ensure flagState2 check is performed
-    if (location.pathname === "/BusinessEntities") {
-
-    }
-    else if (!flagState2) {
+    if (location.pathname === "/user/business-entities") {
+    } else if (!flagState2) {
       setFlagState2(true);
       return;
     }
 
     // Find the current item index based on the QuestionChange state
-    const currentIndex = content.itemsOpt.findIndex(item => item.route === `/${QuestionChange}`);
+    const currentIndex = content.itemsOpt.findIndex(
+      (item) => item.route === `${QuestionChange}`
+    );
 
     // Find the previous valid route by decrementing the index and checking the condition
     let prevIndex = currentIndex - 1;
     while (prevIndex >= 0) {
       const prevItem = itemsOpt[prevIndex];
       if (prevItem.condition(CRObject)) {
-        if (prevItem.route === "/PersonalDetail") {
-
+        if (prevItem.route === "/user/personal-detail") {
           let Email = localStorage.getItem("Email");
           if (Email) {
-            Navigation("/PersonalDetail#" + Email);
+            Navigation("/user/personal-detail#" + Email);
+          } else {
+            Navigation("/user/personal-detail");
           }
-          else {
-            Navigation("/PersonalDetail")
-          }
-        }
-        else {
+        } else {
           Navigation(prevItem.route);
         }
         break;
@@ -167,48 +165,43 @@ const QuestionsNew = (props) => {
     }
   };
 
-
-
-  let DefaultUrl = useRecoilValue(defaultUrl)
+  let DefaultUrl = useRecoilValue(defaultUrl);
 
   let obj = {
-    FinancialInvestments: {
+    "/user/financial-investments": {
       Title: "Financial Investments",
     },
-    PersonalAssets: {
+    "/user/personal-assets": {
       Title: "Personal Assets & Liabilities",
     },
-    Lifestyle: {
+    "/user/life-Style": {
       Title: "Property",
     },
-    Investment: {
+    "/user/investment": {
       Title: "Investment",
     },
-    SuperAndRetirement: {
+    "/user/super-and-retirement": {
       Title: "Super and Retirement",
     },
-    EstatePlanning: {
+    "/user/estate-planning": {
       Title: "Estate Planning & Professional Adviser",
     },
-    PersonalIncome: {
+    "/user/personal-income": {
       Title: "Personal Income and Expenses",
     },
-    BusinessEntities: {
-      Title: "Business Entities & Tax Structures"
+    "/user/business-entities": {
+      Title: "Business Entities & Tax Structures",
     },
-    SMSF: {
+    "/user/SMSF": {
       Title: "Self Manged Super Fund",
     },
-    FamilyTrust: {
+    "/user/family-trust": {
       Title: "Family Trust",
     },
-    PersonalInsurance: {
+    "/user/personal-insurance": {
       Title: "Personal Insurance",
-
     },
-
-  }
-
+  };
 
   return (
     <div className="container-fluid mb-4 ">
@@ -216,44 +209,48 @@ const QuestionsNew = (props) => {
       <div className="row m-0">
         <div className="col-md-12">
           <div className="pb-4 bg-white  borderOverAll  rounded text-center">
-
             <div>
-              <h4 className="heading text-green d-none" onClick={() => { console.log("object:", CRObject) }}> {obj[QuestionChange].Title} </h4>
-              <div className="QuestionIcon p-3 curser-pointer" onClick={() => {
-                setFlagState(true);
-                if (obj[QuestionChange].Title === "Personal Insurance") {
-                  setModalObject({
-                    title: "Personal Insurance",
-                    Input: "Name"
-                  })
-                }
-                else {
-                  setModalObject({
-                    title: "Questions",
-                    Input: "Name"
-                  })
-                }
-              }}>
+              <div
+                className="QuestionIcon p-3 curser-pointer"
+                onClick={() => {
+                  setFlagState(true);
+                  if (obj[QuestionChange].Title === "Personal Insurance") {
+                    setModalObject({
+                      title: "Personal Insurance",
+                      Input: "Name",
+                    });
+                  } else {
+                    setModalObject({
+                      title: "Questions",
+                      Input: "Name",
+                    });
+                  }
+                }}
+              >
                 <img className="img-fluid min-w-25" src={Add} alt="" />
               </div>
             </div>
 
             <QuestionCards Question={QuestionChange} />
 
-
-            <ModalComponent setQuestionChange={setFlagState2} Question={QuestionChange} modalObject={modalObject} setFlagState={setFlagState} flagState={flagState}>
-
-              {props.children ? (
-                React.cloneElement(props.children)
-              ) : "no Child exist"}
-
+            <ModalComponent
+              setQuestionChange={setFlagState2}
+              Question={QuestionChange}
+              modalObject={modalObject}
+              setFlagState={setFlagState}
+              flagState={flagState}
+            >
+              {props.children
+                ? React.cloneElement(props.children)
+                : "no Child exist"}
             </ModalComponent>
 
             <div className="row mt-2">
               <div className="col-md-12">
                 <button
                   onClick={BackHandle}
-                  className="float-center btn w-25 btn-outline backBtn mx-3">
+                  className="float-center btn w-25 btn-outline backBtn mx-3"
+                >
                   Back
                 </button>
                 <button

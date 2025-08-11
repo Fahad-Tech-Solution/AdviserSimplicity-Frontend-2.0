@@ -95,7 +95,7 @@ const RiskProfileCards = (props) => {
 
 
     return (
-        <div className="container-fluid pt-3">
+        <div className="container-fluid pt-3" style={{marginTop:"-100px"}}>
             <div className="row px-0 m-0 ">
 
                 {/*  modal */}

@@ -188,10 +188,10 @@ const ImportantQuestion = () => {
         let id = localStorage.getItem("UserID");
 
         if (id) {
-            Nav("/PersonalDetail#" + id);
+            Nav("/user/personal-detail#" + id);
         }
         else {
-            Nav("/PersonalDetail")
+            Nav("/user/personal-detail")
         }
 
     }
@@ -244,7 +244,7 @@ const ImportantQuestion = () => {
         setCRObject(values);
         localStorage.setItem("QuestionsState", JSON.stringify(values));
         localStorage.setItem("Question", "PersonalAssets");
-        Nav("/PersonalIncome");
+        Nav("/user/personal-income");
     };
 
     const onSubmit = async (values) => {

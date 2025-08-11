@@ -680,7 +680,7 @@ const GoalsObjectiveNew = () => {
   };
 
   return (
-    <div className="container-fluid minheight73">
+    <div className="container-fluid minheight73" style={{marginTop:"-80px"}}>
       <ModalComponent
         modalObject={modalObject}
         setFlagState={setFlagState}

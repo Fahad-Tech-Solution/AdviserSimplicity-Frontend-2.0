@@ -464,7 +464,7 @@ const PersonalDetailNew = () => {
       }
     } else {
       setStepsStatus(false);
-      Nav("/ImportantQuestion");
+      Nav("/user/important-question");
     }
   };
 

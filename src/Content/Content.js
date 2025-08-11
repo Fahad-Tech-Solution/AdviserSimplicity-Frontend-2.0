@@ -65,42 +65,42 @@ export const content = {
       subTitle: "Personal Income and Expenses",
       statusStep: 16,
       icon: "FaMoneyCheckDollar",
-      route: "/PersonalIncome",
+      route: "/user/personal-income",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
     {
       subTitle: "Personal Assets and Debt",
       statusStep: 24,
       icon: "FaHome",
-      route: "/PersonalAssets",
+      route: "/user/personal-assets",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
     {
       subTitle: "Financial Investments",
       statusStep: 32,
       icon: "RiCoinsFill",
-      route: "/FinancialInvestments",
+      route: "/user/financial-investments",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
     {
       subTitle: "Estate Planning & Professional Advisers",
       statusStep: 40,
       icon: "FaQuestionCircle",
-      route: "/EstatePlanning",
+      route: "/user/estate-planning",
       condition: (CRObject) => true,
     },
     {
       subTitle: "Personal Insurance",
       statusStep: 48,
       icon: "FaMoneyCheckDollar",
-      route: "/PersonalInsurance",
+      route: "/user/personal-insurance",
       condition: (CRObject) => CRObject?.personalInsuranceTab === "Yes",
     },
     {
       subTitle: "Business Entities",
       statusStep: 56,
       icon: "FaBriefcase",
-      route: "/BusinessEntities",
+      route: "/user/business-entities",
       condition: (CRObject) =>
         CRObject?.BusinessAsCompanyStructure === "Yes" ||
         CRObject?.BusinessAsTrusts === "Yes",
@@ -109,14 +109,14 @@ export const content = {
       subTitle: "SMSF",
       statusStep: 64,
       icon: "FaGift",
-      route: "/SMSF",
+      route: "/user/SMSF",
       condition: (CRObject) => CRObject?.SMSFManagedFundsTab === "Yes",
     },
     {
       subTitle: "Investment Trust",
       statusStep: 72,
       icon: "MdFamilyRestroom",
-      route: "/FamilyTrust",
+      route: "/user/family-trust",
       condition: (CRObject) => CRObject?.businessAsInvestmentTab === "Yes",
     },
   ],
