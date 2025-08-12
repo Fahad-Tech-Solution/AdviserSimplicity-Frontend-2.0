@@ -5,25 +5,32 @@ import { FaRegEdit, FaRegFileAlt, FaTrashAlt } from "react-icons/fa";
 import { Button, Input, Modal, Select, Tag } from "antd";
 import ModalComponent from "../Questions/FinancialInvestments/ModalComponent";
 import SubscriptionForms from "./SubscriptionForms";
-import { openNotificationSuccess, toSentenceCase } from "../Assets/Api/Api";
+import {
+  openNotificationSuccess,
+  PatchAxios,
+  toSentenceCase,
+} from "../Assets/Api/Api";
 import AdviserFrom from "./AdviserFrom";
 import {
   Advisers,
   defaultUrl,
+  Employees,
   Loading,
   Subscriptions,
 } from "../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { FaCircleCheck, FaCircleXmark, FaXmark } from "react-icons/fa6";
 import { MdMarkAsUnread, MdSearch } from "react-icons/md";
+import EmployeeForm from "./EmployeeForm";
 
 const MyTeam = () => {
   const { confirm } = Modal;
 
   let DefaultUrl = useRecoilValue(defaultUrl);
-  let [advisers, setAdvisers] = useRecoilState(Advisers);
+  let [employee, setEmployee] = useRecoilState(Employees);
   const [selectedValue, setSelectedValue] = useState(null);
   const [expanded, setExpanded] = useState(false);
+  let [loading, setLoading] = useRecoilState(Loading);
 
   const handleSearchClick = () => {
     if (!expanded) {
@@ -244,12 +251,31 @@ const MyTeam = () => {
       cancelText: "Cancel",
       centered: true,
       onOk: async () => {
-        openNotificationSuccess(
-          "error",
-          "topRight",
-          "Delete Failed",
-          "An error occurred while deleting the order."
-        );
+        try {
+          setLoading(true);
+          let res = await PatchAxios(DefaultUrl + "/api/user/softDelete", {
+            _id: id,
+          });
+          if (res) {
+            setEmployee((prev) => prev.filter((item) => item._id !== id));
+            openNotificationSuccess(
+              "success",
+              "topRight",
+              "Employee Deleted",
+              "Employee is deleted successfully"
+            );
+          }
+        } catch (error) {
+          console.error(error);
+          openNotificationSuccess(
+            "error",
+            "topRight",
+            "Delete Failed",
+            "An error occurred while deleting the employee."
+          );
+        } finally {
+          setLoading(false);
+        }
       },
     });
   };
@@ -261,7 +287,7 @@ const MyTeam = () => {
         setFlagState={setFlagState}
         flagState={flagState}
       >
-        <AdviserFrom />
+        <EmployeeForm />
       </ModalComponent>
 
       <div className="row justify-content-center">
@@ -306,7 +332,7 @@ const MyTeam = () => {
                           }
                           onChange={handleChange}
                           options={[
-                            ...advisers.map((item, index) => {
+                            ...employee.map((item, index) => {
                               return {
                                 value: item.email,
                                 label: toSentenceCase(
@@ -337,8 +363,8 @@ const MyTeam = () => {
               <AntTableDynamicReportTable
                 dataSource={
                   selectedValue
-                    ? advisers.filter((item) => item.email === selectedValue)
-                    : advisers
+                    ? employee.filter((item) => item.email === selectedValue)
+                    : employee
                 }
                 columns={columns}
                 pagination={true}

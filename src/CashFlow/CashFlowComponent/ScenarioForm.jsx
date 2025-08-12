@@ -81,7 +81,7 @@ const ScenarioForm = (props) => {
 
                     localStorage.setItem("ScenarioObj", JSON.stringify(res));
 
-                    Nav("/Cash-Flow/PersonalDetail" + "#" + res._id);
+                    Nav("/user/cashflow/personal-detail" + "#" + res._id);
                 }
                 else if (props.modalObject.action === "duplicate") {
                     const updatedData = {
@@ -92,7 +92,7 @@ const ScenarioForm = (props) => {
 
                     localStorage.setItem("ScenarioObj", JSON.stringify(res.data));
 
-                    Nav("/Cash-Flow/PersonalDetail" + "#" + res._id);
+                    Nav("/user/cashflow/personal-detail" + "#" + res._id);
                 }
                 else if (props.modalObject.action === "Edit") {
                     // alert(res._id)

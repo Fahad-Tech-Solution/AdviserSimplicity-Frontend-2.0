@@ -9,7 +9,7 @@ const { persistAtom } = recoilPersist({
 
 export const QuestionShift = atom({
   key: "QuestionShift",
-  default: "FinancialInvestments",
+  default: "/user/personal-income",
 });
 
 export const CashFlowShift = atom({
@@ -231,11 +231,11 @@ export const defaultUrl = atom({
   // default: "http://localhost:7000",
 
   // default: "http://192.168.3.111:7000", // Usama Faheem Ahmed
-  // default: "http://192.168.1.70:7000", // Usama bhai growWork_Beta
+  default: "http://192.168.3.253:7000", // Usama bhai growWork_Beta
   // default: "http://192.168.14.244:7000",   // Usama bhai mara Mobile k sath
   // default: "http://192.168.227.244:7000",  // Usama bhai Fahad bhai k sath
 
-  default: "http://13.239.170.76:7000", // Live link
+  // default: "http://13.239.170.76:7000", // Live link
   // default: "",
 });
 
@@ -476,6 +476,11 @@ export const Subscriptions = atom({
 
 export const Advisers = atom({
   key: "Advisers",
+  default: [],
+});
+
+export const Employees = atom({
+  key: "Employees",
   default: [],
 });
 

@@ -83,7 +83,7 @@ const ProfileTemp = () => {
     },
     {
       label: "Subscription Days Left",
-      children: loggedInUserData?.subscription?.subscriptionDaysLeft || "--",
+      children: loggedInUserData?.subscription?.daysLeft || "--",
       ...sharedItemStyle,
     },
   ];

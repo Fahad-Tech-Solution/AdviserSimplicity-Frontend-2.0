@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import { Layout } from "antd";
 import AdminSideBar from "../Components/SideBar/AdminSideBar";
@@ -29,11 +29,15 @@ import CDFclients from "../Components/CDFclients/CDFclients";
 import ProfileTemp from "../Components/Assets/ProfileSection/ProfileTemp";
 import MyTeam from "../Components/SuperAdminComponent/myTeam";
 import { Header } from "antd/es/layout/layout";
+import { defaultUrl, Employees, Roles } from "../Store/Store";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { GetAxios } from "../Components/Assets/Api/Api";
 
 const { Sider, Content } = Layout;
 
 function AuthRouts() {
-  const [collapsed, setCollapsed] = useState(true);
+  const [collapsed, setCollapsed] = useState(true);            
+  let [employee, setEmployee] = useRecoilState(Employees);
 
   const routeConfigs = [
     {
@@ -148,6 +152,32 @@ function AuthRouts() {
     { path: "/profile", element: () => <ProfileTemp /> },
     { path: "/my-team", element: () => <MyTeam /> },
   ];
+
+  const [role, setRoles] = useRecoilState(Roles);
+  let DefaultUrl = useRecoilValue(defaultUrl);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+const fetchData = async () => {
+  try {
+    // Run multiple GET APIs in parallel
+    const [rolesRes, Employees] = await Promise.all([
+      GetAxios(`${DefaultUrl}/api/role`),
+      GetAxios(`${DefaultUrl}/api/user/Employees`)
+    ]);
+
+    // Update state only if responses exist
+    if (rolesRes) setRoles(rolesRes);
+    if (Employees) setEmployee(Employees)
+
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    // You could show a toast or alert here instead
+  }
+};
+
 
   return (
     <Layout style={{ minHeight: "100vh" }}>

@@ -4,6 +4,7 @@ import {
   BankDetail,
   defaultUrl,
   Loading,
+  LoggedInUserData,
   ProspectsCDF,
   QuestionDetail,
   SelectedClientDetails,
@@ -27,8 +28,11 @@ import DropDownOptions from "../DropDownOptions/DropDownOptions";
 import ModalComponent from "../../Questions/FinancialInvestments/ModalComponent";
 import ViewClient from "../../../GetComponents/ViewClient";
 import { useNavigate } from "react-router-dom";
+import { RiUserSearchLine } from "react-icons/ri";
+import AssignUser from "../../../GetComponents/AssignUser";
 
 const NewAllClients = (props) => {
+  const [loggedUser, setLoggedInUserData] = useRecoilState(LoggedInUserData);
   let DefaultUrl = useRecoilValue(defaultUrl);
   const [loading, setLoading] = useRecoilState(Loading);
   const [showFilters, setShowFilters] = useState(false);
@@ -44,132 +48,205 @@ const NewAllClients = (props) => {
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
 
-  const menuItems = [
-    {
-      action: "View",
-      category: "",
-      label: (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            marginLeft: 13,
-          }}
-          className="fw-bold"
-        >
-          <FaRegFileAlt /> View
-        </div>
-      ),
-      onClick: (heading, row) => CallBack(heading, row, "View"),
-    },
-    {
-      action: "edit",
-      label: (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            marginLeft: 13,
-          }}
-          className="fw-bold"
-        >
-          <FaRegEdit /> Edit
-        </div>
-      ),
-      onClick: (heading, row) => CallBack(heading, row, "Edit"),
-    },
-    {
-      action: "select",
-      label: (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            marginLeft: 13,
-          }}
-          className="fw-bold"
-        >
-          <FaUserCheck /> Select
-        </div>
-      ),
-      onClick: (heading, row) => CallBack(heading, row, "select"),
-    },
-    {
-      action: "delete",
-      label: (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            marginLeft: 13,
-          }}
-          className="fw-bold"
-        >
-          <FaTrashAlt /> Delete
-        </div>
-      ),
-      category: "danger",
-      onClick: (heading, row) => CallBack(heading, row, "Delete"),
-    },
-  ];
-
-  const columns = [
-    {
-      title: "#",
-      key: "index",
-      render: (text, row, index) => index + 1 || "--",
-    },
-    {
-      title: "Name",
-      key: "clientGivenName",
-      render: (text, row) => {
-        const clientName = `${row?.client?.clientTitle || ""}. ${
-          row?.client?.clientGivenName || ""
-        }`;
-        const shouldShowPartner =
-          row?.client?.clientMaritalStatus !== "Single" &&
-          row?.client?.clientMaritalStatus !== "widowed" &&
-          row?.partner?.partnerGivenName;
-        const partnerName = shouldShowPartner
-          ? ` & ${row.partner.partnerGivenName}`
-          : "";
-
-        return clientName.trim() || "--" + partnerName;
+  let menuGenerator = (row) => {
+    const menuItems = [
+      {
+        action: "View",
+        category: "",
+        label: (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              marginLeft: 13,
+            }}
+            className="fw-bold"
+          >
+            <FaRegFileAlt /> View
+          </div>
+        ),
+        onClick: (heading, row) => CallBack(heading, row, "View"),
       },
-    },
-    {
-      title: "Marital Status",
-      key: "clientMaritalStatus",
-      render: (text, row) =>
-        toSentenceCase(row?.client?.clientMaritalStatus) || "--",
-    },
-    {
-      title: "Mobile No",
-      key: "clientWorkPhone",
-      render: (text, row) => row?.client?.clientWorkPhone || "--",
-    },
-    {
-      title: "Email",
-      key: "clientEmail",
-      render: (text, row) => row?.client?.Email || "--",
-    },
-    {
-      title: "Operations",
-      key: "operations",
-      render: (text, row, index) => (
-        <DropDownOptions
-          menuItems={menuItems}
-          CallBack={OpenModel}
-          heading={row}
-          row={row} // ✅ Proper row data
-        />
-      ),
-    },
-  ];
+      {
+        action: "edit",
+        label: (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              marginLeft: 13,
+            }}
+            className="fw-bold"
+          >
+            <FaRegEdit /> Edit
+          </div>
+        ),
+        onClick: (heading, row) => CallBack(heading, row, "Edit"),
+      },
+      {
+        action: "assign",
+        label: (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              marginLeft: 13,
+            }}
+            className="fw-bold"
+          >
+            <RiUserSearchLine /> Assign
+          </div>
+        ),
+        onClick: (heading, row) => CallBack(heading, row, "Assign"),
+      },
+      {
+        action: "select",
+        label: (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              marginLeft: 13,
+            }}
+            className="fw-bold"
+          >
+            <FaUserCheck /> Select
+          </div>
+        ),
+        onClick: (heading, row) => CallBack(heading, row, "select"),
+      },
+      {
+        action: "delete",
+        label: (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              marginLeft: 13,
+            }}
+            className="fw-bold"
+          >
+            <FaTrashAlt /> Delete
+          </div>
+        ),
+        category: "danger",
+        onClick: (heading, row) => CallBack(heading, row, "Delete"),
+      },
+    ];
+
+    if (
+      loggedUser?.roleID?.permissions.includes("adviser") &&
+      row?.assignID?.email !== loggedUser?.email
+    ) {
+      // Find the "assign" menu item
+      const assignIndex = menuItems.findIndex(
+        (item) => item.action === "assign"
+      );
+
+      if (assignIndex !== -1) {
+        menuItems[assignIndex] = {
+          ...menuItems[assignIndex], // keep other properties
+          action: "unAssign", // change the action
+          label: (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                marginLeft: 13,
+              }}
+              className="fw-bold"
+            >
+              <RiUserSearchLine /> Unassign
+            </div>
+          ),
+          onClick: (heading, row) => CallBack(heading, row, "Unassign"),
+        };
+      }
+    }
+
+    return menuItems;
+  };
+  let columnsGenerator = () => {
+    const columns = [
+      {
+        title: "#",
+        key: "index",
+        render: (text, row, index) => index + 1 || "--",
+      },
+      {
+        title: "Name",
+        key: "clientGivenName",
+        render: (text, row) => {
+          const clientName = `${row?.client?.clientTitle || ""}. ${
+            row?.client?.clientGivenName || ""
+          }`;
+          const shouldShowPartner =
+            row?.client?.clientMaritalStatus !== "Single" &&
+            row?.client?.clientMaritalStatus !== "widowed" &&
+            row?.partner?.partnerGivenName;
+          const partnerName = shouldShowPartner
+            ? ` & ${row.partner.partnerGivenName}`
+            : "";
+
+          return clientName.trim() || "--" + partnerName;
+        },
+      },
+      {
+        title: "Marital Status",
+        key: "clientMaritalStatus",
+        render: (text, row) =>
+          toSentenceCase(row?.client?.clientMaritalStatus) || "--",
+      },
+      {
+        title: "Mobile No",
+        key: "clientWorkPhone",
+        render: (text, row) => row?.client?.clientWorkPhone || "--",
+      },
+      {
+        title: "Email",
+        key: "clientEmail",
+        render: (text, row) => row?.client?.Email || "--",
+      },
+      {
+        title: "Assigned to",
+        key: "assigneName",
+        render: (text, row) =>
+          (row?.assignID?.firstName || "--") +
+          " " +
+          (row?.assignID?.lastName || "--"),
+      },
+      {
+        title: "Operations",
+        key: "operations",
+        render: (text, row, index) => {
+          let menuItems = menuGenerator(row);
+          return (
+            <DropDownOptions
+              menuItems={menuItems}
+              CallBack={OpenModel}
+              heading={row}
+              row={row} // ✅ Proper row data
+            />
+          );
+        },
+      },
+    ];
+
+    if (!loggedUser?.roleID?.permissions.includes("adviser")) {
+      const index = columns.findIndex((col) => col.key === "assigneName");
+      if (index !== -1) {
+        columns.splice(index, 1);
+      }
+    }
+
+    return columns;
+  };
 
   const [PerosnalDetail2, setPersonalDetail] = useRecoilState(AllUsers);
   const PerosnalDetail = useRecoilValue(AllUsers);
@@ -182,10 +259,11 @@ const NewAllClients = (props) => {
   let fetchPersonalDetials = async () => {
     try {
       setLoading(true);
-      let res = await GetAxios(`${DefaultUrl}/api/personalDetails`);
+      let res = await GetAxios(`${DefaultUrl}/api/user/Clients`);
+      console.log(res, "/api/user/Clients");
       if (res) {
         let adjustment = deepCloneWithKeys(
-          res.map((item, index) => {
+          res.clients.map((item, index) => {
             return {
               ...item,
               children: null,
@@ -233,6 +311,7 @@ const NewAllClients = (props) => {
           row,
         });
         setFlagState(true);
+
         break;
       case "edit":
       case "Edit":
@@ -243,6 +322,16 @@ const NewAllClients = (props) => {
         setStepsStatus(false);
         setSelectedClientDetails(row);
         Navigate("/user/personal-detail#" + row._id);
+
+        break;
+      case "assign":
+      case "Assign":
+        setModalObject({
+          title: "Assign User",
+          row,
+        });
+        setFlagState(true);
+
         break;
       case "select":
         localStorage.setItem("UserID", row._id);
@@ -304,13 +393,13 @@ const NewAllClients = (props) => {
         setFlagState={setFlagState}
         flagState={flagState}
       >
-        <ViewClient />
+        {modalObject.title === "Assign User" ? <AssignUser /> : <ViewClient />}
       </ModalComponent>
 
       <AntTableDynamicReportTable
         rowSelection={Object.assign({ type: "radio" }, rowSelection)} //This feture is comming up in Next Miled Stone
         dataSource={PerosnalDetail}
-        columns={columns}
+        columns={columnsGenerator()} // ✅ now it's an array
         showFilters={showFilters}
         setShowFilters={setShowFilters}
         pagination={true}

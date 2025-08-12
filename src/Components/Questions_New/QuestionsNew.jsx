@@ -52,7 +52,7 @@ const QuestionsNew = (props) => {
 
   let selectQuestionSet = async (path) => {
     let cLocation = path;
-    // console.log("Question Setting:", cLocation, CRObjectNoUse);
+    console.log("Question Setting:", cLocation, CRObjectNoUse);
 
     setQuestionChange(cLocation);
 

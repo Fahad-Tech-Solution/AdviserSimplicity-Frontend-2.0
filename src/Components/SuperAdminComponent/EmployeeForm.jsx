@@ -2,7 +2,13 @@ import React, { useEffect, useState } from "react";
 import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { Table } from "react-bootstrap";
-import { Advisers, defaultUrl, Roles, Subscriptions } from "../../Store/Store";
+import {
+  Advisers,
+  defaultUrl,
+  LoggedInUserData,
+  Roles,
+  Subscriptions,
+} from "../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   openNotificationSuccess,
@@ -13,7 +19,7 @@ import {
 import { Col, ConfigProvider, Input, Select, Row } from "antd";
 import { content } from "../../Content/Content";
 
-const AdviserFrom = (props) => {
+const EmployeeForm = (props) => {
   const { AdviserObject } = content;
   const { TextArea } = Input;
 
@@ -23,19 +29,14 @@ const AdviserFrom = (props) => {
     email: "",
     phoneNumber: "",
     companyName: "",
-    LicenseeName: "",
-    ABN: "",
-    companyAddress: "",
-    state: "",
-    ASIC: "",
-    AFSNumber: "",
-    AFSName: "",
+    roleID: "",
   };
 
   let DefaultUrl = useRecoilValue(defaultUrl);
   let subscriptions = useRecoilValue(Subscriptions);
   let [advisers, setAdvisers] = useRecoilState(Advisers);
   let roles = useRecoilValue(Roles);
+  let LoggedUser = useRecoilValue(LoggedInUserData);
   let [isDisabled, setIsdisabled] = useState(false);
   let [isDisabledPlanCod, setIsdisabledPlanCod] = useState(false);
 
@@ -49,14 +50,7 @@ const AdviserFrom = (props) => {
       "email",
       "phoneNumber",
       "companyName",
-      "LicenseeName",
-      "ABN",
-      "companyAddress",
-      "state",
-      "ASIC",
-      "AFSNumber",
-      "AFSName",
-      // "subscriptionName", // Uncomment if needed
+      "roleID",
     ];
 
     fieldsToSet.forEach((field) => {
@@ -73,10 +67,10 @@ const AdviserFrom = (props) => {
   let onSubmit = async (values, { resetForm }) => {
     try {
       let res = "";
-      values.passwordHash = passwordGenerator(12);
+      values.companyName = LoggedUser.companyName;
       console.log(values);
       if (props.modalObject.Action.toLowerCase() == "newadviser") {
-        res = await PostAxios(DefaultUrl + "/api/user/Add/Adviser", values);
+        res = await PostAxios(DefaultUrl + "/api/user/Add/Employee", values);
         if (res) {
           console.log(res);
 
@@ -90,7 +84,11 @@ const AdviserFrom = (props) => {
         }
       } else if (props.modalObject.Action.toLowerCase() == "edit") {
         values._id = props.modalObject.row._id;
-        res = await PatchAxios(DefaultUrl + "/api/user/Update/Adviser", values);
+        values.parentUserID = props.modalObject.row.parentUserID;
+        res = await PatchAxios(
+          DefaultUrl + "/api/user/Update/Employee",
+          values
+        );
         if (res) {
           setAdvisers((prev) =>
             prev.map((item) =>
@@ -111,7 +109,9 @@ const AdviserFrom = (props) => {
         "error",
         "topRight",
         "Error Notification",
-        error?.response?.data?.error || error?.response?.data || "Some thing went wrong"
+        error?.response?.data?.error ||
+          error?.response?.data ||
+          "Some thing went wrong"
       );
     } finally {
       resetForm();
@@ -126,102 +126,39 @@ const AdviserFrom = (props) => {
       name: "firstName",
       type: "text",
       placeholder: "First Name",
-      column: 3,
+      column: 12,
       disabled: isDisabled,
     },
     {
       name: "lastName",
       type: "text",
       placeholder: "Last Name",
-      column: 3,
+      column: 12,
       disabled: isDisabled,
     },
     {
       name: "email",
       type: "text",
       placeholder: "Email Address",
-      column: 3,
+      column: 12,
       disabled: isDisabled,
     },
     {
       name: "phoneNumber",
       type: "text",
       placeholder: "Phone Number",
-      column: 3,
+      column: 12,
       disabled: isDisabled,
     },
     {
-      name: "companyName",
-      type: "text",
-      placeholder: "Company Name",
-      column: 3,
-      disabled: isDisabled,
-    },
-    {
-      name: "LicenseeName",
-      type: "text",
-      placeholder: "Licensee Name",
-      column: 3,
-      disabled: isDisabled,
-    },
-    {
-      name: "ABN",
-      type: "text",
-      placeholder: "ABN",
-      column: 3,
-      disabled: isDisabled,
-    },
-    {
-      name: "companyAddress",
-      type: "text",
-      placeholder: "Company Address",
-      column: 3,
-      disabled: isDisabled,
-    },
-    {
-      name: "state",
-      type: "text",
-      placeholder: "State",
-      column: 3,
-      disabled: isDisabled,
-    },
-    {
-      name: "ASIC",
-      type: "text",
-      placeholder: "ASIC Number",
-      column: 3,
-      disabled: isDisabled,
-    },
-    {
-      name: "AFSNumber",
+      name: "roleID",
       type: "select",
-      placeholder: "AFS Number",
-      options: [
-        ...AdviserObject.map((item) => ({
-          label: item.AFSNumber,
-          value: item.AFSNumber,
-        })),
-      ],
-      action: (setFieldvalue, value) => {
-        if (value) {
-          let selectedAdviser = AdviserObject.find(
-            (item) => item.AFSNumber === value
-          );
-          if (selectedAdviser) {
-            setFieldvalue("AFSName", selectedAdviser.AFSName);
-          }
-        }
-      },
-      column: 3,
-      disabled: isDisabled,
-    },
-    {
-      name: "AFSName",
-      type: "textarea",
-      readOnly: true,
-      placeholder: "AFS Name",
-      column: 3,
-      rows: 3,
+      placeholder: "Role",
+      column: 12,
+      options: roles.map((item) => ({
+        value: item._id, // or whatever your backend expects as the ID
+        label: item.roleName, // this is the text shown in the dropdown
+      })),
       disabled: isDisabled,
     },
   ];
@@ -270,13 +207,9 @@ const AdviserFrom = (props) => {
                   </tbody>
                 </Table>
               </div>
-              <Row gutter={[16, 16]}>
+              <Row gutter={[12, 12]} className="justify-content-center">
                 {rowConfig.map((item, index) => {
-                  // Check if it's the last field and there are odd number of fields
-                  const isLast = index === rowConfig.length - 1;
-                  const isOdd = rowConfig.length % 2 !== 0;
-                  const shouldTakeFullWidth = isOdd && isLast;
-                  const columnSpan = Math.floor(24 / item.column);
+                  const columnSpan = parseFloat(item.column);
                   return (
                     <Col
                       key={index}
@@ -285,7 +218,7 @@ const AdviserFrom = (props) => {
                       md={columnSpan}
                       lg={columnSpan}
                       xl={columnSpan}
-                      style={{ minWidth: 250 }}
+                      //   style={{ minWidth: 250 }}
                     >
                       <label
                         htmlFor={item.name}
@@ -381,4 +314,4 @@ const AdviserFrom = (props) => {
   );
 };
 
-export default AdviserFrom;
+export default EmployeeForm;

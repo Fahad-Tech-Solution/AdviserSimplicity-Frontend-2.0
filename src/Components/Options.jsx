@@ -167,7 +167,7 @@ function Options(props) {
         const IconComponent = iconMap[item.icon] || FaUser;
         const isPersonalDetails = item.subTitle === "Personal Details";
         const currentEmail = localStorage.getItem("UserID");
-        console.log(item.route,"item.route");
+        // console.log(item.route,"item.route");
         let isCurrentStep =
           cLocation ===
           (isPersonalDetails ? "/user/personal-detail" : item.route);

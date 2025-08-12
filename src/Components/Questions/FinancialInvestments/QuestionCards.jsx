@@ -408,15 +408,16 @@ const QuestionCards = (props) => {
   };
 
   useEffect(() => {
-    // console.log(props.Question)
+    console.log(props.Question, arrayObj[props.Question]);
+
     countYesAttributes();
   }, [CRObject]);
 
   function countYesAttributes() {
     let a = [];
     let lengthOfa = 0;
-    if (props.Question == "FamilyTrust") {
-      arrayObj[props.Question].map((elem, index) => {
+    if (props.Question == "/user/family-trust") {
+      arrayObj?.[props.Question].map((elem, index) => {
         if (CRObject[elem.key] === "Yes") {
           a.push("yes");
           // console.log("yes")
@@ -424,8 +425,8 @@ const QuestionCards = (props) => {
       });
       lengthOfa = a.length - 1;
       setArrayCount(lengthOfa + CRObject.numberOfFamilyInvestmentProperties);
-    } else if (props.Question == "SMSF") {
-      arrayObj[props.Question].map((elem, index) => {
+    } else if (props.Question == "/user/SMSF") {
+      arrayObj?.[props.Question].map((elem, index) => {
         if (CRObject[elem.key] === "Yes") {
           a.push("yes");
           // console.log("yes")
@@ -433,8 +434,8 @@ const QuestionCards = (props) => {
       });
       lengthOfa = a.length - 1;
       setArrayCount(lengthOfa + CRObject.numberOfSMSFInvestmentProperties);
-    } else if (props.Question == "Lifestyle") {
-      arrayObj[props.Question].map((elem, index) => {
+    } else if (props.Question == "/user/life-Style") {
+      arrayObj?.[props.Question].map((elem, index) => {
         if (CRObject[elem.key] === "Yes") {
           a.push("yes");
           // console.log("yes")
@@ -443,7 +444,7 @@ const QuestionCards = (props) => {
       lengthOfa = a.length - 1;
       setArrayCount(lengthOfa + CRObject.numberOfHolidayHome);
     } else {
-      arrayObj[props.Question].map((elem, index) => {
+      arrayObj?.[props.Question].map((elem, index) => {
         if (CRObject[elem.key] === "Yes") {
           a.push("yes");
           // console.log("yes")
@@ -494,7 +495,7 @@ const QuestionCards = (props) => {
 
   let DefaultUrl = useRecoilValue(defaultUrl);
 
- const JointHidden = [
+  const JointHidden = [
     "superAnnuationIssues",
     "accountBasedPensionIssues",
     "annuitiesIssues",
@@ -764,451 +765,462 @@ const QuestionCards = (props) => {
       </ModalComponent>
 
       <div className="row m-0 justify-content-start align-items-stretch">
-        {arrayObj?.[props.Question].map((elem, index) => {
-          if (CRObject[elem.key] === "Yes") {
-            // const cardSwitch = CardForms.includes(elem.key) ? true : false;
-            const jointClass = JointHidden.includes(elem.key) ? "d-none" : "";
-            const singleSwitch = singleClient.includes(elem.key) ? true : false;
-            const reuseSwitch = reuseModal.includes(elem.key) ? true : false;
-            const combinedSwitch = combinedArray.includes(elem.key)
-              ? true
-              : false;
-            const TowInSwitch = towInOne.includes(elem.key) ? true : false;
-            const SampleOneSwitch = sampleOne.includes(elem.key) ? true : false;
-            const PersonalInsuranceRender = conditionalRender.includes(elem.key)
-              ? true
-              : false;
-            // console.log(PersonalInsuranceRender)
-            const SMSFInP = elem.key === "SMSFDetails" ? true : false;
-            const OneIndex =
-              elem.key === "familyDetails" ||
-              elem.key === "familyOtherInvestment"
+        {Array.isArray(arrayObj?.[props.Question]) &&
+          arrayObj?.[props.Question].map((elem, index) => {
+            if (CRObject[elem.key] === "Yes") {
+              // const cardSwitch = CardForms.includes(elem.key) ? true : false;
+              const jointClass = JointHidden.includes(elem.key) ? "d-none" : "";
+              const singleSwitch = singleClient.includes(elem.key)
                 ? true
                 : false;
+              const reuseSwitch = reuseModal.includes(elem.key) ? true : false;
+              const combinedSwitch = combinedArray.includes(elem.key)
+                ? true
+                : false;
+              const TowInSwitch = towInOne.includes(elem.key) ? true : false;
+              const SampleOneSwitch = sampleOne.includes(elem.key)
+                ? true
+                : false;
+              const PersonalInsuranceRender = conditionalRender.includes(
+                elem.key
+              )
+                ? true
+                : false;
+              // console.log(PersonalInsuranceRender)
+              const SMSFInP = elem.key === "SMSFDetails" ? true : false;
+              const OneIndex =
+                elem.key === "familyDetails" ||
+                elem.key === "familyOtherInvestment"
+                  ? true
+                  : false;
 
-            // const SMSFInP = elem.key === "SMSFInvestmentProperties" ? true : false;
-            // const FamilyInP = elem.key === "familyInvestmentProperties" ? true : false;
-            const PartnerClass =
-              localStorage.getItem("UserStatus") === "Single" ? "d-none" : "";
+              // const SMSFInP = elem.key === "SMSFInvestmentProperties" ? true : false;
+              // const FamilyInP = elem.key === "familyInvestmentProperties" ? true : false;
+              const PartnerClass =
+                localStorage.getItem("UserStatus") === "Single" ? "d-none" : "";
 
-            if (singleSwitch) {
-              return (
-                <div className={`col-md-3 mb-4`} key={index}>
-                  <Card
-                    className="py-4 shadow borderOverAll GoalsobjectiveCard"
-                    style={{ borderRadius: "20px", height: "100%" }}
-                  >
-                    <h5
-                      className="text-center"
-                      onClick={() => {
-                        console.log(questionDetail);
-                      }}
+              if (singleSwitch) {
+                return (
+                  <div className={`col-md-3 mb-4`} key={index}>
+                    <Card
+                      className="py-4 shadow borderOverAll GoalsobjectiveCard"
+                      style={{ borderRadius: "20px", height: "100%" }}
                     >
-                      {elem.title}
-                    </h5>
-                    <div className="QuestionIcon CardImg">
-                      <img className="img-fluid" src={elem.img} alt="" />
-                    </div>
-                    <div className="row justify-content-center align-items-center my-2">
-                      <div className="col-12 p-0 ">
-                        <div className="d-flex flex-column-reverse justify-content-center align-items-center gap-2">
-                          <label
-                            className=" d-block "
-                            htmlFor={"client" + elem.key}
-                          >
-                            General Living
-                          </label>
+                      <h5
+                        className="text-center"
+                        onClick={() => {
+                          console.log(questionDetail);
+                        }}
+                      >
+                        {elem.title}
+                      </h5>
+                      <div className="QuestionIcon CardImg">
+                        <img className="img-fluid" src={elem.img} alt="" />
+                      </div>
+                      <div className="row justify-content-center align-items-center my-2">
+                        <div className="col-12 p-0 ">
+                          <div className="d-flex flex-column-reverse justify-content-center align-items-center gap-2">
+                            <label
+                              className=" d-block "
+                              htmlFor={"client" + elem.key}
+                            >
+                              General Living
+                            </label>
 
-                          <label
-                            className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                            onClick={() => {
-                              OpenModalClient2(
-                                elem.title,
-                                "client",
-                                "General Living"
-                              );
-                            }}
-                          >
-                            <div>
-                              <FontAwesomeIcon
-                                icon={faArrowUpRightFromSquare}
-                              />
-                            </div>
-                          </label>
+                            <label
+                              className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                              onClick={() => {
+                                OpenModalClient2(
+                                  elem.title,
+                                  "client",
+                                  "General Living"
+                                );
+                              }}
+                            >
+                              <div>
+                                <FontAwesomeIcon
+                                  icon={faArrowUpRightFromSquare}
+                                />
+                              </div>
+                            </label>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <input
-                      type="text"
-                      className="form-control inputDesign "
-                      id={"client" + elem.key}
-                      placeholder={"General Living Expenses"}
-                      name={"client" + elem.key}
-                      value={
-                        questionDetail &&
-                        questionDetail?.generalLivingExpenses &&
-                        questionDetail?.generalLivingExpenses
-                          ?.generalLivingExpensesTotal
-                          ? questionDetail.generalLivingExpenses
-                              .generalLivingExpensesTotal
-                          : ""
-                      }
-                    />
-                    <div className="row justify-content-center align-items-center my-2">
-                      <div className="col-12 p-0 ">
-                        <div className="d-flex flex-column-reverse justify-content-center align-items-center gap-2">
-                          <label
-                            className=" d-block"
-                            htmlFor={"retirementLivingExpense"}
-                          >
-                            Retirement Living
-                          </label>
+                      <input
+                        type="text"
+                        className="form-control inputDesign "
+                        id={"client" + elem.key}
+                        placeholder={"General Living Expenses"}
+                        name={"client" + elem.key}
+                        value={
+                          questionDetail &&
+                          questionDetail?.generalLivingExpenses &&
+                          questionDetail?.generalLivingExpenses
+                            ?.generalLivingExpensesTotal
+                            ? questionDetail.generalLivingExpenses
+                                .generalLivingExpensesTotal
+                            : ""
+                        }
+                      />
+                      <div className="row justify-content-center align-items-center my-2">
+                        <div className="col-12 p-0 ">
+                          <div className="d-flex flex-column-reverse justify-content-center align-items-center gap-2">
+                            <label
+                              className=" d-block"
+                              htmlFor={"retirementLivingExpense"}
+                            >
+                              Retirement Living
+                            </label>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <Formik
-                      initialValues={getInitialValuesRegularIncome()}
-                      onSubmit={handleSubmitRegularIncome}
-                      enableReinitialize
+                      <Formik
+                        initialValues={getInitialValuesRegularIncome()}
+                        onSubmit={handleSubmitRegularIncome}
+                        enableReinitialize
+                      >
+                        {({ values, setFieldValue }) => {
+                          return (
+                            <Form>
+                              <InputGroup className="inputDesign p-0 flex-nowrap">
+                                <Field
+                                  type="text"
+                                  className="form-control inputDesignDoubleInput "
+                                  id={"retirementLivingExpense"}
+                                  placeholder={elem.title}
+                                  name={"retirementLivingExpense"}
+                                  onChange={(e) => {
+                                    setFieldValue(
+                                      e.target.name,
+                                      toCommaAndDollar(
+                                        e.target.value.replace(/[^0-9.-]+/g, "")
+                                      )
+                                    );
+                                  }}
+                                />
+                                <Button
+                                  type="submit"
+                                  className="btn bgColor modalBtn border-0"
+                                >
+                                  <FaRegSave />
+                                </Button>
+                              </InputGroup>
+                            </Form>
+                          );
+                        }}
+                      </Formik>
+                    </Card>
+                  </div>
+                );
+              } else if (PersonalInsuranceRender) {
+                return (
+                  <PersonalInsuranceRenderCard
+                    PartnerClass={PartnerClass}
+                    index={index}
+                    jointClass={jointClass}
+                    elem={elem}
+                    OpenModal={OpenModal2}
+                    homeArray={homeArray}
+                    arrayCount={arrayCount}
+                  />
+                );
+              } else if (reuseSwitch) {
+                return (
+                  <div className={`col-md-3 mb-4`} key={index}>
+                    <Card
+                      className="py-4 shadow borderOverAll GoalsobjectiveCard d-flex"
+                      style={{ borderRadius: "20px", height: "100%" }}
                     >
-                      {({ values, setFieldValue }) => {
-                        return (
-                          <Form>
-                            <InputGroup className="inputDesign p-0 flex-nowrap">
-                              <Field
-                                type="text"
-                                className="form-control inputDesignDoubleInput "
-                                id={"retirementLivingExpense"}
-                                placeholder={elem.title}
-                                name={"retirementLivingExpense"}
-                                onChange={(e) => {
-                                  setFieldValue(
-                                    e.target.name,
-                                    toCommaAndDollar(
-                                      e.target.value.replace(/[^0-9.-]+/g, "")
-                                    )
-                                  );
-                                }}
-                              />
-                              <Button
-                                type="submit"
-                                className="btn bgColor modalBtn border-0"
-                              >
-                                <FaRegSave />
-                              </Button>
-                            </InputGroup>
-                          </Form>
-                        );
-                      }}
-                    </Formik>
-                  </Card>
-                </div>
-              );
-            } else if (PersonalInsuranceRender) {
-              return (
-                <PersonalInsuranceRenderCard
-                  PartnerClass={PartnerClass}
-                  index={index}
-                  jointClass={jointClass}
-                  elem={elem}
-                  OpenModal={OpenModal2}
-                  homeArray={homeArray}
-                  arrayCount={arrayCount}
-                />
-              );
-            } else if (reuseSwitch) {
-              return (
-                <div className={`col-md-3 mb-4`} key={index}>
-                  <Card
-                    className="py-4 shadow borderOverAll GoalsobjectiveCard d-flex"
-                    style={{ borderRadius: "20px", height: "100%" }}
-                  >
-                    <h5
-                      className="text-center"
-                      onClick={() => {
-                        console.log(questionDetail[elem.key]);
-                      }}
-                    >
-                      {elem.title}
-                    </h5>
+                      <h5
+                        className="text-center"
+                        onClick={() => {
+                          console.log(questionDetail[elem.key]);
+                        }}
+                      >
+                        {elem.title}
+                      </h5>
 
-                    <div className="QuestionIcon CardImg">
-                      <img className="img-fluid" src={elem.img} alt="" />
-                    </div>
-                    <div className="row justify-content-center align-items-center my-2">
-                      <div className="col-12 p-0 ">
-                        <div className="d-flex flex-column-reverse justify-content-center align-items-center gap-2">
-                          <label
-                            className=" d-block "
-                            htmlFor={"client" + elem.key}
-                          >
-                            {localStorage.getItem("UserName") || "You"}
-                          </label>
+                      <div className="QuestionIcon CardImg">
+                        <img className="img-fluid" src={elem.img} alt="" />
+                      </div>
+                      <div className="row justify-content-center align-items-center my-2">
+                        <div className="col-12 p-0 ">
+                          <div className="d-flex flex-column-reverse justify-content-center align-items-center gap-2">
+                            <label
+                              className=" d-block "
+                              htmlFor={"client" + elem.key}
+                            >
+                              {localStorage.getItem("UserName") || "You"}
+                            </label>
 
-                          <label
-                            className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                            onClick={() => {
-                              OpenReuseModal(elem.title, "client", elem.key);
-                            }}
-                          >
-                            <div>
-                              <FontAwesomeIcon
-                                icon={faArrowUpRightFromSquare}
-                              />
-                            </div>
-                          </label>
+                            <label
+                              className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                              onClick={() => {
+                                OpenReuseModal(elem.title, "client", elem.key);
+                              }}
+                            >
+                              <div>
+                                <FontAwesomeIcon
+                                  icon={faArrowUpRightFromSquare}
+                                />
+                              </div>
+                            </label>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <input
-                      type="text"
-                      className="form-control inputDesign "
-                      id={"client" + elem.key}
-                      placeholder={elem.title}
-                      name={"client" + elem.key}
-                      value={
-                        questionDetail && questionDetail[elem.key]?.clientTotal
-                          ? questionDetail[elem.key].clientTotal
-                          : ""
-                      }
-                    />
-                    <div
-                      className={`row justify-content-center align-items-center my-2 ${PartnerClass}`}
-                    >
-                      <div className="col-12 p-0 ">
-                        <div className="d-flex flex-column-reverse justify-content-center align-items-center gap-2">
-                          <label
-                            className=" d-block "
-                            htmlFor={"partner" + elem.key}
-                          >
-                            {localStorage.getItem("PartnerName") || "Partner"}
-                          </label>
+                      <input
+                        type="text"
+                        className="form-control inputDesign "
+                        id={"client" + elem.key}
+                        placeholder={elem.title}
+                        name={"client" + elem.key}
+                        value={
+                          questionDetail &&
+                          questionDetail[elem.key]?.clientTotal
+                            ? questionDetail[elem.key].clientTotal
+                            : ""
+                        }
+                      />
+                      <div
+                        className={`row justify-content-center align-items-center my-2 ${PartnerClass}`}
+                      >
+                        <div className="col-12 p-0 ">
+                          <div className="d-flex flex-column-reverse justify-content-center align-items-center gap-2">
+                            <label
+                              className=" d-block "
+                              htmlFor={"partner" + elem.key}
+                            >
+                              {localStorage.getItem("PartnerName") || "Partner"}
+                            </label>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <input
-                      type="text"
-                      className={`form-control inputDesign ${PartnerClass}`}
-                      id={"partner" + elem.key}
-                      placeholder={elem.title}
-                      name={"partner" + elem.key}
-                      value={
-                        questionDetail && questionDetail[elem.key]?.partnerTotal
-                          ? questionDetail[elem.key].partnerTotal
-                          : ""
-                      }
-                    />
-                  </Card>
-                </div>
-              );
-            } else if (SMSFInP) {
-              return (
-                <SMSFQCards
-                  PartnerClass={PartnerClass}
-                  index={index}
-                  jointClass={jointClass}
-                  elem={elem}
-                  OpenModal={OpenModal2}
-                  OpenReuseModal={OpenReuseModal}
-                  homeArray={homeArray}
-                  arrayCount={arrayCount}
-                />
-              );
-            } else if (OneIndex) {
-              return (
-                <FamilyInvestmentProperty
-                  PartnerClass={PartnerClass}
-                  index={index}
-                  jointClass={jointClass}
-                  elem={elem}
-                  OpenModal={OpenModal2}
-                  homeArray={homeArray}
-                  arrayCount={arrayCount}
-                />
-              );
-            } else if (combinedSwitch) {
-              return (
-                <CombinedSwitch
-                  PartnerClass={PartnerClass}
-                  index={index}
-                  jointClass={jointClass}
-                  elem={elem}
-                  OpenModal={OpenModal2}
-                  homeArray={homeArray}
-                  arrayCount={arrayCount}
-                />
-              );
-            } else if (TowInSwitch) {
-              return (
-                <TowInOneSwitch
-                  PartnerClass={PartnerClass}
-                  index={index}
-                  jointClass={jointClass}
-                  elem={elem}
-                  OpenModal={OpenModal2}
-                  homeArray={homeArray}
-                  arrayCount={arrayCount}
-                />
-              );
-            } else if (SampleOneSwitch) {
-              return (
-                <SampleOne
-                  PartnerClass={PartnerClass}
-                  index={index}
-                  jointClass={jointClass}
-                  elem={elem}
-                  OpenModal={OpenModal2}
-                  homeArray={homeArray}
-                  arrayCount={arrayCount}
-                />
-              );
-            } else {
-              // <div className={`col-md-${arrayCount % 2 == 0 ? '6' : '4'} mb-4`} key={index}>
-              // ya hos sukta hai bad ma chnage karna para
+                      <input
+                        type="text"
+                        className={`form-control inputDesign ${PartnerClass}`}
+                        id={"partner" + elem.key}
+                        placeholder={elem.title}
+                        name={"partner" + elem.key}
+                        value={
+                          questionDetail &&
+                          questionDetail[elem.key]?.partnerTotal
+                            ? questionDetail[elem.key].partnerTotal
+                            : ""
+                        }
+                      />
+                    </Card>
+                  </div>
+                );
+              } else if (SMSFInP) {
+                return (
+                  <SMSFQCards
+                    PartnerClass={PartnerClass}
+                    index={index}
+                    jointClass={jointClass}
+                    elem={elem}
+                    OpenModal={OpenModal2}
+                    OpenReuseModal={OpenReuseModal}
+                    homeArray={homeArray}
+                    arrayCount={arrayCount}
+                  />
+                );
+              } else if (OneIndex) {
+                return (
+                  <FamilyInvestmentProperty
+                    PartnerClass={PartnerClass}
+                    index={index}
+                    jointClass={jointClass}
+                    elem={elem}
+                    OpenModal={OpenModal2}
+                    homeArray={homeArray}
+                    arrayCount={arrayCount}
+                  />
+                );
+              } else if (combinedSwitch) {
+                return (
+                  <CombinedSwitch
+                    PartnerClass={PartnerClass}
+                    index={index}
+                    jointClass={jointClass}
+                    elem={elem}
+                    OpenModal={OpenModal2}
+                    homeArray={homeArray}
+                    arrayCount={arrayCount}
+                  />
+                );
+              } else if (TowInSwitch) {
+                return (
+                  <TowInOneSwitch
+                    PartnerClass={PartnerClass}
+                    index={index}
+                    jointClass={jointClass}
+                    elem={elem}
+                    OpenModal={OpenModal2}
+                    homeArray={homeArray}
+                    arrayCount={arrayCount}
+                  />
+                );
+              } else if (SampleOneSwitch) {
+                return (
+                  <SampleOne
+                    PartnerClass={PartnerClass}
+                    index={index}
+                    jointClass={jointClass}
+                    elem={elem}
+                    OpenModal={OpenModal2}
+                    homeArray={homeArray}
+                    arrayCount={arrayCount}
+                  />
+                );
+              } else {
+                // <div className={`col-md-${arrayCount % 2 == 0 ? '6' : '4'} mb-4`} key={index}>
+                // ya hos sukta hai bad ma chnage karna para
 
-              return (
-                <div className={`col-md-3 mb-4`} key={index}>
-                  <Card
-                    className="py-4 shadow borderOverAll GoalsobjectiveCard"
-                    style={{ borderRadius: "20px", height: "100%" }}
-                  >
-                    <h5
-                      className="text-center"
-                      onClick={() => {
-                        console.log(questionDetail[elem.key]);
-                      }}
+                return (
+                  <div className={`col-md-3 mb-4`} key={index}>
+                    <Card
+                      className="py-4 shadow borderOverAll GoalsobjectiveCard"
+                      style={{ borderRadius: "20px", height: "100%" }}
                     >
-                      {elem.title}
-                    </h5>
-                    <div className="QuestionIcon CardImg">
-                      <img className="img-fluid" src={elem.img} alt="" />
-                    </div>
-                    <div className="row justify-content-center align-items-center my-2">
-                      <div className="col-12 p-0 ">
-                        <div className="d-flex flex-row justify-content-center align-items-center gap-2">
-                          <label
-                            className=" d-block "
-                            htmlFor={"client" + elem.key}
-                          >
-                            {localStorage.getItem("UserName") || "You"}
-                          </label>
+                      <h5
+                        className="text-center"
+                        onClick={() => {
+                          console.log(questionDetail[elem.key]);
+                        }}
+                      >
+                        {elem.title}
+                      </h5>
+                      <div className="QuestionIcon CardImg">
+                        <img className="img-fluid" src={elem.img} alt="" />
+                      </div>
+                      <div className="row justify-content-center align-items-center my-2">
+                        <div className="col-12 p-0 ">
+                          <div className="d-flex flex-row justify-content-center align-items-center gap-2">
+                            <label
+                              className=" d-block "
+                              htmlFor={"client" + elem.key}
+                            >
+                              {localStorage.getItem("UserName") || "You"}
+                            </label>
 
-                          <label
-                            className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                            onClick={() => {
-                              OpenModal(elem.title, "client");
-                            }}
-                          >
-                            <div>
-                              <FontAwesomeIcon
-                                icon={faArrowUpRightFromSquare}
-                              />
-                            </div>
-                          </label>
+                            <label
+                              className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                              onClick={() => {
+                                OpenModal(elem.title, "client");
+                              }}
+                            >
+                              <div>
+                                <FontAwesomeIcon
+                                  icon={faArrowUpRightFromSquare}
+                                />
+                              </div>
+                            </label>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <input
-                      type="text"
-                      className="form-control inputDesign "
-                      id={"client" + elem.key}
-                      placeholder={elem.title}
-                      name={"client" + elem.key}
-                      value={
-                        questionDetail && questionDetail[elem.key]?.clientTotal
-                          ? questionDetail[elem.key].clientTotal
-                          : ""
-                      }
-                    />
-                    <div
-                      className={`row justify-content-center align-items-center my-2 ${PartnerClass}`}
-                    >
-                      <div className="col-12 p-0 ">
-                        <div className="d-flex flex-row justify-content-center align-items-center gap-2">
-                          <label
-                            className=" d-block "
-                            htmlFor={"partner" + elem.key}
-                          >
-                            {localStorage.getItem("PartnerName") || "Partner"}
-                          </label>
+                      <input
+                        type="text"
+                        className="form-control inputDesign "
+                        id={"client" + elem.key}
+                        placeholder={elem.title}
+                        name={"client" + elem.key}
+                        value={
+                          questionDetail &&
+                          questionDetail[elem.key]?.clientTotal
+                            ? questionDetail[elem.key].clientTotal
+                            : ""
+                        }
+                      />
+                      <div
+                        className={`row justify-content-center align-items-center my-2 ${PartnerClass}`}
+                      >
+                        <div className="col-12 p-0 ">
+                          <div className="d-flex flex-row justify-content-center align-items-center gap-2">
+                            <label
+                              className=" d-block "
+                              htmlFor={"partner" + elem.key}
+                            >
+                              {localStorage.getItem("PartnerName") || "Partner"}
+                            </label>
 
-                          <label
-                            className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                            onClick={() => {
-                              OpenModal(elem.title, "partner");
-                            }}
-                          >
-                            <div>
-                              <FontAwesomeIcon
-                                icon={faArrowUpRightFromSquare}
-                              />
-                            </div>
-                          </label>
+                            <label
+                              className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                              onClick={() => {
+                                OpenModal(elem.title, "partner");
+                              }}
+                            >
+                              <div>
+                                <FontAwesomeIcon
+                                  icon={faArrowUpRightFromSquare}
+                                />
+                              </div>
+                            </label>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <input
-                      type="text"
-                      className={`form-control inputDesign ${PartnerClass}`}
-                      id={"partner" + elem.key}
-                      placeholder={elem.title}
-                      name={"partner" + elem.key}
-                      value={
-                        questionDetail && questionDetail[elem.key]?.partnerTotal
-                          ? questionDetail[elem.key].partnerTotal
-                          : ""
-                      }
-                    />
+                      <input
+                        type="text"
+                        className={`form-control inputDesign ${PartnerClass}`}
+                        id={"partner" + elem.key}
+                        placeholder={elem.title}
+                        name={"partner" + elem.key}
+                        value={
+                          questionDetail &&
+                          questionDetail[elem.key]?.partnerTotal
+                            ? questionDetail[elem.key].partnerTotal
+                            : ""
+                        }
+                      />
 
-                    <div
-                      className={`row justify-content-center align-items-center my-2  ${jointClass} ${PartnerClass}`}
-                    >
-                      <div className="col-12 p-0 ">
-                        <div className="d-flex flex-row justify-content-center align-items-center gap-2">
-                          <label
-                            className=" d-block "
-                            htmlFor={"joint" + elem.key}
-                          >
-                            {(localStorage.getItem("UserName") || "You") +
-                              " " +
-                              (localStorage.getItem("PartnerName") || "")}
-                          </label>
+                      <div
+                        className={`row justify-content-center align-items-center my-2  ${jointClass} ${PartnerClass}`}
+                      >
+                        <div className="col-12 p-0 ">
+                          <div className="d-flex flex-row justify-content-center align-items-center gap-2">
+                            <label
+                              className=" d-block "
+                              htmlFor={"joint" + elem.key}
+                            >
+                              {(localStorage.getItem("UserName") || "You") +
+                                " " +
+                                (localStorage.getItem("PartnerName") || "")}
+                            </label>
 
-                          <label
-                            className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                            onClick={() => {
-                              OpenModal(elem.title, "joint");
-                            }}
-                          >
-                            <div>
-                              <FontAwesomeIcon
-                                icon={faArrowUpRightFromSquare}
-                              />
-                            </div>
-                          </label>
+                            <label
+                              className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                              onClick={() => {
+                                OpenModal(elem.title, "joint");
+                              }}
+                            >
+                              <div>
+                                <FontAwesomeIcon
+                                  icon={faArrowUpRightFromSquare}
+                                />
+                              </div>
+                            </label>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <input
-                      type="text"
-                      className={`form-control inputDesign ${jointClass} ${PartnerClass}`}
-                      id={"joint" + elem.key}
-                      placeholder={elem.title}
-                      name={"joint" + elem.key}
-                      value={
-                        questionDetail && questionDetail[elem.key]?.jointTotal
-                          ? questionDetail[elem.key].jointTotal
-                          : ""
-                      }
-                    />
-                  </Card>
-                </div>
-              );
+                      <input
+                        type="text"
+                        className={`form-control inputDesign ${jointClass} ${PartnerClass}`}
+                        id={"joint" + elem.key}
+                        placeholder={elem.title}
+                        name={"joint" + elem.key}
+                        value={
+                          questionDetail && questionDetail[elem.key]?.jointTotal
+                            ? questionDetail[elem.key].jointTotal
+                            : ""
+                        }
+                      />
+                    </Card>
+                  </div>
+                );
+              }
             }
-          }
-          return null;
-        })}
+            return null;
+          })}
       </div>
 
       <div className="row mt-2 d-none">

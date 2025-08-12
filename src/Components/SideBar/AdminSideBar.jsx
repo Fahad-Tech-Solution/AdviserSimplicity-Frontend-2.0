@@ -171,21 +171,24 @@ const AdminSideBar = (props) => {
 
       {!superAdmin && (
         <>
-          <Menu.Item
-            key="/user/CDF-prospects"
-            icon={<FaPeopleGroup />}
-            onClick={() => nav("/user/CDF-prospects")}
-          >
-            CDF Prospects
-          </Menu.Item>
-
-          <Menu.Item
-            key="/user/my-team"
-            onClick={() => nav("/user/my-team")}
-            icon={<FaUserTie />}
-          >
-            My Team
-          </Menu.Item>
+          {loggedUser?.roleID?.permissions.includes("prospects") && (
+            <Menu.Item
+              key="/user/CDF-prospects"
+              icon={<FaPeopleGroup />}
+              onClick={() => nav("/user/CDF-prospects")}
+            >
+              CDF Prospects
+            </Menu.Item>
+          )}
+          {loggedUser?.roleID?.permissions.includes("adviser") && (
+            <Menu.Item
+              key="/user/my-team"
+              onClick={() => nav("/user/my-team")}
+              icon={<FaUserTie />}
+            >
+              My Team
+            </Menu.Item>
+          )}
         </>
       )}
 
@@ -249,39 +252,40 @@ const AdminSideBar = (props) => {
               Add Client
             </Menu.Item>
           </SubMenu>
-
-          <SubMenu key="sub2" icon={<RiExchange2Line />} title="Cash Flow">
-            <Menu.Item
-              key="/user/cashflow/allusers"
-              onClick={() => nav("/user/cashflow/allusers")}
-            >
-              All Cash Flow Scenarios
-            </Menu.Item>
-
-            {selectedClientDetails?.client && (
-              <SubMenu
-                className="subSubMenu"
-                key="sub3"
-                title={`${selectedClientDetails.client.clientGivenName} - Scenario`}
+          {loggedUser?.roleID?.permissions.includes("cashflow") && (
+            <SubMenu key="sub2" icon={<RiExchange2Line />} title="Cash Flow">
+              <Menu.Item
+                key="/user/cashflow/allusers"
+                onClick={() => nav("/user/cashflow/allusers")}
               >
-                <Menu.Item
-                  key="/user/cashflow/one-client"
-                  onClick={() => nav("/user/cashflow/one-client")}
+                All Cash Flow Scenarios
+              </Menu.Item>
+
+              {selectedClientDetails?.client && (
+                <SubMenu
+                  className="subSubMenu"
+                  key="sub3"
+                  title={`${selectedClientDetails.client.clientGivenName} - Scenario`}
                 >
-                  Scenarios
-                </Menu.Item>
-                <Menu.Item
-                  key="/user/cashflow/reports/"
-                  disabled={
-                    Object.keys(selectedSenario).length > 0 ? false : true
-                  }
-                  onClick={() => nav("/user/cashflow/reports/")}
-                >
-                  Reports
-                </Menu.Item>
-              </SubMenu>
-            )}
-          </SubMenu>
+                  <Menu.Item
+                    key="/user/cashflow/one-client"
+                    onClick={() => nav("/user/cashflow/one-client")}
+                  >
+                    Scenarios
+                  </Menu.Item>
+                  <Menu.Item
+                    key="/user/cashflow/reports/"
+                    disabled={
+                      Object.keys(selectedSenario).length > 0 ? false : true
+                    }
+                    onClick={() => nav("/user/cashflow/reports/")}
+                  >
+                    Reports
+                  </Menu.Item>
+                </SubMenu>
+              )}
+            </SubMenu>
+          )}
         </>
       )}
 

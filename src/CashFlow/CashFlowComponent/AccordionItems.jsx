@@ -79,14 +79,14 @@ const AccordionItems = ({
           )?.route;
 
           if (route) {
-            Nav("/Cash-Flow" + route);
+            Nav("/user/cashflow" + route);
           } else {
             setSelectedSenario(row);
-            Nav("/Cash-Flow/PersonalDetail" + "#" + row._id);
+            Nav("/user/cashflow/personal-detail" + "#" + row._id);
           }
         } else {
           setSelectedSenario(row);
-          Nav("/Cash-Flow/PersonalDetail" + "#" + fullData._id);
+          Nav("/user/cashflow/personal-detail" + "#" + fullData._id);
         }
         break;
 
