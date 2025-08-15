@@ -178,35 +178,7 @@ const EmployeeForm = (props) => {
         return (
           <Form>
             <div className="col-md-12 All_Client reportSection">
-              <div className="row justify-content-center mt-4 d-none">
-                <Table striped bordered responsive hover>
-                  <thead>
-                    <tr>
-                      <th>First Name</th>
-                      <th>Last Name</th>
-                      <th>Email Address</th>
-                      <th>Phone number</th>
-                      <th>Address</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <DynamicTableRow
-                      rowConfig={rowConfig.map((row) =>
-                        row.name === "paymentRaferenceNo"
-                          ? {
-                              ...row,
-                              disabled: values.paymentMethod !== "Online",
-                            }
-                          : row
-                      )}
-                      values={values}
-                      setFieldValue={setFieldValue}
-                      handleChange={handleChange}
-                      handleBlur={handleBlur}
-                    />
-                  </tbody>
-                </Table>
-              </div>
+        
               <Row gutter={[12, 12]} className="justify-content-center">
                 {rowConfig.map((item, index) => {
                   const columnSpan = parseFloat(item.column);

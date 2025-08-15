@@ -14,6 +14,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import {
   deepCloneWithKeys,
   GetAxios,
+  openNotificationSuccess,
   PatchAxios,
   toSentenceCase,
 } from "../Api/Api";
@@ -30,6 +31,7 @@ import ViewClient from "../../../GetComponents/ViewClient";
 import { useNavigate } from "react-router-dom";
 import { RiUserSearchLine } from "react-icons/ri";
 import AssignUser from "../../../GetComponents/AssignUser";
+import { Modal } from "antd";
 
 const NewAllClients = (props) => {
   const [loggedUser, setLoggedInUserData] = useRecoilState(LoggedInUserData);
@@ -260,7 +262,7 @@ const NewAllClients = (props) => {
     try {
       setLoading(true);
       let res = await GetAxios(`${DefaultUrl}/api/user/Clients`);
-      console.log(res, "/api/user/Clients");
+      // console.log(res, "/api/user/Clients");
       if (res) {
         let adjustment = deepCloneWithKeys(
           res.clients.map((item, index) => {
@@ -333,6 +335,11 @@ const NewAllClients = (props) => {
         setFlagState(true);
 
         break;
+      case "unassign":
+      case "unAssign":
+        unassignFunction(row);
+
+        break;
       case "select":
         localStorage.setItem("UserID", row._id);
         localStorage.setItem("selected client", JSON.stringify([row.key]));
@@ -362,6 +369,50 @@ const NewAllClients = (props) => {
       console.error("we Found an error in SoftDelete:", error);
     }
   }
+
+  const { confirm } = Modal;
+
+  const unassignFunction = (row) => {
+    confirm({
+      title: "Are you sure you want to unassign this client?",
+      content: "This action will remove the client assignment.",
+      okText: "Yes, Unassign",
+      okType: "danger",
+      cancelText: "Cancel",
+      centered: true,
+      onOk: async () => {
+        try {
+          setLoading(true);
+          let res = await PatchAxios(DefaultUrl + "/api/user/AssignClient", {
+            clientID: row._id,
+          });
+
+          if (res) {
+            res.clients.children = null;
+            setPersonalDetail((prev) =>
+              prev.map((user) => (user._id === row._id ? res.clients : user))
+            );
+            openNotificationSuccess(
+              "success",
+              "topRight",
+              "Client Unassigned",
+              "Client has been unassigned successfully"
+            );
+          }
+        } catch (error) {
+          console.log(error);
+          openNotificationSuccess(
+            "error",
+            "topRight",
+            "Unassign Failed",
+            "An error occurred while unassigning the client."
+          );
+        } finally {
+          setLoading(false);
+        }
+      },
+    });
+  };
 
   const removeItemById = (idToRemove) => {
     setPersonalDetail((prevData) =>
