@@ -12,7 +12,6 @@ import {
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   openNotificationSuccess,
-  passwordGenerator,
   PatchAxios,
   PostAxios,
 } from "../Assets/Api/Api";

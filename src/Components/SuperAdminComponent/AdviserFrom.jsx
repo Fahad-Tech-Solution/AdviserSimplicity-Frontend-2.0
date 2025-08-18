@@ -6,12 +6,15 @@ import { Advisers, defaultUrl, Roles, Subscriptions } from "../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   openNotificationSuccess,
-  passwordGenerator,
+  randomStringGenerator,
   PatchAxios,
   PostAxios,
 } from "../Assets/Api/Api";
 import { Col, ConfigProvider, Input, Select, Row } from "antd";
 import { content } from "../../Content/Content";
+import FormItemLabel from "antd/es/form/FormItemLabel";
+import { AiOutlineReload } from "react-icons/ai";
+import * as Yup from "yup";
 
 const AdviserFrom = (props) => {
   const { AdviserObject } = content;
@@ -30,6 +33,7 @@ const AdviserFrom = (props) => {
     ASIC: "",
     AFSNumber: "",
     AFSName: "",
+    referralID: "",
   };
 
   let DefaultUrl = useRecoilValue(defaultUrl);
@@ -56,6 +60,7 @@ const AdviserFrom = (props) => {
       "ASIC",
       "AFSNumber",
       "AFSName",
+      "referralID",
       // "subscriptionName", // Uncomment if needed
     ];
 
@@ -73,7 +78,7 @@ const AdviserFrom = (props) => {
   let onSubmit = async (values, { resetForm }) => {
     try {
       let res = "";
-      values.passwordHash = passwordGenerator(12);
+      values.undefined = undefined;
       console.log(values);
       if (props.modalObject.Action.toLowerCase() == "newadviser") {
         res = await PostAxios(DefaultUrl + "/api/user/Add/Adviser", values);
@@ -87,6 +92,11 @@ const AdviserFrom = (props) => {
             "New Plan Added",
             "New subscription plan is added"
           );
+
+          if (props.flagState) {
+            props.setFlagState(false);
+          }
+          resetForm();
         }
       } else if (props.modalObject.Action.toLowerCase() == "edit") {
         values._id = props.modalObject.row._id;
@@ -100,9 +110,13 @@ const AdviserFrom = (props) => {
           openNotificationSuccess(
             "success",
             "topRight",
-            "Plan is Updated",
-            "Subscription plan is updated"
+            "New Adviser",
+            "new Adviser successfully is added"
           );
+          if (props.flagState) {
+            props.setFlagState(false);
+          }
+          resetForm();
         }
       }
     } catch (error) {
@@ -111,12 +125,46 @@ const AdviserFrom = (props) => {
         "error",
         "topRight",
         "Error Notification",
-        error?.response?.data?.error || error?.response?.data || "Some thing went wrong"
+        error?.response?.data?.error ||
+          error?.response?.data ||
+          "Some thing went wrong"
       );
-    } finally {
-      resetForm();
-      if (props.flagState) {
-        props.setFlagState(false);
+    }
+  };
+
+  const referralIDGenerator = (
+    values,
+    setFieldValue,
+    target,
+    reGen = false
+  ) => {
+    // Update the changed field first
+    setFieldValue(target.name, target.value);
+
+    const { firstName, lastName, companyName, referralID } = values;
+
+    // Only generate if referralID is empty or regeneration requested
+    if (!referralID || reGen) {
+      const fName = target.name === "firstName" ? target.value : firstName;
+      const lName = target.name === "lastName" ? target.value : lastName;
+      const cName = target.name === "companyName" ? target.value : companyName;
+
+      if (fName && lName && cName) {
+        const initials =
+          fName[0].toUpperCase() +
+          lName[0].toUpperCase() +
+          cName[0].toUpperCase();
+
+        const randomDigits = randomStringGenerator({
+          length: 2, // instead of count:2 + join
+          count: 1,
+          useUppercase: false,
+          useLowercase: false,
+          useNumbers: true,
+          useSpecial: false,
+        });
+
+        setFieldValue("referralID", initials + randomDigits);
       }
     }
   };
@@ -128,6 +176,7 @@ const AdviserFrom = (props) => {
       placeholder: "First Name",
       column: 3,
       disabled: isDisabled,
+      onChange: referralIDGenerator,
     },
     {
       name: "lastName",
@@ -135,6 +184,14 @@ const AdviserFrom = (props) => {
       placeholder: "Last Name",
       column: 3,
       disabled: isDisabled,
+      onChange: referralIDGenerator,
+    },
+    {
+      name: "referralID",
+      type: "text",
+      placeholder: "User ID",
+      column: 3,
+      reLoad: true,
     },
     {
       name: "email",
@@ -156,6 +213,7 @@ const AdviserFrom = (props) => {
       placeholder: "Company Name",
       column: 3,
       disabled: isDisabled,
+      onChange: referralIDGenerator,
     },
     {
       name: "LicenseeName",
@@ -220,16 +278,35 @@ const AdviserFrom = (props) => {
       type: "textarea",
       readOnly: true,
       placeholder: "AFS Name",
-      column: 3,
-      rows: 3,
+      column: 1,
+      rows: 2,
       disabled: isDisabled,
     },
   ];
+
+  let validationSchema = Yup.object().shape({
+    firstName: Yup.string().required("First Name is required"),
+    lastName: Yup.string().required("Last Name is required"),
+    email: Yup.string().email("Invalid email").required("Email is required"),
+    phoneNumber: Yup.string().required("Phone Number is required"),
+    companyName: Yup.string().required("Company Name is required"),
+    LicenseeName: Yup.string().required("Licensee Name is required"),
+    ABN: Yup.string().required("ABN is required"),
+    companyAddress: Yup.string().required("Company Address is required"),
+    state: Yup.string().required("State is required"),
+    ASIC: Yup.string().required("ASIC Number is required"),
+    AFSNumber: Yup.string().required("AFS Number is required"),
+    AFSName: Yup.string().required("AFS Name is required"),
+    referralID: Yup.string()
+      .min(5, "User ID must be more than 4 characters")
+      .required("User ID is required"),
+  });
 
   return (
     <Formik
       initialValues={initialValues}
       onSubmit={onSubmit}
+      validationSchema={validationSchema}
       enableReinitialize
       innerRef={props.formRef}
     >
@@ -260,10 +337,30 @@ const AdviserFrom = (props) => {
                     >
                       <label
                         htmlFor={item.name}
-                        className="fw-bold"
+                        className="fw-bold w-100"
                         style={{ fontSize: "15px" }}
                       >
-                        {item.placeholder}:
+                        {item.placeholder}:{" "}
+                        {item.reLoad && (
+                          <button
+                            type="button"
+                            className="float-end btn p-0 px-2"
+                            onClick={() => {
+                              referralIDGenerator(
+                                values,
+                                setFieldValue,
+                                {
+                                  name: "",
+                                  value: "",
+                                },
+                                true
+                              );
+                            }}
+                          >
+                            {" "}
+                            <AiOutlineReload />
+                          </button>
+                        )}
                       </label>
 
                       <Field name={item.name}>
@@ -330,6 +427,18 @@ const AdviserFrom = (props) => {
                               className="w-100"
                               disabled={item.disabled}
                               readOnly={item.readOnly}
+                              onChange={(e) => {
+                                if (item?.onChange) {
+                                  item.onChange(
+                                    values,
+                                    setFieldValue,
+                                    e.target,
+                                    false
+                                  );
+                                } else {
+                                  handleChange(e);
+                                }
+                              }}
                             />
                           )
                         }

@@ -741,34 +741,36 @@ const touchFields = async (
   return isValid;
 };
 
-const passwordGenerator = (length = 12) => {
+const randomStringGenerator = ({
+  length = 12,
+  count = 1,
+  useUppercase = true,
+  useLowercase = true,
+  useNumbers = true,
+  useSpecial = true
+} = {}) => {
   const charUppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const charLowercase = "abcdefghijklmnopqrstuvwxyz";
   const charNumber = "0123456789";
   const charSpecial = "~!@#$%^&*_+:?";
 
-  const allChars = charUppercase + charLowercase + charNumber + charSpecial;
+  let allChars = "";
+  if (useUppercase) allChars += charUppercase;
+  if (useLowercase) allChars += charLowercase;
+  if (useNumbers) allChars += charNumber;
+  if (useSpecial) allChars += charSpecial;
 
-  let password = "";
+  if (!allChars) throw new Error("No character sets selected!");
 
-  // Ensure at least one character from each type
-  password += charUppercase[Math.floor(Math.random() * charUppercase.length)];
-  password += charLowercase[Math.floor(Math.random() * charLowercase.length)];
-  password += charNumber[Math.floor(Math.random() * charNumber.length)];
-  password += charSpecial[Math.floor(Math.random() * charSpecial.length)];
+  const generateOne = () => {
+    let str = "";
+    for (let i = 0; i < length; i++) {
+      str += allChars[Math.floor(Math.random() * allChars.length)];
+    }
+    return str;
+  };
 
-  // Fill the rest with random characters
-  for (let i = 4; i < length; i++) {
-    password += allChars[Math.floor(Math.random() * allChars.length)];
-  }
-
-  // Shuffle the password so first 4 chars aren't predictable
-  password = password
-    .split("")
-    .sort(() => 0.5 - Math.random())
-    .join("");
-
-  return password;
+  return Array.from({ length: count }, generateOne);
 };
 
 export {
@@ -806,5 +808,5 @@ export {
   deepCloneWithKeys,
   toSentenceCase,
   touchFields,
-  passwordGenerator,
+  randomStringGenerator,
 };
