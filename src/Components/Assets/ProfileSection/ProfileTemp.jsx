@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import banner from "../Adviser-Simplicity-Profile-Green-Banner.png";
 import { Image } from "react-bootstrap";
-import { Image as AntdImage } from "antd";
+import { Image as AntdImage, message, Tooltip } from "antd";
 import { Button, ConfigProvider, Descriptions } from "antd";
-import { FaEdit, FaPowerOff } from "react-icons/fa";
+import { FaCopy, FaEdit, FaPowerOff, FaRegCopy } from "react-icons/fa";
 import Dynamiclist from "./Dynamiclist";
 import { FiLogOut } from "react-icons/fi";
 import { MdEdit } from "react-icons/md";
@@ -159,6 +159,31 @@ const ProfileTemp = () => {
                     Object.keys(loggedInUserData).length > 0
                       ? `${loggedInUserData.email || ""}`.trim()
                       : "email@gamil.com"}
+                  </p>
+                  <p className="mb-0 text-muted">
+                    <Tooltip title="Copy link">
+                      <Button
+                        color="default"
+                        className="p-0 CustomLink "
+                        variant="link"
+                        onClick={() => {
+                          // window.navigator.clipboard.writeText(`https://cdf.denarowealth.com.au/?referralId=${loggedInUserData?.referralID || "--"}`);
+                          window.navigator.clipboard.writeText(
+                            `http://localhost:3000/?referralId=${
+                              loggedInUserData?.referralID || "--"
+                            }`
+                          );
+                          message.success("Link copied!");
+                        }}
+                      >
+                        https://cdf.denarowealth.com.au/?referralId=
+                        {loggedInUserData &&
+                        typeof loggedInUserData === "object" &&
+                        Object.keys(loggedInUserData).length > 0
+                          ? `${loggedInUserData?.referralID || "--"}`.trim()
+                          : "--"}
+                      </Button>
+                    </Tooltip>
                   </p>
                 </div>
               </div>

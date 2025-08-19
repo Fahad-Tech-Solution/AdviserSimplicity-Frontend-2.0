@@ -1968,3 +1968,10 @@ label {
 .PersonalDetailsForm {
   margin-top: 30px !important;
 }
+
+.CustomLink {
+  color: rgba(33, 37, 41, 0.75);
+  :is(:hover, :focus, :active) {
+    color: #36b446 !important;
+  }
+}
