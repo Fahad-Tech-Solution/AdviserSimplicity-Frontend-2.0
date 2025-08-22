@@ -4,6 +4,7 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import { Table } from "react-bootstrap";
 import {
   Advisers,
+  Employees,
   defaultUrl,
   LoggedInUserData,
   Roles,
@@ -34,6 +35,7 @@ const EmployeeForm = (props) => {
   let DefaultUrl = useRecoilValue(defaultUrl);
   let subscriptions = useRecoilValue(Subscriptions);
   let [advisers, setAdvisers] = useRecoilState(Advisers);
+  let [employee, setEmployee] = useRecoilState(Employees);
   let roles = useRecoilValue(Roles);
   let LoggedUser = useRecoilValue(LoggedInUserData);
   let [isDisabled, setIsdisabled] = useState(false);
@@ -73,7 +75,7 @@ const EmployeeForm = (props) => {
         if (res) {
           console.log(res);
 
-          setAdvisers((prev) => [res, ...prev]);
+          setEmployee((prev) => [res, ...prev]);
           openNotificationSuccess(
             "success",
             "topRight",
@@ -89,7 +91,7 @@ const EmployeeForm = (props) => {
           values
         );
         if (res) {
-          setAdvisers((prev) =>
+          setEmployee((prev) =>
             prev.map((item) =>
               item._id === props.modalObject.row._id ? res : item
             )
@@ -177,7 +179,6 @@ const EmployeeForm = (props) => {
         return (
           <Form>
             <div className="col-md-12 All_Client reportSection">
-        
               <Row gutter={[12, 12]} className="justify-content-center">
                 {rowConfig.map((item, index) => {
                   const columnSpan = parseFloat(item.column);

@@ -169,7 +169,7 @@ const ProfileTemp = () => {
                         onClick={() => {
                           // window.navigator.clipboard.writeText(`https://cdf.denarowealth.com.au/?referralId=${loggedInUserData?.referralID || "--"}`);
                           window.navigator.clipboard.writeText(
-                            `http://localhost:3000/?referralId=${
+                            `https://cdf.denarowealth.com.au/?referralId=${
                               loggedInUserData?.referralID || "--"
                             }`
                           );

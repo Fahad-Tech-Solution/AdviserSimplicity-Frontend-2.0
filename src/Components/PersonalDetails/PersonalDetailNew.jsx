@@ -45,7 +45,7 @@ const PersonalDetailNew = () => {
       clientMaritalStatus: "",
       clientEmploymentStatus: "",
       clientHealth: "",
-      clientSmoker: "nonsmoker",
+      clientSmoker: "No",
       clientPlannedRetirementAge: "",
       clientHomeAddress: "",
       clientPostcode: "",
@@ -74,7 +74,7 @@ const PersonalDetailNew = () => {
       partnerMaritalStatus: "",
       partnerEmploymentStatus: "",
       partnerHealth: "",
-      partnerSmoker: "nonsmoker",
+      partnerSmoker: "Yes",
       partnerPlannedRetirementAge: "",
       partnerHomeAddress: "",
       partnerPostcode: "",
@@ -355,6 +355,7 @@ const PersonalDetailNew = () => {
         if (includeArray.includes(key)) {
           data[key] = 0;
         } else if (key === "partnerEmail") {
+          PersonalDetailsClientPartne;
           data[key] = "dani11221@gmail.com";
         } else if (key === "partnerDOB" || key === "clientDOB") {
           data[key] = "01/01/1999";

@@ -16,6 +16,7 @@ import {
   GetAxios,
   openNotificationSuccess,
   PatchAxios,
+  PostAxios,
   toSentenceCase,
 } from "../Api/Api";
 import {
@@ -29,7 +30,7 @@ import DropDownOptions from "../DropDownOptions/DropDownOptions";
 import ModalComponent from "../../Questions/FinancialInvestments/ModalComponent";
 import ViewClient from "../../../GetComponents/ViewClient";
 import { useNavigate } from "react-router-dom";
-import { RiUserSearchLine } from "react-icons/ri";
+import { RiMailSendLine, RiUserSearchLine } from "react-icons/ri";
 import AssignUser from "../../../GetComponents/AssignUser";
 import { Modal } from "antd";
 
@@ -169,6 +170,58 @@ const NewAllClients = (props) => {
           ),
           onClick: (heading, row) => CallBack(heading, row, "Unassign"),
         };
+      }
+    }
+
+    if (
+      loggedUser?.roleID?.permissions.includes("prospects") &&
+      loggedUser?.roleID?.permissions.includes("fact find")
+    ) {
+      const assignIndex = menuItems.findIndex(
+        (item) => item.action === "assign" || item.action === "unAssign"
+      );
+      if (assignIndex !== -1) {
+        console.log(row.isRiskProfileCompleted, "row.isRiskProfileCompleted");
+        // Insert the "sendRisk
+        if (!row.isRiskProfileCompleted) {
+          menuItems.splice(assignIndex + 1, 0, {
+            action: "sendRiskProfile",
+            label: (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                  marginLeft: 13,
+                }}
+                className="fw-bold"
+              >
+                <RiMailSendLine /> Send Risk Profile
+              </div>
+            ),
+            onClick: (heading, row) =>
+              CallBack(heading, row, "sendRiskProfile"),
+          });
+        } else {
+          menuItems.splice(assignIndex + 1, 0, {
+            action: "sendRiskProfile",
+            label: (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                  marginLeft: 13,
+                }}
+                className="fw-bold"
+              >
+                <FaRegFileAlt /> View Risk Profile
+              </div>
+            ),
+            onClick: (heading, row) =>
+              CallBack(heading, row, "sendRiskProfile"),
+          });
+        }
       }
     }
 
@@ -340,6 +393,10 @@ const NewAllClients = (props) => {
         unassignFunction(row);
 
         break;
+      case "sendRiskProfile":
+        sendRiskProfile(row);
+
+        break;
       case "select":
         localStorage.setItem("UserID", row._id);
         localStorage.setItem("selected client", JSON.stringify([row.key]));
@@ -420,6 +477,33 @@ const NewAllClients = (props) => {
     );
   };
 
+  const sendRiskProfile = async (row) => {
+    let Obj = {
+      name: row.client.clientGivenName,
+      email: row.client.Email,
+      clientFK: row._id,
+    };
+    try {
+      console.log(Obj, "Obj in sendRiskProfile");
+      let res = PostAxios(`${DefaultUrl}/api/riskprofile/email`, Obj);
+      if (res) {
+        openNotificationSuccess(
+          "success",
+          "topRight",
+          "Risk Profile Sent",
+          "Risk Profile has been sent successfully"
+        );
+      }
+    } catch (error) {
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Failed to Send",
+        "An error occurred while sending the Risk Profile."
+      );
+      console.log("Error in sendRiskProfile function:", error);
+    }
+  };
   // rowSelection object indicates the need for row selection
   const rowSelection = {
     selectedRowKeys: [selectedClientDetails.key],

@@ -44,6 +44,9 @@ const AdminSideBar = (props) => {
   let superAdmin =
     loggedUser?.roleID?.permissions.includes("superAdmin") || false;
 
+  let employee =
+    loggedUser?.roleID?.permissions.includes("employee") || false;
+
   const nav = useNavigate();
   const location = useLocation();
 

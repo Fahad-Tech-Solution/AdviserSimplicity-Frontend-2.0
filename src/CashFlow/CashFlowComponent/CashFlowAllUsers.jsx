@@ -91,7 +91,7 @@ const CashFlowAllUsers = (props) => {
           padding: 0,
         }}
       >
-        <Options collapsed={props.collapsed} />
+        <Options collapsed={props.collapsed} setCollapsed={props.setCollapsed} />
       </Header>
       <Content
         style={{

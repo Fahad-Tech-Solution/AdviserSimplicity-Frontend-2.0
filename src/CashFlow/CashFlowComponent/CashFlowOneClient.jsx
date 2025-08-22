@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Accordion, Card, Table } from "react-bootstrap";
+import { Layout } from "antd";
+import AdminSideBar from "../../Components/SideBar/AdminSideBar";
 import Options from "../../Components/Options";
-
 import { useRecoilState, useRecoilValue } from "recoil";
 import { GetAxios } from "../../Components/Assets/Api/Api";
 import {
@@ -13,6 +14,8 @@ import {
 import AccordionItems from "./AccordionItems";
 import ModalComponent from "../../Components/Questions/FinancialInvestments/ModalComponent";
 import ScenarioForm from "./ScenarioForm";
+
+const { Sider, Content, Header } = Layout;
 
 const CashFlowOneClient = (props) => {
   const [PersonalDetail2, setPersonalDetail] = useRecoilState(AllUsers);
@@ -31,7 +34,6 @@ const CashFlowOneClient = (props) => {
           if (res) {
             setPersonalDetail(res);
           }
-          // console.log(JSON.stringify(res[0]), "Cash Grow Work");
         } catch (error) {
           console.error("Error fetching personal details:", error);
         }
@@ -51,7 +53,6 @@ const CashFlowOneClient = (props) => {
             };
             setCashFlowData(updatedData);
           }
-          console.log(JSON.stringify(res[0]), "Cash Grow Work");
         } catch (error) {
           console.error("Error fetching personal details:", error);
         }
@@ -62,7 +63,6 @@ const CashFlowOneClient = (props) => {
   }, [PersonalDetail2]);
 
   let OpenModal = (UserData, Scenario, action) => {
-    // console.log(UserData);
     localStorage.getItem("UserID", UserData._id);
 
     setModalObject({
@@ -82,56 +82,71 @@ const CashFlowOneClient = (props) => {
   };
 
   return (
-    <div className="container-fluid  ps-4 position-relative ">
-      <ModalComponent
-        modalObject={modalObject}
-        setFlagState={setFlagState}
-        flagState={flagState}
-      >
-        <ScenarioForm />
-      </ModalComponent>
+    <>
+      <Layout style={{ background: "#fff", overflowX: "hidden" }}>
+        <Header style={{ background: "#fff", padding: 0 }}>
+          <Options
+            collapsed={props.collapsed}
+            setCollapsed={props.onCollapse}
+          />
+        </Header>
+        <Content
+          style={{
+            margin: "16px",
+            background: "#fff",
+            height: "100%",
+            padding: "1rem 0rem",
+          }}
+        >
+          <div className="container-fluid position-relative ">
+            <ModalComponent
+              modalObject={modalObject}
+              setFlagState={setFlagState}
+              flagState={flagState}
+            >
+              <ScenarioForm />
+            </ModalComponent>
+            <div className="row">
+              <div className="col-md-12 px-0 mt-2">
+                <Card className="shadow cashFlowAllUsers ">
+                  <Card.Body>
+                    <h5 className="cashFlowCardHead LeagueSpartanFamily">
+                      Users List
+                    </h5>
+                    <Accordion
+                      defaultActiveKey={PersonalDetail2.findIndex(
+                        (elem) => elem._id === selectedClientDetails._id
+                      )}
+                    >
+                      {PersonalDetail2.map((elem, index) => {
+                        const filteredScenarios = (
+                          cashFlowData.Scenarios || []
+                        ).filter((scenario) => scenario.clientFK == elem._id);
 
-      <Options collapsed={props.collapsed} />
-
-      <div className="row mt-2">
-        <div className="col-md-12 ">
-          <Card className="shadow cashFlowAllUsers ">
-            <Card.Body>
-              <h5 className="cashFlowCardHead LeagueSpartanFamily">
-                Users List
-              </h5>
-              <Accordion
-                defaultActiveKey={PersonalDetail2.findIndex(
-                  (elem) => elem._id === selectedClientDetails._id
-                )}
-              >
-                {PersonalDetail2.map((elem, index) => {
-                  // Filter scenarios that have the same clientFK as the current client's ID
-                  const filteredScenarios = (
-                    cashFlowData.Scenarios || []
-                  ).filter((scenario) => scenario.clientFK == elem._id);
-
-                  if (elem._id === selectedClientDetails._id) {
-                    return (
-                      <AccordionItems
-                        CallBack={OpenModal}
-                        fullData={elem}
-                        client={elem.client}
-                        partner={elem.partner}
-                        tableData={filteredScenarios || []}
-                        index={index}
-                        key={index} // Unique key per item
-                        eventKey={`${index}`} // Ensure eventKey is string, and matches defaultActiveKey
-                      />
-                    );
-                  }
-                })}
-              </Accordion>
-            </Card.Body>
-          </Card>
-        </div>
-      </div>
-    </div>
+                        if (elem._id === selectedClientDetails._id) {
+                          return (
+                            <AccordionItems
+                              CallBack={OpenModal}
+                              fullData={elem}
+                              client={elem.client}
+                              partner={elem.partner}
+                              tableData={filteredScenarios || []}
+                              index={index}
+                              key={index}
+                              eventKey={`${index}`}
+                            />
+                          );
+                        }
+                      })}
+                    </Accordion>
+                  </Card.Body>
+                </Card>
+              </div>
+            </div>
+          </div>
+        </Content>
+      </Layout>
+    </>
   );
 };
 

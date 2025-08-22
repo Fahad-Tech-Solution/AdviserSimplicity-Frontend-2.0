@@ -20,7 +20,7 @@ const CashFlow = () => {
       <Sider
         collapsed={collapsed}
         onCollapse={setCollapsed}
-        width={220}
+        width={250}
         style={{ background: "#fff", borderRight: "1px solid #f0f0f0" }}
       >
         <AdminSideBar collapsed={collapsed} setCollapsed={setCollapsed} />
@@ -34,11 +34,21 @@ const CashFlow = () => {
         <Routes>
           <Route
             path="/allusers"
-            element={<CashFlowAllUsers collapsed={collapsed} />}
+            element={
+              <CashFlowAllUsers
+                collapsed={collapsed}
+                setCollapsed={setCollapsed}
+              />
+            }
           />
           <Route
             path="/one-client"
-            element={<CashFlowOneClient collapsed={collapsed} />}
+            element={
+              <CashFlowOneClient
+                collapsed={collapsed}
+                setCollapsed={setCollapsed}
+              />
+            }
           />
           <Route path="/reports/*" element={<Reports />} />
           <Route path="/*" element={<CashFlowLayout />} />
