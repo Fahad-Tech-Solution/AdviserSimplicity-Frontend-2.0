@@ -697,6 +697,16 @@ function toSentenceCase(str) {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
+function toTitleCase(str) {
+  if (!str) return "";
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+
 const touchFields = async (
   setFieldTouched,
   fieldNames,
@@ -773,6 +783,8 @@ const randomStringGenerator = ({
   return Array.from({ length: count }, generateOne);
 };
 
+
+
 export {
   DeleteAxios,
   GetAxios,
@@ -807,6 +819,7 @@ export {
   updateCardBySingleEntry,
   deepCloneWithKeys,
   toSentenceCase,
+  toTitleCase,
   touchFields,
   randomStringGenerator,
 };

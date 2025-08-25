@@ -32,11 +32,12 @@ import { Header } from "antd/es/layout/layout";
 import { defaultUrl, Employees, Roles } from "../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { GetAxios } from "../Components/Assets/Api/Api";
+import AllRiskProfile from "../Components/RiskProfile/AllRiskProfile";
 
 const { Sider, Content } = Layout;
 
 function AuthRouts() {
-  const [collapsed, setCollapsed] = useState(true);            
+  const [collapsed, setCollapsed] = useState(true);
   let [employee, setEmployee] = useRecoilState(Employees);
 
   const routeConfigs = [
@@ -148,6 +149,7 @@ function AuthRouts() {
     },
     { path: "/goals-and-objectives", element: () => <GoalsObjectiveNew /> },
     { path: "/risk-profile/*", element: () => <RiskProfileNew /> },
+    { path: "/all-risk-profile", element: () => <AllRiskProfile /> },
     { path: "/CDF-prospects", element: () => <CDFclients /> },
     { path: "/profile", element: () => <ProfileTemp /> },
     { path: "/my-team", element: () => <MyTeam /> },
@@ -160,24 +162,22 @@ function AuthRouts() {
     fetchData();
   }, []);
 
-const fetchData = async () => {
-  try {
-    // Run multiple GET APIs in parallel
-    const [rolesRes, Employees] = await Promise.all([
-      GetAxios(`${DefaultUrl}/api/role`),
-      GetAxios(`${DefaultUrl}/api/user/Employees`)
-    ]);
+  const fetchData = async () => {
+    try {
+      // Run multiple GET APIs in parallel
+      const [rolesRes, Employees] = await Promise.all([
+        GetAxios(`${DefaultUrl}/api/role`),
+        GetAxios(`${DefaultUrl}/api/user/Employees`),
+      ]);
 
-    // Update state only if responses exist
-    if (rolesRes) setRoles(rolesRes);
-    if (Employees) setEmployee(Employees)
-
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    // You could show a toast or alert here instead
-  }
-};
-
+      // Update state only if responses exist
+      if (rolesRes) setRoles(rolesRes);
+      if (Employees) setEmployee(Employees);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      // You could show a toast or alert here instead
+    }
+  };
 
   return (
     <Layout style={{ minHeight: "100vh" }}>

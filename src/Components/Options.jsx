@@ -39,7 +39,7 @@ import {
 import { RiCoinsFill, RiDiscountPercentFill } from "react-icons/ri";
 
 import { content } from "../Content/Content";
-import { openNotificationSuccess, toSentenceCase } from "./Assets/Api/Api";
+import { openNotificationSuccess, toSentenceCase, toTitleCase } from "./Assets/Api/Api";
 import {
   UserName,
   CurrentPage,
@@ -134,7 +134,7 @@ function Options(props) {
     };
 
     stepComplete = stepMap[cLocation] || 0;
-    
+
     Risk = cLocation.startsWith("/user/risk-profile");
 
     if (
@@ -240,6 +240,7 @@ function Options(props) {
     "/user/CDF-prospects",
     "/user/profile",
     "/user/my-team",
+    "/user/all-risk-profile",
   ];
 
   const noTopBarArray = [
@@ -334,7 +335,7 @@ function Options(props) {
                 </Breadcrumb.Item>
               </Breadcrumb>
               <h5 className="Page LeagueSpartanFamily">
-                {toSentenceCase(
+                {toTitleCase(
                   location.pathname
                     .split("/")
                     .filter(Boolean)

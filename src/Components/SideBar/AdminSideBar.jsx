@@ -18,7 +18,12 @@ import {
 } from "../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { FaGear, FaPeopleGroup, FaUserTag } from "react-icons/fa6";
-import { FaRegCreditCard, FaTachometerAlt, FaUserTie } from "react-icons/fa";
+import {
+  FaBalanceScale,
+  FaRegCreditCard,
+  FaTachometerAlt,
+  FaUserTie,
+} from "react-icons/fa";
 import { openNotificationSuccess } from "../Assets/Api/Api";
 import { AiOutlineBank } from "react-icons/ai";
 import { FiLogOut, FiUser } from "react-icons/fi";
@@ -44,8 +49,7 @@ const AdminSideBar = (props) => {
   let superAdmin =
     loggedUser?.roleID?.permissions.includes("superAdmin") || false;
 
-  let employee =
-    loggedUser?.roleID?.permissions.includes("employee") || false;
+  let employee = loggedUser?.roleID?.permissions.includes("employee") || false;
 
   const nav = useNavigate();
   const location = useLocation();
@@ -243,16 +247,26 @@ const AdminSideBar = (props) => {
               Goals and Objectives
             </Menu.Item>
             <Menu.Item
-              key="/user/risk-profile"
-              onClick={() => nav("/user/risk-profile")}
-            >
-              Risk Profile
-            </Menu.Item>
-            <Menu.Item
               key="/user/personal-detail"
               onClick={handleAddClientClick}
             >
               Add Client
+            </Menu.Item>
+          </SubMenu>
+          <SubMenu key="sub3" icon={<FaBalanceScale />} title="Risk Profile">
+            {selectedClientDetails?.client && (
+              <Menu.Item
+                key="/user/risk-profile"
+                onClick={() => nav("/user/risk-profile")}
+              >
+                View Risk Profile
+              </Menu.Item>
+            )}
+            <Menu.Item
+              key="/user/all-risk-profile"
+              onClick={() => nav("/user/all-risk-profile")}
+            >
+              All Risk Profile
             </Menu.Item>
           </SubMenu>
           {loggedUser?.roleID?.permissions.includes("cashflow") && (
@@ -307,13 +321,6 @@ const AdminSideBar = (props) => {
             icon={<FaUserTie />}
           >
             All Advisers
-          </Menu.Item>
-          <Menu.Item
-            key="/super/admin/all-roles"
-            onClick={() => nav("/super/admin/all-roles")}
-            icon={<FaUserTag />}
-          >
-            All Roles
           </Menu.Item>
         </>
       )}
