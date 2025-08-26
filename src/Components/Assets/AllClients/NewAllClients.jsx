@@ -181,7 +181,7 @@ const NewAllClients = (props) => {
         (item) => item.action === "assign" || item.action === "unAssign"
       );
       if (assignIndex !== -1) {
-        console.log(row.isRiskProfileCompleted, "row.isRiskProfileCompleted");
+        // console.log(row.isRiskProfileCompleted, "row.isRiskProfileCompleted");
         // Insert the "sendRisk
         if (!row.isRiskProfileCompleted) {
           menuItems.splice(assignIndex + 1, 0, {
@@ -204,7 +204,7 @@ const NewAllClients = (props) => {
           });
         } else {
           menuItems.splice(assignIndex + 1, 0, {
-            action: "sendRiskProfile",
+            action: "viewRiskProfile",
             label: (
               <div
                 style={{
@@ -219,7 +219,7 @@ const NewAllClients = (props) => {
               </div>
             ),
             onClick: (heading, row) =>
-              CallBack(heading, row, "sendRiskProfile"),
+              CallBack(heading, row, "viewRiskProfile"),
           });
         }
       }
@@ -395,6 +395,12 @@ const NewAllClients = (props) => {
         break;
       case "sendRiskProfile":
         sendRiskProfile(row);
+
+        break;
+      case "viewRiskProfile":
+        setSelectedClientDetails(row);
+        localStorage.setItem("UserID", row._id);
+        Navigate("/user/risk-profile#" + row._id);
 
         break;
       case "select":

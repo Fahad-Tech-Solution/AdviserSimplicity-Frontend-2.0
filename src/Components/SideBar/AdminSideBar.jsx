@@ -253,7 +253,7 @@ const AdminSideBar = (props) => {
               Add Client
             </Menu.Item>
           </SubMenu>
-          <SubMenu key="sub3" icon={<FaBalanceScale />} title="Risk Profile">
+          <SubMenu key="sub4" icon={<FaBalanceScale />} title="Risk Profile">
             {selectedClientDetails?.client && (
               <Menu.Item
                 key="/user/risk-profile"

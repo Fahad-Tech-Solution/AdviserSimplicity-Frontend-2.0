@@ -20,7 +20,12 @@ import {
   QuestionDetail,
   StepsStatus,
 } from "../../Store/Store";
-import { ConvertDate, toSentenceCase } from "../Assets/Api/Api";
+import {
+  ConvertDate,
+  GetAxios,
+  PatchAxios,
+  toSentenceCase,
+} from "../Assets/Api/Api";
 import RiskProfileViewForm from "./RiskProfileViewForm";
 
 const AllRiskProfile = () => {
@@ -31,7 +36,7 @@ const AllRiskProfile = () => {
 
   const [RiskProfileData, setRiskProfileData] = useState([]);
   const [RiskProfileData2, setRiskProfileData2] = useState([]);
-  const [selectedSegment, setSelectedSegment] = useState("New Prospects");
+  const [selectedSegment, setSelectedSegment] = useState("New Risk Profiles");
   const [showFilters, setShowFilters] = useState(false);
 
   let nav = useNavigate();
@@ -39,7 +44,7 @@ const AllRiskProfile = () => {
   const getFilteredData = (value) => {
     setSelectedSegment(value);
     switch (value) {
-      case "New Prospects":
+      case "New Risk Profiles":
         setRiskProfileData(
           RiskProfileData2.filter(
             (item) => item.status?.toLowerCase() === "pending"
@@ -126,25 +131,6 @@ const AllRiskProfile = () => {
         onClick: (heading, row) => CallBack(heading, row, "unsuccessful"),
       },
     ];
-    if (status === "successful") {
-      menuItems.splice(1, 0, {
-        action: "Edit",
-        label: (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              marginLeft: 13,
-            }}
-            className="fw-bold"
-          >
-            <FaEdit /> Edit
-          </div>
-        ),
-        onClick: (heading, row) => CallBack(heading, row, "Edit"),
-      });
-    }
 
     return menuItems;
   };
@@ -171,23 +157,19 @@ const AllRiskProfile = () => {
             fontFamily: '"Inter", sans-serif',
           }}
         >
-          {row?.client?.preferredName || "--"}
-          {row?.client?.relationshipStatus.toLowerCase() == "couple" &&
-            row?.partner?.preferredName !== "" &&
-            ` & ${row?.partner?.preferredName || "--"}`}{" "}
+          {row?.clientFK?.client?.clientGivenName || "--"}
         </div>
       ),
     },
     {
-      title: "Relationship Status",
+      title: "Joined Profile",
       key: "relationshipStatus",
-      render: (text, row) =>
-        toSentenceCase(row?.client?.relationshipStatus) || "--",
+      render: (text, row) => row?.joinedProfile || "--",
     },
     {
       title: "Email",
       key: "email",
-      render: (text, row) => row?.client?.email || "--",
+      render: (text, row) => row?.clientFK?.client?.Email || "--",
     },
     {
       title: "Last updated at",
@@ -250,7 +232,7 @@ const AllRiskProfile = () => {
           menuItems={getMenuItems(row)}
           CallBack={OpenModel}
           heading={row}
-          row={row} // ✅ Proper row data
+          row={row}
         />
       ),
     },
@@ -297,7 +279,7 @@ const AllRiskProfile = () => {
 
   useEffect(() => {
     if (apiFetch) {
-      console.log("Fetching CDF Data");
+      console.log("Fetching Risk Profile Data");
       fetchRiskProfileData();
     }
   }, [apiFetch]);
@@ -305,17 +287,16 @@ const AllRiskProfile = () => {
   const fetchRiskProfileData = async () => {
     try {
       setLoading(true);
-      let res = await GetAxios(`${DefaultUrl}/api/CDF/`);
-      // console.log(res,"cdf");
+      let res = await GetAxios(`${DefaultUrl}/api/riskProfile/getAll`);
+      console.log(res, "Risk Profile Data");
       if (res && res.length > 0) {
-        // setProspectsCDF(res.reverse());
         setRiskProfileData(
           res
             .reverse()
             .filter((item) => item.status?.toLowerCase() === "pending")
         );
         setRiskProfileData2(res);
-        setSelectedSegment("New Prospects");
+        setSelectedSegment("New Risk Profiles");
         setApiFetch(!apiFetch); // Toggle apiFetch to prevent infinite loop
       }
     } catch (error) {
@@ -334,11 +315,12 @@ const AllRiskProfile = () => {
         status,
       };
 
-      let responce = await PatchAxios(`${DefaultUrl}/api/CDF/Update`, data);
+      let responce = await PatchAxios(
+        `${DefaultUrl}/api/riskProfile/updateStatus`,
+        data
+      );
       console.log(responce);
       if (responce) {
-        data.client_FK = responce.client_FK;
-
         setRiskProfileData((prev) =>
           prev.map((item) => (item._id === row._id ? data : item))
         );
@@ -377,42 +359,6 @@ const AllRiskProfile = () => {
     }
   };
 
-  let DummyData = [
-    {
-      key: "1",
-      joinedProfile: "No",
-      client: {
-        preferredName: "John Doe",
-        relationshipStatus: "Single",
-        email: "usmaFaheemahmed80@gmail.com",
-        question1: 1,
-        question2: 1,
-        question3: 1,
-        question4: 1,
-        question5: 1,
-        question6: 1,
-        question7: 1,
-        question8: 1,
-      },
-      updatedAt: "2023-10-01T12:34:56Z",
-      status: "Pending",
-      client_FK: "client123",
-      partner: {
-        question1: 1,
-        question2: 1,
-        question3: 1,
-        question4: 1,
-        question5: 1,
-        question6: 1,
-        question7: 1,
-        question8: 1,
-      },
-      _id: "cdf123",
-      createdAt: "2023-10-01T12:00:00Z",
-      __v: 0,
-    },
-  ];
-
   return (
     <div className="contianer-fluid">
       <ModalComponent
@@ -433,7 +379,7 @@ const AllRiskProfile = () => {
               <Col md={6}>
                 <Segmented
                   options={[
-                    "New Prospects",
+                    "New Risk Profiles",
                     "Successful",
                     "Unsuccessful",
                     "All",
@@ -474,8 +420,10 @@ const AllRiskProfile = () => {
                               options={[
                                 ...RiskProfileData2.map((item, index) => {
                                   return {
-                                    value: item.client.preferredName,
-                                    label: item.client.preferredName,
+                                    value:
+                                      item.clientFK?.client?.clientGivenName,
+                                    label:
+                                      item.clientFK?.client?.clientGivenName,
                                   };
                                 }),
                               ]}
@@ -503,8 +451,8 @@ const AllRiskProfile = () => {
                 <div>
                   <AntTableDynamicReportTable
                     title={`Risk Profiles - ${selectedSegment}`}
-                    // dataSource={RiskProfileData}
-                    dataSource={DummyData}
+                    dataSource={RiskProfileData}
+                    // dataSource={DummyData}
                     columns={columns}
                     showFilters={showFilters}
                     setShowFilters={setShowFilters}
