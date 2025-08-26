@@ -149,7 +149,6 @@ function AuthRouts() {
     },
     { path: "/goals-and-objectives", element: () => <GoalsObjectiveNew /> },
     { path: "/risk-profile/*", element: () => <RiskProfileNew /> },
-    { path: "/all-risk-profile", element: () => <AllRiskProfile /> },
     { path: "/CDF-prospects", element: () => <CDFclients /> },
     { path: "/profile", element: () => <ProfileTemp /> },
     { path: "/my-team", element: () => <MyTeam /> },

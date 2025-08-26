@@ -240,12 +240,22 @@ const AdminSideBar = (props) => {
             >
               Financial Details
             </Menu.Item>
-            <Menu.Item
-              key="/user/goals-and-objectives"
-              onClick={() => nav("/user/goals-and-objectives")}
-            >
-              Goals and Objectives
-            </Menu.Item>
+            {selectedClientDetails?.client && (
+              <>
+                <Menu.Item
+                  key="/user/goals-and-objectives"
+                  onClick={() => nav("/user/goals-and-objectives")}
+                >
+                  Goals and Objectives
+                </Menu.Item>
+                <Menu.Item
+                  key="/user/risk-profile"
+                  onClick={() => nav("/user/risk-profile")}
+                >
+                  View Risk Profile
+                </Menu.Item>
+              </>
+            )}
             <Menu.Item
               key="/user/personal-detail"
               onClick={handleAddClientClick}
@@ -253,22 +263,7 @@ const AdminSideBar = (props) => {
               Add Client
             </Menu.Item>
           </SubMenu>
-          <SubMenu key="sub4" icon={<FaBalanceScale />} title="Risk Profile">
-            {selectedClientDetails?.client && (
-              <Menu.Item
-                key="/user/risk-profile"
-                onClick={() => nav("/user/risk-profile")}
-              >
-                View Risk Profile
-              </Menu.Item>
-            )}
-            <Menu.Item
-              key="/user/all-risk-profile"
-              onClick={() => nav("/user/all-risk-profile")}
-            >
-              All Risk Profile
-            </Menu.Item>
-          </SubMenu>
+
           {loggedUser?.roleID?.permissions.includes("cashflow") && (
             <SubMenu key="sub2" icon={<RiExchange2Line />} title="Cash Flow">
               <Menu.Item
