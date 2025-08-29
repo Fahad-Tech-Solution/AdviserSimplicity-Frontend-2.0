@@ -229,8 +229,8 @@ const PersonalDetailNew = () => {
       {
         key: "clientGivenName",
         validator: (val) =>
-          required(val, "Given name is required") ||
-          isAlphaSpace(val, "Given name must contain only letters and spaces"),
+          required(val, "First name is required") ||
+          isAlphaSpace(val, "First name must contain only letters and spaces"),
       },
       {
         key: "clientPreferredName",
@@ -278,8 +278,8 @@ const PersonalDetailNew = () => {
       {
         key: "partnerGivenName",
         validator: (val) =>
-          required(val, "Given name is required") ||
-          isAlphaSpace(val, "Given name must contain only letters and spaces"),
+          required(val, "First name is required") ||
+          isAlphaSpace(val, "First name must contain only letters and spaces"),
       },
       {
         key: "partnerPreferredName",

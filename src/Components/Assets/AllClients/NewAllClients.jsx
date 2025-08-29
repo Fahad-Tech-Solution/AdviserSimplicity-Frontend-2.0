@@ -32,7 +32,7 @@ import ViewClient from "../../../GetComponents/ViewClient";
 import { useNavigate } from "react-router-dom";
 import { RiMailSendLine, RiUserSearchLine } from "react-icons/ri";
 import AssignUser from "../../../GetComponents/AssignUser";
-import { Modal } from "antd";
+import { Modal, notification, Spin, ConfigProvider } from "antd";
 
 const NewAllClients = (props) => {
   const [loggedUser, setLoggedInUserData] = useRecoilState(LoggedInUserData);
@@ -483,33 +483,55 @@ const NewAllClients = (props) => {
     );
   };
 
-  const sendRiskProfile = async (row) => {
-    let Obj = {
-      name: row.client.clientGivenName,
-      email: row.client.Email,
-      clientFK: row._id,
-    };
-    try {
-      console.log(Obj, "Obj in sendRiskProfile");
-      let res = PostAxios(`${DefaultUrl}/api/riskprofile/email`, Obj);
-      if (res) {
-        openNotificationSuccess(
-          "success",
-          "topRight",
-          "Risk Profile Sent",
-          "Risk Profile has been sent successfully"
-        );
-      }
-    } catch (error) {
-      openNotificationSuccess(
-        "error",
-        "topRight",
-        "Failed to Send",
-        "An error occurred while sending the Risk Profile."
-      );
-      console.log("Error in sendRiskProfile function:", error);
-    }
+const sendRiskProfile = async (row) => {
+  let Obj = {
+    name: row.client.clientGivenName,
+    email: row.client.Email,
+    clientFK: row._id,
   };
+
+  // Unique key to update the same notification
+  const key = "sendingEmail";
+
+  // Show loading notification
+  notification.open({
+    key,
+    message: "Sending Email",
+    description: "Please wait while we send the Risk Profile...",
+    duration: 0, // stays open until updated/closed
+    icon: <ConfigProvider
+      theme={{
+        token: {
+          /* here is your global tokens */
+          colorPrimary: "#36b446",
+        },
+      }}
+    ><Spin size="small" /></ConfigProvider>,
+  });
+
+  try {
+    let res = await PostAxios(`${DefaultUrl}/api/riskprofile/email`, Obj);
+
+    if (res) {
+      // Update notification to success
+      notification.success({
+        key,
+        message: "Risk Profile Sent",
+        description: "Risk Profile has been sent successfully.",
+        duration: 3,
+      });
+    }
+  } catch (error) {
+    // Update notification to error
+    notification.error({
+      key,
+      message: "Failed to Send",
+      description: "An error occurred while sending the Risk Profile.",
+      duration: 3,
+    });
+    console.log("Error in sendRiskProfile function:", error);
+  }
+};
   // rowSelection object indicates the need for row selection
   const rowSelection = {
     selectedRowKeys: [selectedClientDetails.key],

@@ -11,14 +11,30 @@ const CDFViewForm = (props) => {
   };
 
   const clientItems = [
+
     {
-      label: "Name",
-      children: `${Data.client?.firstName || ""} ${Data.client?.surname || ""}`,
+      label: "First Name",
+      children: Data.client?.firstName || "--",
+      ...sharedItemStyle,
+    },
+    {
+      label: "Middle Name",
+      children: Data.client?.middleName || "--",
+      ...sharedItemStyle,
+    },
+    {
+      label: "Last Name",
+      children: Data.client?.lastName || "--",
       ...sharedItemStyle,
     },
     {
       label: "Preferred Name",
       children: Data.client?.preferredName || "--",
+      ...sharedItemStyle,
+    },
+    {
+      label: "Sure Name",
+      children: Data.client?.surname || "--",
       ...sharedItemStyle,
     },
     {

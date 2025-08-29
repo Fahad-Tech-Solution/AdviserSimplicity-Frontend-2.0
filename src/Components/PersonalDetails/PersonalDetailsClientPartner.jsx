@@ -64,32 +64,10 @@ const PersonalDetailsClientPartner = (props) => {
             />
           </div>
 
-          {/*Labels Surname */}
-          <div className="col-6 mb-4">
-            <label htmlFor="clientSurname" className="form-label mt-2">
-              Surname
-            </label>
-          </div>
-
-          {/*Client Input Surname */}
-          <div className="col-6 mb-4">
-            <Field
-              type="text"
-              className="form-control inputDesign"
-              id="clientSurname"
-              name="client.clientSurname"
-            />
-            <ErrorMessage
-              component="div"
-              className="text-danger "
-              name="client.clientSurname"
-            />
-          </div>
-
-          {/*Labels Given Name */}
+          {/*Labels First Name */}
           <div className="col-6 mb-4">
             <label htmlFor="clientGivenName" className="form-label mt-2">
-              Given Name
+              First Name
             </label>
           </div>
 
@@ -130,6 +108,28 @@ const PersonalDetailsClientPartner = (props) => {
             />
           </div>
 
+          {/*Labels Last Name */}
+          <div className="col-6 mb-4">
+            <label htmlFor="clientLastName" className="form-label mt-2">
+              Last Name
+            </label>
+          </div>
+
+          {/*Client Input Last Name */}
+          <div className="col-6 mb-4">
+            <Field
+              type="text"
+              className="form-control inputDesign"
+              id="clientLastName"
+              name="client.clientLastName"
+            />
+            <ErrorMessage
+              component="div"
+              className="text-danger "
+              name="client.clientLastName"
+            />
+          </div>
+
           {/*Labels Preferred Name */}
           <div className="col-6 mb-4">
             <label htmlFor="clientPreferredName" className="form-label mt-2">
@@ -149,6 +149,28 @@ const PersonalDetailsClientPartner = (props) => {
               component="div"
               className="text-danger "
               name="client.clientPreferredName"
+            />
+          </div>
+
+          {/*Labels Surname */}
+          <div className="col-6 mb-4">
+            <label htmlFor="clientSurname" className="form-label mt-2">
+              Surname
+            </label>
+          </div>
+
+          {/*Client Input Surname */}
+          <div className="col-6 mb-4">
+            <Field
+              type="text"
+              className="form-control inputDesign"
+              id="clientSurname"
+              name="client.clientSurname"
+            />
+            <ErrorMessage
+              component="div"
+              className="text-danger "
+              name="client.clientSurname"
             />
           </div>
 
@@ -756,31 +778,6 @@ const PersonalDetailsClientPartner = (props) => {
               />
             </div>
 
-            {/*Mobile Labels Surname */}
-            <div className="col-6 col-md-12 mb-4 d-md-none d-block">
-              <label
-                htmlFor="partnerSurname"
-                className="form-label d-block mt-2"
-              >
-                Surname
-              </label>
-            </div>
-
-            {/*Partner Input Surname */}
-            <div className="col-6 col-md-12  mb-4">
-              <Field
-                type="text"
-                className="form-control inputDesign "
-                id="partnerSurname"
-                name="partner.partnerSurname"
-              />
-              <ErrorMessage
-                className="text-danger "
-                component="div"
-                name="partner.partnerSurname"
-              />
-            </div>
-
             {/*Mobile Labels Given Name */}
             <div className="col-6 col-md-12 mb-4 d-md-none d-block">
               <label
@@ -831,18 +828,46 @@ const PersonalDetailsClientPartner = (props) => {
               />
             </div>
 
+            {/*Mobile Labels Last Name */}
+            <div className="col-6 col-md-12 mb-4 d-md-none d-block">
+              <label
+                htmlFor="partnerLastName"
+                className="form-label d-block mt-2"
+              >
+                Last Name
+              </label>
+            </div>
+
+            {/*Partner Input Last Name */}
+            <div className="col-6 col-md-12  mb-4">
+              <Field
+                type="text"
+                className="form-control inputDesign"
+                id="partnerLastName"
+                name="partner.partnerLastName"
+              />
+              <ErrorMessage
+                className="text-danger "
+                component="div"
+                name="partner.partnerLastName"
+              />
+            </div>
+
             {/*Mobile Labels Preferred Name */}
             <div className="col-6 col-md-12 mb-4 d-md-none d-block">
-              <label htmlFor="partnerPreferredName" className="form-label mt-2">
+              <label
+                htmlFor="partnerPreferredName"
+                className="form-label d-block mt-2"
+              >
                 Preferred Name
               </label>
             </div>
 
-            {/*Partner Input Middle Name */}
+            {/*Partner Input Preferred Name */}
             <div className="col-6 col-md-12  mb-4">
               <Field
                 type="text"
-                className="form-control inputDesign "
+                className="form-control inputDesign"
                 id="partnerPreferredName"
                 name="partner.partnerPreferredName"
               />
@@ -850,6 +875,31 @@ const PersonalDetailsClientPartner = (props) => {
                 className="text-danger "
                 component="div"
                 name="partner.partnerPreferredName"
+              />
+            </div>
+
+            {/*Mobile Labels Surname */}
+            <div className="col-6 col-md-12 mb-4 d-md-none d-block">
+              <label
+                htmlFor="partnerSurname"
+                className="form-label d-block mt-2"
+              >
+                Surname
+              </label>
+            </div>
+
+            {/*Partner Input Surname */}
+            <div className="col-6 col-md-12  mb-4">
+              <Field
+                type="text"
+                className="form-control inputDesign "
+                id="partnerSurname"
+                name="partner.partnerSurname"
+              />
+              <ErrorMessage
+                className="text-danger "
+                component="div"
+                name="partner.partnerSurname"
               />
             </div>
 
