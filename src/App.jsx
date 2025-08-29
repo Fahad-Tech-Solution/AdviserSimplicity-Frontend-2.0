@@ -78,7 +78,6 @@ function App() {
         </div>
       )}
 
-      I am Usama Faheem Ahmed
 
       <Routes>
         {/*                                                                                                           ✅ Public Routes */}
