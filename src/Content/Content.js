@@ -279,21 +279,21 @@ export const content = {
       subTitle: "All Users of CashFlow",
       statusStep: 0,
       icon: "FaUser",
-      route: "/allusers",
+      route: "/user/cashflow/allusers",
       condition: (CRObject) => false, // Always true, as this step is always needed.
     },
     {
       subTitle: "Personal Details",
       statusStep: 0,
       icon: "FaUser",
-      route: "/personal-detail",
+      route: "/user/cashflow/personal-detail",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
     {
       subTitle: "Income & Expenses",
       statusStep: 10,
       icon: "FaMoneyCheckDollar",
-      route: "/income-and-expenses",
+      route: "/user/cashflow/income-and-expenses",
       key: "CashFlow_Income_And_Expenses",
       QuestionsArray: [
         {
@@ -354,7 +354,7 @@ export const content = {
       subTitle: "Lifestyle Assets & Debt",
       statusStep: 20,
       icon: "FaHome",
-      route: "/Personal-Assets",
+      route: "/user/cashflow/personal-assets",
       QuestionsArray: [
         {
           title: "Own a Family Home",
@@ -403,7 +403,7 @@ export const content = {
       subTitle: "Financial Investments",
       statusStep: 30,
       icon: "RiCoinsFill",
-      route: "/Investments",
+      route: "/user/cashflow/investments",
       QuestionsArray: [
         {
           title: "Australian Shares",
@@ -480,7 +480,7 @@ export const content = {
       subTitle: "Business Entities",
       statusStep: 40,
       icon: "FaBriefcase",
-      route: "/Business-Entitles",
+      route: "/user/cashflow/business-entitles",
       QuestionsArray: [
         {
           title: "Dividend Income",
@@ -558,14 +558,14 @@ export const content = {
           sourceKey: "SMSFInvestmentProperties",
         },
       ],
-      route: "/SMSF",
+      route: "/user/cashflow/smsf",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
     {
       subTitle: "Investment Trust",
       statusStep: 60,
       icon: "MdFamilyRestroom",
-      route: "/InvestmentTrust",
+      route: "/user/cashflow/investment-trust",
       QuestionsArray: [
         {
           title: "West Family Trust Investment",

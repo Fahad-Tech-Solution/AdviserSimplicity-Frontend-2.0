@@ -25,7 +25,7 @@ import {
 } from "../Assets/Api/Api";
 import { Field, Form, Formik } from "formik";
 import { SimpleSelectField } from "../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
-import { MdOutlineWarningAmber } from "react-icons/md";
+import { MdAddCircleOutline, MdOutlineWarningAmber } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineReload } from "react-icons/ai";
 
@@ -129,6 +129,7 @@ const CDFclients = () => {
         onClick: (heading, row) => CallBack(heading, row, "unsuccessful"),
       },
     ];
+
     if (status === "successful") {
       menuItems.splice(1, 0, {
         action: "Edit",
@@ -278,6 +279,7 @@ const CDFclients = () => {
       Successful: () => {
         if (isPending) statusChange("successful", row);
       },
+
       Unsuccessful: () => {
         if (isPending) statusChange("unsuccessful", row);
       },
@@ -384,6 +386,7 @@ const CDFclients = () => {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="contianer-fluid">

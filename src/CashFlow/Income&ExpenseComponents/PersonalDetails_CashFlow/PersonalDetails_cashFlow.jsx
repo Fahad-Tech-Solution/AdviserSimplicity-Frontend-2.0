@@ -139,7 +139,7 @@ const PersonalDetails_cashFlow = (Props) => {
         );
 
         setQuestionChange("Income-And-Expenses");
-        Nev(`/Cash-Flow/Income-And-Expenses`);
+        Nev(`/user/cashflow/income-and-expenses`);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
@@ -348,104 +348,81 @@ const PersonalDetails_cashFlow = (Props) => {
     CalBacks,
     sectionName
   ) {
-    // Check if `currentInput` contains `name` and `value`
-    if (
-      !currentInput ||
-      !currentInput.name ||
-      typeof currentInput.value === "undefined"
-    ) {
+    if (!currentInput?.name || currentInput.value === undefined) {
       console.error("Invalid input provided:", currentInput);
       return;
     }
 
-    switch (currentInput.name) {
+    const { name, value } = currentInput;
+
+    // Step 1: Update field values
+    switch (name) {
       case `${sectionName}.name`:
-        setFieldValue(currentInput.name, validateName(currentInput.value));
-        break;
-
-      case `${sectionName}.retirementYear`:
-        // setFieldValue(currentInput.name, currentInput.value);
-
-        // // Ensure that `age` and `currentInput.value` are numbers before performing calculation
-        // const age = parseInt(values[`${sectionName}`][`age`], 10) || 0;
-        // const retirementYear = parseInt(currentInput.value, 10) || 0;
-
-        // // Calculate `plannedRetirementAge` based on the `age` and `retirementYear`
-        // const plannedRetirementAge = age > 0 ? retirementYear + age + 1 : 0;
-
-        // // console.log(age, retirementYear, plannedRetirementAge, currentInput.value)
-        // setFieldValue(
-        //   `${sectionName}.plannedRetirementAge`,
-        //   plannedRetirementAge > 30 ? 30 : plannedRetirementAge
-        // );
-
+        setFieldValue(name, validateName(value));
         break;
 
       default:
-        setFieldValue(currentInput.name, currentInput.value);
+        setFieldValue(name, value);
         break;
     }
 
-    // alert("Macha ay ayay:" + currentInput.name)
+    // Step 2: Handle DOB + retirementYear → Trigger API
+    if (
+      name === `${sectionName}.DOB` ||
+      name === `${sectionName}.retirementYear`
+    ) {
+      setLoadingState(true);
 
-    switch (currentInput.name) {
-      case `${sectionName}.DOB`:
-      case `${sectionName}.retirementYear`:
-        setLoadingState(true);
-        // alert("Macha ay ayay")
+      const DOB = new Date(
+        name === `${sectionName}.DOB` ? value : values?.[sectionName]?.DOB
+      );
 
-        // Ensure that `DOB` and `retirementYear` are valid dates before performing calculation
-        const DOB = new Date(values[`${sectionName}`][`DOB`]);
-        const retirementYearValue =
-          parseInt(values[`${sectionName}`][`retirementYear`], 10) || 0;
+      const retirementYearValue =
+        name === `${sectionName}.retirementYear`
+          ? parseInt(value, 10) || 0
+          : parseInt(values?.[sectionName]?.retirementYear, 10) || 0;
 
-        if (
-          DOB instanceof Date &&
-          !isNaN(DOB.getTime()) &&
-          retirementYearValue > 0
-        ) {
+      if (
+        DOB instanceof Date &&
+        !isNaN(DOB.getTime()) &&
+        retirementYearValue > 0
+      ) {
+        try {
           let data = JSON.parse(JSON.stringify(cashFlowData));
-          data.cf_personalDetails = values;
-          data.cf_personalDetails[`${sectionName}`][
-            `${currentInput.name.split(".")[1]}`
-          ] = currentInput.value;
-          console.log(data);
-          // run Calculate api here
+          data.cf_personalDetails = { ...values };
+
+          // Apply the most recent input value
+          data.cf_personalDetails[sectionName] = {
+            ...data.cf_personalDetails[sectionName],
+            [name.split(".")[1]]: value,
+          };
+
           let res = await PostAxios(
             `${DefaultUrl}/api/cal/cf_personalDetails`,
             data
           );
+
           if (res.data) {
-            console.log(res.data);
-            let obj = res.data;
-            //store Preservation Age
+            const obj = res.data[sectionName];
 
             setFieldValue(
               `${sectionName}.preservationAge`,
-              parseFloat(obj[`${sectionName}`].preservationAge).toFixed(0)
+              Math.round(obj?.preservationAge || 0)
             );
-            // let plannedRetirementAge = (parseFloat(obj[`${sectionName}`].plannedRetirementAge)).toFixed(0);
-            // //store Planned Retirement Age
             setFieldValue(
               `${sectionName}.plannedRetirementAge`,
-              parseFloat(obj[`${sectionName}`].plannedRetirementAge) > 30
-                ? 30
-                : Math.round(
-                    parseFloat(obj[`${sectionName}`].plannedRetirementAge)
-                  )
+              Math.min(Math.round(obj?.plannedRetirementAge || 0), 30)
             );
-            // //store Age
-            setFieldValue(
-              `${sectionName}.age`,
-              Math.round(parseFloat(obj[`${sectionName}`].age))
-            );
-            setLoadingState(false);
+            setFieldValue(`${sectionName}.age`, Math.round(obj?.age || 0));
           }
+        } catch (err) {
+          console.error("API call failed:", err);
+        } finally {
+          setLoadingState(false);
         }
-
-        break;
-      default:
-        break;
+      } else {
+        setLoadingState(false);
+      }
     }
   }
 

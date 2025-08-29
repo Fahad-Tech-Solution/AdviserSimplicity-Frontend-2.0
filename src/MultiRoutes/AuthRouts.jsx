@@ -32,7 +32,6 @@ import { Header } from "antd/es/layout/layout";
 import { defaultUrl, Employees, Roles } from "../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { GetAxios } from "../Components/Assets/Api/Api";
-import AllRiskProfile from "../Components/RiskProfile/AllRiskProfile";
 
 const { Sider, Content } = Layout;
 

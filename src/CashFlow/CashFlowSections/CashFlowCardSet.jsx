@@ -139,16 +139,16 @@ const CashFlowCardSet = (props) => {
 
     const currentIndex = cashFlow.findIndex(
       (item) =>
-        item.route === `/${location.pathname.replace("/Cash-Flow/", "")}`
+        item.route === `${location.pathname}`
     );
     let nextIndex = currentIndex + 1;
 
     const nextItem = cashFlow[nextIndex];
 
     if (!nextItem) {
-      Navigation(`/Cash-Flow/Reports/`);
+      Navigation(`/user/cashflow/reports/`);
     } else {
-      Navigation(`/Cash-Flow` + nextItem.route);
+      Navigation( nextItem.route);
     }
   };
 
@@ -156,14 +156,14 @@ const CashFlowCardSet = (props) => {
     // Find the current item index based on the QuestionChange state
     const currentIndex = cashFlow.findIndex(
       (item) =>
-        item.route === `/${location.pathname.replace("/Cash-Flow/", "")}`
+        item.route === `${location.pathname}`
     );
 
     let nextIndex = currentIndex - 1;
 
     const nextItem = cashFlow[nextIndex];
 
-    Navigation(`/Cash-Flow` + nextItem.route);
+    Navigation(nextItem.route);
   };
 
   let OpenModal = (props) => {

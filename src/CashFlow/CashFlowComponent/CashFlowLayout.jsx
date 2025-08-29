@@ -1,25 +1,27 @@
-import React from 'react'
-import CashFlowOptions from '../CashFlowOptions/CashFlowOptions'
-import { Route, Routes } from 'react-router-dom'
-import CashFlowSections from '../CashFlowSections/CashFlowSections'
-import { content } from '../../Content/Content'
+import React from "react";
+import CashFlowOptions from "../CashFlowOptions/CashFlowOptions";
+import { Route, Routes } from "react-router-dom";
+import CashFlowSections from "../CashFlowSections/CashFlowSections";
+import { content } from "../../Content/Content";
 
 const CashFlowLayout = () => {
+  let { cashFlow } = content;
 
-    let { cashFlow } = content;
+  return (
+    <div>
+      <CashFlowOptions />
+      <Routes>
+        {cashFlow.map((elem, index) => {
+          return (
+            <Route
+              path={elem.route.replace("/user/cashflow/", "/")}
+              element={<CashFlowSections Data={elem} />}
+            />
+          );
+        })}
+      </Routes>
+    </div>
+  );
+};
 
-    return (
-        <div>
-            <CashFlowOptions />
-            <Routes>
-                {cashFlow.map((elem, index) => {
-                    return (
-                        <Route path={elem.route} element={<CashFlowSections Data={elem} />} />
-                    )
-                })}
-            </Routes>
-        </div>
-    )
-}
-
-export default CashFlowLayout
+export default CashFlowLayout;

@@ -65,7 +65,7 @@ function CashFlowOptions(props) {
   let location = useLocation();
 
   useEffect(() => {
-    let cLocation = location.pathname.replace("/", "");
+    let cLocation = location.pathname;
     // console.log(location.pathname, cLocation);
 
     let Opt = "Opt1";
@@ -73,33 +73,17 @@ function CashFlowOptions(props) {
 
     setCurrentPCLassSwitch(cLocation.trim());
 
-    switch (cLocation) {
-      case "Cash-Flow/PersonalDetail":
-        stepComplete = 0;
-        break;
-      case "Cash-Flow/Income-And-Expenses":
-        stepComplete = 10;
-        break;
-      case "Cash-Flow/Personal-Assets":
-        stepComplete = 20;
-        break;
-      case "Cash-Flow/Investments":
-        stepComplete = 30;
-        break;
-      case "Cash-Flow/Business-Entitles":
-        stepComplete = 40;
-        break;
-      case "Cash-Flow/SMSF":
-        stepComplete = 50;
-        break;
-      case "Cash-Flow/InvestmentTrust":
-        stepComplete = 60;
-        break;
-      default:
-        let a = cLocation.split("/")[0];
-        setCurrentTabName(a.replaceAll("-", " "));
-        break;
-    }
+    const stepMap = {
+      "/user/cashflow/personal-detail": 0,
+      "/user/cashflow/income-and-expenses": 10,
+      "/user/cashflow/personal-assets": 20,
+      "/user/cashflow/investments": 30,
+      "/user/cashflow/business-entitles": 40,
+      "/user/cashflow/smsf": 50,
+      "/user/cashflow/investment-trust": 60,
+    };
+
+    stepComplete = stepMap[cLocation] || 0;
 
     setOptRender(Opt);
     setStepCompleted(stepComplete);
@@ -111,9 +95,6 @@ function CashFlowOptions(props) {
     const updatedItems = itemsToRender
       .filter((item) => item.condition(conditionCheck))
       .map((item) => {
-        const isPersonalDetails = item.subTitle === "Personal Details";
-        const currentEmail = localStorage.getItem("UserID");
-
         const iconMap = {
           FaBriefcase,
           FaCheck,
@@ -138,7 +119,7 @@ function CashFlowOptions(props) {
         };
 
         const IconComponent = iconMap[item.icon] || FaUser; // Default to FaUser if not found
-        let isCurrentStep = cLocation === "Cash-Flow" + item.route;
+        let isCurrentStep = cLocation === item.route;
 
         let Status =
           stepComplete < item.statusStep
@@ -156,7 +137,7 @@ function CashFlowOptions(props) {
               }`}
               role="button"
               onClick={() => {
-                handleStepClick(`/Cash-Flow${item.route}`);
+                handleStepClick(`${item.route}`);
               }}
               style={{
                 display: "flex",
@@ -192,6 +173,7 @@ function CashFlowOptions(props) {
 
   let handleStepClick = (props) => {
     if (!stepsStatus) {
+      // console.log(props);
       Nev(props);
     }
   };
