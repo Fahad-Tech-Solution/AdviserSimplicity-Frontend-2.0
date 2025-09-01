@@ -1,18 +1,21 @@
 import React, { useState } from "react";
 import banner from "../Adviser-Simplicity-Profile-Green-Banner.png";
 import { Image } from "react-bootstrap";
-import { Image as AntdImage, message, Tooltip } from "antd";
+import { Image as AntdImage, Input, message, Tooltip } from "antd";
 import { Button, ConfigProvider, Descriptions } from "antd";
 import { FaCopy, FaEdit, FaPowerOff, FaRegCopy } from "react-icons/fa";
 import Dynamiclist from "./Dynamiclist";
 import { FiLogOut } from "react-icons/fi";
-import { MdEdit } from "react-icons/md";
+import { MdEdit, MdOutlineInfo } from "react-icons/md";
 import { useRecoilState } from "recoil";
 import { LoggedInUserData, LoggedInUserTokenJwt } from "../../../Store/Store";
 import { useNavigate } from "react-router-dom";
 import { toSentenceCase } from "../Api/Api";
 import ModalComponent from "../../Questions/FinancialInvestments/ModalComponent";
 import AdviserFrom from "../../SuperAdminComponent/AdviserFrom";
+import { IoSearchOutline } from "react-icons/io5";
+import asanaLogo from "../../Questions/svgs/brand-asana-svgrepo-com.svg";
+import ClientPATIDForm from "../Asana/ClientPATIDForm";
 
 const ProfileTemp = () => {
   const sharedItemStyle = {
@@ -30,6 +33,7 @@ const ProfileTemp = () => {
 
   let superAdminRole =
     loggedInUserData?.roleID?.permissions.includes("superAdmin") || false;
+
   const userItems = [
     {
       label: "First Name",
@@ -106,6 +110,17 @@ const ProfileTemp = () => {
     });
   };
 
+  let OpenModal = () => {
+    setFlagState(true);
+    setModalObject({
+      title: "Connect your Asana",
+      type: "asana",
+      Action: "view",
+      row: {},
+      noFooter: true,
+    });
+  };
+
   return (
     <div className="container-fluid profile-temp-container mt-3">
       <ModalComponent
@@ -113,8 +128,13 @@ const ProfileTemp = () => {
         setFlagState={setFlagState}
         flagState={flagState}
       >
-        <AdviserFrom />
+        {modalObject.type === "newAdviser" ? (
+          <AdviserFrom />
+        ) : (
+          <ClientPATIDForm />
+        )}
       </ModalComponent>
+
       <div className="row justify-content-center ">
         <div className="col-md-12">
           <div
@@ -232,6 +252,33 @@ const ProfileTemp = () => {
         </div>
         {!superAdminRole && (
           <div className="col-md-4">
+            <div className="shadow p-3 rounded-3 mb-5">
+              <h6 className="mb-3">
+                <span>
+                  <AntdImage
+                    src={asanaLogo}
+                    alt="Asana logo"
+                    className="rounded-3 me-3"
+                    width={15}
+                    height={15}
+                    style={{ objectFit: "cover" }}
+                    preview={{ mask: null }}
+                  />{" "}
+                </span>{" "}
+                Connect your Asana.{" "}
+                <span>
+                  <Tooltip title="Your Asana token is securely encrypted. If you wish to update it, click the magnifying glass icon.">
+                    <MdOutlineInfo />
+                  </Tooltip>
+                </span>{" "}
+              </h6>
+
+              {/* This div wraps your list and becomes the scrollable container */}
+              <Input.Group compact className="d-flex flex-row ">
+                <Input placeholder="Asana increpted PAT..." disabled />
+                <Button icon={<IoSearchOutline />} onClick={OpenModal}></Button>
+              </Input.Group>
+            </div>
             <div
               className="shadow p-3 rounded-3 mb-5"
               style={{ height: "430px" }}

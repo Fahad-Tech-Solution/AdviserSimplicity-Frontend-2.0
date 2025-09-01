@@ -259,6 +259,8 @@ const ModalComponent = (props) => {
   let submitButtonRender =
     props?.modalObject?.Action?.toLowerCase() == "view" ? false : true;
 
+  let FooterButtonRender = props?.modalObject?.noFooter ? false : true;
+
   return (
     <div>
       <Modal
@@ -297,79 +299,80 @@ const ModalComponent = (props) => {
               })
             : "no Child exist"}
         </Modal.Body>
-
-        <Modal.Footer>
-          <Button
-            variant="secondary"
-            style={{ width: "12.5%", minWidth: "fit-content" }}
-            onClick={() => {
-              props.setFlagState(false);
-              setProgress(0);
-              setCashFlowReCalculateLoading(false);
-              setCashFlowDownloading(false);
-            }}
-          >
-            Close
-          </Button>
-
-          {props.modalObject?.cal && (
+        {FooterButtonRender && (
+          <Modal.Footer>
             <Button
               variant="secondary"
               style={{ width: "12.5%", minWidth: "fit-content" }}
-              onClick={handleParentButtonClick}
-              disabled={cashFlowReCalculateLoading}
+              onClick={() => {
+                props.setFlagState(false);
+                setProgress(0);
+                setCashFlowReCalculateLoading(false);
+                setCashFlowDownloading(false);
+              }}
             >
-              <FaInfoCircle size={14} style={{ marginBottom: "4px" }} />{" "}
-              Re-Calculate
-              {cashFlowReCalculateLoading && (
-                <ConfigProvider
-                  theme={{
-                    token: {
-                      /* here is your global tokens */
-                      colorPrimary: "#fff",
-                    },
-                  }}
-                >
-                  &nbsp; <Spin size="small" />
-                </ConfigProvider>
-              )}
+              Close
             </Button>
-          )}
 
-          {props.modalObject?.cal && (
-            <Button
-              variant="secondary"
-              style={{ width: "fit-content", minWidth: "fit-content" }}
-              onClick={handleParentButton2Click}
-              disabled={cashFlowDownloading}
-            >
-              {cashFlowDownloading ? (
-                <ConfigProvider
-                  theme={{
-                    token: {
-                      /* here is your global tokens */
-                      colorPrimary: "#fff",
-                    },
-                  }}
-                >
-                  <Spin size="small" />
-                </ConfigProvider>
-              ) : (
-                <FaDownload size={14} style={{ marginBottom: "4px" }} />
-              )}
-            </Button>
-          )}
-          {submitButtonRender && (
-            <button
-              type="button"
-              className="btn bgColor modalBtn"
-              style={{ width: "12.5%", minWidth: "fit-content" }}
-              onClick={handleOk}
-            >
-              Submit
-            </button>
-          )}
-        </Modal.Footer>
+            {props.modalObject?.cal && (
+              <Button
+                variant="secondary"
+                style={{ width: "12.5%", minWidth: "fit-content" }}
+                onClick={handleParentButtonClick}
+                disabled={cashFlowReCalculateLoading}
+              >
+                <FaInfoCircle size={14} style={{ marginBottom: "4px" }} />{" "}
+                Re-Calculate
+                {cashFlowReCalculateLoading && (
+                  <ConfigProvider
+                    theme={{
+                      token: {
+                        /* here is your global tokens */
+                        colorPrimary: "#fff",
+                      },
+                    }}
+                  >
+                    &nbsp; <Spin size="small" />
+                  </ConfigProvider>
+                )}
+              </Button>
+            )}
+
+            {props.modalObject?.cal && (
+              <Button
+                variant="secondary"
+                style={{ width: "fit-content", minWidth: "fit-content" }}
+                onClick={handleParentButton2Click}
+                disabled={cashFlowDownloading}
+              >
+                {cashFlowDownloading ? (
+                  <ConfigProvider
+                    theme={{
+                      token: {
+                        /* here is your global tokens */
+                        colorPrimary: "#fff",
+                      },
+                    }}
+                  >
+                    <Spin size="small" />
+                  </ConfigProvider>
+                ) : (
+                  <FaDownload size={14} style={{ marginBottom: "4px" }} />
+                )}
+              </Button>
+            )}
+            {submitButtonRender && (
+              <button
+                type="button"
+                className="btn bgColor modalBtn"
+                style={{ width: "12.5%", minWidth: "fit-content" }}
+                onClick={handleOk}
+              >
+                Submit
+              </button>
+            )}
+          </Modal.Footer>
+        )}
       </Modal>
     </div>
   );
