@@ -32,11 +32,11 @@ const CDFViewForm = (props) => {
       children: Data.client?.preferredName || "--",
       ...sharedItemStyle,
     },
-    {
-      label: "Sure Name",
-      children: Data.client?.surname || "--",
-      ...sharedItemStyle,
-    },
+    // {
+    //   label: "Sure Name",
+    //   children: Data.client?.surname || "--",
+    //   ...sharedItemStyle,
+    // },
     {
       label: "Date of Birth",
       children: ConvertDate(Data.client?.dateOfBirth) || "--",

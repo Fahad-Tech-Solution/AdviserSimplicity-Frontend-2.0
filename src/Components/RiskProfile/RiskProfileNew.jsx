@@ -73,11 +73,16 @@ const RiskProfileNew = () => {
 
   const GetRiskData = async () => {
     try {
+      console.log(
+        "Fetching risk data...",
+        `${DefaultUrl}/api/riskProfile/${localStorage.getItem("UserID")}`
+      );
       // Make the GET request to fetch risk data
       const res = await GetAxios(
         `${DefaultUrl}/api/riskProfile/${localStorage.getItem("UserID")}`
       );
       // Check if the response is successful and contains data
+      console.log(res, ":res from get");
       if (res && res._id) {
         setRiskQuestion(res); // Assuming response data contains the risk question
         Nav("/user/risk-profile/cards");
@@ -348,7 +353,9 @@ const RiskProfileNew = () => {
 
   useEffect(() => {
     const currentPath =
-      loc.pathname === "/user/risk-profile" ? "/user/risk-profile/" : loc.pathname;
+      loc.pathname === "/user/risk-profile"
+        ? "/user/risk-profile/"
+        : loc.pathname;
     const currentIndex = QuestionArray.findIndex(
       (q) => "/user/risk-profile" + q.route === currentPath
     );
@@ -370,7 +377,9 @@ const RiskProfileNew = () => {
 
   const BackHandle = () => {
     const currentPath =
-      loc.pathname === "/user/risk-profile" ? "/user/risk-profile/" : loc.pathname;
+      loc.pathname === "/user/risk-profile"
+        ? "/user/risk-profile/"
+        : loc.pathname;
 
     // console.log(currentPath);
     const currentIndex = QuestionArray.findIndex(
@@ -638,7 +647,7 @@ const RiskProfileNew = () => {
                           type="Submit"
                           className="float-center btn w-100  bgColor modalBtn"
                         >
-                          Submit 
+                          Submit
                         </button>
                       )}
                     </div>

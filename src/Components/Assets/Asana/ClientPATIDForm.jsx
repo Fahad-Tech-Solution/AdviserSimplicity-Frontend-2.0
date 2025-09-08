@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
-import { Row, Col, Input, Button, Spin, Alert, List } from "antd";
+import { Row, Col, Input, Button, Spin, Alert, List, Select } from "antd";
 import * as Yup from "yup";
 import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 import axios from "axios";
-import { PostAxios } from "../Api/Api";
+import { PostAxios, toSentenceCase } from "../Api/Api";
 import { defaultUrl } from "../../../Store/Store";
 import { useRecoilValue } from "recoil";
+import { FaArrowRight } from "react-icons/fa";
 
 const ClientPATIDForm = (props) => {
   const [showPATID, setShowPATID] = useState(false);
@@ -15,6 +16,7 @@ const ClientPATIDForm = (props) => {
   const [workspaces, setWorkspaces] = useState([]);
   const [projectSpaces, setProjectSpaces] = useState([]);
   const [worSpaceUsers, setWorSpaceUsers] = useState([]);
+  const [AsanaProjectDetails, setAsanaProjectDetails] = useState([]); // ✅ initialize as []
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState("");
   let DefaultUrl = useRecoilValue(defaultUrl);
@@ -101,18 +103,70 @@ const ClientPATIDForm = (props) => {
     }
   };
 
+  const fetchProjectDetails = async (patID, workspaceId, projectId) => {
+    setLoading(true);
+    setApiError("");
+    setAsanaProjectDetails(null);
+    try {
+      const res = await axios.get(
+        `https://app.asana.com/api/1.0/projects/${projectId}?`,
+        {
+          headers: {
+            Authorization: `Bearer ${patID}`,
+          },
+        }
+      );
+      if (res) {
+        console.log("Project Details:", res.data.data.custom_field_settings);
+        setAsanaProjectDetails(res.data.data.custom_field_settings || null);
+      }
+    } catch (error) {
+      setApiError(
+        error?.response?.data?.errors?.[0]?.message ||
+          "Failed to fetch Project details. Please check your PATID or Project ID."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const StoreAllData = async (values) => {
     setLoading(true);
     setApiError("");
-    values.projects=[values.projects];
+    console.log(values);
+
+ 
+    // Build custom_fields object
+    const customFields = Object.fromEntries(
+      values.fieldsMap.map((gid) => {
+        const customFieldObj = AsanaProjectDetails.find(
+          (cf) => cf.custom_field.gid === gid
+        );
+        return [
+          values?.[`appFieldMapping-${gid}`], // key
+          customFieldObj || {}, // value (full object instead of gid)
+        ];
+      })
+    );
+
+    // Final object to send
+    const Obj = {
+      custom_fields: customFields,
+      patID: values.patID,
+      workspace: values.workspace,
+      projects: [values.projects],
+      assignee: values.assignee,
+    };
+    console.log(JSON.stringify(Obj));
+    // return false;
     try {
-      const res = await PostAxios(DefaultUrl + "/api/CDFAsana/Add", values);
+      const res = await PostAxios(DefaultUrl + "/api/CDFAsana/Add", Obj);
       console.log(res);
       setStoredSuccessFull(true);
     } catch (error) {
       setApiError(
         error?.response?.data?.errors?.[0]?.message ||
-          "Failed to fetch Projects. Please check your PATID."
+          "Failed to submit data. Please check your input."
       );
     } finally {
       setLoading(false);
@@ -145,6 +199,11 @@ const ClientPATIDForm = (props) => {
           // Final submission logic here
           console.log("Selected assignee ID :", values.assignee);
           setStep(5);
+          fetchProjectDetails(values.patID, values.workspace, values.projects);
+        } else if (step === 5) {
+          // Final submission logic here
+          console.log("Selected assignee ID :", values.assignee);
+          setStep(6);
           StoreAllData(values);
         }
       }}
@@ -223,8 +282,6 @@ const ClientPATIDForm = (props) => {
           {/* STEP 2: Show Workspaces */}
           {step === 2 && (
             <div>
-              <h5>Asana Workspaces</h5>
-
               {loading && (
                 <div
                   style={{
@@ -251,28 +308,37 @@ const ClientPATIDForm = (props) => {
 
               {!loading && !apiError && workspaces.length > 0 && (
                 <>
-                  <List
-                    bordered
-                    dataSource={workspaces}
-                    renderItem={(item) => (
-                      <List.Item
-                        onClick={() => setFieldValue("workspace", item.gid)}
-                        style={{
-                          cursor: "pointer",
-                          backgroundColor:
-                            values.workspace === item.gid ? "#e6f7ff" : "white",
-                          borderLeft:
-                            values.workspace === item.gid
-                              ? "4px solid #36b446"
-                              : "4px solid transparent",
+                  <h5>Find your Asana workspaces</h5>
+                  <div className="d-flex justify-content-center align-items-center">
+                    <div className="w-100">
+                      <Select
+                        showSearch
+                        value={values.workspace}
+                        style={{ width: "100%" }}
+                        placeholder="Search to Select"
+                        optionFilterProp="label"
+                        filterOption={(input, option) =>
+                          option?.label
+                            ?.toLowerCase()
+                            .includes(input.toLowerCase())
+                        }
+                        filterSort={(optionA, optionB) =>
+                          (optionA?.label ?? "")
+                            .toLowerCase()
+                            .localeCompare((optionB?.label ?? "").toLowerCase())
+                        }
+                        onChange={(val) => {
+                          setFieldValue("workspace", val);
                         }}
-                      >
-                        <strong>{item.name}</strong>{" "}
-                        <span style={{ color: "#888" }}>({item.gid})</span>
-                      </List.Item>
-                    )}
-                    style={{ marginTop: "1rem" }}
-                  />
+                        options={workspaces.map((item) => ({
+                          value: item.gid,
+                          label: `${toSentenceCase(item.name)} (${item.gid})`,
+                        }))}
+                        // 👇 this makes dropdown render inside the modal
+                        getPopupContainer={(trigger) => trigger.parentNode}
+                      />
+                    </div>
+                  </div>
 
                   <div className="mt-3 w-100">
                     <Button
@@ -296,8 +362,6 @@ const ClientPATIDForm = (props) => {
           {/* STEP 3: Show Projects */}
           {step === 3 && (
             <div>
-              <h5>Asana Projects</h5>
-
               {loading && (
                 <div
                   style={{
@@ -324,28 +388,37 @@ const ClientPATIDForm = (props) => {
 
               {!loading && !apiError && projectSpaces.length > 0 && (
                 <>
-                  <List
-                    bordered
-                    dataSource={projectSpaces}
-                    renderItem={(item) => (
-                      <List.Item
-                        onClick={() => setFieldValue("projects", item.gid)}
-                        style={{
-                          cursor: "pointer",
-                          backgroundColor:
-                            values.projects === item.gid ? "#e6f7ff" : "white",
-                          borderLeft:
-                            values.projects === item.gid
-                              ? "4px solid #36b446"
-                              : "4px solid transparent",
+                  <h5>Find your Asana projects:</h5>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div className="w-100">
+                      <Select
+                        showSearch
+                        value={values.projects}
+                        style={{ width: "100%" }}
+                        placeholder="Search to Select"
+                        optionFilterProp="label"
+                        filterOption={(input, option) =>
+                          option?.label
+                            ?.toLowerCase()
+                            .includes(input.toLowerCase())
+                        }
+                        filterSort={(optionA, optionB) =>
+                          (optionA?.label ?? "")
+                            .toLowerCase()
+                            .localeCompare((optionB?.label ?? "").toLowerCase())
+                        }
+                        onChange={(val) => {
+                          setFieldValue("projects", val);
                         }}
-                      >
-                        <strong>{item.name}</strong>{" "}
-                        <span style={{ color: "#888" }}>({item.gid})</span>
-                      </List.Item>
-                    )}
-                    style={{ marginTop: "1rem" }}
-                  />
+                        options={projectSpaces.map((item) => ({
+                          value: item.gid,
+                          label: `${toSentenceCase(item.name)} (${item.gid})`,
+                        }))}
+                        // 👇 this makes dropdown render inside the modalprojects
+                        getPopupContainer={(trigger) => trigger.parentNode}
+                      />
+                    </div>
+                  </div>
 
                   <div className="mt-3 w-100">
                     <Button
@@ -369,8 +442,6 @@ const ClientPATIDForm = (props) => {
           {/* STEP 4: Show Users */}
           {step === 4 && (
             <div>
-              <h5>Asana Users</h5>
-
               {loading && (
                 <div
                   style={{
@@ -397,28 +468,189 @@ const ClientPATIDForm = (props) => {
 
               {!loading && !apiError && worSpaceUsers.length > 0 && (
                 <>
-                  <List
-                    bordered
-                    dataSource={worSpaceUsers}
-                    renderItem={(item) => (
-                      <List.Item
-                        onClick={() => setFieldValue("assignee", item.gid)}
-                        style={{
-                          cursor: "pointer",
-                          backgroundColor:
-                            values.assignee === item.gid ? "#e6f7ff" : "white",
-                          borderLeft:
-                            values.assignee === item.gid
-                              ? "4px solid #36b446"
-                              : "4px solid transparent",
+                  <h5>Select the Asana users you want to assign tasks to.</h5>
+                  <div className="d-flex justify-content-center align-items-center">
+                    <div className="w-100">
+                      <Select
+                        showSearch
+                        value={values.assignee}
+                        style={{ width: "100%" }}
+                        placeholder="Search to Select"
+                        optionFilterProp="label"
+                        filterOption={(input, option) =>
+                          option?.label
+                            ?.toLowerCase()
+                            .includes(input.toLowerCase())
+                        }
+                        filterSort={(optionA, optionB) =>
+                          (optionA?.label ?? "")
+                            .toLowerCase()
+                            .localeCompare((optionB?.label ?? "").toLowerCase())
+                        }
+                        onChange={(val) => {
+                          setFieldValue("assignee", val);
                         }}
-                      >
-                        <strong>{item.name}</strong>{" "}
-                        <span style={{ color: "#888" }}>({item.gid})</span>
-                      </List.Item>
-                    )}
-                    style={{ marginTop: "1rem" }}
-                  />
+                        options={worSpaceUsers.map((item) => ({
+                          value: item.gid,
+                          label: `${toSentenceCase(item.name)} (${item.gid})`,
+                        }))}
+                        // 👇 this makes dropdown render inside the modalprojectsassignee
+                        getPopupContainer={(trigger) => trigger.parentNode}
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-3 w-100">
+                    <Button
+                      disabled={!values.assignee}
+                      type="primary"
+                      htmlType="submit"
+                      className="float-end"
+                    >
+                      Save
+                    </Button>
+                  </div>
+                </>
+              )}
+
+              {!loading && !apiError && workspaces.length === 0 && (
+                <div>No workspaces found for this PATID.</div>
+              )}
+            </div>
+          )}
+
+          {/* STEP 5: Show Custom Fields */}
+          {step === 5 && (
+            <div>
+              {loading && (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "40vh", // ensures vertical centering
+                    width: "100%",
+                  }}
+                >
+                  <Spin siz e="large" tip="Loading Projects..." />
+                </div>
+              )}
+
+              {apiError && (
+                <Alert
+                  type="error"
+                  message="Error"
+                  description={apiError}
+                  showIcon
+                  style={{ marginBottom: "1rem" }}
+                />
+              )}
+
+              {!loading && !apiError && AsanaProjectDetails.length > 0 && (
+                <>
+                  <h5>Asana Custome Fields</h5>
+                  <div className="d-flex justify-content-center align-items-center">
+                    <div className="w-100">
+                      <Select
+                        showSearch
+                        allowClear
+                        style={{ width: "100%" }}
+                        value={values.fieldsMap}
+                        placeholder="Search to Select"
+                        optionFilterProp="label"
+                        mode="multiple"
+                        filterOption={(input, option) =>
+                          option?.label
+                            ?.toLowerCase()
+                            .includes(input.toLowerCase())
+                        }
+                        filterSort={(optionA, optionB) =>
+                          (optionA?.label ?? "")
+                            .toLowerCase()
+                            .localeCompare((optionB?.label ?? "").toLowerCase())
+                        }
+                        onChange={(val) => {
+                          setFieldValue("fieldsMap", val);
+                        }}
+                        options={
+                          Array.isArray(AsanaProjectDetails) &&
+                          AsanaProjectDetails.length > 0
+                            ? AsanaProjectDetails.map((item) => ({
+                                value: item.custom_field.gid,
+                                label: `${toSentenceCase(
+                                  item.custom_field.name
+                                )} (${item.custom_field.gid})`,
+                              }))
+                            : []
+                        }
+                        // 👇 this makes dropdown render inside the modalprojectsassignee
+                        getPopupContainer={(trigger) => trigger.parentNode}
+                      />
+                    </div>
+                  </div>
+
+                  {Array.isArray(values?.fieldsMap) &&
+                    values.fieldsMap.length > 0 &&
+                    values.fieldsMap.map((gid, index) => {
+                      // find the matching Asana field by gid
+                      const field = AsanaProjectDetails.find(
+                        (f) => f.custom_field.gid === gid
+                      );
+
+                      return (
+                        <div
+                          className="row mt-3 justify-content-between align-items-center "
+                          key={gid}
+                        >
+                          {/* Left col: Asana custom field name */}
+                          <div className="col-4 d-flex align-items-center">
+                            <strong>
+                              {field
+                                ? field.custom_field.name
+                                : "Unknown Field"}
+                            </strong>
+                          </div>
+
+                          <div className="col-2">
+                            <FaArrowRight />
+                          </div>
+
+                          {/* Right col: App fields */}
+                          <div className="col-4">
+                            <Field
+                              as="select"
+                              name={`appFieldMapping-${gid}`} // ✅ unique mapping per Asana field
+                              className="form-select"
+                              onChange={(e) =>
+                                setFieldValue(
+                                  `appFieldMapping-${gid}`,
+                                  e.target.value
+                                )
+                              }
+                            >
+                              <option value="">Select App Field</option>
+                              <option value="salutation">Salutation</option>
+                              <option value="firstName">First Name</option>
+                              <option value="middleName">Middle Name</option>
+                              <option value="lastName">Last Name</option>
+                              <option value="preferredName">
+                                Preferred Name
+                              </option>
+                              <option value="fullLegalName">Full Legal Name</option>
+                              <option value="gender">Gender</option>
+                              <option value="dateOfBirth">Date of Birth</option>
+                              <option value="age">Age</option>
+                              <option value="email">Email</option>
+                              <option value="phoneNumber">Phone Number</option>
+                              <option value="relationshipStatus">
+                                Relationship Status
+                              </option>
+                              <option value="occupation">Occupation</option>
+                              <option value="address">Address</option>
+                            </Field>
+                          </div>
+                        </div>
+                      );
+                    })}
 
                   <div className="mt-3 w-100">
                     <Button
@@ -439,8 +671,8 @@ const ClientPATIDForm = (props) => {
             </div>
           )}
 
-          {/* STEP 5: Stored Successfully */}
-          {step === 5 && (
+          {/* STEP 6: Stored Successfully */}
+          {step === 6 && (
             <div>
               <h5>Asana Details Storing</h5>
 

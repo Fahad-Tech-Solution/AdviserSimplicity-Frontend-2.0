@@ -1,126 +1,62 @@
 {
-  "_id": "68a586ee104ac879396b8cf9",
-  "adviserID": "6887287e189758fa429a15e5",
-  "client": {
-    "firstName": "waqar",
-    "surname": "Doe",
-    "preferredName": "Johnny",
-    "gender": "Male",
-    "dateOfBirth": "1990-01-01",
-    "age": 35,
-    "email": "waqargh5151111@gmail.com",
-    "phoneNumber": "1234567890",
-    "relationshipStatus": "couple",
-    "occupation": "Engineer",
-    "address": "",
-    "incomeDetails": {
-      "employmentIncome": 50000,
-      "businessIncome": 10000,
-      "centreLinkPayments": 0,
-      "superPensionPayments": 2000
+  "gid": "1206955233128628",
+  "enabled": true,
+  "enum_options": [
+    {
+      "gid": "1206955233128629",
+      "color": "blue",
+      "enabled": true,
+      "name": "🙎‍♂️Mr",
+      "resource_type": "enum_option"
     },
-    "personalAssets": {
-      "cars": 2,
-      "householdItems": 5000,
-      "boat": 0,
-      "caravan": 0,
-      "creditCards": 2000,
-      "personalLoan": 10000
+    {
+      "gid": "1206955233128630",
+      "color": "hot-pink",
+      "enabled": true,
+      "name": "🙎‍♀️Mrs",
+      "resource_type": "enum_option"
     },
-    "financialAssets": {
-      "bankAccounts": 15000,
-      "shares": 5000,
-      "managedFunds": 3000,
-      "super": 20000,
-      "pension": 0
+    {
+      "gid": "1206955233128631",
+      "color": "hot-pink",
+      "enabled": true,
+      "name": "🙎‍♀️Miss",
+      "resource_type": "enum_option"
+    },
+    {
+      "gid": "1206955233128632",
+      "color": "hot-pink",
+      "enabled": true,
+      "name": "🙎‍♀️Ms",
+      "resource_type": "enum_option"
+    },
+    {
+      "gid": "1206955233128633",
+      "color": "yellow",
+      "enabled": true,
+      "name": "🩺Dr",
+      "resource_type": "enum_option"
+    },
+    {
+      "gid": "1207896371552447",
+      "color": "red",
+      "enabled": true,
+      "name": "💰SMSF",
+      "resource_type": "enum_option"
     }
+  ],
+  "enum_value": null,
+  "name": "Salutation",
+  "description": "",
+  "created_by": {
+    "gid": "1202127256728012",
+    "name": "Anthony Tripodi",
+    "resource_type": "user"
   },
-  "partner": {
-    "firstName": "Jane",
-    "surname": "Doe",
-    "preferredName": "Janey",
-    "gender": "Female",
-    "dateOfBirth": "1992-02-02",
-    "age": 35,
-    "email": "jane.doe@example.com",
-    "phoneNumber": "0987654321",
-    "relationshipStatus": "Married",
-    "occupation": "Doctor",
-    "address": "aus",
-    "incomeDetails": {
-      "employmentIncome": 60000,
-      "businessIncome": 0,
-      "centreLinkPayments": 0,
-      "superPensionPayments": 1500
-    },
-    "personalAssets": {
-      "cars": 1,
-      "householdItems": 3000,
-      "boat": 0,
-      "caravan": 0,
-      "creditCards": 1000,
-      "personalLoan": 5000
-    },
-    "financialAssets": {
-      "bankAccounts": 10000,
-      "shares": 2000,
-      "managedFunds": 1000,
-      "super": 15000,
-      "pension": 0
-    }
-  },
-  "childrenObj": {
-    "hasChildren": "Yes",
-    "childrenList": [
-      {
-        "name": "Alice",
-        "gender": "Female",
-        "dob": "2015-05-05"
-      },
-      {
-        "name": "Bob",
-        "gender": "Male",
-        "dob": "2018-08-08"
-      }
-    ]
-  },
-  "home": {
-    "propertyValue": 500000,
-    "loanBalance": 250000,
-    "rentReceived": 20000,
-    "rentFrequency": "abc"
-  },
-  "otherProperties": {
-    "hasOtherProperties": "Yes",
-    "numberOfProperties": 1,
-    "propertyList": [
-      {
-        "marketValue": 300000,
-        "loanBalance": 150000,
-        "rentReceived": 1500,
-        "rentFrequency": "Monthly",
-        "rentReceivedMain": 1500,
-        "frequencyOfRentMain": "Monthly",
-        "annualExpenses": "2000"
-      }
-    ]
-  },
-  "areaOfAdvice": {
-    "buyAProperty": "Yes",
-    "payOffHomeLoan": "Yes",
-    "incomeProtectionInsurance": "No",
-    "buildSuperannuation": "Yes",
-    "retirementPlanning": "No",
-    "centreLinkEligibility": "No",
-    "investing": "Yes",
-    "moneyManagement": "Yes",
-    "taxMinimization": "No",
-    "inheritancePlanning": "No",
-    "agedCare": "No",
-    "selfManagedSuperFund": "No"
-  },
-  "status": "successful",
-  "createdAt": "2025-08-20T08: 27: 26.471Z",
-  "updatedAt": "2025-08-20T08: 27: 26.471Z",
-  "__v": 0
+  "display_value": null,
+  "resource_subtype": "enum",
+  "resource_type": "custom_field",
+  "is_formula_field": false,
+  "is_value_read_only": false,
+  "type": "enum"
 }

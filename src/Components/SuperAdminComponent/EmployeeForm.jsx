@@ -86,6 +86,7 @@ const EmployeeForm = (props) => {
       } else if (props.modalObject.Action.toLowerCase() == "edit") {
         values._id = props.modalObject.row._id;
         values.parentUserID = props.modalObject.row.parentUserID;
+        
         res = await PatchAxios(
           DefaultUrl + "/api/user/Update/Employee",
           values

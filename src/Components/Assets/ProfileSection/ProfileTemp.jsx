@@ -187,13 +187,18 @@ const ProfileTemp = () => {
                         className="p-0 CustomLink "
                         variant="link"
                         onClick={() => {
-                          // window.navigator.clipboard.writeText(`https://cdf.denarowealth.com.au/?referralId=${loggedInUserData?.referralID || "--"}`);
-                          window.navigator.clipboard.writeText(
-                            `https://cdf.denarowealth.com.au/?referralId=${
-                              loggedInUserData?.referralID || "--"
-                            }`
-                          );
-                          message.success("Link copied!");
+                          const link = `https://cdf.denarowealth.com.au/?referralId=${
+                            loggedInUserData?.referralID || "--"
+                          }`;
+
+                          navigator.clipboard
+                            .writeText(link)
+                            .then(() => {
+                              message.success("Link copied!");
+                            })
+                            .catch(() => {
+                              message.error("Failed to copy link!");
+                            });
                         }}
                       >
                         https://cdf.denarowealth.com.au/?referralId=
@@ -279,6 +284,9 @@ const ProfileTemp = () => {
                 <Button icon={<IoSearchOutline />} onClick={OpenModal}></Button>
               </Input.Group>
             </div>
+
+
+
             <div
               className="shadow p-3 rounded-3 mb-5"
               style={{ height: "430px" }}
