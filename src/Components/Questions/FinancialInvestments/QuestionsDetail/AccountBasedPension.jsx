@@ -317,7 +317,7 @@ const AccountBasedPension = (props) => {
                     </div>
                   </div>
 
-                  {values.NumberOfMap && (
+                  {values.NumberOfMap > 0 && (
                     <div className="mt-4">
                       <Table striped bordered responsive hover>
                         <thead>

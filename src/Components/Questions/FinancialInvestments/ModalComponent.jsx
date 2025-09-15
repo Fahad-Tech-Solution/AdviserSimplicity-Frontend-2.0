@@ -204,6 +204,7 @@ const ModalComponent = (props) => {
     "Family Trust",
     "SMSF Pension Account Details",
     "CDF Details",
+    "Push Client On Adviser link",
     // "Add New Adviser",
     // "Edit Adviser",
     // "View Adviser",

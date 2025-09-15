@@ -34,18 +34,13 @@ const ViewClient = (props) => {
       ...sharedItemStyle,
     },
     {
-      label: "Employment Status",
-      children: Data.client?.clientEmploymentStatus || "--",
-      ...sharedItemStyle,
-    },
-    {
       label: "Email",
       children: Data.client?.Email || "--",
       ...sharedItemStyle,
     },
     {
       label: "Mobile",
-      children: Data.client?.clientMobile || "--",
+      children: Data.client?.clientWorkPhone || "--",
       ...sharedItemStyle,
     },
     {
@@ -82,18 +77,13 @@ const ViewClient = (props) => {
       ...sharedItemStyle,
     },
     {
-      label: "Employment Status",
-      children: Data.partner?.partnerEmploymentStatus || "--",
-      ...sharedItemStyle,
-    },
-    {
       label: "Email",
       children: Data.partner?.partnerEmail || "--",
       ...sharedItemStyle,
     },
     {
       label: "Mobile",
-      children: Data.partner?.partnerMobile || "--",
+      children: Data.partner?.partnerWorkPhone || "--",
       ...sharedItemStyle,
     },
     {

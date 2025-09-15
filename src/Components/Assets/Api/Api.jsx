@@ -84,8 +84,10 @@ let DeleteAxios = async (Api) => {
 const PostAxiosBlob = async (Api, data) => {
   console.log("Post Blob Chala");
   try {
+    const headers = getAuthHeaders();
     const response = await axios.post(Api, data, {
-      responseType: "blob", // This ensures the response is binary (e.g., Excel, PDF)
+      responseType: "blob", // binary (Excel, PDF, etc.)
+      headers: headers, // ✅ Correct way
     });
     return response;
   } catch (error) {
@@ -702,10 +704,9 @@ function toTitleCase(str) {
   return str
     .toLowerCase()
     .split(" ")
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 }
-
 
 const touchFields = async (
   setFieldTouched,
@@ -757,7 +758,7 @@ const randomStringGenerator = ({
   useUppercase = true,
   useLowercase = true,
   useNumbers = true,
-  useSpecial = true
+  useSpecial = true,
 } = {}) => {
   const charUppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const charLowercase = "abcdefghijklmnopqrstuvwxyz";
@@ -782,8 +783,6 @@ const randomStringGenerator = ({
 
   return Array.from({ length: count }, generateOne);
 };
-
-
 
 export {
   DeleteAxios,

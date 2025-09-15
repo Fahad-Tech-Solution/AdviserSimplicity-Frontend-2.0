@@ -30,9 +30,14 @@ import DropDownOptions from "../DropDownOptions/DropDownOptions";
 import ModalComponent from "../../Questions/FinancialInvestments/ModalComponent";
 import ViewClient from "../../../GetComponents/ViewClient";
 import { useNavigate } from "react-router-dom";
-import { RiMailSendLine, RiUserSearchLine } from "react-icons/ri";
+import {
+  RiMailSendLine,
+  RiUploadCloudLine,
+  RiUserSearchLine,
+} from "react-icons/ri";
 import AssignUser from "../../../GetComponents/AssignUser";
 import { Modal, notification, Spin, ConfigProvider } from "antd";
+import PushtoAdviserlink from "../../PushtoAdviserlink/PushtoAdviserlink";
 
 const NewAllClients = (props) => {
   const [loggedUser, setLoggedInUserData] = useRecoilState(LoggedInUserData);
@@ -87,6 +92,24 @@ const NewAllClients = (props) => {
           </div>
         ),
         onClick: (heading, row) => CallBack(heading, row, "Edit"),
+      },
+      {
+        action: "Push-to-Adviser-link",
+        label: (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              marginLeft: 13,
+            }}
+            className="fw-bold"
+          >
+            <RiUploadCloudLine /> Push to Adviser-link
+          </div>
+        ),
+        onClick: (heading, row) =>
+          CallBack(heading, row, "Push-to-Adviser-link"),
       },
       {
         action: "assign",
@@ -227,6 +250,7 @@ const NewAllClients = (props) => {
 
     return menuItems;
   };
+
   let columnsGenerator = () => {
     const columns = [
       {
@@ -327,7 +351,7 @@ const NewAllClients = (props) => {
           "userData"
         );
 
-        setPersonalDetail(adjustment.reverse());
+        setPersonalDetail(adjustment);
       }
 
       res = await GetAxios(`${DefaultUrl}/api/CDF/`);
@@ -377,6 +401,16 @@ const NewAllClients = (props) => {
         setStepsStatus(false);
         setSelectedClientDetails(row);
         Navigate("/user/personal-detail#" + row._id);
+
+        break;
+      case "Push-to-Adviser-link":
+      case "Push to Adviser-link":
+        setModalObject({
+          title: "Push Client On Adviser link",
+          row,
+          noFooter: true, 
+        });
+        setFlagState(true);
 
         break;
       case "assign":
@@ -483,55 +517,59 @@ const NewAllClients = (props) => {
     );
   };
 
-const sendRiskProfile = async (row) => {
-  let Obj = {
-    name: row.client.clientGivenName,
-    email: row.client.Email,
-    clientFK: row._id,
-  };
+  const sendRiskProfile = async (row) => {
+    let Obj = {
+      name: row.client.clientGivenName,
+      email: row.client.Email,
+      clientFK: row._id,
+    };
 
-  // Unique key to update the same notification
-  const key = "sendingEmail";
+    // Unique key to update the same notification
+    const key = "sendingEmail";
 
-  // Show loading notification
-  notification.open({
-    key,
-    message: "Sending Email",
-    description: "Please wait while we send the Risk Profile...",
-    duration: 0, // stays open until updated/closed
-    icon: <ConfigProvider
-      theme={{
-        token: {
-          /* here is your global tokens */
-          colorPrimary: "#36b446",
-        },
-      }}
-    ><Spin size="small" /></ConfigProvider>,
-  });
+    // Show loading notification
+    notification.open({
+      key,
+      message: "Sending Email",
+      description: "Please wait while we send the Risk Profile...",
+      duration: 0, // stays open until updated/closed
+      icon: (
+        <ConfigProvider
+          theme={{
+            token: {
+              /* here is your global tokens */
+              colorPrimary: "#36b446",
+            },
+          }}
+        >
+          <Spin size="small" />
+        </ConfigProvider>
+      ),
+    });
 
-  try {
-    let res = await PostAxios(`${DefaultUrl}/api/riskprofile/email`, Obj);
+    try {
+      let res = await PostAxios(`${DefaultUrl}/api/riskprofile/email`, Obj);
 
-    if (res) {
-      // Update notification to success
-      notification.success({
+      if (res) {
+        // Update notification to success
+        notification.success({
+          key,
+          message: "Risk Profile Sent",
+          description: "Risk Profile has been sent successfully.",
+          duration: 3,
+        });
+      }
+    } catch (error) {
+      // Update notification to error
+      notification.error({
         key,
-        message: "Risk Profile Sent",
-        description: "Risk Profile has been sent successfully.",
+        message: "Failed to Send",
+        description: "An error occurred while sending the Risk Profile.",
         duration: 3,
       });
+      console.log("Error in sendRiskProfile function:", error);
     }
-  } catch (error) {
-    // Update notification to error
-    notification.error({
-      key,
-      message: "Failed to Send",
-      description: "An error occurred while sending the Risk Profile.",
-      duration: 3,
-    });
-    console.log("Error in sendRiskProfile function:", error);
-  }
-};
+  };
   // rowSelection object indicates the need for row selection
   const rowSelection = {
     selectedRowKeys: [selectedClientDetails.key],
@@ -549,6 +587,16 @@ const sendRiskProfile = async (row) => {
     }),
   };
 
+  const componentMapping = {
+    "Assign User": <AssignUser />,
+    "Push Client On Adviser link": <PushtoAdviserlink />,
+    "View Client Details": <ViewClient />,
+  };
+
+  const ModalContent = (obj) => {
+    return componentMapping[obj.title] || null;
+  };
+
   return (
     <div className="All_Client reportSection">
       <ModalComponent
@@ -556,7 +604,7 @@ const sendRiskProfile = async (row) => {
         setFlagState={setFlagState}
         flagState={flagState}
       >
-        {modalObject.title === "Assign User" ? <AssignUser /> : <ViewClient />}
+        {ModalContent(modalObject)}
       </ModalComponent>
 
       <AntTableDynamicReportTable

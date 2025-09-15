@@ -35,6 +35,8 @@ import RiskProfileCards from "./RiskProfileCards";
 
 import "yup-phone";
 import * as Yup from "yup";
+import Notfound404 from "../Questions/svgs/Notfound404";
+import { ConfigProvider, notification, Spin } from "antd";
 
 const RiskProfileNew = () => {
   let DefaultUrl = useRecoilValue(defaultUrl);
@@ -49,6 +51,8 @@ const RiskProfileNew = () => {
     partner: false,
   });
   let [SwitchBtn, setSwitchBtn] = useState(false);
+  let [notFoundBody, setNotFoundBody] = useState(false);
+  let [loading, setLoading] = useState(false);
   // let Form = useRef(null);
   let [mainBoard, setMainBoard] = useState(false);
 
@@ -73,27 +77,29 @@ const RiskProfileNew = () => {
 
   const GetRiskData = async () => {
     try {
-      console.log(
-        "Fetching risk data...",
-        `${DefaultUrl}/api/riskProfile/${localStorage.getItem("UserID")}`
-      );
-      // Make the GET request to fetch risk data
       const res = await GetAxios(
         `${DefaultUrl}/api/riskProfile/${localStorage.getItem("UserID")}`
       );
-      // Check if the response is successful and contains data
-      console.log(res, ":res from get");
+
       if (res && res._id) {
-        setRiskQuestion(res); // Assuming response data contains the risk question
+        setRiskQuestion(res);
         Nav("/user/risk-profile/cards");
       } else {
-        console.error("Unexpected response format:", res);
+        // No data, go to 404
+        Nav("/user/risk-profile/404NotFound");
+        setSwitchBtn(false);
+        setNotFoundBody(false);
       }
     } catch (error) {
-      // Handle any errors during the API call
+      if (error.status === 404) {
+        Nav("/user/risk-profile/404NotFound");
+        setSwitchBtn(false);
+        setNotFoundBody(false);
+      }
       console.error("Error fetching risk data:", error);
-      setRiskQuestion(initialValues);
-      // Optionally, you might want to provide user feedback here
+    } finally {
+      // 🟢 always stop loading after API completes
+      setLoading(false);
     }
   };
 
@@ -541,6 +547,68 @@ const RiskProfileNew = () => {
           }),
         });
 
+  const sendlink = async () => {
+    let Obj = {
+      name: selectedClientDetails.client.clientGivenName,
+      email: selectedClientDetails.client.Email,
+      clientFK: selectedClientDetails._id,
+    };
+
+    // Unique key to update the same notification
+    const key = "sendingEmail";
+
+    // Show loading notification
+    notification.open({
+      key,
+      message: "Sending Email",
+      description: "Please wait while we send the Risk Profile...",
+      duration: 0, // stays open until updated/closed
+      icon: (
+        <ConfigProvider
+          theme={{
+            token: {
+              /* here is your global tokens */
+              colorPrimary: "#36b446",
+            },
+          }}
+        >
+          <Spin size="small" />
+        </ConfigProvider>
+      ),
+    });
+
+    try {
+      let res = await PostAxios(`${DefaultUrl}/api/riskprofile/email`, Obj);
+
+      if (res) {
+        // Update notification to success
+        notification.success({
+          key,
+          message: "Risk Profile Sent",
+          description: "Risk Profile has been sent successfully.",
+          duration: 3,
+        });
+      }
+    } catch (error) {
+      // Update notification to error
+      notification.error({
+        key,
+        message: "Failed to Send",
+        description: "An error occurred while sending the Risk Profile.",
+        duration: 3,
+      });
+      console.log("Error in sendRiskProfile function:", error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <Spin size="large" tip="Loading Risk Profile..." />
+      </div>
+    );
+  }
+
   return (
     <div className="container-fluid pt-3">
       <div className="row px-0 m-0">
@@ -559,6 +627,37 @@ const RiskProfileNew = () => {
               <Form>
                 <div className="col-md-12">
                   <Routes>
+                    <Route
+                      key={"404NotFund"}
+                      path="/404NotFound"
+                      element={
+                        <div style={{ marginTop: "-18%", padding: "0px 20%" }}>
+                          <Notfound404 />
+                          <p
+                            className="text-center"
+                            style={{ marginTop: "-15%" }}
+                          >
+                            Client Haven't filled the Risk Profile yet do you
+                            want to send him a link
+                          </p>
+                          <div
+                            className={
+                              "w-100 d-flex flex-row justify-content-center align-items-center"
+                            }
+                          >
+                            <div className={"w-50 border"}>
+                              <button
+                                type="button"
+                                className="float-center btn w-100  bgColor modalBtn"
+                                onClick={sendlink}
+                              >
+                                Send link
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    />
                     {QuestionArray.map((elem, index) => {
                       if (elem.key === "cardSet") {
                         return (
@@ -601,57 +700,60 @@ const RiskProfileNew = () => {
                       }
                     })}
                   </Routes>
-
-                  <div
-                    className={`row  ${
-                      BackButton
-                        ? "justify-content-between"
-                        : mainBoard === false
-                        ? "justify-content-center"
-                        : "justify-content-end"
-                    } my-3`}
-                  >
-                    {BackButton && (
-                      <div className="col-md-2">
-                        <button
-                          type="button"
-                          onClick={BackHandle}
-                          className="float-center btn w-100  btn-outline  backBtn mx-3 d-flex justify-content-center align-items-center gap-1"
-                        >
-                          <FaArrowLeftLong /> Back
-                        </button>
-                      </div>
-                    )}
-
+                  {notFoundBody && (
                     <div
-                      className={mainBoard === false ? "col-md-4" : "col-md-2"}
+                      className={`row  ${
+                        BackButton
+                          ? "justify-content-between"
+                          : mainBoard === false
+                          ? "justify-content-center"
+                          : "justify-content-end"
+                      } my-3`}
                     >
-                      {!SwitchBtn && (
-                        <button
-                          type="button"
-                          onClick={HandleSubmit}
-                          className="float-center btn w-100  bgColor modalBtn  d-flex justify-content-center align-items-center gap-1"
-                        >
-                          {mainBoard === false ? (
-                            <React.Fragment> Submit </React.Fragment>
-                          ) : (
-                            <React.Fragment>
-                              Next <FaArrowRightLong />
-                            </React.Fragment>
-                          )}
-                        </button>
+                      {BackButton && (
+                        <div className="col-md-2">
+                          <button
+                            type="button"
+                            onClick={BackHandle}
+                            className="float-center btn w-100  btn-outline  backBtn mx-3 d-flex justify-content-center align-items-center gap-1"
+                          >
+                            <FaArrowLeftLong /> Back
+                          </button>
+                        </div>
                       )}
 
-                      {SwitchBtn && (
-                        <button
-                          type="Submit"
-                          className="float-center btn w-100  bgColor modalBtn"
-                        >
-                          Submit
-                        </button>
-                      )}
+                      <div
+                        className={
+                          mainBoard === false ? "col-md-4" : "col-md-2"
+                        }
+                      >
+                        {!SwitchBtn && (
+                          <button
+                            type="button"
+                            onClick={HandleSubmit}
+                            className="float-center btn w-100  bgColor modalBtn  d-flex justify-content-center align-items-center gap-1"
+                          >
+                            {mainBoard === false ? (
+                              <React.Fragment> Submit </React.Fragment>
+                            ) : (
+                              <React.Fragment>
+                                Next <FaArrowRightLong />
+                              </React.Fragment>
+                            )}
+                          </button>
+                        )}
+
+                        {SwitchBtn && (
+                          <button
+                            type="Submit"
+                            className="float-center btn w-100  bgColor modalBtn"
+                          >
+                            Submit
+                          </button>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </Form>
             );

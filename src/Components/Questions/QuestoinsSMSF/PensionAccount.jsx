@@ -597,7 +597,7 @@ const SmsfPensionAccountMiddleWare = (props) => {
                 <div className="row justify-content-center">
                   <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
                     <label htmlFor='' className='text-end '>
-                      Member's of SMSF {questionDetail.SMSFDetails.SMSFOwner.fundName}
+                      Members of SMSF {questionDetail.SMSFDetails.SMSFOwner.fundName}
                     </label>
 
                     <div style={{ minWidth: "25%" }}>

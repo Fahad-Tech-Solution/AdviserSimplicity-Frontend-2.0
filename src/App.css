@@ -1975,3 +1975,17 @@ label {
     color: #36b446 !important;
   }
 }
+
+.pushToAdviserlink .card {
+  padding: 5px;
+  :is(:hover) {
+    background-color: #f8f8f8;
+  }
+}
+
+.pushToAdviserlink .card .ant-btn span {
+  background-color: inherit;
+}
+.pushToAdviserlink .card .card-body {
+  border-radius: 15px; 
+}

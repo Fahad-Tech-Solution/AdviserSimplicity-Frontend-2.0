@@ -7,7 +7,6 @@ import { Image, Row } from "react-bootstrap";
 import { CreatableMultiSelectField } from "../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 
 const GoalsObjectivesQuestions = (props) => {
-
   let [GQObject, setGQObject] = useRecoilState(GQState);
 
   let DefaultUrl = useRecoilValue(defaultUrl);
@@ -71,7 +70,7 @@ const GoalsObjectivesQuestions = (props) => {
     { value: "Other", label: "Other" },
     { value: "Personal Insurance", label: "Personal Insurance" },
     { value: "Retirement Planning", label: "Retirement Planning" },
-    { value: "Superannuation", label: "Superannuation" }
+    { value: "Superannuation", label: "Superannuation" },
   ];
 
   return (
@@ -83,87 +82,152 @@ const GoalsObjectivesQuestions = (props) => {
           enableReinitialize
           innerRef={props.formRef}
         >
-          {({ values, handleChange, setFieldValue }) => (
-            <Form>
-              <div className="col-md-12 text-center">
-                <div className='d-flex flex-row justify-content-center align-items-center gap-2 my-3'>
-                  <label htmlFor='' className=''>
-                    Choose a Financial Plans:
-                  </label>
+          {({ values, handleChange, setFieldValue }) => {
+            // Reset hidden goals whenever scope changes
+            useEffect(() => {
+              if (
+                !values.scope ||
+                values.scope.length === 0 ||
+                values.scope.includes("")
+              ) {
+                // No scope selected → reset ALL goals
+                Object.values(props.modalObject.allGoals)
+                  .flat()
+                  .forEach((goal) => {
+                    setFieldValue(goal.key, "No");
+                  });
+              } else {
+                // Reset goals not included in selected scope(s)
+                Object.values(props.modalObject.allGoals)
+                  .flat()
+                  .forEach((goal) => {
+                    if (
+                      !values.scope.includes("All Areas") &&
+                      !values.scope.includes(goal.scopeOfAdvice)
+                    ) {
+                      setFieldValue(goal.key, "No");
+                    }
+                  });
+              }
+            }, [values.scope, setFieldValue, props.modalObject.allGoals]);
 
-                  <div style={{ minWidth: "30%" }} >
-                    <Field
-                      name={`scope`}
-                      component={CreatableMultiSelectField}
-                      label="Multi Select Field"
-                      options={options}
-                    />
+            return (
+              <Form>
+                <div className="col-md-12 text-center">
+                  <div className="d-flex flex-row justify-content-center align-items-center gap-2 my-3">
+                    <label htmlFor="" className="">
+                      Choose a Financial Plans:
+                    </label>
+
+                    <div style={{ minWidth: "30%" }}>
+                      <Field
+                        name={`scope`}
+                        component={CreatableMultiSelectField}
+                        label="Multi Select Field"
+                        options={options}
+                      />
+                    </div>
                   </div>
+
+                  <Row className="justify-content-center">
+                    {Object.entries(props.modalObject.allGoals).map(
+                      ([category, goals]) => {
+                        return (
+                          <React.Fragment>
+                            {goals.map((elem, index) => {
+                              if (
+                                values.scope &&
+                                values.scope.length > 0 &&
+                                values.scope.includes("All Areas")
+                              ) {
+                                return (
+                                  <div className="col-md-4 px-2 pb-3 d-flex ">
+                                    <div className=" flex-grow-1 d-flex">
+                                      <div
+                                        className={`${
+                                          values[elem.key] == "Yes"
+                                            ? "customBorder p-3"
+                                            : "border p-3"
+                                        }  flex-grow-1`}
+                                        onClick={() =>
+                                          goalsClick(
+                                            index,
+                                            elem,
+                                            values,
+                                            setFieldValue
+                                          )
+                                        }
+                                      >
+                                        <div className="text-center">
+                                          <div
+                                            className="mx-auto"
+                                            style={{ width: "20%" }}
+                                          >
+                                            <Image src={elem.img} fluid />
+                                          </div>
+                                        </div>
+                                        <label
+                                          htmlFor={elem.key}
+                                          className="form-label"
+                                        >
+                                          {elem.title}
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              } else if (
+                                values.scope &&
+                                values.scope.length > 0 &&
+                                values.scope.includes(elem.scopeOfAdvice)
+                              ) {
+                                return (
+                                  <div className="col-md-4 px-2 pb-3 d-flex ">
+                                    <div className=" flex-grow-1 d-flex">
+                                      <div
+                                        className={`${
+                                          values[elem.key] == "Yes"
+                                            ? "customBorder p-3"
+                                            : "border p-3"
+                                        }  flex-grow-1`}
+                                        onClick={() =>
+                                          goalsClick(
+                                            index,
+                                            elem,
+                                            values,
+                                            setFieldValue
+                                          )
+                                        }
+                                      >
+                                        <div className="text-center">
+                                          <div
+                                            className="mx-auto"
+                                            style={{ width: "20%" }}
+                                          >
+                                            <Image src={elem.img} fluid />
+                                          </div>
+                                        </div>
+                                        <label
+                                          htmlFor={elem.key}
+                                          className="form-label"
+                                        >
+                                          {elem.title}
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              }
+                            })}
+                          </React.Fragment>
+                        );
+                      }
+                    )}
+                  </Row>
                 </div>
-
-                <Row className="justify-content-center">
-
-                  {Object.entries(props.modalObject.allGoals).map(([category, goals]) => {
-                    return (<React.Fragment>
-                      {goals.map((elem, index) => {
-                        if (values.scope && values.scope.length > 0 && values.scope.includes("All Areas")) {
-                          return (
-                            <div className="col-md-4 px-2 pb-3 d-flex ">
-                              <div className=" flex-grow-1 d-flex">
-                                <div
-                                  className={`${values[elem.key] == "Yes" ? "customBorder p-3" : "border p-3"
-                                    }  flex-grow-1`}
-                                  onClick={() =>
-                                    goalsClick(index, elem, values, setFieldValue)
-                                  }
-                                >
-                                  <div className="text-center">
-                                    <div className="mx-auto" style={{ width: "20%" }}>
-                                      <Image src={elem.img} fluid />
-                                    </div>
-                                  </div>
-                                  <label htmlFor={elem.key} className="form-label">
-                                    {elem.title}
-                                  </label>
-                                </div>
-
-                              </div>
-                            </div>
-                          );
-                        }
-                        else if (values.scope && values.scope.length > 0 && values.scope.includes(elem.scopeOfAdvice)) {
-                          return (
-                            <div className="col-md-4 px-2 pb-3 d-flex ">
-                              <div className=" flex-grow-1 d-flex">
-                                <div
-                                  className={`${values[elem.key] == "Yes" ? "customBorder p-3" : "border p-3"
-                                    }  flex-grow-1`}
-                                  onClick={() =>
-                                    goalsClick(index, elem, values, setFieldValue)
-                                  }
-                                >
-                                  <div className="text-center">
-                                    <div className="mx-auto" style={{ width: "20%" }}>
-                                      <Image src={elem.img} fluid />
-                                    </div>
-                                  </div>
-                                  <label htmlFor={elem.key} className="form-label">
-                                    {elem.title}
-                                  </label>
-                                </div>
-
-                              </div>
-                            </div>
-                          );
-                        }
-                      })}
-                    </React.Fragment>)
-
-                  })}
-                </Row>
-              </div>
-            </Form>
-          )}
+              </Form>
+            );
+          }}
         </Formik>
       </div>
     </div>

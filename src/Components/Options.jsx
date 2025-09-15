@@ -39,7 +39,11 @@ import {
 import { RiCoinsFill, RiDiscountPercentFill } from "react-icons/ri";
 
 import { content } from "../Content/Content";
-import { openNotificationSuccess, toSentenceCase, toTitleCase } from "./Assets/Api/Api";
+import {
+  openNotificationSuccess,
+  toSentenceCase,
+  toTitleCase,
+} from "./Assets/Api/Api";
 import {
   UserName,
   CurrentPage,
@@ -247,6 +251,7 @@ function Options(props) {
     "/user/goals-and-objectives",
     "/user/risk-profile",
     "/user/risk-profile/",
+    "/user/risk-profile/404NotFound",
     "/Risk-Profile-Cards",
     "/user/risk-profile/cards",
     "/PricingTable",
