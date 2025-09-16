@@ -3,10 +3,11 @@ import { Card, Container, Row, Col, Image } from "react-bootstrap";
 import agePension from "../Questions/svgs/Age-Pension-Image.jpg";
 import LIHC from "../Questions/svgs/LIHC-Image.jpg";
 import CSHC from "../Questions/svgs/CSHC-Imag.jpg";
-import { Button, Spin } from "antd";
+import { Alert, Button, message, Result, Spin } from "antd";
 
-const PushtoAdviserlink = () => {
+const PushtoAdviserlink = (props) => {
   const [loading, setLoading] = useState(false);
+  const [alert, setAlert] = useState("");
 
   const cardTitle = {
     color: "#080808ff",
@@ -25,11 +26,47 @@ const PushtoAdviserlink = () => {
     marginBottom: "12px",
   };
 
+  const ApiResponce = {
+    adviserNotExist: {
+      status: "404",
+      buttonText: "Create your Account",
+      message: "Click following button to create new Account on Adviser link",
+    },
+    adviserCreated: {
+      status: "404",
+      buttonText: "Create your Account",
+    },
+    subscriptionEnded: {
+      status: "404",
+      buttonText: "Renew Your Subscription",
+    },
+    clientNotExist: {
+      status: "404",
+      buttonText: "add your this client in Adviser link",
+    },
+    clientCreated: {
+      status: "201",
+      buttonText: "Create your Account",
+    },
+  };
+
   let load = async (calculator) => {
+    setLoading(true);
+    setAlert(null);
     try {
-      setLoading(true);
+      await new Promise((_, reject) =>
+        setTimeout(() => {
+          const error = new Error("adviserNotExist");
+          error.status = 404;
+          reject(error);
+        }, 1000)
+      );
+      // If no error, continue here
     } catch (error) {
       console.log(error);
+      if (error.status === 404 && error.message === "adviserNotExist") {
+        setAlert(error);
+      }
     } finally {
       setLoading(false);
     }
@@ -46,9 +83,29 @@ const PushtoAdviserlink = () => {
         </div>
       )}
 
-      {!loading && (
+      {alert && (
+        <Result
+          status={ApiResponce?.[alert.message]?.status || "404"}
+          title={ApiResponce?.[alert.message]?.status || "404"}
+          subTitle={ApiResponce?.[alert.message]?.message || "no Key Matched"}
+          extra={
+            <Button type="primary">
+              {ApiResponce?.[alert.message]?.buttonText || "no key Matched"}
+            </Button>
+          }
+        />
+      )}
+
+      {!alert && !loading && (
         <Row className="g-4 align-items-stretch pushToAdviserlink">
           {/* Age Pension Card */}
+          <Col lg={12} md={12} sm={12} className="">
+            <h5>
+              {props?.modalObject?.row?.client?.clientGivenName || "not Found"}{" "}
+              ({props?.modalObject?.row?.client?.Email || "not Found"})
+            </h5>
+          </Col>
+
           <Col lg={4} md={4} sm={12} className="d-flex">
             <Card
               className="border-0 h-100"
