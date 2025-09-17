@@ -30,6 +30,7 @@ import "./App.css";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import Unauthorized from "./Components/Auth/Unauthorized";
 import Warning from "./Components/SuperAdminComponent/Warning";
+import BuyAdviserlink from "./Components/SuperAdminComponent/BuyAdviserlink";
 
 function ProtectedRoute({ element: Element, requiredPermissions = [] }) {
   const user = useRecoilValue(LoggedInUserData);
@@ -78,7 +79,6 @@ function App() {
         </div>
       )}
 
-
       <Routes>
         {/*                                                                                                           ✅ Public Routes */}
         <Route path="/user/login" element={<LoginForm />} />
@@ -88,6 +88,7 @@ function App() {
         <Route path="/forget-password" element={<ForgetPassword />} />
         <Route path="/change-password" element={<PasswordChange />} />
         <Route path="/pricing-table" element={<PricingTable />} />
+        <Route path="/buy-adviser-link" element={<BuyAdviserlink />} />
         <Route path="/admin/login" element={<LoginForm />} />
         <Route path="/stripe-redirect" element={<StripeRedirect />} />
 

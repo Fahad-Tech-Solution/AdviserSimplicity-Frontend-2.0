@@ -51,7 +51,6 @@ const RiskProfileNew = () => {
     partner: false,
   });
   let [SwitchBtn, setSwitchBtn] = useState(false);
-  let [notFoundBody, setNotFoundBody] = useState(false);
   let [loading, setLoading] = useState(false);
   // let Form = useRef(null);
   let [mainBoard, setMainBoard] = useState(false);
@@ -84,18 +83,8 @@ const RiskProfileNew = () => {
       if (res && res._id) {
         setRiskQuestion(res);
         Nav("/user/risk-profile/cards");
-      } else {
-        // No data, go to 404
-        Nav("/user/risk-profile/404NotFound");
-        setSwitchBtn(false);
-        setNotFoundBody(false);
       }
     } catch (error) {
-      if (error.status === 404) {
-        Nav("/user/risk-profile/404NotFound");
-        setSwitchBtn(false);
-        setNotFoundBody(false);
-      }
       console.error("Error fetching risk data:", error);
     } finally {
       // 🟢 always stop loading after API completes
@@ -627,37 +616,37 @@ const RiskProfileNew = () => {
               <Form>
                 <div className="col-md-12">
                   <Routes>
-                    <Route
-                      key={"404NotFund"}
-                      path="/404NotFound"
-                      element={
-                        <div style={{ marginTop: "-18%", padding: "0px 20%" }}>
-                          <Notfound404 />
-                          <p
-                            className="text-center"
-                            style={{ marginTop: "-15%" }}
-                          >
-                            Client Haven't filled the Risk Profile yet do you
-                            want to send him a link
-                          </p>
-                          <div
-                            className={
-                              "w-100 d-flex flex-row justify-content-center align-items-center"
-                            }
-                          >
-                            <div className={"w-50 border"}>
-                              <button
-                                type="button"
-                                className="float-center btn w-100  bgColor modalBtn"
-                                onClick={sendlink}
-                              >
-                                Send link
-                              </button>
-                            </div>
+                    {/* <Route
+                    key={"404NotFund"}
+                    path="/404NotFound"
+                    element={
+                      <div style={{ marginTop: "-18%", padding: "0px 20%" }}>
+                        <Notfound404 />
+                        <p
+                          className="text-center"
+                          style={{ marginTop: "-15%" }}
+                        >
+                          Client Haven't filled the Risk Profile yet do you
+                          want to send him a link
+                        </p>
+                        <div
+                          className={
+                            "w-100 d-flex flex-row justify-content-center align-items-center"
+                          }
+                        >
+                          <div className={"w-50 border"}>
+                            <button
+                              type="button"
+                              className="float-center btn w-100  bgColor modalBtn"
+                              onClick={sendlink}
+                            >
+                              Send link
+                            </button>
                           </div>
                         </div>
-                      }
-                    />
+                      </div>
+                    }
+                  /> */}
                     {QuestionArray.map((elem, index) => {
                       if (elem.key === "cardSet") {
                         return (
@@ -700,60 +689,57 @@ const RiskProfileNew = () => {
                       }
                     })}
                   </Routes>
-                  {notFoundBody && (
+
+                  <div
+                    className={`row  ${
+                      BackButton
+                        ? "justify-content-between"
+                        : mainBoard === false
+                        ? "justify-content-center"
+                        : "justify-content-end"
+                    } my-3`}
+                  >
+                    {BackButton && (
+                      <div className="col-md-2">
+                        <button
+                          type="button"
+                          onClick={BackHandle}
+                          className="float-center btn w-100  btn-outline  backBtn mx-3 d-flex justify-content-center align-items-center gap-1"
+                        >
+                          <FaArrowLeftLong /> Back
+                        </button>
+                      </div>
+                    )}
+
                     <div
-                      className={`row  ${
-                        BackButton
-                          ? "justify-content-between"
-                          : mainBoard === false
-                          ? "justify-content-center"
-                          : "justify-content-end"
-                      } my-3`}
+                      className={mainBoard === false ? "col-md-4" : "col-md-2"}
                     >
-                      {BackButton && (
-                        <div className="col-md-2">
-                          <button
-                            type="button"
-                            onClick={BackHandle}
-                            className="float-center btn w-100  btn-outline  backBtn mx-3 d-flex justify-content-center align-items-center gap-1"
-                          >
-                            <FaArrowLeftLong /> Back
-                          </button>
-                        </div>
+                      {!SwitchBtn && (
+                        <button
+                          type="button"
+                          onClick={HandleSubmit}
+                          className="float-center btn w-100  bgColor modalBtn  d-flex justify-content-center align-items-center gap-1"
+                        >
+                          {mainBoard === false ? (
+                            <React.Fragment> Submit </React.Fragment>
+                          ) : (
+                            <React.Fragment>
+                              Next <FaArrowRightLong />
+                            </React.Fragment>
+                          )}
+                        </button>
                       )}
 
-                      <div
-                        className={
-                          mainBoard === false ? "col-md-4" : "col-md-2"
-                        }
-                      >
-                        {!SwitchBtn && (
-                          <button
-                            type="button"
-                            onClick={HandleSubmit}
-                            className="float-center btn w-100  bgColor modalBtn  d-flex justify-content-center align-items-center gap-1"
-                          >
-                            {mainBoard === false ? (
-                              <React.Fragment> Submit </React.Fragment>
-                            ) : (
-                              <React.Fragment>
-                                Next <FaArrowRightLong />
-                              </React.Fragment>
-                            )}
-                          </button>
-                        )}
-
-                        {SwitchBtn && (
-                          <button
-                            type="Submit"
-                            className="float-center btn w-100  bgColor modalBtn"
-                          >
-                            Submit
-                          </button>
-                        )}
-                      </div>
+                      {SwitchBtn && (
+                        <button
+                          type="Submit"
+                          className="float-center btn w-100  bgColor modalBtn"
+                        >
+                          Submit
+                        </button>
+                      )}
                     </div>
-                  )}
+                  </div>
                 </div>
               </Form>
             );

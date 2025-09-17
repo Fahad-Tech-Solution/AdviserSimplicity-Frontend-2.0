@@ -4,6 +4,7 @@ import agePension from "../Questions/svgs/Age-Pension-Image.jpg";
 import LIHC from "../Questions/svgs/LIHC-Image.jpg";
 import CSHC from "../Questions/svgs/CSHC-Imag.jpg";
 import { Alert, Button, message, Result, Spin } from "antd";
+import { useNavigate } from "react-router-dom";
 
 const PushtoAdviserlink = (props) => {
   const [loading, setLoading] = useState(false);
@@ -28,7 +29,8 @@ const PushtoAdviserlink = (props) => {
 
   const ApiResponce = {
     adviserNotExist: {
-      status: "404",
+      status: "403",
+      respoonsTitle: "Account Not Found",
       buttonText: "Create your Account",
       message: "Click following button to create new Account on Adviser link",
     },
@@ -38,6 +40,13 @@ const PushtoAdviserlink = (props) => {
     },
     subscriptionEnded: {
       status: "404",
+      respoonsTitle: "Subscription Ended",
+      message: (
+        <p className="m-0">
+          Your Subscription is ended on Adviser-link <br /> Please click on
+          following button to renew your subscription
+        </p>
+      ),
       buttonText: "Renew Your Subscription",
     },
     clientNotExist: {
@@ -72,6 +81,21 @@ const PushtoAdviserlink = (props) => {
     }
   };
 
+  let Nevigate = useNavigate();
+
+  let respectiveAction = async (currentResponce) => {
+    switch (currentResponce.status) {
+      case "403":
+      case "404":
+        Nevigate("/buy-adviser-link");
+        break;
+      case "201":
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <Container>
       {loading && (
@@ -86,10 +110,15 @@ const PushtoAdviserlink = (props) => {
       {alert && (
         <Result
           status={ApiResponce?.[alert.message]?.status || "404"}
-          title={ApiResponce?.[alert.message]?.status || "404"}
+          title={ApiResponce?.[alert.message]?.respoonsTitle || "404"}
           subTitle={ApiResponce?.[alert.message]?.message || "no Key Matched"}
           extra={
-            <Button type="primary">
+            <Button
+              type="primary"
+              onClick={() => {
+                respectiveAction(ApiResponce?.[alert.message]);
+              }}
+            >
               {ApiResponce?.[alert.message]?.buttonText || "no key Matched"}
             </Button>
           }
