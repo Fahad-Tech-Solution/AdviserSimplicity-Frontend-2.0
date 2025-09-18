@@ -1989,3 +1989,28 @@ label {
 .pushToAdviserlink .card .card-body {
   border-radius: 15px; 
 }
+
+
+
+
+/* Abdul Moeed css */
+
+.custom-list-item {
+      transition: all 0.3s ease;
+        padding: 10px 16px !important;
+    }
+    .custom-list-item:hover {
+      background-color: rgba(211, 211, 211, 0.36) !important; /* dark green */
+    }
+    .custom-list-item:hover .list-title {
+      color: black !important;
+    }
+    .delete-icon {
+      color: red !important;
+      transition: transform 0.2s ease;
+    }
+    .delete-icon:hover {
+      transform: scale(1.2);
+    }
+    
+    
