@@ -178,7 +178,6 @@ const CenterLinkPayments = (props) => {
                 </div>
               </div>
               {values.owner.length > 0 &&
-
                 <div className="col-md-12">
                   <div className="row justify-content-center">
                     <div className="mt-4">

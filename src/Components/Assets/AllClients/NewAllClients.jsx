@@ -12,12 +12,12 @@ import {
 } from "../../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
+  ConvertDate,
   deepCloneWithKeys,
   GetAxios,
   openNotificationSuccess,
   PatchAxios,
   PostAxios,
-  toSentenceCase,
 } from "../Api/Api";
 import {
   FaRegEdit,
@@ -36,8 +36,9 @@ import {
   RiUserSearchLine,
 } from "react-icons/ri";
 import AssignUser from "../../../GetComponents/AssignUser";
-import { Modal, notification, Spin, ConfigProvider } from "antd";
+import { Modal, notification, Spin, ConfigProvider, Tooltip } from "antd";
 import PushtoAdviserlink from "../../PushtoAdviserlink/PushtoAdviserlink";
+import { FaArrowRotateRight } from "react-icons/fa6";
 
 const NewAllClients = (props) => {
   const [loggedUser, setLoggedInUserData] = useRecoilState(LoggedInUserData);
@@ -88,7 +89,7 @@ const NewAllClients = (props) => {
             }}
             className="fw-bold"
           >
-            <FaRegEdit /> Edit
+            <FaRegEdit /> Discovery Module
           </div>
         ),
         onClick: (heading, row) => CallBack(heading, row, "Edit"),
@@ -251,6 +252,14 @@ const NewAllClients = (props) => {
     return menuItems;
   };
 
+  const shouldShowPartner = (row) => {
+    return (
+      row?.client?.clientMaritalStatus !== "Single" &&
+      row?.client?.clientMaritalStatus !== "widowed" &&
+      row?.partner?.partnerGivenName
+    );
+  };
+
   let columnsGenerator = () => {
     const columns = [
       {
@@ -259,50 +268,143 @@ const NewAllClients = (props) => {
         render: (text, row, index) => index + 1 || "--",
       },
       {
+        title: "Household",
+        key: "clientGivenName",
+        fixed: "left",
+        width: 100,
+        render: (text, row) => {
+          const clientName = `${row?.client?.clientSurname || "--"}`;
+
+          return <p className="m-0">{clientName}</p>;
+        },
+        sorter: (a, b) => {
+          const nameA = a?.client?.clientSurname?.toLowerCase() || "";
+          const nameB = b?.client?.clientSurname?.toLowerCase() || "";
+          return nameA.localeCompare(nameB);
+        },
+        defaultSortOrder: "descend", // ✅ default to Z → A (descending) as per your requirement
+      },
+      {
         title: "Name",
         key: "clientGivenName",
         render: (text, row) => {
-          const clientName = `${row?.client?.clientTitle || ""}. ${
-            row?.client?.clientGivenName || ""
-          }`;
-          const shouldShowPartner =
-            row?.client?.clientMaritalStatus !== "Single" &&
-            row?.client?.clientMaritalStatus !== "widowed" &&
-            row?.partner?.partnerGivenName;
-          const partnerName = shouldShowPartner
-            ? ` & ${row.partner.partnerGivenName}`
+          const clientName = `${row?.client?.clientGivenName || ""}`;
+
+          const showPartner = shouldShowPartner(row);
+
+          const partnerName = showPartner
+            ? ` ${row.partner.partnerGivenName} (Partner)`
             : "";
 
-          return clientName.trim() || "--" + partnerName;
+          return (
+            <p className="m-0">
+              {clientName} (Primary)
+              <br />
+              {partnerName}
+            </p>
+          );
         },
       },
       {
-        title: "Marital Status",
-        key: "clientMaritalStatus",
-        render: (text, row) =>
-          toSentenceCase(row?.client?.clientMaritalStatus) || "--",
+        title: "Age",
+        key: "age",
+        render: (text, row) => {
+          const client = <> {row?.client?.clientAge}</>;
+          const partner = row?.partner?.partnerAge ? (
+            <> {row?.partner?.partnerAge}</>
+          ) : (
+            ""
+          );
+
+          return (
+            <p className="m-0">
+              {client}
+              <br />
+              {partner}
+            </p>
+          );
+        },
       },
       {
-        title: "Mobile No",
+        title: "Contact",
         key: "clientWorkPhone",
-        render: (text, row) => row?.client?.clientWorkPhone || "--",
+        render: (text, row) => {
+          let client = row?.client?.clientWorkPhone;
+          let partner = row?.partner?.partnerWorkPhone;
+          return (
+            <p className="m-0">
+              {client}
+              <br />
+              {partner}
+            </p>
+          );
+        },
       },
       {
         title: "Email",
         key: "clientEmail",
-        render: (text, row) => row?.client?.Email || "--",
+        render: (text, row) => {
+          const client = `${row?.client?.Email || ""}`;
+          const partner = `${row?.partner?.partnerEmail || ""}`;
+
+          return (
+            <p className="m-0">
+              {client}
+              <br />
+              {partner}
+            </p>
+          );
+        },
       },
       {
-        title: "Assigned to",
-        key: "assigneName",
-        render: (text, row) =>
-          (row?.assignID?.firstName || "--") +
-          " " +
-          (row?.assignID?.lastName || "--"),
+        title: "Address",
+        key: "address",
+        dataIndex: "address", // optional, for consistency
+        width: 150, // increase a bit if needed
+        ellipsis: true, // ✅ AntD built-in ellipsis support
+        render: (text, row) => {
+          const client = row?.client?.clientHomeAddress || "";
+          const partner = row?.partner?.partnerHomeAddress || "";
+
+          return (
+            <Tooltip
+              title={`${client}  ${partner && "&& " + partner}`} // ✅ tooltip on hover
+              color={"#fff"}
+              key={"#fff"}
+              styles={{
+                body: { color: "black" },
+              }}
+            >
+              <div
+                style={{
+                  width: "200px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {client}
+                <br />
+                {partner && `${partner}`}
+              </div>
+            </Tooltip>
+          );
+        },
+      },
+      {
+        title: "Last Updated At",
+        key: "clientEmail",
+        render: (text, row) => {
+          const client = `${ConvertDate(row?.updatedAt) || ""}`;
+          return client;
+        },
+        sorter: (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt), // ✅ ascending/descending sort
+        defaultSortOrder: "descend", // optional: start sorted by newest first
       },
       {
         title: "Operations",
         key: "operations",
+        fixed: "right",
+        width: 130,
         render: (text, row, index) => {
           let menuItems = menuGenerator(row);
           return (
@@ -408,7 +510,7 @@ const NewAllClients = (props) => {
         setModalObject({
           title: "Push Client On Adviser link",
           row,
-          noFooter: true, 
+          noFooter: true,
         });
         setFlagState(true);
 
@@ -453,21 +555,61 @@ const NewAllClients = (props) => {
     }
   };
 
-  async function DeleteData(text, row, index) {
-    try {
-      let res = await PatchAxios(
-        DefaultUrl + "/api/personalDetails/softDelete/" + row._id
-      );
-      if (res) {
-        console.log(res);
-        removeItemById(res._id);
-      }
-    } catch (error) {
-      console.error("we Found an error in SoftDelete:", error);
-    }
-  }
+  // async function DeleteData(text, row, index) {
+  //   try {
+  //     let res = await PatchAxios(
+  //       DefaultUrl + "/api/personalDetails/softDelete/" + row._id
+  //     );
+  //     if (res) {
+  //       console.log(res);
+  //       removeItemById(res._id);
+  //     }
+  //   } catch (error) {
+  //     console.error("we Found an error in SoftDelete:", error);
+  //   }
+  // }
 
-  const { confirm } = Modal;
+  const { confirm } = Modal; // ✅ make sure you imported from "antd"
+
+  async function DeleteData(text, row, index) {
+    confirm({
+      title: "Are you sure you want to delete this record?",
+      content: "This action cannot be undone.",
+      okText: "Yes, Delete",
+      okType: "danger",
+      cancelText: "Cancel",
+      centered: true,
+      onOk: async () => {
+        try {
+          setLoading(true); // ✅ if you have a loading state
+          let res = await PatchAxios(
+            DefaultUrl + "/api/personalDetails/softDelete/" + row._id
+          );
+
+          if (res) {
+            console.log(res);
+            removeItemById(row._id); // ✅ remove from UI
+            openNotificationSuccess(
+              "success",
+              "topRight",
+              "Deleted Successfully",
+              "Record deleted successfully"
+            );
+          }
+        } catch (error) {
+          console.error("We found an error in SoftDelete:", error);
+          openNotificationSuccess(
+            "error",
+            "topRight",
+            "Delete Failed",
+            "An error occurred while deleting the record."
+          );
+        } finally {
+          setLoading(false);
+        }
+      },
+    });
+  }
 
   const unassignFunction = (row) => {
     confirm({

@@ -39,7 +39,7 @@ const ViewClient = (props) => {
       ...sharedItemStyle,
     },
     {
-      label: "Mobile",
+      label: "Contact",
       children: Data.client?.clientWorkPhone || "--",
       ...sharedItemStyle,
     },
@@ -82,7 +82,7 @@ const ViewClient = (props) => {
       ...sharedItemStyle,
     },
     {
-      label: "Mobile",
+      label: "Contact",
       children: Data.partner?.partnerWorkPhone || "--",
       ...sharedItemStyle,
     },

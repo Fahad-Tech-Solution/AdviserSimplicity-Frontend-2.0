@@ -160,9 +160,10 @@ const CDFclients = () => {
       render: (text, row, index) => index + 1 || "--",
     },
     {
-      title: <div className="w-100">Name</div>,
+      title: <div className="w-100">HouseHold</div>,
       key: "preferredName",
       fixed: "left",
+      width: 150,
       render: (text, row, index) => (
         <div
           style={{
@@ -175,10 +176,7 @@ const CDFclients = () => {
             fontFamily: '"Inter", sans-serif',
           }}
         >
-          {row?.client?.preferredName || "--"}
-          {row?.client?.relationshipStatus.toLowerCase() == "couple" &&
-            row?.partner?.preferredName !== "" &&
-            ` & ${row?.partner?.preferredName || "--"}`}{" "}
+          {row?.client?.lastName || "--"}
           <FaInfoCircle
             onClick={() => {
               OpenModel(text, row, index);
@@ -188,15 +186,88 @@ const CDFclients = () => {
       ),
     },
     {
-      title: "Relationship Status",
-      key: "relationshipStatus",
-      render: (text, row) =>
-        toSentenceCase(row?.client?.relationshipStatus) || "--",
+      title: <div className="w-100">Clients</div>,
+      key: "preferredName",
+      render: (text, row, index) => (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            fontFamily: '"Inter", sans-serif',
+          }}
+        >
+          {row?.client?.preferredName || "--"} (Primary)
+          <br />
+          {row?.client?.relationshipStatus.toLowerCase() == "couple" &&
+            row?.partner?.preferredName !== "" &&
+            `${row?.partner?.preferredName || "--"} (Partner)`}{" "}
+        </div>
+      ),
+    },
+    {
+      title: "Age",
+      key: "age",
+      width: 100,
+      render: (text, row) => {
+        let client = row?.client?.age || "--";
+        let partner = row?.partner?.age || "";
+        return (
+          <>
+            {client}
+            <br />
+            {partner}
+          </>
+        );
+      },
+    },
+    {
+      title: "Contact",
+      key: "phoneNumber",
+      render: (text, row) => {
+        let client = row?.client?.phoneNumber || "--";
+        let partner = row?.partner?.phoneNumber || "";
+        return (
+          <>
+            {client}
+            <br />
+            {partner}
+          </>
+        );
+      },
     },
     {
       title: "Email",
       key: "email",
-      render: (text, row) => row?.client?.email || "--",
+      render: (text, row) => {
+        let client = row?.client?.email || "--";
+        let partner = row?.partner?.email || "";
+        return (
+          <>
+            {client}
+            <br />
+            {partner}
+          </>
+        );
+      },
+    },
+    {
+      title: "Address",
+      key: "address",
+      render: (text, row) => {
+        let client = row?.client?.address || "--";
+        let partner = row?.partner?.address || "";
+        return (
+          <>
+            {client}
+            <br />
+            {partner}
+          </>
+        );
+      },
     },
     {
       title: "Last updated at",
@@ -254,6 +325,8 @@ const CDFclients = () => {
     {
       title: "Operation",
       key: "operation",
+      fixed: "right",
+      width: 90,
       render: (text, row, index) => (
         <DropDownOptions
           menuItems={getMenuItems(row)}
@@ -386,7 +459,6 @@ const CDFclients = () => {
       setLoading(false);
     }
   };
-
 
   return (
     <div className="contianer-fluid">
