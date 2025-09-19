@@ -2142,3 +2142,29 @@ label {
   border-top-right-radius: 12px;
   border-top-left-radius: 12px;
 }
+
+
+
+
+
+
+
+/* Header row */
+.ant-table-thead > tr > th {
+  background-color: #36B446 !important;
+  color: white !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+ 
+}
+
+/* Remove right border for last header */
+.ant-table-thead > tr > th:last-child {
+  border-right: none !important;
+}
+
+/* Center body cells */
+.ant-table-tbody > tr > td {
+  text-align: center;
+  border: none !important; /* optional if you want a clean look */
+}

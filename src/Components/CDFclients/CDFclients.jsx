@@ -28,6 +28,7 @@ import { SimpleSelectField } from "../Questions/FinancialInvestments/QuestionsDe
 import { MdAddCircleOutline, MdOutlineWarningAmber } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineReload } from "react-icons/ai";
+import EditableTable from "../Assets/Table/EditableTable";
 
 const CDFclients = () => {
   const DefaultUrl = useRecoilValue(defaultUrl);
@@ -388,6 +389,32 @@ const CDFclients = () => {
   };
 
 
+
+
+// {/* changes */}
+//  const originData = Array.from({ length: 20 }).map((_, i) => ({
+//   key: i.toString(),
+//   name: `Edward ${i}`,
+//   age: 32,
+//   address: `London Park no. ${i}`,
+//   phone: `3201406301-${i}`,
+// }));
+
+// const col = [
+//   { title: "Name", dataIndex: "name", editable: true, width: 200 },
+//   { title: "Age", dataIndex: "age", editable: true, width: 100 },
+//   { title: "Address", dataIndex: "address", editable: true },
+//   { title: "Phone", dataIndex: "phone", editable: true, width: 150 },
+// ];
+
+
+// {/* changes */}
+
+
+
+
+
+
   return (
     <div className="contianer-fluid">
       <ModalComponent
@@ -494,6 +521,22 @@ const CDFclients = () => {
                 </div>
               </Col>
             </Row>
+
+
+      
+  
+{/* changes */}
+
+{/* <div style={{ padding: 20, width: "100%" }}>
+  <h2>Editable Table</h2>
+  <EditableTable columns={col} dataSource={originData} />
+</div> */}
+
+{/* changes */}
+
+
+
+
           </Card>
         </div>
       </div>
