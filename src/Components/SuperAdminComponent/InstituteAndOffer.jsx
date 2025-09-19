@@ -19,7 +19,7 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import { BiSolidEdit } from "react-icons/bi";
 import { HiOutlinePlus } from "react-icons/hi";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { BankDetail, defaultUrl } from "../../Store/Store";
+import { BankDetail, defaultUrl, Loading } from "../../Store/Store";
 import {
   GetAxios,
   openNotificationSuccess,
@@ -33,6 +33,7 @@ const InstituteAndOffer = (props) => {
   let { Data } = props;
   let bankDetailObj = useRecoilValue(BankDetail);
   let [bankDetailObj2, setBankDetailObj] = useRecoilState(BankDetail);
+  let [loading, setLoading] = useRecoilState(Loading);
   let DefaultUrl = useRecoilValue(defaultUrl);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
@@ -130,9 +131,12 @@ const InstituteAndOffer = (props) => {
       }
     }
   };
+  
   let { confirm } = Modal;
   let DeleteBank = (elem, operation, index) => {
+    
     confirm({
+      
       title: "Are you sure you want to delete this Platform?",
       content: "This action cannot be undone.",
       okText: "Yes, Delete",
@@ -143,7 +147,6 @@ const InstituteAndOffer = (props) => {
         try {
           setLoading(true);
           let res = await PatchAxios(DefaultUrl + "/api/platform/Delete", elem);
-
           if (res) {
             setBankDetailObj((prevData) => {
               const updatedData = JSON.parse(JSON.stringify({ ...prevData }));
@@ -516,36 +519,14 @@ const InstituteAndOffer = (props) => {
               </div>
             ) : (
               <div className="row">
-                <Card
-                  className="custom-card"
+                <card
                   bordered={false}
-                  style={{
-                    padding: "0px",
-                    // width :"50%",
-                    background: "white",
-                    margin: "20px auto",
-                    borderRadius: "12px",
-                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                    overflow: "hidden",
-                    border: "none",
-                  }}
+                  className="custom-card"
                 >
                   {/* Custom header row */}
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      padding: "15px 16px",
-                      backgroundColor: "#36B446",
-                      color: "white",
-                      fontWeight: "bold",
-                      borderTopLeftRadius: "12px",
-                      borderTopRightRadius: "12px",
-                    }}
-                  >
+                  <div className="InstitudeAndOfferCustomHeader">
                     <span style={{ flex: 2, textAlign: "start" }}>Name</span>
-                    <span style={{ flex: 1, textAlign: "end" }}>Actions</span>
+                    <span className="flex-fill text-end" >Actions</span>
                   </div>
 
                   <List
@@ -556,36 +537,25 @@ const InstituteAndOffer = (props) => {
                     renderItem={(elem, index) => (
                       <List.Item className="custom-list-item">
                         <Skeleton loading={initLoading} active paragraph={false}>
-                          <div
-                            style={{
-                              display: "flex",
-                              width: "100%",
-                              alignItems: "center",
-                              justifyContent: "space-between",
-                            }}
+                          <div className="d-flex w-100 align-items-center justify-content-between"
+                           
                           >
                             {/* Name */}
-                            <span style={{ flex: 2, fontSize: "16px", fontWeight: 500 }}>
+                            <span className="flex-fill fs-6 fw-medium">
                               {elem.platformName}
                             </span>
 
                             {/* Actions (Edit + Delete together) */}
-                            <div style={{ flex: 1, textAlign: "end" }}>
+                            <div  className="flex-fill text-end"
+                            >
                               <Tooltip placement="top" title="Edit">
-                                <BiSolidEdit
-                                  style={{
-                                    fontSize: "20px",
-                                    cursor: "pointer",
-                                    color: "grey",
-                                    marginRight: "12px",
-                                  }}
+                                <BiSolidEdit className="fs-5 text-secondary me-3" role="button" 
                                   onClick={() => OpenInstitute("edit", elem)}
                                 />
                               </Tooltip>
                               <Tooltip placement="top" title="Delete">
                                 <RiDeleteBinLine
-                                  className="delete-icon"
-                                  style={{ fontSize: "20px", cursor: "pointer", color: "red" }}
+                                  className="delete-icon fs-5 text-danger" role="button"
                                   onClick={() => DeleteBank(elem, "delete", index)}
                                 />
                               </Tooltip>
@@ -597,7 +567,7 @@ const InstituteAndOffer = (props) => {
                   />
 
 
-                </Card>
+                </card>
 
 
 
