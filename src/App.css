@@ -281,11 +281,13 @@ input[type="radio"] {
   display: block;
   height: 180px;
   width: 75px;
-  background: linear-gradient(to bottom,
-      white 0,
-      white 90px,
-      #36b446 90px,
-      #36b446 180px);
+  background: linear-gradient(
+    to bottom,
+    white 0,
+    white 90px,
+    #36b446 90px,
+    #36b446 180px
+  );
   position: absolute;
   top: 0;
   color: #36b446;
@@ -308,13 +310,13 @@ input[type="radio"] {
   font-size: 15px;
 } */
 
-input:checked+label.noShadow {
+input:checked + label.noShadow {
   all: unset;
   font-family: "Montserrat", sans-serif;
   font-size: medium;
 }
 
-input:checked+label {
+input:checked + label {
   background-position: 0 -90px;
   -webkit-box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15),
     0 1px 2px rgba(0, 0, 0, 0.05);
@@ -353,11 +355,13 @@ input[type="radio"] {
   display: block;
   height: 180px;
   width: 150px;
-  background: linear-gradient(to bottom,
-      white 0,
-      white 90px,
-      #36b446 90px,
-      #36b446 180px);
+  background: linear-gradient(
+    to bottom,
+    white 0,
+    white 90px,
+    #36b446 90px,
+    #36b446 180px
+  );
   position: absolute;
   top: 0;
   color: #36b446;
@@ -368,11 +372,13 @@ input[type="radio"] {
   display: block;
   height: 180px;
   width: 45px;
-  background: linear-gradient(to bottom,
-      white 0,
-      white 90px,
-      #36b446 90px,
-      #36b446 180px);
+  background: linear-gradient(
+    to bottom,
+    white 0,
+    white 90px,
+    #36b446 90px,
+    #36b446 180px
+  );
   position: absolute;
   top: 0;
   color: #36b446;
@@ -406,7 +412,7 @@ input[type="radio"] {
   font-size: 15px;
 }
 
-input:checked+label {
+input:checked + label {
   background-position: 0 -90px;
   color: white;
   transition: 0.7s;
@@ -722,7 +728,7 @@ h6 {
   height: 40px !important;
 }
 
-.Top_Nav .breadcrumb-item+.breadcrumb-item::before {
+.Top_Nav .breadcrumb-item + .breadcrumb-item::before {
   float: left;
   padding-right: 0px;
 }
@@ -800,25 +806,25 @@ table thead tr:first-child th:last-child {
   /* background-color: red; */
 }
 
-input[type="checkbox"]:checked+.femaleSmoking {
+input[type="checkbox"]:checked + .femaleSmoking {
   border-radius: 50%;
   border: 5px solid #04aa6d;
   padding: 0px 0px 0px 0px;
   width: 15%;
 }
 
-input[type="checkbox"]:checked+.femaleSmoking+.maleNonSmoking {
+input[type="checkbox"]:checked + .femaleSmoking + .maleNonSmoking {
   border-radius: 50%;
   width: 15%;
   border: 0px;
 }
 
-input[type="checkbox"]+.femaleSmoking {
+input[type="checkbox"] + .femaleSmoking {
   border-radius: 50%;
   width: 15%;
 }
 
-input[type="checkbox"]+.femaleSmoking+.maleNonSmoking {
+input[type="checkbox"] + .femaleSmoking + .maleNonSmoking {
   border-radius: 50%;
   width: 15%;
   border: 5px solid #04aa6d;
@@ -914,7 +920,7 @@ input[type="checkbox"]+.femaleSmoking+.maleNonSmoking {
   background-color: #36b446;
 }
 
-.childBtn .childBtn-item:hover~.childBtn-item {
+.childBtn .childBtn-item:hover ~ .childBtn-item {
   border: 0.5px solid gray;
   color: gray;
   background-color: white;
@@ -992,25 +998,25 @@ input[type="checkbox"]+.femaleSmoking+.maleNonSmoking {
   background-color: #36b446;
 }
 
-input[type="checkbox"]:checked+.femaleSmoking {
+input[type="checkbox"]:checked + .femaleSmoking {
   border-radius: 50px;
   border: 5px solid #04aa6d;
   padding: 0px 0px 0px 0px;
   width: 15%;
 }
 
-input[type="checkbox"]:checked+.femaleSmoking+.maleNonSmoking {
+input[type="checkbox"]:checked + .femaleSmoking + .maleNonSmoking {
   border-radius: 50px;
   width: 15%;
   border: 0px;
 }
 
-input[type="checkbox"]+.femaleSmoking {
+input[type="checkbox"] + .femaleSmoking {
   border-radius: 50px;
   width: 15%;
 }
 
-input[type="checkbox"]+.femaleSmoking+.maleNonSmoking {
+input[type="checkbox"] + .femaleSmoking + .maleNonSmoking {
   border-radius: 50px;
   width: 15%;
   border: 5px solid #04aa6d;
@@ -1428,7 +1434,11 @@ label {
   border: 1px solid #36b446 !important;
 }
 
-.cashFlowAllUsers .accordion .accordion-item .accordion-header .accordion-button::after {
+.cashFlowAllUsers
+  .accordion
+  .accordion-item
+  .accordion-header
+  .accordion-button::after {
   content: "";
   /* background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M2 5L8 11L14 5'/%3e%3c/svg%3e"); */
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'%3e%3cpath d='M2 5L8 11L14 5'/%3e%3c/svg%3e");
@@ -1441,7 +1451,11 @@ label {
   display: inline-block;
 }
 
-.cashFlowAllUsers .accordion .accordion-item .accordion-header .accordion-button {
+.cashFlowAllUsers
+  .accordion
+  .accordion-item
+  .accordion-header
+  .accordion-button {
   background-color: #36b446 !important;
   color: white;
   box-shadow: none !important;
@@ -1752,8 +1766,8 @@ label {
 /* Ensure Inter font is applied to Ant Design Table in .reportSection */
 .reportSection .ant-table,
 .reportSection .ant-table-container,
-.reportSection .ant-table-thead>tr>th,
-.reportSection .ant-table-tbody>tr>td,
+.reportSection .ant-table-thead > tr > th,
+.reportSection .ant-table-tbody > tr > td,
 .reportSection .ant-table-thead,
 .reportSection .ant-table-tbody,
 .reportSection .ant-table-summary {
@@ -1788,26 +1802,26 @@ label {
   border-top-right-radius: 8px !important;
 }
 
-.reportSection .ant-table-thead>tr>th {
+.reportSection .ant-table-thead > tr > th {
   background: #36b446 !important;
   color: white;
   font-weight: 700;
   border-radius: 0px !important;
 }
 
-.reportSection .ant-table-summary>tr {
+.reportSection .ant-table-summary > tr {
   background: #36b446 !important;
   color: white;
   font-weight: 700;
 }
 
-.reportSection .ant-table-summary>tr>td {
+.reportSection .ant-table-summary > tr > td {
   background: #36b446 !important;
   color: white;
   font-weight: 700;
 }
 
-.reportSection .ant-table-tbody>tr.green-summary-row>td {
+.reportSection .ant-table-tbody > tr.green-summary-row > td {
   background: #36b446 !important;
   color: white;
   font-weight: 700;
@@ -1840,7 +1854,7 @@ label {
   color: white !important;
 }
 
-.reportSection .highlight-green-row>td {
+.reportSection .highlight-green-row > td {
   background-color: #36b446 !important;
   color: white !important;
 }
@@ -2092,9 +2106,6 @@ label {
   border-radius: 15px;
 }
 
-
-
-
 /* Abdul Moeed css */
 
 .custom-list-item {
@@ -2136,9 +2147,14 @@ label {
   justify-content: space-between;
   align-items: center;
   padding: 15px 16px;
-  background-color: #36B446;
+  background-color: #36b446;
   color: white;
   font-weight: bold;
   border-top-right-radius: 12px;
   border-top-left-radius: 12px;
+}
+
+.datepicker-popper {
+  position: absolute !important;
+  z-index: 20000 !important; /* higher than your table or modal */
 }

@@ -17,6 +17,8 @@ import DynamicYesNo from "../../Questions/FinancialInvestments/QuestionsDetail/D
 import { CreatableMultiSelectField } from "../../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import CreatableSelectField from "./DynamicCreatableSelect/CreatableSelectField";
 import { Form, InputGroup } from "react-bootstrap";
+import { DatePicker as AntDate, Popover } from "antd";
+import dayjs from "dayjs";
 
 const DynamicFormField = ({
   fieldType,
@@ -222,6 +224,64 @@ const DynamicFormField = ({
           id={name}
           name={stakeHolder ? stakeHolder + name : name}
           disabled={all?.disabled ? all.disabled : false} // Disable input based on props
+          // ✅ FIX: return the container instead of appending
+          popperPlacement="bottom-start"
+        />
+      );
+
+    case "antdate":
+      // utility: join stakeHolder + name safely
+      const buildFieldName = (stakeHolder, name) => {
+        if (!stakeHolder) return name;
+        return stakeHolder.endsWith(".")
+          ? `${stakeHolder}${name}`
+          : `${stakeHolder}.${name}`;
+      };
+
+      return (
+        <AntDate
+          className="form-control inputDesignDoubleInput"
+          value={(() => {
+            const fieldName = buildFieldName(stakeHolder, name);
+
+            // safely read nested value
+            const rawValue = fieldName
+              .split(".")
+              .reduce((acc, key) => (acc ? acc[key] : null), values);
+
+            return rawValue ? dayjs(rawValue) : null;
+          })()}
+          onChange={(date) => {
+            const fieldName = buildFieldName(stakeHolder, name);
+            const isoValue = date
+              ? date.hour(12).minute(0).second(0).millisecond(0).toISOString()
+              : null;
+
+            console.log(isoValue);
+            // ✅ update Formik correctly
+            setFieldValue(fieldName, isoValue);
+
+            if (all.callBack) {
+              all.func(
+                values,
+                setFieldValue,
+                { name: fieldName, value: isoValue },
+                stakeHolder
+              );
+            }
+          }}
+          onBlur={() => {
+            const fieldName = buildFieldName(stakeHolder, name);
+            handleBlur({ target: { name: fieldName } });
+          }}
+          id={buildFieldName(stakeHolder, name)}
+          name={buildFieldName(stakeHolder, name)}
+          disabled={all?.disabled ?? false}
+          format="DD/MM/YYYY"
+          allowClear
+          getPopupContainer={(triggerNode) =>
+            triggerNode.closest("table") || triggerNode
+          }
         />
       );
 
@@ -430,14 +490,36 @@ const DynamicFormField = ({
     case "modal":
       return (
         <div className="d-flex justify-content-center align-items-center ">
-          <Button
-            className="btn bgColor modalBtn border-0"
-            onClick={() =>
-              handleInnerModal(innerModalTitle, values, all.key, stakeHolder)
+          <Popover
+            placement="bottom"
+            arrow={false}
+            autoAdjustOverflow={true}
+            content={() =>
+              all.PopoverContent(innerModalTitle, values, all, stakeHolder)
             }
+            title={innerModalTitle}
+            trigger="hover"
+            getPopupContainer={(triggerNode) =>
+              triggerNode.closest("table") || triggerNode
+            }
+            styles={{
+              body: {
+                width: 850,
+                maxHeight: 400,
+                overflowY: "auto",
+                // transform: "translateY(130px)",
+              },
+            }}
           >
-            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-          </Button>
+            <Button
+              className="btn bgColor modalBtn border-0"
+              onClick={() => {
+                handleInnerModal(innerModalTitle, values, all.key, stakeHolder);
+              }}
+            >
+              <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+            </Button>
+          </Popover>
         </div>
       );
 
