@@ -75,53 +75,6 @@ const LeaveEntitlementsModal = (props) => {
     }
   };
 
-  let FormulaSettign = (currentInput, values, setFieldValue) => {
-    let remunerationType = values.remunerationType;
-    let Amount = parseFloat(values.Amount.replace(/[^0-9.-]+/g, "")) || 0;
-    let SGPercentage =
-      parseFloat(values.SGPercentage.replace(/[^0-9.-]+/g, "")) || 0;
-    let GrossSalary = values.GrossSalary;
-    let SGC = values.SGC;
-
-    switch (currentInput.name) {
-      case "remunerationType":
-        remunerationType = currentInput.value;
-        break;
-      case "Amount":
-        Amount = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, ""));
-        break;
-      default:
-        if (currentInput.value.replace(/[^0-9.-]+/g, "") > 100) {
-          SGPercentage = 100;
-        } else {
-          SGPercentage = parseFloat(
-            currentInput.value.replace(/[^0-9.-]+/g, "")
-          );
-        }
-        break;
-    }
-
-    if (remunerationType === "Gross Salary") {
-      GrossSalary = Amount;
-      SGC = (Amount * SGPercentage).toFixed(2);
-    } else {
-      GrossSalary = (Amount / SGPercentage).toFixed(2);
-      SGC = (Amount - GrossSalary).toFixed(2);
-    }
-
-    console.log(
-      "FormulaSettign:",
-      remunerationType,
-      Amount,
-      SGPercentage,
-      GrossSalary,
-      SGC
-    );
-
-    setFieldValue("GrossSalary", GrossSalary);
-    setFieldValue("SGC", SGC);
-  };
-
   return (
     <Formik
       initialValues={initialValues}
@@ -162,19 +115,11 @@ const LeaveEntitlementsModal = (props) => {
                           </td>
                           <td>
                             <Field
-                              type="text"
+                              type="number"
                               placeholder="Amount"
                               id={`annualLeaveAmount`}
                               name={`annualLeaveAmount`}
                               className="form-control inputDesignDoubleInput"
-                              onChange={(e) => {
-                                setFieldValue(
-                                  e.target.name,
-                                  toCommaAndDollar(
-                                    e.target.value.replace(/[^0-9.-]+/g, "")
-                                  )
-                                );
-                              }}
                             />
                           </td>
                           <td style={{ minWidth: "250px" }}>
@@ -204,19 +149,11 @@ const LeaveEntitlementsModal = (props) => {
                           </td>
                           <td>
                             <Field
-                              type="text"
+                              type="number"
                               placeholder="Amount"
                               id={`sickLeaveAmount`}
                               name={`sickLeaveAmount`}
                               className="form-control inputDesignDoubleInput"
-                              onChange={(e) => {
-                                setFieldValue(
-                                  e.target.name,
-                                  toCommaAndDollar(
-                                    e.target.value.replace(/[^0-9.-]+/g, "")
-                                  )
-                                );
-                              }}
                             />
                           </td>
                           <td>
@@ -246,19 +183,11 @@ const LeaveEntitlementsModal = (props) => {
                           </td>
                           <td>
                             <Field
-                              type="text"
+                              type="number"
                               placeholder="Amount"
                               id={`longServiceLeaveAmount`}
                               name={`longServiceLeaveAmount`}
                               className="form-control inputDesignDoubleInput"
-                              onChange={(e) => {
-                                setFieldValue(
-                                  e.target.name,
-                                  toCommaAndDollar(
-                                    e.target.value.replace(/[^0-9.-]+/g, "")
-                                  )
-                                );
-                              }}
                             />
                           </td>
                           <td>

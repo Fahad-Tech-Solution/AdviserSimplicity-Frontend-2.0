@@ -325,17 +325,31 @@ const EmploymentIncome = (props) => {
           parentValues: values,
           parentKey: stakeHolder,
         };
-
-        console.log(all, "Usam");
-
         return (
-          <div style={{ pointerEvents: "none", position: "relative" }}>
-            <SalaryPackage
-              modalObject={modalObject}
-              setFieldValue={setFieldValue}
-              setFlagState={setFlagState}
-              flagState={flagState}
-            />
+          <div
+            style={{
+              pointerEvents: "none",
+              position: "relative",
+              overflow: "hidden",
+              width: "270px", // fixed width for popover
+              height: "120px", // fixed height for popover
+            }}
+          >
+            <div
+              style={{
+                transform: "scale(0.5)", // shrink to 70%
+                transformOrigin: "top left", // anchor scaling to top-left
+                width: "540px", // 850 / 0.7 → compensate scaled width
+                height: "200px", // 400 / 0.7 → compensate scaled height
+              }}
+            >
+              <SalaryPackage
+                modalObject={modalObject}
+                setFieldValue={setFieldValue}
+                setFlagState={setFlagState}
+                flagState={flagState}
+              />
+            </div>
           </div>
         );
       },
@@ -349,6 +363,48 @@ const EmploymentIncome = (props) => {
       callBack: true,
       func: handleInnerModal,
       innerModalTitle: "Salary Packaging",
+      PopoverContent: (
+        innerModalTitle,
+        values,
+        all,
+        stakeHolder,
+        setFieldValue
+      ) => {
+        let modalObject = {
+          title: innerModalTitle,
+          key: all.key,
+          parentValues: values,
+          parentKey: stakeHolder,
+        };
+
+        return (
+          <div
+            style={{
+              pointerEvents: "none",
+              position: "relative",
+              overflow: "hidden",
+              // width: "270px", 
+              // height: "120px", 
+            }}
+          >
+            {/* <div
+              style={{
+                transform: "scale(0.5)", 
+                transformOrigin: "top left", 
+                width: "540px", 
+                height: "200px", 
+              }}
+            > */}
+              <SalaryPackaging
+                modalObject={modalObject}
+                setFieldValue={setFieldValue}
+                setFlagState={setFlagState}
+                flagState={flagState}
+              />
+            {/* </div> */}
+          </div>
+        );
+      },
     },
     {
       title: "Leave Entitlements",
@@ -360,6 +416,48 @@ const EmploymentIncome = (props) => {
       callBack: true,
       func: handleInnerModal,
       innerModalTitle: "Leave entitlements",
+      PopoverContent: (
+        innerModalTitle,
+        values,
+        all,
+        stakeHolder,
+        setFieldValue
+      ) => {
+        let modalObject = {
+          title: innerModalTitle,
+          key: all.key,
+          parentValues: values,
+          parentKey: stakeHolder,
+        };
+
+        return (
+          <div
+            style={{
+              pointerEvents: "none",
+              position: "relative",
+              overflow: "hidden",
+              // width: "370px", 
+              // height: "150px", 
+            }}
+          >
+            {/* <div
+              style={{
+                transform: "scale(0.6)", 
+                transformOrigin: "top left", 
+                width: "620px", 
+                height: "200px", 
+              }}
+            > */}
+              <LeaveEntitlementsModal
+                modalObject={modalObject}
+                setFieldValue={setFieldValue}
+                setFlagState={setFlagState}
+                flagState={flagState}
+              />
+            {/* </div> */}
+          </div>
+        );
+      },
     },
     {
       title: "Choice of Fund",

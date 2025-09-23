@@ -471,17 +471,49 @@ const DynamicFormField = ({
             ? values?.[stakeHolder.slice(0, -1)]?.[name]
             : values?.[name]) === "Yes" && (
             <div className="d-flex justify-content-center align-items-center pt-2">
-              <Button
-                className="btn bgColor modalBtn border-0"
-                id="button-addon2"
-                onClick={() => {
-                  if (all.callBack) {
-                    all.func(innerModalTitle, values, all.key, stakeHolder);
+              <Popover
+                placement="top"
+                arrow={false}
+                autoAdjustOverflow={true}
+                content={() => {
+                  if (all?.PopoverContent) {
+                    return all.PopoverContent(
+                      innerModalTitle,
+                      values,
+                      all,
+                      stakeHolder
+                    );
                   }
                 }}
+                title={innerModalTitle}
+                trigger="hover"
+                getPopupContainer={(triggerNode) =>
+                  triggerNode.closest("table") || triggerNode
+                }
+                styles={{
+                  body: {
+                    width: 400,
+                    Height: 200,
+                    overflowY: "auto",
+                    transform:
+                      stakeHolder === "client."
+                        ? "translateY(-140px)"
+                        : "translateY(-70px)",
+                  },
+                }}
               >
-                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-              </Button>
+                <Button
+                  className="btn bgColor modalBtn border-0"
+                  id="button-addon2"
+                  onClick={() => {
+                    if (all.callBack) {
+                      all.func(innerModalTitle, values, all.key, stakeHolder);
+                    }
+                  }}
+                >
+                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                </Button>
+              </Popover>
             </div>
           )}
         </React.Fragment>
@@ -491,7 +523,7 @@ const DynamicFormField = ({
       return (
         <div className="d-flex justify-content-center align-items-center ">
           <Popover
-            placement="bottom"
+            placement="top"
             arrow={false}
             autoAdjustOverflow={true}
             content={() =>
@@ -504,10 +536,13 @@ const DynamicFormField = ({
             }
             styles={{
               body: {
-                width: 850,
-                maxHeight: 400,
+                width: 300,
+                maxHeight: 200,
                 overflowY: "auto",
-                // transform: "translateY(130px)",
+                transform:
+                  stakeHolder === "client."
+                    ? "translateY(-140px)"
+                    : "translateY(-70px)",
               },
             }}
           >
