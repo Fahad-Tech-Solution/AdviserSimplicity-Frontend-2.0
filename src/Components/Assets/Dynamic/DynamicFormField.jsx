@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Field } from "formik";
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,8 +17,50 @@ import DynamicYesNo from "../../Questions/FinancialInvestments/QuestionsDetail/D
 import { CreatableMultiSelectField } from "../../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import CreatableSelectField from "./DynamicCreatableSelect/CreatableSelectField";
 import { Form, InputGroup } from "react-bootstrap";
-import { DatePicker as AntDate, Popover } from "antd";
+import { DatePicker as AntDate, Drawer, Popover } from "antd";
 import dayjs from "dayjs";
+
+const ButtonDrawer = ({
+  title,
+  placement = "top",
+  height = 250,
+  width = "60%",
+  children,
+  DrawerContent,
+  setOpen,
+  open,
+  containerSelector = ".modal", // 👈 default parent container
+}) => {
+  return (
+    <div className="d-flex justify-content-center align-items-center">
+      {children || "nothing to render"}
+      <Drawer
+        title={title}
+        placement={placement}
+        height={height}
+        width={width}
+        open={open}
+        onClose={() => setOpen(false)}
+        mask={false} // 👈 no black overlay
+        closable={false} // 👈 no close button
+        getContainer={() => document.querySelector(containerSelector)}
+        style={{
+          width: width,
+          margin: "10px auto",
+          borderRadius: "12px",
+          boxShadow: "none",
+        }}
+        styles={{
+          body: { boxShadow: "none", maxHeight: "70vh", overflowY: "auto" },
+          content: { boxShadow: "none" },
+          wrapper: { boxShadow: "none" },
+        }}
+      >
+        {DrawerContent}
+      </Drawer>
+    </div>
+  );
+};
 
 const DynamicFormField = ({
   fieldType,
@@ -35,6 +77,8 @@ const DynamicFormField = ({
   innerModalTitle,
   all,
 }) => {
+  const [open, setOpen] = useState(false);
+
   switch (fieldType) {
     case "number":
       return (
@@ -471,36 +515,20 @@ const DynamicFormField = ({
             ? values?.[stakeHolder.slice(0, -1)]?.[name]
             : values?.[name]) === "Yes" && (
             <div className="d-flex justify-content-center align-items-center pt-2">
-              <Popover
-                placement="top"
-                arrow={false}
-                autoAdjustOverflow={true}
-                content={() => {
-                  if (all?.PopoverContent) {
-                    return all.PopoverContent(
-                      innerModalTitle,
-                      values,
-                      all,
-                      stakeHolder
-                    );
-                  }
-                }}
+              <ButtonDrawer
                 title={innerModalTitle}
-                trigger="hover"
-                getPopupContainer={(triggerNode) =>
-                  triggerNode.closest("table") || triggerNode
-                }
-                styles={{
-                  body: {
-                    width: 400,
-                    Height: 200,
-                    overflowY: "auto",
-                    transform:
-                      stakeHolder === "client."
-                        ? "translateY(-140px)"
-                        : "translateY(-70px)",
-                  },
-                }}
+                buttonIcon={faArrowUpRightFromSquare}
+                placement="top"
+                height={all?.Drawerheight}
+                width={all?.DrawerWidth}
+                DrawerContent={all?.PopoverContent?.(
+                  innerModalTitle,
+                  values,
+                  all,
+                  stakeHolder
+                )}
+                setOpen={setOpen}
+                open={open}
               >
                 <Button
                   className="btn bgColor modalBtn border-0"
@@ -510,10 +538,12 @@ const DynamicFormField = ({
                       all.func(innerModalTitle, values, all.key, stakeHolder);
                     }
                   }}
+                  onMouseEnter={() => setOpen(true)}
+                  onMouseLeave={() => setOpen(false)}
                 >
                   <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                 </Button>
-              </Popover>
+              </ButtonDrawer>
             </div>
           )}
         </React.Fragment>
@@ -522,39 +552,32 @@ const DynamicFormField = ({
     case "modal":
       return (
         <div className="d-flex justify-content-center align-items-center ">
-          <Popover
-            placement="top"
-            arrow={false}
-            autoAdjustOverflow={true}
-            content={() =>
-              all.PopoverContent(innerModalTitle, values, all, stakeHolder)
-            }
+          <ButtonDrawer
             title={innerModalTitle}
-            trigger="hover"
-            getPopupContainer={(triggerNode) =>
-              triggerNode.closest("table") || triggerNode
-            }
-            styles={{
-              body: {
-                width: 300,
-                maxHeight: 200,
-                overflowY: "auto",
-                transform:
-                  stakeHolder === "client."
-                    ? "translateY(-140px)"
-                    : "translateY(-70px)",
-              },
-            }}
+            buttonIcon={faArrowUpRightFromSquare}
+            placement="top"
+            height={all?.Drawerheight}
+            width={all?.DrawerWidth}
+            DrawerContent={all?.PopoverContent?.(
+              innerModalTitle,
+              values,
+              all,
+              stakeHolder
+            )}
+            setOpen={setOpen}
+            open={open}
           >
             <Button
               className="btn bgColor modalBtn border-0"
               onClick={() => {
                 handleInnerModal(innerModalTitle, values, all.key, stakeHolder);
               }}
+              onMouseEnter={() => setOpen(true)}
+              onMouseLeave={() => setOpen(false)}
             >
-              <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+              <FontAwesomeIcon icon={faArrowUpRightFromSquare} />{" "}
             </Button>
-          </Popover>
+          </ButtonDrawer>
         </div>
       );
 

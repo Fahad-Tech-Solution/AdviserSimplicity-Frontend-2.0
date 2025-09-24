@@ -14,7 +14,10 @@ import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
 import SalaryPackage from "./SalaryPackage";
 import LeaveEntitlementsModal from "./LeaveEntitlementsModal";
 import SalaryPackaging from "./SalaryPackaging";
-import { CreatableMultiSelectField } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import {
+  AntdCreatableMultiSelect,
+  CreatableMultiSelectField,
+} from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
 const EmploymentIncome = (props) => {
@@ -26,7 +29,7 @@ const EmploymentIncome = (props) => {
   let [UserStatus] = useState(localStorage.getItem("UserStatus"));
 
   let incomeFromOwnBusiness =
-    Object.keys(questionDetail.incomeFromOwnBusiness).length > 0
+    Object.keys(questionDetail.incomeFromOwnBusiness || {}).length > 0
       ? questionDetail.incomeFromOwnBusiness
       : {
           client: [],
@@ -305,13 +308,15 @@ const EmploymentIncome = (props) => {
       width: 200,
     },
     {
-      title: "Salary Package",
+      title: "Salary Detail",
       dataIndex: "salaryPackage",
       key: "SalaryPackageModal",
       type: "modal", // 🔥 handled by DynamicFormField as button modal
       width: 150,
       handleInnerModal: handleInnerModal,
-      innerModalTitle: "Salary Package",
+      innerModalTitle: "Salary Detail",
+      Drawerheight: 270,
+      DrawerWidth: "80%",
       PopoverContent: (
         innerModalTitle,
         values,
@@ -328,28 +333,16 @@ const EmploymentIncome = (props) => {
         return (
           <div
             style={{
-              pointerEvents: "none",
-              position: "relative",
-              overflow: "hidden",
-              width: "270px", // fixed width for popover
-              height: "120px", // fixed height for popover
+              height: "80px",
+              margin: "-20px 0px 0px 0px",
             }}
           >
-            <div
-              style={{
-                transform: "scale(0.5)", // shrink to 70%
-                transformOrigin: "top left", // anchor scaling to top-left
-                width: "540px", // 850 / 0.7 → compensate scaled width
-                height: "200px", // 400 / 0.7 → compensate scaled height
-              }}
-            >
-              <SalaryPackage
-                modalObject={modalObject}
-                setFieldValue={setFieldValue}
-                setFlagState={setFlagState}
-                flagState={flagState}
-              />
-            </div>
+            <SalaryPackage
+              modalObject={modalObject}
+              setFieldValue={setFieldValue}
+              setFlagState={setFlagState}
+              flagState={flagState}
+            />
           </div>
         );
       },
@@ -359,10 +352,12 @@ const EmploymentIncome = (props) => {
       dataIndex: "salaryPackagingRadio",
       key: "SalaryPackaging",
       type: "yesnoModal", // yes/no with modal
-      width: 200,
+      width: 170,
       callBack: true,
       func: handleInnerModal,
       innerModalTitle: "Salary Packaging",
+      Drawerheight: 250,
+      DrawerWidth: "80%",
       PopoverContent: (
         innerModalTitle,
         values,
@@ -380,28 +375,16 @@ const EmploymentIncome = (props) => {
         return (
           <div
             style={{
-              pointerEvents: "none",
-              position: "relative",
-              overflow: "hidden",
-              // width: "270px", 
-              // height: "120px", 
+              height: "80px",
+              margin: "-20px 0px 0px 0px",
             }}
           >
-            {/* <div
-              style={{
-                transform: "scale(0.5)", 
-                transformOrigin: "top left", 
-                width: "540px", 
-                height: "200px", 
-              }}
-            > */}
-              <SalaryPackaging
-                modalObject={modalObject}
-                setFieldValue={setFieldValue}
-                setFlagState={setFlagState}
-                flagState={flagState}
-              />
-            {/* </div> */}
+            <SalaryPackaging
+              modalObject={modalObject}
+              setFieldValue={setFieldValue}
+              setFlagState={setFlagState}
+              flagState={flagState}
+            />
           </div>
         );
       },
@@ -411,11 +394,13 @@ const EmploymentIncome = (props) => {
       dataIndex: "leaveEntitlementsRadio",
       key: "LeaveEntitlementsModal",
       type: "yesnoModal",
-      width: 200,
+      width: 170,
       handleInnerModal: handleInnerModal,
       callBack: true,
       func: handleInnerModal,
       innerModalTitle: "Leave entitlements",
+      Drawerheight: 320,
+      DrawerWidth: "60%",
       PopoverContent: (
         innerModalTitle,
         values,
@@ -433,28 +418,16 @@ const EmploymentIncome = (props) => {
         return (
           <div
             style={{
-              pointerEvents: "none",
-              position: "relative",
-              overflow: "hidden",
-              // width: "370px", 
-              // height: "150px", 
+              height: "80px",
+              margin: "-20px 0px 0px 0px",
             }}
           >
-            {/* <div
-              style={{
-                transform: "scale(0.6)", 
-                transformOrigin: "top left", 
-                width: "620px", 
-                height: "200px", 
-              }}
-            > */}
-              <LeaveEntitlementsModal
-                modalObject={modalObject}
-                setFieldValue={setFieldValue}
-                setFlagState={setFlagState}
-                flagState={flagState}
-              />
-            {/* </div> */}
+            <LeaveEntitlementsModal
+              modalObject={modalObject}
+              setFieldValue={setFieldValue}
+              setFlagState={setFlagState}
+              flagState={flagState}
+            />
           </div>
         );
       },
@@ -464,7 +437,7 @@ const EmploymentIncome = (props) => {
       dataIndex: "choiceOfFund",
       key: "choiceOfFund",
       type: "yesno",
-      width: 200,
+      width: 150,
     },
   ];
 
@@ -496,7 +469,8 @@ const EmploymentIncome = (props) => {
                 ? ConvertDate(values.client.startDate)
                 : null,
               hoursWorked: values?.client?.hoursWorked || "",
-              salaryPackage: values?.client?.salaryPackage || "",
+              salaryPackage:
+                values?.client?.SalaryPackageModal?.grossSalary || "",
               salaryPackagingRadio: values?.client?.salaryPackagingRadio || "",
               leaveEntitlementsRadio:
                 values?.client?.leaveEntitlementsRadio || "",
@@ -516,7 +490,8 @@ const EmploymentIncome = (props) => {
                 ? ConvertDate(values.partner.startDate)
                 : null,
               hoursWorked: values?.partner?.hoursWorked || "",
-              salaryPackage: values?.partner?.salaryPackage || "",
+              salaryPackage:
+                values?.partner?.SalaryPackageModal?.grossSalary || "",
               salaryPackagingRadio: values?.partner?.salaryPackagingRadio || "",
               leaveEntitlementsRadio:
                 values?.partner?.leaveEntitlementsRadio || "",
@@ -548,17 +523,23 @@ const EmploymentIncome = (props) => {
               </InnerModal>
 
               <div className="col-md-12">
-                <div className="d-flex flex-row justify-content-center align-items-center gap-2">
-                  <label htmlFor="" className="text-end ">
-                    Owner
+                <div className="d-flex flex-row justify-content-center align-items-center gap-4">
+                  <label
+                    htmlFor=""
+                    className="text-end"
+                    onClick={() => {
+                      console.log(options);
+                    }}
+                  >
+                    Order
                   </label>
 
-                  <div style={{ minWidth: "25%" }}>
+                  <div style={{ minWidth: "200px" }}>
                     <Field
                       name={`owner`}
-                      component={CreatableMultiSelectField}
-                      label="Multi Select Field"
+                      component={AntdCreatableMultiSelect}
                       options={options}
+                      onChangefun={() => {}}
                     />
                   </div>
                 </div>

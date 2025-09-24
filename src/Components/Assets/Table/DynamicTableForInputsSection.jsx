@@ -4,9 +4,7 @@ import { Table as AntTable, Typography } from "antd";
 import DynamicFormField from "../Dynamic/DynamicFormField";
 
 const DynamicTableForInputsSection = (type = "bootstrap") => {
-  
-
-const [editingRow, setEditingRow] = useState(null);
+  const [editingRow, setEditingRow] = useState(null);
 
   return function TableHOC({
     columns,
@@ -16,10 +14,8 @@ const [editingRow, setEditingRow] = useState(null);
     handleChange,
     handleBlur,
   }) {
-    
     const renderCell = (record, col) => {
       const value = record[col.dataIndex];
-
       if (editingRow === record.key) {
         return (
           <DynamicFormField
@@ -32,9 +28,11 @@ const [editingRow, setEditingRow] = useState(null);
             handleChange={handleChange}
             handleBlur={handleBlur}
             handleInnerModal={col?.handleInnerModal || (() => {})}
-            stakeHolder={record.stakeHolder + "."} // 🔥 row decides (client/partner)
             innerModalTitle={col?.innerModalTitle || ""}
             all={col || {}}
+            {...(record?.stakeHolder
+              ? { stakeHolder: record.stakeHolder + "." }
+              : {})} // 🔥 row decides (client/partner)
           />
         );
       }
@@ -69,11 +67,14 @@ const [editingRow, setEditingRow] = useState(null);
           columns={allColumns.map((col) => {
             if (col.key === "action" || col.key === "owner") {
               // keep custom render
-              return col;
+              return {
+                ...col,
+                width: editingRow ? col.width || 150 : undefined, // ✅ fallback width if not set
+              };
             }
             return {
               ...col,
-              width: col.width || 150, // ✅ fallback width if not set
+              width: editingRow ? col.width || 150 : undefined, // ✅ fallback width if not set
               render: (text, record) => renderCell(record, col),
             };
           })}

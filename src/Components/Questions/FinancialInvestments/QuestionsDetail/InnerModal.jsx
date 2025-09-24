@@ -98,7 +98,6 @@ const InnerModal = (props) => {
     "Insurances Attached",
     "Pension Benefits",
     "Balance & Benefit Details",
-    "Salary Package",
     // "Home Loan",
     "Australian Shares/ETFs Detail",
     "Managed Funds Detail",
@@ -117,6 +116,7 @@ const InnerModal = (props) => {
     "Reduced Salary Income",
     "Salary Packaging Car",
     "Accumulation Details",
+    "Salary Packaging",
     // "Balance Rollover Amount"
     // "Insurance Premiums"
     // "Portfolio Value"
@@ -145,7 +145,7 @@ const InnerModal = (props) => {
     "SMSF Accumulation Details",
     "Accumulations Benefits",
     "Pension Benefits",
-    // "Pension Benefits Details",
+    "Salary Detail",
     "SMSF Platform Investments Detail",
     "Loan Balance",
     "Concessional Contributions",

@@ -1,215 +1,154 @@
-import { Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
-import { Row, Table } from "react-bootstrap";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { toCommaAndDollar, toPercentage } from "../../Assets/Api/Api";
+import { Form, Formik } from "formik";
+import React, { useEffect, useMemo } from "react";
+import { ConfigProvider } from "antd";
+import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
 const LeaveEntitlementsModal = (props) => {
-  let { title, key, parentValues, parentKey } = props.modalObject;
+  const { key, parentValues, parentKey } = props.modalObject;
 
   let initialValues = {
-    annualLeave: "Annual Leave",
-    annualLeaveAmount: "",
-    annualLeaveTime: "",
-
-    sickLeave: "Sick Leave",
-    sickLeaveAmount: "",
-    sickLeaveTime: "",
-
-    longServiceLeave: "Long Service Leave",
-    longServiceLeaveAmount: "",
-    longServiceLeaveTime: "",
+    annual: { leaveType: "Annual Leave", amount: "", time: "" },
+    sick: { leaveType: "Sick Leave", amount: "", time: "" },
+    longService: { leaveType: "Long Service Leave", amount: "", time: "" },
   };
 
+  // Fill initial values dynamically
   const fillInitialValues = (setFieldValue) => {
-    // if (parentValues._id && parentValues?.key) {
-    // console.log(JSON.stringify(parentValues));
-    if (
-      parentValues?.[`${parentKey.replace(".", "")}`]?.[`${key}`] &&
-      Object.keys(parentValues?.[`${parentKey.replace(".", "")}`]?.[`${key}`])
-        .length > 0
-    ) {
-      let Data = parentValues[`${parentKey.replace(".", "")}`][`${key}`];
-      console.log("incondition", JSON.stringify(Data));
+    const modalData =
+      parentValues?.[parentKey.replace(".", "")]?.[`${key}`] || {};
+    if (Object.keys(modalData).length > 0) {
+      setFieldValue("annual.leaveType", "Annual Leave");
+      setFieldValue("annual.amount", modalData.annualLeaveAmount ?? "");
+      setFieldValue("annual.time", modalData.annualLeaveTime ?? "");
 
-      setFieldValue("annualLeave", Data.annualLeave);
-      setFieldValue("annualLeaveAmount", Data.annualLeaveAmount);
-      setFieldValue("annualLeaveTime", Data.annualLeaveTime);
+      setFieldValue("sick.leaveType", "Sick Leave");
+      setFieldValue("sick.amount", modalData.sickLeaveAmount ?? "");
+      setFieldValue("sick.time", modalData.sickLeaveTime ?? "");
 
-      setFieldValue("sickLeave", Data.sickLeave);
-      setFieldValue("sickLeaveAmount", Data.sickLeaveAmount);
-      setFieldValue("sickLeaveTime", Data.sickLeaveTime);
-
-      setFieldValue("longServiceLeave", Data.longServiceLeave);
-      setFieldValue("longServiceLeaveAmount", Data.longServiceLeaveAmount);
-      setFieldValue("longServiceLeaveTime", Data.longServiceLeaveTime);
+      setFieldValue("longService.leaveType", "Long Service Leave");
+      setFieldValue(
+        "longService.amount",
+        modalData.longServiceLeaveAmount ?? ""
+      );
+      setFieldValue("longService.time", modalData.longServiceLeaveTime ?? "");
     }
   };
 
-  let DefaultUrl = useRecoilValue(defaultUrl);
-
-  let onSubmit = async (values) => {
+  // Submit handler
+  const onSubmit = (values) => {
     console.log(values);
+    const Obj = {
+      annualLeaveAmount: values.annual.amount ?? "",
+      annualLeaveTime: values.annual.time ?? "",
 
-    let Obj = {
-      annualLeave: values.annualLeave,
-      annualLeaveAmount: values.annualLeaveAmount,
-      annualLeaveTime: values.annualLeaveTime,
-      sickLeave: values.sickLeave,
-      sickLeaveAmount: values.sickLeaveAmount,
-      sickLeaveTime: values.sickLeaveTime,
-      longServiceLeave: values.longServiceLeave,
-      longServiceLeaveAmount: values.longServiceLeaveAmount,
-      longServiceLeaveTime: values.longServiceLeaveTime,
+      sickLeaveAmount: values.sick.amount ?? "",
+      sickLeaveTime: values.sick.time ?? "",
+
+      longServiceLeaveAmount: values.longService.amount ?? "",
+      longServiceLeaveTime: values.longService.time ?? "",
     };
+
+    console.log(Obj);
 
     props.setFieldValue(`${parentKey}${key}`, Obj);
 
-    // props.setFieldValue(`${props.modalObject.key3}${props.modalObject.index}`, total)
-    // props.setFieldValue(`${props.modalObject.mainKey}${props.modalObject.index}`, total - 475721)
-
-    // Reset the flag state if necessary
-    if (props.flagState) {
-      props.setFlagState(false);
-    }
+    if (props.flagState) props.setFlagState(false);
   };
+
+  // AntD table columns
+  const tableFields = [
+    {
+      key: "leaveType",
+      dataIndex: "leaveType",
+      type: "text",
+      title: "Leave Type",
+      disabled: true,
+    },
+    {
+      key: "amount",
+      dataIndex: "amount",
+      type: "number",
+      title: "Amount",
+      placeholder: "Enter amount",
+    },
+    {
+      key: "time",
+      dataIndex: "time",
+      type: "select",
+      title: "Time",
+      placeholder: "Select",
+      options: [
+        { value: "Days", label: "Days" },
+        { value: "Weeks", label: "Weeks" },
+        { value: "Hours", label: "Hours" },
+      ],
+    },
+  ];
+
+  const AntDynamicTable = DynamicTableForInputsSection("antd");
 
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={initialValues} // start empty, filled with setFieldValue
       onSubmit={onSubmit}
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, handleChange, setFieldValue }) => {
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
-        }, [values.NumberOfMap]);
+        }, [parentValues]);
+
+        // Table data rows
+        const tableData = useMemo(
+          () => [
+            {
+              key: "annualLeave",
+              stakeHolder: "annual",
+              leaveType: "Annual Leave",
+              amount: values?.annual?.amount || "",
+              time: values?.annual?.time || "",
+            },
+            {
+              key: "sickLeave",
+              stakeHolder: "sick",
+              leaveType: "Sick Leave",
+              amount: values?.sick?.amount || "",
+              time: values?.sick?.time || "",
+            },
+            {
+              key: "longServiceLeave",
+              stakeHolder: "longService",
+              leaveType: "Long Service Leave",
+              amount: values?.longService?.amount || "",
+              time: values?.longService?.time || "",
+            },
+          ],
+          [values]
+        );
 
         return (
           <Form>
-            <Row>
-              <div className="col-md-12">
-                <div className="row justify-content-center">
-                  <div className="mt-4">
-                    <Table striped bordered responsive hover>
-                      <thead>
-                        <tr>
-                          <th>Leave Type</th>
-                          <th>Amount</th>
-                          <th>Time</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>
-                            <Field
-                              type="text"
-                              placeholder="Leave Type"
-                              id={`annualLeave`}
-                              name={`annualLeave`}
-                              className="form-control inputDesignDoubleInput"
-                              disabled
-                            />
-                          </td>
-                          <td>
-                            <Field
-                              type="number"
-                              placeholder="Amount"
-                              id={`annualLeaveAmount`}
-                              name={`annualLeaveAmount`}
-                              className="form-control inputDesignDoubleInput"
-                            />
-                          </td>
-                          <td style={{ minWidth: "250px" }}>
-                            <Field
-                              as="select"
-                              id={`annualLeaveTime`}
-                              name={`annualLeaveTime`}
-                              className="form-select inputDesignDoubleInput"
-                            >
-                              <option value={""}>Select</option>
-                              <option value={"Days"}>Days</option>
-                              <option value={"Weeks"}>Weeks</option>
-                              <option value={"Hours"}>Hours</option>
-                            </Field>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <Field
-                              type="text"
-                              placeholder="Leave Type"
-                              id={`sickLeave`}
-                              name={`sickLeave`}
-                              className="form-control inputDesignDoubleInput"
-                              disabled
-                            />
-                          </td>
-                          <td>
-                            <Field
-                              type="number"
-                              placeholder="Amount"
-                              id={`sickLeaveAmount`}
-                              name={`sickLeaveAmount`}
-                              className="form-control inputDesignDoubleInput"
-                            />
-                          </td>
-                          <td>
-                            <Field
-                              as="select"
-                              id={`sickLeaveTime`}
-                              name={`sickLeaveTime`}
-                              className="form-select inputDesignDoubleInput"
-                            >
-                              <option value={""}>Select</option>
-                              <option value={"Days"}>Days</option>
-                              <option value={"Weeks"}>Weeks</option>
-                              <option value={"Hours"}>Hours</option>
-                            </Field>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <Field
-                              type="text"
-                              placeholder="Leave Type"
-                              id={`longServiceLeave`}
-                              name={`longServiceLeave`}
-                              className="form-control inputDesignDoubleInput"
-                              disabled
-                            />
-                          </td>
-                          <td>
-                            <Field
-                              type="number"
-                              placeholder="Amount"
-                              id={`longServiceLeaveAmount`}
-                              name={`longServiceLeaveAmount`}
-                              className="form-control inputDesignDoubleInput"
-                            />
-                          </td>
-                          <td>
-                            <Field
-                              as="select"
-                              id={`longServiceLeaveTime`}
-                              name={`longServiceLeaveTime`}
-                              className="form-select inputDesignDoubleInput"
-                            >
-                              <option value={""}>Select</option>
-                              <option value={"Days"}>Days</option>
-                              <option value={"Weeks"}>Weeks</option>
-                              <option value={"Hours"}>Hours</option>
-                            </Field>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </Table>
-                  </div>
-                </div>
-              </div>
-            </Row>
+            <ConfigProvider
+              theme={{
+                components: {
+                  Table: {
+                    headerBg: "#36B446",
+                    headerColor: "#fff",
+                    fontWeight: "bold",
+                  },
+                },
+              }}
+            >
+              <AntDynamicTable
+                columns={tableFields}
+                data={tableData}
+                values={values}
+                setFieldValue={setFieldValue}
+                handleChange={handleChange}
+                handleBlur={handleBlur}
+              />
+            </ConfigProvider>
           </Form>
         );
       }}

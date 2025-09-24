@@ -71,7 +71,7 @@ const CashFlowFamilyHome = (props) => {
           [`totalCostBase_${index}`]:
             data.totalCostBase || data.costBase || "$0",
           [`totalCostBaseObj_${index}`]: data.totalCostBaseObj || {},
-          [`loanBalance_${index}`]: data.loanBalance || data.loanAttached || "",
+          [`loanBalance_${index}`]: data.loanBalance || data.loanAttached || "", //
           [`familyHomeLoanObj_${index}`]:
             data.familyHomeLoanObj || data.HomeLoanModal || {},
           [`expectedGrowthRate_${index}`]: data.expectedGrowthRate || "2.50%",
@@ -92,8 +92,7 @@ const CashFlowFamilyHome = (props) => {
         familyHome &&
         familyHome._id
       ) {
-        // setFieldValue(`address_0`, PersonalData.client.clientHomeAddress || "");
-        // setFieldValue(`address_1`, PersonalData.client.clientHomeAddress || "");
+
         updateFields(familyHome, 0);
       } else {
         // Handle cashFlowData scenario
