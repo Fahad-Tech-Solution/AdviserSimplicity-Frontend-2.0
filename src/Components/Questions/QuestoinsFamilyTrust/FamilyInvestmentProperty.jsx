@@ -11,7 +11,7 @@ import { toCommaAndDollar } from '../../Assets/Api/Api';
 
 
 const FamilyInvestmentProperty = (props) => {
-    let { OpenModal, arrayCount, jointClass, PartnerClass, elem, index, OpenReuseModal } = props;
+    let { OpenModal, arrayCount, jointClass, PartnerClass, elem, index, OpenReuseModal,evenClass } = props;
 
     let questionDetail = useRecoilValue(QuestionDetail);
     let CRObject = useRecoilValue(CRState);
@@ -159,7 +159,7 @@ const FamilyInvestmentProperty = (props) => {
                 if (FamilyDetailsCard) {
                     return (
                         <React.Fragment key={Pindex}>
-                            <div className={`col-md-3 mb-4`}>
+                            <div className={`${evenClass ? "col-md-3" : "col-md-4"}  mb-4`}>
                                 <Card className="py-4 shadow borderOverAll GoalsobjectiveCard d-flex" style={{ borderRadius: "20px", height: "100%" }}>
                                     <h5 className='text-center' onClick={() => { console.log(questionDetail[FamilyElem.key]) }}>
                                         {FamilyDetailsSubmitted ? questionDetail.familyDetails.familyTrustOwner.trustName : FamilyElem.title}

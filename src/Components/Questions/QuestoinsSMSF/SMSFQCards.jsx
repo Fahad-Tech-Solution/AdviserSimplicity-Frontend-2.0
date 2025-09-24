@@ -25,7 +25,7 @@ import SampleOne from '../AdditionalQueriesPersonalAssets/SampleOne';
 
 
 const SMSFQCards = (props) => {
-    let { OpenModal, arrayCount, jointClass, PartnerClass, SmsFElem, index, OpenReuseModal } = props;
+    let { OpenModal, arrayCount, jointClass, PartnerClass, SmsFElem, index, OpenReuseModal,evenClass } = props;
 
     let questionDetail = useRecoilValue(QuestionDetail);
     let CRObject = useRecoilValue(CRState);
@@ -139,7 +139,7 @@ const SMSFQCards = (props) => {
                 if (SMSFDetailsCard) {
                     return (
                         <React.Fragment key={Pindex}>
-                            <div className={`col-md-3 mb-4`}>
+                            <div className={`${evenClass ? "col-md-3" : "col-md-4"}  mb-4`}>
                                 <Card className="py-4 shadow borderOverAll GoalsobjectiveCard d-flex" style={{ borderRadius: "20px", height: "100%" }}>
                                     <h5 className='text-center' onClick={() => { console.log(questionDetail[SmsFElem.key]) }}>
                                         {SMSFDetailsSubmitted ? questionDetail.SMSFDetails.SMSFOwner.fundName : SmsFElem.title}

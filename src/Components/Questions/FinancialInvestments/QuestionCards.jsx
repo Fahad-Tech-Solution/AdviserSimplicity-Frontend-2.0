@@ -120,6 +120,7 @@ import SMSFQCards from "../QuestoinsSMSF/SMSFQCards";
 
 import SmsfPensionAccountMiddleWare from "../QuestoinsSMSF/PensionAccount";
 import OtherInvestmentsDynamic from "../QuestoinsSMSF/OtherInvestmentsDynamic";
+import ButtonDrawer from "../../Assets/Dynamic/ButtonDrawer";
 
 const QuestionCards = (props) => {
   let [QuestionChange, setQuestionChange] = useRecoilState(QuestionShift);
@@ -522,7 +523,6 @@ const QuestionCards = (props) => {
   const combinedArray = [
     "familyInvestmentHomeLoan",
     "incomeFromOwnBusiness",
-    "incomeFromOwnBusiness",
     "incomeFromSoleTrader",
     "incomeFromPartnership",
     "incomeFromCentrelink",
@@ -679,6 +679,11 @@ const QuestionCards = (props) => {
   const ModalContent = (obj) => {
     return componentMapping[obj.title] || null;
   };
+  const [open, setOpen] = useState(false);
+
+  const PopoverContent = (obj) => {
+    // return componentMapping[obj.title] || null;
+  };
 
   const getInitialValuesRegularIncome = () => {
     let initialValues = {};
@@ -764,11 +769,17 @@ const QuestionCards = (props) => {
         {ModalContent(modalObject)}
       </ModalComponent>
 
-      <div className="row m-0 justify-content-start align-items-stretch">
+      <div className="row m-0 justify-content-center align-items-stretch">
         {Array.isArray(arrayObj?.[props.Question]) &&
           arrayObj?.[props.Question].map((elem, index) => {
             if (CRObject[elem.key] === "Yes") {
-              // const cardSwitch = CardForms.includes(elem.key) ? true : false;
+              const numberOfCards = arrayObj?.[props.Question].filter(
+                (e) => CRObject[e.key] === "Yes"
+              ).length;
+
+              const evenClass =
+                numberOfCards <= 4 || numberOfCards === 7 || numberOfCards >= 8;
+
               const jointClass = JointHidden.includes(elem.key) ? "d-none" : "";
               const singleSwitch = singleClient.includes(elem.key)
                 ? true
@@ -801,7 +812,10 @@ const QuestionCards = (props) => {
 
               if (singleSwitch) {
                 return (
-                  <div className={`col-md-3 mb-4`} key={index}>
+                  <div
+                    className={`${evenClass ? "col-md-3" : "col-md-4"}  mb-4`}
+                    key={index}
+                  >
                     <Card
                       className="py-4 shadow borderOverAll GoalsobjectiveCard"
                       style={{ borderRadius: "20px", height: "100%" }}
@@ -826,23 +840,32 @@ const QuestionCards = (props) => {
                             >
                               General Living
                             </label>
-
-                            <label
-                              className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                              onClick={() => {
-                                OpenModalClient2(
-                                  elem.title,
-                                  "client",
-                                  "General Living"
-                                );
-                              }}
+                            <ButtonDrawer
+                              title="General Living Expenses"
+                              placement="top"
+                              height={100}
+                              width={"60%"}
+                              DrawerContent={PopoverContent(elem)}
+                              setOpen={setOpen}
+                              open={open}
                             >
-                              <div>
-                                <FontAwesomeIcon
-                                  icon={faArrowUpRightFromSquare}
-                                />
-                              </div>
-                            </label>
+                              <label
+                                className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                                onClick={() => {
+                                  OpenModalClient2(
+                                    elem.title,
+                                    "client",
+                                    "General Living"
+                                  );
+                                }}
+                              >
+                                <div>
+                                  <FontAwesomeIcon
+                                    icon={faArrowUpRightFromSquare}
+                                  />
+                                </div>
+                              </label>
+                            </ButtonDrawer>
                           </div>
                         </div>
                       </div>
@@ -922,11 +945,15 @@ const QuestionCards = (props) => {
                     OpenModal={OpenModal2}
                     homeArray={homeArray}
                     arrayCount={arrayCount}
+                    evenClass={evenClass}
                   />
                 );
               } else if (reuseSwitch) {
                 return (
-                  <div className={`col-md-3 mb-4`} key={index}>
+                  <div
+                    className={`${evenClass ? "col-md-3" : "col-md-4"}  mb-4`}
+                    key={index}
+                  >
                     <Card
                       className="py-4 shadow borderOverAll GoalsobjectiveCard d-flex"
                       style={{ borderRadius: "20px", height: "100%" }}
@@ -1014,6 +1041,7 @@ const QuestionCards = (props) => {
               } else if (SMSFInP) {
                 return (
                   <SMSFQCards
+                    evenClass={evenClass}
                     PartnerClass={PartnerClass}
                     index={index}
                     jointClass={jointClass}
@@ -1027,6 +1055,7 @@ const QuestionCards = (props) => {
               } else if (OneIndex) {
                 return (
                   <FamilyInvestmentProperty
+                    evenClass={evenClass}
                     PartnerClass={PartnerClass}
                     index={index}
                     jointClass={jointClass}
@@ -1039,6 +1068,7 @@ const QuestionCards = (props) => {
               } else if (combinedSwitch) {
                 return (
                   <CombinedSwitch
+                    evenClass={evenClass}
                     PartnerClass={PartnerClass}
                     index={index}
                     jointClass={jointClass}
@@ -1051,6 +1081,7 @@ const QuestionCards = (props) => {
               } else if (TowInSwitch) {
                 return (
                   <TowInOneSwitch
+                    evenClass={evenClass}
                     PartnerClass={PartnerClass}
                     index={index}
                     jointClass={jointClass}
@@ -1063,6 +1094,7 @@ const QuestionCards = (props) => {
               } else if (SampleOneSwitch) {
                 return (
                   <SampleOne
+                    evenClass={evenClass}
                     PartnerClass={PartnerClass}
                     index={index}
                     jointClass={jointClass}
@@ -1077,7 +1109,10 @@ const QuestionCards = (props) => {
                 // ya hos sukta hai bad ma chnage karna para
 
                 return (
-                  <div className={`col-md-3 mb-4`} key={index}>
+                  <div
+                    className={`${evenClass ? "col-md-3" : "col-md-4"} mb-4`}
+                    key={index}
+                  >
                     <Card
                       className="py-4 shadow borderOverAll GoalsobjectiveCard"
                       style={{ borderRadius: "20px", height: "100%" }}

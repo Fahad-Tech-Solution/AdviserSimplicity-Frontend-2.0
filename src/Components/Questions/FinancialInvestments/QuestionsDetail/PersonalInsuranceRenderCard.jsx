@@ -11,7 +11,7 @@ import lifeImg from "../../svgs/lifeimg.svg";
 import TPDImg from "../../svgs/tpdimg.svg";
 
 const PersonalInsuranceRenderCard = (props) => {
-    let { OpenModal, arrayCount, jointClass, PartnerClass, elem, index } = props;
+    let { OpenModal, arrayCount, jointClass, PartnerClass, elem, index, evenClass } = props;
 
     let questionDetail = useRecoilValue(QuestionDetail);
     let CRObject = useRecoilValue(CRState);
@@ -105,7 +105,7 @@ const PersonalInsuranceRenderCard = (props) => {
                 return (
                     <React.Fragment key={Pindex}>
                         {coverTypes[PersonalElem.key] && (
-                            <div className={`col-md-3 mb-4`}>
+                            <div className={`${evenClass ? "col-md-3" : "col-md-4"}  mb-4`}>
                                 <Card className="py-4 shadow borderOverAll GoalsobjectiveCard" style={{ borderRadius: "20px", height: "100%" }}>
                                     <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{PersonalElem.title}
                                     </h5>
