@@ -4,6 +4,7 @@ import React from "react";
 import { Card } from "react-bootstrap";
 import { CRState, QuestionDetail } from "../../../Store/Store";
 import { useRecoilValue } from "recoil";
+import ButtonDrawer from "../../Assets/Dynamic/ButtonDrawer";
 
 const SampleOne = (props) => {
   let {
@@ -14,6 +15,9 @@ const SampleOne = (props) => {
     elem,
     index,
     evenClass,
+    open,
+    setOpen,
+    PopoverContent,
   } = props;
 
   let questionDetail = useRecoilValue(QuestionDetail);
@@ -93,21 +97,39 @@ const SampleOne = (props) => {
                       {setsElem.title}
                     </label>
                     {setsIndex == 0 && (
-                      <label
-                        className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                        onClick={() => {
-                          let Firstargument =
-                            setsElem.defaultSetting === "2innerValues"
-                              ? elem.title
-                              : setsElem.title;
-
-                          OpenModal(Firstargument, "client", setsElem.key);
-                        }}
+                      <ButtonDrawer
+                        title={setsElem.title}
+                        placement="top"
+                        height={300}
+                        width={"70%"}
+                        DrawerContent={PopoverContent(
+                          setsElem.defaultSetting === "2innerValues"
+                            ? elem.title
+                            : setsElem.title,
+                          "client",
+                          setsElem.key
+                        )}
+                        setOpen={setOpen}
+                        open={open}
                       >
-                        <div>
-                          <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                        </div>
-                      </label>
+                        <label
+                          className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                          onClick={() => {
+                            let Firstargument =
+                              setsElem.defaultSetting === "2innerValues"
+                                ? elem.title
+                                : setsElem.title;
+
+                            OpenModal(Firstargument, "client", setsElem.key);
+                          }}
+                          onMouseEnter={() => setOpen(true)}
+                          onMouseLeave={() => setOpen(false)}
+                        >
+                          <div>
+                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                          </div>
+                        </label>
+                      </ButtonDrawer>
                     )}
                   </div>
                 </div>

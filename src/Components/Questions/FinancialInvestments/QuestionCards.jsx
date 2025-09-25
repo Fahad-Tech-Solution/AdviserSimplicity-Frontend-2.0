@@ -409,8 +409,6 @@ const QuestionCards = (props) => {
   };
 
   useEffect(() => {
-    console.log(props.Question, arrayObj[props.Question]);
-
     countYesAttributes();
   }, [CRObject]);
 
@@ -681,8 +679,26 @@ const QuestionCards = (props) => {
   };
   const [open, setOpen] = useState(false);
 
-  const PopoverContent = (obj) => {
-    // return componentMapping[obj.title] || null;
+  const PopoverContent = (title, key, title2) => {
+    let modalObject = {
+      title,
+      key,
+      title2,
+    };
+    console.log(title);
+
+    return (
+      <div
+        style={{
+          height: "80px",
+          margin: "-20px 0px 0px 0px",
+        }}
+      >
+        {React.cloneElement(ModalContent(modalObject), {
+          modalObject,
+        })}
+      </div>
+    );
   };
 
   const getInitialValuesRegularIncome = () => {
@@ -792,21 +808,21 @@ const QuestionCards = (props) => {
               const SampleOneSwitch = sampleOne.includes(elem.key)
                 ? true
                 : false;
+
               const PersonalInsuranceRender = conditionalRender.includes(
                 elem.key
               )
                 ? true
                 : false;
-              // console.log(PersonalInsuranceRender)
+
               const SMSFInP = elem.key === "SMSFDetails" ? true : false;
+
               const OneIndex =
                 elem.key === "familyDetails" ||
                 elem.key === "familyOtherInvestment"
                   ? true
                   : false;
 
-              // const SMSFInP = elem.key === "SMSFInvestmentProperties" ? true : false;
-              // const FamilyInP = elem.key === "familyInvestmentProperties" ? true : false;
               const PartnerClass =
                 localStorage.getItem("UserStatus") === "Single" ? "d-none" : "";
 
@@ -843,9 +859,13 @@ const QuestionCards = (props) => {
                             <ButtonDrawer
                               title="General Living Expenses"
                               placement="top"
-                              height={100}
+                              height={300}
                               width={"60%"}
-                              DrawerContent={PopoverContent(elem)}
+                              DrawerContent={PopoverContent(
+                                elem.title,
+                                "client",
+                                "General Living"
+                              )}
                               setOpen={setOpen}
                               open={open}
                             >
@@ -858,6 +878,8 @@ const QuestionCards = (props) => {
                                     "General Living"
                                   );
                                 }}
+                                onMouseEnter={() => setOpen(true)}
+                                onMouseLeave={() => setOpen(false)}
                               >
                                 <div>
                                   <FontAwesomeIcon
@@ -946,6 +968,9 @@ const QuestionCards = (props) => {
                     homeArray={homeArray}
                     arrayCount={arrayCount}
                     evenClass={evenClass}
+                    open={open}
+                    setOpen={setOpen}
+                    PopoverContent={PopoverContent}
                   />
                 );
               } else if (reuseSwitch) {
@@ -979,19 +1004,38 @@ const QuestionCards = (props) => {
                             >
                               {localStorage.getItem("UserName") || "You"}
                             </label>
-
-                            <label
-                              className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                              onClick={() => {
-                                OpenReuseModal(elem.title, "client", elem.key);
-                              }}
+                            <ButtonDrawer
+                              title={elem.title}
+                              placement="top"
+                              height={270}
+                              width={"60%"}
+                              DrawerContent={PopoverContent(
+                                elem.title,
+                                "client",
+                                elem.key
+                              )}
+                              setOpen={setOpen}
+                              open={open}
                             >
-                              <div>
-                                <FontAwesomeIcon
-                                  icon={faArrowUpRightFromSquare}
-                                />
-                              </div>
-                            </label>
+                              <label
+                                className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                                onClick={() => {
+                                  OpenReuseModal(
+                                    elem.title,
+                                    "client",
+                                    elem.key
+                                  );
+                                }}
+                                onMouseEnter={() => setOpen(true)}
+                                onMouseLeave={() => setOpen(false)}
+                              >
+                                <div>
+                                  <FontAwesomeIcon
+                                    icon={faArrowUpRightFromSquare}
+                                  />
+                                </div>
+                              </label>
+                            </ButtonDrawer>
                           </div>
                         </div>
                       </div>
@@ -1050,6 +1094,9 @@ const QuestionCards = (props) => {
                     OpenReuseModal={OpenReuseModal}
                     homeArray={homeArray}
                     arrayCount={arrayCount}
+                    open={open}
+                    setOpen={setOpen}
+                    PopoverContent={PopoverContent}
                   />
                 );
               } else if (OneIndex) {
@@ -1105,9 +1152,6 @@ const QuestionCards = (props) => {
                   />
                 );
               } else {
-                // <div className={`col-md-${arrayCount % 2 == 0 ? '6' : '4'} mb-4`} key={index}>
-                // ya hos sukta hai bad ma chnage karna para
-
                 return (
                   <div
                     className={`${evenClass ? "col-md-3" : "col-md-4"} mb-4`}

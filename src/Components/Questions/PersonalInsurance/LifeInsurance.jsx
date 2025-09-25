@@ -1,8 +1,19 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { BankDetail, defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { openNotificationSuccess, PatchAxios, PostAxios, RenderName, toCommaAndDollar } from "../../Assets/Api/Api";
+import {
+  BankDetail,
+  CRState,
+  defaultUrl,
+  QuestionDetail,
+} from "../../../Store/Store";
+import {
+  openNotificationSuccess,
+  PatchAxios,
+  PostAxios,
+  RenderName,
+  toCommaAndDollar,
+} from "../../Assets/Api/Api";
 import { Button, InputGroup, Modal, Table } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,14 +24,14 @@ import PremiumsDetails from "./PremiumsDetails";
 import Beneficiaries from "../FinancialInvestments/QuestionsDetail/Beneficiaries";
 import NewLoadingExclusion from "./NewLoadingExclusion";
 
-
 const PersonalInsuranceLife = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
   let DefaultUrl = useRecoilValue(defaultUrl);
   let bankDetailObj = useRecoilValue(BankDetail);
+  let [CRObject, setCRObject] = useRecoilState(CRState);
 
-  let [UserStatus] = useState(localStorage.getItem('UserStatus'));
+  let [UserStatus] = useState(localStorage.getItem("UserStatus"));
 
   let [flagState, setFlagState] = useState(false);
   let [showModal, setShowModal] = useState(false);
@@ -31,13 +42,14 @@ const PersonalInsuranceLife = (props) => {
     values: "",
   });
 
-
-  let personalInsurance = Object.keys(questionDetail.personalInsurance).length > 0 ? questionDetail.personalInsurance : {
-    client: [],
-    partner: [],
-    joint: [],
-
-  }; // Use an empty object as default if life is undefined
+  let personalInsurance =
+    Object.keys(questionDetail.personalInsurance || {}).length > 0
+      ? questionDetail.personalInsurance
+      : {
+          client: [],
+          partner: [],
+          joint: [],
+        }; // Use an empty object as default if life is undefined
 
   const fillInitialValues = (setFieldValue) => {
     // console.log(personalInsurance);
@@ -45,14 +57,14 @@ const PersonalInsuranceLife = (props) => {
     let Data = personalInsurance;
 
     if (Data?.PersonalInsurance) {
-
       if (personalInsurance.numberOfPersonalInsurance > 0) {
-
-        setFieldValue("NumberOfMap", personalInsurance.numberOfPersonalInsurance);
+        setFieldValue(
+          "NumberOfMap",
+          personalInsurance.numberOfPersonalInsurance
+        );
       } else {
         setFieldValue("NumberOfMap", "");
       }
-
 
       personalInsurance.PersonalInsurance.forEach((entry, index) => {
         // alert(entry.lifeInsured);
@@ -66,10 +78,13 @@ const PersonalInsuranceLife = (props) => {
         setFieldValue("premiums" + index, entry.premiums);
         setFieldValue("premiumsDetails" + index, entry.premiumsDetails);
         setFieldValue("loadingExclusion" + index, entry.loadingExclusion);
-        setFieldValue("loadingExclusionValue" + index, entry.loadingExclusionValue);
+        setFieldValue(
+          "loadingExclusionValue" + index,
+          entry.loadingExclusionValue
+        );
         setFieldValue("beneficiary" + index, entry.beneficiary);
         setFieldValue("beneficiariesArray" + index, entry.beneficiariesArray);
-      })
+      });
     }
   };
 
@@ -77,13 +92,12 @@ const PersonalInsuranceLife = (props) => {
     NumberOfMap: "",
   };
 
-
   let onSubmit = async (values) => {
     // console.log(JSON.stringify(values), "Console Values");
 
     let newEntries = [];
 
-    let loopLength = parseFloat(values.NumberOfMap)
+    let loopLength = parseFloat(values.NumberOfMap);
 
     // alert(loopLength)
 
@@ -110,23 +124,20 @@ const PersonalInsuranceLife = (props) => {
       // console.log(newEntries, "before Push");
       newEntries.push(newEntry);
       // console.log(newEntries, "after Push");
-
     }
 
     // console.log(newEntries, "Console newEntries");
-
 
     let Obj = {};
     Obj.PersonalInsurance = newEntries;
     Obj.numberOfPersonalInsurance = newEntries.length;
     Obj.clientFK = localStorage.getItem("UserID");
 
-
     let clientArray = [];
     let partnerArray = [];
     let bothArray = [];
 
-    newEntries.forEach(entry => {
+    newEntries.forEach((entry) => {
       if (entry.lifeInsured === "client") {
         clientArray.push(entry);
       }
@@ -143,132 +154,157 @@ const PersonalInsuranceLife = (props) => {
     // console.log("both Array:", bothArray);
 
     let obj = {
-      "clientLifeInsuranceTotal": 0,
-      "clientTPDTotal": 0,
-      "clientTraumaTotal": 0,
-      "clientIncomeProtectionTotal": 0,
+      clientLifeInsuranceTotal: 0,
+      clientTPDTotal: 0,
+      clientTraumaTotal: 0,
+      clientIncomeProtectionTotal: 0,
 
-      "partnerLifeInsuranceTotal": 0,
-      "partnerTPDTotal": 0,
-      "partnerTraumaTotal": 0,
-      "partnerIncomeProtectionTotal": 0
+      partnerLifeInsuranceTotal: 0,
+      partnerTPDTotal: 0,
+      partnerTraumaTotal: 0,
+      partnerIncomeProtectionTotal: 0,
     };
 
-    clientArray.forEach(entry => {
+    clientArray.forEach((entry) => {
       // console.log(entry.sumInsured.coverType, entry.premiums);
 
       let premiumValue = parseFloat(entry.premiums.replace(/[^0-9.-]+/g, ""));
 
       let sumInsuredArray = entry.sumInsured || [];
-      sumInsuredArray.forEach(SumData => {
-
+      sumInsuredArray.forEach((SumData) => {
         if (SumData.coverType === "Life") {
           obj.clientLifeInsuranceTotal += premiumValue;
-        }
-        else if (SumData.coverType === "TPD") {
+        } else if (SumData.coverType === "TPD") {
           obj.clientTPDTotal += premiumValue;
-        }
-        else if (SumData.coverType === "Trauma") {
+        } else if (SumData.coverType === "Trauma") {
           obj.clientTraumaTotal += premiumValue;
-        }
-        else if (SumData.coverType === "Income protection") {
+        } else if (SumData.coverType === "Income protection") {
           obj.clientIncomeProtectionTotal += premiumValue;
         }
-
-      })
-
+      });
     });
 
-    partnerArray.forEach(entry => {
+    partnerArray.forEach((entry) => {
       // console.log(entry.sumInsured.coverType, entry.premiums);
 
       let premiumValue = parseFloat(entry.premiums.replace(/[^0-9.-]+/g, ""));
 
       let sumInsuredArray = entry.sumInsured || [];
-      sumInsuredArray.forEach(SumData => {
-
+      sumInsuredArray.forEach((SumData) => {
         if (SumData.coverType === "Life") {
           obj.partnerLifeInsuranceTotal += premiumValue;
-        }
-        else if (SumData.coverType === "TPD") {
+        } else if (SumData.coverType === "TPD") {
           obj.partnerTPDTotal += premiumValue;
-        }
-        else if (SumData.coverType === "Trauma") {
+        } else if (SumData.coverType === "Trauma") {
           obj.partnerTraumaTotal += premiumValue;
-        }
-        else if (SumData.coverType === "Income protection") {
+        } else if (SumData.coverType === "Income protection") {
           obj.partnerIncomeProtectionTotal += premiumValue;
         }
-
-      })
-
+      });
     });
 
-    bothArray.forEach(entry => {
+    bothArray.forEach((entry) => {
       // console.log(entry.sumInsured.coverType, entry.premiums);
 
-      let premiumValue = (parseFloat(entry.premiums.replace(/[^0-9.-]+/g, "")) / 2);
+      let premiumValue =
+        parseFloat(entry.premiums.replace(/[^0-9.-]+/g, "")) / 2;
 
       let sumInsuredArray = entry.sumInsured || [];
-      sumInsuredArray.forEach(SumData => {
-
+      sumInsuredArray.forEach((SumData) => {
         if (SumData.coverType === "Life") {
           obj.clientLifeInsuranceTotal += premiumValue;
           obj.partnerLifeInsuranceTotal += premiumValue;
-        }
-        else if (SumData.coverType === "TPD") {
+        } else if (SumData.coverType === "TPD") {
           obj.clientTPDTotal += premiumValue;
           obj.partnerTPDTotal += premiumValue;
-        }
-        else if (SumData.coverType === "Trauma") {
+        } else if (SumData.coverType === "Trauma") {
           obj.clientTraumaTotal += premiumValue;
           obj.partnerTraumaTotal += premiumValue;
-        }
-        else if (SumData.coverType === "Income protection") {
+        } else if (SumData.coverType === "Income protection") {
           obj.clientIncomeProtectionTotal += premiumValue;
           obj.partnerIncomeProtectionTotal += premiumValue;
         }
-      })
+      });
     });
 
     // console.log(obj, "Submit ka console Form k ");
 
-    Obj.clientLifeInsuranceTotal = toCommaAndDollar(obj.clientLifeInsuranceTotal);
+    Obj.clientLifeInsuranceTotal = toCommaAndDollar(
+      obj.clientLifeInsuranceTotal
+    );
     Obj.clientTPDTotal = toCommaAndDollar(obj.clientTPDTotal);
     Obj.clientTraumaTotal = toCommaAndDollar(obj.clientTraumaTotal);
-    Obj.clientIncomeProtectionTotal = toCommaAndDollar(obj.clientIncomeProtectionTotal);
+    Obj.clientIncomeProtectionTotal = toCommaAndDollar(
+      obj.clientIncomeProtectionTotal
+    );
 
-    Obj.partnerLifeInsuranceTotal = toCommaAndDollar(obj.partnerLifeInsuranceTotal);
+    Obj.partnerLifeInsuranceTotal = toCommaAndDollar(
+      obj.partnerLifeInsuranceTotal
+    );
     Obj.partnerTPDTotal = toCommaAndDollar(obj.partnerTPDTotal);
     Obj.partnerTraumaTotal = toCommaAndDollar(obj.partnerTraumaTotal);
-    Obj.partnerIncomeProtectionTotal = toCommaAndDollar(obj.partnerIncomeProtectionTotal);
+    Obj.partnerIncomeProtectionTotal = toCommaAndDollar(
+      obj.partnerIncomeProtectionTotal
+    );
 
-    const bankAccountArray = personalInsurance.clientFK || "";  // No need to default to empty string
-    console.log(JSON.stringify(Obj), bankAccountArray);
+    const bankAccountArray = personalInsurance.clientFK || ""; // No need to default to empty string
+    // console.log(JSON.stringify(Obj), bankAccountArray);
 
     try {
       let res;
-      if (bankAccountArray == "") {  // Check if it's truthy and not an empty string
+      if (bankAccountArray == "") {
+        // Check if it's truthy and not an empty string
         res = await PostAxios(`${DefaultUrl}/api/personalInsurance/Add`, Obj);
       } else {
-        res = await PatchAxios(`${DefaultUrl}/api/personalInsurance/Update`, Obj);
+        res = await PatchAxios(
+          `${DefaultUrl}/api/personalInsurance/Update`,
+          Obj
+        );
       }
 
       if (res) {
         console.log(res);
         const updatedData = { ...questionDetail, personalInsurance: res };
         setQuestionDetail(updatedData);
+
+        updateQuestions();
       }
 
-      openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
+      openNotificationSuccess(
+        "success",
+        "topRight",
+        "Success Notification",
+        'Data of "' + props.modalObject.title + '" is Saved'
+      );
       // Reset the flag state if necessary
       if (props.flagState) {
         props.setFlagState(false);
       }
-
     } catch (error) {
       console.error("Error occurred while making API call:", error);
-      openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        'Data of "' +
+          props.modalObject.title +
+          '" is not Saved Please! try again'
+      );
+    }
+  };
+
+  let updateQuestions = async () => {
+    let values = { ...CRObject, life: "Yes" };
+
+    try {
+      const PatchRes = await PatchAxios(
+        `${DefaultUrl}/api/questions/Update/${localStorage.getItem("UserID")}`,
+        values
+      );
+      console.log(PatchRes, "PatchRes");
+      setCRObject(PatchRes);
+    } catch (error) {
+      console.error("Error submitting form:", error);
     }
   };
 
@@ -276,7 +312,6 @@ const PersonalInsuranceLife = (props) => {
     const value = e.target.value > 10 ? 10 : e.target.value;
     setFieldValue(e.target.id, value);
   };
-
 
   let handleInnerModal = (title, question, key, values, editArray, index) => {
     // alert("asdasd");
@@ -286,19 +321,16 @@ const PersonalInsuranceLife = (props) => {
       key,
       values,
       editArray: editArray || [],
-      index
+      index,
     });
     setFlagState(true);
-  }
-
-  const componentMapping = {
-
-    "sumInsured": <NewLoadingExclusion />,
-    "premiumsDetails": <PremiumsDetails />,
-    "beneficiariesArray": <Beneficiaries />
-
   };
 
+  const componentMapping = {
+    sumInsured: <NewLoadingExclusion />,
+    premiumsDetails: <PremiumsDetails />,
+    beneficiariesArray: <Beneficiaries />,
+  };
 
   const ModalContent = (obj) => {
     let maKeaBtao = obj.key;
@@ -320,18 +352,23 @@ const PersonalInsuranceLife = (props) => {
           }, []);
           return (
             <Form>
-
-              <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} >
+              <InnerModal
+                modalObject={modalObject}
+                setFieldValue={setFieldValue}
+                setFlagState={setFlagState}
+                flagState={flagState}
+              >
                 {ModalContent(modalObject)}
               </InnerModal>
 
-
-              <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
-                <label htmlFor='' className=''>
-                  How many {props.modalObject.title} does {RenderName("client")} {UserStatus === "Married" && `and ${RenderName("partner")}`}  have :
+              <div className="d-flex flex-row justify-content-center align-items-center gap-2">
+                <label htmlFor="" className="">
+                  How many {props.modalObject.title} does {RenderName("client")}{" "}
+                  {UserStatus === "Married" && `and ${RenderName("partner")}`}{" "}
+                  have :
                 </label>
 
-                <div style={{ width: "10%" }} >
+                <div style={{ width: "10%" }}>
                   <Field
                     type="number"
                     id="NumberOfMap"
@@ -367,201 +404,331 @@ const PersonalInsuranceLife = (props) => {
                         </tr>
                       </thead>
                       <tbody>
-                        {Array.from({ length: values.NumberOfMap }).map((_, i) => {
-                          return (
-                            <tr key={i}>
-                              <td>{1 + i}</td>
-                              <td>
-                                <Field
-                                  as="select"
-                                  placeholder="Life insured"
-                                  id={`lifeInsured${i}`}
-                                  name={`lifeInsured${i}`}
-                                  className="form-select inputDesignDoubleInput"
-                                  onChange={(e) => {
-                                    setFieldValue(e.target.name, e.target.value);
-                                    // alert(e.target.value)
-                                  }}
-                                >
-                                  <option value={""}>Select</option>
-                                  <option value={"client"}>{RenderName("client")}</option>
-                                  {UserStatus !== "Single" &&
-                                    <React.Fragment>
-                                      <option value={"partner"}>{RenderName("partner")}</option>
-                                      {/*
+                        {Array.from({ length: values.NumberOfMap }).map(
+                          (_, i) => {
+                            return (
+                              <tr key={i}>
+                                <td>{1 + i}</td>
+                                <td>
+                                  <Field
+                                    as="select"
+                                    placeholder="Life insured"
+                                    id={`lifeInsured${i}`}
+                                    name={`lifeInsured${i}`}
+                                    className="form-select inputDesignDoubleInput"
+                                    onChange={(e) => {
+                                      setFieldValue(
+                                        e.target.name,
+                                        e.target.value
+                                      );
+                                      // alert(e.target.value)
+                                    }}
+                                  >
+                                    <option value={""}>Select</option>
+                                    <option value={"client"}>
+                                      {RenderName("client")}
+                                    </option>
+                                    {UserStatus !== "Single" && (
+                                      <React.Fragment>
+                                        <option value={"partner"}>
+                                          {RenderName("partner")}
+                                        </option>
+                                        {/*
                                           <option value={"joint"}> {"Joint (" + RenderName("joint") + ")"} </option>
                                           <option value={"client+partner+joint"}>{RenderName("client") + " , " + RenderName("partner") + " and Joint"} </option>
                                           */}
-                                      <option value={"client+partner"}>{"Both (" + RenderName("client") + " , " + RenderName("partner") + ")"} </option>
-                                    </React.Fragment>
-                                  }
-                                </Field>
-                              </td>
-                              <td>
-                                <Field
-                                  as="select"
-                                  placeholder="Life insured"
-                                  id={`provider${i}`}
-                                  name={`provider${i}`}
-                                  className="form-select inputDesignDoubleInput"
-                                >
-                                  <option value={""}>Select</option>
-                                  {
-                                    bankDetailObj?.PersonalInsurances && bankDetailObj.PersonalInsurances.length > 0 ? (
-                                      bankDetailObj.PersonalInsurances.map((elem, index) => (
-                                        <option key={index} value={elem._id}>
-                                          {elem.platformName}
+                                        <option value={"client+partner"}>
+                                          {"Both (" +
+                                            RenderName("client") +
+                                            " , " +
+                                            RenderName("partner") +
+                                            ")"}{" "}
                                         </option>
-                                      ))
+                                      </React.Fragment>
+                                    )}
+                                  </Field>
+                                </td>
+                                <td>
+                                  <Field
+                                    as="select"
+                                    placeholder="Life insured"
+                                    id={`provider${i}`}
+                                    name={`provider${i}`}
+                                    className="form-select inputDesignDoubleInput"
+                                  >
+                                    <option value={""}>Select</option>
+                                    {bankDetailObj?.PersonalInsurances &&
+                                    bankDetailObj.PersonalInsurances.length >
+                                      0 ? (
+                                      bankDetailObj.PersonalInsurances.map(
+                                        (elem, index) => (
+                                          <option key={index} value={elem._id}>
+                                            {elem.platformName}
+                                          </option>
+                                        )
+                                      )
                                     ) : (
-                                      <option disabled>No Platforms Added in Personal Insurances</option>
-                                    )
-                                  }
-                                </Field>
-                              </td>
-                              <td>
-                                <Field
-                                  type="number"
-                                  placeholder="Policy No"
-                                  id={`policyNo${i}`}
-                                  name={`policyNo${i}`}
-                                  className="form-control inputDesignDoubleInput"
-                                />
-                              </td>
-                              <td>
-                                <Field
-                                  as="select"
-                                  id={`owner${i}`}
-                                  name={`owner${i}`}
-                                  className="form-select inputDesignDoubleInput"
-                                >
-                                  <option value={""}>Select</option>
-                                  <option value={"client"}>{RenderName("client")}</option>
-                                  {UserStatus !== "Single" &&
-                                    <React.Fragment>
-                                      <option value={"partner"}>{RenderName("partner")}</option>
-                                    </React.Fragment>
-                                  }
-                                  <option value={"SMSF"}>SMSF</option>
-                                  <option value={"Super Trustees"}>Super Trustees </option>
-                                  <option value={"Company (Pty Ltd)"}>Company (Pty Ltd)</option>
-                                  <option value={"Family Trust"}>Family Trust</option>
-                                </Field>
-                              </td>
-                              <td>
-                                <div style={{ minWidth: "100px" }}>
-                                  <DatePicker
-                                    className="form-control inputDesignDoubleInput shadow DateInputPadding"
-                                    showIcon
-                                    id={`startDate${i}`}
-                                    name={`startDate${i}`}
-                                    selected={values[`startDate${i}`]}
-                                    onChange={(date) => setFieldValue(`startDate${i}`, date)}
-                                    dateFormat="dd/MM/yyyy"
-                                    placeholderText="dd/mm/yyyy"
-                                    maxDate={new Date()}
-                                    showMonthDropdown
-                                    showYearDropdown
-                                    dropdownMode="select"
-                                    onBlur={handleBlur}
-                                    wrapperClassName="w-100"
+                                      <option disabled>
+                                        No Platforms Added in Personal
+                                        Insurances
+                                      </option>
+                                    )}
+                                  </Field>
+                                </td>
+                                <td>
+                                  <Field
+                                    type="number"
+                                    placeholder="Policy No"
+                                    id={`policyNo${i}`}
+                                    name={`policyNo${i}`}
+                                    className="form-control inputDesignDoubleInput"
                                   />
-                                </div>
-                              </td>
+                                </td>
+                                <td>
+                                  <Field
+                                    as="select"
+                                    id={`owner${i}`}
+                                    name={`owner${i}`}
+                                    className="form-select inputDesignDoubleInput"
+                                  >
+                                    <option value={""}>Select</option>
+                                    <option value={"client"}>
+                                      {RenderName("client")}
+                                    </option>
+                                    {UserStatus !== "Single" && (
+                                      <React.Fragment>
+                                        <option value={"partner"}>
+                                          {RenderName("partner")}
+                                        </option>
+                                      </React.Fragment>
+                                    )}
+                                    <option value={"SMSF"}>SMSF</option>
+                                    <option value={"Super Trustees"}>
+                                      Super Trustees{" "}
+                                    </option>
+                                    <option value={"Company (Pty Ltd)"}>
+                                      Company (Pty Ltd)
+                                    </option>
+                                    <option value={"Family Trust"}>
+                                      Family Trust
+                                    </option>
+                                  </Field>
+                                </td>
+                                <td>
+                                  <div style={{ minWidth: "100px" }}>
+                                    <DatePicker
+                                      className="form-control inputDesignDoubleInput shadow DateInputPadding"
+                                      showIcon
+                                      id={`startDate${i}`}
+                                      name={`startDate${i}`}
+                                      selected={values[`startDate${i}`]}
+                                      onChange={(date) =>
+                                        setFieldValue(`startDate${i}`, date)
+                                      }
+                                      dateFormat="dd/MM/yyyy"
+                                      placeholderText="dd/mm/yyyy"
+                                      maxDate={new Date()}
+                                      showMonthDropdown
+                                      showYearDropdown
+                                      dropdownMode="select"
+                                      onBlur={handleBlur}
+                                      wrapperClassName="w-100"
+                                    />
+                                  </div>
+                                </td>
 
-                              <td>
-                                <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
+                                <td>
+                                  <div className="d-flex flex-column justify-content-center align-items-center gap-2">
+                                    <InputGroup>
+                                      <Field
+                                        type="text"
+                                        placeholder="Sum Insured "
+                                        id={`sumInsuredSum${i}`}
+                                        name={`sumInsuredSum${i}`}
+                                        className="form-control inputDesignDoubleInput"
+                                        onChange={(e) => {
+                                          setFieldValue(
+                                            e.target.name,
+                                            toCommaAndDollar(
+                                              e.target.value.replace(
+                                                /[^0-9.-]+/g,
+                                                ""
+                                              )
+                                            )
+                                          );
+                                        }}
+                                      />
+                                      <Button
+                                        className="btn bgColor modalBtn border-0"
+                                        id="button-addon2"
+                                        onClick={() => {
+                                          let name =
+                                            values[`lifeInsured${i}`] ===
+                                              undefined ||
+                                            values[`lifeInsured${i}`] ===
+                                              null ||
+                                            values[`lifeInsured${i}`] === null
+                                              ? RenderName("client")
+                                              : values[`lifeInsured${i}`] ===
+                                                "client+partner"
+                                              ? RenderName("client") +
+                                                " & " +
+                                                RenderName("partner")
+                                              : RenderName(
+                                                  values[`lifeInsured${i}`]
+                                                );
 
+                                          handleInnerModal(
+                                            name + "_Sum Insured",
+                                            `How many Policies do ${name} have :`,
+                                            `sumInsured`,
+                                            values,
+                                            values[`sumInsured${i}`],
+                                            i
+                                          );
+                                        }}
+                                      >
+                                        <FontAwesomeIcon
+                                          icon={faArrowUpRightFromSquare}
+                                        />
+                                      </Button>
+                                    </InputGroup>
+                                  </div>
+                                </td>
+                                <td>
                                   <InputGroup>
                                     <Field
                                       type="text"
-                                      placeholder="Sum Insured "
-                                      id={`sumInsuredSum${i}`}
-                                      name={`sumInsuredSum${i}`}
+                                      placeholder="Premiums p.a"
+                                      id={`premiums${i}`}
+                                      name={`premiums${i}`}
                                       className="form-control inputDesignDoubleInput"
                                       onChange={(e) => {
-                                        setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")))
+                                        setFieldValue(
+                                          e.target.name,
+                                          toCommaAndDollar(
+                                            e.target.value.replace(
+                                              /[^0-9.-]+/g,
+                                              ""
+                                            )
+                                          )
+                                        );
                                       }}
                                     />
-                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2"
+                                    <Button
+                                      className="btn bgColor modalBtn border-0"
+                                      id="button-addon2"
                                       onClick={() => {
-                                        let name = ((values[`lifeInsured${i}`] === undefined) || (values[`lifeInsured${i}`] === null) || (values[`lifeInsured${i}`] === null)) ? RenderName("client")
-                                          : values[`lifeInsured${i}`] === "client+partner" ? RenderName("client") + " & " + RenderName("partner") : RenderName(values[`lifeInsured${i}`])
+                                        let name =
+                                          values[`lifeInsured${i}`] ===
+                                            undefined ||
+                                          values[`lifeInsured${i}`] === null ||
+                                          values[`lifeInsured${i}`] === null
+                                            ? RenderName("client")
+                                            : values[`lifeInsured${i}`] ===
+                                              "client+partner"
+                                            ? RenderName("client") +
+                                              " & " +
+                                              RenderName("partner")
+                                            : RenderName(
+                                                values[`lifeInsured${i}`]
+                                              );
 
-                                        handleInnerModal(name + "_Sum Insured", `How many Policies do ${name} have :`, `sumInsured`, values, values[`sumInsured${i}`], i)
-                                      }}>
-                                      <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                        handleInnerModal(
+                                          name + "_Premiums p.a",
+                                          ``,
+                                          `premiumsDetails`,
+                                          values,
+                                          values[`premiumsDetails${i}`],
+                                          i
+                                        );
+                                      }}
+                                    >
+                                      <FontAwesomeIcon
+                                        icon={faArrowUpRightFromSquare}
+                                      />
                                     </Button>
                                   </InputGroup>
-                                </div>
-                              </td>
-                              <td>
-                                <InputGroup>
-                                  <Field
-                                    type="text"
-                                    placeholder="Premiums p.a"
-                                    id={`premiums${i}`}
-                                    name={`premiums${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                    onChange={(e) => {
-                                      setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")))
-                                    }}
-                                  />
-                                  <Button className='btn bgColor modalBtn border-0' id="button-addon2"
-                                    onClick={() => {
-                                      let name = ((values[`lifeInsured${i}`] === undefined) || (values[`lifeInsured${i}`] === null) || (values[`lifeInsured${i}`] === null)) ? RenderName("client")
-                                        : values[`lifeInsured${i}`] === "client+partner" ? RenderName("client") + " & " + RenderName("partner") : RenderName(values[`lifeInsured${i}`])
+                                </td>
+                                <td>
+                                  <div className="d-flex flex-column justify-content-center align-items-center gap-2">
+                                    <DynamicYesNo
+                                      name={`loadingExclusion${i}`}
+                                      values={values}
+                                      handleChange={handleChange}
+                                    />
+                                    {values[`loadingExclusion${i}`] ===
+                                      "Yes" && (
+                                      <div className="w-100 ">
+                                        <Field
+                                          type="text"
+                                          placeholder="Loading / Exclusion"
+                                          id={`loadingExclusionValue${i}`}
+                                          name={`loadingExclusionValue${i}`}
+                                          className="form-control inputDesignDoubleInput"
+                                        />
+                                      </div>
+                                    )}
+                                  </div>
+                                </td>
+                                <td>
+                                  {" "}
+                                  <div className="d-flex flex-column justify-content-center align-items-center gap-2">
+                                    <DynamicYesNo
+                                      name={`beneficiary${i}`}
+                                      values={values}
+                                      handleChange={handleChange}
+                                    />
+                                    {values[`beneficiary${i}`] === "Yes" && (
+                                      <Button
+                                        className="btn bgColor modalBtn border-0"
+                                        id="button-addon2"
+                                        onClick={() => {
+                                          let name =
+                                            values[`lifeInsured${i}`] ===
+                                              undefined ||
+                                            values[`lifeInsured${i}`] ===
+                                              null ||
+                                            values[`lifeInsured${i}`] === null
+                                              ? RenderName("client")
+                                              : values[`lifeInsured${i}`] ===
+                                                "client+partner"
+                                              ? RenderName("client") +
+                                                " & " +
+                                                RenderName("partner")
+                                              : RenderName(
+                                                  values[`lifeInsured${i}`]
+                                                );
 
-                                      handleInnerModal(name + "_Premiums p.a", ``, `premiumsDetails`, values, values[`premiumsDetails${i}`], i)
-                                    }}>
-                                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                  </Button>
-                                </InputGroup>
-                              </td>
-                              <td>
-                                <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
-                                  <DynamicYesNo name={`loadingExclusion${i}`} values={values} handleChange={handleChange} />
-                                  {values[`loadingExclusion${i}`] === "Yes" &&
-                                    <div className="w-100 ">
-                                      <Field
-                                        type="text"
-                                        placeholder="Loading / Exclusion"
-                                        id={`loadingExclusionValue${i}`}
-                                        name={`loadingExclusionValue${i}`}
-                                        className="form-control inputDesignDoubleInput"
-                                      />
-                                    </div>
-                                  }
-                                </div>
-                              </td>
-                              <td> <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
-                                <DynamicYesNo name={`beneficiary${i}`} values={values} handleChange={handleChange} />
-                                {values[`beneficiary${i}`] === "Yes" &&
-                                  <Button className='btn bgColor modalBtn border-0' id="button-addon2"
-                                    onClick={() => {
-                                      let name = ((values[`lifeInsured${i}`] === undefined) || (values[`lifeInsured${i}`] === null) || (values[`lifeInsured${i}`] === null)) ? RenderName("client")
-                                        : values[`lifeInsured${i}`] === "client+partner" ? RenderName("client") + " & " + RenderName("partner") : RenderName(values[`lifeInsured${i}`]);
-
-                                      handleInnerModal(name + "_Beneficiaries", `How many beneficiaries do ${name} have :`, `beneficiariesArray`, values, values[`beneficiariesArray${i}`], i, "ParentModal")
-
-                                    }}>
-                                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                  </Button>
-                                }
-                              </div>
-                              </td>
-
-                            </tr>
-                          );
-                        })}
+                                          handleInnerModal(
+                                            name + "_Beneficiaries",
+                                            `How many beneficiaries do ${name} have :`,
+                                            `beneficiariesArray`,
+                                            values,
+                                            values[`beneficiariesArray${i}`],
+                                            i,
+                                            "ParentModal"
+                                          );
+                                        }}
+                                      >
+                                        <FontAwesomeIcon
+                                          icon={faArrowUpRightFromSquare}
+                                        />
+                                      </Button>
+                                    )}
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          }
+                        )}
                       </tbody>
                     </Table>
                   </div>
                 )}
               </div>
-
             </Form>
-          )
+          );
         }}
       </Formik>
     </div>

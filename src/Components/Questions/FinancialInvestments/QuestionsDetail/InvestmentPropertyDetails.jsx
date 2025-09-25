@@ -72,7 +72,7 @@ const InvestmentPropertyDetails = (props) => {
     }
 
     let data =
-      Object.keys(questionDetail[props.modalObject.index]).length > 0
+      Object.keys(questionDetail[props.modalObject.index] || {}).length > 0
         ? questionDetail[props.modalObject.index]
         : {
             client: [],
@@ -96,13 +96,13 @@ const InvestmentPropertyDetails = (props) => {
   }, [props.modalObject]);
 
   const fillInitialValues = (setFieldValue) => {
-    console.log(
-      props.modalObject.title,
-      " Data of :",
-      props.modalObject.Input,
-      ":: whole Data Set ",
-      JSON.stringify(investmentPropertyDetails)
-    );
+    // console.log(
+    //   props.modalObject.title,
+    //   " Data of :",
+    //   props.modalObject.Input,
+    //   ":: whole Data Set ",
+    //   JSON.stringify(investmentPropertyDetails)
+    // );
     if (
       investmentPropertyDetails[props.modalObject.Input] &&
       investmentPropertyDetails[props.modalObject.Input].length

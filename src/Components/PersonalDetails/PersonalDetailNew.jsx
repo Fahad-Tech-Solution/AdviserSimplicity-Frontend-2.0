@@ -1,10 +1,7 @@
-import { ErrorMessage, Form, Formik } from "formik";
 import React, { useEffect, useRef, useState } from "react";
-import PersonalDetailsClientPartner from "./PersonalDetailsClientPartner";
-import "yup-phone";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Button, Radio, Card, ConfigProvider } from "antd";
 import * as Yup from "yup";
-import Childe from "./Childe";
-import PersonalDetailCards from "./PersonalDetailCards";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   defaultUrl,
@@ -12,7 +9,6 @@ import {
   StepsStatus,
 } from "../../Store/Store";
 import {
-  ConvertDate,
   GetAxios,
   openNotificationSuccess,
   PatchAxios,
@@ -20,141 +16,136 @@ import {
   touchFields,
 } from "../Assets/Api/Api";
 import { useLocation, useNavigate } from "react-router-dom";
-import { differenceInYears, isValid } from "date-fns";
+import Childe from "./Childe";
+import DynamicTableForInputsSection from "../Assets/Table/DynamicTableForInputsSection";
+
+const validationSchema = Yup.object({
+  client: Yup.object().shape({
+    firstName: Yup.string().required("First name is required"),
+    lastName: Yup.string().required("Surname is required"),
+    dob: Yup.string().required("Date of birth is required"),
+  }),
+  partner: Yup.object().shape({
+    firstName: Yup.string().when("client.marital", {
+      is: (val) => val !== "Single" && val !== "Widowed",
+      then: Yup.string().required("First name is required"),
+    }),
+    lastName: Yup.string().when("client.marital", {
+      is: (val) => val !== "Single" && val !== "Widowed",
+      then: Yup.string().required("Surname is required"),
+    }),
+    dob: Yup.string().when("client.marital", {
+      is: (val) => val !== "Single" && val !== "Widowed",
+      then: Yup.string().required("Date of birth is required"),
+    }),
+  }),
+  contact: Yup.object().shape({
+    clientName: Yup.string().required("Client name is required"),
+    homeAddress: Yup.string().required("Home address is required"),
+  }),
+  children: Yup.object().shape({
+    name: Yup.string().when("haveAnyChildren", {
+      is: "Yes",
+      then: Yup.string().required("Child name is required"),
+    }),
+    dob: Yup.string().when("haveAnyChildren", {
+      is: "Yes",
+      then: Yup.string().required("Date of birth is required"),
+    }),
+  }),
+  haveAnyChildren: Yup.string()
+    .oneOf(["Yes", "No"], "Please select Yes or No")
+    .required("This field is required"),
+});
 
 const PersonalDetailNew = () => {
-  let formRef = useRef(null);
-  let formRefOfChield = useRef(null);
+  const formRef = useRef(null);
+  const formRefOfChild = useRef(null);
 
-  let [Switch, setSwitch] = useState(1);
-  let [userData, setUserData] = useState({});
-  let [PersonalDetailObj, setPersonalDetailObj] =
+  const [switchStep, setSwitchStep] = useState(1);
+  const [userData, setUserData] = useState({});
+  const [personalDetailObj, setPersonalDetailObj] =
     useRecoilState(PersonalDetailsData);
-  let [stepsStatus, setStepsStatus] = useRecoilState(StepsStatus); // eslint-disable-line no-unused-vars
-  let DefaultUrl = useRecoilValue(defaultUrl);
+  const [stepsStatus, setStepsStatus] = useRecoilState(StepsStatus);
+  const defaultUrlValue = useRecoilValue(defaultUrl);
+
+  const AntdDynamicTable = DynamicTableForInputsSection("antd");
 
   let initialValues = {
     client: {
-      clientTitle: "",
-      clientGivenName: "",
-      clientSurname: "",
-      clientPreferredName: "",
-      clientGender: "",
-      clientDOB: "",
-      clientAge: "",
-      clientMaritalStatus: "",
-      clientEmploymentStatus: "",
-      clientHealth: "",
-      clientSmoker: "No",
-      clientPlannedRetirementAge: "",
-      clientHomeAddress: "",
-      clientPostcode: "",
-      clientHomePhone: "",
-      clientWorkPhone: "",
-      clientMobile: "",
-      Email: "",
-      clientPostalAddress: "",
-      clientPostalPostCode: "",
-      clientMiddleName: "",
-      clientOccupationID: "",
-      clientTaxResidentRadio: "No",
-      clientPrivateHealthCoverRadio: "No",
-      clientHELPSDebtRadio: "No",
-      clientSameAsAbove: false,
-      // clientRetirement: "",
+      title: "",
+      firstName: "",
+      middleName: "",
+      lastName: "",
+      preferred: "",
+      gender: "",
+      dob: "",
+      age: "",
+      marital: "",
+      employment: "",
+      occupation: "",
+      retAge: "",
+      smoker: false,
+      taxRes: false,
+      healthCover: false,
+      helpDebt: false,
     },
     partner: {
-      partnerTitle: "",
-      partnerGivenName: "",
-      partnerSurname: "",
-      partnerPreferredName: "",
-      partnerGender: "",
-      partnerDOB: "",
-      partnerAge: "",
-      partnerMaritalStatus: "",
-      partnerEmploymentStatus: "",
-      partnerHealth: "",
-      partnerSmoker: "Yes",
-      partnerPlannedRetirementAge: "",
-      partnerHomeAddress: "",
-      partnerPostcode: "",
-      partnerHomePhone: "",
-      partnerWorkPhone: "",
-      partnerMobile: "",
-      partnerEmail: "",
-      partnerPostalAddress: "",
-      partnerPostalPostCode: "",
-      partnerMiddleName: "",
-      partnerOccupationID: "",
-      partnerTaxResidentRadio: "No",
-      partnerPrivateHealthCoverRadio: "No",
-      partnerHELPSDebtRadio: "No",
-      partnerSameAsClient: false,
-      // partnerRetirement: ""
+      title: "",
+      firstName: "",
+      middleName: "",
+      lastName: "",
+      preferred: "",
+      gender: "",
+      dob: "",
+      age: "",
+      marital: "",
+      employment: "",
+      occupation: "",
+      retAge: "",
+      smoker: false,
+      taxRes: false,
+      healthCover: false,
+      helpDebt: false,
+    },
+
+    contact: {
+      clientName: "",
+      homeAddress: "",
+      postcode: "",
+      suburb: "",
+      state: "",
+      postalAddress: "",
+      mobile: "",
+      email: "",
     },
     children: {
-      numberOfChildren: 0,
-      arrayOfChildren: [],
+      name: "",
+      dob: "",
+      gender: "",
+      relationship: "",
+      dependant: false,
     },
     haveAnyChildren: "No",
   };
 
-  let location = useLocation();
-  let hashing = location.hash;
+  const location = useLocation();
+  const navigate = useNavigate();
+  const hashing = location.hash;
 
   useEffect(() => {
-    setPersonalDetailObj({
-      client: {
-        clientTitle: "Mr.",
-        clientGivenName: "John",
-        clientSurname: "Doe",
-        clientPreferredName: "Johnny",
-        clientGender: "Male",
-        clientDOB: "1990-01-01",
-        clientAge: 34,
-        clientMaritalStatus: "Single",
-        clientEmploymentStatus: "Employed",
-        clientHealth: "Good",
-        clientSmoker: "No",
-        clientPlannedRetirementAge: 65,
-        clientHomeAddress: "123 Main St",
-        clientPostcode: 12345,
-        clientHomePhone: "555-555-5555",
-        clientWorkPhone: "555-555-5556",
-        clientMobile: "555-555-5557",
-        Email: "john.doe@example.com",
-        clientPostalAddress: "123 Main St",
-        clientPostalPostCode: 12345,
-        clientMiddleName: "Michael",
-        clientOccupationID: "OCC123",
-        clientTaxResidentRadio: "Yes",
-        clientPrivateHealthCoverRadio: "Yes",
-        clientHELPSDebtRadio: "No",
-        clientSameAsAbove: true,
-        clientRetirement: "Comfortable",
-      },
-      partner: {},
-      children: {
-        numberOfChildren: 0,
-      },
-      haveAnyChildren: "No",
-    });
-
-    let Id = hashing.replace("#", "");
-
-    if (Id) {
-      GetApiFunction(Id);
-      // setSwitch(3);
+    const id = hashing.replace("#", "");
+    if (id) {
+      getApiFunction(id);
     }
   }, []);
 
-  async function GetApiFunction(id) {
+  const getApiFunction = async (id) => {
     try {
-      let res = await GetAxios(
-        `${DefaultUrl}/api/personalDetails/getUserById/${id}`
+      const res = await GetAxios(
+        `${defaultUrlValue}/api/personalDetails/getUserById/${id}`
       );
       if (res) {
-        console.log(res);
         setPersonalDetailObj(res);
         setUserData(res);
 
@@ -174,268 +165,386 @@ const PersonalDetailNew = () => {
     } catch (error) {
       console.error("Error occurred while making API call:", error);
     }
-  }
-
-  let Nav = useNavigate();
-
-  // Updated validation schema to handle nested structures correctly
-  let validationSchema = Yup.object({
-    client: Yup.object({
-      Email: Yup.string().email("Invalid email format").required("Required"),
-    }),
-    haveAnyChildren: Yup.string()
-      .oneOf(["Yes", "No"], "Please select Yes or No")
-      .required("This field is required"),
-  });
-
-  const validateForm = (values) => {
-    const errors = {};
-    const client = values.client || {};
-    const partner = values.partner || {};
-
-    const clientErrors = {};
-    const partnerErrors = {};
-
-    const maritalStatus = client.clientMaritalStatus?.toLowerCase();
-
-    // === Reusable Validators ===
-    const required = (value, msg) => (!value ? msg : undefined);
-    const isAlphaSpace = (value, msg) =>
-      value && !/^[a-zA-Z\s]+$/.test(value) ? msg : undefined;
-    const isValidEmail = (value) =>
-      value && !Yup.string().email().isValidSync(value)
-        ? "Invalid email format"
-        : undefined;
-    const isValidDOB = (value) =>
-      value && !/^\d{2}\/\d{2}\/\d{4}$/.test(ConvertDate(value))
-        ? "Date must be in DD/MM/YYYY format"
-        : undefined;
-    const isPositiveNumber = (value, msg) =>
-      value !== 0 && (!value || isNaN(value) || value < 0) ? msg : undefined;
-
-    // === Client Field Configs ===
-    const clientFields = [
-      {
-        key: "Email",
-        validator: (val) =>
-          required(val, "Email is required") || isValidEmail(val),
-      },
-      {
-        key: "clientSurname",
-        validator: (val) =>
-          required(val, "Surname is required") ||
-          isAlphaSpace(val, "Surname must contain only letters and spaces"),
-      },
-      {
-        key: "clientGivenName",
-        validator: (val) =>
-          required(val, "First name is required") ||
-          isAlphaSpace(val, "First name must contain only letters and spaces"),
-      },
-      {
-        key: "clientPreferredName",
-        validator: (val) =>
-          required(val, "Preferred name is required") ||
-          isAlphaSpace(
-            val,
-            "Preferred name must contain only letters and spaces"
-          ),
-      },
-      {
-        key: "clientDOB",
-        validator: (val) =>
-          required(val, "Date of birth is required") || isValidDOB(val),
-      },
-      {
-        key: "clientAge",
-        validator: (val) =>
-          isPositiveNumber(val, "Age must be a valid positive number"),
-      },
-      {
-        key: "clientMaritalStatus",
-        validator: (val) => required(val, "Marital status is required"),
-      },
-      {
-        key: "clientHomeAddress",
-        validator: (val) => required(val, "Home address is required"),
-      },
-    ];
-
-    // === Partner Field Configs (conditionally validated) ===
-
-    const partnerFields = [
-      {
-        key: "partnerEmail",
-        validator: (val) =>
-          required(val, "Email is required") || isValidEmail(val),
-      },
-      {
-        key: "partnerSurname",
-        validator: (val) =>
-          required(val, "Surname is required") ||
-          isAlphaSpace(val, "Surname must contain only letters and spaces"),
-      },
-      {
-        key: "partnerGivenName",
-        validator: (val) =>
-          required(val, "First name is required") ||
-          isAlphaSpace(val, "First name must contain only letters and spaces"),
-      },
-      {
-        key: "partnerPreferredName",
-        validator: (val) =>
-          required(val, "Preferred name is required") ||
-          isAlphaSpace(
-            val,
-            "Preferred name must contain only letters and spaces"
-          ),
-      },
-      {
-        key: "partnerDOB",
-        validator: (val) =>
-          required(val, "Date of birth is required") || isValidDOB(val),
-      },
-      {
-        key: "partnerAge",
-        validator: (val) =>
-          isPositiveNumber(val, "Age must be a valid positive number"),
-      },
-      {
-        key: "partnerMaritalStatus",
-        validator: (val) => required(val, "Marital status is required"),
-      },
-      {
-        key: "partnerHomeAddress",
-        validator: (val) => required(val, "Home address is required"),
-      },
-    ];
-
-    // === Run Validation Loop for Client
-    clientFields.forEach(({ key, validator }) => {
-      const error = validator(client[key]);
-      if (error) clientErrors[key] = error;
-    });
-
-    // === Conditional Partner Validation
-    if (maritalStatus !== "single" && maritalStatus !== "widowed") {
-      partnerFields.forEach(({ key, validator }) => {
-        const error = validator(partner[key]);
-        if (error) partnerErrors[key] = error;
-      });
-    }
-
-    // === Children Section
-    if (!values.haveAnyChildren) {
-      errors.haveAnyChildren = "This field is required";
-    } else if (!["Yes", "No"].includes(values.haveAnyChildren)) {
-      errors.haveAnyChildren = "Please select Yes or No";
-    }
-
-    // === Merge Errors
-    if (Object.keys(clientErrors).length > 0) errors.client = clientErrors;
-    if (Object.keys(partnerErrors).length > 0) errors.partner = partnerErrors;
-
-    return errors;
   };
 
-  let includeArray = [
-    "clientAge",
-    "partnerAge",
-    "clientPlannedRetirementAge",
-    "partnerPlannedRetirementAge",
-    "clientPostcode",
-    "partnerPostcode",
-    "clientPostalPostCode",
-    "partnerPostalPostCode",
+  const storeData = (setFieldValue) => {
+    try {
+      const data = JSON.parse(JSON.stringify(personalDetailObj)) || {};
+
+      if (data._id) {
+        setFieldValue("client", {
+          title: data.client.clientTitle || "",
+          firstName: data.client.clientGivenName || "",
+          middleName: data.client.clientMiddleName || "",
+          lastName: data.client.clientSurname || "",
+          preferred: data.client.clientPreferredName || "",
+          gender: data.client.clientGender || "",
+          dob: data.client.clientDOB || "",
+          age: data.client.clientAge || "",
+          marital: data.client.clientMaritalStatus || "",
+          employment: data.client.clientEmploymentStatus || "",
+          occupation: data.client.clientOccupationID || "",
+          retAge: data.client.clientPlannedRetirementAge || "",
+          smoker: data.client.clientSmoker,
+          taxRes: data.client.clientTaxResidentRadio,
+          healthCover: data.client.clientPrivateHealthCoverRadio,
+          helpDebt: data.client.clientHELPSDebtRadio,
+        });
+
+        const maritalStatus = data.client?.clientMaritalStatus;
+        if (
+          maritalStatus &&
+          maritalStatus !== "Single" &&
+          maritalStatus !== "Widowed"
+        ) {
+          setFieldValue("partner", {
+            title: data.partner.partnerTitle || "",
+            firstName: data.partner.partnerGivenName || "",
+            middleName: data.partner.partnerMiddleName || "",
+            lastName: data.partner.partnerSurname || "",
+            preferred: data.partner.partnerPreferredName || "",
+            gender: data.partner.partnerGender || "",
+            dob: data.partner.partnerDOB || "",
+            age: data.partner.partnerAge || "",
+            marital: data.partner.partnerMaritalStatus || "",
+            employment: data.partner.partnerEmploymentStatus || "",
+            occupation: data.partner.partnerOccupationID || "",
+            retAge: data.partner.partnerPlannedRetirementAge || "",
+            smoker: data.partner.partnerSmoker,
+            taxRes: data.partner.partnerTaxResidentRadio,
+            healthCover: data.partner.partnerPrivateHealthCoverRadio,
+            helpDebt: data.partner.partnerHELPSDebtRadio,
+          });
+        }
+
+        setFieldValue("contact", [
+          {
+            clientName:
+              `${data.client.clientGivenName} ${data.client.clientSurname}` ||
+              "",
+            homeAddress: data.client.clientHomeAddress || "",
+            postcode: data.client.clientPostcode || "",
+            suburb: "",
+            state: "",
+            postalAddress: data.client.clientPostalAddress || "",
+            mobile: data.client.clientMobile || "",
+            email: data.client.Email || "",
+          },
+        ]);
+
+        setFieldValue("children", data.children?.arrayOfChildren || []);
+        setFieldValue("haveAnyChildren", data.haveAnyChildren || "No");
+        setSwitchStep(3);
+      }
+    } catch (error) {
+      console.error("An error occurred while storing data:", error);
+    }
+  };
+
+  const personalFields = [
+    {
+      title: "Title",
+      dataIndex: "title",
+      type: "select",
+      options: [
+        { value: "Mr", label: "Mr" },
+        { value: "Mrs", label: "Mrs" },
+        { value: "Ms", label: "Ms" },
+        { value: "Miss", label: "Miss" },
+        { value: "Dr", label: "Dr" },
+      ],
+      key: "title",
+    },
+    {
+      title: "First Name",
+      dataIndex: "firstName",
+      type: "text",
+      key: "firstName",
+    },
+    {
+      title: "Middle Name",
+      dataIndex: "middleName",
+      type: "text",
+      key: "middleName",
+    },
+    {
+      title: "Last Name",
+      dataIndex: "lastName",
+      type: "text",
+      key: "lastName",
+    },
+    {
+      title: "Preferred",
+      dataIndex: "preferred",
+      type: "text",
+      key: "preferred",
+    },
+    {
+      title: "Surname",
+      dataIndex: "clientSurname",
+      type: "text",
+      key: "clientSurname",
+    },
+
+    {
+      title: "Gender",
+      dataIndex: "gender",
+      type: "select",
+      options: [
+        { value: "Male", label: "Male" },
+        { value: "Female", label: "Female" },
+        { value: "Other", label: "Other" },
+      ],
+      key: "gender",
+    },
+    {
+      title: "DOB",
+      dataIndex: "dob",
+      type: "antdate",
+      key: "dob",
+    },
+    {
+      title: "Age",
+      dataIndex: "age",
+      type: "text",
+      key: "age",
+    },
+    {
+      title: "Marital",
+      dataIndex: "marital",
+      type: "select",
+      options: [
+        { value: "Single", label: "Single" },
+        { value: "Married", label: "Married" },
+        { value: "De Facto", label: "De Facto" },
+        { value: "Divorced", label: "Divorced" },
+        { value: "Widowed", label: "Widowed" },
+      ],
+      key: "marital",
+    },
+    {
+      title: "Employment",
+      dataIndex: "employment",
+      type: "select",
+      options: [
+        { value: "Employee", label: "Employee" },
+        { value: "Homemaker", label: "Homemaker" },
+        { value: "Not Working", label: "Not Working" },
+        { value: "Self-funded Retiree", label: "Self-funded Retiree" },
+        { value: "Centrelink Retiree", label: "Centrelink Retiree" },
+        { value: "Centrelink Recipient", label: "Centrelink Recipient" },
+        { value: "Self Employed", label: "Self Employed" },
+        { value: "Student", label: "Student" },
+        { value: "Unemployed", label: "Unemployed" },
+      ],
+      key: "employment",
+    },
+    {
+      title: "Occupation",
+      dataIndex: "occupation",
+      type: "text",
+      key: "occupation",
+    },
+    {
+      title: "Ret Age",
+      dataIndex: "retAge",
+      type: "text",
+      key: "retAge",
+    },
+    {
+      title: "Client Health",
+      dataIndex: "clientHealth",
+      type: "select",
+      options: [
+        { value: "execlent", label: "execlent" },
+        { value: "good", label: "good" },
+        { value: "average", label: "average" },
+        { value: "poor", label: "poor" },
+      ],
+      key: "clientHealth",
+    },
+    {
+      title: "Smoker",
+      dataIndex: "smoker",
+      type: "yesno",
+      key: "smoker",
+    },
+    {
+      title: "Tax Res",
+      dataIndex: "taxRes",
+      type: "yesno",
+      key: "taxRes",
+    },
+    {
+      title: "Health Cover",
+      dataIndex: "healthCover",
+      type: "yesno",
+      key: "healthCover",
+    },
+    {
+      title: "HELP Debt",
+      dataIndex: "helpDebt",
+      type: "yesno",
+      key: "helpDebt",
+    },
   ];
 
-  const checkAndReplaceEmptyData = (data) => {
-    for (let key in data) {
-      if (data[key] === "" || data[key] === null) {
-        if (includeArray.includes(key)) {
-          data[key] = 0;
-        } else if (key === "partnerEmail") {
-          PersonalDetailsClientPartne;
-          data[key] = "dani11221@gmail.com";
-        } else if (key === "partnerDOB" || key === "clientDOB") {
-          data[key] = "01/01/1999";
-        } else if (typeof data[key] === "string") {
-          data[key] = "dummy Data";
-        } else if (typeof data[key] === "number") {
-          data[key] = 0;
-        } else if (typeof data[key] === "boolean") {
-          data[key] = false;
-        } else {
-          data[key] = "dummy Data"; // Fallback for any other type
-        }
-      }
-    }
-    return data;
-  };
+  const contactFields = [
+    {
+      title: "Client Name",
+      dataIndex: "clientName",
+      type: "text",
+      key: "clientName",
+    },
+    {
+      title: "Home Address",
+      dataIndex: "homeAddress",
+      type: "text",
+      key: "homeAddress",
+    },
+    {
+      title: "Postcode/Suburb",
+      dataIndex: "clientPostcode",
+      type: "text",
+      key: "clientPostcode",
+    },
+    {
+      title: "Postcode",
+      dataIndex: "postcode",
+      type: "text",
+      key: "postcode",
+    },
+    {
+      title: "Suburb",
+      dataIndex: "suburb",
+      type: "text",
+      key: "suburb",
+    },
+    {
+      title: "State",
+      dataIndex: "state",
+      type: "text",
+      key: "state",
+    },
+    {
+      title: "Postal Address",
+      dataIndex: "postalAddress",
+      type: "text",
+      key: "postalAddress",
+    },
+    {
+      title: "Mobile",
+      dataIndex: "mobile",
+      type: "text",
+      key: "mobile",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      type: "text",
+      key: "email",
+    },
+  ];
 
-  let onSubmit = async (values) => {
-    console.log("Parent on submit : ", values);
-    if (Switch === 1) {
-      setSwitch(2);
-    } else if (Switch === 2) {
-      let obj = values;
+  const childrenFields = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      type: "text",
+      key: "name",
+    },
+    {
+      title: "DOB",
+      dataIndex: "dob",
+      type: "antdate",
+      key: "dob",
+    },
+    {
+      title: "Gender",
+      dataIndex: "gender",
+      type: "select",
+      options: [
+        { value: "Male", label: "Male" },
+        { value: "Female", label: "Female" },
+        { value: "Other", label: "Other" },
+      ],
+      key: "gender",
+    },
+    {
+      title: "Relationship",
+      dataIndex: "relationship",
+      type: "select",
+      options: [
+        { value: "Son", label: "Son" },
+        { value: "Daughter", label: "Daughter" },
+        { value: "Other", label: "Other" },
+      ],
+      key: "relationship",
+    },
+    {
+      title: "Dependant",
+      dataIndex: "dependant",
+      type: "yesno",
+      key: "dependant",
+    },
+  ];
+
+  const onSubmit = async (values) => {
+    if (switchStep === 1) {
+      setSwitchStep(2);
+    } else if (switchStep === 2) {
+      const obj = {
+        client: values.client,
+        partner: values.partner,
+        contact: values.contact,
+        children: values.children,
+        haveAnyChildren: values.haveAnyChildren,
+      };
 
       if (
-        values.client.clientMaritalStatus === "Single" ||
-        values.client.clientMaritalStatus === "Widowed"
+        values.client.marital === "Single" ||
+        values.client.marital === "Widowed"
       ) {
         obj.partner = {};
       }
 
       if (values.haveAnyChildren === "No") {
-        obj.children = {};
+        obj.children = [];
       }
 
-      let FoundId = PersonalDetailObj._id || "";
-
-      // console.log(JSON.stringify(obj))
+      const foundId = personalDetailObj._id || "";
 
       try {
         let res;
-        if (!FoundId) {
-          checkAndReplaceEmptyData(obj.client);
-
-          checkAndReplaceEmptyData(obj.partner);
-
-          console.log(JSON.stringify(obj));
-
-          res = await PostAxios(`${DefaultUrl}/api/personalDetails/Add`, obj);
+        if (!foundId) {
+          res = await PostAxios(
+            `${defaultUrlValue}/api/personalDetails/Add`,
+            obj
+          );
         } else {
-          obj._id = PersonalDetailObj._id;
+          obj._id = personalDetailObj._id;
           res = await PatchAxios(
-            `${DefaultUrl}/api/personalDetails/Update`,
+            `${defaultUrlValue}/api/personalDetails/Update`,
             obj
           );
         }
 
         if (res) {
-          console.log(res);
-
           localStorage.setItem("UserID", res._id);
-          localStorage.setItem("UserName", res.client.clientPreferredName);
+          localStorage.setItem("UserName", res.client.preferred);
 
           if (
-            values.client.clientMaritalStatus === "Single" ||
-            values.client.clientMaritalStatus === "Widowed"
+            values.client.marital === "Single" ||
+            values.client.marital === "Widowed"
           ) {
             localStorage.setItem("UserStatus", "Single");
           } else {
             localStorage.setItem("UserStatus", "Married");
-            localStorage.setItem(
-              "PartnerName",
-              res.partner.partnerPreferredName
-            );
+            localStorage.setItem("PartnerName", res.partner.preferred);
           }
 
-          setSwitch(3);
+          setSwitchStep(3);
           setPersonalDetailObj(res);
-
-          // type, placement, message, description
           openNotificationSuccess(
             "success",
             "topRight",
@@ -445,7 +554,7 @@ const PersonalDetailNew = () => {
         }
       } catch (error) {
         console.error("Error occurred while making API call:", error?.response);
-        if (error?.response?.status == 409) {
+        if (error?.response?.status === 409) {
           if (error?.response?.data?.message) {
             openNotificationSuccess(
               "error",
@@ -459,92 +568,19 @@ const PersonalDetailNew = () => {
             "error",
             "topRight",
             "Notification",
-            "Something when wrong please check data again!"
+            "Something went wrong please check data again!"
           );
         }
       }
     } else {
       setStepsStatus(false);
-      Nav("/user/important-question");
+      navigate("/user/important-question");
     }
   };
 
-  const StoreData = (setFieldValue) => {
-    try {
-      const data = JSON.parse(JSON.stringify(PersonalDetailObj)) || {};
-
-      // Function to set field values dynamically
-      const setFields = (prefix, obj) => {
-        if (!obj || typeof obj !== "object") {
-          throw new Error(`Invalid object for prefix ${prefix}`);
-        }
-
-        Object.keys(obj).forEach((key) => {
-          try {
-            if (key === "clientSameAsAbove" || key === "partnerSameAsClient") {
-              setFieldValue(`${prefix}.${key}`, obj[key] || false);
-            } else {
-              setFieldValue(`${prefix}.${key}`, obj[key] || "");
-            }
-          } catch (error) {
-            console.error(
-              `Error setting field value for ${prefix}.${key}:`,
-              error
-            );
-          }
-        });
-      };
-
-      if (data?.client?.clientDOB) {
-        const clientDOB = new Date(data.client.clientDOB);
-        if (isValid(clientDOB)) {
-          data.client.clientAge =
-            differenceInYears(new Date(), clientDOB) || "0";
-        }
-      }
-
-      if (data?.partner?.partnerDOB) {
-        const partnerDOB = new Date(data.partner.partnerDOB);
-        if (isValid(partnerDOB)) {
-          data.partner.partnerAge =
-            differenceInYears(new Date(), partnerDOB) || "0";
-        }
-      }
-
-      // Check if the user data has an ID
-      if (data._id) {
-        setFields("client", data.client);
-
-        // Only set partner fields if marital status is not "Single" or "Widowed"
-        const maritalStatus = data.client?.clientMaritalStatus;
-        if (
-          maritalStatus &&
-          maritalStatus !== "Single" &&
-          maritalStatus !== "Widowed"
-        ) {
-          setFields("partner", data.partner);
-        }
-
-        // Set children and 'haveAnyChildren' fields
-        setFieldValue(
-          "children.numberOfChildren",
-          data.children?.numberOfChildren || ""
-        );
-        setFieldValue(
-          "children.arrayOfChildren",
-          data.children?.arrayOfChildren || ""
-        );
-        setFieldValue("haveAnyChildren", data.haveAnyChildren.trim() || "No");
-        setSwitch(3);
-      }
-    } catch (error) {
-      console.error("An error occurred while storing data:", error);
-    }
-  };
-
-  let submitChiled = () => {
-    if (formRefOfChield.current) {
-      formRefOfChield.current.handleSubmit(); // Trigger Formik's handleSubmit
+  const submitChild = () => {
+    if (formRefOfChild.current) {
+      formRefOfChild.current.handleSubmit();
     }
   };
 
@@ -552,7 +588,8 @@ const PersonalDetailNew = () => {
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
-      validate={validateForm}
+      validateOnChange={false}
+      validateOnBlur={false}
       onSubmit={onSubmit}
       innerRef={formRef}
       enableReinitialize
@@ -561,115 +598,173 @@ const PersonalDetailNew = () => {
         values,
         setFieldValue,
         handleChange,
-        errors,
         handleBlur,
         setFieldTouched,
       }) => {
         useEffect(() => {
-          // Store Usre Data
-          StoreData(setFieldValue);
+          storeData(setFieldValue);
         }, [userData]);
+
+        const combinedPersonal = [
+          { ...values.client, key: 1, role: "Client", stakeHolder: "client" },
+        ];
+
+        if (
+          values.client.marital &&
+          values.client.marital !== "Single" &&
+          values.client.marital !== "Widowed"
+        ) {
+          combinedPersonal.push({
+            ...values.partner,
+            key: 2,
+            role: "Partner",
+            stakeHolder: "partner",
+          });
+        }
 
         return (
           <Form className="PersonalDetailsForm">
-            {Switch == 1 && (
-              <PersonalDetailsClientPartner
-                values={values}
-                setFieldValue={setFieldValue}
-                handleChange={handleChange}
-                handleBlur={handleBlur}
-              />
-            )}
+            <ConfigProvider
+              theme={{
+                components: {
+                  Table: {
+                    headerBg: "#36B446",
+                    headerColor: "white",
+                    headerFontWeight: "bold",
+                  },
+                },
+              }}
+            >
+              {switchStep === 1 && (
+                <Card title="Personal Details">
+                  <h3 className="mt-4">Personal Details</h3>
+                  <AntdDynamicTable
+                    columns={personalFields}
+                    data={combinedPersonal}
+                    values={values}
+                    setFieldValue={setFieldValue}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                  />
 
-            {Switch == 2 && (
-              <Childe
-                formRefOfChield={formRefOfChield}
-                FoundData={PersonalDetailObj}
-                values={values}
-                ParentformRef={formRef}
-                setFieldValue={setFieldValue}
-                handleChange={handleChange}
-                handleBlur={handleBlur}
-              />
-            )}
+                  <h3 className="mt-4">Contact Details</h3>
+                  <AntdDynamicTable
+                    columns={contactFields}
+                    data={[values.contact]} // 👈 wrap object into array
+                    values={values}
+                    setFieldValue={setFieldValue}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                  />
 
-            {Switch == 3 && <PersonalDetailCards data={PersonalDetailObj} />}
-
-            <div className={`row justify-content-center gap-2 mb-4`}>
-              {Switch !== 1 && (
-                <div className="col-md-3 px-4">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSwitch(--Switch);
-                    }}
-                    className="float-center w-100 btn btn-outline  backBtn "
-                  >
-                    {Switch == 3 ? "Edit" : "Back"}
-                  </button>
-                </div>
+                  <h3 className="mt-4">Children Details</h3>
+                  <div style={{ marginTop: 16 }}>
+                    <Field
+                      as={Radio.Group}
+                      name="haveAnyChildren"
+                      onChange={handleChange}
+                    >
+                      <Radio value="Yes">Yes</Radio>
+                      <Radio value="No">No</Radio>
+                    </Field>
+                    <ErrorMessage name="haveAnyChildren" component="div" />
+                  </div>
+                  <AntdDynamicTable
+                    columns={childrenFields}
+                    data={[values.children]} // 👈 wrap object into array
+                    values={values}
+                    setFieldValue={setFieldValue}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                  />
+                </Card>
               )}
 
-              <div
-                className={` ${
-                  Switch !== 1 ? "col-md-3" : "col-md-4 submitPadding"
-                } `}
-              >
-                {Switch === 1 ? (
-                  <button
-                    type="button"
-                    className=" btn w-100  bgColor modalBtn"
-                    onClick={async () => {
-                      let isValud = await touchFields(
-                        setFieldTouched,
-                        [
-                          "client.Email",
-                          "client.clientSurname",
-                          "client.clientGivenName",
-                          "client.clientPreferredName",
-                          "client.clientDOB",
-                          "client.clientAge",
-                          "client.clientHomeAddress",
-                          //partners
-                          "partner.Email",
-                          "partner.partnerSurname",
-                          "partner.partnerGivenName",
-                          "partner.partnerPreferredName",
-                          "partner.partnerDOB",
-                          "partner.partnerAge",
-                          "partner.partnerHomeAddress",
-                        ],
-                        values,
-                        validateForm
-                      );
+              {switchStep === 2 && (
+                <Childe
+                  formRefOfChield={formRefOfChild}
+                  FoundData={personalDetailObj}
+                  values={values}
+                  ParentformRef={formRef}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                />
+              )}
 
-                      console.log("isValud : ", isValud);
+              {switchStep === 3 && (
+                <Card title="Personal Details Summary">
+                  <h3 className="mt-4">Personal Details</h3>
+                  <AntdDynamicTable
+                    columns={personalFields}
+                    data={combinedPersonal}
+                    values={values}
+                    setFieldValue={setFieldValue}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                  />
 
-                      if (isValud) {
-                        setSwitch(++Switch);
-                      }
-                    }}
+                  <h3 className="mt-4">Contact Details</h3>
+                  <AntdDynamicTable
+                    columns={contactFields}
+                    data={[{ ...values.contact, key: "contactRow" }]} // ✅ unique key
+                    // ✅ AntD knows how to separate rows
+                    values={values}
+                    setFieldValue={setFieldValue}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                  />
+
+                  <h3 className="mt-4">Children Details</h3>
+                  <AntdDynamicTable
+                    columns={childrenFields}
+                    data={[{ ...values.children }]} // ✅ different key
+                    values={values}
+                    setFieldValue={setFieldValue}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                  />
+                </Card>
+              )}
+
+              <div style={{ marginTop: 16, display: "flex", gap: 8 }}>
+                {switchStep !== 1 && (
+                  <Button
+                    onClick={() => setSwitchStep(switchStep - 1)}
+                    style={{ marginRight: 8 }}
                   >
-                    Submit
-                  </button>
-                ) : Switch === 2 ? (
-                  <button
-                    type="button"
-                    className=" btn w-100  bgColor modalBtn"
-                    onClick={submitChiled}
-                  >
-                    {Switch == 3 ? "Next" : "Submit"}
-                  </button>
-                ) : (
-                  <button
-                    type="submit"
-                    className=" btn w-100  bgColor modalBtn"
-                  >
-                    {Switch == 3 ? "Next" : "Submit"}
-                  </button>
+                    {switchStep === 3 ? "Edit" : "Back"}
+                  </Button>
                 )}
+                <Button
+                  type="primary"
+                  onClick={
+                    switchStep === 1
+                      ? async () => {
+                          const isValid = await touchFields(
+                            setFieldTouched,
+                            [
+                              "client.firstName",
+                              "client.lastName",
+                              "client.dob",
+                              "partner.firstName",
+                              "partner.lastName",
+                              "partner.dob",
+                            ],
+                            values,
+                            validationSchema
+                          );
+                          if (isValid) setSwitchStep(switchStep + 1);
+                        }
+                      : switchStep === 2
+                      ? submitChild
+                      : () => formRef.current.handleSubmit()
+                  }
+                >
+                  {switchStep === 3 ? "Next" : "Submit"}
+                </Button>
               </div>
-            </div>
+            </ConfigProvider>
           </Form>
         );
       }}
