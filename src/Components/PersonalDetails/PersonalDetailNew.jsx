@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { Button, Radio, Card, ConfigProvider } from "antd";
 import * as Yup from "yup";
@@ -9,15 +9,18 @@ import {
   StepsStatus,
 } from "../../Store/Store";
 import {
+  ConvertDate,
   GetAxios,
+  getNestedValue,
   openNotificationSuccess,
   PatchAxios,
   PostAxios,
   touchFields,
 } from "../Assets/Api/Api";
 import { useLocation, useNavigate } from "react-router-dom";
-import Childe from "./Childe";
 import DynamicTableForInputsSection from "../Assets/Table/DynamicTableForInputsSection";
+import DynamicYesNo from "../Questions/FinancialInvestments/QuestionsDetail/DynamicYesNo";
+import dayjs from "dayjs";
 
 const validationSchema = Yup.object({
   client: Yup.object().shape({
@@ -108,24 +111,6 @@ const PersonalDetailNew = () => {
       healthCover: false,
       helpDebt: false,
     },
-
-    contact: {
-      clientName: "",
-      homeAddress: "",
-      postcode: "",
-      suburb: "",
-      state: "",
-      postalAddress: "",
-      mobile: "",
-      email: "",
-    },
-    children: {
-      name: "",
-      dob: "",
-      gender: "",
-      relationship: "",
-      dependant: false,
-    },
     haveAnyChildren: "No",
   };
 
@@ -170,6 +155,7 @@ const PersonalDetailNew = () => {
   const storeData = (setFieldValue) => {
     try {
       const data = JSON.parse(JSON.stringify(personalDetailObj)) || {};
+      console.log("personalDetailObj", personalDetailObj);
 
       if (data._id) {
         setFieldValue("client", {
@@ -179,7 +165,9 @@ const PersonalDetailNew = () => {
           lastName: data.client.clientSurname || "",
           preferred: data.client.clientPreferredName || "",
           gender: data.client.clientGender || "",
-          dob: data.client.clientDOB || "",
+          dob: data?.client?.clientDOB
+            ? ConvertDate(data?.client?.clientDOB)
+            : "",
           age: data.client.clientAge || "",
           marital: data.client.clientMaritalStatus || "",
           employment: data.client.clientEmploymentStatus || "",
@@ -189,6 +177,19 @@ const PersonalDetailNew = () => {
           taxRes: data.client.clientTaxResidentRadio,
           healthCover: data.client.clientPrivateHealthCoverRadio,
           helpDebt: data.client.clientHELPSDebtRadio,
+
+          // contact fields
+          contact: {
+            homeAddress: data?.client?.clientHomeAddress || "",
+            postcodeSuburb: data?.client?.clientPostcode || "",
+            SameAsAbove: data?.client?.clientSameAsAbove || false,
+            postalAddress: data?.client?.clientPostalAddress || "",
+            postalPostCode: data?.client?.clientPostalPostCode || "",
+            mobile: data?.client?.clientMobile || "",
+            homePhone: data?.client?.clientHomePhone || "",
+            workPhone: data?.client?.clientWorkPhone || "",
+            email: data?.client?.Email || "",
+          },
         });
 
         const maritalStatus = data.client?.clientMaritalStatus;
@@ -204,7 +205,9 @@ const PersonalDetailNew = () => {
             lastName: data.partner.partnerSurname || "",
             preferred: data.partner.partnerPreferredName || "",
             gender: data.partner.partnerGender || "",
-            dob: data.partner.partnerDOB || "",
+            dob: data?.partner?.partnerDOB
+              ? ConvertDate(data?.partner?.partnerDOB)
+              : "",
             age: data.partner.partnerAge || "",
             marital: data.partner.partnerMaritalStatus || "",
             employment: data.partner.partnerEmploymentStatus || "",
@@ -214,27 +217,38 @@ const PersonalDetailNew = () => {
             taxRes: data.partner.partnerTaxResidentRadio,
             healthCover: data.partner.partnerPrivateHealthCoverRadio,
             helpDebt: data.partner.partnerHELPSDebtRadio,
+
+            // contact fields
+            contact: {
+              homeAddress: data?.partner?.partnerHomeAddress || "",
+              postcodeSuburb: data?.partner?.partnerPostcode || "",
+              SameAsAbove: data?.partner?.partnerSameAsAbove || false,
+              postalAddress: data?.partner?.partnerPostalAddress || "",
+              postalPostCode: data?.partner?.partnerPostalPostCode || "",
+              mobile: data?.partner?.partnerMobile || "",
+              homePhone: data?.partner?.partnerHomePhone || "",
+              workPhone: data?.partner?.partnerWorkPhone || "",
+              email: data?.partner?.partnerEmail || "",
+            },
           });
         }
 
-        setFieldValue("contact", [
-          {
-            clientName:
-              `${data.client.clientGivenName} ${data.client.clientSurname}` ||
-              "",
-            homeAddress: data.client.clientHomeAddress || "",
-            postcode: data.client.clientPostcode || "",
-            suburb: "",
-            state: "",
-            postalAddress: data.client.clientPostalAddress || "",
-            mobile: data.client.clientMobile || "",
-            email: data.client.Email || "",
-          },
-        ]);
-
-        setFieldValue("children", data.children?.arrayOfChildren || []);
         setFieldValue("haveAnyChildren", data.haveAnyChildren || "No");
-        setSwitchStep(3);
+
+        if (data?.haveAnyChildren === "Yes" && data?.numberOfChildren > 0) {
+          let newChildren = [];
+
+          for (let i = 0; i < data.numberOfChildren; i++) {
+            newChildren.push({
+              key: `child_${i}`,
+              ...(data.children?.[i] || {}), // keep existing data if already filled
+            });
+          }
+
+          console.log("newChildren:", newChildren);
+
+          setFieldValue("children", newChildren);
+        }
       }
     } catch (error) {
       console.error("An error occurred while storing data:", error);
@@ -252,6 +266,7 @@ const PersonalDetailNew = () => {
         { value: "Ms", label: "Ms" },
         { value: "Miss", label: "Miss" },
         { value: "Dr", label: "Dr" },
+        { value: "Other", label: "Other" },
       ],
       key: "title",
     },
@@ -278,12 +293,13 @@ const PersonalDetailNew = () => {
       dataIndex: "preferred",
       type: "text",
       key: "preferred",
+      fixed: "left",
     },
     {
       title: "Surname",
-      dataIndex: "clientSurname",
+      dataIndex: "surname",
       type: "text",
-      key: "clientSurname",
+      key: "surname",
     },
 
     {
@@ -352,8 +368,8 @@ const PersonalDetailNew = () => {
       key: "retAge",
     },
     {
-      title: "Client Health",
-      dataIndex: "clientHealth",
+      title: "Health",
+      dataIndex: "health",
       type: "select",
       options: [
         { value: "execlent", label: "execlent" },
@@ -361,7 +377,7 @@ const PersonalDetailNew = () => {
         { value: "average", label: "average" },
         { value: "poor", label: "poor" },
       ],
-      key: "clientHealth",
+      key: "health",
     },
     {
       title: "Smoker",
@@ -391,10 +407,11 @@ const PersonalDetailNew = () => {
 
   const contactFields = [
     {
-      title: "Client Name",
-      dataIndex: "clientName",
+      title: "Name",
+      dataIndex: "preferred",
       type: "text",
-      key: "clientName",
+      key: "owner",
+      fixed: "left",
     },
     {
       title: "Home Address",
@@ -404,39 +421,74 @@ const PersonalDetailNew = () => {
     },
     {
       title: "Postcode/Suburb",
-      dataIndex: "clientPostcode",
+      dataIndex: "postcodeSuburb",
       type: "text",
-      key: "clientPostcode",
+      key: "postcodeSuburb",
     },
     {
-      title: "Postcode",
-      dataIndex: "postcode",
-      type: "text",
-      key: "postcode",
-    },
-    {
-      title: "Suburb",
-      dataIndex: "suburb",
-      type: "text",
-      key: "suburb",
-    },
-    {
-      title: "State",
-      dataIndex: "state",
-      type: "text",
-      key: "state",
+      title: "Same As Home Address",
+      placeholder: "Same As Home Address",
+      dataIndex: "SameAsAbove",
+      type: "checkbox",
+      key: "SameAsAbove",
+      width: 230,
+      callBack: true,
+      func: (values, setFieldValue, thisInput, stakeHolder) => {
+        const homeAddress = getNestedValue(values, `${stakeHolder}homeAddress`);
+        const postcodeSuburb = getNestedValue(
+          values,
+          `${stakeHolder}postcodeSuburb`
+        );
+
+        console.log("stakeHolder:", stakeHolder);
+        console.log("homeAddress:", homeAddress);
+        console.log("postcodeSuburb:", postcodeSuburb);
+        console.log("checked:", thisInput.checked);
+
+        if (thisInput.checked) {
+          setFieldValue(`${stakeHolder}postalAddress`, homeAddress || "");
+          setFieldValue(`${stakeHolder}postalPostCode`, postcodeSuburb || "");
+        }
+      },
     },
     {
       title: "Postal Address",
       dataIndex: "postalAddress",
       type: "text",
       key: "postalAddress",
+      disabled: (values, stakeHolder) =>
+        getNestedValue(values, `${stakeHolder}SameAsAbove`) === true, // 👈 use stakeHolderF
+    },
+    {
+      title: "Postcode/Suburb",
+      dataIndex: "postalPostCode",
+      type: "text",
+      key: "postalPostCode",
+      disabled: (values, stakeHolder) => {
+        console.log(
+          stakeHolder,
+          getNestedValue(values, `${stakeHolder}SameAsAbove`)
+        );
+        return getNestedValue(values, `${stakeHolder}SameAsAbove`) === true;
+      },
     },
     {
       title: "Mobile",
       dataIndex: "mobile",
       type: "text",
       key: "mobile",
+    },
+    {
+      title: "Home Phone",
+      dataIndex: "homePhone",
+      type: "text",
+      key: "homePhone",
+    },
+    {
+      title: "Work Phone",
+      dataIndex: "workPhone",
+      type: "text",
+      key: "workPhone",
     },
     {
       title: "Email",
@@ -452,6 +504,7 @@ const PersonalDetailNew = () => {
       dataIndex: "name",
       type: "text",
       key: "name",
+      fixed: "left",
     },
     {
       title: "DOB",
@@ -471,125 +524,185 @@ const PersonalDetailNew = () => {
       key: "gender",
     },
     {
-      title: "Relationship",
+      title: "Add in Relation",
       dataIndex: "relationship",
       type: "select",
       options: [
         { value: "Son", label: "Son" },
         { value: "Daughter", label: "Daughter" },
-        { value: "Other", label: "Other" },
+        { value: "Step Daughter", label: "Step Daughter" },
+        { value: "Step Son", label: "Step Son" },
       ],
       key: "relationship",
     },
     {
-      title: "Dependant",
-      dataIndex: "dependant",
+      title: "Add in is Child Depenant",
+      dataIndex: "depenantChild",
       type: "yesno",
-      key: "dependant",
+      key: "depenantChild",
     },
   ];
 
   const onSubmit = async (values) => {
-    if (switchStep === 1) {
-      setSwitchStep(2);
-    } else if (switchStep === 2) {
-      const obj = {
-        client: values.client,
-        partner: values.partner,
-        contact: values.contact,
-        children: values.children,
-        haveAnyChildren: values.haveAnyChildren,
-      };
+    const payload = {
+      client: {
+        clientTitle: values.client.title,
+        clientGivenName: values.client.firstName,
+        clientMiddleName: values.client.middleName,
+        clientLastName: values.client.lastName,
+        clientSurname: values.client.surname,
+        clientPreferredName: values.client.preferred,
+        clientGender: values.client.gender,
+        clientDOB: values.client.dob
+          ? dayjs(values.client.dob, "DD/MM/YYYY").toISOString()
+          : null,
+        clientAge: values.client.age,
+        clientMaritalStatus: values.client.marital,
+        clientEmploymentStatus: values.client.employment,
+        clientOccupationID: values.client.occupation,
+        clientPlannedRetirementAge: values.client.retAge,
+        clientSmoker: values.client.smoker,
+        clientTaxResidentRadio: values.client.taxRes,
+        clientPrivateHealthCoverRadio: values.client.healthCover,
+        clientHELPSDebtRadio: values.client.helpDebt,
 
-      if (
-        values.client.marital === "Single" ||
-        values.client.marital === "Widowed"
-      ) {
-        obj.partner = {};
+        // flatten contact
+        clientHomeAddress: values.client.contact?.homeAddress,
+        clientPostcode: values.client.contact?.postcodeSuburb,
+        clientSameAsAbove: values.client.contact?.SameAsAbove||false||false,
+        clientPostalAddress: values.client.contact?.postalAddress,
+        clientPostalPostCode: values.client.contact?.postalPostCode,
+        clientMobile: values.client.contact?.mobile,
+        clientHomePhone: values.client.contact?.homePhone,
+        clientWorkPhone: values.client.contact?.workPhone,
+        Email: values.client.contact?.email,
+      },
+      partner: {
+        partnerTitle: values.partner?.title,
+        partnerGivenName: values.partner?.firstName,
+        partnerMiddleName: values.partner?.middleName,
+        partnerLastName: values.partner.lastName,
+        partnerSurname: values.partner.surname,
+        partnerPreferredName: values.partner?.preferred,
+        partnerGender: values.partner?.gender,
+        partnerDOB: values.partner?.dob
+          ? dayjs(values.partner.dob, "DD/MM/YYYY").toISOString()
+          : null,
+        partnerAge: values.partner?.age,
+        partnerMaritalStatus: values.partner?.marital,
+        partnerEmploymentStatus: values.partner?.employment,
+        partnerOccupationID: values.partner?.occupation,
+        partnerPlannedRetirementAge: values.partner?.retAge,
+        partnerSmoker: values.partner?.smoker,
+        partnerTaxResidentRadio: values.partner?.taxRes,
+        partnerPrivateHealthCoverRadio: values.partner?.healthCover,
+        partnerHELPSDebtRadio: values.partner?.helpDebt,
+
+        // flatten contact
+        partnerHomeAddress: values.partner?.contact?.homeAddress,
+        partnerPostcode: values.partner?.contact?.postcodeSuburb,
+        partnerSameAsClient: values.partner?.contact?.SameAsAbove||false,
+        partnerPostalAddress: values.partner?.contact?.postalAddress,
+        partnerPostalPostCode: values.partner?.contact?.postalPostCode,
+        partnerMobile: values.partner?.contact?.mobile,
+        partnerHomePhone: values.partner?.contact?.homePhone,
+        partnerWorkPhone: values.partner?.contact?.workPhone,
+        partnerEmail: values.partner?.contact?.email,
+      },
+      haveAnyChildren: values.haveAnyChildren,
+      children: {
+        arrayOfChildren: values.children?.map((child) => ({
+          depenantChild: child.depenantChild,
+          name: child.name,
+          gender: child.gender,
+          relationship: child.relationship,
+          dob: child.dob
+            ? dayjs(child.dob, ["DD/MM/YYYY", "YYYY-MM-DD"]).toISOString()
+            : null,
+        })),
+      },
+    };
+
+    console.log("🚀 Final Payload", payload);
+
+    if (
+      values.client.marital === "Single" ||
+      values.client.marital === "Widowed"
+    ) {
+      payload.partner = {};
+    }
+
+    if (values.haveAnyChildren === "No") {
+      payload.children = [];
+    }
+
+    const foundId = personalDetailObj._id || "";
+
+    try {
+      let res;
+      if (!foundId) {
+        res = await PostAxios(
+          `${defaultUrlValue}/api/personalDetails/Add`,
+          payload
+        );
+      } else {
+        payload._id = personalDetailObj._id;
+        res = await PatchAxios(
+          `${defaultUrlValue}/api/personalDetails/Update`,
+          payload
+        );
       }
 
-      if (values.haveAnyChildren === "No") {
-        obj.children = [];
+      if (res) {
+        localStorage.setItem("UserID", res._id);
+        localStorage.setItem("UserName", res.client.preferred);
+
+        if (
+          values.client.marital === "Single" ||
+          values.client.marital === "Widowed"
+        ) {
+          localStorage.setItem("UserStatus", "Single");
+        } else {
+          localStorage.setItem("UserStatus", "Married");
+          localStorage.setItem("PartnerName", res.partner.preferred);
+        }
+
+        setSwitchStep(3);
+        setPersonalDetailObj(res);
+        openNotificationSuccess(
+          "success",
+          "topRight",
+          "Notification",
+          "User Data Successfully Saved!"
+        );
       }
-
-      const foundId = personalDetailObj._id || "";
-
-      try {
-        let res;
-        if (!foundId) {
-          res = await PostAxios(
-            `${defaultUrlValue}/api/personalDetails/Add`,
-            obj
-          );
-        } else {
-          obj._id = personalDetailObj._id;
-          res = await PatchAxios(
-            `${defaultUrlValue}/api/personalDetails/Update`,
-            obj
-          );
-        }
-
-        if (res) {
-          localStorage.setItem("UserID", res._id);
-          localStorage.setItem("UserName", res.client.preferred);
-
-          if (
-            values.client.marital === "Single" ||
-            values.client.marital === "Widowed"
-          ) {
-            localStorage.setItem("UserStatus", "Single");
-          } else {
-            localStorage.setItem("UserStatus", "Married");
-            localStorage.setItem("PartnerName", res.partner.preferred);
-          }
-
-          setSwitchStep(3);
-          setPersonalDetailObj(res);
-          openNotificationSuccess(
-            "success",
-            "topRight",
-            "Notification",
-            "User Data Successfully Saved!"
-          );
-        }
-      } catch (error) {
-        console.error("Error occurred while making API call:", error?.response);
-        if (error?.response?.status === 409) {
-          if (error?.response?.data?.message) {
-            openNotificationSuccess(
-              "error",
-              "topRight",
-              "Notification",
-              error.response.data.message
-            );
-          }
-        } else {
+    } catch (error) {
+      console.error("Error occurred while making API call:", error?.response);
+      if (error?.response?.status === 409) {
+        if (error?.response?.data?.message) {
           openNotificationSuccess(
             "error",
             "topRight",
             "Notification",
-            "Something went wrong please check data again!"
+            error.response.data.message
           );
         }
+      } else {
+        openNotificationSuccess(
+          "error",
+          "topRight",
+          "Notification",
+          "Something went wrong please check data again!"
+        );
       }
-    } else {
-      setStepsStatus(false);
-      navigate("/user/important-question");
-    }
-  };
-
-  const submitChild = () => {
-    if (formRefOfChild.current) {
-      formRefOfChild.current.handleSubmit();
     }
   };
 
   return (
     <Formik
       initialValues={initialValues}
-      validationSchema={validationSchema}
-      validateOnChange={false}
-      validateOnBlur={false}
+      // validationSchema={validationSchema}
+
       onSubmit={onSubmit}
       innerRef={formRef}
       enableReinitialize
@@ -605,166 +718,167 @@ const PersonalDetailNew = () => {
           storeData(setFieldValue);
         }, [userData]);
 
-        const combinedPersonal = [
-          { ...values.client, key: 1, role: "Client", stakeHolder: "client" },
-        ];
+        const tableData = useMemo(() => {
+          const rows = [];
 
-        if (
-          values.client.marital &&
-          values.client.marital !== "Single" &&
-          values.client.marital !== "Widowed"
-        ) {
-          combinedPersonal.push({
-            ...values.partner,
-            key: 2,
-            role: "Partner",
-            stakeHolder: "partner",
+          rows.push({
+            key: "client",
+            stakeHolder: "client",
+            ...values.client,
           });
-        }
+
+          if (!["Single", "Widowed", ""].includes(values.client.marital)) {
+            rows.push({
+              key: "partner",
+              stakeHolder: "partner",
+              ...values.partner,
+            });
+          }
+
+          return rows;
+        }, [values]);
+
+        const contactTableData = useMemo(() => {
+          const rows = [];
+
+          rows.push({
+            key: "client.contact",
+            stakeHolder: "client.contact", // 👈 point to nested contact
+            ...values.client,
+            ...values.client.contact, // flatten contact fields
+          });
+
+          if (!["Single", "Widowed", ""].includes(values.client.marital)) {
+            rows.push({
+              key: "partner.contact",
+              stakeHolder: "partner.contact", // 👈 point to nested contact
+              ...values.partner,
+              ...values.partner.contact,
+            });
+          }
+
+          return rows;
+        }, [values]);
+
+        const childrenTableData = useMemo(() => {
+          // Ensure numberOfChildren is a number
+          const numChildren = Number(values.numberOfChildren) || 0;
+          if (values.haveAnyChildren === "Yes" && numChildren > 0) {
+            // If values.children exists and is an array, use it; otherwise, create empty objects
+            const childrenArr = Array.from(
+              { length: numChildren },
+              (_, index) => {
+                const child = values.children?.[index] || {};
+                return {
+                  key: `children.${index}`,
+                  stakeHolder: `children.${index}`,
+                  ...child,
+                };
+              }
+            );
+            return childrenArr;
+          }
+          return [];
+        }, [values]);
 
         return (
-          <Form className="PersonalDetailsForm">
-            <ConfigProvider
-              theme={{
-                components: {
-                  Table: {
-                    headerBg: "#36B446",
-                    headerColor: "white",
-                    headerFontWeight: "bold",
-                  },
-                },
+          <Form className=" All_Client reportSection">
+            <h3 className="mt-4">Personal Details</h3>
+            <AntdDynamicTable
+              columns={personalFields}
+              data={tableData}
+              values={values}
+              setFieldValue={setFieldValue}
+              handleChange={handleChange}
+              handleBlur={handleBlur}
+            />
+
+            <h3
+              className="mt-4"
+              onClick={() => {
+                console.log(values);
               }}
             >
-              {switchStep === 1 && (
-                <Card title="Personal Details">
-                  <h3 className="mt-4">Personal Details</h3>
-                  <AntdDynamicTable
-                    columns={personalFields}
-                    data={combinedPersonal}
-                    values={values}
-                    setFieldValue={setFieldValue}
-                    handleChange={handleChange}
-                    handleBlur={handleBlur}
-                  />
+              Contact
+            </h3>
+            <AntdDynamicTable
+              columns={contactFields}
+              data={contactTableData}
+              values={values}
+              setFieldValue={setFieldValue}
+              handleChange={handleChange}
+              handleBlur={handleBlur}
+            />
 
-                  <h3 className="mt-4">Contact Details</h3>
-                  <AntdDynamicTable
-                    columns={contactFields}
-                    data={[values.contact]} // 👈 wrap object into array
-                    values={values}
-                    setFieldValue={setFieldValue}
-                    handleChange={handleChange}
-                    handleBlur={handleBlur}
-                  />
+            <h3
+              className="mt-4"
+              onClick={() => {
+                console.log(values);
+              }}
+            >
+              Children Details
+            </h3>
 
-                  <h3 className="mt-4">Children Details</h3>
-                  <div style={{ marginTop: 16 }}>
-                    <Field
-                      as={Radio.Group}
-                      name="haveAnyChildren"
-                      onChange={handleChange}
-                    >
-                      <Radio value="Yes">Yes</Radio>
-                      <Radio value="No">No</Radio>
-                    </Field>
-                    <ErrorMessage name="haveAnyChildren" component="div" />
-                  </div>
-                  <AntdDynamicTable
-                    columns={childrenFields}
-                    data={[values.children]} // 👈 wrap object into array
-                    values={values}
-                    setFieldValue={setFieldValue}
-                    handleChange={handleChange}
-                    handleBlur={handleBlur}
-                  />
-                </Card>
-              )}
-
-              {switchStep === 2 && (
-                <Childe
-                  formRefOfChield={formRefOfChild}
-                  FoundData={personalDetailObj}
+            <div className="row justify-content-center align-items-center mb-3">
+              <div className="col-md-3">
+                <label className="form-label fw-bold">
+                  Do you have any children?
+                </label>
+              </div>
+              <div className="col-md-2">
+                <DynamicYesNo
+                  name={"haveAnyChildren"}
                   values={values}
-                  ParentformRef={formRef}
+                  handleChange={handleChange}
+                />
+              </div>
+            </div>
+            {values.haveAnyChildren === "Yes" && (
+              <div className="row justify-content-center align-items-center mb-3">
+                <div className="col-md-3">
+                  <label className="form-label fw-bold">
+                    How many children do you have :
+                  </label>
+                </div>
+                <div className="col-md-1">
+                  <Field
+                    name="numberOfChildren"
+                    type="number"
+                    className="form-control"
+                    min="0"
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val < 5) {
+                        setFieldValue(e.target.name, e.target.value);
+                      } else {
+                        setFieldValue(e.target.name, 5);
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {values.haveAnyChildren === "Yes" &&
+              values.numberOfChildren > 0 && (
+                <AntdDynamicTable
+                  columns={childrenFields}
+                  data={childrenTableData}
+                  values={values}
                   setFieldValue={setFieldValue}
                   handleChange={handleChange}
                   handleBlur={handleBlur}
                 />
               )}
 
-              {switchStep === 3 && (
-                <Card title="Personal Details Summary">
-                  <h3 className="mt-4">Personal Details</h3>
-                  <AntdDynamicTable
-                    columns={personalFields}
-                    data={combinedPersonal}
-                    values={values}
-                    setFieldValue={setFieldValue}
-                    handleChange={handleChange}
-                    handleBlur={handleBlur}
-                  />
-
-                  <h3 className="mt-4">Contact Details</h3>
-                  <AntdDynamicTable
-                    columns={contactFields}
-                    data={[{ ...values.contact, key: "contactRow" }]} // ✅ unique key
-                    // ✅ AntD knows how to separate rows
-                    values={values}
-                    setFieldValue={setFieldValue}
-                    handleChange={handleChange}
-                    handleBlur={handleBlur}
-                  />
-
-                  <h3 className="mt-4">Children Details</h3>
-                  <AntdDynamicTable
-                    columns={childrenFields}
-                    data={[{ ...values.children }]} // ✅ different key
-                    values={values}
-                    setFieldValue={setFieldValue}
-                    handleChange={handleChange}
-                    handleBlur={handleBlur}
-                  />
-                </Card>
-              )}
-
-              <div style={{ marginTop: 16, display: "flex", gap: 8 }}>
-                {switchStep !== 1 && (
-                  <Button
-                    onClick={() => setSwitchStep(switchStep - 1)}
-                    style={{ marginRight: 8 }}
-                  >
-                    {switchStep === 3 ? "Edit" : "Back"}
-                  </Button>
-                )}
-                <Button
-                  type="primary"
-                  onClick={
-                    switchStep === 1
-                      ? async () => {
-                          const isValid = await touchFields(
-                            setFieldTouched,
-                            [
-                              "client.firstName",
-                              "client.lastName",
-                              "client.dob",
-                              "partner.firstName",
-                              "partner.lastName",
-                              "partner.dob",
-                            ],
-                            values,
-                            validationSchema
-                          );
-                          if (isValid) setSwitchStep(switchStep + 1);
-                        }
-                      : switchStep === 2
-                      ? submitChild
-                      : () => formRef.current.handleSubmit()
-                  }
-                >
-                  {switchStep === 3 ? "Next" : "Submit"}
+            <div className="row justify-content-center align-items-center mb-3 mt-4">
+              <div className="col-md-4">
+                <Button type="primary" htmlType="submit" className="w-100">
+                  {" "}
+                  Submit
                 </Button>
               </div>
-            </ConfigProvider>
+            </div>
           </Form>
         );
       }}

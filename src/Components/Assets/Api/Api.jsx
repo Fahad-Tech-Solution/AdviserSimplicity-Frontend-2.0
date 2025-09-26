@@ -797,6 +797,9 @@ const randomStringGenerator = ({
   return Array.from({ length: count }, generateOne);
 };
 
+const getNestedValue = (obj, path) =>
+  path.split(".").reduce((acc, part) => acc && acc[part], obj);
+
 export {
   DeleteAxios,
   GetAxios,
@@ -835,4 +838,5 @@ export {
   toTitleCase,
   touchFields,
   randomStringGenerator,
+  getNestedValue,
 };

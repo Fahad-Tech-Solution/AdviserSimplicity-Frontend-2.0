@@ -17,7 +17,7 @@ import DynamicYesNo from "../../Questions/FinancialInvestments/QuestionsDetail/D
 import { CreatableMultiSelectField } from "../../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import CreatableSelectField from "./DynamicCreatableSelect/CreatableSelectField";
 import { Form, InputGroup } from "react-bootstrap";
-import { DatePicker as AntDate, Drawer, Popover } from "antd";
+import { DatePicker as AntDate, Checkbox, Drawer, Popover } from "antd";
 import dayjs from "dayjs";
 import ButtonDrawer from "./ButtonDrawer";
 
@@ -59,7 +59,11 @@ const DynamicFormField = ({
               all.BlurHandler(values, setFieldValue, e.target, stakeHolder);
             }
           }}
-          disabled={all?.disabled ? all.disabled : false}
+          disabled={
+            typeof all?.disabled === "function"
+              ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+              : all?.disabled || false
+          }
         />
       );
 
@@ -77,8 +81,37 @@ const DynamicFormField = ({
               all.func(values, setFieldValue, e.target, stakeHolder);
             }
           }}
-          disabled={all?.disabled ? all.disabled : false}
+          disabled={
+            typeof all?.disabled === "function"
+              ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+              : all?.disabled || false
+          }
         />
+      );
+
+    case "checkbox":
+      return (
+        <Field name={stakeHolder ? stakeHolder + name : name}>
+          {({ field, form }) => (
+            <Checkbox
+              id={name}
+              checked={field.value || false}
+              onChange={(e) => {
+                form.setFieldValue(field.name, e.target.checked);
+                if (all.callBack) {
+                  all.func(values, setFieldValue, e.target, stakeHolder);
+                }
+              }}
+              disabled={
+                typeof all?.disabled === "function"
+                  ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+                  : all?.disabled || false
+              }
+            >
+              {placeholder || name}
+            </Checkbox>
+          )}
+        </Field>
       );
 
     case "number-toPercent":
@@ -117,7 +150,11 @@ const DynamicFormField = ({
               stakeHolder
             )
           }
-          disabled={all?.disabled ? all.disabled : false}
+          disabled={
+            typeof all?.disabled === "function"
+              ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+              : all?.disabled || false
+          }
         />
       );
 
@@ -141,7 +178,11 @@ const DynamicFormField = ({
                 all.func(values, setFieldValue, e.target, stakeHolder);
               }
             }}
-            disabled={all?.disabled ? all.disabled : false}
+            disabled={
+              typeof all?.disabled === "function"
+                ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+                : all?.disabled || false
+            }
           />
           <div className="invalid-feedback">{all.invalidMessage}</div>
         </React.Fragment>
@@ -173,7 +214,11 @@ const DynamicFormField = ({
                   );
                 }
               }}
-              disabled={all?.disabled ? all.disabled : false}
+              disabled={
+                typeof all?.disabled === "function"
+                  ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+                  : all?.disabled || false
+              }
             />
 
             <Button
@@ -226,7 +271,11 @@ const DynamicFormField = ({
           showIcon
           id={name}
           name={stakeHolder ? stakeHolder + name : name}
-          disabled={all?.disabled ? all.disabled : false} // Disable input based on props
+          disabled={
+            typeof all?.disabled === "function"
+              ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+              : all?.disabled || false
+          } // Disable input based on props
           // ✅ FIX: return the container instead of appending
           popperPlacement="bottom-start"
         />
@@ -279,7 +328,11 @@ const DynamicFormField = ({
           }}
           id={buildFieldName(stakeHolder, name)}
           name={buildFieldName(stakeHolder, name)}
-          disabled={all?.disabled ?? false}
+          disabled={
+            typeof all?.disabled === "function"
+              ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+              : all?.disabled || false
+          }
           format="DD/MM/YYYY"
           allowClear
           getPopupContainer={(triggerNode) =>
@@ -309,7 +362,11 @@ const DynamicFormField = ({
                   all.func(values, setFieldValue, e.target, stakeHolder);
                 }
               }}
-              disabled={all?.disabled ? all.disabled : false}
+              disabled={
+                typeof all?.disabled === "function"
+                  ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+                  : all?.disabled || false
+              }
             />
 
             <Field
@@ -335,7 +392,11 @@ const DynamicFormField = ({
           as="select"
           name={stakeHolder ? stakeHolder + name : name}
           className="form-select inputDesignDoubleInput"
-          disabled={all?.disabled ? all.disabled : false}
+          disabled={
+            typeof all?.disabled === "function"
+              ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+              : all?.disabled || false
+          }
           onChange={(e) => {
             handleChange(e);
             if (all.callBack) {
@@ -372,7 +433,11 @@ const DynamicFormField = ({
               as="select"
               name={stakeHolder ? stakeHolder + name : name}
               className="form-select inputDesignDoubleInput"
-              disabled={all?.disabled ? all.disabled : false}
+              disabled={
+                typeof all?.disabled === "function"
+                  ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+                  : all?.disabled || false
+              }
               onChange={(e) => {
                 handleChange(e);
                 if (all.callBack) {
@@ -420,7 +485,11 @@ const DynamicFormField = ({
           component={CreatableMultiSelectField}
           label="Multi Select Field"
           options={options}
-          disabled={all?.disabled ? all.disabled : false}
+          disabled={
+            typeof all?.disabled === "function"
+              ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+              : all?.disabled || false
+          }
           onChange={(e) => {
             console.log(e);
             if (all.callBack) {
@@ -437,7 +506,11 @@ const DynamicFormField = ({
           component={CreatableMultiSelectField}
           label="Multi Select Field"
           options={options}
-          disabled={all?.disabled ? all.disabled : false}
+          disabled={
+            typeof all?.disabled === "function"
+              ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+              : all?.disabled || false
+          }
         />
       );
 
@@ -449,7 +522,11 @@ const DynamicFormField = ({
           defaultOptions={options}
           placeholder="Select or create ..."
           form={{ setFieldValue }}
-          disabled={all?.disabled ? all.disabled : false}
+          disabled={
+            typeof all?.disabled === "function"
+              ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+              : all?.disabled || false
+          }
         />
       );
 

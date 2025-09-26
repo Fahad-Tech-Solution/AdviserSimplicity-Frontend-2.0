@@ -7,7 +7,6 @@ import AllClients from "../GetComponents/AllClients";
 import ViewClient from "../GetComponents/ViewClient";
 import Questions from "../Components/Questions/Questoins";
 import Dashboard from "../Components/Dashboard/Dashboard";
-import PersonalDetail_Edit from "../Components/PersonalDetails/PersonalDetail_Edit";
 import PersonalDetailNew from "../Components/PersonalDetails/PersonalDetailNew";
 import ImportantQuestion from "../Components/Questions/ImportantQuestion/ImportantQuestion";
 import QuestionsNew from "../Components/Questions_New/QuestionsNew";
@@ -47,7 +46,6 @@ function AuthRouts() {
     { path: "/all-client", element: () => <AllClients /> },
     { path: "/view-client", element: () => <ViewClient /> },
     { path: "/personal-detail", element: () => <PersonalDetailNew /> },
-    { path: "/personal-detail-old", element: () => <PersonalDetail_Edit /> },
     { path: "/important-question", element: () => <ImportantQuestion /> },
     { path: "/questions", element: () => <Questions /> },
     {

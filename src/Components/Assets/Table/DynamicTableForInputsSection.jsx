@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Table as BootstrapTable, Button } from "react-bootstrap";
 import { Table as AntTable, Typography } from "antd";
 import DynamicFormField from "../Dynamic/DynamicFormField";
+import { ConvertDate } from "../Api/Api";
 
 const DynamicTableForInputsSection = (type = "bootstrap") => {
   const [editingRow, setEditingRow] = useState(null);
@@ -35,6 +36,15 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
               : {})} // 🔥 row decides (client/partner)
           />
         );
+      }
+
+      // ✅ When not editing → format based on type
+      if (col?.type === "antdate") {
+        return value ? ConvertDate(value) : "--";
+      }
+
+      if (col?.type === "checkbox") {
+        return value ? "Checked" : "Un-Checked";
       }
 
       return value || "--";
