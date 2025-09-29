@@ -24,6 +24,7 @@ const PersonalInsuranceRenderCard = (props) => {
     setOpen,
     PopoverContent,
   } = props;
+    let { OpenModal, arrayCount, jointClass, PartnerClass, elem, index } = props;
 
   let questionDetail = useRecoilValue(QuestionDetail);
   let CRObject = useRecoilValue(CRState);

@@ -5,6 +5,12 @@ import { Card } from "react-bootstrap";
 import { CRState, QuestionDetail } from "../../../Store/Store";
 import { useRecoilValue } from "recoil";
 import ButtonDrawer from "../../Assets/Dynamic/ButtonDrawer";
+import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from 'react'
+import { Card } from 'react-bootstrap';
+import { CRState, QuestionDetail } from '../../../Store/Store';
+import { useRecoilValue } from 'recoil';
 
 const SampleOne = (props) => {
   let {

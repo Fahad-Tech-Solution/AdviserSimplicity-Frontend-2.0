@@ -36,6 +36,7 @@ const SMSFQCards = (props) => {
     setOpen,
     PopoverContent,
   } = props;
+    let { OpenModal, arrayCount, jointClass, PartnerClass, SmsFElem, index, OpenReuseModal } = props;
 
   let questionDetail = useRecoilValue(QuestionDetail);
   let CRObject = useRecoilValue(CRState);
