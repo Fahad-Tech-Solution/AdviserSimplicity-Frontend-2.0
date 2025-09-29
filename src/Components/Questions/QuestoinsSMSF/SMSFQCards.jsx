@@ -20,7 +20,6 @@ import people from "../svgs/property-value.svg";
 import SMSFInvestmentProperty from "./SMSFInvestmentProperty";
 import { toCommaAndDollar } from "../../Assets/Api/Api";
 import SampleOne from "../AdditionalQueriesPersonalAssets/SampleOne";
-import ButtonDrawer from "../../Assets/Dynamic/ButtonDrawer";
 
 const SMSFQCards = (props) => {
   let {
@@ -36,7 +35,6 @@ const SMSFQCards = (props) => {
     setOpen,
     PopoverContent,
   } = props;
-    let { OpenModal, arrayCount, jointClass, PartnerClass, SmsFElem, index, OpenReuseModal } = props;
 
   let questionDetail = useRecoilValue(QuestionDetail);
   let CRObject = useRecoilValue(CRState);
@@ -223,36 +221,18 @@ const SMSFQCards = (props) => {
                           Total Fund Value {SmsFElem.title}
                         </label>
 
-                        <ButtonDrawer
-                          title={SmsFElem.title}
-                          placement="top"
-                          height={300}
-                          width={"70%"}
-                          DrawerContent={
-                            <PopoverContent
-                              title={SmsFElem.title}
-                              keyId={SmsFElem.key}
-                              title2="client"
-                            />
-                          }
-                          setOpen={setOpen}
-                          open={open}
+                        <label
+                          className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                          onClick={() => {
+                            OpenModal(SmsFElem.title, "client", SmsFElem.key);
+                          }}
+                          onMouseEnter={() => setOpen(true)}
+                          onMouseLeave={() => setOpen(false)}
                         >
-                          <label
-                            className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                            onClick={() => {
-                              OpenModal(SmsFElem.title, "client", SmsFElem.key);
-                            }}
-                            onMouseEnter={() => setOpen(true)}
-                            onMouseLeave={() => setOpen(false)}
-                          >
-                            <div>
-                              <FontAwesomeIcon
-                                icon={faArrowUpRightFromSquare}
-                              />
-                            </div>
-                          </label>
-                        </ButtonDrawer>
+                          <div>
+                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                          </div>
+                        </label>
                       </div>
                     </div>
                   </div>
@@ -692,4 +672,3 @@ const SMSFQCards = (props) => {
 };
 
 export default SMSFQCards;
-

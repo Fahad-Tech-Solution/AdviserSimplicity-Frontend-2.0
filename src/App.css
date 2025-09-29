@@ -2062,7 +2062,6 @@ label {
   /* collapsed width */
 }
 
-
 .CustomLink {
   color: rgba(33, 37, 41, 0.75);
 
@@ -2138,4 +2137,21 @@ label {
 .datepicker-popper {
   position: absolute !important;
   z-index: 20000 !important; /* higher than your table or modal */
+}
+
+.ProfilePicButton {
+  position: absolute;
+  bottom: 8px;
+  right: calc(50% - 60px + 8px);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &&:is(:hover, :focus, :active) {
+    background-color: #e0e0e0;
+  }
 }

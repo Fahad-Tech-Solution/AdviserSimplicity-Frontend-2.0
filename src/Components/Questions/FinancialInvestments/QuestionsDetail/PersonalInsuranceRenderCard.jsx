@@ -9,7 +9,6 @@ import incomeImg from "../../svgs/asd.png";
 import traumaImg from "../../svgs/traumaimg.svg";
 import lifeImg from "../../svgs/lifeimg.svg";
 import TPDImg from "../../svgs/tpdimg.svg";
-import ButtonDrawer from "../../../Assets/Dynamic/ButtonDrawer";
 
 const PersonalInsuranceRenderCard = (props) => {
   let {
@@ -24,7 +23,6 @@ const PersonalInsuranceRenderCard = (props) => {
     setOpen,
     PopoverContent,
   } = props;
-    let { OpenModal, arrayCount, jointClass, PartnerClass, elem, index } = props;
 
   let questionDetail = useRecoilValue(QuestionDetail);
   let CRObject = useRecoilValue(CRState);
@@ -112,7 +110,6 @@ const PersonalInsuranceRenderCard = (props) => {
           });
         }
 
-
         // Now, conditionally render cards based on the coverTypes object
         return (
           <React.Fragment key={Pindex}>
@@ -142,38 +139,23 @@ const PersonalInsuranceRenderCard = (props) => {
                         >
                           {localStorage.getItem("UserName") || "You"}
                         </label>
-                        <ButtonDrawer
-                          title="Personal Insurance"
-                          placement="top"
-                          height={300}
-                          width={"60%"}
-                          DrawerContent={PopoverContent(
-                            "Personal Insurance",
-                            "client",
-                            PersonalElem.key
-                          )}
-                          setOpen={setOpen}
-                          open={open}
+
+                        <label
+                          className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                          onClick={() => {
+                            OpenModal(
+                              "Personal Insurance",
+                              "client",
+                              PersonalElem.key
+                            );
+                          }}
+                          onMouseEnter={() => setOpen(true)}
+                          onMouseLeave={() => setOpen(false)}
                         >
-                          <label
-                            className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                            onClick={() => {
-                              OpenModal(
-                                "Personal Insurance",
-                                "client",
-                                PersonalElem.key
-                              );
-                            }}
-                            onMouseEnter={() => setOpen(true)}
-                            onMouseLeave={() => setOpen(false)}
-                          >
-                            <div>
-                              <FontAwesomeIcon
-                                icon={faArrowUpRightFromSquare}
-                              />
-                            </div>
-                          </label>
-                        </ButtonDrawer>
+                          <div>
+                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                          </div>
+                        </label>
                       </div>
                     </div>
                   </div>

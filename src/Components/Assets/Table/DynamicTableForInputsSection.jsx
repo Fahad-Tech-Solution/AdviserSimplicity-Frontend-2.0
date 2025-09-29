@@ -5,8 +5,6 @@ import DynamicFormField from "../Dynamic/DynamicFormField";
 import { ConvertDate } from "../Api/Api";
 
 const DynamicTableForInputsSection = (type = "bootstrap") => {
-  const [editingRow, setEditingRow] = useState(null);
-
   return function TableHOC({
     columns,
     data,
@@ -15,6 +13,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
     handleChange,
     handleBlur,
   }) {
+    const [editingRow, setEditingRow] = useState(null);
     const renderCell = (record, col) => {
       const value = record[col.dataIndex];
       if (editingRow === record.key) {
