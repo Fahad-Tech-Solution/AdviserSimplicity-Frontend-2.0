@@ -465,9 +465,7 @@ const EmploymentIncome = (props) => {
               occupation: values?.client?.occupation || "",
               employmentStatus: values?.client?.employmentStatus || "",
               nameOfCompany: values?.client?.nameOfCompany || "",
-              startDate: values?.client?.startDate
-                ? ConvertDate(values.client.startDate)
-                : null,
+              startDate: values?.client?.startDate || "",
               hoursWorked: values?.client?.hoursWorked || "",
               salaryPackage:
                 values?.client?.SalaryPackageModal?.grossSalary || "",

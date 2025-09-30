@@ -54,13 +54,13 @@ export const content = {
       route: "/user/personal-detail",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
-    {
-      subTitle: "Question",
-      statusStep: 8,
-      icon: "FaPlus",
-      route: "/user/important-question",
-      condition: (CRObject) => true, // Always true, as this step is always needed.
-    },
+    // {
+    //   subTitle: "Question",
+    //   statusStep: 8,
+    //   icon: "FaPlus",
+    //   route: "/user/important-question",
+    //   condition: (CRObject) => true, // Always true, as this step is always needed.
+    // },
     {
       subTitle: "Personal Income and Expenses",
       statusStep: 16,

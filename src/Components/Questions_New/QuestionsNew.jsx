@@ -7,6 +7,7 @@ import {
   defaultUrl,
   QuestionDetail,
   QuestionShift,
+  SelectedClientDetails,
 } from "../../Store/Store";
 import "./Questions.css";
 
@@ -26,6 +27,7 @@ const QuestionsNew = (props) => {
   let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
   let [QuestionChange, setQuestionChange] = useRecoilState(QuestionShift);
   let CRObject = useRecoilValue(CRState);
+  let SelectedClient = useRecoilValue(SelectedClientDetails);
 
   let [flagState, setFlagState] = useState(false);
   let [flagState2, setFlagState2] = useState(true);
@@ -145,9 +147,9 @@ const QuestionsNew = (props) => {
       const prevItem = itemsOpt[prevIndex];
       if (prevItem.condition(CRObject)) {
         if (prevItem.route === "/user/personal-detail") {
-          let Email = localStorage.getItem("Email");
-          if (Email) {
-            Navigation("/user/personal-detail#" + Email);
+          let Id = CRObject?.clientFK || SelectedClient?._id;
+          if (Id) {
+            Navigation("/user/personal-detail#" + Id);
           } else {
             Navigation("/user/personal-detail");
           }
@@ -231,7 +233,7 @@ const QuestionsNew = (props) => {
               </div>
             </div>
 
-            <QuestionCards Question={QuestionChange} />
+            <QuestionCards questionKey={QuestionChange} />
 
             <ModalComponent
               setQuestionChange={setFlagState2}

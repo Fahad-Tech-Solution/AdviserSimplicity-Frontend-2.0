@@ -104,6 +104,7 @@ const ModalComponent = (props) => {
   }, [props.setQuestionChange, props.Question]);
 
   const xlTitles = [
+    "Important Questions",
     "Questions",
     // "Employement Income",
     // "Australian Shares",

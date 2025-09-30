@@ -20,6 +20,7 @@ import people from "../svgs/property-value.svg";
 import SMSFInvestmentProperty from "./SMSFInvestmentProperty";
 import { toCommaAndDollar } from "../../Assets/Api/Api";
 import SampleOne from "../AdditionalQueriesPersonalAssets/SampleOne";
+import ButtonDrawer from "../../Assets/Dynamic/ButtonDrawer";
 
 const SMSFQCards = (props) => {
   let {

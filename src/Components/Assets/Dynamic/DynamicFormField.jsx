@@ -19,48 +19,7 @@ import CreatableSelectField from "./DynamicCreatableSelect/CreatableSelectField"
 import { Form, InputGroup } from "react-bootstrap";
 import { DatePicker as AntDate, Checkbox, Drawer, Popover } from "antd";
 import dayjs from "dayjs";
-
-const ButtonDrawer = ({
-  title,
-  placement = "top",
-  height = 250,
-  width = "60%",
-  children,
-  DrawerContent,
-  setOpen,
-  open,
-  containerSelector = ".modal", // 👈 default parent container
-}) => {
-  return (
-    <div className="d-flex justify-content-center align-items-center">
-      {children || "nothing to render"}
-      <Drawer
-        title={title}
-        placement={placement}
-        height={height}
-        width={width}
-        open={open}
-        onClose={() => setOpen(false)}
-        mask={false} // 👈 no black overlay
-        closable={false} // 👈 no close button
-        getContainer={() => document.querySelector(containerSelector)}
-        style={{
-          width: width,
-          margin: "10px auto",
-          borderRadius: "12px",
-          boxShadow: "none",
-        }}
-        styles={{
-          body: { boxShadow: "none", maxHeight: "70vh", overflowY: "auto" },
-          content: { boxShadow: "none" },
-          wrapper: { boxShadow: "none" },
-        }}
-      >
-        {DrawerContent}
-      </Drawer>
-    </div>
-  );
-};
+import ButtonDrawer from "./ButtonDrawer";
 
 const DynamicFormField = ({
   fieldType,

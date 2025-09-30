@@ -4,8 +4,10 @@ import { Button, Card } from "antd";
 import * as Yup from "yup";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
+  CRState,
   defaultUrl,
   PersonalDetailsData,
+  QuestionDetail,
   StepsStatus,
 } from "../../Store/Store";
 import {
@@ -21,6 +23,8 @@ import DynamicTableForInputsSection from "../Assets/Table/DynamicTableForInputsS
 import DynamicYesNo from "../Questions/FinancialInvestments/QuestionsDetail/DynamicYesNo";
 import dayjs from "dayjs";
 import ProfileCard from "./ProfileCard";
+import ImportantQuestion from "../Questions/ImportantQuestion/ImportantQuestion";
+import ModalComponent from "../Questions/FinancialInvestments/ModalComponent";
 
 const validationSchema = Yup.object({
   client: Yup.object().shape({
@@ -156,10 +160,14 @@ const mapChildrenForSubmit = (children = []) =>
 
 const PersonalDetailNew = () => {
   const formRef = useRef(null);
-  const [switchStep, setSwitchStep] = useState(1);
+  const [switchStep, setSwitchStep] = useState(0);
   const [userData, setUserData] = useState({});
+  let [flagState, setFlagState] = useState(false);
+  let [modalObject, setModalObject] = useState({});
   const [personalDetailObj, setPersonalDetailObj] =
     useRecoilState(PersonalDetailsData);
+  let [CRObjectNoUse, setCRObject] = useRecoilState(CRState);
+  let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
   const defaultUrlValue = useRecoilValue(defaultUrl);
   const location = useLocation();
   const Nav = useNavigate();
@@ -299,24 +307,28 @@ const PersonalDetailNew = () => {
       dataIndex: "smoker",
       type: "yesno",
       key: "smoker",
+      width: 100,
     },
     {
       title: "Tax Res",
       dataIndex: "taxRes",
       type: "yesno",
       key: "taxRes",
+      width: 100,
     },
     {
       title: "Health Cover",
       dataIndex: "healthCover",
       type: "yesno",
       key: "healthCover",
+      width: 100,
     },
     {
       title: "HELP Debt",
       dataIndex: "helpDebt",
       type: "yesno",
       key: "helpDebt",
+      width: 100,
     },
   ];
 
@@ -410,6 +422,8 @@ const PersonalDetailNew = () => {
       dataIndex: "email",
       type: "text",
       key: "email",
+      width: 230,
+      fixed: "right",
     },
   ];
 
@@ -464,10 +478,12 @@ const PersonalDetailNew = () => {
         `${defaultUrlValue}/api/personalDetails/getUserById/${id}`
       );
       if (res) {
+        console.log(res);
         setPersonalDetailObj(res);
         setUserData(res);
         localStorage.setItem("UserID", res._id);
         localStorage.setItem("UserName", res.client.clientPreferredName);
+        localStorage.setItem("Email", res.client?.Email || "");
         localStorage.setItem(
           "UserStatus",
           ["Single", "Widowed"].includes(res.client.clientMaritalStatus)
@@ -556,6 +572,7 @@ const PersonalDetailNew = () => {
       if (res) {
         localStorage.setItem("UserID", res._id);
         localStorage.setItem("UserName", res.client?.preferred || "");
+        localStorage.setItem("Emial", res.client?.Email || "");
         localStorage.setItem(
           "UserStatus",
           ["Single", "Widowed"].includes(res.client?.marital)
@@ -586,8 +603,158 @@ const PersonalDetailNew = () => {
 
   useEffect(() => {
     const id = location.hash.replace("#", "");
-    if (id) getApiFunction(id);
+    if (id) {
+      getApiFunction(id);
+      getQuestions(id); // this fetches the Yes and No Questions of client
+      getQuestionsDetails(id); // this fetches the Detailed Data of client
+    } else {
+      setSwitchStep(1);
+    }
   }, []);
+
+  useEffect(() => {
+    if (switchStep == 2) {
+      console.log("CRObjectNoUse", CRObjectNoUse);
+      if (
+        CRObjectNoUse.investmentPropertyTab === "No" &&
+        CRObjectNoUse.personalInsuranceTab === "No" &&
+        CRObjectNoUse.BusinessAsCompanyStructure === "No" &&
+        CRObjectNoUse.SMSFManagedFundsTab === "No" &&
+        CRObjectNoUse.businessAsInvestmentTab === "No"
+      ) {
+        setModalObject({
+          title: "Important Questions",
+        });
+        setFlagState(true);
+      }
+    }
+  }, [switchStep]);
+
+  async function getQuestions(id) {
+    try {
+      const res = await GetAxios(`${defaultUrlValue}/api/questions/${id}`);
+      if (res) {
+        setCRObject(res);
+      }
+    } catch (error) {
+      setCRObject({
+        //Financial Assets
+        QuestionsFlag: false,
+        clientFK: "",
+
+        bankAccountFinance: "No",
+        termDepositsFinance: "No",
+        australianShareMarket: "No",
+        managedFund: "No",
+        investmentBondFinance: "No",
+        managedFundsLOC: "No",
+        managedFundsMarginLoan: "No",
+
+        car: "No",
+        boat: "No",
+        caravan: "No",
+        houseHold: "No",
+        otherAssets: "No",
+
+        personalLoans: "No",
+
+        creditCards: "No",
+
+        familyHome: "No",
+        familyHomeLoan: "No",
+        numberOfHolidayHome: 0,
+
+        investmentPropertyDetails: "No",
+        investmentPropertyLoan: "No",
+        incomeExpenses: "No",
+
+        superAnnuationIssues: "No",
+        accountBasedPensionIssues: "No",
+        annuitiesIssues: "No",
+
+        will: "No",
+        POA: "No",
+        professionalAdviser: "No",
+
+        incomeFromOwnBusiness: "No",
+        incomeFromSoleTrader: "No",
+        incomeFromPartnership: "No",
+        incomeFromCentrelink: "No",
+        incomeFromSuperPayment: "No",
+        incomeFromOverseasPension: "No",
+        incomeFromInheritance: "No",
+        incomeFromLumpsumExpense: "No",
+        incomeFromRegularLivingExpenses: "Yes", // this one should be yes always
+
+        BusinessAsCompanyStructure: "No",
+        BusinessAsTrusts: "No",
+
+        //keys which just controls rendering
+        investmentPropertyTab: "No",
+        personalInsuranceTab: "No",
+
+        // companyStructureBusinessTab: "No",
+        // trustStructureBusinessTab: "No",
+
+        SMSFManagedFundsTab: "No",
+        businessAsInvestmentTab: "No",
+
+        SMSFBank: "Yes",
+        SMSFTermDeposits: "No",
+        SMSFAustralianShares: "No",
+        SMSFManagedFunds: "No",
+        SMSFInvestmentLoan: "No",
+        SMSFInvestmentProperties: "No",
+        numberOfSMSFInvestmentProperties: 0,
+        SMSFPensionPhase: "No",
+
+        //loop keys
+        // SMSFInvestmentPropertiesLoan
+        // SMSFInvestmentExpenses
+
+        SMSFDetails: "Yes", // this one should be yes always
+        SMSFAccumulationDetails: "Yes", // this one should be yes always
+
+        familyBank: "Yes", // this one should be yes always
+
+        familyTermDeposit: "No",
+        familyAustralianShare: "No",
+        familyMangedFunds: "No",
+        familyInvestmentHomeLoan: "No",
+        familyInvestmentProperties: "No",
+        numberOfFamilyInvestmentProperties: 0,
+        familyPensionPhase: "No",
+
+        SMSFOtherInvestment: "No",
+        familyOtherInvestment: "No",
+
+        //loop keys
+        // familyInvestmentPropertiesLoan
+        // familyInvestmentExpenses
+
+        familyDetails: "Yes", // this one should be yes always
+
+        life: "Yes",
+        TPD: "Yes",
+        trauma: "Yes",
+        incomeProtection: "Yes",
+      });
+      console.error("Error fetching questions:", error);
+    }
+  }
+
+  async function getQuestionsDetails(id) {
+    try {
+      const res = await GetAxios(
+        `${defaultUrlValue}/api/dataOfAllSection/${id}`
+      );
+      if (res) {
+        setQuestionDetail(res);
+      }
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+    }
+  }
 
   return (
     <Formik
@@ -649,6 +816,13 @@ const PersonalDetailNew = () => {
 
         return (
           <Form className="All_Client reportSection">
+            <ModalComponent
+              modalObject={modalObject}
+              setFlagState={setFlagState}
+              flagState={flagState}
+            >
+              <ImportantQuestion />
+            </ModalComponent>
             {switchStep == 1 && (
               <>
                 <h3 className="mt-4">Personal Details</h3>
@@ -751,21 +925,17 @@ const PersonalDetailNew = () => {
             )}
             {switchStep == 2 && (
               <>
-                <h3
-                  className="mt-4"
-                  onClick={() => {
-                    console.log(values);
-                  }}
-                >
-                  Personal Details Summay
-                </h3>
-                <div className="row justify-content-center">
-                  <div className="col-md-4  mt-4">
+                <div className="row justify-content-center mt-4">
+                  <div className="col-md-3 mt-4">
                     <ProfileCard owner="client" Data={values.client} />
                   </div>
-                  <div className="col-md-4  mt-4">
-                    <ProfileCard owner="partner" Data={values.partner} />
-                  </div>
+                  {!["Single", "Widowed", ""].includes(
+                    values.client.marital
+                  ) && (
+                    <div className="col-md-3 mt-4">
+                      <ProfileCard owner="partner" Data={values.partner} />
+                    </div>
+                  )}
                 </div>
                 <div className="row justify-content-center">
                   <div className="col-md-2 mt-4">
@@ -782,10 +952,26 @@ const PersonalDetailNew = () => {
                   <div className="col-md-2 mt-4">
                     <Button
                       htmlType="button"
+                      color="default"
+                      variant="filled"
+                      className="w-100"
+                      onClick={() => {
+                        setModalObject({
+                          title: "Important Questions",
+                        });
+                        setFlagState(true);
+                      }}
+                    >
+                      Edit Questions
+                    </Button>
+                  </div>
+                  <div className="col-md-2 mt-4">
+                    <Button
+                      htmlType="button"
                       type="primary"
                       className="w-100"
                       onClick={() => {
-                        Nav("/user/important-question");
+                        Nav("/user/personal-income");
                       }}
                     >
                       Next
