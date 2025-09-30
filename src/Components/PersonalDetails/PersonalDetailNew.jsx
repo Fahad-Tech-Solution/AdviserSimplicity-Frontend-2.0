@@ -162,6 +162,7 @@ const PersonalDetailNew = () => {
     useRecoilState(PersonalDetailsData);
   const defaultUrlValue = useRecoilValue(defaultUrl);
   const location = useLocation();
+  const Nav = useNavigate();
 
   const initialValues = {
     client: {},
@@ -767,7 +768,7 @@ const PersonalDetailNew = () => {
                   </div>
                 </div>
                 <div className="row justify-content-center">
-                  <div className="col-md-4  mt-4">
+                  <div className="col-md-2 mt-4">
                     <Button
                       htmlType="button"
                       className="w-100"
@@ -776,6 +777,18 @@ const PersonalDetailNew = () => {
                       }}
                     >
                       Edit
+                    </Button>
+                  </div>
+                  <div className="col-md-2 mt-4">
+                    <Button
+                      htmlType="button"
+                      type="primary"
+                      className="w-100"
+                      onClick={() => {
+                        Nav("/user/important-question");
+                      }}
+                    >
+                      Next
                     </Button>
                   </div>
                 </div>

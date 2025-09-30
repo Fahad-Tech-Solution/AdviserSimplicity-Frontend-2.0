@@ -8,7 +8,7 @@ import {
 import { FiMapPin } from "react-icons/fi";
 import dayjs from "dayjs";
 
-import defaultAvatar from "../Questions/svgs/avatar-boy-(4).png";
+import defaultAvatar from "../Questions/svgs/avatar-boy-(1).png";
 import { FaCamera } from "react-icons/fa";
 import { List } from "antd";
 import ModalComponent from "../Questions/FinancialInvestments/ModalComponent";
