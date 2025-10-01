@@ -282,7 +282,6 @@ const NewAllClients = (props) => {
           const nameB = b?.client?.clientSurname?.toLowerCase() || "";
           return nameA.localeCompare(nameB);
         },
-        defaultSortOrder: "descend", // ✅ default to Z → A (descending) as per your requirement
       },
       {
         title: "Name",
@@ -398,7 +397,6 @@ const NewAllClients = (props) => {
           return client;
         },
         sorter: (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt), // ✅ ascending/descending sort
-        defaultSortOrder: "descend", // optional: start sorted by newest first
       },
       {
         title: "Operations",
@@ -408,12 +406,14 @@ const NewAllClients = (props) => {
         render: (text, row, index) => {
           let menuItems = menuGenerator(row);
           return (
-            <DropDownOptions
-              menuItems={menuItems}
-              CallBack={OpenModel}
-              heading={row}
-              row={row} // ✅ Proper row data
-            />
+            <div className="w-100 d-flex justify-content-center align-items-center">
+              <DropDownOptions
+                menuItems={menuItems}
+                CallBack={OpenModel}
+                heading={row}
+                row={row} // ✅ Proper row data
+              />
+            </div>
           );
         },
       },
@@ -443,6 +443,7 @@ const NewAllClients = (props) => {
       let res = await GetAxios(`${DefaultUrl}/api/user/Clients`);
       // console.log(res, "/api/user/Clients");
       if (res) {
+        console.log(res, "DashBoard Table");
         let adjustment = deepCloneWithKeys(
           res.clients.map((item, index) => {
             return {
@@ -554,20 +555,6 @@ const NewAllClients = (props) => {
         break;
     }
   };
-
-  // async function DeleteData(text, row, index) {
-  //   try {
-  //     let res = await PatchAxios(
-  //       DefaultUrl + "/api/personalDetails/softDelete/" + row._id
-  //     );
-  //     if (res) {
-  //       console.log(res);
-  //       removeItemById(res._id);
-  //     }
-  //   } catch (error) {
-  //     console.error("we Found an error in SoftDelete:", error);
-  //   }
-  // }
 
   const { confirm } = Modal; // ✅ make sure you imported from "antd"
 

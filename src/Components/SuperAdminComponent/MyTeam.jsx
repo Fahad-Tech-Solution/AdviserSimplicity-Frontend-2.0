@@ -131,12 +131,14 @@ const MyTeam = () => {
       key: "operations",
       fixed: "right",
       render: (text, row, index) => (
-        <DropDownOptions
-          menuItems={getDowpdownOptions(row)}
-          CallBack={CallBack}
-          heading={row}
-          row={row} // ✅ Proper row data
-        />
+        <div className="w-100 d-flex justify-content-center align-items-center">
+          <DropDownOptions
+            menuItems={getDowpdownOptions(row)}
+            CallBack={CallBack}
+            heading={row}
+            row={row} // ✅ Proper row data
+          />
+        </div>
       ),
     },
   ];

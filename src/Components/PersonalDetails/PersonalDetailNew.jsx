@@ -825,7 +825,7 @@ const PersonalDetailNew = () => {
             </ModalComponent>
             {switchStep == 1 && (
               <>
-                <h3 className="mt-4">Personal Details</h3>
+                <h3 className="mt-4 fw-bold">Personal Details</h3>
                 <AntdDynamicTable
                   columns={personalFields}
                   data={tableData}
@@ -836,7 +836,7 @@ const PersonalDetailNew = () => {
                 />
 
                 <h3
-                  className="mt-4"
+                  className="mt-4 fw-bold"
                   onClick={() => {
                     console.log(values);
                   }}
@@ -853,7 +853,7 @@ const PersonalDetailNew = () => {
                 />
 
                 <h3
-                  className="mt-4"
+                  className="mt-4 fw-bold"
                   onClick={() => {
                     console.log(values);
                   }}
@@ -861,13 +861,13 @@ const PersonalDetailNew = () => {
                   Children Details
                 </h3>
 
-                <div className="row justify-content-center align-items-center mb-3">
+                <div className="row justify-content-start align-items-center mb-3">
                   <div className="col-md-3">
                     <label className="form-label fw-bold">
                       Do you have any children?
                     </label>
                   </div>
-                  <div className="col-md-2">
+                  <div className="col-md-1">
                     <DynamicYesNo
                       name={"haveAnyChildren"}
                       values={values}
@@ -876,7 +876,7 @@ const PersonalDetailNew = () => {
                   </div>
                 </div>
                 {values.haveAnyChildren === "Yes" && (
-                  <div className="row justify-content-center align-items-center mb-3">
+                  <div className="row justify-content-start align-items-center mb-3">
                     <div className="col-md-3">
                       <label className="form-label fw-bold">
                         How many children do you have :

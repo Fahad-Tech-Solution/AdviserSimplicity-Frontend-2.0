@@ -139,11 +139,11 @@
 //         {variant === "single" && (
 //           <input className="form-control mt-2" placeholder={title} />
 //         )}
-        
+
 //           <button className="btn btn-outline-primary mt-2" onClick={onOpen}>
 //             Open Modal
 //           </button>
-       
+
 //       </div>
 //     </div>
 //   );
@@ -173,9 +173,6 @@
 // };
 
 // export default QuestionCards;
-
-
-
 import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 
@@ -298,7 +295,6 @@ import SMSFQCards from "../QuestoinsSMSF/SMSFQCards";
 
 import SmsfPensionAccountMiddleWare from "../QuestoinsSMSF/PensionAccount";
 import OtherInvestmentsDynamic from "../QuestoinsSMSF/OtherInvestmentsDynamic";
-import ButtonDrawer from "../../Assets/Dynamic/ButtonDrawer";
 
 const QuestionCards = (props) => {
   let [QuestionChange, setQuestionChange] = useRecoilState(QuestionShift);
@@ -587,14 +583,16 @@ const QuestionCards = (props) => {
   };
 
   useEffect(() => {
+    console.log(props.questionKey, arrayObj[props.questionKey]);
+
     countYesAttributes();
   }, [CRObject]);
 
   function countYesAttributes() {
     let a = [];
     let lengthOfa = 0;
-    if (props.Question == "/user/family-trust") {
-      arrayObj?.[props.Question].map((elem, index) => {
+    if (props.questionKey == "/user/family-trust") {
+      arrayObj?.[props.questionKey].map((elem, index) => {
         if (CRObject[elem.key] === "Yes") {
           a.push("yes");
           // console.log("yes")
@@ -602,8 +600,8 @@ const QuestionCards = (props) => {
       });
       lengthOfa = a.length - 1;
       setArrayCount(lengthOfa + CRObject.numberOfFamilyInvestmentProperties);
-    } else if (props.Question == "/user/SMSF") {
-      arrayObj?.[props.Question].map((elem, index) => {
+    } else if (props.questionKey == "/user/SMSF") {
+      arrayObj?.[props.questionKey].map((elem, index) => {
         if (CRObject[elem.key] === "Yes") {
           a.push("yes");
           // console.log("yes")
@@ -611,8 +609,8 @@ const QuestionCards = (props) => {
       });
       lengthOfa = a.length - 1;
       setArrayCount(lengthOfa + CRObject.numberOfSMSFInvestmentProperties);
-    } else if (props.Question == "/user/life-Style") {
-      arrayObj?.[props.Question].map((elem, index) => {
+    } else if (props.questionKey == "/user/life-Style") {
+      arrayObj?.[props.questionKey].map((elem, index) => {
         if (CRObject[elem.key] === "Yes") {
           a.push("yes");
           // console.log("yes")
@@ -621,7 +619,8 @@ const QuestionCards = (props) => {
       lengthOfa = a.length - 1;
       setArrayCount(lengthOfa + CRObject.numberOfHolidayHome);
     } else {
-      arrayObj?.[props.Question].map((elem, index) => {
+      console.log();
+      arrayObj?.[props.questionKey].map((elem, index) => {
         if (CRObject[elem.key] === "Yes") {
           a.push("yes");
           // console.log("yes")
@@ -942,9 +941,10 @@ const QuestionCards = (props) => {
       </ModalComponent>
 
       <div className="row m-0 justify-content-start align-items-stretch">
-        {Array.isArray(arrayObj?.[props.Question]) &&
-          arrayObj?.[props.Question].map((elem, index) => {
+        {Array.isArray(arrayObj?.[props.questionKey]) &&
+          arrayObj?.[props.questionKey].map((elem, index) => {
             if (CRObject[elem.key] === "Yes") {
+              // const cardSwitch = CardForms.includes(elem.key) ? true : false;
               const jointClass = JointHidden.includes(elem.key) ? "d-none" : "";
               const singleSwitch = singleClient.includes(elem.key)
                 ? true
@@ -957,21 +957,21 @@ const QuestionCards = (props) => {
               const SampleOneSwitch = sampleOne.includes(elem.key)
                 ? true
                 : false;
-
               const PersonalInsuranceRender = conditionalRender.includes(
                 elem.key
               )
                 ? true
                 : false;
-
+              // console.log(PersonalInsuranceRender)
               const SMSFInP = elem.key === "SMSFDetails" ? true : false;
-
               const OneIndex =
                 elem.key === "familyDetails" ||
                 elem.key === "familyOtherInvestment"
                   ? true
                   : false;
 
+              // const SMSFInP = elem.key === "SMSFInvestmentProperties" ? true : false;
+              // const FamilyInP = elem.key === "familyInvestmentProperties" ? true : false;
               const PartnerClass =
                 localStorage.getItem("UserStatus") === "Single" ? "d-none" : "";
 
@@ -1002,23 +1002,23 @@ const QuestionCards = (props) => {
                             >
                               General Living
                             </label>
-                   
-                              <label
-                                className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                onClick={() => {
-                                  OpenModalClient2(
-                                    elem.title,
-                                    "client",
-                                    "General Living"
-                                  );
-                                }}
-                              >
-                                <div>
-                                  <FontAwesomeIcon
-                                    icon={faArrowUpRightFromSquare}
-                                  />
-                                </div>
-                              </label>
+
+                            <label
+                              className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                              onClick={() => {
+                                OpenModalClient2(
+                                  elem.title,
+                                  "client",
+                                  "General Living"
+                                );
+                              }}
+                            >
+                              <div>
+                                <FontAwesomeIcon
+                                  icon={faArrowUpRightFromSquare}
+                                />
+                              </div>
+                            </label>
                           </div>
                         </div>
                       </div>
@@ -1098,7 +1098,6 @@ const QuestionCards = (props) => {
                     OpenModal={OpenModal2}
                     homeArray={homeArray}
                     arrayCount={arrayCount}
-                    evenClass={evenClass}
                   />
                 );
               } else if (reuseSwitch) {
@@ -1129,24 +1128,19 @@ const QuestionCards = (props) => {
                             >
                               {localStorage.getItem("UserName") || "You"}
                             </label>
-                              <label
-                                className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
-                                onClick={() => {
-                                  OpenReuseModal(
-                                    elem.title,
-                                    "client",
-                                    elem.key
-                                  );
-                                }}
-                                onMouseEnter={() => setOpen(true)}
-                                onMouseLeave={() => setOpen(false)}
-                              >
-                                <div>
-                                  <FontAwesomeIcon
-                                    icon={faArrowUpRightFromSquare}
-                                  />
-                                </div>
-                              </label>
+
+                            <label
+                              className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
+                              onClick={() => {
+                                OpenReuseModal(elem.title, "client", elem.key);
+                              }}
+                            >
+                              <div>
+                                <FontAwesomeIcon
+                                  icon={faArrowUpRightFromSquare}
+                                />
+                              </div>
+                            </label>
                           </div>
                         </div>
                       </div>
@@ -1204,9 +1198,6 @@ const QuestionCards = (props) => {
                     OpenReuseModal={OpenReuseModal}
                     homeArray={homeArray}
                     arrayCount={arrayCount}
-                    open={open}
-                    setOpen={setOpen}
-                    PopoverContent={PopoverContent}
                   />
                 );
               } else if (OneIndex) {
@@ -1258,6 +1249,9 @@ const QuestionCards = (props) => {
                   />
                 );
               } else {
+                // <div className={`col-md-${arrayCount % 2 == 0 ? '6' : '4'} mb-4`} key={index}>
+                // ya hos sukta hai bad ma chnage karna para
+
                 return (
                   <div className={`col-md-3 mb-4`} key={index}>
                     <Card
@@ -1405,6 +1399,26 @@ const QuestionCards = (props) => {
           })}
       </div>
 
+      <div className="row mt-2 d-none">
+        <div className="col-md-12">
+          <button
+            onClick={() => {
+              setQuestionChange("income");
+            }}
+            className="float-end btn w-25  bgColor modalBtn"
+          >
+            Next
+          </button>
+          <button
+            onClick={() => {
+              setQuestionChange("InvestmentTrust");
+            }}
+            className="float-end btn w-25  btn-outline  backBtn mx-3"
+          >
+            Back
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

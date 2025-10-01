@@ -270,6 +270,7 @@ const AccordionItems = ({
       <Menu.Item
         key="6"
         icon={<FaTrashAlt />}
+        className="custom-danger-option"
         onClick={() => menuClicked(fullData, row, "delete")}
       >
         Delete{" "}
@@ -312,28 +313,30 @@ const AccordionItems = ({
       title: "Operation",
       key: "operation",
       render: (text, row) => (
-        <Dropdown overlay={getMenu(row)} trigger={["click"]}>
-          {row.isLocked ? (
-            <div style={{ position: "relative", display: "inline-block" }}>
+        <div className="w-100 d-flex justify-content-center align-items-center">
+          <Dropdown overlay={getMenu(row)} trigger={["click"]}>
+            {row.isLocked ? (
+              <div style={{ position: "relative", display: "inline-block" }}>
+                <FaGear size={20} />
+                <FaLock
+                  size={10}
+                  style={{
+                    position: "absolute",
+                    top: "75%",
+                    left: "95%",
+                    transform: "translate(-50%, -50%)",
+                    border: "20px solid inherit",
+                    borderRadius: "50%",
+                    backgroundColor: "white",
+                    color: "#ac0202",
+                  }}
+                />
+              </div>
+            ) : (
               <FaGear size={20} />
-              <FaLock
-                size={10}
-                style={{
-                  position: "absolute",
-                  top: "75%",
-                  left: "95%",
-                  transform: "translate(-50%, -50%)",
-                  border: "20px solid inherit",
-                  borderRadius: "50%",
-                  backgroundColor: "white",
-                  color: "#ac0202",
-                }}
-              />
-            </div>
-          ) : (
-            <FaGear size={20} />
-          )}
-        </Dropdown>
+            )}
+          </Dropdown>
+        </div>
       ),
     },
   ];
@@ -468,8 +471,8 @@ const AccordionItems = ({
 
             <div className="col-md-12 mt-3">
               <div className="row justify-content-between ">
-                <div className="pt-2" style={{ width: "fit-content" }}>
-                  <h5>Scenario List :</h5>
+                <div className="pt-2 " style={{ width: "fit-content" }}>
+                  <h5 className="fw-bold">Scenario List :</h5>
                 </div>
                 <div style={{ width: "fit-content" }}>
                   <button

@@ -62,7 +62,7 @@ const ProfileCard = ({ owner = "client", Data }) => {
 
   return (
     <Card
-      className="shadow-sm"
+      className="shadow-sm h-100"
       style={{ borderRadius: "12px", fontFamily: "Inter, sans-serif" }}
     >
       <ModalComponent

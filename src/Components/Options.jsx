@@ -142,12 +142,9 @@ function Options(props) {
     Risk = cLocation.startsWith("/user/risk-profile");
 
     if (
-      [
-        "/user/business-entities",
-        "/user/SMSF",
-        "/user/family-trust",
-        "Goals-And-Objectives",
-      ].includes(cLocation)
+      ["/user/SMSF", "/user/family-trust", "Goals-And-Objectives"].includes(
+        cLocation
+      )
     )
       Opt = "Opt2";
     if (Risk) Opt = "Opt3";
@@ -223,7 +220,7 @@ function Options(props) {
             <span
               style={{
                 color: isCurrentStep ? "#000" : "#808080",
-                fontSize: "11px",
+                fontSize: "12px",
                 fontWeight: isCurrentStep ? "600" : "500",
               }}
             >

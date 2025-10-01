@@ -328,12 +328,14 @@ const CDFclients = () => {
       fixed: "right",
       width: 90,
       render: (text, row, index) => (
-        <DropDownOptions
-          menuItems={getMenuItems(row)}
-          CallBack={OpenModel}
-          heading={row}
-          row={row} // ✅ Proper row data
-        />
+        <div className="w-100 d-flex justify-content-center align-items-center">
+          <DropDownOptions
+            menuItems={getMenuItems(row)}
+            CallBack={OpenModel}
+            heading={row}
+            row={row} // ✅ Proper row data
+          />
+        </div>
       ),
     },
   ];

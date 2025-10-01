@@ -181,7 +181,7 @@ const Dashboard = (props) => {
         <div className="col-md-12">
           <Card className="custom_Shadow mb-5">
             <div className="d-flex flex-column justify-content-center align-items-center py-3">
-              <h5 className="PoppinsFamily navy_Text fw-bold w-100 text-start ps-3 m-0">
+              <h5 className=" navy_Text fw-bold w-100 text-start ps-3 m-0">
                 My Clients{" "}
                 <Button
                   type="primary"
