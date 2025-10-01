@@ -77,7 +77,7 @@ const DynamicFormField = ({
       );
 
     case "number-toPercent":
-      let FormulaSetting = () => {};
+      let FormulaSetting = () => { };
 
       if (all.callBack) {
         // alert(all.callBack);
@@ -332,20 +332,20 @@ const DynamicFormField = ({
             {(stakeHolder
               ? values?.[stakeHolder.slice(0, -1)]?.[name]
               : values?.[name]) === all.ModalOption && (
-              <Button
-                className="btn bgColor modalBtn border-0"
-                onClick={() =>
-                  handleInnerModal(
-                    innerModalTitle,
-                    values,
-                    all.key,
-                    stakeHolder
-                  )
-                }
-              >
-                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-              </Button>
-            )}
+                <Button
+                  className="btn bgColor modalBtn border-0"
+                  onClick={() =>
+                    handleInnerModal(
+                      innerModalTitle,
+                      values,
+                      all.key,
+                      stakeHolder
+                    )
+                  }
+                >
+                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                </Button>
+              )}
           </InputGroup>
         </React.Fragment>
       );
@@ -377,9 +377,7 @@ const DynamicFormField = ({
           disabled={all?.disabled ? all.disabled : false}
         />
       );
-
-
- case "select-multi-antd":
+    case "select-multi-antd":
       return (
         <Field
           name={stakeHolder ? stakeHolder + name : name}
@@ -388,34 +386,14 @@ const DynamicFormField = ({
           options={options}
           disabled={
             typeof all?.disabled === "function"
-              ? all.disabled(values, stakeHolder) 
+              ? all.disabled(values, stakeHolder)
               : all?.disabled || false
           }
         />
 
 
 
-        
-      );
 
-
- case "select-multi-antd":
-      return (
-        <Field
-          name={stakeHolder ? stakeHolder + name : name}
-          component={AntdCreatableMultiSelect}
-          getPopupContainer={all?.trrigger}
-          options={options}
-          disabled={
-            typeof all?.disabled === "function"
-              ? all.disabled(values, stakeHolder) 
-              : all?.disabled || false
-          }
-        />
-
-
-
-        
       );
 
     case "select-creatable":
@@ -450,20 +428,20 @@ const DynamicFormField = ({
           {(stakeHolder
             ? values?.[stakeHolder.slice(0, -1)]?.[name]
             : values?.[name]) === "Yes" && (
-            <div className="d-flex justify-content-center align-items-center pt-2">
-              <Button
-                className="btn bgColor modalBtn border-0"
-                id="button-addon2"
-                onClick={() => {
-                  if (all.callBack) {
-                    all.func(innerModalTitle, values, all.key, stakeHolder);
-                  }
-                }}
-              >
-                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-              </Button>
-            </div>
-          )}
+              <div className="d-flex justify-content-center align-items-center pt-2">
+                <Button
+                  className="btn bgColor modalBtn border-0"
+                  id="button-addon2"
+                  onClick={() => {
+                    if (all.callBack) {
+                      all.func(innerModalTitle, values, all.key, stakeHolder);
+                    }
+                  }}
+                >
+                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                </Button>
+              </div>
+            )}
         </React.Fragment>
       );
 
