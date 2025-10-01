@@ -1,26 +1,14 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Card } from "react-bootstrap";
 import NewAllClients from "../Assets/AllClients/NewAllClients";
 import CustomApexChart from "../Assets/ApexChart/CustomApexChart";
-import {
-  CRState,
-  LoggedInUserData,
-  OptionRender,
-  PersonalDetailsData,
-  ProspectsCDF,
-  QuestionDetail,
-  StepsStatus,
-} from "../../Store/Store";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { LoggedInUserData, ProspectsCDF } from "../../Store/Store";
+import { useRecoilValue } from "recoil";
 import { toTitleCase } from "../Assets/Api/Api";
-import { Button } from "antd";
-import { FaPlus } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 
 const Dashboard = (props) => {
   let prospectsCDF = useRecoilValue(ProspectsCDF);
   let loggedInUserData = useRecoilValue(LoggedInUserData);
-  let nev = useNavigate();
 
   const dataSeries = [
     { name: "Orders", data: [31, 40, 28, 51, 42, 109, 100] },
@@ -58,65 +46,6 @@ const Dashboard = (props) => {
       ];
     }
   }, [prospectsCDF]);
-
-  const [CRStateObj, setCRState] = useRecoilState(CRState);
-  const [stepsStatus, setStepsStatus] = useRecoilState(StepsStatus);
-  const [optRender, setOptRender] = useRecoilState(OptionRender);
-  const [PersonalDetailObj, setPersonalDetailObj] =
-    useRecoilState(PersonalDetailsData);
-  const [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
-
-  const handleAddClientClick = () => {
-    localStorage.removeItem("Email");
-    localStorage.removeItem("PartnerName");
-    localStorage.removeItem("UserID");
-    localStorage.removeItem("UserName");
-    localStorage.removeItem("UserStatus");
-    setCRState();
-    setStepsStatus(true);
-    setOptRender("Opt1");
-    localStorage.setItem("OptionRender", "Opt1");
-
-    setPersonalDetailObj({
-      client: {
-        clientTitle: "Mr.",
-        clientGivenName: "John",
-        clientSurname: "Doe",
-        clientPreferredName: "Johnny",
-        clientGender: "Male",
-        clientDOB: "1990-01-01",
-        clientAge: 34,
-        clientMaritalStatus: "Single",
-        clientEmploymentStatus: "Employed",
-        clientHealth: "Good",
-        clientSmoker: "No",
-        clientPlannedRetirementAge: 65,
-        clientHomeAddress: "123 Main St",
-        clientPostcode: 12345,
-        clientHomePhone: "555-555-5555",
-        clientWorkPhone: "555-555-5556",
-        clientMobile: "555-555-5557",
-        Email: "john.doe@example.com",
-        clientPostalAddress: "123 Main St",
-        clientPostalPostCode: 12345,
-        clientMiddleName: "Michael",
-        clientOccupationID: "OCC123",
-        clientTaxResidentRadio: "Yes",
-        clientPrivateHealthCoverRadio: "Yes",
-        clientHELPSDebtRadio: "No",
-        clientSameAsAbove: true,
-        clientRetirement: "Comfortable",
-      },
-      partner: {},
-      children: {
-        numberOfChildren: 0,
-      },
-      haveAnyChildren: "No",
-    });
-
-    setQuestionDetail({});
-    nev("/user/personal-detail");
-  };
 
   return (
     <div className="DashBoard">
@@ -181,17 +110,6 @@ const Dashboard = (props) => {
         <div className="col-md-12">
           <Card className="custom_Shadow mb-5">
             <div className="d-flex flex-column justify-content-center align-items-center py-3">
-              <h5 className=" navy_Text fw-bold w-100 text-start ps-3 m-0">
-                My Clients{" "}
-                <Button
-                  type="primary"
-                  className="float-end me-3"
-                  onClick={handleAddClientClick}
-                >
-                  <FaPlus /> Add Client
-                </Button>
-              </h5>
-
               <div style={{ width: "98%", marginTop: "-10px" }}>
                 <NewAllClients />
               </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Formik, Form, Field } from "formik";
-import { Button, Card } from "antd";
+import { Button, Card, Spin } from "antd";
 import * as Yup from "yup";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
@@ -162,6 +162,7 @@ const PersonalDetailNew = () => {
   const formRef = useRef(null);
   const [switchStep, setSwitchStep] = useState(0);
   const [userData, setUserData] = useState({});
+  const [loading, setLeading] = useState(false);
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
   const [personalDetailObj, setPersonalDetailObj] =
@@ -473,6 +474,7 @@ const PersonalDetailNew = () => {
   ];
 
   const getApiFunction = async (id) => {
+    setLeading(true);
     try {
       const res = await GetAxios(
         `${defaultUrlValue}/api/personalDetails/getUserById/${id}`
@@ -498,6 +500,8 @@ const PersonalDetailNew = () => {
       }
     } catch (error) {
       console.error("❌ Error in API:", error);
+    } finally {
+      setLeading(false);
     }
   };
 
@@ -815,7 +819,14 @@ const PersonalDetailNew = () => {
         }, [values]);
 
         return (
-          <Form className="All_Client reportSection">
+          <Form
+            className="All_Client reportSection"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault(); // 🚫 stop form submit
+              }
+            }}
+          >
             <ModalComponent
               modalObject={modalObject}
               setFlagState={setFlagState}
@@ -823,161 +834,177 @@ const PersonalDetailNew = () => {
             >
               <ImportantQuestion />
             </ModalComponent>
-            {switchStep == 1 && (
+            {loading && (
+              <div
+                className="d-flex justify-content-center align-items-center"
+                style={{ height: "40vh", width: "100%" }}
+              >
+                <Spin size="large" />
+              </div>
+            )}
+            {!loading && (
               <>
-                <h3 className="mt-4 fw-bold">Personal Details</h3>
-                <AntdDynamicTable
-                  columns={personalFields}
-                  data={tableData}
-                  values={values}
-                  setFieldValue={setFieldValue}
-                  handleChange={handleChange}
-                  handleBlur={handleBlur}
-                />
-
-                <h3
-                  className="mt-4 fw-bold"
-                  onClick={() => {
-                    console.log(values);
-                  }}
-                >
-                  Contact
-                </h3>
-                <AntdDynamicTable
-                  columns={contactFields}
-                  data={contactTableData}
-                  values={values}
-                  setFieldValue={setFieldValue}
-                  handleChange={handleChange}
-                  handleBlur={handleBlur}
-                />
-
-                <h3
-                  className="mt-4 fw-bold"
-                  onClick={() => {
-                    console.log(values);
-                  }}
-                >
-                  Children Details
-                </h3>
-
-                <div className="row justify-content-start align-items-center mb-3">
-                  <div className="col-md-3">
-                    <label className="form-label fw-bold">
-                      Do you have any children?
-                    </label>
-                  </div>
-                  <div className="col-md-1">
-                    <DynamicYesNo
-                      name={"haveAnyChildren"}
-                      values={values}
-                      handleChange={handleChange}
-                    />
-                  </div>
-                </div>
-                {values.haveAnyChildren === "Yes" && (
-                  <div className="row justify-content-start align-items-center mb-3">
-                    <div className="col-md-3">
-                      <label className="form-label fw-bold">
-                        How many children do you have :
-                      </label>
-                    </div>
-                    <div className="col-md-1">
-                      <Field
-                        name="numberOfChildren"
-                        type="number"
-                        className="form-control"
-                        min="0"
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          if (val < 5) {
-                            setFieldValue(e.target.name, e.target.value);
-                          } else {
-                            setFieldValue(e.target.name, 5);
-                          }
-                        }}
-                        onWheel={(e) => e.target.blur()} // 👈 disables mouse wheel increment/decrement
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {values.haveAnyChildren === "Yes" &&
-                  values.numberOfChildren > 0 && (
+                {switchStep == 1 && (
+                  <>
+                    <h3 className="mt-4 fw-bold">Personal Details</h3>
                     <AntdDynamicTable
-                      columns={childrenFields}
-                      data={childrenTableData}
+                      columns={personalFields}
+                      data={tableData}
                       values={values}
                       setFieldValue={setFieldValue}
                       handleChange={handleChange}
                       handleBlur={handleBlur}
                     />
-                  )}
 
-                <div className="row justify-content-center align-items-center mb-3 mt-4">
-                  <div className="col-md-4">
-                    <Button type="primary" htmlType="submit" className="w-100">
-                      Submit
-                    </Button>
-                  </div>
-                </div>
-              </>
-            )}
-            {switchStep == 2 && (
-              <>
-                <div className="row justify-content-center mt-4">
-                  <div className="col-md-3 mt-4">
-                    <ProfileCard owner="client" Data={values.client} />
-                  </div>
-                  {!["Single", "Widowed", ""].includes(
-                    values.client.marital
-                  ) && (
-                    <div className="col-md-3 mt-4">
-                      <ProfileCard owner="partner" Data={values.partner} />
+                    <h3
+                      className="mt-4 fw-bold"
+                      onClick={() => {
+                        console.log(values);
+                      }}
+                    >
+                      Contact
+                    </h3>
+                    <AntdDynamicTable
+                      columns={contactFields}
+                      data={contactTableData}
+                      values={values}
+                      setFieldValue={setFieldValue}
+                      handleChange={handleChange}
+                      handleBlur={handleBlur}
+                    />
+
+                    <h3
+                      className="mt-4 fw-bold"
+                      onClick={() => {
+                        console.log(values);
+                      }}
+                    >
+                      Children Details
+                    </h3>
+
+                    <div className="row justify-content-start align-items-center mb-3">
+                      <div className="col-md-3">
+                        <label className="form-label fw-bold">
+                          Do you have any children?
+                        </label>
+                      </div>
+                      <div className="col-md-1">
+                        <DynamicYesNo
+                          name={"haveAnyChildren"}
+                          values={values}
+                          handleChange={handleChange}
+                        />
+                      </div>
                     </div>
-                  )}
-                </div>
-                <div className="row justify-content-center">
-                  <div className="col-md-2 mt-4">
-                    <Button
-                      htmlType="button"
-                      className="w-100"
-                      onClick={() => {
-                        setSwitchStep(1);
-                      }}
-                    >
-                      Edit
-                    </Button>
-                  </div>
-                  <div className="col-md-2 mt-4">
-                    <Button
-                      htmlType="button"
-                      color="default"
-                      variant="filled"
-                      className="w-100"
-                      onClick={() => {
-                        setModalObject({
-                          title: "Important Questions",
-                        });
-                        setFlagState(true);
-                      }}
-                    >
-                      Edit Questions
-                    </Button>
-                  </div>
-                  <div className="col-md-2 mt-4">
-                    <Button
-                      htmlType="button"
-                      type="primary"
-                      className="w-100"
-                      onClick={() => {
-                        Nav("/user/personal-income");
-                      }}
-                    >
-                      Next
-                    </Button>
-                  </div>
-                </div>
+                    {values.haveAnyChildren === "Yes" && (
+                      <div className="row justify-content-start align-items-center mb-3">
+                        <div className="col-md-3">
+                          <label className="form-label fw-bold">
+                            How many children do you have :
+                          </label>
+                        </div>
+                        <div className="col-md-1">
+                          <Field
+                            name="numberOfChildren"
+                            type="number"
+                            className="form-control"
+                            min="0"
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              if (val < 5) {
+                                setFieldValue(e.target.name, e.target.value);
+                              } else {
+                                setFieldValue(e.target.name, 5);
+                              }
+                            }}
+                            onWheel={(e) => e.target.blur()} // 👈 disables mouse wheel increment/decrement
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {values.haveAnyChildren === "Yes" &&
+                      values.numberOfChildren > 0 && (
+                        <AntdDynamicTable
+                          columns={childrenFields}
+                          data={childrenTableData}
+                          values={values}
+                          setFieldValue={setFieldValue}
+                          handleChange={handleChange}
+                          handleBlur={handleBlur}
+                        />
+                      )}
+
+                    <div className="row justify-content-center align-items-center mb-3 mt-4">
+                      <div className="col-md-4">
+                        <Button
+                          type="primary"
+                          htmlType="submit"
+                          className="w-100"
+                        >
+                          Submit
+                        </Button>
+                      </div>
+                    </div>
+                  </>
+                )}
+                {switchStep == 2 && (
+                  <>
+                    <div className="row justify-content-center mt-4">
+                      <div className="col-md-3 mt-4">
+                        <ProfileCard owner="client" Data={values.client} />
+                      </div>
+                      {!["Single", "Widowed", ""].includes(
+                        values.client.marital
+                      ) && (
+                        <div className="col-md-3 mt-4">
+                          <ProfileCard owner="partner" Data={values.partner} />
+                        </div>
+                      )}
+                    </div>
+                    <div className="row justify-content-center">
+                      <div className="col-md-2 mt-4">
+                        <Button
+                          htmlType="button"
+                          className="w-100"
+                          onClick={() => {
+                            setSwitchStep(1);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                      </div>
+                      <div className="col-md-2 mt-4">
+                        <Button
+                          htmlType="button"
+                          color="default"
+                          variant="filled"
+                          className="w-100"
+                          onClick={() => {
+                            setModalObject({
+                              title: "Important Questions",
+                            });
+                            setFlagState(true);
+                          }}
+                        >
+                          Edit Questions
+                        </Button>
+                      </div>
+                      <div className="col-md-2 mt-4">
+                        <Button
+                          htmlType="button"
+                          type="primary"
+                          className="w-100"
+                          onClick={() => {
+                            Nav("/user/personal-income");
+                          }}
+                        >
+                          Next
+                        </Button>
+                      </div>
+                    </div>
+                  </>
+                )}
               </>
             )}
           </Form>

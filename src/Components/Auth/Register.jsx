@@ -178,7 +178,7 @@ const Register = () => {
                                         </div>
                                         <div className='col-sm-7'>
                                             <p className='p-0 m-0 mb-1'>I already have an Account <Link to='/Login' className='text-green'>Login</Link></p>
-                                            <button type='submit' className='primary btn w-100 '>
+                                            <button type='submit' className='modalBtn btn w-100 '>
                                                 Sign Up
                                             </button>
                                         </div>

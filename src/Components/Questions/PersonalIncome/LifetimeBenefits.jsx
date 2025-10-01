@@ -1,6 +1,6 @@
 import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
-import { Button, InputGroup, Row, Table } from "react-bootstrap";
+import { Row } from "react-bootstrap"; // you can replace this with AntD Grid later if you want full migration
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
 import {
@@ -12,91 +12,107 @@ import {
   toNumericValue,
 } from "../../Assets/Api/Api";
 
-import DynamicTableRow from "../../Assets/Dynamic/DynamicTableRow";
-import { CreatableMultiSelectField } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import { AntdCreatableMultiSelect } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
 const LifeTimeBeneFits = (props) => {
-  let questionDetail = useRecoilValue(QuestionDetail);
-  let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+  const questionDetail = useRecoilValue(QuestionDetail);
+  const [, setQuestionDetail] = useRecoilState(QuestionDetail);
 
+  const [UserStatus] = useState(localStorage.getItem("UserStatus"));
 
-  let [UserStatus] = useState(localStorage.getItem('UserStatus'));
-
-  let incomeFromSuperPayment =
+  const incomeFromSuperPayment =
+    questionDetail?.incomeFromSuperPayment &&
     Object.keys(questionDetail.incomeFromSuperPayment).length > 0
       ? questionDetail.incomeFromSuperPayment
       : {
-        client: [],
-        partner: [],
-        joint: [],
-      }; // Use an empty object as default if incomeFromSuperPayment is undefined
+          client: {},
+          partner: {},
+        };
 
-  let initialValues = {
-    owner: []
+  const initialValues = {
+    owner: [],
+    client: {
+     
+    },
+    partner: {
+     
+    },
   };
 
   const fillInitialValues = (setFieldValue) => {
-    console.log(incomeFromSuperPayment, "data");
-    let data = incomeFromSuperPayment;
-
+    const data = incomeFromSuperPayment;
     if (data && data._id) {
-      setFieldValue(`owner`, data.owner || "");
+      setFieldValue("owner", data.owner || []);
 
-      // Handle client-related conditions
-      if (data.owner.includes("client")) {
-        if (data?.client && Object.keys(data.client).length) {
-          setFieldValue(`client.fundName`, data.client.fundName || "");
-          setFieldValue(`client.regularIncomePerFortnight`, data.client.regularIncomePerFortnight || "");
-          setFieldValue(`client.isPension`, data.client.isPension || "");
-          setFieldValue(`client.regularIncomePA`, data.client.regularIncomePA || "");
-          setFieldValue(`client.centrelinkDeductibleAmount`, data.client.centrelinkDeductibleAmount || "");
+      if (
+        Array.isArray(data.owner)
+          ? data.owner.includes("client")
+          : (data.owner || "").includes("client")
+      ) {
+        if (data.client && Object.keys(data.client).length) {
+          setFieldValue("client.fundName", data.client.fundName || "");
+          setFieldValue(
+            "client.regularIncomePerFortnight",
+            data.client.regularIncomePerFortnight || ""
+          );
+          setFieldValue("client.isPension", data.client.isPension || "");
+          setFieldValue(
+            "client.regularIncomePA",
+            data.client.regularIncomePA || ""
+          );
+          setFieldValue(
+            "client.centrelinkDeductibleAmount",
+            data.client.centrelinkDeductibleAmount || ""
+          );
         }
       }
 
-      // Handle partner-related conditions
-      if (UserStatus === "Married" && data.owner.includes("partner")) {
-        if (data?.partner && Object.keys(data.partner).length) {
-          setFieldValue(`partner.regularIncomePA`, data.partner.regularIncomePA || "");
-          setFieldValue(`partner.regularIncomePerFortnight`, data.partner.regularIncomePerFortnight || "");
-          setFieldValue(`partner.centrelinkDeductibleAmount`, data.partner.centrelinkDeductibleAmount || "");
-          setFieldValue(`partner.fundName`, data.partner.fundName || "");
-          setFieldValue(`partner.isPension`, data.partner.isPension || "");
+      if (
+        (Array.isArray(data.owner)
+          ? data.owner.includes("partner")
+          : (data.owner || "").includes("partner")) &&
+        UserStatus === "Married"
+      ) {
+        if (data.partner && Object.keys(data.partner).length) {
+          setFieldValue("partner.fundName", data.partner.fundName || "");
+          setFieldValue(
+            "partner.regularIncomePerFortnight",
+            data.partner.regularIncomePerFortnight || ""
+          );
+          setFieldValue("partner.isPension", data.partner.isPension || "");
+          setFieldValue(
+            "partner.regularIncomePA",
+            data.partner.regularIncomePA || ""
+          );
+          setFieldValue(
+            "partner.centrelinkDeductibleAmount",
+            data.partner.centrelinkDeductibleAmount || ""
+          );
         }
       }
     }
   };
 
-  let DefaultUrl = useRecoilValue(defaultUrl);
+  const DefaultUrl = useRecoilValue(defaultUrl);
 
-  let onSubmit = async (values) => {
-    console.log(values);
-
-    let obj = { ...values }; // Create a new object to avoid mutating values
+  const onSubmit = async (values) => {
+    const obj = { ...values };
     obj.clientFK = localStorage.getItem("UserID");
 
-    console.log(obj, "Object");
-
-    // Handle client-related conditions
     if (values.owner.includes("client")) {
       obj.clientTotal = values.client.regularIncomePA;
-      console.log("Client total set");
     } else {
       obj.client = {};
       obj.clientTotal = "";
-      console.log("Client data cleared");
     }
 
-    // Handle partner-related conditions
     if (values.owner.includes("partner") && UserStatus === "Married") {
       obj.partnerTotal = values.partner.regularIncomePA;
-      console.log("Partner total set");
     } else {
       obj.partner = {};
       obj.partnerTotal = "";
-      console.log("Partner data cleared");
     }
-
-    console.log(obj, "final obj");
 
     const bankAccountArray = incomeFromSuperPayment.clientFK || "";
 
@@ -115,24 +131,32 @@ const LifeTimeBeneFits = (props) => {
       }
 
       if (res) {
-        console.log(res);
         const updatedData = { ...questionDetail, incomeFromSuperPayment: res };
         setQuestionDetail(updatedData);
       }
 
-      openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
+      openNotificationSuccess(
+        "success",
+        "topRight",
+        "Success Notification",
+        `Data of "${props.modalObject.title}" is Saved`
+      );
 
-      // Reset the flag state if necessary
       if (props.flagState) {
         props.setFlagState(false);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
-      openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        `Data of "${props.modalObject.title}" is not Saved. Please try again.`
+      );
     }
   };
 
-  const options = [
+  const fundOptions = [
     { value: "ESS Super", label: "ESS Super" },
     { value: "PSS", label: "PSS" },
     { value: "CSC", label: "CSC" },
@@ -142,66 +166,74 @@ const LifeTimeBeneFits = (props) => {
   ];
 
   const Formula = (values, setFieldValue, currentInput, stakeHolder) => {
-    // alert(values);
-    // console.log(values);
     try {
-      let stakeHolderKey = stakeHolder.replace(".", "");
+      const stakeHolderKey = stakeHolder.replace(".", "");
       let IncomePF =
         toNumericValue(values[stakeHolderKey]?.regularIncomePerFortnight) || 0;
-      switch (currentInput.name) {
-        case `${stakeHolder}regularIncomePerFortnight`:
-          IncomePF = toNumericValue(currentInput.value) || 0;
-          break;
-        default:
-          console.warn("Unexpected input field");
-          break;
+
+      if (currentInput.name === `${stakeHolder}regularIncomePerFortnight`) {
+        IncomePF = toNumericValue(currentInput.value) || 0;
       }
 
-      let amount = IncomePF * 26;
-      setFieldValue(`${stakeHolder}regularIncomePA`, toCommaAndDollar(amount));
+      const amount = IncomePF * 26;
+      setFieldValue(
+        `${stakeHolder}regularIncomePA`,
+        toCommaAndDollar(amount)
+      );
     } catch (error) {
       console.error("Error in Formula function: ", error);
     }
   };
-  const rowConfig = [
+
+  const AntdTable = DynamicTableForInputsSection("antd");
+
+  const columns = [
+    { title: "Owner", dataIndex: "owner", key: "owner" },
     {
-      name: "fundName",
-      type: "select-creatable",
-      options: options,
-      styleSet: { width: "220px" },
+      title: "Fund Name",
+      dataIndex: "fundName",
+      key: "fundName",
+      type: "select",
+      options: fundOptions,
+      width: 150,
+       trrigger: () =>
+        document.querySelector("table"),
     },
     {
-      name: "regularIncomePerFortnight",
+      title: "Regular Income per Fortnight",
+      dataIndex: "regularIncomePerFortnight",
+      key: "regularIncomePerFortnight",
       type: "number-toComma",
-      placeholder: "Regular Income  per fortnight",
       callBack: true,
       func: Formula,
     },
     {
-      name: "regularIncomePA",
+      title: "Regular Income p.a",
+      dataIndex: "regularIncomePA",
+      key: "regularIncomePA",
       type: "number-toComma",
-      placeholder: "Income P.A",
       disabled: true,
     },
     {
-      name: "centrelinkDeductibleAmount",
+      title: "Centrelink Deductible Amount",
+      dataIndex: "centrelinkDeductibleAmount",
+      key: "centrelinkDeductibleAmount",
       type: "number-toComma",
-      placeholder: "CentreLink Deductible Amount",
     },
     {
-      name: "isPension",
+      title: "Is Pension Tax Fee",
+      dataIndex: "isPension",
+      key: "isPension",
       type: "yesno",
-      placeholder: "CentreLink Deductible Amount",
     },
   ];
 
-
-  const ownerOptions = (UserStatus !== "Single") ? [
-    { value: "client", label: RenderName("client") },
-    { value: "partner", label: RenderName("partner") }] :
-    [{ value: "client", label: RenderName("client") },];
-
-
+  function ownerOptions() {
+    const opts = [{ value: "client", label: RenderName("client") }];
+    if (UserStatus !== "Single")
+      opts.push({ value: "partner", label: RenderName("partner") });
+    return opts;
+  }
 
   return (
     <Formik
@@ -214,6 +246,41 @@ const LifeTimeBeneFits = (props) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
+console.log(values.client?.centreplaceDeductibleAmount)
+        const dataRows = [
+          ...(values.owner.includes("client")
+            ? [
+                {
+                  key: "client",
+                  owner: RenderName("client"),
+                  stakeHolder: "client",
+                  fundName: values.client?.fundName || "",
+                  regularIncomePerFortnight:
+                    values.client?.regularIncomePerFortnight || "",
+                  regularIncomePA: values.client?.regularIncomePA || "",
+                  centrelinkDeductibleAmount:
+                    values.client?.centrelinkDeductibleAmount || "",
+                  isPension: values.client?.isPension || "",
+                },
+              ]
+            : []),
+          ...(values.owner.includes("partner") && UserStatus === "Married"
+            ? [
+                {
+                  key: "partner",
+                  owner: RenderName("partner"),
+                  stakeHolder: "partner",
+                  fundName: values.partner?.fundName || "",
+                  regularIncomePerFortnight:
+                    values.partner?.regularIncomePerFortnight || "",
+                  regularIncomePA: values.partner?.regularIncomePA || "",
+                  centrelinkDeductibleAmount:
+                    values.partner?.centrelinkDeductibleAmount || "",
+                  isPension: values.partner?.isPension || "",
+                },
+              ]
+            : []),
+        ];
 
         return (
           <Form>
@@ -225,64 +292,26 @@ const LifeTimeBeneFits = (props) => {
                       <label htmlFor="" className="text-end ">
                         Owner
                       </label>
-
-                      <div style={{ minWidth: "25%" }}>
+                      <div style={{ minWidth: "200px" }}>
                         <Field
                           name={`owner`}
-                          component={CreatableMultiSelectField}
-                          label="Multi Select Field"
-                          options={ownerOptions}
+                          component={AntdCreatableMultiSelect}
+                          options={ownerOptions()}
                         />
                       </div>
                     </div>
                   </div>
+
                   {values.owner.length > 0 && (
-                    <div className="mt-4">
-                      <Table striped bordered responsive hover>
-                        <thead>
-                          <tr>
-                            <th
-                              onClick={() => {
-                                console.log(values);
-                              }}
-                            >
-                              Owner
-                            </th>
-                            <th>Fund Name</th>
-                            <th>Regular Income per Fortnight</th>
-                            <th>Regular Income p.a </th>
-                            <th>Centrelink Deductible Amount</th>
-                            <th>Is Pension Tax Fee</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {(values.owner.includes("client")) && (
-
-                            <DynamicTableRow
-                              rowConfig={rowConfig}
-                              values={values}
-                              setFieldValue={setFieldValue}
-                              handleChange={handleChange}
-                              handleBlur={handleBlur}
-                              // handleInnerModal={handleInnerModal}
-                              stakeHolder="client."
-                            />
-                          )}
-
-                          {(values.owner.includes("partner") && UserStatus === "Married") && (
-                            <DynamicTableRow
-                              rowConfig={rowConfig}
-                              values={values}
-                              setFieldValue={setFieldValue}
-                              handleChange={handleChange}
-                              handleBlur={handleBlur}
-                              // handleInnerModal={handleInnerModal}
-                              stakeHolder="partner."
-                            />
-                          )}
-
-                        </tbody>
-                      </Table>
+                    <div className="mt-4 All_Client reportSection">
+                      <AntdTable
+                        columns={columns}
+                        data={dataRows}
+                        values={values}
+                        setFieldValue={setFieldValue}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                      />
                     </div>
                   )}
                 </div>

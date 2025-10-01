@@ -1,243 +1,267 @@
 import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
-import { Button, InputGroup, Row, Table } from "react-bootstrap";
+import { Row } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
 import { openNotificationSuccess, PatchAxios, PostAxios, RenderName } from "../../Assets/Api/Api";
-
-import MyFormComponent from "../../Assets/Dynamic/DemoDynamicForm";
-import DynamicTableRow from "../../Assets/Dynamic/DynamicTableRow";
-import { CreatableMultiSelectField } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
+import { AntdCreatableMultiSelect } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 
 const SoleTrader = (props) => {
-    let questionDetail = useRecoilValue(QuestionDetail);
-    let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+  const questionDetail = useRecoilValue(QuestionDetail);
+  const [, setQuestionDetail] = useRecoilState(QuestionDetail);
 
-    let [UserStatus] = useState(localStorage.getItem('UserStatus'));
+  const [UserStatus] = useState(localStorage.getItem("UserStatus"));
 
-    let incomeFromSoleTrader =
-        Object.keys(questionDetail.incomeFromSoleTrader).length > 0
-            ? questionDetail.incomeFromSoleTrader
-            : {
-                client: [],
-                partner: [],
-                joint: [],
-            }; // Use an empty object as default if incomeFromSoleTrader is undefined
+  const incomeFromSoleTrader =
+    questionDetail?.incomeFromSoleTrader && Object.keys(questionDetail.incomeFromSoleTrader).length > 0
+      ? questionDetail.incomeFromSoleTrader
+      : {
+          client: {},
+          partner: {},
+          joint: {},
+        };
 
-    let initialValues = {
-        owner: []
-    };
+  const initialValues = {
+    owner: [],
+    client: {
+      businessName: "",
+      ABN: "",
+      businessAddress: "",
+      netBusinessIncome: "",
+      goodWill: "",
+    },
+    partner: {
+      businessName: "",
+      ABN: "",
+      businessAddress: "",
+      netBusinessIncome: "",
+      goodWill: "",
+    },
+  };
 
-    const fillInitialValues = (setFieldValue) => {
-        console.log(incomeFromSoleTrader, "edit");
-        let data = incomeFromSoleTrader;
+  const fillInitialValues = (setFieldValue) => {
+    const data = incomeFromSoleTrader;
+    if (data && data._id) {
+      setFieldValue("owner", data.owner || []);
 
-        if (data && data._id) {
-            setFieldValue(`owner`, data.owner || "");
-
-            // Handle client-related fields
-            if (data.owner.includes("client")) {
-                if (data?.client && Object.keys(data.client).length) {
-                    setFieldValue(`client.businessName`, data.client.businessName || "");
-                    setFieldValue(`client.ABN`, data.client.ABN || "");
-                    setFieldValue(`client.businessAddress`, data.client.businessAddress || "");
-                    setFieldValue(`client.netBusinessIncome`, data.client.netBusinessIncome || "");
-                    setFieldValue(`client.goodWill`, data.client.goodWill || "");
-                }
-            }
-
-            // Handle partner-related fields if married
-            if (data.owner.includes("partner") && UserStatus === "Married") {
-                if (data?.partner && Object.keys(data.partner).length) {
-                    setFieldValue(`partner.businessName`, data.partner.businessName || "");
-                    setFieldValue(`partner.ABN`, data.partner.ABN || "");
-                    setFieldValue(`partner.businessAddress`, data.partner.businessAddress || "");
-                    setFieldValue(`partner.netBusinessIncome`, data.partner.netBusinessIncome || "");
-                    setFieldValue(`partner.goodWill`, data.partner.goodWill || "");
-                }
-            }
+      if (Array.isArray(data.owner) ? data.owner.includes("client") : (data.owner || "").includes("client")) {
+        if (data.client && Object.keys(data.client).length) {
+          setFieldValue(
+            "client.businessName", 
+            data.client.businessName || "");
+          setFieldValue(
+            "client.ABN", 
+            data.client.ABN || "");
+          setFieldValue(
+            "client.businessAddress",
+             data.client.businessAddress || "");
+          setFieldValue(
+            "client.netBusinessIncome",
+             data.client.netBusinessIncome || "");
+          setFieldValue(
+            "client.goodWill",
+             data.client.goodWill || "");
         }
-    };
+      }
 
-
-    let DefaultUrl = useRecoilValue(defaultUrl);
-
-    let onSubmit = async (values) => {
-        console.log("values", values);
-        let obj = { ...values };
-        obj.clientFK = localStorage.getItem("UserID");
-
-        // Handle client-related conditions
-        if (values.owner.includes("client")) {
-            obj.clientTotal = values.client.netBusinessIncome;
-            console.log("Client total set");
-        } else {
-            obj.client = {};
-            obj.clientTotal = "";
-            console.log("Client data cleared");
+      if ((Array.isArray(data.owner) ? data.owner.includes("partner") : (data.owner || "").includes("partner")) && UserStatus === "Married") {
+        if (data.partner && Object.keys(data.partner).length) {
+          setFieldValue(
+            "partner.businessName",
+             data.partner.businessName || "");
+          setFieldValue(
+            "partner.ABN", 
+            data.partner.ABN || "");
+          setFieldValue(
+            "partner.businessAddress",
+             data.partner.businessAddress || "");
+          setFieldValue(
+            "partner.netBusinessIncome",
+             data.partner.netBusinessIncome || "");
+          setFieldValue(
+            "partner.goodWill",
+             data.partner.goodWill || "");
         }
+      }
+    }
+  };
 
-        // Handle partner-related conditions
-        if (values.owner.includes("partner") && UserStatus === "Married") {
-            obj.partnerTotal = values.partner.netBusinessIncome;
-            console.log("Partner total set");
-        } else {
-            obj.partner = {};
-            obj.partnerTotal = "";
-            console.log("Partner data cleared");
-        }
+  const AntdTable = DynamicTableForInputsSection("antd");
 
-        console.log(obj, "final obj");
+  const DefaultUrl = useRecoilValue(defaultUrl);
 
-        // Check if incomeFromSoleTrader exists
-        const bankAccountArray = incomeFromSoleTrader.clientFK || "";
+  const onSubmit = async (values) => {
+    const obj = { ...values };
+    obj.clientFK = localStorage.getItem("UserID");
 
-        try {
-            let res;
-            if (!bankAccountArray) {
-                res = await PostAxios(
-                    `${DefaultUrl}/api/incomeFromSoleTrader/Add`,
-                    obj
-                );
-            } else {
-                res = await PatchAxios(
-                    `${DefaultUrl}/api/incomeFromSoleTrader/Update`,
-                    obj
-                );
-            }
+    if (values.owner.includes("client")) {
+      obj.clientTotal = values.client.netBusinessIncome;
+    } else {
+      obj.client = {};
+      obj.clientTotal = "";
+    }
 
-            if (res) {
-                console.log(res);
-                const updatedData = { ...questionDetail, incomeFromSoleTrader: res };
-                setQuestionDetail(updatedData);
-            }
+    if (values.owner.includes("partner") && UserStatus === "Married") {
+      obj.partnerTotal = values.partner.netBusinessIncome;
+    } else {
+      obj.partner = {};
+      obj.partnerTotal = "";
+    }
 
-            openNotificationSuccess("success", "topRight", "Success Notification", `Data of "${props.modalObject.title}" is Saved`);
+    const bankAccountArray = incomeFromSoleTrader.clientFK || "";
 
-            // Reset the flag state if necessary
-            if (props.flagState) {
-                props.setFlagState(false);
-            }
-        } catch (error) {
-            console.error("Error occurred while making API call:", error);
-            openNotificationSuccess("error", "topRight", "Error Notification", `Data of "${props.modalObject.title}" is not Saved. Please try again.`);
-        }
-    };
+    try {
+      let res;
+      if (!bankAccountArray) {
+        res = await PostAxios(`${DefaultUrl}/api/incomeFromSoleTrader/Add`, obj);
+      } else {
+        res = await PatchAxios(`${DefaultUrl}/api/incomeFromSoleTrader/Update`, obj);
+      }
 
-    const handleInnerModal = (name, values) => {
-        console.log("Opening modal for:", name, values);
-    };
+      if (res) {
+        const updatedData = { ...questionDetail, incomeFromSoleTrader: res };
+        setQuestionDetail(updatedData);
+      }
 
+      openNotificationSuccess("success", "topRight", "Success Notification", `Data of "${props.modalObject.title}" is Saved`);
 
-    const rowConfig = [
-        { name: "businessName", type: "text", placeholder: "Business Name" },
-        { name: "ABN", type: "number", placeholder: "ABN" },
-        { name: "businessAddress", type: "text", placeholder: "Business Address" },
-        {
-            name: "netBusinessIncome",
-            type: "number-toComma",
-            placeholder: "Net Business Income",
-        },
-        {
-            name: "goodWill",
-            type: "number-toComma",
-            placeholder: "GoodWill Business Valuation",
-        },
-    ];
+      if (props.flagState) {
+        props.setFlagState(false);
+      }
+    } catch (error) {
+      console.error("Error occurred while making API call:", error);
+      openNotificationSuccess("error", "topRight", "Error Notification", `Data of "${props.modalObject.title}" is not Saved. Please try again.`);
+    }
+  };
 
-    const options = (UserStatus !== "Single") ? [
-        { value: "client", label: RenderName("client") },
-        { value: "partner", label: RenderName("partner") }] :
-        [{ value: "client", label: RenderName("client") },];
+  const handleInnerModal = (name, values) => {
+    console.log("Opening modal for:", name, values);
+  };
 
+  
+  const columns = [
+    { title: "Owner", dataIndex: "owner", key: "owner" },
+    {
+      title: "Business Name",
+      dataIndex: "businessName",
+      key: "businessName",
+      type: "text",
+      placeholder: "Business Name",
+    },
+    { title: "ABN", dataIndex: "ABN", key: "ABN", type: "number", placeholder: "ABN" },
+    {
+      title: "Business Address",
+      dataIndex: "businessAddress",
+      key: "businessAddress",
+      type: "text",
+      placeholder: "Business Address",
+    },
+    {
+      title: "Net Business Income",
+      dataIndex: "netBusinessIncome",
+      key: "netBusinessIncome",
+      type: "number-toComma",
+      placeholder: "Net Business Income",
+    },
+    {
+      title: "Goodwill/Business Valuation",
+      dataIndex: "goodWill",
+      key: "goodWill",
+      type: "number-toComma",
+      placeholder: "GoodWill Business Valuation",
+    },
+  ];
 
-    return (
-        <Formik
-            initialValues={initialValues}
-            onSubmit={onSubmit}
-            enableReinitialize
-            innerRef={props.formRef}
-        >
-            {({ values, setFieldValue, handleChange, handleBlur }) => {
-                useEffect(() => {
-                    fillInitialValues(setFieldValue);
-                }, []);
+  return (
+    <Formik
+     initialValues={initialValues} 
+     onSubmit={onSubmit} 
+     enableReinitialize
+      innerRef={props.formRef}>
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
+        useEffect(() => {
+          fillInitialValues(setFieldValue);
+        
+        }, []);
 
-                return (
-                    <Form>
-                        <Row>
-                            <div className="col-md-12">
-                                <div className="row justify-content-center">
-                                    <div className="col-md-12">
-                                        <div className="d-flex justify-content-center align-items-center gap-4">
-                                            <label htmlFor="" className="text-end ">
-                                                Owner
-                                            </label>
+        const dataRows = [
+          ...(values.owner.includes("client")
+            ? [
+                {
+                  key: "client",
+                  owner: RenderName("client"),
+                  stakeHolder: "client",
+                  businessName: values.client?.businessName || "",
+                  ABN: values.client?.ABN || "",
+                  businessAddress: values.client?.businessAddress || "",
+                  netBusinessIncome: values.client?.netBusinessIncome || "",
+                  goodWill: values.client?.goodWill || "",
+                },
+              ]
+            : []),
+          ...(values.owner.includes("partner") && UserStatus === "Married"
+            ? [
+                {
+                  key: "partner",
+                  owner: RenderName("partner"),
+                  stakeHolder: "partner",
+                  businessName: values.partner?.businessName || "",
+                  ABN: values.partner?.ABN || "",
+                  businessAddress: values.partner?.businessAddress || "",
+                  netBusinessIncome: values.partner?.netBusinessIncome || "",
+                  goodWill: values.partner?.goodWill || "",
+                },
+              ]
+            : []),
+        ];
 
-                                            <div style={{ minWidth: "25%" }}>
-                                                <Field
-                                                    name={`owner`}
-                                                    component={CreatableMultiSelectField}
-                                                    label="Multi Select Field"
-                                                    options={options}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {values.owner.length > 0 && (
-                                        <div className="mt-4">
-                                            <Table striped bordered responsive hover>
-                                                <thead className="text-center">
-                                                    <tr>
-                                                        <th>Owner</th>
-                                                        <th>Business Name</th>
-                                                        <th>ABN</th>
-                                                        <th>Business Address</th>
-                                                        <th style={{ maxWidth: "100px" }}>
-                                                            Net Business Income
-                                                        </th>
-                                                        <th style={{ maxWidth: "100px" }}>
-                                                            Goodwill/Business Valuation
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {(values.owner.includes("client")) && (
-                                                        <DynamicTableRow
-                                                            rowConfig={rowConfig}
-                                                            values={values}
-                                                            setFieldValue={setFieldValue}
-                                                            handleChange={handleChange}
-                                                            handleBlur={handleBlur}
-                                                            handleInnerModal={handleInnerModal}
-                                                            stakeHolder="client."
-                                                        />
-                                                    )}
+        return (
+          <Form>
+            <Row>
+              <div className="col-md-12">
+                <div className="row justify-content-center">
+                  <div className="col-md-12">
+                    <div className="d-flex justify-content-center align-items-center gap-4">
+                      <label htmlFor="" className="text-end ">
+                        Owner
+                      </label>
 
-                                                    {(values.owner.includes("partner") && UserStatus === "Married") &&
-                                                        <DynamicTableRow
-                                                            rowConfig={rowConfig}
-                                                            values={values}
-                                                            setFieldValue={setFieldValue}
-                                                            handleChange={handleChange}
-                                                            handleBlur={handleBlur}
-                                                            handleInnerModal={handleInnerModal}
-                                                            stakeHolder="partner."
-                                                        />}
+                      <div style={{ minWidth: "200px" }}>
+                        <Field name={`owner`} component={AntdCreatableMultiSelect} options={optionsForOwner()} />
+                      </div>
+                    </div>
+                  </div>
 
-                                                </tbody>
-                                            </Table>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </Row>
-                        {/* <MyFormComponent /> */}
-                    </Form>
-                );
-            }}
-        </Formik>
-    );
+                  {values.owner.length > 0 && (
+                    <div className="mt-4 All_Client reportSection">
+                      <AntdTable
+                        columns={columns}
+                        data={dataRows}
+                        values={values}
+                        setFieldValue={setFieldValue}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                        handleInnerModal={handleInnerModal}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Row>
+        
+          </Form>
+        );
+      }}
+    </Formik>
+  );
 };
+
+function optionsForOwner() {
+  const UserStatus = localStorage.getItem("UserStatus");
+  const opts = [{ value: "client", label: RenderName("client") }];
+  if (UserStatus !== "Single") opts.push({ value: "partner", label: RenderName("partner") });
+  return opts;
+}
 
 export default SoleTrader;

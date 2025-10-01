@@ -49,6 +49,11 @@ const ButtonDrawer = ({
           body: { boxShadow: "none", maxHeight: "70vh", overflowY: "auto" },
           content: { boxShadow: "none" },
           wrapper: { boxShadow: "none" },
+          header: {
+            backgroundColor: "#36b446", // custom bg color
+            color: "#fff", // header text color
+            fontWeight: "600", // bold title
+          },
         }}
       >
         {DrawerContent}

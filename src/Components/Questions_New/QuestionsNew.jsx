@@ -213,7 +213,8 @@ const QuestionsNew = (props) => {
           <div className="pb-4 bg-white  borderOverAll  rounded text-center">
             <div>
               <div
-                className="QuestionIcon p-3 curser-pointer"
+                className="QuestionIcon p-3"
+                role="button"
                 onClick={() => {
                   setFlagState(true);
                   if (obj[QuestionChange].Title === "Personal Insurance") {

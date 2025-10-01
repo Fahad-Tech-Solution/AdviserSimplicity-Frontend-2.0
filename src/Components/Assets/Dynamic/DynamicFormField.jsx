@@ -14,7 +14,10 @@ import {
   toCommaAndDollar,
 } from "../Api/Api";
 import DynamicYesNo from "../../Questions/FinancialInvestments/QuestionsDetail/DynamicYesNo";
-import { CreatableMultiSelectField } from "../../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import {
+  AntdCreatableMultiSelect,
+  CreatableMultiSelectField,
+} from "../../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import CreatableSelectField from "./DynamicCreatableSelect/CreatableSelectField";
 import { Form, InputGroup } from "react-bootstrap";
 import { DatePicker as AntDate, Checkbox, Drawer, Popover } from "antd";
@@ -514,6 +517,21 @@ const DynamicFormField = ({
         />
       );
 
+    case "select-multi-antd":
+      return (
+        <Field
+          name={stakeHolder ? stakeHolder + name : name}
+          component={AntdCreatableMultiSelect}
+          getPopupContainer={all?.trrigger}
+          options={options}
+          disabled={
+            typeof all?.disabled === "function"
+              ? all.disabled(values, stakeHolder)
+              : all?.disabled || false
+          }
+        />
+      );
+
     case "select-creatable":
       return (
         <Field
@@ -554,7 +572,7 @@ const DynamicFormField = ({
               <ButtonDrawer
                 title={innerModalTitle}
                 buttonIcon={faArrowUpRightFromSquare}
-                placement="top"
+                placement="bottom"
                 height={all?.Drawerheight}
                 width={all?.DrawerWidth}
                 DrawerContent={all?.PopoverContent?.(
@@ -591,7 +609,7 @@ const DynamicFormField = ({
           <ButtonDrawer
             title={innerModalTitle}
             buttonIcon={faArrowUpRightFromSquare}
-            placement="top"
+            placement="bottom"
             height={all?.Drawerheight}
             width={all?.DrawerWidth}
             DrawerContent={all?.PopoverContent?.(

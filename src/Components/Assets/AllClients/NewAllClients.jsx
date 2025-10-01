@@ -2,9 +2,12 @@ import React, { Children, useEffect, useState } from "react";
 import {
   AllUsers,
   BankDetail,
+  CRState,
   defaultUrl,
   Loading,
   LoggedInUserData,
+  OptionRender,
+  PersonalDetailsData,
   ProspectsCDF,
   QuestionDetail,
   SelectedClientDetails,
@@ -39,6 +42,7 @@ import AssignUser from "../../../GetComponents/AssignUser";
 import { Modal, notification, Spin, ConfigProvider, Tooltip } from "antd";
 import PushtoAdviserlink from "../../PushtoAdviserlink/PushtoAdviserlink";
 import { FaArrowRotateRight } from "react-icons/fa6";
+import ReusableHeader from "../Dynamic/ReusableHeader";
 
 const NewAllClients = (props) => {
   const [loggedUser, setLoggedInUserData] = useRecoilState(LoggedInUserData);
@@ -53,6 +57,66 @@ const NewAllClients = (props) => {
   let [selectedClientDetails, setSelectedClientDetails] = useRecoilState(
     SelectedClientDetails
   );
+
+  const [expanded, setExpanded] = useState(false);
+  const [selectedValue, setSelectedValue] = useState(null);
+
+  const [CRStateObj, setCRState] = useRecoilState(CRState);
+  const [optRender, setOptRender] = useRecoilState(OptionRender);
+  const [PersonalDetailObj, setPersonalDetailObj] =
+    useRecoilState(PersonalDetailsData);
+
+  const handleAddClientClick = () => {
+    localStorage.removeItem("Email");
+    localStorage.removeItem("PartnerName");
+    localStorage.removeItem("UserID");
+    localStorage.removeItem("UserName");
+    localStorage.removeItem("UserStatus");
+    setCRState();
+    setStepsStatus(true);
+    setOptRender("Opt1");
+    localStorage.setItem("OptionRender", "Opt1");
+
+    setPersonalDetailObj({
+      client: {
+        clientTitle: "Mr.",
+        clientGivenName: "John",
+        clientSurname: "Doe",
+        clientPreferredName: "Johnny",
+        clientGender: "Male",
+        clientDOB: "1990-01-01",
+        clientAge: 34,
+        clientMaritalStatus: "Single",
+        clientEmploymentStatus: "Employed",
+        clientHealth: "Good",
+        clientSmoker: "No",
+        clientPlannedRetirementAge: 65,
+        clientHomeAddress: "123 Main St",
+        clientPostcode: 12345,
+        clientHomePhone: "555-555-5555",
+        clientWorkPhone: "555-555-5556",
+        clientMobile: "555-555-5557",
+        Email: "john.doe@example.com",
+        clientPostalAddress: "123 Main St",
+        clientPostalPostCode: 12345,
+        clientMiddleName: "Michael",
+        clientOccupationID: "OCC123",
+        clientTaxResidentRadio: "Yes",
+        clientPrivateHealthCoverRadio: "Yes",
+        clientHELPSDebtRadio: "No",
+        clientSameAsAbove: true,
+        clientRetirement: "Comfortable",
+      },
+      partner: {},
+      children: {
+        numberOfChildren: 0,
+      },
+      haveAnyChildren: "No",
+    });
+
+    setQuestionDetail({});
+    Navigate("/user/personal-detail");
+  };
 
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
@@ -727,7 +791,7 @@ const NewAllClients = (props) => {
   };
 
   return (
-    <div className="All_Client reportSection">
+    <div className="All_Client reportSection mt-2">
       <ModalComponent
         modalObject={modalObject}
         setFlagState={setFlagState}
@@ -735,6 +799,24 @@ const NewAllClients = (props) => {
       >
         {ModalContent(modalObject)}
       </ModalComponent>
+
+      <ReusableHeader
+        title="My Clients"
+        expanded={expanded}
+        selectedValue={selectedValue}
+        options={PerosnalDetail.map((item) => ({
+          value: item.client.Email,
+          label: `${item.client.clientGivenName} ${item.client.clientLastName}`,
+        }))}
+        onSearchClick={() => setExpanded(true)}
+        onCloseClick={() => {
+          setExpanded(false);
+          setSelectedValue(null);
+        }}
+        onChange={(val) => setSelectedValue(val)}
+        onAddClick={handleAddClientClick}
+        addButtonLabel="Add Client"
+      />
 
       <AntTableDynamicReportTable
         rowSelection={Object.assign({ type: "radio" }, rowSelection)} //This feture is comming up in Next Miled Stone

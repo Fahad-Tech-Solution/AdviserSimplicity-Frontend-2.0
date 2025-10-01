@@ -13,7 +13,7 @@ const AntTableDynamicReportTable = ({
   customPagination = {},
   rowSelection = null,
 }) => (
-  <div className="mt-4 porsition-relative">
+  <div className="mt-3 porsition-relative">
     <Table
       rowSelection={rowSelection}
       dataSource={dataSource}

@@ -28,6 +28,7 @@ import { SimpleSelectField } from "../Questions/FinancialInvestments/QuestionsDe
 import { MdAddCircleOutline, MdOutlineWarningAmber } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineReload } from "react-icons/ai";
+import EditableTable from "../Assets/Table/EditableTable";
 
 const CDFclients = () => {
   const DefaultUrl = useRecoilValue(defaultUrl);
@@ -568,6 +569,22 @@ const CDFclients = () => {
                 </div>
               </Col>
             </Row>
+
+
+      
+  
+{/* changes */}
+
+{/* <div style={{ padding: 20, width: "100%" }}>
+  <h2>Editable Table</h2>
+  <EditableTable columns={col} dataSource={originData} />
+</div> */}
+
+{/* changes */}
+
+
+
+
           </Card>
         </div>
       </div>
