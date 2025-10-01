@@ -1,87 +1,92 @@
 import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
-import { Button, InputGroup, Row, Table } from "react-bootstrap";
+import { Row } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { openNotificationSuccess, PatchAxios, PostAxios, RenderName } from "../../Assets/Api/Api";
-import { CreatableMultiSelectField } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
-import DynamicTableRow from "../../Assets/Dynamic/DynamicTableRow";
+import {
+  openNotificationSuccess,
+  PatchAxios,
+  PostAxios,
+  RenderName,
+} from "../../Assets/Api/Api";
+import { AntdCreatableMultiSelect } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
 const CenterLinkPayments = (props) => {
-  let questionDetail = useRecoilValue(QuestionDetail);
-  let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+  const questionDetail = useRecoilValue(QuestionDetail);
+  const [, setQuestionDetail] = useRecoilState(QuestionDetail);
+  const [UserStatus] = useState(localStorage.getItem("UserStatus"));
 
-  let [UserStatus] = useState(localStorage.getItem('UserStatus'));
+  const incomeFromCentrelink =
+    questionDetail?.incomeFromCentrelink &&
+      Object.keys(questionDetail.incomeFromCentrelink).length > 0
+      ? questionDetail.incomeFromCentrelink
+      : {
+        client: {},
+        partner: {},
+        joint: {},
+      };
 
-
-
-  let incomeFromCentrelink = Object.keys(questionDetail.incomeFromCentrelink).length > 0 ? questionDetail.incomeFromCentrelink : {
-    client: [],
-    partner: [],
-    joint: [],
-
-  }; // Use an empty object as default if incomeFromCentrelink is undefined
-
-  let initialValues = {
-    owner: ""
+  const initialValues = {
+    owner: [],
+    client: {
+      CRN: "",
+      paymentType: [],
+      fortnightlyPayment: "",
+      annualPaymentAmount: "",
+      centrelinkCardsHeld: [],
+    },
+    partner: {
+      CRN: "",
+      paymentType: [],
+      fortnightlyPayment: "",
+      annualPaymentAmount: "",
+      centrelinkCardsHeld: [],
+    },
   };
 
   const fillInitialValues = (setFieldValue) => {
-    if (incomeFromCentrelink && incomeFromCentrelink._id) {
-      let data = incomeFromCentrelink;
+    const data = incomeFromCentrelink;
+    if (data && data._id) {
+      setFieldValue("owner", data.owner || []);
 
-      if (data) {
-        setFieldValue("owner", data.owner);
+      if (data.owner?.includes("client") && data.client) {
+        setFieldValue("client.CRN", data.client.CRN || "");
+        setFieldValue("client.paymentType", data.client.paymentType || []);
+        setFieldValue("client.fortnightlyPayment", data.client.fortnightlyPayment || "");
+        setFieldValue("client.annualPaymentAmount", data.client.annualPaymentAmount || "");
+        setFieldValue("client.centrelinkCardsHeld", data.client.centrelinkCardsHeld || []);
+      }
 
-        // Check ownership for client
-        if (data.owner.includes("client")) {
-          setFieldValue(`client.paymentType`, data.client.paymentType || "");
-          setFieldValue(`client.CRN`, data.client.CRN || "");
-          setFieldValue(`client.fortnightlyPayment`, data.client.fortnightlyPayment || "");
-          setFieldValue(`client.annualPaymentAmount`, data.client.annualPaymentAmount || "");
-          setFieldValue(`client.centrelinkCardsHeld`, data.client.centrelinkCardsHeld || "");
-        }
-
-        // Check ownership for partner
-        if (data.owner.includes("partner") && UserStatus === "Married") {
-          setFieldValue(`partner.paymentType`, data.partner.paymentType || "");
-          setFieldValue(`partner.CRN`, data.partner.CRN || "");
-          setFieldValue(`partner.fortnightlyPayment`, data.partner.fortnightlyPayment || "");
-          setFieldValue(`partner.annualPaymentAmount`, data.partner.annualPaymentAmount || "");
-          setFieldValue(`partner.centrelinkCardsHeld`, data.partner.centrelinkCardsHeld || "");
-        }
+      if (data.owner?.includes("partner") && UserStatus === "Married" && data.partner) {
+        setFieldValue("partner.CRN", data.partner.CRN || "");
+        setFieldValue("partner.paymentType", data.partner.paymentType || []);
+        setFieldValue("partner.fortnightlyPayment", data.partner.fortnightlyPayment || "");
+        setFieldValue("partner.annualPaymentAmount", data.partner.annualPaymentAmount || "");
+        setFieldValue("partner.centrelinkCardsHeld", data.partner.centrelinkCardsHeld || []);
       }
     }
   };
 
-  let DefaultUrl = useRecoilValue(defaultUrl);
+  const AntdTable = DynamicTableForInputsSection("antd");
+  const DefaultUrl = useRecoilValue(defaultUrl);
 
-  let onSubmit = async (values) => {
-    console.log(JSON.stringify(values));
-
-    let obj = values;
+  const onSubmit = async (values) => {
+    let obj = { ...values };
     obj.clientFK = localStorage.getItem("UserID");
 
-    // Check ownership for client
     if (obj.owner.includes("client")) {
       obj.clientTotal = obj.client.annualPaymentAmount;
     } else {
-      obj.clientTotal = "";
       obj.client = {};
+      obj.clientTotal = "";
     }
 
-    // Check ownership for partner
-    if (obj.owner.includes("partner")) {
+    if (obj.owner.includes("partner") && UserStatus === "Married") {
       obj.partnerTotal = obj.partner.annualPaymentAmount;
     } else {
-      obj.partnerTotal = "";
       obj.partner = {};
-    }
-
-    // Check user status for married condition
-    if (UserStatus !== "Married") {
       obj.partnerTotal = "";
-      obj.partner = {};
     }
 
     const GotData = incomeFromCentrelink.clientFK || "";
@@ -95,139 +100,158 @@ const CenterLinkPayments = (props) => {
       }
 
       if (res) {
-        console.log(res);
         const updatedData = { ...questionDetail, incomeFromCentrelink: res };
         setQuestionDetail(updatedData);
       }
 
-      openNotificationSuccess("success", "topRight", "Success Notification", `Data of "${props.modalObject.title}" is Saved`);
+      openNotificationSuccess(
+        "success",
+        "topRight",
+        "Success Notification",
+        `Data of "${props.modalObject.title}" is Saved`
+      );
 
-      // Reset the flag state if necessary
-      if (props.flagState) {
-        props.setFlagState(false);
-      }
+      if (props.flagState) props.setFlagState(false);
     } catch (error) {
       console.error("Error occurred while making API call:", error);
-      openNotificationSuccess("error", "topRight", "Error Notification", `Data of "${props.modalObject.title}" is not Saved. Please try again.`);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        `Data of "${props.modalObject.title}" is not Saved. Please try again.`
+      );
     }
   };
 
-
-  const options = [
-    { value: "Age Pension", label: "Age Pension" },
-    { value: "Disability Pension", label: "Disability Pension" },
-    { value: "Carer Payment", label: "Carer Payment" },
-    { value: "Carer Allowance", label: "Carer Allowance" },
-    { value: "Jobseeker", label: "Jobseeker" },
-    { value: "Family Tax Benefit A", label: "Family Tax Benefit A" },
-    { value: "Family Tax Benefit B", label: "Family Tax Benefit B" },
-    { value: "Rent Assistance", label: "Rent Assistance" },
+  const columns = [
+    { title: "Owner", dataIndex: "owner", key: "owner" },
+    { title: "CRN", dataIndex: "CRN", key: "CRN", type: "number", placeholder: "CRN" },
+    {
+      title: "Payment Type",
+      dataIndex: "paymentType",
+      key: "paymentType",
+      type: "select-multi-antd",
+      width:250,
+      trrigger: () =>
+        document.querySelector("table"),
+      options: [
+        { value: "Age Pension", label: "Age Pension" },
+        { value: "Disability Pension", label: "Disability Pension" },
+        { value: "Carer Payment", label: "Carer Payment" },
+        { value: "Carer Allowance", label: "Carer Allowance" },
+        { value: "Jobseeker", label: "Jobseeker" },
+        { value: "Family Tax Benefit A", label: "Family Tax Benefit A" },
+        { value: "Family Tax Benefit B", label: "Family Tax Benefit B" },
+        { value: "Rent Assistance", label: "Rent Assistance" },
+      ],
+    },
+    {
+      title: "Fortnightly Payment",
+      dataIndex: "fortnightlyPayment",
+      key: "fortnightlyPayment",
+      type: "number-toComma",
+      placeholder: "Fortnightly Payment",
+      width:200,
+    },
+    {
+      title: "Annual Payment Amount",
+      dataIndex: "annualPaymentAmount",
+      key: "annualPaymentAmount",
+      type: "number-toComma",
+      placeholder: "Annual Payment Amount",
+       width:250,
+    },
+    {
+      title: "Centrelink Cards Held",
+      dataIndex: "centrelinkCardsHeld",
+      key: "centrelinkCardsHeld",
+      type: "select-multi-antd",
+       width:270,
+      options: [
+        { value: "Pensioner Card", label: "Pensioner Card" },
+        { value: "Low Income Card", label: "Low Income Card" },
+        { value: "Commonwealth Seniors Card", label: "Commonwealth Seniors Card" },
+      ],
+    },
   ];
 
-  const options2 = [
-    { value: "Pensioner Card", label: "Pensioner Card " },
-    { value: "Low Income Card", label: "Low Income Card " },
-    { value: "Commonwealth Seniors Card", label: "Commonwealth Seniors Card" },
-  ];
+  function ownerOptions() {
+    const opts = [{ value: "client", label: RenderName("client") }];
+    if (UserStatus !== "Single") {
+      opts.push({ value: "partner", label: RenderName("partner") });
+    }
+    return opts;
+  }
 
-  const rowConfig = [
-    { name: 'CRN', type: 'number', placeholder: 'CRN' },
-    { name: 'paymentType', type: 'select-creatableMulti', placeholder: 'Multi Select Field', options: options, styleSet: { width: "150px" }, },
-    { name: 'fortnightlyPayment', type: 'number-toComma', placeholder: 'Fortnightly Payment', styleSet: { width: "150px" }, },
-    { name: 'annualPaymentAmount', type: 'number-toComma', placeholder: 'Annual Payment Amount', styleSet: { width: "150px" }, },
-    { name: 'centrelinkCardsHeld', type: 'select-creatableMulti', placeholder: 'Multi Select Field', options: options2 },
-  ];
-
-  const ownerOptions = (UserStatus !== "Single") ? [
-    { value: "client", label: RenderName("client") },
-    { value: "partner", label: RenderName("partner") }] :
-    [{ value: "client", label: RenderName("client") },];
-
-
+  const handleInnerModal = (name, values) => {
+    console.log("Modal trigger:", name, values);
+  };
 
   return (
-    <Formik
-      initialValues={initialValues}
-      onSubmit={onSubmit}
-      enableReinitialize
-      innerRef={props.formRef}
-    >
+    <Formik initialValues={initialValues} onSubmit={onSubmit} enableReinitialize innerRef={props.formRef}>
       {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        const dataRows = [
+          ...(values.owner.includes("client")
+            ? [
+              {
+                key: "client",
+                owner: RenderName("client"),
+                stakeHolder: "client",
+                CRN: values.client?.CRN || "",
+                paymentType: values.client?.paymentType || [],
+                fortnightlyPayment: values.client?.fortnightlyPayment || "",
+                annualPaymentAmount: values.client?.annualPaymentAmount || "",
+                centrelinkCardsHeld: values.client?.centrelinkCardsHeld || [],
+              },
+            ]
+            : []),
+          ...(values.owner.includes("partner") && UserStatus === "Married"
+            ? [
+              {
+                key: "partner",
+                owner: RenderName("partner"),
+                stakeHolder: "partner",
+                CRN: values.partner?.CRN || "",
+                paymentType: values.partner?.paymentType || [],
+                fortnightlyPayment: values.partner?.fortnightlyPayment || "",
+                annualPaymentAmount: values.partner?.annualPaymentAmount || "",
+                centrelinkCardsHeld: values.partner?.centrelinkCardsHeld || [],
+              },
+            ]
+            : []),
+        ];
+
         return (
           <Form>
             <Row>
+              <div className="col-md-12">
+                <div className="d-flex justify-content-center align-items-center gap-4">
+                  <label className="text-end">Owner</label>
+                  <div style={{ minWidth: "200px" }}>
+                    <Field name="owner"
+                     component={AntdCreatableMultiSelect}
+                      options={ownerOptions()} />
+                  </div>
+                </div>
 
-              <div className='col-md-12'>
-                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
-                  <label htmlFor='' className='text-end '>
-                    Owner
-                  </label>
-
-                  <div style={{ minWidth: "25%" }}>
-                    <Field
-                      name={`owner`}
-                      component={CreatableMultiSelectField}
-                      label="Multi Select Field"
-                      options={ownerOptions}
+                {values.owner.length > 0 && (
+                  <div className="mt-4 All_Client reportSection">
+                    <AntdTable
+                      columns={columns}
+                      data={dataRows}
+                      values={values}
+                      setFieldValue={setFieldValue}
+                      handleChange={handleChange}
+                      handleBlur={handleBlur}
+                      handleInnerModal={handleInnerModal}
                     />
                   </div>
-                </div>
+                )}
               </div>
-              {values.owner.length > 0 &&
-
-                <div className="col-md-12">
-                  <div className="row justify-content-center">
-                    <div className="mt-4">
-                      <Table striped bordered responsive hover>
-                        <thead>
-                          <tr>
-                            <th
-                              onClick={() => {
-                                console.log(values);
-                              }}
-                            >
-                              Owner
-                            </th>
-                            <th>CRN</th>
-                            <th>Payment Type</th>
-                            <th>Fortnightly Payment</th>
-                            <th>Annual Payment Amount</th>
-                            <th>Centrelink Cards Held</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {(values.owner.includes("client")) &&
-                            <DynamicTableRow
-                              rowConfig={rowConfig}
-                              values={values}
-                              setFieldValue={setFieldValue}
-                              handleChange={handleChange}
-                              handleBlur={handleBlur}
-                              stakeHolder={"client."}
-                            />
-                          }
-                          {(values.owner.includes("partner") && UserStatus === "Married") &&
-                            <DynamicTableRow
-                              rowConfig={rowConfig}
-                              values={values}
-                              setFieldValue={setFieldValue}
-                              handleChange={handleChange}
-                              handleBlur={handleBlur}
-                              stakeHolder={"partner."}
-                            />
-                          }
-
-                        </tbody>
-                      </Table>
-                    </div>
-                  </div>
-                </div>
-              }
-
             </Row>
           </Form>
         );

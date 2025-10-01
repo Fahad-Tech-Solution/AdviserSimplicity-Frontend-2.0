@@ -14,7 +14,7 @@ import {
   toCommaAndDollar,
 } from "../Api/Api";
 import DynamicYesNo from "../../Questions/FinancialInvestments/QuestionsDetail/DynamicYesNo";
-import { CreatableMultiSelectField } from "../../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import { AntdCreatableMultiSelect, CreatableMultiSelectField } from "../../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import CreatableSelectField from "./DynamicCreatableSelect/CreatableSelectField";
 import { Form, InputGroup } from "react-bootstrap";
 
@@ -376,6 +376,46 @@ const DynamicFormField = ({
           options={options}
           disabled={all?.disabled ? all.disabled : false}
         />
+      );
+
+
+ case "select-multi-antd":
+      return (
+        <Field
+          name={stakeHolder ? stakeHolder + name : name}
+          component={AntdCreatableMultiSelect}
+          getPopupContainer={all?.trrigger}
+          options={options}
+          disabled={
+            typeof all?.disabled === "function"
+              ? all.disabled(values, stakeHolder) 
+              : all?.disabled || false
+          }
+        />
+
+
+
+        
+      );
+
+
+ case "select-multi-antd":
+      return (
+        <Field
+          name={stakeHolder ? stakeHolder + name : name}
+          component={AntdCreatableMultiSelect}
+          getPopupContainer={all?.trrigger}
+          options={options}
+          disabled={
+            typeof all?.disabled === "function"
+              ? all.disabled(values, stakeHolder) 
+              : all?.disabled || false
+          }
+        />
+
+
+
+        
       );
 
     case "select-creatable":

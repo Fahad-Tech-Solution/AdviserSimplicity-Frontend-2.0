@@ -63,7 +63,7 @@ const CreatableMultiSelectField = ({ options, field, form, disabled, onChange })
       className=''
       value={
         options
-          ? options.filter(option =>
+          ? options.filter((option) =>
             Array.isArray(field.value)
               ? field.value.includes(option.value)
               : false
@@ -223,5 +223,72 @@ const SimpleSelectField = ({ options, field, form, onChange }) => {
   );
 };
 
+const AntdCreatableMultiSelect = ({
+  field, // { name, value, onChange, onBlur }
+  form, // formik bag
+  label,
+  options = [],
+  onChangefun, // Custom onChange function
+  getPopupContainer: customPopupContainer,
+  ...props
+}) => {
+  const handleChange = (value) => {
+    form.setFieldValue(field.name, value);
+    if (onChangefun) {
+      let obj = {
+        target: {
+          name: field.name,
+          value: value,
+        },
+      };
+      onChangefun(obj);
+    }
+  };
 
-export { CreatableMultiSelectField, CreatableSelectField, SimpleSelectField };
+  // 👇 If caller passes getPopupContainer, use it. Otherwise default.
+  const resolvedPopupContainer =
+    customPopupContainer || ((triggerNode) => triggerNode.parentNode);
+
+
+  return (
+    <div className="w-100">
+      {label && <label style={{ marginBottom: 4 }}>{label}</label>}
+      <ConfigProvider
+        theme={{
+          components: {
+            Select: {
+              colorBorder: "#36b446",
+            },
+          },
+        }}
+      >
+        <AntDSelect
+          mode="tags" // or "multiple" if you don't want creatable
+          allowClear
+          styles={{
+            root: {
+              minHeight: "42px",
+              placeholderpadding: "10px ",
+              fontSize: "14px",
+            },
+          }}
+          style={{ width: "100%" }}
+          placeholder="Select or add options"
+          value={field.value || []}
+          onChange={handleChange}
+          size="large"
+          options={options}
+          getPopupContainer={resolvedPopupContainer} // 👈 Fix
+          {...props}
+        />
+      </ConfigProvider>
+    </div>
+  );
+};
+
+export {
+  CreatableMultiSelectField,
+  CreatableSelectField,
+  SimpleSelectField,
+  AntdCreatableMultiSelect,
+};

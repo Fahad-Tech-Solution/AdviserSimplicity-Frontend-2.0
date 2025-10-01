@@ -1,90 +1,102 @@
 import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
-import { Row, Table } from "react-bootstrap";
+import { Row } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { openNotificationSuccess, PatchAxios, PostAxios, RenderName } from "../../Assets/Api/Api";
-import DynamicTableRow from "../../Assets/Dynamic/DynamicTableRow";
-import { CreatableMultiSelectField } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
-// import Select from "react-select";
+import {
+  openNotificationSuccess,
+  PatchAxios,
+  PostAxios,
+  RenderName,
+} from "../../Assets/Api/Api";
+import { AntdCreatableMultiSelect } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
 const OverseasPension = (props) => {
-  let questionDetail = useRecoilValue(QuestionDetail);
-  let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+  const questionDetail = useRecoilValue(QuestionDetail);
+  const [, setQuestionDetail] = useRecoilState(QuestionDetail);
 
+  const [UserStatus] = useState(localStorage.getItem("UserStatus"));
 
-  let [UserStatus] = useState(localStorage.getItem('UserStatus'));
-
-  let incomeFromOverseasPension =
+  const incomeFromOverseasPension =
+    questionDetail?.incomeFromOverseasPension &&
     Object.keys(questionDetail.incomeFromOverseasPension).length > 0
       ? questionDetail.incomeFromOverseasPension
       : {
-        client: [],
-        partner: [],
-        joint: [],
-      }; // Use an empty object as default if incomeFromOverseasPension is undefined
+          client: {},
+          partner: {},
+        };
 
-  let initialValues = {
-    owner: []
+  const initialValues = {
+    owner: [],
+    client: {
+      country: "",
+      regularIncomePA: "",
+    },
+    partner: {
+      country: "",
+      regularIncomePA: "",
+    },
   };
 
   const fillInitialValues = (setFieldValue) => {
-    console.log(incomeFromOverseasPension, "data");
-    let data = incomeFromOverseasPension || "";
-
+    const data = incomeFromOverseasPension;
     if (data && data._id) {
-      setFieldValue(`owner`, data.owner || "");
+      setFieldValue("owner", data.owner || []);
 
-      // Handle client-related conditions
-      if (data.owner.includes("client")) {
-        if (data?.client && Object.keys(data.client).length) {
-          setFieldValue(`client.regularIncomePA`, data.client.regularIncomePA || "");
-          setFieldValue(`client.country`, data.client.country || "");
+      if (
+        Array.isArray(data.owner)
+          ? data.owner.includes("client")
+          : (data.owner || "").includes("client")
+      ) {
+        if (data.client && Object.keys(data.client).length) {
+          setFieldValue("client.country", data.client.country || "");
+          setFieldValue(
+            "client.regularIncomePA",
+            data.client.regularIncomePA || ""
+          );
         }
       }
 
-      // Handle partner-related conditions
-      if (UserStatus === "Married" && data.owner.includes("partner")) {
-        if (data?.partner && Object.keys(data.partner).length) {
-          setFieldValue(`partner.regularIncomePA`, data.partner.regularIncomePA || "");
-          setFieldValue(`partner.country`, data.partner.country || "");
+      if (
+        (Array.isArray(data.owner)
+          ? data.owner.includes("partner")
+          : (data.owner || "").includes("partner")) &&
+        UserStatus === "Married"
+      ) {
+        if (data.partner && Object.keys(data.partner).length) {
+          setFieldValue("partner.country", data.partner.country || "");
+          setFieldValue(
+            "partner.regularIncomePA",
+            data.partner.regularIncomePA || ""
+          );
         }
       }
     }
   };
 
+  const AntdTable = DynamicTableForInputsSection("antd");
 
-  let DefaultUrl = useRecoilValue(defaultUrl);
+  const DefaultUrl = useRecoilValue(defaultUrl);
 
-  let onSubmit = async (values) => {
-    console.log(JSON.stringify(values));
-    // return (false);
-
-    let obj = values;
+  const onSubmit = async (values) => {
+    const obj = { ...values };
     obj.clientFK = localStorage.getItem("UserID");
-    console.log(obj, "new Object");
 
-    // Handle client-related conditions
     if (values.owner.includes("client")) {
       obj.clientTotal = values.client.regularIncomePA;
-      console.log("Client total set");
     } else {
       obj.client = {};
       obj.clientTotal = "";
-      console.log("Client data cleared");
     }
 
-    // Handle partner-related conditions
     if (values.owner.includes("partner") && UserStatus === "Married") {
       obj.partnerTotal = values.partner.regularIncomePA;
-      console.log("Partner total set");
     } else {
       obj.partner = {};
       obj.partnerTotal = "";
-      console.log("Partner data cleared");
     }
 
-    console.log(obj, "final obj");
     const bankAccountArray = incomeFromOverseasPension.clientFK || "";
 
     try {
@@ -102,7 +114,6 @@ const OverseasPension = (props) => {
       }
 
       if (res) {
-        console.log(res);
         const updatedData = {
           ...questionDetail,
           incomeFromOverseasPension: res,
@@ -110,38 +121,44 @@ const OverseasPension = (props) => {
         setQuestionDetail(updatedData);
       }
 
-      openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
+      openNotificationSuccess(
+        "success",
+        "topRight",
+        "Success Notification",
+        `Data of "${props.modalObject.title}" is Saved`
+      );
 
-      // Reset the flag state if necessary
       if (props.flagState) {
         props.setFlagState(false);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
-      openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        `Data of "${props.modalObject.title}" is not Saved. Please try again.`
+      );
     }
   };
 
-
-  const rowConfig = [
-    { name: "country", type: "text", placeholder: "Country" },
+  const columns = [
+    { title: "Owner", dataIndex: "owner", key: "owner" },
     {
-      name: "regularIncomePA",
-      type: "number-toComma",
-      placeholder: "Regular IncomePA",
+      title: "Country",
+      dataIndex: "country",
+      key: "country",
+      type: "text",
+      placeholder: "Country",
     },
-    // { name: "businessAddress", type: "text", placeholder: "Business Address" },
+    {
+      title: "Regular Income p.a",
+      dataIndex: "regularIncomePA",
+      key: "regularIncomePA",
+      type: "number-toComma",
+      placeholder: "Regular Income p.a",
+    },
   ];
-
-
-
-  const options = (UserStatus !== "Single") ? [
-    { value: "client", label: RenderName("client") },
-    { value: "partner", label: RenderName("partner") }] :
-    [{ value: "client", label: RenderName("client") },];
-
-
-
 
   return (
     <Formik
@@ -155,6 +172,31 @@ const OverseasPension = (props) => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        const dataRows = [
+          ...(values.owner.includes("client")
+            ? [
+                {
+                  key: "client",
+                  owner: RenderName("client"),
+                  stakeHolder: "client",
+                  country: values.client?.country || "",
+                  regularIncomePA: values.client?.regularIncomePA || "",
+                },
+              ]
+            : []),
+          ...(values.owner.includes("partner") && UserStatus === "Married"
+            ? [
+                {
+                  key: "partner",
+                  owner: RenderName("partner"),
+                  stakeHolder: "partner",
+                  country: values.partner?.country || "",
+                  regularIncomePA: values.partner?.regularIncomePA || "",
+                },
+              ]
+            : []),
+        ];
+
         return (
           <Form>
             <Row>
@@ -165,59 +207,26 @@ const OverseasPension = (props) => {
                       <label htmlFor="" className="text-end ">
                         Owner
                       </label>
-
-                      <div style={{ minWidth: "25%" }}>
+                      <div style={{ minWidth: "200px" }}>
                         <Field
                           name={`owner`}
-                          component={CreatableMultiSelectField}
-                          label="Multi Select Field"
-                          options={options}
+                          component={AntdCreatableMultiSelect}
+                          options={optionsForOwner()}
                         />
                       </div>
                     </div>
                   </div>
-                  {values.owner.length > 0 && (
-                    <div className="mt-4">
-                      <Table striped bordered responsive hover>
-                        <thead>
-                          <tr>
-                            <th
-                              onClick={() => {
-                                console.log(values);
-                              }}
-                            >
-                              Owner
-                            </th>
-                            <th>Country</th>
-                            <th>Regular Income p.a</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {(values.owner.includes("client")) && (
-                            <DynamicTableRow
-                              rowConfig={rowConfig}
-                              values={values}
-                              setFieldValue={setFieldValue}
-                              handleChange={handleChange}
-                              handleBlur={handleBlur}
-                              // handleInnerModal={handleInnerModal}
-                              stakeHolder="client."
-                            />
-                          )}
 
-                          {(values.owner.includes("partner") && UserStatus === "Married") && (
-                            <DynamicTableRow
-                              rowConfig={rowConfig}
-                              values={values}
-                              setFieldValue={setFieldValue}
-                              handleChange={handleChange}
-                              handleBlur={handleBlur}
-                              // handleInnerModal={handleInnerModal}
-                              stakeHolder="partner."
-                            />
-                          )}
-                        </tbody>
-                      </Table>
+                  {values.owner.length > 0 && (
+                    <div className="mt-4 All_Client reportSection">
+                      <AntdTable
+                        columns={columns}
+                        data={dataRows}
+                        values={values}
+                        setFieldValue={setFieldValue}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                      />
                     </div>
                   )}
                 </div>
@@ -230,5 +239,12 @@ const OverseasPension = (props) => {
   );
 };
 
-export default OverseasPension;
+function optionsForOwner() {
+  const UserStatus = localStorage.getItem("UserStatus");
+  const opts = [{ value: "client", label: RenderName("client") }];
+  if (UserStatus !== "Single")
+    opts.push({ value: "partner", label: RenderName("partner") });
+  return opts;
+}
 
+export default OverseasPension;
