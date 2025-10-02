@@ -27,6 +27,11 @@ import {
 import { openNotificationSuccess } from "../Assets/Api/Api";
 import { AiOutlineBank } from "react-icons/ai";
 import { FiLogOut, FiUser } from "react-icons/fi";
+import {
+  MdOutlineAccountBalance,
+  MdOutlineSecurity,
+  MdOutlineTrackChanges,
+} from "react-icons/md";
 
 const { SubMenu } = Menu;
 
@@ -237,6 +242,7 @@ const AdminSideBar = (props) => {
                   );
                 }
               }}
+              icon={<MdOutlineAccountBalance />}
             >
               Financial Details
             </Menu.Item>
@@ -245,32 +251,28 @@ const AdminSideBar = (props) => {
                 <Menu.Item
                   key="/user/goals-and-objectives"
                   onClick={() => nav("/user/goals-and-objectives")}
+                  icon={<MdOutlineTrackChanges />}
                 >
                   Goals and Objectives
                 </Menu.Item>
                 <Menu.Item
                   key="/user/risk-profile"
                   onClick={() => nav("/user/risk-profile")}
+                  icon={<MdOutlineSecurity />}
                 >
                   View Risk Profile
                 </Menu.Item>
               </>
             )}
-            <Menu.Item
-              key="/user/personal-detail"
-              onClick={handleAddClientClick}
-            >
-              Add Client
-            </Menu.Item>
           </SubMenu>
 
           {loggedUser?.roleID?.permissions.includes("cashflow") && (
-            <SubMenu key="sub2" icon={<RiExchange2Line />} title="Cash Flow">
+            <SubMenu key="sub2" icon={<RiExchange2Line />} title="Strategy">
               <Menu.Item
                 key="/user/cashflow/allusers"
                 onClick={() => nav("/user/cashflow/allusers")}
               >
-                All Cash Flow Scenarios
+                All Strategy Scenarios
               </Menu.Item>
 
               {selectedClientDetails?.client && (

@@ -1,9 +1,10 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Card } from "react-bootstrap";
 import NewAllClients from "../Assets/AllClients/NewAllClients";
 import CustomApexChart from "../Assets/ApexChart/CustomApexChart";
 import { LoggedInUserData, ProspectsCDF } from "../../Store/Store";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
+import { toTitleCase } from "../Assets/Api/Api";
 
 const Dashboard = (props) => {
   let prospectsCDF = useRecoilValue(ProspectsCDF);
@@ -53,12 +54,14 @@ const Dashboard = (props) => {
         {loggedInUserData &&
         typeof loggedInUserData === "object" &&
         Object.keys(loggedInUserData).length > 0
-          ? `${loggedInUserData.firstName || ""} ${
-              loggedInUserData.lastName || ""
-            }`.trim()
+          ? toTitleCase(
+              `${loggedInUserData.firstName || ""} ${
+                loggedInUserData.lastName || ""
+              }`.trim()
+            )
           : "Guest"}
       </h5>
-      <div className="row justify-content-stretch">
+      <div className="row justify-content-stretch d-none">
         <div className={"col-md-3 mt-3 mt-md-0"}>
           <Card className=" overflow-hidden custom_Shadow pb-3 h-100 d-flex flex-column justify-content-center align-items-center">
             <div className="mt-4">
@@ -107,10 +110,7 @@ const Dashboard = (props) => {
         <div className="col-md-12">
           <Card className="custom_Shadow mb-5">
             <div className="d-flex flex-column justify-content-center align-items-center py-3">
-              <h5 className="PoppinsFamily navy_Text fw-bold w-100 text-start ps-3 m-0">
-                All Clients
-              </h5>
-              <div style={{ width: "98%" }}>
+              <div style={{ width: "98%", marginTop: "-10px" }}>
                 <NewAllClients />
               </div>
             </div>

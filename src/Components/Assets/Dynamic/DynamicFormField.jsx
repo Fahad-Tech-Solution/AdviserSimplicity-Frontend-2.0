@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Field } from "formik";
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,9 +14,15 @@ import {
   toCommaAndDollar,
 } from "../Api/Api";
 import DynamicYesNo from "../../Questions/FinancialInvestments/QuestionsDetail/DynamicYesNo";
-import { AntdCreatableMultiSelect, CreatableMultiSelectField } from "../../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import {
+  AntdCreatableMultiSelect,
+  CreatableMultiSelectField,
+} from "../../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import CreatableSelectField from "./DynamicCreatableSelect/CreatableSelectField";
 import { Form, InputGroup } from "react-bootstrap";
+import { DatePicker as AntDate, Checkbox, Drawer, Popover } from "antd";
+import dayjs from "dayjs";
+import ButtonDrawer from "./ButtonDrawer";
 
 const DynamicFormField = ({
   fieldType,
@@ -33,6 +39,8 @@ const DynamicFormField = ({
   innerModalTitle,
   all,
 }) => {
+  const [open, setOpen] = useState(false);
+
   switch (fieldType) {
     case "number":
       return (
@@ -54,7 +62,11 @@ const DynamicFormField = ({
               all.BlurHandler(values, setFieldValue, e.target, stakeHolder);
             }
           }}
-          disabled={all?.disabled ? all.disabled : false}
+          disabled={
+            typeof all?.disabled === "function"
+              ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+              : all?.disabled || false
+          }
         />
       );
 
@@ -72,12 +84,41 @@ const DynamicFormField = ({
               all.func(values, setFieldValue, e.target, stakeHolder);
             }
           }}
-          disabled={all?.disabled ? all.disabled : false}
+          disabled={
+            typeof all?.disabled === "function"
+              ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+              : all?.disabled || false
+          }
         />
       );
 
+    case "checkbox":
+      return (
+        <Field name={stakeHolder ? stakeHolder + name : name}>
+          {({ field, form }) => (
+            <Checkbox
+              id={name}
+              checked={field.value || false}
+              onChange={(e) => {
+                form.setFieldValue(field.name, e.target.checked);
+                if (all.callBack) {
+                  all.func(values, setFieldValue, e.target, stakeHolder);
+                }
+              }}
+              disabled={
+                typeof all?.disabled === "function"
+                  ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+                  : all?.disabled || false
+              }
+            >
+              {placeholder || name}
+            </Checkbox>
+          )}
+        </Field>
+      );
+
     case "number-toPercent":
-      let FormulaSetting = () => { };
+      let FormulaSetting = () => {};
 
       if (all.callBack) {
         // alert(all.callBack);
@@ -112,7 +153,11 @@ const DynamicFormField = ({
               stakeHolder
             )
           }
-          disabled={all?.disabled ? all.disabled : false}
+          disabled={
+            typeof all?.disabled === "function"
+              ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+              : all?.disabled || false
+          }
         />
       );
 
@@ -136,7 +181,11 @@ const DynamicFormField = ({
                 all.func(values, setFieldValue, e.target, stakeHolder);
               }
             }}
-            disabled={all?.disabled ? all.disabled : false}
+            disabled={
+              typeof all?.disabled === "function"
+                ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+                : all?.disabled || false
+            }
           />
           <div className="invalid-feedback">{all.invalidMessage}</div>
         </React.Fragment>
@@ -168,7 +217,11 @@ const DynamicFormField = ({
                   );
                 }
               }}
-              disabled={all?.disabled ? all.disabled : false}
+              disabled={
+                typeof all?.disabled === "function"
+                  ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+                  : all?.disabled || false
+              }
             />
 
             <Button
@@ -221,7 +274,73 @@ const DynamicFormField = ({
           showIcon
           id={name}
           name={stakeHolder ? stakeHolder + name : name}
-          disabled={all?.disabled ? all.disabled : false} // Disable input based on props
+          disabled={
+            typeof all?.disabled === "function"
+              ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+              : all?.disabled || false
+          } // Disable input based on props
+          // ✅ FIX: return the container instead of appending
+          popperPlacement="bottom-start"
+        />
+      );
+
+    case "antdate":
+      // utility: join stakeHolder + name safely
+      const buildFieldName = (stakeHolder, name) => {
+        if (!stakeHolder) return name;
+        return stakeHolder.endsWith(".")
+          ? `${stakeHolder}${name}`
+          : `${stakeHolder}.${name}`;
+      };
+
+      return (
+        <AntDate
+          className="form-control inputDesignDoubleInput"
+          value={(() => {
+            const fieldName = buildFieldName(stakeHolder, name);
+
+            // safely read nested value
+            const rawValue = fieldName
+              .split(".")
+              .reduce((acc, key) => (acc ? acc[key] : null), values);
+
+            return rawValue ? dayjs(rawValue) : null;
+          })()}
+          onChange={(date) => {
+            const fieldName = buildFieldName(stakeHolder, name);
+            const isoValue = date
+              ? date.hour(12).minute(0).second(0).millisecond(0).toISOString()
+              : null;
+
+            console.log(isoValue);
+            // ✅ update Formik correctly
+            setFieldValue(fieldName, isoValue);
+
+            if (all.callBack) {
+              all.func(
+                values,
+                setFieldValue,
+                { name: fieldName, value: isoValue },
+                stakeHolder
+              );
+            }
+          }}
+          onBlur={() => {
+            const fieldName = buildFieldName(stakeHolder, name);
+            handleBlur({ target: { name: fieldName } });
+          }}
+          id={buildFieldName(stakeHolder, name)}
+          name={buildFieldName(stakeHolder, name)}
+          disabled={
+            typeof all?.disabled === "function"
+              ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+              : all?.disabled || false
+          }
+          format="DD/MM/YYYY"
+          allowClear
+          getPopupContainer={(triggerNode) =>
+            triggerNode.closest("table") || triggerNode
+          }
         />
       );
 
@@ -246,7 +365,11 @@ const DynamicFormField = ({
                   all.func(values, setFieldValue, e.target, stakeHolder);
                 }
               }}
-              disabled={all?.disabled ? all.disabled : false}
+              disabled={
+                typeof all?.disabled === "function"
+                  ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+                  : all?.disabled || false
+              }
             />
 
             <Field
@@ -272,7 +395,11 @@ const DynamicFormField = ({
           as="select"
           name={stakeHolder ? stakeHolder + name : name}
           className="form-select inputDesignDoubleInput"
-          disabled={all?.disabled ? all.disabled : false}
+          disabled={
+            typeof all?.disabled === "function"
+              ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+              : all?.disabled || false
+          }
           onChange={(e) => {
             handleChange(e);
             if (all.callBack) {
@@ -309,7 +436,11 @@ const DynamicFormField = ({
               as="select"
               name={stakeHolder ? stakeHolder + name : name}
               className="form-select inputDesignDoubleInput"
-              disabled={all?.disabled ? all.disabled : false}
+              disabled={
+                typeof all?.disabled === "function"
+                  ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+                  : all?.disabled || false
+              }
               onChange={(e) => {
                 handleChange(e);
                 if (all.callBack) {
@@ -332,20 +463,20 @@ const DynamicFormField = ({
             {(stakeHolder
               ? values?.[stakeHolder.slice(0, -1)]?.[name]
               : values?.[name]) === all.ModalOption && (
-                <Button
-                  className="btn bgColor modalBtn border-0"
-                  onClick={() =>
-                    handleInnerModal(
-                      innerModalTitle,
-                      values,
-                      all.key,
-                      stakeHolder
-                    )
-                  }
-                >
-                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                </Button>
-              )}
+              <Button
+                className="btn bgColor modalBtn border-0"
+                onClick={() =>
+                  handleInnerModal(
+                    innerModalTitle,
+                    values,
+                    all.key,
+                    stakeHolder
+                  )
+                }
+              >
+                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+              </Button>
+            )}
           </InputGroup>
         </React.Fragment>
       );
@@ -357,7 +488,11 @@ const DynamicFormField = ({
           component={CreatableMultiSelectField}
           label="Multi Select Field"
           options={options}
-          disabled={all?.disabled ? all.disabled : false}
+          disabled={
+            typeof all?.disabled === "function"
+              ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+              : all?.disabled || false
+          }
           onChange={(e) => {
             console.log(e);
             if (all.callBack) {
@@ -374,9 +509,14 @@ const DynamicFormField = ({
           component={CreatableMultiSelectField}
           label="Multi Select Field"
           options={options}
-          disabled={all?.disabled ? all.disabled : false}
+          disabled={
+            typeof all?.disabled === "function"
+              ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+              : all?.disabled || false
+          }
         />
       );
+
     case "select-multi-antd":
       return (
         <Field
@@ -390,10 +530,6 @@ const DynamicFormField = ({
               : all?.disabled || false
           }
         />
-
-
-
-
       );
 
     case "select-creatable":
@@ -404,7 +540,11 @@ const DynamicFormField = ({
           defaultOptions={options}
           placeholder="Select or create ..."
           form={{ setFieldValue }}
-          disabled={all?.disabled ? all.disabled : false}
+          disabled={
+            typeof all?.disabled === "function"
+              ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+              : all?.disabled || false
+          }
         />
       );
 
@@ -428,7 +568,22 @@ const DynamicFormField = ({
           {(stakeHolder
             ? values?.[stakeHolder.slice(0, -1)]?.[name]
             : values?.[name]) === "Yes" && (
-              <div className="d-flex justify-content-center align-items-center pt-2">
+            <div className="d-flex justify-content-center align-items-center pt-2">
+              <ButtonDrawer
+                title={innerModalTitle}
+                buttonIcon={faArrowUpRightFromSquare}
+                placement="bottom"
+                height={all?.Drawerheight}
+                width={all?.DrawerWidth}
+                DrawerContent={all?.PopoverContent?.(
+                  innerModalTitle,
+                  values,
+                  all,
+                  stakeHolder
+                )}
+                setOpen={setOpen}
+                open={open}
+              >
                 <Button
                   className="btn bgColor modalBtn border-0"
                   id="button-addon2"
@@ -437,25 +592,46 @@ const DynamicFormField = ({
                       all.func(innerModalTitle, values, all.key, stakeHolder);
                     }
                   }}
+                  onMouseEnter={() => setOpen(true)}
+                  onMouseLeave={() => setOpen(false)}
                 >
                   <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                 </Button>
-              </div>
-            )}
+              </ButtonDrawer>
+            </div>
+          )}
         </React.Fragment>
       );
 
     case "modal":
       return (
         <div className="d-flex justify-content-center align-items-center ">
-          <Button
-            className="btn bgColor modalBtn border-0"
-            onClick={() =>
-              handleInnerModal(innerModalTitle, values, all.key, stakeHolder)
-            }
+          <ButtonDrawer
+            title={innerModalTitle}
+            buttonIcon={faArrowUpRightFromSquare}
+            placement="bottom"
+            height={all?.Drawerheight}
+            width={all?.DrawerWidth}
+            DrawerContent={all?.PopoverContent?.(
+              innerModalTitle,
+              values,
+              all,
+              stakeHolder
+            )}
+            setOpen={setOpen}
+            open={open}
           >
-            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-          </Button>
+            <Button
+              className="btn bgColor modalBtn border-0"
+              onClick={() => {
+                handleInnerModal(innerModalTitle, values, all.key, stakeHolder);
+              }}
+              onMouseEnter={() => setOpen(true)}
+              onMouseLeave={() => setOpen(false)}
+            >
+              <FontAwesomeIcon icon={faArrowUpRightFromSquare} />{" "}
+            </Button>
+          </ButtonDrawer>
         </div>
       );
 

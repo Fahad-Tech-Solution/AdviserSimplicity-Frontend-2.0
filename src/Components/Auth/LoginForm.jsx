@@ -113,7 +113,7 @@ const LoginForm = () => {
         navigate("/change-password");
       } else if (!userData.isActive) {
         // Case 3: User not active
-        if(userData.action!=="pricing table"){
+        if (userData.action !== "pricing table") {
           setLoggedUserToken(""); // optionally clear token
         }
         navigate(`/user/warning?message=${res.action}`);
@@ -248,7 +248,7 @@ const LoginForm = () => {
                             <p>
                               <Link
                                 to="/forget-password"
-                                className="text-green"
+                                className="optionActive"
                               >
                                 Forgot Password
                               </Link>
@@ -258,7 +258,7 @@ const LoginForm = () => {
                           <div className="col-md-12">
                             <button
                               type="submit"
-                              className="primary btn w-100 "
+                              className="modalBtn btn w-100 "
                             >
                               Login
                             </button>

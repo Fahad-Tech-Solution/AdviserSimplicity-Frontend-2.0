@@ -254,11 +254,24 @@ const validateName = (value) => {
 };
 
 let ConvertDate = (date) => {
-  let d = new Date(date);
-  let day = d.getDate().toString().padStart(2, "0");
-  let month = (d.getMonth() + 1).toString().padStart(2, "0"); // Months are zero-based
-  let year = d.getFullYear();
+  if (!date) return "";
+
+  let d = new Date(date); // parse the ISO string
+  let day = d.getUTCDate().toString().padStart(2, "0");
+  let month = (d.getUTCMonth() + 1).toString().padStart(2, "0"); // Months are 0-based
+  let year = d.getUTCFullYear();
+
   return `${day}/${month}/${year}`;
+};
+
+let ConvertDate2 = (date) => {
+  if (!date) return "";
+
+  return new Date(date).toLocaleDateString("en-AU", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
 };
 
 const createStructuredEntries = (values, schemaType, numberOfProperties) => {
@@ -784,6 +797,9 @@ const randomStringGenerator = ({
   return Array.from({ length: count }, generateOne);
 };
 
+const getNestedValue = (obj, path) =>
+  path.split(".").reduce((acc, part) => acc && acc[part], obj);
+
 export {
   DeleteAxios,
   GetAxios,
@@ -803,6 +819,7 @@ export {
   handleInputBlur,
   validateName,
   ConvertDate,
+  ConvertDate2,
   createStructuredEntries,
   generateYearData,
   buildReportTree,
@@ -821,4 +838,5 @@ export {
   toTitleCase,
   touchFields,
   randomStringGenerator,
+  getNestedValue,
 };

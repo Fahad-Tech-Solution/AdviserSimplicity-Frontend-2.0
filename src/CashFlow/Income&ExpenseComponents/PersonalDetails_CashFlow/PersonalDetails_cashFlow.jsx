@@ -303,7 +303,7 @@ const PersonalDetails_cashFlow = (Props) => {
               />
             </div>
           ) : input.type === "Radio" ? (
-            <div className="PersonalDetailsForm d-flex justify-content-center  m-0 p-0 ">
+            <div className=" d-flex justify-content-center  m-0 p-0 ">
               <div style={{ width: "15rem" }}>
                 <DynamicYesNo
                   name={`${sectionName}.${input.name}`}
@@ -576,7 +576,7 @@ const PersonalDetails_cashFlow = (Props) => {
         }, [PersonalDetailObj, cashFlowData]);
 
         return (
-          <Form className="container-fluid PersonalDetailsForm  mt-2 mt-md-0 p-0 px-md-5">
+          <Form className="container-fluid   mt-2 mt-md-0 p-0 px-md-5">
             <div className="row">
               {/* Client Section */}
               <div className="col-md-8">

@@ -202,7 +202,7 @@ const ForgetPassword = () => {
                                   <div className="col-md-10">
                                     <button
                                       type="submit"
-                                      className="primary btn w-100"
+                                      className="modalBtn btn w-100"
                                     >
                                       Submit
                                     </button>
@@ -278,7 +278,7 @@ const ForgetPassword = () => {
                                   <div className="col-md-10">
                                     <button
                                       type="submit"
-                                      className="primary btn w-100"
+                                      className="modalBtn btn w-100"
                                       disabled={isExpired}
                                     >
                                       Submit
@@ -420,7 +420,7 @@ const ForgetPassword = () => {
                                   <div className="col-md-10">
                                     <button
                                       type="submit"
-                                      className="primary btn w-100"
+                                      className="modalBtn btn w-100"
                                       disabled={isExpired}
                                     >
                                       Submit

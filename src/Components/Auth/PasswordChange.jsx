@@ -282,7 +282,7 @@ const PasswordChange = () => {
                           <div className="col-md-12 mt-3">
                             <button
                               type="submit"
-                              className="primary btn w-100 "
+                              className="modalBtn btn w-100 "
                             >
                               Login
                             </button>

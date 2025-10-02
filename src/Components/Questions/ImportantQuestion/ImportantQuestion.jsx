@@ -23,172 +23,14 @@ import {
   PostAxios,
 } from "../../Assets/Api/Api";
 
-const ImportantQuestion = () => {
+const ImportantQuestion = (props) => {
   let [CRObjectNoUse, setCRObject] = useRecoilState(CRState);
   let CRObject = useRecoilValue(CRState);
   let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
 
   let DefaultUrl = useRecoilValue(defaultUrl);
 
-  useEffect(() => {
-    // console.log("QuestionDetails Data condition :", Object.keys(questionDetail).length)
-
-    if (questionDetail && Object.keys(questionDetail).length <= 0) {
-      fetchDataAllInOne();
-    }
-
-    if (!CRObjectNoUse?._id) {
-      FetchQuestions();
-    }
-  }, []);
-
-  const FetchQuestions = async () => {
-    try {
-      const res = await GetAxios(
-        `${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`
-      );
-      console.log(res);
-      if (res) {
-        setCRObject(res);
-      }
-    } catch (error) {
-      setCRObject({
-        //Financial Assets
-        QuestionsFlag: false,
-        clientFK: "",
-
-        bankAccountFinance: "No",
-        termDepositsFinance: "No",
-        australianShareMarket: "No",
-        managedFund: "No",
-        investmentBondFinance: "No",
-        managedFundsLOC: "No",
-        managedFundsMarginLoan: "No",
-
-        car: "No",
-        boat: "No",
-        caravan: "No",
-        houseHold: "No",
-        otherAssets: "No",
-
-        personalLoans: "No",
-
-        creditCards: "No",
-
-        familyHome: "No",
-        familyHomeLoan: "No",
-        numberOfHolidayHome: 0,
-
-        investmentPropertyDetails: "No",
-        investmentPropertyLoan: "No",
-        incomeExpenses: "No",
-
-        superAnnuationIssues: "No",
-        accountBasedPensionIssues: "No",
-        annuitiesIssues: "No",
-
-        will: "No",
-        POA: "No",
-        professionalAdviser: "No",
-
-        incomeFromOwnBusiness: "No",
-        incomeFromSoleTrader: "No",
-        incomeFromPartnership: "No",
-        incomeFromCentrelink: "No",
-        incomeFromSuperPayment: "No",
-        incomeFromOverseasPension: "No",
-        incomeFromInheritance: "No",
-        incomeFromLumpsumExpense: "No",
-        incomeFromRegularLivingExpenses: "Yes", // this one should be yes always
-
-        BusinessAsCompanyStructure: "No",
-        BusinessAsTrusts: "No",
-
-        //keys which just controls rendering
-        investmentPropertyTab: "No",
-        personalInsuranceTab: "No",
-
-        // companyStructureBusinessTab: "No",
-        // trustStructureBusinessTab: "No",
-
-        SMSFManagedFundsTab: "No",
-        businessAsInvestmentTab: "No",
-
-        SMSFBank: "Yes",
-        SMSFTermDeposits: "No",
-        SMSFAustralianShares: "No",
-        SMSFManagedFunds: "No",
-        SMSFInvestmentLoan: "No",
-        SMSFInvestmentProperties: "No",
-        numberOfSMSFInvestmentProperties: 0,
-        SMSFPensionPhase: "No",
-
-        //loop keys
-        // SMSFInvestmentPropertiesLoan
-        // SMSFInvestmentExpenses
-
-        SMSFDetails: "Yes", // this one should be yes always
-        SMSFAccumulationDetails: "Yes", // this one should be yes always
-
-        familyBank: "Yes", // this one should be yes always
-
-        familyTermDeposit: "No",
-        familyAustralianShare: "No",
-        familyMangedFunds: "No",
-        familyInvestmentHomeLoan: "No",
-        familyInvestmentProperties: "No",
-        numberOfFamilyInvestmentProperties: 0,
-        familyPensionPhase: "No",
-
-        SMSFOtherInvestment: "No",
-        familyOtherInvestment: "No",
-
-        //loop keys
-        // familyInvestmentPropertiesLoan
-        // familyInvestmentExpenses
-
-        familyDetails: "Yes", // this one should be yes always
-
-        life: "Yes",
-        TPD: "Yes",
-        trauma: "Yes",
-        incomeProtection: "Yes",
-      });
-      console.error("Error fetching questions:", error);
-    }
-  };
-
-  const fetchDataAllInOne = async () => {
-    try {
-      const res = await GetAxios(
-        `${DefaultUrl}/api/dataOfAllSection/${localStorage.getItem("UserID")}`
-      );
-      console.log(JSON.stringify(res), ":res of get all inner Question Data");
-      if (res) {
-        setQuestionDetail(res);
-        // setFlagState(true)
-      }
-    } catch (error) {
-      console.error("Error fetching questions:", error);
-    }
-  };
-
-  const formRef = useRef(null); // Create a ref to store the form instance
-
-  // let [flagState, setFlagState] = useState(false);
-
   let Nav = useNavigate();
-
-  let CloseModal = () => {
-    // setFlagState(false)
-    let id = localStorage.getItem("UserID");
-
-    if (id) {
-      Nav("/user/personal-detail#" + id);
-    } else {
-      Nav("/user/personal-detail");
-    }
-  };
 
   let QuestionArray = [
     {
@@ -235,7 +77,8 @@ const ImportantQuestion = () => {
     setCRObject(values);
     localStorage.setItem("QuestionsState", JSON.stringify(values));
     localStorage.setItem("Question", "PersonalAssets");
-    Nav("/user/personal-income");
+    // Nav("/user/personal-income");
+    props.flagState && props.setFlagState(false);
   };
 
   const onSubmit = async (values) => {
@@ -281,7 +124,7 @@ const ImportantQuestion = () => {
         initialValues={CRObject}
         onSubmit={onSubmit}
         enableReinitialize
-        innerRef={formRef}
+        innerRef={props.formRef}
       >
         {({ values, handleChange, setFieldValue }) => (
           <Form>
@@ -294,25 +137,6 @@ const ImportantQuestion = () => {
                     values={values}
                     setFieldValue={setFieldValue}
                   />
-                </div>
-              </div>
-            </div>
-            <div className="row mt-2">
-              <div className="col-md-12">
-                <div className="d-flex justify-content-center">
-                  <button
-                    onClick={CloseModal}
-                    type="button"
-                    className="float-center btn w-25  btn-outline  backBtn mx-3"
-                  >
-                    Back
-                  </button>
-                  <button
-                    type="submit"
-                    className="float-center btn w-25  bgColor modalBtn"
-                  >
-                    Next
-                  </button>
                 </div>
               </div>
             </div>

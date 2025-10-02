@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Select from "react-select/creatable";
 import { Select as AntDSelect, ConfigProvider } from "antd";
 
@@ -29,37 +29,36 @@ const CreatableMultiSelectField = ({
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
-      border: state.isFocused ? "1px solid #36b446" : "1px solid #36b446",
+      border: "1px solid #36b446",
       boxShadow: state.isFocused ? "0 0 0 0px #36b446" : "none",
       "&:hover": {
         border: state.isFocused ? "1px solid #4CAF50" : "1px solid #36b446",
       },
-      backgroundColor: disabled ? "#f0f0f0" : "white", // Change background when disabled
-      pointerEvents: disabled ? "none" : "auto", // Disable interaction
-      minHeight: "42px", // Set the minimum height
-      height: field.value && field.value.length > 0 ? "auto" : "42px", // Set the height
+      backgroundColor: disabled ? "#f0f0f0" : "white",
+      pointerEvents: disabled ? "none" : "auto",
+      minHeight: "42px",
+      height: field.value && field.value.length > 0 ? "auto" : "42px",
     }),
     valueContainer: (provided) => ({
       ...provided,
-      height: field.value && field.value.length > 0 ? "auto" : "42px", // Ensure value container matches the control height
-      // padding: '0 8px' // Adjust padding as needed
+      height: field.value && field.value.length > 0 ? "auto" : "42px",
     }),
     input: (provided) => ({
       ...provided,
-      margin: "0", // Ensure input has no margin
-      padding: "0", // Ensure input has no padding
+      margin: "0",
+      padding: "0",
     }),
     indicatorsContainer: (provided) => ({
       ...provided,
-      height: "44px", // Ensure indicators container matches the control height
+      height: "44px",
     }),
     menu: (provided) => ({
       ...provided,
-      zIndex: 9999, // Ensure the menu is on top of other elements
+      zIndex: 9999,
     }),
     menuPortal: (provided) => ({
       ...provided,
-      zIndex: 9999, // Ensure the menu portal is on top of other elements
+      zIndex: 9999,
     }),
   };
 
@@ -67,14 +66,13 @@ const CreatableMultiSelectField = ({
     <Select
       isMulti
       name={field.name}
-      className=""
       value={
         options
           ? options.filter((option) =>
-            Array.isArray(field.value)
-              ? field.value.includes(option.value)
-              : false
-          )
+              Array.isArray(field.value)
+                ? field.value.includes(option.value)
+                : false
+            )
           : []
       }
       onChange={handleChange}
@@ -92,11 +90,11 @@ const createOption = (label) => ({
 });
 
 const defaultOptions = [
-  { value: "ESS Super ", label: "ESS Super " },
-  { value: "PSS ", label: "PSS " },
+  { value: "ESS Super", label: "ESS Super" },
+  { value: "PSS", label: "PSS" },
   { value: "CSC", label: "CSC" },
-  { value: "Uni Super ", label: "Uni Super " },
-  { value: "Telstra ", label: "Telstra " },
+  { value: "Uni Super", label: "Uni Super" },
+  { value: "Telstra", label: "Telstra" },
   { value: "Other", label: "Other" },
 ];
 
@@ -115,42 +113,44 @@ const CreatableSelectField = ({ field, form, disabled }) => {
       form.setFieldValue(field.name, newOption.value);
     }, 1000);
   };
+
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
-      border: state.isFocused ? "2px solid #36b446" : "1px solid #36b446",
-      boxShadow: state.isFocused ? "0 0 0 0px #4CAF50" : "none",
+      border: "1px solid #36b446",
+      boxShadow: state.isFocused ? "0 0 0 0px #36b446" : "none",
       "&:hover": {
-        border: state.isFocused ? "2px solid #36b446" : "1px solid #36b446",
+        border: state.isFocused ? "1px solid #4CAF50" : "1px solid #36b446",
       },
-      backgroundColor: disabled ? "#f0f0f0" : "white", // Change background when disabled
-      pointerEvents: disabled ? "none" : "auto", // Disable interaction
-      minHeight: "42px", // Set the minimum height
-      height: "42px", // Allow height to adjust based on content
+      backgroundColor: disabled ? "#f0f0f0" : "white",
+      pointerEvents: disabled ? "none" : "auto",
+      minHeight: "42px",
+      height: field.value && field.value.length > 0 ? "auto" : "42px",
     }),
     valueContainer: (provided) => ({
       ...provided,
-      height: field.value && field.value.length > 0 ? "auto" : "44px", // Adjust height based on selection
-      padding: "0 8px", // Adjust padding as needed
+      height: field.value && field.value.length > 0 ? "auto" : "44px",
+      padding: "0 8px",
     }),
     input: (provided) => ({
       ...provided,
-      margin: "0", // Ensure input has no margin
-      padding: "0", // Ensure input has no padding
+      margin: "0",
+      padding: "0",
     }),
     indicatorsContainer: (provided) => ({
       ...provided,
-      height: "42px", // Ensure indicators container matches the control height
+      height: "42px",
     }),
     menu: (provided) => ({
       ...provided,
-      zIndex: 9999, // Ensure the menu is on top of other elements
+      zIndex: 9999,
     }),
     menuPortal: (provided) => ({
       ...provided,
-      zIndex: 9999, // Ensure the menu portal is on top of other elements
+      zIndex: 9999,
     }),
   };
+
   return (
     <Select
       isClearable
@@ -174,10 +174,8 @@ const CreatableSelectField = ({ field, form, disabled }) => {
 
 const SimpleSelectField = ({ options, field, form, onChange }) => {
   const handleChange = (selectedOption) => {
-    // Update form value
     form.setFieldValue(field.name, selectedOption ? selectedOption.value : "");
 
-    // Run custom onChange if provided
     if (onChange) {
       onChange(selectedOption);
     }
@@ -186,7 +184,7 @@ const SimpleSelectField = ({ options, field, form, onChange }) => {
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
-      border: state.isFocused ? "1px solid #36b446" : "1px solid #36b446",
+      border: "1px solid #36b446",
       boxShadow: state.isFocused ? "0 0 0 0px #36b446" : "none",
       "&:hover": {
         border: state.isFocused ? "1px solid #4CAF50" : "1px solid #36b446",
@@ -235,11 +233,11 @@ const SimpleSelectField = ({ options, field, form, onChange }) => {
 };
 
 const AntdCreatableMultiSelect = ({
-  field, // { name, value, onChange, onBlur }
-  form, // formik bag
+  field,
+  form,
   label,
   options = [],
-  onChangefun, // Custom onChange function
+  onChangefun,
   getPopupContainer: customPopupContainer,
   ...props
 }) => {
@@ -256,10 +254,8 @@ const AntdCreatableMultiSelect = ({
     }
   };
 
-  // 👇 If caller passes getPopupContainer, use it. Otherwise default.
   const resolvedPopupContainer =
     customPopupContainer || ((triggerNode) => triggerNode.parentNode);
-
 
   return (
     <div className="w-100">
@@ -274,7 +270,7 @@ const AntdCreatableMultiSelect = ({
         }}
       >
         <AntDSelect
-          mode="tags" // or "multiple" if you don't want creatable
+          mode="tags"
           allowClear
           styles={{
             root: {
@@ -289,7 +285,7 @@ const AntdCreatableMultiSelect = ({
           onChange={handleChange}
           size="large"
           options={options}
-          getPopupContainer={resolvedPopupContainer} // 👈 Fix
+          getPopupContainer={resolvedPopupContainer}
           {...props}
         />
       </ConfigProvider>

@@ -5,11 +5,8 @@ import AdminSideBar from "../Components/SideBar/AdminSideBar";
 import Options from "../Components/Options";
 import AllClients from "../GetComponents/AllClients";
 import ViewClient from "../GetComponents/ViewClient";
-import Questions from "../Components/Questions/Questoins";
 import Dashboard from "../Components/Dashboard/Dashboard";
-import PersonalDetail_Edit from "../Components/PersonalDetails/PersonalDetail_Edit";
 import PersonalDetailNew from "../Components/PersonalDetails/PersonalDetailNew";
-import ImportantQuestion from "../Components/Questions/ImportantQuestion/ImportantQuestion";
 import QuestionsNew from "../Components/Questions_New/QuestionsNew";
 import FinancialInvestments from "../Components/Questions/FinancialInvestments/FinancialInvestments";
 import AdditionalQueriesPersonalAssets from "../Components/Questions/AdditionalQueriesPersonalAssets/AdditionalQueriesPersonalAssets";
@@ -47,9 +44,6 @@ function AuthRouts() {
     { path: "/all-client", element: () => <AllClients /> },
     { path: "/view-client", element: () => <ViewClient /> },
     { path: "/personal-detail", element: () => <PersonalDetailNew /> },
-    { path: "/personal-detail-old", element: () => <PersonalDetail_Edit /> },
-    { path: "/important-question", element: () => <ImportantQuestion /> },
-    { path: "/questions", element: () => <Questions /> },
     {
       path: "/personal-income",
       element: () => (

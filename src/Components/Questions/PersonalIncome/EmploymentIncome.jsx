@@ -1,470 +1,568 @@
-import { ErrorMessage, Field, Form, Formik } from 'formik';
-import React, { useEffect, useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultUrl, QuestionDetail } from '../../../Store/Store';
-import { openNotificationSuccess, PatchAxios, PostAxios, RenderName } from '../../Assets/Api/Api';
-import DatePicker from 'react-datepicker';
-
-import { Button, Table } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons';
-import DynamicYesNo from '../FinancialInvestments/QuestionsDetail/DynamicYesNo';
-import InnerModal from '../FinancialInvestments/QuestionsDetail/InnerModal';
-import SalaryPackage from './SalaryPackage';
-import LeaveEntitlementsModal from './LeaveEntitlementsModal';
-import SalaryPackaging from './SalaryPackaging';
-import { CreatableMultiSelectField } from '../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField';
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import React, { useEffect, useMemo, useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { defaultUrl, QuestionDetail } from "../../../Store/Store";
+import {
+  ConvertDate,
+  ConvertDate2,
+  openNotificationSuccess,
+  PatchAxios,
+  PostAxios,
+  RenderName,
+} from "../../Assets/Api/Api";
+import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
+import SalaryPackage from "./SalaryPackage";
+import LeaveEntitlementsModal from "./LeaveEntitlementsModal";
+import SalaryPackaging from "./SalaryPackaging";
+import {
+  AntdCreatableMultiSelect,
+  CreatableMultiSelectField,
+} from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
 const EmploymentIncome = (props) => {
-    let questionDetail = useRecoilValue(QuestionDetail);
-    let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
-    let [flagState, setFlagState] = useState(false);
-    let [modalObject, setModalObject] = useState({});
+  let questionDetail = useRecoilValue(QuestionDetail);
+  let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+  let [flagState, setFlagState] = useState(false);
+  let [modalObject, setModalObject] = useState({});
 
-    let [UserStatus] = useState(localStorage.getItem('UserStatus'));
+  let [UserStatus] = useState(localStorage.getItem("UserStatus"));
 
-    let incomeFromOwnBusiness = Object.keys(questionDetail.incomeFromOwnBusiness).length > 0 ? questionDetail.incomeFromOwnBusiness : {
-        client: [],
-        partner: [],
-        joint: [],
+  let incomeFromOwnBusiness =
+    Object.keys(questionDetail.incomeFromOwnBusiness || {}).length > 0
+      ? questionDetail.incomeFromOwnBusiness
+      : {
+          client: [],
+          partner: [],
+          joint: [],
+        }; // Use an empty object as default if incomeFromOwnBusiness is undefined
 
-    };  // Use an empty object as default if incomeFromOwnBusiness is undefined
+  let initialValues = {
+    owner: "",
+  };
 
-    let initialValues = {
-        owner: ""
-    };
+  const fillInitialValues = (setFieldValue) => {
+    let userStatus = localStorage.getItem("UserStatus");
 
-    const fillInitialValues = (setFieldValue) => {
-        let userStatus = localStorage.getItem('UserStatus');
+    if (incomeFromOwnBusiness && incomeFromOwnBusiness._id) {
+      setFieldValue("owner", incomeFromOwnBusiness.owner);
 
-        if (incomeFromOwnBusiness && incomeFromOwnBusiness._id) {
-            setFieldValue("owner", incomeFromOwnBusiness.owner);
+      // Check for client ownership
+      if (incomeFromOwnBusiness.owner.includes("client")) {
+        setFieldValue(
+          "client.occupation",
+          incomeFromOwnBusiness.client.occupation
+        );
+        setFieldValue(
+          "client.employmentStatus",
+          incomeFromOwnBusiness.client.employmentStatus
+        );
+        setFieldValue(
+          "client.nameOfCompany",
+          incomeFromOwnBusiness.client.nameOfCompany
+        );
+        setFieldValue(
+          "client.startDate",
+          incomeFromOwnBusiness.client.startDate
+        );
+        setFieldValue(
+          "client.hoursWorked",
+          incomeFromOwnBusiness.client.hoursWorked
+        );
+        setFieldValue(
+          "client.choiceOfFund",
+          incomeFromOwnBusiness.client.choiceOfFund
+        );
+        setFieldValue(
+          "client.SalaryPackageModal",
+          incomeFromOwnBusiness.client.SalaryPackageModal
+        );
+        setFieldValue(
+          "client.salaryPackagingRadio",
+          incomeFromOwnBusiness.client.salaryPackagingRadio
+        );
+        setFieldValue(
+          "client.SalaryPackagingModal",
+          incomeFromOwnBusiness.client.SalaryPackagingModal
+        );
+        setFieldValue(
+          "client.leaveEntitlementsRadio",
+          incomeFromOwnBusiness.client.leaveEntitlementsRadio
+        );
+        setFieldValue(
+          "client.LeaveEntitlementsModal",
+          incomeFromOwnBusiness.client.LeaveEntitlementsModal
+        );
+      }
 
-            // Check for client ownership
-            if (incomeFromOwnBusiness.owner.includes("client")) {
-                setFieldValue("client.occupation", incomeFromOwnBusiness.client.occupation);
-                setFieldValue("client.employmentStatus", incomeFromOwnBusiness.client.employmentStatus);
-                setFieldValue("client.nameOfCompany", incomeFromOwnBusiness.client.nameOfCompany);
-                setFieldValue("client.startDate", incomeFromOwnBusiness.client.startDate);
-                setFieldValue("client.hoursWorked", incomeFromOwnBusiness.client.hoursWorked);
-                setFieldValue("client.choiceOfFund", incomeFromOwnBusiness.client.choiceOfFund);
-                setFieldValue("client.SalaryPackageModal", incomeFromOwnBusiness.client.SalaryPackageModal);
-                setFieldValue("client.salaryPackagingRadio", incomeFromOwnBusiness.client.salaryPackagingRadio);
-                setFieldValue("client.SalaryPackagingModal", incomeFromOwnBusiness.client.SalaryPackagingModal);
-                setFieldValue("client.leaveEntitlementsRadio", incomeFromOwnBusiness.client.leaveEntitlementsRadio);
-                setFieldValue("client.LeaveEntitlementsModal", incomeFromOwnBusiness.client.LeaveEntitlementsModal);
-            }
+      // Check for partner ownership
+      if (
+        incomeFromOwnBusiness.owner.includes("partner") &&
+        userStatus === "Married"
+      ) {
+        setFieldValue(
+          "partner.occupation",
+          incomeFromOwnBusiness.partner.occupation
+        );
+        setFieldValue(
+          "partner.employmentStatus",
+          incomeFromOwnBusiness.partner.employmentStatus
+        );
+        setFieldValue(
+          "partner.nameOfCompany",
+          incomeFromOwnBusiness.partner.nameOfCompany
+        );
+        setFieldValue(
+          "partner.startDate",
+          incomeFromOwnBusiness.partner.startDate
+        );
+        setFieldValue(
+          "partner.hoursWorked",
+          incomeFromOwnBusiness.partner.hoursWorked
+        );
+        setFieldValue(
+          "partner.choiceOfFund",
+          incomeFromOwnBusiness.partner.choiceOfFund
+        );
+        setFieldValue(
+          "partner.SalaryPackageModal",
+          incomeFromOwnBusiness.partner.SalaryPackageModal
+        );
+        setFieldValue(
+          "partner.salaryPackagingRadio",
+          incomeFromOwnBusiness.partner.salaryPackagingRadio
+        );
+        setFieldValue(
+          "partner.SalaryPackagingModal",
+          incomeFromOwnBusiness.partner.SalaryPackagingModal
+        );
+        setFieldValue(
+          "partner.leaveEntitlementsRadio",
+          incomeFromOwnBusiness.partner.leaveEntitlementsRadio
+        );
+        setFieldValue(
+          "partner.LeaveEntitlementsModal",
+          incomeFromOwnBusiness.partner.LeaveEntitlementsModal
+        );
+      }
+    } else {
+      // Optional: Handle the case where incomeFromOwnBusiness does not exist
+    }
+  };
 
-            // Check for partner ownership
-            if (incomeFromOwnBusiness.owner.includes("partner") && userStatus === "Married") {
-                setFieldValue("partner.occupation", incomeFromOwnBusiness.partner.occupation);
-                setFieldValue("partner.employmentStatus", incomeFromOwnBusiness.partner.employmentStatus);
-                setFieldValue("partner.nameOfCompany", incomeFromOwnBusiness.partner.nameOfCompany);
-                setFieldValue("partner.startDate", incomeFromOwnBusiness.partner.startDate);
-                setFieldValue("partner.hoursWorked", incomeFromOwnBusiness.partner.hoursWorked);
-                setFieldValue("partner.choiceOfFund", incomeFromOwnBusiness.partner.choiceOfFund);
-                setFieldValue("partner.SalaryPackageModal", incomeFromOwnBusiness.partner.SalaryPackageModal);
-                setFieldValue("partner.salaryPackagingRadio", incomeFromOwnBusiness.partner.salaryPackagingRadio);
-                setFieldValue("partner.SalaryPackagingModal", incomeFromOwnBusiness.partner.SalaryPackagingModal);
-                setFieldValue("partner.leaveEntitlementsRadio", incomeFromOwnBusiness.partner.leaveEntitlementsRadio);
-                setFieldValue("partner.LeaveEntitlementsModal", incomeFromOwnBusiness.partner.LeaveEntitlementsModal);
-            }
-        } else {
-            // Optional: Handle the case where incomeFromOwnBusiness does not exist
-        }
-    };
+  let DefaultUrl = useRecoilValue(defaultUrl);
 
-    let DefaultUrl = useRecoilValue(defaultUrl)
+  let onSubmit = async (values) => {
+    console.log(JSON.stringify(values));
 
-    let onSubmit = async (values) => {
-        console.log(JSON.stringify(values));
+    let userStatus = localStorage.getItem("UserStatus");
+    let obj = values;
 
-        let userStatus = localStorage.getItem('UserStatus');
-        let obj = values;
+    obj.clientFK = localStorage.getItem("UserID");
 
-        obj.clientFK = localStorage.getItem("UserID");
-
-        // Check for client ownership
-        if (values.owner.includes("client")) {
-            obj.clientTotal = obj.client.SalaryPackageModal.grossSalary;
-        } else {
-            obj.clientTotal = "";
-            obj.client = {};
-        }
-
-        // Check for partner ownership
-        if (values.owner.includes("partner")) {
-            obj.partnerTotal = obj.partner.SalaryPackageModal.grossSalary;
-        } else {
-            obj.partnerTotal = "";
-            obj.partner = {};
-        }
-
-        // Handle status condition
-        if (userStatus !== "Married") {
-            obj.partnerTotal = "";
-            obj.partner = {};
-        }
-
-        try {
-            let res;
-
-            if (!questionDetail.incomeFromOwnBusiness || !questionDetail.incomeFromOwnBusiness.clientFK) {
-                res = await PostAxios(`${DefaultUrl}/api/incomeFromOwnBusiness/Add`, obj);
-            } else {
-                res = await PatchAxios(`${DefaultUrl}/api/incomeFromOwnBusiness/Update`, obj);
-            }
-
-            if (res) {
-                console.log(res);
-                const updatedData = { ...questionDetail, incomeFromOwnBusiness: res };
-                setQuestionDetail(updatedData);
-            }
-
-            openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
-
-            // Reset the flag state if necessary
-            if (props.flagState) {
-                props.setFlagState(false);
-            }
-        } catch (error) {
-            console.error("Error occurred while making API call:", error);
-            openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved. Please try again.");
-        }
-    };
-
-    // title, key, values
-    let handleInnerModal = (title, key, values, parentKey) => {
-        setModalObject({
-            title, key, parentValues: values, parentKey
-        })
-        setFlagState(true);
+    // Check for client ownership
+    if (values.owner.includes("client")) {
+      obj.clientTotal = obj.client.SalaryPackageModal.grossSalary;
+    } else {
+      obj.clientTotal = "";
+      obj.client = {};
     }
 
-    const options = (UserStatus !== "Single") ? [
-        { value: "client", label: RenderName("client") },
-        { value: "partner", label: RenderName("partner") }] :
-        [{ value: "client", label: RenderName("client") },];
+    // Check for partner ownership
+    if (values.owner.includes("partner")) {
+      obj.partnerTotal = obj.partner.SalaryPackageModal.grossSalary;
+    } else {
+      obj.partnerTotal = "";
+      obj.partner = {};
+    }
 
+    // Handle status condition
+    if (userStatus !== "Married") {
+      obj.partnerTotal = "";
+      obj.partner = {};
+    }
 
-    return (
-        <Formik
-            initialValues={initialValues}
-            onSubmit={onSubmit}
-            enableReinitialize
-            innerRef={props.formRef}
-        >
-            {({
-                values,
-                setFieldValue,
-                setValues,
-                handleChange,
-                handleBlur,
-            }) => {
-                useEffect(() => {
-                    fillInitialValues(setFieldValue);
-                }, []);
+    try {
+      let res;
 
-                return (
-                    <Form>
-                        <div className='row'>
+      if (
+        !questionDetail.incomeFromOwnBusiness ||
+        !questionDetail.incomeFromOwnBusiness.clientFK
+      ) {
+        res = await PostAxios(
+          `${DefaultUrl}/api/incomeFromOwnBusiness/Add`,
+          obj
+        );
+      } else {
+        res = await PatchAxios(
+          `${DefaultUrl}/api/incomeFromOwnBusiness/Update`,
+          obj
+        );
+      }
 
-                            <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} >
-                                {
-                                    modalObject.key === "SalaryPackageModal" ? <SalaryPackage /> :
-                                        modalObject.key === "SalaryPackagingModal" ? <SalaryPackaging /> :
-                                            modalObject.key === "LeaveEntitlementsModal" ? <LeaveEntitlementsModal /> : ""
-                                }
-                            </InnerModal>
+      if (res) {
+        console.log(res);
+        const updatedData = { ...questionDetail, incomeFromOwnBusiness: res };
+        setQuestionDetail(updatedData);
+      }
 
-                            <div className='col-md-12'>
-                                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
-                                    <label htmlFor='' className='text-end '>
-                                        Owner
-                                    </label>
+      openNotificationSuccess(
+        "success",
+        "topRight",
+        "Success Notification",
+        'Data of "' + props.modalObject.title + '" is Saved'
+      );
 
-                                    <div style={{ minWidth: "25%" }}>
-                                        <Field
-                                            name={`owner`}
-                                            component={CreatableMultiSelectField}
-                                            label="Multi Select Field"
-                                            options={options}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
+      // Reset the flag state if necessary
+      if (props.flagState) {
+        props.setFlagState(false);
+      }
+    } catch (error) {
+      console.error("Error occurred while making API call:", error);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        'Data of "' +
+          props.modalObject.title +
+          '" is not Saved. Please try again.'
+      );
+    }
+  };
 
+  // title, key, values
+  let handleInnerModal = (title, values, key, parentKey) => {
+    setModalObject({
+      title,
+      key,
+      parentValues: values,
+      parentKey,
+    });
+    setFlagState(true);
+  };
 
-                            {values.owner.length > 0 &&
-                                <div className='col-md-12'>
-                                    <div className='mt-4'>
-                                        <Table striped bordered responsive hover>
-                                            <thead>
-                                                <tr>
-                                                    <th>Owner</th>
-                                                    <th>Occupation</th>
-                                                    <th>Employment Status</th>
-                                                    <th>Name of Company</th>
-                                                    <th>Start Date</th>
-                                                    <th>Hours Worked</th>
-                                                    <th>Salary Package</th>
-                                                    <th>Salary Packaging</th>
-                                                    <th>Leave entitlements</th>
-                                                    <th>Choice of Fund</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {(values.owner.includes("client")) &&
-                                                    <tr>
-                                                        <th className='py-auto'>
-                                                            {values.owner.includes("joint") ? RenderName("joint") : RenderName("client")}
-                                                        </th>
-                                                        <td>
-                                                            <Field
-                                                                type="text"
-                                                                placeholder="Enter Occupation"
-                                                                id={`occupation`}
-                                                                name={`client.occupation`}
-                                                                className="form-control inputDesignDoubleInput"
-                                                            />
-                                                        </td>
-                                                        <td>
-                                                            <Field
-                                                                as="select"
-                                                                placeholder="Name of Employment Status"
-                                                                id={`employmentStatus`}
-                                                                name={`client.employmentStatus`}
-                                                                className="form-select inputDesignDoubleInput"
-                                                            >
-                                                                <option value="">Select</option>
-                                                                <option value="Full Time">Full Time</option>
-                                                                <option value="Part Time">Part Time</option>
-                                                                <option value="Casual">Casual</option>
-                                                                <option value="Contract">Contract</option>
-                                                                <option value="OnLeave">On Leave</option>
-                                                            </Field>
-                                                        </td>
-                                                        <td>
-                                                            <Field
-                                                                type="text"
-                                                                placeholder="Name of Company"
-                                                                id={`nameOfCompany`}
-                                                                name={`client.nameOfCompany`}
-                                                                className="form-control inputDesignDoubleInput"
-                                                            />
-                                                        </td>
-                                                        <td>
-                                                            <div style={{ minWidth: "100px" }}>
-                                                                <DatePicker
-                                                                    className="form-control inputDesignDoubleInput shadow DateInputPadding"
-                                                                    showIcon
-                                                                    id={`startDate`}
-                                                                    name={`client.startDate`}
-                                                                    selected={values?.client?.startDate}
-                                                                    onChange={(date) => setFieldValue(`client.startDate`, date)}
-                                                                    dateFormat="dd/MM/yyyy"
-                                                                    placeholderText="dd/mm/yyyy"
-                                                                    maxDate={new Date()}
-                                                                    showMonthDropdown
-                                                                    showYearDropdown
-                                                                    dropdownMode="select"
-                                                                    onBlur={handleBlur}
-                                                                    wrapperClassName="w-100"
-                                                                />
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <Field
-                                                                type="number"
-                                                                placeholder="Hours Worked"
-                                                                id={`hoursWorked`}
-                                                                name={`client.hoursWorked`}
-                                                                className="form-control inputDesignDoubleInput"
-                                                            />
-                                                        </td>
-                                                        <td className='text-center'>
-                                                            <Button className='btn bgColor modalBtn border-0 my-1 ' id="button-addon2"
-                                                                onClick={() => {
-                                                                    handleInnerModal(
-                                                                        "Salary Package",
-                                                                        "SalaryPackageModal",
-                                                                        values, "client",
-                                                                    )
-                                                                }}>
-                                                                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                            </Button>
-                                                        </td>
-                                                        <td>
-                                                            <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
-                                                                <DynamicYesNo name={`client.salaryPackagingRadio`} values={values} handleChange={handleChange} />
-                                                                {values?.client?.salaryPackagingRadio === "Yes" &&
-                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2"
-                                                                        onClick={() => {
-                                                                            handleInnerModal(
-                                                                                "Salary Packaging",
-                                                                                "SalaryPackagingModal",
-                                                                                values, "client")
-                                                                        }}>
-                                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                                    </Button>
-                                                                }
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
-                                                                <DynamicYesNo name={`client.leaveEntitlementsRadio`} values={values} handleChange={handleChange} />
-                                                                {values?.client?.leaveEntitlementsRadio === "Yes" &&
-                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2"
-                                                                        onClick={() => {
-                                                                            handleInnerModal("Leave entitlements",
-                                                                                "LeaveEntitlementsModal",
-                                                                                values, "client")
-                                                                        }}>
-                                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                                    </Button>
-                                                                }
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
-                                                                <DynamicYesNo name={`client.choiceOfFund`} values={values} handleChange={handleChange} />
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                }
+  const options =
+    UserStatus !== "Single"
+      ? [
+          { value: "client", label: RenderName("client") },
+          { value: "partner", label: RenderName("partner") },
+        ]
+      : [{ value: "client", label: RenderName("client") }];
 
-                                                {(values.owner.includes("partner") && UserStatus === "Married") &&
+  const AntDTableHOC = DynamicTableForInputsSection("antd");
 
-                                                    <tr>
-                                                        <th className='py-auto'>
-                                                            {RenderName("partner")}
-                                                        </th>
-                                                        <td>
-                                                            <Field
-                                                                type="text"
-                                                                placeholder="Enter Occupation"
-                                                                id={`occupation`}
-                                                                name={`partner.occupation`}
-                                                                className="form-control inputDesignDoubleInput"
-                                                            />
-                                                        </td>
-                                                        <td>
-                                                            <Field
-                                                                as="select"
-                                                                placeholder="Name of Employment Status"
-                                                                id={`employmentStatus`}
-                                                                name={`partner.employmentStatus`}
-                                                                className="form-select inputDesignDoubleInput"
-                                                            >
-                                                                <option value="">Select</option>
-                                                                <option value="Full Time">Full Time</option>
-                                                                <option value="Part Time">Part Time</option>
-                                                                <option value="Casual">Casual</option>
-                                                                <option value="Conratct">Conratct</option>
-                                                                <option value="OnLeave">On Leave</option>
-                                                            </Field>
-                                                        </td>
-                                                        <td>
-                                                            <Field
-                                                                type="text"
-                                                                placeholder="Name of Company"
-                                                                id={`nameOfCompany`}
-                                                                name={`partner.nameOfCompany`}
-                                                                className="form-control inputDesignDoubleInput"
-                                                            />
-                                                        </td>
-                                                        <td>
-                                                            <div style={{ minWidth: "100px" }}>
-                                                                <DatePicker
-                                                                    className="form-control inputDesignDoubleInput shadow DateInputPadding"
-                                                                    showIcon
-                                                                    id={`startDate`}
-                                                                    name={`partner.startDate`}
-                                                                    selected={values?.partner?.startDate}
-                                                                    onChange={(date) => setFieldValue(`partner.startDate`, date)}
-                                                                    dateFormat="dd/MM/yyyy"
-                                                                    placeholderText="dd/mm/yyyy"
-                                                                    maxDate={new Date()}
-                                                                    showMonthDropdown
-                                                                    showYearDropdown
-                                                                    dropdownMode="select"
-                                                                    onBlur={handleBlur}
-                                                                    wrapperClassName="w-100"
-                                                                />
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <Field
-                                                                type="number"
-                                                                placeholder="Hours Worked"
-                                                                id={`hoursWorked`}
-                                                                name={`partner.hoursWorked`}
-                                                                className="form-control inputDesignDoubleInput"
-                                                            />
-                                                        </td>
-                                                        <td className='text-center'>
-                                                            <Button className='btn bgColor modalBtn border-0 my-1 ' id="button-addon2"
-                                                                onClick={() => {
-                                                                    handleInnerModal(
-                                                                        "Salary Package",
-                                                                        "SalaryPackageModal",
-                                                                        values, "partner",
-                                                                    )
-                                                                }}>
-                                                                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                            </Button>
-                                                        </td>
-                                                        <td>
-                                                            <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
-                                                                <DynamicYesNo name={`partner.salaryPackagingRadio`} values={values} handleChange={handleChange} />
-                                                                {values?.partner?.salaryPackagingRadio === "Yes" &&
-                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2"
-                                                                        onClick={() => {
-                                                                            handleInnerModal(
-                                                                                "Salary Packaging",
-                                                                                "SalaryPackagingModal",
-                                                                                values, "partner")
-                                                                        }}>
-                                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                                    </Button>
-                                                                }
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
-                                                                <DynamicYesNo name={`partner.leaveEntitlementsRadio`} values={values} handleChange={handleChange} />
-                                                                {values?.partner?.leaveEntitlementsRadio === "Yes" &&
-                                                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2"
-                                                                        onClick={() => {
-                                                                            handleInnerModal(
-                                                                                "Salary Packaging",
-                                                                                "LeaveEntitlementsModal",
-                                                                                values, "partner")
-                                                                        }}>
-                                                                        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                                                    </Button>
-                                                                }
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div className='d-flex flex-column justify-content-center align-items-center gap-2'>
-                                                                <DynamicYesNo id={"choiceOfFund"} name={`partner.choiceOfFund`} values={values} handleChange={handleChange} />
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                }
-
-                                            </tbody>
-                                        </Table>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    </Form>
-                )
+  const columns = [
+    {
+      title: "Owner",
+      dataIndex: "owner",
+      key: "owner",
+      type: "text", // simple static text or could be DynamicFormField if editable
+      placeholder: "Enter Owner Name",
+      width: 150,
+    },
+    {
+      title: "Occupation",
+      dataIndex: "occupation",
+      key: "occupation",
+      type: "text",
+      placeholder: "Enter Occupation",
+      width: 200,
+    },
+    {
+      title: "Employment Status",
+      dataIndex: "employmentStatus",
+      key: "employmentStatus",
+      type: "select",
+      placeholder: "Select Employment Status",
+      options: [
+        { label: "Full Time", value: "Full Time" },
+        { label: "Part Time", value: "Part Time" },
+        { label: "Casual", value: "Casual" },
+        { label: "Contract", value: "Contract" },
+        { label: "On Leave", value: "OnLeave" },
+      ],
+      width: 200,
+    },
+    {
+      title: "Name of Company",
+      dataIndex: "nameOfCompany",
+      key: "nameOfCompany",
+      type: "text",
+      placeholder: "Enter Company Name",
+      width: 200,
+    },
+    {
+      title: "Start Date",
+      dataIndex: "startDate",
+      key: "startDate",
+      type: "antdate",
+      placeholder: "dd/mm/yyyy",
+      width: 200,
+    },
+    {
+      title: "Hours Worked",
+      dataIndex: "hoursWorked",
+      key: "hoursWorked",
+      type: "number",
+      placeholder: "Enter Hours Worked",
+      width: 200,
+    },
+    {
+      title: "Salary Detail",
+      dataIndex: "salaryPackage",
+      key: "SalaryPackageModal",
+      type: "modal", // 🔥 handled by DynamicFormField as button modal
+      width: 150,
+      handleInnerModal: handleInnerModal,
+      innerModalTitle: "Salary Detail",
+      Drawerheight: 270,
+      DrawerWidth: "80%",
+      PopoverContent: (
+        innerModalTitle,
+        values,
+        all,
+        stakeHolder,
+        setFieldValue
+      ) => {
+        let modalObject = {
+          title: innerModalTitle,
+          key: all.key,
+          parentValues: values,
+          parentKey: stakeHolder,
+        };
+        return (
+          <div
+            style={{
+              height: "80px",
+              margin: "-20px 0px 0px 0px",
             }}
-        </Formik>
-    );
+          >
+            <SalaryPackage
+              modalObject={modalObject}
+              setFieldValue={setFieldValue}
+              setFlagState={setFlagState}
+              flagState={flagState}
+            />
+          </div>
+        );
+      },
+    },
+    {
+      title: "Salary Packaging",
+      dataIndex: "salaryPackagingRadio",
+      key: "SalaryPackaging",
+      type: "yesnoModal", // yes/no with modal
+      width: 170,
+      callBack: true,
+      func: handleInnerModal,
+      innerModalTitle: "Salary Packaging",
+      Drawerheight: 250,
+      DrawerWidth: "80%",
+      PopoverContent: (
+        innerModalTitle,
+        values,
+        all,
+        stakeHolder,
+        setFieldValue
+      ) => {
+        let modalObject = {
+          title: innerModalTitle,
+          key: all.key,
+          parentValues: values,
+          parentKey: stakeHolder,
+        };
+
+        return (
+          <div
+            style={{
+              height: "80px",
+              margin: "-20px 0px 0px 0px",
+            }}
+          >
+            <SalaryPackaging
+              modalObject={modalObject}
+              setFieldValue={setFieldValue}
+              setFlagState={setFlagState}
+              flagState={flagState}
+            />
+          </div>
+        );
+      },
+    },
+    {
+      title: "Leave Entitlements",
+      dataIndex: "leaveEntitlementsRadio",
+      key: "LeaveEntitlementsModal",
+      type: "yesnoModal",
+      width: 170,
+      handleInnerModal: handleInnerModal,
+      callBack: true,
+      func: handleInnerModal,
+      innerModalTitle: "Leave entitlements",
+      Drawerheight: 320,
+      DrawerWidth: "60%",
+      PopoverContent: (
+        innerModalTitle,
+        values,
+        all,
+        stakeHolder,
+        setFieldValue
+      ) => {
+        let modalObject = {
+          title: innerModalTitle,
+          key: all.key,
+          parentValues: values,
+          parentKey: stakeHolder,
+        };
+
+        return (
+          <div
+            style={{
+              height: "80px",
+              margin: "-20px 0px 0px 0px",
+            }}
+          >
+            <LeaveEntitlementsModal
+              modalObject={modalObject}
+              setFieldValue={setFieldValue}
+              setFlagState={setFlagState}
+              flagState={flagState}
+            />
+          </div>
+        );
+      },
+    },
+    {
+      title: "Choice of Fund",
+      dataIndex: "choiceOfFund",
+      key: "choiceOfFund",
+      type: "yesno",
+      width: 150,
+    },
+  ];
+
+  return (
+    <Formik
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      enableReinitialize
+      innerRef={props.formRef}
+    >
+      {({ values, setFieldValue, setValues, handleChange, handleBlur }) => {
+        useEffect(() => {
+          fillInitialValues(setFieldValue);
+        }, []);
+
+        // inside your component that has Formik's values
+        const tableData = useMemo(() => {
+          const rows = [];
+
+          if (values.owner.includes("client")) {
+            rows.push({
+              key: "client",
+              stakeHolder: "client", // 🔥 pass this to renderCell
+              owner: RenderName("client"),
+              occupation: values?.client?.occupation || "",
+              employmentStatus: values?.client?.employmentStatus || "",
+              nameOfCompany: values?.client?.nameOfCompany || "",
+              startDate: values?.client?.startDate || "",
+              hoursWorked: values?.client?.hoursWorked || "",
+              salaryPackage:
+                values?.client?.SalaryPackageModal?.grossSalary || "",
+              salaryPackagingRadio: values?.client?.salaryPackagingRadio || "",
+              leaveEntitlementsRadio:
+                values?.client?.leaveEntitlementsRadio || "",
+              choiceOfFund: values?.client?.choiceOfFund || "",
+            });
+          }
+
+          if (values.owner.includes("partner")) {
+            rows.push({
+              key: "partner",
+              stakeHolder: "partner",
+              owner: RenderName("partner"),
+              occupation: values?.partner?.occupation || "",
+              employmentStatus: values?.partner?.employmentStatus || "",
+              nameOfCompany: values?.partner?.nameOfCompany || "",
+              startDate: values?.partner?.startDate
+                ? ConvertDate(values.partner.startDate)
+                : null,
+              hoursWorked: values?.partner?.hoursWorked || "",
+              salaryPackage:
+                values?.partner?.SalaryPackageModal?.grossSalary || "",
+              salaryPackagingRadio: values?.partner?.salaryPackagingRadio || "",
+              leaveEntitlementsRadio:
+                values?.partner?.leaveEntitlementsRadio || "",
+              choiceOfFund: values?.partner?.choiceOfFund || "",
+            });
+          }
+
+          return rows;
+        }, [values]);
+
+        return (
+          <Form>
+            <div className="row">
+              <InnerModal
+                modalObject={modalObject}
+                setFieldValue={setFieldValue}
+                setFlagState={setFlagState}
+                flagState={flagState}
+              >
+                {modalObject.key === "SalaryPackageModal" ? (
+                  <SalaryPackage />
+                ) : modalObject.key === "SalaryPackaging" ? (
+                  <SalaryPackaging />
+                ) : modalObject.key === "LeaveEntitlementsModal" ? (
+                  <LeaveEntitlementsModal />
+                ) : (
+                  ""
+                )}
+              </InnerModal>
+
+              <div className="col-md-12">
+                <div className="d-flex flex-row justify-content-center align-items-center gap-4">
+                  <label
+                    htmlFor=""
+                    className="text-end"
+                    onClick={() => {
+                      console.log(options);
+                    }}
+                  >
+                    Order
+                  </label>
+
+                  <div style={{ minWidth: "200px" }}>
+                    <Field
+                      name={`owner`}
+                      component={AntdCreatableMultiSelect}
+                      options={options}
+                      onChangefun={() => {}}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {values.owner.length > 0 && (
+                <div className="col-md-12">
+                  <div className="mt-4 All_Client reportSection">
+                    <AntDTableHOC
+                      columns={columns}
+                      data={tableData}
+                      values={values}
+                      setFieldValue={setFieldValue}
+                      handleChange={handleChange}
+                      handleBlur={handleBlur}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </Form>
+        );
+      }}
+    </Formik>
+  );
 };
 
 export default EmploymentIncome;

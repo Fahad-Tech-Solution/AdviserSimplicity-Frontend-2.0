@@ -2,9 +2,12 @@ import React, { Children, useEffect, useState } from "react";
 import {
   AllUsers,
   BankDetail,
+  CRState,
   defaultUrl,
   Loading,
   LoggedInUserData,
+  OptionRender,
+  PersonalDetailsData,
   ProspectsCDF,
   QuestionDetail,
   SelectedClientDetails,
@@ -12,12 +15,12 @@ import {
 } from "../../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
+  ConvertDate,
   deepCloneWithKeys,
   GetAxios,
   openNotificationSuccess,
   PatchAxios,
   PostAxios,
-  toSentenceCase,
 } from "../Api/Api";
 import {
   FaRegEdit,
@@ -36,8 +39,10 @@ import {
   RiUserSearchLine,
 } from "react-icons/ri";
 import AssignUser from "../../../GetComponents/AssignUser";
-import { Modal, notification, Spin, ConfigProvider } from "antd";
+import { Modal, notification, Spin, ConfigProvider, Tooltip } from "antd";
 import PushtoAdviserlink from "../../PushtoAdviserlink/PushtoAdviserlink";
+import { FaArrowRotateRight } from "react-icons/fa6";
+import ReusableHeader from "../Dynamic/ReusableHeader";
 
 const NewAllClients = (props) => {
   const [loggedUser, setLoggedInUserData] = useRecoilState(LoggedInUserData);
@@ -52,6 +57,66 @@ const NewAllClients = (props) => {
   let [selectedClientDetails, setSelectedClientDetails] = useRecoilState(
     SelectedClientDetails
   );
+
+  const [expanded, setExpanded] = useState(false);
+  const [selectedValue, setSelectedValue] = useState(null);
+
+  const [CRStateObj, setCRState] = useRecoilState(CRState);
+  const [optRender, setOptRender] = useRecoilState(OptionRender);
+  const [PersonalDetailObj, setPersonalDetailObj] =
+    useRecoilState(PersonalDetailsData);
+
+  const handleAddClientClick = () => {
+    localStorage.removeItem("Email");
+    localStorage.removeItem("PartnerName");
+    localStorage.removeItem("UserID");
+    localStorage.removeItem("UserName");
+    localStorage.removeItem("UserStatus");
+    setCRState();
+    setStepsStatus(true);
+    setOptRender("Opt1");
+    localStorage.setItem("OptionRender", "Opt1");
+
+    setPersonalDetailObj({
+      client: {
+        clientTitle: "Mr.",
+        clientGivenName: "John",
+        clientSurname: "Doe",
+        clientPreferredName: "Johnny",
+        clientGender: "Male",
+        clientDOB: "1990-01-01",
+        clientAge: 34,
+        clientMaritalStatus: "Single",
+        clientEmploymentStatus: "Employed",
+        clientHealth: "Good",
+        clientSmoker: "No",
+        clientPlannedRetirementAge: 65,
+        clientHomeAddress: "123 Main St",
+        clientPostcode: 12345,
+        clientHomePhone: "555-555-5555",
+        clientWorkPhone: "555-555-5556",
+        clientMobile: "555-555-5557",
+        Email: "john.doe@example.com",
+        clientPostalAddress: "123 Main St",
+        clientPostalPostCode: 12345,
+        clientMiddleName: "Michael",
+        clientOccupationID: "OCC123",
+        clientTaxResidentRadio: "Yes",
+        clientPrivateHealthCoverRadio: "Yes",
+        clientHELPSDebtRadio: "No",
+        clientSameAsAbove: true,
+        clientRetirement: "Comfortable",
+      },
+      partner: {},
+      children: {
+        numberOfChildren: 0,
+      },
+      haveAnyChildren: "No",
+    });
+
+    setQuestionDetail({});
+    Navigate("/user/personal-detail");
+  };
 
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
@@ -88,7 +153,7 @@ const NewAllClients = (props) => {
             }}
             className="fw-bold"
           >
-            <FaRegEdit /> Edit
+            <FaRegEdit /> Discovery Module
           </div>
         ),
         onClick: (heading, row) => CallBack(heading, row, "Edit"),
@@ -251,6 +316,14 @@ const NewAllClients = (props) => {
     return menuItems;
   };
 
+  const shouldShowPartner = (row) => {
+    return (
+      row?.client?.clientMaritalStatus !== "Single" &&
+      row?.client?.clientMaritalStatus !== "widowed" &&
+      row?.partner?.partnerGivenName
+    );
+  };
+
   let columnsGenerator = () => {
     const columns = [
       {
@@ -259,59 +332,152 @@ const NewAllClients = (props) => {
         render: (text, row, index) => index + 1 || "--",
       },
       {
-        title: "Name",
+        title: "Household",
         key: "clientGivenName",
+        fixed: "left",
+        width: 100,
         render: (text, row) => {
-          const clientName = `${row?.client?.clientTitle || ""}. ${
-            row?.client?.clientGivenName || ""
-          }`;
-          const shouldShowPartner =
-            row?.client?.clientMaritalStatus !== "Single" &&
-            row?.client?.clientMaritalStatus !== "widowed" &&
-            row?.partner?.partnerGivenName;
-          const partnerName = shouldShowPartner
-            ? ` & ${row.partner.partnerGivenName}`
-            : "";
+          const clientName = `${row?.client?.clientSurname || "--"}`;
 
-          return clientName.trim() || "--" + partnerName;
+          return <p className="m-0">{clientName}</p>;
+        },
+        sorter: (a, b) => {
+          const nameA = a?.client?.clientSurname?.toLowerCase() || "";
+          const nameB = b?.client?.clientSurname?.toLowerCase() || "";
+          return nameA.localeCompare(nameB);
         },
       },
       {
-        title: "Marital Status",
-        key: "clientMaritalStatus",
-        render: (text, row) =>
-          toSentenceCase(row?.client?.clientMaritalStatus) || "--",
+        title: "Name",
+        key: "clientGivenName",
+        render: (text, row) => {
+          const clientName = `${row?.client?.clientGivenName || ""}`;
+
+          const showPartner = shouldShowPartner(row);
+
+          const partnerName = showPartner
+            ? ` ${row.partner.partnerGivenName} (Partner)`
+            : "";
+
+          return (
+            <p className="m-0">
+              {clientName} (Primary)
+              <br />
+              {partnerName}
+            </p>
+          );
+        },
       },
       {
-        title: "Mobile No",
+        title: "Age",
+        key: "age",
+        render: (text, row) => {
+          const client = <> {row?.client?.clientAge}</>;
+          const partner = row?.partner?.partnerAge ? (
+            <> {row?.partner?.partnerAge}</>
+          ) : (
+            ""
+          );
+
+          return (
+            <p className="m-0">
+              {client}
+              <br />
+              {partner}
+            </p>
+          );
+        },
+      },
+      {
+        title: "Contact",
         key: "clientWorkPhone",
-        render: (text, row) => row?.client?.clientWorkPhone || "--",
+        render: (text, row) => {
+          let client = row?.client?.clientWorkPhone;
+          let partner = row?.partner?.partnerWorkPhone;
+          return (
+            <p className="m-0">
+              {client}
+              <br />
+              {partner}
+            </p>
+          );
+        },
       },
       {
         title: "Email",
         key: "clientEmail",
-        render: (text, row) => row?.client?.Email || "--",
+        render: (text, row) => {
+          const client = `${row?.client?.Email || ""}`;
+          const partner = `${row?.partner?.partnerEmail || ""}`;
+
+          return (
+            <p className="m-0">
+              {client}
+              <br />
+              {partner}
+            </p>
+          );
+        },
       },
       {
-        title: "Assigned to",
-        key: "assigneName",
-        render: (text, row) =>
-          (row?.assignID?.firstName || "--") +
-          " " +
-          (row?.assignID?.lastName || "--"),
+        title: "Address",
+        key: "address",
+        dataIndex: "address", // optional, for consistency
+        width: 150, // increase a bit if needed
+        ellipsis: true, // ✅ AntD built-in ellipsis support
+        render: (text, row) => {
+          const client = row?.client?.clientHomeAddress || "";
+          const partner = row?.partner?.partnerHomeAddress || "";
+
+          return (
+            <Tooltip
+              title={`${client}  ${partner && "&& " + partner}`} // ✅ tooltip on hover
+              color={"#fff"}
+              key={"#fff"}
+              styles={{
+                body: { color: "black" },
+              }}
+            >
+              <div
+                style={{
+                  width: "200px",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {client}
+                <br />
+                {partner && `${partner}`}
+              </div>
+            </Tooltip>
+          );
+        },
+      },
+      {
+        title: "Last Updated At",
+        key: "clientEmail",
+        render: (text, row) => {
+          const client = `${ConvertDate(row?.updatedAt) || ""}`;
+          return client;
+        },
+        sorter: (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt), // ✅ ascending/descending sort
       },
       {
         title: "Operations",
         key: "operations",
+        fixed: "right",
+        width: 130,
         render: (text, row, index) => {
           let menuItems = menuGenerator(row);
           return (
-            <DropDownOptions
-              menuItems={menuItems}
-              CallBack={OpenModel}
-              heading={row}
-              row={row} // ✅ Proper row data
-            />
+            <div className="w-100 d-flex justify-content-center align-items-center">
+              <DropDownOptions
+                menuItems={menuItems}
+                CallBack={OpenModel}
+                heading={row}
+                row={row} // ✅ Proper row data
+              />
+            </div>
           );
         },
       },
@@ -341,6 +507,7 @@ const NewAllClients = (props) => {
       let res = await GetAxios(`${DefaultUrl}/api/user/Clients`);
       // console.log(res, "/api/user/Clients");
       if (res) {
+        console.log(res, "DashBoard Table");
         let adjustment = deepCloneWithKeys(
           res.clients.map((item, index) => {
             return {
@@ -408,7 +575,7 @@ const NewAllClients = (props) => {
         setModalObject({
           title: "Push Client On Adviser link",
           row,
-          noFooter: true, 
+          noFooter: true,
         });
         setFlagState(true);
 
@@ -453,21 +620,47 @@ const NewAllClients = (props) => {
     }
   };
 
-  async function DeleteData(text, row, index) {
-    try {
-      let res = await PatchAxios(
-        DefaultUrl + "/api/personalDetails/softDelete/" + row._id
-      );
-      if (res) {
-        console.log(res);
-        removeItemById(res._id);
-      }
-    } catch (error) {
-      console.error("we Found an error in SoftDelete:", error);
-    }
-  }
+  const { confirm } = Modal; // ✅ make sure you imported from "antd"
 
-  const { confirm } = Modal;
+  async function DeleteData(text, row, index) {
+    confirm({
+      title: "Are you sure you want to delete this record?",
+      content: "This action cannot be undone.",
+      okText: "Yes, Delete",
+      okType: "danger",
+      cancelText: "Cancel",
+      centered: true,
+      onOk: async () => {
+        try {
+          setLoading(true); // ✅ if you have a loading state
+          let res = await PatchAxios(
+            DefaultUrl + "/api/personalDetails/softDelete/" + row._id
+          );
+
+          if (res) {
+            console.log(res);
+            removeItemById(row._id); // ✅ remove from UI
+            openNotificationSuccess(
+              "success",
+              "topRight",
+              "Deleted Successfully",
+              "Record deleted successfully"
+            );
+          }
+        } catch (error) {
+          console.error("We found an error in SoftDelete:", error);
+          openNotificationSuccess(
+            "error",
+            "topRight",
+            "Delete Failed",
+            "An error occurred while deleting the record."
+          );
+        } finally {
+          setLoading(false);
+        }
+      },
+    });
+  }
 
   const unassignFunction = (row) => {
     confirm({
@@ -598,7 +791,7 @@ const NewAllClients = (props) => {
   };
 
   return (
-    <div className="All_Client reportSection">
+    <div className="All_Client reportSection mt-2">
       <ModalComponent
         modalObject={modalObject}
         setFlagState={setFlagState}
@@ -606,6 +799,24 @@ const NewAllClients = (props) => {
       >
         {ModalContent(modalObject)}
       </ModalComponent>
+
+      <ReusableHeader
+        title="My Clients"
+        expanded={expanded}
+        selectedValue={selectedValue}
+        options={PerosnalDetail.map((item) => ({
+          value: item.client.Email,
+          label: `${item.client.clientGivenName} ${item.client.clientLastName}`,
+        }))}
+        onSearchClick={() => setExpanded(true)}
+        onCloseClick={() => {
+          setExpanded(false);
+          setSelectedValue(null);
+        }}
+        onChange={(val) => setSelectedValue(val)}
+        onAddClick={handleAddClientClick}
+        addButtonLabel="Add Client"
+      />
 
       <AntTableDynamicReportTable
         rowSelection={Object.assign({ type: "radio" }, rowSelection)} //This feture is comming up in Next Miled Stone

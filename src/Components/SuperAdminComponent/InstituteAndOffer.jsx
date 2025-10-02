@@ -134,9 +134,7 @@ const InstituteAndOffer = (props) => {
   
   let { confirm } = Modal;
   let DeleteBank = (elem, operation, index) => {
-    
     confirm({
-      
       title: "Are you sure you want to delete this Platform?",
       content: "This action cannot be undone.",
       okText: "Yes, Delete",
@@ -565,13 +563,7 @@ const InstituteAndOffer = (props) => {
                       </List.Item>
                     )}
                   />
-
-
                 </card>
-
-
-
-
               </div>
             )}
           </Row>

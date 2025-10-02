@@ -27,7 +27,7 @@ const Beneficiaries = (props) => {
     });
 
     const fillInitialValues = (setFieldValue, loopValue) => {
-        console.log(props)
+        
 
 
         let arr = []
@@ -73,7 +73,7 @@ const Beneficiaries = (props) => {
 
     let onSubmit = async (values) => {
 
-        console.log(values)
+    
 
         const newEntries = [];
 
@@ -92,8 +92,6 @@ const Beneficiaries = (props) => {
             newEntries.push(newEntry);
         }
 
-        // Log the new entries to verify
-        console.log(newEntries);
 
         props.setFieldValue(`${props.modalObject.key}${props.modalObject.index}`, newEntries)
 

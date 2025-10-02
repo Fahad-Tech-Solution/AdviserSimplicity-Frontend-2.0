@@ -1,62 +1,80 @@
 {
-  "gid": "1206955233128628",
-  "enabled": true,
-  "enum_options": [
-    {
-      "gid": "1206955233128629",
-      "color": "blue",
-      "enabled": true,
-      "name": "🙎‍♂️Mr",
-      "resource_type": "enum_option"
-    },
-    {
-      "gid": "1206955233128630",
-      "color": "hot-pink",
-      "enabled": true,
-      "name": "🙎‍♀️Mrs",
-      "resource_type": "enum_option"
-    },
-    {
-      "gid": "1206955233128631",
-      "color": "hot-pink",
-      "enabled": true,
-      "name": "🙎‍♀️Miss",
-      "resource_type": "enum_option"
-    },
-    {
-      "gid": "1206955233128632",
-      "color": "hot-pink",
-      "enabled": true,
-      "name": "🙎‍♀️Ms",
-      "resource_type": "enum_option"
-    },
-    {
-      "gid": "1206955233128633",
-      "color": "yellow",
-      "enabled": true,
-      "name": "🩺Dr",
-      "resource_type": "enum_option"
-    },
-    {
-      "gid": "1207896371552447",
-      "color": "red",
-      "enabled": true,
-      "name": "💰SMSF",
-      "resource_type": "enum_option"
-    }
+  "owner": [
+    "client",
+    "partner"
   ],
-  "enum_value": null,
-  "name": "Salutation",
-  "description": "",
-  "created_by": {
-    "gid": "1202127256728012",
-    "name": "Anthony Tripodi",
-    "resource_type": "user"
+  "client": {
+    "occupation": "Blanditiis facilis i",
+    "employmentStatus": "Full Time",
+    "nameOfCompany": "Ramsey Ellis Trading",
+    "startDate": "2025-09-22T19:00:00.000Z",
+    "hoursWorked": 3243,
+    "choiceOfFund": "Yes",
+    "SalaryPackageModal": {
+      "remunerationType": "Total Package",
+      "amount": "$12",
+      "SG": "100.00%",
+      "grossSalary": "$6",
+      "SGC": "6.00%",
+      "salarySacrificeContributions": "$234",
+      "afterTaxContributions": "$0"
+    },
+    "salaryPackagingRadio": "Yes",
+    "SalaryPackagingModal": {
+      "employerFBTStatus": "Full FBT/Rebatable/Exempt (17K Cap)",
+      "creditCardMortgageRepayments": "$123",
+      "costBaseOfCar": "$123",
+      "FBTPaidByEmployer": "Yes",
+      "runningCostsOfCar": "$12,322"
+    },
+    "leaveEntitlementsRadio": "Yes",
+    "LeaveEntitlementsModal": {
+      "annualLeave": "Annual Leave",
+      "annualLeaveAmount": "$123",
+      "annualLeaveTime": "Weeks",
+      "sickLeave": "Sick Leave",
+      "sickLeaveAmount": "$123",
+      "sickLeaveTime": "Weeks",
+      "longServiceLeave": "Long Service Leave",
+      "longServiceLeaveAmount": "$123",
+      "longServiceLeaveTime": "Hours"
+    }
   },
-  "display_value": null,
-  "resource_subtype": "enum",
-  "resource_type": "custom_field",
-  "is_formula_field": false,
-  "is_value_read_only": false,
-  "type": "enum"
+  "partner": {
+    "salaryPackagingRadio": "Yes",
+    "leaveEntitlementsRadio": "Yes",
+    "choiceOfFund": "Yes",
+    "occupation": "jhgjhj",
+    "employmentStatus": "Full Time",
+    "nameOfCompany": "123",
+    "startDate": "2025-09-15T19:00:00.000Z",
+    "hoursWorked": 2131,
+    "SalaryPackageModal": {
+      "remunerationType": "Total Package",
+      "amount": "$123",
+      "SG": "100.00%",
+      "grossSalary": "$62",
+      "SGC": "61.50%",
+      "salarySacrificeContributions": "$123",
+      "afterTaxContributions": "$12"
+    },
+    "SalaryPackagingModal": {
+      "employerFBTStatus": "Full FBT/Rebatable/Exempt (17K Cap)",
+      "creditCardMortgageRepayments": "$123",
+      "costBaseOfCar": "$123",
+      "FBTPaidByEmployer": "Yes",
+      "runningCostsOfCar": "$123"
+    },
+    "LeaveEntitlementsModal": {
+      "annualLeave": "Annual Leave",
+      "annualLeaveAmount": "$123",
+      "annualLeaveTime": "Days",
+      "sickLeave": "Sick Leave",
+      "sickLeaveAmount": "$123",
+      "sickLeaveTime": "Days",
+      "longServiceLeave": "Long Service Leave",
+      "longServiceLeaveAmount": "$123",
+      "longServiceLeaveTime": "Weeks"
+    }
+  }
 }

@@ -5,7 +5,6 @@ import DynamicFormField from "../Dynamic/DynamicFormField";
 import { ConvertDate } from "../Api/Api";
 
 const DynamicTableForInputsSection = (type = "bootstrap") => {
-
   return function TableHOC({
     columns,
     data,
@@ -28,7 +27,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
             setFieldValue={setFieldValue}
             handleChange={handleChange}
             handleBlur={handleBlur}
-            handleInnerModal={col?.handleInnerModal || (() => { })}
+            handleInnerModal={col?.handleInnerModal || (() => {})}
             innerModalTitle={col?.innerModalTitle || ""}
             all={col || {}}
             {...(record?.stakeHolder
@@ -47,11 +46,9 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
         return value ? "Checked" : "Un-Checked";
       }
 
-   if (col?.type === "select-multi-antd") {
+         if (col?.type === "select-multi-antd") {
   return Array.isArray(value) ? value.join(", ") : value || "";
 }
-
-
 
       return value || "--";
     };

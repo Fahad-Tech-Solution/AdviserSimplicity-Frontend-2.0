@@ -101,11 +101,11 @@ const CashFlowAllUsers = (props) => {
           padding: "1rem 0rem",
         }}
       >
-        <div className="row mt-2">
-          <div className="col-md-12 ">
+        <div className="row mt-4">
+          <div className="col-md-12">
             <Card className="shadow cashFlowAllUsers mb-3">
               <Card.Body>
-                <h5 className="cashFlowCardHead LeagueSpartanFamily">
+                <h5 className="cashFlowCardHead">
                   Users List
                 </h5>
                 <Accordion defaultActiveKey="0">

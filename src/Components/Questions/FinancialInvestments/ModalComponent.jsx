@@ -104,8 +104,9 @@ const ModalComponent = (props) => {
   }, [props.setQuestionChange, props.Question]);
 
   const xlTitles = [
+    "Important Questions",
     "Questions",
-    "Employement Income",
+    // "Employement Income",
     // "Australian Shares",
     // "Managed Funds",
     // "Investment Bond",
@@ -211,6 +212,7 @@ const ModalComponent = (props) => {
   ]; // Add other  /ntitles that should use "xl" here
 
   let fullTitles = [
+    "Employement Income", // it was in xl before
     "Family Trust Investment Loan",
     "Family Details",
     "Life Insurance",

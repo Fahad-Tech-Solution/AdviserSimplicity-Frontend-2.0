@@ -22,6 +22,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { FaCircleCheck, FaCircleXmark, FaXmark } from "react-icons/fa6";
 import { MdMarkAsUnread, MdSearch } from "react-icons/md";
 import EmployeeForm from "./EmployeeForm";
+import ReusableHeader from "../Assets/Dynamic/ReusableHeader";
 
 const MyTeam = () => {
   const { confirm } = Modal;
@@ -131,12 +132,14 @@ const MyTeam = () => {
       key: "operations",
       fixed: "right",
       render: (text, row, index) => (
-        <DropDownOptions
-          menuItems={getDowpdownOptions(row)}
-          CallBack={CallBack}
-          heading={row}
-          row={row} // ✅ Proper row data
-        />
+        <div className="w-100 d-flex justify-content-center align-items-center">
+          <DropDownOptions
+            menuItems={getDowpdownOptions(row)}
+            CallBack={CallBack}
+            heading={row}
+            row={row} // ✅ Proper row data
+          />
+        </div>
       ),
     },
   ];
@@ -386,71 +389,23 @@ const MyTeam = () => {
         <div className="col-md-12 py-3" style={{ minHeight: "76vh" }}>
           <div className="card">
             <div className="card-body">
-              <div className="d-flex justify-content-between align-items-center mb-3">
-                <h5 className="PoppinsFamily green_Text fw-bold fs-4">
-                  My Team
-                </h5>
-                <div className="d-flex align-items-center gap-3">
-                  <div className="SearchAnimate">
-                    <div
-                      className={`expandable-search ${
-                        expanded ? "expanded" : ""
-                      }`}
-                    >
-                      <Button
-                        icon={<MdSearch size={18} />}
-                        onClick={handleSearchClick}
-                        className="search-icon-btn"
-                      />
-
-                      <div className="input-wrapper">
-                        <Select
-                          showSearch
-                          value={selectedValue}
-                          style={{ width: 200 }}
-                          placeholder="Search to Select"
-                          optionFilterProp="label"
-                          filterOption={(input, option) =>
-                            option?.label
-                              ?.toLowerCase()
-                              .includes(input.toLowerCase())
-                          }
-                          filterSort={(optionA, optionB) =>
-                            (optionA?.label ?? "")
-                              .toLowerCase()
-                              .localeCompare(
-                                (optionB?.label ?? "").toLowerCase()
-                              )
-                          }
-                          onChange={handleChange}
-                          options={[
-                            ...employee.map((item, index) => {
-                              return {
-                                value: item.email,
-                                label: toSentenceCase(
-                                  item.firstName + " " + item.lastName
-                                ),
-                              };
-                            }),
-                          ]}
-                        />
-                        <Button
-                          icon={<FaXmark />}
-                          onClick={handleCloseClick}
-                          type="text"
-                          className="close-btn"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <Button
-                    className="me-2"
-                    onClick={() => CallBack("", "", "newAdviser")}
-                  >
-                    Add Advisers
-                  </Button>
-                </div>
-              </div>
+              <ReusableHeader
+                title="My Team"
+                expanded={expanded}
+                selectedValue={selectedValue}
+                options={employee.map((item) => ({
+                  value: item.email,
+                  label: `${item.firstName} ${item.lastName}`,
+                }))}
+                onSearchClick={() => setExpanded(true)}
+                onCloseClick={() => {
+                  setExpanded(false);
+                  setSelectedValue(null);
+                }}
+                onChange={(val) => setSelectedValue(val)}
+                onAddClick={handleCloseClick}
+                addButtonLabel="Add Advisers"
+              />
 
               <AntTableDynamicReportTable
                 dataSource={

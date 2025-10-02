@@ -1,155 +1,190 @@
-import { Field, Form, Formik } from 'formik';
-import React, { useEffect, useState } from 'react';
-import { Row, Table } from 'react-bootstrap';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultUrl, QuestionDetail } from '../../../Store/Store';
-import { toCommaAndDollar, toPercentage } from '../../Assets/Api/Api';
-import DynamicYesNo from '../FinancialInvestments/QuestionsDetail/DynamicYesNo';
+import { Field, Form, Formik } from "formik";
+import React, { useEffect, useMemo } from "react";
+import { ConfigProvider } from "antd";
+import { useRecoilValue } from "recoil";
+import { defaultUrl } from "../../../Store/Store";
+import { toCommaAndDollar } from "../../Assets/Api/Api";
+import DynamicYesNo from "../FinancialInvestments/QuestionsDetail/DynamicYesNo";
+import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
 const SalaryPackaging = (props) => {
+  const { key, parentValues, parentKey } = props.modalObject;
 
-    let { title, key, parentValues, parentKey } = props.modalObject;
+  const fillInitialValues = (setFieldValue) => {
+    // if (parentValues._id && parentValues?.key) {
+    // console.log(JSON.stringify(parentValues));
+    if (
+      parentValues?.[`${parentKey.replace(".", "")}`]?.[`${key}Modal`] &&
+      Object.keys(
+        parentValues?.[`${parentKey.replace(".", "")}`]?.[`${key}Modal`]
+      ).length > 0
+    ) {
+      let Data = parentValues[`${parentKey.replace(".", "")}`][`${key}Modal`];
+      console.log("incondition", JSON.stringify(Data));
 
-    let initialValues = {}
+      setFieldValue("employerFBTStatus", Data.employerFBTStatus);
+      setFieldValue(
+        "creditCardMortgageRepayments",
+        Data.creditCardMortgageRepayments
+      );
+      setFieldValue("costBaseOfCar", Data.costBaseOfCar);
+      setFieldValue("FBTPaidByEmployer", Data.FBTPaidByEmployer);
+      setFieldValue("runningCostsOfCar", Data.runningCostsOfCar);
+    }
+  };
 
-    const fillInitialValues = (setFieldValue) => {
-        // if (parentValues._id && parentValues?.key) {
-        console.log(JSON.stringify(parentValues));
-        if (parentValues?.[`${parentKey}`]?.[`${key}`] && Object.keys(parentValues?.[`${parentKey}`]?.[`${key}`]).length > 0) {
-            let Data = parentValues[`${parentKey}`][`${key}`];
-            console.log("incondition", JSON.stringify(Data));
+  const DefaultUrl = useRecoilValue(defaultUrl);
 
-            setFieldValue("employerFBTStatus", Data.employerFBTStatus)
-            setFieldValue("creditCardMortgageRepayments", Data.creditCardMortgageRepayments)
-            setFieldValue("costBaseOfCar", Data.costBaseOfCar)
-            setFieldValue("FBTPaidByEmployer", Data.FBTPaidByEmployer)
-            setFieldValue("runningCostsOfCar", Data.runningCostsOfCar)
-        }
+  // ✅ Submit handler
+  const onSubmit = async (values) => {
+    console.log(values);
+
+    const Obj = {
+      employerFBTStatus: values.employerFBTStatus || "",
+      creditCardMortgageRepayments: values.creditCardMortgageRepayments || "",
+      costBaseOfCar: values.costBaseOfCar || "",
+      FBTPaidByEmployer: values.FBTPaidByEmployer || "",
+      runningCostsOfCar: values.runningCostsOfCar || "",
     };
 
-    let DefaultUrl = useRecoilValue(defaultUrl)
+    props.setFieldValue(`${parentKey}${key}Modal`, Obj);
 
-    let onSubmit = async (values) => {
+    if (props.flagState) {
+      props.setFlagState(false);
+    }
+  };
 
-        console.log(values)
+  // ✅ Table field configs
+  const tableFields = [
+    {
+      key: "employerFBTStatus",
+      dataIndex: "employerFBTStatus",
+      type: "select",
+      title: "Employer FBT Status",
+      placeholder: "Select Employer FBT Status",
+      width: 170,
+      options: [
+        { value: "Full FBT", label: "Full FBT" },
+        { value: "Exempt (17K Cap)", label: "Exempt (17K Cap)" },
+        { value: "Exempt (30K Cap)", label: "Exempt (30K Cap)" },
+        { value: "Rebatable", label: "Rebatable" },
+      ],
+    },
+    {
+      key: "creditCardMortgageRepayments",
+      dataIndex: "creditCardMortgageRepayments",
+      type: "text",
+      title: "Credit Card/Mortgage Repayments",
+      placeholder: "Enter amount",
+      width: 100,
+      formatter: (val) =>
+        val ? toCommaAndDollar(val.replace(/[^0-9.-]+/g, "")) : "",
+    },
+    {
+      key: "costBaseOfCar",
+      dataIndex: "costBaseOfCar",
+      type: "text",
+      title: "Cost Base of Car",
+      placeholder: "Enter cost",
+      formatter: (val) =>
+        val ? toCommaAndDollar(val.replace(/[^0-9.-]+/g, "")) : "",
+    },
+    {
+      key: "FBTPaidByEmployer",
+      dataIndex: "FBTPaidByEmployer",
+      type: "yesno",
+      title: "FBT Paid By Employer",
+      width: 100,
+      render: (_, record) => (
+        <DynamicYesNo
+          name="FBTPaidByEmployer"
+          values={{
+            ...record,
+            FBTPaidByEmployer: record.FBTPaidByEmployer || "",
+          }}
+          handleChange={() => {}}
+        />
+      ),
+    },
+    {
+      key: "runningCostsOfCar",
+      dataIndex: "runningCostsOfCar",
+      type: "text",
+      title: "Running Costs of Car",
+      placeholder: "Enter costs",
+      formatter: (val) =>
+        val ? toCommaAndDollar(val.replace(/[^0-9.-]+/g, "")) : "",
+    },
+  ];
 
-        let Obj = {
-            employerFBTStatus: values.employerFBTStatus,
-            creditCardMortgageRepayments: values.creditCardMortgageRepayments,
-            costBaseOfCar: values.costBaseOfCar,
-            FBTPaidByEmployer: values.FBTPaidByEmployer,
-            runningCostsOfCar: values.runningCostsOfCar,
-        }
+  // ✅ Initialize AntD DynamicTable
+  const AntDynamicTable = DynamicTableForInputsSection("antd");
 
-        props.setFieldValue(`${parentKey}.${key}`, Obj);
+  return (
+    <Formik
+      initialValues={{}} // ✅ derived from parent
+      onSubmit={onSubmit}
+      enableReinitialize // ✅ important: updates form values on edit
+      innerRef={props.formRef}
+    >
+      {({ values, handleChange, setFieldValue, handleBlur }) => {
+        useEffect(() => {
+          fillInitialValues(setFieldValue);
+        }, [values.NumberOfMap]);
 
-        // Reset the flag state if necessary
-        if (props.flagState) {
-            props.setFlagState(false);
-        }
-    };
+        const tableData = useMemo(() => {
+          const rows = [];
 
+          rows.push({
+            key: "client",
+            employerFBTStatus: values?.employerFBTStatus || "--",
+            creditCardMortgageRepayments:
+              values?.creditCardMortgageRepayments || "",
+            costBaseOfCar: values?.costBaseOfCar || "",
+            FBTPaidByEmployer: values?.FBTPaidByEmployer || "",
+            runningCostsOfCar: values?.runningCostsOfCar || "",
+          });
 
+          return rows;
+        }, [values]);
 
-
-    return (
-        <Formik
-            initialValues={initialValues}
-            onSubmit={onSubmit}
-            enableReinitialize
-            innerRef={props.formRef}
-        >
-            {({ values, handleChange, setFieldValue }) => {
-                useEffect(() => {
-                    fillInitialValues(setFieldValue);
-                }, [values.NumberOfMap]);
-
-                return (
-                    <Form>
-                        <Row>
-                            <div className="col-md-12">
-                                <div className='row justify-content-center'>
-                                    <div className='mt-4'>
-                                        <Table striped bordered responsive hover>
-                                            <thead>
-                                                <tr>
-                                                    <th>Employer FBT Status</th>
-                                                    <th>Credit Card/Mortgage Repayments</th>
-                                                    <th>Cost Base of Car</th>
-                                                    <th>FBT Paid By Employer</th>
-                                                    <th>Running Costs of Car</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <Field
-                                                            as="select"
-                                                            id={`employerFBTStatus`}
-                                                            name={`employerFBTStatus`}
-                                                            className="form-select inputDesignDoubleInput"
-                                                        >
-                                                            <option value={""}>Select</option>
-                                                            <option value={"Full FBT/Rebatable/Exempt (17K Cap)"}>Full FBT/Rebatable/Exempt (17K Cap)</option>
-                                                            <option value={"Exempt (30K Cap)"}>Exempt (30K Cap)</option>
-                                                        </Field>
-                                                    </td>
-                                                    <td style={{ minWidth: "100px" }}>
-                                                        <Field
-                                                            type="text"
-                                                            placeholder="Credit Card/Mortgage Repayments"
-                                                            id={`creditCardMortgageRepayments`}
-                                                            name={`creditCardMortgageRepayments`}
-                                                            className="form-control inputDesignDoubleInput"
-                                                            onChange={(e) => {
-                                                                setFieldValue(e.target.name,
-                                                                    toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                                            }}
-                                                        />
-                                                    </td>
-                                                    <td style={{ minWidth: "100px" }}>
-                                                        <Field
-                                                            type="text"
-                                                            placeholder="Cost Base of Car"
-                                                            id={`costBaseOfCar`}
-                                                            name={`costBaseOfCar`}
-                                                            className="form-control inputDesignDoubleInput"
-                                                            onChange={(e) => {
-                                                                setFieldValue(e.target.name,
-                                                                    toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                                            }}
-                                                        />
-                                                    </td>
-
-                                                    <td style={{ minWidth: "100px" }}>
-                                                        <DynamicYesNo name={`FBTPaidByEmployer`} values={values} handleChange={handleChange} />
-                                                    </td>
-                                                    <td style={{ minWidth: "100px" }}>
-                                                        <Field
-                                                            type="text"
-                                                            placeholder="Running Costs of Car"
-                                                            id={`runningCostsOfCar`}
-                                                            name={`runningCostsOfCar`}
-                                                            className="form-control inputDesignDoubleInput"
-                                                            onChange={(e) => {
-                                                                setFieldValue(e.target.name,
-                                                                    toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                                            }}
-                                                        />
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </Table>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </Row>
-                    </Form>
-                );
-            }}
-        </Formik>
-    );
+        return (
+          <Form>
+            <ConfigProvider
+              theme={{
+                components: {
+                  Table: {
+                    headerBg: "#36B446",
+                    headerColor: "#fff",
+                    fontWeight: "bold",
+                  },
+                },
+              }}
+            >
+              <AntDynamicTable
+                columns={tableFields}
+                data={[
+                  {
+                    key: "row1",
+                    employerFBTStatus: values.employerFBTStatus || "",
+                    creditCardMortgageRepayments:
+                      values.creditCardMortgageRepayments || "",
+                    costBaseOfCar: values.costBaseOfCar || "",
+                    FBTPaidByEmployer: values.FBTPaidByEmployer || "",
+                    runningCostsOfCar: values.runningCostsOfCar || "",
+                  },
+                ]}
+                values={values}
+                setFieldValue={setFieldValue}
+                handleChange={handleChange}
+                handleBlur={handleBlur}
+              />
+            </ConfigProvider>
+          </Form>
+        );
+      }}
+    </Formik>
+  );
 };
 
 export default SalaryPackaging;
