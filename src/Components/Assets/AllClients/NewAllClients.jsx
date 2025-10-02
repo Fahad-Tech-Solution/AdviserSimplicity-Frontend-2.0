@@ -57,14 +57,14 @@ const NewAllClients = (props) => {
   let [selectedClientDetails, setSelectedClientDetails] = useRecoilState(
     SelectedClientDetails
   );
-
   const [expanded, setExpanded] = useState(false);
   const [selectedValue, setSelectedValue] = useState(null);
-
   const [CRStateObj, setCRState] = useRecoilState(CRState);
   const [optRender, setOptRender] = useRecoilState(OptionRender);
   const [PersonalDetailObj, setPersonalDetailObj] =
     useRecoilState(PersonalDetailsData);
+  const [PerosnalDetail2, setPersonalDetail] = useRecoilState(AllUsers);
+  const PerosnalDetail = useRecoilValue(AllUsers);
 
   const handleAddClientClick = () => {
     localStorage.removeItem("Email");
@@ -333,17 +333,17 @@ const NewAllClients = (props) => {
       },
       {
         title: "Household",
-        key: "clientGivenName",
+        key: "clientLastName",
         fixed: "left",
         width: 100,
         render: (text, row) => {
-          const clientName = `${row?.client?.clientSurname || "--"}`;
+          const clientName = `${row?.client?.clientLastName || "--"}`;
 
           return <p className="m-0">{clientName}</p>;
         },
         sorter: (a, b) => {
-          const nameA = a?.client?.clientSurname?.toLowerCase() || "";
-          const nameB = b?.client?.clientSurname?.toLowerCase() || "";
+          const nameA = a?.client?.clientLastName?.toLowerCase() || "";
+          const nameB = b?.client?.clientLastName?.toLowerCase() || "";
           return nameA.localeCompare(nameB);
         },
       },
@@ -493,9 +493,6 @@ const NewAllClients = (props) => {
     return columns;
   };
 
-  const [PerosnalDetail2, setPersonalDetail] = useRecoilState(AllUsers);
-  const PerosnalDetail = useRecoilValue(AllUsers);
-
   useEffect(() => {
     fetchPersonalDetials();
     fetchData();
@@ -508,15 +505,7 @@ const NewAllClients = (props) => {
       // console.log(res, "/api/user/Clients");
       if (res) {
         console.log(res, "DashBoard Table");
-        let adjustment = deepCloneWithKeys(
-          res.clients.map((item, index) => {
-            return {
-              ...item,
-              children: null,
-            };
-          }),
-          "userData"
-        );
+        let adjustment = deepCloneWithKeys(res.clients, "userData");
 
         setPersonalDetail(adjustment);
       }
@@ -806,21 +795,32 @@ const NewAllClients = (props) => {
         selectedValue={selectedValue}
         options={PerosnalDetail.map((item) => ({
           value: item.client.Email,
-          label: `${item.client.clientGivenName} ${item.client.clientLastName}`,
+          label: `${item.client.clientGivenName || ""} ${
+            item.client.clientLastName || ""
+          }`,
         }))}
         onSearchClick={() => setExpanded(true)}
         onCloseClick={() => {
           setExpanded(false);
           setSelectedValue(null);
         }}
-        onChange={(val) => setSelectedValue(val)}
+        onChange={(val) => {
+          console.log(val);
+          setSelectedValue(val);
+        }}
         onAddClick={handleAddClientClick}
         addButtonLabel="Add Client"
       />
 
       <AntTableDynamicReportTable
         rowSelection={Object.assign({ type: "radio" }, rowSelection)} //This feture is comming up in Next Miled Stone
-        dataSource={PerosnalDetail}
+        dataSource={
+          selectedValue
+            ? PerosnalDetail.filter(
+                (item) => item.client.Email === selectedValue
+              )
+            : PerosnalDetail
+        }
         columns={columnsGenerator()} // ✅ now it's an array
         showFilters={showFilters}
         setShowFilters={setShowFilters}

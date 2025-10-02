@@ -48,7 +48,7 @@ const Dashboard = (props) => {
   }, [prospectsCDF]);
 
   return (
-    <div className="DashBoard">
+    <div className="DashBoard px-0">
       <h5 className="Greetings PoppinsFamily">
         👋 Welcome,{" "}
         {loggedInUserData &&

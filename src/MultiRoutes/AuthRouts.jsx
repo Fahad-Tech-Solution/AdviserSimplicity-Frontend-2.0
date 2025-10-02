@@ -197,7 +197,7 @@ function AuthRouts() {
         </Header>
         <Content
           style={{
-            margin: "16px",
+            margin: "16px 10px",
             background: "#fff",
             height: "100%",
             padding: "1rem 0rem",

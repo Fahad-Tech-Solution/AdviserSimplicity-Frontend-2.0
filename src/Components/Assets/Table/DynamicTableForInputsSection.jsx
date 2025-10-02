@@ -46,9 +46,9 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
         return value ? "Checked" : "Un-Checked";
       }
 
-         if (col?.type === "select-multi-antd") {
-  return Array.isArray(value) ? value.join(", ") : value || "";
-}
+      if (col?.type === "select-multi-antd") {
+        return Array.isArray(value) ? value.join(", ") : value || "";
+      }
 
       return value || "--";
     };
