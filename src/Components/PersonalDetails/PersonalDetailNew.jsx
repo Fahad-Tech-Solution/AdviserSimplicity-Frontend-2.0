@@ -26,7 +26,7 @@ import dayjs from "dayjs";
 import ProfileCard from "./ProfileCard";
 import ImportantQuestion from "../Questions/ImportantQuestion/ImportantQuestion";
 import ModalComponent from "../Questions/FinancialInvestments/ModalComponent";
-import axios from "axios";
+import { differenceInYears } from "date-fns";
 
 const childSchema = Yup.object({
   depenantChild: Yup.string()
@@ -40,16 +40,16 @@ const childSchema = Yup.object({
 
 const contactSchema = Yup.object({
   homeAddress: Yup.string().required("Home address is required"),
-  postcodeSuburb: Yup.number()
-    .typeError("Must be a number")
+  postcodeSuburb: Yup.string()
+    .typeError("PostCode must be a number")
     .required("Postcode is required"),
   SameAsAbove: Yup.boolean(),
   postalAddress: Yup.string().required("Postal address is required"),
-  postalPostCode: Yup.number()
-    .typeError("Must be a number")
+  postalPostCode: Yup.string()
+    .typeError("Postal postcode must be a number")
     .required("Postal postcode is required"),
   mobile: Yup.string()
-    .matches(/^[0-9]+$/, "Must be digits only")
+    .matches(/^[0-9]+$/, "Mobile must be digits only")
     .required("Mobile is required"),
   homePhone: Yup.string(),
   workPhone: Yup.string(),
@@ -224,6 +224,7 @@ const mapChildrenForSubmit = (children = []) =>
 const PersonalDetailNew = () => {
   const formRef = useRef(null);
   const [switchStep, setSwitchStep] = useState(0);
+  const [errorShow, setErrorShow] = useState(false);
   const [userData, setUserData] = useState({});
   const [loading, setLeading] = useState(false);
   let [flagState, setFlagState] = useState(false);
@@ -300,11 +301,17 @@ const PersonalDetailNew = () => {
       CheckError: true,
     },
     {
-      title: "DOB",
+      title: "Date of Birth",
       dataIndex: "dob",
       type: "antdate",
       key: "dob",
       CheckError: true,
+      callBack: true,
+      func: (values, setFieldValue, thisInput, stakeHolder) => {
+        const age =
+          differenceInYears(new Date(), new Date(thisInput.value)) || 0;
+        setFieldValue(stakeHolder + "age", age);
+      },
     },
     {
       title: "Age",
@@ -312,23 +319,24 @@ const PersonalDetailNew = () => {
       type: "text",
       key: "age",
       CheckError: true,
+      disabled: true,
     },
     {
-      title: "Marital",
+      title: "Marital Status",
       dataIndex: "marital",
       type: "select",
       options: [
         { value: "Single", label: "Single" },
         { value: "Married", label: "Married" },
         { value: "De Facto", label: "De Facto" },
-        { value: "Divorced", label: "Divorced" },
+        { value: "Partnered", label: "Partnered" },
         { value: "Widowed", label: "Widowed" },
       ],
       key: "marital",
       CheckError: true,
     },
     {
-      title: "Employment",
+      title: "Employment Status",
       dataIndex: "employment",
       type: "select",
       options: [
@@ -353,7 +361,7 @@ const PersonalDetailNew = () => {
       CheckError: true,
     },
     {
-      title: "Ret Age",
+      title: "Planned Retirement Age",
       dataIndex: "retAge",
       type: "text",
       key: "retAge",
@@ -380,14 +388,14 @@ const PersonalDetailNew = () => {
       width: 100,
     },
     {
-      title: "Tax Res",
+      title: "Tax Resident",
       dataIndex: "taxRes",
       type: "yesno",
       key: "taxRes",
       width: 100,
     },
     {
-      title: "Health Cover",
+      title: "Private Health Cover",
       dataIndex: "healthCover",
       type: "yesno",
       key: "healthCover",
@@ -426,33 +434,6 @@ const PersonalDetailNew = () => {
       width: 200,
       CheckError: true,
     },
-    // {
-    //   title: "Same As Home Address",
-    //   placeholder: "Same As Home Address",
-    //   dataIndex: "SameAsAbove",
-    //   type: "checkbox",
-    //   key: "SameAsAbove",
-    //   width: 230,
-    //   callBack: true,
-    //   func: (values, setFieldValue, thisInput, stakeHolder) => {
-    //     const homeAddress = getNestedValue(values, `${stakeHolder}homeAddress`);
-    //     const postcodeSuburb = getNestedValue(
-    //       values,
-    //       `${stakeHolder}postcodeSuburb`
-    //     );
-
-    //     console.log("stakeHolder:", stakeHolder);
-    //     console.log("homeAddress:", homeAddress);
-    //     console.log("postcodeSuburb:", postcodeSuburb);
-    //     console.log("checked:", thisInput.checked);
-
-    //     if (thisInput.checked) {
-    //       setFieldValue(`${stakeHolder}postalAddress`, homeAddress || "");
-    //       setFieldValue(`${stakeHolder}postalPostCode`, postcodeSuburb || "");
-    //     }
-    //   },
-    //   CheckError: true,
-    // },
     {
       title: "Postal Address",
       dataIndex: "postalAddress",
@@ -494,7 +475,7 @@ const PersonalDetailNew = () => {
       CheckError: true,
     },
     {
-      title: "Mobile",
+      title: "Mobile Number",
       dataIndex: "mobile",
       type: "text",
       key: "mobile",
@@ -602,6 +583,7 @@ const PersonalDetailNew = () => {
       }
     } catch (error) {
       console.error("❌ Error in API:", error);
+      setErrorShow(true);
     } finally {
       setLeading(false);
     }
@@ -719,8 +701,11 @@ const PersonalDetailNew = () => {
   }, []);
 
   useEffect(() => {
-    if (switchStep == 2) {
-      // console.log("CRObjectNoUse", CRObjectNoUse);
+    if (
+      switchStep === 2 &&
+      CRObjectNoUse &&
+      Object.keys(CRObjectNoUse).length > 0
+    ) {
       if (
         CRObjectNoUse.investmentPropertyTab === "No" &&
         CRObjectNoUse.personalInsuranceTab === "No" &&
@@ -728,13 +713,11 @@ const PersonalDetailNew = () => {
         CRObjectNoUse.SMSFManagedFundsTab === "No" &&
         CRObjectNoUse.businessAsInvestmentTab === "No"
       ) {
-        setModalObject({
-          title: "Important Questions",
-        });
+        setModalObject({ title: "Important Questions" });
         setFlagState(true);
       }
     }
-  }, [switchStep]);
+  }, [switchStep, CRObjectNoUse]); // 👈 also depend on CRObjectNoUse
 
   async function getQuestions(id) {
     try {
@@ -875,12 +858,8 @@ const PersonalDetailNew = () => {
           storeData(setFieldValue);
         }, [userData]);
 
-        useEffect(() => {
-          console.log("client object identity:", values.client);
-        }, [values.client]);
-
         const tableData = useMemo(() => {
-          console.log(values.client.taxRes);
+          // console.log(values.client.taxRes);
           const rows = [
             {
               key: "client",
@@ -975,36 +954,42 @@ const PersonalDetailNew = () => {
             {!loading && (
               <>
                 {/* Show global error alert only when errors exist */}
-                {values && errors && Object.keys(errors).length > 0 && (
-                  <div className="mt-3">
-                    <Alert
-                      message="Validation Errors"
-                      description={
-                        <div>
-                          <p>
-                            Some required fields are missing or invalid. Please
-                            edit to fix them:
-                          </p>
-                          <ul style={{ marginLeft: 20 }}>
-                            {flattenErrors(errors).map(([field, errorMsg]) => {
-                              const baseObject = field.split(".")[0]; // 👈 only take root key
-                              return (
-                                <li key={field}>
-                                  <strong>
-                                    {errorMsg} in ({toSentenceCase(baseObject)})
-                                  </strong>
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        </div>
-                      }
-                      type="error"
-                      showIcon
-                      className="mb-3"
-                    />
-                  </div>
-                )}
+                {errorShow &&
+                  values &&
+                  errors &&
+                  Object.keys(errors).length > 0 && (
+                    <div className="mt-3">
+                      <Alert
+                        message="Validation Errors"
+                        description={
+                          <div>
+                            <p>
+                              Some required fields are missing or invalid.
+                              Please edit to fix them:
+                            </p>
+                            <ul style={{ marginLeft: 20 }}>
+                              {flattenErrors(errors).map(
+                                ([field, errorMsg]) => {
+                                  const baseObject = field.split(".")[0]; // 👈 only take root key
+                                  return (
+                                    <li key={field}>
+                                      <strong>
+                                        {errorMsg} in (
+                                        {toSentenceCase(baseObject)})
+                                      </strong>
+                                    </li>
+                                  );
+                                }
+                              )}
+                            </ul>
+                          </div>
+                        }
+                        type="error"
+                        showIcon
+                        className="mb-3"
+                      />
+                    </div>
+                  )}
 
                 {switchStep == 1 && (
                   <>
@@ -1132,6 +1117,7 @@ const PersonalDetailNew = () => {
                           className="w-100"
                           onClick={() => {
                             setSwitchStep(1);
+                            setErrorShow(true);
                           }}
                         >
                           Edit

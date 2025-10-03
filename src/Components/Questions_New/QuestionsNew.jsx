@@ -217,17 +217,12 @@ const QuestionsNew = (props) => {
                 role="button"
                 onClick={() => {
                   setFlagState(true);
-                  if (obj[QuestionChange].Title === "Personal Insurance") {
-                    setModalObject({
-                      title: "Personal Insurance",
-                      Input: "Name",
-                    });
-                  } else {
+               
                     setModalObject({
                       title: "Questions",
                       Input: "Name",
                     });
-                  }
+                  
                 }}
               >
                 <img className="img-fluid min-w-25" src={Add} alt="" />

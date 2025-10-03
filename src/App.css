@@ -682,6 +682,25 @@ input:checked + label {
   padding: 10px;
 }
 
+/* thing are ok to remove after full Project changes*/
+.DateInputPadding {
+  padding: 8px 8px 8px 30px !important;
+}
+
+.iconContainer {
+  color: #ffffff;
+  width: 20px;
+  display: inline-block;
+}
+
+.iconContainerLg {
+  width: 40px;
+  display: inline-block;
+  margin-left: 10px;
+}
+
+/* thing are ok to remove after full Project changes*/
+
 @media only screen and (max-width: 425px) {
   .profile-temp-container .profile-card {
     margin-top: -100px;

@@ -8,8 +8,9 @@ import {
   Progress,
 } from "../../../Store/Store";
 import { useRecoilState } from "recoil";
-import { ConfigProvider, Spin } from "antd";
+import { ConfigProvider, Spin, Button as AntButton } from "antd";
 import CustomLoadingBar from "./CustomLoadingBar";
+import ImportantQuestion from "../ImportantQuestion/ImportantQuestion";
 
 const ModalComponent = (props) => {
   const formRef = useRef(null); // Create a ref to store the form instance
@@ -17,6 +18,9 @@ const ModalComponent = (props) => {
   const childButtonDownloadRef = useRef(null);
   const intervalRef = useRef(null); // Store the interval reference
   const [progress, setProgress] = useRecoilState(Progress);
+
+  const [showInnerModal, setShowInnerModal] = useState(false);
+  const [modalObject2, setModalObject2] = useState({});
 
   let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
     useRecoilState(CashFlowReCalculateLoading);
@@ -271,7 +275,7 @@ const ModalComponent = (props) => {
         size={size === "xxl" ? "" : size}
         backdrop="static"
         keyboard={false}
-        centered
+        // centered
         show={props.flagState}
         onHide={() => {
           props.setFlagState(false);
@@ -364,6 +368,21 @@ const ModalComponent = (props) => {
                 )}
               </Button>
             )}
+
+            {props.modalObject?.title === "Questions" && (
+              <AntButton
+                htmlType="button"
+                color="default"
+                variant="filled"
+                onClick={() => {
+                  setShowInnerModal(true);
+                }}
+                style={{padding:"18px"}}
+              >
+                Edit Important Questions
+              </AntButton>
+            )}
+
             {submitButtonRender && (
               <button
                 type="button"
@@ -377,6 +396,15 @@ const ModalComponent = (props) => {
           </Modal.Footer>
         )}
       </Modal>
+      {showInnerModal && (
+        <ModalComponent
+          flagState={showInnerModal}
+          setFlagState={setShowInnerModal}
+          modalObject={{ title: "Important Questions" }}
+        >
+          <ImportantQuestion />
+        </ModalComponent>
+      )}
     </div>
   );
 };

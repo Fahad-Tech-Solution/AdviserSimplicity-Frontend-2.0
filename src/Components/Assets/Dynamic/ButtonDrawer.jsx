@@ -50,7 +50,7 @@ const ButtonDrawer = ({
           content: { boxShadow: "none" },
           wrapper: { boxShadow: "none" },
           header: {
-            backgroundColor: "#36b446", // custom bg color
+            backgroundColor: "#a0a0a0ff", // custom bg color
             color: "#fff", // header text color
             fontWeight: "600", // bold title
           },

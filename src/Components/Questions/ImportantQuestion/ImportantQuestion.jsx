@@ -1,10 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Button, Modal } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { scroller, Element } from "react-scroll";
 import DynamicQuestionBlocks from "../../Assets/DynamicQuestionBlocks/DynamicQuestionBlocks";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { CRState, defaultUrl, QuestionDetail } from "../../../Store/Store";
+import { CRState, defaultUrl } from "../../../Store/Store";
 
 import Business_SMSF from "../svgs/money-bag-svgrepo-com.svg";
 import Questions_People from "../svgs/Questions_People.png";
@@ -17,7 +13,6 @@ import propertyValue from "../svgs/property-value.svg";
 
 import { Form, Formik } from "formik";
 import {
-  GetAxios,
   openNotificationSuccess,
   PatchAxios,
   PostAxios,
@@ -26,33 +21,30 @@ import {
 const ImportantQuestion = (props) => {
   let [CRObjectNoUse, setCRObject] = useRecoilState(CRState);
   let CRObject = useRecoilValue(CRState);
-  let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
 
   let DefaultUrl = useRecoilValue(defaultUrl);
 
-  let Nav = useNavigate();
-
   let QuestionArray = [
-    {
-      title: "Investment Properties",
-      img: propertyValue,
-      key: "investmentPropertyTab",
-    },
+    // {
+    //   title: "Investment Properties",
+    //   img: propertyValue,
+    //   key: "investmentPropertyTab",
+    // },
     {
       title: "Personal Insurance",
       img: insuranceProtection,
       key: "personalInsuranceTab",
     },
     {
-      title: "A Company (Pty Ltd) Structure to run a business ",
+      title: "A Company (Pty Ltd) structure to run a business",
       img: Business_building,
       key: "BusinessAsCompanyStructure",
     },
-    // {
-    //     title: "A Trust Structure to run a business ",
-    //     img: Business_TeamHandshake,
-    //     key: "BusinessAsTrusts",
-    // },
+    {
+      title: "A Trust structure to run a business",
+      img: Business_TeamHandshake,
+      key: "BusinessAsTrusts",
+    },
     {
       title: "A Self-Managed Super Fund",
       img: Business_SMSF,

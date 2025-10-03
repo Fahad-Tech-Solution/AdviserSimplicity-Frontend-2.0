@@ -192,7 +192,7 @@ const InnerModal = (props) => {
         size={size === "xxl" ? "" : size}
         backdrop="static"
         keyboard={false}
-        centered
+        // centered
         show={props.flagState}
         onHide={() => {
           props.setFlagState(false);

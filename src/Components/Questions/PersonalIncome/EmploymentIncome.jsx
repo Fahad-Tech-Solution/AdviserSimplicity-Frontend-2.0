@@ -315,7 +315,7 @@ const EmploymentIncome = (props) => {
       width: 150,
       handleInnerModal: handleInnerModal,
       innerModalTitle: "Salary Detail",
-      Drawerheight: 270,
+      Drawerheight: 220,
       DrawerWidth: "80%",
       PopoverContent: (
         innerModalTitle,
@@ -356,7 +356,7 @@ const EmploymentIncome = (props) => {
       callBack: true,
       func: handleInnerModal,
       innerModalTitle: "Salary Packaging",
-      Drawerheight: 250,
+      Drawerheight: 220,
       DrawerWidth: "80%",
       PopoverContent: (
         innerModalTitle,
