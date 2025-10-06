@@ -2,7 +2,13 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { openNotificationSuccess, PatchAxios, PostAxios, toCommaAndDollar, toNumericValue } from "../../Assets/Api/Api";
+import {
+  openNotificationSuccess,
+  PatchAxios,
+  PostAxios,
+  toCommaAndDollar,
+  toNumericValue,
+} from "../../Assets/Api/Api";
 
 import moneyBag from "../svgs/moneyBag.svg";
 import down from "../svgs/down.svg";
@@ -57,54 +63,42 @@ const RegularLivingExpenses = (props) => {
       setFieldValue(`personalClothing`, data.personalClothing || "");
       setFieldValue(`personalCigarettes`, data.personalCigarettes || "");
       setFieldValue(`personalAlcohol`, data.personalAlcohol || "");
-      setFieldValue(`personalSubscriptionFees`, data.personalSubscriptionFees || "");
-      setFieldValue(`personalClubMemberships`, data.personalClubMemberships || "");
+      setFieldValue(
+        `personalSubscriptionFees`,
+        data.personalSubscriptionFees || ""
+      );
+      setFieldValue(
+        `personalClubMemberships`,
+        data.personalClubMemberships || ""
+      );
       setFieldValue(`personalOthers`, data.personalOthers || "");
       setFieldValue(`personalHolidays`, data.personalHolidays || "");
       setFieldValue(`personalDiningOut`, data.personalDiningOut || "");
       setFieldValue(`personalMobilePhone`, data.personalMobilePhone || "");
-      setFieldValue(`personalMedicalExpenses`, data.personalMedicalExpenses || "");
       setFieldValue(
-        `transportPetrol`,
-        data.transportPetrol || ""
+        `personalMedicalExpenses`,
+        data.personalMedicalExpenses || ""
       );
-      setFieldValue(
-        `transportCarRepair`,
-        (data.transportCarRepair) || ""
-      );
+      setFieldValue(`transportPetrol`, data.transportPetrol || "");
+      setFieldValue(`transportCarRepair`, data.transportCarRepair || "");
       setFieldValue(
         `transportCarRegistration`,
-        (data.transportCarRegistration) || ""
+        data.transportCarRegistration || ""
       );
-      setFieldValue(
-        `publicTransport`,
-        (data.publicTransport) || ""
-      );
-      setFieldValue(
-        `transportOthers`,
-        (data.transportOthers) || ""
-      );
+      setFieldValue(`publicTransport`, data.publicTransport || "");
+      setFieldValue(`transportOthers`, data.transportOthers || "");
       setFieldValue(
         `insurancePrivateHealth`,
-        (data.insurancePrivateHealth) || ""
+        data.insurancePrivateHealth || ""
       );
-      setFieldValue(
-        `insuranceLife`,
-        (data.insuranceLife) || ""
-      );
+      setFieldValue(`insuranceLife`, data.insuranceLife || "");
       setFieldValue(
         `insuranceIncomeProtection`,
-        (data.insuranceIncomeProtection) || ""
+        data.insuranceIncomeProtection || ""
       );
-      setFieldValue(`insuranceCar`, (data.insuranceCar) || "");
-      setFieldValue(
-        `insuranceHomeContents`,
-        (data.insuranceHomeContents) || ""
-      );
-      setFieldValue(
-        `insuranceOthers`,
-        (data.insuranceOthers) || ""
-      );
+      setFieldValue(`insuranceCar`, data.insuranceCar || "");
+      setFieldValue(`insuranceHomeContents`, data.insuranceHomeContents || "");
+      setFieldValue(`insuranceOthers`, data.insuranceOthers || "");
       setFieldValue(`houseHoldRentType`, data.houseHoldRentType || "");
       setFieldValue(
         `houseHoldElectricityType`,
@@ -226,14 +220,26 @@ const RegularLivingExpenses = (props) => {
         setQuestionDetail(updatedData);
       }
 
-      openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
+      openNotificationSuccess(
+        "success",
+        "topRight",
+        "Success Notification",
+        'Data of "' + props.modalObject.title + '" is Saved'
+      );
       // Reset the flag state if necessary
       if (props.flagState) {
         props.setFlagState(false);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
-      openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        'Data of "' +
+          props.modalObject.title +
+          '" is not Saved Please! try again'
+      );
     }
   };
   const expenseTypes = [
@@ -307,7 +313,12 @@ const RegularLivingExpenses = (props) => {
             {/* houseHold */}
             <div className="row ">
               <div
-                onClick={() => setOpen(!open)}
+                onClick={() => {
+                  setOpen(!open);
+                  setOpen2(false);
+                  setOpen3(false);
+                  setOpen4(false);
+                }}
                 aria-controls=""
                 aria-expanded={open}
                 className="bgColorIncome   py-2 text-light fw-bold"
@@ -332,9 +343,9 @@ const RegularLivingExpenses = (props) => {
                   {/* Total Expense Formula1 */}
                   {setTotalExpense(
                     totalHouseHold +
-                    totalPersonal +
-                    totalTransport +
-                    totalInsurance
+                      totalPersonal +
+                      totalTransport +
+                      totalInsurance
                   )}
                   {/* Sum of HouseHold Formula2 */}
                   {setTotalHouseHold(
@@ -344,54 +355,54 @@ const RegularLivingExpenses = (props) => {
                         (values.houseHoldRentType || 0)
                       ).toFixed(2)
                     ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.houseHoldElectricity) || 0) *
-                        (values.houseHoldElectricityType || 0)
-                      ).toFixed(2)
-                    ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.houseHoldWaterRates) || 0) *
-                        (values.houseHoldWaterRatesType || 0)
-                      ).toFixed(2)
-                    ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.houseHoldGas) || 0) *
-                        (values.houseHoldGasType || 0)
-                      ).toFixed(2)
-                    ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.houseHoldPhone) || 0) *
-                        (values.houseHoldPhoneType || 0)
-                      ).toFixed(2)
-                    ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.houseHoldCouncilRates) || 0) *
-                        (values.houseHoldCouncilRatesType || 0)
-                      ).toFixed(2)
-                    ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.houseHoldInternet) || 0) *
-                        (values.houseHoldInternetType || 0)
-                      ).toFixed(2)
-                    ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.houseHoldOthers) || 0) *
-                        (values.houseHoldOthersType || 0)
-                      ).toFixed(2)
-                    ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.houseHoldFood) || 0) *
-                        (values.houseHoldFoodType || 0)
-                      ).toFixed(2)
-                    )
+                      parseFloat(
+                        (
+                          (toNumericValue(values.houseHoldElectricity) || 0) *
+                          (values.houseHoldElectricityType || 0)
+                        ).toFixed(2)
+                      ) +
+                      parseFloat(
+                        (
+                          (toNumericValue(values.houseHoldWaterRates) || 0) *
+                          (values.houseHoldWaterRatesType || 0)
+                        ).toFixed(2)
+                      ) +
+                      parseFloat(
+                        (
+                          (toNumericValue(values.houseHoldGas) || 0) *
+                          (values.houseHoldGasType || 0)
+                        ).toFixed(2)
+                      ) +
+                      parseFloat(
+                        (
+                          (toNumericValue(values.houseHoldPhone) || 0) *
+                          (values.houseHoldPhoneType || 0)
+                        ).toFixed(2)
+                      ) +
+                      parseFloat(
+                        (
+                          (toNumericValue(values.houseHoldCouncilRates) || 0) *
+                          (values.houseHoldCouncilRatesType || 0)
+                        ).toFixed(2)
+                      ) +
+                      parseFloat(
+                        (
+                          (toNumericValue(values.houseHoldInternet) || 0) *
+                          (values.houseHoldInternetType || 0)
+                        ).toFixed(2)
+                      ) +
+                      parseFloat(
+                        (
+                          (toNumericValue(values.houseHoldOthers) || 0) *
+                          (values.houseHoldOthersType || 0)
+                        ).toFixed(2)
+                      ) +
+                      parseFloat(
+                        (
+                          (toNumericValue(values.houseHoldFood) || 0) *
+                          (values.houseHoldFoodType || 0)
+                        ).toFixed(2)
+                      )
                   )}
                   {/* Sum of HouseHold Formula2 */}
 
@@ -403,60 +414,60 @@ const RegularLivingExpenses = (props) => {
                         (values.personalClothingType || 0)
                       ).toFixed(2)
                     ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.personalCigarettes) || 0) *
-                        (values.personalCigarettesType || 0)
-                      ).toFixed(2)
-                    ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.personalAlcohol) || 0) *
-                        (values.personalAlcoholType || 0)
-                      ).toFixed(2)
-                    ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.personalSubscriptionFees) ||
-                          0) * (values.personalSubscriptionFeesType || 0)
-                      ).toFixed(2)
-                    ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.personalClubMemberships) ||
-                          0) * (values.personalClubMembershipsType || 0)
-                      ).toFixed(2)
-                    ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.personalOthers) || 0) *
-                        (values.personalOthersType || 0)
-                      ).toFixed(2)
-                    ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.personalHolidays) || 0) *
-                        (values.personalHolidaysType || 0)
-                      ).toFixed(2)
-                    ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.personalDiningOut) || 0) *
-                        (values.personalDiningOutType || 0)
-                      ).toFixed(2)
-                    ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.personalMobilePhone) || 0) *
-                        (values.personalMobilePhoneType || 0)
-                      ).toFixed(2)
-                    ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.personalMedicalExpenses) ||
-                          0) * (values.personalMedicalExpensesType || 0)
-                      ).toFixed(2)
-                    )
+                      parseFloat(
+                        (
+                          (toNumericValue(values.personalCigarettes) || 0) *
+                          (values.personalCigarettesType || 0)
+                        ).toFixed(2)
+                      ) +
+                      parseFloat(
+                        (
+                          (toNumericValue(values.personalAlcohol) || 0) *
+                          (values.personalAlcoholType || 0)
+                        ).toFixed(2)
+                      ) +
+                      parseFloat(
+                        (
+                          (toNumericValue(values.personalSubscriptionFees) ||
+                            0) * (values.personalSubscriptionFeesType || 0)
+                        ).toFixed(2)
+                      ) +
+                      parseFloat(
+                        (
+                          (toNumericValue(values.personalClubMemberships) ||
+                            0) * (values.personalClubMembershipsType || 0)
+                        ).toFixed(2)
+                      ) +
+                      parseFloat(
+                        (
+                          (toNumericValue(values.personalOthers) || 0) *
+                          (values.personalOthersType || 0)
+                        ).toFixed(2)
+                      ) +
+                      parseFloat(
+                        (
+                          (toNumericValue(values.personalHolidays) || 0) *
+                          (values.personalHolidaysType || 0)
+                        ).toFixed(2)
+                      ) +
+                      parseFloat(
+                        (
+                          (toNumericValue(values.personalDiningOut) || 0) *
+                          (values.personalDiningOutType || 0)
+                        ).toFixed(2)
+                      ) +
+                      parseFloat(
+                        (
+                          (toNumericValue(values.personalMobilePhone) || 0) *
+                          (values.personalMobilePhoneType || 0)
+                        ).toFixed(2)
+                      ) +
+                      parseFloat(
+                        (
+                          (toNumericValue(values.personalMedicalExpenses) ||
+                            0) * (values.personalMedicalExpensesType || 0)
+                        ).toFixed(2)
+                      )
                   )}
 
                   {/* Sum of transportFormula4 */}
@@ -468,30 +479,30 @@ const RegularLivingExpenses = (props) => {
                         (values.transportPetrolType || 0)
                       ).toFixed(2)
                     ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.transportCarRepair) || 0) *
-                        (values.transportCarRepairType || 0)
-                      ).toFixed(2)
-                    ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.transportCarRegistration) ||
-                          0) * (values.transportCarRegistrationType || 0)
-                      ).toFixed(2)
-                    ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.publicTransport) || 0) *
-                        (values.publicTransportType || 0)
-                      ).toFixed(2)
-                    ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.transportOthers) || 0) *
-                        (values.transportOthersType || 0)
-                      ).toFixed(2)
-                    )
+                      parseFloat(
+                        (
+                          (toNumericValue(values.transportCarRepair) || 0) *
+                          (values.transportCarRepairType || 0)
+                        ).toFixed(2)
+                      ) +
+                      parseFloat(
+                        (
+                          (toNumericValue(values.transportCarRegistration) ||
+                            0) * (values.transportCarRegistrationType || 0)
+                        ).toFixed(2)
+                      ) +
+                      parseFloat(
+                        (
+                          (toNumericValue(values.publicTransport) || 0) *
+                          (values.publicTransportType || 0)
+                        ).toFixed(2)
+                      ) +
+                      parseFloat(
+                        (
+                          (toNumericValue(values.transportOthers) || 0) *
+                          (values.transportOthersType || 0)
+                        ).toFixed(2)
+                      )
                   )}
 
                   {/* Sum of insurance Formula5 */}
@@ -503,36 +514,36 @@ const RegularLivingExpenses = (props) => {
                         (values.insurancePrivateHealthType || 0)
                       ).toFixed(2)
                     ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.insuranceLife) || 0) *
-                        (values.insuranceLifeType || 0)
-                      ).toFixed(2)
-                    ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.insuranceIncomeProtection) ||
-                          0) * (values.insuranceIncomeProtectionType || 0)
-                      ).toFixed(2)
-                    ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.insuranceCar) || 0) *
-                        (values.insuranceCarType || 0)
-                      ).toFixed(2)
-                    ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.insuranceHomeContents) || 0) *
-                        (values.insuranceHomeContentsType || 0)
-                      ).toFixed(2)
-                    ) +
-                    parseFloat(
-                      (
-                        (toNumericValue(values.insuranceOthers) || 0) *
-                        (values.insuranceOthersType || 0)
-                      ).toFixed(2)
-                    )
+                      parseFloat(
+                        (
+                          (toNumericValue(values.insuranceLife) || 0) *
+                          (values.insuranceLifeType || 0)
+                        ).toFixed(2)
+                      ) +
+                      parseFloat(
+                        (
+                          (toNumericValue(values.insuranceIncomeProtection) ||
+                            0) * (values.insuranceIncomeProtectionType || 0)
+                        ).toFixed(2)
+                      ) +
+                      parseFloat(
+                        (
+                          (toNumericValue(values.insuranceCar) || 0) *
+                          (values.insuranceCarType || 0)
+                        ).toFixed(2)
+                      ) +
+                      parseFloat(
+                        (
+                          (toNumericValue(values.insuranceHomeContents) || 0) *
+                          (values.insuranceHomeContentsType || 0)
+                        ).toFixed(2)
+                      ) +
+                      parseFloat(
+                        (
+                          (toNumericValue(values.insuranceOthers) || 0) *
+                          (values.insuranceOthersType || 0)
+                        ).toFixed(2)
+                      )
                   )}
 
                   <div className="my-3 mx-0">
@@ -550,7 +561,7 @@ const RegularLivingExpenses = (props) => {
                           {expenseTypes.map((expense) => {
                             const totalValue = toCommaAndDollar(
                               (toNumericValue(values[expense.id]) || 0) *
-                              (parseFloat(values[`${expense.id}Type`]) || 0)
+                                (parseFloat(values[`${expense.id}Type`]) || 0)
                             );
                             return (
                               <tr key={expense.id}>
@@ -640,7 +651,12 @@ const RegularLivingExpenses = (props) => {
             {/* personal   */}
             <div className="row my-1">
               <div
-                onClick={() => setOpen2(!open2)}
+                onClick={() => {
+                  setOpen(false);
+                  setOpen2(!open2);
+                  setOpen3(false);
+                  setOpen4(false);
+                }}
                 aria-controls=""
                 aria-expanded={open2}
                 className="bgColorIncome py-2 text-light fw-bold"
@@ -679,124 +695,8 @@ const RegularLivingExpenses = (props) => {
                       <tbody>
                         {personalExpenses.map((expense) => {
                           const totalValue = toCommaAndDollar(
-                            ((toNumericValue(values[expense.id]) || 0) * (parseFloat(values[`${expense.id}Type`]) || 0))
-                          );
-                          return (
-                            <tr key={expense.id}>
-                              <td>
-                                <label
-                                  htmlFor={expense.id}
-                                  className="form-label"
-                                >
-                                  {expense.name}
-                                </label>
-                              </td>
-                              <td>
-                                <Field
-                                  type="text"
-                                  className="form-control inputDesignDoubleInput shadow"
-                                  id={expense.id}
-                                  placeholder={expense.name}
-                                  name={expense.id}
-                                  onChange={(e) => {
-                                    handleChange(e);
-                                    let rawValue = e.target.value.replace(
-                                      /[^0-9.-]+/g,
-                                      ""
-                                    );
-                                    let formattedValue =
-                                      toCommaAndDollar(rawValue);
-                                    // console.log(formattedValue);
-                                    setFieldValue(expense.id, formattedValue);
-                                  }}
-                                />
-                                <ErrorMessage
-                                  name={expense.id}
-                                  component="div"
-                                  className="text-danger fw-bold"
-                                />
-                              </td>
-                              <td>
-                                <Field
-                                  as="select"
-                                  id={`${expense.id}Type`}
-                                  name={`${expense.id}Type`}
-                                  className="form-select shadow inputDesignDoubleInput"
-                                >
-                                  <option value="">Select</option>
-                                  <option value={52}>Weekly</option>
-                                  <option value={26}>Fortnightly</option>
-                                  <option value={12}>Monthly</option>
-                                  <option value={4}>Quarterly</option>
-                                  <option value={2}>Six-Monthly</option>
-                                  <option value={1}>Annually</option>
-                                </Field>
-                                <ErrorMessage
-                                  name={`${expense.id}Type`}
-                                  component="div"
-                                  className="text-danger fw-bold"
-                                />
-                              </td>
-                              <td>
-                                <Field
-                                  className="form-control shadow inputDesignDoubleInput"
-                                  value={
-                                    totalValue
-                                  }
-                                  disabled
-                                />
-                              </td>
-                            </tr>
-                          )
-                        })}
-                      </tbody>
-                    </Table>
-                  </div>
-                </div>
-              </Collapse>
-            </div>
-            {/* personal*/}
-
-            {/* transport */}
-            <div className="row my-1 justify-content-center">
-              <div
-                onClick={() => setOpen3(!open3)}
-                aria-controls=""
-                aria-expanded={open3}
-                className="bgColorIncome fw-bold py-2 text-light"
-              >
-                <div className="row">
-                  <div className="col-md-6">
-                    <label className=" mb-0">Transport</label>
-                  </div>
-                  <div className="col-md-6">
-                    <label id="transportTotalValue" className="float-end mb-0">
-                      {toCommaAndDollar(totalTransport)}
-                      <div className="iconContainer mx-1">
-                        <img className="img-fluid" src={down} alt="" />
-                      </div>
-                    </label>
-                  </div>
-                </div>
-              </div>
-              <div></div>
-              <Collapse in={open3}>
-                <div className="row my-3 justify-content-center">
-                  <div className="table-responsive m-0 p-0">
-                    <Table striped bordered responsive hover>
-                      <thead className="bgColorIncome text-light">
-                        <tr>
-                          <th>Expense Type</th>
-                          <th>Amount</th>
-                          <th>Frequency</th>
-                          <th>Amount P.A</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {transportExpenses.map((expense) => {
-                          const totalValue = toCommaAndDollar(
                             (toNumericValue(values[expense.id]) || 0) *
-                            (parseFloat(values[`${expense.id}Type`]) || 0)
+                              (parseFloat(values[`${expense.id}Type`]) || 0)
                           );
                           return (
                             <tr key={expense.id}>
@@ -860,7 +760,126 @@ const RegularLivingExpenses = (props) => {
                                   value={totalValue}
                                   disabled
                                 />
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </Table>
+                  </div>
+                </div>
+              </Collapse>
+            </div>
+            {/* personal*/}
 
+            {/* transport */}
+            <div className="row my-1 justify-content-center">
+              <div
+                onClick={() => {
+                  setOpen(false);
+                  setOpen2(false);
+                  setOpen3(!open3);
+                  setOpen4(false);
+                }}
+                aria-controls=""
+                aria-expanded={open3}
+                className="bgColorIncome fw-bold py-2 text-light"
+              >
+                <div className="row">
+                  <div className="col-md-6">
+                    <label className=" mb-0">Transport</label>
+                  </div>
+                  <div className="col-md-6">
+                    <label id="transportTotalValue" className="float-end mb-0">
+                      {toCommaAndDollar(totalTransport)}
+                      <div className="iconContainer mx-1">
+                        <img className="img-fluid" src={down} alt="" />
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div></div>
+              <Collapse in={open3}>
+                <div className="row my-3 justify-content-center">
+                  <div className="table-responsive m-0 p-0">
+                    <Table striped bordered responsive hover>
+                      <thead className="bgColorIncome text-light">
+                        <tr>
+                          <th>Expense Type</th>
+                          <th>Amount</th>
+                          <th>Frequency</th>
+                          <th>Amount P.A</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {transportExpenses.map((expense) => {
+                          const totalValue = toCommaAndDollar(
+                            (toNumericValue(values[expense.id]) || 0) *
+                              (parseFloat(values[`${expense.id}Type`]) || 0)
+                          );
+                          return (
+                            <tr key={expense.id}>
+                              <td>
+                                <label
+                                  htmlFor={expense.id}
+                                  className="form-label"
+                                >
+                                  {expense.name}
+                                </label>
+                              </td>
+                              <td>
+                                <Field
+                                  type="text"
+                                  className="form-control inputDesignDoubleInput shadow"
+                                  id={expense.id}
+                                  placeholder={expense.name}
+                                  name={expense.id}
+                                  onChange={(e) => {
+                                    handleChange(e);
+                                    let rawValue = e.target.value.replace(
+                                      /[^0-9.-]+/g,
+                                      ""
+                                    );
+                                    let formattedValue =
+                                      toCommaAndDollar(rawValue);
+                                    // console.log(formattedValue);
+                                    setFieldValue(expense.id, formattedValue);
+                                  }}
+                                />
+                                <ErrorMessage
+                                  name={expense.id}
+                                  component="div"
+                                  className="text-danger fw-bold"
+                                />
+                              </td>
+                              <td>
+                                <Field
+                                  as="select"
+                                  id={`${expense.id}Type`}
+                                  name={`${expense.id}Type`}
+                                  className="form-select shadow inputDesignDoubleInput"
+                                >
+                                  <option value="">Select</option>
+                                  <option value={52}>Weekly</option>
+                                  <option value={26}>Fortnightly</option>
+                                  <option value={12}>Monthly</option>
+                                  <option value={4}>Quarterly</option>
+                                  <option value={2}>Six-Monthly</option>
+                                  <option value={1}>Annually</option>
+                                </Field>
+                                <ErrorMessage
+                                  name={`${expense.id}Type`}
+                                  component="div"
+                                  className="text-danger fw-bold"
+                                />
+                              </td>
+                              <td>
+                                <Field
+                                  className="form-control shadow inputDesignDoubleInput"
+                                  value={totalValue}
+                                  disabled
+                                />
                               </td>
                             </tr>
                           );
@@ -876,7 +895,12 @@ const RegularLivingExpenses = (props) => {
             {/* insurance */}
             <div className="row justify-content-center my-1">
               <div
-                onClick={() => setOpen4(!open4)}
+                onClick={() => {
+                  setOpen(false);
+                  setOpen2(false);
+                  setOpen3(false);
+                  setOpen4(!open4);
+                }}
                 aria-controls=""
                 aria-expanded={open4}
                 className="bgColorIncome fw-bold py-2 text-light"
@@ -897,7 +921,6 @@ const RegularLivingExpenses = (props) => {
               </div>
               <div></div>
               <Collapse in={open4}>
-
                 <div className="row justify-content-center my-3">
                   <div className=" m-0 p-0">
                     <Table striped bordered responsive hover>
@@ -916,7 +939,7 @@ const RegularLivingExpenses = (props) => {
                         {insuranceExpenses.map((expense) => {
                           const totalValue = toCommaAndDollar(
                             (toNumericValue(values[expense.id]) || 0) *
-                            (parseFloat(values[`${expense.id}Type`]) || 0)
+                              (parseFloat(values[`${expense.id}Type`]) || 0)
                           );
                           return (
                             <tr key={expense.id}>

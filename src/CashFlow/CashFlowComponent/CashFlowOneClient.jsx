@@ -73,7 +73,7 @@ const CashFlowOneClient = (props) => {
           ? "Duplicate"
           : "Update") +
         " Scenario" +
-        (action === "duplicate" && " Name"),
+        (action === "duplicate" ? " Name" : ""),
       Data: UserData,
       Scenario,
       action,
