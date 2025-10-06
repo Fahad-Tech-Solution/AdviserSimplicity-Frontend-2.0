@@ -5,6 +5,7 @@ import DynamicFormField from "../Dynamic/DynamicFormField";
 import { ConvertDate } from "../Api/Api";
 
 const DynamicTableForInputsSection = (type = "bootstrap") => {
+
   return function TableHOC({
     columns,
     data,
@@ -27,7 +28,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
             setFieldValue={setFieldValue}
             handleChange={handleChange}
             handleBlur={handleBlur}
-            handleInnerModal={col?.handleInnerModal || (() => {})}
+            handleInnerModal={col?.handleInnerModal || (() => { })}
             innerModalTitle={col?.innerModalTitle || ""}
             all={col || {}}
             {...(record?.stakeHolder

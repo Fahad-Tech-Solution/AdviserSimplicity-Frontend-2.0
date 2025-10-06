@@ -1,19 +1,16 @@
-import { Field, Form, Formik } from "formik";
+import { Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
-import { Row, Table } from "react-bootstrap";
 import { useRecoilValue } from "recoil";
-import { BankDetail, defaultUrl, QuestionDetail } from "../../../Store/Store";
-import DynamicTableRow from "../../Assets/Dynamic/DynamicTableRow";
+import { BankDetail, QuestionDetail } from "../../../Store/Store";
+import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
+import { toCommaAndDollar } from "../../Assets/Api/Api";
+
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const HomeLoan = (props) => {
-    let initialValues = {};
-
-
-    let bankDetailObj = useRecoilValue(BankDetail);
-
+    const bankDetailObj = useRecoilValue(BankDetail);
 
     let [lenderOption, setLenderOption] = useState(() => {
-
         if (!bankDetailObj?.FinancialInstitutions) return [];
 
         // Create an options array
@@ -24,37 +21,47 @@ const HomeLoan = (props) => {
 
         return optionsArray;
     })
-    
-    let questionDetail = useRecoilValue(QuestionDetail);
 
-    const fillInitialValues = (setFieldValue) => {
-        console.log(props.modalObject, "kuch Chala");
-        if (props.modalObject.values.HomeLoanModal) {
-            let data = props.modalObject.values.HomeLoanModal;
+    const AnnualFormula = (values, setFieldValue, currentInput, index) => {
+        let repaymentsAmount =
+            parseFloat(
+                values?.repaymentsAmount?.replace(/[^0-9.-]+/g, "") || 0
+            ) || 0;
+        let frequency =
+            parseFloat(values?.frequency || 0) || 0;
 
-            setFieldValue(`lender`, data.lender);
-            setFieldValue(`loanBalance`, data.loanBalance);
-            setFieldValue(`loanType`, data.loanType);
-            setFieldValue(`repaymentsAmount`, data.repaymentsAmount);
-            setFieldValue(`frequency`, data.frequency);
-            setFieldValue(`annualRepayments`, data.annualRepayments);
-            setFieldValue(`interestRatePA`, data.interestRatePA);
-            setFieldValue(`loanTerm`, data.loanTerm);
-            setFieldValue(`loanTermRemaining`, data.loanTermRemaining);
-
+        // if the user is currently editing one of these, update it in memory
+        const fieldName = currentInput.name.split(".").pop();
+        if (fieldName === "repaymentsAmount") {
+            repaymentsAmount =
+                parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
+        } else if (fieldName === "frequency") {
+            frequency = parseFloat(currentInput.value) || 0;
         }
+
+        const annualRepayments = frequency * repaymentsAmount;
+        console.log("clculated Values", annualRepayments, frequency, repaymentsAmount)
+        setFieldValue(`annualRepayments`, toCommaAndDollar(annualRepayments));
     };
 
 
-    let onSubmit = async (values) => {
-        console.log("values", values);
 
 
-        props.setFieldValue(`HomeLoanModal`, values);
-        props.setFieldValue(`loanAmount`, values.loanBalance);
-        props.setFieldValue(`annualRepayments`, values.annualRepayments);
 
-        // Reset the flag state if necessary
+    const fillInitialValues = (setFieldValue) => {
+        if (props.modalObject?.values?.HomeLoanModal) {
+            const data = props.modalObject.values.HomeLoanModal;
+            Object.keys(data).forEach((key) => {
+                setFieldValue(key, data[key]);
+            });
+        }
+    };
+
+    const onSubmit = async (values) => {
+        props.setFieldValue("HomeLoanModal", values);
+        props.setFieldValue("loanAmount", values.loanBalance);
+        props.setFieldValue("annualRepayments", values.annualRepayments);
+
         if (props.flagState) {
             props.setFlagState(false);
         }
@@ -62,27 +69,33 @@ const HomeLoan = (props) => {
 
     const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
         value: (i + 1).toString(),
-        label: ("Year " + (i + 1)).toString(),
+        label: `Year ${i + 1}`,
     }));
 
-
-
-    const rowConfig = [
+    // ✅ AntD column config
+    const columns = [
         {
-            name: "lender",
+            title: "Lender",
+            dataIndex: "lender",
+            key: "lender",
             type: "select",
-            placeholder: "Lender",
-            styleSet: { width: "150px" },
-            options: lenderOption
-        },
-        {
-            name: "loanBalance",
-            type: 'number-toComma',
-            placeholder: "Loan Balance",
 
+            options: lenderOption,
+            placeholder: "Lender",
+
+            width: 260,
         },
         {
-            name: "loanType",
+            title: "Loan Balance",
+            dataIndex: "loanBalance",
+            key: "loanBalance",
+            type: "number-toComma",
+            placeholder: "Loan Balance",
+        },
+        {
+            title: "Loan Type",
+            dataIndex: "loanType",
+            key: "loanType",
             type: "select",
             options: [
                 { value: "i/only", label: "i/only" },
@@ -90,13 +103,21 @@ const HomeLoan = (props) => {
             ],
         },
         {
-            name: "repaymentsAmount",
-            type: 'number-toComma',
+            title: "Repayments Amount",
+            dataIndex: "repaymentsAmount",
+            key: "repaymentsAmount",
+            type: "number-toComma",
             placeholder: "Repayments Amount",
+            callBack: true,
+            func: AnnualFormula,
         },
         {
-            name: "frequency",
+            title: "Frequency",
+            dataIndex: "frequency",
+            key: "frequency",
             type: "select",
+            callBack: true,
+            func: AnnualFormula,
             options: [
                 { value: "52", label: "Weekly" },
                 { value: "26", label: "Fortnightly" },
@@ -106,22 +127,31 @@ const HomeLoan = (props) => {
             styleSet: { width: "200px" },
         },
         {
-            name: "annualRepayments",
-            type: 'number-toComma',
+            title: "Annual Repayments",
+            dataIndex: "annualRepayments",
+            key: "annualRepayments",
+            type: "number-toComma",
             placeholder: "Annual Repayments",
+            disabled: true,
         },
         {
-            name: "interestRatePA",
+            title: "Interest Rate (p.a)",
+            dataIndex: "interestRatePA",
+            key: "interestRatePA",
             type: "number-toPercent",
             placeholder: "Interest Rate (p.a)",
         },
         {
-            name: "loanTerm",
+            title: "Loan Term",
+            dataIndex: "loanTerm",
+            key: "loanTerm",
             type: "select",
             options: loanTermOptions,
         },
         {
-            name: "loanTermRemaining",
+            title: "Loan Term Remaining",
+            dataIndex: "loanTermRemaining",
+            key: "loanTermRemaining",
             type: "select",
             options: loanTermOptions,
         },
@@ -129,55 +159,50 @@ const HomeLoan = (props) => {
 
     return (
         <Formik
-            initialValues={initialValues}
+            initialValues={{}}
             onSubmit={onSubmit}
             enableReinitialize
             innerRef={props.formRef}
         >
-            {({ values, handleChange, setFieldValue, handleBlur }) => {
+            {({ values, setFieldValue, handleChange, handleBlur }) => {
                 useEffect(() => {
                     fillInitialValues(setFieldValue);
-                }, [values.NumberOfMap]);
+                }, []);
+
+                const dataRows = values.HomeLoan || [
+                    {
+                        key: "0",
+                        lender: values.lender,
+                        loanBalance: values.loanBalance,
+                        loanType: values.loanType,
+                        repaymentsAmount: values.repaymentsAmount,
+                        frequency: values.frequency,
+                        annualRepayments: values.annualRepayments,
+                        interestRatePA: values.interestRatePA,
+                        loanTerm: values.loanTerm,
+                        loanTermRemaining: values.loanTermRemaining,
+                    },
+                ];
 
                 return (
                     <Form>
-                        <Row>
-                            <div className="col-md-12">
-                                <div className="row justify-content-center">
-                                    <div className="mt-4">
-                                        <Table striped bordered responsive hover>
-                                            <thead>
-                                                <tr>
-                                                    {/* <th>No#</th> */}
-                                                    <th>Lender</th>
-                                                    <th>Loan Balance</th>
-                                                    <th>Loan Type</th>
-                                                    <th>Repayments Amount</th>
-                                                    <th>Frequency</th>
-                                                    <th>Annual Repayments</th>
-                                                    <th>Interest Rate (p.a)</th>
-                                                    <th>Loan Term </th>
-                                                    <th>Loan Term Remaining </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <DynamicTableRow
-                                                    rowConfig={rowConfig}
-                                                    values={values}
-                                                    setFieldValue={setFieldValue}
-                                                    handleChange={handleChange}
-                                                    handleBlur={handleBlur}
-                                                />
-                                            </tbody>
-                                        </Table>
-                                    </div>
-                                </div>
+                        {dataRows.length > 0 && (
+                            <div className="mt-4 All_Client reportSection">
+                                <AntdTable
+                                    columns={columns}
+                                    data={dataRows}
+                                    values={values}
+                                    setFieldValue={setFieldValue}
+                                    handleChange={handleChange}
+                                    handleBlur={handleBlur}
+                                />
                             </div>
-                        </Row>
+                        )}
                     </Form>
                 );
             }}
         </Formik>
     );
 };
+
 export default HomeLoan;

@@ -1,6 +1,5 @@
-import { Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
-import { Row, Table } from "react-bootstrap";
+import { Form, Formik } from "formik";
+import React, { useEffect, useState, useMemo } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   BankDetail,
@@ -9,20 +8,24 @@ import {
 } from "../../../../Store/Store";
 import {
   handleInputChange,
-  PatchAxios,
-  PostAxios,
-  toCommaAndDollar,
   handleInputFocus,
   handleInputKeyDown,
   handleInputBlur,
-  toPercentage,
   openNotificationSuccess,
+  PatchAxios,
+  PostAxios,
+  toCommaAndDollar,
+  toPercentage,
 } from "../../../Assets/Api/Api";
+import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
+
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const PersonalLoan = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
   let bankDetailObj = useRecoilValue(BankDetail);
+  let DefaultUrl = useRecoilValue(defaultUrl);
 
   let [nameSet] = useState(() => {
     if (props.modalObject.Input === "client") {
@@ -42,119 +45,134 @@ const PersonalLoan = (props) => {
     Object.keys(questionDetail.personalLoans).length > 0
       ? questionDetail.personalLoans
       : {
-          client: [],
-          partner: [],
-          joint: [],
-        };
-  // Use an empty object as default if personalLoans is undefined
+        client: [],
+        partner: [],
+        joint: [],
+      };
 
-  let initialValues = personalLoans[props.modalObject.Input].length
-    ? { NumberOfMap: personalLoans[props.modalObject.Input].length }
-    : { NumberOfMap: "" };
+  let initialValues = {
+    personalLoans: personalLoans[props.modalObject.Input].length
+      ? personalLoans[props.modalObject.Input]
+      : [],
+    NumberOfMap: personalLoans[props.modalObject.Input].length || "",
+  };
 
   const [dynamicFields, setDynamicFields] = useState([]);
+
+  const [lenderOption, setLenderOption] = useState(() => {
+    if (!bankDetailObj?.FinancialInstitutions) return [];
+    return bankDetailObj.FinancialInstitutions.map((elem) => ({
+      value: elem._id,
+      label: elem.platformName,
+    }));
+  });
 
   useEffect(() => {
     if (
       personalLoans[props.modalObject.Input] &&
       personalLoans[props.modalObject.Input].length
     ) {
-      let arr = [];
-
-      for (let i = 0; i < personalLoans[props.modalObject.Input].length; i++) {
-        arr.push("");
-      }
-
-      setDynamicFields(arr);
+      setDynamicFields(
+        Array(personalLoans[props.modalObject.Input].length).fill("")
+      );
     }
-  }, []);
+  }, [personalLoans[props.modalObject.Input]]);
 
   const fillInitialValues = (setFieldValue) => {
     if (
       personalLoans[props.modalObject.Input] &&
       personalLoans[props.modalObject.Input].length
     ) {
-      personalLoans[props.modalObject.Input].forEach((data, i) => {
-        if (data) {
-          setFieldValue(`LenderCurrent${i}`, data.LenderCurrent || "");
-          setFieldValue(`LoanBalance${i}`, data.LoanBalance || "");
-          setFieldValue(`LoanType${i}`, data.LoanType || "");
-          setFieldValue(`RepaymentsAmount${i}`, data.RepaymentsAmount || "");
-          setFieldValue(`Frequency${i}`, data.Frequency || "");
-          setFieldValue(`AnnualRepayments${i}`, data.AnnualRepayments || "");
-          setFieldValue(`InterestRate${i}`, data.InterestRate || "");
-          setFieldValue(`LoanTerm${i}`, data.LoanTerm || "");
-          setFieldValue(`LoanTermRemaining${i}`, data.LoanTermRemaining || "");
-          // setFieldValue(`DeductibleLoanAmount${i}`, data.DeductibleLoanAmount || '');
-        }
-      });
+      setFieldValue("personalLoans", personalLoans[props.modalObject.Input]);
     }
   };
 
   let handleInput = (e, setFieldValue) => {
     const value = e.target.value > 2 ? 2 : e.target.value;
-    setFieldValue(e.target.id, value);
-
-    let arr = [];
-
-    for (let i = 0; i < value; i++) {
-      arr.push("");
-    }
-
-    setDynamicFields(arr);
+    setFieldValue("NumberOfMap", value);
+    setDynamicFields(Array(Number(value)).fill(""));
+    // Initialize new personalLoans array with empty objects if needed
+    setFieldValue(
+      "personalLoans",
+      Array(Number(value)).fill().map((_, i) => ({
+        LenderCurrent: "",
+        LoanBalance: "",
+        LoanType: "",
+        RepaymentsAmount: "",
+        Frequency: "",
+        AnnualRepayments: "",
+        InterestRate: "",
+        LoanTerm: "",
+        LoanTermRemaining: "",
+        ...(initialValues.personalLoans[i] || {}),
+      }))
+    );
   };
 
-  let DefaultUrl = useRecoilValue(defaultUrl);
+  const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
+    value: `Year ${i + 1}`,
+    label: `Year ${i + 1}`,
+  }));
 
-  let onSubmit = async (values) => {
-    // Extract the number of maps from the values
-    const numberOfMaps = parseInt(values.NumberOfMap, 10);
-    const newEntries = [];
+  let AnnualFormula = (values, setFieldValue, currentInput, index) => {
+    // alert("ma chala")
+    let RepaymentsAmount = parseFloat(
+      values.personalLoans[index.replace(/[^0-9]+/g, "")]?.RepaymentsAmount?.replace(/[^0-9.-]+/g, "") || 0
+    );
+    let Frequency = parseFloat(values.personalLoans[index.replace(/[^0-9]+/g, "")]?.Frequency || 0);
 
-    // Iterate through each map entry and create a new object
-    for (let i = 0; i < numberOfMaps; i++) {
-      const newEntry = {
-        LenderCurrent: values[`LenderCurrent${i}`] || "",
-        LoanBalance: values[`LoanBalance${i}`] || "",
-        LoanType: values[`LoanType${i}`] || "",
-        RepaymentsAmount: values[`RepaymentsAmount${i}`] || "",
-        Frequency: values[`Frequency${i}`] || "",
-        AnnualRepayments: values[`AnnualRepayments${i}`] || "",
-        InterestRate: values[`InterestRate${i}`] || "",
-        LoanTerm: values[`LoanTerm${i}`] || "",
-        LoanTermRemaining: values[`LoanTermRemaining${i}`] || "",
-        // DeductibleLoanAmount: values[`DeductibleLoanAmount${i}`] || "",
-      };
-      newEntries.push(newEntry);
+    switch (currentInput.name.split(".").pop()) {
+      case "RepaymentsAmount":
+        RepaymentsAmount =
+          parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
+        break;
+      case "Frequency":
+        Frequency = parseFloat(currentInput.value) || 0;
+        break;
     }
 
-    // Log the new entries to verify
-    console.log(newEntries);
+    const AnnualRepayments = Frequency * RepaymentsAmount;
 
+    console.log(AnnualRepayments, Frequency, RepaymentsAmount)
+
+    setFieldValue(
+      `[${index}].AnnualRepayments`,
+      toCommaAndDollar(AnnualRepayments)
+    );
+  };
+
+  let FormulaSetting = () => { };
+
+  let onSubmit = async (values) => {
+    // Use the personalLoans array directly from values
+    const personalLoanData = values.personalLoans;
+
+    // Create API payload
     let DataOf = props.modalObject.Input;
-
-    // Create an object with additional fields
     let obj = {
       clientFK: localStorage.getItem("UserID"),
+      [DataOf]: personalLoanData,
+      [DataOf + "Total"]: toCommaAndDollar(
+        personalLoanData.reduce(
+          (total, entry) =>
+            total + parseFloat(entry.AnnualRepayments.replace(/[^0-9.-]+/g, "") || 0),
+          0
+        )
+      ),
     };
 
-    obj[DataOf] = newEntries;
-
-    // Calculate total currentBalance
-    obj[DataOf + "Total"] = toCommaAndDollar(
-      newEntries.reduce(
-        (total, entry) =>
-          total + parseFloat(entry.AnnualRepayments.replace(/[^0-9.-]+/g, "")),
-        0
-      )
-    );
-
-    console.log(obj, "final obj");
-
-    const bankAccountArray = personalLoans.clientFK || "";
+    // Update the questionDetail state
+    setQuestionDetail((prev) => ({
+      ...prev,
+      personalLoans: {
+        ...prev.personalLoans,
+        [props.modalObject.Input]: personalLoanData,
+      },
+    }));
 
     try {
       let res;
+      const bankAccountArray = personalLoans.clientFK || "";
       if (!bankAccountArray) {
         res = await PostAxios(`${DefaultUrl}/api/personalLoans/Add`, obj);
       } else {
@@ -172,9 +190,13 @@ const PersonalLoan = (props) => {
         "success",
         "topRight",
         "Success Notification",
-        'Data of "' + props.modalObject.title + '" is Saved'
+        `Data of "${props.modalObject.title}" is Saved`
       );
-      // Reset the flag state if necessary
+
+      // Update parent component if needed
+      if (props.setFieldValue) {
+        props.setFieldValue("personalLoans", personalLoanData);
+      }
       if (props.flagState) {
         props.setFlagState(false);
       }
@@ -184,306 +206,173 @@ const PersonalLoan = (props) => {
         "error",
         "topRight",
         "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        `Data of "${props.modalObject.title}" is not Saved. Please try again!`
       );
     }
   };
 
-  const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
-    value: (i + 1).toString(),
-    label: ("Year " + (i + 1)).toString(),
-  }));
+  const columns = [
+    {
+      title: "No#",
+      dataIndex: "index",
+      key: "owner",
+      type: "number",
+      render: (_, __, i) => i + 1,
+      width: 60,
+    },
+    {
+      title: "Lender",
+      dataIndex: "LenderCurrent",
+      key: "LenderCurrent",
+      type: "select",
+      options: lenderOption,
+      placeholder: "Lender",
+      width: 260,
+    },
+    {
+      title: "Loan Balance",
+      dataIndex: "LoanBalance",
+      key: "LoanBalance",
+      type: "number-toComma",
+      placeholder: "Loan Balance",
+    },
+    {
+      title: "Loan Type",
+      dataIndex: "LoanType",
+      key: "LoanType",
+      type: "select",
+      options: [
+        { value: "i/only", label: "i/only" },
+        { value: "P&I", label: "P&I" },
+      ],
+    },
+    {
+      title: "Repayments Amount",
+      dataIndex: "RepaymentsAmount",
+      key: "RepaymentsAmount",
+      type: "number-toComma",
+      placeholder: "Repayments Amount",
+      callBack: true,
+      func: AnnualFormula,
+    },
+    {
+      title: "Frequency",
+      dataIndex: "Frequency",
+      key: "Frequency",
+      type: "select",
+      options: [
+        { value: "52", label: "Weekly" },
+        { value: "26", label: "Fortnightly" },
+        { value: "12", label: "Monthly" },
+        { value: "1", label: "Annually" },
+      ],
+      styleSet: { width: "200px" },
+      callBack: true,
+      func: AnnualFormula,
+    },
+    {
+      title: "Annual Repayments",
+      dataIndex: "AnnualRepayments",
+      key: "AnnualRepayments",
+      type: "number-toComma",
+      placeholder: "Annual Repayments",
+      disabled: true,
+      callBack: true,
+      func: AnnualFormula,
 
-  let AnnualFormula = (values, setFieldValue, currentInput, index) => {
-    let RepaymentsAmount = parseFloat(
-      values[`RepaymentsAmount${index}`].replace(/[^0-9.-]+/g, "")
-    );
-    let Frequency = values[`Frequency${index}`];
-    let AnnualRepayments = values[`AnnualRepayments${index}`];
-
-    switch (currentInput.name.replace(/[0-9]/g, "")) {
-      case "RepaymentsAmount":
-        RepaymentsAmount =
-          parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
-        break;
-      case "Frequency":
-        Frequency =
-          parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
-        break;
-      default:
-        console.log("wrong Input");
-        break;
-    }
-
-    AnnualRepayments = Frequency * RepaymentsAmount;
-
-    console.log(RepaymentsAmount, Frequency, AnnualRepayments);
-
-    setFieldValue(
-      `AnnualRepayments${index}`,
-      toCommaAndDollar(AnnualRepayments)
-    );
-  };
-
-  let FormulaSetting = () => {};
+    },
+    {
+      title: "Interest Rate (p.a)",
+      dataIndex: "InterestRate",
+      key: "InterestRate",
+      type: "number-toPercent",
+      placeholder: "Interest Rate (p.a)",
+    },
+    {
+      title: "Loan Term",
+      dataIndex: "LoanTerm",
+      key: "LoanTerm",
+      type: "select",
+      options: loanTermOptions,
+    },
+    {
+      title: "Loan Term Remaining",
+      dataIndex: "LoanTermRemaining",
+      key: "LoanTermRemaining",
+      type: "select",
+      options: loanTermOptions,
+    },
+  ];
 
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={onSubmit}
       enableReinitialize
       innerRef={props.formRef}
+      onSubmit={onSubmit}
     >
-      {({ values, setFieldValue }) => {
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
-        }, [values.NumberOfMap]);
+        }, [personalLoans[props.modalObject.Input]]);
+
+        const dataRows = useMemo(() => {
+          const num = Number(values.NumberOfMap) || 0;
+          if (num > 0) {
+            return Array.from({ length: num }, (_, i) => ({
+              key: `personalLoan.${i}`,
+              stakeHolder: `personalLoans[${i}]`,
+              LenderCurrent: values.personalLoans?.[i]?.LenderCurrent || "",
+              LoanBalance: values.personalLoans?.[i]?.LoanBalance || "",
+              LoanType: values.personalLoans?.[i]?.LoanType || "",
+              RepaymentsAmount: values.personalLoans?.[i]?.RepaymentsAmount || "",
+              Frequency: values.personalLoans?.[i]?.Frequency || "",
+              AnnualRepayments: values.personalLoans?.[i]?.AnnualRepayments || "",
+              InterestRate: values.personalLoans?.[i]?.InterestRate || "",
+              LoanTerm: values.personalLoans?.[i]?.LoanTerm || "",
+              LoanTermRemaining: values.personalLoans?.[i]?.LoanTermRemaining || "",
+            }));
+          }
+          return [];
+        }, [values.NumberOfMap, values.personalLoans]);
 
         return (
           <Form>
-            <Row>
-              <div className="col-md-12">
-                <div className="row justify-content-center">
-                  <div className="d-flex justify-content-center align-items-center gap-4">
-                    <p className="text-end mt-1 pt-2">
-                      How many {props.modalObject.title} does {nameSet} have :
-                    </p>
-                    <div style={{ minWidth: "25%" }}>
-                      <Field
-                        type="number"
-                        id="NumberOfMap"
-                        name="NumberOfMap"
-                        className="form-control inputDesignDoubleInput"
-                        onChange={(e) => handleInput(e, setFieldValue)}
-                      />
-                    </div>
-                  </div>
-
-                  {values.NumberOfMap && (
-                    <div className="mt-4">
-                      <Table striped bordered responsive hover>
-                        <thead>
-                          <tr>
-                            <th>No#</th>
-                            <th>Lender </th>
-                            <th>Loan Balance</th>
-                            <th>Loan Type</th>
-                            <th>Repayments Amount</th>
-                            <th>Frequency</th>
-                            <th>Annual Repayments</th>
-                            <th>Interest Rate (p.a)</th>
-                            <th>Loan Term </th>
-                            <th>Loan Term Remaining</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {dynamicFields.map((elem, i) => {
-                            return (
-                              <tr key={i}>
-                                <td>{1 + i}</td>
-                                <td style={{ width: "150px" }}>
-                                  <Field
-                                    as="select"
-                                    placeholder="Lender Current"
-                                    id={`LenderCurrent${i}`}
-                                    name={`LenderCurrent${i}`}
-                                    className="form-select inputDesignDoubleInput"
-                                  >
-                                    <option value={""}>Please Select</option>
-                                    {bankDetailObj?.FinancialInstitutions
-                                      ?.length > 0 &&
-                                      bankDetailObj.FinancialInstitutions.map(
-                                        (elem, index) => {
-                                          if (!elem?._id || !elem?.platformName)
-                                            return null;
-                                          return (
-                                            <option
-                                              key={index}
-                                              value={elem._id}
-                                            >
-                                              {elem.platformName}
-                                            </option>
-                                          );
-                                        }
-                                      )}
-                                  </Field>
-                                </td>
-                                <td style={{ width: "150px" }}>
-                                  <Field
-                                    type="text"
-                                    placeholder="Loan Balance"
-                                    id={`LoanBalance${i}`}
-                                    name={`LoanBalance${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                    onChange={(e) => {
-                                      setFieldValue(
-                                        e.target.name,
-                                        toCommaAndDollar(
-                                          e.target.value.replace(
-                                            /[^0-9.-]+/g,
-                                            ""
-                                          )
-                                        )
-                                      );
-                                    }}
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    as="select"
-                                    placeholder="Lender Current"
-                                    id={`LoanType${i}`}
-                                    name={`LoanType${i}`}
-                                    className="form-select inputDesignDoubleInput"
-                                  >
-                                    <option value={""}>Please Select</option>
-                                    <option value={"i/only"}>i/only</option>
-                                    <option value={"P&I"}>P&I</option>
-                                  </Field>
-                                </td>
-                                <td>
-                                  <Field
-                                    type="text"
-                                    placeholder="Repayments Amount"
-                                    id={`RepaymentsAmount${i}`}
-                                    name={`RepaymentsAmount${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                    onChange={(e) => {
-                                      setFieldValue(
-                                        e.target.name,
-                                        toCommaAndDollar(
-                                          e.target.value.replace(
-                                            /[^0-9.-]+/g,
-                                            ""
-                                          )
-                                        )
-                                      );
-                                      AnnualFormula(
-                                        values,
-                                        setFieldValue,
-                                        e.target,
-                                        i
-                                      );
-                                    }}
-                                  />
-                                </td>
-                                <td style={{ width: "150px" }}>
-                                  <Field
-                                    as="select"
-                                    placeholder="Lender Current"
-                                    id={`Frequency${i}`}
-                                    name={`Frequency${i}`}
-                                    className="form-select inputDesignDoubleInput"
-                                    onChange={(e) => {
-                                      setFieldValue(
-                                        e.target.name,
-                                        e.target.value
-                                      );
-                                      AnnualFormula(
-                                        values,
-                                        setFieldValue,
-                                        e.target,
-                                        i
-                                      );
-                                    }}
-                                  >
-                                    <option value={""}>Please Select</option>
-                                    <option value={52}>Weekly </option>
-                                    <option value={26}>Fortnightly </option>
-                                    <option value={12}>Monthly </option>
-                                    <option value={1}>Annually </option>
-                                  </Field>
-                                </td>
-                                <td>
-                                  <Field
-                                    type="text"
-                                    placeholder="Annual Repayments"
-                                    id={`AnnualRepayments${i}`}
-                                    name={`AnnualRepayments${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                    disabled
-                                  />
-                                </td>
-                                <td style={{ width: "150px" }}>
-                                  <Field
-                                    type="text"
-                                    placeholder="Interest Rate (p.a)"
-                                    id={`InterestRate${i}`}
-                                    name={`InterestRate${i}`}
-                                    onChange={(e) =>
-                                      handleInputChange(
-                                        e,
-                                        setFieldValue,
-                                        FormulaSetting,
-                                        values
-                                      )
-                                    }
-                                    onFocus={(e) =>
-                                      handleInputFocus(e, setFieldValue)
-                                    }
-                                    onKeyDown={(e) => handleInputKeyDown(e)}
-                                    onBlur={(e) =>
-                                      handleInputBlur(
-                                        e,
-                                        setFieldValue,
-                                        toPercentage,
-                                        FormulaSetting,
-                                        values
-                                      )
-                                    }
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    as="select"
-                                    placeholder="Lender Current"
-                                    id={`LoanTerm${i}`}
-                                    name={`LoanTerm${i}`}
-                                    className="form-select inputDesignDoubleInput"
-                                  >
-                                    <option value={""}>Please Select</option>
-                                    {loanTermOptions.map((option) => (
-                                      <option
-                                        key={option.value}
-                                        value={option.value}
-                                      >
-                                        {option.label}
-                                      </option>
-                                    ))}
-                                  </Field>
-                                </td>
-                                <td>
-                                  <Field
-                                    as="select"
-                                    placeholder="Lender Current"
-                                    id={`LoanTermRemaining${i}`}
-                                    name={`LoanTermRemaining${i}`}
-                                    className="form-select inputDesignDoubleInput"
-                                  >
-                                    <option value={""}>Please Select</option>
-                                    {loanTermOptions.map((option) => (
-                                      <option
-                                        key={option.value}
-                                        value={option.value}
-                                      >
-                                        {option.label}
-                                      </option>
-                                    ))}
-                                  </Field>
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </Table>
-                    </div>
-                  )}
-                </div>
+            <div className="d-flex justify-content-center align-items-center gap-4">
+              <p className="text-end mt-1 pt-2">
+                How many {props.modalObject.title} does {nameSet} have :
+              </p>
+              <div style={{ minWidth: "10%" }}>
+                <select
+                  id="NumberOfMap"
+                  name="NumberOfMap"
+                  className="form-select inputDesignDoubleInput"
+                  onChange={(e) => handleInput(e, setFieldValue)}
+                  value={values.NumberOfMap}
+                >
+                  <option value="">Select</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                </select>
               </div>
-            </Row>
+
+            </div>
+
+            {values.NumberOfMap && (
+              <div className="mt-4 All_Client reportSection">
+                <AntdTable
+                  columns={columns}
+                  data={dataRows}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                />
+              </div>
+            )}
+            <button type="submit" style={{ display: "none" }}>
+              Submit
+            </button>
           </Form>
         );
       }}
