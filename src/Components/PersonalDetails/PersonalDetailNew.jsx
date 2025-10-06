@@ -643,7 +643,7 @@ const PersonalDetailNew = () => {
     payload.client.Email = payload.client.clientEmail;
     payload.client.clientEmail = undefined;
 
-    // console.log("Submitting payload:", payload);
+    console.log("Submitting payload:", payload);
 
     try {
       const foundId = personalDetailObj?._id;

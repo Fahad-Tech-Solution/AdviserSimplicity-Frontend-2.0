@@ -3,7 +3,12 @@ import React, { useEffect, useState } from "react";
 import { Row } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { openNotificationSuccess, PatchAxios, PostAxios, RenderName } from "../../Assets/Api/Api";
+import {
+  openNotificationSuccess,
+  PatchAxios,
+  PostAxios,
+  RenderName,
+} from "../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 import { AntdCreatableMultiSelect } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 
@@ -14,7 +19,8 @@ const SoleTrader = (props) => {
   const [UserStatus] = useState(localStorage.getItem("UserStatus"));
 
   const incomeFromSoleTrader =
-    questionDetail?.incomeFromSoleTrader && Object.keys(questionDetail.incomeFromSoleTrader).length > 0
+    questionDetail?.incomeFromSoleTrader &&
+    Object.keys(questionDetail.incomeFromSoleTrader).length > 0
       ? questionDetail.incomeFromSoleTrader
       : {
           client: {},
@@ -45,43 +51,47 @@ const SoleTrader = (props) => {
     if (data && data._id) {
       setFieldValue("owner", data.owner || []);
 
-      if (Array.isArray(data.owner) ? data.owner.includes("client") : (data.owner || "").includes("client")) {
+      if (
+        Array.isArray(data.owner)
+          ? data.owner.includes("client")
+          : (data.owner || "").includes("client")
+      ) {
         if (data.client && Object.keys(data.client).length) {
-          setFieldValue(
-            "client.businessName", 
-            data.client.businessName || "");
-          setFieldValue(
-            "client.ABN", 
-            data.client.ABN || "");
+          setFieldValue("client.businessName", data.client.businessName || "");
+          setFieldValue("client.ABN", data.client.ABN || "");
           setFieldValue(
             "client.businessAddress",
-             data.client.businessAddress || "");
+            data.client.businessAddress || ""
+          );
           setFieldValue(
             "client.netBusinessIncome",
-             data.client.netBusinessIncome || "");
-          setFieldValue(
-            "client.goodWill",
-             data.client.goodWill || "");
+            data.client.netBusinessIncome || ""
+          );
+          setFieldValue("client.goodWill", data.client.goodWill || "");
         }
       }
 
-      if ((Array.isArray(data.owner) ? data.owner.includes("partner") : (data.owner || "").includes("partner")) && UserStatus === "Married") {
+      if (
+        (Array.isArray(data.owner)
+          ? data.owner.includes("partner")
+          : (data.owner || "").includes("partner")) &&
+        UserStatus === "Married"
+      ) {
         if (data.partner && Object.keys(data.partner).length) {
           setFieldValue(
             "partner.businessName",
-             data.partner.businessName || "");
-          setFieldValue(
-            "partner.ABN", 
-            data.partner.ABN || "");
+            data.partner.businessName || ""
+          );
+          setFieldValue("partner.ABN", data.partner.ABN || "");
           setFieldValue(
             "partner.businessAddress",
-             data.partner.businessAddress || "");
+            data.partner.businessAddress || ""
+          );
           setFieldValue(
             "partner.netBusinessIncome",
-             data.partner.netBusinessIncome || "");
-          setFieldValue(
-            "partner.goodWill",
-             data.partner.goodWill || "");
+            data.partner.netBusinessIncome || ""
+          );
+          setFieldValue("partner.goodWill", data.partner.goodWill || "");
         }
       }
     }
@@ -114,9 +124,15 @@ const SoleTrader = (props) => {
     try {
       let res;
       if (!bankAccountArray) {
-        res = await PostAxios(`${DefaultUrl}/api/incomeFromSoleTrader/Add`, obj);
+        res = await PostAxios(
+          `${DefaultUrl}/api/incomeFromSoleTrader/Add`,
+          obj
+        );
       } else {
-        res = await PatchAxios(`${DefaultUrl}/api/incomeFromSoleTrader/Update`, obj);
+        res = await PatchAxios(
+          `${DefaultUrl}/api/incomeFromSoleTrader/Update`,
+          obj
+        );
       }
 
       if (res) {
@@ -124,14 +140,24 @@ const SoleTrader = (props) => {
         setQuestionDetail(updatedData);
       }
 
-      openNotificationSuccess("success", "topRight", "Success Notification", `Data of "${props.modalObject.title}" is Saved`);
+      openNotificationSuccess(
+        "success",
+        "topRight",
+        "Success Notification",
+        `Data of "${props.modalObject.title}" is Saved`
+      );
 
       if (props.flagState) {
         props.setFlagState(false);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
-      openNotificationSuccess("error", "topRight", "Error Notification", `Data of "${props.modalObject.title}" is not Saved. Please try again.`);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        `Data of "${props.modalObject.title}" is not Saved. Please try again.`
+      );
     }
   };
 
@@ -139,7 +165,6 @@ const SoleTrader = (props) => {
     console.log("Opening modal for:", name, values);
   };
 
-  
   const columns = [
     { title: "Owner", dataIndex: "owner", key: "owner" },
     {
@@ -149,7 +174,13 @@ const SoleTrader = (props) => {
       type: "text",
       placeholder: "Business Name",
     },
-    { title: "ABN", dataIndex: "ABN", key: "ABN", type: "number", placeholder: "ABN" },
+    {
+      title: "ABN",
+      dataIndex: "ABN",
+      key: "ABN",
+      type: "number",
+      placeholder: "ABN",
+    },
     {
       title: "Business Address",
       dataIndex: "businessAddress",
@@ -175,14 +206,14 @@ const SoleTrader = (props) => {
 
   return (
     <Formik
-     initialValues={initialValues} 
-     onSubmit={onSubmit} 
-     enableReinitialize
-      innerRef={props.formRef}>
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      enableReinitialize
+      innerRef={props.formRef}
+    >
       {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
-        
         }, []);
 
         const dataRows = [
@@ -228,7 +259,11 @@ const SoleTrader = (props) => {
                       </label>
 
                       <div style={{ minWidth: "200px" }}>
-                        <Field name={`owner`} component={AntdCreatableMultiSelect} options={optionsForOwner()} />
+                        <Field
+                          name={`owner`}
+                          component={AntdCreatableMultiSelect}
+                          options={optionsForOwner()}
+                        />
                       </div>
                     </div>
                   </div>
@@ -249,7 +284,6 @@ const SoleTrader = (props) => {
                 </div>
               </div>
             </Row>
-        
           </Form>
         );
       }}
@@ -260,7 +294,8 @@ const SoleTrader = (props) => {
 function optionsForOwner() {
   const UserStatus = localStorage.getItem("UserStatus");
   const opts = [{ value: "client", label: RenderName("client") }];
-  if (UserStatus !== "Single") opts.push({ value: "partner", label: RenderName("partner") });
+  if (UserStatus !== "Single")
+    opts.push({ value: "partner", label: RenderName("partner") });
   return opts;
 }
 

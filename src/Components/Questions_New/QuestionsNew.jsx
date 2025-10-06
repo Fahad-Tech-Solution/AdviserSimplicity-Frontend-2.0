@@ -5,6 +5,7 @@ import {
   BankDetail,
   CRState,
   defaultUrl,
+  PersonalDetailsData,
   QuestionDetail,
   QuestionShift,
   SelectedClientDetails,
@@ -22,12 +23,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { GetAxios } from "../Assets/Api/Api";
 import QuestionCards from "../Questions/FinancialInvestments/QuestionCards";
 import { content } from "../../Content/Content";
+import QuestionCardsNew from "../Questions/FinancialInvestments/QuestionCardsNew";
 
 const QuestionsNew = (props) => {
   let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
   let [QuestionChange, setQuestionChange] = useRecoilState(QuestionShift);
   let CRObject = useRecoilValue(CRState);
   let SelectedClient = useRecoilValue(SelectedClientDetails);
+  const personalDetailObj = useRecoilValue(PersonalDetailsData);
 
   let [flagState, setFlagState] = useState(false);
   let [flagState2, setFlagState2] = useState(true);
@@ -74,7 +77,7 @@ const QuestionsNew = (props) => {
   const FetchQuestions = async () => {
     try {
       const res = await GetAxios(
-        `${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`
+        `${DefaultUrl}/api/questions/${personalDetailObj._id}`
       );
       if (res) {
         setCRObject(res);
@@ -87,7 +90,7 @@ const QuestionsNew = (props) => {
   const fetchDataAllInOne = async () => {
     try {
       const res = await GetAxios(
-        `${DefaultUrl}/api/dataOfAllSection/${localStorage.getItem("UserID")}`
+        `${DefaultUrl}/api/dataOfAllSection/${personalDetailObj._id}`
       );
       // console.log(JSON.stringify(res), ":res of get all inner Question Data")
       if (res) {
@@ -217,12 +220,11 @@ const QuestionsNew = (props) => {
                 role="button"
                 onClick={() => {
                   setFlagState(true);
-               
-                    setModalObject({
-                      title: "Questions",
-                      Input: "Name",
-                    });
-                  
+
+                  setModalObject({
+                    title: "Questions",
+                    Input: "Name",
+                  });
                 }}
               >
                 <img className="img-fluid min-w-25" src={Add} alt="" />
@@ -230,6 +232,7 @@ const QuestionsNew = (props) => {
             </div>
 
             <QuestionCards questionKey={QuestionChange} />
+            <QuestionCardsNew questionKey={QuestionChange} />
 
             <ModalComponent
               setQuestionChange={setFlagState2}

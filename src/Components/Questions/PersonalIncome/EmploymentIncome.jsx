@@ -1,7 +1,11 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import React, { useEffect, useMemo, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { defaultUrl, QuestionDetail } from "../../../Store/Store";
+import {
+  defaultUrl,
+  PersonalDetailsData,
+  QuestionDetail,
+} from "../../../Store/Store";
 import {
   ConvertDate,
   ConvertDate2,
@@ -22,6 +26,7 @@ import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInpu
 
 const EmploymentIncome = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
+  const personalDetailObj = useRecoilValue(PersonalDetailsData);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
@@ -241,13 +246,25 @@ const EmploymentIncome = (props) => {
     setFlagState(true);
   };
 
-  const options =
-    UserStatus !== "Single"
-      ? [
-          { value: "client", label: RenderName("client") },
-          { value: "partner", label: RenderName("partner") },
-        ]
-      : [{ value: "client", label: RenderName("client") }];
+  const options = ["Single", "Widowed"].includes(
+    personalDetailObj.client?.MaritalStatus
+  )
+    ? [
+        {
+          value: "client",
+          label: personalDetailObj.client?.clientPreferredName,
+        },
+        {
+          value: "partner",
+          label: personalDetailObj.partner?.partnerPreferredName,
+        },
+      ]
+    : [
+        {
+          value: "client",
+          label: personalDetailObj.client?.clientPreferredName,
+        },
+      ];
 
   const AntDTableHOC = DynamicTableForInputsSection("antd");
 
