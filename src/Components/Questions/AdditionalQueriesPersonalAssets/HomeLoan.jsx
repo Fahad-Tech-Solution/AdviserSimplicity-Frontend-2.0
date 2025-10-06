@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { BankDetail, QuestionDetail } from "../../../Store/Store";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
+import { toCommaAndDollar } from "../../Assets/Api/Api";
 
 const AntdTable = DynamicTableForInputsSection("antd");
 
@@ -10,7 +11,6 @@ const HomeLoan = (props) => {
     const bankDetailObj = useRecoilValue(BankDetail);
 
     let [lenderOption, setLenderOption] = useState(() => {
-        console.log(bankDetailObj, "Bank Deails in Leander Option")
         if (!bankDetailObj?.FinancialInstitutions) return [];
 
         // Create an options array
@@ -21,6 +21,31 @@ const HomeLoan = (props) => {
 
         return optionsArray;
     })
+
+    const AnnualFormula = (values, setFieldValue, currentInput, index) => {
+        let repaymentsAmount =
+            parseFloat(
+                values?.repaymentsAmount?.replace(/[^0-9.-]+/g, "") || 0
+            ) || 0;
+        let frequency =
+            parseFloat(values?.frequency || 0) || 0;
+
+        // if the user is currently editing one of these, update it in memory
+        const fieldName = currentInput.name.split(".").pop();
+        if (fieldName === "repaymentsAmount") {
+            repaymentsAmount =
+                parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
+        } else if (fieldName === "frequency") {
+            frequency = parseFloat(currentInput.value) || 0;
+        }
+
+        const annualRepayments = frequency * repaymentsAmount;
+        console.log("clculated Values", annualRepayments, frequency, repaymentsAmount)
+        setFieldValue(`annualRepayments`, toCommaAndDollar(annualRepayments));
+    };
+
+
+
 
 
     const fillInitialValues = (setFieldValue) => {
@@ -83,12 +108,16 @@ const HomeLoan = (props) => {
             key: "repaymentsAmount",
             type: "number-toComma",
             placeholder: "Repayments Amount",
+            callBack: true,
+            func: AnnualFormula,
         },
         {
             title: "Frequency",
             dataIndex: "frequency",
             key: "frequency",
             type: "select",
+            callBack: true,
+            func: AnnualFormula,
             options: [
                 { value: "52", label: "Weekly" },
                 { value: "26", label: "Fortnightly" },
@@ -103,6 +132,7 @@ const HomeLoan = (props) => {
             key: "annualRepayments",
             type: "number-toComma",
             placeholder: "Annual Repayments",
+            disabled: true,
         },
         {
             title: "Interest Rate (p.a)",
@@ -139,9 +169,9 @@ const HomeLoan = (props) => {
                     fillInitialValues(setFieldValue);
                 }, []);
 
-                const dataRows = [
+                const dataRows = values.HomeLoan || [
                     {
-                        key: "homeLoan",
+                        key: "0",
                         lender: values.lender,
                         loanBalance: values.loanBalance,
                         loanType: values.loanType,

@@ -35,7 +35,7 @@
 //       variant: "combined",
 //     },
 //     {
-//       title: "House hold",
+//       title: "Contents",
 //       key: "houseHold",
 //       api: "/houseHold",
 //       img: houseHoldSvg,
@@ -308,7 +308,7 @@ const QuestionCards = (props) => {
   let arrayObj = {
     "/user/personal-assets": [
       {
-        title: "Own a Family Home",
+        title: "Family Home",
         key: "familyHome",
         img: Questions_Home,
       },
@@ -319,7 +319,7 @@ const QuestionCards = (props) => {
         img: car,
       },
       {
-        title: "House hold",
+        title: "Contents",
         key: "houseHold",
         api: "/houseHold",
         img: houseHold,
@@ -350,7 +350,7 @@ const QuestionCards = (props) => {
     ],
     "/user/life-Style": [
       {
-        title: "Own a Family Home",
+        title: "Family Home",
         key: "familyHome",
         img: Questions_Home,
       },
@@ -767,12 +767,12 @@ const QuestionCards = (props) => {
     "Lumpsum Expenses": <LumpsumExpenses />,
 
     //Personal Assets & Liabilities
-    "Own a Family Home": <OwnFamilyHome />,
+    "Family Home": <OwnFamilyHome />,
     Car: <AssetInfo />,
     Boat: <AssetInfo />,
     Caravan: <AssetInfo />,
     "Personal Assets": <AssetInfo />,
-    "House hold": <AssetInfo />,
+    "Contents": <AssetInfo />,
     "Other Assets": <AssetInfo />,
     "Personal Loan": <PersonalLoan />,
     "Credit Card": <CreditCard />,

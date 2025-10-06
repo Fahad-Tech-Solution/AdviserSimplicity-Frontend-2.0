@@ -205,22 +205,22 @@ const OwnFamilyHome = (props) => {
                 );
             },
         },
-        {
-            title: "Loan Amount",
-            dataIndex: "loanAmount",
-            key: "loanAmount",
-            type: "number-toComma",
-            placeholder: "Loan Amount",
-            disabled: true,
-        },
-        {
-            title: "Annual Repayments",
-            dataIndex: "annualRepayments",
-            key: "annualRepayments",
-            type: "number-toComma",
-            placeholder: "Annual Repayments",
-            disabled: true,
-        },
+        // {
+        //     title: "Loan Amount",
+        //     dataIndex: "loanAmount",
+        //     key: "loanAmount",
+        //     type: "number-toComma",
+        //     placeholder: "Loan Amount",
+        //     disabled: true,
+        // },
+        // {
+        //     title: "Annual Repayments",
+        //     dataIndex: "annualRepayments",
+        //     key: "annualRepayments",
+        //     type: "number-toComma",
+        //     placeholder: "Annual Repayments",
+        //     disabled: true,
+        // },
     ];
 
     return (

@@ -12,7 +12,7 @@ const CombinedSwitch = (props) => {
     let CRObject = useRecoilValue(CRState);
 
 
-    let onlyJoint = ["Boat", "Caravan", "House hold",];
+    let onlyJoint = ["Boat", "Caravan", "Contents", "Other Assets"];
     let onlyClient = ["Other Assets",];
 
 

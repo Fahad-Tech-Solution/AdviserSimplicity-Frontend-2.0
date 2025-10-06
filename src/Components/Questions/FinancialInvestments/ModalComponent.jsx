@@ -115,7 +115,7 @@ const ModalComponent = (props) => {
     "Personal Loan",
     "Credit Card",
     "Home Loan",
-    "Own a Family Home",
+    "Family Home",
     "Holiday Home",
     "Holiday Home Loan",
     "Investment Properties",
@@ -252,12 +252,12 @@ const ModalComponent = (props) => {
   const size = smallModal
     ? ""
     : fullTitles.includes(props.modalObject.title)
-    ? "xxl"
-    : xlTitles.includes(props.modalObject.title)
-    ? "xl"
-    : xlKey.includes(props.modalObject.key)
-    ? "xl"
-    : "lg";
+      ? "xxl"
+      : xlTitles.includes(props.modalObject.title)
+        ? "xl"
+        : xlKey.includes(props.modalObject.key)
+          ? "xl"
+          : "lg";
 
   let submitButtonRender =
     props?.modalObject?.Action?.toLowerCase() == "view" ? false : true;
@@ -292,14 +292,14 @@ const ModalComponent = (props) => {
         <Modal.Body>
           {props.children
             ? React.cloneElement(props.children, {
-                formRef,
-                flagState,
-                setFlagState,
-                modalObject,
-                setQuestionChange,
-                childButtonRef,
-                childButtonDownloadRef,
-              })
+              formRef,
+              flagState,
+              setFlagState,
+              modalObject,
+              setQuestionChange,
+              childButtonRef,
+              childButtonDownloadRef,
+            })
             : "no Child exist"}
         </Modal.Body>
         {FooterButtonRender && (
