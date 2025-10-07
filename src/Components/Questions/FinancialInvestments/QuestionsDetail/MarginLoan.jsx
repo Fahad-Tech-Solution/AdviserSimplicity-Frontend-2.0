@@ -100,11 +100,17 @@ const MarginLoan = (props) => {
     label: `Year ${i + 1}`,
   }));
 
-  const FormulaSetting = (values, setFieldValue, current, stakeHolder) => {
-    const monthly = parseFloat(current.value.replace(/[^0-9.-]+/g, "")) || 0;
-    const annual = toCommaAndDollar(monthly * 12);
-    setFieldValue(`${stakeHolder}.annualLoan`, annual);
-  };
+const FormulaSetting = (values, setFieldValue, currentInput, stakeHolder) => {
+  if (!currentInput) return;
+
+  const monthly = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
+  const annual = monthly * 12;
+
+  console.log("FormulaSetting:", { monthly, annual });
+
+  setFieldValue(stakeHolder+"annualLoan", toCommaAndDollar(annual));
+};
+
 
   const onSubmit = async (values) => {
     let obj = { ...values };
@@ -322,7 +328,7 @@ const MarginLoan = (props) => {
             <Row>
               <div className="col-md-12">
                 <div className="d-flex justify-content-center align-items-center gap-4">
-                  <label className="text-end">Owner</label>
+                  <label className="text-end" onClick={()=>{console.log(values)}}>Owner</label>
                   <div style={{ minWidth: "250px" }}>
                     <Field
                       name="owner"
