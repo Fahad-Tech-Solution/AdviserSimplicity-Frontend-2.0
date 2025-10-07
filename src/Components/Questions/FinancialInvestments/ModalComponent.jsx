@@ -193,7 +193,7 @@ const ModalComponent = (props) => {
     "Platform Investment",
     "Other Investments",
     "Cash",
-    "Term Deposits",
+    // "Term Deposits",
     "Investment Bonds",
     "Investment Loans (LOC)",
     "Lifetime Benefits",
@@ -235,7 +235,7 @@ const ModalComponent = (props) => {
     "Investments Property",
     "Super Fund",
     "Annuities",
-    "Account Based Pension",
+    // "Account Based Pension",
     "Family Trust Investment Properties",
   ];
 
@@ -251,17 +251,17 @@ const ModalComponent = (props) => {
     "car",
   ];
 
-  let smallModal = props.modalObject.small || false;
+  let smallModal = props?.modalObject?.small || false;
 
   const size = smallModal
     ? ""
-    : fullTitles.includes(props.modalObject.title)
-      ? "xxl"
-      : xlTitles.includes(props.modalObject.title)
-        ? "xl"
-        : xlKey.includes(props.modalObject.key)
-          ? "xl"
-          : "lg";
+    : fullTitles.includes(props.modalObject?.title)
+    ? "xxl"
+    : xlTitles.includes(props.modalObject?.title)
+    ? "xl"
+    : xlKey.includes(props.modalObject?.key)
+    ? "xl"
+    : "lg";
 
   let submitButtonRender =
     props?.modalObject?.Action?.toLowerCase() == "view" ? false : true;
@@ -287,23 +287,23 @@ const ModalComponent = (props) => {
         <Element id="modal-container"></Element>
         <Modal.Header closeButton>
           <Modal.Title>
-            {props.modalObject.title === "Regular Living Expenses"
-              ? props.modalObject.title2 || props.modalObject.title
-              : props.modalObject.title}
+            {props.modalObject?.title === "Regular Living Expenses"
+              ? props.modalObject?.title2 || props.modalObject?.title
+              : props.modalObject?.title}
           </Modal.Title>
         </Modal.Header>
         {progress !== 0 && <CustomLoadingBar progress={progress} />}
         <Modal.Body>
           {props.children
             ? React.cloneElement(props.children, {
-              formRef,
-              flagState,
-              setFlagState,
-              modalObject,
-              setQuestionChange,
-              childButtonRef,
-              childButtonDownloadRef,
-            })
+                formRef,
+                flagState,
+                setFlagState,
+                modalObject,
+                setQuestionChange,
+                childButtonRef,
+                childButtonDownloadRef,
+              })
             : "no Child exist"}
         </Modal.Body>
         {FooterButtonRender && (
@@ -377,7 +377,7 @@ const ModalComponent = (props) => {
                 onClick={() => {
                   setShowInnerModal(true);
                 }}
-                style={{padding:"18px"}}
+                style={{ padding: "18px" }}
               >
                 Edit Important Questions
               </AntButton>

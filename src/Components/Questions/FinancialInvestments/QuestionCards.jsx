@@ -128,7 +128,7 @@
 
 // const QuestionCard = ({ title, img, variant, onOpen }) => {
 //   return (
-//     <div className="col-md-3 mb-4">
+//     <div className="${evenClass ? "col-md-3" : "col-md-4"} mb-4">
 //       <div className="card shadow p-3 h-100" style={{ borderRadius: "16px" }}>
 //         <h5 className="text-center">{title}</h5>
 //         <div className="text-center">
@@ -772,7 +772,7 @@ const QuestionCards = (props) => {
     Boat: <AssetInfo />,
     Caravan: <AssetInfo />,
     "Personal Assets": <AssetInfo />,
-    "Contents": <AssetInfo />,
+    Contents: <AssetInfo />,
     "Other Assets": <AssetInfo />,
     "Personal Loan": <PersonalLoan />,
     "Credit Card": <CreditCard />,
@@ -940,7 +940,7 @@ const QuestionCards = (props) => {
         {ModalContent(modalObject)}
       </ModalComponent>
 
-      <div className="row m-0 justify-content-start align-items-stretch">
+      <div className="row m-0 justify-content-center align-items-stretch">
         {Array.isArray(arrayObj?.[props.questionKey]) &&
           arrayObj?.[props.questionKey].map((elem, index) => {
             if (CRObject[elem.key] === "Yes") {
@@ -975,9 +975,19 @@ const QuestionCards = (props) => {
               const PartnerClass =
                 localStorage.getItem("UserStatus") === "Single" ? "d-none" : "";
 
+              const numberOfCards = arrayObj?.[props.questionKey].filter(
+                (e) => CRObject[e.key] === "Yes"
+              ).length;
+
+              const evenClass =
+                numberOfCards <= 4 || numberOfCards === 7 || numberOfCards >= 8;
+
               if (singleSwitch) {
                 return (
-                  <div className={`col-md-3 mb-4`} key={index}>
+                  <div
+                    className={`${evenClass ? "col-md-3" : "col-md-4"} mb-4`}
+                    key={index}
+                  >
                     <Card
                       className="py-4 shadow borderOverAll GoalsobjectiveCard"
                       style={{ borderRadius: "20px", height: "100%" }}
@@ -1099,11 +1109,15 @@ const QuestionCards = (props) => {
                     OpenModal={OpenModal2}
                     homeArray={homeArray}
                     arrayCount={arrayCount}
+                    evenClass={evenClass}
                   />
                 );
               } else if (reuseSwitch) {
                 return (
-                  <div className={`col-md-3 mb-4`} key={index}>
+                  <div
+                    className={`${evenClass ? "col-md-3" : "col-md-4"} mb-4`}
+                    key={index}
+                  >
                     <Card
                       className="py-4 shadow borderOverAll GoalsobjectiveCard d-flex"
                       style={{ borderRadius: "20px", height: "100%" }}
@@ -1199,6 +1213,7 @@ const QuestionCards = (props) => {
                     OpenReuseModal={OpenReuseModal}
                     homeArray={homeArray}
                     arrayCount={arrayCount}
+                    evenClass={evenClass}
                   />
                 );
               } else if (OneIndex) {
@@ -1211,6 +1226,7 @@ const QuestionCards = (props) => {
                     OpenModal={OpenModal2}
                     homeArray={homeArray}
                     arrayCount={arrayCount}
+                    evenClass={evenClass}
                   />
                 );
               } else if (combinedSwitch) {
@@ -1223,6 +1239,7 @@ const QuestionCards = (props) => {
                     OpenModal={OpenModal2}
                     homeArray={homeArray}
                     arrayCount={arrayCount}
+                    evenClass={evenClass}
                   />
                 );
               } else if (TowInSwitch) {
@@ -1235,6 +1252,7 @@ const QuestionCards = (props) => {
                     OpenModal={OpenModal2}
                     homeArray={homeArray}
                     arrayCount={arrayCount}
+                    evenClass={evenClass}
                   />
                 );
               } else if (SampleOneSwitch) {
@@ -1247,6 +1265,7 @@ const QuestionCards = (props) => {
                     OpenModal={OpenModal2}
                     homeArray={homeArray}
                     arrayCount={arrayCount}
+                    evenClass={evenClass}
                   />
                 );
               } else {
@@ -1254,7 +1273,10 @@ const QuestionCards = (props) => {
                 // ya hos sukta hai bad ma chnage karna para
 
                 return (
-                  <div className={`col-md-3 mb-4`} key={index}>
+                  <div
+                    className={`${evenClass ? "col-md-3" : "col-md-4"} mb-4`}
+                    key={index}
+                  >
                     <Card
                       className="py-4 shadow borderOverAll GoalsobjectiveCard"
                       style={{ borderRadius: "20px", height: "100%" }}

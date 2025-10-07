@@ -27,34 +27,28 @@ const PersonalLoan = (props) => {
   let bankDetailObj = useRecoilValue(BankDetail);
   let DefaultUrl = useRecoilValue(defaultUrl);
 
-  let [nameSet] = useState(() => {
-    if (props.modalObject.Input === "client") {
-      return localStorage.getItem("UserName");
-    } else if (props.modalObject.Input === "partner") {
-      return localStorage.getItem("PartnerName");
-    } else if (props.modalObject.Input === "joint") {
-      return (
-        localStorage.getItem("UserName") +
-        " & " +
-        localStorage.getItem("PartnerName")
-      );
-    }
-  });
+  let [nameSet] = useState(localStorage.getItem("UserName"));
 
   let personalLoans =
-    Object.keys(questionDetail.personalLoans).length > 0
+    Object.keys(questionDetail.personalLoans || {}).length > 0
       ? questionDetail.personalLoans
       : {
-        client: [],
-        partner: [],
-        joint: [],
-      };
+          client: [],
+          partner: [],
+          joint: [],
+        };
 
   let initialValues = {
-    personalLoans: personalLoans[props.modalObject.Input].length
-      ? personalLoans[props.modalObject.Input]
-      : [],
-    NumberOfMap: personalLoans[props.modalObject.Input].length || "",
+    personalLoans:
+      Array.isArray(personalLoans["client"]) &&
+      personalLoans["client"].length > 0
+        ? personalLoans["client"]
+        : [],
+    NumberOfMap:
+      Array.isArray(personalLoans["client"]) &&
+      personalLoans["client"].length > 0
+        ? personalLoans["client"].length
+        : "",
   };
 
   const [dynamicFields, setDynamicFields] = useState([]);
@@ -69,21 +63,21 @@ const PersonalLoan = (props) => {
 
   useEffect(() => {
     if (
-      personalLoans[props.modalObject.Input] &&
-      personalLoans[props.modalObject.Input].length
+      personalLoans["client"] &&
+      personalLoans["client"].length
     ) {
       setDynamicFields(
-        Array(personalLoans[props.modalObject.Input].length).fill("")
+        Array(personalLoans["client"].length).fill("")
       );
     }
-  }, [personalLoans[props.modalObject.Input]]);
+  }, [personalLoans["client"]]);
 
   const fillInitialValues = (setFieldValue) => {
     if (
-      personalLoans[props.modalObject.Input] &&
-      personalLoans[props.modalObject.Input].length
+      personalLoans["client"] &&
+      personalLoans["client"].length
     ) {
-      setFieldValue("personalLoans", personalLoans[props.modalObject.Input]);
+      setFieldValue("personalLoans", personalLoans["client"]);
     }
   };
 
@@ -94,18 +88,20 @@ const PersonalLoan = (props) => {
     // Initialize new personalLoans array with empty objects if needed
     setFieldValue(
       "personalLoans",
-      Array(Number(value)).fill().map((_, i) => ({
-        LenderCurrent: "",
-        LoanBalance: "",
-        LoanType: "",
-        RepaymentsAmount: "",
-        Frequency: "",
-        AnnualRepayments: "",
-        InterestRate: "",
-        LoanTerm: "",
-        LoanTermRemaining: "",
-        ...(initialValues.personalLoans[i] || {}),
-      }))
+      Array(Number(value))
+        .fill()
+        .map((_, i) => ({
+          LenderCurrent: "",
+          LoanBalance: "",
+          LoanType: "",
+          RepaymentsAmount: "",
+          Frequency: "",
+          AnnualRepayments: "",
+          InterestRate: "",
+          LoanTerm: "",
+          LoanTermRemaining: "",
+          ...(initialValues.personalLoans[i] || {}),
+        }))
     );
   };
 
@@ -117,9 +113,13 @@ const PersonalLoan = (props) => {
   let AnnualFormula = (values, setFieldValue, currentInput, index) => {
     // alert("ma chala")
     let RepaymentsAmount = parseFloat(
-      values.personalLoans[index.replace(/[^0-9]+/g, "")]?.RepaymentsAmount?.replace(/[^0-9.-]+/g, "") || 0
+      values.personalLoans[
+        index.replace(/[^0-9]+/g, "")
+      ]?.RepaymentsAmount?.replace(/[^0-9.-]+/g, "") || 0
     );
-    let Frequency = parseFloat(values.personalLoans[index.replace(/[^0-9]+/g, "")]?.Frequency || 0);
+    let Frequency = parseFloat(
+      values.personalLoans[index.replace(/[^0-9]+/g, "")]?.Frequency || 0
+    );
 
     switch (currentInput.name.split(".").pop()) {
       case "RepaymentsAmount":
@@ -133,7 +133,7 @@ const PersonalLoan = (props) => {
 
     const AnnualRepayments = Frequency * RepaymentsAmount;
 
-    console.log(AnnualRepayments, Frequency, RepaymentsAmount)
+    console.log(AnnualRepayments, Frequency, RepaymentsAmount);
 
     setFieldValue(
       `[${index}].AnnualRepayments`,
@@ -141,21 +141,22 @@ const PersonalLoan = (props) => {
     );
   };
 
-  let FormulaSetting = () => { };
+  let FormulaSetting = () => {};
 
   let onSubmit = async (values) => {
     // Use the personalLoans array directly from values
     const personalLoanData = values.personalLoans;
 
     // Create API payload
-    let DataOf = props.modalObject.Input;
+    let DataOf = "client";
     let obj = {
       clientFK: localStorage.getItem("UserID"),
       [DataOf]: personalLoanData,
       [DataOf + "Total"]: toCommaAndDollar(
         personalLoanData.reduce(
           (total, entry) =>
-            total + parseFloat(entry.AnnualRepayments.replace(/[^0-9.-]+/g, "") || 0),
+            total +
+            parseFloat(entry.AnnualRepayments.replace(/[^0-9.-]+/g, "") || 0),
           0
         )
       ),
@@ -166,7 +167,7 @@ const PersonalLoan = (props) => {
       ...prev,
       personalLoans: {
         ...prev.personalLoans,
-        [props.modalObject.Input]: personalLoanData,
+        ["client"]: personalLoanData,
       },
     }));
 
@@ -176,7 +177,7 @@ const PersonalLoan = (props) => {
       if (!bankAccountArray) {
         res = await PostAxios(`${DefaultUrl}/api/personalLoans/Add`, obj);
       } else {
-        obj.collection = props.modalObject.Input;
+        obj.collection = "client";
         res = await PatchAxios(`${DefaultUrl}/api/personalLoans/Update`, obj);
       }
 
@@ -279,7 +280,6 @@ const PersonalLoan = (props) => {
       disabled: true,
       callBack: true,
       func: AnnualFormula,
-
     },
     {
       title: "Interest Rate (p.a)",
@@ -314,7 +314,7 @@ const PersonalLoan = (props) => {
       {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
-        }, [personalLoans[props.modalObject.Input]]);
+        }, [personalLoans["client"]]);
 
         const dataRows = useMemo(() => {
           const num = Number(values.NumberOfMap) || 0;
@@ -325,12 +325,15 @@ const PersonalLoan = (props) => {
               LenderCurrent: values.personalLoans?.[i]?.LenderCurrent || "",
               LoanBalance: values.personalLoans?.[i]?.LoanBalance || "",
               LoanType: values.personalLoans?.[i]?.LoanType || "",
-              RepaymentsAmount: values.personalLoans?.[i]?.RepaymentsAmount || "",
+              RepaymentsAmount:
+                values.personalLoans?.[i]?.RepaymentsAmount || "",
               Frequency: values.personalLoans?.[i]?.Frequency || "",
-              AnnualRepayments: values.personalLoans?.[i]?.AnnualRepayments || "",
+              AnnualRepayments:
+                values.personalLoans?.[i]?.AnnualRepayments || "",
               InterestRate: values.personalLoans?.[i]?.InterestRate || "",
               LoanTerm: values.personalLoans?.[i]?.LoanTerm || "",
-              LoanTermRemaining: values.personalLoans?.[i]?.LoanTermRemaining || "",
+              LoanTermRemaining:
+                values.personalLoans?.[i]?.LoanTermRemaining || "",
             }));
           }
           return [];
@@ -355,7 +358,6 @@ const PersonalLoan = (props) => {
                   <option value="2">2</option>
                 </select>
               </div>
-
             </div>
 
             {values.NumberOfMap && (

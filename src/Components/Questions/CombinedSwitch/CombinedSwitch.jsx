@@ -6,7 +6,7 @@ import { CRState, QuestionDetail } from '../../../Store/Store';
 import { useRecoilValue } from 'recoil';
 
 const CombinedSwitch = (props) => {
-    let { OpenModal, arrayCount, jointClass, PartnerClass, elem, index } = props;
+    let { OpenModal, arrayCount, jointClass, PartnerClass, elem, index,evenClass } = props;
 
     let questionDetail = useRecoilValue(QuestionDetail);
     let CRObject = useRecoilValue(CRState);
@@ -18,7 +18,7 @@ const CombinedSwitch = (props) => {
 
     if (onlyJoint.includes(elem.title)) {
         return (
-            <div className={`col-md-3 mb-4`} key={index}>
+            <div className={`${evenClass ? "col-md-3" : "col-md-4"} mb-4`} key={index}>
                 <Card className="py-4 shadow borderOverAll GoalsobjectiveCard d-flex" style={{ borderRadius: "20px", height: "100%" }}>
                     <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}</h5>
                     <div className="QuestionIcon CardImg">
@@ -59,7 +59,7 @@ const CombinedSwitch = (props) => {
     }
     if (onlyClient.includes(elem.title)) {
         return (
-            <div className={`col-md-3 mb-4`} key={index}>
+            <div className={`${evenClass ? "col-md-3" : "col-md-4"} mb-4`} key={index}>
                 <Card className="py-4 shadow borderOverAll GoalsobjectiveCard d-flex" style={{ borderRadius: "20px", height: "100%" }}>
                     <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}</h5>
                     <div className="QuestionIcon CardImg">
@@ -100,7 +100,7 @@ const CombinedSwitch = (props) => {
     }
     else if (elem.title === "Own a Family Home") {
         return (
-            <div className={`col-md-3 mb-4`} key={index}>
+            <div className={`${evenClass ? "col-md-3" : "col-md-4"} mb-4`} key={index}>
                 <Card className="py-4 shadow borderOverAll GoalsobjectiveCard d-flex" style={{ borderRadius: "20px", height: "100%" }}>
                     <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}
                     </h5>
@@ -160,7 +160,7 @@ const CombinedSwitch = (props) => {
     }
     else {
         return (
-            <div className={`col-md-3 mb-4`} key={index}>
+            <div className={`${evenClass ? "col-md-3" : "col-md-4"} mb-4`} key={index}>
 
                 <Card className="py-4 shadow borderOverAll GoalsobjectiveCard d-flex" style={{ borderRadius: "20px", height: "100%" }}>
                     <h5 className='text-center' onClick={() => { console.log(questionDetail[elem.key]) }}>{elem.title}

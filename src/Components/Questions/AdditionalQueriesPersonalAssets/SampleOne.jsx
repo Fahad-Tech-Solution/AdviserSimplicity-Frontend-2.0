@@ -68,7 +68,7 @@ const SampleOne = (props) => {
   };
 
   return (
-    <div className={` col-md-3  mb-4`} key={index}>
+    <div className={` ${evenClass ? "col-md-3" : "col-md-4"}  mb-4`} key={index}>
       <Card
         className="py-4 shadow borderOverAll GoalsobjectiveCard"
         style={{ borderRadius: "20px", height: "100%" }}

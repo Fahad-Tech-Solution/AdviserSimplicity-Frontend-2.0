@@ -1,430 +1,768 @@
-// import React from "react";
-/*-----"/user/personal-assets"-----------*/
+import React, { useState } from "react";
+import { FaArrowUpRightFromSquare } from "react-icons/fa6";
+import { Field, Form, Formik } from "formik";
+import { Button, InputGroup } from "react-bootstrap";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  defaultUrl,
+  PersonalDetailsData,
+  QuestionDetail,
+} from "../../../Store/Store";
+import {
+  openNotificationSuccess,
+  PatchAxios,
+  PostAxios,
+  toCommaAndDollar,
+} from "../../Assets/Api/Api";
+import ModalComponent from "./ModalComponent";
+
+/* SVG imports */
 import homeSvg from "../svgs/home-svgrepo-com.svg";
 import carSvg from "../svgs/car.svg";
 import houseHoldSvg from "../svgs/warehouse-.svg";
 import boatSvg from "../svgs/boat.svg";
-import trailerSvg from "../svgs/trailer-caravan.svg";
 import settingMoneySvg from "../svgs/settingMoney.svg";
 import moneyGivingPng from "../svgs/moneyGiving.png";
-
-/*-----"/user/personal-income"-----------*/
 import businessmanSvg from "../svgs/businessman.svg";
 import businessIncomePng from "../svgs/business-income.png";
 import businessPartnershipPng from "../svgs/businessPartnership.png";
 import gearsSvg from "../svgs/gears-gear-svgrepo-com.svg";
 import moneySvg from "../svgs/money-3.svg";
 import overseasSvg from "../svgs/overseas.svg";
-import inheritancePng from "../svgs/inheritance.png";
-import moneyBagSvg from "../svgs/money-bag-svgrepo-com.svg";
 import moneyBagPng from "../svgs/money-bag.png";
+import BankImg from "../svgs/bank.svg";
+import TermImg from "../svgs/TermDepositCanva.png";
+import PortFolio from "../svgs/portfolio.svg";
+import analytics from "../svgs/analytics.png";
+import funds from "../svgs/funds.svg";
+import certificate from "../svgs/certificate.svg";
+import property from "../svgs/property-value.svg";
+import loan from "../svgs/loan.svg";
+import piggybank1 from "../svgs/piggy-bank.svg";
+import calender from "../svgs/calendar.png";
+import piggybank2 from "../svgs/piggy-bank-new.svg";
+import will from "../svgs/page-with-curl-svgrepo-com.svg";
+import advisor from "../svgs/online-interview-male-svgrepo-com.svg";
+import POA from "../svgs/conversation-person-svgrepo-com.svg";
 
-/*---------------"Practical imports"----------------------------*/
-import React, { useState } from "react";
-import { FaArrowUpRightFromSquare } from "react-icons/fa6";
-import { PersonalDetailsData, QuestionDetail } from "../../../Store/Store";
-import { useRecoilState, useRecoilValue } from "recoil";
+/* Components */
+import OwnFamilyHome from "../AdditionalQueriesPersonalAssets/OwnFamilyHome";
+import AssetInfo from "../AdditionalQueriesPersonalAssets/AssetInfo";
+import PersonalLoan from "./QuestionsDetail/PersonalLoan";
+import CreditCard from "./QuestionsDetail/CreditCard";
 import EmploymentIncome from "../PersonalIncome/EmploymentIncome";
-// // Example card config
+import Partnership from "../PersonalIncome/Partnership";
+import CenterLinkPayments from "../PersonalIncome/CenterLinkPayments";
+import LifeTimeBeneFits from "../PersonalIncome/LifetimeBenefits";
+import OverseasPension from "../PersonalIncome/OverseasPension";
+import Inheritance from "../PersonalIncome/Inheritance";
+import LumpsumExpenses from "../PersonalIncome/LumpsumExpenses";
+import RegularLivingExpenses from "../PersonalIncome/RegularLivingExpenses";
+import SoleTrader from "../PersonalIncome/SoleTrader";
+import { FaRegSave } from "react-icons/fa";
+import ButtonDrawer from "../../Assets/Dynamic/ButtonDrawer";
+import MiddleWare from "./MiddleWare";
+import InvestmentPropertyDetails from "./QuestionsDetail/InvestmentPropertyDetails";
+import InvestmentLoan from "./QuestionsDetail/InvestmentLoan";
+import MarginLoan from "./QuestionsDetail/MarginLoan";
+import EstatePlanningWill from "../EstatePlanning/EstatePlanningWill";
+import EstatePlanningPOA from "../EstatePlanning/EstatePlanningPOA";
+import EstatePlanningProfessionalAdviser from "../EstatePlanning/EstatePlanningProfessionalAdviser";
+import trailer from "../svgs/trailer-caravan.svg";
+
+/*------------------------------------ CONFIG ------------------------------------*/
 const questionConfig = {
+  "/user/personal-income": [
+    {
+      title: "Employment Income",
+      keyName: "incomeFromOwnBusiness",
+      img: businessmanSvg,
+      component: <EmploymentIncome />,
+      DrawerWidth: "80%",
+    },
+    {
+      title: "Sole Trader",
+      keyName: "incomeFromSoleTrader",
+      img: businessIncomePng,
+      component: <SoleTrader />,
+    },
+    {
+      title: "Partnership",
+      keyName: "incomeFromPartnership",
+      img: businessPartnershipPng,
+      component: <Partnership />,
+    },
+    {
+      title: "Centerlink Payments",
+      keyName: "incomeFromCentrelink",
+      img: gearsSvg,
+      component: <CenterLinkPayments />,
+    },
+    {
+      title: "LifeTime Benefits",
+      keyName: "incomeFromSuperPayment",
+      img: moneySvg,
+      component: <LifeTimeBeneFits />,
+    },
+    {
+      title: "Overseas Pension",
+      keyName: "incomeFromOverseasPension",
+      img: overseasSvg,
+      component: <OverseasPension />,
+    },
+    {
+      title: "Regular Living Expenses",
+      keyName: "incomeFromRegularLivingExpenses",
+      img: moneyBagPng,
+      component: <RegularLivingExpenses />,
+      variant: "case3",
+      Labels: ["General Living", "Retirement Living"],
+      customButtonAction: async (
+        values,
+        questionDetail,
+        setQuestionDetail,
+        DefaultUrl,
+        personalDetailObj
+      ) => {
+        try {
+          if (!values?.retirementLivingExpense) {
+            openNotificationSuccess(
+              "error",
+              "topRight",
+              "Validation Error",
+              "Please enter a valid retirement living expense value."
+            );
+            return;
+          }
+
+          const existing = questionDetail?.retirementLivingExpenses;
+          const isUpdate = Boolean(existing?._id);
+          const payload = {
+            _id: isUpdate ? existing._id : undefined,
+            retirementLivingExpense: values.retirementLivingExpense,
+            clientFK: personalDetailObj?._id,
+          };
+
+          const apiUrl = `${DefaultUrl}/api/retirementLivingExpenses/${
+            isUpdate ? "Update" : "Add"
+          }`;
+          const res = isUpdate
+            ? await PatchAxios(apiUrl, payload)
+            : await PostAxios(apiUrl, payload);
+
+          if (!res) throw new Error("No response from API");
+
+          setQuestionDetail((prev) => ({
+            ...prev,
+            retirementLivingExpenses: res,
+          }));
+
+          openNotificationSuccess(
+            "success",
+            "topRight",
+            "Success",
+            `Retirement Living Expense ${
+              isUpdate ? "updated" : "added"
+            } successfully!`
+          );
+        } catch (err) {
+          console.error(err);
+          openNotificationSuccess(
+            "error",
+            "topRight",
+            "Error",
+            "Failed to save retirement living data."
+          );
+        }
+      },
+      getInitialValues: (questionDetail) => {
+        if (!questionDetail) return {};
+
+        const sectionData = questionDetail["retirementLivingExpenses"];
+
+        // ✅ Return data only if it exists and has a valid _id
+        if (sectionData && sectionData._id) {
+          return { ...sectionData };
+        }
+
+        // ✅ Otherwise return empty defaults
+        return {};
+      },
+    },
+  ],
   "/user/personal-assets": [
     {
-      title: "Own a Family Home",
+      title: "Family Home",
       keyName: "familyHome",
       img: homeSvg,
+      component: <OwnFamilyHome />,
     },
     {
       title: "Car",
       keyName: "car",
       img: carSvg,
       api: "/car",
+      component: <AssetInfo />,
     },
     {
-      title: "House hold",
+      title: "Contents",
       keyName: "houseHold",
-      api: "/houseHold",
       img: houseHoldSvg,
+      variant: "case4",
+      api: "/houseHold",
+      component: <AssetInfo />,
     },
     {
       title: "Boat",
       keyName: "boat",
-      api: "/boat",
       img: boatSvg,
+      variant: "case4",
+      api: "/boat",
+      component: <AssetInfo />,
     },
     {
       title: "Caravan",
       keyName: "caravan",
+      img: trailer,
+      variant: "case4",
       api: "/caravan",
-      img: trailerSvg,
+      component: <AssetInfo />,
     },
     {
       title: "Other Assets",
       keyName: "otherAssets",
+      api: "/personalAssets",
       img: settingMoneySvg,
-      variant: "reuse",
+      variant: "case4",
+      component: <AssetInfo />,
     },
     {
       title: "Personal Debt",
       keyName: "personalLoans",
       img: moneyGivingPng,
+      variant: "case2",
+      Labels: [
+        {
+          label: "Credit Card",
+          value: (questionDetail) =>
+            questionDetail?.creditCards?.clientTotal ?? "",
+          component: <CreditCard />,
+          key: "creditCards",
+        },
+        {
+          label: "Personal Loan",
+          value: (questionDetail) =>
+            questionDetail?.personalLoans?.clientTotal ?? "",
+          component: <PersonalLoan />,
+          key: "personalLoans",
+        },
+      ],
     },
   ],
-  "/user/personal-income": [
+  "/user/financial-investments": [
     {
-      title: "Employment Income",
-      keyName: "incomeFromOwnBusiness",
-      img: businessmanSvg,
-      Component: <EmploymentIncome />,
+      title: "Bank Accounts",
+      keyName: "bankAccountFinance",
+      img: BankImg,
+      component: <MiddleWare />,
     },
     {
-      title: "Sole Trader",
-      keyName: "incomeFromSoleTrader",
-      img: businessIncomePng,
+      title: "Term Deposits",
+      keyName: "termDepositsFinance",
+      img: TermImg,
+      component: <MiddleWare />,
     },
     {
-      title: "Partnership",
-      keyName: "incomeFromPartnership",
-      img: businessPartnershipPng,
+      title: "Australian Shares/ETFs",
+      keyName: "australianShareMarket",
+      img: PortFolio,
+      component: <MiddleWare />,
     },
     {
-      title: "Centerlink Payments",
-      keyName: "incomeFromCentrelink",
-      img: gearsSvg,
+      title: "Platform Investments",
+      keyName: "managedFund",
+      img: funds,
+      component: <MiddleWare />,
     },
     {
-      title: "LifeTime Benefits",
-      keyName: "incomeFromSuperPayment",
-      img: moneySvg,
+      title: "Investment Bond",
+      keyName: "investmentBondFinance",
+      img: certificate,
+      component: <MiddleWare />,
+    },
+    //SuperAndRetirement
+    {
+      title: "Super Funds",
+      keyName: "superAnnuationIssues",
+      img: piggybank1,
+      component: <MiddleWare />,
     },
     {
-      title: "Overseas Pension",
-      keyName: "incomeFromOverseasPension",
-      img: overseasSvg,
+      title: "Account Based Pension",
+      keyName: "accountBasedPensionIssues",
+      img: piggybank2,
+      component: <MiddleWare />,
     },
     {
-      title: "Inheritance",
-      keyName: "incomeFromInheritance",
-      img: inheritancePng,
+      title: "Annuities",
+      keyName: "annuitiesIssues",
+      img: calender,
+      component: <MiddleWare />,
+    },
+    // Investment
+    {
+      title: "Investment Properties",
+      keyName: "investmentPropertyDetails",
+      img: property,
+      component: <InvestmentPropertyDetails />,
     },
     {
-      title: "Lumpsum Expenses",
-      keyName: "incomeFromLumpsumExpense",
-      img: moneyBagSvg,
+      title: "Investment Loan",
+      keyName: "managedFundsLOC",
+      img: loan,
+      component: <InvestmentLoan />,
     },
     {
-      title: "Regular Living Expenses",
-      keyName: "incomeFromRegularLivingExpenses",
-      img: moneyBagPng,
+      title: "Margin Loan",
+      keyName: "managedFundsMarginLoan",
+      img: analytics,
+      component: <MarginLoan />,
+    },
+  ],
+  "/user/estate-planning": [
+    {
+      title: "Wills",
+      keyName: "will",
+      img: will,
+      component: <EstatePlanningWill />,
+    },
+    {
+      title: "Power of Attorneys",
+      keyName: "POA",
+      img: POA,
+      component: <EstatePlanningPOA />,
+    },
+    {
+      title: "Professional Advisers",
+      keyName: "professionalAdviser",
+      img: advisor,
+      showPartnerButton: true,
+      component: <EstatePlanningProfessionalAdviser />,
     },
   ],
 };
 
-// Case 1: Default - Icon top, name below, input field
-// Case 2: Personal Debt - Custom text right-aligned, icon, multiple inputs
-// Case 3: Regular Living - Name/text, grouped input with custom function button
-// Case 4: Contents - Simplified, both names shown, no partner input
+/*------------------------------------ CARD ------------------------------------*/
+const QuestionCard = (props) => {
+  const {
+    title,
+    keyName,
+    img,
+    variant = "case1", // "case1" | "case2" | "case3" | "case4"
+    partnerModal = false,
+    onOpen,
+    questionDetail = {},
+    personalDetailObj = {},
+    customText = null,
+    customButtonIcon = null,
+    customButtonAction = null,
+    hidePartner = false,
+    Labels = [],
+    getInitialValues = null,
+    component = null,
+    PopoverContent = null,
+    evenClass,
+  } = props;
 
-const QuestionCard = ({
-  title,
-  keyName,
-  img,
-  variant = "case1", // "case1" | "case2" | "case3" | "case4"
-  partnerModal = false,
-  onOpen,
-  questionDetail = {},
-  personalDetailObj = {},
-  customText = null,
-  customButtonIcon = null,
-  customButtonAction = null,
-  hidePartner = false,
-}) => {
-  // Get preferred names
-  const clientName = personalDetailObj.client?.clientPreferredName || "";
-  const partnerName = personalDetailObj.partner?.partnerPreferredName || "";
+  const [open, setOpen] = useState(false);
 
-  // Check if single or widowed
-  const isSingleOrWidowed = ["Single", "Widowed"].includes(
+  const clientName = personalDetailObj.client?.clientPreferredName || "Client";
+  const partnerName =
+    personalDetailObj.partner?.partnerPreferredName || "Partner";
+  const isSingle = ["Single", "Widowed"].includes(
     personalDetailObj.client?.clientMaritalStatus
   );
-  console.log(questionDetail[keyName], keyName, title);
-  // Get values
-  const clientValue =
-    questionDetail[keyName]?.clientTotal !== undefined
-      ? `${questionDetail[keyName].clientTotal}`
-      : "";
 
-  const partnerValue =
-    questionDetail[keyName]?.partnerTotal !== undefined
-      ? `${questionDetail[keyName].partnerTotal}`
-      : "";
+  const clientValue = questionDetail?.[keyName]?.clientTotal ?? "";
+  const partnerValue = questionDetail?.[keyName]?.partnerTotal ?? "";
+  const jointValue = questionDetail?.[keyName]?.jointTotal ?? "";
+  const initialValues = getInitialValues?.(questionDetail) || {};
 
-  // Case 1: Default Layout
-  const renderCase1 = () => (
-    <>
-      <div className="text-center mb-3">
-        <img src={img} alt={title} style={{ width: 60, height: 60 }} />
-      </div>
-
-      {/* Client Input */}
-      <div className="mb-3">
-        <div className="d-flex justify-content-center align-items-center gap-2 mb-2">
-          <button
-            className="btn btn-sm bg-secondary rounded-circle text-light d-flex align-items-center justify-content-center"
-            style={{ width: 28, height: 28, padding: 0 }}
-            onClick={() => onOpen?.(title, "client")}
-          >
-            <FaArrowUpRightFromSquare size={14} />
-          </button>
+  // 🧩 CASE 1: Default
+  const renderCase1 = () => {
+    const [clientOpen, setClientOpen] = useState(false);
+    const [partnerOpen, setPartnerOpen] = useState(false);
+    return (
+      <>
+        <div className="text-center mb-3">
+          <img src={img} alt={title} width={60} height={60} />
         </div>
-        <label className="d-block text-center mb-2 fw-medium">
-          {clientName}
-        </label>
-        <input
-          className="form-control inputDesign text-center"
-          value={clientValue}
-          readOnly
-          placeholder={title}
-        />
-      </div>
 
-      {/* Partner Input */}
-      {!isSingleOrWidowed && !hidePartner && (
-        <div>
-          {partnerModal && (
-            <div className="d-flex justify-content-center align-items-center gap-2 mb-2">
-              <button
-                className="btn btn-sm bg-secondary rounded-circle text-light d-flex align-items-center justify-content-center"
-                style={{ width: 28, height: 28, padding: 0 }}
-                onClick={() => onOpen?.(title, "partner")}
-              >
-                <FaArrowUpRightFromSquare size={14} />
-              </button>
-            </div>
-          )}
-          <label className="d-block text-center mb-2 fw-medium">
-            {partnerName}
-          </label>
+        {/* Client */}
+        <div className="mb-3 text-center d-flex flex-column align-items-center justify-content-center">
+          <ButtonDrawer
+            title={title}
+            placement="bottom"
+            height={props?.Drawerheight}
+            width={props?.DrawerWidth}
+            DrawerContent={PopoverContent(
+              title,
+              keyName,
+              component,
+              "client",
+              props.api
+            )}
+            open={clientOpen}
+            setOpen={setClientOpen}
+          >
+            <button
+              className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
+              onClick={() =>
+                onOpen(title, keyName, component, "client", props?.api)
+              }
+              onMouseEnter={() => setClientOpen(true)}
+              onMouseLeave={() => setClientOpen(false)}
+              style={{ width: 28, height: 28, padding: 0 }}
+            >
+              <FaArrowUpRightFromSquare size={14} />
+            </button>
+          </ButtonDrawer>
+          <div className="mb-2">{clientName}</div>
           <input
             className="form-control inputDesign text-center"
-            value={partnerValue}
+            value={clientValue}
             readOnly
             placeholder={title}
           />
         </div>
-      )}
-    </>
-  );
 
-  // Case 2: Personal Debt Layout
+        {/* Partner */}
+        {!isSingle && (
+          <div className="mb-3 text-center d-flex flex-column align-items-center justify-content-center">
+            {props?.showPartnerButton && (
+              <ButtonDrawer
+                title={title}
+                placement="bottom"
+                height={props?.Drawerheight}
+                width={props?.DrawerWidth}
+                DrawerContent={PopoverContent(
+                  title,
+                  keyName,
+                  component,
+                  "partner"
+                )}
+                open={partnerOpen}
+                setOpen={setPartnerOpen}
+              >
+                <button
+                  className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
+                  onClick={() =>
+                    onOpen(title, keyName, component, "partner", props?.api)
+                  }
+                  onMouseEnter={() => setPartnerOpen(true)}
+                  onMouseLeave={() => setPartnerOpen(false)}
+                  style={{ width: 28, height: 28, padding: 0 }}
+                >
+                  <FaArrowUpRightFromSquare size={14} />
+                </button>
+              </ButtonDrawer>
+            )}
+            <div className="mb-2">{partnerName}</div>
+            <input
+              className="form-control inputDesign text-center"
+              value={partnerValue}
+              readOnly
+              placeholder={title}
+            />
+          </div>
+        )}
+      </>
+    );
+  };
+
+  const LabelItem = ({
+    lbl,
+    title,
+    questionDetail,
+    Drawerheight,
+    DrawerWidth,
+    onOpen, // Add this prop
+  }) => {
+    const [openNew, setOpenNew] = useState(false);
+
+    const handleOpen = () => {
+      // Pass the specific label's data to the modal
+      onOpen(lbl.label, lbl.key, lbl.component);
+    };
+
+    return (
+      <div className="mb-3 text-center">
+        <div className="d-flex justify-content-center align-items-center gap-2 mb-2">
+          <span>{lbl.label}</span>
+          <ButtonDrawer
+            title={lbl.label}
+            placement="bottom"
+            height={Drawerheight}
+            width={DrawerWidth}
+            DrawerContent={PopoverContent(lbl.label, lbl.key, lbl.component)}
+            open={openNew}
+            setOpen={setOpenNew}
+          >
+            <button
+              className="btn btn-sm bg-secondary rounded-circle text-light d-flex align-items-center justify-content-center"
+              onClick={handleOpen} // Use the local handleOpen
+              onMouseEnter={() => setOpenNew(true)}
+              onMouseLeave={() => setOpenNew(false)}
+              style={{ width: 28, height: 28, padding: 0 }}
+            >
+              <FaArrowUpRightFromSquare size={14} />
+            </button>
+          </ButtonDrawer>
+        </div>
+        <input
+          className="form-control inputDesign text-center"
+          value={lbl.value?.(questionDetail) || ""}
+          readOnly
+          placeholder={title}
+        />
+      </div>
+    );
+  };
+
+  // 🧩 CASE 2: Labels with icon
   const renderCase2 = () => (
     <>
       <div className="text-center mb-3">
-        <img src={img} alt={title} style={{ width: 60, height: 60 }} />
+        <img src={img} alt={title} width={60} height={60} />
       </div>
-
-      {/* Credit Card Section */}
-      <div className="mb-3">
-        <div className="d-flex align-items-center justify-content-center gap-2 mb-2">
-          <span className="fw-medium">{customText || "Credit Card"}</span>
-          <button
-            className="btn btn-sm bg-secondary rounded-circle text-light d-flex align-items-center justify-content-center"
-            style={{ width: 28, height: 28, padding: 0 }}
-            onClick={() => onOpen?.(title, "client", "Credit Card")}
-          >
-            <FaArrowUpRightFromSquare size={14} />
-          </button>
-        </div>
-        <input
-          className="form-control inputDesign text-center"
-          value={clientValue}
-          readOnly
-          placeholder={title}
+      {Labels.map((lbl, i) => (
+        <LabelItem
+          key={i}
+          lbl={lbl}
+          title={title}
+          questionDetail={questionDetail}
+          Drawerheight={props?.Drawerheight}
+          DrawerWidth={props?.DrawerWidth}
+          onOpen={onOpen} // Pass the onOpen prop down
         />
-      </div>
-
-      {/* Personal Loan Section */}
-      <div>
-        <div className="d-flex align-items-center justify-content-center gap-2 mb-2">
-          <span className="fw-medium">Personal Loan</span>
-          <button
-            className="btn btn-sm bg-secondary rounded-circle text-light d-flex align-items-center justify-content-center"
-            style={{ width: 28, height: 28, padding: 0 }}
-            onClick={() => onOpen?.(title, "partner", "Personal Loan")}
-          >
-            <FaArrowUpRightFromSquare size={14} />
-          </button>
-        </div>
-        <input
-          className="form-control inputDesign text-center"
-          value={partnerValue}
-          readOnly
-          placeholder={title}
-        />
-      </div>
+      ))}
     </>
   );
 
-  // Case 3: Regular Living Expenses Layout
+  // 🧩 CASE 3: Form input + button
   const renderCase3 = () => (
     <>
       <div className="text-center mb-4">
-        <img src={img} alt={title} style={{ width: 60, height: 60 }} />
+        <img src={img} alt={title} width={60} height={60} />
       </div>
-
-      {/* General Living Section */}
       <div className="mb-3">
         <div className="d-flex align-items-center justify-content-center gap-2 mb-2">
-          <span className="fw-medium">General Living</span>
-          <button
-            className="btn btn-sm bg-secondary rounded-circle text-light d-flex align-items-center justify-content-center"
-            style={{ width: 28, height: 28, padding: 0 }}
-            onClick={() => onOpen?.(title, "partner", "Personal Loan")}
+          <span className="fw-medium">{Labels[0]}</span>
+
+          <ButtonDrawer
+            title={title}
+            placement="bottom"
+            height={props?.Drawerheight}
+            width={props?.DrawerWidth}
+            DrawerContent={PopoverContent(title, keyName, component)}
+            open={open}
+            setOpen={setOpen}
           >
-            <FaArrowUpRightFromSquare size={14} />
-          </button>
+            <button
+              className="btn btn-sm bg-secondary rounded-circle text-light d-flex align-items-center justify-content-center"
+              style={{ width: 28, height: 28, padding: 0 }}
+              onClick={() => onOpen?.(title, keyName, component)}
+              onMouseEnter={() => setOpen(true)}
+              onMouseLeave={() => setOpen(false)}
+            >
+              <FaArrowUpRightFromSquare size={14} />
+            </button>
+          </ButtonDrawer>
         </div>
         <div className="input-group">
           <input
             className="form-control inputDesign text-center"
-            placeholder="General Living Expenses"
+            placeholder={Labels[0]}
             value={clientValue}
             readOnly
           />
         </div>
       </div>
 
-      {/* Retirement Living Section */}
-      <div>
-        <label className="d-block text-center mb-2 fw-medium">
-          Retirement Living
-        </label>
-        <div className="input-group">
-          <input
-            className="form-control inputDesign text-center"
-            placeholder="Regular Living Expenses"
-            value={partnerValue}
-            readOnly
-          />
-          <button
-            className="btn text-light d-flex align-items-center justify-content-center"
-            style={{
-              borderRadius: "0 8px 8px 0",
-              backgroundColor: "#28a745",
-              border: "2px solid #28a745",
-              width: 40,
-            }}
-            onClick={() => customButtonAction?.()}
-          >
-            {customButtonIcon || <FaArrowUpRightFromSquare size={16} />}
-          </button>
-        </div>
-      </div>
+      <label className="d-block text-center mb-2 fw-medium">{Labels[1]} </label>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={(values) =>
+          customButtonAction?.(
+            values,
+            questionDetail,
+            props.setQuestionDetail,
+            props.DefaultUrl,
+            personalDetailObj
+          )
+        }
+        enableReinitialize
+      >
+        {({ setFieldValue }) => (
+          <Form>
+            <InputGroup className="inputDesign p-0 flex-nowrap">
+              <Field
+                name="retirementLivingExpense"
+                className="form-control inputDesign text-center"
+                placeholder="Retirement Living Expense"
+                onChange={(e) =>
+                  setFieldValue(
+                    e.target.name,
+                    toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, ""))
+                  )
+                }
+              />
+              <Button type="submit" className="btn bgColor modalBtn border-0">
+                <FaRegSave size={16} />
+              </Button>
+            </InputGroup>
+          </Form>
+        )}
+      </Formik>
     </>
   );
 
-  // Case 4: Contents Layout (Simplified)
+  // 🧩 CASE 4: Simple one-input
   const renderCase4 = () => (
     <>
       <div className="text-center mb-3">
-        <img src={img} alt={title} style={{ width: 60, height: 60 }} />
+        <img src={img} alt={title} width={60} height={60} />
       </div>
-
-      {/* Icon Button */}
-      <div className="d-flex justify-content-center align-items-center gap-2 mb-2">
-        <button
-          className="btn btn-sm bg-secondary rounded-circle text-light d-flex align-items-center justify-content-center"
-          style={{ width: 28, height: 28, padding: 0 }}
-          onClick={() => onOpen?.(title, "both")}
+      <div className="d-flex flex-column align-items-center justify-content-center">
+        <ButtonDrawer
+          title={title}
+          placement="bottom"
+          height={props?.Drawerheight}
+          width={props?.DrawerWidth}
+          DrawerContent={PopoverContent(
+            title,
+            keyName,
+            component,
+            "joint",
+            props.api
+          )}
+          open={open}
+          setOpen={setOpen}
         >
-          <FaArrowUpRightFromSquare size={14} />
-        </button>
+          <button
+            className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
+            onClick={() =>
+              onOpen(title, keyName, component, "joint", props.api)
+            }
+            style={{ width: 28, height: 28, padding: 0 }}
+            onMouseEnter={() => setOpen(true)}
+            onMouseLeave={() => setOpen(false)}
+          >
+            <FaArrowUpRightFromSquare size={14} />
+          </button>
+        </ButtonDrawer>
       </div>
-
-      {/* Both Names Displayed */}
-      <label className="d-block text-center mb-2 fw-medium">
+      <div className="text-center mb-2">
         {clientName} & {partnerName}
-      </label>
-
-      {/* Single Input */}
+      </div>
       <input
         className="form-control inputDesign text-center"
-        value={clientValue}
+        value={jointValue}
         readOnly
         placeholder={title}
       />
     </>
   );
 
-  let allCases = {
-    case1: renderCase1(),
-    case2: renderCase2(),
-    case3: renderCase3(),
-    case4: renderCase4(),
-  };
-
-  let Rendred = (variant) => {
-    return allCases[variant || "case1"];
-  };
+  const renderVariant = {
+    case1: renderCase1,
+    case2: renderCase2,
+    case3: renderCase3,
+    case4: renderCase4,
+  }[variant];
 
   return (
-    <div className="col-md-3 mb-4">
-      <div
-        className="card shadow px-4 py-4 h-100 borderOverAll GoalsobjectiveCard"
-        style={{ borderRadius: "20px" }}
-      >
+    <div className={`${evenClass ? "col-md-3" : "col-md-4"} mb-4`}>
+      <div className="card shadow px-4 py-4 h-100 borderOverAll GoalsobjectiveCard rounded-4">
         <h5 className="text-center fw-bold mb-3">{title}</h5>
-
-        {Rendred(variant)}
+        {renderVariant ? renderVariant() : renderCase1()}
       </div>
     </div>
   );
 };
 
-// Demo Component
+/*------------------------------------ DEMO WRAPPER ------------------------------------*/
 const QuestionCardsDemo = ({ questionKey, CRObject }) => {
-  const [modalInfo, setModalInfo] = useState(null);
-
   const personalDetailObj = useRecoilValue(PersonalDetailsData);
+  const DefaultUrl = useRecoilValue(defaultUrl);
   const [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
+  const [modalInfo, setModalInfo] = useState(null);
+  const [flagState, setFlagState] = useState(false);
 
-  const handleOpen = (title, role, subType) => {
-    setModalInfo({ title, role, subType });
-    console.log(
-      `Opening modal for ${title} - ${role}${subType ? ` - ${subType}` : ""}`
-    );
+  const handleOpen = (title, keyName, component, Input) => {
+    console.log(title, keyName);
+    setModalInfo({ title, key: keyName, component, Input });
+    setFlagState(true);
   };
 
   const questions = questionConfig[questionKey] || [];
 
-  // Only render cards where CRObject[key] === "Yes"
   const visibleQuestions = questions.filter(
-    (q) => !CRObject || CRObject[q.key] === "Yes"
+    (q) => !CRObject || CRObject[q.keyName] === "Yes"
   );
 
+  const numberOfCards = visibleQuestions.length;
+
+  const evenClass =
+    numberOfCards <= 4 || numberOfCards === 7 || numberOfCards >= 8;
+
+  const PopoverContent = (title, keyName, component, Input) => {
+    let modalObject = {
+      title: title,
+      key: keyName,
+      Input,
+    };
+    return (
+      <div
+        style={{
+          height: "80px",
+          margin: "-20px 0px 0px 0px",
+        }}
+      >
+        {component
+          ? React.cloneElement(component, {
+              modalObject,
+            })
+          : "no Child exist"}
+      </div>
+    );
+  };
+
   return (
-    <div
-      className="container-fluid my-4"
-      style={{ minHeight: "100vh", padding: "20px" }}
-    >
-      <div className="row">
+    <div className="container-fluid my-4" style={{ minHeight: "100vh" }}>
+      <ModalComponent
+        modalObject={modalInfo}
+        flagState={flagState}
+        setFlagState={setFlagState}
+      >
+        {modalInfo?.component || null}
+      </ModalComponent>
+
+      <div className="row justify-content-center ">
         {visibleQuestions.map((q, idx) => (
           <QuestionCard
             key={idx}
             {...q}
-            onOpen={() => console.log("Open modal for", q.title)}
+            onOpen={handleOpen}
             personalDetailObj={personalDetailObj}
             questionDetail={questionDetail}
             setQuestionDetail={setQuestionDetail}
+            DefaultUrl={DefaultUrl}
+            PopoverContent={PopoverContent}
+            evenClass={evenClass}
           />
         ))}
       </div>
-
-      {modalInfo && (
-        <div className="alert alert-info mt-4">
-          <strong>Modal Info:</strong> {modalInfo.title} - {modalInfo.role}
-          {modalInfo.subType && ` - ${modalInfo.subType}`}
-        </div>
-      )}
     </div>
   );
 };

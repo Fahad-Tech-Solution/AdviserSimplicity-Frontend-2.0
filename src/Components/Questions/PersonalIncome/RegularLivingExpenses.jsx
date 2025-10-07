@@ -37,7 +37,7 @@ const RegularLivingExpenses = (props) => {
   const [open4, setOpen4] = useState(false);
 
   let regularLivingExpenses =
-    Object.keys(questionDetail[apiKey]).length > 0
+    Object.keys(questionDetail[apiKey] || {}).length > 0
       ? questionDetail[apiKey]
       : {};
 
