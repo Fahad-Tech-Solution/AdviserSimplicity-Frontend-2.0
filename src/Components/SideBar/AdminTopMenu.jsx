@@ -1,0 +1,317 @@
+import {
+  faBars,
+  faCircleUser,
+  faMoon,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import { ConfigProvider, Dropdown, Menu, Steps } from "antd";
+import React, { useEffect, useState } from "react";
+import { Breadcrumb } from "react-bootstrap";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { content } from "../../Content/Content";
+
+import {
+  FaCertificate,
+  FaMoneyBillWave,
+  FaUser,
+  FaUserShield,
+} from "react-icons/fa6";
+import { RiCoinsFill, RiDiscountPercentFill } from "react-icons/ri";
+import {
+  MdFamilyRestroom,
+  MdWaterDrop,
+  MdOutlineBalance,
+  MdOutlineTimeline,
+} from "react-icons/md";
+import { BiDollarCircle } from "react-icons/bi";
+import { FiLogOut } from "react-icons/fi";
+import { useRecoilState } from "recoil";
+import { LoggedInUserData } from "../../Store/Store";
+import { toSentenceCase } from "../Assets/Api/Api";
+
+const AdminTopMenu = (props) => {
+  // let [currentPCLassSwitch, setCurrentPCLassSwitch] = useState("Admin Panel");
+
+  let [loggedInUserData, setLoggedInUserData] =
+    useRecoilState(LoggedInUserData);
+
+  let superAdminRole =
+    loggedInUserData?.roleID?.permissions.includes("superAdmin") || false;
+
+  let [items, setItems] = useState([]);
+  let { superAdmin } = content;
+
+  let location = useLocation();
+
+  useEffect(() => {
+    let cLocation =
+      location.pathname === "/super/admin" ||
+      location.pathname === "/super/admin/"
+        ? ""
+        : location.pathname.replace("/super/admin/", "");
+    console.log(location.pathname, cLocation);
+
+    let stepComplete = 0;
+
+    switch (cLocation) {
+      case "investmen-platforms":
+        stepComplete = 10;
+        break;
+      case "investment-bonds":
+        stepComplete = 20;
+        break;
+      case "super-annuation-funds":
+        stepComplete = 30;
+        break;
+      case "account-based-pensions":
+        stepComplete = 40;
+        break;
+      case "annuities":
+        stepComplete = 50;
+        break;
+      case "personal-insurances":
+        stepComplete = 60;
+        break;
+      default:
+        stepComplete = 0;
+        break;
+    }
+
+    const itemsToRender = superAdmin;
+
+    let conditionCheck = true;
+
+    const updatedItems = itemsToRender
+      .filter((item) => item.condition(conditionCheck))
+      .map((item) => {
+        const iconMap = {
+          FaUser,
+          RiCoinsFill,
+          MdFamilyRestroom,
+          FaCertificate,
+          FaMoneyBillWave,
+          FaUserShield,
+          BiDollarCircle,
+          RiDiscountPercentFill,
+        };
+
+        const IconComponent = iconMap[item.icon] || FaUser; // Default to FaUser if not found
+        let isCurrentStep = cLocation === item.route.replace("/", "");
+
+        let Status =
+          stepComplete < item.statusStep
+            ? "wait"
+            : stepComplete > item.statusStep
+            ? "finish"
+            : "processing";
+
+        return {
+          ...item,
+          icon: (
+            <span
+              className={`rounded-circle text-light ${
+                isCurrentStep ? "bgColorIncomeBlack" : "bgColorIncome2"
+              }`}
+              role="button"
+              onClick={() => {
+                handleStepClick(`/super/admin${item.route}`);
+              }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "16px",
+                width: "2rem",
+                height: "2rem",
+              }}
+            >
+              <IconComponent />
+            </span>
+          ),
+          status: Status,
+          subTitle: (
+            <span
+              style={{
+                color: isCurrentStep ? "#000" : "#808080",
+                fontSize: "12px",
+                width: "100%",
+                fontWeight: isCurrentStep ? "600" : "500",
+              }}
+            >
+              {" "}
+              {item.subTitle}{" "}
+            </span>
+          ),
+        };
+      });
+
+    setItems(updatedItems);
+  }, [location]);
+
+  let Nev = useNavigate();
+  let handleStepClick = (props) => {
+    Nev(props);
+  };
+
+  let topMenuArray = [
+    "/super/admin/adviser-simplicity-packages",
+    "/super/admin/all-advisers",
+    "/super/admin/all-roles",
+    "/super/admin/dashboard",
+    "/super/admin/profile",
+  ];
+
+  const getMenu = (row) => (
+    <Menu
+      style={{
+        minWidth: "150px",
+        marginTop: "10px",
+      }}
+    >
+      <React.Fragment>
+        <Menu.Item
+          key="1"
+          style={{
+            minHeight: "40px",
+            fontSize: "14px",
+            fontWeight: "600",
+          }}
+          onClick={() => {
+            Nev(superAdminRole ? "/super/admin/profile" : "/user/profile");
+          }}
+        >
+          Profile
+        </Menu.Item>
+        <Menu.Item
+          key="3"
+          style={{
+            minHeight: "40px",
+            color: "#FF4D4F",
+            fontSize: "14px",
+            fontWeight: "600",
+          }}
+          onClick={() => {
+            setLoggedInUserData({});
+            Nev("/admin/login");
+          }}
+        >
+          Logout <FiLogOut />
+        </Menu.Item>
+      </React.Fragment>
+    </Menu>
+  );
+
+  if (topMenuArray.includes(location.pathname)) {
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: 10,
+          zIndex: 100,
+          background: "transparent",
+          padding: 0,
+          height: "fit-content",
+          width: props.collapsed ? "calc(100% - 80px)" : "calc(100% - 250px)", // adjust width based on sidebar
+        }}
+        className="d-md-block d-none"
+      >
+        <div className="Top_Nav">
+          <div className="d-flex justify-content-between align-items-center">
+            <div>
+              <Breadcrumb className="BreadcrumbCustom">
+                <Breadcrumb.Item
+                  active
+                  linkAs={Link}
+                  linkProps={{ to: "/" }}
+                  className="p-0 m-0 LeagueSpartanFamily"
+                >
+                  Admin
+                </Breadcrumb.Item>
+                <Breadcrumb.Item
+                  active
+                  linkAs={Link}
+                  linkProps={{ to: "/" }}
+                  className="p-0 m-0 LeagueSpartanFamily"
+                >
+                  {toSentenceCase(
+                    location.pathname
+                      .split("/")
+                      .filter(Boolean)
+                      .pop()
+                      .replaceAll("-", " ")
+                  )}
+                </Breadcrumb.Item>
+              </Breadcrumb>
+              <h5 className="Page LeagueSpartanFamily">
+                {toSentenceCase(
+                  location.pathname
+                    .split("/")
+                    .filter(Boolean)
+                    .pop()
+                    .replaceAll("-", " ")
+                )}
+              </h5>
+            </div>
+            <div className="rightBlock d-flex justify-content-around align-items-center">
+              <FontAwesomeIcon
+                role="button"
+                icon={faBars}
+                className="menu"
+                onClick={() => props.setCollapsed(!props.collapsed)}
+              />
+              {/* <FontAwesomeIcon icon={faMoon} className="moon" /> */}
+              <div className="d-flex justify-content-center align-items-center">
+                <Dropdown overlay={getMenu()}>
+                  <img
+                    src="https://i.pinimg.com/736x/c7/9a/37/c79a37e13ef14be556b51143bcbb1b01.jpg"
+                    alt="Profile"
+                    className="rounded-circle"
+                    style={{ width: "35px" }}
+                  />
+                </Dropdown>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container-fluid overflow-hidden">
+      <div className="row">
+        <div
+          className="col-md-12 overflow-auto"
+          style={{ padding: "20px 0px 0px 0px" }}
+        >
+          <ConfigProvider
+            theme={{
+              components: {
+                Steps: {
+                  customIconFontSize: 30,
+                },
+              },
+              token: {
+                /* here is your global tokens */
+                colorPrimary: "#36b446",
+                fontSize: 12,
+                lineWidth: 4,
+              },
+            }}
+          >
+            <Steps
+              items={items}
+              labelPlacement={"vertical"}
+              initial={0}
+              responsive={false}
+              status={"process"}
+            />
+          </ConfigProvider>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AdminTopMenu;
