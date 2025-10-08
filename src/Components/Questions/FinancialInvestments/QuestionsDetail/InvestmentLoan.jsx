@@ -1,5 +1,5 @@
 import { Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Row, Table } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
@@ -17,6 +17,7 @@ import {
 import axios from "axios";
 import DynamicTableRow from "../../../Assets/Dynamic/DynamicTableRow";
 import { CreatableMultiSelectField } from "./CreatableMultiSelectField";
+import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
 
 const InvestmentLoan = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
@@ -404,6 +405,100 @@ const InvestmentLoan = (props) => {
         ]
       : [{ value: "client", label: RenderName("client") }];
 
+  const AntDTableHOC = DynamicTableForInputsSection("antd");
+
+  const columns = [
+    {
+      title: "Owner",
+      dataIndex: "owner",
+      key: "owner",
+      type: "text", // simple static text or could be DynamicFormField if editable
+      placeholder: "Enter Owner Name",
+      width: 150,
+    },
+    {
+      title: "Lender",
+      dataIndex: "lender",
+      key: "lender",
+      type: "select", // simple static text or could be DynamicFormField if editable
+      options: lenderOption,
+      width: 150,
+    },
+    {
+      title: "Loan Balance",
+      dataIndex: "loanBalance",
+      key: "loanBalance",
+      type: "number-toComma",
+      placeholder: "Loan Balance",
+      width: 200,
+    },
+    {
+      title: "Loan Type",
+      dataIndex: "loanType",
+      key: "loanType",
+      type: "select", // simple static text or could be DynamicFormField if editable
+      options: optionsLender,
+      width: 150,
+    },
+    {
+      title: "Repayments Amount",
+      dataIndex: "repaymentsAmount",
+      key: "repaymentsAmount",
+      type: "number-toComma",
+      placeholder: "Repayments Amount",
+      width: 200,
+    },
+    {
+      title: "frequency",
+      dataIndex: "frequency",
+      key: "frequency",
+      type: "select", // simple static text or could be DynamicFormField if editable
+      options: optionsFrequency,
+      width: 150,
+    },
+    {
+      title: "Annual Repayments",
+      dataIndex: "annualRepayments",
+      key: "annualRepayments",
+      type: "number-toComma-and-MultiSelect", // simple static text or could be DynamicFormField if editable
+      width: 150,
+      name2: "serviceFeeType",
+
+    },
+        {
+      title: "Interest Rate",
+      dataIndex: "interestRate",
+      key: "interestRate",
+      type: "number-toPercent",
+      placeholder: "Interest Rate",
+      width: 200,
+    },
+        {
+      title: "Loan Term",
+      dataIndex: "loanTerm",
+      key: "loanTerm",
+      type: "select", // simple static text or could be DynamicFormField if editable
+      options: loanTermOptions,
+      width: 150,
+    },
+        {
+      title: "Loan Term Remaining",
+      dataIndex: "loanTermRemaining",
+      key: "loanTermRemaining",
+      type: "select", // simple static text or could be DynamicFormField if editable
+      options: loanTermOptions,
+      width: 150,
+    },
+            {
+      title: "Deductible Loan Amount",
+      dataIndex: "deductibleLoanAmount",
+      key: "deductibleLoanAmount",
+      type: "number-toPercent",
+      placeholder: "Deductible Loan Amount",
+      width: 200,
+    },
+  ];
+
   return (
     <Formik
       initialValues={initialValues}
@@ -415,6 +510,32 @@ const InvestmentLoan = (props) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
+
+        const tableData = useMemo(() => {
+          const rows = [];
+
+          if (values.owner.includes("client")) {
+            rows.push({
+              key: "client",
+              stakeHolder: "client", // 🔥 pass this to renderCell
+              owner: RenderName("client"),
+              // lender: values?.client?.lender || "",
+              // loanBalance: values?.client?.loanBalance || "",
+              ...values.client,
+            });
+          }
+
+          if (values.owner.includes("partner")) {
+            rows.push({
+              key: "partner",
+              stakeHolder: "partner", // 🔥 pass this to renderCell
+              owner: RenderName("partner"),
+              ...values.partner,
+            });
+          }
+
+          return rows;
+        }, [values]);
 
         return (
           <Form>
@@ -440,63 +561,15 @@ const InvestmentLoan = (props) => {
                     </div>
                   </div>
                   {values.owner.length > 0 && (
-                    <div className="mt-4">
-                      <Table striped bordered responsive hover>
-                        <thead>
-                          <tr>
-                            <th>
-                              {props.modalObject.title !== "Investment Loan"
-                                ? "members"
-                                : "Owner"}
-                            </th>
-                            <th>Lender</th>
-                            <th>Loan Balance</th>
-                            <th>Loan Type</th>
-                            <th>Repayments Amount</th>
-                            <th>Frequency</th>
-                            <th>Annual Repayments</th>
-                            <th>Interest Rate (p.a)</th>
-                            <th>Loan Term</th>
-                            <th>Loan Term Remaining</th>
-                            <th>Deductible Loan Amount</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {values.owner.includes("client") && (
-                            <DynamicTableRow
-                              rowConfig={rowConfig}
-                              values={values}
-                              setFieldValue={setFieldValue}
-                              handleChange={handleChange}
-                              handleBlur={handleBlur}
-                              stakeHolder={"client."}
-                            />
-                          )}
-
-                          {values.owner.includes("partner") &&
-                            UserStatus === "Married" && (
-                              <DynamicTableRow
-                                rowConfig={rowConfig}
-                                values={values}
-                                setFieldValue={setFieldValue}
-                                handleChange={handleChange}
-                                handleBlur={handleBlur}
-                                stakeHolder={"partner."}
-                              />
-                            )}
-
-                          {values.owner.includes("joint") && (
-                            <DynamicTableRow
-                              rowConfig={rowConfig}
-                              values={values}
-                              setFieldValue={setFieldValue}
-                              handleChange={handleChange}
-                              handleBlur={handleBlur}
-                              stakeHolder={"joint."}
-                            />
-                          )}
-                        </tbody>
-                      </Table>
+                    <div className="mt-4 All_Client reportSection">
+                      <AntDTableHOC
+                        columns={columns}
+                        data={tableData}
+                        values={values}
+                        setFieldValue={setFieldValue}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                      />
                     </div>
                   )}
                 </div>

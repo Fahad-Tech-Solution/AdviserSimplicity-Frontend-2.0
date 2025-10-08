@@ -232,10 +232,10 @@ const QuestionsNew = (props) => {
             </div>
 
             <QuestionCards questionKey={QuestionChange} />
-            <QuestionCardsNew
+            {/* <QuestionCardsNew
               questionKey={QuestionChange}
               CRObject={CRObject}
-            />
+            /> */}
 
             <ModalComponent
               setQuestionChange={setFlagState2}
