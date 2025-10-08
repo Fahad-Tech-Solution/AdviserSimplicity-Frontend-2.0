@@ -246,7 +246,7 @@ const EmploymentIncome = (props) => {
     setFlagState(true);
   };
 
-  const options = ["Single", "Widowed"].includes(
+  const options = !["Single", "Widowed"].includes(
     personalDetailObj.client?.MaritalStatus
   )
     ? [
@@ -501,9 +501,7 @@ const EmploymentIncome = (props) => {
               occupation: values?.partner?.occupation || "",
               employmentStatus: values?.partner?.employmentStatus || "",
               nameOfCompany: values?.partner?.nameOfCompany || "",
-              startDate: values?.partner?.startDate
-                ? ConvertDate(values.partner.startDate)
-                : null,
+              startDate: values?.partner?.startDate || "",
               hoursWorked: values?.partner?.hoursWorked || "",
               salaryPackage:
                 values?.partner?.SalaryPackageModal?.grossSalary || "",
@@ -543,7 +541,7 @@ const EmploymentIncome = (props) => {
                     htmlFor=""
                     className="text-end"
                     onClick={() => {
-                      console.log(options);
+                      console.log(values);
                     }}
                   >
                     Order

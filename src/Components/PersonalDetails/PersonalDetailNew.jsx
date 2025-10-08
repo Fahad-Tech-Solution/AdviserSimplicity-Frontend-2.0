@@ -221,6 +221,51 @@ const mapChildrenForSubmit = (children = []) =>
     dob: formatDate(child.dob),
   }));
 
+const SectionErrorAlert = ({
+  title,
+  columns,
+  errors,
+  errorShow,
+  flattenErrors,
+}) => {
+  const fieldKeys = columns.map((col) => col.dataIndex);
+
+  const sectionErrors = flattenErrors(errors).filter(
+    ([field]) => fieldKeys.includes(field.split(".").pop()) // ✅ match by last key
+  );
+
+  console.log("Section errors:", sectionErrors);
+  console.log("Field keys:", fieldKeys);
+  console.log("All flattened errors:", flattenErrors(errors));
+
+  if (!errorShow || sectionErrors.length === 0) return null;
+
+  return (
+    <div className="mt-3">
+      <Alert
+        message={`Validation Errors (${title})`}
+        description={
+          <ul style={{ marginLeft: 20 }}>
+            {sectionErrors.map(([field, errorMsg]) => {
+              const lastKey = field.split(".").pop();
+              return (
+                <li key={field}>
+                  <strong>
+                    {errorMsg} in ({toSentenceCase(lastKey)})
+                  </strong>
+                </li>
+              );
+            })}
+          </ul>
+        }
+        type="error"
+        showIcon
+        className="mb-3"
+      />
+    </div>
+  );
+};
+
 const PersonalDetailNew = () => {
   const formRef = useRef(null);
   const [switchStep, setSwitchStep] = useState(0);
@@ -363,7 +408,7 @@ const PersonalDetailNew = () => {
     {
       title: "Planned Retirement Age",
       dataIndex: "retAge",
-      type: "text",
+      type: "number",
       key: "retAge",
       CheckError: true,
     },
@@ -958,37 +1003,13 @@ const PersonalDetailNew = () => {
                   values &&
                   errors &&
                   Object.keys(errors).length > 0 && (
-                    <div className="mt-3">
-                      <Alert
-                        message="Validation Errors"
-                        description={
-                          <div>
-                            <p>
-                              Some required fields are missing or invalid.
-                              Please edit to fix them:
-                            </p>
-                            <ul style={{ marginLeft: 20 }}>
-                              {flattenErrors(errors).map(
-                                ([field, errorMsg]) => {
-                                  const baseObject = field.split(".")[0]; // 👈 only take root key
-                                  return (
-                                    <li key={field}>
-                                      <strong>
-                                        {errorMsg} in (
-                                        {toSentenceCase(baseObject)})
-                                      </strong>
-                                    </li>
-                                  );
-                                }
-                              )}
-                            </ul>
-                          </div>
-                        }
-                        type="error"
-                        showIcon
-                        className="mb-3"
-                      />
-                    </div>
+                    <SectionErrorAlert
+                      title="Personal Details"
+                      columns={personalFields}
+                      errors={errors}
+                      errorShow={errorShow}
+                      flattenErrors={flattenErrors}
+                    />
                   )}
 
                 {switchStep == 1 && (
@@ -1002,6 +1023,19 @@ const PersonalDetailNew = () => {
                       handleChange={handleChange}
                       handleBlur={handleBlur}
                     />
+
+                    {errorShow &&
+                      values &&
+                      errors &&
+                      Object.keys(errors).length > 0 && (
+                        <SectionErrorAlert
+                          title="Contact Details"
+                          columns={contactFields}
+                          errors={errors}
+                          errorShow={errorShow}
+                          flattenErrors={flattenErrors}
+                        />
+                      )}
 
                     <h3
                       className="mt-5 fw-bold"
@@ -1019,6 +1053,19 @@ const PersonalDetailNew = () => {
                       handleChange={handleChange}
                       handleBlur={handleBlur}
                     />
+
+                    {errorShow &&
+                      values &&
+                      errors &&
+                      Object.keys(errors).length > 0 && (
+                        <SectionErrorAlert
+                          title="Children Details"
+                          columns={childrenFields}
+                          errors={errors}
+                          errorShow={errorShow}
+                          flattenErrors={flattenErrors}
+                        />
+                      )}
 
                     <h3
                       className="mt-5 fw-bold"

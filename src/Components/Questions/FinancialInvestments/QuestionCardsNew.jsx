@@ -44,6 +44,13 @@ import piggybank2 from "../svgs/piggy-bank-new.svg";
 import will from "../svgs/page-with-curl-svgrepo-com.svg";
 import advisor from "../svgs/online-interview-male-svgrepo-com.svg";
 import POA from "../svgs/conversation-person-svgrepo-com.svg";
+import lifeImg from "../svgs/lifeimg.svg";
+import TPDImg from "../svgs/tpdimg.svg";
+import incomeImg from "../svgs/asd.png";
+import traumaImg from "../svgs/traumaimg.svg";
+import Business_building from "../svgs/building-small-svgrepo-com.svg";
+import people from "../svgs/property-value.svg";
+import investmentCircle from "../svgs/investmentCircle.png";
 
 /* Components */
 import OwnFamilyHome from "../AdditionalQueriesPersonalAssets/OwnFamilyHome";
@@ -69,7 +76,12 @@ import EstatePlanningWill from "../EstatePlanning/EstatePlanningWill";
 import EstatePlanningPOA from "../EstatePlanning/EstatePlanningPOA";
 import EstatePlanningProfessionalAdviser from "../EstatePlanning/EstatePlanningProfessionalAdviser";
 import trailer from "../svgs/trailer-caravan.svg";
-
+import PersonalInsuranceLife from "../PersonalInsurance/LifeInsurance";
+import OtherInvestmentsDynamic from "../QuestoinsSMSF/OtherInvestmentsDynamic";
+import SmsfDetails from "../QuestoinsSMSF/SmsfDetails";
+import SmsfAccumulationDetails from "../QuestoinsSMSF/SmsfAccumulationDetails";
+import SmsfPensionAccountMiddleWare from "../QuestoinsSMSF/PensionAccount";
+import FamilyDetails from "../QuestoinsFamilyTrust/FamilyDetails";
 /*------------------------------------ CONFIG ------------------------------------*/
 const questionConfig = {
   "/user/personal-income": [
@@ -350,6 +362,179 @@ const questionConfig = {
       component: <EstatePlanningProfessionalAdviser />,
     },
   ],
+  "/user/personal-insurance": [
+    {
+      title: "Life Insurance",
+      keyName: "life",
+      dataKey: "personalInsurance",
+      img: lifeImg,
+      component: <PersonalInsuranceLife />,
+      BaceKeys: {
+        client: "clientLifeInsuranceTotal",
+        partner: "partnerLifeInsuranceTotal",
+      },
+    },
+    {
+      title: "TPD",
+      keyName: "life",
+      dataKey: "personalInsurance",
+      img: TPDImg,
+      component: <PersonalInsuranceLife />,
+      BaceKeys: {
+        client: "clientTPDTotal",
+        partner: "partnerTPDTotal",
+      },
+    },
+    {
+      title: "Trauma",
+      keyName: "life",
+      img: traumaImg,
+      dataKey: "personalInsurance",
+      component: <PersonalInsuranceLife />,
+      BaceKeys: {
+        client: "clientTraumaTotal",
+        partner: "partnerTraumaTotal",
+      },
+    },
+    {
+      title: "Income Protection",
+      keyName: "life",
+      img: incomeImg,
+      dataKey: "personalInsurance",
+      component: <PersonalInsuranceLife />,
+      BaceKeys: {
+        client: "clientIncomeProtectionTotal",
+        partner: "partnerIncomeProtectionTotal",
+      },
+    },
+  ],
+  "/user/business-entities": [
+    {
+      title: "Business as Company Structure",
+      keyName: "BusinessAsCompanyStructure",
+      img: Business_building,
+      component: <MiddleWare />,
+    },
+    {
+      title: "Business as Trusts",
+      keyName: "BusinessAsTrusts",
+      img: businessIncomePng,
+      component: <MiddleWare />,
+    },
+  ],
+  "/user/SMSF": [
+    {
+      title: "SMSF Details",
+      keyName: "SMSFDetails",
+      component: <SmsfDetails />,
+      img: will,
+    },
+    {
+      title: "SMSF Accumulation Details",
+      keyName: "SMSFAccumulationDetails",
+      component: <SmsfAccumulationDetails />,
+      img: property,
+    },
+    {
+      title: "SMSF Pension Phase",
+      keyName: "SMSFPensionPhase",
+      component: <SmsfPensionAccountMiddleWare />,
+      img: calender,
+    },
+    {
+      title: "SMSF Bank Accounts",
+      keyName: "SMSFBank",
+      img: BankImg,
+      component: <MiddleWare />,
+    },
+    {
+      title: "SMSF Term Deposits",
+      keyName: "SMSFTermDeposits",
+      img: TermImg,
+      component: <MiddleWare />,
+    },
+    {
+      title: "SMSF Australian Shares/ETFs",
+      keyName: "SMSFAustralianShares",
+      img: PortFolio,
+      component: <MiddleWare />,
+    },
+    {
+      title: "SMSF Platform Investments",
+      keyName: "SMSFManagedFunds",
+      img: funds,
+      component: <MiddleWare />,
+    },
+
+    {
+      title: "SMSF Investment Loan",
+      keyName: "SMSFInvestmentLoan",
+      img: analytics,
+      component: <InvestmentLoan />,
+    },
+    {
+      title: "SMSF Investment Properties",
+      keyName: "SMSFInvestmentProperties",
+      img: people,
+      component: <InvestmentPropertyDetails />,
+    },
+    {
+      title: "Other Investments",
+      keyName: "SMSFOtherInvestment",
+      img: investmentCircle,
+      component: <OtherInvestmentsDynamic />,
+    },
+  ],
+  "/user/family-trust": [
+    {
+      title: "Family Trust Details",
+      keyName: "familyDetails",
+      img: will,
+      component: <FamilyDetails />,
+    },
+    {
+      title: "Family Trust Bank Accounts",
+      keyName: "familyBank",
+      img: BankImg,
+      component: <MiddleWare />,
+    },
+    {
+      title: "Family Trust Term Deposits",
+      keyName: "familyTermDeposit",
+      img: TermImg,
+      component: <MiddleWare />,
+    },
+    {
+      title: "Family Trust Australian Shares/ETFs",
+      keyName: "familyAustralianShare",
+      img: PortFolio,
+      component: <MiddleWare />,
+    },
+    {
+      title: "Family Trust Platform Investments",
+      keyName: "familyMangedFunds",
+      img: funds,
+      component: <MiddleWare />,
+    },
+    {
+      title: "Family Trust Investment Loan",
+      keyName: "familyInvestmentHomeLoan",
+      img: analytics,
+      component: <InvestmentLoan />,
+    },
+    {
+      title: "Family Trust Investment Property",
+      keyName: "familyInvestmentProperties",
+      img: people,
+      component: <InvestmentPropertyDetails />,
+    },
+    {
+      title: "Other Family Investments",
+      keyName: "familyOtherInvestment",
+      img: investmentCircle,
+      component: <OtherInvestmentsDynamic />,
+    },
+  ],
 };
 
 /*------------------------------------ CARD ------------------------------------*/
@@ -372,9 +557,13 @@ const QuestionCard = (props) => {
     component = null,
     PopoverContent = null,
     evenClass,
+    BaceKeys = null,
+    dataKey = null,
   } = props;
 
   const [open, setOpen] = useState(false);
+  const [clientOpen, setClientOpen] = useState(false);
+  const [partnerOpen, setPartnerOpen] = useState(false);
 
   const clientName = personalDetailObj.client?.clientPreferredName || "Client";
   const partnerName =
@@ -383,15 +572,31 @@ const QuestionCard = (props) => {
     personalDetailObj.client?.clientMaritalStatus
   );
 
-  const clientValue = questionDetail?.[keyName]?.clientTotal ?? "";
-  const partnerValue = questionDetail?.[keyName]?.partnerTotal ?? "";
-  const jointValue = questionDetail?.[keyName]?.jointTotal ?? "";
+  const sourceKey = dataKey || keyName;
+
+  const clientValue =
+    questionDetail?.[sourceKey]?.[
+      BaceKeys && Object.keys(BaceKeys).length > 0
+        ? BaceKeys.client
+        : "clientTotal"
+    ] ?? "";
+  const partnerValue =
+    questionDetail?.[sourceKey]?.[
+      BaceKeys && Object.keys(BaceKeys).length > 0
+        ? BaceKeys.partner
+        : "partnerTotal"
+    ] ?? "";
+  const jointValue =
+    questionDetail?.[sourceKey]?.[
+      BaceKeys && Object.keys(BaceKeys).length > 0
+        ? BaceKeys.joint
+        : "jointTotal"
+    ] ?? "";
+
   const initialValues = getInitialValues?.(questionDetail) || {};
 
   // 🧩 CASE 1: Default
   const renderCase1 = () => {
-    const [clientOpen, setClientOpen] = useState(false);
-    const [partnerOpen, setPartnerOpen] = useState(false);
     return (
       <>
         <div className="text-center mb-3">
@@ -684,7 +889,7 @@ const QuestionCard = (props) => {
   return (
     <div className={`${evenClass ? "col-md-3" : "col-md-4"} mb-4`}>
       <div className="card shadow px-4 py-4 h-100 borderOverAll GoalsobjectiveCard rounded-4">
-        <h5 className="text-center fw-bold mb-3">{title}</h5>
+        <h5 className="text-center fw-bold mb-3">{props.title2}</h5>
         {renderVariant ? renderVariant() : renderCase1()}
       </div>
     </div>
@@ -707,9 +912,19 @@ const QuestionCardsDemo = ({ questionKey, CRObject }) => {
 
   const questions = questionConfig[questionKey] || [];
 
-  const visibleQuestions = questions.filter(
-    (q) => !CRObject || CRObject[q.keyName] === "Yes"
-  );
+  const specialVisibilityRules = {
+    "/user/SMSF": (q, index, questionDetail) => {
+      if (index <= 1) return true;
+      return !!questionDetail?.SMSFDetails?.SMSFOwner?.fundName?.trim();
+    },
+    // add more keys here later if needed
+  };
+
+  const visibleQuestions = questions.filter((q, index) => {
+    const baseVisible = !CRObject || CRObject[q.keyName] === "Yes";
+    const rule = specialVisibilityRules[questionKey];
+    return rule ? baseVisible && rule(q, index, questionDetail) : baseVisible;
+  });
 
   const numberOfCards = visibleQuestions.length;
 
@@ -738,6 +953,14 @@ const QuestionCardsDemo = ({ questionKey, CRObject }) => {
     );
   };
 
+  const generateTitle = (data) => {
+    console.log(questionDetail?.SMSFDetails?.SMSFOwner?.fundName);
+    if (data.title === "SMSF Details") {
+      return questionDetail?.SMSFDetails?.SMSFOwner?.fundName || data.title;
+    }
+    return data.title;
+  };
+
   return (
     <div className="container-fluid my-4" style={{ minHeight: "100vh" }}>
       <ModalComponent
@@ -749,19 +972,22 @@ const QuestionCardsDemo = ({ questionKey, CRObject }) => {
       </ModalComponent>
 
       <div className="row justify-content-center ">
-        {visibleQuestions.map((q, idx) => (
-          <QuestionCard
-            key={idx}
-            {...q}
-            onOpen={handleOpen}
-            personalDetailObj={personalDetailObj}
-            questionDetail={questionDetail}
-            setQuestionDetail={setQuestionDetail}
-            DefaultUrl={DefaultUrl}
-            PopoverContent={PopoverContent}
-            evenClass={evenClass}
-          />
-        ))}
+        {visibleQuestions.map((q, idx) => {
+          return (
+            <QuestionCard
+              key={idx}
+              {...q}
+              title2={generateTitle(q)}
+              onOpen={handleOpen}
+              personalDetailObj={personalDetailObj}
+              questionDetail={questionDetail}
+              setQuestionDetail={setQuestionDetail}
+              DefaultUrl={DefaultUrl}
+              PopoverContent={PopoverContent}
+              evenClass={evenClass}
+            />
+          );
+        })}
       </div>
     </div>
   );

@@ -21,7 +21,6 @@ import ModalComponent from "../Questions/FinancialInvestments/ModalComponent";
 import { Element, scroller } from "react-scroll";
 import { useLocation, useNavigate } from "react-router-dom";
 import { GetAxios } from "../Assets/Api/Api";
-import QuestionCards from "../Questions/FinancialInvestments/QuestionCards";
 import { content } from "../../Content/Content";
 import QuestionCardsNew from "../Questions/FinancialInvestments/QuestionCardsNew";
 
@@ -231,7 +230,6 @@ const QuestionsNew = (props) => {
               </div>
             </div>
 
-            <QuestionCards questionKey={QuestionChange} />
             <QuestionCardsNew
               questionKey={QuestionChange}
               CRObject={CRObject}
