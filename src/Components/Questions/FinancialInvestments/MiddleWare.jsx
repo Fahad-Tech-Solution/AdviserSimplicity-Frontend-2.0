@@ -60,18 +60,12 @@ const MiddleWare = (props) => {
     Object.keys(questionDetail[props.modalObject.key] || {}).length > 0
       ? questionDetail[props.modalObject.key]
       : {
-          client: [],
-          joint: [],
-          partner: [],
-        };
+        client: [],
+        joint: [],
+        partner: [],
+      };
 
   const initialValues = {
-    clientCurrentBalance: "",
-    partnerCurrentBalance: "",
-    jointCurrentBalance: "",
-    clientCostBaseTemp: "",
-    partnerCostBaseTemp: "",
-    jointCostBaseTemp: "",
     client: [],
     partner: [],
     joint: [],
@@ -186,46 +180,60 @@ const MiddleWare = (props) => {
       [`${currentInput.name}Message`]:
         expectedTotal !== fromWith
           ? `Total must be equal to the sum of all ${inputSet} filled in the popup. The sum is ${toCommaAndDollar(
-              expectedTotal
-            )}`
+            expectedTotal
+          )}`
           : "",
     }));
   };
 
   // ---------- robust modal opener (accepts various call shapes) ----------
-  async function OpenInnerModal(...args) {
-    let title = null;
-    let valuesForModal = null;
-    let inputKey = null;
+  // async function OpenInnerModal(...args) {
+  //   let title = null;
+  //   let valuesForModal = null;
+  //   let inputKey = null;
 
-    if (typeof args[0] === "string" && args.length >= 3) {
-      title = args[0];
-      valuesForModal = args[1];
-      inputKey = args[2];
-    } else if (args[0] && typeof args[0] === "object" && args[0].stakeHolder) {
-      const row = args[0];
-      inputKey = row.stakeHolder;
-      valuesForModal = row.values || row.data || [];
-      title = row.innerModalTitle || `${RenderName(row.stakeHolder)}_${props.modalObject.title} Detail`;
-    } else {
-      inputKey = args[0];
-      valuesForModal = args[1] || [];
-      title = `${RenderName(inputKey || "client")}_${props.modalObject.title} Detail`;
-    }
+  //   if (typeof args[0] === "string" && args.length >= 3) {
+  //     title = args[0];
+  //     valuesForModal = args[1];
+  //     inputKey = args[2];
+  //   } else if (args[0] && typeof args[0] === "object" && args[0].stakeHolder) {
+  //     const row = args[0];
+  //     inputKey = row.stakeHolder;
+  //     valuesForModal = row.values || row.data || [];
+  //     title = row.innerModalTitle || `${RenderName(row.stakeHolder)}_${props.modalObject.title} Detail`;
+  //   } else {
+  //     inputKey = args[0];
+  //     valuesForModal = args[1] || [];
+  //     title = `${RenderName(inputKey || "client")}_${props.modalObject.title} Detail`;
+  //   }
 
-    if (!title.includes(props.modalObject.title)) {
-      const left = (title && title.split("_")[0]) || RenderName(inputKey || "client");
-      title = `${left}_${props.modalObject.title} Detail`;
-    }
-    if (!title.includes("Detail")) title = `${title} Detail`;
+  //   if (!title.includes(props.modalObject.title)) {
+  //     const left = (title && title.split("_")[0]) || RenderName(inputKey || "client");
+  //     title = `${left}_${props.modalObject.title} Detail`;
+  //   }
+  //   if (!title.includes("Detail")) title = `${title} Detail`;
 
-    console.log("OpenInnerModal ->", { title, inputKey, valuesForModal });
+  //   console.log("OpenInnerModal ->", { title, inputKey, valuesForModal });
+
+  //   setModalObject({
+  //     title,
+  //     Input: inputKey,
+  //     key: props.modalObject.key,
+  //     values: valuesForModal,
+  //     ShowError,
+  //     setShowError,
+  //   });
+  //   setFlagState(true);
+  // }
+
+  async function OpenInnerModal(title, values, key, stackholder) {
+    console.log(title, values, key, stackholder);
 
     setModalObject({
       title,
-      Input: inputKey,
+      Input: key,
       key: props.modalObject.key,
-      values: valuesForModal,
+      values,
       ShowError,
       setShowError,
     });
@@ -244,7 +252,12 @@ const MiddleWare = (props) => {
       setFieldValue("joint", BankAccountFinance.joint || []);
 
       const recalculateSums = (stakeHolder, array) => {
-        const currentBalanceSum = sumArrayValues(array, "currentBalance");
+        const currentBalanceSum = calculateExpectedTotal(
+          props.modalObject.title,
+          array,
+          `${stakeHolder}CurrentBalance`,
+          stakeHolder
+        );
         setFieldValue(`${stakeHolder}CurrentBalance`, toCommaAndDollar(currentBalanceSum));
         checkValues(
           { ...BankAccountFinance, [stakeHolder]: array },
@@ -254,10 +267,12 @@ const MiddleWare = (props) => {
         );
 
         if (attrebuteSet) {
-          const isAustralian = AustralianArray.includes(props.modalObject.title);
-          const isManagedFund = ManagedFundArray.includes(props.modalObject.title);
-          const costBaseField = isAustralian ? "costBase" : isManagedFund ? "totalPortfolioCost" : "costBase";
-          const costBaseSum = sumArrayValues(array, costBaseField);
+          const costBaseSum = calculateExpectedTotal(
+            props.modalObject.title,
+            array,
+            `${stakeHolder}CostBaseTemp`,
+            stakeHolder
+          );
           setFieldValue(`${stakeHolder}CostBaseTemp`, toCommaAndDollar(costBaseSum));
           checkValues(
             { ...BankAccountFinance, [stakeHolder]: array },
@@ -317,8 +332,8 @@ const MiddleWare = (props) => {
           obj.partnerTotal = toCommaAndDollar((parseFloat(obj.partnerCurrentBalance.replace(/[^0-9.-]+/g, "")) || 0) + fiftyPercent);
         }
       } else {
-        obj.clientTotal = obj.clientCurrentBalance || "$0";
-        obj.partnerTotal = obj.partnerCurrentBalance || "$0";
+        obj.clientTotal = obj.clientCurrentBalance || "";
+        obj.partnerTotal = obj.partnerCurrentBalance || "";
       }
 
       if (clientPartnerOnly) obj.jointCurrentBalance = undefined;
@@ -349,48 +364,42 @@ const MiddleWare = (props) => {
   // ---------- AntD columns ----------
   const columns = attrebuteSet
     ? [
-        { title: "Owner", dataIndex: "owner", key: "owner" },
-        {
-          title: "Current Balance",
-          dataIndex: "currentBalance",
-          key: "currentBalance",
-          type: "number-toComma-Modal",
-          placeholder: "Current Balance",
-          callBack: true,
-          inputChangeFunc: checkValues,
-          callBackModal: true,
-          func: OpenInnerModal,
-          handleInnerModal: OpenInnerModal,
-          width: 200,
-        },
-        {
-          title: "Cost Base",
-          dataIndex: "costBaseTemp",
-          key: "costBaseTemp",
-          type: "number-toComma",
-          placeholder: "Cost Base",
-          callBack: true,
-          inputChangeFunc: checkValues,
-          handleInnerModal: OpenInnerModal,
-          width: 200,
-        },
-      ]
+      { title: "Owner", dataIndex: "owner", key: "owner" },
+      {
+        title: "Current Balance",
+        dataIndex: "currentBalance",
+        key: "currentBalance",
+        type: "number-toComma-Modal",
+        placeholder: "Current Balance",
+        innerModalTitle: "Bank Accounts Detail",
+        func: OpenInnerModal,
+        width: 200,
+      },
+      {
+        title: "Cost Base",
+        dataIndex: "costBaseTemp",
+        key: "costBaseTemp",
+        type: "number-toComma",
+        placeholder: "Cost Base",
+        callBack: true,
+        inputChangeFunc: checkValues,
+        handleInnerModal: OpenInnerModal,
+        width: 200,
+      },
+    ]
     : [
-        { title: "Owner", dataIndex: "owner", key: "owner" },
-        {
-          title: "Current Balance",
-          dataIndex: "currentBalance",
-          key: "currentBalance",
-          type: "number-toComma-Modal",
-          placeholder: "Current Balance",
-          callBack: true,
-          inputChangeFunc: checkValues,
-          callBackModal: true,
-          func: OpenInnerModal,
-          handleInnerModal: OpenInnerModal,
-          width: 200,
-        },
-      ];
+      { title: "Owner", dataIndex: "owner", key: "owner" },
+      {
+        title: "Current Balance",
+        dataIndex: "currentBalance",
+        key: "currentBalance",
+        type: "number-toComma-Modal",
+        placeholder: "Current Balance",
+        innerModalTitle: "Bank Accounts Detail",
+        func: OpenInnerModal,
+        width: 200,
+      },
+    ];
 
   const componentMapping = {
     "Bank Accounts Detail": <BankTermForm />,
@@ -422,10 +431,13 @@ const MiddleWare = (props) => {
 
   // ---------- render ----------
   return (
-    <Formik initialValues={initialValues} onSubmit={onSubmit} enableReinitialize innerRef={props.formRef}>
+    <Formik initialValues={initialValues}
+      onSubmit={onSubmit}
+      enableReinitialize
+      innerRef={props.formRef}>
       {({ values, handleChange, setFieldValue, handleBlur }) => {
         useEffect(() => {
-          fillInitialValues(setFieldValue);
+          // fillInitialValues(setFieldValue);
         }, [props.modalObject.key, questionDetail, modalObject]);
 
         const dataRows = [
@@ -440,46 +452,84 @@ const MiddleWare = (props) => {
           },
           ...(localStorage.getItem("UserStatus") === "Married"
             ? [
-                {
-                  key: "partner",
-                  owner: RenderName("partner"),
-                  stakeHolder: "partner",
-                  currentBalance: values.partnerCurrentBalance,
-                  costBaseTemp: values.partnerCostBaseTemp,
-                  values: values.partner || [],
-                  innerModalTitle: RenderName("partner") + "_" + props.modalObject.title + " Detail",
-                },
-                !clientPartnerOnly && {
-                  key: "joint",
-                  owner: `${RenderName("client")} & ${RenderName("partner")}`,
-                  stakeHolder: "joint",
-                  currentBalance: values.jointCurrentBalance,
-                  costBaseTemp: values.jointCostBaseTemp,
-                  values: values.joint || [],
-                  innerModalTitle:
-                    RenderName("client") +
-                    " & " +
-                    RenderName("partner") +
-                    "_" +
-                    props.modalObject.title +
-                    " Detail",
-                },
-              ].filter(Boolean)
+              {
+                key: "partner",
+                owner: RenderName("partner"),
+                stakeHolder: "partner",
+                currentBalance: values.partnerCurrentBalance,
+                costBaseTemp: values.partnerCostBaseTemp,
+                values: values.partner || [],
+                innerModalTitle: RenderName("partner") + "_" + props.modalObject.title + " Detail",
+              },
+              !clientPartnerOnly && {
+                key: "joint",
+                owner: `${RenderName("client")} & ${RenderName("partner")}`,
+                stakeHolder: "joint",
+                currentBalance: values.jointCurrentBalance,
+                costBaseTemp: values.jointCostBaseTemp,
+                values: values.joint || [],
+                innerModalTitle:
+                  RenderName("client") +
+                  " & " +
+                  RenderName("partner") +
+                  "_" +
+                  props.modalObject.title +
+                  " Detail",
+              },
+            ].filter(Boolean)
             : []),
         ];
+
+        const handleModalClose = (setFieldValue, values) => {
+          if (!modalObject?.Input) return;
+          const stakeholder = modalObject.Input;
+
+          const dataArray = values[stakeholder] || [];
+
+          const currentBalanceSum = calculateExpectedTotal(
+            props.modalObject.title,
+            dataArray,
+            `${stakeholder}CurrentBalance`,
+            stakeholder
+          );
+          setFieldValue(`${stakeholder}CurrentBalance`, toCommaAndDollar(currentBalanceSum));
+
+          // Also recalc Cost Base if relevant
+          if (attrebuteSet) {
+            const costBaseSum = calculateExpectedTotal(
+              props.modalObject.title,
+              dataArray,
+              `${stakeholder}CostBaseTemp`,
+              stakeholder
+            );
+            setFieldValue(`${stakeholder}CostBaseTemp`, toCommaAndDollar(costBaseSum));
+          }
+
+          // Update validation state
+          checkValues(
+            { ...values, [stakeholder]: dataArray },
+            setFieldValue,
+            { name: `${stakeholder}CurrentBalance`, value: toCommaAndDollar(currentBalanceSum) },
+            stakeholder
+          );
+        };
 
         return (
           <Form>
             <Row>
               <div className="col-md-12">
-                <InnerModal 
-                  modalObject={modalObject} 
-                  setFieldValue={setFieldValue} 
+                <InnerModal
+                  modalObject={modalObject}
+                  setFieldValue={setFieldValue}
                   setFlagState={setFlagState}
                   flagState={flagState}
+                  onCancel={() => setFlagState(false)}
+                  onClose={() => handleModalClose(setFieldValue, values)}
                 >
                   {ModalContent(modalObject)}
                 </InnerModal>
+
+                <h2 onClick={() => console.log(values)}>Test Values</h2>
 
                 <div className="mt-4 All_Client reportSection">
                   <AntdTable

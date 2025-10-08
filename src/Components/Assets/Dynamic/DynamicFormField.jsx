@@ -228,6 +228,7 @@ const DynamicFormField = ({
               className="btn bgColor modalBtn border-0"
               id="button-addon2"
               onClick={() => {
+                console.log("dynamic Field-",innerModalTitle)
                 all.func(innerModalTitle, values, all.key, stakeHolder);
               }}
             >
