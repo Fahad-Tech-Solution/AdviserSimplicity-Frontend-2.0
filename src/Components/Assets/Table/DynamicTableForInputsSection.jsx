@@ -39,7 +39,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
 
       // ✅ When not editing → format based on type
       if (col?.type === "antdate") {
-        console.log(value);
+        // console.log(value);
         return value ? ConvertDate(value) : "--";
       } else if (col?.type === "checkbox") {
         return value ? "Checked" : "Un-Checked";

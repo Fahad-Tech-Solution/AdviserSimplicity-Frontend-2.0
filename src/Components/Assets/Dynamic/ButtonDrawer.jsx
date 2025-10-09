@@ -41,7 +41,7 @@ const ButtonDrawer = ({
         getContainer={() => document.querySelector(containerSelector)}
         style={{
           width: width,
-          margin: "10px auto",
+          margin: "5px auto",
           borderRadius: "12px",
           boxShadow: "none",
         }}
@@ -50,7 +50,8 @@ const ButtonDrawer = ({
           content: { boxShadow: "none" },
           wrapper: { boxShadow: "none" },
           header: {
-            backgroundColor: "#a0a0a0ff", // custom bg color
+            // backgroundColor: "#b4368f", // custom bg color
+            background: "linear-gradient(60deg,  #158b50ff, #36b446)", // 🌈 gradient
             color: "#fff", // header text color
             fontWeight: "600", // bold title
           },

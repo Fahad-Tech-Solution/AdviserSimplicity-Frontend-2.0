@@ -25,10 +25,10 @@ const AssetInfo = (props) => {
   const fillInitialValues = (setFieldValue) => {
     if (
       questionDetail[props.modalObject.key] &&
-      Object.keys(questionDetail[props.modalObject.key]||{}).length >= 0
+      Object.keys(questionDetail[props.modalObject.key] || {}).length >= 0
     ) {
       const data = questionDetail[props.modalObject.key] || {};
-      
+
       if (Object.keys(data).length > 0) {
         setFieldValue("owner", data.owner || []);
 
@@ -207,7 +207,7 @@ const AssetInfo = (props) => {
     ...baseColumns,
   ];
 
-  const onlyJoint = ["Boat", "Caravan", "House hold"];
+  const onlyJoint = ["Boat", "Caravan", "Contents"];
   const onlyClient = ["Other Assets"];
 
   const options = onlyJoint.includes(props.modalObject.title)

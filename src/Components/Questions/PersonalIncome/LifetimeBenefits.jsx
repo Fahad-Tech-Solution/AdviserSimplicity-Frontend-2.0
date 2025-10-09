@@ -32,12 +32,8 @@ const LifeTimeBeneFits = (props) => {
 
   const initialValues = {
     owner: [],
-    client: {
-     
-    },
-    partner: {
-     
-    },
+    client: {},
+    partner: {},
   };
 
   const fillInitialValues = (setFieldValue) => {
@@ -176,10 +172,7 @@ const LifeTimeBeneFits = (props) => {
       }
 
       const amount = IncomePF * 26;
-      setFieldValue(
-        `${stakeHolder}regularIncomePA`,
-        toCommaAndDollar(amount)
-      );
+      setFieldValue(`${stakeHolder}regularIncomePA`, toCommaAndDollar(amount));
     } catch (error) {
       console.error("Error in Formula function: ", error);
     }
@@ -196,8 +189,7 @@ const LifeTimeBeneFits = (props) => {
       type: "select",
       options: fundOptions,
       width: 150,
-       trrigger: () =>
-        document.querySelector("table"),
+      trrigger: () => document.querySelector("table"),
     },
     {
       title: "Regular Income per Fortnight",
@@ -246,7 +238,6 @@ const LifeTimeBeneFits = (props) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
-console.log(values.client?.centreplaceDeductibleAmount)
         const dataRows = [
           ...(values.owner.includes("client")
             ? [

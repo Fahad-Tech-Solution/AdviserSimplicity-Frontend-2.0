@@ -91,6 +91,7 @@ const questionConfig = {
       img: businessmanSvg,
       component: <EmploymentIncome />,
       DrawerWidth: "80%",
+      Drawerheight: 300,
     },
     {
       title: "Sole Trader",
@@ -223,6 +224,8 @@ const questionConfig = {
       variant: "case4",
       api: "/houseHold",
       component: <AssetInfo />,
+      DrawerWidth: "60%",
+      Drawerheight: 200,
     },
     {
       title: "Boat",
@@ -231,6 +234,8 @@ const questionConfig = {
       variant: "case4",
       api: "/boat",
       component: <AssetInfo />,
+      DrawerWidth: "60%",
+      Drawerheight: 200,
     },
     {
       title: "Caravan",
@@ -239,6 +244,8 @@ const questionConfig = {
       variant: "case4",
       api: "/caravan",
       component: <AssetInfo />,
+      DrawerWidth: "60%",
+      Drawerheight: 200,
     },
     {
       title: "Other Assets",
@@ -247,6 +254,8 @@ const questionConfig = {
       img: settingMoneySvg,
       variant: "case4",
       component: <AssetInfo />,
+      DrawerWidth: "60%",
+      Drawerheight: 200,
     },
     {
       title: "Personal Debt",
@@ -840,8 +849,8 @@ const QuestionCard = (props) => {
       </div>
       <div className="d-flex flex-column align-items-center justify-content-center">
         <ButtonDrawer
-          title={title}
-          placement="bottom"
+          // title={title}
+          placement="top"
           height={props?.Drawerheight}
           width={props?.DrawerWidth}
           DrawerContent={PopoverContent(
@@ -872,7 +881,7 @@ const QuestionCard = (props) => {
       </div>
       <input
         className="form-control inputDesign text-center"
-        value={jointValue}
+        value={jointValue || clientValue || ""}
         readOnly
         placeholder={title}
       />
@@ -889,7 +898,14 @@ const QuestionCard = (props) => {
   return (
     <div className={`${evenClass ? "col-md-3" : "col-md-4"} mb-4`}>
       <div className="card shadow px-4 py-4 h-100 borderOverAll GoalsobjectiveCard rounded-4">
-        <h5 className="text-center fw-bold mb-3">{props.title2}</h5>
+        <h5
+          className="text-center fw-bold mb-3"
+          onClick={() => {
+            console.log(questionDetail?.[sourceKey]);
+          }}
+        >
+          {props.title2}
+        </h5>
         {renderVariant ? renderVariant() : renderCase1()}
       </div>
     </div>
@@ -954,7 +970,6 @@ const QuestionCardsDemo = ({ questionKey, CRObject }) => {
   };
 
   const generateTitle = (data) => {
-    console.log(questionDetail?.SMSFDetails?.SMSFOwner?.fundName);
     if (data.title === "SMSF Details") {
       return questionDetail?.SMSFDetails?.SMSFOwner?.fundName || data.title;
     }

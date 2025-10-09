@@ -650,7 +650,7 @@ const DynamicFormField = ({
                 : all?.disabled || false
             }
             onChange={(e) => {
-              console.log(e);
+              // console.log(e);
               if (all.callBack) {
                 all.func(values, setFieldValue, e.target, stakeHolder);
               }
