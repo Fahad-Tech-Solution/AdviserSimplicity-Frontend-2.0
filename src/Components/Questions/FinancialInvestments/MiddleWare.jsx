@@ -21,11 +21,11 @@ import TradingCompany from "../BusinessEntities/TradingCompany";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
 const MiddleWare = (props) => {
-  // recoil
+  // Recoil
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
-  // local state
+  // Local state
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
   let [ShowError, setShowError] = useState({});
@@ -33,67 +33,71 @@ const MiddleWare = (props) => {
   const AntdTable = DynamicTableForInputsSection("antd");
   const DefaultUrl = useRecoilValue(defaultUrl);
 
-  // title-based flags
-  let switchArray = [
-    "Australian Shares/ETFs",
-    "SMSF Australian Shares/ETFs",
-    "Family Trust Australian Shares/ETFs",
-    "Platform Investments",
-    "Family Trust Platform Investments",
-    "SMSF Platform Investments",
-    "Investment Bond",
-  ];
-  let attrebuteSet = switchArray.includes(props.modalObject.title) ? true : false;
+  // Title-based flags as objects
+  const switchObject = {
+    "Australian Shares/ETFs": true,
+    "SMSF Australian Shares/ETFs": true,
+    "Family Trust Australian Shares/ETFs": true,
+    "Platform Investments": true,
+    "Family Trust Platform Investments": true,
+    "SMSF Platform Investments": true,
+    "Investment Bond": true,
+  };
 
-  let clientPartnerArray = [
-    "Super Funds",
-    "Account Based Pension",
-    "Annuities",
-    "Business as Company Structure",
-    "Business as Trusts",
-  ];
-  let clientPartnerOnly = clientPartnerArray.includes(props.modalObject.title)
-    ? true
-    : false;
+  const clientPartnerObject = {
+    "Super Funds": true,
+    "Account Based Pension": true,
+    "Annuities": true,
+    "Business as Company Structure": true,
+    "Business as Trusts": true,
+  };
+
+  const australianObject = {
+    "Australian Shares/ETFs": true,
+    "SMSF Australian Shares/ETFs": true,
+    "Family Trust Australian Shares/ETFs": true,
+  };
+
+  const managedFundObject = {
+    "Platform Investments": true,
+    "Family Trust Platform Investments": true,
+    "SMSF Platform Investments": true,
+    "Investment Bond": true,
+  };
+
+  let attrebuteSet = props.modalObject.title in switchObject;
+  let clientPartnerOnly = props.modalObject.title in clientPartnerObject;
 
   let BankAccountFinance =
     Object.keys(questionDetail[props.modalObject.key] || {}).length > 0
       ? questionDetail[props.modalObject.key]
       : {
-        client: [],
-        joint: [],
-        partner: [],
+        client: {},
+        joint: {},
+        partner: {},
       };
 
   const initialValues = {
-    client: [],
-    partner: [],
-    joint: [],
+    client: {},
+    partner: {},
+    joint: {},
   };
 
-  const AustralianArray = [
-    "Australian Shares/ETFs",
-    "SMSF Australian Shares/ETFs",
-    "Family Trust Australian Shares/ETFs",
-  ];
-  const ManagedFundArray = [
-    "Platform Investments",
-    "Family Trust Platform Investments",
-    "SMSF Platform Investments",
-    "Investment Bond",
-  ];
+  // ---------- Helpers ----------
+  const sumObjectValues = (obj, key, multiplierKey = null) => {
 
-  // ---------- helpers ----------
-  const sumArrayValues = (array, key, multiplierKey = null) => {
-    return array.reduce((total, entry) => {
-      const value = parseFloat(entry[key]?.replace(/[^0-9.-]+/g, "")) || 0;
-      const multiplier = multiplierKey ? parseFloat(entry[multiplierKey] || 1) : 1;
-      return total + value * multiplier;
-    }, 0);
+    console.log(obj)
+    return obj[key];
+    // return Object.values(obj || {}).reduce((total, entry) => {
+    // const value = parseFloat(entry?.replace(/[^0-9.-]+/g, "")) || 0;
+
+    // const multiplier = multiplierKey ? parseFloat(entry[multiplierKey] || 1) : 1;
+    // return total + value * multiplier;
+    // }, 0);
   };
 
-  const calculateExpectedTotal = (modalTitle, dataArray, currentInput, checkState) => {
-    if (!dataArray || dataArray.length === 0) return 0;
+  const calculateExpectedTotal = (modalTitle, dataObj, currentInput, checkState) => {
+    if (!dataObj || Object.keys(dataObj).length === 0) return 0;
 
     switch (modalTitle) {
       case "Bank Accounts":
@@ -102,34 +106,35 @@ const MiddleWare = (props) => {
       case "SMSF Term Deposits":
       case "Family Trust Bank Accounts":
       case "Family Trust Term Deposits":
-        return sumArrayValues(dataArray, "currentBalance");
+      case "Annuities Detail":
+        return sumObjectValues(dataObj, "currentBalance");
 
       case "Australian Shares/ETFs":
       case "SMSF Australian Shares/ETFs":
       case "Family Trust Australian Shares/ETFs":
         return currentInput === `${checkState}CurrentBalance`
-          ? sumArrayValues(dataArray, "currentBalance")
-          : sumArrayValues(dataArray, "costBase");
+          ? sumObjectValues(dataObj, "currentBalance")
+          : sumObjectValues(dataObj, "costBase");
 
       case "Platform Investments":
       case "Investment Bond":
       case "SMSF Platform Investments":
       case "Family Trust Platform Investments":
         return currentInput === `${checkState}CurrentBalance`
-          ? sumArrayValues(dataArray, "serviceFee", "serviceFeeType")
-          : sumArrayValues(dataArray, "totalPortfolioCost");
+          ? sumObjectValues(dataObj, "serviceFee", "serviceFeeType")
+          : sumObjectValues(dataObj, "totalPortfolioCost");
 
       case "Super Funds":
-        return sumArrayValues(dataArray, "annualAdvice");
+        return sumObjectValues(dataObj, "annualAdvice");
 
       case "Account Based Pension":
-        return sumArrayValues(dataArray, "pensionPayment");
+        return sumObjectValues(dataObj, "pensionPayment");
 
       case "Invested in Annuities":
-        return sumArrayValues(dataArray, "originalInvestmentAmount");
+        return sumObjectValues(dataObj, "originalInvestmentAmount");
 
       case "Business as Company Structure":
-        return sumArrayValues(dataArray, "equityPosition");
+        return sumObjectValues(dataObj, "equityPosition");
 
       default:
         return 0;
@@ -137,9 +142,9 @@ const MiddleWare = (props) => {
   };
 
   const checkValues = async (values, setFieldValue, currentInput, stakeHolder) => {
-    const client = values.client || [];
-    const partner = values.partner || [];
-    const joint = values.joint || [];
+    const client = values.client || {};
+    const partner = values.partner || {};
+    const joint = values.joint || {};
 
     let checkState = "";
     let inputSet = "current balance";
@@ -168,15 +173,14 @@ const MiddleWare = (props) => {
 
     const expectedTotal = await calculateExpectedTotal(
       props.modalObject.title,
-      values[checkState] || [],
+      values[checkState] || {},
       currentInput.name,
       checkState
     );
 
     setShowError((prevState) => ({
       ...prevState,
-      [`${currentInput.name}Error`]:
-        expectedTotal !== 0 && expectedTotal !== fromWith,
+      [`${currentInput.name}Error`]: expectedTotal !== 0 && expectedTotal !== fromWith,
       [`${currentInput.name}Message`]:
         expectedTotal !== fromWith
           ? `Total must be equal to the sum of all ${inputSet} filled in the popup. The sum is ${toCommaAndDollar(
@@ -186,81 +190,42 @@ const MiddleWare = (props) => {
     }));
   };
 
-  // ---------- robust modal opener (accepts various call shapes) ----------
-  // async function OpenInnerModal(...args) {
-  //   let title = null;
-  //   let valuesForModal = null;
-  //   let inputKey = null;
-
-  //   if (typeof args[0] === "string" && args.length >= 3) {
-  //     title = args[0];
-  //     valuesForModal = args[1];
-  //     inputKey = args[2];
-  //   } else if (args[0] && typeof args[0] === "object" && args[0].stakeHolder) {
-  //     const row = args[0];
-  //     inputKey = row.stakeHolder;
-  //     valuesForModal = row.values || row.data || [];
-  //     title = row.innerModalTitle || `${RenderName(row.stakeHolder)}_${props.modalObject.title} Detail`;
-  //   } else {
-  //     inputKey = args[0];
-  //     valuesForModal = args[1] || [];
-  //     title = `${RenderName(inputKey || "client")}_${props.modalObject.title} Detail`;
-  //   }
-
-  //   if (!title.includes(props.modalObject.title)) {
-  //     const left = (title && title.split("_")[0]) || RenderName(inputKey || "client");
-  //     title = `${left}_${props.modalObject.title} Detail`;
-  //   }
-  //   if (!title.includes("Detail")) title = `${title} Detail`;
-
-  //   console.log("OpenInnerModal ->", { title, inputKey, valuesForModal });
-
-  //   setModalObject({
-  //     title,
-  //     Input: inputKey,
-  //     key: props.modalObject.key,
-  //     values: valuesForModal,
-  //     ShowError,
-  //     setShowError,
-  //   });
-  //   setFlagState(true);
-  // }
-
-  async function OpenInnerModal(title, values, key, stackholder) {
-    console.log(title, values, key, stackholder);
+  // ---------- Robust Modal Opener ----------
+  async function OpenInnerModal(title, values, key, stakeHolder) {
+    console.log("OpenInnerModal ->", { title, values, key, stakeHolder });
 
     setModalObject({
       title,
-      Input: key,
-      key: props.modalObject.key,
-      values,
+      Input: stakeHolder,
+      key: key,
+      values: values,
       ShowError,
       setShowError,
     });
     setFlagState(true);
   }
 
-  // ---------- fill initial values ----------
+  // ---------- Fill Initial Values ----------
   const fillInitialValues = (setFieldValue) => {
     try {
       if (!BankAccountFinance || Object.keys(BankAccountFinance).length === 0) return;
 
       if (!BankAccountFinance.clientFK && !BankAccountFinance._id) return;
 
-      setFieldValue("client", BankAccountFinance.client || []);
-      setFieldValue("partner", BankAccountFinance.partner || []);
-      setFieldValue("joint", BankAccountFinance.joint || []);
+      setFieldValue("client", BankAccountFinance.client || {});
+      setFieldValue("partner", BankAccountFinance.partner || {});
+      setFieldValue("joint", BankAccountFinance.joint || {});
 
-      const recalculateSums = (stakeHolder, array) => {
+      const recalculateSums = (stakeHolder, obj) => {
         const currentBalanceSum = calculateExpectedTotal(
           props.modalObject.title,
-          array,
+          obj,
           `${stakeHolder}CurrentBalance`,
           stakeHolder
         );
         setFieldValue(`${stakeHolder}CurrentBalance`, toCommaAndDollar(currentBalanceSum));
         checkValues(
-          { ...BankAccountFinance, [stakeHolder]: array },
+          { ...BankAccountFinance, [stakeHolder]: obj },
           setFieldValue,
           { name: `${stakeHolder}CurrentBalance`, value: toCommaAndDollar(currentBalanceSum) },
           stakeHolder
@@ -269,13 +234,13 @@ const MiddleWare = (props) => {
         if (attrebuteSet) {
           const costBaseSum = calculateExpectedTotal(
             props.modalObject.title,
-            array,
+            obj,
             `${stakeHolder}CostBaseTemp`,
             stakeHolder
           );
           setFieldValue(`${stakeHolder}CostBaseTemp`, toCommaAndDollar(costBaseSum));
           checkValues(
-            { ...BankAccountFinance, [stakeHolder]: array },
+            { ...BankAccountFinance, [stakeHolder]: obj },
             setFieldValue,
             { name: `${stakeHolder}CostBaseTemp`, value: toCommaAndDollar(costBaseSum) },
             stakeHolder
@@ -283,12 +248,12 @@ const MiddleWare = (props) => {
         }
       };
 
-      recalculateSums("client", BankAccountFinance.client || []);
+      recalculateSums("client", BankAccountFinance.client || {});
 
       if (localStorage.getItem("UserStatus") === "Married") {
-        recalculateSums("partner", BankAccountFinance.partner || []);
+        recalculateSums("partner", BankAccountFinance.partner || {});
         if (!clientPartnerOnly) {
-          recalculateSums("joint", BankAccountFinance.joint || []);
+          recalculateSums("joint", BankAccountFinance.joint || {});
         }
       }
     } catch (error) {
@@ -296,7 +261,7 @@ const MiddleWare = (props) => {
     }
   };
 
-  // ---------- onSubmit with API calls ----------
+  // ---------- onSubmit with API Calls ----------
   const onSubmit = async (values) => {
     try {
       let obj = { ...values };
@@ -361,11 +326,11 @@ const MiddleWare = (props) => {
     }
   };
 
-  // ---------- AntD columns ----------
+  // ---------- Columns as Object ----------
   const columns = attrebuteSet
-    ? [
-      { title: "Owner", dataIndex: "owner", key: "owner" },
-      {
+    ? {
+      owner: { title: "Owner", dataIndex: "owner", key: "owner" },
+      currentBalance: {
         title: "Current Balance",
         dataIndex: "currentBalance",
         key: "currentBalance",
@@ -375,7 +340,7 @@ const MiddleWare = (props) => {
         func: OpenInnerModal,
         width: 200,
       },
-      {
+      costBaseTemp: {
         title: "Cost Base",
         dataIndex: "costBaseTemp",
         key: "costBaseTemp",
@@ -386,10 +351,10 @@ const MiddleWare = (props) => {
         handleInnerModal: OpenInnerModal,
         width: 200,
       },
-    ]
-    : [
-      { title: "Owner", dataIndex: "owner", key: "owner" },
-      {
+    }
+    : {
+      owner: { title: "Owner", dataIndex: "owner", key: "owner" },
+      currentBalance: {
         title: "Current Balance",
         dataIndex: "currentBalance",
         key: "currentBalance",
@@ -399,7 +364,7 @@ const MiddleWare = (props) => {
         func: OpenInnerModal,
         width: 200,
       },
-    ];
+    };
 
   const componentMapping = {
     "Bank Accounts Detail": <BankTermForm />,
@@ -429,85 +394,131 @@ const MiddleWare = (props) => {
     return componentMapping[title] || null;
   };
 
-  // ---------- render ----------
+  // ---------- Render ----------
   return (
-    <Formik initialValues={initialValues}
+    <Formik
+      initialValues={initialValues}
       onSubmit={onSubmit}
       enableReinitialize
-      innerRef={props.formRef}>
+      innerRef={props.formRef}
+    >
       {({ values, handleChange, setFieldValue, handleBlur }) => {
         useEffect(() => {
-          // fillInitialValues(setFieldValue);
+          fillInitialValues(setFieldValue);
         }, [props.modalObject.key, questionDetail, modalObject]);
-
-        const dataRows = [
-          {
+        const dataRows = {
+          client: {
             key: "client",
             owner: RenderName("client"),
             stakeHolder: "client",
-            currentBalance: values.clientCurrentBalance,
-            costBaseTemp: values.clientCostBaseTemp,
-            values: values.client || [],
-            innerModalTitle: RenderName("client") + "_" + props.modalObject.title + " Detail",
+            currentBalance:
+              Object.keys(values.client || {}).length > 0
+                ?
+                calculateExpectedTotal(
+                  props.modalObject.title,
+                  values.client,
+                  "currentBalance",
+                  "client"
+                )
+
+                : "--",
+            costBaseTemp:
+              attrebuteSet && Object.keys(values.client || {}).length > 0
+                ? 
+                  calculateExpectedTotal(
+                    props.modalObject.title,
+                    values.client,
+                    "clientCostBaseTemp",
+                    "client"
+                  )
+                : "--",
+            values: values.client,
+            innerModalTitle: `${RenderName("client")}_${props.modalObject.title} Detail`,
           },
           ...(localStorage.getItem("UserStatus") === "Married"
-            ? [
-              {
+            ? {
+              partner: {
                 key: "partner",
                 owner: RenderName("partner"),
                 stakeHolder: "partner",
-                currentBalance: values.partnerCurrentBalance,
-                costBaseTemp: values.partnerCostBaseTemp,
-                values: values.partner || [],
-                innerModalTitle: RenderName("partner") + "_" + props.modalObject.title + " Detail",
+                currentBalance:
+                  Object.keys(values.partner || {}).length > 0
+                    ? calculateExpectedTotal(
+                        props.modalObject.title,
+                        values.partner,
+                        "partnerCurrentBalance",
+                        "partner"
+                      )
+                    : "--",
+                costBaseTemp:
+                  attrebuteSet && Object.keys(values.partner || {}).length > 0
+                    ? calculateExpectedTotal(
+                        props.modalObject.title,
+                        values.partner,
+                        "partnerCostBaseTemp",
+                        "partner"
+                      )
+                    : "--",
+                values: values.partner,
+                innerModalTitle: `${RenderName("partner")}_${props.modalObject.title} Detail`,
               },
-              !clientPartnerOnly && {
-                key: "joint",
-                owner: `${RenderName("client")} & ${RenderName("partner")}`,
-                stakeHolder: "joint",
-                currentBalance: values.jointCurrentBalance,
-                costBaseTemp: values.jointCostBaseTemp,
-                values: values.joint || [],
-                innerModalTitle:
-                  RenderName("client") +
-                  " & " +
-                  RenderName("partner") +
-                  "_" +
-                  props.modalObject.title +
-                  " Detail",
-              },
-            ].filter(Boolean)
-            : []),
-        ];
+              ...(!clientPartnerOnly && {
+                joint: {
+                  key: "joint",
+                  owner: `${RenderName("client")} & ${RenderName("partner")}`,
+                  stakeHolder: "joint",
+                  currentBalance:
+                    Object.keys(values.joint || {}).length > 0
+                      ? calculateExpectedTotal(
+                          props.modalObject.title,
+                          values.joint,
+                          "jointCurrentBalance",
+                          "joint"
+                        )
+                      : "--",
+                  costBaseTemp:
+                    attrebuteSet && Object.keys(values.joint || {}).length > 0
+                      ? calculateExpectedTotal(
+                          props.modalObject.title,
+                          values.joint,
+                          "jointCostBaseTemp",
+                          "joint"
+                        )
+                      : "--",
+                  values: values.joint,
+                  innerModalTitle: `${RenderName("client")} & ${RenderName("partner")}_${props.modalObject.title} Detail`,
+                },
+              }),
+            }
+            : {}),
+        };
 
         const handleModalClose = (setFieldValue, values) => {
           if (!modalObject?.Input) return;
           const stakeholder = modalObject.Input;
 
-          const dataArray = values[stakeholder] || [];
+          const dataObj = values[stakeholder] || {};
 
           const currentBalanceSum = calculateExpectedTotal(
             props.modalObject.title,
-            dataArray,
+            dataObj,
             `${stakeholder}CurrentBalance`,
             stakeholder
           );
           setFieldValue(`${stakeholder}CurrentBalance`, toCommaAndDollar(currentBalanceSum));
 
-          // Also recalc Cost Base if relevant
           if (attrebuteSet) {
             const costBaseSum = calculateExpectedTotal(
               props.modalObject.title,
-              dataArray,
+              dataObj,
               `${stakeholder}CostBaseTemp`,
               stakeholder
             );
             setFieldValue(`${stakeholder}CostBaseTemp`, toCommaAndDollar(costBaseSum));
           }
 
-          // Update validation state
           checkValues(
-            { ...values, [stakeholder]: dataArray },
+            { ...values, [stakeholder]: dataObj },
             setFieldValue,
             { name: `${stakeholder}CurrentBalance`, value: toCommaAndDollar(currentBalanceSum) },
             stakeholder
@@ -533,8 +544,8 @@ const MiddleWare = (props) => {
 
                 <div className="mt-4 All_Client reportSection">
                   <AntdTable
-                    columns={columns}
-                    data={dataRows}
+                    columns={Object.values(columns)}
+                    data={Object.values(dataRows)}
                     values={values}
                     setFieldValue={setFieldValue}
                     handleChange={handleChange}
