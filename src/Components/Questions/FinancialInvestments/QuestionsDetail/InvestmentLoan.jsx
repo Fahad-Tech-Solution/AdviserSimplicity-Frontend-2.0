@@ -16,7 +16,10 @@ import {
 } from "../../../Assets/Api/Api";
 import axios from "axios";
 import DynamicTableRow from "../../../Assets/Dynamic/DynamicTableRow";
-import { CreatableMultiSelectField } from "./CreatableMultiSelectField";
+import {
+  AntdCreatableMultiSelect,
+  CreatableMultiSelectField,
+} from "./CreatableMultiSelectField";
 import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
 
 const InvestmentLoan = (props) => {
@@ -48,7 +51,18 @@ const InvestmentLoan = (props) => {
           joint: [],
         }; // Use an empty object as default if managedFundsLOC is undefined
 
-  let initialValues = { owner: "" };
+  let initialValues = {
+    owner: "",
+    client: {
+      deductibleLoanAmount: "100%",
+    },
+    partner: {
+      deductibleLoanAmount: "100%",
+    },
+    joint: {
+      deductibleLoanAmount: "100%",
+    },
+  };
 
   const fillInitialValues = (setFieldValue) => {
     console.log(managedFundsLOC);
@@ -209,6 +223,7 @@ const InvestmentLoan = (props) => {
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   let onSubmit = async (values) => {
+    console.log(values, "values");
     let obj = values;
     obj.clientFK = localStorage.getItem("UserID");
 
@@ -217,8 +232,8 @@ const InvestmentLoan = (props) => {
     try {
       // Safely parse the value after removing non-numeric characters
       let annualRepayments =
-        parseFloat(obj.joint?.annualRepayments.replace(/[^0-9.-]+/g, "")) *
-        parseFloat(obj.joint?.serviceFeeType.replace(/[^0-9.-]+/g, ""));
+        parseFloat((obj.joint?.annualRepayments || "0").replace(/[^0-9.-]+/g, "")) *
+        parseFloat((obj.joint?.serviceFeeType || "0").replace(/[^0-9.-]+/g, ""));
 
       // Check if the parsed value is a valid number
       if (isNaN(annualRepayments) || annualRepayments === undefined) {
@@ -234,9 +249,10 @@ const InvestmentLoan = (props) => {
 
     // For "client" related calculations
     if (values.owner.includes("client")) {
+      console.log(obj.client, "obj.client");
       obj.clientTotal = toCommaAndDollar(
         parseFloat(obj.client.annualRepayments.replace(/[^0-9.-]+/g, "")) *
-          parseFloat(obj.client.serviceFeeType.replace(/[^0-9.-]+/g, "")) +
+          parseFloat(obj.client.frequency.replace(/[^0-9.-]+/g, "")) +
           fiftyPercent
       );
     } else if (values.owner.includes("joint")) {
@@ -250,7 +266,7 @@ const InvestmentLoan = (props) => {
     if (values.owner.includes("partner") && UserStatus === "Married") {
       obj.partnerTotal = toCommaAndDollar(
         parseFloat(obj.partner?.annualRepayments.replace(/[^0-9.-]+/g, "")) *
-          parseFloat(obj.partner?.serviceFeeType.replace(/[^0-9.-]+/g, "")) +
+          parseFloat(obj.partner?.frequency.replace(/[^0-9.-]+/g, "")) +
           fiftyPercent
       );
     } else if (values.owner.includes("joint")) {
@@ -333,68 +349,120 @@ const InvestmentLoan = (props) => {
     value: (i + 1).toString(),
     label: ("Year " + (i + 1)).toString(),
   }));
+  const calculateAnnualRepayments = (
+    values,
+    setFieldValue,
+    thisInput,
+    stackHolder
+  ) => {
+    console.log(
+      values,
+      thisInput.value,
+      stackHolder,
+      "calculateAnnualRepayments"
+    );
+    // safely extract numeric values
+    const cleanNumber = (val) => {
+      if (val === undefined || val === null) return 0;
+      if (typeof val === "number") return val;
+      const cleaned = String(val).replace(/[^0-9.-]+/g, "");
+      const parsed = parseFloat(cleaned);
+      return isNaN(parsed) ? 0 : parsed;
+    };
 
-  const rowConfig = [
-    {
-      name: "lender",
-      type: "select",
-      options: lenderOption,
-      placeholder: "Lender",
-      styleSet: { width: "20rem" },
-    },
-    {
-      name: "loanBalance",
-      type: "number-toComma",
-      placeholder: "Loan Balance",
-    },
-    {
-      name: "loanType",
-      type: "select",
-      options: optionsLender,
-      placeholder: "Loan Type",
-    },
-    {
-      name: "repaymentsAmount",
-      type: "number-toComma",
-      placeholder: "Repayments Amount",
-    },
-    {
-      name: "frequency",
-      type: "select",
-      options: optionsFrequency,
-      placeholder: "Frequency",
-    },
-    {
-      name: "annualRepayments",
-      type: "number-toComma-and-MultiSelect",
-      placeholder: "Annual Repayments",
-      name2: "serviceFeeType",
-      placeholder2: "Service Fee Type",
-      styleSet: { width: "20rem" },
-    },
-    {
-      name: "interestRate",
-      type: "number-toPercent",
-      placeholder: "Interest Rate",
-    },
-    {
-      name: "loanTerm",
-      type: "select",
-      options: loanTermOptions,
-      placeholder: "Loan Term",
-    },
-    {
-      name: "loanTermRemaining",
-      type: "select",
-      options: loanTermOptions,
-      placeholder: "Loan Term Remaining",
-    },
-    {
-      name: "deductibleLoanAmount",
-      type: "number-toPercent",
-      placeholder: "Deductible Loan Amount",
-    },
-  ];
+    let repaymentsAmount = cleanNumber(
+      values?.[stackHolder.replace(".", "")]?.repaymentsAmount
+    );
+    let frequency = cleanNumber(
+      values?.[stackHolder.replace(".", "")]?.frequency
+    );
+
+    // Handle real-time updates from current input
+    switch (thisInput.name) {
+      case stackHolder + "repaymentsAmount":
+        repaymentsAmount = cleanNumber(thisInput.value);
+        break;
+      case stackHolder + "frequency":
+        frequency = cleanNumber(thisInput.value);
+        break;
+      default:
+        break;
+    }
+
+    console.log(repaymentsAmount, frequency, "repaymentsAmount, frequency");
+
+    const annualRepayments = repaymentsAmount * frequency;
+
+    // ✅ Corrected field path
+    setFieldValue(
+      `${stackHolder}annualRepayments`,
+      toCommaAndDollar(annualRepayments || 0)
+    );
+  };
+
+  // const rowConfig = [
+  //   {
+  //     name: "lender",
+  //     type: "select",
+  //     options: lenderOption,
+  //     placeholder: "Lender",
+  //     styleSet: { width: "20rem" },
+  //   },
+  //   {
+  //     name: "loanBalance",
+  //     type: "number-toComma",
+  //     placeholder: "Loan Balance",
+  //   },
+  //   {
+  //     name: "loanType",
+  //     type: "select",
+  //     options: optionsLender,
+  //     placeholder: "Loan Type",
+  //   },
+  //   {
+  //     name: "repaymentsAmount",
+  //     type: "number-toComma",
+  //     placeholder: "Repayments Amount",
+  //   },
+  //   {
+  //     name: "frequency",
+  //     type: "select",
+  //     options: optionsFrequency,
+  //     placeholder: "Frequency",
+  //     callBack: true,
+  //     func: calculateAnnualRepayments,
+  //   },
+  //   {
+  //     name: "annualRepayments",
+  //     type: "number-toComma-and-MultiSelect",
+  //     placeholder: "Annual Repayments",
+  //     name2: "serviceFeeType",
+  //     placeholder2: "Service Fee Type",
+  //     styleSet: { width: "20rem" },
+  //   },
+  //   {
+  //     name: "interestRate",
+  //     type: "number-toPercent",
+  //     placeholder: "Interest Rate",
+  //   },
+  //   {
+  //     name: "loanTerm",
+  //     type: "select",
+  //     options: loanTermOptions,
+  //     placeholder: "Loan Term",
+  //   },
+  //   {
+  //     name: "loanTermRemaining",
+  //     type: "select",
+  //     options: loanTermOptions,
+  //     placeholder: "Loan Term Remaining",
+  //   },
+  //   {
+  //     name: "deductibleLoanAmount",
+  //     type: "number-toPercent",
+  //     placeholder: "Deductible Loan Amount",
+  //   },
+  // ];
 
   const options =
     UserStatus !== "Single"
@@ -447,25 +515,29 @@ const InvestmentLoan = (props) => {
       type: "number-toComma",
       placeholder: "Repayments Amount",
       width: 200,
+      callBack: true,
+      func: calculateAnnualRepayments,
     },
     {
-      title: "frequency",
+      title: "Frequency",
       dataIndex: "frequency",
       key: "frequency",
       type: "select", // simple static text or could be DynamicFormField if editable
       options: optionsFrequency,
       width: 150,
+      callBack: true,
+      func: calculateAnnualRepayments,
     },
     {
       title: "Annual Repayments",
       dataIndex: "annualRepayments",
       key: "annualRepayments",
-      type: "number-toComma-and-MultiSelect", // simple static text or could be DynamicFormField if editable
+      type: "number-toComma", // simple static text or could be DynamicFormField if editable
+      placeholder: "Annual Repayments",
+      disabled: true,
       width: 150,
-      name2: "serviceFeeType",
-
     },
-        {
+    {
       title: "Interest Rate",
       dataIndex: "interestRate",
       key: "interestRate",
@@ -473,7 +545,7 @@ const InvestmentLoan = (props) => {
       placeholder: "Interest Rate",
       width: 200,
     },
-        {
+    {
       title: "Loan Term",
       dataIndex: "loanTerm",
       key: "loanTerm",
@@ -481,7 +553,7 @@ const InvestmentLoan = (props) => {
       options: loanTermOptions,
       width: 150,
     },
-        {
+    {
       title: "Loan Term Remaining",
       dataIndex: "loanTermRemaining",
       key: "loanTermRemaining",
@@ -489,7 +561,7 @@ const InvestmentLoan = (props) => {
       options: loanTermOptions,
       width: 150,
     },
-            {
+    {
       title: "Deductible Loan Amount",
       dataIndex: "deductibleLoanAmount",
       key: "deductibleLoanAmount",
@@ -550,12 +622,20 @@ const InvestmentLoan = (props) => {
                           : "Owner"}
                       </label>
 
-                      <div style={{ minWidth: "25%" }}>
+                      {/* <div style={{ minWidth: "25%" }}>
                         <Field
                           name={`owner`}
                           component={CreatableMultiSelectField}
                           label="Multi Select Field"
                           options={options}
+                        />
+                      </div> */}
+                      <div style={{ minWidth: "200px" }}>
+                        <Field
+                          name={`owner`}
+                          component={AntdCreatableMultiSelect}
+                          options={options}
+                          onChangefun={() => {}}
                         />
                       </div>
                     </div>
