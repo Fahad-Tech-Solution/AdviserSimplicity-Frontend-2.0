@@ -17,7 +17,12 @@ import {
   StepsStatus,
 } from "../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { FaGear, FaPeopleGroup, FaUserTag } from "react-icons/fa6";
+import {
+  FaChessKnight,
+  FaGear,
+  FaPeopleGroup,
+  FaUserTag,
+} from "react-icons/fa6";
 import {
   FaBalanceScale,
   FaRegCreditCard,
@@ -26,8 +31,18 @@ import {
 } from "react-icons/fa";
 import { openNotificationSuccess } from "../Assets/Api/Api";
 import { AiOutlineBank } from "react-icons/ai";
-import { FiLogOut, FiUser } from "react-icons/fi";
 import {
+  FiActivity,
+  FiBarChart2,
+  FiDollarSign,
+  FiFileText,
+  FiLogOut,
+  FiShuffle,
+  FiUser,
+} from "react-icons/fi";
+import {
+  MdInput,
+  MdLocationPin,
   MdOutlineAccountBalance,
   MdOutlineSecurity,
   MdOutlineTrackChanges,
@@ -163,6 +178,7 @@ const AdminSideBar = (props) => {
         onClick={() =>
           nav(superAdmin ? "/super/admin/dashboard" : "/user/dashboard")
         }
+        style={{ fontWeight: "600" }}
       >
         Dashboard
       </Menu.Item>
@@ -175,6 +191,7 @@ const AdminSideBar = (props) => {
               nav(superAdmin ? "/super/admin/profile" : "/user/profile");
             }}
             icon={<FiUser />}
+            style={{ fontWeight: "600" }}
           >
             Profile
           </Menu.Item>
@@ -188,6 +205,7 @@ const AdminSideBar = (props) => {
               key="/user/CDF-prospects"
               icon={<FaPeopleGroup />}
               onClick={() => nav("/user/CDF-prospects")}
+              style={{ fontWeight: "600" }}
             >
               CDF Prospects
             </Menu.Item>
@@ -197,6 +215,7 @@ const AdminSideBar = (props) => {
               key="/user/my-team"
               onClick={() => nav("/user/my-team")}
               icon={<FaUserTie />}
+              style={{ fontWeight: "600" }}
             >
               My Team
             </Menu.Item>
@@ -209,6 +228,7 @@ const AdminSideBar = (props) => {
           key="/super/admin/financial-institutions"
           onClick={() => nav("/super/admin/financial-institutions")}
           icon={<AiOutlineBank />}
+          style={{ fontWeight: "600" }}
         >
           Financial Entities & Offerings
         </Menu.Item>
@@ -216,7 +236,12 @@ const AdminSideBar = (props) => {
 
       {!superAdmin && (
         <>
-          <SubMenu key="sub1" icon={<RiAppsLine />} title="Discovery">
+          <SubMenu
+            style={{ fontWeight: "600" }}
+            key="sub1"
+            icon={<RiAppsLine />}
+            title="Discovery"
+          >
             <Menu.Item
               key="/user/all-client"
               onClick={() => {
@@ -243,6 +268,7 @@ const AdminSideBar = (props) => {
                 }
               }}
               icon={<MdOutlineAccountBalance />}
+              style={{ fontWeight: "600", color: "#36b446" }}
             >
               Financial Details
             </Menu.Item>
@@ -252,6 +278,7 @@ const AdminSideBar = (props) => {
                   key="/user/goals-and-objectives"
                   onClick={() => nav("/user/goals-and-objectives")}
                   icon={<MdOutlineTrackChanges />}
+                  style={{ fontWeight: "600", color: "#36b446" }}
                 >
                   Goals and Objectives
                 </Menu.Item>
@@ -259,6 +286,7 @@ const AdminSideBar = (props) => {
                   key="/user/risk-profile"
                   onClick={() => nav("/user/risk-profile")}
                   icon={<MdOutlineSecurity />}
+                  style={{ fontWeight: "600", color: "#36b446" }}
                 >
                   View Risk Profile
                 </Menu.Item>
@@ -266,40 +294,79 @@ const AdminSideBar = (props) => {
             )}
           </SubMenu>
 
-          {loggedUser?.roleID?.permissions.includes("cashflow") && (
-            <SubMenu key="sub2" icon={<RiExchange2Line />} title="Strategy">
-              <Menu.Item
+          {loggedUser?.roleID?.permissions.includes("cashflow") &&
+            selectedClientDetails?.client && (
+              <SubMenu
+                style={{ fontWeight: "600" }}
+                key="sub2"
+                icon={<FaChessKnight />}
+                title="Strategy"
+              >
+                {/* <Menu.Item
                 key="/user/cashflow/allusers"
                 onClick={() => nav("/user/cashflow/allusers")}
+                style={{ fontWeight: "600" }}
               >
                 All Strategy Scenarios
-              </Menu.Item>
+              </Menu.Item> */}
 
-              {selectedClientDetails?.client && (
-                <SubMenu
-                  className="subSubMenu"
-                  key="sub3"
-                  title={`${selectedClientDetails.client.clientGivenName} - Scenario`}
+                <Menu.Item
+                  key="/user/cashflow/one-client"
+                  onClick={() => nav("/user/cashflow/one-client")}
+                  style={{ fontWeight: "600" }}
+                  icon={<MdLocationPin />}
                 >
-                  <Menu.Item
-                    key="/user/cashflow/one-client"
-                    onClick={() => nav("/user/cashflow/one-client")}
-                  >
-                    Scenarios
-                  </Menu.Item>
-                  <Menu.Item
-                    key="/user/cashflow/reports/"
-                    disabled={
-                      Object.keys(selectedSenario).length > 0 ? false : true
-                    }
-                    onClick={() => nav("/user/cashflow/reports/")}
-                  >
-                    Reports
-                  </Menu.Item>
-                </SubMenu>
-              )}
-            </SubMenu>
-          )}
+                  Scenarios
+                </Menu.Item>
+                <Menu.Item
+                  key="Inputs"
+                  style={{ fontWeight: "600" }}
+                  icon={<MdInput />}
+                >
+                  Inputs
+                </Menu.Item>
+                <Menu.Item
+                  key="Cashflow"
+                  style={{ fontWeight: "600" }}
+                  icon={<FiDollarSign />}
+                >
+                  Cashflow
+                </Menu.Item>
+                <Menu.Item
+                  key="Networth"
+                  style={{ fontWeight: "600" }}
+                  icon={<FiActivity />}
+                >
+                  Networth
+                </Menu.Item>
+                <Menu.Item
+                  key="Charts"
+                  style={{ fontWeight: "600" }}
+                  icon={<FiBarChart2 />}
+                >
+                  Charts
+                </Menu.Item>
+
+                <Menu.Item
+                  key="/user/cashflow/reports/"
+                  disabled={
+                    Object.keys(selectedSenario).length > 0 ? false : true
+                  }
+                  onClick={() => nav("/user/cashflow/reports/")}
+                  style={{ fontWeight: "600" }}
+                  icon={<FiFileText />}
+                >
+                  Reports
+                </Menu.Item>
+                <Menu.Item
+                  key="Compare"
+                  style={{ fontWeight: "600" }}
+                  icon={<FiShuffle />}
+                >
+                  Compare
+                </Menu.Item>
+              </SubMenu>
+            )}
         </>
       )}
 
@@ -309,6 +376,7 @@ const AdminSideBar = (props) => {
             key="/super/admin/adviser-simplicity-packages"
             onClick={() => nav("/super/admin/adviser-simplicity-packages")}
             icon={<FaRegCreditCard />}
+            style={{ fontWeight: "600" }}
           >
             All Subscriptions
           </Menu.Item>
@@ -316,6 +384,7 @@ const AdminSideBar = (props) => {
             key="/super/admin/all-advisers"
             onClick={() => nav("/super/admin/all-advisers")}
             icon={<FaUserTie />}
+            style={{ fontWeight: "600" }}
           >
             All Advisers
           </Menu.Item>
@@ -332,6 +401,7 @@ const AdminSideBar = (props) => {
               nav("/");
             }}
             icon={<FiLogOut />}
+            style={{ fontWeight: "600" }}
           >
             Logout
           </Menu.Item>

@@ -26,7 +26,7 @@ import CDFclients from "../Components/CDFclients/CDFclients";
 import ProfileTemp from "../Components/Assets/ProfileSection/ProfileTemp";
 import MyTeam from "../Components/SuperAdminComponent/myTeam";
 import { Header } from "antd/es/layout/layout";
-import { defaultUrl, Employees, Roles } from "../Store/Store";
+import { BankDetail, defaultUrl, Employees, Roles } from "../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { GetAxios } from "../Components/Assets/Api/Api";
 
@@ -35,6 +35,7 @@ const { Sider, Content } = Layout;
 function AuthRouts() {
   const [collapsed, setCollapsed] = useState(true);
   let [employee, setEmployee] = useRecoilState(Employees);
+  let [bankDetailObj, setBankDetailObj] = useRecoilState(BankDetail);
 
   const routeConfigs = [
     {
@@ -157,14 +158,16 @@ function AuthRouts() {
   const fetchData = async () => {
     try {
       // Run multiple GET APIs in parallel
-      const [rolesRes, Employees] = await Promise.all([
+      const [rolesRes, Employees, Investment] = await Promise.all([
         GetAxios(`${DefaultUrl}/api/role`),
         GetAxios(`${DefaultUrl}/api/user/Employees`),
+        GetAxios(`${DefaultUrl}/api/investmentoffer/`),
       ]);
 
       // Update state only if responses exist
       if (rolesRes) setRoles(rolesRes);
       if (Employees) setEmployee(Employees);
+      if (Investment) setBankDetailObj(Investment);
     } catch (error) {
       console.error("Error fetching data:", error);
       // You could show a toast or alert here instead
@@ -197,7 +200,7 @@ function AuthRouts() {
         </Header>
         <Content
           style={{
-            margin: "16px",
+            margin: "16px 10px",
             background: "#fff",
             height: "100%",
             padding: "1rem 0rem",

@@ -85,7 +85,7 @@ const BankTermForm = (props) => {
 
     let DataOf = props.modalObject.Input;
 
-    props.setFieldValue(`${DataOf}Details`, newEntries);
+    props.setFieldValue(DataOf, newEntries);
 
     let total = newEntries.reduce(
       (total, entry) =>
@@ -93,12 +93,12 @@ const BankTermForm = (props) => {
       0
     );
 
-    props.setFieldValue(DataOf + "currentBalance", toCommaAndDollar(total));
+    props.setFieldValue(DataOf + "CurrentBalance", toCommaAndDollar(total));
 
     props.modalObject.setShowError((prevState) => ({
       ...prevState,
-      [`${DataOf + "currentBalance"}Error`]: false,
-      [`${DataOf + "currentBalance"}Message`]: "",
+      [`${DataOf + "CurrentBalance"}Error`]: false,
+      [`${DataOf + "CurrentBalance"}Message`]: "",
     }));
 
     // Reset the flag state if necessary

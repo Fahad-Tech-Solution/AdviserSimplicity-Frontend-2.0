@@ -286,6 +286,7 @@ export const PersonalDetailsData = atom({
     },
     haveAnyChildren: "No",
   },
+  effects_UNSTABLE: [persistAtom], // enables localStorage persistence
 });
 
 export const AllUsers = atom({

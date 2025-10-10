@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Formik, Form, Field } from "formik";
-import { Button, Card, Spin } from "antd";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Alert, Button, Card, Spin } from "antd";
 import * as Yup from "yup";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
@@ -17,6 +17,7 @@ import {
   openNotificationSuccess,
   PatchAxios,
   PostAxios,
+  toSentenceCase,
 } from "../Assets/Api/Api";
 import { useLocation, useNavigate } from "react-router-dom";
 import DynamicTableForInputsSection from "../Assets/Table/DynamicTableForInputsSection";
@@ -25,30 +26,94 @@ import dayjs from "dayjs";
 import ProfileCard from "./ProfileCard";
 import ImportantQuestion from "../Questions/ImportantQuestion/ImportantQuestion";
 import ModalComponent from "../Questions/FinancialInvestments/ModalComponent";
+import { differenceInYears } from "date-fns";
 
-const validationSchema = Yup.object({
-  client: Yup.object().shape({
-    firstName: Yup.string().required("First name is required"),
-    lastName: Yup.string().required("Surname is required"),
-    dob: Yup.string().required("Date of birth is required"),
+const childSchema = Yup.object({
+  depenantChild: Yup.string()
+    .oneOf(["Yes", "No"])
+    .required("Dependent required"),
+  name: Yup.string().required("Child name required"),
+  dob: Yup.date().required("Child DOB required"),
+  gender: Yup.string().required("Gender required"),
+  relationship: Yup.string().required("Relationship required"),
+});
+
+const contactSchema = Yup.object({
+  homeAddress: Yup.string().required("Home address is required"),
+  postcodeSuburb: Yup.string()
+    .typeError("PostCode must be a number")
+    .required("Postcode is required"),
+  SameAsAbove: Yup.boolean(),
+  postalAddress: Yup.string().required("Postal address is required"),
+  postalPostCode: Yup.string()
+    .typeError("Postal postcode must be a number")
+    .required("Postal postcode is required"),
+  mobile: Yup.string()
+    .matches(/^[0-9]+$/, "Mobile must be digits only")
+    .required("Mobile is required"),
+  homePhone: Yup.string(),
+  workPhone: Yup.string(),
+  email: Yup.string().email("Invalid email").required("Email is required"),
+});
+
+const personSchema = Yup.object({
+  title: Yup.string().required("Required"),
+  firstName: Yup.string().required("First Name is required"),
+  middleName: Yup.string(),
+  lastName: Yup.string().required("Last Name is required"),
+  preferred: Yup.string(),
+  gender: Yup.string().required("Gender is required"),
+  dob: Yup.date().required("DOB is required"),
+  age: Yup.number().nullable(),
+  marital: Yup.string(),
+  employment: Yup.string(),
+  occupation: Yup.string(),
+  retAge: Yup.string(),
+  smoker: Yup.string(),
+  taxRes: Yup.string(),
+  healthCover: Yup.string(),
+  health: Yup.string(),
+  helpDebt: Yup.string(),
+  image: Yup.object({
+    url: Yup.string().url("Must be a valid URL").nullable(),
   }),
-  partner: Yup.object().shape({
-    firstName: Yup.string().when("client.marital", {
-      is: (val) => val !== "Single" && val !== "Widowed",
-      then: Yup.string().required("First name is required"),
-    }),
-    lastName: Yup.string().when("client.marital", {
-      is: (val) => val !== "Single" && val !== "Widowed",
-      then: Yup.string().required("Surname is required"),
-    }),
-    dob: Yup.string().when("client.marital", {
-      is: (val) => val !== "Single" && val !== "Widowed",
-      then: Yup.string().required("Date of birth is required"),
-    }),
+  contact: contactSchema,
+});
+
+export const validationSchema = Yup.object({
+  client: personSchema,
+
+  // Partner is conditionally required
+  partner: Yup.mixed().when("client.marital", {
+    is: (marital) => marital && !["Single", "Widowed", ""].includes(marital),
+    then: () => personSchema.required("Partner details required"),
+    otherwise: () => Yup.mixed().notRequired(),
   }),
+
   haveAnyChildren: Yup.string()
-    .oneOf(["Yes", "No"], "Please select Yes or No")
-    .required("This field is required"),
+    .oneOf(["Yes", "No"])
+    .required("Please select Yes or No"),
+
+  numberOfChildren: Yup.mixed().when("haveAnyChildren", {
+    is: "Yes",
+    then: () =>
+      Yup.number()
+        .typeError("Must be a number")
+        .min(1, "At least 1 child required")
+        .required("Number of children is required"),
+    otherwise: () => Yup.number().nullable(),
+  }),
+
+  // Children required only when haveAnyChildren = Yes AND numberOfChildren > 0
+  children: Yup.mixed().when(["haveAnyChildren", "numberOfChildren"], {
+    is: (haveAnyChildren, numberOfChildren) =>
+      haveAnyChildren === "Yes" && Number(numberOfChildren) > 0,
+    then: () =>
+      Yup.array()
+        .of(childSchema)
+        .min(1, "At least one child detail is required"),
+    otherwise: () => Yup.array().notRequired(),
+  }),
 });
 
 const AntdDynamicTable = DynamicTableForInputsSection("antd");
@@ -80,7 +145,6 @@ const mapPersonFromBackend = (person, type) => {
     firstName: person?.[`${prefix}GivenName`] || "",
     middleName: person?.[`${prefix}MiddleName`] || "",
     lastName: person?.[`${prefix}LastName`] || "",
-    surname: person?.[`${prefix}Surname`] || "",
     preferred: person?.[`${prefix}PreferredName`] || "",
     gender: person?.[`${prefix}Gender`] || "",
     dob: person?.[`${prefix}DOB`] ? formatDate(person[`${prefix}DOB`]) : "",
@@ -131,7 +195,6 @@ const mapPersonForSubmit = (person, type) => {
     [`${prefix}GivenName`]: person.firstName,
     [`${prefix}MiddleName`]: person.middleName,
     [`${prefix}LastName`]: person.lastName,
-    [`${prefix}Surname`]: person.surname,
     [`${prefix}PreferredName`]: person.preferred,
     [`${prefix}Gender`]: person.gender,
     [`${prefix}DOB`]: formatDate(person.dob),
@@ -158,9 +221,55 @@ const mapChildrenForSubmit = (children = []) =>
     dob: formatDate(child.dob),
   }));
 
+const SectionErrorAlert = ({
+  title,
+  columns,
+  errors,
+  errorShow,
+  flattenErrors,
+}) => {
+  const fieldKeys = columns.map((col) => col.dataIndex);
+
+  const sectionErrors = flattenErrors(errors).filter(
+    ([field]) => fieldKeys.includes(field.split(".").pop()) // ✅ match by last key
+  );
+
+  console.log("Section errors:", sectionErrors);
+  console.log("Field keys:", fieldKeys);
+  console.log("All flattened errors:", flattenErrors(errors));
+
+  if (!errorShow || sectionErrors.length === 0) return null;
+
+  return (
+    <div className="mt-3">
+      <Alert
+        message={`Validation Errors (${title})`}
+        description={
+          <ul style={{ marginLeft: 20 }}>
+            {sectionErrors.map(([field, errorMsg]) => {
+              const lastKey = field.split(".").pop();
+              return (
+                <li key={field}>
+                  <strong>
+                    {errorMsg} in ({toSentenceCase(lastKey)})
+                  </strong>
+                </li>
+              );
+            })}
+          </ul>
+        }
+        type="error"
+        showIcon
+        className="mb-3"
+      />
+    </div>
+  );
+};
+
 const PersonalDetailNew = () => {
   const formRef = useRef(null);
   const [switchStep, setSwitchStep] = useState(0);
+  const [errorShow, setErrorShow] = useState(false);
   const [userData, setUserData] = useState({});
   const [loading, setLeading] = useState(false);
   let [flagState, setFlagState] = useState(false);
@@ -193,24 +302,28 @@ const PersonalDetailNew = () => {
         { value: "Other", label: "Other" },
       ],
       key: "title",
+      CheckError: true,
     },
     {
       title: "First Name",
       dataIndex: "firstName",
       type: "text",
       key: "firstName",
+      CheckError: true,
     },
     {
       title: "Middle Name",
       dataIndex: "middleName",
       type: "text",
       key: "middleName",
+      CheckError: true,
     },
     {
       title: "Last Name",
       dataIndex: "lastName",
       type: "text",
       key: "lastName",
+      CheckError: true,
     },
     {
       title: "Preferred",
@@ -218,14 +331,8 @@ const PersonalDetailNew = () => {
       type: "text",
       key: "preferred",
       fixed: "left",
+      CheckError: true,
     },
-    {
-      title: "Surname",
-      dataIndex: "surname",
-      type: "text",
-      key: "surname",
-    },
-
     {
       title: "Gender",
       dataIndex: "gender",
@@ -236,34 +343,45 @@ const PersonalDetailNew = () => {
         { value: "Other", label: "Other" },
       ],
       key: "gender",
+      CheckError: true,
     },
     {
-      title: "DOB",
+      title: "Date of Birth",
       dataIndex: "dob",
       type: "antdate",
       key: "dob",
+      CheckError: true,
+      callBack: true,
+      func: (values, setFieldValue, thisInput, stakeHolder) => {
+        const age =
+          differenceInYears(new Date(), new Date(thisInput.value)) || 0;
+        setFieldValue(stakeHolder + "age", age);
+      },
     },
     {
       title: "Age",
       dataIndex: "age",
       type: "text",
       key: "age",
+      CheckError: true,
+      disabled: true,
     },
     {
-      title: "Marital",
+      title: "Marital Status",
       dataIndex: "marital",
       type: "select",
       options: [
         { value: "Single", label: "Single" },
         { value: "Married", label: "Married" },
         { value: "De Facto", label: "De Facto" },
-        { value: "Divorced", label: "Divorced" },
+        { value: "Partnered", label: "Partnered" },
         { value: "Widowed", label: "Widowed" },
       ],
       key: "marital",
+      CheckError: true,
     },
     {
-      title: "Employment",
+      title: "Employment Status",
       dataIndex: "employment",
       type: "select",
       options: [
@@ -278,18 +396,21 @@ const PersonalDetailNew = () => {
         { value: "Unemployed", label: "Unemployed" },
       ],
       key: "employment",
+      CheckError: true,
     },
     {
       title: "Occupation",
       dataIndex: "occupation",
       type: "text",
       key: "occupation",
+      CheckError: true,
     },
     {
-      title: "Ret Age",
+      title: "Planned Retirement Age",
       dataIndex: "retAge",
-      type: "text",
+      type: "number",
       key: "retAge",
+      CheckError: true,
     },
     {
       title: "Health",
@@ -302,6 +423,7 @@ const PersonalDetailNew = () => {
         { value: "poor", label: "poor" },
       ],
       key: "health",
+      CheckError: true,
     },
     {
       title: "Smoker",
@@ -311,14 +433,14 @@ const PersonalDetailNew = () => {
       width: 100,
     },
     {
-      title: "Tax Res",
+      title: "Tax Resident",
       dataIndex: "taxRes",
       type: "yesno",
       key: "taxRes",
       width: 100,
     },
     {
-      title: "Health Cover",
+      title: "Private Health Cover",
       dataIndex: "healthCover",
       type: "yesno",
       key: "healthCover",
@@ -340,28 +462,34 @@ const PersonalDetailNew = () => {
       type: "text",
       key: "owner",
       fixed: "left",
+      CheckError: true,
     },
     {
       title: "Home Address",
       dataIndex: "homeAddress",
       type: "text",
       key: "homeAddress",
+      CheckError: true,
     },
     {
       title: "Postcode/Suburb",
       dataIndex: "postcodeSuburb",
-      type: "text",
+      type: "postcode-antd",
       key: "postcodeSuburb",
+      width: 200,
+      CheckError: true,
     },
     {
-      title: "Same As Home Address",
-      placeholder: "Same As Home Address",
-      dataIndex: "SameAsAbove",
-      type: "checkbox",
-      key: "SameAsAbove",
+      title: "Postal Address",
+      dataIndex: "postalAddress",
+      type: "postal-with-checkbox",
+      key: "postalAddress",
       width: 230,
-      callBack: true,
-      func: (values, setFieldValue, thisInput, stakeHolder) => {
+      CheckError: true,
+      disabled: (values, stakeHolder) =>
+        getNestedValue(values, `${stakeHolder}SameAsAbove`) === true, // 👈 use stakeHolderF
+      checkCallBack: true,
+      checkfunc: (values, setFieldValue, thisInput, stakeHolder) => {
         const homeAddress = getNestedValue(values, `${stakeHolder}homeAddress`);
         const postcodeSuburb = getNestedValue(
           values,
@@ -380,43 +508,37 @@ const PersonalDetailNew = () => {
       },
     },
     {
-      title: "Postal Address",
-      dataIndex: "postalAddress",
-      type: "text",
-      key: "postalAddress",
-      disabled: (values, stakeHolder) =>
-        getNestedValue(values, `${stakeHolder}SameAsAbove`) === true, // 👈 use stakeHolderF
-    },
-    {
       title: "Postcode/Suburb",
       dataIndex: "postalPostCode",
-      type: "text",
+      type: "postcode-antd",
       key: "postalPostCode",
+      width: 200,
+
       disabled: (values, stakeHolder) => {
-        console.log(
-          stakeHolder,
-          getNestedValue(values, `${stakeHolder}SameAsAbove`)
-        );
         return getNestedValue(values, `${stakeHolder}SameAsAbove`) === true;
       },
+      CheckError: true,
     },
     {
-      title: "Mobile",
+      title: "Mobile Number",
       dataIndex: "mobile",
       type: "text",
       key: "mobile",
+      CheckError: true,
     },
     {
       title: "Home Phone",
       dataIndex: "homePhone",
       type: "text",
       key: "homePhone",
+      CheckError: true,
     },
     {
       title: "Work Phone",
       dataIndex: "workPhone",
       type: "text",
       key: "workPhone",
+      CheckError: true,
     },
     {
       title: "Email",
@@ -425,6 +547,7 @@ const PersonalDetailNew = () => {
       key: "email",
       width: 230,
       fixed: "right",
+      CheckError: true,
     },
   ];
 
@@ -435,12 +558,14 @@ const PersonalDetailNew = () => {
       type: "text",
       key: "name",
       fixed: "left",
+      CheckError: true,
     },
     {
       title: "DOB",
       dataIndex: "dob",
       type: "antdate",
       key: "dob",
+      CheckError: true,
     },
     {
       title: "Gender",
@@ -452,6 +577,7 @@ const PersonalDetailNew = () => {
         { value: "Other", label: "Other" },
       ],
       key: "gender",
+      CheckError: true,
     },
     {
       title: "Add in Relation",
@@ -464,12 +590,14 @@ const PersonalDetailNew = () => {
         { value: "Step Son", label: "Step Son" },
       ],
       key: "relationship",
+      CheckError: true,
     },
     {
       title: "Add in is Child Depenant",
       dataIndex: "depenantChild",
       type: "yesno",
       key: "depenantChild",
+      CheckError: true,
     },
   ];
 
@@ -480,7 +608,7 @@ const PersonalDetailNew = () => {
         `${defaultUrlValue}/api/personalDetails/getUserById/${id}`
       );
       if (res) {
-        console.log(res);
+        // console.log(res);
         setPersonalDetailObj(res);
         setUserData(res);
         localStorage.setItem("UserID", res._id);
@@ -500,6 +628,7 @@ const PersonalDetailNew = () => {
       }
     } catch (error) {
       console.error("❌ Error in API:", error);
+      setErrorShow(true);
     } finally {
       setLeading(false);
     }
@@ -559,7 +688,7 @@ const PersonalDetailNew = () => {
     payload.client.Email = payload.client.clientEmail;
     payload.client.clientEmail = undefined;
 
-    // console.log("Submitting payload:", payload);
+    console.log("Submitting payload:", payload);
 
     try {
       const foundId = personalDetailObj?._id;
@@ -617,8 +746,11 @@ const PersonalDetailNew = () => {
   }, []);
 
   useEffect(() => {
-    if (switchStep == 2) {
-      console.log("CRObjectNoUse", CRObjectNoUse);
+    if (
+      switchStep === 2 &&
+      CRObjectNoUse &&
+      Object.keys(CRObjectNoUse).length > 0
+    ) {
       if (
         CRObjectNoUse.investmentPropertyTab === "No" &&
         CRObjectNoUse.personalInsuranceTab === "No" &&
@@ -626,13 +758,11 @@ const PersonalDetailNew = () => {
         CRObjectNoUse.SMSFManagedFundsTab === "No" &&
         CRObjectNoUse.businessAsInvestmentTab === "No"
       ) {
-        setModalObject({
-          title: "Important Questions",
-        });
+        setModalObject({ title: "Important Questions" });
         setFlagState(true);
       }
     }
-  }, [switchStep]);
+  }, [switchStep, CRObjectNoUse]); // 👈 also depend on CRObjectNoUse
 
   async function getQuestions(id) {
     try {
@@ -764,25 +894,41 @@ const PersonalDetailNew = () => {
     <Formik
       initialValues={initialValues}
       onSubmit={onSubmit}
+      validationSchema={validationSchema}
       innerRef={formRef}
       enableReinitialize
     >
-      {({ values, setFieldValue, handleChange, handleBlur }) => {
+      {({ values, setFieldValue, handleChange, handleBlur, errors }) => {
         useEffect(() => {
           storeData(setFieldValue);
         }, [userData]);
 
         const tableData = useMemo(() => {
+          // console.log(values.client.taxRes);
           const rows = [
-            { key: "client", stakeHolder: "client", ...values.client },
+            {
+              key: "client",
+              stakeHolder: "client",
+              smoker: values.client.smoker,
+              taxRes: values.client.taxRes,
+              healthCover: values.client.healthCover,
+              helpDebt: values.client.helpDebt,
+              ...values.client,
+            },
           ];
+
           if (!["Single", "Widowed", ""].includes(values.client.marital)) {
             rows.push({
               key: "partner",
               stakeHolder: "partner",
+              smoker: values.partner.smoker,
+              taxRes: values.partner.taxRes,
+              healthCover: values.partner.healthCover,
+              helpDebt: values.partner.helpDebt,
               ...values.partner,
             });
           }
+
           return rows;
         }, [values]);
 
@@ -818,6 +964,14 @@ const PersonalDetailNew = () => {
           return [];
         }, [values]);
 
+        const flattenErrors = (obj, parentKey = "") =>
+          Object.entries(obj || {}).flatMap(([key, val]) => {
+            const path = parentKey ? `${parentKey}.${key}` : key;
+            return typeof val === "string"
+              ? [[path, val]]
+              : flattenErrors(val, path);
+          });
+
         return (
           <Form
             className="All_Client reportSection"
@@ -844,6 +998,20 @@ const PersonalDetailNew = () => {
             )}
             {!loading && (
               <>
+                {/* Show global error alert only when errors exist */}
+                {errorShow &&
+                  values &&
+                  errors &&
+                  Object.keys(errors).length > 0 && (
+                    <SectionErrorAlert
+                      title="Personal Details"
+                      columns={personalFields}
+                      errors={errors}
+                      errorShow={errorShow}
+                      flattenErrors={flattenErrors}
+                    />
+                  )}
+
                 {switchStep == 1 && (
                   <>
                     <h3 className="mt-4 fw-bold">Personal Details</h3>
@@ -856,8 +1024,21 @@ const PersonalDetailNew = () => {
                       handleBlur={handleBlur}
                     />
 
+                    {errorShow &&
+                      values &&
+                      errors &&
+                      Object.keys(errors).length > 0 && (
+                        <SectionErrorAlert
+                          title="Contact Details"
+                          columns={contactFields}
+                          errors={errors}
+                          errorShow={errorShow}
+                          flattenErrors={flattenErrors}
+                        />
+                      )}
+
                     <h3
-                      className="mt-4 fw-bold"
+                      className="mt-5 fw-bold"
                       onClick={() => {
                         console.log(values);
                       }}
@@ -873,8 +1054,21 @@ const PersonalDetailNew = () => {
                       handleBlur={handleBlur}
                     />
 
+                    {errorShow &&
+                      values &&
+                      errors &&
+                      Object.keys(errors).length > 0 && (
+                        <SectionErrorAlert
+                          title="Children Details"
+                          columns={childrenFields}
+                          errors={errors}
+                          errorShow={errorShow}
+                          flattenErrors={flattenErrors}
+                        />
+                      )}
+
                     <h3
-                      className="mt-4 fw-bold"
+                      className="mt-5 fw-bold"
                       onClick={() => {
                         console.log(values);
                       }}
@@ -906,20 +1100,21 @@ const PersonalDetailNew = () => {
                         <div className="col-md-1">
                           <Field
                             name="numberOfChildren"
-                            type="number"
-                            className="form-control"
-                            min="0"
-                            onChange={(e) => {
-                              const val = e.target.value;
-                              if (val < 5) {
-                                setFieldValue(e.target.name, e.target.value);
-                              } else {
-                                setFieldValue(e.target.name, 5);
-                              }
-                            }}
-                            onWheel={(e) => e.target.blur()} // 👈 disables mouse wheel increment/decrement
-                          />
+                            as="select"
+                            className="form-select"
+                          >
+                            {[0, 1, 2, 3, 4, 5].map((num) => (
+                              <option key={num} value={num}>
+                                {num}
+                              </option>
+                            ))}
+                          </Field>
                         </div>
+                        <ErrorMessage
+                          name={"numberOfChildren"}
+                          component="div"
+                          className="text-danger small mt-1"
+                        />
                       </div>
                     )}
 
@@ -969,6 +1164,7 @@ const PersonalDetailNew = () => {
                           className="w-100"
                           onClick={() => {
                             setSwitchStep(1);
+                            setErrorShow(true);
                           }}
                         >
                           Edit

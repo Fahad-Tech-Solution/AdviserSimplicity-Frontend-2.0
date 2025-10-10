@@ -31,6 +31,7 @@ const ReusableHeader = ({
 
             <div className="input-wrapper">
               <Select
+                disabled={!expanded}
                 showSearch
                 value={selectedValue}
                 style={{ width: 200 }}

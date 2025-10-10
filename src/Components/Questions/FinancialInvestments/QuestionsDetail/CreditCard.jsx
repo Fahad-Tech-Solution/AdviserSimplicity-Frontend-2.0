@@ -27,29 +27,22 @@ const CreditCard = (props) => {
   const bankDetailObj = useRecoilValue(BankDetail);
   const DefaultUrl = useRecoilValue(defaultUrl);
 
-  const [nameSet] = useState(() => {
-    if (props.modalObject.Input === "client")
-      return localStorage.getItem("UserName");
-    if (props.modalObject.Input === "partner")
-      return localStorage.getItem("PartnerName");
-    if (props.modalObject.Input === "joint")
-      return (
-        localStorage.getItem("UserName") +
-        " & " +
-        localStorage.getItem("PartnerName")
-      );
-  });
+  const [nameSet] = useState(localStorage.getItem("UserName"));
 
   const creditCards =
-    Object.keys(questionDetail.creditCards).length > 0
+    Object.keys(questionDetail.creditCards || {}).length > 0
       ? questionDetail.creditCards
       : { client: [], partner: [], joint: [] };
 
-  const initialValues = {
-    creditCards: creditCards[props.modalObject.Input].length
-      ? creditCards[props.modalObject.Input]
-      : [],
-    NumberOfMap: creditCards[props.modalObject.Input].length || "",
+  let initialValues = {
+    creditCards:
+      Array.isArray(creditCards["client"]) && creditCards["client"].length > 0
+        ? creditCards["client"]
+        : [],
+    NumberOfMap:
+      Array.isArray(creditCards["client"]) && creditCards["client"].length > 0
+        ? creditCards["client"].length
+        : "",
   };
 
   const [dynamicFields, setDynamicFields] = useState([]);
@@ -63,22 +56,14 @@ const CreditCard = (props) => {
   });
 
   useEffect(() => {
-    if (
-      creditCards[props.modalObject.Input] &&
-      creditCards[props.modalObject.Input].length
-    ) {
-      setDynamicFields(
-        Array(creditCards[props.modalObject.Input].length).fill("")
-      );
+    if (creditCards["client"] && creditCards["client"].length) {
+      setDynamicFields(Array(creditCards["client"].length).fill(""));
     }
-  }, [creditCards[props.modalObject.Input]]);
+  }, [creditCards["client"]]);
 
   const fillInitialValues = (setFieldValue) => {
-    if (
-      creditCards[props.modalObject.Input] &&
-      creditCards[props.modalObject.Input].length
-    ) {
-      setFieldValue("creditCards", creditCards[props.modalObject.Input]);
+    if (creditCards["client"] && creditCards["client"].length) {
+      setFieldValue("creditCards", creditCards["client"]);
     }
   };
 
@@ -111,13 +96,21 @@ const CreditCard = (props) => {
   }));
 
   const AnnualFormula = (values, setFieldValue, currentInput, index) => {
-    console.log("Annual Remayment Check Credit Card", values, index.replace(/[^0-9]+/g, ""))
-    let RepaymentsAmount = parseFloat(
-      values.creditCards[index.replace(/[^0-9]+/g, "")]?.RepaymentsAmount?.replace(/[^0-9.-]+/g, "") || 0
+    console.log(
+      "Annual Remayment Check Credit Card",
+      values,
+      index.replace(/[^0-9]+/g, "")
     );
-    let Frequency = parseFloat(values.creditCards[index.replace(/[^0-9]+/g, "")]?.Frequency || 0);
+    let RepaymentsAmount = parseFloat(
+      values.creditCards[
+        index.replace(/[^0-9]+/g, "")
+      ]?.RepaymentsAmount?.replace(/[^0-9.-]+/g, "") || 0
+    );
+    let Frequency = parseFloat(
+      values.creditCards[index.replace(/[^0-9]+/g, "")]?.Frequency || 0
+    );
 
-    console.log(currentInput.name, currentInput.name.split(".").pop())
+    console.log(currentInput.name, currentInput.name.split(".").pop());
 
     switch (currentInput.name.split(".").pop()) {
       case "RepaymentsAmount":
@@ -131,7 +124,7 @@ const CreditCard = (props) => {
 
     const AnnualRepayments = Frequency * RepaymentsAmount;
 
-    console.log(AnnualRepayments, Frequency, RepaymentsAmount)
+    console.log(AnnualRepayments, Frequency, RepaymentsAmount);
 
     setFieldValue(
       `[${index}].AnnualRepayments`,
@@ -139,11 +132,11 @@ const CreditCard = (props) => {
     );
   };
 
-  const FormulaSetting = () => { };
+  const FormulaSetting = () => {};
 
   const onSubmit = async (values) => {
     const creditCardData = values.creditCards;
-    const DataOf = props.modalObject.Input;
+    const DataOf = "client";
 
     const obj = {
       clientFK: localStorage.getItem("UserID"),
@@ -152,9 +145,7 @@ const CreditCard = (props) => {
         creditCardData.reduce(
           (total, entry) =>
             total +
-            parseFloat(
-              entry.AnnualRepayments?.replace(/[^0-9.-]+/g, "") || 0
-            ),
+            parseFloat(entry.AnnualRepayments?.replace(/[^0-9.-]+/g, "") || 0),
           0
         )
       ),
@@ -164,7 +155,7 @@ const CreditCard = (props) => {
       ...prev,
       creditCards: {
         ...prev.creditCards,
-        [props.modalObject.Input]: creditCardData,
+        ["client"]: creditCardData,
       },
     }));
 
@@ -174,7 +165,7 @@ const CreditCard = (props) => {
       if (!bankAccountArray) {
         res = await PostAxios(`${DefaultUrl}/api/creditCards/Add`, obj);
       } else {
-        obj.collection = props.modalObject.Input;
+        obj.collection = "client";
         res = await PatchAxios(`${DefaultUrl}/api/creditCards/Update`, obj);
       }
 
@@ -190,7 +181,8 @@ const CreditCard = (props) => {
         `Data of "${props.modalObject.title}" is Saved`
       );
 
-      if (props.setFieldValue) props.setFieldValue("creditCards", creditCardData);
+      if (props.setFieldValue)
+        props.setFieldValue("creditCards", creditCardData);
       if (props.flagState) props.setFlagState(false);
     } catch (error) {
       console.error("Error occurred while making API call:", error);
@@ -304,7 +296,7 @@ const CreditCard = (props) => {
       {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
-        }, [creditCards[props.modalObject.Input]]);
+        }, [creditCards["client"]]);
 
         const dataRows = useMemo(() => {
           const num = Number(values.NumberOfMap) || 0;
@@ -315,11 +307,9 @@ const CreditCard = (props) => {
               LenderCurrent: values.creditCards?.[i]?.LenderCurrent || "",
               LoanBalance: values.creditCards?.[i]?.LoanBalance || "",
               LoanType: values.creditCards?.[i]?.LoanType || "",
-              RepaymentsAmount:
-                values.creditCards?.[i]?.RepaymentsAmount || "",
+              RepaymentsAmount: values.creditCards?.[i]?.RepaymentsAmount || "",
               Frequency: values.creditCards?.[i]?.Frequency || "",
-              AnnualRepayments:
-                values.creditCards?.[i]?.AnnualRepayments || "",
+              AnnualRepayments: values.creditCards?.[i]?.AnnualRepayments || "",
               InterestRate: values.creditCards?.[i]?.InterestRate || "",
               LoanTerm: values.creditCards?.[i]?.LoanTerm || "",
               LoanTermRemaining:
@@ -332,10 +322,15 @@ const CreditCard = (props) => {
         return (
           <Form>
             <div className="d-flex justify-content-center align-items-center gap-4">
-              <p className="text-end mt-1 pt-2" onClick={() => { console.log(values) }}>
+              <p
+                className="text-end mt-1 pt-2"
+                onClick={() => {
+                  console.log(values);
+                }}
+              >
                 How many {props.modalObject.title} does {nameSet} have :
               </p>
-               <div style={{ minWidth: "10%" }}>
+              <div style={{ minWidth: "10%" }}>
                 <select
                   id="NumberOfMap"
                   name="NumberOfMap"

@@ -39,16 +39,13 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
 
       // ✅ When not editing → format based on type
       if (col?.type === "antdate") {
+        // console.log(value);
         return value ? ConvertDate(value) : "--";
-      }
-
-      if (col?.type === "checkbox") {
+      } else if (col?.type === "checkbox") {
         return value ? "Checked" : "Un-Checked";
+      } else if (col?.type === "select-multi-antd") {
+        return Array.isArray(value) ? value.join(", ") : value || "";
       }
-
-         if (col?.type === "select-multi-antd") {
-  return Array.isArray(value) ? value.join(", ") : value || "";
-}
 
       return value || "--";
     };

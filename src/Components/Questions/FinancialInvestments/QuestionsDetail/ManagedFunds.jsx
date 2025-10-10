@@ -165,8 +165,8 @@ const ManagedFunds = (props) => {
     console.log(newEntries);
 
     let DataOf = props.modalObject.Input;
-     props.setFieldValue(`${DataOf}Details`, newEntries);
 
+    props.setFieldValue(DataOf, newEntries);
 
     let total = newEntries.reduce(
       (total, entry) =>
@@ -181,7 +181,7 @@ const ManagedFunds = (props) => {
       0
     );
 
-    props.setFieldValue(DataOf + "currentBalance", toCommaAndDollar(total));
+    props.setFieldValue(DataOf + "CurrentBalance", toCommaAndDollar(total));
     props.setFieldValue(
       DataOf + "CostBaseTemp",
       toCommaAndDollar(totalCostBase)
@@ -191,10 +191,10 @@ const ManagedFunds = (props) => {
 
     props.modalObject.setShowError((prevState) => ({
       ...prevState,
-      [`${DataOf + "currentBalance"}Error`]: false,
-      [`${DataOf + "currentBalance"}Message`]: "",
-      [`${DataOf + "costBaseTemp"}Error`]: false,
-      [`${DataOf + "costBaseTemp"}Message`]: "",
+      [`${DataOf + "CurrentBalance"}Error`]: false,
+      [`${DataOf + "CurrentBalance"}Message`]: "",
+      [`${DataOf + "CostBaseTemp"}Error`]: false,
+      [`${DataOf + "CostBaseTemp"}Message`]: "",
     }));
 
     // Reset the flag state if necessary

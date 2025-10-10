@@ -8,6 +8,7 @@ import {
   PatchAxios,
   PostAxios,
   RenderName,
+  toCommaAndDollar,
 } from "../../Assets/Api/Api";
 import { AntdCreatableMultiSelect } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
@@ -19,13 +20,13 @@ const CenterLinkPayments = (props) => {
 
   const incomeFromCentrelink =
     questionDetail?.incomeFromCentrelink &&
-      Object.keys(questionDetail.incomeFromCentrelink).length > 0
+    Object.keys(questionDetail.incomeFromCentrelink).length > 0
       ? questionDetail.incomeFromCentrelink
       : {
-        client: {},
-        partner: {},
-        joint: {},
-      };
+          client: {},
+          partner: {},
+          joint: {},
+        };
 
   const initialValues = {
     owner: [],
@@ -53,17 +54,39 @@ const CenterLinkPayments = (props) => {
       if (data.owner?.includes("client") && data.client) {
         setFieldValue("client.CRN", data.client.CRN || "");
         setFieldValue("client.paymentType", data.client.paymentType || []);
-        setFieldValue("client.fortnightlyPayment", data.client.fortnightlyPayment || "");
-        setFieldValue("client.annualPaymentAmount", data.client.annualPaymentAmount || "");
-        setFieldValue("client.centrelinkCardsHeld", data.client.centrelinkCardsHeld || []);
+        setFieldValue(
+          "client.fortnightlyPayment",
+          data.client.fortnightlyPayment || ""
+        );
+        setFieldValue(
+          "client.annualPaymentAmount",
+          data.client.annualPaymentAmount || ""
+        );
+        setFieldValue(
+          "client.centrelinkCardsHeld",
+          data.client.centrelinkCardsHeld || []
+        );
       }
 
-      if (data.owner?.includes("partner") && UserStatus === "Married" && data.partner) {
+      if (
+        data.owner?.includes("partner") &&
+        UserStatus === "Married" &&
+        data.partner
+      ) {
         setFieldValue("partner.CRN", data.partner.CRN || "");
         setFieldValue("partner.paymentType", data.partner.paymentType || []);
-        setFieldValue("partner.fortnightlyPayment", data.partner.fortnightlyPayment || "");
-        setFieldValue("partner.annualPaymentAmount", data.partner.annualPaymentAmount || "");
-        setFieldValue("partner.centrelinkCardsHeld", data.partner.centrelinkCardsHeld || []);
+        setFieldValue(
+          "partner.fortnightlyPayment",
+          data.partner.fortnightlyPayment || ""
+        );
+        setFieldValue(
+          "partner.annualPaymentAmount",
+          data.partner.annualPaymentAmount || ""
+        );
+        setFieldValue(
+          "partner.centrelinkCardsHeld",
+          data.partner.centrelinkCardsHeld || []
+        );
       }
     }
   };
@@ -94,9 +117,15 @@ const CenterLinkPayments = (props) => {
     try {
       let res;
       if (!GotData) {
-        res = await PostAxios(`${DefaultUrl}/api/incomeFromCentrelink/Add`, obj);
+        res = await PostAxios(
+          `${DefaultUrl}/api/incomeFromCentrelink/Add`,
+          obj
+        );
       } else {
-        res = await PatchAxios(`${DefaultUrl}/api/incomeFromCentrelink/Update`, obj);
+        res = await PatchAxios(
+          `${DefaultUrl}/api/incomeFromCentrelink/Update`,
+          obj
+        );
       }
 
       if (res) {
@@ -125,15 +154,20 @@ const CenterLinkPayments = (props) => {
 
   const columns = [
     { title: "Owner", dataIndex: "owner", key: "owner" },
-    { title: "CRN", dataIndex: "CRN", key: "CRN", type: "number", placeholder: "CRN" },
+    {
+      title: "CRN",
+      dataIndex: "CRN",
+      key: "CRN",
+      type: "number",
+      placeholder: "CRN",
+    },
     {
       title: "Payment Type",
       dataIndex: "paymentType",
       key: "paymentType",
       type: "select-multi-antd",
-      width:250,
-      trrigger: () =>
-        document.querySelector("table"),
+      width: 250,
+      trrigger: () => document.querySelector("table"),
       options: [
         { value: "Age Pension", label: "Age Pension" },
         { value: "Disability Pension", label: "Disability Pension" },
@@ -151,7 +185,17 @@ const CenterLinkPayments = (props) => {
       key: "fortnightlyPayment",
       type: "number-toComma",
       placeholder: "Fortnightly Payment",
-      width:200,
+      width: 200,
+      callBack: true,
+      func: (values, setFieldValue, thisInput, stakeHolder) => {
+        console.log("center-Link Payment");
+        setFieldValue(
+          stakeHolder + "annualPaymentAmount",
+          toCommaAndDollar(
+            parseFloat(thisInput.value.replace(/[^0-9.-]+/g, "") || 0) * 26
+          )
+        );
+      },
     },
     {
       title: "Annual Payment Amount",
@@ -159,18 +203,22 @@ const CenterLinkPayments = (props) => {
       key: "annualPaymentAmount",
       type: "number-toComma",
       placeholder: "Annual Payment Amount",
-       width:250,
+      width: 250,
+      disabled: true,
     },
     {
       title: "Centrelink Cards Held",
       dataIndex: "centrelinkCardsHeld",
       key: "centrelinkCardsHeld",
       type: "select-multi-antd",
-       width:270,
+      width: 270,
       options: [
         { value: "Pensioner Card", label: "Pensioner Card" },
         { value: "Low Income Card", label: "Low Income Card" },
-        { value: "Commonwealth Seniors Card", label: "Commonwealth Seniors Card" },
+        {
+          value: "Commonwealth Seniors Card",
+          label: "Commonwealth Seniors Card",
+        },
       ],
     },
   ];
@@ -188,7 +236,12 @@ const CenterLinkPayments = (props) => {
   };
 
   return (
-    <Formik initialValues={initialValues} onSubmit={onSubmit} enableReinitialize innerRef={props.formRef}>
+    <Formik
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      enableReinitialize
+      innerRef={props.formRef}
+    >
       {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
@@ -197,31 +250,33 @@ const CenterLinkPayments = (props) => {
         const dataRows = [
           ...(values.owner.includes("client")
             ? [
-              {
-                key: "client",
-                owner: RenderName("client"),
-                stakeHolder: "client",
-                CRN: values.client?.CRN || "",
-                paymentType: values.client?.paymentType || [],
-                fortnightlyPayment: values.client?.fortnightlyPayment || "",
-                annualPaymentAmount: values.client?.annualPaymentAmount || "",
-                centrelinkCardsHeld: values.client?.centrelinkCardsHeld || [],
-              },
-            ]
+                {
+                  key: "client",
+                  owner: RenderName("client"),
+                  stakeHolder: "client",
+                  CRN: values.client?.CRN || "",
+                  paymentType: values.client?.paymentType || [],
+                  fortnightlyPayment: values.client?.fortnightlyPayment || "",
+                  annualPaymentAmount: values.client?.annualPaymentAmount || "",
+                  centrelinkCardsHeld: values.client?.centrelinkCardsHeld || [],
+                },
+              ]
             : []),
           ...(values.owner.includes("partner") && UserStatus === "Married"
             ? [
-              {
-                key: "partner",
-                owner: RenderName("partner"),
-                stakeHolder: "partner",
-                CRN: values.partner?.CRN || "",
-                paymentType: values.partner?.paymentType || [],
-                fortnightlyPayment: values.partner?.fortnightlyPayment || "",
-                annualPaymentAmount: values.partner?.annualPaymentAmount || "",
-                centrelinkCardsHeld: values.partner?.centrelinkCardsHeld || [],
-              },
-            ]
+                {
+                  key: "partner",
+                  owner: RenderName("partner"),
+                  stakeHolder: "partner",
+                  CRN: values.partner?.CRN || "",
+                  paymentType: values.partner?.paymentType || [],
+                  fortnightlyPayment: values.partner?.fortnightlyPayment || "",
+                  annualPaymentAmount:
+                    values.partner?.annualPaymentAmount || "",
+                  centrelinkCardsHeld:
+                    values.partner?.centrelinkCardsHeld || [],
+                },
+              ]
             : []),
         ];
 
@@ -232,9 +287,11 @@ const CenterLinkPayments = (props) => {
                 <div className="d-flex justify-content-center align-items-center gap-4">
                   <label className="text-end">Owner</label>
                   <div style={{ minWidth: "200px" }}>
-                    <Field name="owner"
-                     component={AntdCreatableMultiSelect}
-                      options={ownerOptions()} />
+                    <Field
+                      name="owner"
+                      component={AntdCreatableMultiSelect}
+                      options={ownerOptions()}
+                    />
                   </div>
                 </div>
 

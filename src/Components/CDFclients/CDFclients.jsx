@@ -174,7 +174,6 @@ const CDFclients = () => {
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
-            fontFamily: '"Inter", sans-serif',
           }}
         >
           {row?.client?.lastName || "--"}
@@ -198,7 +197,6 @@ const CDFclients = () => {
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
-            fontFamily: '"Inter", sans-serif',
           }}
         >
           {row?.client?.preferredName || "--"} (Primary)

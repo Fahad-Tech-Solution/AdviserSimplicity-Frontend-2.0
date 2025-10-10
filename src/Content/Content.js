@@ -62,14 +62,14 @@ export const content = {
     //   condition: (CRObject) => true, // Always true, as this step is always needed.
     // },
     {
-      subTitle: "Personal Income and Expenses",
+      subTitle: "Personal Income & Expenses",
       statusStep: 16,
       icon: "FaMoneyCheckDollar",
       route: "/user/personal-income",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
     {
-      subTitle: "Personal Assets and Debt",
+      subTitle: "Personal Assets & Debt",
       statusStep: 24,
       icon: "FaHome",
       route: "/user/personal-assets",

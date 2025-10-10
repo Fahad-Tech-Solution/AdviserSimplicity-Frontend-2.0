@@ -17,7 +17,6 @@ import {
 import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
 import { AntdCreatableMultiSelect } from "./CreatableMultiSelectField";
 
-
 const MarginLoan = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
   const [, setQuestionDetail] = useRecoilState(QuestionDetail);
@@ -32,9 +31,9 @@ const MarginLoan = (props) => {
     })) || [];
 
   const managedFundsLOC =
-    questionDetail[props.modalObject.index] &&
-    Object.keys(questionDetail[props.modalObject.index]).length > 0
-      ? questionDetail[props.modalObject.index]
+    questionDetail[props.modalObject.key] &&
+    Object.keys(questionDetail[props.modalObject.key]).length > 0
+      ? questionDetail[props.modalObject.key]
       : {
           client: {},
           partner: {},
@@ -76,6 +75,7 @@ const MarginLoan = (props) => {
   };
 
   const fillInitialValues = (setFieldValue) => {
+    console.log(props.modalObject);
     const data = managedFundsLOC;
     if (data && data._id) {
       setFieldValue("owner", data.owner || []);
@@ -100,17 +100,11 @@ const MarginLoan = (props) => {
     label: `Year ${i + 1}`,
   }));
 
-const FormulaSetting = (values, setFieldValue, currentInput, stakeHolder) => {
-  if (!currentInput) return;
-
-  const monthly = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
-  const annual = monthly * 12;
-
-  console.log("FormulaSetting:", { monthly, annual });
-
-  setFieldValue(stakeHolder+"annualLoan", toCommaAndDollar(annual));
-};
-
+  const FormulaSetting = (values, setFieldValue, current, stakeHolder) => {
+    const monthly = parseFloat(current.value.replace(/[^0-9.-]+/g, "")) || 0;
+    const annual = toCommaAndDollar(monthly * 12);
+    setFieldValue(`${stakeHolder}.annualLoan`, annual);
+  };
 
   const onSubmit = async (values) => {
     let obj = { ...values };
@@ -159,18 +153,18 @@ const FormulaSetting = (values, setFieldValue, currentInput, stakeHolder) => {
       const GotData = managedFundsLOC.clientFK || "";
       if (!GotData) {
         res = await PostAxios(
-          `${DefaultUrl}/api/${props.modalObject.index}/Add`,
+          `${DefaultUrl}/api/${props.modalObject.key}/Add`,
           obj
         );
       } else {
         res = await PatchAxios(
-          `${DefaultUrl}/api/${props.modalObject.index}/Update`,
+          `${DefaultUrl}/api/${props.modalObject.key}/Update`,
           obj
         );
       }
 
       if (res) {
-        const updatedData = { ...questionDetail, [props.modalObject.index]: res };
+        const updatedData = { ...questionDetail, [props.modalObject.key]: res };
         setQuestionDetail(updatedData);
       }
 
@@ -328,7 +322,7 @@ const FormulaSetting = (values, setFieldValue, currentInput, stakeHolder) => {
             <Row>
               <div className="col-md-12">
                 <div className="d-flex justify-content-center align-items-center gap-4">
-                  <label className="text-end" onClick={()=>{console.log(values)}}>Owner</label>
+                  <label className="text-end">Owner</label>
                   <div style={{ minWidth: "250px" }}>
                     <Field
                       name="owner"
