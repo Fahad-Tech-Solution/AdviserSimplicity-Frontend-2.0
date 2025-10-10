@@ -98,7 +98,7 @@ const MiddleWare = (props) => {
 
   const calculateExpectedTotal = (modalTitle, dataObj, currentInput, checkState) => {
     if (!dataObj || Object.keys(dataObj).length === 0) return 0;
-
+    console.log(modalTitle)
     switch (modalTitle) {
       case "Bank Accounts":
       case "Term Deposits":
@@ -106,30 +106,29 @@ const MiddleWare = (props) => {
       case "SMSF Term Deposits":
       case "Family Trust Bank Accounts":
       case "Family Trust Term Deposits":
-      case "Annuities Detail":
+      case "Annuities":
+         case "Super Funds":
+          
+      case "Account Based Pension":
         return sumObjectValues(dataObj, "currentBalance");
 
       case "Australian Shares/ETFs":
       case "SMSF Australian Shares/ETFs":
       case "Family Trust Australian Shares/ETFs":
-        return currentInput === `${checkState}CurrentBalance`
+        case "Investment Bond":
+        return currentInput === `${checkState}currentBalance`
           ? sumObjectValues(dataObj, "currentBalance")
           : sumObjectValues(dataObj, "costBase");
 
       case "Platform Investments":
-      case "Investment Bond":
+      
       case "SMSF Platform Investments":
       case "Family Trust Platform Investments":
-        return currentInput === `${checkState}CurrentBalance`
+        return currentInput === `${checkState}currentBalance`
           ? sumObjectValues(dataObj, "serviceFee", "serviceFeeType")
           : sumObjectValues(dataObj, "totalPortfolioCost");
 
-      case "Super Funds":
-        return sumObjectValues(dataObj, "annualAdvice");
-
-      case "Account Based Pension":
-        return sumObjectValues(dataObj, "pensionPayment");
-
+    
       case "Invested in Annuities":
         return sumObjectValues(dataObj, "originalInvestmentAmount");
 
@@ -153,17 +152,17 @@ const MiddleWare = (props) => {
       parseFloat((currentInput.value || "").replace(/[^0-9.-]+/g, "")) || 0;
 
     switch (currentInput.name) {
-      case "clientCurrentBalance":
-      case "partnerCurrentBalance":
-      case "jointCurrentBalance":
-        checkState = currentInput.name.replace("CurrentBalance", "");
+      case "clientcurrentBalance":
+      case "partnercurrentBalance":
+      case "jointcurrentBalance":
+        checkState = currentInput.name.replace("currentBalance", "");
         inputSet = "current balance";
         break;
 
-      case "clientCostBaseTemp":
-      case "partnerCostBaseTemp":
-      case "jointCostBaseTemp":
-        checkState = currentInput.name.replace("CostBaseTemp", "");
+      case "clientcostBaseTemp":
+      case "partnercostBaseTemp":
+      case "jointcostBaseTemp":
+        checkState = currentInput.name.replace("costBaseTemp", "");
         inputSet = "Cost Base";
         break;
 
@@ -220,14 +219,14 @@ const MiddleWare = (props) => {
         const currentBalanceSum = calculateExpectedTotal(
           props.modalObject.title,
           obj,
-          `${stakeHolder}CurrentBalance`,
+          `${stakeHolder}currentBalance`,
           stakeHolder
         );
-        setFieldValue(`${stakeHolder}CurrentBalance`, toCommaAndDollar(currentBalanceSum));
+        setFieldValue(`${stakeHolder}currentBalance`, toCommaAndDollar(currentBalanceSum));
         checkValues(
           { ...BankAccountFinance, [stakeHolder]: obj },
           setFieldValue,
-          { name: `${stakeHolder}CurrentBalance`, value: toCommaAndDollar(currentBalanceSum) },
+          { name: `${stakeHolder}currentBalance`, value: toCommaAndDollar(currentBalanceSum) },
           stakeHolder
         );
 
@@ -235,14 +234,14 @@ const MiddleWare = (props) => {
           const costBaseSum = calculateExpectedTotal(
             props.modalObject.title,
             obj,
-            `${stakeHolder}CostBaseTemp`,
+            `${stakeHolder}costBaseTemp`,
             stakeHolder
           );
-          setFieldValue(`${stakeHolder}CostBaseTemp`, toCommaAndDollar(costBaseSum));
+          setFieldValue(`${stakeHolder}costBaseTemp`, toCommaAndDollar(costBaseSum));
           checkValues(
             { ...BankAccountFinance, [stakeHolder]: obj },
             setFieldValue,
-            { name: `${stakeHolder}CostBaseTemp`, value: toCommaAndDollar(costBaseSum) },
+            { name: `${stakeHolder}costBaseTemp`, value: toCommaAndDollar(costBaseSum) },
             stakeHolder
           );
         }
@@ -267,41 +266,41 @@ const MiddleWare = (props) => {
       let obj = { ...values };
 
       if (!attrebuteSet) {
-        obj.clientCostBaseTemp = undefined;
-        obj.partnerCostBaseTemp = undefined;
-        obj.jointCostBaseTemp = undefined;
+        obj.clientcostBaseTemp = undefined;
+        obj.partnercostBaseTemp = undefined;
+        obj.jointcostBaseTemp = undefined;
       }
 
       obj.clientFK = localStorage.getItem("UserID");
 
       if (
-        obj.jointCurrentBalance &&
-        obj.jointCurrentBalance !== undefined &&
-        obj.jointCurrentBalance !== null &&
-        parseFloat(obj.jointCurrentBalance.replace(/[^0-9.-]+/g, "")) !== 0
+        obj.jointcurrentBalance &&
+        obj.jointcurrentBalance !== undefined &&
+        obj.jointcurrentBalance !== null &&
+        parseFloat(obj.jointcurrentBalance.replace(/[^0-9.-]+/g, "")) !== 0
       ) {
         let fiftyPercent = 0;
         try {
-          let jointCurrentBalance = parseFloat(obj.jointCurrentBalance.replace(/[^0-9.-]+/g, ""));
-          fiftyPercent = isNaN(jointCurrentBalance) || jointCurrentBalance === undefined ? 0 : jointCurrentBalance / 2;
+          let jointcurrentBalance = parseFloat(obj.jointcurrentBalance.replace(/[^0-9.-]+/g, ""));
+          fiftyPercent = isNaN(jointcurrentBalance) || jointcurrentBalance === undefined ? 0 : jointcurrentBalance / 2;
         } catch (err) {
           console.error("Error calculating fiftyPercent:", err);
           fiftyPercent = 0;
         }
 
         if (fiftyPercent === 0) {
-          obj.clientTotal = obj.clientCurrentBalance;
-          obj.partnerTotal = obj.partnerCurrentBalance;
+          obj.clientTotal = obj.clientcurrentBalance;
+          obj.partnerTotal = obj.partnercurrentBalance;
         } else {
-          obj.clientTotal = toCommaAndDollar((parseFloat(obj.clientCurrentBalance.replace(/[^0-9.-]+/g, "")) || 0) + fiftyPercent);
-          obj.partnerTotal = toCommaAndDollar((parseFloat(obj.partnerCurrentBalance.replace(/[^0-9.-]+/g, "")) || 0) + fiftyPercent);
+          obj.clientTotal = toCommaAndDollar((parseFloat(obj.clientcurrentBalance.replace(/[^0-9.-]+/g, "")) || 0) + fiftyPercent);
+          obj.partnerTotal = toCommaAndDollar((parseFloat(obj.partnercurrentBalance.replace(/[^0-9.-]+/g, "")) || 0) + fiftyPercent);
         }
       } else {
-        obj.clientTotal = obj.clientCurrentBalance || "";
-        obj.partnerTotal = obj.partnerCurrentBalance || "";
+        obj.clientTotal = obj.clientcurrentBalance || "";
+        obj.partnerTotal = obj.partnercurrentBalance || "";
       }
 
-      if (clientPartnerOnly) obj.jointCurrentBalance = undefined;
+      if (clientPartnerOnly) obj.jointcurrentBalance = undefined;
 
       const bankAccountArray = BankAccountFinance.clientFK || "";
 
@@ -373,7 +372,7 @@ const MiddleWare = (props) => {
     "Platform Investments Detail": <ManagedFunds />,
     "Investment Bond Detail": <ManagedFunds />,
     "Super Funds Detail": <SuperFunds />,
-    "Account Based Pension Detail": <AccountBasedPension />,
+    "Account Based Pension": <AccountBasedPension />,
     "Annuities Detail": <InvestedAnnuities />,
     "Business as Company Structure Detail": <TradingCompany />,
     "SMSF Bank Accounts Detail": <BankTermForm />,
@@ -428,7 +427,7 @@ const MiddleWare = (props) => {
                   calculateExpectedTotal(
                     props.modalObject.title,
                     values.client,
-                    "clientCostBaseTemp",
+                    "clientcostBaseTemp",
                     "client"
                   )
                 : "--",
@@ -446,7 +445,7 @@ const MiddleWare = (props) => {
                     ? calculateExpectedTotal(
                         props.modalObject.title,
                         values.partner,
-                        "partnerCurrentBalance",
+                        "partnercurrentBalance",
                         "partner"
                       )
                     : "--",
@@ -455,7 +454,7 @@ const MiddleWare = (props) => {
                     ? calculateExpectedTotal(
                         props.modalObject.title,
                         values.partner,
-                        "partnerCostBaseTemp",
+                        "partnercostBaseTemp",
                         "partner"
                       )
                     : "--",
@@ -472,7 +471,7 @@ const MiddleWare = (props) => {
                       ? calculateExpectedTotal(
                           props.modalObject.title,
                           values.joint,
-                          "jointCurrentBalance",
+                          "jointcurrentBalance",
                           "joint"
                         )
                       : "--",
@@ -481,7 +480,7 @@ const MiddleWare = (props) => {
                       ? calculateExpectedTotal(
                           props.modalObject.title,
                           values.joint,
-                          "jointCostBaseTemp",
+                          "jointcostBaseTemp",
                           "joint"
                         )
                       : "--",
@@ -502,25 +501,25 @@ const MiddleWare = (props) => {
           const currentBalanceSum = calculateExpectedTotal(
             props.modalObject.title,
             dataObj,
-            `${stakeholder}CurrentBalance`,
+            `${stakeholder}currentBalance`,
             stakeholder
           );
-          setFieldValue(`${stakeholder}CurrentBalance`, toCommaAndDollar(currentBalanceSum));
+          setFieldValue(`${stakeholder}currentBalance`, toCommaAndDollar(currentBalanceSum));
 
           if (attrebuteSet) {
             const costBaseSum = calculateExpectedTotal(
               props.modalObject.title,
               dataObj,
-              `${stakeholder}CostBaseTemp`,
+              `${stakeholder}costBaseTemp`,
               stakeholder
             );
-            setFieldValue(`${stakeholder}CostBaseTemp`, toCommaAndDollar(costBaseSum));
+            setFieldValue(`${stakeholder}costBaseTemp`, toCommaAndDollar(costBaseSum));
           }
 
           checkValues(
             { ...values, [stakeholder]: dataObj },
             setFieldValue,
-            { name: `${stakeholder}CurrentBalance`, value: toCommaAndDollar(currentBalanceSum) },
+            { name: `${stakeholder}currentBalance`, value: toCommaAndDollar(currentBalanceSum) },
             stakeholder
           );
         };
