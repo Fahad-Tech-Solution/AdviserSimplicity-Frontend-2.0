@@ -812,6 +812,13 @@ input:checked + label {
   background: #a0a0a05d;
 }
 
+.form-select {
+  padding: 8px 30px 8px 8px !important;
+  border-radius: 5px !important;
+  min-width: 6rem !important;
+  box-shadow: none !important;
+}
+
 @media only screen and (min-width: 1045px) {
   .mainBody {
     padding-right: 1.5rem !important;

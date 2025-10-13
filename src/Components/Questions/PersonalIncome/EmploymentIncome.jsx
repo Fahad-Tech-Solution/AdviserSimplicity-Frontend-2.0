@@ -206,7 +206,7 @@ const EmploymentIncome = (props) => {
       }
 
       if (res) {
-        console.log(res);
+        // console.log(res);
         const updatedData = { ...questionDetail, incomeFromOwnBusiness: res };
         setQuestionDetail(updatedData);
       }
@@ -544,7 +544,7 @@ const EmploymentIncome = (props) => {
                       console.log(values);
                     }}
                   >
-                    Order
+                    Owner
                   </label>
 
                   <div style={{ minWidth: "200px" }}>

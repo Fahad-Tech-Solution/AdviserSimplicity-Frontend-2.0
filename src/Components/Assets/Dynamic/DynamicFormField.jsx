@@ -825,21 +825,7 @@ const DynamicFormField = ({
             ? values?.[stakeHolder.slice(0, -1)]?.[name]
             : values?.[name]) === "Yes" && (
             <div className="d-flex justify-content-center align-items-center pt-2">
-              <ButtonDrawer
-                title={innerModalTitle}
-                buttonIcon={faArrowUpRightFromSquare}
-                placement="bottom"
-                height={all?.Drawerheight}
-                width={all?.DrawerWidth}
-                DrawerContent={all?.PopoverContent?.(
-                  innerModalTitle,
-                  values,
-                  all,
-                  stakeHolder
-                )}
-                setOpen={setOpen}
-                open={open}
-              >
+           
                 <Button
                   className="btn bgColor modalBtn border-0"
                   id="button-addon2"
@@ -848,12 +834,10 @@ const DynamicFormField = ({
                       all.func(innerModalTitle, values, all.key, stakeHolder);
                     }
                   }}
-                  onMouseEnter={() => setOpen(true)}
-                  onMouseLeave={() => setOpen(false)}
+               
                 >
                   <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                 </Button>
-              </ButtonDrawer>
             </div>
           )}
         </React.Fragment>
@@ -862,32 +846,15 @@ const DynamicFormField = ({
     case "modal":
       return (
         <div className="d-flex justify-content-center align-items-center ">
-          <ButtonDrawer
-            title={innerModalTitle}
-            buttonIcon={faArrowUpRightFromSquare}
-            placement="bottom"
-            height={all?.Drawerheight}
-            width={all?.DrawerWidth}
-            DrawerContent={all?.PopoverContent?.(
-              innerModalTitle,
-              values,
-              all,
-              stakeHolder
-            )}
-            setOpen={setOpen}
-            open={open}
-          >
+        
             <Button
               className="btn bgColor modalBtn border-0"
               onClick={() => {
                 handleInnerModal(innerModalTitle, values, all.key, stakeHolder);
               }}
-              onMouseEnter={() => setOpen(true)}
-              onMouseLeave={() => setOpen(false)}
             >
               <FontAwesomeIcon icon={faArrowUpRightFromSquare} />{" "}
             </Button>
-          </ButtonDrawer>
         </div>
       );
 

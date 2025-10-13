@@ -66,18 +66,13 @@ const Partnership = (props) => {
         setFieldValue(
           "client.totalNetPartnershipIncome",
           data.client.totalNetPartnershipIncome
-            ? toCommaAndDollar(data.client.totalNetPartnershipIncome)
-            : ""
         );
         setFieldValue(
           "client.shareOfPartnership",
           data.client.shareOfPartnership || ""
         );
         setFieldValue("client.share", data.client.share || "");
-        setFieldValue(
-          "client.goodWill",
-          data.client.goodWill ? toCommaAndDollar(data.client.goodWill) : ""
-        );
+        setFieldValue("client.goodWill", data.client.goodWill);
       }
 
       if (
@@ -155,35 +150,26 @@ const Partnership = (props) => {
       ...values,
       client: {
         ...values.client,
-        totalNetPartnershipIncome: toNumericValue(
-          values.client.totalNetPartnershipIncome
-        ),
-        share: toNumericValue(values.client.share),
-        goodWill: toNumericValue(values.client.goodWill),
       },
       partner: {
         ...values.partner,
-        totalNetPartnershipIncome: toNumericValue(
-          values.partner.totalNetPartnershipIncome
-        ),
-        share: toNumericValue(values.partner.share),
-        goodWill: toNumericValue(values.partner.goodWill),
       },
     };
+
     obj.clientFK = localStorage.getItem("UserID") || "";
 
     if (!values.owner.includes("client")) {
       obj.client = {};
       obj.clientTotal = "";
     } else {
-      obj.clientTotal = toNumericValue(values.client.share);
+      obj.clientTotal = values.client.share;
     }
 
     if (!values.owner.includes("partner") || UserStatus !== "Married") {
       obj.partner = {};
       obj.partnerTotal = "";
     } else {
-      obj.partnerTotal = toNumericValue(values.partner.share);
+      obj.partnerTotal = values.partner.share;
     }
 
     try {

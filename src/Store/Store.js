@@ -120,7 +120,6 @@ export const CRState = atom({
     caravan: "No",
     houseHold: "No",
     otherAssets: "No",
-    personalAssets: "No",
     personalLoans: "No",
     creditCards: "No",
 

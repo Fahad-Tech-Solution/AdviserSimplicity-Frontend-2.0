@@ -381,7 +381,7 @@ const PersonalDetailNew = () => {
       CheckError: true,
     },
     {
-      title: "Employment Status",
+      title: "Work Status",
       dataIndex: "employment",
       type: "select",
       options: [
@@ -397,16 +397,17 @@ const PersonalDetailNew = () => {
       ],
       key: "employment",
       CheckError: true,
+      width: 220,
     },
+    // {
+    //   title: "Occupation",
+    //   dataIndex: "occupation",
+    //   type: "text",
+    //   key: "occupation",
+    //   CheckError: true,
+    // },
     {
-      title: "Occupation",
-      dataIndex: "occupation",
-      type: "text",
-      key: "occupation",
-      CheckError: true,
-    },
-    {
-      title: "Planned Retirement Age",
+      title: "Age to Retire",
       dataIndex: "retAge",
       type: "number",
       key: "retAge",
@@ -417,10 +418,10 @@ const PersonalDetailNew = () => {
       dataIndex: "health",
       type: "select",
       options: [
-        { value: "execlent", label: "execlent" },
-        { value: "good", label: "good" },
-        { value: "average", label: "average" },
-        { value: "poor", label: "poor" },
+        { value: "Execlent", label: "Execlent" },
+        { value: "Good", label: "Good" },
+        { value: "Average", label: "Average" },
+        { value: "Poor", label: "Poor" },
       ],
       key: "health",
       CheckError: true,
@@ -1136,6 +1137,9 @@ const PersonalDetailNew = () => {
                           type="primary"
                           htmlType="submit"
                           className="w-100"
+                          onClick={() => {
+                            setErrorShow(true);
+                          }}
                         >
                           Submit
                         </Button>
