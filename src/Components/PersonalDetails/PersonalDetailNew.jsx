@@ -411,7 +411,6 @@ const PersonalDetailNew = () => {
       dataIndex: "retAge",
       type: "number",
       key: "retAge",
-      CheckError: true,
     },
     {
       title: "Health",
@@ -917,7 +916,6 @@ const PersonalDetailNew = () => {
               ...values.client,
             },
           ];
-
           if (!["Single", "Widowed", ""].includes(values.client.marital)) {
             rows.push({
               key: "partner",
@@ -929,7 +927,6 @@ const PersonalDetailNew = () => {
               ...values.partner,
             });
           }
-
           return rows;
         }, [values]);
 

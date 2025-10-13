@@ -31,9 +31,9 @@ const MarginLoan = (props) => {
     })) || [];
 
   const managedFundsLOC =
-    questionDetail[props.modalObject.index] &&
-    Object.keys(questionDetail[props.modalObject.index]).length > 0
-      ? questionDetail[props.modalObject.index]
+    questionDetail[props.modalObject.key] &&
+    Object.keys(questionDetail[props.modalObject.key]).length > 0
+      ? questionDetail[props.modalObject.key]
       : {
           client: {},
           partner: {},
@@ -75,6 +75,7 @@ const MarginLoan = (props) => {
   };
 
   const fillInitialValues = (setFieldValue) => {
+    console.log(props.modalObject);
     const data = managedFundsLOC;
     if (data && data._id) {
       setFieldValue("owner", data.owner || []);
@@ -158,21 +159,18 @@ const MarginLoan = (props) => {
       const GotData = managedFundsLOC.clientFK || "";
       if (!GotData) {
         res = await PostAxios(
-          `${DefaultUrl}/api/${props.modalObject.index}/Add`,
+          `${DefaultUrl}/api/${props.modalObject.key}/Add`,
           obj
         );
       } else {
         res = await PatchAxios(
-          `${DefaultUrl}/api/${props.modalObject.index}/Update`,
+          `${DefaultUrl}/api/${props.modalObject.key}/Update`,
           obj
         );
       }
 
       if (res) {
-        const updatedData = {
-          ...questionDetail,
-          [props.modalObject.index]: res,
-        };
+        const updatedData = { ...questionDetail, [props.modalObject.key]: res };
         setQuestionDetail(updatedData);
       }
 
