@@ -1,5 +1,5 @@
 import { Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Button, InputGroup, Row, Table } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../../Store/Store";
@@ -14,6 +14,8 @@ import {
   toCommaAndDollar,
   toPercentage,
 } from "../../../Assets/Api/Api";
+import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
+
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
@@ -168,6 +170,7 @@ const InvestmentPropertyDetails = (props) => {
     const numberOfMaps = parseInt(values.NumberOfMap, 10);
     const newEntries = [];
 
+    console.log(values, "values on submit");
     // Iterate through each map entry and create a new object
     for (let i = 0; i < numberOfMaps; i++) {
       const newEntry = {
@@ -355,6 +358,246 @@ const InvestmentPropertyDetails = (props) => {
     setFlagState(true);
   };
 
+  const columns = [
+    {
+      title: "No#",
+      dataIndex: "index",
+      key: "owner",
+      render: (_, __, i) => i + 1,
+      width: 60,
+    },
+    // {
+    //   title: "Owner",
+    //   dataIndex: "owner",
+    //   key: "owner",
+    //   type: "text", // simple static text or could be DynamicFormField if editable
+    //   placeholder: "Enter Owner Name",
+    //   width: 150,
+    // },
+    {
+      title: "Property Address",
+      dataIndex: "PropertyAddress",
+      key: "PropertyAddress",
+      type: "text",
+      placeholder: "PropertyAddress",
+      width: 200,
+    },
+    {
+      title: "Current Value",
+      dataIndex: "CurrentValue",
+      key: "CurrentValue",
+      type: "text",
+      placeholder: "Current Value",
+      width: 200,
+    },
+    {
+      title: "Cost Base",
+      dataIndex: "CostBase",
+      key: "CostBase",
+      type: "text",
+      placeholder: "Cost Base",
+      width: 200,
+    },
+    {
+      title: "Loan Balance",
+      dataIndex: "propertyLoanBalance",
+      key: "propertyLoanDetailsArray",
+      type: "number-toComma-Modal",
+      placeholder: "Loan Balance",
+      width: 200,
+      func:handleInnerModal,
+      innerModalTitle: "Property Loan Details",
+    },
+    {
+      title: "Weekly Rental Income",
+      dataIndex: "weeklyRentalIncome",
+      key: "weeklyRentalIncome",
+      type: "text",
+      placeholder: "Weekly Rental Income",
+      width: 200,
+    },
+    {
+      title: "Expenses",
+      dataIndex: "CostBase",
+      key: "CostBase",
+      type: "number-toComma-Modal",
+      placeholder: "Cost Base",
+      width: 200,
+    },
+    // {
+    //   title: "Employment Status",
+    //   dataIndex: "employmentStatus",
+    //   key: "employmentStatus",
+    //   type: "select",
+    //   placeholder: "Select Employment Status",
+    //   options: [
+    //     { label: "Full Time", value: "Full Time" },
+    //     { label: "Part Time", value: "Part Time" },
+    //     { label: "Casual", value: "Casual" },
+    //     { label: "Contract", value: "Contract" },
+    //     { label: "On Leave", value: "OnLeave" },
+    //   ],
+    //   width: 200,
+    // },
+    // {
+    //   title: "Name of Company",
+    //   dataIndex: "nameOfCompany",
+    //   key: "nameOfCompany",
+    //   type: "text",
+    //   placeholder: "Enter Company Name",
+    //   width: 200,
+    // },
+    // {
+    //   title: "Start Date",
+    //   dataIndex: "startDate",
+    //   key: "startDate",
+    //   type: "antdate",
+    //   placeholder: "dd/mm/yyyy",
+    //   width: 200,
+    // },
+    // {
+    //   title: "Hours Worked",
+    //   dataIndex: "hoursWorked",
+    //   key: "hoursWorked",
+    //   type: "number",
+    //   placeholder: "Enter Hours Worked",
+    //   width: 200,
+    // },
+    // {
+    //   title: "Salary Detail",
+    //   dataIndex: "salaryPackage",
+    //   key: "SalaryPackageModal",
+    //   type: "modal", // 🔥 handled by DynamicFormField as button modal
+    //   width: 150,
+    //   handleInnerModal: handleInnerModal,
+    //   innerModalTitle: "Salary Detail",
+    //   Drawerheight: 220,
+    //   DrawerWidth: "80%",
+    //   PopoverContent: (
+    //     innerModalTitle,
+    //     values,
+    //     all,
+    //     stakeHolder,
+    //     setFieldValue
+    //   ) => {
+    //     let modalObject = {
+    //       title: innerModalTitle,
+    //       key: all.key,
+    //       parentValues: values,
+    //       parentKey: stakeHolder,
+    //     };
+    //     return (
+    //       <div
+    //         style={{
+    //           height: "80px",
+    //           margin: "-20px 0px 0px 0px",
+    //         }}
+    //       >
+    //         <SalaryPackage
+    //           modalObject={modalObject}
+    //           setFieldValue={setFieldValue}
+    //           setFlagState={setFlagState}
+    //           flagState={flagState}
+    //         />
+    //       </div>
+    //     );
+    //   },
+    // },
+    // {
+    //   title: "Salary Packaging",
+    //   dataIndex: "salaryPackagingRadio",
+    //   key: "SalaryPackaging",
+    //   type: "yesnoModal", // yes/no with modal
+    //   width: 170,
+    //   callBack: true,
+    //   func: handleInnerModal,
+    //   innerModalTitle: "Salary Packaging",
+    //   Drawerheight: 220,
+    //   DrawerWidth: "80%",
+    //   PopoverContent: (
+    //     innerModalTitle,
+    //     values,
+    //     all,
+    //     stakeHolder,
+    //     setFieldValue
+    //   ) => {
+    //     let modalObject = {
+    //       title: innerModalTitle,
+    //       key: all.key,
+    //       parentValues: values,
+    //       parentKey: stakeHolder,
+    //     };
+
+    //     return (
+    //       <div
+    //         style={{
+    //           height: "80px",
+    //           margin: "-20px 0px 0px 0px",
+    //         }}
+    //       >
+    //         <SalaryPackaging
+    //           modalObject={modalObject}
+    //           setFieldValue={setFieldValue}
+    //           setFlagState={setFlagState}
+    //           flagState={flagState}
+    //         />
+    //       </div>
+    //     );
+    //   },
+    // },
+    // {
+    //   title: "Leave Entitlements",
+    //   dataIndex: "leaveEntitlementsRadio",
+    //   key: "LeaveEntitlementsModal",
+    //   type: "yesnoModal",
+    //   width: 170,
+    //   handleInnerModal: handleInnerModal,
+    //   callBack: true,
+    //   func: handleInnerModal,
+    //   innerModalTitle: "Leave entitlements",
+    //   Drawerheight: 320,
+    //   DrawerWidth: "60%",
+    //   PopoverContent: (
+    //     innerModalTitle,
+    //     values,
+    //     all,
+    //     stakeHolder,
+    //     setFieldValue
+    //   ) => {
+    //     let modalObject = {
+    //       title: innerModalTitle,
+    //       key: all.key,
+    //       parentValues: values,
+    //       parentKey: stakeHolder,
+    //     };
+
+    //     // return (
+    //     //   <div
+    //     //     style={{
+    //     //       height: "80px",
+    //     //       margin: "-20px 0px 0px 0px",
+    //     //     }}
+    //     //   >
+    //     //     <LeaveEntitlementsModal
+    //     //       modalObject={modalObject}
+    //     //       setFieldValue={setFieldValue}
+    //     //       setFlagState={setFlagState}
+    //     //       flagState={flagState}
+    //     //     />
+    //     //   </div>
+    //     // );
+    //   },
+    // },
+    // {
+    //   title: "Choice of Fund",
+    //   dataIndex: "choiceOfFund",
+    //   key: "choiceOfFund",
+    //   type: "yesno",
+    //   width: 150,
+    // },
+  ];
+  const AntDTableHOC = DynamicTableForInputsSection("antd");
+
   return (
     <Formik
       initialValues={initialValues}
@@ -362,10 +605,33 @@ const InvestmentPropertyDetails = (props) => {
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, setFieldValue }) => {
+      {({ values, setFieldValue, handleBlur, handleChange }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, [investmentPropertyDetails]);
+
+        const tableData = useMemo(() => {
+          const num = Number(values.NumberOfMap) || 0;
+          if (num > 0) {
+            return Array.from({ length: num }, (_, i) => ({
+              key: `investmentProperties.${i}`,
+              stakeHolder: `investmentProperties[${i}]`,
+              PropertyAddress:
+                values.investmentProperties?.[i]?.PropertyAddress || "",
+              CurrentValue:
+                values.investmentProperties?.[i]?.CurrentValue || "",
+              CostBase:
+                values.investmentProperties?.[i]?.CostBase || "",
+              propertyLoanBalance:
+                values.investmentProperties?.[i]?.propertyLoanBalance || "",
+              weeklyRentalIncome:
+                values.investmentProperties?.[i]?.weeklyRentalIncome || "",
+              expenses:
+                values.investmentProperties?.[i]?.expenses || "",
+            }));
+          }
+          return [];
+        }, [values.NumberOfMap, values.investmentProperties]);
 
         return (
           <Form>
@@ -377,7 +643,7 @@ const InvestmentPropertyDetails = (props) => {
                       How many {props.modalObject.title} does {nameSet} have :
                     </p>
 
-                    <div style={{ width: "8%" }}>
+                    {/* <div style={{ width: "8%" }}>
                       <Field
                         type="number"
                         id="NumberOfMap"
@@ -385,6 +651,24 @@ const InvestmentPropertyDetails = (props) => {
                         className="form-control inputDesignDoubleInput"
                         onChange={(e) => handleInput(e, setFieldValue)}
                       />
+
+                    </div> */}
+
+                    <div style={{ minWidth: "10%" }}>
+                      <select
+                        id="NumberOfMap"
+                        name="NumberOfMap"
+                        className="form-select inputDesignDoubleInput"
+                        onChange={(e) => handleInput(e, setFieldValue)}
+                        value={values.NumberOfMap}
+                      >
+                        <option value="">Select</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                      </select>
                     </div>
                   </div>
 
@@ -404,8 +688,8 @@ const InvestmentPropertyDetails = (props) => {
                   </InnerModal>
 
                   {values.NumberOfMap > 0 && (
-                    <div className="mt-4">
-                      <Table striped bordered responsive hover>
+                    <div className="mt-4 All_Client reportSection">
+                      {/* <Table striped bordered responsive hover>
                         <thead>
                           <tr>
                             <th>No#</th>
@@ -664,7 +948,16 @@ const InvestmentPropertyDetails = (props) => {
                             );
                           })}
                         </tbody>
-                      </Table>
+                      </Table> */}
+
+                      <AntDTableHOC
+                        columns={columns}
+                        data={tableData}
+                        values={values}
+                        setFieldValue={setFieldValue}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                      />
                     </div>
                   )}
                 </div>
