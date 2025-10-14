@@ -34,26 +34,18 @@ const PersonalInsuranceLife = (props) => {
   const [CRObject, setCRObject] = useRecoilState(CRState);
   const [UserStatus] = useState(localStorage.getItem("UserStatus"));
   const [flagState, setFlagState] = useState(false);
-  const [modalObject, setModalObject] = useState({
-    title: "",
-    question: "",
-    key: "",
-    values: {},
-    editArray: [],
-    index: null,
-    parentModal: "",
-  });
+  const [modalObject, setModalObject] = useState({});
 
   const personalInsurance =
     Object.keys(questionDetail.personalInsurance || {}).length > 0
       ? questionDetail.personalInsurance
       : {
-        client: [],
-        partner: [],
-        joint: [],
-        PersonalInsurance: [],
-        numberOfPersonalInsurance: 0,
-      };
+          client: [],
+          partner: [],
+          joint: [],
+          PersonalInsurance: [],
+          numberOfPersonalInsurance: 0,
+        };
 
   const initialValues = {
     NumberOfMap: "",
@@ -64,18 +56,16 @@ const PersonalInsuranceLife = (props) => {
     const userStatus = localStorage.getItem("UserStatus");
 
     if (personalInsurance && personalInsurance.PersonalInsurance?.length) {
-      // Set total number of records
       setFieldValue(
         "NumberOfMap",
         personalInsurance.numberOfPersonalInsurance || 0
       );
 
-      // Loop through existing entries
       personalInsurance.PersonalInsurance.forEach((entry, index) => {
         setFieldValue(`PersonalInsurance[${index}].lifeInsured`, entry.lifeInsured || "");
         setFieldValue(`PersonalInsurance[${index}].provider`, entry.provider || "");
         setFieldValue(`PersonalInsurance[${index}].policyNo`, entry.policyNo || "");
-        setFieldValue(`PersonalInsurance[${index}].owner`, entry.owner || "");
+        setFieldValue(`PersonalInsurance[${index}].Owner`, entry.Owner || "");
         setFieldValue(`PersonalInsurance[${index}].startDate`, entry.startDate || "");
         setFieldValue(`PersonalInsurance[${index}].sumInsured`, entry.sumInsured || []);
         setFieldValue(`PersonalInsurance[${index}].sumInsuredSum`, entry.sumInsuredSum || "");
@@ -87,12 +77,10 @@ const PersonalInsuranceLife = (props) => {
         setFieldValue(`PersonalInsurance[${index}].beneficiariesArray`, entry.beneficiariesArray || []);
       });
     } else {
-      // If no data found, clear form fields
       setFieldValue("NumberOfMap", "");
       setFieldValue("PersonalInsurance", []);
     }
   };
-
 
   const handleInput = (e, setFieldValue) => {
     const value = e.target.value > 10 ? 10 : e.target.value;
@@ -105,29 +93,26 @@ const PersonalInsuranceLife = (props) => {
           lifeInsured: "",
           provider: "",
           policyNo: "",
-          owner: "",
+          Owner: "",
           startDate: "",
           sumInsured: [],
           sumInsuredSum: "",
           premiums: "",
           premiumsDetails: [],
           loadingExclusion: "",
-          loadingExclusionValue: "",
+          loadingExclusionValue: "No",
           beneficiary: "",
           beneficiariesArray: [],
         }))
     );
   };
 
-  const handleInnerModal = (title, question, key, values, editArray, index, parentModal) => {
+  let handleInnerModal = (title, values, key, parentKey) => {
     setModalObject({
       title,
-      question,
       key,
-      values,
-      editArray: editArray || [],
-      index,
-      parentModal: parentModal || "",
+      parentValues: values,
+      parentKey,
     });
     setFlagState(true);
   };
@@ -141,7 +126,7 @@ const PersonalInsuranceLife = (props) => {
         lifeInsured: values.PersonalInsurance[i]?.lifeInsured || "",
         provider: values.PersonalInsurance[i]?.provider || "",
         policyNo: values.PersonalInsurance[i]?.policyNo || "",
-        owner: values.PersonalInsurance[i]?.owner || "",
+        Owner: values.PersonalInsurance[i]?.Owner || "",
         startDate: values.PersonalInsurance[i]?.startDate || "",
         sumInsured: values.PersonalInsurance[i]?.sumInsured || [],
         sumInsuredSum: values.PersonalInsurance[i]?.sumInsuredSum || "",
@@ -214,9 +199,9 @@ const PersonalInsuranceLife = (props) => {
         { value: RenderName("client"), label: RenderName("client") },
         ...(UserStatus !== "Single"
           ? [
-            { value:  RenderName("partner"), label: RenderName("partner") },
-            { value:`${RenderName("client")} & ${RenderName("partner")}`, label: `${RenderName("client")} & ${RenderName("partner")}` },
-          ]
+              { value: RenderName("partner"), label: RenderName("partner") },
+              { value: `${RenderName("client")} & ${RenderName("partner")}`, label: `${RenderName("client")} & ${RenderName("partner")}` },
+            ]
           : []),
       ],
       width: 200,
@@ -230,9 +215,9 @@ const PersonalInsuranceLife = (props) => {
       options:
         bankDetailObj?.PersonalInsurances && bankDetailObj.PersonalInsurances.length > 0
           ? bankDetailObj.PersonalInsurances.map((elem) => ({
-            value: elem._id,
-            label: elem.platformName,
-          }))
+              value: elem._id,
+              label: elem.platformName,
+            }))
           : [{ value: "", label: "No Platforms Added in Personal Insurances", disabled: true }],
       width: 200,
     },
@@ -256,8 +241,7 @@ const PersonalInsuranceLife = (props) => {
         { value: "Company (Pty Ltd)", label: "Company (Pty Ltd)" },
         { value: "Family Trust", label: "Family Trust" },
       ],
-       width: 200,
-    
+      width: 200,
     },
     {
       title: "Start Date",
@@ -267,80 +251,47 @@ const PersonalInsuranceLife = (props) => {
       placeholder: "dd/mm/yyyy",
       width: 150,
     },
-  {
-  title: "Sum Insured",
-  dataIndex: "sumInsuredSum",
-  key: "sumInsured",
-  type: "number-toComma-Modal",
-  placeholder: "Sum Insured",
-  width: 200,
-  callBack: true,
-  func: (values, stakeHolder) => {
-    const stake =
-      typeof stakeHolder === "string"
-        ? stakeHolder
-        : stakeHolder?.stakeHolder || "";
-
-    const index = stake.split("[")[1]?.split("]")[0] || 0;
-
-    const lifeInsuredValue = values.PersonalInsurance[index]?.lifeInsured;
-    const name =
-      lifeInsuredValue === "client+partner"
-        ? `${RenderName("client")} & ${RenderName("partner")}`
-        : RenderName(lifeInsuredValue || "client");
-
-    handleInnerModal(
-      `${name}_Sum Insured`,
-      `How many Policies do ${name} have :`,
-      "sumInsured",
-      values,
-      values.PersonalInsurance[index]?.sumInsured || [],
-      index
-    );
-  },
-  Drawerheight: 220,
-  DrawerWidth: "80%",
-  PopoverContent: (
-    innerModalTitle,
-    values,
-    all,
-    stakeHolder,
-    setFieldValue
-  ) => {
-    const stake =
-      typeof stakeHolder === "string"
-        ? stakeHolder
-        : stakeHolder?.stakeHolder || "";
-
-    const index = stake.split("[")[1]?.split("]")[0] || 0;
-
-    const modalObject = {
-      title: innerModalTitle,
-      key: all.key,
-      parentValues: values,
-      parentKey: stake,
-      index,
-    };
-    return (
-      <div
-        style={{
-          height: "120px",
-          margin: "-10px 0px 0px 0px",
-        }}
-      >
-        <NewLoadingExclusion
-          modalObject={modalObject}
-          setFieldValue={setFieldValue}
-          setFlagState={setFlagState}
-          flagState={flagState}
-        />
-      </div>
-    );
-  },
-},
-
-
-
+    {
+      title: "Sum Insured",
+      dataIndex: "sumInsuredSum",
+      key: "sumInsured",
+      type: "number-toComma-Modal",
+      placeholder: "Sum Insured",
+      width: 200,
+      handleInnerModal: handleInnerModal,
+      innerModalTitle: "_Sum Insured",
+      Drawerheight: 220,
+      DrawerWidth: "80%",
+      PopoverContent: (
+        innerModalTitle,
+        values,
+        all,
+        stakeHolder,
+        setFieldValue
+      ) => {
+        let modalObject = {
+          title: innerModalTitle,
+          key: all.key,
+          parentValues: values,
+          parentKey: stakeHolder,
+        };
+        return (
+          <div
+            style={{
+              height: "80px",
+              margin: "-20px 0px 0px 0px",
+            }}
+          >
+            <NewLoadingExclusion 
+              modalObject={modalObject}
+              setFieldValue={setFieldValue}
+              setFlagState={setFlagState}
+              flagState={flagState}
+            />
+          </div>
+        );
+      },
+    },
     {
       title: "Premiums p.a",
       dataIndex: "premiums",
@@ -348,20 +299,37 @@ const PersonalInsuranceLife = (props) => {
       type: "number-toComma-Modal",
       placeholder: "Premiums p.a",
       width: 200,
-      callBack: true,
-      func: (values, stakeHolder) => {
-        const index = stakeHolder.split("[")[1].split("]")[0];
-        const name =
-          values.PersonalInsurance[index]?.lifeInsured === "client+partner"
-            ? `${RenderName("client")} & ${RenderName("partner")}`
-            : RenderName(values.PersonalInsurance[index]?.lifeInsured || "client");
-        handleInnerModal(
-          `${name}_Premiums p.a`,
-          "",
-          "premiumsDetails",
-          values,
-          values.PersonalInsurance[index]?.premiumsDetails || [],
-          index
+      handleInnerModal: handleInnerModal,
+      innerModalTitle: "Premiums Details",
+      Drawerheight: 220,
+      DrawerWidth: "80%",
+      PopoverContent: (
+        innerModalTitle,
+        values,
+        all,
+        stakeHolder,
+        setFieldValue
+      ) => {
+        let modalObject = {
+          title: innerModalTitle,
+          key: all.key,
+          parentValues: values,
+          parentKey: stakeHolder,
+        };
+        return (
+          <div
+            style={{
+              height: "80px",
+              margin: "-20px 0px 0px 0px",
+            }}
+          >
+            <PremiumsDetails
+              modalObject={modalObject}
+              setFieldValue={setFieldValue}
+              setFlagState={setFlagState}
+              flagState={flagState}
+            />
+          </div>
         );
       },
     },
@@ -371,33 +339,44 @@ const PersonalInsuranceLife = (props) => {
       key: "loadingExclusion",
       type: "yesno",
       width: 170,
-      // callBack: true,
-      // func: (values, stakeHolder, setFieldValue) => {
-      //   const index = stakeHolder.split("[")[1].split("]")[0];
-      //   setFieldValue(`PersonalInsurance[${index}].loadingExclusionValue`, "");
-      // },
     },
     {
       title: "Beneficiary",
       dataIndex: "beneficiary",
       key: "beneficiary",
-      type: "yesnoModal",
+      type: "modal",
       width: 200,
-      callBack: true,
-      func: (values, stakeHolder) => {
-        const index = stakeHolder.split("[")[1].split("]")[0];
-        const name =
-          values.PersonalInsurance[index]?.lifeInsured === "client+partner"
-            ? `${RenderName("client")} & ${RenderName("partner")}`
-            : RenderName(values.PersonalInsurance[index]?.lifeInsured || "client");
-        handleInnerModal(
-          `${name}_Beneficiaries`,
-          `How many beneficiaries do ${name} have :`,
-          "beneficiariesArray",
-          values,
-          values.PersonalInsurance[index]?.beneficiariesArray || [],
-          index,
-          "ParentModal"
+      handleInnerModal: handleInnerModal,
+      innerModalTitle: "Beneficiaries",
+      Drawerheight: 220,
+      DrawerWidth: "80%",
+      PopoverContent: (
+        innerModalTitle,
+        values,
+        all,
+        stakeHolder,
+        setFieldValue
+      ) => {
+        let modalObject = {
+          title: innerModalTitle,
+          key: all.key,
+          parentValues: values,
+          parentKey: stakeHolder,
+        };
+        return (
+          <div
+            style={{
+              height: "80px",
+              margin: "-20px 0px 0px 0px",
+            }}
+          >
+            <Beneficiaries
+              modalObject={modalObject}
+              setFieldValue={setFieldValue}
+              setFlagState={setFlagState}
+              flagState={flagState}
+            />
+          </div>
         );
       },
     },
@@ -425,15 +404,35 @@ const PersonalInsuranceLife = (props) => {
 
           return (
             <Form>
-              <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState}>
+              <InnerModal 
+                modalObject={modalObject} 
+                setFieldValue={setFieldValue} 
+                setFlagState={setFlagState} 
+                flagState={flagState}
+              >
                 {modalObject.key === "sumInsured" && (
-                  <NewLoadingExclusion modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} />
+                  <NewLoadingExclusion  
+                    modalObject={modalObject} 
+                    setFieldValue={setFieldValue} 
+                    setFlagState={setFlagState} 
+                    flagState={flagState} 
+                  />
                 )}
-                {modalObject.key === "premiumsDetails" && (
-                  <PremiumsDetails modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} />
+                {modalObject.key === "premiums" && (
+                  <PremiumsDetails 
+                    modalObject={modalObject} 
+                    setFieldValue={setFieldValue} 
+                    setFlagState={setFlagState} 
+                    flagState={flagState} 
+                  />
                 )}
-                {modalObject.key === "beneficiariesArray" && (
-                  <Beneficiaries modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} />
+                {modalObject.key === "beneficiary" && (
+                  <Beneficiaries 
+                    modalObject={modalObject} 
+                    setFieldValue={setFieldValue} 
+                    setFlagState={setFlagState} 
+                    flagState={flagState} 
+                  />
                 )}
               </InnerModal>
 
