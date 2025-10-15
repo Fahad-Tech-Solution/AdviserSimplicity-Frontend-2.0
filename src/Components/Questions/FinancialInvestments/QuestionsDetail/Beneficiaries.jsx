@@ -9,7 +9,7 @@ import { handleInputBlur, handleInputChange, handleInputFocus, handleInputKeyDow
 const Beneficiaries = (props) => {
 
 
-    let initialValues = props?.modalObject?.editArray.length ? { NumberOfMap: props.modalObject.editArray.length } : { NumberOfMap: "" };
+    let initialValues = props?.modalObject?.editArray?.length ? { NumberOfMap: props.modalObject.editArray.length } : { NumberOfMap: "" };
     // let initialValues = { NumberOfMap: "" };
 
     const [dynamicFields, setDynamicFields] = useState([]);

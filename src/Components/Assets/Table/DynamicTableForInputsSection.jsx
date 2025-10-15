@@ -28,7 +28,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
             handleChange={handleChange}
             handleBlur={handleBlur}
             handleInnerModal={col?.handleInnerModal || (() => {})}
-            innerModalTitle={col?.innerModalTitle || ""}
+            innerModalTitle={   col?.innerModalTitle || ""}
             all={col || {}}
             {...(record?.stakeHolder
               ? { stakeHolder: record.stakeHolder + "." }

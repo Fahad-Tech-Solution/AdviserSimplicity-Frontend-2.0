@@ -49,6 +49,16 @@ const DynamicFormField = ({
 }) => {
   const [open, setOpen] = useState(false);
 
+  const getNestedValue = (obj, path) => {
+    if (!obj || !path) return undefined;
+    const normalizedPath = path.replace(/\[(\d+)\]/g, '.$1'); // Convert [0] to .0
+    return normalizedPath.split('.').reduce((acc, key) => {
+      return acc && Object.prototype.hasOwnProperty.call(acc, key)
+        ? acc[key]
+        : undefined;
+    }, obj);
+  };
+
   switch (fieldType) {
     case "number":
       return (
@@ -209,7 +219,7 @@ const DynamicFormField = ({
       );
 
     case "number-toPercent":
-      let FormulaSetting = () => {};
+      let FormulaSetting = () => { };
 
       if (all.callBack) {
         // alert(all.callBack);
@@ -611,20 +621,20 @@ const DynamicFormField = ({
             {(stakeHolder
               ? values?.[stakeHolder.slice(0, -1)]?.[name]
               : values?.[name]) === all.ModalOption && (
-              <Button
-                className="btn bgColor modalBtn border-0"
-                onClick={() =>
-                  handleInnerModal(
-                    innerModalTitle,
-                    values,
-                    all.key,
-                    stakeHolder
-                  )
-                }
-              >
-                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-              </Button>
-            )}
+                <Button
+                  className="btn bgColor modalBtn border-0"
+                  onClick={() =>
+                    handleInnerModal(
+                      innerModalTitle,
+                      values,
+                      all.key,
+                      stakeHolder
+                    )
+                  }
+                >
+                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                </Button>
+              )}
           </InputGroup>
           {all?.CheckError && (
             <ErrorMessage
@@ -822,24 +832,11 @@ const DynamicFormField = ({
             setFieldValue={setFieldValue}
           />
           {(stakeHolder
-            ? values?.[stakeHolder.slice(0, -1)]?.[name]
-            : values?.[name]) === "Yes" && (
-            <div className="d-flex justify-content-center align-items-center pt-2">
-              <ButtonDrawer
-                title={innerModalTitle}
-                buttonIcon={faArrowUpRightFromSquare}
-                placement="bottom"
-                height={all?.Drawerheight}
-                width={all?.DrawerWidth}
-                DrawerContent={all?.PopoverContent?.(
-                  innerModalTitle,
-                  values,
-                  all,
-                  stakeHolder
-                )}
-                setOpen={setOpen}
-                open={open}
-              >
+            ? getNestedValue(values, `${stakeHolder}${name}`)
+            : getNestedValue(values, name)
+          ) === "Yes" && (
+              <div className="d-flex justify-content-center align-items-center pt-2">
+
                 <Button
                   className="btn bgColor modalBtn border-0"
                   id="button-addon2"
@@ -848,15 +845,13 @@ const DynamicFormField = ({
                       all.func(innerModalTitle, values, all.key, stakeHolder);
                     }
                   }}
-                  onMouseEnter={() => setOpen(true)}
-                  onMouseLeave={() => setOpen(false)}
                 >
                   <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
                 </Button>
-              </ButtonDrawer>
-            </div>
-          )}
-        </React.Fragment>
+              </div>
+            )
+          }
+        </React.Fragment >
       );
 
     case "modal":

@@ -19,10 +19,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 import DynamicYesNo from "../FinancialInvestments/QuestionsDetail/DynamicYesNo";
 import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
-import PremiumsDetails from "./PremiumsDetails";
+import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 import Beneficiaries from "../FinancialInvestments/QuestionsDetail/Beneficiaries";
 import NewLoadingExclusion from "./NewLoadingExclusion";
-import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
+import NewPremiumsDetails from "./NewPremiumsDetails";
 
 const AntdTable = DynamicTableForInputsSection("antd");
 
@@ -40,12 +40,12 @@ const PersonalInsuranceLife = (props) => {
     Object.keys(questionDetail.personalInsurance || {}).length > 0
       ? questionDetail.personalInsurance
       : {
-          client: [],
-          partner: [],
-          joint: [],
-          PersonalInsurance: [],
-          numberOfPersonalInsurance: 0,
-        };
+        client: [],
+        partner: [],
+        joint: [],
+        PersonalInsurance: [],
+        numberOfPersonalInsurance: 0,
+      };
 
   const initialValues = {
     NumberOfMap: "",
@@ -71,7 +71,7 @@ const PersonalInsuranceLife = (props) => {
         setFieldValue(`PersonalInsurance[${index}].sumInsuredSum`, entry.sumInsuredSum || "");
         setFieldValue(`PersonalInsurance[${index}].premiums`, entry.premiums || "");
         setFieldValue(`PersonalInsurance[${index}].premiumsDetails`, entry.premiumsDetails || []);
-        setFieldValue(`PersonalInsurance[${index}].loadingExclusion`, entry.loadingExclusion || "");
+        setFieldValue(`PersonalInsurance[${index}].loadingExclusion`, entry.loadingExclusion || "No");
         setFieldValue(`PersonalInsurance[${index}].loadingExclusionValue`, entry.loadingExclusionValue || "");
         setFieldValue(`PersonalInsurance[${index}].beneficiary`, entry.beneficiary || "");
         setFieldValue(`PersonalInsurance[${index}].beneficiariesArray`, entry.beneficiariesArray || []);
@@ -82,37 +82,21 @@ const PersonalInsuranceLife = (props) => {
     }
   };
 
-  const handleInput = (e, setFieldValue) => {
-    const value = e.target.value > 10 ? 10 : e.target.value;
-    setFieldValue("NumberOfMap", value);
-    setFieldValue(
-      "PersonalInsurance",
-      Array(Number(value))
-        .fill()
-        .map(() => ({
-          lifeInsured: "",
-          provider: "",
-          policyNo: "",
-          Owner: "",
-          startDate: "",
-          sumInsured: [],
-          sumInsuredSum: "",
-          premiums: "",
-          premiumsDetails: [],
-          loadingExclusion: "",
-          loadingExclusionValue: "No",
-          beneficiary: "",
-          beneficiariesArray: [],
-        }))
-    );
-  };
 
-  let handleInnerModal = (title, values, key, parentKey) => {
+
+  let handleInnerModal = (innerModalTitle, values, key, stakeHolder) => {
+
+    let index = stakeHolder.replace(/[^0-9]+/g, "");
+    let BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
+
+    let title = RenderName(values?.[BaseKey]?.[index].lifeInsured) + innerModalTitle;
+
+    console.log(innerModalTitle, key, values, stakeHolder, title)
     setModalObject({
       title,
       key,
       parentValues: values,
-      parentKey,
+      stakeHolder,
     });
     setFlagState(true);
   };
@@ -199,9 +183,9 @@ const PersonalInsuranceLife = (props) => {
         { value: RenderName("client"), label: RenderName("client") },
         ...(UserStatus !== "Single"
           ? [
-              { value: RenderName("partner"), label: RenderName("partner") },
-              { value: `${RenderName("client")} & ${RenderName("partner")}`, label: `${RenderName("client")} & ${RenderName("partner")}` },
-            ]
+            { value: RenderName("partner"), label: RenderName("partner") },
+            { value: `${RenderName("client")} & ${RenderName("partner")}`, label: `${RenderName("client")} & ${RenderName("partner")}` },
+          ]
           : []),
       ],
       width: 200,
@@ -215,9 +199,9 @@ const PersonalInsuranceLife = (props) => {
       options:
         bankDetailObj?.PersonalInsurances && bankDetailObj.PersonalInsurances.length > 0
           ? bankDetailObj.PersonalInsurances.map((elem) => ({
-              value: elem._id,
-              label: elem.platformName,
-            }))
+            value: elem._id,
+            label: elem.platformName,
+          }))
           : [{ value: "", label: "No Platforms Added in Personal Insurances", disabled: true }],
       width: 200,
     },
@@ -258,39 +242,8 @@ const PersonalInsuranceLife = (props) => {
       type: "number-toComma-Modal",
       placeholder: "Sum Insured",
       width: 200,
-      handleInnerModal: handleInnerModal,
       innerModalTitle: "_Sum Insured",
-      Drawerheight: 220,
-      DrawerWidth: "80%",
-      PopoverContent: (
-        innerModalTitle,
-        values,
-        all,
-        stakeHolder,
-        setFieldValue
-      ) => {
-        let modalObject = {
-          title: innerModalTitle,
-          key: all.key,
-          parentValues: values,
-          parentKey: stakeHolder,
-        };
-        return (
-          <div
-            style={{
-              height: "80px",
-              margin: "-20px 0px 0px 0px",
-            }}
-          >
-            <NewLoadingExclusion 
-              modalObject={modalObject}
-              setFieldValue={setFieldValue}
-              setFlagState={setFlagState}
-              flagState={flagState}
-            />
-          </div>
-        );
-      },
+      func: handleInnerModal,
     },
     {
       title: "Premiums p.a",
@@ -298,40 +251,9 @@ const PersonalInsuranceLife = (props) => {
       key: "premiums",
       type: "number-toComma-Modal",
       placeholder: "Premiums p.a",
+      innerModalTitle: "_Premiums p.a",
       width: 200,
-      handleInnerModal: handleInnerModal,
-      innerModalTitle: "Premiums Details",
-      Drawerheight: 220,
-      DrawerWidth: "80%",
-      PopoverContent: (
-        innerModalTitle,
-        values,
-        all,
-        stakeHolder,
-        setFieldValue
-      ) => {
-        let modalObject = {
-          title: innerModalTitle,
-          key: all.key,
-          parentValues: values,
-          parentKey: stakeHolder,
-        };
-        return (
-          <div
-            style={{
-              height: "80px",
-              margin: "-20px 0px 0px 0px",
-            }}
-          >
-            <PremiumsDetails
-              modalObject={modalObject}
-              setFieldValue={setFieldValue}
-              setFlagState={setFlagState}
-              flagState={flagState}
-            />
-          </div>
-        );
-      },
+      func: handleInnerModal,
     },
     {
       title: "Loading/Exclusion",
@@ -344,41 +266,11 @@ const PersonalInsuranceLife = (props) => {
       title: "Beneficiary",
       dataIndex: "beneficiary",
       key: "beneficiary",
-      type: "modal",
+      type: "yesnoModal",
       width: 200,
-      handleInnerModal: handleInnerModal,
-      innerModalTitle: "Beneficiaries",
-      Drawerheight: 220,
-      DrawerWidth: "80%",
-      PopoverContent: (
-        innerModalTitle,
-        values,
-        all,
-        stakeHolder,
-        setFieldValue
-      ) => {
-        let modalObject = {
-          title: innerModalTitle,
-          key: all.key,
-          parentValues: values,
-          parentKey: stakeHolder,
-        };
-        return (
-          <div
-            style={{
-              height: "80px",
-              margin: "-20px 0px 0px 0px",
-            }}
-          >
-            <Beneficiaries
-              modalObject={modalObject}
-              setFieldValue={setFieldValue}
-              setFlagState={setFlagState}
-              flagState={flagState}
-            />
-          </div>
-        );
-      },
+      innerModalTitle: "_Beneficiaries",
+      func: handleInnerModal,
+      callBack: true,
     },
   ];
 
@@ -404,34 +296,29 @@ const PersonalInsuranceLife = (props) => {
 
           return (
             <Form>
-              <InnerModal 
-                modalObject={modalObject} 
-                setFieldValue={setFieldValue} 
-                setFlagState={setFlagState} 
+              <InnerModal
+                modalObject={modalObject}
+                setFieldValue={setFieldValue}
+                setFlagState={setFlagState}
                 flagState={flagState}
               >
-                {modalObject.key === "sumInsured" && (
-                  <NewLoadingExclusion  
-                    modalObject={modalObject} 
-                    setFieldValue={setFieldValue} 
-                    setFlagState={setFlagState} 
-                    flagState={flagState} 
+                {/* {modalObject.key === "sumInsured" && (
+                  <NewLoadingExclusion
+                    modalObject={modalObject}
+                    setFieldValue={setFieldValue}
+                    setFlagState={setFlagState}
+                    flagState={flagState}
                   />
-                )}
+                )}*/}
                 {modalObject.key === "premiums" && (
-                  <PremiumsDetails 
-                    modalObject={modalObject} 
-                    setFieldValue={setFieldValue} 
-                    setFlagState={setFlagState} 
-                    flagState={flagState} 
-                  />
+                  <NewPremiumsDetails />
                 )}
                 {modalObject.key === "beneficiary" && (
-                  <Beneficiaries 
-                    modalObject={modalObject} 
-                    setFieldValue={setFieldValue} 
-                    setFlagState={setFlagState} 
-                    flagState={flagState} 
+                  <Beneficiaries
+                    modalObject={modalObject}
+                    setFieldValue={setFieldValue}
+                    setFlagState={setFlagState}
+                    flagState={flagState}
                   />
                 )}
               </InnerModal>
@@ -442,12 +329,11 @@ const PersonalInsuranceLife = (props) => {
                   {UserStatus === "Married" && `and ${RenderName("partner")}`} have :
                 </p>
                 <div style={{ minWidth: "10%" }}>
-                  <select
+                  <Field
+                    as="select"
                     id="NumberOfMap"
                     name="NumberOfMap"
                     className="form-select inputDesignDoubleInput"
-                    onChange={(e) => handleInput(e, setFieldValue)}
-                    value={values.NumberOfMap}
                   >
                     <option value="">Select</option>
                     {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
@@ -455,7 +341,7 @@ const PersonalInsuranceLife = (props) => {
                         {num}
                       </option>
                     ))}
-                  </select>
+                  </Field>
                 </div>
               </div>
 

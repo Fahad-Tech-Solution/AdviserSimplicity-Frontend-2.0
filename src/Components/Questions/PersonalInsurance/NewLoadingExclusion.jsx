@@ -13,6 +13,7 @@ const NewLoadingExclusion = (props) => {
     let [UserStatus] = useState(localStorage.getItem('UserStatus'));
     let [HeaderFlag, setHeaderFlag] = useState(false);
 
+    alert("we reached");
     const fillInitialValues = (setFieldValue) => {
         if (props.modalObject.values[`${props.modalObject.key}${props.modalObject.index}`]) {
 
