@@ -79,10 +79,9 @@ const HomeLoan = (props) => {
             dataIndex: "lender",
             key: "lender",
             type: "select",
-
+            selectedOptionValue: true,
             options: lenderOption,
             placeholder: "Lender",
-
             width: 260,
         },
         {
@@ -116,6 +115,7 @@ const HomeLoan = (props) => {
             dataIndex: "frequency",
             key: "frequency",
             type: "select",
+            selectedOptionValue: true,
             callBack: true,
             func: AnnualFormula,
             options: [

@@ -32,11 +32,13 @@ const childSchema = Yup.object({
   depenantChild: Yup.string()
     .oneOf(["Yes", "No"])
     .required("Dependent required"),
-  name: Yup.string().required("Child name required"),
+  name: Yup.string().required("Child Name required"),
   dob: Yup.date().required("Child DOB required"),
   gender: Yup.string().required("Gender required"),
   relationship: Yup.string().required("Relationship required"),
 });
+
+const ausPhoneRegex = /^(?:\+61|0)[2-478](?:[ ]?\d){8}$/;
 
 const contactSchema = Yup.object({
   homeAddress: Yup.string().required("Home address is required"),
@@ -49,15 +51,28 @@ const contactSchema = Yup.object({
     .typeError("Postal postcode must be a number")
     .required("Postal postcode is required"),
   mobile: Yup.string()
-    .matches(/^[0-9]+$/, "Mobile must be digits only")
-    .required("Mobile is required"),
-  homePhone: Yup.string(),
-  workPhone: Yup.string(),
+    .matches(
+      ausPhoneRegex,
+      "Valid Australian Mobile Phone number Format: 0X XXXX XXXX"
+    )
+    .required("Mobile Phone is required"),
+  homePhone: Yup.string()
+    .matches(
+      ausPhoneRegex,
+      "Valid Australian Home Phone number Format: 0X XXXX XXXX"
+    )
+    .required("Home Phone is required"),
+  workPhone: Yup.string()
+    .matches(
+      ausPhoneRegex,
+      "Valid Australian Work Phone number Format: 0X XXXX XXXX"
+    )
+    .required("Work Phone is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
 });
 
 const personSchema = Yup.object({
-  title: Yup.string().required("Required"),
+  title: Yup.string().required("Title is Required"),
   firstName: Yup.string().required("First Name is required"),
   middleName: Yup.string(),
   lastName: Yup.string().required("Last Name is required"),
@@ -99,7 +114,7 @@ export const validationSchema = Yup.object({
     then: () =>
       Yup.number()
         .typeError("Must be a number")
-        .min(1, "At least 1 child required")
+        .min(0, "At least 0 child required")
         .required("Number of children is required"),
     otherwise: () => Yup.number().nullable(),
   }),
@@ -171,6 +186,7 @@ const mapChildrenFromBackend = (children = []) =>
     gender: child?.gender || "",
     relationship: child?.relationship || "",
     dob: child?.dob ? formatDate(child.dob) : "",
+    age: child?.age || "",
   }));
 
 const mapContactForSubmit = (contact, prefix = "client") => ({
@@ -219,7 +235,55 @@ const mapChildrenForSubmit = (children = []) =>
     gender: child.gender,
     relationship: child.relationship,
     dob: formatDate(child.dob),
+    age: child.age,
   }));
+
+// const SectionErrorAlert = ({
+//   title,
+//   columns,
+//   errors,
+//   errorShow,
+//   flattenErrors,
+//   BaseKey, // 🆕 can be string or array
+// }) => {
+//   const fieldKeys = columns.map((col) => col.dataIndex);
+
+//   // Normalize BaseKey to an array
+//   const baseKeys = Array.isArray(BaseKey) ? BaseKey : [BaseKey];
+
+//   const sectionErrors = flattenErrors(errors).filter(([field]) => {
+//     const parts = field.split(".");
+//     const base = parts[0]; // e.g. client, partner, joint, etc.
+//     const lastKey = parts.pop();
+
+//     const matchesBase = !BaseKey || baseKeys.some((key) => key && base === key);
+//     const matchesField = fieldKeys.includes(lastKey);
+
+//     return matchesBase && matchesField;
+//   });
+
+//   if (!errorShow || sectionErrors.length === 0) return null;
+
+//   return (
+//     <div className="mt-3">
+//       <Alert
+//         message={`Validation Errors (${title})`}
+//         description={
+//           <ul style={{ marginLeft: 20 }}>
+//             {sectionErrors.map(([field, errorMsg]) => (
+//               <li key={field}>
+//                 <strong>{errorMsg}</strong>
+//               </li>
+//             ))}
+//           </ul>
+//         }
+//         type="error"
+//         showIcon
+//         className="mb-3"
+//       />
+//     </div>
+//   );
+// };
 
 const SectionErrorAlert = ({
   title,
@@ -227,16 +291,29 @@ const SectionErrorAlert = ({
   errors,
   errorShow,
   flattenErrors,
+  BaseKey, // 🆕 string | string[]
 }) => {
   const fieldKeys = columns.map((col) => col.dataIndex);
 
-  const sectionErrors = flattenErrors(errors).filter(
-    ([field]) => fieldKeys.includes(field.split(".").pop()) // ✅ match by last key
-  );
+  // Normalize BaseKey to array
+  const baseKeys = Array.isArray(BaseKey) ? BaseKey : [BaseKey];
 
-  console.log("Section errors:", sectionErrors);
-  console.log("Field keys:", fieldKeys);
-  console.log("All flattened errors:", flattenErrors(errors));
+  // Flatten errors and filter based on BaseKey and field keys
+  const sectionErrors = flattenErrors(errors).filter(([field]) => {
+    const lastKey = field.split(".").pop();
+
+    // ✅ Match if BaseKey is empty OR if field starts with any BaseKey (prefix match)
+    const matchesBase =
+      !BaseKey ||
+      baseKeys.some(
+        (key) => key && (field === key || field.startsWith(`${key}.`))
+      );
+
+    // ✅ Match column field
+    const matchesField = fieldKeys.includes(lastKey);
+
+    return matchesBase && matchesField;
+  });
 
   if (!errorShow || sectionErrors.length === 0) return null;
 
@@ -246,16 +323,11 @@ const SectionErrorAlert = ({
         message={`Validation Errors (${title})`}
         description={
           <ul style={{ marginLeft: 20 }}>
-            {sectionErrors.map(([field, errorMsg]) => {
-              const lastKey = field.split(".").pop();
-              return (
-                <li key={field}>
-                  <strong>
-                    {errorMsg} in ({toSentenceCase(lastKey)})
-                  </strong>
-                </li>
-              );
-            })}
+            {sectionErrors.map(([field, errorMsg]) => (
+              <li key={field}>
+                <strong>{errorMsg}</strong>
+              </li>
+            ))}
           </ul>
         }
         type="error"
@@ -285,7 +357,7 @@ const PersonalDetailNew = () => {
   const initialValues = {
     client: {},
     partner: {},
-    haveAnyChildren: "No",
+    haveAnyChildren: "Yes",
   };
 
   const personalFields = [
@@ -417,7 +489,7 @@ const PersonalDetailNew = () => {
       dataIndex: "health",
       type: "select",
       options: [
-        { value: "Execlent", label: "Execlent" },
+        { value: "Excellent", label: "Excellent" },
         { value: "Good", label: "Good" },
         { value: "Average", label: "Average" },
         { value: "Poor", label: "Poor" },
@@ -447,7 +519,7 @@ const PersonalDetailNew = () => {
       width: 100,
     },
     {
-      title: "HELP Debt",
+      title: "Help Debt",
       dataIndex: "helpDebt",
       type: "yesno",
       key: "helpDebt",
@@ -496,10 +568,10 @@ const PersonalDetailNew = () => {
           `${stakeHolder}postcodeSuburb`
         );
 
-        console.log("stakeHolder:", stakeHolder);
-        console.log("homeAddress:", homeAddress);
-        console.log("postcodeSuburb:", postcodeSuburb);
-        console.log("checked:", thisInput.checked);
+        // console.log("stakeHolder:", stakeHolder);
+        // console.log("homeAddress:", homeAddress);
+        // console.log("postcodeSuburb:", postcodeSuburb);
+        // console.log("checked:", thisInput.checked);
 
         if (thisInput.checked) {
           setFieldValue(`${stakeHolder}postalAddress`, homeAddress || "");
@@ -566,6 +638,20 @@ const PersonalDetailNew = () => {
       type: "antdate",
       key: "dob",
       CheckError: true,
+      callBack: true,
+      func: (values, setFieldValue, thisInput, stakeHolder) => {
+        const age =
+          differenceInYears(new Date(), new Date(thisInput.value)) || 0;
+        setFieldValue(stakeHolder + "age", age);
+      },
+    },
+    {
+      title: "Age",
+      dataIndex: "age",
+      type: "text",
+      key: "age",
+      disabled: true,
+      CheckError: true,
     },
     {
       title: "Gender",
@@ -580,7 +666,7 @@ const PersonalDetailNew = () => {
       CheckError: true,
     },
     {
-      title: "Add in Relation",
+      title: "Relationship",
       dataIndex: "relationship",
       type: "select",
       options: [
@@ -593,11 +679,12 @@ const PersonalDetailNew = () => {
       CheckError: true,
     },
     {
-      title: "Add in is Child Depenant",
+      title: "Dependent",
       dataIndex: "depenantChild",
       type: "yesno",
       key: "depenantChild",
       CheckError: true,
+      width: 100,
     },
   ];
 
@@ -651,10 +738,11 @@ const PersonalDetailNew = () => {
         );
       }
 
-      setFieldValue(
-        "haveAnyChildren",
-        personalDetailObj.haveAnyChildren || "No"
-      );
+      // setFieldValue(
+      //   "haveAnyChildren",
+      //   personalDetailObj.haveAnyChildren || "No"
+      // );
+      setFieldValue("haveAnyChildren", "Yes");
 
       if (
         personalDetailObj.haveAnyChildren === "Yes" &&
@@ -916,7 +1004,9 @@ const PersonalDetailNew = () => {
               ...values.client,
             },
           ];
-          if (!["Single", "Widowed", ""].includes(values.client.marital)) {
+          if (
+            !["Single", "Widowed", ""].includes(values.client.marital || "")
+          ) {
             rows.push({
               key: "partner",
               stakeHolder: "partner",
@@ -939,7 +1029,9 @@ const PersonalDetailNew = () => {
               ...values.client.contact,
             },
           ];
-          if (!["Single", "Widowed", ""].includes(values.client.marital)) {
+          if (
+            !["Single", "Widowed", ""].includes(values.client.marital || "")
+          ) {
             rows.push({
               key: "partner.contact",
               stakeHolder: "partner.contact",
@@ -1007,6 +1099,7 @@ const PersonalDetailNew = () => {
                       errors={errors}
                       errorShow={errorShow}
                       flattenErrors={flattenErrors}
+                      BaseKey={["client", "partner"]}
                     />
                   )}
 
@@ -1032,6 +1125,7 @@ const PersonalDetailNew = () => {
                           errors={errors}
                           errorShow={errorShow}
                           flattenErrors={flattenErrors}
+                          BaseKey={["client.contact", "partner.contact"]}
                         />
                       )}
 
@@ -1041,7 +1135,7 @@ const PersonalDetailNew = () => {
                         console.log(values);
                       }}
                     >
-                      Contact
+                      Contact Details
                     </h3>
                     <AntdDynamicTable
                       columns={contactFields}
@@ -1062,6 +1156,7 @@ const PersonalDetailNew = () => {
                           errors={errors}
                           errorShow={errorShow}
                           flattenErrors={flattenErrors}
+                          BaseKey={"children"}
                         />
                       )}
 
@@ -1074,7 +1169,7 @@ const PersonalDetailNew = () => {
                       Children Details
                     </h3>
 
-                    <div className="row justify-content-start align-items-center mb-3">
+                    <div className="row justify-content-start align-items-center mb-3 d-none">
                       <div className="col-md-3">
                         <label className="form-label fw-bold">
                           Do you have any children?

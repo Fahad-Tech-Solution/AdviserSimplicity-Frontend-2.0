@@ -62,21 +62,13 @@ const PersonalLoan = (props) => {
   });
 
   useEffect(() => {
-    if (
-      personalLoans["client"] &&
-      personalLoans["client"].length
-    ) {
-      setDynamicFields(
-        Array(personalLoans["client"].length).fill("")
-      );
+    if (personalLoans["client"] && personalLoans["client"].length) {
+      setDynamicFields(Array(personalLoans["client"].length).fill(""));
     }
   }, [personalLoans["client"]]);
 
   const fillInitialValues = (setFieldValue) => {
-    if (
-      personalLoans["client"] &&
-      personalLoans["client"].length
-    ) {
+    if (personalLoans["client"] && personalLoans["client"].length) {
       setFieldValue("personalLoans", personalLoans["client"]);
     }
   };
@@ -229,6 +221,7 @@ const PersonalLoan = (props) => {
       options: lenderOption,
       placeholder: "Lender",
       width: 260,
+      selectedOptionValue: true,
     },
     {
       title: "Loan Balance",
@@ -261,6 +254,7 @@ const PersonalLoan = (props) => {
       dataIndex: "Frequency",
       key: "Frequency",
       type: "select",
+      selectedOptionValue: true,
       options: [
         { value: "52", label: "Weekly" },
         { value: "26", label: "Fortnightly" },

@@ -168,6 +168,8 @@ function AuthRouts() {
       if (rolesRes) setRoles(rolesRes);
       if (Employees) setEmployee(Employees);
       if (Investment) setBankDetailObj(Investment);
+
+      // console.log(Investment);
     } catch (error) {
       console.error("Error fetching data:", error);
       // You could show a toast or alert here instead

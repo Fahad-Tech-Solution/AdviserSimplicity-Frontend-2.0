@@ -800,6 +800,77 @@ const randomStringGenerator = ({
 const getNestedValue = (obj, path) =>
   path.split(".").reduce((acc, part) => acc && acc[part], obj);
 
+// utils/MiddleWareHelpers.js
+const sumArrayValues = (array = [], key, multiplierKey = null) => {
+  return (array || []).reduce((total, entry) => {
+    const value =
+      parseFloat(String(entry[key] || "").replace(/[^0-9.-]+/g, "")) || 0;
+    const multiplier = multiplierKey
+      ? parseFloat(entry[multiplierKey] || 1)
+      : 1;
+    return total + value * multiplier;
+  }, 0);
+};
+
+/**
+ * calculateExpectedTotal: determines the expected total for a modal type
+ * Matches the logic originally in MiddleWare.jsx's calculateExpectedTotal switch
+ *
+ * @param {string} modalTitle
+ * @param {array} dataArray
+ * @param {string} currentInput   // e.g. 'clientCurrentBalance'
+ * @param {string} checkState     // e.g. 'client'
+ */
+const calculateExpectedTotal = (
+  modalTitle = "",
+  dataArray = [],
+  currentInput = "",
+  checkState = ""
+) => {
+  if (!dataArray || dataArray.length === 0) return 0;
+
+  switch (modalTitle) {
+    case "Bank Accounts":
+    case "Term Deposits":
+    case "SMSF Bank Accounts":
+    case "SMSF Term Deposits":
+    case "Family Trust Bank Accounts":
+    case "Family Trust Term Deposits":
+      return sumArrayValues(dataArray, "currentBalance");
+
+    case "Australian Shares/ETFs":
+    case "SMSF Australian Shares/ETFs":
+    case "Family Trust Australian Shares/ETFs":
+      return currentInput === `${checkState}CurrentBalance`
+        ? sumArrayValues(dataArray, "currentBalance")
+        : sumArrayValues(dataArray, "costBase");
+
+    case "Platform Investments":
+    case "Investment Bond":
+    case "SMSF Platform Investments":
+    case "Family Trust Platform Investments":
+      return currentInput === `${checkState}CurrentBalance`
+        ? sumArrayValues(dataArray, "serviceFee", "serviceFeeType")
+        : sumArrayValues(dataArray, "totalPortfolioCost");
+
+    case "Super Funds":
+      return sumArrayValues(dataArray, "annualAdvice");
+
+    case "Account Based Pension":
+      return sumArrayValues(dataArray, "pensionPayment");
+
+    case "Invested in Annuities":
+    case "Annuities":
+      return sumArrayValues(dataArray, "originalInvestmentAmount");
+
+    case "Business as Company Structure":
+      return sumArrayValues(dataArray, "equityPosition");
+
+    default:
+      return 0;
+  }
+};
+
 export {
   DeleteAxios,
   GetAxios,
@@ -839,4 +910,6 @@ export {
   touchFields,
   randomStringGenerator,
   getNestedValue,
+  sumArrayValues,
+  calculateExpectedTotal,
 };

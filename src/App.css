@@ -80,6 +80,7 @@ input:checked + label {
 .inputDesign {
   padding: 8px !important;
   border-color: #36b446 !important;
+  max-width: 60%;
 
   &&::placeholder {
     color: #949494 !important;
@@ -834,6 +835,10 @@ input:checked + label {
   .LargeSheet {
     text-align: left !important;
     padding-left: 6.5rem !important;
+  }
+
+  .inputDesign {
+    max-width: 28%;
   }
 }
 

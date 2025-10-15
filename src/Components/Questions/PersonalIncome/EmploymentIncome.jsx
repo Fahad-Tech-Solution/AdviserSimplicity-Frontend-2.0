@@ -24,6 +24,8 @@ import {
 } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
+const AntDTableHOC = DynamicTableForInputsSection("antd");
+
 const EmploymentIncome = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   const personalDetailObj = useRecoilValue(PersonalDetailsData);
@@ -266,8 +268,6 @@ const EmploymentIncome = (props) => {
         },
       ];
 
-  const AntDTableHOC = DynamicTableForInputsSection("antd");
-
   const columns = [
     {
       title: "Owner",
@@ -332,37 +332,6 @@ const EmploymentIncome = (props) => {
       width: 150,
       handleInnerModal: handleInnerModal,
       innerModalTitle: "Salary Detail",
-      Drawerheight: 220,
-      DrawerWidth: "80%",
-      PopoverContent: (
-        innerModalTitle,
-        values,
-        all,
-        stakeHolder,
-        setFieldValue
-      ) => {
-        let modalObject = {
-          title: innerModalTitle,
-          key: all.key,
-          parentValues: values,
-          parentKey: stakeHolder,
-        };
-        return (
-          <div
-            style={{
-              height: "80px",
-              margin: "-20px 0px 0px 0px",
-            }}
-          >
-            <SalaryPackage
-              modalObject={modalObject}
-              setFieldValue={setFieldValue}
-              setFlagState={setFlagState}
-              flagState={flagState}
-            />
-          </div>
-        );
-      },
     },
     {
       title: "Salary Packaging",
@@ -372,39 +341,8 @@ const EmploymentIncome = (props) => {
       width: 170,
       callBack: true,
       func: handleInnerModal,
+      handleInnerModal: handleInnerModal,
       innerModalTitle: "Salary Packaging",
-      Drawerheight: 220,
-      DrawerWidth: "80%",
-      PopoverContent: (
-        innerModalTitle,
-        values,
-        all,
-        stakeHolder,
-        setFieldValue
-      ) => {
-        let modalObject = {
-          title: innerModalTitle,
-          key: all.key,
-          parentValues: values,
-          parentKey: stakeHolder,
-        };
-
-        return (
-          <div
-            style={{
-              height: "80px",
-              margin: "-20px 0px 0px 0px",
-            }}
-          >
-            <SalaryPackaging
-              modalObject={modalObject}
-              setFieldValue={setFieldValue}
-              setFlagState={setFlagState}
-              flagState={flagState}
-            />
-          </div>
-        );
-      },
     },
     {
       title: "Leave Entitlements",
@@ -416,38 +354,6 @@ const EmploymentIncome = (props) => {
       callBack: true,
       func: handleInnerModal,
       innerModalTitle: "Leave entitlements",
-      Drawerheight: 320,
-      DrawerWidth: "60%",
-      PopoverContent: (
-        innerModalTitle,
-        values,
-        all,
-        stakeHolder,
-        setFieldValue
-      ) => {
-        let modalObject = {
-          title: innerModalTitle,
-          key: all.key,
-          parentValues: values,
-          parentKey: stakeHolder,
-        };
-
-        return (
-          <div
-            style={{
-              height: "80px",
-              margin: "-20px 0px 0px 0px",
-            }}
-          >
-            <LeaveEntitlementsModal
-              modalObject={modalObject}
-              setFieldValue={setFieldValue}
-              setFlagState={setFlagState}
-              flagState={flagState}
-            />
-          </div>
-        );
-      },
     },
     {
       title: "Choice of Fund",

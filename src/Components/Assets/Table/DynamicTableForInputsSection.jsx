@@ -28,7 +28,9 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
             handleChange={handleChange}
             handleBlur={handleBlur}
             handleInnerModal={col?.handleInnerModal || (() => {})}
-            innerModalTitle={col?.innerModalTitle || ""}
+            innerModalTitle={
+              record?.innerModalTitle || col?.innerModalTitle || ""
+            }
             all={col || {}}
             {...(record?.stakeHolder
               ? { stakeHolder: record.stakeHolder + "." }
@@ -45,11 +47,39 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
         return value ? "Checked" : "Un-Checked";
       } else if (col?.type === "select-multi-antd") {
         return Array.isArray(value) ? value.join(", ") : value || "";
+      } else if (col?.type === "yesnoModal") {
+        if (value === "Yes") {
+          return (
+            <div className="d-flex align-items-center justify-content-center gap-3">
+              <>{value}</>
+              <DynamicFormField
+                fieldType={"modal"}
+                name={col?.dataIndex || ""}
+                placeholder={col?.placeholder || ""}
+                options={col?.options || []}
+                values={values}
+                setFieldValue={setFieldValue}
+                handleChange={handleChange}
+                handleBlur={handleBlur}
+                handleInnerModal={col?.handleInnerModal || (() => {})}
+                innerModalTitle={
+                  record?.innerModalTitle || col?.innerModalTitle || ""
+                }
+                all={col || {}}
+                {...(record?.stakeHolder
+                  ? { stakeHolder: record.stakeHolder + "." }
+                  : {})} // 🔥 row decides (client/partner)
+              />
+            </div>
+          );
+        } else {
+          return value;
+        }
       } else if (col?.selectedOptionValue) {
         const selectedOption = col?.options?.find(
-          (item) => item.value === parseFloat(value)
+          (item) => item.value == value
         );
-        return selectedOption ? selectedOption.label : value;
+        return selectedOption ? selectedOption.label : value || "--";
       }
 
       return value || "--";

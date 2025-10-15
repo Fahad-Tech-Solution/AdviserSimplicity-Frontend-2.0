@@ -89,18 +89,13 @@ const Partnership = (props) => {
         setFieldValue(
           "partner.totalNetPartnershipIncome",
           data.partner.totalNetPartnershipIncome
-            ? toCommaAndDollar(data.partner.totalNetPartnershipIncome)
-            : ""
         );
         setFieldValue(
           "partner.shareOfPartnership",
           data.partner.shareOfPartnership || ""
         );
         setFieldValue("partner.share", data.partner.share || "");
-        setFieldValue(
-          "partner.goodWill",
-          data.partner.goodWill ? toCommaAndDollar(data.partner.goodWill) : ""
-        );
+        setFieldValue("partner.goodWill", data.partner.goodWill);
       }
     }
   };

@@ -62,12 +62,9 @@ import Partnership from "../PersonalIncome/Partnership";
 import CenterLinkPayments from "../PersonalIncome/CenterLinkPayments";
 import LifeTimeBeneFits from "../PersonalIncome/LifetimeBenefits";
 import OverseasPension from "../PersonalIncome/OverseasPension";
-import Inheritance from "../PersonalIncome/Inheritance";
-import LumpsumExpenses from "../PersonalIncome/LumpsumExpenses";
 import RegularLivingExpenses from "../PersonalIncome/RegularLivingExpenses";
 import SoleTrader from "../PersonalIncome/SoleTrader";
 import { FaRegSave } from "react-icons/fa";
-import ButtonDrawer from "../../Assets/Dynamic/ButtonDrawer";
 import MiddleWare from "./MiddleWare";
 import InvestmentPropertyDetails from "./QuestionsDetail/InvestmentPropertyDetails";
 import InvestmentLoan from "./QuestionsDetail/InvestmentLoan";
@@ -213,6 +210,7 @@ const questionConfig = {
       keyName: "familyHome",
       img: homeSvg,
       component: <OwnFamilyHome />,
+      clientOnly: true,
     },
     {
       title: "Car",
@@ -558,6 +556,7 @@ const QuestionCard = (props) => {
     img,
     variant = "case1", // "case1" | "case2" | "case3" | "case4"
     partnerModal = false,
+    clientOnly = false,
     onOpen,
     questionDetail = {},
     personalDetailObj = {},
@@ -633,7 +632,7 @@ const QuestionCard = (props) => {
         </div>
 
         {/* Partner */}
-        {!isSingle && (
+        {!isSingle && !clientOnly && (
           <div className="mb-3 text-center d-flex flex-column align-items-center justify-content-center">
             {props?.showPartnerButton && (
               <button
@@ -685,12 +684,14 @@ const QuestionCard = (props) => {
             <FaArrowUpRightFromSquare size={14} />
           </button>
         </div>
-        <input
-          className="form-control inputDesign text-center"
-          value={lbl.value?.(questionDetail) || ""}
-          readOnly
-          placeholder={title}
-        />
+        <div className="d-flex align-item-center justify-content-center">
+          <input
+            className="form-control inputDesign text-center"
+            value={lbl.value?.(questionDetail) || ""}
+            readOnly
+            placeholder={title}
+          />
+        </div>
       </div>
     );
   };
@@ -732,7 +733,7 @@ const QuestionCard = (props) => {
             <FaArrowUpRightFromSquare size={14} />
           </button>
         </div>
-        <div className="input-group">
+        <div className="input-group justify-content-center">
           <input
             className="form-control inputDesign text-center"
             placeholder={Labels[0]}
@@ -757,11 +758,11 @@ const QuestionCard = (props) => {
         enableReinitialize
       >
         {({ setFieldValue }) => (
-          <Form>
-            <InputGroup className="inputDesign p-0 flex-nowrap">
+          <Form className="d-flex justify-content-center align-items-stretch">
+            <InputGroup className="inputDesign justify-content-center p-0 flex-nowrap">
               <Field
                 name="retirementLivingExpense"
-                className="form-control inputDesign text-center"
+                className="form-control inputDesignDoubleInput text-center"
                 placeholder="Retirement Living Expense"
                 onChange={(e) =>
                   setFieldValue(
@@ -798,12 +799,14 @@ const QuestionCard = (props) => {
       <div className="text-center mb-2">
         {clientName} & {partnerName}
       </div>
-      <input
-        className="form-control inputDesign text-center"
-        value={jointValue || clientValue || ""}
-        readOnly
-        placeholder={title}
-      />
+      <div className="d-flex align-item-center justify-content-center">
+        <input
+          className="form-control inputDesign text-center"
+          value={jointValue || clientValue || ""}
+          readOnly
+          placeholder={title}
+        />
+      </div>
     </>
   );
 

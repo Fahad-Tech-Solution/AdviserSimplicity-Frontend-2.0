@@ -32,7 +32,6 @@ const EstatePlanningProfessionalAdviser = (props) => {
     : { NumberOfMap: "" };
 
   const [dynamicFields, setDynamicFields] = useState([]);
-  const [dynamicFields, setDynamicFields] = useState([]);
 
   useEffect(() => {
     if (
@@ -52,9 +51,18 @@ const EstatePlanningProfessionalAdviser = (props) => {
     ) {
       professionalAdviser[props.modalObject.Input].forEach((data, i) => {
         if (data) {
-          setFieldValue(`professionalAdviser[${i}].POAType`, data.POAType || "");
-          setFieldValue(`professionalAdviser[${i}].adviserName`, data.adviserName || "");
-          setFieldValue(`professionalAdviser[${i}].company`, data.company || "");
+          setFieldValue(
+            `professionalAdviser[${i}].POAType`,
+            data.POAType || ""
+          );
+          setFieldValue(
+            `professionalAdviser[${i}].adviserName`,
+            data.adviserName || ""
+          );
+          setFieldValue(
+            `professionalAdviser[${i}].company`,
+            data.company || ""
+          );
           setFieldValue(`professionalAdviser[${i}].phone`, data.phone || "");
           setFieldValue(`professionalAdviser[${i}].email`, data.email || "");
         }
@@ -117,7 +125,10 @@ const EstatePlanningProfessionalAdviser = (props) => {
         res = await PostAxios(`${DefaultUrl}/api/professionalAdviser/Add`, obj);
       } else {
         obj.collection = props.modalObject.Input;
-        res = await PatchAxios(`${DefaultUrl}/api/professionalAdviser/Update`, obj);
+        res = await PatchAxios(
+          `${DefaultUrl}/api/professionalAdviser/Update`,
+          obj
+        );
       }
 
       if (res) {
