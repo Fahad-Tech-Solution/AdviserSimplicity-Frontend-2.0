@@ -356,8 +356,8 @@ const InvestmentLoan = (props) => {
     stackHolder
   ) => {
     console.log(
-      values,
-      thisInput.value,
+      // values,
+      // thisInput.value,
       stackHolder,
       "calculateAnnualRepayments"
     );

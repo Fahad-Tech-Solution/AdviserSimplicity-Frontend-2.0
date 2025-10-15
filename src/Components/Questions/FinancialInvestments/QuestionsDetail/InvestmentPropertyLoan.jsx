@@ -21,6 +21,7 @@ import axios from "axios";
 import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
 
 const InvestmentPropertyLoan = (props) => {
+  console.log("props in investment property loan", props);
   let bankDetailObj = useRecoilValue(BankDetail);
 
   let [lenderOption, setLenderOption] = useState(() => {
@@ -56,23 +57,55 @@ const InvestmentPropertyLoan = (props) => {
 
   let initialValues = { NumberOfMap: "1" };
 
+  // const fillInitialValues = (setFieldValue) => {
+  //   let arr = [];
+  //   // if (props.modalObject.editArray.length) {
+  //   //   props.modalObject.editArray.map((data, index) => {
+  //   //     setFieldValue(`LenderCurrent${index}`, data.LenderCurrent);
+  //   //     setFieldValue(`LoanBalance${index}`, data.LoanBalance);
+  //   //     setFieldValue(`LoanType${index}`, data.LoanType);
+  //   //     setFieldValue(`RepaymentsAmount${index}`, data.RepaymentsAmount);
+  //   //     setFieldValue(`Frequency${index}`, data.Frequency);
+  //   //     setFieldValue(`AnnualRepayments${index}`, data.AnnualRepayments);
+  //   //     setFieldValue(`InterestRate${index}`, data.InterestRate);
+  //   //     setFieldValue(`LoanTerm${index}`, data.LoanTerm);
+  //   //     setFieldValue(`LoanTermRemaining${index}`, data.LoanTermRemaining);
+  //   //     setFieldValue(
+  //   //       `DeductibleLoanAmount${index}`,
+  //   //       data.DeductibleLoanAmount
+  //   //     );
+  //   //   });
+  //   // }
+  // };
+
   const fillInitialValues = (setFieldValue) => {
-    let arr = [];
-    if (props.modalObject.editArray.length) {
-      props.modalObject.editArray.map((data, index) => {
-        setFieldValue(`LenderCurrent${index}`, data.LenderCurrent);
-        setFieldValue(`LoanBalance${index}`, data.LoanBalance);
-        setFieldValue(`LoanType${index}`, data.LoanType);
-        setFieldValue(`RepaymentsAmount${index}`, data.RepaymentsAmount);
-        setFieldValue(`Frequency${index}`, data.Frequency);
-        setFieldValue(`AnnualRepayments${index}`, data.AnnualRepayments);
-        setFieldValue(`InterestRate${index}`, data.InterestRate);
-        setFieldValue(`LoanTerm${index}`, data.LoanTerm);
-        setFieldValue(`LoanTermRemaining${index}`, data.LoanTermRemaining);
-        setFieldValue(
-          `DeductibleLoanAmount${index}`,
-          data.DeductibleLoanAmount
-        );
+    console.log("props.modalObject Loan", props.modalObject);
+    // console.log(
+    //   "props.modalObject Loan",
+    //   props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
+    // );
+    // Extract index (the number part) from stakeHolder, e.g. "client1" -> 1
+    let index = props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "");
+
+    let propertyLoanData =
+      props.modalObject.values?.[
+        props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "")
+      ]?.[index]?.[props.modalObject.key + "Array"];
+    console.log("fillInitialValues -> loan", propertyLoanData);
+
+    // If we found data, populate form fields dynamically
+    if (propertyLoanData && propertyLoanData.length) {
+      propertyLoanData.map((data, index) => {
+        setFieldValue(`LenderCurrent`, data.LenderCurrent || "");
+        setFieldValue(`LoanBalance`, data.LoanBalance || "");
+        setFieldValue(`LoanType`, data.LoanType || "");
+        setFieldValue(`RepaymentsAmount`, data.RepaymentsAmount || "");
+        setFieldValue(`Frequency`, data.Frequency || "");
+        setFieldValue(`AnnualRepayments`, data.AnnualRepayments || "");
+        setFieldValue(`InterestRate`, data.InterestRate || "");
+        setFieldValue(`LoanTerm`, data.LoanTerm || "");
+        setFieldValue(`LoanTermRemaining`, data.LoanTermRemaining || "");
+        setFieldValue(`DeductibleLoanAmount`, data.DeductibleLoanAmount || "");
       });
     }
   };
@@ -87,22 +120,22 @@ const InvestmentPropertyLoan = (props) => {
     // Iterate through each map entry and create a new object
     for (let i = 0; i < numberOfMaps; i++) {
       const newEntry = {
-        LenderCurrent: values[`LenderCurrent${i}`] || "",
-        LoanBalance: values[`LoanBalance${i}`] || "",
-        LoanType: values[`LoanType${i}`] || "",
-        RepaymentsAmount: values[`RepaymentsAmount${i}`] || "",
-        Frequency: values[`Frequency${i}`] || "",
-        AnnualRepayments: values[`AnnualRepayments${i}`] || "",
-        InterestRate: values[`InterestRate${i}`] || "",
-        LoanTerm: values[`LoanTerm${i}`] || "",
-        LoanTermRemaining: values[`LoanTermRemaining${i}`] || "",
-        DeductibleLoanAmount: values[`DeductibleLoanAmount${i}`] || "",
+        LenderCurrent: values[`LenderCurrent`] || "",
+        LoanBalance: values[`LoanBalance`] || "",
+        LoanType: values[`LoanType`] || "",
+        RepaymentsAmount: values[`RepaymentsAmount`] || "",
+        Frequency: values[`Frequency`] || "",
+        AnnualRepayments: values[`AnnualRepayments`] || "",
+        InterestRate: values[`InterestRate`] || "",
+        LoanTerm: values[`LoanTerm`] || "",
+        LoanTermRemaining: values[`LoanTermRemaining`] || "",
+        DeductibleLoanAmount: values[`DeductibleLoanAmount`] || "",
       };
       newEntries.push(newEntry);
     }
 
     // Log the new entries to verify
-    console.log(newEntries);
+    console.log("newEntries", newEntries);
 
     let total = newEntries.reduce(
       (total, entry) =>
@@ -112,12 +145,12 @@ const InvestmentPropertyLoan = (props) => {
     );
 
     props.setFieldValue(
-      `${props.modalObject.key}${props.modalObject.index}`,
+      `${props.modalObject.stakeHolder}${props.modalObject.key}Array`,
       newEntries
     );
     // props.setFieldValue(`${props.modalObject.key3}${props.modalObject.index}`, total)
     props.setFieldValue(
-      `${props.modalObject.mainKey}${props.modalObject.index}`,
+      `${props.modalObject.stakeHolder}${props.modalObject.key}`,
       toCommaAndDollar(total)
     );
 
@@ -225,7 +258,7 @@ const InvestmentPropertyLoan = (props) => {
       values,
       thisInput.value,
       stackHolder,
-      "calculateAnnualRepayments"
+      "calculateAnnualRepayments111"
     );
     // safely extract numeric values
     const cleanNumber = (val) => {
@@ -266,6 +299,8 @@ const InvestmentPropertyLoan = (props) => {
     );
   };
 
+  const AntDTableHOC = DynamicTableForInputsSection("antd");
+
   const columns = [
     // {
     //   title: "Owner",
@@ -285,24 +320,24 @@ const InvestmentPropertyLoan = (props) => {
     },
     {
       title: "Loan Balance",
-      dataIndex: "loanBalance",
-      key: "loanBalance",
+      dataIndex: "LoanBalance",
+      key: "LoanBalance",
       type: "number-toComma",
       placeholder: "Loan Balance",
       width: 200,
     },
     {
       title: "Loan Type",
-      dataIndex: "loanType",
-      key: "loanType",
+      dataIndex: "LoanType",
+      key: "LoanType",
       type: "select", // simple static text or could be DynamicFormField if editable
       options: optionsLender,
       width: 150,
     },
     {
       title: "Repayments Amount",
-      dataIndex: "repaymentsAmount",
-      key: "repaymentsAmount",
+      dataIndex: "RepaymentsAmount",
+      key: "RepaymentsAmount",
       type: "number-toComma",
       placeholder: "Repayments Amount",
       width: 200,
@@ -311,8 +346,8 @@ const InvestmentPropertyLoan = (props) => {
     },
     {
       title: "Frequency",
-      dataIndex: "frequency",
-      key: "frequency",
+      dataIndex: "Frequency",
+      key: "Frequency",
       type: "select", // simple static text or could be DynamicFormField if editable
       options: optionsFrequency,
       width: 150,
@@ -321,8 +356,8 @@ const InvestmentPropertyLoan = (props) => {
     },
     {
       title: "Annual Repayments",
-      dataIndex: "annualRepayments",
-      key: "annualRepayments",
+      dataIndex: "AnnualRepayments",
+      key: "AnnualRepayments",
       type: "number-toComma", // simple static text or could be DynamicFormField if editable
       placeholder: "Annual Repayments",
       disabled: true,
@@ -330,38 +365,37 @@ const InvestmentPropertyLoan = (props) => {
     },
     {
       title: "Interest Rate",
-      dataIndex: "interestRate",
-      key: "interestRate",
+      dataIndex: "InterestRate",
+      key: "InterestRate",
       type: "number-toPercent",
       placeholder: "Interest Rate",
       width: 200,
     },
     {
       title: "Loan Term",
-      dataIndex: "loanTerm",
-      key: "loanTerm",
+      dataIndex: "LoanTerm",
+      key: "LoanTerm",
       type: "select", // simple static text or could be DynamicFormField if editable
       options: loanTermOptions,
       width: 150,
     },
     {
       title: "Loan Term Remaining",
-      dataIndex: "loanTermRemaining",
-      key: "loanTermRemaining",
+      dataIndex: "LoanTermRemaining",
+      key: "LoanTermRemaining",
       type: "select", // simple static text or could be DynamicFormField if editable
       options: loanTermOptions,
       width: 150,
     },
     {
       title: "Deductible Loan Amount",
-      dataIndex: "deductibleLoanAmount",
-      key: "deductibleLoanAmount",
+      dataIndex: "DeductibleLoanAmount",
+      key: "DeductibleLoanAmount",
       type: "number-toPercent",
       placeholder: "Deductible Loan Amount",
       width: 200,
     },
   ];
-  const AntDTableHOC = DynamicTableForInputsSection("antd");
 
   return (
     <Formik
@@ -375,23 +409,24 @@ const InvestmentPropertyLoan = (props) => {
           fillInitialValues(setFieldValue);
         }, []);
         const tableData = useMemo(() => {
-            console.log("values:",values)
-          const rows = [{
-            key:0,
-            owner: nameSet,
-            LenderCurrent: values?.LenderCurrent || "",
-            loanBalance: values?.LoanBalance || "",
-            loanType: values?.LoanType || "",
-            repaymentsAmount: values?.RepaymentsAmount || "",
-            frequency: values?.Frequency || "",
-            annualRepayments: values?.AnnualRepayments || "",
-            interestRate: values?.InterestRate || "",
-            loanTerm: values?.LoanTerm || "",
-            loanTermRemaining: values?.LoanTermRemaining || "",
-            deductibleLoanAmount: values?.DeductibleLoanAmount || "",
-          }];
+          // console.log("values:", values);
+          const rows = [
+            {
+              key: 0,
+              owner: nameSet,
+              LenderCurrent: values?.LenderCurrent || "",
+              LoanBalance: values?.LoanBalance || "",
+              LoanType: values?.LoanType || "",
+              RepaymentsAmount: values?.RepaymentsAmount || "",
+              Frequency: values?.Frequency || "",
+              AnnualRepayments: values?.AnnualRepayments || "",
+              InterestRate: values?.InterestRate || "",
+              LoanTerm: values?.LoanTerm || "",
+              LoanTermRemaining: values?.LoanTermRemaining || "",
+              DeductibleLoanAmount: values?.DeductibleLoanAmount || "",
+            },
+          ];
 
-   
           return rows;
         }, [values]);
 

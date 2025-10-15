@@ -105,42 +105,40 @@ const InvestmentPropertyDetails = (props) => {
     //   ":: whole Data Set ",
     //   JSON.stringify(investmentPropertyDetails)
     // );
-    if (
-      investmentPropertyDetails[props.modalObject.Input] &&
-      investmentPropertyDetails[props.modalObject.Input].length
-    ) {
-      setFieldValue(
-        `NumberOfMap`,
-        investmentPropertyDetails[props.modalObject.Input].length || ""
-      );
-
-      investmentPropertyDetails[props.modalObject.Input].forEach((data, i) => {
-        if (data) {
-          setFieldValue(`PropertyAddress${i}`, data.PropertyAddress || "");
-          setFieldValue(`CurrentValue${i}`, data.CurrentValue || "");
-          setFieldValue(`CostBase${i}`, data.CostBase || "");
-          // if (SwitchFlag) {
-          setFieldValue(`ClientOwnership${i}`, data.ClientOwnership || "");
-          setFieldValue(`PartnerOwnership${i}`, data.PartnerOwnership || "");
-          // }
-          setFieldValue(
-            `propertyLoanBalance${i}`,
-            data.propertyLoanBalance || ""
-          );
-          setFieldValue(
-            `propertyLoanDetailsArray${i}`,
-            data.propertyLoanDetailsArray || ""
-          );
-
-          setFieldValue(
-            `weeklyRentalIncome${i}`,
-            data.weeklyRentalIncome || ""
-          );
-          setFieldValue(`expenses${i}`, data.expenses || "");
-          setFieldValue(`expensesArray${i}`, data.expensesArray || "");
-        }
-      });
-    }
+    // if (
+    //   investmentPropertyDetails[props.modalObject.Input] &&
+    //   investmentPropertyDetails[props.modalObject.Input].length
+    // ) {
+    //   setFieldValue(
+    //     `NumberOfMap`,
+    //     investmentPropertyDetails[props.modalObject.Input].length || ""
+    //   );
+    //   investmentPropertyDetails[props.modalObject.Input].forEach((data, i) => {
+    //     if (data) {
+    //       setFieldValue(`PropertyAddress${i}`, data.PropertyAddress || "");
+    //       setFieldValue(`CurrentValue${i}`, data.CurrentValue || "");
+    //       setFieldValue(`CostBase${i}`, data.CostBase || "");
+    //       // if (SwitchFlag) {
+    //       setFieldValue(`ClientOwnership${i}`, data.ClientOwnership || "");
+    //       setFieldValue(`PartnerOwnership${i}`, data.PartnerOwnership || "");
+    //       // }
+    //       setFieldValue(
+    //         `propertyLoanBalance${i}`,
+    //         data.propertyLoanBalance || ""
+    //       );
+    //       setFieldValue(
+    //         `propertyLoanDetailsArray${i}`,
+    //         data.propertyLoanDetailsArray || ""
+    //       );
+    //       setFieldValue(
+    //         `weeklyRentalIncome${i}`,
+    //         data.weeklyRentalIncome || ""
+    //       );
+    //       setFieldValue(`expenses${i}`, data.expenses || "");
+    //       setFieldValue(`expensesArray${i}`, data.expensesArray || "");
+    //     }
+    //   });
+    // }
   };
 
   let handleInput = (e, setFieldValue) => {
@@ -332,31 +330,21 @@ const InvestmentPropertyDetails = (props) => {
     }
   };
 
-  let handleInnerModal = (
-    title,
-    question,
-    key,
-    mainKey,
-    key3,
-    editArray,
-    index,
-    values
-  ) => {
-    console.log(values);
+  let handleInnerModal = (innerModalTitle, values, key, stakeHolder) => {
+    console.log("handleInnerModal: ", innerModalTitle);
     let ParentModal = props.modalObject.title;
     setModalObject({
-      title,
-      question,
-      key,
-      mainKey,
-      key3,
-      editArray: editArray || [],
-      index,
+      title: innerModalTitle,
+      innerModalTitle,
       values,
+      key,
+      stakeHolder,
       ParentModal,
     });
     setFlagState(true);
   };
+
+  const AntDTableHOC = DynamicTableForInputsSection("antd");
 
   const columns = [
     {
@@ -386,7 +374,7 @@ const InvestmentPropertyDetails = (props) => {
       title: "Current Value",
       dataIndex: "CurrentValue",
       key: "CurrentValue",
-      type: "text",
+      type: "number-toComma",
       placeholder: "Current Value",
       width: 200,
     },
@@ -394,35 +382,37 @@ const InvestmentPropertyDetails = (props) => {
       title: "Cost Base",
       dataIndex: "CostBase",
       key: "CostBase",
-      type: "text",
+      type: "number-toComma",
       placeholder: "Cost Base",
       width: 200,
     },
     {
       title: "Loan Balance",
-      dataIndex: "propertyLoanBalance",
-      key: "propertyLoanDetailsArray",
+      dataIndex: "propertyLoanDetails",
+      key: "propertyLoanDetails",
       type: "number-toComma-Modal",
       placeholder: "Loan Balance",
       width: 200,
-      func:handleInnerModal,
+      func: handleInnerModal,
       innerModalTitle: "Property Loan Details",
     },
     {
       title: "Weekly Rental Income",
       dataIndex: "weeklyRentalIncome",
       key: "weeklyRentalIncome",
-      type: "text",
+      type: "number-toComma",
       placeholder: "Weekly Rental Income",
       width: 200,
     },
     {
       title: "Expenses",
-      dataIndex: "CostBase",
-      key: "CostBase",
+      dataIndex: "incomeExpenses",
+      key: "incomeExpenses",
       type: "number-toComma-Modal",
-      placeholder: "Cost Base",
+      placeholder: "Expenses",
       width: 200,
+      func: handleInnerModal,
+      innerModalTitle: "Expense Details",
     },
     // {
     //   title: "Employment Status",
@@ -596,7 +586,6 @@ const InvestmentPropertyDetails = (props) => {
     //   width: 150,
     // },
   ];
-  const AntDTableHOC = DynamicTableForInputsSection("antd");
 
   return (
     <Formik
@@ -620,14 +609,12 @@ const InvestmentPropertyDetails = (props) => {
                 values.investmentProperties?.[i]?.PropertyAddress || "",
               CurrentValue:
                 values.investmentProperties?.[i]?.CurrentValue || "",
-              CostBase:
-                values.investmentProperties?.[i]?.CostBase || "",
+              CostBase: values.investmentProperties?.[i]?.CostBase || "",
               propertyLoanBalance:
                 values.investmentProperties?.[i]?.propertyLoanBalance || "",
               weeklyRentalIncome:
                 values.investmentProperties?.[i]?.weeklyRentalIncome || "",
-              expenses:
-                values.investmentProperties?.[i]?.expenses || "",
+              expenses: values.investmentProperties?.[i]?.expenses || "",
             }));
           }
           return [];
@@ -639,7 +626,12 @@ const InvestmentPropertyDetails = (props) => {
               <div className="col-md-12">
                 <div className="row justify-content-center">
                   <div className="d-flex flex-row justify-content-center align-items-center gap-2">
-                    <p className="text-end mt-3">
+                    <p
+                      className="text-end mt-3"
+                      onClick={() => {
+                        console.log(values);
+                      }}
+                    >
                       How many {props.modalObject.title} does {nameSet} have :
                     </p>
 
@@ -678,9 +670,9 @@ const InvestmentPropertyDetails = (props) => {
                     setFlagState={setFlagState}
                     flagState={flagState}
                   >
-                    {modalObject.key === "propertyLoanDetailsArray" ? (
+                    {modalObject.key === "propertyLoanDetails" ? (
                       <InvestmentPropertyLoan />
-                    ) : modalObject.key === "expensesArray" ? (
+                    ) : modalObject.key === "incomeExpenses" ? (
                       <QuestionIncomeExpanse />
                     ) : (
                       ""
