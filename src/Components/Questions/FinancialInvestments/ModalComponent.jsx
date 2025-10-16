@@ -308,7 +308,7 @@ const ModalComponent = (props) => {
         </Modal.Body>
         {FooterButtonRender && (
           <Modal.Footer>
-            <Button
+            {/* <Button
               variant="secondary"
               style={{ width: "12.5%", minWidth: "fit-content" }}
               onClick={() => {
@@ -319,7 +319,7 @@ const ModalComponent = (props) => {
               }}
             >
               Close
-            </Button>
+            </Button> */}
 
             {props.modalObject?.cal && (
               <Button
@@ -390,7 +390,7 @@ const ModalComponent = (props) => {
                 style={{ width: "12.5%", minWidth: "fit-content" }}
                 onClick={handleOk}
               >
-                Submit
+                Save
               </button>
             )}
           </Modal.Footer>

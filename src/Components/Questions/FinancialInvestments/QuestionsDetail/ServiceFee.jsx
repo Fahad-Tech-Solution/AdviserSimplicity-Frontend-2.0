@@ -11,7 +11,7 @@ import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForI
 const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
 
-const PortfolioValue = (props) => {
+const ServiceFee = (props) => {
   const Platform = props.modalObject.Platform || {};
   const initialEditArray = props.modalObject.editArray || [];
 
@@ -30,11 +30,7 @@ const PortfolioValue = (props) => {
     }
   }, [initialEditArray]);
 
-  const fillInitialValues = (setFieldValue) => {
-    if (initialEditArray.length) {
-      setFieldValue("investments", initialEditArray);
-    }
-  };
+
 
   const handleInput = (e, setFieldValue) => {
     const value = e.target.value > 50 ? 50 : e.target.value;
@@ -257,4 +253,4 @@ const PortfolioValue = (props) => {
   );
 };
 
-export default PortfolioValue;
+export default ServiceFee;

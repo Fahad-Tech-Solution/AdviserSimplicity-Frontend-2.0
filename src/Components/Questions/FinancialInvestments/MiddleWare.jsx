@@ -55,6 +55,13 @@ const MiddleWare = (props) => {
     props.modalObject.title
   );
 
+  const LabelPortfolioValue = [
+    "Platform Investments",
+    "Family Trust Platform Investments",
+    "SMSF Platform Investments",
+  ];
+  const LabelPortfolio = LabelPortfolioValue.includes(props.modalObject.title);
+
   // read backend block for this modal key
   const BankAccountFinance =
     questionDetail[props.modalObject.key] &&
@@ -166,6 +173,7 @@ const MiddleWare = (props) => {
       setFieldValue("client", {
         currentBalanceArray: BankAccountFinance.client || [],
         currentBalance: BankAccountFinance.clientCurrentBalance || "",
+        costBase: BankAccountFinance.clientCostBaseTemp || "",
       });
 
       // Add cost base temp if needed
@@ -181,6 +189,7 @@ const MiddleWare = (props) => {
         setFieldValue("partner", {
           currentBalanceArray: BankAccountFinance.partner || [],
           currentBalance: BankAccountFinance.partnerCurrentBalance || "",
+          costBase: BankAccountFinance.partnerCostBaseTemp || "",
         });
 
         setFieldValue(
@@ -194,6 +203,7 @@ const MiddleWare = (props) => {
           setFieldValue("joint", {
             currentBalanceArray: BankAccountFinance.joint || [],
             currentBalance: BankAccountFinance.jointCurrentBalance || "",
+            costBase: BankAccountFinance.jointCostBaseTemp || "",
           });
 
           setFieldValue(
@@ -358,9 +368,9 @@ const MiddleWare = (props) => {
         clientCurrentBalance: values?.client?.currentBalance || "$0",
         partnerCurrentBalance: values?.partner?.currentBalance || "$0",
         jointCurrentBalance: values?.joint?.currentBalance || "$0",
-        clientCostBaseTemp: values?.client?.clientCostBase || "",
-        partnerCostBaseTemp: values?.partner?.partnerCostBase || "",
-        jointCostBaseTemp: values?.joint?.jointCostBase || "",
+        clientCostBaseTemp: values?.client?.costBase || "",
+        partnerCostBaseTemp: values?.partner?.costBase || "",
+        jointCostBaseTemp: values?.joint?.costBase || "",
       };
 
       // remove temp cost base fields if not attribute set
@@ -493,7 +503,7 @@ const MiddleWare = (props) => {
     };
 
     const currentBalanceCol = {
-      title: "Current Balance",
+      title: LabelPortfolio ? "Portfolio Value" : "Current Balance",
       dataIndex: "currentBalance",
       key: "currentBalance",
       type: "number-toComma-Modal",

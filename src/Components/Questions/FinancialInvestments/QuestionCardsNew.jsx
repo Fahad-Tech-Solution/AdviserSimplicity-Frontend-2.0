@@ -587,19 +587,19 @@ const QuestionCard = (props) => {
       BaceKeys && Object.keys(BaceKeys).length > 0
         ? BaceKeys.client
         : "clientTotal"
-    ] ?? "";
+    ] ?? "$0";
   const partnerValue =
     questionDetail?.[sourceKey]?.[
       BaceKeys && Object.keys(BaceKeys).length > 0
         ? BaceKeys.partner
         : "partnerTotal"
-    ] ?? "";
+    ] ?? "$0";
   const jointValue =
     questionDetail?.[sourceKey]?.[
       BaceKeys && Object.keys(BaceKeys).length > 0
         ? BaceKeys.joint
         : "jointTotal"
-    ] ?? "";
+    ] ?? "$0";
 
   const initialValues = getInitialValues?.(questionDetail) || {};
 

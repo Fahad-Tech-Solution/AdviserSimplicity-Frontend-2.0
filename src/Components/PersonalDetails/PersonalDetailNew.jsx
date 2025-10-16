@@ -32,7 +32,8 @@ const childSchema = Yup.object({
   depenantChild: Yup.string()
     .oneOf(["Yes", "No"])
     .required("Dependent required"),
-  name: Yup.string().required("Child Name required"),
+  firstName: Yup.string().required("Child First Name required"),
+  lastName: Yup.string().required("Child Last Name required"),
   dob: Yup.date().required("Child DOB required"),
   gender: Yup.string().required("Gender required"),
   relationship: Yup.string().required("Relationship required"),
@@ -182,7 +183,8 @@ const mapChildrenFromBackend = (children = []) =>
   children.map((child, i) => ({
     key: `child_${i}`,
     depenantChild: child?.depenantChild || "No",
-    name: child?.name || "",
+    firstName: child?.firstName || "",
+    lastName: child?.lastName || "",
     gender: child?.gender || "",
     relationship: child?.relationship || "",
     dob: child?.dob ? formatDate(child.dob) : "",
@@ -231,7 +233,8 @@ const mapPersonForSubmit = (person, type) => {
 const mapChildrenForSubmit = (children = []) =>
   children.map((child) => ({
     depenantChild: child.depenantChild,
-    name: child.name,
+    firstName: child.firstName,
+    lastName: child.lastName,
     gender: child.gender,
     relationship: child.relationship,
     dob: formatDate(child.dob),
@@ -625,11 +628,18 @@ const PersonalDetailNew = () => {
 
   const childrenFields = [
     {
-      title: "Name",
-      dataIndex: "name",
+      title: "First Name",
+      dataIndex: "firstName",
       type: "text",
-      key: "name",
+      key: "firstName",
       fixed: "left",
+      CheckError: true,
+    },
+    {
+      title: "Last Name",
+      dataIndex: "lastName",
+      type: "text",
+      key: "lastName",
       CheckError: true,
     },
     {
@@ -983,6 +993,7 @@ const PersonalDetailNew = () => {
       initialValues={initialValues}
       onSubmit={onSubmit}
       validationSchema={validationSchema}
+      validateOnMount={false}
       innerRef={formRef}
       enableReinitialize
     >

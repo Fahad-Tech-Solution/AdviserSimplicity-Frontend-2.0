@@ -23,6 +23,7 @@ import { Form, InputGroup } from "react-bootstrap";
 import {
   DatePicker as AntDate,
   Checkbox,
+  ConfigProvider,
   Drawer,
   Popover,
   Select,
@@ -714,6 +715,64 @@ const DynamicFormField = ({
         </>
       );
 
+    case "select-antd":
+      return (
+        <>
+          <Field name={stakeHolder ? stakeHolder + name : name}>
+            {({ field, form }) => (
+              <ConfigProvider
+                theme={{
+                  components: {
+                    Select: {
+                      colorBorder: "#36b446",
+                    },
+                  },
+                }}
+              >
+                <Select
+                  {...field}
+                  showSearch
+                  allowClear
+                  placeholder="Select an option"
+                  options={options}
+                  disabled={
+                    typeof all?.disabled === "function"
+                      ? all.disabled(values, stakeHolder)
+                      : all?.disabled || false
+                  }
+                  // 🔍 Custom filter logic for search
+                  filterOption={(input, option) =>
+                    option?.label?.toLowerCase().includes(input.toLowerCase())
+                  }
+                  onChange={(value) => {
+                    form.setFieldValue(field.name, value);
+                    if (all.func) {
+                      all.func(
+                        values,
+                        setFieldValue,
+                        { name: field.name, value },
+                        stakeHolder
+                      );
+                    }
+                  }}
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                  style={{ width: "100%" }}
+                  size="large"
+                />
+              </ConfigProvider>
+            )}
+          </Field>
+
+          {all?.CheckError && (
+            <ErrorMessage
+              name={stakeHolder ? stakeHolder + name : name}
+              component="div"
+              className="text-danger small mt-1"
+            />
+          )}
+        </>
+      );
+
     case "postcode-antd":
       return (
         <>
@@ -769,7 +828,6 @@ const DynamicFormField = ({
               );
             }}
           </Field>
-          {stakeHolder ? stakeHolder + name : name}
           {all?.CheckError && (
             <ErrorMessage
               name={stakeHolder ? stakeHolder + name : name}

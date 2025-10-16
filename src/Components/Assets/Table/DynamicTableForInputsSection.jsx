@@ -81,7 +81,6 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
         );
         return selectedOption ? selectedOption.label : value || "--";
       }
-
       return value || "--";
     };
 
