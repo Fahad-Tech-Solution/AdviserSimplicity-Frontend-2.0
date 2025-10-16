@@ -55,7 +55,9 @@ const InvestmentPropertyLoan = (props) => {
     }
   });
 
-  let initialValues = { NumberOfMap: "1" };
+  let initialValues = { NumberOfMap: "1" ,
+    DeductibleLoanAmount: "100%",
+  };
 
   // const fillInitialValues = (setFieldValue) => {
   //   let arr = [];
@@ -252,14 +254,15 @@ const InvestmentPropertyLoan = (props) => {
     values,
     setFieldValue,
     thisInput,
-    stackHolder
+    stakeHolder
   ) => {
     console.log(
       values,
       thisInput.value,
-      stackHolder,
+      stakeHolder,
       "calculateAnnualRepayments111"
     );
+
     // safely extract numeric values
     const cleanNumber = (val) => {
       if (val === undefined || val === null) return 0;
@@ -269,19 +272,15 @@ const InvestmentPropertyLoan = (props) => {
       return isNaN(parsed) ? 0 : parsed;
     };
 
-    let repaymentsAmount = cleanNumber(
-      values?.[stackHolder.replace(".", "")]?.repaymentsAmount
-    );
-    let frequency = cleanNumber(
-      values?.[stackHolder.replace(".", "")]?.frequency
-    );
+    let repaymentsAmount = cleanNumber(values?.RepaymentsAmount);
+    let frequency = cleanNumber(values?.Frequency);
 
     // Handle real-time updates from current input
     switch (thisInput.name) {
-      case stackHolder + "repaymentsAmount":
+      case "RepaymentsAmount":
         repaymentsAmount = cleanNumber(thisInput.value);
         break;
-      case stackHolder + "frequency":
+      case "Frequency":
         frequency = cleanNumber(thisInput.value);
         break;
       default:
@@ -293,10 +292,7 @@ const InvestmentPropertyLoan = (props) => {
     const annualRepayments = repaymentsAmount * frequency;
 
     // ✅ Corrected field path
-    setFieldValue(
-      `${stackHolder}annualRepayments`,
-      toCommaAndDollar(annualRepayments || 0)
-    );
+    setFieldValue(`AnnualRepayments`, toCommaAndDollar(annualRepayments || 0));
   };
 
   const AntDTableHOC = DynamicTableForInputsSection("antd");
@@ -436,7 +432,12 @@ const InvestmentPropertyLoan = (props) => {
               <div className="col-md-12">
                 <div className="row justify-content-center">
                   <div className="col-md-5 d-none">
-                    <p className="text-end mt-1">
+                    <p
+                      className="text-end mt-1"
+                      onClick={() => {
+                        console.log(values);
+                      }}
+                    >
                       How many {props.modalObject.title} does {nameSet} have :
                     </p>
                   </div>

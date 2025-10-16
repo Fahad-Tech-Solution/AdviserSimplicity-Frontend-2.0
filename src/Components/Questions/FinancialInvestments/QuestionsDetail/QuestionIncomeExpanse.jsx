@@ -34,11 +34,11 @@ const QuestionIncomeExpanse = (props) => {
   const [dynamicFields, setDynamicFields] = useState([]);
 
   const fillInitialValues = (setFieldValue) => {
-    console.log("props.modalObject 12", props.modalObject);
-    console.log(
-      "props.modalObject",
-      props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
-    );
+    console.log("props.modalObject 12", props);
+    // console.log(
+    //   "props.modalObject",
+    //   props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
+    // );
     let index = props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "");
 
     let expanseData =

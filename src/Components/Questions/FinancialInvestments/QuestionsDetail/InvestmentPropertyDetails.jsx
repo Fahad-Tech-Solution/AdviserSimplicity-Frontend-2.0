@@ -24,6 +24,8 @@ import InvestmentPropertyLoan from "./InvestmentPropertyLoan";
 import QuestionIncomeExpanse from "./QuestionIncomeExpanse";
 import { FaRegBuilding } from "react-icons/fa6";
 
+const AntDTableHOC = DynamicTableForInputsSection("antd");
+
 const InvestmentPropertyDetails = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
@@ -98,47 +100,60 @@ const InvestmentPropertyDetails = (props) => {
   }, [props.modalObject]);
 
   const fillInitialValues = (setFieldValue) => {
-    // console.log(
-    //   props.modalObject.title,
-    //   " Data of :",
-    //   props.modalObject.Input,
-    //   ":: whole Data Set ",
-    //   JSON.stringify(investmentPropertyDetails)
-    // );
-    // if (
-    //   investmentPropertyDetails[props.modalObject.Input] &&
-    //   investmentPropertyDetails[props.modalObject.Input].length
-    // ) {
-    //   setFieldValue(
-    //     `NumberOfMap`,
-    //     investmentPropertyDetails[props.modalObject.Input].length || ""
-    //   );
-    //   investmentPropertyDetails[props.modalObject.Input].forEach((data, i) => {
-    //     if (data) {
-    //       setFieldValue(`PropertyAddress${i}`, data.PropertyAddress || "");
-    //       setFieldValue(`CurrentValue${i}`, data.CurrentValue || "");
-    //       setFieldValue(`CostBase${i}`, data.CostBase || "");
-    //       // if (SwitchFlag) {
-    //       setFieldValue(`ClientOwnership${i}`, data.ClientOwnership || "");
-    //       setFieldValue(`PartnerOwnership${i}`, data.PartnerOwnership || "");
-    //       // }
-    //       setFieldValue(
-    //         `propertyLoanBalance${i}`,
-    //         data.propertyLoanBalance || ""
-    //       );
-    //       setFieldValue(
-    //         `propertyLoanDetailsArray${i}`,
-    //         data.propertyLoanDetailsArray || ""
-    //       );
-    //       setFieldValue(
-    //         `weeklyRentalIncome${i}`,
-    //         data.weeklyRentalIncome || ""
-    //       );
-    //       setFieldValue(`expenses${i}`, data.expenses || "");
-    //       setFieldValue(`expensesArray${i}`, data.expensesArray || "");
-    //     }
-    //   });
-    // }
+    const dataSet = investmentPropertyDetails?.client;
+    console.log(dataSet, "dataSet");
+    if (Array.isArray(dataSet) && dataSet.length > 0) {
+      // Set number of maps
+      console.log(dataSet.length, "dataSet.length");
+      setFieldValue("NumberOfMap", dataSet.length.toString());
+
+      // Loop through each entry and set form fields
+      dataSet.forEach((data, i) => {
+        setFieldValue(
+          `investmentProperties[${i}].PropertyAddress`,
+          data.PropertyAddress || ""
+        );
+        setFieldValue(
+          `investmentProperties[${i}].CurrentValue`,
+          data.CurrentValue || ""
+        );
+        setFieldValue(
+          `investmentProperties[${i}].CostBase`,
+          data.CostBase || ""
+        );
+        setFieldValue(
+          `investmentProperties[${i}].ClientOwnership`,
+          data.ClientOwnership || ""
+        );
+        setFieldValue(
+          `investmentProperties[${i}].PartnerOwnership`,
+          data.PartnerOwnership || ""
+        );
+        setFieldValue(
+          `investmentProperties[${i}].propertyLoanDetails`,
+          data.propertyLoanDetails || ""
+        );
+        setFieldValue(
+          `investmentProperties[${i}].propertyLoanDetailsArray`,
+          data.propertyLoanDetailsArray || ""
+        );
+        setFieldValue(
+          `investmentProperties[${i}].weeklyRentalIncome`,
+          data.weeklyRentalIncome || ""
+        );
+        setFieldValue(
+          `investmentProperties[${i}].incomeExpenses`,
+          data.incomeExpenses || ""
+        );
+        setFieldValue(
+          `investmentProperties[${i}].incomeExpensesArray`,
+          data.expensesArray || ""
+        );
+      });
+    } else {
+      // If no data found, clear NumberOfMap
+      setFieldValue("NumberOfMap", "");
+    }
   };
 
   let handleInput = (e, setFieldValue) => {
@@ -163,112 +178,89 @@ const InvestmentPropertyDetails = (props) => {
 
   let DefaultUrl = useRecoilValue(defaultUrl);
 
-  let onSubmit = async (values) => {
-    // Extract the number of maps from the values
-    const numberOfMaps = parseInt(values.NumberOfMap, 10);
-    const newEntries = [];
-
-    console.log(values, "values on submit");
-    // Iterate through each map entry and create a new object
-    for (let i = 0; i < numberOfMaps; i++) {
-      const newEntry = {
-        PropertyAddress: values[`PropertyAddress${i}`] || "",
-        CurrentValue: values[`CurrentValue${i}`] || "",
-        CostBase: values[`CostBase${i}`] || "",
-        ClientOwnership: SwitchFlag
-          ? values[`ClientOwnership${i}`] || ""
-          : undefined,
-        PartnerOwnership: SwitchFlag
-          ? values[`PartnerOwnership${i}`] || ""
-          : undefined,
-        propertyLoanBalance: values[`propertyLoanBalance${i}`] || "",
-        propertyLoanDetailsArray: values[`propertyLoanDetailsArray${i}`] || "",
-        weeklyRentalIncome: values[`weeklyRentalIncome${i}`] || "",
-        expenses: values[`expenses${i}`] || "",
-        expensesArray: values[`expensesArray${i}`] || "",
-      };
-      newEntries.push(newEntry);
-    }
-
-    // Log the new entries to verify
-    console.log(newEntries);
-
-    let DataOf = props.modalObject.Input;
-
-    // Create an object with additional fields
-    let obj = {
-      clientFK: localStorage.getItem("UserID"),
-    };
-
-    obj[DataOf] = newEntries;
-
-    // Calculate total currentBalance
-    obj["clientTotal"] = toCommaAndDollar(
-      newEntries.reduce(
-        (total, entry) =>
-          total + parseFloat(entry.CurrentValue.replace(/[^0-9.-]+/g, "")) || 0,
-        0
-      )
-    );
-    obj["partnerTotal"] = toCommaAndDollar(
-      newEntries.reduce(
-        (total, entry) =>
-          total +
-            parseFloat(entry.propertyLoanBalance.replace(/[^0-9.-]+/g, "")) ||
-          0,
-        0
-      )
-    );
-
-    console.log(obj, "final obj", props.modalObject.index);
-
-    // Check if investmentPropertyDetails and the array at props.modalObject.Input exist
-    // const bankAccountArray = investmentPropertyDetails[props.modalObject.Input] || [];
-    const bankAccountArray = investmentPropertyDetails.clientFK || "";
-
+  const onSubmit = async (values) => {
     try {
-      let res;
-      if (!bankAccountArray) {
-        res = await PostAxios(
-          `${DefaultUrl}/api/${props.modalObject.index}/Add`,
-          obj
-        );
-      } else {
-        // obj.collection = props.modalObject.Input
-        res = await PatchAxios(
-          `${DefaultUrl}/api/${props.modalObject.index}/Update`,
-          obj
-        );
-      }
+      console.log(values, "values on submit");
+
+      // Extract investment properties from form
+      const investmentProperties = values?.investmentProperties || [];
+      const numberOfMaps =
+        parseInt(values.NumberOfMap, 10) || investmentProperties.length || 0;
+
+      // Create new array for backend
+      const newEntries = investmentProperties
+        .slice(0, numberOfMaps)
+        .map((item) => ({
+          PropertyAddress: item.PropertyAddress || "",
+          CurrentValue: item.CurrentValue || "",
+          CostBase: item.CostBase || "",
+          ClientOwnership: SwitchFlag ? item.ClientOwnership || "" : "",
+          PartnerOwnership: SwitchFlag ? item.PartnerOwnership || "" : "",
+          propertyLoanDetails: item.propertyLoanDetails || "",
+          propertyLoanDetailsArray: item.propertyLoanDetailsArray || "",
+          weeklyRentalIncome: item.weeklyRentalIncome || "",
+          incomeExpenses: item.incomeExpenses || "",
+          expensesArray: item.incomeExpensesArray || "",
+        }));
+
+      // Create payload for backend
+      const payload = {
+        clientFK: localStorage.getItem("UserID"),
+        client: newEntries,
+        clientTotal: toCommaAndDollar(
+          newEntries.reduce(
+            (total, entry) =>
+              total +
+              (parseFloat(entry.CurrentValue?.replace(/[^0-9.-]+/g, "")) || 0),
+            0
+          )
+        ),
+        partnerTotal: toCommaAndDollar(
+          newEntries.reduce(
+            (total, entry) =>
+              total +
+              (parseFloat(
+                entry.propertyLoanDetails?.replace(/[^0-9.-]+/g, "")
+              ) || 0),
+            0
+          )
+        ),
+      };
+
+      console.log(payload, "Final Payload for Backend");
+
+      // Decide POST or PATCH
+      const apiUrl = `${DefaultUrl}/api/${props.modalObject.index}`;
+      const existingRecord = investmentPropertyDetails?.clientFK;
+
+      const res = existingRecord
+        ? await PatchAxios(`${apiUrl}/Update`, payload)
+        : await PostAxios(`${apiUrl}/Add`, payload);
 
       if (res) {
         console.log(res);
-        const updatedData = {
+        setQuestionDetail({
           ...questionDetail,
           [props.modalObject.index]: res,
-        };
-        setQuestionDetail(updatedData);
+        });
+
+        openNotificationSuccess(
+          "success",
+          "topRight",
+          "Success Notification",
+          `Data of "${props.modalObject.title}" is saved successfully`
+        );
       }
 
-      openNotificationSuccess(
-        "success",
-        "topRight",
-        "Success Notification",
-        'Data of "' + props.modalObject.title + '" is Saved'
-      );
-      // Reset the flag state if necessary
-      if (props.flagState) {
-        props.setFlagState(false);
-      }
+      // reset flag
+      if (props.flagState) props.setFlagState(false);
     } catch (error) {
       console.error("Error occurred while making API call:", error);
       openNotificationSuccess(
         "error",
         "topRight",
         "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        `Data of "${props.modalObject.title}" could not be saved. Please try again.`
       );
     }
   };
@@ -343,8 +335,6 @@ const InvestmentPropertyDetails = (props) => {
     });
     setFlagState(true);
   };
-
-  const AntDTableHOC = DynamicTableForInputsSection("antd");
 
   const columns = [
     {
@@ -610,11 +600,12 @@ const InvestmentPropertyDetails = (props) => {
               CurrentValue:
                 values.investmentProperties?.[i]?.CurrentValue || "",
               CostBase: values.investmentProperties?.[i]?.CostBase || "",
-              propertyLoanBalance:
-                values.investmentProperties?.[i]?.propertyLoanBalance || "",
+              propertyLoanDetails:
+                values.investmentProperties?.[i]?.propertyLoanDetails || "",
               weeklyRentalIncome:
                 values.investmentProperties?.[i]?.weeklyRentalIncome || "",
-              expenses: values.investmentProperties?.[i]?.expenses || "",
+              incomeExpenses:
+                values.investmentProperties?.[i]?.incomeExpenses || "",
             }));
           }
           return [];
