@@ -417,74 +417,81 @@ const DynamicFormField = ({
         </>
       );
 
-    case "antdate":
-      // utility: join stakeHolder + name safely
-      const buildFieldName = (stakeHolder, name) => {
-        if (!stakeHolder) return name;
-        return stakeHolder.endsWith(".")
-          ? `${stakeHolder}${name}`
-          : `${stakeHolder}.${name}`;
-      };
+   case "antdate":
+  // utility: join stakeHolder + name safely (supports array indices like "stakeholders[0].")
+  const buildFieldName = (stakeHolder, name) => {
+    if (!stakeHolder) return name;
+    // ensure no duplicate dots or missing brackets
+    return stakeHolder.endsWith(".") || stakeHolder.endsWith("]")
+      ? `${stakeHolder}${name}`
+      : `${stakeHolder}.${name}`;
+  };
 
-      return (
-        <>
-          <AntDate
-            className="form-control inputDesignDoubleInput"
-            value={(() => {
-              const fieldName = buildFieldName(stakeHolder, name);
+  // utility: safely access nested object with support for bracket paths
+  const getValueByPath = (obj, path) => {
+    try {
+      return path
+        .replace(/\[(\w+)\]/g, ".$1") // convert [0] → .0
+        .split(".")
+        .reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : null), obj);
+    } catch {
+      return null;
+    }
+  };
 
-              // safely read nested value
-              const rawValue = fieldName
-                .split(".")
-                .reduce((acc, key) => (acc ? acc[key] : null), values);
+  return (
+    <>
+      <AntDate
+        className="form-control inputDesignDoubleInput"
+        value={(() => {
+          const fieldName = buildFieldName(stakeHolder, name);
+          const rawValue = getValueByPath(values, fieldName);
+          return rawValue ? dayjs(rawValue) : null;
+        })()}
+        onChange={(date) => {
+          const fieldName = buildFieldName(stakeHolder, name);
+          const isoValue = date
+            ? date.hour(12).minute(0).second(0).millisecond(0).toISOString()
+            : null;
 
-              return rawValue ? dayjs(rawValue) : null;
-            })()}
-            onChange={(date) => {
-              const fieldName = buildFieldName(stakeHolder, name);
-              const isoValue = date
-                ? date.hour(12).minute(0).second(0).millisecond(0).toISOString()
-                : null;
+          setFieldValue(fieldName, isoValue);
 
-              // console.log(isoValue);
-              // ✅ update Formik correctly
-              setFieldValue(fieldName, isoValue);
+          if (all.callBack) {
+            all.func(
+              values,
+              setFieldValue,
+              { name: fieldName, value: isoValue },
+              stakeHolder
+            );
+          }
+        }}
+        onBlur={() => {
+          const fieldName = buildFieldName(stakeHolder, name);
+          handleBlur({ target: { name: fieldName } });
+        }}
+        id={buildFieldName(stakeHolder, name)}
+        name={buildFieldName(stakeHolder, name)}
+        disabled={
+          typeof all?.disabled === "function"
+            ? all.disabled(values, stakeHolder)
+            : all?.disabled || false
+        }
+        format="DD/MM/YYYY"
+        allowClear
+        getPopupContainer={(triggerNode) =>
+          triggerNode.closest("table") || triggerNode
+        }
+      />
+      {all?.CheckError && (
+        <ErrorMessage
+          name={buildFieldName(stakeHolder, name)}
+          component="div"
+          className="text-danger small mt-1"
+        />
+      )}
+    </>
+  );
 
-              if (all.callBack) {
-                all.func(
-                  values,
-                  setFieldValue,
-                  { name: fieldName, value: isoValue },
-                  stakeHolder
-                );
-              }
-            }}
-            onBlur={() => {
-              const fieldName = buildFieldName(stakeHolder, name);
-              handleBlur({ target: { name: fieldName } });
-            }}
-            id={buildFieldName(stakeHolder, name)}
-            name={buildFieldName(stakeHolder, name)}
-            disabled={
-              typeof all?.disabled === "function"
-                ? all.disabled(values, stakeHolder) // pass form values to compute disabled
-                : all?.disabled || false
-            }
-            format="DD/MM/YYYY"
-            allowClear
-            getPopupContainer={(triggerNode) =>
-              triggerNode.closest("table") || triggerNode
-            }
-          />
-          {all?.CheckError && (
-            <ErrorMessage
-              name={stakeHolder ? stakeHolder + name : name}
-              component="div"
-              className="text-danger small mt-1"
-            />
-          )}
-        </>
-      );
 
     case "number-toComma-and-MultiSelect":
       return (
@@ -852,6 +859,39 @@ const DynamicFormField = ({
             )
           }
         </React.Fragment >
+      );
+
+    case "yesnoInput":
+      return (
+        <React.Fragment>
+          <DynamicYesNo
+            name={stakeHolder ? stakeHolder + name : name}
+            values={values}
+            handleChange={handleChange}
+            setFieldValue={setFieldValue}
+          />
+          {(stakeHolder
+            ? getNestedValue(values, `${stakeHolder}${name}`)
+            : getNestedValue(values, name)
+          ) === "Yes" && (
+              <div className="pt-2">
+                <Field
+                  name={
+                    stakeHolder ? `${stakeHolder}${name}_input` : `${name}_input`
+                  }
+                  type="text"
+                  className="form-control"
+                   placeholder={placeholder}
+                  onChange={handleChange}
+                  value={
+                    stakeHolder
+                      ? getNestedValue(values, `${stakeHolder}${name}_input`) || ""
+                      : values[`${name}_input`] || ""
+                  }
+                />
+              </div>
+            )}
+        </React.Fragment>
       );
 
     case "modal":

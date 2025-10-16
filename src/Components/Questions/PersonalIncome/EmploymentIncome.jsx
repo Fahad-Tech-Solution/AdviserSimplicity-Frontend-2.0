@@ -37,10 +37,10 @@ const EmploymentIncome = (props) => {
     Object.keys(questionDetail.incomeFromOwnBusiness || {}).length > 0
       ? questionDetail.incomeFromOwnBusiness
       : {
-          client: [],
-          partner: [],
-          joint: [],
-        }; // Use an empty object as default if incomeFromOwnBusiness is undefined
+        client: [],
+        partner: [],
+        joint: [],
+      }; // Use an empty object as default if incomeFromOwnBusiness is undefined
 
   let initialValues = {
     owner: "",
@@ -229,8 +229,8 @@ const EmploymentIncome = (props) => {
         "topRight",
         "Error Notification",
         'Data of "' +
-          props.modalObject.title +
-          '" is not Saved. Please try again.'
+        props.modalObject.title +
+        '" is not Saved. Please try again.'
       );
     }
   };
@@ -250,21 +250,21 @@ const EmploymentIncome = (props) => {
     personalDetailObj.client?.MaritalStatus
   )
     ? [
-        {
-          value: "client",
-          label: personalDetailObj.client?.clientPreferredName,
-        },
-        {
-          value: "partner",
-          label: personalDetailObj.partner?.partnerPreferredName,
-        },
-      ]
+      {
+        value: "client",
+        label: personalDetailObj.client?.clientPreferredName,
+      },
+      {
+        value: "partner",
+        label: personalDetailObj.partner?.partnerPreferredName,
+      },
+    ]
     : [
-        {
-          value: "client",
-          label: personalDetailObj.client?.clientPreferredName,
-        },
-      ];
+      {
+        value: "client",
+        label: personalDetailObj.client?.clientPreferredName,
+      },
+    ];
 
   const AntDTableHOC = DynamicTableForInputsSection("antd");
 
@@ -552,7 +552,7 @@ const EmploymentIncome = (props) => {
                       name={`owner`}
                       component={AntdCreatableMultiSelect}
                       options={options}
-                      onChangefun={() => {}}
+                      onChangefun={() => { }}
                     />
                   </div>
                 </div>

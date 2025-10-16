@@ -35,66 +35,66 @@
 //     }
 //   };
 
-//   let onSubmit = async (values) => {
+// let onSubmit = async (values) => {
 
-//     console.log(values)
+//   console.log(values)
 
-//     props.setFieldValue(`${props.modalObject.key}${props.modalObject.index}`, values)
-
-
-//     props.setFieldValue(`premiums${props.modalObject.index}`, values.totalCost)
+//   props.setFieldValue(`${props.modalObject.key}${props.modalObject.index}`, values)
 
 
+//   props.setFieldValue(`premiums${props.modalObject.index}`, values.totalCost)
 
-//     // Reset the flag state if necessary
-//     if (props.flagState) {
-//       props.setFlagState(false);
+
+
+//   // Reset the flag state if necessary
+//   if (props.flagState) {
+//     props.setFlagState(false);
+//   }
+// };
+
+// let FormulaSetting = (values, setFieldValue, currentinput) => {
+//   try {
+//     // Extract necessary values
+//     let premiums = values.premiums.replace(/[^0-9.-]+/g, "");
+//     let frequency = values.frequency;
+//     let totalCost = values.totalCost;
+
+//     // Perform actions based on currentinput
+//     switch (currentinput.name) {
+//       case "premiums":
+//         // Safely parse the input and handle invalid input cases
+//         premiums = parseFloat(currentinput.value.replace(/[^0-9.-]+/g, ""));
+//         if (isNaN(premiums)) {
+//           premiums = 0; // Set a default value if parsing fails
+//         }
+//         break;
+//       case "frequency":
+//         frequency = parseFloat(currentinput.value);
+//         if (isNaN(frequency) || frequency === undefined || frequency === null || frequency === "") {
+//           frequency = 1; // Set a default value if frequency is invalid
+//         }
+//         break;
+//       default:
+//         console.log("No valid input setting for:", currentinput);
+//         break;
 //     }
-//   };
 
-//   let FormulaSetting = (values, setFieldValue, currentinput) => {
-//     try {
-//       // Extract necessary values
-//       let premiums = values.premiums.replace(/[^0-9.-]+/g, "");
-//       let frequency = values.frequency;
-//       let totalCost = values.totalCost;
-
-//       // Perform actions based on currentinput
-//       switch (currentinput.name) {
-//         case "premiums":
-//           // Safely parse the input and handle invalid input cases
-//           premiums = parseFloat(currentinput.value.replace(/[^0-9.-]+/g, ""));
-//           if (isNaN(premiums)) {
-//             premiums = 0; // Set a default value if parsing fails
-//           }
-//           break;
-//         case "frequency":
-//           frequency = parseFloat(currentinput.value);
-//           if (isNaN(frequency) || frequency === undefined || frequency === null || frequency === "") {
-//             frequency = 1; // Set a default value if frequency is invalid
-//           }
-//           break;
-//         default:
-//           console.log("No valid input setting for:", currentinput);
-//           break;
-//       }
-
-//       // Ensure that premiums and frequency are valid numbers before calculation
-//       if (!isNaN(premiums) && !isNaN(frequency)) {
-//         totalCost = premiums * frequency;
-//       } else {
-//         totalCost = 0; // Fallback if any value is invalid
-//       }
-
-//       // Set totalCost safely
-//       setFieldValue("totalCost", toCommaAndDollar(totalCost));
-
-//     } catch (error) {
-//       // Log any unexpected errors and handle gracefully
-//       console.error("Error in FormulaSetting:", error);
-//       setFieldValue("totalCost", 0); // Set a default in case of error
+//     // Ensure that premiums and frequency are valid numbers before calculation
+//     if (!isNaN(premiums) && !isNaN(frequency)) {
+//       totalCost = premiums * frequency;
+//     } else {
+//       totalCost = 0; // Fallback if any value is invalid
 //     }
-//   };
+
+//     // Set totalCost safely
+//     setFieldValue("totalCost", toCommaAndDollar(totalCost));
+
+//   } catch (error) {
+//     // Log any unexpected errors and handle gracefully
+//     console.error("Error in FormulaSetting:", error);
+//     setFieldValue("totalCost", 0); // Set a default in case of error
+//   }
+// };
 
 //   let emptyArrow = () => { }
 
@@ -250,12 +250,233 @@
 // export default PremiumsDetails;
 
 
-import React from 'react'
 
-const NewPremiumsDetails = () => {
+
+import { Field, Form, Formik } from "formik";
+import React, { useEffect, useState, useMemo } from "react";
+import {
+  handleInputBlur,
+  handleInputChange,
+  handleInputFocus,
+  handleInputKeyDown,
+  RenderName,
+  toCommaAndDollar,
+  toPercentage,
+} from "../../Assets/Api/Api";
+import { useRecoilValue } from "recoil";
+import { QuestionDetail } from "../../../Store/Store";
+import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
+
+const AntdTable = DynamicTableForInputsSection("antd");
+
+const PremiumsDetails = (props) => {
+  const [UserStatus] = useState(localStorage.getItem("UserStatus"));
+  const questionDetail = useRecoilValue(QuestionDetail);
+
+  const initialValues = {
+    PremiumsDetails: [],
+    NumberOfMap: 1,
+  };
+
+  const fillInitialValues = (setFieldValue) => {
+    try {
+      const stakeHolder = props.modalObject.stakeHolder;
+      const parentValues = props.modalObject.parentValues || {};
+
+      if (stakeHolder && parentValues?.[stakeHolder]) {
+        const data = parentValues[stakeHolder];
+
+        setFieldValue("PremiumsDetails[0].coverType", data.coverType || "");
+        setFieldValue("PremiumsDetails[0].premiums", data.premiums || "");
+        setFieldValue("PremiumsDetails[0].frequency", data.frequency || "");
+        setFieldValue("PremiumsDetails[0].totalCost", data.totalCost || "");
+        setFieldValue("PremiumsDetails[0].payeeOfPremiums", data.payeeOfPremiums || "");
+        setFieldValue("PremiumsDetails[0].paymentMethod", data.paymentMethod || "");
+        setFieldValue("PremiumsDetails[0].commissionRate", data.commissionRate || "");
+      }
+    } catch (err) {
+      console.error("Error in fillInitialValues:", err);
+    }
+  };
+
+
+  let onSubmit = async (values) => {
+
+    console.log(values, props.modalObject)
+    props.setFieldValue(`${props.modalObject.stakeHolder}${props.modalObject.key}Details`, values)
+    props.setFieldValue(`${props.modalObject.stakeHolder}${props.modalObject.key}`, values.totalCost)
+
+    // Reset the flag state if necessary
+    if (props.flagState) {
+      props.setFlagState(false);
+    }
+  };
+
+ const FormulaSetting = (values, setFieldValue, currentInput, stakeHolder) => {
+  try {
+  
+    const row = values || {};
+
+    // Step 1: extract which field triggered the change
+    const fieldName = currentInput.name.split(".").pop();
+
+    // Step 2: initialize base values
+    let premiums =
+      parseFloat((row.premiums || "").toString().replace(/[^0-9.-]+/g, "")) || 0;
+    let frequency = parseFloat(row.frequency) || 1;
+
+    // Step 3: handle input-specific logic
+    if (fieldName === "premiums") {
+      premiums =
+        parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
+    } else if (fieldName === "frequency") {
+      frequency = parseFloat(currentInput.value) || 1;
+    }
+
+    // Step 4: calculate total cost
+    const totalCost = premiums * frequency;
+
+    // Step 5: update field value safely
+    setFieldValue(`totalCost`, toCommaAndDollar(totalCost));
+  } catch (error) {
+    console.error("Error in FormulaSetting:", error);
+  }
+};
+
+
+  const columns = [
+    {
+      title: "No#",
+      dataIndex: "index",
+      key: "owner",
+      render: (_, __, i) => i + 1,
+      width: 60,
+    },
+    {
+      title: "Cover Type",
+      dataIndex: "coverType",
+      key: "coverType",
+      type: "select",
+      options: [
+        { value: "Life", label: "Life" },
+        { value: "TPD", label: "TPD" },
+        { value: "Trauma", label: "Trauma" },
+        { value: "Income protection", label: "Income protection" },
+      ],
+      width: 200,
+    },
+    {
+      title: "Premiums",
+      dataIndex: "premiums",
+      key: "premiums",
+      type: "number-toComma",
+      width: 150,
+      callBack: true,
+      func: FormulaSetting,
+    },
+
+
+   {
+  title: "Frequency",
+  dataIndex: "frequency",
+  key: "frequency",
+  type: "select",
+  width: 150,
+  callBack: true,
+  func: FormulaSetting,
+  options: [
+    { value: "12", label: "Monthly" },
+    { value: "6", label: "6 Monthly" },
+    { value: "1", label: "Yearly" },
+  ],
+},
+
+    {
+      title: "Total Cost p.a",
+      dataIndex: "totalCost",
+      key: "totalCost",
+      type: "text",
+      disabled: true,
+      width: 150,
+    },
+    {
+      title: "Payee of Premiums",
+      dataIndex: "payeeOfPremiums",
+      key: "payeeOfPremiums",
+      type: "select",
+      options: [
+        { value: "client", label: RenderName("client") },
+        ...(UserStatus !== "Single"
+          ? [{ value: "partner", label: RenderName("partner") }]
+          : []),
+        { value: "SMSF", label: "SMSF" },
+        { value: "Super Trustees", label: "Super Trustees" },
+        { value: "Company (Pty Ltd)", label: "Company (Pty Ltd)" },
+        { value: "Family Trust", label: "Family Trust" },
+      ],
+      width: 200,
+    },
+    {
+      title: "Payment Method",
+      dataIndex: "paymentMethod",
+      key: "paymentMethod",
+      type: "select",
+      options: [
+        { value: "Credit Card", label: "Credit Card" },
+        { value: "Direct Debit", label: "Direct Debit" },
+        { value: "Rollover", label: "Rollover" },
+        { value: "Manual", label: "Manual" },
+      ],
+      width: 200,
+    },
+    {
+      title: "Commission Rate",
+      dataIndex: "commissionRate",
+      key: "commissionRate",
+      type: "text",
+      
+      width: 150,
+    },
+  ];
+
   return (
-    <div>NewPremiumsDetails</div>
-  )
-}
+    <Formik
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      enableReinitialize
+      innerRef={props.formRef}
+    >
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
+        useEffect(() => {
+          fillInitialValues(setFieldValue);
+        }, []);
 
-export default NewPremiumsDetails
+        const dataRows = useMemo(() => {
+          const num = Number(values.NumberOfMap) || 1;
+          return Array.from({ length: num }, (_, i) => ({
+            key: i,
+            ...values.PremiumsDetails[i],
+          }));
+        }, [values.NumberOfMap, values.PremiumsDetails]);
+
+        return (
+          <Form>
+            <div className="mt-4 All_Client reportSection">
+              <AntdTable
+                columns={columns}
+                data={dataRows}
+                values={values}
+                setFieldValue={setFieldValue}
+                handleChange={handleChange}
+                handleBlur={handleBlur}
+              />
+            </div>
+            <button type="submit" style={{ display: "none" }}>Submit</button>
+          </Form>
+        );
+      }}
+    </Formik>
+  );
+};
+
+export default PremiumsDetails;

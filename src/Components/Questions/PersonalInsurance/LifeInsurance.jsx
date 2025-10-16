@@ -22,7 +22,7 @@ import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 import Beneficiaries from "../FinancialInvestments/QuestionsDetail/Beneficiaries";
 import NewLoadingExclusion from "./NewLoadingExclusion";
-import NewPremiumsDetails from "./NewPremiumsDetails";
+import PremiumsDetails from "./PremiumsDetails";
 
 const AntdTable = DynamicTableForInputsSection("antd");
 
@@ -91,7 +91,7 @@ const PersonalInsuranceLife = (props) => {
 
     let title = RenderName(values?.[BaseKey]?.[index].lifeInsured) + innerModalTitle;
 
-    console.log(innerModalTitle, key, values, stakeHolder, title)
+    console.log(innerModalTitle, key, values, stakeHolder, title, index, BaseKey, values?.[BaseKey]?.[index].lifeInsured)
     setModalObject({
       title,
       key,
@@ -177,17 +177,19 @@ const PersonalInsuranceLife = (props) => {
       title: "Life Insured",
       dataIndex: "lifeInsured",
       key: "lifeInsured",
+      selectedOptionValue:true,
       type: "select",
       placeholder: "Select Life Insured",
       options: [
-        { value: RenderName("client"), label: RenderName("client") },
+        { value: "client", label: RenderName("client") },
         ...(UserStatus !== "Single"
           ? [
-            { value: RenderName("partner"), label: RenderName("partner") },
-            { value: `${RenderName("client")} & ${RenderName("partner")}`, label: `${RenderName("client")} & ${RenderName("partner")}` },
+            { value: "partner", label: RenderName("partner") },
+            { value: `joint`, label: `${RenderName("client")} & ${RenderName("partner")}` },
           ]
           : []),
       ],
+
       width: 200,
     },
     {
@@ -195,6 +197,8 @@ const PersonalInsuranceLife = (props) => {
       dataIndex: "provider",
       key: "provider",
       type: "select",
+      
+      selectedOptionValue:true,
       placeholder: "Select Provider",
       options:
         bankDetailObj?.PersonalInsurances && bankDetailObj.PersonalInsurances.length > 0
@@ -259,8 +263,9 @@ const PersonalInsuranceLife = (props) => {
       title: "Loading/Exclusion",
       dataIndex: "loadingExclusion",
       key: "loadingExclusion",
-      type: "yesno",
-      width: 170,
+      placeholder: "Loading/Exclusion",
+      type: "yesnoInput",
+      width: 190,
     },
     {
       title: "Beneficiary",
@@ -274,11 +279,24 @@ const PersonalInsuranceLife = (props) => {
     },
   ];
 
+  const componentMapping = {
+    sumInsured: <NewLoadingExclusion />,
+    premiums: <PremiumsDetails />,
+    beneficiary: <Beneficiaries />,
+  };
+
+  const ModalContent = (obj) => {
+    let maKeaBtao = obj.key;
+    return componentMapping[maKeaBtao] || null;
+  };
+
+
   return (
     <div>
       <Formik initialValues={initialValues} onSubmit={onSubmit} enableReinitialize innerRef={props.formRef}>
         {({ values, setFieldValue, handleChange, handleBlur }) => {
           useEffect(() => {
+            
             fillInitialValues(setFieldValue);
           }, [personalInsurance.PersonalInsurance]);
 
@@ -302,29 +320,11 @@ const PersonalInsuranceLife = (props) => {
                 setFlagState={setFlagState}
                 flagState={flagState}
               >
-                {/* {modalObject.key === "sumInsured" && (
-                  <NewLoadingExclusion
-                    modalObject={modalObject}
-                    setFieldValue={setFieldValue}
-                    setFlagState={setFlagState}
-                    flagState={flagState}
-                  />
-                )}*/}
-                {modalObject.key === "premiums" && (
-                  <NewPremiumsDetails />
-                )}
-                {modalObject.key === "beneficiary" && (
-                  <Beneficiaries
-                    modalObject={modalObject}
-                    setFieldValue={setFieldValue}
-                    setFlagState={setFlagState}
-                    flagState={flagState}
-                  />
-                )}
+                {ModalContent(modalObject)}
               </InnerModal>
 
               <div className="d-flex flex-row justify-content-center align-items-center gap-4">
-                <p className="text-end mt-1 pt-2">
+                <p className="text-end mt-1 pt-2" onClick={()=>console.log(values)}>
                   How many {props.modalObject.title} does {RenderName("client")}{" "}
                   {UserStatus === "Married" && `and ${RenderName("partner")}`} have :
                 </p>

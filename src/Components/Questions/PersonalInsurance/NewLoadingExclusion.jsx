@@ -8,35 +8,35 @@ import { handleInputBlur, handleInputChange, handleInputFocus, handleInputKeyDow
 const NewLoadingExclusion = (props) => {
 
 
-    let initialValues = props?.modalObject?.editArray.length ? { NumberOfMap: props.modalObject.editArray.length } : { NumberOfMap: "" };
+    let initialValues = (props?.modalObject?.editArray && props?.modalObject?.editArray.length) ? { NumberOfMap: props.modalObject.editArray.length } : { NumberOfMap: "" };
 
     let [UserStatus] = useState(localStorage.getItem('UserStatus'));
     let [HeaderFlag, setHeaderFlag] = useState(false);
 
-    alert("we reached");
     const fillInitialValues = (setFieldValue) => {
-        if (props.modalObject.values[`${props.modalObject.key}${props.modalObject.index}`]) {
 
-            let data = props.modalObject.values[`${props.modalObject.key}${props.modalObject.index}`];
+        // if (props.modalObject.values[`${props.modalObject.key}${props.modalObject.index}`]) {
 
-            setFieldValue("NumberOfMap", data.length);
+        //     let data = props.modalObject.values[`${props.modalObject.key}${props.modalObject.index}`];
 
-            data.forEach((element, index) => {
+        //     setFieldValue("NumberOfMap", data.length);
 
-                setFieldValue("coverType" + index, element.coverType);
-                setFieldValue("premiums" + index, element.premiums);
-                setFieldValue("frequency" + index, element.frequency);
+        //     data.forEach((element, index) => {
 
-                if (element.coverType === "Income protection") {
-                    // alert("i am in", element.waitingPeriod)
-                    setFieldValue("waitingPeriod" + index, element.waitingPeriod);
-                    setFieldValue("benefitPeriod" + index, element.benefitPeriod);
-                }
-            });
+        //         setFieldValue("coverType" + index, element.coverType);
+        //         setFieldValue("premiums" + index, element.premiums);
+        //         setFieldValue("frequency" + index, element.frequency);
+
+        //         if (element.coverType === "Income protection") {
+        //             // alert("i am in", element.waitingPeriod)
+        //             setFieldValue("waitingPeriod" + index, element.waitingPeriod);
+        //             setFieldValue("benefitPeriod" + index, element.benefitPeriod);
+        //         }
+        //     });
 
 
 
-        }
+        // }
     };
 
     let onSubmit = async (values) => {

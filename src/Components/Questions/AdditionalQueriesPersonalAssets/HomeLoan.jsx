@@ -22,7 +22,7 @@ const HomeLoan = (props) => {
         return optionsArray;
     })
 
-    const AnnualFormula = (values, setFieldValue, currentInput, index) => {
+    const AnnualFormula = (values, setFieldValue, currentInput, stakeHolder) => {
         let repaymentsAmount =
             parseFloat(
                 values?.repaymentsAmount?.replace(/[^0-9.-]+/g, "") || 0
