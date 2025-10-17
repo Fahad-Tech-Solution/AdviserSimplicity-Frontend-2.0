@@ -363,6 +363,7 @@ const PersonalLoan = (props) => {
                   setFieldValue={setFieldValue}
                   handleChange={handleChange}
                   handleBlur={handleBlur}
+                  handleSubmit={props?.handleOk}
                 />
               </div>
             )}

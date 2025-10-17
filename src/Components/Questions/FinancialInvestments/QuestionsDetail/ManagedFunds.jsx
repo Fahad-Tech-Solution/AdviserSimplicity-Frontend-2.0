@@ -21,9 +21,7 @@ import ServiceFee from "./ServiceFee";
 const AntdTable = DynamicTableForInputsSection("antd");
 
 const ManagedFunds = (props) => {
-  const questionDetail = useRecoilValue(QuestionDetail);
   const bankDetailObj = useRecoilValue(BankDetail);
-  const DefaultUrl = useRecoilValue(defaultUrl);
 
   const [ShowError, setShowError] = useState({});
   const [flagState, setFlagState] = useState(false);

@@ -16,6 +16,7 @@ import {
 } from "../../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
 import { AntdCreatableMultiSelect } from "./CreatableMultiSelectField";
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const MarginLoan = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
@@ -201,6 +202,7 @@ const MarginLoan = (props) => {
       key: "lender",
       type: "select",
       options: lenderOption,
+      selectedOptionValue: true,
       width: 200,
     },
     {
@@ -262,8 +264,6 @@ const MarginLoan = (props) => {
       width: 200,
     },
   ];
-
-  const AntdTable = DynamicTableForInputsSection("antd");
 
   const ownerOptions = () => {
     const opts = [{ value: "client", label: RenderName("client") }];

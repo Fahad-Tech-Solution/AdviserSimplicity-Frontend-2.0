@@ -20,7 +20,6 @@ const ModalComponent = (props) => {
   const [progress, setProgress] = useRecoilState(Progress);
 
   const [showInnerModal, setShowInnerModal] = useState(false);
-  const [modalObject2, setModalObject2] = useState({});
 
   let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
     useRecoilState(CashFlowReCalculateLoading);
@@ -303,6 +302,7 @@ const ModalComponent = (props) => {
                 setQuestionChange,
                 childButtonRef,
                 childButtonDownloadRef,
+                handleOk,
               })
             : "no Child exist"}
         </Modal.Body>
@@ -390,7 +390,7 @@ const ModalComponent = (props) => {
                 style={{ width: "12.5%", minWidth: "fit-content" }}
                 onClick={handleOk}
               >
-                Save
+                Save & Exit
               </button>
             )}
           </Modal.Footer>

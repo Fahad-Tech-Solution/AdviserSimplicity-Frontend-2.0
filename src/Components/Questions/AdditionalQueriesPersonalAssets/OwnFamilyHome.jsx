@@ -242,6 +242,7 @@ const OwnFamilyHome = (props) => {
                       setFieldValue={setFieldValue}
                       handleChange={handleChange}
                       handleBlur={handleBlur}
+                      handleSubmit={props?.handleOk}
                     />
                   </div>
                 )}

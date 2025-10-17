@@ -12,11 +12,17 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
     setFieldValue,
     handleChange,
     handleBlur,
+    pagination = false,
+    handleSubmit = () => {},
   }) {
-    const [editingRow, setEditingRow] = useState(null);
+    // 🔥 global edit mode instead of per-row editing
+    const [isEditing, setIsEditing] = useState(false);
+
     const renderCell = (record, col) => {
       const value = record[col.dataIndex];
-      if (editingRow === record.key) {
+
+      // ✅ When global edit mode is ON
+      if (isEditing) {
         return (
           <DynamicFormField
             fieldType={col?.type || "text"}
@@ -34,103 +40,123 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
             all={col || {}}
             {...(record?.stakeHolder
               ? { stakeHolder: record.stakeHolder + "." }
-              : {})} // 🔥 row decides (client/partner)
+              : {})}
           />
         );
       }
 
-      // ✅ When not editing → format based on type
-      if (col?.type === "antdate") {
-        // console.log(value);
-        return value ? ConvertDate(value) : "--";
-      } else if (col?.type === "checkbox") {
-        return value ? "Checked" : "Un-Checked";
-      } else if (col?.type === "select-multi-antd") {
+      // ✅ When not editing → format value for display
+      if (col?.type === "antdate") return value ? ConvertDate(value) : "--";
+      if (col?.type === "checkbox") return value ? "Checked" : "Un-Checked";
+      if (col?.type === "select-multi-antd")
         return Array.isArray(value) ? value.join(", ") : value || "";
-      } else if (col?.type === "yesnoModal") {
-        if (value === "Yes") {
-          return (
-            <div className="d-flex align-items-center justify-content-center gap-3">
-              <>{value}</>
-              <DynamicFormField
-                fieldType={"modal"}
-                name={col?.dataIndex || ""}
-                placeholder={col?.placeholder || ""}
-                options={col?.options || []}
-                values={values}
-                setFieldValue={setFieldValue}
-                handleChange={handleChange}
-                handleBlur={handleBlur}
-                handleInnerModal={col?.handleInnerModal || (() => {})}
-                innerModalTitle={
-                  record?.innerModalTitle || col?.innerModalTitle || ""
-                }
-                all={col || {}}
-                {...(record?.stakeHolder
-                  ? { stakeHolder: record.stakeHolder + "." }
-                  : {})} // 🔥 row decides (client/partner)
-              />
-            </div>
-          );
-        } else {
-          return value;
-        }
-      } else if (col?.selectedOptionValue) {
+      if (col?.type === "yesnoModal" && value === "Yes") {
+        return (
+          <div className="d-flex align-items-center justify-content-center gap-3">
+            {value}
+            <DynamicFormField
+              fieldType="modal"
+              name={col?.dataIndex || ""}
+              placeholder={col?.placeholder || ""}
+              options={col?.options || []}
+              values={values}
+              setFieldValue={setFieldValue}
+              handleChange={handleChange}
+              handleBlur={handleBlur}
+              handleInnerModal={col?.handleInnerModal || (() => {})}
+              innerModalTitle={
+                record?.innerModalTitle || col?.innerModalTitle || ""
+              }
+              all={col || {}}
+              {...(record?.stakeHolder
+                ? { stakeHolder: record.stakeHolder + "." }
+                : {})}
+            />
+          </div>
+        );
+      }
+      if (col?.selectedOptionValue) {
         const selectedOption = col?.options?.find(
           (item) => item.value == value
         );
         return selectedOption ? selectedOption.label : value || "--";
       }
+
       return value || "--";
     };
 
+    // ✅ Global action column (only one cell)
     const actionColumn = {
       title: "Action",
       key: "action",
-      width: 100,
+      width: 120,
       fixed: "right",
       align: "center",
-      render: (_, record) =>
-        editingRow === record.key ? (
-          <Typography.Link onClick={() => setEditingRow(null)}>
-            Save
+      render: (_, record, index) =>
+        index === 0 ? (
+          <Typography.Link
+            onClick={() => {
+              isEditing && handleSubmit();
+              setIsEditing((prev) => !prev);
+            }}
+            style={{
+              display: "block",
+              height: "100%",
+            }}
+          >
+            {isEditing ? "Save All" : "Edit All"}
           </Typography.Link>
         ) : (
-          <Typography.Link onClick={() => setEditingRow(record.key)}>
-            Edit
-          </Typography.Link>
+          // ⬇️ Empty cell for other rows
+          { children: null, props: { colSpan: 0 } }
         ),
     };
 
     const allColumns = [...columns, actionColumn];
 
-    // ✅ AntD Table
+    // ✅ ANT DESIGN TABLE
     if (type === "antd") {
       return (
         <AntTable
           columns={allColumns.map((col) => {
-            if (col.key === "action" || col.key === "owner") {
+            if (col.key === "action") {
+              return {
+                ...col,
+                //  if (col.key === "action" || col.key === "owner") {
+
+                width: isEditing ? col.width || 150 : undefined, // ✅ fallback width if not set
+                onCell: (_, index) =>
+                  index === 0
+                    ? { rowSpan: data.length } // 🔥 span one cell across all rows
+                    : { rowSpan: 0 },
+              };
+            } else if (col.key === "owner") {
               // keep custom render
               return {
                 ...col,
-                width: editingRow ? col.width || 150 : undefined, // ✅ fallback width if not set
+                width: isEditing ? col.width || 150 : undefined, // ✅ fallback width if not set
               };
             }
             return {
               ...col,
-              width: editingRow ? col.width || 150 : undefined, // ✅ fallback width if not set
+              width: isEditing ? col.width || 150 : undefined, // ✅ fallback width if not set
               render: (text, record) => renderCell(record, col),
             };
           })}
           dataSource={data}
-          pagination={false}
+          pagination={pagination}
+          customPagination={{
+            pageSize: 10,
+            position: ["bottomRight"],
+            className: "custom-pagination",
+          }}
           rowKey="key"
-          scroll={{ x: "max-content" }} // optional: keeps right fixed working well
+          scroll={{ x: "max-content" }}
         />
       );
     }
 
-    // ✅ Bootstrap Table
+    // ✅ BOOTSTRAP TABLE (similar approach)
     if (type === "bootstrap") {
       return (
         <BootstrapTable striped bordered hover responsive>
@@ -142,11 +168,24 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
             </tr>
           </thead>
           <tbody>
-            {data.map((record) => (
+            {data.map((record, rowIndex) => (
               <tr key={record.key}>
-                {allColumns.map((col) => (
+                {columns.map((col) => (
                   <td key={col.key}>{renderCell(record, col)}</td>
                 ))}
+                {rowIndex === 0 ? (
+                  <td
+                    rowSpan={data.length}
+                    className="text-center align-middle"
+                  >
+                    <Button
+                      variant={isEditing ? "success" : "primary"}
+                      onClick={() => setIsEditing((prev) => !prev)}
+                    >
+                      {isEditing ? "Save All" : "Edit All"}
+                    </Button>
+                  </td>
+                ) : null}
               </tr>
             ))}
           </tbody>

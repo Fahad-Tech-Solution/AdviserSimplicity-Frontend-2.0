@@ -1,11 +1,8 @@
 import { Form, Formik } from "formik";
 import React, { useEffect, useMemo, useState } from "react";
 import { Row } from "react-bootstrap";
-import { useRecoilValue } from "recoil";
-import { BankDetail, defaultUrl } from "../../../../Store/Store";
+import { ConfigProvider, Select } from "antd";
 import { toCommaAndDollar } from "../../../Assets/Api/Api";
-import { ConfigProvider, Pagination, Select } from "antd";
-import { SimpleSelectField } from "./CreatableMultiSelectField";
 import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
 
 const AntdTable = DynamicTableForInputsSection("antd");
@@ -21,20 +18,12 @@ const PortfolioValue = (props) => {
   };
 
   const [dynamicFields, setDynamicFields] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 10;
 
   useEffect(() => {
     if (initialEditArray.length) {
       setDynamicFields(Array(initialEditArray.length).fill(""));
     }
   }, [initialEditArray]);
-
-  const fillInitialValues = (setFieldValue) => {
-    if (initialEditArray.length) {
-      setFieldValue("investments", initialEditArray);
-    }
-  };
 
   const handleInput = (e, setFieldValue) => {
     const value = e.target.value > 50 ? 50 : e.target.value;
@@ -56,15 +45,13 @@ const PortfolioValue = (props) => {
   // Create dynamic options for a given platform
   const generateOptions = () => {
     const options = [];
-    if (Platform) {
-      if (Array.isArray(Platform.arrayOfOffers)) {
-        Platform.arrayOfOffers.forEach((offer) => {
-          options.push({
-            value: offer._id,
-            label: `${offer.investmentName} (${offer.investmentCode})`,
-          });
+    if (Platform && Array.isArray(Platform.arrayOfOffers)) {
+      Platform.arrayOfOffers.forEach((offer) => {
+        options.push({
+          value: offer._id,
+          label: `${offer.investmentName} (${offer.investmentCode})`,
         });
-      }
+      });
     }
     return options;
   };
@@ -81,18 +68,14 @@ const PortfolioValue = (props) => {
     return code;
   };
 
-  let OnInvestmentOptionSelect = (
+  const OnInvestmentOptionSelect = (
     values,
     setFieldValue,
     currentName,
     stakeHolder
   ) => {
-    let code = getCodeForOption(currentName.value);
+    const code = getCodeForOption(currentName.value);
     setFieldValue(stakeHolder + "investmentCode", code || "");
-  };
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
   };
 
   const onSubmit = async (values) => {
@@ -157,26 +140,18 @@ const PortfolioValue = (props) => {
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, setFieldValue, handleBlur }) => {
-        useEffect(() => {
-          //   fillInitialValues(setFieldValue);
-        }, []);
-
-        // Pagination logic — filter only visible rows for Ant Table
-        const paginatedRows = useMemo(() => {
-          const num = Number(initialValues.NumberOfMap) || 0;
-          if (!values?.investments) return [];
-          const start = (currentPage - 1) * pageSize;
-          const end = start + pageSize;
-          return values.investments.slice(start, end).map((inv, i) => ({
-            key: `investment.${start + i}`, // ensures unique keys
-            owner: start + i + 1, // ✅ keeps numbering continuous across pages
-            stakeHolder: `investments[${start + i}]`,
-            investmentOption: inv.investmentOption || "",
-            investmentCode: inv.investmentCode || "",
-            investmentValue: inv.investmentValue || "",
+      {({ values, setFieldValue, handleBlur, handleChange }) => {
+        const allRows = useMemo(() => {
+          const num = Number(values.NumberOfMap) || 0;
+          return Array.from({ length: num }, (_, i) => ({
+            key: `investment.${i}`,
+            owner: i + 1,
+            stakeHolder: `investments[${i}]`,
+            investmentOption: values.investments?.[i]?.investmentOption || "",
+            investmentCode: values.investments?.[i]?.investmentCode || "",
+            investmentValue: values.investments?.[i]?.investmentValue || "",
           }));
-        }, [currentPage, values?.investments]);
+        }, [values.NumberOfMap, values.investments]);
 
         return (
           <Form>
@@ -205,7 +180,6 @@ const PortfolioValue = (props) => {
                           size="large"
                           value={values.NumberOfMap || undefined}
                           onChange={(value) => {
-                            // Create a synthetic event to reuse handleInput logic
                             handleInput({ target: { value } }, setFieldValue);
                           }}
                           onBlur={handleBlur}
@@ -227,24 +201,14 @@ const PortfolioValue = (props) => {
                     <div className="mt-4 All_Client reportSection">
                       <AntdTable
                         columns={columns}
-                        data={paginatedRows}
+                        data={allRows}
                         values={values}
                         setFieldValue={setFieldValue}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                        pagination={true}
+                        handleSubmit={props?.handleOk}
                       />
-
-                      {dynamicFields.length >= 10 && (
-                        <div className="w-100 CustomPaginantion d-flex justify-content-center mt-3">
-                          <Pagination
-                            align="start"
-                            defaultCurrent={1}
-                            current={currentPage}
-                            total={dynamicFields.length}
-                            pageSize={pageSize}
-                            onChange={handlePageChange}
-                            showSizeChanger={false}
-                          />
-                        </div>
-                      )}
                     </div>
                   )}
                 </div>

@@ -10,7 +10,7 @@ import {
 } from "../../../Assets/Api/Api";
 import axios from "axios";
 import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
-import { ConfigProvider, Pagination, Select } from "antd";
+import { ConfigProvider, Select } from "antd";
 
 const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
@@ -56,8 +56,6 @@ const AustralianShares = (props) => {
   };
 
   const [dynamicFields, setDynamicFields] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 10;
 
   useEffect(() => {
     if (existingData.length) {
@@ -89,7 +87,6 @@ const AustralianShares = (props) => {
           ...(initialValues.shares[i] || {}),
         }))
     );
-    setCurrentPage(1);
   };
 
   const handleASXCodeChange = async (
@@ -98,7 +95,6 @@ const AustralianShares = (props) => {
     input,
     stakeHolder
   ) => {
-    // e, setFieldValue, index
     let code = input.value.toUpperCase();
     let index = stakeHolder.replace(/[^0-9-]+/g, "");
 
@@ -154,14 +150,10 @@ const AustralianShares = (props) => {
   };
 
   const calculateBalance = (values, setFieldValue, input, stakeHolder) => {
-    // row
+    if (!stakeHolder) return;
 
-    if (!stakeHolder) {
-      return false;
-    }
-
-    let index = stakeHolder.replace(/[^0-9-]+/g, "");
-    let BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
+    const index = stakeHolder.replace(/[^0-9-]+/g, "");
+    const BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
 
     let sharePrice = parseFloat(
       values?.[BaseKey]?.[index]?.sharePrice.replace(/[^0-9.-]+/g, "") || 0
@@ -176,6 +168,7 @@ const AustralianShares = (props) => {
         shareCount = input.value;
         break;
     }
+
     setFieldValue(
       stakeHolder + "currentBalance",
       toCommaAndDollar(shareCount * sharePrice)
@@ -184,18 +177,15 @@ const AustralianShares = (props) => {
 
   const onSubmit = async (values) => {
     const DataOf = props.modalObject.Input;
-    console.log(props.modalObject, values);
-
-    const newEntries = values.shares.map((entry) => ({
-      ...entry,
-    }));
+    const newEntries = values.shares.map((entry) => ({ ...entry }));
 
     const total = newEntries.reduce(
-      (t, e) => t + parseFloat(e.currentBalance.replace(/[^0-9.-]+/g, "")),
+      (t, e) =>
+        t + parseFloat((e.currentBalance || "$0").replace(/[^0-9.-]+/g, "")),
       0
     );
     const totalCostBase = newEntries.reduce(
-      (t, e) => t + parseFloat(e.costBase.replace(/[^0-9.-]+/g, "")),
+      (t, e) => t + parseFloat((e.costBase || "$0").replace(/[^0-9.-]+/g, "")),
       0
     );
 
@@ -263,14 +253,9 @@ const AustralianShares = (props) => {
       callBack: true,
       func: calculateBalance,
       disabled: (values, stakeHolder) => {
-        let index = stakeHolder.replace(/[^0-9-]+/g, "");
-        let BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
-
-        if (values?.[BaseKey]?.[index]?.sharePrice) {
-          return false;
-        } else {
-          return true;
-        }
+        const index = stakeHolder.replace(/[^0-9-]+/g, "");
+        const BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
+        return !values?.[BaseKey]?.[index]?.sharePrice;
       },
     },
     {
@@ -280,14 +265,9 @@ const AustralianShares = (props) => {
       type: "number-toComma",
       placeholder: "Cost Base",
       disabled: (values, stakeHolder) => {
-        let index = stakeHolder.replace(/[^0-9-]+/g, "");
-        let BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
-
-        if (values?.[BaseKey]?.[index]?.sharePrice) {
-          return false;
-        } else {
-          return true;
-        }
+        const index = stakeHolder.replace(/[^0-9-]+/g, "");
+        const BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
+        return !values?.[BaseKey]?.[index]?.sharePrice;
       },
     },
     {
@@ -313,9 +293,6 @@ const AustralianShares = (props) => {
 
         const dataRows = useMemo(() => {
           const num = Number(values.NumberOfMap) || 0;
-          const start = (currentPage - 1) * pageSize;
-          const end = start + pageSize;
-
           return Array.from({ length: num }, (_, i) => ({
             key: `share.${i}`,
             stakeHolder: `shares[${i}]`,
@@ -325,9 +302,9 @@ const AustralianShares = (props) => {
             sharePrice: values.shares?.[i]?.sharePrice || "",
             shares: values.shares?.[i]?.shares || "",
             costBase: values.shares?.[i]?.costBase || "",
-            currentBalance: values.shares?.[i].currentBalance || "",
-          })).slice(start, end);
-        }, [values.NumberOfMap, values.shares, currentPage]);
+            currentBalance: values.shares?.[i]?.currentBalance || "",
+          }));
+        }, [values.NumberOfMap, values.shares]);
 
         return (
           <Form>
@@ -353,7 +330,6 @@ const AustralianShares = (props) => {
                     size="large"
                     value={values.NumberOfMap || undefined}
                     onChange={(value) => {
-                      // Create a synthetic event to reuse handleInput logic
                       handleInput({ target: { value } }, setFieldValue);
                     }}
                     onBlur={handleBlur}
@@ -378,19 +354,9 @@ const AustralianShares = (props) => {
                   setFieldValue={setFieldValue}
                   handleBlur={handleBlur}
                   handleChange={handleChange}
+                  pagination={true} // 🚫 pagination removed
+                  handleSubmit={props?.handleOk}
                 />
-
-                {Number(values.NumberOfMap) > pageSize && (
-                  <div className="w-100 CustomPaginantion d-flex justify-content-center mt-3">
-                    <Pagination
-                      current={currentPage}
-                      total={Number(values.NumberOfMap)}
-                      pageSize={pageSize}
-                      onChange={(p) => setCurrentPage(p)}
-                      showSizeChanger={false}
-                    />
-                  </div>
-                )}
               </div>
             )}
 

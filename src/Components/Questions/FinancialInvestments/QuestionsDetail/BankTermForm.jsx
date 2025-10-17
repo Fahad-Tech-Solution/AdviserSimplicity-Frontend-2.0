@@ -1,4 +1,4 @@
-import { Form, Formik } from "formik";
+import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState, useMemo } from "react";
 import { useRecoilValue } from "recoil";
 import {
@@ -13,8 +13,10 @@ import {
   openNotificationSuccess,
 } from "../../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
+import { ConfigProvider, Select } from "antd";
 
 const AntdTable = DynamicTableForInputsSection("antd");
+const { Option } = Select;
 
 const BankTermForm = (props) => {
   const bankDetailObj = useRecoilValue(BankDetail);
@@ -55,8 +57,6 @@ const BankTermForm = (props) => {
     bankAccounts: existingData.length ? existingData : [],
   };
 
-  const [dynamicFields, setDynamicFields] = useState([]);
-
   // Generate Financial Institution options
   const [institutionOptions, setInstitutionOptions] = useState(() => {
     if (!bankDetailObj?.FinancialInstitutions) return [];
@@ -65,12 +65,6 @@ const BankTermForm = (props) => {
       label: elem.platformName,
     }));
   });
-
-  useEffect(() => {
-    if (existingData.length) {
-      setDynamicFields(Array(existingData.length).fill(""));
-    }
-  }, [existingData]);
 
   const fillInitialValues = (setFieldValue) => {
     if (existingData.length) {
@@ -87,7 +81,9 @@ const BankTermForm = (props) => {
     const totalBalance = bankData.reduce(
       (total, entry) =>
         total +
-        parseFloat(entry.currentBalance?.replace(/[^0-9.-]+/g, "") || 0),
+        parseFloat(
+          (entry?.currentBalance || "$0")?.replace(/[^0-9.-]+/g, "") || 0
+        ),
       0
     );
 
@@ -97,7 +93,6 @@ const BankTermForm = (props) => {
       bankData
     );
 
-    console.log(DataOf);
     props.setFieldValue(
       props.modalObject.stakeHolder + "currentBalance",
       toCommaAndDollar(totalBalance)
@@ -185,22 +180,43 @@ const BankTermForm = (props) => {
                 How many {title} does {nameSet} have :
               </p>
               <div style={{ minWidth: "10%" }}>
-                <select
-                  id="NumberOfMap"
-                  name="NumberOfMap"
-                  className="form-select inputDesignDoubleInput"
-                  value={values.NumberOfMap}
+                <ConfigProvider
+                  theme={{
+                    components: {
+                      Select: {
+                        colorBorder: "#36b446",
+                      },
+                    },
+                  }}
                 >
-                  <option value="">Select</option>
-                  {Array.from(
-                    { length: props?.modalObject?.pageLimit || 0 },
-                    (_, i) => (
-                      <option key={i} value={i + 1}>
-                        {i + 1}
-                      </option>
-                    )
-                  )}
-                </select>
+                  <Field name="NumberOfMap">
+                    {({ field, form }) => (
+                      <Select
+                        id="NumberOfMap"
+                        className="w-100 h-100"
+                        placeholder="Select"
+                        size="large"
+                        value={field.value || undefined}
+                        onChange={(value) =>
+                          form.setFieldValue(field.name, value)
+                        }
+                        onBlur={() => form.setFieldTouched(field.name, true)}
+                        getPopupContainer={(triggerNode) =>
+                          triggerNode.parentNode
+                        }
+                      >
+                        {Array.from(
+                          { length: props?.modalObject?.pageLimit || 10 },
+                          (_, i) => (
+                            <Option key={i} value={i + 1}>
+                              {i + 1}
+                            </Option>
+                          )
+                        )}
+                      </Select>
+                    )}
+                  </Field>
+                </ConfigProvider>
               </div>
             </div>
 
@@ -213,6 +229,7 @@ const BankTermForm = (props) => {
                   setFieldValue={setFieldValue}
                   handleChange={handleChange}
                   handleBlur={handleBlur}
+                  handleSubmit={props?.handleOk}
                 />
               </div>
             )}

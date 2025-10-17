@@ -3,6 +3,7 @@ import React, { useEffect, useMemo } from "react";
 import { ConfigProvider } from "antd";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
+const AntDynamicTable = DynamicTableForInputsSection("antd");
 const LeaveEntitlementsModal = (props) => {
   const { key, parentValues, parentKey } = props.modalObject;
 
@@ -85,8 +86,6 @@ const LeaveEntitlementsModal = (props) => {
     },
   ];
 
-  const AntDynamicTable = DynamicTableForInputsSection("antd");
-
   return (
     <Formik
       initialValues={initialValues} // start empty, filled with setFieldValue
@@ -147,6 +146,7 @@ const LeaveEntitlementsModal = (props) => {
                 setFieldValue={setFieldValue}
                 handleChange={handleChange}
                 handleBlur={handleBlur}
+                handleSubmit={props?.handleOk}
               />
             </ConfigProvider>
           </Form>

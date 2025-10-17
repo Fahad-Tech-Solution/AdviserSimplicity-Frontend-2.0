@@ -217,6 +217,7 @@ const InnerModal = (props) => {
                 setFieldValue,
                 childButtonRef,
                 childButtonDownloadRef,
+                handleOk
               })
             : "no Child exist"}
         </Modal.Body>
@@ -289,7 +290,7 @@ const InnerModal = (props) => {
             style={{ width: "12.5%", minWidth: "fit-content" }}
             onClick={handleOk}
           >
-            Save
+            Save & Exit
           </button>
         </Modal.Footer>
       </Modal>

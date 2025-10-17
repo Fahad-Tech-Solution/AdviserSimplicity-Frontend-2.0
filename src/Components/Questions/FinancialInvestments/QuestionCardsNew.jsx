@@ -625,7 +625,7 @@ const QuestionCard = (props) => {
           <div className="mb-2">{clientName}</div>
           <input
             className="form-control inputDesign text-center"
-            value={clientValue}
+            value={clientValue || "$0"}
             readOnly
             placeholder={title}
           />
@@ -648,7 +648,7 @@ const QuestionCard = (props) => {
             <div className="mb-2">{partnerName}</div>
             <input
               className="form-control inputDesign text-center"
-              value={partnerValue}
+              value={partnerValue || "$0"}
               readOnly
               placeholder={title}
             />
@@ -687,7 +687,7 @@ const QuestionCard = (props) => {
         <div className="d-flex align-item-center justify-content-center">
           <input
             className="form-control inputDesign text-center"
-            value={lbl.value?.(questionDetail) || ""}
+            value={lbl.value?.(questionDetail) || "$0"}
             readOnly
             placeholder={title}
           />
@@ -737,7 +737,7 @@ const QuestionCard = (props) => {
           <input
             className="form-control inputDesign text-center"
             placeholder={Labels[0]}
-            value={clientValue}
+            value={clientValue || "$0"}
             readOnly
           />
         </div>
@@ -802,7 +802,7 @@ const QuestionCard = (props) => {
       <div className="d-flex align-item-center justify-content-center">
         <input
           className="form-control inputDesign text-center"
-          value={jointValue || clientValue || ""}
+          value={jointValue || clientValue || "$0"}
           readOnly
           placeholder={title}
         />

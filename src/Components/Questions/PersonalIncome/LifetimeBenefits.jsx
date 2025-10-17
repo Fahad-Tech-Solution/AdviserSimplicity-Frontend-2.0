@@ -15,6 +15,8 @@ import {
 import { AntdCreatableMultiSelect } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
+const AntdTable = DynamicTableForInputsSection("antd");
+
 const LifeTimeBeneFits = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
   const [, setQuestionDetail] = useRecoilState(QuestionDetail);
@@ -178,8 +180,6 @@ const LifeTimeBeneFits = (props) => {
     }
   };
 
-  const AntdTable = DynamicTableForInputsSection("antd");
-
   const columns = [
     { title: "Owner", dataIndex: "owner", key: "owner" },
     {
@@ -302,6 +302,7 @@ const LifeTimeBeneFits = (props) => {
                         setFieldValue={setFieldValue}
                         handleChange={handleChange}
                         handleBlur={handleBlur}
+                        handleSubmit={props?.handleOk}
                       />
                     </div>
                   )}

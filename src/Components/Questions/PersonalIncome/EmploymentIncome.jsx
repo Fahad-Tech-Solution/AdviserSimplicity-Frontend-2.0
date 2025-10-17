@@ -447,7 +447,7 @@ const EmploymentIncome = (props) => {
                     htmlFor=""
                     className="text-end"
                     onClick={() => {
-                      console.log(values);
+                      console.log(values, props.handleOk);
                     }}
                   >
                     Owner
@@ -474,6 +474,7 @@ const EmploymentIncome = (props) => {
                       setFieldValue={setFieldValue}
                       handleChange={handleChange}
                       handleBlur={handleBlur}
+                      handleSubmit={props?.handleOk}
                     />
                   </div>
                 </div>

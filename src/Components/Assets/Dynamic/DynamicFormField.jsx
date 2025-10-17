@@ -26,6 +26,7 @@ import {
   ConfigProvider,
   Drawer,
   Popover,
+  Radio,
   Select,
   Spin,
 } from "antd";
@@ -143,6 +144,64 @@ const DynamicFormField = ({
               </Checkbox>
             )}
           </Field>{" "}
+          {all?.CheckError && (
+            <ErrorMessage
+              name={stakeHolder ? stakeHolder + name : name}
+              component="div"
+              className="text-danger small mt-1"
+            />
+          )}
+        </>
+      );
+
+    case "radio":
+      return (
+        <>
+          <ConfigProvider
+            theme={{
+              components: {
+                Radio: {
+                  colorPrimary: "#36b446", // ✅ your green theme
+                  colorPrimaryHover: "#2fa23b",
+                  colorPrimaryActive: "#2fa23b",
+                },
+              },
+            }}
+          >
+            <Field name={stakeHolder ? stakeHolder + name : name}>
+              {({ field, form }) => (
+                <Radio.Group
+                  id={name}
+                  className="d-flex gap-3 flex-wrap align-items-center flex-row"
+                  value={field.value}
+                  onChange={(e) => {
+                    form.setFieldValue(field.name, e.target.value);
+                    handleChange(e);
+                    if (all.callBack) {
+                      all.func(values, setFieldValue, e.target, stakeHolder);
+                    }
+                  }}
+                  disabled={
+                    typeof all?.disabled === "function"
+                      ? all.disabled(values, stakeHolder)
+                      : all?.disabled || false
+                  }
+                >
+                  {Array.isArray(all?.options) &&
+                    all.options.map((opt, idx) => (
+                      <Radio
+                        key={idx}
+                        value={opt.value}
+                        className="radio-custom-style"
+                      >
+                        {opt.label || opt.lable || opt.value}
+                      </Radio>
+                    ))}
+                </Radio.Group>
+              )}
+            </Field>
+          </ConfigProvider>
+
           {all?.CheckError && (
             <ErrorMessage
               name={stakeHolder ? stakeHolder + name : name}

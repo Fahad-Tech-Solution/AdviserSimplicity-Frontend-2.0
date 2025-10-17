@@ -14,6 +14,8 @@ import {
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 import { AntdCreatableMultiSelect } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 
+  const AntdTable = DynamicTableForInputsSection("antd");
+
 const Partnership = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
   const [, setQuestionDetail] = useRecoilState(QuestionDetail);
@@ -137,7 +139,6 @@ const Partnership = (props) => {
     }
   };
 
-  const AntdTable = DynamicTableForInputsSection("antd");
   const DefaultUrl = useRecoilValue(defaultUrl);
 
   const onSubmit = async (values) => {
@@ -355,6 +356,7 @@ const Partnership = (props) => {
                         handleChange={handleChange}
                         handleBlur={handleBlur}
                         handleInnerModal={handleInnerModal}
+                        handleSubmit={props?.handleOk}
                       />
                     </div>
                   )}

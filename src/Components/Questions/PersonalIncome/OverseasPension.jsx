@@ -12,6 +12,8 @@ import {
 import { AntdCreatableMultiSelect } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
+const AntdTable = DynamicTableForInputsSection("antd");
+
 const OverseasPension = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
   const [, setQuestionDetail] = useRecoilState(QuestionDetail);
@@ -74,8 +76,6 @@ const OverseasPension = (props) => {
       }
     }
   };
-
-  const AntdTable = DynamicTableForInputsSection("antd");
 
   const DefaultUrl = useRecoilValue(defaultUrl);
 
@@ -226,6 +226,7 @@ const OverseasPension = (props) => {
                         setFieldValue={setFieldValue}
                         handleChange={handleChange}
                         handleBlur={handleBlur}
+                        handleSubmit={props?.handleOk}
                       />
                     </div>
                   )}

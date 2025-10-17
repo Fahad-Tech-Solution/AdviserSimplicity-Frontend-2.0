@@ -404,6 +404,7 @@ const RegularLivingExpenses = (props) => {
                   handleChange={handleChange}
                   handleBlur={handleBlur}
                   sectionKey="household"
+                  handleSubmit={props?.handleOk}
                 />
               </div>
             ),
@@ -426,6 +427,7 @@ const RegularLivingExpenses = (props) => {
                   handleChange={handleChange}
                   handleBlur={handleBlur}
                   sectionKey="personal"
+                  handleSubmit={props?.handleOk}
                 />
               </div>
             ),
@@ -448,6 +450,7 @@ const RegularLivingExpenses = (props) => {
                   handleChange={handleChange}
                   handleBlur={handleBlur}
                   sectionKey="transport"
+                  handleSubmit={props?.handleOk}
                 />
               </div>
             ),
@@ -470,32 +473,11 @@ const RegularLivingExpenses = (props) => {
                   handleChange={handleChange}
                   handleBlur={handleBlur}
                   sectionKey="insurance"
+                  handleSubmit={props?.handleOk}
                 />
               </div>
             ),
           },
-          // {
-          //   key: "5",
-          //   label: (
-          //     <div className="d-flex justify-content-between align-items-center w-100">
-          //       <span>💡 Other Expenses</span>
-          //       <strong>${totals.other?.toLocaleString() || 0}</strong>
-          //     </div>
-          //   ),
-          //   children: (
-          //     <div className="All_Client reportSection">
-          //       <AntDTableHOC
-          //         columns={columns}
-          //         data={tableData.other}
-          //         values={values}
-          //         setFieldValue={setFieldValue}
-          //         handleChange={handleChange}
-          //         handleBlur={handleBlur}
-          //         sectionKey="other"
-          //       />
-          //     </div>
-          //   ),
-          // },
         ];
 
         return (
@@ -533,17 +515,6 @@ const RegularLivingExpenses = (props) => {
                   borderRadius: "12px",
                 }}
               />
-
-              {/* <Divider />
-
-              <div className="text-end mt-3">
-                <h5>
-                  <strong>Total Monthly Expenses:</strong>{" "}
-                  <span style={{ color: "#36b446" }}>
-                    ${totalOverall.toLocaleString()}
-                  </span>
-                </h5>
-              </div> */}
             </div>
           </Form>
         );

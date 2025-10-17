@@ -4,7 +4,7 @@ import { Image } from "react-bootstrap";
 import { FaInfoCircle } from "react-icons/fa";
 
 import SVGCoin from "../../../CashFlow/CashFlowAssets/Cast_Flow/SVG/SVG-Doller-Coin.svg";
-import { getJwtToken } from "../../../Store/recoilUtils";
+import { getJwtToken, getUserDetail } from "../../../Store/recoilUtils";
 
 const getAuthHeaders = () => {
   const token = getJwtToken();
@@ -149,20 +149,32 @@ let toPercentage = (x) => {
 };
 
 let RenderName = (Input) => {
+  let PerosnalDetails = getUserDetail();
   if (Input === "client") {
-    return localStorage.getItem("UserName");
+    return (
+      PerosnalDetails?.client?.clientPreferredName ||
+      localStorage.getItem("UserName")
+    );
   } else if (Input === "partner") {
-    return localStorage.getItem("PartnerName");
+    return (
+      PerosnalDetails?.partner?.partnerPreferredName ||
+      localStorage.getItem("PartnerName")
+    );
   } else if (Input === "joint") {
     let userStatus = localStorage.getItem("UserStatus");
     if (userStatus === "Married") {
       return (
-        localStorage.getItem("UserName") +
+        (PerosnalDetails?.client?.clientPreferredName ||
+          localStorage.getItem("UserName")) +
         " + " +
-        localStorage.getItem("PartnerName")
+        (PerosnalDetails?.partner?.partnerPreferredName ||
+          localStorage.getItem("PartnerName"))
       );
     } else {
-      return localStorage.getItem("UserName");
+      return (
+        PerosnalDetails?.client?.clientPreferredName ||
+        localStorage.getItem("UserName")
+      );
     }
   }
 };

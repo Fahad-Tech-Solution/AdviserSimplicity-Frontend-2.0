@@ -59,6 +59,7 @@ const MiddleWare = (props) => {
     "Platform Investments",
     "Family Trust Platform Investments",
     "SMSF Platform Investments",
+    "Investment Bond",
   ];
   const LabelPortfolio = LabelPortfolioValue.includes(props.modalObject.title);
 
@@ -609,6 +610,7 @@ const MiddleWare = (props) => {
                     setFieldValue={setFieldValue}
                     handleChange={handleChange}
                     handleBlur={handleBlur}
+                    handleSubmit={props?.handleOk}
                   />
                 </div>
               </div>
