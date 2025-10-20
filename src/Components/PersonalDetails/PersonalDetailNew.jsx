@@ -32,12 +32,22 @@ const childSchema = Yup.object({
   depenantChild: Yup.string()
     .oneOf(["Yes", "No"])
     .required("Dependent required"),
+<<<<<<< HEAD
   name: Yup.string().required("Child name required"),
+=======
+  firstName: Yup.string().required("Child First Name required"),
+  lastName: Yup.string().required("Child Last Name required"),
+>>>>>>> origin/master
   dob: Yup.date().required("Child DOB required"),
   gender: Yup.string().required("Gender required"),
   relationship: Yup.string().required("Relationship required"),
 });
 
+<<<<<<< HEAD
+=======
+const ausPhoneRegex = /^(?:\+61|0)[2-478](?:[ ]?\d){8}$/;
+
+>>>>>>> origin/master
 const contactSchema = Yup.object({
   homeAddress: Yup.string().required("Home address is required"),
   postcodeSuburb: Yup.string()
@@ -49,15 +59,39 @@ const contactSchema = Yup.object({
     .typeError("Postal postcode must be a number")
     .required("Postal postcode is required"),
   mobile: Yup.string()
+<<<<<<< HEAD
     .matches(/^[0-9]+$/, "Mobile must be digits only")
     .required("Mobile is required"),
   homePhone: Yup.string(),
   workPhone: Yup.string(),
+=======
+    .matches(
+      ausPhoneRegex,
+      "Valid Australian Mobile Phone number Format: 0X XXXX XXXX"
+    )
+    .required("Mobile Phone is required"),
+  homePhone: Yup.string()
+    .matches(
+      ausPhoneRegex,
+      "Valid Australian Home Phone number Format: 0X XXXX XXXX"
+    )
+    .required("Home Phone is required"),
+  workPhone: Yup.string()
+    .matches(
+      ausPhoneRegex,
+      "Valid Australian Work Phone number Format: 0X XXXX XXXX"
+    )
+    .required("Work Phone is required"),
+>>>>>>> origin/master
   email: Yup.string().email("Invalid email").required("Email is required"),
 });
 
 const personSchema = Yup.object({
+<<<<<<< HEAD
   title: Yup.string().required("Required"),
+=======
+  title: Yup.string().required("Title is Required"),
+>>>>>>> origin/master
   firstName: Yup.string().required("First Name is required"),
   middleName: Yup.string(),
   lastName: Yup.string().required("Last Name is required"),
@@ -99,7 +133,11 @@ export const validationSchema = Yup.object({
     then: () =>
       Yup.number()
         .typeError("Must be a number")
+<<<<<<< HEAD
         .min(1, "At least 1 child required")
+=======
+        .min(0, "At least 0 child required")
+>>>>>>> origin/master
         .required("Number of children is required"),
     otherwise: () => Yup.number().nullable(),
   }),
@@ -167,10 +205,19 @@ const mapChildrenFromBackend = (children = []) =>
   children.map((child, i) => ({
     key: `child_${i}`,
     depenantChild: child?.depenantChild || "No",
+<<<<<<< HEAD
     name: child?.name || "",
     gender: child?.gender || "",
     relationship: child?.relationship || "",
     dob: child?.dob ? formatDate(child.dob) : "",
+=======
+    firstName: child?.firstName || "",
+    lastName: child?.lastName || "",
+    gender: child?.gender || "",
+    relationship: child?.relationship || "",
+    dob: child?.dob ? formatDate(child.dob) : "",
+    age: child?.age || "",
+>>>>>>> origin/master
   }));
 
 const mapContactForSubmit = (contact, prefix = "client") => ({
@@ -215,12 +262,123 @@ const mapPersonForSubmit = (person, type) => {
 const mapChildrenForSubmit = (children = []) =>
   children.map((child) => ({
     depenantChild: child.depenantChild,
+<<<<<<< HEAD
     name: child.name,
     gender: child.gender,
     relationship: child.relationship,
     dob: formatDate(child.dob),
   }));
 
+=======
+    firstName: child.firstName,
+    lastName: child.lastName,
+    gender: child.gender,
+    relationship: child.relationship,
+    dob: formatDate(child.dob),
+    age: child.age,
+  }));
+
+// const SectionErrorAlert = ({
+//   title,
+//   columns,
+//   errors,
+//   errorShow,
+//   flattenErrors,
+//   BaseKey, // 🆕 can be string or array
+// }) => {
+//   const fieldKeys = columns.map((col) => col.dataIndex);
+
+//   // Normalize BaseKey to an array
+//   const baseKeys = Array.isArray(BaseKey) ? BaseKey : [BaseKey];
+
+//   const sectionErrors = flattenErrors(errors).filter(([field]) => {
+//     const parts = field.split(".");
+//     const base = parts[0]; // e.g. client, partner, joint, etc.
+//     const lastKey = parts.pop();
+
+//     const matchesBase = !BaseKey || baseKeys.some((key) => key && base === key);
+//     const matchesField = fieldKeys.includes(lastKey);
+
+//     return matchesBase && matchesField;
+//   });
+
+//   if (!errorShow || sectionErrors.length === 0) return null;
+
+//   return (
+//     <div className="mt-3">
+//       <Alert
+//         message={`Validation Errors (${title})`}
+//         description={
+//           <ul style={{ marginLeft: 20 }}>
+//             {sectionErrors.map(([field, errorMsg]) => (
+//               <li key={field}>
+//                 <strong>{errorMsg}</strong>
+//               </li>
+//             ))}
+//           </ul>
+//         }
+//         type="error"
+//         showIcon
+//         className="mb-3"
+//       />
+//     </div>
+//   );
+// };
+
+const SectionErrorAlert = ({
+  title,
+  columns,
+  errors,
+  errorShow,
+  flattenErrors,
+  BaseKey, // 🆕 string | string[]
+}) => {
+  const fieldKeys = columns.map((col) => col.dataIndex);
+
+  // Normalize BaseKey to array
+  const baseKeys = Array.isArray(BaseKey) ? BaseKey : [BaseKey];
+
+  // Flatten errors and filter based on BaseKey and field keys
+  const sectionErrors = flattenErrors(errors).filter(([field]) => {
+    const lastKey = field.split(".").pop();
+
+    // ✅ Match if BaseKey is empty OR if field starts with any BaseKey (prefix match)
+    const matchesBase =
+      !BaseKey ||
+      baseKeys.some(
+        (key) => key && (field === key || field.startsWith(`${key}.`))
+      );
+
+    // ✅ Match column field
+    const matchesField = fieldKeys.includes(lastKey);
+
+    return matchesBase && matchesField;
+  });
+
+  if (!errorShow || sectionErrors.length === 0) return null;
+
+  return (
+    <div className="mt-3">
+      <Alert
+        message={`Validation Errors (${title})`}
+        description={
+          <ul style={{ marginLeft: 20 }}>
+            {sectionErrors.map(([field, errorMsg]) => (
+              <li key={field}>
+                <strong>{errorMsg}</strong>
+              </li>
+            ))}
+          </ul>
+        }
+        type="error"
+        showIcon
+        className="mb-3"
+      />
+    </div>
+  );
+};
+
+>>>>>>> origin/master
 const PersonalDetailNew = () => {
   const formRef = useRef(null);
   const [switchStep, setSwitchStep] = useState(0);
@@ -240,7 +398,11 @@ const PersonalDetailNew = () => {
   const initialValues = {
     client: {},
     partner: {},
+<<<<<<< HEAD
     haveAnyChildren: "No",
+=======
+    haveAnyChildren: "Yes",
+>>>>>>> origin/master
   };
 
   const personalFields = [
@@ -336,7 +498,11 @@ const PersonalDetailNew = () => {
       CheckError: true,
     },
     {
+<<<<<<< HEAD
       title: "Employment Status",
+=======
+      title: "Work Status",
+>>>>>>> origin/master
       dataIndex: "employment",
       type: "select",
       options: [
@@ -352,6 +518,7 @@ const PersonalDetailNew = () => {
       ],
       key: "employment",
       CheckError: true,
+<<<<<<< HEAD
     },
     {
       title: "Occupation",
@@ -366,16 +533,39 @@ const PersonalDetailNew = () => {
       type: "text",
       key: "retAge",
       CheckError: true,
+=======
+      width: 220,
+    },
+    // {
+    //   title: "Occupation",
+    //   dataIndex: "occupation",
+    //   type: "text",
+    //   key: "occupation",
+    //   CheckError: true,
+    // },
+    {
+      title: "Age to Retire",
+      dataIndex: "retAge",
+      type: "number",
+      key: "retAge",
+>>>>>>> origin/master
     },
     {
       title: "Health",
       dataIndex: "health",
       type: "select",
       options: [
+<<<<<<< HEAD
         { value: "execlent", label: "execlent" },
         { value: "good", label: "good" },
         { value: "average", label: "average" },
         { value: "poor", label: "poor" },
+=======
+        { value: "Excellent", label: "Excellent" },
+        { value: "Good", label: "Good" },
+        { value: "Average", label: "Average" },
+        { value: "Poor", label: "Poor" },
+>>>>>>> origin/master
       ],
       key: "health",
       CheckError: true,
@@ -402,7 +592,11 @@ const PersonalDetailNew = () => {
       width: 100,
     },
     {
+<<<<<<< HEAD
       title: "HELP Debt",
+=======
+      title: "Help Debt",
+>>>>>>> origin/master
       dataIndex: "helpDebt",
       type: "yesno",
       key: "helpDebt",
@@ -451,10 +645,17 @@ const PersonalDetailNew = () => {
           `${stakeHolder}postcodeSuburb`
         );
 
+<<<<<<< HEAD
         console.log("stakeHolder:", stakeHolder);
         console.log("homeAddress:", homeAddress);
         console.log("postcodeSuburb:", postcodeSuburb);
         console.log("checked:", thisInput.checked);
+=======
+        // console.log("stakeHolder:", stakeHolder);
+        // console.log("homeAddress:", homeAddress);
+        // console.log("postcodeSuburb:", postcodeSuburb);
+        // console.log("checked:", thisInput.checked);
+>>>>>>> origin/master
 
         if (thisInput.checked) {
           setFieldValue(`${stakeHolder}postalAddress`, homeAddress || "");
@@ -508,19 +709,53 @@ const PersonalDetailNew = () => {
 
   const childrenFields = [
     {
+<<<<<<< HEAD
       title: "Name",
       dataIndex: "name",
       type: "text",
       key: "name",
+=======
+      title: "First Name",
+      dataIndex: "firstName",
+      type: "text",
+      key: "firstName",
+>>>>>>> origin/master
       fixed: "left",
       CheckError: true,
     },
     {
+<<<<<<< HEAD
+=======
+      title: "Last Name",
+      dataIndex: "lastName",
+      type: "text",
+      key: "lastName",
+      CheckError: true,
+    },
+    {
+>>>>>>> origin/master
       title: "DOB",
       dataIndex: "dob",
       type: "antdate",
       key: "dob",
       CheckError: true,
+<<<<<<< HEAD
+=======
+      callBack: true,
+      func: (values, setFieldValue, thisInput, stakeHolder) => {
+        const age =
+          differenceInYears(new Date(), new Date(thisInput.value)) || 0;
+        setFieldValue(stakeHolder + "age", age);
+      },
+    },
+    {
+      title: "Age",
+      dataIndex: "age",
+      type: "text",
+      key: "age",
+      disabled: true,
+      CheckError: true,
+>>>>>>> origin/master
     },
     {
       title: "Gender",
@@ -535,7 +770,11 @@ const PersonalDetailNew = () => {
       CheckError: true,
     },
     {
+<<<<<<< HEAD
       title: "Add in Relation",
+=======
+      title: "Relationship",
+>>>>>>> origin/master
       dataIndex: "relationship",
       type: "select",
       options: [
@@ -548,11 +787,19 @@ const PersonalDetailNew = () => {
       CheckError: true,
     },
     {
+<<<<<<< HEAD
       title: "Add in is Child Depenant",
+=======
+      title: "Dependent",
+>>>>>>> origin/master
       dataIndex: "depenantChild",
       type: "yesno",
       key: "depenantChild",
       CheckError: true,
+<<<<<<< HEAD
+=======
+      width: 100,
+>>>>>>> origin/master
     },
   ];
 
@@ -606,10 +853,18 @@ const PersonalDetailNew = () => {
         );
       }
 
+<<<<<<< HEAD
       setFieldValue(
         "haveAnyChildren",
         personalDetailObj.haveAnyChildren || "No"
       );
+=======
+      // setFieldValue(
+      //   "haveAnyChildren",
+      //   personalDetailObj.haveAnyChildren || "No"
+      // );
+      setFieldValue("haveAnyChildren", "Yes");
+>>>>>>> origin/master
 
       if (
         personalDetailObj.haveAnyChildren === "Yes" &&
@@ -850,6 +1105,10 @@ const PersonalDetailNew = () => {
       initialValues={initialValues}
       onSubmit={onSubmit}
       validationSchema={validationSchema}
+<<<<<<< HEAD
+=======
+      validateOnMount={false}
+>>>>>>> origin/master
       innerRef={formRef}
       enableReinitialize
     >
@@ -871,8 +1130,14 @@ const PersonalDetailNew = () => {
               ...values.client,
             },
           ];
+<<<<<<< HEAD
 
           if (!["Single", "Widowed", ""].includes(values.client.marital)) {
+=======
+          if (
+            !["Single", "Widowed", ""].includes(values.client.marital || "")
+          ) {
+>>>>>>> origin/master
             rows.push({
               key: "partner",
               stakeHolder: "partner",
@@ -883,7 +1148,10 @@ const PersonalDetailNew = () => {
               ...values.partner,
             });
           }
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
           return rows;
         }, [values]);
 
@@ -896,7 +1164,13 @@ const PersonalDetailNew = () => {
               ...values.client.contact,
             },
           ];
+<<<<<<< HEAD
           if (!["Single", "Widowed", ""].includes(values.client.marital)) {
+=======
+          if (
+            !["Single", "Widowed", ""].includes(values.client.marital || "")
+          ) {
+>>>>>>> origin/master
             rows.push({
               key: "partner.contact",
               stakeHolder: "partner.contact",
@@ -958,6 +1232,7 @@ const PersonalDetailNew = () => {
                   values &&
                   errors &&
                   Object.keys(errors).length > 0 && (
+<<<<<<< HEAD
                     <div className="mt-3">
                       <Alert
                         message="Validation Errors"
@@ -989,6 +1264,16 @@ const PersonalDetailNew = () => {
                         className="mb-3"
                       />
                     </div>
+=======
+                    <SectionErrorAlert
+                      title="Personal Details"
+                      columns={personalFields}
+                      errors={errors}
+                      errorShow={errorShow}
+                      flattenErrors={flattenErrors}
+                      BaseKey={["client", "partner"]}
+                    />
+>>>>>>> origin/master
                   )}
 
                 {switchStep == 1 && (
@@ -1003,13 +1288,34 @@ const PersonalDetailNew = () => {
                       handleBlur={handleBlur}
                     />
 
+<<<<<<< HEAD
+=======
+                    {errorShow &&
+                      values &&
+                      errors &&
+                      Object.keys(errors).length > 0 && (
+                        <SectionErrorAlert
+                          title="Contact Details"
+                          columns={contactFields}
+                          errors={errors}
+                          errorShow={errorShow}
+                          flattenErrors={flattenErrors}
+                          BaseKey={["client.contact", "partner.contact"]}
+                        />
+                      )}
+
+>>>>>>> origin/master
                     <h3
                       className="mt-5 fw-bold"
                       onClick={() => {
                         console.log(values);
                       }}
                     >
+<<<<<<< HEAD
                       Contact
+=======
+                      Contact Details
+>>>>>>> origin/master
                     </h3>
                     <AntdDynamicTable
                       columns={contactFields}
@@ -1020,6 +1326,23 @@ const PersonalDetailNew = () => {
                       handleBlur={handleBlur}
                     />
 
+<<<<<<< HEAD
+=======
+                    {errorShow &&
+                      values &&
+                      errors &&
+                      Object.keys(errors).length > 0 && (
+                        <SectionErrorAlert
+                          title="Children Details"
+                          columns={childrenFields}
+                          errors={errors}
+                          errorShow={errorShow}
+                          flattenErrors={flattenErrors}
+                          BaseKey={"children"}
+                        />
+                      )}
+
+>>>>>>> origin/master
                     <h3
                       className="mt-5 fw-bold"
                       onClick={() => {
@@ -1029,7 +1352,11 @@ const PersonalDetailNew = () => {
                       Children Details
                     </h3>
 
+<<<<<<< HEAD
                     <div className="row justify-content-start align-items-center mb-3">
+=======
+                    <div className="row justify-content-start align-items-center mb-3 d-none">
+>>>>>>> origin/master
                       <div className="col-md-3">
                         <label className="form-label fw-bold">
                           Do you have any children?
@@ -1089,6 +1416,12 @@ const PersonalDetailNew = () => {
                           type="primary"
                           htmlType="submit"
                           className="w-100"
+<<<<<<< HEAD
+=======
+                          onClick={() => {
+                            setErrorShow(true);
+                          }}
+>>>>>>> origin/master
                         >
                           Submit
                         </Button>

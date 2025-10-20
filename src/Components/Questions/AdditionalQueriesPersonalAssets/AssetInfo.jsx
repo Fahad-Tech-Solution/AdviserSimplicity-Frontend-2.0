@@ -25,10 +25,17 @@ const AssetInfo = (props) => {
   const fillInitialValues = (setFieldValue) => {
     if (
       questionDetail[props.modalObject.key] &&
+<<<<<<< HEAD
       Object.keys(questionDetail[props.modalObject.key]||{}).length >= 0
     ) {
       const data = questionDetail[props.modalObject.key] || {};
       
+=======
+      Object.keys(questionDetail[props.modalObject.key] || {}).length >= 0
+    ) {
+      const data = questionDetail[props.modalObject.key] || {};
+
+>>>>>>> origin/master
       if (Object.keys(data).length > 0) {
         setFieldValue("owner", data.owner || []);
 
@@ -207,7 +214,11 @@ const AssetInfo = (props) => {
     ...baseColumns,
   ];
 
+<<<<<<< HEAD
   const onlyJoint = ["Boat", "Caravan", "House hold"];
+=======
+  const onlyJoint = ["Boat", "Caravan", "Contents"];
+>>>>>>> origin/master
   const onlyClient = ["Other Assets"];
 
   const options = onlyJoint.includes(props.modalObject.title)
@@ -287,6 +298,10 @@ const AssetInfo = (props) => {
                       setFieldValue={setFieldValue}
                       handleChange={handleChange}
                       handleBlur={handleBlur}
+<<<<<<< HEAD
+=======
+                      handleSubmit={props?.handleOk}
+>>>>>>> origin/master
                     />
                   </div>
                 )}

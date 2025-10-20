@@ -26,7 +26,11 @@ import CDFclients from "../Components/CDFclients/CDFclients";
 import ProfileTemp from "../Components/Assets/ProfileSection/ProfileTemp";
 import MyTeam from "../Components/SuperAdminComponent/myTeam";
 import { Header } from "antd/es/layout/layout";
+<<<<<<< HEAD
 import { defaultUrl, Employees, Roles } from "../Store/Store";
+=======
+import { BankDetail, defaultUrl, Employees, Roles } from "../Store/Store";
+>>>>>>> origin/master
 import { useRecoilState, useRecoilValue } from "recoil";
 import { GetAxios } from "../Components/Assets/Api/Api";
 
@@ -35,6 +39,10 @@ const { Sider, Content } = Layout;
 function AuthRouts() {
   const [collapsed, setCollapsed] = useState(true);
   let [employee, setEmployee] = useRecoilState(Employees);
+<<<<<<< HEAD
+=======
+  let [bankDetailObj, setBankDetailObj] = useRecoilState(BankDetail);
+>>>>>>> origin/master
 
   const routeConfigs = [
     {
@@ -157,14 +165,27 @@ function AuthRouts() {
   const fetchData = async () => {
     try {
       // Run multiple GET APIs in parallel
+<<<<<<< HEAD
       const [rolesRes, Employees] = await Promise.all([
         GetAxios(`${DefaultUrl}/api/role`),
         GetAxios(`${DefaultUrl}/api/user/Employees`),
+=======
+      const [rolesRes, Employees, Investment] = await Promise.all([
+        GetAxios(`${DefaultUrl}/api/role`),
+        GetAxios(`${DefaultUrl}/api/user/Employees`),
+        GetAxios(`${DefaultUrl}/api/investmentoffer/`),
+>>>>>>> origin/master
       ]);
 
       // Update state only if responses exist
       if (rolesRes) setRoles(rolesRes);
       if (Employees) setEmployee(Employees);
+<<<<<<< HEAD
+=======
+      if (Investment) setBankDetailObj(Investment);
+
+      // console.log(Investment);
+>>>>>>> origin/master
     } catch (error) {
       console.error("Error fetching data:", error);
       // You could show a toast or alert here instead

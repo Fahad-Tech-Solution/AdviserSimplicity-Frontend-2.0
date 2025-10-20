@@ -13,6 +13,10 @@ import {
 import { AntdCreatableMultiSelect } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
+<<<<<<< HEAD
+=======
+const AntdTable = DynamicTableForInputsSection("antd");
+>>>>>>> origin/master
 const CenterLinkPayments = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
   const [, setQuestionDetail] = useRecoilState(QuestionDetail);
@@ -91,7 +95,10 @@ const CenterLinkPayments = (props) => {
     }
   };
 
+<<<<<<< HEAD
   const AntdTable = DynamicTableForInputsSection("antd");
+=======
+>>>>>>> origin/master
   const DefaultUrl = useRecoilValue(defaultUrl);
 
   const onSubmit = async (values) => {
@@ -305,6 +312,10 @@ const CenterLinkPayments = (props) => {
                       handleChange={handleChange}
                       handleBlur={handleBlur}
                       handleInnerModal={handleInnerModal}
+<<<<<<< HEAD
+=======
+                      handleSubmit={props?.handleOk}
+>>>>>>> origin/master
                     />
                   </div>
                 )}

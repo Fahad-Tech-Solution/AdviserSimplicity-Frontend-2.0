@@ -1,7 +1,6 @@
 import React, { Children, useEffect, useState } from "react";
 import {
   AllUsers,
-  BankDetail,
   CRState,
   defaultUrl,
   Loading,
@@ -51,7 +50,6 @@ const NewAllClients = (props) => {
   const [showFilters, setShowFilters] = useState(false);
   let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
   let [prospectsCDF, setProspectsCDF] = useRecoilState(ProspectsCDF);
-  let [bankDetailObj, setBankDetailObj] = useRecoilState(BankDetail);
 
   let [stepsStatus, setStepsStatus] = useRecoilState(StepsStatus);
   let [selectedClientDetails, setSelectedClientDetails] = useRecoilState(
@@ -495,7 +493,7 @@ const NewAllClients = (props) => {
 
   useEffect(() => {
     fetchPersonalDetials();
-    fetchData();
+
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   let fetchPersonalDetials = async () => {
@@ -522,17 +520,7 @@ const NewAllClients = (props) => {
     }
   };
 
-  async function fetchData() {
-    try {
-      const res = await GetAxios(`${DefaultUrl}/api/investmentoffer/`);
-      if (res) {
-        // console.log(JSON.stringify(res))
-        setBankDetailObj(res || {});
-      }
-    } catch (error) {
-      console.error("Error fetching questions:", error);
-    }
-  }
+ 
 
   let Navigate = useNavigate();
 

@@ -217,12 +217,13 @@ const InnerModal = (props) => {
                 setFieldValue,
                 childButtonRef,
                 childButtonDownloadRef,
+                handleOk
               })
             : "no Child exist"}
         </Modal.Body>
 
         <Modal.Footer>
-          <Button
+          {/* <Button
             variant="secondary"
             style={{ width: "12.5%", minWidth: "fit-content" }}
             onClick={() => {
@@ -233,7 +234,7 @@ const InnerModal = (props) => {
             }}
           >
             Close
-          </Button>
+          </Button> */}
 
           {props.modalObject?.cal && (
             <Button
@@ -289,7 +290,7 @@ const InnerModal = (props) => {
             style={{ width: "12.5%", minWidth: "fit-content" }}
             onClick={handleOk}
           >
-            Submit
+            Save & Exit
           </button>
         </Modal.Footer>
       </Modal>

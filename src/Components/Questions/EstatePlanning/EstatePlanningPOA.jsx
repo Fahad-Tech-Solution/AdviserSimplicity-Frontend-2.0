@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { Row, Table } from 'react-bootstrap';
@@ -332,6 +333,398 @@ const EstatePlanningPOA = (props) => {
             }}
         </Formik>
     );
+=======
+import { Field, Form, Formik } from "formik";
+import React, { useEffect, useMemo, useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  defaultUrl,
+  QuestionDetail,
+  PersonalDetailsData,
+} from "../../../Store/Store";
+import {
+  openNotificationSuccess,
+  PatchAxios,
+  PostAxios,
+  RenderName,
+} from "../../Assets/Api/Api";
+import { AntdCreatableMultiSelect } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
+import { Tooltip } from "antd";
+import { FaCircleQuestion } from "react-icons/fa6";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+const AntDTableHOC = DynamicTableForInputsSection("antd");
+
+const EstatePlanningPOA = (props) => {
+  let questionDetail = useRecoilValue(QuestionDetail);
+  let personalDetailObj = useRecoilValue(PersonalDetailsData);
+  let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+  let [UserStatus] = useState(localStorage.getItem("UserStatus"));
+
+  let POA =
+    Object.keys(questionDetail.POA || {}).length > 0
+      ? questionDetail.POA
+      : {
+          client: {},
+          partner: {},
+          joint: {},
+          owner: [],
+        };
+
+  let initialValues = {
+    owner: [],
+    client: {
+      POAType: "",
+      yearSetUp: "",
+      POAName: "",
+      DOB: "",
+      relationshipStatus: [],
+    },
+    partner: {
+      POAType: "",
+      yearSetUp: "",
+      POAName: "",
+      DOB: "",
+      relationshipStatus: [],
+    },
+  };
+
+  const fillInitialValues = (setFieldValue) => {
+    if (POA && POA.clientFK) {
+      setFieldValue("owner", POA.owner || []);
+
+      if (POA.owner?.includes("client") || POA.owner?.includes("together")) {
+        setFieldValue("client.POAType", POA.client?.POAType || "");
+        setFieldValue("client.yearSetUp", POA.client?.yearSetUp || "");
+        setFieldValue("client.POAName", POA.client?.POAName || "");
+        setFieldValue(
+          "client.DOB",
+          POA.client?.DOB ? new Date(POA.client.DOB) : ""
+        );
+        setFieldValue(
+          "client.relationshipStatus",
+          POA.client?.relationshipStatus || []
+        );
+      }
+
+      if (POA.owner?.includes("partner") || POA.owner?.includes("together")) {
+        setFieldValue("partner.POAType", POA.partner?.POAType || "");
+        setFieldValue("partner.yearSetUp", POA.partner?.yearSetUp || "");
+        setFieldValue("partner.POAName", POA.partner?.POAName || "");
+        setFieldValue(
+          "partner.DOB",
+          POA.partner?.DOB ? new Date(POA.partner.DOB) : ""
+        );
+        setFieldValue(
+          "partner.relationshipStatus",
+          POA.partner?.relationshipStatus || []
+        );
+      }
+    }
+  };
+
+  let DefaultUrl = useRecoilValue(defaultUrl);
+
+  let onSubmit = async (values) => {
+    let DataOf = props.modalObject?.key || "POA";
+    console.log(
+      "EstatePlanningPOA onSubmit values:",
+      values,
+      "Key Came From:",
+      DataOf
+    );
+    let obj = { ...values };
+    obj.clientFK = localStorage.getItem("UserID");
+
+    if (values.owner.includes("client") || values.owner.includes("together")) {
+      obj.clientTotal = values.client?.POAName?.toString() || "";
+      // Ensure DOB is formatted correctly for API
+      obj.client.DOB = values.client.DOB
+        ? new Date(values.client.DOB).toISOString()
+        : "";
+    } else {
+      obj.clientTotal = "";
+      obj.client = {};
+    }
+
+    if (values.owner.includes("partner") || values.owner.includes("together")) {
+      obj.partnerTotal = values.partner?.POAName?.toString() || "";
+      obj.partner.DOB = values.partner.DOB
+        ? new Date(values.partner.DOB).toISOString()
+        : "";
+      // Copy client values to partner if "together" is selected
+      if (values.owner.includes("together")) {
+        obj.partner = { ...obj.client };
+      }
+    } else {
+      obj.partnerTotal = "";
+      obj.partner = {};
+    }
+
+    if (UserStatus !== "Married") {
+      obj.partnerTotal = "";
+      obj.partner = {};
+    }
+
+    console.log("Final obj:", obj);
+
+    try {
+      let res;
+      if (!POA.clientFK) {
+        res = await PostAxios(`${DefaultUrl}/api/POA/Add`, obj);
+      } else {
+        res = await PatchAxios(`${DefaultUrl}/api/POA/Update`, obj);
+      }
+
+      if (res) {
+        console.log(res);
+        const updatedData = { ...questionDetail, POA: res };
+        setQuestionDetail(updatedData);
+        openNotificationSuccess(
+          "success",
+          "topRight",
+          "Success Notification",
+          `Data of "${props.modalObject?.title || "POA"}" is Saved`
+        );
+        if (props.flagState) {
+          props.setFlagState(false);
+        }
+      }
+    } catch (error) {
+      console.error(
+        "API error details:",
+        error.response?.data || error.message
+      );
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        `Data of "${props.modalObject?.title || "POA"}" is not Saved: ${
+          error.response?.data?.message || error.message
+        }`
+      );
+    }
+  };
+
+  const options = !["Single", "Widowed"].includes(
+    personalDetailObj.client?.MaritalStatus
+  )
+    ? [
+        {
+          value: "client",
+          label: personalDetailObj.client?.clientPreferredName || "Client",
+        },
+        {
+          value: "partner",
+          label: personalDetailObj.partner?.partnerPreferredName || "Partner",
+        },
+        { value: "joint", label: `(${RenderName("joint")})` },
+      ]
+    : [
+        {
+          value: "client",
+          label: personalDetailObj.client?.clientPreferredName || "Client",
+        },
+      ];
+
+  const columns = [
+    {
+      title: "Owner",
+      dataIndex: "owner",
+      key: "owner",
+      type: "text",
+      placeholder: "Enter Owner Name",
+      width: 150,
+    },
+    {
+      title: "POA Type",
+      dataIndex: "POAType",
+      key: "POAType",
+      type: "select",
+      placeholder: "Select POA Type",
+      width: 150,
+      options: [
+        { value: "Enduring", label: "Enduring" },
+        { value: "Financial & Personal", label: "Financial & Personal" },
+        { value: "Medical Decision Maker", label: "Medical Decision Maker" },
+        { value: "Limited", label: "Limited" },
+        { value: "Other", label: "Other" },
+      ],
+      disabled: (values, stakeHolder) =>
+        values.owner.includes("together") && stakeHolder === "partner",
+    },
+    {
+      title: "Year Set Up",
+      dataIndex: "yearSetUp",
+      key: "yearSetUp",
+      type: "number",
+      placeholder: "Enter Year Set Up",
+      width: 150,
+      disabled: (values, stakeHolder) =>
+        values.owner.includes("together") && stakeHolder === "partner",
+    },
+    {
+      title: "Name of POA",
+      dataIndex: "POAName",
+      key: "POAName",
+      type: "text",
+      placeholder: "Enter Name of POA",
+      width: 200,
+      disabled: (values, stakeHolder) =>
+        values.owner.includes("together") && stakeHolder === "partner",
+    },
+    {
+      title: "DOB",
+      dataIndex: "DOB",
+      key: "DOB",
+      type: "antdate",
+      placeholder: "Select DOB",
+      width: 150,
+      render: ({ value, onChange, disabled }) => (
+        <DatePicker
+          selected={value ? new Date(value) : null}
+          onChange={onChange}
+          placeholderText="dd/mm/yyyy"
+          dateFormat="dd/MM/yyyy"
+          className="form-control"
+          disabled={disabled}
+        />
+      ),
+      disabled: (values, stakeHolder) =>
+        values.owner.includes("together") && stakeHolder === "partner",
+    },
+    {
+      title: "Relationship Status",
+      dataIndex: "relationshipStatus",
+      key: "relationshipStatus",
+      type: "select-creatableMulti",
+      placeholder: "Select Relationship Status",
+      width: 200,
+      options: [
+        { value: "spouse-de-facto", label: "Spouse/De-facto" },
+        { value: "child", label: "Child" },
+        { value: "stepchild", label: "Stepchild" },
+        { value: "neice", label: "Neice" },
+        { value: "nephew", label: "Nephew" },
+        { value: "other", label: "Other" },
+      ],
+      disabled: (values, stakeHolder) =>
+        values.owner.includes("together") && stakeHolder === "partner",
+    },
+  ];
+
+  return (
+    <Formik
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      enableReinitialize
+      innerRef={props.formRef}
+    >
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
+        useEffect(() => {
+          fillInitialValues(setFieldValue);
+        }, []);
+
+        const tableData = useMemo(() => {
+          const rows = [];
+
+          if (
+            values.owner.includes("client") ||
+            values.owner.includes("together")
+          ) {
+            rows.push({
+              key: "client",
+              stakeHolder: "client",
+              owner: RenderName("client"),
+              POAType: values?.client?.POAType || "",
+              yearSetUp: values?.client?.yearSetUp || "",
+              POAName: values?.client?.POAName || "",
+              DOB: values?.client?.DOB || "",
+              relationshipStatus: values?.client?.relationshipStatus || [],
+            });
+          }
+
+          if (
+            (values.owner.includes("partner") ||
+              values.owner.includes("together")) &&
+            UserStatus === "Married"
+          ) {
+            rows.push({
+              key: "partner",
+              stakeHolder: "partner",
+              owner: RenderName("partner"),
+              POAType: values?.partner?.POAType || "",
+              yearSetUp: values?.partner?.yearSetUp || "",
+              POAName: values?.partner?.POAName || "",
+              DOB: values?.partner?.DOB || "",
+              relationshipStatus: values?.partner?.relationshipStatus || [],
+            });
+          }
+
+          return rows;
+        }, [values]);
+
+        return (
+          <Form>
+            <div className="row">
+              <div className="col-md-12">
+                <div className="d-flex flex-row justify-content-center align-items-center gap-4">
+                  <label htmlFor="" className="text-end">
+                    Owner
+                  </label>
+                  <div style={{ minWidth: "200px" }}>
+                    <Field
+                      name="owner"
+                      component={AntdCreatableMultiSelect}
+                      options={options}
+                      onChangefun={(selection) => {
+                        const selectionArray = selection;
+                        const hasTogether = selectionArray.some(
+                          (item) => item.value === "together"
+                        );
+                        if (hasTogether) {
+                          setFieldValue("owner", ["together"]);
+                        }
+                      }}
+                    />
+                  </div>
+                  {values.owner.includes("together") && (
+                    <Tooltip
+                      placement="top"
+                      title={
+                        "When yes is selected for Partner for POA, details from Client Answers for POA will be copied to Partner when client and partner have a POA together."
+                      }
+                    >
+                      <FaCircleQuestion
+                        style={{ fontSize: "18px", cursor: "pointer" }}
+                      />
+                    </Tooltip>
+                  )}
+                </div>
+              </div>
+
+              {values.owner.length > 0 && (
+                <div className="col-md-12">
+                  <div className="mt-4 All_Client reportSection">
+                    <AntDTableHOC
+                      columns={columns}
+                      data={tableData}
+                      values={values}
+                      setFieldValue={setFieldValue}
+                      handleChange={handleChange}
+                      handleBlur={handleBlur}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </Form>
+        );
+      }}
+    </Formik>
+  );
+>>>>>>> origin/master
 };
 
 export default EstatePlanningPOA;

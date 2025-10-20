@@ -23,8 +23,10 @@ import { Form, InputGroup } from "react-bootstrap";
 import {
   DatePicker as AntDate,
   Checkbox,
+  ConfigProvider,
   Drawer,
   Popover,
+  Radio,
   Select,
   Spin,
 } from "antd";
@@ -142,6 +144,64 @@ const DynamicFormField = ({
               </Checkbox>
             )}
           </Field>{" "}
+          {all?.CheckError && (
+            <ErrorMessage
+              name={stakeHolder ? stakeHolder + name : name}
+              component="div"
+              className="text-danger small mt-1"
+            />
+          )}
+        </>
+      );
+
+    case "radio":
+      return (
+        <>
+          <ConfigProvider
+            theme={{
+              components: {
+                Radio: {
+                  colorPrimary: "#36b446", // ✅ your green theme
+                  colorPrimaryHover: "#2fa23b",
+                  colorPrimaryActive: "#2fa23b",
+                },
+              },
+            }}
+          >
+            <Field name={stakeHolder ? stakeHolder + name : name}>
+              {({ field, form }) => (
+                <Radio.Group
+                  id={name}
+                  className="d-flex gap-3 flex-wrap align-items-center flex-row"
+                  value={field.value}
+                  onChange={(e) => {
+                    form.setFieldValue(field.name, e.target.value);
+                    handleChange(e);
+                    if (all.callBack) {
+                      all.func(values, setFieldValue, e.target, stakeHolder);
+                    }
+                  }}
+                  disabled={
+                    typeof all?.disabled === "function"
+                      ? all.disabled(values, stakeHolder)
+                      : all?.disabled || false
+                  }
+                >
+                  {Array.isArray(all?.options) &&
+                    all.options.map((opt, idx) => (
+                      <Radio
+                        key={idx}
+                        value={opt.value}
+                        className="radio-custom-style"
+                      >
+                        {opt.label || opt.lable || opt.value}
+                      </Radio>
+                    ))}
+                </Radio.Group>
+              )}
+            </Field>
+          </ConfigProvider>
+
           {all?.CheckError && (
             <ErrorMessage
               name={stakeHolder ? stakeHolder + name : name}
@@ -650,7 +710,7 @@ const DynamicFormField = ({
                 : all?.disabled || false
             }
             onChange={(e) => {
-              console.log(e);
+              // console.log(e);
               if (all.callBack) {
                 all.func(values, setFieldValue, e.target, stakeHolder);
               }
@@ -714,67 +774,127 @@ const DynamicFormField = ({
         </>
       );
 
-    case "postcode-antd":
+    case "select-antd":
       return (
-        <Field name={stakeHolder ? stakeHolder + name : name}>
-          {({ field, form }) => {
-            const [optionsData, setOptionsData] = useState([]);
-            const [loading, setLoading] = useState(false);
-            const USERNAME = "usamasaeed3k";
-            const handleSearch = async (query) => {
-              if (!query) {
-                setOptionsData([]);
-                return;
-              }
-              setLoading(true);
-              try {
-                const res = await axios.get(
-                  `https://secure.geonames.org/postalCodeSearchJSON?placename=${encodeURIComponent(
-                    query
-                  )}&country=AU&maxRows=10&username=${USERNAME}`
-                );
-
-                const mapped = (res.data.postalCodes || []).map((place) => ({
-                  value: `${place.placeName} (${place.postalCode})`,
-                  label: `${place.placeName} (${place.postalCode})`,
-                }));
-                setOptionsData(mapped);
-              } catch (err) {
-                console.error("Error fetching postcodes:", err);
-              }
-              setLoading(false);
-            };
-
-            return (
-              <>
+        <>
+          <Field name={stakeHolder ? stakeHolder + name : name}>
+            {({ field, form }) => (
+              <ConfigProvider
+                theme={{
+                  components: {
+                    Select: {
+                      colorBorder: "#36b446",
+                    },
+                  },
+                }}
+              >
                 <Select
+                  {...field}
                   showSearch
                   allowClear
-                  value={field.value || undefined}
-                  placeholder="Type suburb or postcode..."
-                  onSearch={handleSearch}
-                  onChange={(val) => form.setFieldValue(field.name, val)}
-                  filterOption={false} // 👈 important, we use server filtering
-                  notFoundContent={loading ? <Spin size="small" /> : null}
-                  options={optionsData}
-                  style={{ width: "100%", height: "7vh" }}
+                  placeholder="Select an option"
+                  options={options}
                   disabled={
                     typeof all?.disabled === "function"
-                      ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+                      ? all.disabled(values, stakeHolder)
                       : all?.disabled || false
                   }
+                  // 🔍 Custom filter logic for search
+                  filterOption={(input, option) =>
+                    option?.label?.toLowerCase().includes(input.toLowerCase())
+                  }
+                  onChange={(value) => {
+                    form.setFieldValue(field.name, value);
+                    if (all.func) {
+                      all.func(
+                        values,
+                        setFieldValue,
+                        { name: field.name, value },
+                        stakeHolder
+                      );
+                    }
+                  }}
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                  style={{ width: "100%" }}
+                  size="large"
                 />
-                {all?.CheckError && (
-                  <ErrorMessage
-                    name={field.name}
-                    component="div"
-                    className="text-danger small mt-1"
+              </ConfigProvider>
+            )}
+          </Field>
+
+          {all?.CheckError && (
+            <ErrorMessage
+              name={stakeHolder ? stakeHolder + name : name}
+              component="div"
+              className="text-danger small mt-1"
+            />
+          )}
+        </>
+      );
+
+    case "postcode-antd":
+      return (
+        <>
+          <Field name={stakeHolder ? stakeHolder + name : name}>
+            {({ field, form }) => {
+              const [optionsData, setOptionsData] = useState([]);
+              const [loading, setLoading] = useState(false);
+              const USERNAME = "usamasaeed3k";
+              const handleSearch = async (query) => {
+                if (!query) {
+                  setOptionsData([]);
+                  return;
+                }
+                setLoading(true);
+                try {
+                  const res = await axios.get(
+                    `https://secure.geonames.org/postalCodeSearchJSON?placename=${encodeURIComponent(
+                      query
+                    )}&country=AU&maxRows=10&username=${USERNAME}`
+                  );
+
+                  const mapped = (res.data.postalCodes || []).map((place) => ({
+                    value: `${place.placeName} (${place.postalCode})`,
+                    label: `${place.placeName} (${place.postalCode})`,
+                  }));
+                  setOptionsData(mapped);
+                } catch (err) {
+                  console.error("Error fetching postcodes:", err);
+                }
+                setLoading(false);
+              };
+
+              return (
+                <>
+                  <Select
+                    showSearch
+                    allowClear
+                    value={field.value || undefined}
+                    placeholder="Type suburb or postcode..."
+                    onSearch={handleSearch}
+                    onChange={(val) => form.setFieldValue(field.name, val)}
+                    filterOption={false} // 👈 important, we use server filtering
+                    notFoundContent={loading ? <Spin size="small" /> : null}
+                    options={optionsData}
+                    style={{ width: "100%", height: "7vh" }}
+                    disabled={
+                      typeof all?.disabled === "function"
+                        ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+                        : all?.disabled || false
+                    }
                   />
-                )}
-              </>
-            );
-          }}
-        </Field>
+                </>
+              );
+            }}
+          </Field>
+          {all?.CheckError && (
+            <ErrorMessage
+              name={stakeHolder ? stakeHolder + name : name}
+              component="div"
+              className="text-danger small mt-1"
+            />
+          )}
+        </>
       );
 
     case "select-creatable":
@@ -825,35 +945,17 @@ const DynamicFormField = ({
             ? values?.[stakeHolder.slice(0, -1)]?.[name]
             : values?.[name]) === "Yes" && (
             <div className="d-flex justify-content-center align-items-center pt-2">
-              <ButtonDrawer
-                title={innerModalTitle}
-                buttonIcon={faArrowUpRightFromSquare}
-                placement="bottom"
-                height={all?.Drawerheight}
-                width={all?.DrawerWidth}
-                DrawerContent={all?.PopoverContent?.(
-                  innerModalTitle,
-                  values,
-                  all,
-                  stakeHolder
-                )}
-                setOpen={setOpen}
-                open={open}
+              <Button
+                className="btn bgColor modalBtn border-0"
+                id="button-addon2"
+                onClick={() => {
+                  if (all.callBack) {
+                    all.func(innerModalTitle, values, all.key, stakeHolder);
+                  }
+                }}
               >
-                <Button
-                  className="btn bgColor modalBtn border-0"
-                  id="button-addon2"
-                  onClick={() => {
-                    if (all.callBack) {
-                      all.func(innerModalTitle, values, all.key, stakeHolder);
-                    }
-                  }}
-                  onMouseEnter={() => setOpen(true)}
-                  onMouseLeave={() => setOpen(false)}
-                >
-                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                </Button>
-              </ButtonDrawer>
+                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+              </Button>
             </div>
           )}
         </React.Fragment>
@@ -862,32 +964,14 @@ const DynamicFormField = ({
     case "modal":
       return (
         <div className="d-flex justify-content-center align-items-center ">
-          <ButtonDrawer
-            title={innerModalTitle}
-            buttonIcon={faArrowUpRightFromSquare}
-            placement="bottom"
-            height={all?.Drawerheight}
-            width={all?.DrawerWidth}
-            DrawerContent={all?.PopoverContent?.(
-              innerModalTitle,
-              values,
-              all,
-              stakeHolder
-            )}
-            setOpen={setOpen}
-            open={open}
+          <Button
+            className="btn bgColor modalBtn border-0"
+            onClick={() => {
+              handleInnerModal(innerModalTitle, values, all.key, stakeHolder);
+            }}
           >
-            <Button
-              className="btn bgColor modalBtn border-0"
-              onClick={() => {
-                handleInnerModal(innerModalTitle, values, all.key, stakeHolder);
-              }}
-              onMouseEnter={() => setOpen(true)}
-              onMouseLeave={() => setOpen(false)}
-            >
-              <FontAwesomeIcon icon={faArrowUpRightFromSquare} />{" "}
-            </Button>
-          </ButtonDrawer>
+            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />{" "}
+          </Button>
         </div>
       );
 

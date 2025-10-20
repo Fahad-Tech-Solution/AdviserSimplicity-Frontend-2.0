@@ -24,6 +24,11 @@ import {
 } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
+<<<<<<< HEAD
+=======
+const AntDTableHOC = DynamicTableForInputsSection("antd");
+
+>>>>>>> origin/master
 const EmploymentIncome = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   const personalDetailObj = useRecoilValue(PersonalDetailsData);
@@ -206,7 +211,11 @@ const EmploymentIncome = (props) => {
       }
 
       if (res) {
+<<<<<<< HEAD
         console.log(res);
+=======
+        // console.log(res);
+>>>>>>> origin/master
         const updatedData = { ...questionDetail, incomeFromOwnBusiness: res };
         setQuestionDetail(updatedData);
       }
@@ -246,7 +255,11 @@ const EmploymentIncome = (props) => {
     setFlagState(true);
   };
 
+<<<<<<< HEAD
   const options = ["Single", "Widowed"].includes(
+=======
+  const options = !["Single", "Widowed"].includes(
+>>>>>>> origin/master
     personalDetailObj.client?.MaritalStatus
   )
     ? [
@@ -266,8 +279,11 @@ const EmploymentIncome = (props) => {
         },
       ];
 
+<<<<<<< HEAD
   const AntDTableHOC = DynamicTableForInputsSection("antd");
 
+=======
+>>>>>>> origin/master
   const columns = [
     {
       title: "Owner",
@@ -332,6 +348,7 @@ const EmploymentIncome = (props) => {
       width: 150,
       handleInnerModal: handleInnerModal,
       innerModalTitle: "Salary Detail",
+<<<<<<< HEAD
       Drawerheight: 220,
       DrawerWidth: "80%",
       PopoverContent: (
@@ -363,6 +380,8 @@ const EmploymentIncome = (props) => {
           </div>
         );
       },
+=======
+>>>>>>> origin/master
     },
     {
       title: "Salary Packaging",
@@ -372,6 +391,7 @@ const EmploymentIncome = (props) => {
       width: 170,
       callBack: true,
       func: handleInnerModal,
+<<<<<<< HEAD
       innerModalTitle: "Salary Packaging",
       Drawerheight: 220,
       DrawerWidth: "80%",
@@ -405,6 +425,10 @@ const EmploymentIncome = (props) => {
           </div>
         );
       },
+=======
+      handleInnerModal: handleInnerModal,
+      innerModalTitle: "Salary Packaging",
+>>>>>>> origin/master
     },
     {
       title: "Leave Entitlements",
@@ -416,6 +440,7 @@ const EmploymentIncome = (props) => {
       callBack: true,
       func: handleInnerModal,
       innerModalTitle: "Leave entitlements",
+<<<<<<< HEAD
       Drawerheight: 320,
       DrawerWidth: "60%",
       PopoverContent: (
@@ -448,6 +473,8 @@ const EmploymentIncome = (props) => {
           </div>
         );
       },
+=======
+>>>>>>> origin/master
     },
     {
       title: "Choice of Fund",
@@ -501,9 +528,13 @@ const EmploymentIncome = (props) => {
               occupation: values?.partner?.occupation || "",
               employmentStatus: values?.partner?.employmentStatus || "",
               nameOfCompany: values?.partner?.nameOfCompany || "",
+<<<<<<< HEAD
               startDate: values?.partner?.startDate
                 ? ConvertDate(values.partner.startDate)
                 : null,
+=======
+              startDate: values?.partner?.startDate || "",
+>>>>>>> origin/master
               hoursWorked: values?.partner?.hoursWorked || "",
               salaryPackage:
                 values?.partner?.SalaryPackageModal?.grossSalary || "",
@@ -543,10 +574,17 @@ const EmploymentIncome = (props) => {
                     htmlFor=""
                     className="text-end"
                     onClick={() => {
+<<<<<<< HEAD
                       console.log(options);
                     }}
                   >
                     Order
+=======
+                      console.log(values, props.handleOk);
+                    }}
+                  >
+                    Owner
+>>>>>>> origin/master
                   </label>
 
                   <div style={{ minWidth: "200px" }}>
@@ -570,6 +608,10 @@ const EmploymentIncome = (props) => {
                       setFieldValue={setFieldValue}
                       handleChange={handleChange}
                       handleBlur={handleBlur}
+<<<<<<< HEAD
+=======
+                      handleSubmit={props?.handleOk}
+>>>>>>> origin/master
                     />
                   </div>
                 </div>

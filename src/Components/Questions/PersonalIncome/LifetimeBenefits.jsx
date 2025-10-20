@@ -15,6 +15,11 @@ import {
 import { AntdCreatableMultiSelect } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
+<<<<<<< HEAD
+=======
+const AntdTable = DynamicTableForInputsSection("antd");
+
+>>>>>>> origin/master
 const LifeTimeBeneFits = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
   const [, setQuestionDetail] = useRecoilState(QuestionDetail);
@@ -32,12 +37,17 @@ const LifeTimeBeneFits = (props) => {
 
   const initialValues = {
     owner: [],
+<<<<<<< HEAD
     client: {
      
     },
     partner: {
      
     },
+=======
+    client: {},
+    partner: {},
+>>>>>>> origin/master
   };
 
   const fillInitialValues = (setFieldValue) => {
@@ -176,17 +186,24 @@ const LifeTimeBeneFits = (props) => {
       }
 
       const amount = IncomePF * 26;
+<<<<<<< HEAD
       setFieldValue(
         `${stakeHolder}regularIncomePA`,
         toCommaAndDollar(amount)
       );
+=======
+      setFieldValue(`${stakeHolder}regularIncomePA`, toCommaAndDollar(amount));
+>>>>>>> origin/master
     } catch (error) {
       console.error("Error in Formula function: ", error);
     }
   };
 
+<<<<<<< HEAD
   const AntdTable = DynamicTableForInputsSection("antd");
 
+=======
+>>>>>>> origin/master
   const columns = [
     { title: "Owner", dataIndex: "owner", key: "owner" },
     {
@@ -196,8 +213,12 @@ const LifeTimeBeneFits = (props) => {
       type: "select",
       options: fundOptions,
       width: 150,
+<<<<<<< HEAD
        trrigger: () =>
         document.querySelector("table"),
+=======
+      trrigger: () => document.querySelector("table"),
+>>>>>>> origin/master
     },
     {
       title: "Regular Income per Fortnight",
@@ -246,7 +267,10 @@ const LifeTimeBeneFits = (props) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
+<<<<<<< HEAD
 console.log(values.client?.centreplaceDeductibleAmount)
+=======
+>>>>>>> origin/master
         const dataRows = [
           ...(values.owner.includes("client")
             ? [
@@ -311,6 +335,10 @@ console.log(values.client?.centreplaceDeductibleAmount)
                         setFieldValue={setFieldValue}
                         handleChange={handleChange}
                         handleBlur={handleBlur}
+<<<<<<< HEAD
+=======
+                        handleSubmit={props?.handleOk}
+>>>>>>> origin/master
                       />
                     </div>
                   )}

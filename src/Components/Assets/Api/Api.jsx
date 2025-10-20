@@ -4,7 +4,7 @@ import { Image } from "react-bootstrap";
 import { FaInfoCircle } from "react-icons/fa";
 
 import SVGCoin from "../../../CashFlow/CashFlowAssets/Cast_Flow/SVG/SVG-Doller-Coin.svg";
-import { getJwtToken } from "../../../Store/recoilUtils";
+import { getJwtToken, getUserDetail } from "../../../Store/recoilUtils";
 
 const getAuthHeaders = () => {
   const token = getJwtToken();
@@ -149,20 +149,32 @@ let toPercentage = (x) => {
 };
 
 let RenderName = (Input) => {
+  let PerosnalDetails = getUserDetail();
   if (Input === "client") {
-    return localStorage.getItem("UserName");
+    return (
+      PerosnalDetails?.client?.clientPreferredName ||
+      localStorage.getItem("UserName")
+    );
   } else if (Input === "partner") {
-    return localStorage.getItem("PartnerName");
+    return (
+      PerosnalDetails?.partner?.partnerPreferredName ||
+      localStorage.getItem("PartnerName")
+    );
   } else if (Input === "joint") {
     let userStatus = localStorage.getItem("UserStatus");
     if (userStatus === "Married") {
       return (
-        localStorage.getItem("UserName") +
+        (PerosnalDetails?.client?.clientPreferredName ||
+          localStorage.getItem("UserName")) +
         " + " +
-        localStorage.getItem("PartnerName")
+        (PerosnalDetails?.partner?.partnerPreferredName ||
+          localStorage.getItem("PartnerName"))
       );
     } else {
-      return localStorage.getItem("UserName");
+      return (
+        PerosnalDetails?.client?.clientPreferredName ||
+        localStorage.getItem("UserName")
+      );
     }
   }
 };
@@ -800,6 +812,77 @@ const randomStringGenerator = ({
 const getNestedValue = (obj, path) =>
   path.split(".").reduce((acc, part) => acc && acc[part], obj);
 
+// utils/MiddleWareHelpers.js
+const sumArrayValues = (array = [], key, multiplierKey = null) => {
+  return (array || []).reduce((total, entry) => {
+    const value =
+      parseFloat(String(entry[key] || "").replace(/[^0-9.-]+/g, "")) || 0;
+    const multiplier = multiplierKey
+      ? parseFloat(entry[multiplierKey] || 1)
+      : 1;
+    return total + value * multiplier;
+  }, 0);
+};
+
+/**
+ * calculateExpectedTotal: determines the expected total for a modal type
+ * Matches the logic originally in MiddleWare.jsx's calculateExpectedTotal switch
+ *
+ * @param {string} modalTitle
+ * @param {array} dataArray
+ * @param {string} currentInput   // e.g. 'clientCurrentBalance'
+ * @param {string} checkState     // e.g. 'client'
+ */
+const calculateExpectedTotal = (
+  modalTitle = "",
+  dataArray = [],
+  currentInput = "",
+  checkState = ""
+) => {
+  if (!dataArray || dataArray.length === 0) return 0;
+
+  switch (modalTitle) {
+    case "Bank Accounts":
+    case "Term Deposits":
+    case "SMSF Bank Accounts":
+    case "SMSF Term Deposits":
+    case "Family Trust Bank Accounts":
+    case "Family Trust Term Deposits":
+      return sumArrayValues(dataArray, "currentBalance");
+
+    case "Australian Shares/ETFs":
+    case "SMSF Australian Shares/ETFs":
+    case "Family Trust Australian Shares/ETFs":
+      return currentInput === `${checkState}CurrentBalance`
+        ? sumArrayValues(dataArray, "currentBalance")
+        : sumArrayValues(dataArray, "costBase");
+
+    case "Platform Investments":
+    case "Investment Bond":
+    case "SMSF Platform Investments":
+    case "Family Trust Platform Investments":
+      return currentInput === `${checkState}CurrentBalance`
+        ? sumArrayValues(dataArray, "serviceFee", "serviceFeeType")
+        : sumArrayValues(dataArray, "totalPortfolioCost");
+
+    case "Super Funds":
+      return sumArrayValues(dataArray, "annualAdvice");
+
+    case "Account Based Pension":
+      return sumArrayValues(dataArray, "pensionPayment");
+
+    case "Invested in Annuities":
+    case "Annuities":
+      return sumArrayValues(dataArray, "originalInvestmentAmount");
+
+    case "Business as Company Structure":
+      return sumArrayValues(dataArray, "equityPosition");
+
+    default:
+      return 0;
+  }
+};
+
 export {
   DeleteAxios,
   GetAxios,
@@ -839,4 +922,6 @@ export {
   touchFields,
   randomStringGenerator,
   getNestedValue,
+  sumArrayValues,
+  calculateExpectedTotal,
 };

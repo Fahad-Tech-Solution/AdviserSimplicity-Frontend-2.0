@@ -14,6 +14,11 @@ import {
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 import { AntdCreatableMultiSelect } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 
+<<<<<<< HEAD
+=======
+  const AntdTable = DynamicTableForInputsSection("antd");
+
+>>>>>>> origin/master
 const Partnership = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
   const [, setQuestionDetail] = useRecoilState(QuestionDetail);
@@ -21,6 +26,7 @@ const Partnership = (props) => {
 
   const incomeFromPartnership =
     questionDetail?.incomeFromPartnership &&
+<<<<<<< HEAD
       Object.keys(questionDetail.incomeFromPartnership).length > 0
       ? questionDetail.incomeFromPartnership
       : {
@@ -28,6 +34,15 @@ const Partnership = (props) => {
         partner: {},
         joint: {},
       };
+=======
+    Object.keys(questionDetail.incomeFromPartnership).length > 0
+      ? questionDetail.incomeFromPartnership
+      : {
+          client: {},
+          partner: {},
+          joint: {},
+        };
+>>>>>>> origin/master
 
   const initialValues = {
     owner: [],
@@ -59,18 +74,29 @@ const Partnership = (props) => {
       if (data.owner?.includes("client") && data.client) {
         setFieldValue("client.businessName", data.client.businessName || "");
         setFieldValue("client.ABN", data.client.ABN || "");
+<<<<<<< HEAD
         setFieldValue("client.businessAddress", data.client.businessAddress || "");
         setFieldValue(
           "client.totalNetPartnershipIncome",
           data.client.totalNetPartnershipIncome
             ? toCommaAndDollar(data.client.totalNetPartnershipIncome)
             : ""
+=======
+        setFieldValue(
+          "client.businessAddress",
+          data.client.businessAddress || ""
+        );
+        setFieldValue(
+          "client.totalNetPartnershipIncome",
+          data.client.totalNetPartnershipIncome
+>>>>>>> origin/master
         );
         setFieldValue(
           "client.shareOfPartnership",
           data.client.shareOfPartnership || ""
         );
         setFieldValue("client.share", data.client.share || "");
+<<<<<<< HEAD
         setFieldValue(
           "client.goodWill",
           data.client.goodWill ? toCommaAndDollar(data.client.goodWill) : ""
@@ -86,21 +112,47 @@ const Partnership = (props) => {
           data.partner.totalNetPartnershipIncome
             ? toCommaAndDollar(data.partner.totalNetPartnershipIncome)
             : ""
+=======
+        setFieldValue("client.goodWill", data.client.goodWill);
+      }
+
+      if (
+        data.owner?.includes("partner") &&
+        UserStatus === "Married" &&
+        data.partner
+      ) {
+        setFieldValue("partner.businessName", data.partner.businessName || "");
+        setFieldValue("partner.ABN", data.partner.ABN || "");
+        setFieldValue(
+          "partner.businessAddress",
+          data.partner.businessAddress || ""
+        );
+        setFieldValue(
+          "partner.totalNetPartnershipIncome",
+          data.partner.totalNetPartnershipIncome
+>>>>>>> origin/master
         );
         setFieldValue(
           "partner.shareOfPartnership",
           data.partner.shareOfPartnership || ""
         );
         setFieldValue("partner.share", data.partner.share || "");
+<<<<<<< HEAD
         setFieldValue(
           "partner.goodWill",
           data.partner.goodWill ? toCommaAndDollar(data.partner.goodWill) : ""
         );
+=======
+        setFieldValue("partner.goodWill", data.partner.goodWill);
+>>>>>>> origin/master
       }
     }
   };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
   let Formula = (values, setFieldValue, currentInput, stakeHolder) => {
     try {
       // Removing periods in stakeholder name and logging current values
@@ -138,9 +190,12 @@ const Partnership = (props) => {
     }
   };
 
+<<<<<<< HEAD
 
 
   const AntdTable = DynamicTableForInputsSection("antd");
+=======
+>>>>>>> origin/master
   const DefaultUrl = useRecoilValue(defaultUrl);
 
   const onSubmit = async (values) => {
@@ -148,6 +203,7 @@ const Partnership = (props) => {
       ...values,
       client: {
         ...values.client,
+<<<<<<< HEAD
         totalNetPartnershipIncome: toNumericValue(values.client.totalNetPartnershipIncome),
         share: toNumericValue(values.client.share),
         goodWill: toNumericValue(values.client.goodWill),
@@ -159,31 +215,62 @@ const Partnership = (props) => {
         goodWill: toNumericValue(values.partner.goodWill),
       },
     };
+=======
+      },
+      partner: {
+        ...values.partner,
+      },
+    };
+
+>>>>>>> origin/master
     obj.clientFK = localStorage.getItem("UserID") || "";
 
     if (!values.owner.includes("client")) {
       obj.client = {};
       obj.clientTotal = "";
     } else {
+<<<<<<< HEAD
       obj.clientTotal = toNumericValue(values.client.share);
+=======
+      obj.clientTotal = values.client.share;
+>>>>>>> origin/master
     }
 
     if (!values.owner.includes("partner") || UserStatus !== "Married") {
       obj.partner = {};
       obj.partnerTotal = "";
     } else {
+<<<<<<< HEAD
       obj.partnerTotal = toNumericValue(values.partner.share);
+=======
+      obj.partnerTotal = values.partner.share;
+>>>>>>> origin/master
     }
 
     try {
       let res;
       if (incomeFromPartnership._id) {
+<<<<<<< HEAD
         res = await PatchAxios(`${DefaultUrl}/api/incomeFromPartnership/Update`, {
           ...obj,
           _id: incomeFromPartnership._id,
         });
       } else {
         res = await PostAxios(`${DefaultUrl}/api/incomeFromPartnership/Add`, obj);
+=======
+        res = await PatchAxios(
+          `${DefaultUrl}/api/incomeFromPartnership/Update`,
+          {
+            ...obj,
+            _id: incomeFromPartnership._id,
+          }
+        );
+      } else {
+        res = await PostAxios(
+          `${DefaultUrl}/api/incomeFromPartnership/Add`,
+          obj
+        );
+>>>>>>> origin/master
       }
 
       if (res) {
@@ -220,13 +307,18 @@ const Partnership = (props) => {
     {
       title: "Owner",
       dataIndex: "owner",
+<<<<<<< HEAD
       key: "owner"
+=======
+      key: "owner",
+>>>>>>> origin/master
     },
     {
       title: "Business Name",
       dataIndex: "businessName",
       key: "businessName",
       type: "text",
+<<<<<<< HEAD
       placeholder: "Business Name"
     },
     {
@@ -247,6 +339,66 @@ const Partnership = (props) => {
 
   return (
     <Formik initialValues={initialValues} onSubmit={onSubmit} enableReinitialize innerRef={props.formRef}>
+=======
+      placeholder: "Business Name",
+    },
+    {
+      title: "ABN",
+      dataIndex: "ABN",
+      key: "ABN",
+      type: "number",
+      placeholder: "ABN",
+    },
+    {
+      title: "Business Address",
+      dataIndex: "businessAddress",
+      key: "businessAddress",
+      type: "text",
+      placeholder: "Business Address",
+    },
+    {
+      title: "Total Net Partnership Income",
+      dataIndex: "totalNetPartnershipIncome",
+      key: "totalNetPartnershipIncome",
+      type: "number-toComma",
+      placeholder: "Total Net Partnership Income",
+      callBack: true,
+      func: Formula,
+    },
+    {
+      title: "Share Of Partnership (%)",
+      dataIndex: "shareOfPartnership",
+      key: "shareOfPartnership",
+      type: "number-toPercent",
+      placeholder: "Share Of Partnership",
+      callBack: true,
+      func: Formula,
+    },
+    {
+      title: "Share Amount",
+      dataIndex: "share",
+      key: "share",
+      type: "number-toComma",
+      placeholder: "Share",
+      disabled: true,
+    },
+    {
+      title: "Goodwill/Business Valuation",
+      dataIndex: "goodWill",
+      key: "goodWill",
+      type: "number-toComma",
+      placeholder: "GoodWill Business Valuation",
+    },
+  ];
+
+  return (
+    <Formik
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      enableReinitialize
+      innerRef={props.formRef}
+    >
+>>>>>>> origin/master
       {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
@@ -255,6 +407,7 @@ const Partnership = (props) => {
         const dataRows = [
           ...(values.owner.includes("client")
             ? [
+<<<<<<< HEAD
               {
                 key: "client",
                 owner: RenderName("client"),
@@ -284,6 +437,39 @@ const Partnership = (props) => {
                 goodWill: values.partner?.goodWill || "",
               },
             ]
+=======
+                {
+                  key: "client",
+                  owner: RenderName("client"),
+                  stakeHolder: "client",
+                  businessName: values.client?.businessName || "",
+                  ABN: values.client?.ABN || "",
+                  businessAddress: values.client?.businessAddress || "",
+                  totalNetPartnershipIncome:
+                    values.client?.totalNetPartnershipIncome || "",
+                  shareOfPartnership: values.client?.shareOfPartnership || "",
+                  share: values.client?.share || "",
+                  goodWill: values.client?.goodWill || "",
+                },
+              ]
+            : []),
+          ...(values.owner.includes("partner") && UserStatus === "Married"
+            ? [
+                {
+                  key: "partner",
+                  owner: RenderName("partner"),
+                  stakeHolder: "partner",
+                  businessName: values.partner?.businessName || "",
+                  ABN: values.partner?.ABN || "",
+                  businessAddress: values.partner?.businessAddress || "",
+                  totalNetPartnershipIncome:
+                    values.partner?.totalNetPartnershipIncome || "",
+                  shareOfPartnership: values.partner?.shareOfPartnership || "",
+                  share: values.partner?.share || "",
+                  goodWill: values.partner?.goodWill || "",
+                },
+              ]
+>>>>>>> origin/master
             : []),
         ];
 
@@ -294,9 +480,21 @@ const Partnership = (props) => {
                 <div className="row justify-content-center">
                   <div className="col-md-12">
                     <div className="d-flex justify-content-center align-items-center gap-4">
+<<<<<<< HEAD
                       <label htmlFor="" className="text-end">Owner</label>
                       <div style={{ minWidth: "200px" }}>
                         <Field name="owner" component={AntdCreatableMultiSelect} options={optionsForOwner()} />
+=======
+                      <label htmlFor="" className="text-end">
+                        Owner
+                      </label>
+                      <div style={{ minWidth: "200px" }}>
+                        <Field
+                          name="owner"
+                          component={AntdCreatableMultiSelect}
+                          options={optionsForOwner()}
+                        />
+>>>>>>> origin/master
                       </div>
                     </div>
                   </div>
@@ -311,6 +509,10 @@ const Partnership = (props) => {
                         handleChange={handleChange}
                         handleBlur={handleBlur}
                         handleInnerModal={handleInnerModal}
+<<<<<<< HEAD
+=======
+                        handleSubmit={props?.handleOk}
+>>>>>>> origin/master
                       />
                     </div>
                   )}
@@ -327,7 +529,12 @@ const Partnership = (props) => {
 function optionsForOwner() {
   const UserStatus = localStorage.getItem("UserStatus");
   const opts = [{ value: "client", label: RenderName("client") }];
+<<<<<<< HEAD
   if (UserStatus !== "Single") opts.push({ value: "partner", label: RenderName("partner") });
+=======
+  if (UserStatus !== "Single")
+    opts.push({ value: "partner", label: RenderName("partner") });
+>>>>>>> origin/master
   return opts;
 }
 
