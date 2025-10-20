@@ -241,7 +241,7 @@ const PersonalInsuranceLife = (props) => {
     },
     {
       title: "Sum Insured",
-      dataIndex: "sumInsuredSum",
+      dataIndex: "sumInsured",
       key: "sumInsured",
       type: "number-toComma-Modal",
       placeholder: "Sum Insured",

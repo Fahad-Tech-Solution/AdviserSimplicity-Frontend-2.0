@@ -20,20 +20,20 @@
 
 //   let [UserStatus] = useState(localStorage.getItem('UserStatus'));
 
-//   const fillInitialValues = (setFieldValue) => {
-//     if (props.modalObject.values[`${props.modalObject.key}${props.modalObject.index}`]) {
+// const fillInitialValues = (setFieldValue) => {
+//   if (props.modalObject.values[`${props.modalObject.key}${props.modalObject.index}`]) {
 
-//       let data = props.modalObject.values[`${props.modalObject.key}${props.modalObject.index}`];
-//       setFieldValue("coverType", data.coverType);
-//       setFieldValue("premiums", data.premiums);
-//       setFieldValue("frequency", data.frequency);
-//       setFieldValue("totalCost", data.totalCost);
-//       setFieldValue("payeeOfPremiums", data.payeeOfPremiums);
-//       setFieldValue("paymentMethod", data.paymentMethod);
-//       setFieldValue("commissionRate", data.commissionRate);
+//     let data = props.modalObject.values[`${props.modalObject.key}${props.modalObject.index}`];
+//     setFieldValue("coverType", data.coverType);
+//     setFieldValue("premiums", data.premiums);
+//     setFieldValue("frequency", data.frequency);
+//     setFieldValue("totalCost", data.totalCost);
+//     setFieldValue("payeeOfPremiums", data.payeeOfPremiums);
+//     setFieldValue("paymentMethod", data.paymentMethod);
+//     setFieldValue("commissionRate", data.commissionRate);
 
-//     }
-//   };
+//   }
+// };
 
 // let onSubmit = async (values) => {
 
@@ -274,30 +274,35 @@ const PremiumsDetails = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
 
   const initialValues = {
-    PremiumsDetails: [],
-    NumberOfMap: 1,
   };
-
   const fillInitialValues = (setFieldValue) => {
     try {
-      const stakeHolder = props.modalObject.stakeHolder;
-      const parentValues = props.modalObject.parentValues || {};
+      const { stakeHolder, parentValues, key } = props.modalObject
 
-      if (stakeHolder && parentValues?.[stakeHolder]) {
-        const data = parentValues[stakeHolder];
+      let index = stakeHolder.replace(/[^0-9]+/g, "");
+      let BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
 
-        setFieldValue("PremiumsDetails[0].coverType", data.coverType || "");
-        setFieldValue("PremiumsDetails[0].premiums", data.premiums || "");
-        setFieldValue("PremiumsDetails[0].frequency", data.frequency || "");
-        setFieldValue("PremiumsDetails[0].totalCost", data.totalCost || "");
-        setFieldValue("PremiumsDetails[0].payeeOfPremiums", data.payeeOfPremiums || "");
-        setFieldValue("PremiumsDetails[0].paymentMethod", data.paymentMethod || "");
-        setFieldValue("PremiumsDetails[0].commissionRate", data.commissionRate || "");
-      }
+      let data = parentValues?.[BaseKey]?.[index]?.[key + "Details"] || {};
+
+      console.log(data);
+
+      if (!data || typeof data !== "object") return;
+
+      // Fill form fields using the same structure used in onSubmit
+      setFieldValue("coverType", data.coverType || "");
+      setFieldValue("premiums", data.premiums || "");
+      setFieldValue("frequency", data.frequency || "");
+      setFieldValue("totalCost", data.totalCost || "");
+      setFieldValue("payeeOfPremiums", data.payeeOfPremiums || "");
+      setFieldValue("paymentMethod", data.paymentMethod || "");
+      setFieldValue("commissionRate", data.commissionRate || "");
+
+
     } catch (err) {
       console.error("Error in fillInitialValues:", err);
     }
   };
+
 
 
   let onSubmit = async (values) => {
@@ -312,36 +317,36 @@ const PremiumsDetails = (props) => {
     }
   };
 
- const FormulaSetting = (values, setFieldValue, currentInput, stakeHolder) => {
-  try {
-  
-    const row = values || {};
+  const FormulaSetting = (values, setFieldValue, currentInput, stakeHolder) => {
+    try {
 
-    // Step 1: extract which field triggered the change
-    const fieldName = currentInput.name.split(".").pop();
+      const row = values || {};
 
-    // Step 2: initialize base values
-    let premiums =
-      parseFloat((row.premiums || "").toString().replace(/[^0-9.-]+/g, "")) || 0;
-    let frequency = parseFloat(row.frequency) || 1;
+      // Step 1: extract which field triggered the change
+      const fieldName = currentInput.name.split(".").pop();
 
-    // Step 3: handle input-specific logic
-    if (fieldName === "premiums") {
-      premiums =
-        parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
-    } else if (fieldName === "frequency") {
-      frequency = parseFloat(currentInput.value) || 1;
+      // Step 2: initialize base values
+      let premiums =
+        parseFloat((row.premiums || "").toString().replace(/[^0-9.-]+/g, "")) || 0;
+      let frequency = parseFloat(row.frequency) || 1;
+
+      // Step 3: handle input-specific logic
+      if (fieldName === "premiums") {
+        premiums =
+          parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
+      } else if (fieldName === "frequency") {
+        frequency = parseFloat(currentInput.value) || 1;
+      }
+
+      // Step 4: calculate total cost
+      const totalCost = premiums * frequency;
+
+      // Step 5: update field value safely
+      setFieldValue(`totalCost`, toCommaAndDollar(totalCost));
+    } catch (error) {
+      console.error("Error in FormulaSetting:", error);
     }
-
-    // Step 4: calculate total cost
-    const totalCost = premiums * frequency;
-
-    // Step 5: update field value safely
-    setFieldValue(`totalCost`, toCommaAndDollar(totalCost));
-  } catch (error) {
-    console.error("Error in FormulaSetting:", error);
-  }
-};
+  };
 
 
   const columns = [
@@ -376,20 +381,20 @@ const PremiumsDetails = (props) => {
     },
 
 
-   {
-  title: "Frequency",
-  dataIndex: "frequency",
-  key: "frequency",
-  type: "select",
-  width: 150,
-  callBack: true,
-  func: FormulaSetting,
-  options: [
-    { value: "12", label: "Monthly" },
-    { value: "6", label: "6 Monthly" },
-    { value: "1", label: "Yearly" },
-  ],
-},
+    {
+      title: "Frequency",
+      dataIndex: "frequency",
+      key: "frequency",
+      type: "select",
+      width: 150,
+      callBack: true,
+      func: FormulaSetting,
+      options: [
+        { value: "12", label: "Monthly" },
+        { value: "6", label: "6 Monthly" },
+        { value: "1", label: "Yearly" },
+      ],
+    },
 
     {
       title: "Total Cost p.a",
@@ -434,7 +439,7 @@ const PremiumsDetails = (props) => {
       dataIndex: "commissionRate",
       key: "commissionRate",
       type: "text",
-      
+
       width: 150,
     },
   ];
@@ -455,12 +460,15 @@ const PremiumsDetails = (props) => {
           const num = Number(values.NumberOfMap) || 1;
           return Array.from({ length: num }, (_, i) => ({
             key: i,
-            ...values.PremiumsDetails[i],
+            ...values
           }));
-        }, [values.NumberOfMap, values.PremiumsDetails]);
+        }, [values]);
 
         return (
           <Form>
+            <p className="text-end mt-1 pt-2" onClick={() => console.log(values)}>
+              How many
+            </p>
             <div className="mt-4 All_Client reportSection">
               <AntdTable
                 columns={columns}
