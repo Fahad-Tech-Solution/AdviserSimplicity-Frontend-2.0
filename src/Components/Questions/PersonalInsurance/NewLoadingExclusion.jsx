@@ -319,13 +319,9 @@
 // };
 
 // export default NewLoadingExclusion;
-
 import { Form, Formik } from "formik";
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  toCommaAndDollar,
-  RenderName,
-} from "../../Assets/Api/Api";
+import { toCommaAndDollar, RenderName } from "../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
 const AntdTable = DynamicTableForInputsSection("antd");
@@ -333,87 +329,82 @@ const AntdTable = DynamicTableForInputsSection("antd");
 const NewLoadingExclusion = (props) => {
   const [UserStatus] = useState(localStorage.getItem("UserStatus"));
 
-  // 👇 initialize basic form structure
-  const initialValues = {
-    NewLoadingExclusionDetails: [],
-    NumberOfMap:
-      props?.modalObject?.editArray?.length || 1,
+  // Initialize with empty object like PremiumsDetails
+  const initialValues = {};
+
+  // ✅ Fill initial values - same pattern as PremiumsDetails
+  const fillInitialValues = (setFieldValue) => {
+    try {
+      const { stakeHolder, parentValues, key } = props.modalObject;
+
+      let index = stakeHolder.replace(/[^0-9]+/g, "");
+      let BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
+
+      // Access data using the same structure as PremiumsDetails
+      let data = parentValues?.[BaseKey]?.[index]?.[key + "Details"] || {};
+
+      console.log("Initial data:", data);
+
+      if (!data || typeof data !== "object") return;
+
+      // Fill form fields
+      setFieldValue("coverType", data.coverType || "");
+      setFieldValue("premiums", data.premiums || "");
+      setFieldValue("frequency", data.frequency || "");
+      setFieldValue("waitingPeriod", data.waitingPeriod || "");
+      setFieldValue("benefitPeriod", data.benefitPeriod || "");
+
+    } catch (err) {
+      console.error("Error in fillInitialValues:", err);
+    }
   };
 
-  // ✅ Fill initial values for editing case
-const fillInitialValues = (setFieldValue) => {
-  try {
-    const editArray = props?.modalObject?.editArray;
-    const stakeHolder = props?.modalObject?.stakeHolder;
-    const parentValues = props?.modalObject?.parentValues || {};
+  // ✅ onSubmit logic - same pattern as PremiumsDetails
+  const onSubmit = async (values) => {
+    console.log("Submitting values:", values, props.modalObject);
+    
+    // Set the details object and the total value like PremiumsDetails
+    props.setFieldValue(
+      `${props.modalObject.stakeHolder}${props.modalObject.key}Details`, 
+      values
+    );
+    
+    // Calculate and set total like PremiumsDetails
+    const totalCost = parseFloat((values.premiums || "").toString().replace(/[^0-9.-]+/g, "")) || 0;
+    props.setFieldValue(
+      `${props.modalObject.stakeHolder}${props.modalObject.key}`, 
+      toCommaAndDollar(totalCost)
+    );
 
-    // ✅ Case 1: Direct edit array (modal edit mode)
-    if (editArray && editArray.length > 0) {
-      setFieldValue("NumberOfMap", editArray.length);
-      setFieldValue("NewLoadingExclusionDetails", editArray);
-      return;
+    // Reset the flag state if necessary
+    if (props.flagState) {
+      props.setFlagState(false);
     }
+  };
 
-    // ✅ Case 2: Data from parent modal using sumInsuredSum
-    if (stakeHolder) {
-      // Extract baseKey & index — e.g., "PersonalInsurance[0]"
-      const baseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
-      const idxMatch = stakeHolder.match(/\[(\d+)\]/);
-      const index = idxMatch ? parseInt(idxMatch[1], 10) : 0;
+  // ✅ FormulaSetting function like PremiumsDetails
+  const FormulaSetting = (values, setFieldValue, currentInput, stakeHolder) => {
+    try {
+      const row = values || {};
+      const fieldName = currentInput.name.split(".").pop();
 
-      // Access structure like parentValues.PersonalInsurance[0].sumInsuredSum
-      const parentBlock = parentValues?.[baseKey]?.[index];
-      const sumInsuredArray = parentBlock?.sumInsuredSum || [];
+      let premiums = parseFloat((row.premiums || "").toString().replace(/[^0-9.-]+/g, "")) || 0;
+      let frequency = parseFloat(row.frequency) || 1;
 
-      if (Array.isArray(sumInsuredArray) && sumInsuredArray.length > 0) {
-        setFieldValue("NumberOfMap", sumInsuredArray.length);
-        setFieldValue("NewLoadingExclusionDetails", sumInsuredArray);
-        return;
+      if (fieldName === "premiums") {
+        premiums = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
+      } else if (fieldName === "frequency") {
+        frequency = parseFloat(currentInput.value) || 1;
       }
+
+      const totalCost = premiums * frequency;
+      setFieldValue(`totalCost`, toCommaAndDollar(totalCost));
+    } catch (error) {
+      console.error("Error in FormulaSetting:", error);
     }
+  };
 
-    // ✅ Case 3: fallback default (blank single row)
-    setFieldValue("NewLoadingExclusionDetails", [
-      {
-        coverType: "",
-        premiums: "",
-        frequency: "",
-        waitingPeriod: "",
-        benefitPeriod: "",
-      },
-    ]);
-    setFieldValue("NumberOfMap", 1);
-  } catch (err) {
-    console.error("Error in fillInitialValues:", err);
-    setFieldValue("NumberOfMap", 1);
-  }
-};
-
-
-  // ✅ onSubmit logic
- const onSubmit = async (values) => {
-  const rows = values.NewLoadingExclusionDetails || [];
-
-  // Save data into parent key: sumInsuredSum
-  props.setFieldValue(`sumInsured${props.modalObject.index}`, rows);
-
-  // Calculate total premiums
-  const total = rows.reduce(
-    (acc, row) =>
-      acc +
-      (parseFloat((row.premiums || "").toString().replace(/[^0-9.-]+/g, "")) || 0),
-    0
-  );
-  props.setFieldValue(
-    `sumInsured${props.modalObject.index}`,
-    toCommaAndDollar(total)
-  );
-
-  if (props.flagState) props.setFlagState(false);
-};
-
-
-  // ✅ Column configuration for DynamicTable
+  // ✅ Column configuration - simplified for single row like PremiumsDetails
   const columns = [
     {
       title: "No#",
@@ -440,7 +431,9 @@ const fillInitialValues = (setFieldValue) => {
       dataIndex: "premiums",
       key: "premiums",
       type: "number-toComma",
-      width: 150,
+      width: 50,
+      callBack: true,
+      func: FormulaSetting,
     },
     {
       title: "Frequency",
@@ -448,12 +441,15 @@ const fillInitialValues = (setFieldValue) => {
       key: "frequency",
       type: "select",
       options: [
-        { value: "Monthly", label: "Monthly" },
-        { value: "6 Monthly", label: "6 Monthly" },
-        { value: "Yearly", label: "Yearly" },
+        { value: "12", label: "Monthly" },
+        { value: "6", label: "6 Monthly" },
+        { value: "1", label: "Yearly" },
       ],
       width: 150,
+      callBack: true,
+      func: FormulaSetting,
     },
+   
     {
       title: "Waiting Period",
       dataIndex: "waitingPeriod",
@@ -468,6 +464,8 @@ const fillInitialValues = (setFieldValue) => {
         { value: "2 Years", label: "2 Years" },
       ],
       width: 160,
+      // Show only for Income Protection
+      showCondition: (record) => record.coverType === "Income protection",
     },
     {
       title: "Benefit Period",
@@ -482,6 +480,8 @@ const fillInitialValues = (setFieldValue) => {
         { value: "To Age 70", label: "To Age 70" },
       ],
       width: 160,
+      // Show only for Income Protection
+      showCondition: (record) => record.coverType === "Income protection",
     },
   ];
 
@@ -497,17 +497,21 @@ const fillInitialValues = (setFieldValue) => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        // ✅ Create single data row like PremiumsDetails
         const dataRows = useMemo(() => {
-          const num = Number(values.NumberOfMap) || 1;
-          const arr = values.NewLoadingExclusionDetails || [];
-          return Array.from({ length: num }, (_, i) => ({
-            key: i,
-            ...arr[i],
-          }));
-        }, [values.NumberOfMap, values.NewLoadingExclusionDetails]);
+          return [
+            {
+              key: 0,
+              ...values
+            }
+          ];
+        }, [values]);
 
         return (
           <Form>
+            <p className="text-end mt-1 pt-2" onClick={() => console.log(values)}>
+              How many
+            </p>
             <div className="mt-4 All_Client reportSection">
               <AntdTable
                 columns={columns}

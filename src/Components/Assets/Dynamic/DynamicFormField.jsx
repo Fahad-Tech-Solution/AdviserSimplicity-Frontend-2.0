@@ -861,38 +861,49 @@ const DynamicFormField = ({
         </React.Fragment >
       );
 
-    case "yesnoInput":
-      return (
-        <React.Fragment>
-          <DynamicYesNo
-            name={stakeHolder ? stakeHolder + name : name}
-            values={values}
-            handleChange={handleChange}
-            setFieldValue={setFieldValue}
+ case "yesnoInput":
+  return (
+    <React.Fragment>
+      <DynamicYesNo
+        name={stakeHolder ? stakeHolder + name : name}
+        values={values}
+        handleChange={handleChange}
+        setFieldValue={setFieldValue}
+      />
+
+      {(
+        stakeHolder
+          ? getNestedValue(values, `${stakeHolder}${name}`)
+          : getNestedValue(values, name)
+      ) === "Yes" && (
+        <div className="pt-2">
+          <Field
+            name={
+              stakeHolder
+                ? `${stakeHolder}${name}_input`
+                : `${name}_input`
+            }
+            type="text"
+            className="form-control"
+            placeholder={placeholder}
+            value={
+              stakeHolder
+                ? getNestedValue(values, `${stakeHolder}${name}_input`) || ""
+                : values[`${name}_input`] || ""
+            }
+            onChange={(e) =>
+              setFieldValue(
+                stakeHolder
+                  ? `${stakeHolder}${name}_input`
+                  : `${name}_input`,
+                e.target.value
+              )
+            }
           />
-          {(stakeHolder
-            ? getNestedValue(values, `${stakeHolder}${name}`)
-            : getNestedValue(values, name)
-          ) === "Yes" && (
-              <div className="pt-2">
-                <Field
-                  name={
-                    stakeHolder ? `${stakeHolder}${name}_input` : `${name}_input`
-                  }
-                  type="text"
-                  className="form-control"
-                   placeholder={placeholder}
-                  onChange={handleChange}
-                  value={
-                    stakeHolder
-                      ? getNestedValue(values, `${stakeHolder}${name}_input`) || ""
-                      : values[`${name}_input`] || ""
-                  }
-                />
-              </div>
-            )}
-        </React.Fragment>
-      );
+        </div>
+      )}
+    </React.Fragment>
+  );
 
     case "modal":
       return (

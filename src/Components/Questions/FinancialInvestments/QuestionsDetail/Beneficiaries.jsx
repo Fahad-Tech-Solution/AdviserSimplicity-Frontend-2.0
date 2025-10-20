@@ -27,7 +27,7 @@
 //     });
 
 //     const fillInitialValues = (setFieldValue, loopValue) => {
-        
+
 
 
 //         let arr = []
@@ -73,7 +73,7 @@
 
 //     let onSubmit = async (values) => {
 
-    
+
 
 //         const newEntries = [];
 
@@ -326,12 +326,8 @@
 
 // export default Beneficiaries;
 
-
-
-
 import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState, useMemo } from 'react';
-import { Row } from 'react-bootstrap';
 import { useRecoilValue } from 'recoil';
 import { defaultUrl } from '../../../../Store/Store';
 import { handleInputBlur, handleInputChange, handleInputFocus, handleInputKeyDown, toPercentage } from '../../../Assets/Api/Api';
@@ -340,7 +336,11 @@ import DynamicTableForInputsSection from '../../../Assets/Table/DynamicTableForI
 const AntdTable = DynamicTableForInputsSection("antd");
 
 const Beneficiaries = (props) => {
-    const [title, setTitle] = useState(() => {
+    const [UserStatus] = useState(localStorage.getItem("UserStatus"));
+    const [autoClearValue, setAutoClearValue] = useState(false);
+    const DefaultUrl = useRecoilValue(defaultUrl);
+
+    const [title] = useState(() => {
         let currentTitle = props.modalObject.ParentModal || "";
         if (currentTitle.includes('_')) {
             currentTitle = (currentTitle.split('_'))[1];
@@ -348,109 +348,98 @@ const Beneficiaries = (props) => {
         return currentTitle;
     });
 
-    const [autoClearValue, setAutoClearValue] = useState(false);
-    const DefaultUrl = useRecoilValue(defaultUrl);
+    // ✅ Same structure as PremiumsDetails - flat object
+    const initialValues = {};
 
-    const initialValues = {
-        BeneficiariesDetails: [],
-        NumberOfMap: 1,
-    };
-
+    // ✅ Same fillInitialValues pattern as PremiumsDetails
     const fillInitialValues = (setFieldValue) => {
         try {
-            const stakeHolder = props.modalObject?.stakeHolder;
-            const parentValues = props.modalObject?.parentValues || {};
-            const editArray = props.modalObject?.editArray;
+            const { stakeHolder, parentValues, key } = props.modalObject;
 
-            if (editArray && editArray.length > 0) {
-                // If we have editArray from props, use that
-                setFieldValue("NumberOfMap", editArray.length);
-                
-                editArray.forEach((data, index) => {
-                    setFieldValue(`BeneficiariesDetails[${index}].nominationType`, data.nominationType || '');
-                    setFieldValue(`BeneficiariesDetails[${index}].DOB`, data.DOB || '');
-                    setFieldValue(`BeneficiariesDetails[${index}].beneficiaryName`, data.beneficiaryName || '');
-                    setFieldValue(`BeneficiariesDetails[${index}].relationshipStatus`, data.relationshipStatus || '');
-                    setFieldValue(`BeneficiariesDetails[${index}].shareBenefit`, data.shareBenefit || '');
-                });
-            } else if (stakeHolder) {
-                // Try to load from parent values structure
-                const baseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
-                const idxMatch = stakeHolder.match(/\[(\d+)\]/);
-                const index = idxMatch ? parseInt(idxMatch[1], 10) : 0;
+            let index = stakeHolder.replace(/[^0-9]+/g, "");
+            let BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
 
-                const data = parentValues?.[baseKey]?.[index];
-                const beneficiariesArray = data?.beneficiariesArray || [];
+            // Access data using same structure as PremiumsDetails
+            let data = parentValues?.[BaseKey]?.[index]?.[key + "Details"] || {};
 
-                if (beneficiariesArray.length > 0) {
-                    setFieldValue("NumberOfMap", beneficiariesArray.length);
-                    
-                    beneficiariesArray.forEach((beneficiary, idx) => {
-                        setFieldValue(`BeneficiariesDetails[${idx}].nominationType`, beneficiary.nominationType || '');
-                        setFieldValue(`BeneficiariesDetails[${idx}].DOB`, beneficiary.DOB || '');
-                        setFieldValue(`BeneficiariesDetails[${idx}].beneficiaryName`, beneficiary.beneficiaryName || '');
-                        setFieldValue(`BeneficiariesDetails[${idx}].relationshipStatus`, beneficiary.relationshipStatus || '');
-                        setFieldValue(`BeneficiariesDetails[${idx}].shareBenefit`, beneficiary.shareBenefit || '');
-                    });
-                } else {
-                    // Initialize with one empty row
-                    setFieldValue("NumberOfMap", 1);
-                }
-            }
+            console.log("Beneficiaries initial data:", data);
+
+            if (!data || typeof data !== "object") return;
+
+            // Fill form fields
+            setFieldValue("nominationType", data.nominationType || "");
+            setFieldValue("DOB", data.DOB || "");
+            setFieldValue("beneficiaryName", data.beneficiaryName || "");
+            setFieldValue("relationshipStatus", data.relationshipStatus || "");
+            setFieldValue("shareBenefit", data.shareBenefit || "");
+
         } catch (err) {
             console.error("Error in fillInitialValues:", err);
-            setFieldValue("NumberOfMap", 1);
         }
     };
 
-    const handleNominationTypeChange = (value, index, setFieldValue, values) => {
-        // Update current row
-        setFieldValue(`BeneficiariesDetails[${index}].nominationType`, value);
+    // ✅ Same onSubmit pattern as PremiumsDetails
+    const onSubmit = async (values) => {
+        console.log("Submitting beneficiaries:", values, props.modalObject);
+
+        // Set the details object like PremiumsDetails
+        props.setFieldValue(
+            `${props.modalObject.stakeHolder}${props.modalObject.key}Details`,
+            values
+        );
+
+        // Set a summary value if needed (like totalCost in PremiumsDetails)
+        props.setFieldValue(
+            `${props.modalObject.stakeHolder}${props.modalObject.key}`,
+            values.beneficiaryName || "Yes"
+        );
+
+        // Reset the flag state if necessary
+        if (props.flagState) {
+            props.setFlagState(false);
+        }
+    };
+
+    // ✅ FormulaSetting function like PremiumsDetails
+    const FormulaSetting = (values, setFieldValue, currentInput, stakeHolder) => {
+        try {
+            const row = values || {};
+            const fieldName = currentInput.name.split(".").pop();
+
+            // Add any specific calculations here if needed
+            // For beneficiaries, we mainly handle the nomination type logic
+
+        } catch (error) {
+            console.error("Error in FormulaSetting:", error);
+        }
+    };
+
+    // ✅ Handle nomination type changes with proper callback
+    const handleNominationTypeChange = (value, setFieldValue, values) => {
+        setFieldValue("nominationType", value);
 
         if (value === "Legal Personal Representative (Your Estate)") {
-            // Update all rows
-            const numRows = values.NumberOfMap || 1;
-            for (let i = 0; i < numRows; i++) {
-                setFieldValue(`BeneficiariesDetails[${i}].nominationType`, value);
-                setFieldValue(`BeneficiariesDetails[${i}].beneficiaryName`, "N/A");
-                setFieldValue(`BeneficiariesDetails[${i}].relationshipStatus`, "N/A");
-                setFieldValue(`BeneficiariesDetails[${i}].shareBenefit`, "");
-            }
+            setFieldValue("beneficiaryName", "N/A");
+            setFieldValue("relationshipStatus", "N/A");
+            setFieldValue("shareBenefit", "");
             setAutoClearValue(true);
         } else if (value === "Reversionary Beneficiary") {
-            setFieldValue(`BeneficiariesDetails[${index}].beneficiaryName`, "N/A");
-            setFieldValue(`BeneficiariesDetails[${index}].relationshipStatus`, "N/A");
-            setFieldValue(`BeneficiariesDetails[${index}].shareBenefit`, "100.00%");
-
-            if (values.NumberOfMap !== 1) {
-                for (let i = 0; i < values.NumberOfMap; i++) {
-                    if (values.BeneficiariesDetails?.[i]?.nominationType === "Legal Personal Representative (Your Estate)") {
-                        setFieldValue(`BeneficiariesDetails[${i}].shareBenefit`, "100.00%");
-                    }
-                }
-            }
+            setFieldValue("beneficiaryName", "N/A");
+            setFieldValue("relationshipStatus", "N/A");
+            setFieldValue("shareBenefit", "100.00%");
         } else {
             if (autoClearValue) {
-                setFieldValue(`BeneficiariesDetails[${index}].beneficiaryName`, "");
-                setFieldValue(`BeneficiariesDetails[${index}].relationshipStatus`, "");
-                setFieldValue(`BeneficiariesDetails[${index}].shareBenefit`, "");
+                setFieldValue("beneficiaryName", "");
+                setFieldValue("relationshipStatus", "");
+                setFieldValue("shareBenefit", "");
                 setAutoClearValue(false);
-            }
-
-            if (values.NumberOfMap !== 1) {
-                for (let i = 0; i < values.NumberOfMap; i++) {
-                    if (values.BeneficiariesDetails?.[i]?.nominationType === "Legal Personal Representative (Your Estate)") {
-                        setFieldValue(`BeneficiariesDetails[${i}].nominationType`, "Legal Personal Representative (Your Estate)");
-                        setFieldValue(`BeneficiariesDetails[${i}].beneficiaryName`, "N/A");
-                        setFieldValue(`BeneficiariesDetails[${i}].relationshipStatus`, "N/A");
-                        setFieldValue(`BeneficiariesDetails[${i}].shareBenefit`, "100.00%");
-                        setAutoClearValue(true);
-                    }
-                }
             }
         }
     };
 
+    const extraValue = ["Account Based Pension Detail", "Annuities Detail", "Pension Benefits Details"];
+
+    // ✅ Get relationship options based on nomination type
     const getRelationshipOptions = (nominationType) => {
         if (nominationType === "Legal Personal Representative (Your Estate)" || 
             nominationType === "Reversionary Beneficiary") {
@@ -464,25 +453,7 @@ const Beneficiaries = (props) => {
         ];
     };
 
-    const onSubmit = async (values) => {
-        try {
-            const beneficiariesArray = values.BeneficiariesDetails || [];
-            
-            // Update parent form
-            props.setFieldValue(`${props.modalObject.stakeHolder}.beneficiariesArray`, beneficiariesArray);
-            props.setFieldValue(`${props.modalObject.stakeHolder}.beneficiary`, beneficiariesArray.length > 0 ? "Yes" : "No");
-
-            // Close modal
-            if (props.flagState) {
-                props.setFlagState(false);
-            }
-        } catch (error) {
-            console.error("Error in onSubmit:", error);
-        }
-    };
-
-    const extraValue = ["Account Based Pension Detail", "Annuities Detail", "Pension Benefits Details"];
-
+    // ✅ Column configuration - single row like PremiumsDetails
     const columns = [
         {
             title: "No#",
@@ -498,15 +469,16 @@ const Beneficiaries = (props) => {
             type: "select",
             width: 250,
             options: [
-                ...(extraValue.includes(title) ? [{ value: "Reversionary Beneficiary", label: "Reversionary Beneficiary" }] : []),
+                ...(extraValue.includes(title) ?
+                    [{ value: "Reversionary Beneficiary", label: "Reversionary Beneficiary" }] : []),
                 { value: "Binding (Non-Lapsing)", label: "Binding (Non-Lapsing)" },
                 { value: "Binding (Lapsing)", label: "Binding (Lapsing)" },
                 { value: "Non-Binding", label: "Non-Binding" },
                 { value: "Legal Personal Representative (Your Estate)", label: "Legal Personal Representative (Your Estate)" }
             ],
             callBack: true,
-            func: (values, setFieldValue, currentInput, stakeHolder, index) => {
-                handleNominationTypeChange(currentInput.value, index, setFieldValue, values);
+            func: (values, setFieldValue, currentInput) => {
+                handleNominationTypeChange(currentInput.value, setFieldValue, values);
             }
         },
         {
@@ -515,8 +487,8 @@ const Beneficiaries = (props) => {
             key: "DOB",
             type: "antdate",
             width: 150,
-            disabled: (record) => 
-                record.nominationType === "Legal Personal Representative (Your Estate)" || 
+            disabled: (record) =>
+                record.nominationType === "Legal Personal Representative (Your Estate)" ||
                 record.nominationType === "Reversionary Beneficiary"
         },
         {
@@ -525,8 +497,8 @@ const Beneficiaries = (props) => {
             key: "beneficiaryName",
             type: "text",
             width: 200,
-            disabled: (record) => 
-                record.nominationType === "Legal Personal Representative (Your Estate)" || 
+            disabled: (record) =>
+                record.nominationType === "Legal Personal Representative (Your Estate)" ||
                 record.nominationType === "Reversionary Beneficiary"
         },
         {
@@ -535,7 +507,17 @@ const Beneficiaries = (props) => {
             key: "relationshipStatus",
             type: "select",
             width: 200,
-
+            // ✅ FIXED: Use a static array with all possible options
+            options: [
+                { value: "Spouse/De-facto", label: "Spouse/De-facto" },
+                { value: "Child", label: "Child" },
+                { value: "Financial Dependant", label: "Financial Dependant" },
+                { value: "Interdependant", label: "Interdependant" },
+                { value: "N/A", label: "N/A" }
+            ],
+            disabled: (record) =>
+                record.nominationType === "Legal Personal Representative (Your Estate)" ||
+                record.nominationType === "Reversionary Beneficiary"
         },
         {
             title: "Share of Benefit",
@@ -545,13 +527,11 @@ const Beneficiaries = (props) => {
             width: 150,
             disabled: (record) => record.nominationType === "Reversionary Beneficiary",
             callBack: true,
-            func: (values, setFieldValue, currentInput, stakeHolder, index) => {
-                // Handle percentage formatting
-                handleInputChange(currentInput, setFieldValue, () => {}, values);
+            func: (values, setFieldValue, currentInput) => {
+                handleInputChange(currentInput, setFieldValue, FormulaSetting, values);
             },
-            onBlur: (values, setFieldValue, currentInput, stakeHolder, index) => {
-                // Format as percentage on blur
-                handleInputBlur(currentInput, setFieldValue, toPercentage, () => {}, values);
+            onBlur: (values, setFieldValue, currentInput) => {
+                handleInputBlur(currentInput, setFieldValue, toPercentage, FormulaSetting, values);
             }
         }
     ];
@@ -568,58 +548,45 @@ const Beneficiaries = (props) => {
                     fillInitialValues(setFieldValue);
                 }, []);
 
+                // ✅ Create single data row like PremiumsDetails
                 const dataRows = useMemo(() => {
-                    const num = Number(values.NumberOfMap) || 1;
-                    return Array.from({ length: num }, (_, i) => ({
-                        key: i,
-                        ...values.BeneficiariesDetails[i],
-                    }));
-                }, [values.NumberOfMap, values.BeneficiariesDetails]);
+                    return [
+                        {
+                            key: 0,
+                            ...values
+                        }
+                    ];
+                }, [values]);
 
                 return (
                     <Form>
-                        <Row>
-                            <div className="col-md-12">
-                                <div className='row justify-content-center'>
-                                    <div className='d-flex flex-row justify-content-center align-items-center gap-2 mb-4'>
-                                        <p className='text-end mt-3 mb-0'>
-                                            {props.modalObject.question || "How many beneficiaries?"}
-                                        </p>
-                                        <div style={{ width: "8%" }}>
-                                            <Field
-                                                type="number"
-                                                id="NumberOfMap"
-                                                name="NumberOfMap"
-                                                className="form-control inputDesignDoubleInput"
-                                                min="1"
-                                                max="10"
-                                            />
-                                        </div>
-                                    </div>
+                        <p className="text-end mt-1 pt-2" onClick={() => console.log(values)}>
+                            How many
+                        </p>
+                        <div className="mt-4 All_Client reportSection">
+                            <AntdTable
+                                columns={columns}
+                                data={dataRows}
+                                values={values}
+                                setFieldValue={setFieldValue}
+                                handleChange={handleChange}
+                                handleBlur={handleBlur}
+                            />
+                        </div>
 
-                                    {values.NumberOfMap && (
-                                        <div className="mt-4 All_Client reportSection">
-                                            <AntdTable
-                                                columns={columns}
-                                                data={dataRows}
-                                                values={values}
-                                                setFieldValue={setFieldValue}
-                                                handleChange={handleChange}
-                                                handleBlur={handleBlur}
-                                            />
-                                        </div>
-                                    )}
+                        {/* Validation message */}
+                        {values.shareBenefit && 
+                         parseFloat((values.shareBenefit || "0").replace(/[^0-9.-]+/g, "")) < 100 &&
+                         values.nominationType !== "Legal Personal Representative (Your Estate)" &&
+                         values.nominationType !== "Reversionary Beneficiary" && (
+                            <p style={{ textAlign: "left", fontSize: "13px" }} className="text-danger mt-2 fw-bold">
+                                Share of Benefit must be 100%
+                            </p>
+                        )}
 
-                                    {/* Validation for share benefit */}
-                                    {dataRows.some(row => 
-                                        parseFloat((row.shareBenefit || "0").replace(/[^0-9.-]+/g, "")) < 100 &&
-                                        row.nominationType !== "Legal Personal Representative (Your Estate)" &&
-                                        row.nominationType !== "Reversionary Beneficiary"
-                                    )}
-                                </div>
-                            </div>
-                        </Row>
-                        <button type="submit" style={{ display: "none" }}>Submit</button>
+                        <button type="submit" style={{ display: "none" }}>
+                            Submit
+                        </button>
                     </Form>
                 );
             }}
