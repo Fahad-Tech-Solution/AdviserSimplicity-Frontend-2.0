@@ -171,14 +171,19 @@ const DynamicFormField = ({
             <Field name={stakeHolder ? stakeHolder + name : name}>
               {({ field, form }) => (
                 <Radio.Group
+                  className="w-100"
                   id={name}
-                  className="d-flex gap-3 flex-wrap align-items-center flex-row"
                   value={field.value}
                   onChange={(e) => {
                     form.setFieldValue(field.name, e.target.value);
                     handleChange(e);
                     if (all.callBack) {
-                      all.func(values, setFieldValue, e.target, stakeHolder);
+                      all.func(
+                        values,
+                        setFieldValue,
+                        { name: field.name, value: e.target.value },
+                        stakeHolder
+                      );
                     }
                   }}
                   disabled={
@@ -187,16 +192,18 @@ const DynamicFormField = ({
                       : all?.disabled || false
                   }
                 >
-                  {Array.isArray(all?.options) &&
-                    all.options.map((opt, idx) => (
-                      <Radio
-                        key={idx}
-                        value={opt.value}
-                        className="radio-custom-style"
-                      >
-                        {opt.label || opt.lable || opt.value}
-                      </Radio>
-                    ))}
+                  <div className="d-flex flex-row gap-2">
+                    {Array.isArray(all?.options) &&
+                      all.options.map((opt, idx) => (
+                        <Radio
+                          key={idx}
+                          value={opt.value}
+                          className="radio-custom-style"
+                        >
+                          {opt.label || opt.lable || opt.value}
+                        </Radio>
+                      ))}
+                  </div>
                 </Radio.Group>
               )}
             </Field>

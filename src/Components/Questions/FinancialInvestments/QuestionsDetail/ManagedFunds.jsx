@@ -17,8 +17,10 @@ import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForI
 import InnerModal from "./InnerModal";
 import PortfolioValue from "./PortfolioValue";
 import ServiceFee from "./ServiceFee";
+import { ConfigProvider, Select } from "antd";
 
 const AntdTable = DynamicTableForInputsSection("antd");
+const { Option } = Select;
 
 const ManagedFunds = (props) => {
   const bankDetailObj = useRecoilValue(BankDetail);
@@ -343,10 +345,13 @@ const ManagedFunds = (props) => {
               setFlagState={setFlagState}
               flagState={flagState}
             >
-              {modalObject.key === "portfolioValue" ? <PortfolioValue /> : 
-              modalObject.key === "serviceFee" ? <ServiceFee /> : 
-              
-              ""}
+              {modalObject.key === "portfolioValue" ? (
+                <PortfolioValue />
+              ) : modalObject.key === "serviceFee" ? (
+                <ServiceFee />
+              ) : (
+                ""
+              )}
             </InnerModal>
 
             <div className="d-flex justify-content-center align-items-center gap-4">
@@ -354,20 +359,35 @@ const ManagedFunds = (props) => {
                 How many Platforms does {nameSet} have :
               </p>
               <div style={{ minWidth: "10%" }}>
-                <select
-                  id="NumberOfMap"
-                  name="NumberOfMap"
-                  className="form-select inputDesignDoubleInput"
-                  onChange={(e) => handleInput(e, setFieldValue)}
-                  value={values.NumberOfMap}
+                <ConfigProvider
+                  theme={{
+                    components: {
+                      Select: {
+                        colorBorder: "#36b446",
+                      },
+                    },
+                  }}
                 >
-                  <option value="">Select</option>
-                  {[...Array(5).keys()].map((num) => (
-                    <option key={num + 1} value={num + 1}>
-                      {num + 1}
-                    </option>
-                  ))}
-                </select>
+                  <Select
+                    id="NumberOfMap"
+                    name="NumberOfMap"
+                    className="w-100 h-100"
+                    placeholder="Select"
+                    size="large"
+                    value={values.NumberOfMap || undefined}
+                    onChange={(value) => {
+                      handleInput({ target: { value } }, setFieldValue);
+                    }}
+                    onBlur={handleBlur}
+                    getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                  >
+                    {Array.from({ length: 5 }, (_, i) => (
+                      <Option key={i} value={i + 1}>
+                        {i + 1}
+                      </Option>
+                    ))}
+                  </Select>
+                </ConfigProvider>
               </div>
             </div>
 

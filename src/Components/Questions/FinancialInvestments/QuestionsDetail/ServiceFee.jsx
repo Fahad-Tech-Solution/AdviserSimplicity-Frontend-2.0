@@ -11,44 +11,50 @@ import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForI
 const AntdTable = DynamicTableForInputsSection("antd");
 
 const ServiceFee = (props) => {
-  const Platform = props.modalObject.Platform || {};
+
   const initialEditArray = props.modalObject.editArray || [];
 
   const initialValues = {
     NumberOfMap: initialEditArray.length || "",
-    investments: initialEditArray.length ? initialEditArray : [],
-  };
-
-  // Find code for selected option
-  const getCodeForOption = (SelectedOffer) => {
-    let code = "";
-    if (Platform) {
-      const offer = Platform.arrayOfOffers?.find(
-        (offer) => offer._id === SelectedOffer
-      );
-      if (offer) code = offer.investmentCode;
-    }
-    return code;
+    ...initialEditArray
   };
 
   let OnInvestmentOptionSelect = (
     values,
     setFieldValue,
-    currentName,
+    currentInput,
     stakeHolder
   ) => {
-    let code = getCodeForOption(currentName.value);
-    setFieldValue(stakeHolder + "investmentCode", code || "");
+    let serviceFee = values.serviceFee || "";
+    let frequency = values.frequency || "";
+    let annualAdviserServiceFee = 0;
+    switch (currentInput.name) {
+      case "serviceFee":
+        serviceFee = currentInput.value;
+        break;
+      case "frequency":
+        frequency = currentInput.value;
+        break;
+    }
+
+    if (frequency === "Monthly") {
+      annualAdviserServiceFee = parseFloat(
+        (parseFloat(serviceFee?.replace(/[^0-9.-]+/g, "") || 0) || 0) * 12
+      );
+    } else if (frequency === "Annualy") {
+      annualAdviserServiceFee = parseFloat(
+        parseFloat(serviceFee?.replace(/[^0-9.-]+/g, "") || 0) || 0
+      );
+    }
+    setFieldValue(
+      `annualAdviserServiceFee`,
+      toCommaAndDollar(annualAdviserServiceFee)
+    );
   };
 
   const onSubmit = async (values) => {
-    const newEntries = values.investments;
-    const total = newEntries.reduce(
-      (total, entry) =>
-        total +
-        parseFloat(entry.investmentValue?.replace(/[^0-9.-]+/g, "") || 0),
-      0
-    );
+    const newEntries = values;
+
 
     props.setFieldValue(
       `${props.modalObject.stakeHolder}${props.modalObject.key}Array`,
@@ -56,7 +62,7 @@ const ServiceFee = (props) => {
     );
     props.setFieldValue(
       `${props.modalObject.stakeHolder}${props.modalObject.key}`,
-      toCommaAndDollar(total)
+      values.annualAdviserServiceFee
     );
 
     if (props.flagState) props.setFlagState(false);
@@ -87,6 +93,8 @@ const ServiceFee = (props) => {
         { value: "Monthly", lable: "Monthly" },
         { value: "Annualy", lable: "Annualy" },
       ],
+      callBack: true,
+      func: OnInvestmentOptionSelect,
     },
     {
       title: "Annual Adviser Service Fee p.a",
