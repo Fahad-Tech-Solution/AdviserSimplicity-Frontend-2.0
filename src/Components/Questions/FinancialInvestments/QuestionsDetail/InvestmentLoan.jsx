@@ -232,8 +232,12 @@ const InvestmentLoan = (props) => {
     try {
       // Safely parse the value after removing non-numeric characters
       let annualRepayments =
-        parseFloat((obj.joint?.annualRepayments || "0").replace(/[^0-9.-]+/g, "")) *
-        parseFloat((obj.joint?.serviceFeeType || "0").replace(/[^0-9.-]+/g, ""));
+        parseFloat(
+          (obj.joint?.annualRepayments || "0").replace(/[^0-9.-]+/g, "")
+        ) *
+        parseFloat(
+          (obj.joint?.serviceFeeType || "0").replace(/[^0-9.-]+/g, "")
+        );
 
       // Check if the parsed value is a valid number
       if (isNaN(annualRepayments) || annualRepayments === undefined) {
@@ -491,6 +495,7 @@ const InvestmentLoan = (props) => {
       type: "select", // simple static text or could be DynamicFormField if editable
       options: lenderOption,
       width: 150,
+      selectedOptionValue: true,
     },
     {
       title: "Loan Balance",
@@ -527,6 +532,7 @@ const InvestmentLoan = (props) => {
       width: 150,
       callBack: true,
       func: calculateAnnualRepayments,
+      selectedOptionValue: true,
     },
     {
       title: "Annual Repayments",

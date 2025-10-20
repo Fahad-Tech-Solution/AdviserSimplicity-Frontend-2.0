@@ -55,9 +55,7 @@ const InvestmentPropertyLoan = (props) => {
     }
   });
 
-  let initialValues = { NumberOfMap: "1" ,
-    DeductibleLoanAmount: "100%",
-  };
+  let initialValues = { NumberOfMap: "1", DeductibleLoanAmount: "100%" };
 
   // const fillInitialValues = (setFieldValue) => {
   //   let arr = [];
@@ -313,6 +311,7 @@ const InvestmentPropertyLoan = (props) => {
       type: "select", // simple static text or could be DynamicFormField if editable
       options: lenderOption,
       width: 150,
+      selectedOptionValue: true,
     },
     {
       title: "Loan Balance",
@@ -349,6 +348,7 @@ const InvestmentPropertyLoan = (props) => {
       width: 150,
       callBack: true,
       func: calculateAnnualRepayments,
+      selectedOptionValue: true,
     },
     {
       title: "Annual Repayments",
