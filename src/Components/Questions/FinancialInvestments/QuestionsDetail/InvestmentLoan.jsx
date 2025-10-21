@@ -43,8 +43,8 @@ const InvestmentLoan = (props) => {
   let [UserStatus] = useState(localStorage.getItem("UserStatus"));
 
   let managedFundsLOC =
-    Object.keys(questionDetail[props.modalObject.index] || {}).length > 0
-      ? questionDetail[props.modalObject.index]
+    Object.keys(questionDetail[props.modalObject.key] || {}).length > 0
+      ? questionDetail[props.modalObject.key]
       : {
           client: [],
           partner: [],
@@ -232,8 +232,12 @@ const InvestmentLoan = (props) => {
     try {
       // Safely parse the value after removing non-numeric characters
       let annualRepayments =
-        parseFloat((obj.joint?.annualRepayments || "0").replace(/[^0-9.-]+/g, "")) *
-        parseFloat((obj.joint?.serviceFeeType || "0").replace(/[^0-9.-]+/g, ""));
+        parseFloat(
+          (obj.joint?.annualRepayments || "0").replace(/[^0-9.-]+/g, "")
+        ) *
+        parseFloat(
+          (obj.joint?.serviceFeeType || "0").replace(/[^0-9.-]+/g, "")
+        );
 
       // Check if the parsed value is a valid number
       if (isNaN(annualRepayments) || annualRepayments === undefined) {
@@ -292,13 +296,13 @@ const InvestmentLoan = (props) => {
       if (!bankAccountArray) {
         // Make a POST request if no bank account is found
         res = await PostAxios(
-          `${DefaultUrl}/api/${props.modalObject.index}/Add`,
+          `${DefaultUrl}/api/${props.modalObject.key}/Add`,
           obj
         );
       } else {
         // Make a PATCH request if a bank account is found
         res = await PatchAxios(
-          `${DefaultUrl}/api/${props.modalObject.index}/Update`,
+          `${DefaultUrl}/api/${props.modalObject.key}/Update`,
           obj
         );
       }
@@ -307,7 +311,7 @@ const InvestmentLoan = (props) => {
         console.log(res);
         const updatedData = {
           ...questionDetail,
-          [props.modalObject.index]: res,
+          [props.modalObject.key]: res,
         };
         setQuestionDetail(updatedData);
       }
@@ -356,8 +360,8 @@ const InvestmentLoan = (props) => {
     stackHolder
   ) => {
     console.log(
-      values,
-      thisInput.value,
+      // values,
+      // thisInput.value,
       stackHolder,
       "calculateAnnualRepayments"
     );
@@ -491,6 +495,7 @@ const InvestmentLoan = (props) => {
       type: "select", // simple static text or could be DynamicFormField if editable
       options: lenderOption,
       width: 150,
+      selectedOptionValue: true,
     },
     {
       title: "Loan Balance",
@@ -527,6 +532,7 @@ const InvestmentLoan = (props) => {
       width: 150,
       callBack: true,
       func: calculateAnnualRepayments,
+      selectedOptionValue: true,
     },
     {
       title: "Annual Repayments",

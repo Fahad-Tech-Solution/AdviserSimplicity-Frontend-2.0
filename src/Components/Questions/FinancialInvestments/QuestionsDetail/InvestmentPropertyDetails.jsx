@@ -1,5 +1,5 @@
 import { Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Button, InputGroup, Row, Table } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../../Store/Store";
@@ -14,6 +14,8 @@ import {
   toCommaAndDollar,
   toPercentage,
 } from "../../../Assets/Api/Api";
+import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
+
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
@@ -21,6 +23,8 @@ import InnerModal from "./InnerModal";
 import InvestmentPropertyLoan from "./InvestmentPropertyLoan";
 import QuestionIncomeExpanse from "./QuestionIncomeExpanse";
 import { FaRegBuilding } from "react-icons/fa6";
+
+const AntDTableHOC = DynamicTableForInputsSection("antd");
 
 const InvestmentPropertyDetails = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
@@ -51,7 +55,7 @@ const InvestmentPropertyDetails = (props) => {
     }
   });
 
-  // let investmentPropertyDetails = Object.keys(questionDetail[props.modalObject.index]).length > 0 ? questionDetail[props.modalObject.index] : {
+  // let investmentPropertyDetails = Object.keys(questionDetail[props.modalObject.key]).length > 0 ? questionDetail[props.modalObject.key] : {
   //     client: [],
   //     partner: [],
   //     joint: [],
@@ -63,17 +67,17 @@ const InvestmentPropertyDetails = (props) => {
   const [dynamicFields, setDynamicFields] = useState([]);
 
   useEffect(() => {
-    console.log(investmentPropertyDetails[props.modalObject.Input]);
+    console.log(investmentPropertyDetails[props.modalObject.key]);
     if (
-      props.modalObject.index === "investmentPropertyDetails" ||
-      props.modalObject.index === "familyInvestmentProperties"
+      props.modalObject.key === "investmentPropertyDetails" ||
+      props.modalObject.key === "familyInvestmentProperties"
     ) {
       setSwitchFlag(true);
     }
 
     let data =
-      Object.keys(questionDetail[props.modalObject.index] || {}).length > 0
-        ? questionDetail[props.modalObject.index]
+      Object.keys(questionDetail[props.modalObject.key] || {}).length > 0
+        ? questionDetail[props.modalObject.key]
         : {
             client: [],
             partner: [],
@@ -96,48 +100,60 @@ const InvestmentPropertyDetails = (props) => {
   }, [props.modalObject]);
 
   const fillInitialValues = (setFieldValue) => {
-    // console.log(
-    //   props.modalObject.title,
-    //   " Data of :",
-    //   props.modalObject.Input,
-    //   ":: whole Data Set ",
-    //   JSON.stringify(investmentPropertyDetails)
-    // );
-    if (
-      investmentPropertyDetails[props.modalObject.Input] &&
-      investmentPropertyDetails[props.modalObject.Input].length
-    ) {
-      setFieldValue(
-        `NumberOfMap`,
-        investmentPropertyDetails[props.modalObject.Input].length || ""
-      );
+    const dataSet = investmentPropertyDetails?.client;
+    console.log(dataSet, "dataSet");
 
-      investmentPropertyDetails[props.modalObject.Input].forEach((data, i) => {
-        if (data) {
-          setFieldValue(`PropertyAddress${i}`, data.PropertyAddress || "");
-          setFieldValue(`CurrentValue${i}`, data.CurrentValue || "");
-          setFieldValue(`CostBase${i}`, data.CostBase || "");
-          // if (SwitchFlag) {
-          setFieldValue(`ClientOwnership${i}`, data.ClientOwnership || "");
-          setFieldValue(`PartnerOwnership${i}`, data.PartnerOwnership || "");
-          // }
-          setFieldValue(
-            `propertyLoanBalance${i}`,
-            data.propertyLoanBalance || ""
-          );
-          setFieldValue(
-            `propertyLoanDetailsArray${i}`,
-            data.propertyLoanDetailsArray || ""
-          );
+    if (Array.isArray(dataSet) && dataSet.length > 0) {
+      // Set number of maps
+      console.log(dataSet.length, "dataSet.length");
+      setFieldValue("NumberOfMap", dataSet.length.toString());
 
-          setFieldValue(
-            `weeklyRentalIncome${i}`,
-            data.weeklyRentalIncome || ""
-          );
-          setFieldValue(`expenses${i}`, data.expenses || "");
-          setFieldValue(`expensesArray${i}`, data.expensesArray || "");
-        }
+      // Loop through each entry and set form fields
+      dataSet.forEach((data, i) => {
+        setFieldValue(
+          `investmentProperties[${i}].PropertyAddress`,
+          data.PropertyAddress || ""
+        );
+        setFieldValue(
+          `investmentProperties[${i}].CurrentValue`,
+          data.CurrentValue || ""
+        );
+        setFieldValue(
+          `investmentProperties[${i}].CostBase`,
+          data.CostBase || ""
+        );
+        setFieldValue(
+          `investmentProperties[${i}].ClientOwnership`,
+          data.ClientOwnership || ""
+        );
+        setFieldValue(
+          `investmentProperties[${i}].PartnerOwnership`,
+          data.PartnerOwnership || ""
+        );
+        setFieldValue(
+          `investmentProperties[${i}].propertyLoanDetails`,
+          data.propertyLoanDetails || ""
+        );
+        setFieldValue(
+          `investmentProperties[${i}].propertyLoanDetailsArray`,
+          data.propertyLoanDetailsArray || ""
+        );
+        setFieldValue(
+          `investmentProperties[${i}].weeklyRentalIncome`,
+          data.weeklyRentalIncome || ""
+        );
+        setFieldValue(
+          `investmentProperties[${i}].incomeExpenses`,
+          data.incomeExpenses || ""
+        );
+        setFieldValue(
+          `investmentProperties[${i}].incomeExpensesArray`,
+          data.expensesArray || ""
+        );
       });
+    } else {
+      // If no data found, clear NumberOfMap
+      setFieldValue("NumberOfMap", "");
     }
   };
 
@@ -163,111 +179,89 @@ const InvestmentPropertyDetails = (props) => {
 
   let DefaultUrl = useRecoilValue(defaultUrl);
 
-  let onSubmit = async (values) => {
-    // Extract the number of maps from the values
-    const numberOfMaps = parseInt(values.NumberOfMap, 10);
-    const newEntries = [];
-
-    // Iterate through each map entry and create a new object
-    for (let i = 0; i < numberOfMaps; i++) {
-      const newEntry = {
-        PropertyAddress: values[`PropertyAddress${i}`] || "",
-        CurrentValue: values[`CurrentValue${i}`] || "",
-        CostBase: values[`CostBase${i}`] || "",
-        ClientOwnership: SwitchFlag
-          ? values[`ClientOwnership${i}`] || ""
-          : undefined,
-        PartnerOwnership: SwitchFlag
-          ? values[`PartnerOwnership${i}`] || ""
-          : undefined,
-        propertyLoanBalance: values[`propertyLoanBalance${i}`] || "",
-        propertyLoanDetailsArray: values[`propertyLoanDetailsArray${i}`] || "",
-        weeklyRentalIncome: values[`weeklyRentalIncome${i}`] || "",
-        expenses: values[`expenses${i}`] || "",
-        expensesArray: values[`expensesArray${i}`] || "",
-      };
-      newEntries.push(newEntry);
-    }
-
-    // Log the new entries to verify
-    console.log(newEntries);
-
-    let DataOf = props.modalObject.Input;
-
-    // Create an object with additional fields
-    let obj = {
-      clientFK: localStorage.getItem("UserID"),
-    };
-
-    obj[DataOf] = newEntries;
-
-    // Calculate total currentBalance
-    obj["clientTotal"] = toCommaAndDollar(
-      newEntries.reduce(
-        (total, entry) =>
-          total + parseFloat(entry.CurrentValue.replace(/[^0-9.-]+/g, "")) || 0,
-        0
-      )
-    );
-    obj["partnerTotal"] = toCommaAndDollar(
-      newEntries.reduce(
-        (total, entry) =>
-          total +
-            parseFloat(entry.propertyLoanBalance.replace(/[^0-9.-]+/g, "")) ||
-          0,
-        0
-      )
-    );
-
-    console.log(obj, "final obj", props.modalObject.index);
-
-    // Check if investmentPropertyDetails and the array at props.modalObject.Input exist
-    // const bankAccountArray = investmentPropertyDetails[props.modalObject.Input] || [];
-    const bankAccountArray = investmentPropertyDetails.clientFK || "";
-
+  const onSubmit = async (values) => {
     try {
-      let res;
-      if (!bankAccountArray) {
-        res = await PostAxios(
-          `${DefaultUrl}/api/${props.modalObject.index}/Add`,
-          obj
-        );
-      } else {
-        // obj.collection = props.modalObject.Input
-        res = await PatchAxios(
-          `${DefaultUrl}/api/${props.modalObject.index}/Update`,
-          obj
-        );
-      }
+      console.log(values, "values on submit");
+
+      // Extract investment properties from form
+      const investmentProperties = values?.investmentProperties || [];
+      const numberOfMaps =
+        parseInt(values.NumberOfMap, 10) || investmentProperties.length || 0;
+
+      // Create new array for backend
+      const newEntries = investmentProperties
+        .slice(0, numberOfMaps)
+        .map((item) => ({
+          PropertyAddress: item.PropertyAddress || "",
+          CurrentValue: item.CurrentValue || "",
+          CostBase: item.CostBase || "",
+          ClientOwnership: SwitchFlag ? item.ClientOwnership || "" : "",
+          PartnerOwnership: SwitchFlag ? item.PartnerOwnership || "" : "",
+          propertyLoanDetails: item.propertyLoanDetails || "",
+          propertyLoanDetailsArray: item.propertyLoanDetailsArray || "",
+          weeklyRentalIncome: item.weeklyRentalIncome || "",
+          incomeExpenses: item.incomeExpenses || "",
+          expensesArray: item.incomeExpensesArray || "",
+        }));
+
+      // Create payload for backend
+      const payload = {
+        clientFK: localStorage.getItem("UserID"),
+        client: newEntries,
+        clientTotal: toCommaAndDollar(
+          newEntries.reduce(
+            (total, entry) =>
+              total +
+              (parseFloat(entry.CurrentValue?.replace(/[^0-9.-]+/g, "")) || 0),
+            0
+          )
+        ),
+        partnerTotal: toCommaAndDollar(
+          newEntries.reduce(
+            (total, entry) =>
+              total +
+              (parseFloat(
+                entry.propertyLoanDetails?.replace(/[^0-9.-]+/g, "")
+              ) || 0),
+            0
+          )
+        ),
+      };
+
+      console.log(payload, "Final Payload for Backend");
+
+      // Decide POST or PATCH
+      const apiUrl = `${DefaultUrl}/api/${props.modalObject.key}`;
+      const existingRecord = investmentPropertyDetails?.clientFK;
+
+      const res = existingRecord
+        ? await PatchAxios(`${apiUrl}/Update`, payload)
+        : await PostAxios(`${apiUrl}/Add`, payload);
 
       if (res) {
         console.log(res);
-        const updatedData = {
+        setQuestionDetail({
           ...questionDetail,
-          [props.modalObject.index]: res,
-        };
-        setQuestionDetail(updatedData);
+          [props.modalObject.key]: res,
+        });
+
+        openNotificationSuccess(
+          "success",
+          "topRight",
+          "Success Notification",
+          `Data of "${props.modalObject.title}" is saved successfully`
+        );
       }
 
-      openNotificationSuccess(
-        "success",
-        "topRight",
-        "Success Notification",
-        'Data of "' + props.modalObject.title + '" is Saved'
-      );
-      // Reset the flag state if necessary
-      if (props.flagState) {
-        props.setFlagState(false);
-      }
+      // reset flag
+      if (props.flagState) props.setFlagState(false);
     } catch (error) {
       console.error("Error occurred while making API call:", error);
       openNotificationSuccess(
         "error",
         "topRight",
         "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        `Data of "${props.modalObject.title}" could not be saved. Please try again.`
       );
     }
   };
@@ -329,31 +323,260 @@ const InvestmentPropertyDetails = (props) => {
     }
   };
 
-  let handleInnerModal = (
-    title,
-    question,
-    key,
-    mainKey,
-    key3,
-    editArray,
-    index,
-    values
-  ) => {
-    console.log(values);
+  let handleInnerModal = (innerModalTitle, values, key, stakeHolder) => {
+    console.log("handleInnerModal: ", innerModalTitle);
     let ParentModal = props.modalObject.title;
     setModalObject({
-      title,
-      question,
-      key,
-      mainKey,
-      key3,
-      editArray: editArray || [],
-      index,
+      title: innerModalTitle,
+      innerModalTitle,
       values,
+      key,
+      stakeHolder,
       ParentModal,
     });
     setFlagState(true);
   };
+
+  const columns = [
+    {
+      title: "No#",
+      dataIndex: "index",
+      key: "owner",
+      render: (_, __, i) => i + 1,
+      width: 60,
+    },
+    // {
+    //   title: "Owner",
+    //   dataIndex: "owner",
+    //   key: "owner",
+    //   type: "text", // simple static text or could be DynamicFormField if editable
+    //   placeholder: "Enter Owner Name",
+    //   width: 150,
+    // },
+    {
+      title: "Property Address",
+      dataIndex: "PropertyAddress",
+      key: "PropertyAddress",
+      type: "text",
+      placeholder: "PropertyAddress",
+      width: 200,
+    },
+    {
+      title: "Current Value",
+      dataIndex: "CurrentValue",
+      key: "CurrentValue",
+      type: "number-toComma",
+      placeholder: "Current Value",
+      width: 200,
+    },
+    {
+      title: "Cost Base",
+      dataIndex: "CostBase",
+      key: "CostBase",
+      type: "number-toComma",
+      placeholder: "Cost Base",
+      width: 200,
+    },
+    {
+      title: "Loan Balance",
+      dataIndex: "propertyLoanDetails",
+      key: "propertyLoanDetails",
+      type: "number-toComma-Modal",
+      placeholder: "Loan Balance",
+      width: 200,
+      func: handleInnerModal,
+      innerModalTitle: "Property Loan Details",
+    },
+    {
+      title: "Weekly Rental Income",
+      dataIndex: "weeklyRentalIncome",
+      key: "weeklyRentalIncome",
+      type: "number-toComma",
+      placeholder: "Weekly Rental Income",
+      width: 200,
+    },
+    {
+      title: "Expenses",
+      dataIndex: "incomeExpenses",
+      key: "incomeExpenses",
+      type: "number-toComma-Modal",
+      placeholder: "Expenses",
+      width: 200,
+      func: handleInnerModal,
+      innerModalTitle: "Expense Details",
+    },
+    // {
+    //   title: "Employment Status",
+    //   dataIndex: "employmentStatus",
+    //   key: "employmentStatus",
+    //   type: "select",
+    //   placeholder: "Select Employment Status",
+    //   options: [
+    //     { label: "Full Time", value: "Full Time" },
+    //     { label: "Part Time", value: "Part Time" },
+    //     { label: "Casual", value: "Casual" },
+    //     { label: "Contract", value: "Contract" },
+    //     { label: "On Leave", value: "OnLeave" },
+    //   ],
+    //   width: 200,
+    // },
+    // {
+    //   title: "Name of Company",
+    //   dataIndex: "nameOfCompany",
+    //   key: "nameOfCompany",
+    //   type: "text",
+    //   placeholder: "Enter Company Name",
+    //   width: 200,
+    // },
+    // {
+    //   title: "Start Date",
+    //   dataIndex: "startDate",
+    //   key: "startDate",
+    //   type: "antdate",
+    //   placeholder: "dd/mm/yyyy",
+    //   width: 200,
+    // },
+    // {
+    //   title: "Hours Worked",
+    //   dataIndex: "hoursWorked",
+    //   key: "hoursWorked",
+    //   type: "number",
+    //   placeholder: "Enter Hours Worked",
+    //   width: 200,
+    // },
+    // {
+    //   title: "Salary Detail",
+    //   dataIndex: "salaryPackage",
+    //   key: "SalaryPackageModal",
+    //   type: "modal", // 🔥 handled by DynamicFormField as button modal
+    //   width: 150,
+    //   handleInnerModal: handleInnerModal,
+    //   innerModalTitle: "Salary Detail",
+    //   Drawerheight: 220,
+    //   DrawerWidth: "80%",
+    //   PopoverContent: (
+    //     innerModalTitle,
+    //     values,
+    //     all,
+    //     stakeHolder,
+    //     setFieldValue
+    //   ) => {
+    //     let modalObject = {
+    //       title: innerModalTitle,
+    //       key: all.key,
+    //       parentValues: values,
+    //       parentKey: stakeHolder,
+    //     };
+    //     return (
+    //       <div
+    //         style={{
+    //           height: "80px",
+    //           margin: "-20px 0px 0px 0px",
+    //         }}
+    //       >
+    //         <SalaryPackage
+    //           modalObject={modalObject}
+    //           setFieldValue={setFieldValue}
+    //           setFlagState={setFlagState}
+    //           flagState={flagState}
+    //         />
+    //       </div>
+    //     );
+    //   },
+    // },
+    // {
+    //   title: "Salary Packaging",
+    //   dataIndex: "salaryPackagingRadio",
+    //   key: "SalaryPackaging",
+    //   type: "yesnoModal", // yes/no with modal
+    //   width: 170,
+    //   callBack: true,
+    //   func: handleInnerModal,
+    //   innerModalTitle: "Salary Packaging",
+    //   Drawerheight: 220,
+    //   DrawerWidth: "80%",
+    //   PopoverContent: (
+    //     innerModalTitle,
+    //     values,
+    //     all,
+    //     stakeHolder,
+    //     setFieldValue
+    //   ) => {
+    //     let modalObject = {
+    //       title: innerModalTitle,
+    //       key: all.key,
+    //       parentValues: values,
+    //       parentKey: stakeHolder,
+    //     };
+
+    //     return (
+    //       <div
+    //         style={{
+    //           height: "80px",
+    //           margin: "-20px 0px 0px 0px",
+    //         }}
+    //       >
+    //         <SalaryPackaging
+    //           modalObject={modalObject}
+    //           setFieldValue={setFieldValue}
+    //           setFlagState={setFlagState}
+    //           flagState={flagState}
+    //         />
+    //       </div>
+    //     );
+    //   },
+    // },
+    // {
+    //   title: "Leave Entitlements",
+    //   dataIndex: "leaveEntitlementsRadio",
+    //   key: "LeaveEntitlementsModal",
+    //   type: "yesnoModal",
+    //   width: 170,
+    //   handleInnerModal: handleInnerModal,
+    //   callBack: true,
+    //   func: handleInnerModal,
+    //   innerModalTitle: "Leave entitlements",
+    //   Drawerheight: 320,
+    //   DrawerWidth: "60%",
+    //   PopoverContent: (
+    //     innerModalTitle,
+    //     values,
+    //     all,
+    //     stakeHolder,
+    //     setFieldValue
+    //   ) => {
+    //     let modalObject = {
+    //       title: innerModalTitle,
+    //       key: all.key,
+    //       parentValues: values,
+    //       parentKey: stakeHolder,
+    //     };
+
+    //     // return (
+    //     //   <div
+    //     //     style={{
+    //     //       height: "80px",
+    //     //       margin: "-20px 0px 0px 0px",
+    //     //     }}
+    //     //   >
+    //     //     <LeaveEntitlementsModal
+    //     //       modalObject={modalObject}
+    //     //       setFieldValue={setFieldValue}
+    //     //       setFlagState={setFlagState}
+    //     //       flagState={flagState}
+    //     //     />
+    //     //   </div>
+    //     // );
+    //   },
+    // },
+    // {
+    //   title: "Choice of Fund",
+    //   dataIndex: "choiceOfFund",
+    //   key: "choiceOfFund",
+    //   type: "yesno",
+    //   width: 150,
+    // },
+  ];
 
   return (
     <Formik
@@ -362,10 +585,32 @@ const InvestmentPropertyDetails = (props) => {
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, setFieldValue }) => {
+      {({ values, setFieldValue, handleBlur, handleChange }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, [investmentPropertyDetails]);
+
+        const tableData = useMemo(() => {
+          const num = Number(values.NumberOfMap) || 0;
+          if (num > 0) {
+            return Array.from({ length: num }, (_, i) => ({
+              key: `investmentProperties.${i}`,
+              stakeHolder: `investmentProperties[${i}]`,
+              PropertyAddress:
+                values.investmentProperties?.[i]?.PropertyAddress || "",
+              CurrentValue:
+                values.investmentProperties?.[i]?.CurrentValue || "",
+              CostBase: values.investmentProperties?.[i]?.CostBase || "",
+              propertyLoanDetails:
+                values.investmentProperties?.[i]?.propertyLoanDetails || "",
+              weeklyRentalIncome:
+                values.investmentProperties?.[i]?.weeklyRentalIncome || "",
+              incomeExpenses:
+                values.investmentProperties?.[i]?.incomeExpenses || "",
+            }));
+          }
+          return [];
+        }, [values.NumberOfMap, values.investmentProperties]);
 
         return (
           <Form>
@@ -373,11 +618,16 @@ const InvestmentPropertyDetails = (props) => {
               <div className="col-md-12">
                 <div className="row justify-content-center">
                   <div className="d-flex flex-row justify-content-center align-items-center gap-2">
-                    <p className="text-end mt-3">
+                    <p
+                      className="text-end mt-3"
+                      onClick={() => {
+                        console.log(values);
+                      }}
+                    >
                       How many {props.modalObject.title} does {nameSet} have :
                     </p>
 
-                    <div style={{ width: "8%" }}>
+                    {/* <div style={{ width: "8%" }}>
                       <Field
                         type="number"
                         id="NumberOfMap"
@@ -385,6 +635,24 @@ const InvestmentPropertyDetails = (props) => {
                         className="form-control inputDesignDoubleInput"
                         onChange={(e) => handleInput(e, setFieldValue)}
                       />
+
+                    </div> */}
+
+                    <div style={{ minWidth: "10%" }}>
+                      <select
+                        id="NumberOfMap"
+                        name="NumberOfMap"
+                        className="form-select inputDesignDoubleInput"
+                        onChange={(e) => handleInput(e, setFieldValue)}
+                        value={values.NumberOfMap}
+                      >
+                        <option value="">Select</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                      </select>
                     </div>
                   </div>
 
@@ -394,9 +662,9 @@ const InvestmentPropertyDetails = (props) => {
                     setFlagState={setFlagState}
                     flagState={flagState}
                   >
-                    {modalObject.key === "propertyLoanDetailsArray" ? (
+                    {modalObject.key === "propertyLoanDetails" ? (
                       <InvestmentPropertyLoan />
-                    ) : modalObject.key === "expensesArray" ? (
+                    ) : modalObject.key === "incomeExpenses" ? (
                       <QuestionIncomeExpanse />
                     ) : (
                       ""
@@ -404,8 +672,8 @@ const InvestmentPropertyDetails = (props) => {
                   </InnerModal>
 
                   {values.NumberOfMap > 0 && (
-                    <div className="mt-4">
-                      <Table striped bordered responsive hover>
+                    <div className="mt-4 All_Client reportSection">
+                      {/* <Table striped bordered responsive hover>
                         <thead>
                           <tr>
                             <th>No#</th>
@@ -664,7 +932,16 @@ const InvestmentPropertyDetails = (props) => {
                             );
                           })}
                         </tbody>
-                      </Table>
+                      </Table> */}
+
+                      <AntDTableHOC
+                        columns={columns}
+                        data={tableData}
+                        values={values}
+                        setFieldValue={setFieldValue}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                      />
                     </div>
                   )}
                 </div>
