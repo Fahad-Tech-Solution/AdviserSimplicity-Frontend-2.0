@@ -254,10 +254,17 @@ const questionConfig = {
       keyName: "otherAssets",
       api: "/personalAssets",
       img: settingMoneySvg,
-      variant: "case4",
+      variant: "case2",
       component: <AssetInfo />,
-      DrawerWidth: "60%",
-      Drawerheight: 200,
+      Labels: [
+        {
+          label: "Other Assets",
+          value: (questionDetail) =>
+            questionDetail?.otherAssets?.clientTotal ?? "",
+          component: <AssetInfo />,
+          key: "otherAssets",
+        },
+      ],
     },
     {
       title: "Personal Debt",

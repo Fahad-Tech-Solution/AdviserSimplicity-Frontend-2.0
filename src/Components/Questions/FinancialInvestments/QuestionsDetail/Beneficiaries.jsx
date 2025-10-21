@@ -582,7 +582,7 @@ const Beneficiaries = (props) => {
                             <div className="col-md-12">
                                 <div className='row justify-content-center'>
                                     <div className='d-flex flex-row justify-content-center align-items-center gap-2 mb-4'>
-                                        <p className='text-end mt-3 mb-0'>
+                                        <p className='text-end mb-0'>
                                             {props.modalObject.question || "How many beneficiaries?"}
                                         </p>
                                         <div style={{ width: "8%" }}>

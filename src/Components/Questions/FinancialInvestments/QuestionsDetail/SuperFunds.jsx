@@ -32,11 +32,13 @@ const SuperFunds = (props) => {
 
   // Determine name based on stakeholder
   const [nameSet] = useState(() => {
-    if (props.modalObject.Input === "client") {
+    let StackHolder = props.modalObject.stakeHolder.replace(".", "");
+
+    if (StackHolder === "client") {
       return localStorage.getItem("UserName");
-    } else if (props.modalObject.Input === "partner") {
+    } else if (StackHolder === "partner") {
       return localStorage.getItem("PartnerName");
-    } else if (props.modalObject.Input === "joint") {
+    } else if (StackHolder === "joint") {
       return (
         localStorage.getItem("UserName") +
         " & " +
@@ -80,8 +82,8 @@ const SuperFunds = (props) => {
         .map((_, i) => ({
           platformName: "",
           memberNumber: "",
-          portfolioValue: "",
-          portfolioArray: "",
+          // portfolioValue: "",
+          // portfolioArray: "",
           balanceBenefitDetails: "",
           balanceBenefitDetailsArray: "",
           groupInsurance: "",
@@ -101,12 +103,14 @@ const SuperFunds = (props) => {
     key,
     stakeHolder,
     values,
-    type
+    type,
+    question
   ) => {
     const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
     const BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
 
     const selectedPlatformId = values?.[BaseKey]?.[index]?.platformName || "";
+
     if (!selectedPlatformId && key === "portfolioArray") {
       openNotificationSuccess(
         "error",
@@ -123,8 +127,10 @@ const SuperFunds = (props) => {
       ) || [];
 
     setModalObject({
-      title: `${RenderName(props.modalObject.Input)}${innerModalTitle}`,
-      question: `Enter details for ${nameSet}'s ${type}`,
+      title: `${RenderName(
+        props.modalObject.stakeHolder.replace(".", "")
+      )}${innerModalTitle}`,
+      question,
       key,
       stakeHolder,
       editArray: values?.[BaseKey]?.[index]?.[key] || [],
@@ -134,40 +140,40 @@ const SuperFunds = (props) => {
     setFlagState(true);
   };
 
-  const CheckInputValue = (
-    values,
-    setFieldValue,
-    currentInput,
-    stakeHolder
-  ) => {
-    const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
-    const BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
+  // const CheckInputValue = (
+  //   values,
+  //   setFieldValue,
+  //   currentInput,
+  //   stakeHolder
+  // ) => {
+  //   const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
+  //   const BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
 
-    const portfolioArray = values?.[BaseKey]?.[index]?.portfolioArray || [];
-    const ExpectedSum = portfolioArray.reduce(
-      (total, entry) =>
-        total +
-        parseFloat(entry.investmentValue?.replace(/[^0-9.-]+/g, "") || 0),
-      0
-    );
+  //   const portfolioArray = values?.[BaseKey]?.[index]?.portfolioArray || [];
+  //   const ExpectedSum = portfolioArray.reduce(
+  //     (total, entry) =>
+  //       total +
+  //       parseFloat(entry.investmentValue?.replace(/[^0-9.-]+/g, "") || 0),
+  //     0
+  //   );
 
-    const data = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, ""));
-    if (ExpectedSum !== data) {
-      setShowError((prev) => ({
-        ...prev,
-        [`portfolioValue${index}Error`]: true,
-        [`portfolioValue${index}Message`]:
-          "Total must equal the sum of all investment values in the popup. The sum is " +
-          toCommaAndDollar(ExpectedSum),
-      }));
-    } else {
-      setShowError((prev) => ({
-        ...prev,
-        [`portfolioValue${index}Error`]: false,
-        [`portfolioValue${index}Message`]: "",
-      }));
-    }
-  };
+  //   const data = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, ""));
+  //   if (ExpectedSum !== data) {
+  //     setShowError((prev) => ({
+  //       ...prev,
+  //       [`portfolioValue${index}Error`]: true,
+  //       [`portfolioValue${index}Message`]:
+  //         "Total must equal the sum of all investment values in the popup. The sum is " +
+  //         toCommaAndDollar(ExpectedSum),
+  //     }));
+  //   } else {
+  //     setShowError((prev) => ({
+  //       ...prev,
+  //       [`portfolioValue${index}Error`]: false,
+  //       [`portfolioValue${index}Message`]: "",
+  //     }));
+  //   }
+  // };
 
   const onSubmit = async (values) => {
     const DataOf = props.modalObject.Input;
@@ -221,25 +227,25 @@ const SuperFunds = (props) => {
       type: "text",
       placeholder: "Member Number",
     },
-    {
-      title: "Portfolio Value",
-      dataIndex: "portfolioValue",
-      key: "portfolioValue",
-      type: "number-toComma-Modal",
-      innerModalTitle: "_Portfolio Value",
-      placeholder: "Portfolio Value",
-      callBack: true,
-      inputChangeFunc: CheckInputValue,
-      func: (title, stakeHolder, values) =>
-        handleInnerModal(
-          title,
-          "portfolioArray",
-          stakeHolder,
-          values,
-          "Portfolio Value"
-        ),
-      errorHandler: ShowError,
-    },
+    // {
+    //   title: "Portfolio Value",
+    //   dataIndex: "portfolioValue",
+    //   key: "portfolioValue",
+    //   type: "number-toComma-Modal",
+    //   innerModalTitle: "_Portfolio Value",
+    //   placeholder: "Portfolio Value",
+    //   callBack: true,
+    //   inputChangeFunc: CheckInputValue,
+    //   func: (title, stakeHolder, values) =>
+    //     handleInnerModal(
+    //       title,
+    //       "portfolioArray",
+    //       stakeHolder,
+    //       values,
+    //       "Portfolio Value"
+    //     ),
+    //   errorHandler: ShowError,
+    // },
     {
       title: "Balance & Benefit Details",
       dataIndex: "balanceBenefitDetails",
@@ -248,13 +254,14 @@ const SuperFunds = (props) => {
       innerModalTitle: "_Balance & Benefit Details",
       placeholder: "Balance Benefit",
       callBack: true,
-      func: (title, stakeHolder, values) =>
+      func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
-          title,
-          "balanceBenefitDetailsArray",
+          innerModalTitle,
+          key,
           stakeHolder,
           values,
-          "Balance Benefit Details"
+          "Balance Benefit Details",
+          `How many Benefit Details and Components do ${nameSet} have ?`
         ),
     },
     {
@@ -265,13 +272,14 @@ const SuperFunds = (props) => {
       innerModalTitle: "_Group Insurance",
       placeholder: "Group Insurance",
       callBack: true,
-      func: (title, stakeHolder, values) =>
+      func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
-          title,
-          "groupInsuranceArray",
+          innerModalTitle,
+          key,
           stakeHolder,
           values,
-          "Group Insurance"
+          "Group Insurance",
+          `How many Group Insurance ${nameSet} have :`
         ),
     },
     {
@@ -282,13 +290,14 @@ const SuperFunds = (props) => {
       innerModalTitle: "_Contributions",
       placeholder: "Contributions",
       callBack: true,
-      func: (title, stakeHolder, values) =>
+      func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
-          title,
-          "ContributionsArray",
+          innerModalTitle,
+          key,
           stakeHolder,
           values,
-          "Contributions"
+          "Contributions",
+          `How many Contributions do ${nameSet} have ?`
         ),
     },
     {
@@ -299,13 +308,14 @@ const SuperFunds = (props) => {
       innerModalTitle: "_Beneficiaries",
       placeholder: "Beneficiaries",
       callBack: true,
-      func: (title, stakeHolder, values) =>
+      func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
-          title,
-          "beneficiariesArray",
+          innerModalTitle,
+          key,
           stakeHolder,
           values,
-          "Beneficiaries"
+          "Beneficiaries",
+          `How many beneficiaries do ${nameSet} have :`
         ),
     },
     {
@@ -319,10 +329,10 @@ const SuperFunds = (props) => {
 
   let componentMapping = {
     portfolioArray: <PortfolioValue />,
-    balanceBenefitDetailsArray: <MemberNumber />,
-    groupInsuranceArray: <GroupInsurance />,
-    ContributionsArray: <Contributions />,
-    beneficiariesArray: <Beneficiaries />,
+    balanceBenefitDetails: <MemberNumber />,
+    groupInsurance: <GroupInsurance />,
+    contributions: <Contributions />,
+    nominatedBeneficiaries: <Beneficiaries />,
   };
 
   const ModalContent = (obj) => {
@@ -350,7 +360,7 @@ const SuperFunds = (props) => {
               stakeHolder: `superFunds[${i}]`,
               platformName: values.superFunds?.[i]?.platformName || "",
               memberNumber: values.superFunds?.[i]?.memberNumber || "",
-              portfolioValue: values.superFunds?.[i]?.portfolioValue || "",
+              // portfolioValue: values.superFunds?.[i]?.portfolioValue || "",
               balanceBenefitDetails:
                 values.superFunds?.[i]?.balanceBenefitDetails || "",
               groupInsurance: values.superFunds?.[i]?.groupInsurance || "",
