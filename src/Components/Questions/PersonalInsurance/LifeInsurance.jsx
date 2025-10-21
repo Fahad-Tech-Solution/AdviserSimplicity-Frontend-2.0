@@ -68,13 +68,13 @@ const PersonalInsuranceLife = (props) => {
         setFieldValue(`PersonalInsurance[${index}].Owner`, entry.Owner || "");
         setFieldValue(`PersonalInsurance[${index}].startDate`, entry.startDate || "");
         setFieldValue(`PersonalInsurance[${index}].sumInsured`, entry.sumInsured || []);
-        setFieldValue(`PersonalInsurance[${index}].sumInsuredSum`, entry.sumInsuredSum || "");
+        setFieldValue(`PersonalInsurance[${index}].sumInsuredDetails`, entry.sumInsuredSum || "");
         setFieldValue(`PersonalInsurance[${index}].premiums`, entry.premiums || "");
         setFieldValue(`PersonalInsurance[${index}].premiumsDetails`, entry.premiumsDetails || []);
         setFieldValue(`PersonalInsurance[${index}].loadingExclusion`, entry.loadingExclusion || "No");
-        setFieldValue(`PersonalInsurance[${index}].loadingExclusionValue`, entry.loadingExclusionValue || "");
+        setFieldValue(`PersonalInsurance[${index}].loadingExclusion_input`, entry.loadingExclusionValue || "");
         setFieldValue(`PersonalInsurance[${index}].beneficiary`, entry.beneficiary || "");
-        setFieldValue(`PersonalInsurance[${index}].beneficiariesArray`, entry.beneficiariesArray || []);
+        setFieldValue(`PersonalInsurance[${index}].beneficiaryDetails`, entry.beneficiaryDetails || []);
       });
     } else {
       setFieldValue("NumberOfMap", "");
@@ -101,69 +101,194 @@ const PersonalInsuranceLife = (props) => {
     setFlagState(true);
   };
 
-  const onSubmit = async (values) => {
-    const newEntries = [];
+const onSubmit = async (values, { setFieldValue }) => {
+  try {
     const loopLength = parseFloat(values.NumberOfMap) || 0;
+    const newEntries = [];
 
+    // 🟢 FIX: Use the nested structure from your form
     for (let i = 0; i < loopLength; i++) {
+      const entry = values.PersonalInsurance?.[i] || {};
+      
       const newEntry = {
-        lifeInsured: values.PersonalInsurance[i]?.lifeInsured || "",
-        provider: values.PersonalInsurance[i]?.provider || "",
-        policyNo: values.PersonalInsurance[i]?.policyNo || "",
-        Owner: values.PersonalInsurance[i]?.Owner || "",
-        startDate: values.PersonalInsurance[i]?.startDate || "",
-        sumInsured: values.PersonalInsurance[i]?.sumInsured || [],
-        sumInsuredSum: values.PersonalInsurance[i]?.sumInsuredSum || "",
-        premiums: values.PersonalInsurance[i]?.premiums || "",
-        premiumsDetails: values.PersonalInsurance[i]?.premiumsDetails || [],
-        loadingExclusion: values.PersonalInsurance[i]?.loadingExclusion || "",
-        loadingExclusionValue: values.PersonalInsurance[i]?.loadingExclusionValue || "",
-        beneficiary: values.PersonalInsurance[i]?.beneficiary || "",
-        beneficiariesArray: values.PersonalInsurance[i]?.beneficiariesArray || [],
+        lifeInsured: entry.lifeInsured || "",
+        provider: entry.provider || "",
+        policyNo: entry.policyNo || "",
+        owner: entry.Owner || "", // Note: your form uses 'Owner' with capital O
+        startDate: entry.startDate || "",
+        sumInsuredSum: entry.sumInsuredDetails || "", // Your form uses sumInsuredDetails
+        sumInsured: entry.sumInsured || [],
+        premiums: entry.premiums || "",
+        premiumsDetails: entry.premiumsDetails || [],
+        loadingExclusion: entry.loadingExclusion || "",
+        loadingExclusionValue: entry.loadingExclusion_input || "", // Your form uses loadingExclusion_input
+        beneficiary: entry.beneficiary || "",
+        beneficiariesArray: entry.beneficiaryDetails || [], // Your form uses beneficiaryDetails
       };
+
       newEntries.push(newEntry);
     }
 
+    // 🧾 Build base API object
     const Obj = {
       PersonalInsurance: newEntries,
       numberOfPersonalInsurance: newEntries.length,
       clientFK: localStorage.getItem("UserID"),
     };
 
+    // -------------------------------------------------------------
+    // 🧮 TOTAL PREMIUM CALCULATION (THIS PART NOW GETS CALLED CORRECTLY)
+    // -------------------------------------------------------------
+
+    const obj = {
+      clientLifeInsuranceTotal: 0,
+      clientTPDTotal: 0,
+      clientTraumaTotal: 0,
+      clientIncomeProtectionTotal: 0,
+
+      partnerLifeInsuranceTotal: 0,
+      partnerTPDTotal: 0,
+      partnerTraumaTotal: 0,
+      partnerIncomeProtectionTotal: 0,
+    };
+
+    // Separate by lifeInsured type
+    const clientArray = newEntries.filter(
+      (e) => e.lifeInsured?.toLowerCase() === "client"
+    );
+    const partnerArray = newEntries.filter(
+      (e) => e.lifeInsured?.toLowerCase() === "partner"
+    );
+    const bothArray = newEntries.filter(
+      (e) => e.lifeInsured?.toLowerCase() === "client+partner"
+    );
+
+    // Helper function to parse premium value
+    const parsePremium = (premiumStr) => {
+      if (!premiumStr) return 0;
+      return parseFloat(premiumStr.replace(/[^0-9.-]+/g, "")) || 0;
+    };
+
+    // ---- Client entries ----
+    clientArray.forEach((entry) => {
+      const premiumValue = parsePremium(entry.premiums);
+      const sumInsuredArray = Array.isArray(entry.sumInsured) ? entry.sumInsured : [];
+      
+      sumInsuredArray.forEach((SumData) => {
+        if (SumData.coverType === "Life")
+          obj.clientLifeInsuranceTotal += premiumValue;
+        else if (SumData.coverType === "TPD")
+          obj.clientTPDTotal += premiumValue;
+        else if (SumData.coverType === "Trauma")
+          obj.clientTraumaTotal += premiumValue;
+        else if (SumData.coverType === "Income protection")
+          obj.clientIncomeProtectionTotal += premiumValue;
+      });
+    });
+
+    // ---- Partner entries ----
+    partnerArray.forEach((entry) => {
+      const premiumValue = parsePremium(entry.premiums);
+      const sumInsuredArray = Array.isArray(entry.sumInsured) ? entry.sumInsured : [];
+      
+      sumInsuredArray.forEach((SumData) => {
+        if (SumData.coverType === "Life")
+          obj.partnerLifeInsuranceTotal += premiumValue;
+        else if (SumData.coverType === "TPD")
+          obj.partnerTPDTotal += premiumValue;
+        else if (SumData.coverType === "Trauma")
+          obj.partnerTraumaTotal += premiumValue;
+        else if (SumData.coverType === "Income protection")
+          obj.partnerIncomeProtectionTotal += premiumValue;
+      });
+    });
+
+    // ---- Both entries (split half each) ----
+    bothArray.forEach((entry) => {
+      const premiumValue = parsePremium(entry.premiums) / 2;
+      const sumInsuredArray = Array.isArray(entry.sumInsured) ? entry.sumInsured : [];
+      
+      sumInsuredArray.forEach((SumData) => {
+        if (SumData.coverType === "Life") {
+          obj.clientLifeInsuranceTotal += premiumValue;
+          obj.partnerLifeInsuranceTotal += premiumValue;
+        } else if (SumData.coverType === "TPD") {
+          obj.clientTPDTotal += premiumValue;
+          obj.partnerTPDTotal += premiumValue;
+        } else if (SumData.coverType === "Trauma") {
+          obj.clientTraumaTotal += premiumValue;
+          obj.partnerTraumaTotal += premiumValue;
+        } else if (SumData.coverType === "Income protection") {
+          obj.clientIncomeProtectionTotal += premiumValue;
+          obj.partnerIncomeProtectionTotal += premiumValue;
+        }
+      });
+    });
+
+    // Format totals and attach to Obj
+    Obj.clientLifeInsuranceTotal = toCommaAndDollar(obj.clientLifeInsuranceTotal);
+    Obj.clientTPDTotal = toCommaAndDollar(obj.clientTPDTotal);
+    Obj.clientTraumaTotal = toCommaAndDollar(obj.clientTraumaTotal);
+    Obj.clientIncomeProtectionTotal = toCommaAndDollar(obj.clientIncomeProtectionTotal);
+
+    Obj.partnerLifeInsuranceTotal = toCommaAndDollar(obj.partnerLifeInsuranceTotal);
+    Obj.partnerTPDTotal = toCommaAndDollar(obj.partnerTPDTotal);
+    Obj.partnerTraumaTotal = toCommaAndDollar(obj.partnerTraumaTotal);
+    Obj.partnerIncomeProtectionTotal = toCommaAndDollar(obj.partnerIncomeProtectionTotal);
+
+    // -------------------------------------------------------------
+    // 🧩 REST OF YOUR API CODE REMAINS THE SAME...
+    // -------------------------------------------------------------
+
     const bankAccountArray = personalInsurance.clientFK || "";
+    let res;
 
-    try {
-      let res;
-      if (!bankAccountArray) {
-        res = await PostAxios(`${DefaultUrl}/api/personalInsurance/Add`, Obj);
-      } else {
-        res = await PatchAxios(`${DefaultUrl}/api/personalInsurance/Update`, Obj);
-      }
-
-      if (res) {
-        const updatedData = { ...questionDetail, personalInsurance: res };
-        setQuestionDetail(updatedData);
-      }
-
-      openNotificationSuccess(
-        "success",
-        "topRight",
-        "Success Notification",
-        `Data of "${props.modalObject.title}" is Saved`
-      );
-      if (props.flagState) {
-        props.setFlagState(false);
-      }
-    } catch (error) {
-      console.error("Error occurred while making API call:", error);
-      openNotificationSuccess(
-        "error",
-        "topRight",
-        "Error Notification",
-        `Data of "${props.modalObject.title}" is not Saved. Please try again!`
-      );
+    if (!bankAccountArray) {
+      res = await PostAxios(`${DefaultUrl}/api/personalInsurance/Add`, Obj);
+    } else {
+      res = await PatchAxios(`${DefaultUrl}/api/personalInsurance/Update`, Obj);
     }
-  };
+
+    if (res) {
+      const updatedData = { ...questionDetail, personalInsurance: res };
+      setQuestionDetail(updatedData);
+      await updateQuestions();
+    }
+
+    openNotificationSuccess(
+      "success",
+      "topRight",
+      "Success Notification",
+      `Data of "${props.modalObject.title}" is Saved`
+    );
+
+    if (props.flagState) props.setFlagState(false);
+  } catch (error) {
+    console.error("Error occurred while making API call:", error);
+    openNotificationSuccess(
+      "error",
+      "topRight",
+      "Error Notification",
+      `Data of "${props.modalObject.title}" is not Saved. Please try again!`
+    );
+  }
+};
+
+// Don't forget to add back the updateQuestions function if needed
+let updateQuestions = async () => {
+  let values = { ...CRObject, life: "Yes" };
+  try {
+    const PatchRes = await PatchAxios(
+      `${DefaultUrl}/api/questions/Update/${localStorage.getItem("UserID")}`,
+      values
+    );
+    console.log(PatchRes, "PatchRes");
+    setCRObject(PatchRes);
+  } catch (error) {
+    console.error("Error submitting form:", error);
+  }
+};
+
 
   const columns = [
     {

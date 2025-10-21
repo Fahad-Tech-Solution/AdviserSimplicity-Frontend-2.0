@@ -14,6 +14,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
     handleBlur,
   }) {
     const [editingRow, setEditingRow] = useState(null);
+    
     const renderCell = (record, col) => {
       const value = record[col.dataIndex];
       if (editingRow === record.key) {
@@ -28,18 +29,17 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
             handleChange={handleChange}
             handleBlur={handleBlur}
             handleInnerModal={col?.handleInnerModal || (() => {})}
-            innerModalTitle={   col?.innerModalTitle || ""}
+            innerModalTitle={col?.innerModalTitle || ""}
             all={col || {}}
             {...(record?.stakeHolder
               ? { stakeHolder: record.stakeHolder + "." }
-              : {})} // 🔥 row decides (client/partner)
+              : {})}
           />
         );
       }
 
       // ✅ When not editing → format based on type
       if (col?.type === "antdate") {
-        // console.log(value);
         return value ? ConvertDate(value) : "--";
       } else if (col?.type === "checkbox") {
         return value ? "Checked" : "Un-Checked";
@@ -48,6 +48,33 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
       }
 
       return value || "--";
+    };
+
+    const processColumns = (cols) => {
+      return cols.map((col) => {
+        // If column has children (grouped columns), process them recursively
+        if (col.children && Array.isArray(col.children)) {
+          return {
+            ...col,
+            children: processColumns(col.children)
+          };
+        }
+        
+        // If it's action column, keep custom render
+        if (col.key === "action" || col.key === "owner") {
+          return {
+            ...col,
+            width: editingRow ? col.width || 150 : undefined,
+          };
+        }
+        
+        // Regular column with render function
+        return {
+          ...col,
+          width: editingRow ? col.width || 150 : undefined,
+          render: (text, record) => renderCell(record, col),
+        };
+      });
     };
 
     const actionColumn = {
@@ -72,31 +99,20 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
 
     // ✅ AntD Table
     if (type === "antd") {
+      const processedColumns = processColumns(allColumns);
+      
       return (
         <AntTable
-          columns={allColumns.map((col) => {
-            if (col.key === "action" || col.key === "owner") {
-              // keep custom render
-              return {
-                ...col,
-                width: editingRow ? col.width || 150 : undefined, // ✅ fallback width if not set
-              };
-            }
-            return {
-              ...col,
-              width: editingRow ? col.width || 150 : undefined, // ✅ fallback width if not set
-              render: (text, record) => renderCell(record, col),
-            };
-          })}
+          columns={processedColumns}
           dataSource={data}
           pagination={false}
           rowKey="key"
-          scroll={{ x: "max-content" }} // optional: keeps right fixed working well
+          scroll={{ x: "max-content" }}
         />
       );
     }
 
-    // ✅ Bootstrap Table
+    // ✅ Bootstrap Table (unchanged)
     if (type === "bootstrap") {
       return (
         <BootstrapTable striped bordered hover responsive>

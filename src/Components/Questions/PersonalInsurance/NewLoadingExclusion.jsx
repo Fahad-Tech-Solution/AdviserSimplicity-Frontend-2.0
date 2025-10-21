@@ -318,9 +318,9 @@
 //     );
 // };
 
-// export default NewLoadingExclusion;
-import { Form, Formik } from "formik";
+// export default NewLoadingExclusion;import { Form, Formik } from "formik";import React, { useEffect, useMemo, useState } from "react";
 import React, { useEffect, useMemo, useState } from "react";
+import { Formik, Form } from "formik";
 import { toCommaAndDollar, RenderName } from "../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
@@ -328,71 +328,59 @@ const AntdTable = DynamicTableForInputsSection("antd");
 
 const NewLoadingExclusion = (props) => {
   const [UserStatus] = useState(localStorage.getItem("UserStatus"));
-
-  // Initialize with empty object like PremiumsDetails
   const initialValues = {};
 
-  // ✅ Fill initial values - same pattern as PremiumsDetails
   const fillInitialValues = (setFieldValue) => {
     try {
       const { stakeHolder, parentValues, key } = props.modalObject;
-
       let index = stakeHolder.replace(/[^0-9]+/g, "");
       let BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
-
-      // Access data using the same structure as PremiumsDetails
       let data = parentValues?.[BaseKey]?.[index]?.[key + "Details"] || {};
-
-      console.log("Initial data:", data);
 
       if (!data || typeof data !== "object") return;
 
-      // Fill form fields
       setFieldValue("coverType", data.coverType || "");
       setFieldValue("premiums", data.premiums || "");
       setFieldValue("frequency", data.frequency || "");
       setFieldValue("waitingPeriod", data.waitingPeriod || "");
       setFieldValue("benefitPeriod", data.benefitPeriod || "");
-
     } catch (err) {
       console.error("Error in fillInitialValues:", err);
     }
   };
 
-  // ✅ onSubmit logic - same pattern as PremiumsDetails
   const onSubmit = async (values) => {
-    console.log("Submitting values:", values, props.modalObject);
-    
-    // Set the details object and the total value like PremiumsDetails
     props.setFieldValue(
-      `${props.modalObject.stakeHolder}${props.modalObject.key}Details`, 
+      `${props.modalObject.stakeHolder}${props.modalObject.key}Details`,
       values
     );
-    
-    // Calculate and set total like PremiumsDetails
-    const totalCost = parseFloat((values.premiums || "").toString().replace(/[^0-9.-]+/g, "")) || 0;
+
+    const totalCost =
+      parseFloat((values.premiums || "").toString().replace(/[^0-9.-]+/g, "")) ||
+      0;
     props.setFieldValue(
-      `${props.modalObject.stakeHolder}${props.modalObject.key}`, 
+      `${props.modalObject.stakeHolder}${props.modalObject.key}`,
       toCommaAndDollar(totalCost)
     );
 
-    // Reset the flag state if necessary
     if (props.flagState) {
       props.setFlagState(false);
     }
   };
 
-  // ✅ FormulaSetting function like PremiumsDetails
   const FormulaSetting = (values, setFieldValue, currentInput, stakeHolder) => {
     try {
       const row = values || {};
       const fieldName = currentInput.name.split(".").pop();
 
-      let premiums = parseFloat((row.premiums || "").toString().replace(/[^0-9.-]+/g, "")) || 0;
+      let premiums =
+        parseFloat((row.premiums || "").toString().replace(/[^0-9.-]+/g, "")) ||
+        0;
       let frequency = parseFloat(row.frequency) || 1;
 
       if (fieldName === "premiums") {
-        premiums = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
+        premiums =
+          parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
       } else if (fieldName === "frequency") {
         frequency = parseFloat(currentInput.value) || 1;
       }
@@ -404,123 +392,145 @@ const NewLoadingExclusion = (props) => {
     }
   };
 
-  // ✅ Column configuration - simplified for single row like PremiumsDetails
-  const columns = [
-    {
-      title: "No#",
-      dataIndex: "index",
-      key: "owner",
-      render: (_, __, i) => i + 1,
-      width: 60,
-    },
-    {
-      title: "Cover Type",
-      dataIndex: "coverType",
-      key: "coverType",
-      type: "select",
-      options: [
-        { value: "Life", label: "Life" },
-        { value: "TPD", label: "TPD" },
-        { value: "Trauma", label: "Trauma" },
-        { value: "Income protection", label: "Income protection" },
-      ],
-      width: 180,
-    },
-    {
-      title: "Premiums",
-      dataIndex: "premiums",
-      key: "premiums",
-      type: "number-toComma",
-      width: 50,
-      callBack: true,
-      func: FormulaSetting,
-    },
-    {
-      title: "Frequency",
-      dataIndex: "frequency",
-      key: "frequency",
-      type: "select",
-      options: [
-        { value: "12", label: "Monthly" },
-        { value: "6", label: "6 Monthly" },
-        { value: "1", label: "Yearly" },
-      ],
-      width: 150,
-      callBack: true,
-      func: FormulaSetting,
-    },
-   
-    {
-      title: "Waiting Period",
-      dataIndex: "waitingPeriod",
-      key: "waitingPeriod",
-      type: "select",
-      options: [
-        { value: "30 Days", label: "30 Days" },
-        { value: "60 Days", label: "60 Days" },
-        { value: "90 Days", label: "90 Days" },
-        { value: "120 Days", label: "120 Days" },
-        { value: "180 Days", label: "180 Days" },
-        { value: "2 Years", label: "2 Years" },
-      ],
-      width: 160,
-      // Show only for Income Protection
-      showCondition: (record) => record.coverType === "Income protection",
-    },
-    {
-      title: "Benefit Period",
-      dataIndex: "benefitPeriod",
-      key: "benefitPeriod",
-      type: "select",
-      options: [
-        { value: "2 Years", label: "2 Years" },
-        { value: "5 Years", label: "5 Years" },
-        { value: "To Age 60", label: "To Age 60" },
-        { value: "To Age 65", label: "To Age 65" },
-        { value: "To Age 70", label: "To Age 70" },
-      ],
-      width: 160,
-      // Show only for Income Protection
-      showCondition: (record) => record.coverType === "Income protection",
-    },
-  ];
+  // Columns
+  const colNo = {
+    title: "No#",
+    dataIndex: "index",
+    key: "owner",
+    render: (_, __, i) => i + 1,
+    width: 60,
+  };
+
+  const colCoverType = {
+    title: "Cover Type",
+    dataIndex: "coverType",
+    key: "coverType",
+    type: "select",
+    options: [
+      { value: "Life", label: "Life" },
+      { value: "TPD", label: "TPD" },
+      { value: "Trauma", label: "Trauma" },
+      { value: "Income protection", label: "Income protection" },
+    ],
+    width: 180,
+  };
+
+  const colPremiums = {
+    title: "Premiums",
+    dataIndex: "premiums",
+    key: "premiums",
+    type: "number-toComma",
+    width: 150,
+    callBack: true,
+    func: FormulaSetting,
+  };
+
+  const colFrequency = {
+    title: "Frequency",
+    dataIndex: "frequency",
+    key: "frequency",
+    type: "select",
+    options: [
+      { value: "12", label: "Monthly" },
+      { value: "6", label: "6 Monthly" },
+      { value: "1", label: "Yearly" },
+    ],
+    width: 150,
+    callBack: true,
+    func: FormulaSetting,
+  };
+
+  const colWaiting = {
+    title: "Waiting Period",
+    dataIndex: "waitingPeriod",
+    key: "waitingPeriod",
+    type: "select",
+    options: [
+      { value: "30 Days", label: "30 Days" },
+      { value: "60 Days", label: "60 Days" },
+      { value: "90 Days", label: "90 Days" },
+      { value: "120 Days", label: "120 Days" },
+      { value: "180 Days", label: "180 Days" },
+      { value: "2 Years", label: "2 Years" },
+    ],
+    width: 160,
+  };
+
+  const colBenefit = {
+    title: "Benefit Period",
+    dataIndex: "benefitPeriod",
+    key: "benefitPeriod",
+    type: "select",
+    options: [
+      { value: "2 Years", label: "2 Years" },
+      { value: "5 Years", label: "5 Years" },
+      { value: "To Age 60", label: "To Age 60" },
+      { value: "To Age 65", label: "To Age 65" },
+      { value: "To Age 70", label: "To Age 70" },
+    ],
+    width: 160,
+  };
 
   return (
-    <Formik
-      initialValues={initialValues}
-      onSubmit={onSubmit}
-      enableReinitialize
-      innerRef={props.formRef}
-    >
+    <Formik initialValues={initialValues} onSubmit={onSubmit} innerRef={props.formRef}>
       {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
 
-        // ✅ Create single data row like PremiumsDetails
-        const dataRows = useMemo(() => {
-          return [
-            {
-              key: 0,
-              ...values
-            }
-          ];
-        }, [values]);
+        const dataRows = useMemo(() => [{ key: 0, ...values }], [values]);
 
+        // 👇 dynamically pick columns
+ const visibleColumns =
+  values.coverType === "Income protection"
+    ? [
+        colNo,
+        colCoverType,
+        {
+          title: (
+            <div
+              style={{
+                textAlign: "center",
+                fontWeight: "bold",
+              }}
+            >
+              Other Details
+            </div>
+          ),
+          children: [
+            {
+              ...colPremiums,
+              title: <div style={{ textAlign: "center" }}>Premiums</div>,
+              key: "premiums", // Make sure key is defined
+            },
+            {
+              ...colWaiting,
+              title: <div style={{ textAlign: "center" }}>Waiting Period</div>,
+              key: "waitingPeriod",
+            },
+            {
+              ...colBenefit,
+              title: <div style={{ textAlign: "center" }}>Benefit Period</div>,
+              key: "benefitPeriod",
+            },
+          ],
+        },
+        colFrequency,
+      ]
+    : [colNo, colCoverType, colPremiums, colFrequency];
         return (
           <Form>
-            <p className="text-end mt-1 pt-2" onClick={() => console.log(values)}>
-              How many
-            </p>
+            <p className="text-end mt-1 pt-2">How many</p>
             <div className="mt-4 All_Client reportSection">
-              <AntdTable
-                columns={columns}
+             <AntdTable
+                columns={visibleColumns}
                 data={dataRows}
                 values={values}
                 setFieldValue={setFieldValue}
                 handleChange={handleChange}
                 handleBlur={handleBlur}
               />
+
             </div>
             <button type="submit" style={{ display: "none" }}>
               Submit

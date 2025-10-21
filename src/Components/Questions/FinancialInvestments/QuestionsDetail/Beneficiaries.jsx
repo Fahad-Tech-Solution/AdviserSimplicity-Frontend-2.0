@@ -388,12 +388,6 @@ const Beneficiaries = (props) => {
             values
         );
 
-        // Set a summary value if needed (like totalCost in PremiumsDetails)
-        props.setFieldValue(
-            `${props.modalObject.stakeHolder}${props.modalObject.key}`,
-            values.beneficiaryName || "Yes"
-        );
-
         // Reset the flag state if necessary
         if (props.flagState) {
             props.setFlagState(false);
@@ -540,7 +534,7 @@ const Beneficiaries = (props) => {
         <Formik
             initialValues={initialValues}
             onSubmit={onSubmit}
-            enableReinitialize
+            
             innerRef={props.formRef}
         >
             {({ values, setFieldValue, handleChange, handleBlur }) => {
