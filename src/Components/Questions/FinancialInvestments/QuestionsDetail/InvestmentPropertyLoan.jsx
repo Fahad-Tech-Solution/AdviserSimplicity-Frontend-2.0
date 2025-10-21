@@ -94,7 +94,11 @@ const InvestmentPropertyLoan = (props) => {
     console.log("fillInitialValues -> loan", propertyLoanData);
 
     // If we found data, populate form fields dynamically
-    if (propertyLoanData && propertyLoanData.length) {
+    if (
+      propertyLoanData &&
+      Array.isArray(propertyLoanData) &&
+      propertyLoanData.length > 0
+    ) {
       propertyLoanData.map((data, index) => {
         setFieldValue(`LenderCurrent`, data.LenderCurrent || "");
         setFieldValue(`LoanBalance`, data.LoanBalance || "");

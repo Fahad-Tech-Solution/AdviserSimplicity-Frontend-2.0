@@ -178,10 +178,7 @@ const SalaryPackaging = (props) => {
                 setFieldValue={setFieldValue}
                 handleChange={handleChange}
                 handleBlur={handleBlur}
-<<<<<<< HEAD
-=======
                 handleSubmit={props?.handleOk}
->>>>>>> origin/master
               />
             </ConfigProvider>
           </Form>

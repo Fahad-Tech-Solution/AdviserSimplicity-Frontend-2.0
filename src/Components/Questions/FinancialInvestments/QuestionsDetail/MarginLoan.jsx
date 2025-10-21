@@ -16,10 +16,7 @@ import {
 } from "../../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
 import { AntdCreatableMultiSelect } from "./CreatableMultiSelectField";
-<<<<<<< HEAD
-=======
 const AntdTable = DynamicTableForInputsSection("antd");
->>>>>>> origin/master
 
 const MarginLoan = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
@@ -104,12 +101,6 @@ const MarginLoan = (props) => {
     label: `Year ${i + 1}`,
   }));
 
-<<<<<<< HEAD
-  const FormulaSetting = (values, setFieldValue, current, stakeHolder) => {
-    const monthly = parseFloat(current.value.replace(/[^0-9.-]+/g, "")) || 0;
-    const annual = toCommaAndDollar(monthly * 12);
-    setFieldValue(`${stakeHolder}.annualLoan`, annual);
-=======
   const FormulaSetting = (values, setFieldValue, currentInput, stakeHolder) => {
     if (!currentInput) return;
 
@@ -120,7 +111,6 @@ const MarginLoan = (props) => {
     console.log("FormulaSetting:", { monthly, annual });
 
     setFieldValue(stakeHolder + "annualLoan", toCommaAndDollar(annual));
->>>>>>> origin/master
   };
 
   const onSubmit = async (values) => {
@@ -212,10 +202,7 @@ const MarginLoan = (props) => {
       key: "lender",
       type: "select",
       options: lenderOption,
-<<<<<<< HEAD
-=======
       selectedOptionValue: true,
->>>>>>> origin/master
       width: 200,
     },
     {
@@ -278,11 +265,6 @@ const MarginLoan = (props) => {
     },
   ];
 
-<<<<<<< HEAD
-  const AntdTable = DynamicTableForInputsSection("antd");
-
-=======
->>>>>>> origin/master
   const ownerOptions = () => {
     const opts = [{ value: "client", label: RenderName("client") }];
     if (UserStatus !== "Single") {
@@ -346,9 +328,6 @@ const MarginLoan = (props) => {
             <Row>
               <div className="col-md-12">
                 <div className="d-flex justify-content-center align-items-center gap-4">
-<<<<<<< HEAD
-                  <label className="text-end">Owner</label>
-=======
                   <label
                     className="text-end"
                     onClick={() => {
@@ -357,7 +336,6 @@ const MarginLoan = (props) => {
                   >
                     Owner
                   </label>
->>>>>>> origin/master
                   <div style={{ minWidth: "250px" }}>
                     <Field
                       name="owner"

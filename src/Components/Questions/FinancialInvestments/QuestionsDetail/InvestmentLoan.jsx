@@ -43,8 +43,8 @@ const InvestmentLoan = (props) => {
   let [UserStatus] = useState(localStorage.getItem("UserStatus"));
 
   let managedFundsLOC =
-    Object.keys(questionDetail[props.modalObject.index] || {}).length > 0
-      ? questionDetail[props.modalObject.index]
+    Object.keys(questionDetail[props.modalObject.key] || {}).length > 0
+      ? questionDetail[props.modalObject.key]
       : {
           client: [],
           partner: [],
@@ -296,13 +296,13 @@ const InvestmentLoan = (props) => {
       if (!bankAccountArray) {
         // Make a POST request if no bank account is found
         res = await PostAxios(
-          `${DefaultUrl}/api/${props.modalObject.index}/Add`,
+          `${DefaultUrl}/api/${props.modalObject.key}/Add`,
           obj
         );
       } else {
         // Make a PATCH request if a bank account is found
         res = await PatchAxios(
-          `${DefaultUrl}/api/${props.modalObject.index}/Update`,
+          `${DefaultUrl}/api/${props.modalObject.key}/Update`,
           obj
         );
       }
@@ -311,7 +311,7 @@ const InvestmentLoan = (props) => {
         console.log(res);
         const updatedData = {
           ...questionDetail,
-          [props.modalObject.index]: res,
+          [props.modalObject.key]: res,
         };
         setQuestionDetail(updatedData);
       }

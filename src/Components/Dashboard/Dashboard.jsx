@@ -9,10 +9,7 @@ import { toTitleCase } from "../Assets/Api/Api";
 const Dashboard = (props) => {
   let prospectsCDF = useRecoilValue(ProspectsCDF);
   let loggedInUserData = useRecoilValue(LoggedInUserData);
-<<<<<<< HEAD
-=======
   
->>>>>>> origin/master
 
   const dataSeries = [
     { name: "Orders", data: [31, 40, 28, 51, 42, 109, 100] },

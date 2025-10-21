@@ -668,7 +668,7 @@ const DynamicFormField = ({
               ))}
             </Field>
 
-            {(stakeHolder
+            {/* {(stakeHolder
               ? values?.[stakeHolder.slice(0, -1)]?.[name]
               : values?.[name]) === all.ModalOption && (
               <Button
@@ -684,7 +684,33 @@ const DynamicFormField = ({
               >
                 <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
               </Button>
-            )}
+            )} */}
+            {(() => {
+  // Get the current value safely
+  const currentValue = stakeHolder
+    ? values?.[stakeHolder.slice(0, -1)]?.[name]
+    : values?.[name];
+
+  // If ModalOption is an array, check if currentValue exists inside it
+  const shouldShowModal = Array.isArray(all.ModalOption)
+    ? all.ModalOption.includes(currentValue)
+    : currentValue === all.ModalOption;
+
+  // Render modal button only when condition matches
+  return (
+    shouldShowModal && (
+      <Button
+        className="btn bgColor modalBtn border-0"
+        onClick={() =>
+          handleInnerModal(innerModalTitle, values, all.key, stakeHolder)
+        }
+      >
+        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+      </Button>
+    )
+  );
+})()}
+
           </InputGroup>
           {all?.CheckError && (
             <ErrorMessage

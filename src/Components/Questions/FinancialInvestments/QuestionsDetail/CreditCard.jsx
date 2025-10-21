@@ -132,11 +132,6 @@ const CreditCard = (props) => {
     );
   };
 
-<<<<<<< HEAD
-  const FormulaSetting = () => {};
-
-=======
->>>>>>> origin/master
   const onSubmit = async (values) => {
     const creditCardData = values.creditCards;
     const DataOf = "client";
@@ -213,10 +208,7 @@ const CreditCard = (props) => {
       type: "select",
       options: lenderOption,
       placeholder: "Lender",
-<<<<<<< HEAD
-=======
       selectedOptionValue: true,
->>>>>>> origin/master
       width: 260,
     },
     {
@@ -250,10 +242,7 @@ const CreditCard = (props) => {
       dataIndex: "Frequency",
       key: "Frequency",
       type: "select",
-<<<<<<< HEAD
-=======
       selectedOptionValue: true,
->>>>>>> origin/master
       options: [
         { value: "52", label: "Weekly" },
         { value: "26", label: "Fortnightly" },
@@ -365,10 +354,7 @@ const CreditCard = (props) => {
                   setFieldValue={setFieldValue}
                   handleChange={handleChange}
                   handleBlur={handleBlur}
-<<<<<<< HEAD
-=======
                   handleSubmit={props?.handleOk}
->>>>>>> origin/master
                 />
               </div>
             )}

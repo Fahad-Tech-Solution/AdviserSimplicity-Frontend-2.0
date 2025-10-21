@@ -55,7 +55,7 @@ const InvestmentPropertyDetails = (props) => {
     }
   });
 
-  // let investmentPropertyDetails = Object.keys(questionDetail[props.modalObject.index]).length > 0 ? questionDetail[props.modalObject.index] : {
+  // let investmentPropertyDetails = Object.keys(questionDetail[props.modalObject.key]).length > 0 ? questionDetail[props.modalObject.key] : {
   //     client: [],
   //     partner: [],
   //     joint: [],
@@ -67,17 +67,17 @@ const InvestmentPropertyDetails = (props) => {
   const [dynamicFields, setDynamicFields] = useState([]);
 
   useEffect(() => {
-    console.log(investmentPropertyDetails[props.modalObject.Input]);
+    console.log(investmentPropertyDetails[props.modalObject.key]);
     if (
-      props.modalObject.index === "investmentPropertyDetails" ||
-      props.modalObject.index === "familyInvestmentProperties"
+      props.modalObject.key === "investmentPropertyDetails" ||
+      props.modalObject.key === "familyInvestmentProperties"
     ) {
       setSwitchFlag(true);
     }
 
     let data =
-      Object.keys(questionDetail[props.modalObject.index] || {}).length > 0
-        ? questionDetail[props.modalObject.index]
+      Object.keys(questionDetail[props.modalObject.key] || {}).length > 0
+        ? questionDetail[props.modalObject.key]
         : {
             client: [],
             partner: [],
@@ -102,6 +102,7 @@ const InvestmentPropertyDetails = (props) => {
   const fillInitialValues = (setFieldValue) => {
     const dataSet = investmentPropertyDetails?.client;
     console.log(dataSet, "dataSet");
+
     if (Array.isArray(dataSet) && dataSet.length > 0) {
       // Set number of maps
       console.log(dataSet.length, "dataSet.length");
@@ -230,7 +231,7 @@ const InvestmentPropertyDetails = (props) => {
       console.log(payload, "Final Payload for Backend");
 
       // Decide POST or PATCH
-      const apiUrl = `${DefaultUrl}/api/${props.modalObject.index}`;
+      const apiUrl = `${DefaultUrl}/api/${props.modalObject.key}`;
       const existingRecord = investmentPropertyDetails?.clientFK;
 
       const res = existingRecord
@@ -241,7 +242,7 @@ const InvestmentPropertyDetails = (props) => {
         console.log(res);
         setQuestionDetail({
           ...questionDetail,
-          [props.modalObject.index]: res,
+          [props.modalObject.key]: res,
         });
 
         openNotificationSuccess(

@@ -100,13 +100,9 @@ const SalaryPackage = (props) => {
     const validGrossSalary = !isNaN(parseFloat(grossSalary))
       ? toCommaAndDollar(grossSalary)
       : "0$";
-<<<<<<< HEAD
-    const validSGC = !isNaN(parseFloat(SGC)) ? parseFloat(SGC).toFixed(2) : "0";
-=======
     const validSGC = !isNaN(parseFloat(SGC))
       ? toCommaAndDollar(parseFloat(SGC).toFixed(2))
       : "$0";
->>>>>>> origin/master
 
     if (remunerationType === "Gross Salary") {
       setFieldValue("grossSalary", validGrossSalary);
@@ -256,10 +252,7 @@ const SalaryPackage = (props) => {
                       setFieldValue={setFieldValue}
                       handleChange={handleChange}
                       handleBlur={handleBlur}
-<<<<<<< HEAD
-=======
                       handleSubmit={props?.handleOk}
->>>>>>> origin/master
                     />
                   </div>
                 </div>

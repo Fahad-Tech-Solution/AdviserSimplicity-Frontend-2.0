@@ -44,8 +44,6 @@ import piggybank2 from "../svgs/piggy-bank-new.svg";
 import will from "../svgs/page-with-curl-svgrepo-com.svg";
 import advisor from "../svgs/online-interview-male-svgrepo-com.svg";
 import POA from "../svgs/conversation-person-svgrepo-com.svg";
-<<<<<<< HEAD
-=======
 import lifeImg from "../svgs/lifeimg.svg";
 import TPDImg from "../svgs/tpdimg.svg";
 import incomeImg from "../svgs/asd.png";
@@ -53,7 +51,6 @@ import traumaImg from "../svgs/traumaimg.svg";
 import Business_building from "../svgs/building-small-svgrepo-com.svg";
 import people from "../svgs/property-value.svg";
 import investmentCircle from "../svgs/investmentCircle.png";
->>>>>>> origin/master
 
 /* Components */
 import OwnFamilyHome from "../AdditionalQueriesPersonalAssets/OwnFamilyHome";
@@ -65,18 +62,9 @@ import Partnership from "../PersonalIncome/Partnership";
 import CenterLinkPayments from "../PersonalIncome/CenterLinkPayments";
 import LifeTimeBeneFits from "../PersonalIncome/LifetimeBenefits";
 import OverseasPension from "../PersonalIncome/OverseasPension";
-<<<<<<< HEAD
-import Inheritance from "../PersonalIncome/Inheritance";
-import LumpsumExpenses from "../PersonalIncome/LumpsumExpenses";
 import RegularLivingExpenses from "../PersonalIncome/RegularLivingExpenses";
 import SoleTrader from "../PersonalIncome/SoleTrader";
 import { FaRegSave } from "react-icons/fa";
-import ButtonDrawer from "../../Assets/Dynamic/ButtonDrawer";
-=======
-import RegularLivingExpenses from "../PersonalIncome/RegularLivingExpenses";
-import SoleTrader from "../PersonalIncome/SoleTrader";
-import { FaRegSave } from "react-icons/fa";
->>>>>>> origin/master
 import MiddleWare from "./MiddleWare";
 import InvestmentPropertyDetails from "./QuestionsDetail/InvestmentPropertyDetails";
 import InvestmentLoan from "./QuestionsDetail/InvestmentLoan";
@@ -85,16 +73,12 @@ import EstatePlanningWill from "../EstatePlanning/EstatePlanningWill";
 import EstatePlanningPOA from "../EstatePlanning/EstatePlanningPOA";
 import EstatePlanningProfessionalAdviser from "../EstatePlanning/EstatePlanningProfessionalAdviser";
 import trailer from "../svgs/trailer-caravan.svg";
-<<<<<<< HEAD
-
-=======
 import PersonalInsuranceLife from "../PersonalInsurance/LifeInsurance";
 import OtherInvestmentsDynamic from "../QuestoinsSMSF/OtherInvestmentsDynamic";
 import SmsfDetails from "../QuestoinsSMSF/SmsfDetails";
 import SmsfAccumulationDetails from "../QuestoinsSMSF/SmsfAccumulationDetails";
 import SmsfPensionAccountMiddleWare from "../QuestoinsSMSF/PensionAccount";
 import FamilyDetails from "../QuestoinsFamilyTrust/FamilyDetails";
->>>>>>> origin/master
 /*------------------------------------ CONFIG ------------------------------------*/
 const questionConfig = {
   "/user/personal-income": [
@@ -104,10 +88,7 @@ const questionConfig = {
       img: businessmanSvg,
       component: <EmploymentIncome />,
       DrawerWidth: "80%",
-<<<<<<< HEAD
-=======
       Drawerheight: 300,
->>>>>>> origin/master
     },
     {
       title: "Sole Trader",
@@ -146,13 +127,10 @@ const questionConfig = {
       component: <RegularLivingExpenses />,
       variant: "case3",
       Labels: ["General Living", "Retirement Living"],
-<<<<<<< HEAD
-=======
       dataKey: "generalLivingExpenses",
       BaceKeys: {
         client: "generalLivingExpensesTotal",
       },
->>>>>>> origin/master
       customButtonAction: async (
         values,
         questionDetail,
@@ -232,10 +210,7 @@ const questionConfig = {
       keyName: "familyHome",
       img: homeSvg,
       component: <OwnFamilyHome />,
-<<<<<<< HEAD
-=======
       clientOnly: true,
->>>>>>> origin/master
     },
     {
       title: "Car",
@@ -251,11 +226,8 @@ const questionConfig = {
       variant: "case4",
       api: "/houseHold",
       component: <AssetInfo />,
-<<<<<<< HEAD
-=======
       DrawerWidth: "60%",
       Drawerheight: 200,
->>>>>>> origin/master
     },
     {
       title: "Boat",
@@ -264,11 +236,8 @@ const questionConfig = {
       variant: "case4",
       api: "/boat",
       component: <AssetInfo />,
-<<<<<<< HEAD
-=======
       DrawerWidth: "60%",
       Drawerheight: 200,
->>>>>>> origin/master
     },
     {
       title: "Caravan",
@@ -277,11 +246,8 @@ const questionConfig = {
       variant: "case4",
       api: "/caravan",
       component: <AssetInfo />,
-<<<<<<< HEAD
-=======
       DrawerWidth: "60%",
       Drawerheight: 200,
->>>>>>> origin/master
     },
     {
       title: "Other Assets",
@@ -290,11 +256,8 @@ const questionConfig = {
       img: settingMoneySvg,
       variant: "case4",
       component: <AssetInfo />,
-<<<<<<< HEAD
-=======
       DrawerWidth: "60%",
       Drawerheight: 200,
->>>>>>> origin/master
     },
     {
       title: "Personal Debt",
@@ -410,8 +373,6 @@ const questionConfig = {
       component: <EstatePlanningProfessionalAdviser />,
     },
   ],
-<<<<<<< HEAD
-=======
   "/user/personal-insurance": [
     {
       title: "Life Insurance",
@@ -585,7 +546,6 @@ const questionConfig = {
       component: <OtherInvestmentsDynamic />,
     },
   ],
->>>>>>> origin/master
 };
 
 /*------------------------------------ CARD ------------------------------------*/
@@ -596,10 +556,7 @@ const QuestionCard = (props) => {
     img,
     variant = "case1", // "case1" | "case2" | "case3" | "case4"
     partnerModal = false,
-<<<<<<< HEAD
-=======
     clientOnly = false,
->>>>>>> origin/master
     onOpen,
     questionDetail = {},
     personalDetailObj = {},
@@ -612,17 +569,10 @@ const QuestionCard = (props) => {
     component = null,
     PopoverContent = null,
     evenClass,
-<<<<<<< HEAD
-  } = props;
-
-  const [open, setOpen] = useState(false);
-
-=======
     BaceKeys = null,
     dataKey = null,
   } = props;
 
->>>>>>> origin/master
   const clientName = personalDetailObj.client?.clientPreferredName || "Client";
   const partnerName =
     personalDetailObj.partner?.partnerPreferredName || "Partner";
@@ -630,11 +580,6 @@ const QuestionCard = (props) => {
     personalDetailObj.client?.clientMaritalStatus
   );
 
-<<<<<<< HEAD
-  const clientValue = questionDetail?.[keyName]?.clientTotal ?? "";
-  const partnerValue = questionDetail?.[keyName]?.partnerTotal ?? "";
-  const jointValue = questionDetail?.[keyName]?.jointTotal ?? "";
-=======
   const sourceKey = dataKey || keyName;
 
   const clientValue =
@@ -656,16 +601,10 @@ const QuestionCard = (props) => {
         : "jointTotal"
     ] ?? "$0";
 
->>>>>>> origin/master
   const initialValues = getInitialValues?.(questionDetail) || {};
 
   // 🧩 CASE 1: Default
   const renderCase1 = () => {
-<<<<<<< HEAD
-    const [clientOpen, setClientOpen] = useState(false);
-    const [partnerOpen, setPartnerOpen] = useState(false);
-=======
->>>>>>> origin/master
     return (
       <>
         <div className="text-center mb-3">
@@ -674,39 +613,6 @@ const QuestionCard = (props) => {
 
         {/* Client */}
         <div className="mb-3 text-center d-flex flex-column align-items-center justify-content-center">
-<<<<<<< HEAD
-          <ButtonDrawer
-            title={title}
-            placement="bottom"
-            height={props?.Drawerheight}
-            width={props?.DrawerWidth}
-            DrawerContent={PopoverContent(
-              title,
-              keyName,
-              component,
-              "client",
-              props.api
-            )}
-            open={clientOpen}
-            setOpen={setClientOpen}
-          >
-            <button
-              className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
-              onClick={() =>
-                onOpen(title, keyName, component, "client", props?.api)
-              }
-              onMouseEnter={() => setClientOpen(true)}
-              onMouseLeave={() => setClientOpen(false)}
-              style={{ width: 28, height: 28, padding: 0 }}
-            >
-              <FaArrowUpRightFromSquare size={14} />
-            </button>
-          </ButtonDrawer>
-          <div className="mb-2">{clientName}</div>
-          <input
-            className="form-control inputDesign text-center"
-            value={clientValue}
-=======
           <button
             className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
             onClick={() =>
@@ -720,44 +626,12 @@ const QuestionCard = (props) => {
           <input
             className="form-control inputDesign text-center"
             value={clientValue || "$0"}
->>>>>>> origin/master
             readOnly
             placeholder={title}
           />
         </div>
 
         {/* Partner */}
-<<<<<<< HEAD
-        {!isSingle && (
-          <div className="mb-3 text-center d-flex flex-column align-items-center justify-content-center">
-            {props?.showPartnerButton && (
-              <ButtonDrawer
-                title={title}
-                placement="bottom"
-                height={props?.Drawerheight}
-                width={props?.DrawerWidth}
-                DrawerContent={PopoverContent(
-                  title,
-                  keyName,
-                  component,
-                  "partner"
-                )}
-                open={partnerOpen}
-                setOpen={setPartnerOpen}
-              >
-                <button
-                  className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
-                  onClick={() =>
-                    onOpen(title, keyName, component, "partner", props?.api)
-                  }
-                  onMouseEnter={() => setPartnerOpen(true)}
-                  onMouseLeave={() => setPartnerOpen(false)}
-                  style={{ width: 28, height: 28, padding: 0 }}
-                >
-                  <FaArrowUpRightFromSquare size={14} />
-                </button>
-              </ButtonDrawer>
-=======
         {!isSingle && !clientOnly && (
           <div className="mb-3 text-center d-flex flex-column align-items-center justify-content-center">
             {props?.showPartnerButton && (
@@ -770,16 +644,11 @@ const QuestionCard = (props) => {
               >
                 <FaArrowUpRightFromSquare size={14} />
               </button>
->>>>>>> origin/master
             )}
             <div className="mb-2">{partnerName}</div>
             <input
               className="form-control inputDesign text-center"
-<<<<<<< HEAD
-              value={partnerValue}
-=======
               value={partnerValue || "$0"}
->>>>>>> origin/master
               readOnly
               placeholder={title}
             />
@@ -797,11 +666,6 @@ const QuestionCard = (props) => {
     DrawerWidth,
     onOpen, // Add this prop
   }) => {
-<<<<<<< HEAD
-    const [openNew, setOpenNew] = useState(false);
-
-=======
->>>>>>> origin/master
     const handleOpen = () => {
       // Pass the specific label's data to the modal
       onOpen(lbl.label, lbl.key, lbl.component);
@@ -811,34 +675,6 @@ const QuestionCard = (props) => {
       <div className="mb-3 text-center">
         <div className="d-flex justify-content-center align-items-center gap-2 mb-2">
           <span>{lbl.label}</span>
-<<<<<<< HEAD
-          <ButtonDrawer
-            title={lbl.label}
-            placement="bottom"
-            height={Drawerheight}
-            width={DrawerWidth}
-            DrawerContent={PopoverContent(lbl.label, lbl.key, lbl.component)}
-            open={openNew}
-            setOpen={setOpenNew}
-          >
-            <button
-              className="btn btn-sm bg-secondary rounded-circle text-light d-flex align-items-center justify-content-center"
-              onClick={handleOpen} // Use the local handleOpen
-              onMouseEnter={() => setOpenNew(true)}
-              onMouseLeave={() => setOpenNew(false)}
-              style={{ width: 28, height: 28, padding: 0 }}
-            >
-              <FaArrowUpRightFromSquare size={14} />
-            </button>
-          </ButtonDrawer>
-        </div>
-        <input
-          className="form-control inputDesign text-center"
-          value={lbl.value?.(questionDetail) || ""}
-          readOnly
-          placeholder={title}
-        />
-=======
 
           <button
             className="btn btn-sm bg-secondary rounded-circle text-light d-flex align-items-center justify-content-center"
@@ -856,7 +692,6 @@ const QuestionCard = (props) => {
             placeholder={title}
           />
         </div>
->>>>>>> origin/master
       </div>
     );
   };
@@ -890,34 +725,6 @@ const QuestionCard = (props) => {
       <div className="mb-3">
         <div className="d-flex align-items-center justify-content-center gap-2 mb-2">
           <span className="fw-medium">{Labels[0]}</span>
-<<<<<<< HEAD
-
-          <ButtonDrawer
-            title={title}
-            placement="bottom"
-            height={props?.Drawerheight}
-            width={props?.DrawerWidth}
-            DrawerContent={PopoverContent(title, keyName, component)}
-            open={open}
-            setOpen={setOpen}
-          >
-            <button
-              className="btn btn-sm bg-secondary rounded-circle text-light d-flex align-items-center justify-content-center"
-              style={{ width: 28, height: 28, padding: 0 }}
-              onClick={() => onOpen?.(title, keyName, component)}
-              onMouseEnter={() => setOpen(true)}
-              onMouseLeave={() => setOpen(false)}
-            >
-              <FaArrowUpRightFromSquare size={14} />
-            </button>
-          </ButtonDrawer>
-        </div>
-        <div className="input-group">
-          <input
-            className="form-control inputDesign text-center"
-            placeholder={Labels[0]}
-            value={clientValue}
-=======
           <button
             className="btn btn-sm bg-secondary rounded-circle text-light d-flex align-items-center justify-content-center"
             style={{ width: 28, height: 28, padding: 0 }}
@@ -931,7 +738,6 @@ const QuestionCard = (props) => {
             className="form-control inputDesign text-center"
             placeholder={Labels[0]}
             value={clientValue || "$0"}
->>>>>>> origin/master
             readOnly
           />
         </div>
@@ -952,19 +758,11 @@ const QuestionCard = (props) => {
         enableReinitialize
       >
         {({ setFieldValue }) => (
-<<<<<<< HEAD
-          <Form>
-            <InputGroup className="inputDesign p-0 flex-nowrap">
-              <Field
-                name="retirementLivingExpense"
-                className="form-control inputDesign text-center"
-=======
           <Form className="d-flex justify-content-center align-items-stretch">
             <InputGroup className="inputDesign justify-content-center p-0 flex-nowrap">
               <Field
                 name="retirementLivingExpense"
                 className="form-control inputDesignDoubleInput text-center"
->>>>>>> origin/master
                 placeholder="Retirement Living Expense"
                 onChange={(e) =>
                   setFieldValue(
@@ -990,35 +788,6 @@ const QuestionCard = (props) => {
         <img src={img} alt={title} width={60} height={60} />
       </div>
       <div className="d-flex flex-column align-items-center justify-content-center">
-<<<<<<< HEAD
-        <ButtonDrawer
-          title={title}
-          placement="bottom"
-          height={props?.Drawerheight}
-          width={props?.DrawerWidth}
-          DrawerContent={PopoverContent(
-            title,
-            keyName,
-            component,
-            "joint",
-            props.api
-          )}
-          open={open}
-          setOpen={setOpen}
-        >
-          <button
-            className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
-            onClick={() =>
-              onOpen(title, keyName, component, "joint", props.api)
-            }
-            style={{ width: 28, height: 28, padding: 0 }}
-            onMouseEnter={() => setOpen(true)}
-            onMouseLeave={() => setOpen(false)}
-          >
-            <FaArrowUpRightFromSquare size={14} />
-          </button>
-        </ButtonDrawer>
-=======
         <button
           className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
           onClick={() => onOpen(title, keyName, component, "joint", props.api)}
@@ -1026,19 +795,10 @@ const QuestionCard = (props) => {
         >
           <FaArrowUpRightFromSquare size={14} />
         </button>
->>>>>>> origin/master
       </div>
       <div className="text-center mb-2">
         {clientName} & {partnerName}
       </div>
-<<<<<<< HEAD
-      <input
-        className="form-control inputDesign text-center"
-        value={jointValue}
-        readOnly
-        placeholder={title}
-      />
-=======
       <div className="d-flex align-item-center justify-content-center">
         <input
           className="form-control inputDesign text-center"
@@ -1047,7 +807,6 @@ const QuestionCard = (props) => {
           placeholder={title}
         />
       </div>
->>>>>>> origin/master
     </>
   );
 
@@ -1061,9 +820,6 @@ const QuestionCard = (props) => {
   return (
     <div className={`${evenClass ? "col-md-3" : "col-md-4"} mb-4`}>
       <div className="card shadow px-4 py-4 h-100 borderOverAll GoalsobjectiveCard rounded-4">
-<<<<<<< HEAD
-        <h5 className="text-center fw-bold mb-3">{title}</h5>
-=======
         <h5
           className="text-center fw-bold mb-3"
           onClick={() => {
@@ -1072,7 +828,6 @@ const QuestionCard = (props) => {
         >
           {props.title2}
         </h5>
->>>>>>> origin/master
         {renderVariant ? renderVariant() : renderCase1()}
       </div>
     </div>
@@ -1088,22 +843,13 @@ const QuestionCardsDemo = ({ questionKey, CRObject }) => {
   const [flagState, setFlagState] = useState(false);
 
   const handleOpen = (title, keyName, component, Input) => {
-<<<<<<< HEAD
-    console.log(title, keyName);
-=======
     // console.log(title, keyName);
->>>>>>> origin/master
     setModalInfo({ title, key: keyName, component, Input });
     setFlagState(true);
   };
 
   const questions = questionConfig[questionKey] || [];
 
-<<<<<<< HEAD
-  const visibleQuestions = questions.filter(
-    (q) => !CRObject || CRObject[q.keyName] === "Yes"
-  );
-=======
   const specialVisibilityRules = {
     "/user/SMSF": (q, index, questionDetail) => {
       if (index <= 1) return true;
@@ -1117,7 +863,6 @@ const QuestionCardsDemo = ({ questionKey, CRObject }) => {
     const rule = specialVisibilityRules[questionKey];
     return rule ? baseVisible && rule(q, index, questionDetail) : baseVisible;
   });
->>>>>>> origin/master
 
   const numberOfCards = visibleQuestions.length;
 
@@ -1146,8 +891,6 @@ const QuestionCardsDemo = ({ questionKey, CRObject }) => {
     );
   };
 
-<<<<<<< HEAD
-=======
   const generateTitle = (data) => {
     if (data.title === "SMSF Details") {
       return questionDetail?.SMSFDetails?.SMSFOwner?.fundName || data.title;
@@ -1155,7 +898,6 @@ const QuestionCardsDemo = ({ questionKey, CRObject }) => {
     return data.title;
   };
 
->>>>>>> origin/master
   return (
     <div className="container-fluid my-4" style={{ minHeight: "100vh" }}>
       <ModalComponent
@@ -1167,21 +909,6 @@ const QuestionCardsDemo = ({ questionKey, CRObject }) => {
       </ModalComponent>
 
       <div className="row justify-content-center ">
-<<<<<<< HEAD
-        {visibleQuestions.map((q, idx) => (
-          <QuestionCard
-            key={idx}
-            {...q}
-            onOpen={handleOpen}
-            personalDetailObj={personalDetailObj}
-            questionDetail={questionDetail}
-            setQuestionDetail={setQuestionDetail}
-            DefaultUrl={DefaultUrl}
-            PopoverContent={PopoverContent}
-            evenClass={evenClass}
-          />
-        ))}
-=======
         {visibleQuestions.map((q, idx) => {
           return (
             <QuestionCard
@@ -1198,7 +925,6 @@ const QuestionCardsDemo = ({ questionKey, CRObject }) => {
             />
           );
         })}
->>>>>>> origin/master
       </div>
     </div>
   );

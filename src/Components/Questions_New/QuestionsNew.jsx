@@ -21,10 +21,6 @@ import ModalComponent from "../Questions/FinancialInvestments/ModalComponent";
 import { Element, scroller } from "react-scroll";
 import { useLocation, useNavigate } from "react-router-dom";
 import { GetAxios } from "../Assets/Api/Api";
-<<<<<<< HEAD
-import QuestionCards from "../Questions/FinancialInvestments/QuestionCards";
-=======
->>>>>>> origin/master
 import { content } from "../../Content/Content";
 import QuestionCardsNew from "../Questions/FinancialInvestments/QuestionCardsNew";
 
@@ -234,18 +230,10 @@ const QuestionsNew = (props) => {
               </div>
             </div>
 
-<<<<<<< HEAD
-            <QuestionCards questionKey={QuestionChange} />
-            {/* <QuestionCardsNew
-              questionKey={QuestionChange}
-              CRObject={CRObject}
-            /> */}
-=======
             <QuestionCardsNew
               questionKey={QuestionChange}
               CRObject={CRObject}
             />
->>>>>>> origin/master
 
             <ModalComponent
               setQuestionChange={setFlagState2}

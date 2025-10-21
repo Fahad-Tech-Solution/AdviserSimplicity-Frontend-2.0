@@ -62,30 +62,13 @@ const PersonalLoan = (props) => {
   });
 
   useEffect(() => {
-<<<<<<< HEAD
-    if (
-      personalLoans["client"] &&
-      personalLoans["client"].length
-    ) {
-      setDynamicFields(
-        Array(personalLoans["client"].length).fill("")
-      );
-=======
     if (personalLoans["client"] && personalLoans["client"].length) {
       setDynamicFields(Array(personalLoans["client"].length).fill(""));
->>>>>>> origin/master
     }
   }, [personalLoans["client"]]);
 
   const fillInitialValues = (setFieldValue) => {
-<<<<<<< HEAD
-    if (
-      personalLoans["client"] &&
-      personalLoans["client"].length
-    ) {
-=======
     if (personalLoans["client"] && personalLoans["client"].length) {
->>>>>>> origin/master
       setFieldValue("personalLoans", personalLoans["client"]);
     }
   };
@@ -238,10 +221,7 @@ const PersonalLoan = (props) => {
       options: lenderOption,
       placeholder: "Lender",
       width: 260,
-<<<<<<< HEAD
-=======
       selectedOptionValue: true,
->>>>>>> origin/master
     },
     {
       title: "Loan Balance",
@@ -274,10 +254,7 @@ const PersonalLoan = (props) => {
       dataIndex: "Frequency",
       key: "Frequency",
       type: "select",
-<<<<<<< HEAD
-=======
       selectedOptionValue: true,
->>>>>>> origin/master
       options: [
         { value: "52", label: "Weekly" },
         { value: "26", label: "Fortnightly" },
@@ -386,10 +363,7 @@ const PersonalLoan = (props) => {
                   setFieldValue={setFieldValue}
                   handleChange={handleChange}
                   handleBlur={handleBlur}
-<<<<<<< HEAD
-=======
                   handleSubmit={props?.handleOk}
->>>>>>> origin/master
                 />
               </div>
             )}
