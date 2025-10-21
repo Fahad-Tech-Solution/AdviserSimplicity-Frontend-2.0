@@ -53,8 +53,8 @@ const DynamicFormField = ({
 
   const getNestedValue = (obj, path) => {
     if (!obj || !path) return undefined;
-    const normalizedPath = path.replace(/\[(\d+)\]/g, '.$1'); // Convert [0] to .0
-    return normalizedPath.split('.').reduce((acc, key) => {
+    const normalizedPath = path.replace(/\[(\d+)\]/g, ".$1"); // Convert [0] to .0
+    return normalizedPath.split(".").reduce((acc, key) => {
       return acc && Object.prototype.hasOwnProperty.call(acc, key)
         ? acc[key]
         : undefined;
@@ -286,7 +286,7 @@ const DynamicFormField = ({
       );
 
     case "number-toPercent":
-      let FormulaSetting = () => { };
+      let FormulaSetting = () => {};
 
       if (all.callBack) {
         // alert(all.callBack);
@@ -484,81 +484,83 @@ const DynamicFormField = ({
         </>
       );
 
-   case "antdate":
-  // utility: join stakeHolder + name safely (supports array indices like "stakeholders[0].")
-  const buildFieldName = (stakeHolder, name) => {
-    if (!stakeHolder) return name;
-    // ensure no duplicate dots or missing brackets
-    return stakeHolder.endsWith(".") || stakeHolder.endsWith("]")
-      ? `${stakeHolder}${name}`
-      : `${stakeHolder}.${name}`;
-  };
+    case "antdate":
+      // utility: join stakeHolder + name safely (supports array indices like "stakeholders[0].")
+      const buildFieldName = (stakeHolder, name) => {
+        if (!stakeHolder) return name;
+        // ensure no duplicate dots or missing brackets
+        return stakeHolder.endsWith(".") || stakeHolder.endsWith("]")
+          ? `${stakeHolder}${name}`
+          : `${stakeHolder}.${name}`;
+      };
 
-  // utility: safely access nested object with support for bracket paths
-  const getValueByPath = (obj, path) => {
-    try {
-      return path
-        .replace(/\[(\w+)\]/g, ".$1") // convert [0] → .0
-        .split(".")
-        .reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : null), obj);
-    } catch {
-      return null;
-    }
-  };
-
-  return (
-    <>
-      <AntDate
-        className="form-control inputDesignDoubleInput"
-        value={(() => {
-          const fieldName = buildFieldName(stakeHolder, name);
-          const rawValue = getValueByPath(values, fieldName);
-          return rawValue ? dayjs(rawValue) : null;
-        })()}
-        onChange={(date) => {
-          const fieldName = buildFieldName(stakeHolder, name);
-          const isoValue = date
-            ? date.hour(12).minute(0).second(0).millisecond(0).toISOString()
-            : null;
-
-          setFieldValue(fieldName, isoValue);
-
-          if (all.callBack) {
-            all.func(
-              values,
-              setFieldValue,
-              { name: fieldName, value: isoValue },
-              stakeHolder
+      // utility: safely access nested object with support for bracket paths
+      const getValueByPath = (obj, path) => {
+        try {
+          return path
+            .replace(/\[(\w+)\]/g, ".$1") // convert [0] → .0
+            .split(".")
+            .reduce(
+              (acc, key) => (acc && acc[key] !== undefined ? acc[key] : null),
+              obj
             );
-          }
-        }}
-        onBlur={() => {
-          const fieldName = buildFieldName(stakeHolder, name);
-          handleBlur({ target: { name: fieldName } });
-        }}
-        id={buildFieldName(stakeHolder, name)}
-        name={buildFieldName(stakeHolder, name)}
-        disabled={
-          typeof all?.disabled === "function"
-            ? all.disabled(values, stakeHolder)
-            : all?.disabled || false
+        } catch {
+          return null;
         }
-        format="DD/MM/YYYY"
-        allowClear
-        getPopupContainer={(triggerNode) =>
-          triggerNode.closest("table") || triggerNode
-        }
-      />
-      {all?.CheckError && (
-        <ErrorMessage
-          name={buildFieldName(stakeHolder, name)}
-          component="div"
-          className="text-danger small mt-1"
-        />
-      )}
-    </>
-  );
+      };
 
+      return (
+        <>
+          <AntDate
+            className="form-control inputDesignDoubleInput"
+            value={(() => {
+              const fieldName = buildFieldName(stakeHolder, name);
+              const rawValue = getValueByPath(values, fieldName);
+              return rawValue ? dayjs(rawValue) : null;
+            })()}
+            onChange={(date) => {
+              const fieldName = buildFieldName(stakeHolder, name);
+              const isoValue = date
+                ? date.hour(12).minute(0).second(0).millisecond(0).toISOString()
+                : null;
+
+              setFieldValue(fieldName, isoValue);
+
+              if (all.callBack) {
+                all.func(
+                  values,
+                  setFieldValue,
+                  { name: fieldName, value: isoValue },
+                  stakeHolder
+                );
+              }
+            }}
+            onBlur={() => {
+              const fieldName = buildFieldName(stakeHolder, name);
+              handleBlur({ target: { name: fieldName } });
+            }}
+            id={buildFieldName(stakeHolder, name)}
+            name={buildFieldName(stakeHolder, name)}
+            disabled={
+              typeof all?.disabled === "function"
+                ? all.disabled(values, stakeHolder)
+                : all?.disabled || false
+            }
+            format="DD/MM/YYYY"
+            allowClear
+            getPopupContainer={(triggerNode) =>
+              triggerNode.closest("table") || triggerNode
+            }
+          />
+          {all?.CheckError && (
+            <ErrorMessage
+              name={buildFieldName(stakeHolder, name)}
+              component="div"
+              className="text-danger small mt-1"
+            />
+          )}
+        </>
+      );
 
     case "number-toComma-and-MultiSelect":
       return (
@@ -691,50 +693,36 @@ const DynamicFormField = ({
                 </option>
               ))}
             </Field>
-
-            {/* {(stakeHolder
-              ? values?.[stakeHolder.slice(0, -1)]?.[name]
-              : values?.[name]) === all.ModalOption && (
-              <Button
-                className="btn bgColor modalBtn border-0"
-                onClick={() =>
-                  handleInnerModal(
-                    innerModalTitle,
-                    values,
-                    all.key,
-                    stakeHolder
-                  )
-                }
-              >
-                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-              </Button>
-            )} */}
             {(() => {
-  // Get the current value safely
-  const currentValue = stakeHolder
-    ? values?.[stakeHolder.slice(0, -1)]?.[name]
-    : values?.[name];
+              // Get the current value safely
+              const currentValue = stakeHolder
+                ? values?.[stakeHolder.slice(0, -1)]?.[name]
+                : values?.[name];
 
-  // If ModalOption is an array, check if currentValue exists inside it
-  const shouldShowModal = Array.isArray(all.ModalOption)
-    ? all.ModalOption.includes(currentValue)
-    : currentValue === all.ModalOption;
+              // If ModalOption is an array, check if currentValue exists inside it
+              const shouldShowModal = Array.isArray(all.ModalOption)
+                ? all.ModalOption.includes(currentValue)
+                : currentValue === all.ModalOption;
 
-  // Render modal button only when condition matches
-  return (
-    shouldShowModal && (
-      <Button
-        className="btn bgColor modalBtn border-0"
-        onClick={() =>
-          handleInnerModal(innerModalTitle, values, all.key, stakeHolder)
-        }
-      >
-        <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-      </Button>
-    )
-  );
-})()}
-
+              // Render modal button only when condition matches
+              return (
+                shouldShowModal && (
+                  <Button
+                    className="btn bgColor modalBtn border-0"
+                    onClick={() =>
+                      handleInnerModal(
+                        innerModalTitle,
+                        values,
+                        all.key,
+                        stakeHolder
+                      )
+                    }
+                  >
+                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                  </Button>
+                )
+              );
+            })()}
           </InputGroup>
           {all?.CheckError && (
             <ErrorMessage
@@ -864,7 +852,10 @@ const DynamicFormField = ({
                       );
                     }
                   }}
-                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                  // getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                  getPopupContainer={(triggerNode) =>
+                    triggerNode.closest("table") || triggerNode
+                  }
                   style={{ width: "100%" }}
                   size="large"
                 />
@@ -993,25 +984,22 @@ const DynamicFormField = ({
           />
           {(stakeHolder
             ? getNestedValue(values, `${stakeHolder}${name}`)
-            : getNestedValue(values, name)
-          ) === "Yes" && (
-              <div className="d-flex justify-content-center align-items-center pt-2">
-
-                <Button
-                  className="btn bgColor modalBtn border-0"
-                  id="button-addon2"
-                  onClick={() => {
-                    if (all.callBack) {
-                      all.func(innerModalTitle, values, all.key, stakeHolder);
-                    }
-                  }}
-                >
-                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                </Button>
-              </div>
-            )
-          }
-        </React.Fragment >
+            : getNestedValue(values, name)) === "Yes" && (
+            <div className="d-flex justify-content-center align-items-center pt-2">
+              <Button
+                className="btn bgColor modalBtn border-0"
+                id="button-addon2"
+                onClick={() => {
+                  if (all.callBack) {
+                    all.func(innerModalTitle, values, all.key, stakeHolder);
+                  }
+                }}
+              >
+                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+              </Button>
+            </div>
+          )}
+        </React.Fragment>
       );
 
     case "yesnoInput":
@@ -1025,25 +1013,25 @@ const DynamicFormField = ({
           />
           {(stakeHolder
             ? getNestedValue(values, `${stakeHolder}${name}`)
-            : getNestedValue(values, name)
-          ) === "Yes" && (
-              <div className="pt-2">
-                <Field
-                  name={
-                    stakeHolder ? `${stakeHolder}${name}_input` : `${name}_input`
-                  }
-                  type="text"
-                  className="form-control"
-                   placeholder={placeholder}
-                  onChange={handleChange}
-                  value={
-                    stakeHolder
-                      ? getNestedValue(values, `${stakeHolder}${name}_input`) || ""
-                      : values[`${name}_input`] || ""
-                  }
-                />
-              </div>
-            )}
+            : getNestedValue(values, name)) === "Yes" && (
+            <div className="pt-2">
+              <Field
+                name={
+                  stakeHolder ? `${stakeHolder}${name}_input` : `${name}_input`
+                }
+                type="text"
+                className="form-control"
+                placeholder={placeholder}
+                onChange={handleChange}
+                value={
+                  stakeHolder
+                    ? getNestedValue(values, `${stakeHolder}${name}_input`) ||
+                      ""
+                    : values[`${name}_input`] || ""
+                }
+              />
+            </div>
+          )}
         </React.Fragment>
       );
 

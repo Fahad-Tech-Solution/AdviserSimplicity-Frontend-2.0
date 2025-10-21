@@ -111,7 +111,7 @@ const SuperFunds = (props) => {
 
     const selectedPlatformId = values?.[BaseKey]?.[index]?.platformName || "";
 
-    if (!selectedPlatformId && key === "portfolioArray") {
+    if (!selectedPlatformId && key === "balanceBenefit") {
       openNotificationSuccess(
         "error",
         "topRight",
@@ -248,8 +248,8 @@ const SuperFunds = (props) => {
     // },
     {
       title: "Balance & Benefit Details",
-      dataIndex: "balanceBenefitDetails",
-      key: "balanceBenefitDetails",
+      dataIndex: "balanceBenefit",
+      key: "balanceBenefit",
       type: "number-toComma-Modal",
       innerModalTitle: "_Balance & Benefit Details",
       placeholder: "Balance Benefit",
@@ -329,7 +329,7 @@ const SuperFunds = (props) => {
 
   let componentMapping = {
     portfolioArray: <PortfolioValue />,
-    balanceBenefitDetails: <MemberNumber />,
+    balanceBenefit: <MemberNumber />,
     groupInsurance: <GroupInsurance />,
     contributions: <Contributions />,
     nominatedBeneficiaries: <Beneficiaries />,
