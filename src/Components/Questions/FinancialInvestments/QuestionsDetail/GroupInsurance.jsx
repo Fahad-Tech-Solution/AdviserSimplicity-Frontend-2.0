@@ -1,251 +1,225 @@
-import { Field, Form, Formik } from 'formik';
-import React, { useEffect, useState } from 'react';
-import { Row, Table } from 'react-bootstrap';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { defaultUrl, QuestionDetail } from '../../../../Store/Store';
-import { PatchAxios, PostAxios, toCommaAndDollar } from '../../../Assets/Api/Api';
+import React, { useEffect, useMemo, useState } from "react";
+import { Form, Formik } from "formik";
+import { useRecoilValue } from "recoil";
+import { defaultUrl } from "../../../../Store/Store";
+import { toCommaAndDollar } from "../../../Assets/Api/Api";
+import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
+import InnerModal from "./InnerModal";
+import { Select } from "antd";
+
+const AntdTable = DynamicTableForInputsSection("antd");
+const { Option } = Select;
 
 const GroupInsurance = (props) => {
+  const [flagState, setFlagState] = useState(false);
+  const [modalObject, setModalObject] = useState({});
+  const DefaultUrl = useRecoilValue(defaultUrl);
 
+  const initialValues = {
+    lifeCover: "",
+    TPDCover: "",
+    coverType: "",
+    cost: "",
+    monthlyIncome: "",
+    waitingPeriod: "",
+    BenefitPeriod: "",
+    coverType2: "",
+    cost2: "",
+  };
 
-    let initialValues = {
-        lifeCover: "",
-        TPDCover: "",
-        coverType: "",
-        cost: "",
-        monthlyIncome: "",
-        waitingPeriod: "",
-        BenefitPeriod: "",
-        coverType2: "",
-        cost2: "",
-    };
-
-
-    const fillInitialValues = (setFieldValue) => {
-
-        console.log(props.modalObject.editArray)
-
-        if (Object.keys(props.modalObject.editArray).length > 0) {
-            let data = props.modalObject.editArray
-            setFieldValue("lifeCover", data.lifeCover)
-            setFieldValue("TPDCover", data.TPDCover)
-            setFieldValue("coverType", data.coverType)
-            setFieldValue("cost", data.cost)
-            setFieldValue("monthlyIncome", data.monthlyIncome)
-            setFieldValue("waitingPeriod", data.waitingPeriod)
-            setFieldValue("BenefitPeriod", data.BenefitPeriod)
-            setFieldValue("coverType2", data.coverType2)
-            setFieldValue("cost2", data.cost2)
-        }
-    };
-
-
-    let DefaultUrl = useRecoilValue(defaultUrl)
-
-    let onSubmit = async (values) => {
-
-        console.log(values)
-
-        props.setFieldValue(`${props.modalObject.key}${props.modalObject.index}`, values)
-
-        // Reset the flag state if necessary
-        if (props.flagState) {
-            props.setFlagState(false);
-        }
-    };
-
-
-    return (
-        <Formik
-            initialValues={initialValues}
-            onSubmit={onSubmit}
-            enableReinitialize
-            innerRef={props.formRef}
-        >
-            {({ values, handleChange, setFieldValue }) => {
-                useEffect(() => {
-                    fillInitialValues(setFieldValue);
-                }, [values.NumberOfMap]);
-
-                return (
-                    <Form>
-                        <Row>
-                            <div className="col-md-12">
-                                <div className='row justify-content-center'>
-                                    <div className='mt-4'>
-                                        <Table striped bordered responsive hover>
-                                            <thead>
-                                                <tr>
-                                                    <th>Life Cover</th>
-                                                    <th>TPD Cover</th>
-                                                    <th>Cover type</th>
-                                                    <th>Cost p.a.</th>
-                                                    <th>Monthly Income Protection</th>
-                                                    <th>Waiting Period</th>
-                                                    <th>Benefit Period</th>
-                                                    <th>Cover type</th>
-                                                    <th>Cost p.a.</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <Field
-                                                            type="text"
-                                                            placeholder="Life Cover"
-                                                            id={`lifeCover`}
-                                                            name={`lifeCover`}
-                                                            className="form-control inputDesignDoubleInput"
-                                                            onChange={(e) => {
-                                                                setFieldValue(e.target.name,
-                                                                    toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                                            }}
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <Field
-                                                            type="text"
-                                                            placeholder="TPD Cover"
-                                                            id={`TPDCover`}
-                                                            name={`TPDCover`}
-                                                            className="form-control inputDesignDoubleInput"
-                                                            onChange={(e) => {
-                                                                setFieldValue(e.target.name,
-                                                                    toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                                            }}
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <Field
-                                                            as="select"
-                                                            placeholder="Cover type"
-                                                            id={`coverType`}
-                                                            name={`coverType`}
-                                                            className="form-select  inputDesignDoubleInput"
-                                                        >
-                                                            <option value="">Select</option>
-                                                            <option value="Unitised">Unitised</option>
-                                                            <option value="Fixed">Fixed</option>
-                                                        </Field>
-                                                    </td>
-                                                    <td>
-                                                        <Field
-                                                            type="text"
-                                                            placeholder="Cost p.a."
-                                                            id={`cost`}
-                                                            name={`cost`}
-                                                            className="form-control inputDesignDoubleInput"
-                                                            onChange={(e) => {
-                                                                setFieldValue(e.target.name,
-                                                                    toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                                            }}
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <Field
-                                                            type="text"
-                                                            placeholder="Monthly Income Protection"
-                                                            id={`monthlyIncome`}
-                                                            name={`monthlyIncome`}
-                                                            className="form-control inputDesignDoubleInput"
-                                                            onChange={(e) => {
-                                                                setFieldValue(e.target.name,
-                                                                    toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                                            }}
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <Field
-                                                            as="select"
-                                                            id={`waitingPeriod`}
-                                                            name={`waitingPeriod`}
-                                                            className="form-select inputDesignDoubleInput"
-                                                        >
-                                                            <option value={30}>30 Days</option>
-                                                            <option value={60}>60Days </option>
-                                                            <option value={90}>90 Days</option>
-                                                            <option value={180}>180 Days</option>
-
-                                                        </Field>
-                                                    </td>
-                                                    <td>
-                                                        <Field
-                                                            as="select"
-                                                            id={`BenefitPeriod`}
-                                                            name={`BenefitPeriod`}
-                                                            className="form-select inputDesignDoubleInput"
-                                                        >
-                                                            <option value={"2 Years"}>2 Years</option>
-                                                            <option value={"5 years "}>5 years </option>
-                                                            <option value={"To age 60"}>To age 60</option>
-                                                            <option value={"To Age 65"}>To Age 65</option>
-                                                            <option value={"To Age 67"}>To Age 67</option>
-
-                                                        </Field>
-                                                    </td>
-                                                    <td>
-                                                        <Field
-                                                            as="select"
-                                                            placeholder="Cover type"
-                                                            id={`coverType2`}
-                                                            name={`coverType2`}
-                                                            className="form-select inputDesignDoubleInput"
-                                                        >
-                                                            <option value="">Select</option>
-                                                            <option value="Unitised">Unitised</option>
-                                                            <option value="Fixed">Fixed</option>
-                                                        </Field>
-                                                    </td>
-                                                    <td>
-                                                        <Field
-                                                            type="text"
-                                                            placeholder="Cost p.a."
-                                                            id={`cost2`}
-                                                            name={`cost2`}
-                                                            className="form-control inputDesignDoubleInput"
-                                                            onChange={(e) => {
-                                                                setFieldValue(e.target.name,
-                                                                    toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                                            }}
-                                                        />
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </Table>
-                                    </div>
-                                </div>
-                            </div>
-                        </Row>
-                    </Form>
-                );
-            }}
-        </Formik>
+  // 🔁 Pre-fill data for edit mode
+  const fillInitialValues = (setFieldValue) => {
+    let index = parseFloat(
+      props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
     );
+    let BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
+
+    const data =
+      props.modalObject?.values?.[BaseKey]?.[index]?.[
+        props.modalObject?.key + "Details"
+      ] || {};
+    console.log("Filling initial values for Group Insurance:", data);
+    if (Object.keys(data).length > 0) {
+      Object.keys(initialValues).forEach((key) => {
+        if (data[key] !== undefined) setFieldValue(key, data[key]);
+      });
+    }
+  };
+
+  const onSubmit = async (values) => {
+    console.log("Submitting Group Insurance:", values);
+
+    props.setFieldValue(
+      `${props.modalObject.stakeHolder}${props.modalObject.key}Details`,
+      values
+    );
+
+    if (props.flagState) props.setFlagState(false);
+  };
+
+  // 📊 Define table columns for Group Insurance
+  const columns = [
+    {
+      title: "Life Cover",
+      dataIndex: "lifeCover",
+      key: "lifeCover",
+      type: "number-toComma",
+      placeholder: "Life Cover",
+      callBack: true,
+      func: (values, setFieldValue, input) =>
+        setFieldValue(
+          input.name,
+          toCommaAndDollar(input.value.replace(/[^0-9.-]+/g, ""))
+        ),
+    },
+    {
+      title: "TPD Cover",
+      dataIndex: "TPDCover",
+      key: "TPDCover",
+      type: "number-toComma",
+      placeholder: "TPD Cover",
+      callBack: true,
+      func: (values, setFieldValue, input) =>
+        setFieldValue(
+          input.name,
+          toCommaAndDollar(input.value.replace(/[^0-9.-]+/g, ""))
+        ),
+    },
+    {
+      title: "Cover Type",
+      dataIndex: "coverType",
+      key: "coverType",
+      type: "select",
+      options: [
+        { value: "Unitised", label: "Unitised" },
+        { value: "Fixed", label: "Fixed" },
+      ],
+    },
+    {
+      title: "Cost p.a.",
+      dataIndex: "cost",
+      key: "cost",
+      type: "number-toComma",
+      placeholder: "Cost p.a.",
+      callBack: true,
+      func: (values, setFieldValue, input) =>
+        setFieldValue(
+          input.name,
+          toCommaAndDollar(input.value.replace(/[^0-9.-]+/g, ""))
+        ),
+    },
+    {
+      title: "Monthly Income Protection",
+      dataIndex: "monthlyIncome",
+      key: "monthlyIncome",
+      type: "number-toComma",
+      placeholder: "Monthly Income Protection",
+      callBack: true,
+      func: (values, setFieldValue, input) =>
+        setFieldValue(
+          input.name,
+          toCommaAndDollar(input.value.replace(/[^0-9.-]+/g, ""))
+        ),
+    },
+    {
+      title: "Waiting Period",
+      dataIndex: "waitingPeriod",
+      key: "waitingPeriod",
+      type: "select",
+      options: [
+        { value: 30, label: "30 Days" },
+        { value: 60, label: "60 Days" },
+        { value: 90, label: "90 Days" },
+        { value: 180, label: "180 Days" },
+      ],
+    },
+    {
+      title: "Benefit Period",
+      dataIndex: "BenefitPeriod",
+      key: "BenefitPeriod",
+      type: "select",
+      options: [
+        { value: "2 Years", label: "2 Years" },
+        { value: "5 Years", label: "5 Years" },
+        { value: "To age 60", label: "To age 60" },
+        { value: "To Age 65", label: "To Age 65" },
+        { value: "To Age 67", label: "To Age 67" },
+      ],
+    },
+    {
+      title: "Cover Type ",
+      dataIndex: "coverType2",
+      key: "coverType2",
+      type: "select",
+      options: [
+        { value: "Unitised", label: "Unitised" },
+        { value: "Fixed", label: "Fixed" },
+      ],
+    },
+    {
+      title: "Cost p.a.",
+      dataIndex: "cost2",
+      key: "cost2",
+      type: "number-toComma",
+      placeholder: "Cost p.a.",
+      callBack: true,
+      func: (values, setFieldValue, input) =>
+        setFieldValue(
+          input.name,
+          toCommaAndDollar(input.value.replace(/[^0-9.-]+/g, ""))
+        ),
+    },
+  ];
+
+  return (
+    <Formik
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      enableReinitialize
+      innerRef={props.formRef}
+    >
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
+        useEffect(() => {
+          fillInitialValues(setFieldValue);
+        }, [props.modalObject?.editArray]);
+
+        const dataRows = useMemo(() => {
+          return [
+            {
+              key: "groupInsurance",
+              ...values,
+            },
+          ];
+        }, [values]);
+
+        return (
+          <Form>
+            <InnerModal
+              modalObject={modalObject}
+              setFieldValue={setFieldValue}
+              setFlagState={setFlagState}
+              flagState={flagState}
+            />
+
+            <div className="mt-4 All_Client reportSection">
+              <AntdTable
+                columns={columns}
+                data={dataRows}
+                values={values}
+                setFieldValue={setFieldValue}
+                handleChange={handleChange}
+                handleBlur={handleBlur}
+              />
+            </div>
+
+            <button type="submit" style={{ display: "none" }}>
+              Submit
+            </button>
+          </Form>
+        );
+      }}
+    </Formik>
+  );
 };
 
 export default GroupInsurance;
-
-
-// <td>
-//                         <Field
-//                             as="select"
-//                             id={`investmentOption`}
-//                             name={`investmentOption`}
-//                             className="form-select inputDesignDoubleInput"
-//                         >
-//                             <option value={""}>Please Select</option>
-//                             {options.map((elem, index) => {
-//                                 return (<option key={index} value={elem}>{elem}</option>)
-//                             })}
-//                         </Field>
-//                     </td>
-//                     <td>
-//                         <Field
-//                             type="text"
-//                             placeholder="Investment Code"
-//                             id={`investmentCode`}
-//                             name={`investmentCode`}
-//                             className="form-control inputDesignDoubleInput"
-//                             disabled
-//                         />
-//                     </td>

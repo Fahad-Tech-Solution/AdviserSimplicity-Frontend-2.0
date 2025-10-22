@@ -17,6 +17,7 @@ const InnerModal = (props) => {
   const childButtonDownloadRef = useRef(null);
   const intervalRef = useRef(null); // Store the interval reference
   const [progress, setProgress] = useRecoilState(Progress);
+  const [isEditing, setIsEditing] = useState(false);
 
   let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
     useRecoilState(CashFlowReCalculateLoading);
@@ -124,11 +125,11 @@ const InnerModal = (props) => {
   ]; // Add other titles that should use "xl" here
 
   const xlKeys = [
-    "balanceBenefitDetailsArray",
-    "groupInsuranceArray",
+    "balanceBenefit",
+    "groupInsurance",
     "premiumsDetails",
     "sumInsured",
-    "beneficiariesArray",
+    "beneficiaries",
     "totalCostBase",
     // "ContributionsArray"
     // "Bank Accounts Detail"
@@ -217,24 +218,29 @@ const InnerModal = (props) => {
                 setFieldValue,
                 childButtonRef,
                 childButtonDownloadRef,
-                handleOk
+                handleOk,
+                isEditing,
+                setIsEditing,
               })
             : "no Child exist"}
         </Modal.Body>
 
         <Modal.Footer>
-          {/* <Button
-            variant="secondary"
-            style={{ width: "12.5%", minWidth: "fit-content" }}
-            onClick={() => {
-              props.setFlagState(false);
-              setProgress(0);
-              setCashFlowReCalculateLoading(false);
-              setCashFlowDownloading(false);
-            }}
-          >
-            Close
-          </Button> */}
+          {!isEditing && (
+            <Button
+              variant="secondary"
+              style={{ width: "12.5%", minWidth: "fit-content" }}
+              className="heartbeat"
+              onClick={() => {
+                if (!isEditing) {
+                  setIsEditing(!isEditing);
+                  return;
+                }
+              }}
+            >
+              Edit
+            </Button>
+          )}
 
           {props.modalObject?.cal && (
             <Button
@@ -283,15 +289,16 @@ const InnerModal = (props) => {
               )}
             </Button>
           )}
-
-          <button
-            type="button"
-            className="btn bgColor modalBtn"
-            style={{ width: "12.5%", minWidth: "fit-content" }}
-            onClick={handleOk}
-          >
-            Save & Exit
-          </button>
+          {isEditing && (
+            <button
+              type="button"
+              className="btn bgColor modalBtn"
+              style={{ width: "12.5%", minWidth: "fit-content" }}
+              onClick={handleOk}
+            >
+              Save & Exit
+            </button>
+          )}
         </Modal.Footer>
       </Modal>
     </div>

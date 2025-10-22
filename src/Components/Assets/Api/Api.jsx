@@ -166,7 +166,7 @@ let RenderName = (Input) => {
       return (
         (PerosnalDetails?.client?.clientPreferredName ||
           localStorage.getItem("UserName")) +
-        " + " +
+        " & " +
         (PerosnalDetails?.partner?.partnerPreferredName ||
           localStorage.getItem("PartnerName"))
       );

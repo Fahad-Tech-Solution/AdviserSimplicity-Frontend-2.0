@@ -51,6 +51,7 @@ const SalaryPackaging = (props) => {
 
     if (props.flagState) {
       props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
     }
   };
 
@@ -179,6 +180,8 @@ const SalaryPackaging = (props) => {
                 handleChange={handleChange}
                 handleBlur={handleBlur}
                 handleSubmit={props?.handleOk}
+                isEditing={props?.isEditing}
+                setIsEditing={props?.setIsEditing}
               />
             </ConfigProvider>
           </Form>

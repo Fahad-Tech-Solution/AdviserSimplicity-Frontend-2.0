@@ -85,7 +85,7 @@ const SuperFunds = (props) => {
           // portfolioValue: "",
           // portfolioArray: "",
           balanceBenefitDetails: "",
-          balanceBenefitDetailsArray: "",
+          balanceBenefitDetailsDetails: "",
           groupInsurance: "",
           groupInsuranceArray: "",
           contributions: "",
@@ -136,6 +136,7 @@ const SuperFunds = (props) => {
       editArray: values?.[BaseKey]?.[index]?.[key] || [],
       values,
       Platform,
+      ParentModalObject: props.modalObject,
     });
     setFlagState(true);
   };
@@ -253,7 +254,6 @@ const SuperFunds = (props) => {
       type: "number-toComma-Modal",
       innerModalTitle: "_Balance & Benefit Details",
       placeholder: "Balance Benefit",
-      callBack: true,
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
           innerModalTitle,
@@ -363,6 +363,7 @@ const SuperFunds = (props) => {
               // portfolioValue: values.superFunds?.[i]?.portfolioValue || "",
               balanceBenefitDetails:
                 values.superFunds?.[i]?.balanceBenefitDetails || "",
+              balanceBenefit: values.superFunds?.[i]?.balanceBenefit || "",
               groupInsurance: values.superFunds?.[i]?.groupInsurance || "",
               contributions: values.superFunds?.[i]?.contributions || "",
               nominatedBeneficiaries:
@@ -385,7 +386,12 @@ const SuperFunds = (props) => {
             </InnerModal>
 
             <div className="d-flex justify-content-center align-items-center gap-4">
-              <p className="text-end mt-1 pt-2">
+              <p
+                className="text-end mt-1 pt-2"
+                onClick={() => {
+                  console.log(values);
+                }}
+              >
                 How many Super Funds does {nameSet} have:
               </p>
               <div style={{ minWidth: "10%" }}>

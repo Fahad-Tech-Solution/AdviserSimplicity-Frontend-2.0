@@ -64,6 +64,7 @@ const SalaryPackage = (props) => {
     // Reset the flag state if necessary
     if (props.flagState) {
       props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
     }
   };
 
@@ -253,6 +254,8 @@ const SalaryPackage = (props) => {
                       handleChange={handleChange}
                       handleBlur={handleBlur}
                       handleSubmit={props?.handleOk}
+                      isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
                     />
                   </div>
                 </div>

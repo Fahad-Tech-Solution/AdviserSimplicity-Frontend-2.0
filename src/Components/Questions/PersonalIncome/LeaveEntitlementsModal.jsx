@@ -53,7 +53,10 @@ const LeaveEntitlementsModal = (props) => {
 
     props.setFieldValue(`${parentKey}${key}`, Obj);
 
-    if (props.flagState) props.setFlagState(false);
+    if (props.flagState) {
+      props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
+    }
   };
 
   // AntD table columns
@@ -147,6 +150,8 @@ const LeaveEntitlementsModal = (props) => {
                 handleChange={handleChange}
                 handleBlur={handleBlur}
                 handleSubmit={props?.handleOk}
+                isEditing={props?.isEditing}
+                setIsEditing={props?.setIsEditing}
               />
             </ConfigProvider>
           </Form>

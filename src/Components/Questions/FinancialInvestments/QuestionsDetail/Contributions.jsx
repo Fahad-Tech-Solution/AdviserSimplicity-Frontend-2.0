@@ -1,285 +1,285 @@
-import { Field, Form, Formik } from 'formik';
-import React, { useEffect, useState } from 'react';
-import { Row, Table } from 'react-bootstrap';
-import { useRecoilValue } from 'recoil';
-import { defaultUrl } from '../../../../Store/Store';
-import { toCommaAndDollar } from '../../../Assets/Api/Api';
-import DatePicker from 'react-datepicker';
+import React, { useEffect, useMemo, useState } from "react";
+import { Formik, Form } from "formik";
+import { useRecoilValue } from "recoil";
+import { ConfigProvider, Select, DatePicker } from "antd";
+import dayjs from "dayjs";
+import { defaultUrl } from "../../../../Store/Store";
+import { toCommaAndDollar } from "../../../Assets/Api/Api";
+import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
+
+const AntdTable = DynamicTableForInputsSection("antd");
+const { Option } = Select;
 
 const Contributions = (props) => {
+  const DefaultUrl = useRecoilValue(defaultUrl);
+  const [dynamicFields, setDynamicFields] = useState([]);
 
+  // ---------------- INITIAL VALUES ----------------
+  const initialValues = {
+    NumberOfMap: props.modalObject?.editArray?.newEntries?.length || "",
+    startingYear:
+      props.modalObject?.editArray?.startingYear || dayjs().startOf("year"),
+    newEntries: props.modalObject?.editArray?.newEntries || [],
+  };
 
-    let initialValues = { NumberOfMap: "" };
+  // ---------------- FILL EXISTING DATA ----------------
+  const fillInitialValues = (setFieldValue) => {
+    if (props.modalObject?.editArray?.newEntries) {
+      const arr = Array(props.modalObject.editArray.newEntries.length).fill("");
+      setDynamicFields(arr);
+      setFieldValue(
+        "NumberOfMap",
+        props.modalObject.editArray.newEntries.length
+      );
+      setFieldValue(
+        "startingYear",
+        dayjs(props.modalObject.editArray.startingYear)
+      );
+      setFieldValue("newEntries", props.modalObject.editArray.newEntries);
+    }
+  };
 
-    const [dynamicFields, setDynamicFields] = useState([]);
+  // ---------------- HANDLE NUMBER CHANGE ----------------
+  const handleInput = (value, setFieldValue) => {
+    const limited = value > 10 ? 10 : value;
+    setFieldValue("NumberOfMap", limited);
+    const arr = Array(limited).fill("");
+    setDynamicFields(arr);
 
-    const fillInitialValues = (setFieldValue) => {
-
-
-        if (props.modalObject.editArray.newEntries) {
-
-            let arr = []
-
-            for (let i = 0; i < props.modalObject.editArray.newEntries.length; i++) {
-                arr.push("");
-            }
-
-            setDynamicFields(arr);
-
-            setFieldValue(`NumberOfMap`, props.modalObject.editArray.newEntries.length || '');
-            setFieldValue(`startingYear`, props.modalObject.editArray.startingYear || '');
-
-            props.modalObject.editArray.newEntries.forEach((data, i) => {
-                if (data) {
-                    console.log(data.investmentOption)
-                    setFieldValue(`employerContributions${i}`, data.employerContributions || '');
-                    setFieldValue(`concessional${i}`, data.concessional || '');
-                    setFieldValue(`totalConcessional${i}`, data.totalConcessional || '');
-                    setFieldValue(`nonConcessionalContributions${i}`, data.nonConcessionalContributions || '');
-                }
-
-            });
-        }
-
-    };
-
-    let handleInput = (e, setFieldValue) => {
-        const value = e.target.value > 10 ? 10 : e.target.value;
-        setFieldValue(e.target.id, value);
-
-        let arr = []
-
-        for (let i = 0; i < value; i++) {
-            arr.push("");
-        }
-
-        setDynamicFields(arr);
-
-    };
-
-    let DefaultUrl = useRecoilValue(defaultUrl)
-
-    let onSubmit = async (values) => {
-
-        console.log(values)
-
-        const newEntries = [];
-
-        let loopLength = parseFloat(values.NumberOfMap)
-
-        // Iterate through each map entry and create a new object
-        for (let i = 0; i < loopLength; i++) {
-            // alert("loop chala")
-            const newEntry = {
-                employerContributions: values[`employerContributions${i}`] || "",
-                concessional: values[`concessional${i}`] || "",
-                totalConcessional: values[`totalConcessional${i}`] || "",
-                nonConcessionalContributions: values[`nonConcessionalContributions${i}`] || "",
-            };
-            newEntries.push(newEntry);
-        }
-
-        // Log the new entries to verify
-        console.log(newEntries);
-
-        let Obj = {
-            startingYear: values.startingYear,
-            newEntries: newEntries
-        }
-
-        props.setFieldValue(`${props.modalObject.key}${props.modalObject.index}`, Obj)
-
-
-        // Reset the flag state if necessary
-        if (props.flagState) {
-            props.setFlagState(false);
-        }
-    };
-
-    return (
-        <Formik
-            initialValues={initialValues}
-            onSubmit={onSubmit}
-            enableReinitialize
-            innerRef={props.formRef}
-        >
-            {({ values, handleChange, setFieldValue, handleBlur }) => {
-                useEffect(() => {
-                    fillInitialValues(setFieldValue);
-                }, []);
-
-                return (
-                    <Form>
-                        <Row>
-                            <div className="col-md-12">
-                                <div className='row justify-content-center'>
-
-                                    <div className='d-flex flex-row justify-content-center align-items-center gap-2 d-none'>
-                                        <p className='text-wrap mt-3'>
-                                            {props.modalObject.question}
-                                        </p>
-
-                                        <div style={{ width: "8%" }}>
-                                            <Field
-                                                type="number"
-                                                id="NumberOfMap"
-                                                name="NumberOfMap"
-                                                className="form-control inputDesignDoubleInput"
-                                                onChange={(e) => handleInput(e, setFieldValue)}
-                                            />
-                                        </div>
-                                        <p className='text-wrap mt-3'>
-                                            Starting Form
-                                        </p>
-                                        <div style={{ width: "10%" }}>
-                                            <DatePicker
-                                                id="Starting Year"
-                                                className="form-control inputDesign DateInputPadding"
-                                                selected={values.startingYear}
-                                                onChange={(date) => {
-                                                    setFieldValue("startingYear", date);
-                                                }}
-                                                dateFormat="yyyy"  // Display year only
-                                                showYearPicker       // Enable year picker mode
-                                                placeholderText="yyyy"
-                                                onBlur={handleBlur}
-                                                name="startingYear"
-                                                maxDate={new Date()}
-                                                wrapperClassName="w-100"
-                                                showIcon
-                                            />
-                                        </div>
-                                    </div>
-
-
-                                    <div className="d-flex flex-wrap justify-content-center align-items-center gap-2">
-                                        <p className="text-wrap mt-3 flex-grow">
-                                            {props.modalObject.question}
-                                        </p>
-
-                                        <div className="flex-shrink-0" style={{ width: "8%" }}>
-                                            <Field
-                                                type="number"
-                                                id="NumberOfMap"
-                                                name="NumberOfMap"
-                                                className="form-control inputDesignDoubleInput"
-                                                onChange={(e) => handleInput(e, setFieldValue)}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="d-flex flex-wrap justify-content-center align-items-center gap-2">
-                                        <p className="text-wrap mt-3 flex-grow-2">
-                                            Starting From
-                                        </p>
-
-                                        <div className="flex-shrink-0" style={{ width: "10%" }}>
-                                            <DatePicker
-                                                id="Starting Year"
-                                                className="form-control inputDesignDoubleInput DateInputPadding"
-                                                selected={values.startingYear}
-                                                onChange={(date) => {
-                                                    setFieldValue("startingYear", date);
-                                                }}
-                                                dateFormat="yyyy"  // Display year only
-                                                showYearPicker       // Enable year picker mode
-                                                placeholderText="yyyy"
-                                                onBlur={handleBlur}
-                                                name="startingYear"
-                                                maxDate={new Date()}
-                                                wrapperClassName="w-100"
-                                                showIcon
-                                            />
-                                        </div>
-                                    </div>
-
-                                    {values.NumberOfMap && (
-                                        <div className='mt-4'>
-                                            <Table striped bordered responsive hover>
-                                                <thead>
-                                                    <tr>
-                                                        <th>No#</th>
-                                                        <th>Financial Years</th>
-                                                        <th>Employer Contributions</th>
-                                                        <th>Concessional (Include. Salary Sac)</th>
-                                                        <th>Total Concessional Contributions</th>
-                                                        <th>Non-Concessional Contributions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {dynamicFields.map((elem, i) => {
-                                                        const DateYear = new Date(values.startingYear).getFullYear() || new Date().getFullYear();
-                                                        const startYear = DateYear + i;
-                                                        const endYear = startYear + 1;
-                                                        const yearRange = `${startYear}/${endYear}`;
-
-                                                        return (
-                                                            <tr key={i}>
-                                                                <td>{1 + i}</td>
-                                                                <td className="pt-3">{yearRange}</td> {/* Displaying the year range */}
-                                                                <td>
-                                                                    <Field
-                                                                        type="text"
-                                                                        placeholder="Employer Contributions"
-                                                                        id={`employerContributions${i}`}
-                                                                        name={`employerContributions${i}`}
-                                                                        className="form-control inputDesignDoubleInput"
-                                                                        onChange={(e) => {
-                                                                            setFieldValue(`employerContributions${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                                                            setFieldValue(`totalConcessional${i}`, toCommaAndDollar((parseFloat(values[`concessional${i}`].replace(/[^0-9.-]+/g, "") || 0)) + parseFloat(e.target.value.replace(/[^0-9.-]+/g, "") || 0)));
-                                                                        }}
-                                                                    />
-                                                                </td>
-                                                                <td>
-                                                                    <Field
-                                                                        type="text"
-                                                                        placeholder="Concessional (Include. Salary Sac)"
-                                                                        id={`concessional${i}`}
-                                                                        name={`concessional${i}`}
-                                                                        className="form-control inputDesignDoubleInput"
-                                                                        onChange={(e) => {
-                                                                            setFieldValue(`concessional${i}`, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                                                            setFieldValue(`totalConcessional${i}`, toCommaAndDollar(parseFloat(values[`employerContributions${i}`].replace(/[^0-9.-]+/g, "") || 0) + parseFloat(e.target.value.replace(/[^0-9.-]+/g, "") || 0)));
-                                                                        }}
-                                                                    />
-                                                                </td>
-                                                                <td>
-                                                                    <Field
-                                                                        type="text"
-                                                                        placeholder="Total Concessional Contributions"
-                                                                        id={`totalConcessional${i}`}
-                                                                        name={`totalConcessional${i}`}
-                                                                        className="form-control inputDesignDoubleInput"
-                                                                        disabled
-                                                                    />
-                                                                </td>
-                                                                <td>
-                                                                    <Field
-                                                                        type="text"
-                                                                        placeholder="Non-Concessional Contributions"
-                                                                        id={`nonConcessionalContributions${i}`}
-                                                                        name={`nonConcessionalContributions${i}`}
-                                                                        className="form-control inputDesignDoubleInput"
-                                                                        onChange={(e) => {
-                                                                            setFieldValue(e.target.name,
-                                                                                toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                                                        }}
-                                                                    />
-                                                                </td>
-
-                                                            </tr>)
-                                                    })}
-                                                </tbody>
-                                            </Table>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </Row>
-                    </Form>
-                );
-            }}
-        </Formik>
+    setFieldValue(
+      "newEntries",
+      Array(limited)
+        .fill()
+        .map((_, i) => ({
+          employerContributions: "",
+          concessional: "",
+          totalConcessional: "",
+          nonConcessionalContributions: "",
+        }))
     );
+  };
+
+  // ---------------- FORM SUBMIT ----------------
+  const onSubmit = async (values) => {
+    const { NumberOfMap, startingYear, newEntries } = values;
+
+    const filteredEntries = (newEntries || []).slice(0, NumberOfMap);
+
+    const Obj = {
+      startingYear,
+      newEntries: filteredEntries,
+    };
+
+    props.setFieldValue(
+      `${props.modalObject.key}${props.modalObject.index}`,
+      Obj
+    );
+
+    if (props.flagState) props.setFlagState(false);
+  };
+
+  let Calculate = (values, setFieldValue, currentInput, stakeHolder) => {
+    try {
+      // Extract index for dynamic row update
+      const index = parseFloat(stakeHolder?.match(/\[(\d+)\]/)?.[1] || 0);
+
+      // Helper to safely extract numeric values
+      const getVal = (field) =>
+        parseFloat(
+          values?.newEntries?.[index]?.[field]
+            ?.toString()
+            .replace(/[^0-9.-]+/g, "") || 0
+        );
+
+      // Get the raw numeric value of current input
+      const rawVal =
+        parseFloat(
+          currentInput?.value?.toString().replace(/[^0-9.-]+/g, "") || 0
+        ) || 0;
+
+      // Existing employer contribution
+      let employerContributions = getVal("employerContributions");
+      let concessional = getVal("concessional");
+
+      // Update concessional
+      if (currentInput.name == "concessional") {
+        concessional = rawVal;
+      } else if (currentInput.name == "employerContributions") {
+        employerContributions = rawVal;
+      }
+
+      console.log(employerContributions, concessional, rawVal, currentInput);
+
+      // Calculate total concessional
+      const totalConcessional = employerContributions + concessional;
+
+      setFieldValue(
+        `newEntries[${index}].totalConcessional`,
+        toCommaAndDollar(totalConcessional)
+      );
+
+      // Optional debug log
+      // console.log(
+      //   `Row ${index + 1} → Employer: ${employerContributions}, Concessional: ${concessional}, Total: ${totalConcessional}`
+      // );
+    } catch (err) {
+      console.error("❌ Calculation error in Concessional column:", err);
+    }
+  };
+
+  // ---------------- TABLE COLUMNS ----------------
+  const columns = [
+    {
+      title: "No#",
+      dataIndex: "no",
+      key: "no",
+      justText: true,
+      width: 60,
+    },
+    {
+      title: "Financial Years",
+      dataIndex: "financialYears",
+      key: "financialYears",
+      justText: true,
+    },
+    {
+      title: "Employer Contributions",
+      dataIndex: "employerContributions",
+      key: "employerContributions",
+      type: "number-toComma",
+      placeholder: "Employer Contributions",
+      onChange: Calculate,
+    },
+    {
+      title: "Concessional (Include. Salary Sac)",
+      dataIndex: "concessional",
+      key: "concessional",
+      type: "number-toComma",
+      placeholder: "Concessional",
+      callBack: true,
+      func: Calculate,
+    },
+
+    {
+      title: "Total Concessional Contributions",
+      dataIndex: "totalConcessional",
+      key: "totalConcessional",
+      type: "number-toComma",
+      placeholder: "Total Concessional",
+      disabled: true,
+    },
+    {
+      title: "Non-Concessional Contributions",
+      dataIndex: "nonConcessionalContributions",
+      key: "nonConcessionalContributions",
+      type: "number-toComma",
+      placeholder: "Non-Concessional Contributions",
+    },
+  ];
+
+  // ---------------- RENDER ----------------
+  return (
+    <Formik
+      initialValues={initialValues}
+      enableReinitialize
+      onSubmit={onSubmit}
+      innerRef={props.formRef}
+    >
+      {({ values, setFieldValue, handleBlur, handleChange }) => {
+        useEffect(() => {
+          fillInitialValues(setFieldValue);
+        }, []);
+
+        const dataRows = useMemo(() => {
+          const num = Number(values.NumberOfMap) || 0;
+          const startYear = dayjs(values.startingYear).year() || dayjs().year();
+          return Array.from({ length: num }, (_, i) => {
+            const fy = `${startYear + i}/${startYear + i + 1}`;
+            const entry = values.newEntries?.[i] || {};
+            return {
+              key: i,
+              index: i,
+              no: i + 1,
+              financialYears: fy,
+              stakeHolder: `newEntries[${i}]`,
+              employerContributions: entry.employerContributions || "",
+              concessional: entry.concessional || "",
+              totalConcessional: entry.totalConcessional || "",
+              nonConcessionalContributions:
+                entry.nonConcessionalContributions || "",
+            };
+          });
+        }, [values.NumberOfMap, values.newEntries, values.startingYear]);
+
+        return (
+          <Form>
+            <div className="d-flex flex-column justify-content-center align-items-center gap-3 mt-2 ">
+              <ConfigProvider
+                theme={{
+                  components: {
+                    Select: { colorBorder: "#36b446" },
+                  },
+                }}
+              >
+                <div className="d-flex flex-row justify-content-center align-items-center gap-3 mt-2  w-75">
+                  <p className="mt-3">{props.modalObject.question}</p>
+
+                  <Select
+                    id="NumberOfMap"
+                    name="NumberOfMap"
+                    className="w-25"
+                    placeholder="Select Count"
+                    size="large"
+                    value={values.NumberOfMap || undefined}
+                    onChange={(value) => handleInput(value, setFieldValue)}
+                    onBlur={handleBlur}
+                    getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                  >
+                    {Array.from({ length: 10 }, (_, i) => (
+                      <Option key={i + 1} value={i + 1}>
+                        {i + 1}
+                      </Option>
+                    ))}
+                  </Select>
+                </div>
+                <div className="d-flex flex-wrap justify-content-center align-items-center gap-3 mt-2">
+                  <p className="text-wrap mt-3">Starting From</p>
+                  <DatePicker
+                    picker="year"
+                    value={
+                      values.startingYear ? dayjs(values.startingYear) : null
+                    }
+                    onChange={(date) => setFieldValue("startingYear", date)}
+                    className="w-25"
+                    placeholder="Select Year"
+                    size="large"
+                    format="YYYY"
+                    disabledDate={(current) => current && current > dayjs()}
+                    getPopupContainer={(triggerNode) =>
+                      triggerNode.closest("table") || triggerNode
+                    }
+                  />
+                </div>
+              </ConfigProvider>
+            </div>
+
+            {values.NumberOfMap && (
+              <div className="mt-4 All_Client reportSection">
+                <AntdTable
+                  columns={columns}
+                  data={dataRows}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                />
+              </div>
+            )}
+          </Form>
+        );
+      }}
+    </Formik>
+  );
 };
 
 export default Contributions;

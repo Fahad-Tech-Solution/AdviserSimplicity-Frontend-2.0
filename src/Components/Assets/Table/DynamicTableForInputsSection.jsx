@@ -14,9 +14,11 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
     handleBlur,
     pagination = false,
     handleSubmit = () => {},
+    isEditing = false,
+    setIsEditing = () => {},
   }) {
     // 🔥 global edit mode instead of per-row editing
-    const [isEditing, setIsEditing] = useState(false);
+    // const {isEditing, setIsEditing} = useState(false);
 
     const renderCell = (record, col) => {
       const value = record[col.dataIndex];
@@ -112,7 +114,8 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
         ),
     };
 
-    const allColumns = [...columns, actionColumn];
+    // const allColumns = [...columns, actionColumn];
+    const allColumns = [...columns];
 
     // ✅ ANT DESIGN TABLE
     if (type === "antd") {
@@ -130,7 +133,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
                     ? { rowSpan: data.length } // 🔥 span one cell across all rows
                     : { rowSpan: 0 },
               };
-            } else if (col.key === "owner") {
+            } else if (col.key === "owner" || col?.justText) {
               // keep custom render
               return {
                 ...col,

@@ -39,10 +39,10 @@ const EmploymentIncome = (props) => {
     Object.keys(questionDetail.incomeFromOwnBusiness || {}).length > 0
       ? questionDetail.incomeFromOwnBusiness
       : {
-        client: [],
-        partner: [],
-        joint: [],
-      }; // Use an empty object as default if incomeFromOwnBusiness is undefined
+          client: [],
+          partner: [],
+          joint: [],
+        }; // Use an empty object as default if incomeFromOwnBusiness is undefined
 
   let initialValues = {
     owner: "",
@@ -223,6 +223,7 @@ const EmploymentIncome = (props) => {
       // Reset the flag state if necessary
       if (props.flagState) {
         props.setFlagState(false);
+        props.setIsEditing(!props.isEditing);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
@@ -231,8 +232,8 @@ const EmploymentIncome = (props) => {
         "topRight",
         "Error Notification",
         'Data of "' +
-        props.modalObject.title +
-        '" is not Saved. Please try again.'
+          props.modalObject.title +
+          '" is not Saved. Please try again.'
       );
     }
   };
@@ -252,21 +253,21 @@ const EmploymentIncome = (props) => {
     personalDetailObj.client?.MaritalStatus
   )
     ? [
-      {
-        value: "client",
-        label: personalDetailObj.client?.clientPreferredName,
-      },
-      {
-        value: "partner",
-        label: personalDetailObj.partner?.partnerPreferredName,
-      },
-    ]
+        {
+          value: "client",
+          label: personalDetailObj.client?.clientPreferredName,
+        },
+        {
+          value: "partner",
+          label: personalDetailObj.partner?.partnerPreferredName,
+        },
+      ]
     : [
-      {
-        value: "client",
-        label: personalDetailObj.client?.clientPreferredName,
-      },
-    ];
+        {
+          value: "client",
+          label: personalDetailObj.client?.clientPreferredName,
+        },
+      ];
 
   const columns = [
     {
@@ -458,7 +459,7 @@ const EmploymentIncome = (props) => {
                       name={`owner`}
                       component={AntdCreatableMultiSelect}
                       options={options}
-                      onChangefun={() => { }}
+                      onChangefun={() => {}}
                     />
                   </div>
                 </div>
@@ -475,6 +476,8 @@ const EmploymentIncome = (props) => {
                       handleChange={handleChange}
                       handleBlur={handleBlur}
                       handleSubmit={props?.handleOk}
+                      isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
                     />
                   </div>
                 </div>

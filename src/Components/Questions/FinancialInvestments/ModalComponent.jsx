@@ -20,6 +20,7 @@ const ModalComponent = (props) => {
   const [progress, setProgress] = useRecoilState(Progress);
 
   const [showInnerModal, setShowInnerModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
     useRecoilState(CashFlowReCalculateLoading);
@@ -303,23 +304,28 @@ const ModalComponent = (props) => {
                 childButtonRef,
                 childButtonDownloadRef,
                 handleOk,
+                isEditing,
+                setIsEditing,
               })
             : "no Child exist"}
         </Modal.Body>
         {FooterButtonRender && (
           <Modal.Footer>
-            {/* <Button
-              variant="secondary"
-              style={{ width: "12.5%", minWidth: "fit-content" }}
-              onClick={() => {
-                props.setFlagState(false);
-                setProgress(0);
-                setCashFlowReCalculateLoading(false);
-                setCashFlowDownloading(false);
-              }}
-            >
-              Close
-            </Button> */}
+            {!isEditing && (
+              <Button
+                variant="secondary"
+                style={{ width: "12.5%", minWidth: "fit-content" }}
+                className="heartbeat"
+                onClick={() => {
+                  if (!isEditing) {
+                    setIsEditing(!isEditing);
+                    return;
+                  }
+                }}
+              >
+                Edit
+              </Button>
+            )}
 
             {props.modalObject?.cal && (
               <Button
@@ -383,7 +389,7 @@ const ModalComponent = (props) => {
               </AntButton>
             )}
 
-            {submitButtonRender && (
+            {submitButtonRender && isEditing && (
               <button
                 type="button"
                 className="btn bgColor modalBtn"

@@ -345,6 +345,7 @@ const questionConfig = {
       keyName: "investmentPropertyDetails",
       img: property,
       component: <InvestmentPropertyDetails />,
+      Labels: ["Total Market Value", "Total Loan"],
     },
     {
       title: "Investment Loan",
@@ -580,9 +581,18 @@ const QuestionCard = (props) => {
     dataKey = null,
   } = props;
 
-  const clientName = personalDetailObj.client?.clientPreferredName || "Client";
+  const clientName =
+    Labels.length > 0
+      ? Labels[0]
+      : personalDetailObj.client?.clientPreferredName || "Client";
   const partnerName =
-    personalDetailObj.partner?.partnerPreferredName || "Partner";
+    Labels.length > 1
+      ? Labels[1]
+      : personalDetailObj.partner?.partnerPreferredName || "Partner";
+
+  const jointName = personalDetailObj.client?.clientPreferredName +
+          personalDetailObj.partner?.partnerPreferredName || "joint";
+
   const isSingle = ["Single", "Widowed"].includes(
     personalDetailObj.client?.clientMaritalStatus
   );

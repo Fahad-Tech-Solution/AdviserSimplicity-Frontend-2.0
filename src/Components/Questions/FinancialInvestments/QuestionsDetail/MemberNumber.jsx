@@ -18,88 +18,168 @@ const MemberNumber = (props) => {
   const [modalObject, setModalObject] = useState({});
   const [dynamicFields, setDynamicFields] = useState([]);
 
-  const existingData =
-    props.modalObject.values?.[
-      `${props.modalObject.key}${props.modalObject.index}`
-    ] || [];
+  let index = parseFloat(
+    props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
+  );
+  let BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
 
-  const initialValues = {
-    NumberOfMap: existingData.length || 1,
-    funds: existingData.length ? existingData : [],
-  };
+  const existingData =
+    props.modalObject.values?.[BaseKey]?.[index]?.[
+      `${props.modalObject.key}Details`
+    ] || {};
+
+  const initialValues = {};
 
   useEffect(() => {
-    if (existingData.length) {
-      setDynamicFields(Array(existingData.length).fill(""));
+    if (Object.keys(existingData).length) {
+      setDynamicFields(Array(Object.keys(existingData).length).fill(""));
     }
   }, [existingData]);
 
   const fillInitialValues = (setFieldValue) => {
-    if (existingData.length) {
-      setFieldValue("funds", existingData);
+    if (Object.keys(existingData).length) {
+      Object.keys(existingData).forEach((field) => {
+        setFieldValue(field, existingData[field] || "");
+      });
     }
   };
 
   const handleInnerModal = (innerModalTitle, values, key, stakeHolder) => {
     console.log({
       title:
-        RenderName(props.modalObject.stakeHolder.replace(".", "")) +
-        innerModalTitle,
+        RenderName(
+          props.modalObject.ParentModalObject.stakeHolder.replace(".", "")
+        ) + innerModalTitle,
       question: `How many Underlying Investments does ${RenderName(
-        props.modalObject.stakeHolder.replace(".", "")
+        props.modalObject.ParentModalObject.stakeHolder.replace(".", "")
       )} have :`,
       key,
       editArray: values?.[key + "Array"] || [],
       values,
       Platform: props.modalObject.Platform,
+      modalObject: props.modalObject,
     });
 
     setModalObject({
       title:
-        RenderName(props.modalObject.stakeHolder.replace(".", "")) +
-        innerModalTitle,
+        RenderName(
+          props.modalObject.ParentModalObject.stakeHolder.replace(".", "")
+        ) + innerModalTitle,
       question: `How many Underlying Investments does ${RenderName(
-        props.modalObject.stakeHolder.replace(".", "")
+        props.modalObject.ParentModalObject.stakeHolder.replace(".", "")
       )} have :`,
       key,
       editArray: values?.[key + "Array"] || [],
       values,
       Platform: props.modalObject.Platform,
+      modalObject: props.modalObject,
     });
     setFlagState(true);
   };
 
   const onSubmit = async (values) => {
-    const newEntries = values.funds || [];
-    const total = newEntries.reduce(
-      (total, entry) =>
-        total +
-        (parseFloat(entry.taxableComponent?.replace(/[^0-9.-]+/g, "")) || 0),
-      0
-    );
-    const total2 = newEntries.reduce(
-      (total, entry) =>
-        total +
-        (parseFloat(entry.preservedAmount?.replace(/[^0-9.-]+/g, "")) || 0),
-      0
-    );
+    try {
+      const entry = values || {};
 
-    props.setFieldValue(
-      `${props.modalObject.key}${props.modalObject.index}`,
-      newEntries
-    );
-    props.setFieldValue(
-      `${props.modalObject.mainKey}${props.modalObject.index}`,
-      toCommaAndDollar(total + total2)
-    );
+      // Extract numeric values safely
+      const taxableComponent =
+        parseFloat(entry.taxableComponent?.replace(/[^0-9.-]+/g, "")) || 0;
+      const preservedAmount =
+        parseFloat(entry.preservedAmount?.replace(/[^0-9.-]+/g, "")) || 0;
 
-    if (props.flagState) props.setFlagState(false);
+      // Calculate total
+      const total = taxableComponent + preservedAmount;
+
+      // 🧾 Update Formik fields in parent
+      props.setFieldValue(
+        `${props.modalObject.stakeHolder}${props.modalObject.key}Details`,
+        entry
+      );
+
+      props.setFieldValue(
+        `${props.modalObject.stakeHolder}${props.modalObject.key}`,
+        toCommaAndDollar(total)
+      );
+
+      // ✅ Reset flag if needed
+      if (props.flagState) props.setFlagState(false);
+
+      // console.log("✅ Submitted values:", entry);
+    } catch (err) {
+      console.error("❌ Error in onSubmit:", err);
+    }
   };
 
   const optionFundType = [
     { value: "Accumulation", label: "Accumulation" },
     { value: "Defined Benefit", label: "Defined Benefit" },
   ];
+
+  const Calculate = (values, setFieldValue, currentInput, stakeHolder) => {
+    try {
+      // Extract the base path (like funds[0]) for dynamic fields
+
+      const getVal = (field) =>
+        parseFloat(values?.[field]?.toString().replace(/[^0-9.-]+/g, "") || 0);
+
+      let portfolioValue = getVal("portfolioValue");
+      let taxFreeComponent = getVal("taxFreeComponent");
+      let restrictedNonPreserved = getVal("restrictedNonPreserved");
+      let unrestrictedNonPreserved = getVal("unrestrictedNonPreserved");
+
+      // Update values based on which input triggered the change
+      const fieldName = currentInput.name;
+      const rawVal =
+        parseFloat(
+          currentInput?.value?.toString().replace(/[^0-9.-]+/g, "") || 0
+        ) || 0;
+
+      switch (fieldName) {
+        case "portfolioValue":
+          portfolioValue = rawVal;
+          break;
+        case "taxFreeComponent":
+          taxFreeComponent = rawVal;
+          break;
+        case "restrictedNonPreserved":
+          restrictedNonPreserved = rawVal;
+          break;
+        case "unrestrictedNonPreserved":
+          unrestrictedNonPreserved = rawVal;
+          break;
+        default:
+          break;
+      }
+
+      // 💰 Calculate taxable component
+      const taxableComponent = portfolioValue - taxFreeComponent;
+      setFieldValue(`taxableComponent`, toCommaAndDollar(taxableComponent));
+
+      // 🏦 Calculate preserved amount
+      const preservedAmount =
+        portfolioValue - (restrictedNonPreserved + unrestrictedNonPreserved);
+      setFieldValue(`preservedAmount`, toCommaAndDollar(preservedAmount));
+
+      // Optional: log for debugging
+      // console.log(
+      //   "📊 Calculated:",
+      //   "Portfolio:",
+      //   portfolioValue,
+      //   "TaxFree:",
+      //   taxFreeComponent,
+      //   "Restricted:",
+      //   restrictedNonPreserved,
+      //   "Unrestricted:",
+      //   unrestrictedNonPreserved,
+      //   "→ Taxable:",
+      //   taxableComponent,
+      //   "Preserved:",
+      //   preservedAmount
+      // );
+    } catch (err) {
+      console.error("❌ Calculation error:", err);
+    }
+  };
 
   const columns = [
     { title: "No#", dataIndex: "owner", key: "owner", width: 60 },
@@ -119,6 +199,7 @@ const MemberNumber = (props) => {
       disabled: true,
       placeholder: "Portfolio Value",
       callBack: true,
+      inputChangeFunc: Calculate,
       innerModalTitle: "_Portfolio Value",
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
@@ -147,6 +228,8 @@ const MemberNumber = (props) => {
       key: "taxFreeComponent",
       type: "number-toComma",
       placeholder: "Tax Free Component",
+      callBack: true,
+      func: Calculate,
     },
     {
       title: "Taxable Component",
@@ -162,6 +245,8 @@ const MemberNumber = (props) => {
       key: "restrictedNonPreserved",
       type: "number-toComma",
       placeholder: "Restricted Non Preserved",
+      callBack: true,
+      func: Calculate,
     },
     {
       title: "Unrestricted Non Preserved",
@@ -169,6 +254,8 @@ const MemberNumber = (props) => {
       key: "unrestrictedNonPreserved",
       type: "number-toComma",
       placeholder: "Unrestricted Non Preserved",
+      callBack: true,
+      func: Calculate,
     },
     {
       title: "Preserved Amount",
@@ -193,25 +280,22 @@ const MemberNumber = (props) => {
         }, [existingData]);
 
         const dataRows = useMemo(() => {
-          const num = 1;
-          if (num > 0) {
-            return Array.from({ length: num }, (_, i) => ({
-              key: `fund.${i}`,
-              owner: i + 1,
-              fundType: values?.[i]?.fundType || "",
-              portfolioValue: values?.[i]?.portfolioValue || "",
-              eligibleServiceDate: values?.[i]?.eligibleServiceDate || "",
-              commencementDate: values?.[i]?.commencementDate || "",
-              taxFreeComponent: values?.[i]?.taxFreeComponent || "",
-              taxableComponent: values?.[i]?.taxableComponent || "",
-              restrictedNonPreserved: values?.[i]?.restrictedNonPreserved || "",
-              unrestrictedNonPreserved:
-                values?.[i]?.unrestrictedNonPreserved || "",
-              preservedAmount: values?.[i]?.preservedAmount || "",
-            }));
-          }
-          return [];
-        }, [values.funds]);
+          return [
+            {
+              key: `fund`,
+              owner: 1,
+              fundType: values?.fundType || "",
+              portfolioValue: values?.portfolioValue || "",
+              eligibleServiceDate: values?.eligibleServiceDate || "",
+              commencementDate: values?.commencementDate || "",
+              taxFreeComponent: values?.taxFreeComponent || "",
+              taxableComponent: values?.taxableComponent || "",
+              restrictedNonPreserved: values?.restrictedNonPreserved || "",
+              unrestrictedNonPreserved: values?.unrestrictedNonPreserved || "",
+              preservedAmount: values?.preservedAmount || "",
+            },
+          ];
+        }, [values]);
 
         return (
           <Form>
@@ -223,15 +307,6 @@ const MemberNumber = (props) => {
             >
               <PortfolioValue />
             </InnerModal>
-
-            <p
-              className="text-end mt-1 pt-2 d-none"
-              onClick={() => {
-                console.log(values);
-              }}
-            >
-              Test Text
-            </p>
 
             <div className="mt-4 All_Client reportSection">
               <AntdTable

@@ -88,11 +88,11 @@ const PortfolioValue = (props) => {
     );
 
     props.setFieldValue(
-      `${props.modalObject.stakeHolder}${props.modalObject.key}Array`,
+      `${props.modalObject.stakeHolder || ""}${props.modalObject.key}Array`,
       newEntries
     );
     props.setFieldValue(
-      `${props.modalObject.stakeHolder}${props.modalObject.key}`,
+      `${props.modalObject.stakeHolder || ""}${props.modalObject.key}`,
       toCommaAndDollar(total)
     );
 
