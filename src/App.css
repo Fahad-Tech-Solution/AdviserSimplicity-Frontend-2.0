@@ -820,6 +820,12 @@ input:checked + label {
   box-shadow: none !important;
 }
 
+.GInputSelect .form-select {
+  min-width: 3rem !important;
+  border-top-right-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+}
+
 @media only screen and (min-width: 1045px) {
   .mainBody {
     padding-right: 1.5rem !important;

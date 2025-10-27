@@ -182,7 +182,10 @@ const MarginLoan = (props) => {
         `Data of "${props.modalObject.title}" is Saved`
       );
 
-      if (props.flagState) props.setFlagState(false);
+      if (props.flagState) {
+        props.setFlagState(false);
+        props.setIsEditing(!props.isEditing);
+      }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
       openNotificationSuccess(
@@ -355,6 +358,8 @@ const MarginLoan = (props) => {
                       handleChange={handleChange}
                       handleBlur={handleBlur}
                       handleInnerModal={handleInnerModal}
+                      isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
                     />
                   </div>
                 )}

@@ -150,7 +150,7 @@ const InnerModal = (props) => {
     "Balance Rollover Amount",
   ];
 
-  let mdTitles = ["Other Percentage Amount"];
+  let mdTitles = ["Other Percentage Amount", "Trustee Name"];
 
   let [size, setSize] = useState("md");
 

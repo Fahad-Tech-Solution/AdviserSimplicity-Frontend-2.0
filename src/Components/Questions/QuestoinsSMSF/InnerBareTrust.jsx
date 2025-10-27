@@ -82,7 +82,10 @@ const InnerBareTrust = (props) => {
     console.log("✅ Final directorsOfBareTrust object:", finalObj);
 
     props.setFieldValue("directorsOfBareTrust", finalObj);
-    if (props.flagState) props.setFlagState(false);
+    if (props.flagState) {
+      props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
+    }
   };
 
   // 🧩 Formik Wrapper
@@ -203,6 +206,8 @@ const InnerBareTrust = (props) => {
                         setFieldValue={setFieldValue}
                         handleChange={handleChange}
                         handleBlur={handleBlur}
+                        isEditing={props?.isEditing}
+                        setIsEditing={props?.setIsEditing}
                       />
                     </div>
                   )}

@@ -126,7 +126,10 @@ const InnerDirectors = (props) => {
     console.log("Total (if numeric fields):", total);
 
     // 🟢 Close modal
-    if (props.flagState) props.setFlagState(false);
+    if (props.flagState) {
+      props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
+    }
   };
 
   const columns = [
@@ -253,6 +256,8 @@ const InnerDirectors = (props) => {
                         setFieldValue={setFieldValue}
                         handleChange={handleChange}
                         handleBlur={handleBlur}
+                        isEditing={props?.isEditing}
+                        setIsEditing={props?.setIsEditing}
                       />
                     </div>
                   )}

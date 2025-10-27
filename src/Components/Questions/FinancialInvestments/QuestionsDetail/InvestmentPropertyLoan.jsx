@@ -161,6 +161,7 @@ const InvestmentPropertyLoan = (props) => {
     // Reset the flag state if necessary
     if (props.flagState) {
       props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
     }
   };
 
@@ -456,7 +457,6 @@ const InvestmentPropertyLoan = (props) => {
                   </div>
                   {values.NumberOfMap && (
                     <div className="mt-4 All_Client reportSection">
-                      
                       <AntDTableHOC
                         columns={columns}
                         data={tableData}
@@ -464,6 +464,8 @@ const InvestmentPropertyLoan = (props) => {
                         setFieldValue={setFieldValue}
                         handleChange={handleChange}
                         handleBlur={handleBlur}
+                        isEditing={props?.isEditing}
+                        setIsEditing={props?.setIsEditing}
                       />
                     </div>
                   )}

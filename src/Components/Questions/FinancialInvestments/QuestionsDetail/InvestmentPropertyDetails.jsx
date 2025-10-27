@@ -254,7 +254,10 @@ const InvestmentPropertyDetails = (props) => {
       }
 
       // reset flag
-      if (props.flagState) props.setFlagState(false);
+      if (props.flagState) {
+        props.setFlagState(false);
+        props.setIsEditing(!props.isEditing);
+      }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
       openNotificationSuccess(
@@ -405,7 +408,6 @@ const InvestmentPropertyDetails = (props) => {
       func: handleInnerModal,
       innerModalTitle: "Expense Details",
     },
-    
   ];
 
   return (
@@ -510,6 +512,8 @@ const InvestmentPropertyDetails = (props) => {
                         setFieldValue={setFieldValue}
                         handleChange={handleChange}
                         handleBlur={handleBlur}
+                        isEditing={props?.isEditing}
+                        setIsEditing={props?.setIsEditing}
                       />
                     </div>
                   )}

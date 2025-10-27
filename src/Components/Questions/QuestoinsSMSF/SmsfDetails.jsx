@@ -214,6 +214,7 @@ const SmsfDetails = (props) => {
       // Reset the flag state if necessary
       if (props.flagState) {
         props.setFlagState(false);
+        props.setIsEditing(!props.isEditing);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
@@ -294,6 +295,8 @@ const SmsfDetails = (props) => {
                       setFieldValue={setFieldValue}
                       handleChange={handleChange}
                       handleBlur={handleBlur}
+                      isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
                     />
                   </div>
                 </div>

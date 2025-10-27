@@ -108,6 +108,7 @@ const QuestionIncomeExpanse = (props) => {
     // Reset the flag state if necessary
     if (props.flagState) {
       props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
     }
   };
   let FormulaSetting = (values, setFieldValue, currentInput, index) => {
@@ -501,6 +502,8 @@ const QuestionIncomeExpanse = (props) => {
                         setFieldValue={setFieldValue}
                         handleChange={handleChange}
                         handleBlur={handleBlur}
+                        isEditing={props?.isEditing}
+                        setIsEditing={props?.setIsEditing}
                       />
                     </div>
                   )}
