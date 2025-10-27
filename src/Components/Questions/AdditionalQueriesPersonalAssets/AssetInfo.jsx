@@ -162,7 +162,10 @@ const AssetInfo = (props) => {
         `Data of "${props.modalObject.title}" is Saved`
       );
 
-      if (props.flagState) props.setFlagState(false);
+      if (props.flagState) {
+        props.setFlagState(false);
+        props.setIsEditing(!props.isEditing);
+      }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
       openNotificationSuccess(
@@ -288,6 +291,8 @@ const AssetInfo = (props) => {
                       handleChange={handleChange}
                       handleBlur={handleBlur}
                       handleSubmit={props?.handleOk}
+                      isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
                     />
                   </div>
                 )}

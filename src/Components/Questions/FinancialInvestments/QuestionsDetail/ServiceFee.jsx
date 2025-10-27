@@ -11,12 +11,11 @@ import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForI
 const AntdTable = DynamicTableForInputsSection("antd");
 
 const ServiceFee = (props) => {
-
   const initialEditArray = props.modalObject.editArray || [];
 
   const initialValues = {
     NumberOfMap: initialEditArray.length || "",
-    ...initialEditArray
+    ...initialEditArray,
   };
 
   let OnInvestmentOptionSelect = (
@@ -55,7 +54,6 @@ const ServiceFee = (props) => {
   const onSubmit = async (values) => {
     const newEntries = values;
 
-
     props.setFieldValue(
       `${props.modalObject.stakeHolder}${props.modalObject.key}Array`,
       newEntries
@@ -65,7 +63,10 @@ const ServiceFee = (props) => {
       values.annualAdviserServiceFee
     );
 
-    if (props.flagState) props.setFlagState(false);
+    if (props.flagState) {
+      props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
+    }
   };
 
   // Define columns for Antd Table
@@ -139,6 +140,8 @@ const ServiceFee = (props) => {
                       handleSubmit={props?.handleOk}
                       handleBlur={handleBlur}
                       handleChange={handleChange}
+                      isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
                     />
                   </div>
                 </div>

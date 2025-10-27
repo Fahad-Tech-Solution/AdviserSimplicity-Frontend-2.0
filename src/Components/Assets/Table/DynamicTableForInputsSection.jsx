@@ -35,7 +35,12 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
             setFieldValue={setFieldValue}
             handleChange={handleChange}
             handleBlur={handleBlur}
-            handleInnerModal={col?.handleInnerModal || (() => {})}
+            handleInnerModal={
+              col?.handleInnerModal ||
+              (() => {
+                console.log("No function defined");
+              })
+            }
             innerModalTitle={
               record?.innerModalTitle || col?.innerModalTitle || ""
             }
@@ -65,7 +70,12 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
               setFieldValue={setFieldValue}
               handleChange={handleChange}
               handleBlur={handleBlur}
-              handleInnerModal={col?.handleInnerModal || (() => {})}
+              handleInnerModal={
+                col?.func ||
+                (() => {
+                  console.log("No function defined");
+                })
+              }
               innerModalTitle={
                 record?.innerModalTitle || col?.innerModalTitle || ""
               }

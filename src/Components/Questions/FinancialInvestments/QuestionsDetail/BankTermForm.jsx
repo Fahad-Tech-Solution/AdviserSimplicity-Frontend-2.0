@@ -105,7 +105,10 @@ const BankTermForm = (props) => {
       [`${DataOf + "currentBalance"}Message`]: "",
     }));
 
-    if (props.flagState) props.setFlagState(false);
+    if (props.flagState) {
+      props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
+    }
   };
 
   // Define table columns
@@ -230,6 +233,8 @@ const BankTermForm = (props) => {
                   handleChange={handleChange}
                   handleBlur={handleBlur}
                   handleSubmit={props?.handleOk}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
                 />
               </div>
             )}

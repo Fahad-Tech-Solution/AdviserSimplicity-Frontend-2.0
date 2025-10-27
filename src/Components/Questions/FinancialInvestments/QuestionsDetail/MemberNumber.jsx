@@ -102,7 +102,10 @@ const MemberNumber = (props) => {
       );
 
       // ✅ Reset flag if needed
-      if (props.flagState) props.setFlagState(false);
+      if (props.flagState) {
+        props.setFlagState(false);
+        props.setIsEditing(!props.isEditing);
+      }
 
       // console.log("✅ Submitted values:", entry);
     } catch (err) {
@@ -316,6 +319,8 @@ const MemberNumber = (props) => {
                 setFieldValue={setFieldValue}
                 handleChange={handleChange}
                 handleBlur={handleBlur}
+                isEditing={props?.isEditing}
+                setIsEditing={props?.setIsEditing}
               />
             </div>
 

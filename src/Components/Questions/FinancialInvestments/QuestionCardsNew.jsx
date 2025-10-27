@@ -83,7 +83,7 @@ import FamilyDetails from "../QuestoinsFamilyTrust/FamilyDetails";
 const questionConfig = {
   "/user/personal-income": [
     {
-      title: "Employment Income",
+      title: "Employment",
       keyName: "incomeFromOwnBusiness",
       img: businessmanSvg,
       component: <EmploymentIncome />,
@@ -103,13 +103,13 @@ const questionConfig = {
       component: <Partnership />,
     },
     {
-      title: "Centerlink Payments",
+      title: "Centerlink",
       keyName: "incomeFromCentrelink",
       img: gearsSvg,
       component: <CenterLinkPayments />,
     },
     {
-      title: "LifeTime Benefits",
+      title: "LifeTime Pension",
       keyName: "incomeFromSuperPayment",
       img: moneySvg,
       component: <LifeTimeBeneFits />,
@@ -121,7 +121,7 @@ const questionConfig = {
       component: <OverseasPension />,
     },
     {
-      title: "Regular Living Expenses",
+      title: "Living Expenses",
       keyName: "incomeFromRegularLivingExpenses",
       img: moneyBagPng,
       component: <RegularLivingExpenses />,
@@ -590,8 +590,9 @@ const QuestionCard = (props) => {
       ? Labels[1]
       : personalDetailObj.partner?.partnerPreferredName || "Partner";
 
-  const jointName = personalDetailObj.client?.clientPreferredName +
-          personalDetailObj.partner?.partnerPreferredName || "joint";
+  const jointName =
+    personalDetailObj.client?.clientPreferredName +
+      personalDetailObj.partner?.partnerPreferredName || "joint";
 
   const isSingle = ["Single", "Widowed"].includes(
     personalDetailObj.client?.clientMaritalStatus
@@ -625,7 +626,7 @@ const QuestionCard = (props) => {
     return (
       <>
         <div className="text-center mb-3">
-          <img src={img} alt={title} width={60} height={60} />
+          <img src={img} alt={title} width={70} height={70} />
         </div>
 
         {/* Client */}
@@ -717,7 +718,7 @@ const QuestionCard = (props) => {
   const renderCase2 = () => (
     <>
       <div className="text-center mb-3">
-        <img src={img} alt={title} width={60} height={60} />
+        <img src={img} alt={title} width={70} height={70} />
       </div>
       {Labels.map((lbl, i) => (
         <LabelItem
@@ -737,7 +738,7 @@ const QuestionCard = (props) => {
   const renderCase3 = () => (
     <>
       <div className="text-center mb-4">
-        <img src={img} alt={title} width={60} height={60} />
+        <img src={img} alt={title} width={70} height={70} />
       </div>
       <div className="mb-3">
         <div className="d-flex align-items-center justify-content-center gap-2 mb-2">
@@ -802,7 +803,7 @@ const QuestionCard = (props) => {
   const renderCase4 = () => (
     <>
       <div className="text-center mb-3">
-        <img src={img} alt={title} width={60} height={60} />
+        <img src={img} alt={title} width={70} height={70} />
       </div>
       <div className="d-flex flex-column align-items-center justify-content-center">
         <button

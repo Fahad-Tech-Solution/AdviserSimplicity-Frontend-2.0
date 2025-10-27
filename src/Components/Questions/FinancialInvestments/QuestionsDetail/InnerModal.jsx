@@ -99,12 +99,10 @@ const InnerModal = (props) => {
     "Insurances Attached",
     "Pension Benefits",
     "Balance & Benefit Details",
-    // "Home Loan",
     "Australian Shares/ETFs Detail",
     "Managed Funds Detail",
     "Super Funds Detail",
     "Investment Bond Detail",
-    // "Account Based Pension Detail",
     "Invested in Annuities Detail",
     "Property Loan Details",
     "Risk Goals",
@@ -118,10 +116,6 @@ const InnerModal = (props) => {
     "Salary Packaging Car",
     "Accumulation Details",
     "Salary Packaging",
-    // "Balance Rollover Amount"
-    // "Insurance Premiums"
-    // "Portfolio Value"
-    // "Bank Accounts Detail"
   ]; // Add other titles that should use "xl" here
 
   const xlKeys = [
@@ -131,8 +125,6 @@ const InnerModal = (props) => {
     "sumInsured",
     "beneficiaries",
     "totalCostBase",
-    // "ContributionsArray"
-    // "Bank Accounts Detail"
   ]; // Add other titles that should use "xl" here
 
   let fullTitles = [
@@ -200,6 +192,7 @@ const InnerModal = (props) => {
           setProgress(0);
           setCashFlowReCalculateLoading(false);
           setCashFlowDownloading(false);
+          setIsEditing(false);
         }}
       >
         <Element id="modal-container"></Element>

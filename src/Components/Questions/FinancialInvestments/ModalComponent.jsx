@@ -110,10 +110,6 @@ const ModalComponent = (props) => {
   const xlTitles = [
     "Important Questions",
     "Questions",
-    // "Employement Income",
-    // "Australian Shares",
-    // "Managed Funds",
-    // "Investment Bond",
     "Investment Loan",
     "Margin Loan",
     "Personal Loan",
@@ -124,20 +120,15 @@ const ModalComponent = (props) => {
     "Holiday Home Loan",
     "Investment Properties",
     "Investment Property Loan",
-    // "Super Funds",
-    // "Account Based Pension",
-    // "invested in Annuities",
     "Wills",
     "Power of Attorneys",
     "Professional Advisers",
-    "Centerlink Payments",
+    "Centerlink",
     "Sole Trader",
     "Partnership",
     "SMSF Details",
     "SMSF Investment Loan",
     "Investment Home Loan",
-    // "Business as Company Structure",
-    // "Business as Trusts",
     "Family Trust Details",
     "Family Trust Investment Loan",
     "Goals and Objectives Questions",
@@ -193,10 +184,9 @@ const ModalComponent = (props) => {
     "Platform Investment",
     "Other Investments",
     "Cash",
-    // "Term Deposits",
     "Investment Bonds",
     "Investment Loans (LOC)",
-    "Lifetime Benefits",
+    "LifeTime Pension",
     "SMSF Accumulation Details",
     "SMSF Bank",
     "SMSF Term Deposit",
@@ -210,13 +200,10 @@ const ModalComponent = (props) => {
     "SMSF Pension Account Details",
     "CDF Details",
     "Push Client On Adviser link",
-    // "Add New Adviser",
-    // "Edit Adviser",
-    // "View Adviser",
   ]; // Add other  /ntitles that should use "xl" here
 
   let fullTitles = [
-    "Employement Income", // it was in xl before
+    "Employment",
     "Family Trust Investment Loan",
     "Family Details",
     "Life Insurance",
@@ -231,10 +218,9 @@ const ModalComponent = (props) => {
     "Education Expenses",
     "Centrelink Payments/Benefits",
     "Own a Family Home",
-    "Employment Income",
     "Investments Property",
     "Super Fund",
-    "Annuities",
+    // "Annuities",
     // "Account Based Pension",
     "Family Trust Investment Properties",
   ];
@@ -263,8 +249,19 @@ const ModalComponent = (props) => {
     ? "xl"
     : "lg";
 
-  let submitButtonRender =
-    props?.modalObject?.Action?.toLowerCase() == "view" ? false : true;
+  const shouldRenderSubmitButton = () => {
+    const action = props?.modalObject?.Action?.toLowerCase();
+    const title = props?.modalObject?.title;
+
+    if (action === "view") return false;
+    if (title === "Questions") return true;
+    if (title === "Important Questions") return true;
+    if (title !== "Questions" && isEditing === true) return true;
+
+    return false;
+  };
+
+  let submitButtonRender = shouldRenderSubmitButton();
 
   let FooterButtonRender = props?.modalObject?.noFooter ? false : true;
 
@@ -282,6 +279,7 @@ const ModalComponent = (props) => {
           setProgress(0);
           setCashFlowReCalculateLoading(false);
           setCashFlowDownloading(false);
+          setIsEditing(false);
         }}
       >
         <Element id="modal-container"></Element>
@@ -311,21 +309,23 @@ const ModalComponent = (props) => {
         </Modal.Body>
         {FooterButtonRender && (
           <Modal.Footer>
-            {!isEditing && (
-              <Button
-                variant="secondary"
-                style={{ width: "12.5%", minWidth: "fit-content" }}
-                className="heartbeat"
-                onClick={() => {
-                  if (!isEditing) {
-                    setIsEditing(!isEditing);
-                    return;
-                  }
-                }}
-              >
-                Edit
-              </Button>
-            )}
+            {!isEditing &&
+              props.modalObject?.title !== "Questions" &&
+              props.modalObject?.title !== "Important Questions" && (
+                <Button
+                  variant="secondary"
+                  style={{ width: "12.5%", minWidth: "fit-content" }}
+                  className="heartbeat"
+                  onClick={() => {
+                    if (!isEditing) {
+                      setIsEditing(!isEditing);
+                      return;
+                    }
+                  }}
+                >
+                  Edit
+                </Button>
+              )}
 
             {props.modalObject?.cal && (
               <Button
@@ -389,7 +389,7 @@ const ModalComponent = (props) => {
               </AntButton>
             )}
 
-            {submitButtonRender && isEditing && (
+            {submitButtonRender && (
               <button
                 type="button"
                 className="btn bgColor modalBtn"

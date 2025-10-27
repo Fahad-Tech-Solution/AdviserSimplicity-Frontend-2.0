@@ -210,7 +210,10 @@ const AustralianShares = (props) => {
       [`${DataOf + "costBaseTemp"}Error`]: false,
     }));
 
-    if (props.flagState) props.setFlagState(false);
+    if (props.flagState) {
+      props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
+    }
   };
 
   const columns = [
@@ -356,6 +359,8 @@ const AustralianShares = (props) => {
                   handleChange={handleChange}
                   pagination={true} // 🚫 pagination removed
                   handleSubmit={props?.handleOk}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
                 />
               </div>
             )}

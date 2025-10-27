@@ -65,6 +65,7 @@ const HomeLoan = (props) => {
 
     if (props.flagState) {
       props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
     }
   };
 
@@ -197,6 +198,8 @@ const HomeLoan = (props) => {
                   handleChange={handleChange}
                   handleBlur={handleBlur}
                   handleSubmit={props?.handleOk}
+                             isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
                 />
               </div>
             )}

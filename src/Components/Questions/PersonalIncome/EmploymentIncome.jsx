@@ -250,7 +250,7 @@ const EmploymentIncome = (props) => {
   };
 
   const options = !["Single", "Widowed"].includes(
-    personalDetailObj.client?.MaritalStatus
+    personalDetailObj.client?.clientMaritalStatus?.trim()
   )
     ? [
         {
@@ -299,7 +299,7 @@ const EmploymentIncome = (props) => {
         { label: "Contract", value: "Contract" },
         { label: "On Leave", value: "OnLeave" },
       ],
-      width: 200,
+      width: 150,
     },
     {
       title: "Name of Company",
@@ -315,7 +315,7 @@ const EmploymentIncome = (props) => {
       key: "startDate",
       type: "antdate",
       placeholder: "dd/mm/yyyy",
-      width: 200,
+      width: 150,
     },
     {
       title: "Hours Worked",
@@ -323,14 +323,14 @@ const EmploymentIncome = (props) => {
       key: "hoursWorked",
       type: "number",
       placeholder: "Enter Hours Worked",
-      width: 200,
+      width: 100,
     },
     {
       title: "Salary Detail",
       dataIndex: "salaryPackage",
       key: "SalaryPackageModal",
       type: "modal", // 🔥 handled by DynamicFormField as button modal
-      width: 150,
+      width: 100,
       handleInnerModal: handleInnerModal,
       innerModalTitle: "Salary Detail",
     },
@@ -448,7 +448,7 @@ const EmploymentIncome = (props) => {
                     htmlFor=""
                     className="text-end"
                     onClick={() => {
-                      console.log(values, props.handleOk);
+                      console.log(values);
                     }}
                   >
                     Owner

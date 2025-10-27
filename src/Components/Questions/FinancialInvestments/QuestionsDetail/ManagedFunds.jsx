@@ -229,7 +229,10 @@ const ManagedFunds = (props) => {
     }));
 
     // 🏁 Close modal if flag is set
-    if (props.flagState) props.setFlagState(false);
+    if (props.flagState) {
+      props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
+    }
   };
 
   const getPlatformOptions = () => {
@@ -400,6 +403,8 @@ const ManagedFunds = (props) => {
                   setFieldValue={setFieldValue}
                   handleChange={handleChange}
                   handleBlur={handleBlur}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
                 />
               </div>
             )}

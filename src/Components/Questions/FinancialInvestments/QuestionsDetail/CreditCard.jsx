@@ -181,7 +181,10 @@ const CreditCard = (props) => {
 
       if (props.setFieldValue)
         props.setFieldValue("creditCards", creditCardData);
-      if (props.flagState) props.setFlagState(false);
+      if (props.flagState) {
+        props.setFlagState(false);
+        props.setIsEditing(!props.isEditing);
+      }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
       openNotificationSuccess(
@@ -355,6 +358,8 @@ const CreditCard = (props) => {
                   handleChange={handleChange}
                   handleBlur={handleBlur}
                   handleSubmit={props?.handleOk}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
                 />
               </div>
             )}

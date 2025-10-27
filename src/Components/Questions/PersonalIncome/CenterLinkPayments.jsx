@@ -140,7 +140,10 @@ const CenterLinkPayments = (props) => {
         `Data of "${props.modalObject.title}" is Saved`
       );
 
-      if (props.flagState) props.setFlagState(false);
+      if (props.flagState) {
+        props.setFlagState(false);
+        props.setIsEditing(!props.isEditing);
+      }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
       openNotificationSuccess(
@@ -306,6 +309,8 @@ const CenterLinkPayments = (props) => {
                       handleBlur={handleBlur}
                       handleInnerModal={handleInnerModal}
                       handleSubmit={props?.handleOk}
+                      isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
                     />
                   </div>
                 )}

@@ -349,9 +349,11 @@ const PersonalDetailNew = () => {
   const [loading, setLeading] = useState(false);
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
+  const [isEditing, setIsEditing] = useState(false);
   const [personalDetailObj, setPersonalDetailObj] =
     useRecoilState(PersonalDetailsData);
   let [CRObjectNoUse, setCRObject] = useRecoilState(CRState);
+  let [stepsStatus, setStepsStatus] = useRecoilState(StepsStatus);
   let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
   const defaultUrlValue = useRecoilValue(defaultUrl);
   const location = useLocation();
@@ -815,6 +817,8 @@ const PersonalDetailNew = () => {
         }
         setSwitchStep(2);
         setPersonalDetailObj(res);
+        setIsEditing(!isEditing);
+        setStepsStatus(false);
         openNotificationSuccess(
           "success",
           "topRight",
@@ -840,6 +844,7 @@ const PersonalDetailNew = () => {
       getQuestionsDetails(id); // this fetches the Detailed Data of client
     } else {
       setSwitchStep(1);
+      setIsEditing(!isEditing);
     }
   }, []);
 
@@ -1124,6 +1129,8 @@ const PersonalDetailNew = () => {
                       setFieldValue={setFieldValue}
                       handleChange={handleChange}
                       handleBlur={handleBlur}
+                      isEditing={isEditing}
+                      setIsEditing={setIsEditing}
                     />
 
                     {errorShow &&
@@ -1155,6 +1162,8 @@ const PersonalDetailNew = () => {
                       setFieldValue={setFieldValue}
                       handleChange={handleChange}
                       handleBlur={handleBlur}
+                      isEditing={isEditing}
+                      setIsEditing={setIsEditing}
                     />
 
                     {errorShow &&
@@ -1231,6 +1240,8 @@ const PersonalDetailNew = () => {
                           setFieldValue={setFieldValue}
                           handleChange={handleChange}
                           handleBlur={handleBlur}
+                          isEditing={isEditing}
+                          setIsEditing={setIsEditing}
                         />
                       )}
 
@@ -1272,6 +1283,7 @@ const PersonalDetailNew = () => {
                           onClick={() => {
                             setSwitchStep(1);
                             setErrorShow(true);
+                            setIsEditing(!isEditing);
                           }}
                         >
                           Edit

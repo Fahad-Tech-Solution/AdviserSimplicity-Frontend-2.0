@@ -130,6 +130,7 @@ const OverseasPension = (props) => {
 
       if (props.flagState) {
         props.setFlagState(false);
+        props.setIsEditing(!props.isEditing);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
@@ -227,6 +228,8 @@ const OverseasPension = (props) => {
                         handleChange={handleChange}
                         handleBlur={handleBlur}
                         handleSubmit={props?.handleOk}
+                                   isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
                       />
                     </div>
                   )}

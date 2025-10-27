@@ -54,7 +54,10 @@ const GroupInsurance = (props) => {
       values
     );
 
-    if (props.flagState) props.setFlagState(false);
+    if (props.flagState) {
+      props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
+    }
   };
 
   // 📊 Define table columns for Group Insurance
@@ -209,6 +212,8 @@ const GroupInsurance = (props) => {
                 setFieldValue={setFieldValue}
                 handleChange={handleChange}
                 handleBlur={handleBlur}
+                isEditing={props?.isEditing}
+                setIsEditing={props?.setIsEditing}
               />
             </div>
 

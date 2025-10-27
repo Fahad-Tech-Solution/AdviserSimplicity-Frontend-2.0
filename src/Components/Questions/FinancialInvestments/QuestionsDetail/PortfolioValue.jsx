@@ -96,7 +96,10 @@ const PortfolioValue = (props) => {
       toCommaAndDollar(total)
     );
 
-    if (props.flagState) props.setFlagState(false);
+    if (props.flagState) {
+      props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
+    }
   };
 
   // Define columns for Antd Table
@@ -208,6 +211,8 @@ const PortfolioValue = (props) => {
                         handleBlur={handleBlur}
                         pagination={true}
                         handleSubmit={props?.handleOk}
+                        isEditing={props?.isEditing}
+                        setIsEditing={props?.setIsEditing}
                       />
                     </div>
                   )}

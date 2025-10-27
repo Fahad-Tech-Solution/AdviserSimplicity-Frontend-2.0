@@ -149,6 +149,7 @@ const SoleTrader = (props) => {
 
       if (props.flagState) {
         props.setFlagState(false);
+        props.setIsEditing(!props.isEditing);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
@@ -279,6 +280,8 @@ const SoleTrader = (props) => {
                         handleBlur={handleBlur}
                         handleInnerModal={handleInnerModal}
                         handleSubmit={props?.handleOk}
+                        isEditing={props?.isEditing}
+                        setIsEditing={props?.setIsEditing}
                       />
                     </div>
                   )}

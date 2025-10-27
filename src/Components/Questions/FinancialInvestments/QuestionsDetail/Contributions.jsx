@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Formik, Form } from "formik";
 import { useRecoilValue } from "recoil";
-import { ConfigProvider, Select, DatePicker } from "antd";
+import { ConfigProvider, Select } from "antd";
 import dayjs from "dayjs";
 import { defaultUrl } from "../../../../Store/Store";
 import { toCommaAndDollar } from "../../../Assets/Api/Api";
@@ -17,26 +17,23 @@ const Contributions = (props) => {
   // ---------------- INITIAL VALUES ----------------
   const initialValues = {
     NumberOfMap: props.modalObject?.editArray?.newEntries?.length || "",
-    startingYear:
-      props.modalObject?.editArray?.startingYear || dayjs().startOf("year"),
     newEntries: props.modalObject?.editArray?.newEntries || [],
   };
 
   // ---------------- FILL EXISTING DATA ----------------
   const fillInitialValues = (setFieldValue) => {
-    if (props.modalObject?.editArray?.newEntries) {
-      const arr = Array(props.modalObject.editArray.newEntries.length).fill("");
-      setDynamicFields(arr);
-      setFieldValue(
-        "NumberOfMap",
-        props.modalObject.editArray.newEntries.length
-      );
-      setFieldValue(
-        "startingYear",
-        dayjs(props.modalObject.editArray.startingYear)
-      );
-      setFieldValue("newEntries", props.modalObject.editArray.newEntries);
-    }
+    const index = parseFloat(
+      props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
+    );
+    const BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
+
+    let data =
+      props.modalObject.values?.[BaseKey]?.[index]?.[
+        props.modalObject.key + "Array"
+      ] || [];
+
+    setFieldValue("NumberOfMap", data.length);
+    setFieldValue("newEntries", data);
   };
 
   // ---------------- HANDLE NUMBER CHANGE ----------------
@@ -50,7 +47,7 @@ const Contributions = (props) => {
       "newEntries",
       Array(limited)
         .fill()
-        .map((_, i) => ({
+        .map(() => ({
           employerContributions: "",
           concessional: "",
           totalConcessional: "",
@@ -61,81 +58,60 @@ const Contributions = (props) => {
 
   // ---------------- FORM SUBMIT ----------------
   const onSubmit = async (values) => {
-    const { NumberOfMap, startingYear, newEntries } = values;
-
+    const { NumberOfMap, newEntries } = values;
     const filteredEntries = (newEntries || []).slice(0, NumberOfMap);
 
-    const Obj = {
-      startingYear,
-      newEntries: filteredEntries,
-    };
-
     props.setFieldValue(
-      `${props.modalObject.key}${props.modalObject.index}`,
-      Obj
+      `${props.modalObject.stakeHolder}${props.modalObject.key}Array`,
+      filteredEntries
     );
 
-    if (props.flagState) props.setFlagState(false);
+    if (props.flagState) {
+      props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
+    }
   };
 
-  let Calculate = (values, setFieldValue, currentInput, stakeHolder) => {
+  // ---------------- CALCULATE CONTRIBUTIONS ----------------
+  const Calculate = (values, setFieldValue, currentInput, stakeHolder) => {
     try {
-      // Extract index for dynamic row update
+      console.log("Calculating contributions...");
       const index = parseFloat(stakeHolder?.match(/\[(\d+)\]/)?.[1] || 0);
-
-      // Helper to safely extract numeric values
       const getVal = (field) =>
         parseFloat(
           values?.newEntries?.[index]?.[field]
             ?.toString()
             .replace(/[^0-9.-]+/g, "") || 0
         );
-
-      // Get the raw numeric value of current input
       const rawVal =
         parseFloat(
           currentInput?.value?.toString().replace(/[^0-9.-]+/g, "") || 0
         ) || 0;
 
-      // Existing employer contribution
       let employerContributions = getVal("employerContributions");
       let concessional = getVal("concessional");
 
-      // Update concessional
-      if (currentInput.name == "concessional") {
+      if (currentInput.name === `newEntries[${index}].concessional`)
         concessional = rawVal;
-      } else if (currentInput.name == "employerContributions") {
+      else if (
+        currentInput.name === `newEntries[${index}].employerContributions`
+      )
         employerContributions = rawVal;
-      }
 
-      console.log(employerContributions, concessional, rawVal, currentInput);
-
-      // Calculate total concessional
       const totalConcessional = employerContributions + concessional;
 
       setFieldValue(
         `newEntries[${index}].totalConcessional`,
         toCommaAndDollar(totalConcessional)
       );
-
-      // Optional debug log
-      // console.log(
-      //   `Row ${index + 1} → Employer: ${employerContributions}, Concessional: ${concessional}, Total: ${totalConcessional}`
-      // );
     } catch (err) {
-      console.error("❌ Calculation error in Concessional column:", err);
+      console.error("❌ Calculation error:", err);
     }
   };
 
   // ---------------- TABLE COLUMNS ----------------
   const columns = [
-    {
-      title: "No#",
-      dataIndex: "no",
-      key: "no",
-      justText: true,
-      width: 60,
-    },
+    { title: "No#", dataIndex: "no", key: "no", justText: true, width: 60 },
     {
       title: "Financial Years",
       dataIndex: "financialYears",
@@ -148,7 +124,8 @@ const Contributions = (props) => {
       key: "employerContributions",
       type: "number-toComma",
       placeholder: "Employer Contributions",
-      onChange: Calculate,
+      func: Calculate,
+      callBack: true,
     },
     {
       title: "Concessional (Include. Salary Sac)",
@@ -159,7 +136,6 @@ const Contributions = (props) => {
       callBack: true,
       func: Calculate,
     },
-
     {
       title: "Total Concessional Contributions",
       dataIndex: "totalConcessional",
@@ -192,7 +168,7 @@ const Contributions = (props) => {
 
         const dataRows = useMemo(() => {
           const num = Number(values.NumberOfMap) || 0;
-          const startYear = dayjs(values.startingYear).year() || dayjs().year();
+          const startYear = dayjs().year(); // Always current year
           return Array.from({ length: num }, (_, i) => {
             const fy = `${startYear + i}/${startYear + i + 1}`;
             const entry = values.newEntries?.[i] || {};
@@ -209,7 +185,7 @@ const Contributions = (props) => {
                 entry.nonConcessionalContributions || "",
             };
           });
-        }, [values.NumberOfMap, values.newEntries, values.startingYear]);
+        }, [values.NumberOfMap, values.newEntries]);
 
         return (
           <Form>
@@ -221,7 +197,7 @@ const Contributions = (props) => {
                   },
                 }}
               >
-                <div className="d-flex flex-row justify-content-center align-items-center gap-3 mt-2  w-75">
+                <div className="d-flex flex-row justify-content-center align-items-center gap-3 mt-2 w-75">
                   <p className="mt-3">{props.modalObject.question}</p>
 
                   <Select
@@ -242,24 +218,6 @@ const Contributions = (props) => {
                     ))}
                   </Select>
                 </div>
-                <div className="d-flex flex-wrap justify-content-center align-items-center gap-3 mt-2">
-                  <p className="text-wrap mt-3">Starting From</p>
-                  <DatePicker
-                    picker="year"
-                    value={
-                      values.startingYear ? dayjs(values.startingYear) : null
-                    }
-                    onChange={(date) => setFieldValue("startingYear", date)}
-                    className="w-25"
-                    placeholder="Select Year"
-                    size="large"
-                    format="YYYY"
-                    disabledDate={(current) => current && current > dayjs()}
-                    getPopupContainer={(triggerNode) =>
-                      triggerNode.closest("table") || triggerNode
-                    }
-                  />
-                </div>
               </ConfigProvider>
             </div>
 
@@ -272,6 +230,8 @@ const Contributions = (props) => {
                   setFieldValue={setFieldValue}
                   handleChange={handleChange}
                   handleBlur={handleBlur}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
                 />
               </div>
             )}

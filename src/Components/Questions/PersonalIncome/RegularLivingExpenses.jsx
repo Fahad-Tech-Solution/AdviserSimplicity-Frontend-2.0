@@ -251,6 +251,7 @@ const RegularLivingExpenses = (props) => {
 
         if (props.flagState) {
           props.setFlagState(false);
+          props.setIsEditing(!props.isEditing);
         }
       }
     } catch (error) {
@@ -405,6 +406,8 @@ const RegularLivingExpenses = (props) => {
                   handleBlur={handleBlur}
                   sectionKey="household"
                   handleSubmit={props?.handleOk}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
                 />
               </div>
             ),
@@ -428,6 +431,8 @@ const RegularLivingExpenses = (props) => {
                   handleBlur={handleBlur}
                   sectionKey="personal"
                   handleSubmit={props?.handleOk}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
                 />
               </div>
             ),
@@ -451,6 +456,8 @@ const RegularLivingExpenses = (props) => {
                   handleBlur={handleBlur}
                   sectionKey="transport"
                   handleSubmit={props?.handleOk}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
                 />
               </div>
             ),
@@ -474,6 +481,8 @@ const RegularLivingExpenses = (props) => {
                   handleBlur={handleBlur}
                   sectionKey="insurance"
                   handleSubmit={props?.handleOk}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
                 />
               </div>
             ),

@@ -13,6 +13,8 @@ import {
 } from "../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
+const AntDTableHOC = DynamicTableForInputsSection("antd");
+
 const SalaryPackage = (props) => {
   let { title, key, parentValues, parentKey } = props.modalObject;
 
@@ -113,8 +115,6 @@ const SalaryPackage = (props) => {
       setFieldValue("SGC", validSGC);
     }
   };
-
-  const AntDTableHOC = DynamicTableForInputsSection("antd");
 
   const columns = [
     {

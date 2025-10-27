@@ -71,15 +71,6 @@ const MiddleWare = (props) => {
       : { client: [], joint: [], partner: [] };
 
   const initialValues = {
-    // clientCurrentBalance: "",
-    // partnerCurrentBalance: "",
-    // jointCurrentBalance: "",
-    // clientCostBaseTemp: "",
-    // partnerCostBaseTemp: "",
-    // jointCostBaseTemp: "",
-    // client: [],
-    // partner: [],
-    // joint: [],
   };
 
   // Modal component mapping
@@ -114,57 +105,6 @@ const MiddleWare = (props) => {
   };
 
   // Fill initial values from backend data into Formik structure
-  // const fillInitialValues = (setFieldValue) => {
-  //   try {
-  //     // If no data available, return
-  //     if (!BankAccountFinance || !BankAccountFinance.clientFK) return;
-
-  //     // client
-  //     setFieldValue("client", BankAccountFinance.client || []);
-  //     setFieldValue(
-  //       "clientCurrentBalance",
-  //       BankAccountFinance.clientCurrentBalance || ""
-  //     );
-  //     // cost base temp for attribute sets
-  //     setFieldValue(
-  //       "clientCostBaseTemp",
-  //       BankAccountFinance.clientCostBaseTemp ||
-  //         BankAccountFinance.clientCostBase ||
-  //         ""
-  //     );
-
-  //     // partner & joint only when Married
-  //     if (localStorage.getItem("UserStatus") === "Married") {
-  //       setFieldValue("partner", BankAccountFinance.partner || []);
-  //       setFieldValue(
-  //         "partnerCurrentBalance",
-  //         BankAccountFinance.partnerCurrentBalance || ""
-  //       );
-  //       setFieldValue(
-  //         "partnerCostBaseTemp",
-  //         BankAccountFinance.partnerCostBaseTemp ||
-  //           BankAccountFinance.partnerCostBase ||
-  //           ""
-  //       );
-
-  //       if (!clientPartnerOnly) {
-  //         setFieldValue("joint", BankAccountFinance.joint || []);
-  //         setFieldValue(
-  //           "jointCurrentBalance",
-  //           BankAccountFinance.jointCurrentBalance || ""
-  //         );
-  //         setFieldValue(
-  //           "jointCostBaseTemp",
-  //           BankAccountFinance.jointCostBaseTemp ||
-  //             BankAccountFinance.jointCostBase ||
-  //             ""
-  //         );
-  //       }
-  //     }
-  //   } catch (err) {
-  //     console.error("fillInitialValues error:", err);
-  //   }
-  // };
   const fillInitialValues = (setFieldValue) => {
     try {
       // 🧩 If no data available, return
@@ -263,103 +203,7 @@ const MiddleWare = (props) => {
   const DefaultUrl = useRecoilValue(defaultUrl);
 
   // Submit behaviour preserved from original
-  // const onSubmit = async (values) => {
-  //   try {
-  //     const obj = { ...values };
-
-  //     // remove temp cost base fields if not attribute set
-  //     if (!attrebuteSet) {
-  //       delete obj.clientCostBaseTemp;
-  //       delete obj.partnerCostBaseTemp;
-  //       delete obj.jointCostBaseTemp;
-  //     }
-
-  //     obj.clientFK = localStorage.getItem("UserID");
-
-  //     // Compute clientTotal / partnerTotal using joint (50/50) if joint exists
-  //     if (
-  //       obj.jointCurrentBalance &&
-  //       parseFloat(
-  //         String(obj.jointCurrentBalance).replace(/[^0-9.-]+/g, "")
-  //       ) !== 0
-  //     ) {
-  //       let fiftyPercent = 0;
-  //       try {
-  //         const jointValue =
-  //           parseFloat(
-  //             String(obj.jointCurrentBalance).replace(/[^0-9.-]+/g, "")
-  //           ) || 0;
-  //         fiftyPercent = jointValue / 2;
-  //       } catch (err) {
-  //         console.error("Error parsing jointCurrentBalance:", err);
-  //         fiftyPercent = 0;
-  //       }
-
-  //       if (fiftyPercent === 0) {
-  //         obj.clientTotal = obj.clientCurrentBalance || "$0";
-  //         obj.partnerTotal = obj.partnerCurrentBalance || "$0";
-  //       } else {
-  //         obj.clientTotal = toCommaAndDollar(
-  //           (parseFloat(
-  //             String(obj.clientCurrentBalance || "0").replace(/[^0-9.-]+/g, "")
-  //           ) || 0) + fiftyPercent
-  //         );
-  //         obj.partnerTotal = toCommaAndDollar(
-  //           (parseFloat(
-  //             String(obj.partnerCurrentBalance || "0").replace(/[^0-9.-]+/g, "")
-  //           ) || 0) + fiftyPercent
-  //         );
-  //       }
-  //     } else {
-  //       obj.clientTotal = obj.clientCurrentBalance || "$0";
-  //       obj.partnerTotal = obj.partnerCurrentBalance || "$0";
-  //     }
-
-  //     if (clientPartnerOnly) {
-  //       obj.jointCurrentBalance = undefined;
-  //     }
-
-  //     const bankAccountArray = BankAccountFinance.clientFK || "";
-
-  //     let res;
-  //     if (!bankAccountArray) {
-  //       res = await PostAxios(
-  //         `${DefaultUrl}/api/${props.modalObject.key}/Add`,
-  //         obj
-  //       );
-  //     } else {
-  //       res = await PatchAxios(
-  //         `${DefaultUrl}/api/${props.modalObject.key}/Update`,
-  //         obj
-  //       );
-  //     }
-
-  //     if (res) {
-  //       const updatedData = {
-  //         ...questionDetailObj,
-  //         [props.modalObject.key]: res,
-  //       };
-  //       setQuestionDetail(updatedData);
-  //       openNotificationSuccess(
-  //         "success",
-  //         "topRight",
-  //         "Success Notification",
-  //         `Data of "${props.modalObject.title}" is Saved`
-  //       );
-  //       if (props.flagState) props.setFlagState(false);
-  //     }
-  //   } catch (error) {
-  //     console.error("onSubmit error:", error);
-  //     openNotificationSuccess(
-  //       "error",
-  //       "topRight",
-  //       "Error Notification",
-  //       `Data of "${props.modalObject.title}" is not Saved Please! try again`
-  //     );
-  //   }
-  // };
-
-  const onSubmit = async (values) => {
+   const onSubmit = async (values) => {
     try {
       // 1️⃣ Start shaping object for backend
       const obj = {
@@ -426,8 +270,14 @@ const MiddleWare = (props) => {
       // 4️⃣ Optional: handle client-partner-only case
       if (clientPartnerOnly) {
         obj.jointCurrentBalance = undefined;
-        obj.joint = [];
+        obj.joint = undefined;
       }
+
+      console.log(
+        clientPartnerOnly,
+        clientPartnerArray.includes(props.modalObject.title),
+        obj
+      );
 
       // 5️⃣ Perform API call
       const bankAccountArray = BankAccountFinance.clientFK || "";
@@ -460,7 +310,10 @@ const MiddleWare = (props) => {
           `Data of "${props.modalObject.title}" is Saved`
         );
 
-        if (props.flagState) props.setFlagState(false);
+        if (props.flagState) {
+          props.setFlagState(false);
+          props.setIsEditing(!props.isEditing);
+        }
       }
     } catch (error) {
       console.error("onSubmit error:", error);
@@ -611,6 +464,8 @@ const MiddleWare = (props) => {
                     handleChange={handleChange}
                     handleBlur={handleBlur}
                     handleSubmit={props?.handleOk}
+                    isEditing={props?.isEditing}
+                    setIsEditing={props?.setIsEditing}
                   />
                 </div>
               </div>

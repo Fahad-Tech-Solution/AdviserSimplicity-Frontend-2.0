@@ -50,7 +50,9 @@ const SuperFunds = (props) => {
 
   // Load existing data if available
   const existingData =
-    questionDetail.superAnnuationIssues?.[props.modalObject.Input] || [];
+    props.modalObject.values?.[
+      props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "")
+    ]?.[props.modalObject.Input + "Array"] || [];
 
   const initialValues = {
     NumberOfMap: existingData.length || "",
@@ -69,33 +71,6 @@ const SuperFunds = (props) => {
     if (existingData.length) {
       setFieldValue("superFunds", existingData);
     }
-  };
-
-  const handleInput = (e, setFieldValue) => {
-    const value = e.target.value > 10 ? 10 : e.target.value;
-    setFieldValue("NumberOfMap", value);
-    setDynamicFields(Array(Number(value)).fill(""));
-    setFieldValue(
-      "superFunds",
-      Array(Number(value))
-        .fill()
-        .map((_, i) => ({
-          platformName: "",
-          memberNumber: "",
-          // portfolioValue: "",
-          // portfolioArray: "",
-          balanceBenefitDetails: "",
-          balanceBenefitDetailsDetails: "",
-          groupInsurance: "",
-          groupInsuranceArray: "",
-          contributions: "",
-          ContributionsArray: "",
-          nominatedBeneficiaries: "",
-          beneficiariesArray: "",
-          annualAdvice: "",
-          ...(initialValues.superFunds[i] || {}),
-        }))
-    );
   };
 
   const handleInnerModal = (
@@ -186,9 +161,12 @@ const SuperFunds = (props) => {
       0
     );
 
-    props.setFieldValue(DataOf, fundData);
     props.setFieldValue(
-      DataOf + "currentBalance",
+      props.modalObject.stakeHolder + DataOf + "Array",
+      fundData
+    );
+    props.setFieldValue(
+      props.modalObject.stakeHolder + "currentBalance",
       toCommaAndDollar(totalAdvice)
     );
 
@@ -198,7 +176,10 @@ const SuperFunds = (props) => {
       [`${DataOf + "currentBalance"}Message`]: "",
     }));
 
-    if (props.flagState) props.setFlagState(false);
+    if (props.flagState) {
+      props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
+    }
   };
 
   const columns = [
@@ -228,25 +209,6 @@ const SuperFunds = (props) => {
       type: "text",
       placeholder: "Member Number",
     },
-    // {
-    //   title: "Portfolio Value",
-    //   dataIndex: "portfolioValue",
-    //   key: "portfolioValue",
-    //   type: "number-toComma-Modal",
-    //   innerModalTitle: "_Portfolio Value",
-    //   placeholder: "Portfolio Value",
-    //   callBack: true,
-    //   inputChangeFunc: CheckInputValue,
-    //   func: (title, stakeHolder, values) =>
-    //     handleInnerModal(
-    //       title,
-    //       "portfolioArray",
-    //       stakeHolder,
-    //       values,
-    //       "Portfolio Value"
-    //     ),
-    //   errorHandler: ShowError,
-    // },
     {
       title: "Balance & Benefit Details",
       dataIndex: "balanceBenefit",
@@ -412,12 +374,12 @@ const SuperFunds = (props) => {
                     size="large"
                     value={values.NumberOfMap || undefined}
                     onChange={(value) => {
-                      handleInput({ target: { value } }, setFieldValue);
+                      setFieldValue("NumberOfMap", value);
                     }}
                     onBlur={handleBlur}
                     getPopupContainer={(triggerNode) => triggerNode.parentNode}
                   >
-                    {Array.from({ length: 20 }, (_, i) => (
+                    {Array.from({ length: 10 }, (_, i) => (
                       <Option key={i} value={i + 1}>
                         {i + 1}
                       </Option>
@@ -436,6 +398,8 @@ const SuperFunds = (props) => {
                   setFieldValue={setFieldValue}
                   handleChange={handleChange}
                   handleBlur={handleBlur}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
                 />
               </div>
             )}
