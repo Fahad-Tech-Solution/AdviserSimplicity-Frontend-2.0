@@ -222,7 +222,7 @@ const InnerDirectors = (props) => {
                         className="form-control inputDesignDoubleInput"
                         onChange={(e) => handleInput(e, setFieldValue)}
                       />
-
+// is coment mai likh dia
                     </div> */}
 
                     <div style={{ minWidth: "10%" }}>
