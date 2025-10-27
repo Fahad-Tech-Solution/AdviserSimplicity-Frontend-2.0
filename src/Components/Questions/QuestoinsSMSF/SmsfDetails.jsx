@@ -16,376 +16,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 import DatePicker from "react-datepicker";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
+import InnerDirectors from "./InnerDirectors";
+import InnerBareTrust from "./InnerBareTrust";
 
-function InnerDirectors(props) {
-  let innerinitialValues = { NumberOfDirectors: "" };
-
-  let handleInnerSubmit = (values) => {
-    console.log(values);
-
-    let newEntries = [];
-
-    for (let i = 0; i < parseFloat(values.NumberOfDirectors); i++) {
-      const newEntry = {
-        directorName: values[`directorName${i}`] || "",
-      };
-
-      newEntries.push(newEntry);
-    }
-
-    props.setFieldValue("directorsOfCorporateTrustee", newEntries);
-
-    if (props.flagState) {
-      props.setFlagState(false);
-    }
-  };
-  let handleInput = (e, setFieldValue, limit) => {
-    const value = e.target.value > limit ? limit : e.target.value;
-    setFieldValue(e.target.id, value);
-  };
-
-  let innerfillInitialValues = (setFieldValue) => {
-    console.log(
-      props.modalObject.values,
-      props.modalObject.values[`directorsOfCorporateTrustee`]
-    );
-
-    setFieldValue(
-      "NumberOfDirectors",
-      props.modalObject.values[`directorsOfCorporateTrustee`].length > 0
-        ? props.modalObject.values[`directorsOfCorporateTrustee`].length
-        : ""
-    );
-
-    let director =
-      props.modalObject.values[`directorsOfCorporateTrustee`] || [];
-
-    director.forEach((element, index) => {
-      setFieldValue("directorName" + index, element.directorName);
-    });
-  };
-
-  return (
-    <Modal
-      centered
-      size={"md"}
-      backdrop="static"
-      show={props.flagState}
-      onHide={() => props.setFlagState(false)}
-    >
-      <Modal.Header closeButton>
-        <Modal.Title>Directors</Modal.Title>
-      </Modal.Header>
-      <Formik
-        initialValues={innerinitialValues}
-        onSubmit={handleInnerSubmit}
-        enableReinitialize
-      >
-        {({ values, setFieldValue, handleChange }) => {
-          useEffect(() => {
-            innerfillInitialValues(setFieldValue);
-          }, []);
-          return (
-            <Form>
-              <Modal.Body className="px-4">
-                <div className="col-md-12">
-                  <div className="d-flex flex-row justify-content-center align-items-center gap-2">
-                    <label htmlFor="" className="">
-                      How many directors does the Corporate Trustee have :
-                    </label>
-
-                    <div
-                      style={{
-                        width: "40%",
-                      }}
-                    >
-                      <Field
-                        type="number"
-                        id={`NumberOfDirectors`}
-                        name={`NumberOfDirectors`}
-                        className="form-control inputDesignDoubleInput"
-                        onChange={(e) => handleInput(e, setFieldValue, 6)}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="row justify-content-center">
-                    {values.NumberOfDirectors && (
-                      <div className="mt-4">
-                        <Table striped bordered responsive hover>
-                          <thead>
-                            <tr>
-                              <th
-                                onClick={() => {
-                                  console.log(values);
-                                }}
-                              >
-                                No#
-                              </th>
-                              <th>Director Name</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {Array.from({
-                              length: values.NumberOfDirectors,
-                            }).map((_, index) => (
-                              <tr key={index}>
-                                <td>{index + 1}</td>
-                                <td>
-                                  {" "}
-                                  <Field
-                                    type="text"
-                                    placeholder="Director Name"
-                                    id={`directorName${index}`}
-                                    name={`directorName${index}`}
-                                    className="form-control inputDesignDoubleInput"
-                                    onChange={(e) => {
-                                      setFieldValue(
-                                        e.target.name,
-                                        validateName(e.target.value)
-                                      );
-                                    }}
-                                  />
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </Table>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button
-                  variant="secondary"
-                  onClick={() => {
-                    props.setFlagState(false);
-                  }}
-                >
-                  Close
-                </Button>
-                <Button type="submit" className="btn bgColor modalBtn">
-                  Submit
-                </Button>
-              </Modal.Footer>
-            </Form>
-          );
-        }}
-      </Formik>
-    </Modal>
-  );
-}
-
-function InnerDirectorsOfBareTrust(props) {
-  let innerinitialValues = { NumberOfDirectors: "" };
-
-  let handleInnerSubmit = (values) => {
-    console.log(values);
-
-    let newEntries = [];
-
-    for (let i = 0; i < parseFloat(values.NumberOfDirectors); i++) {
-      const newEntry = {
-        directorName: values[`directorName${i}`] || "",
-      };
-
-      newEntries.push(newEntry);
-    }
-
-    let Obj = {
-      NumberOfDirectors: newEntries.length,
-      bareTrusteeName: values.bareTrusteeName,
-      ACN: values.ACN,
-      directorNameArray: newEntries,
-    };
-
-    // props.setFieldValue("NumberOfDirectors", parseFloat(values.NumberOfDirectors))
-    props.setFieldValue("directorsOfBareTrust", Obj);
-
-    if (props.flagState) {
-      props.setFlagState(false);
-    }
-  };
-  let handleInput = (e, setFieldValue, limit) => {
-    const value = e.target.value > limit ? limit : e.target.value;
-    setFieldValue(e.target.id, value);
-  };
-
-  let innerfillInitialValues = (setFieldValue) => {
-    console.log(props.modalObject.values);
-
-    if (
-      Object.keys(props.modalObject.values[`directorsOfBareTrust`]).length > 0
-    ) {
-      let Data = props.modalObject.values[`directorsOfBareTrust`] || {};
-      setFieldValue("bareTrusteeName", Data.bareTrusteeName);
-      setFieldValue("ACN", Data.ACN);
-
-      if (Data.directorNameArray.length > 0) {
-        setFieldValue("NumberOfDirectors", Data.directorNameArray.length);
-        Data.directorNameArray.forEach((elem, index) => {
-          setFieldValue("directorName" + index, elem.directorName);
-        });
-      }
-    }
-  };
-
-  return (
-    <Modal
-      centered
-      size={"xl"}
-      show={props.flagState}
-      backdrop="static"
-      onHide={() => props.setFlagState(false)}
-    >
-      <Modal.Header closeButton>
-        <Modal.Title>Directors Of Bare Trust</Modal.Title>
-      </Modal.Header>
-      <Formik
-        initialValues={innerinitialValues}
-        onSubmit={handleInnerSubmit}
-        enableReinitialize
-      >
-        {({ values, setFieldValue, handleChange }) => {
-          useEffect(() => {
-            innerfillInitialValues(setFieldValue);
-          }, []);
-          return (
-            <Form>
-              <Modal.Body className="px-4">
-                <div className="col-md-12">
-                  <div className="d-flex flex-row justify-content-center align-items-center gap-2">
-                    <label htmlFor="" className="">
-                      How many directors does the bare trust have ?
-                    </label>
-
-                    <div
-                      style={{
-                        width: "5%",
-                      }}
-                    >
-                      <Field
-                        type="number"
-                        id={`NumberOfDirectors`}
-                        name={`NumberOfDirectors`}
-                        className="form-control inputDesignDoubleInput"
-                        onChange={(e) => handleInput(e, setFieldValue, 6)}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="row justify-content-center">
-                    {values.NumberOfDirectors && (
-                      <div className="mt-4">
-                        <Table striped bordered responsive hover>
-                          <thead>
-                            <tr>
-                              <th
-                                onClick={() => {
-                                  console.log(values);
-                                }}
-                              >
-                                No#
-                              </th>
-                              <th>Bare Trustee Name</th>
-                              <th>ACN</th>
-
-                              {Array.from({
-                                length: values.NumberOfDirectors,
-                              }).map((_, index) => (
-                                <th key={index}>Director {index + 1} Name</th>
-                              ))}
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>1</td>
-                              <td>
-                                <Field
-                                  type="text"
-                                  placeholder="Bare Trustee Name"
-                                  id={`bareTrusteeName`}
-                                  name={`bareTrusteeName`}
-                                  className="form-control inputDesignDoubleInput"
-                                  onChange={(e) => {
-                                    setFieldValue(
-                                      e.target.name,
-                                      validateName(e.target.value)
-                                    );
-                                  }}
-                                />
-                              </td>
-                              <td>
-                                <Field
-                                  type="number"
-                                  placeholder="ACN"
-                                  id={`ACN`}
-                                  name={`ACN`}
-                                  className="form-control inputDesignDoubleInput"
-                                />
-                              </td>
-                              {Array.from({
-                                length: values.NumberOfDirectors,
-                              }).map((_, index) => (
-                                <td key={index}>
-                                  <Field
-                                    as="select"
-                                    placeholder="Director Name"
-                                    id={`directorName${index}`}
-                                    name={`directorName${index}`}
-                                    className="form-select inputDesignDoubleInput"
-                                  >
-                                    <option value="">Select</option>
-                                    {props.modalObject.values[
-                                      `directorsOfCorporateTrustee`
-                                    ].map((elem, i) => {
-                                      return (
-                                        <option values={elem.directorName}>
-                                          {elem.directorName}
-                                        </option>
-                                      );
-                                    })}
-                                  </Field>
-                                </td>
-                              ))}
-                            </tr>
-                          </tbody>
-                        </Table>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button
-                  variant="secondary"
-                  onClick={() => {
-                    props.setFlagState(false);
-                  }}
-                >
-                  Close
-                </Button>
-                <Button type="submit" className="btn bgColor modalBtn">
-                  Submit
-                </Button>
-              </Modal.Footer>
-            </Form>
-          );
-        }}
-      </Formik>
-    </Modal>
-  );
-}
-
+const AntDTableHOC = DynamicTableForInputsSection("antd");
 const SmsfDetails = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
+  let [flagState, setFlagState] = useState(false);
+
   let [flagState1, setFlagState1] = useState(false);
   let [flagState2, setFlagState2] = useState(false);
   let [modalObject, setModalObject] = useState({});
-  const AntDTableHOC = DynamicTableForInputsSection("antd");
 
   let SMSFDetails =
     Object.keys(questionDetail.SMSFDetails).length > 0
@@ -396,52 +39,35 @@ const SmsfDetails = (props) => {
           joint: [],
         }; // Use an empty object as default if SMSFDetails is undefined
 
-  let initialValues = {
-    fundName: "qq",
-    ABN: "",
-    registeredOffice: "",
-    placeOfBusiness: "",
-    establishmentDate: "",
-    trusteeType: "",
-    directorsOfCorporateTrustee: [],
-    trusteeName: "",
-    nameOfAccountant: "",
-    ACN: "",
-    bareTrust: "No",
-    directorsOfBareTrust: {},
-  };
+  let initialValues = {};
 
   const fillInitialValues = (setFieldValue) => {
     let data = SMSFDetails.SMSFOwner || {};
     console.log(SMSFDetails, "data of SMSFDetails");
 
-    // setFieldValue("owner", data.owner || []);
-    // setFieldValue("fundName", data.fundName || "");
-    // setFieldValue("ABN", data.ABN || "");
-    // Loop through each property of SMSFDetails and set the field values
     Object.keys(data).forEach((key) => {
       setFieldValue(key, data[key] || ""); // Set each field value or an empty string if the value is null/undefined
     });
   };
 
-  let handleInnerModal = (title, key, mainKey, values) => {
-    setModalObject({
-      title,
-      key,
-      mainKey,
+  let handleInnerModal = (innerModalTitle, values, key, stakeHolder) => {
+    console.log(
+      "handleInnerModal: ",
+      innerModalTitle,
       values,
-    });
-    setFlagState1(true);
-  };
-
-  let handleInnerModal2 = (title, key, mainKey, values) => {
-    setModalObject({
-      title,
       key,
-      mainKey,
+      stakeHolder
+    );
+    let ParentModal = props.modalObject.title;
+    setModalObject({
+      title: innerModalTitle,
+      innerModalTitle,
       values,
+      key,
+      stakeHolder,
+      ParentModal,
     });
-    setFlagState2(true);
+    setFlagState(true);
   };
 
   const columns = [
@@ -501,8 +127,10 @@ const SmsfDetails = (props) => {
       placeholder: "Trustee Type",
       width: 180,
       ModalOption: ["Corporate", "Individual"], // 👈 add this — triggers modal icon when selected
-      innerModalTitle: "Corporate Trustee Details", // optional but recommended
+      func: handleInnerModal,
+      innerModalTitle: "Trustee Name", // optional but recommended
     },
+
     {
       title: "Trustee Name",
       dataIndex: "trusteeName",
@@ -523,9 +151,13 @@ const SmsfDetails = (props) => {
       title: "Bare Trust",
       dataIndex: "bareTrust",
       key: "bareTrust",
-      type: "yesno",
-      placeholder: "Bare Trust",
-      width: 120,
+      type: "yesnoModal", // yes/no with modal
+      width: 170,
+      callBack: true,
+      func: handleInnerModal,
+      handleInnerModal: handleInnerModal,
+      innerModalTitle: "Directors Of Bare Trust",
+
       // we'll use the AntDHOC to render a Yes/No control or call back to render custom
       // The AntD HOC in your sample already knows how to render various `type` values.
     },
@@ -609,21 +241,25 @@ const SmsfDetails = (props) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, [values.NumberOfMap]);
+        // 🟢 Dynamically filter columns based on selected Trustee Type
+        const filteredColumns = useMemo(() => {
+          if (values.trusteeType === "Corporate") {
+            return columns; // show all columns
+          } else {
+            // hide "Trustee Name" when not Corporate
+            return columns.filter((col) => col.key !== "trusteeName");
+          }
+        }, [values.trusteeType]);
 
         const tableData = useMemo(() => {
           const rows = [];
           console.log(values, "values of SMSFDetails");
 
- 
-            rows.push({
-              key: "client",
-              // stakeHolder: "client",
-              owner: RenderName("client"),
-              ...values,
-            });
-        
-
-       
+          rows.push({
+            key: "client",
+            owner: RenderName("client"),
+            ...values,
+          });
 
           return rows;
         }, [values]);
@@ -633,9 +269,26 @@ const SmsfDetails = (props) => {
             <Row>
               <div className="col-md-12">
                 <div className="row justify-content-center">
+                  <InnerModal
+                    modalObject={modalObject}
+                    setFieldValue={setFieldValue}
+                    setFlagState={setFlagState}
+                    flagState={flagState}
+                  >
+                    {modalObject.key === "trusteeType" ? (
+                      <InnerDirectors />
+                    ) : modalObject.key === "bareTrust" ? (
+                      <InnerBareTrust />
+                    ) : (
+                      ""
+                    )}
+                  </InnerModal>
+
+                  {/* <p onClick={() => console.log(values)}>Test Text</p> */}
+
                   <div className="mt-4 All_Client reportSection">
                     <AntDTableHOC
-                      columns={columns}
+                      columns={filteredColumns}
                       data={tableData}
                       values={values}
                       setFieldValue={setFieldValue}
@@ -645,18 +298,6 @@ const SmsfDetails = (props) => {
                   </div>
                 </div>
               </div>
-              <InnerDirectors
-                setFieldValue={setFieldValue}
-                flagState={flagState1}
-                setFlagState={setFlagState1}
-                modalObject={modalObject}
-              ></InnerDirectors>
-              <InnerDirectorsOfBareTrust
-                setFieldValue={setFieldValue}
-                flagState={flagState2}
-                setFlagState={setFlagState2}
-                modalObject={modalObject}
-              ></InnerDirectorsOfBareTrust>
             </Row>
           </Form>
         );
