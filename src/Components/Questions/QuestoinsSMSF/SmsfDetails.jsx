@@ -751,8 +751,6 @@ const SmsfDetails = (props) => {
                     />
                   </div>
                 </div>
-                      isEditing={props?.isEditing}
-                      setIsEditing={props?.setIsEditing}
               </div>
 
               {/* Inner modals rendered using the InnerModal wrapper to match sample pattern */}
