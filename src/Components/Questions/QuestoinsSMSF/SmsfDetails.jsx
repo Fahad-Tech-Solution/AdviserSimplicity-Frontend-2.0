@@ -51,7 +51,8 @@ const SmsfDetails = (props) => {
 
   // Default SMSFDetails structure (fallback to empty arrays/objects like original)
   const SMSFDetails =
-    questionDetail?.SMSFDetails && Object.keys(questionDetail.SMSFDetails).length > 0
+    questionDetail?.SMSFDetails &&
+    Object.keys(questionDetail.SMSFDetails).length > 0
       ? questionDetail.SMSFDetails
       : {
           client: [],
@@ -96,8 +97,14 @@ const SmsfDetails = (props) => {
         setFieldValue(key, data[key] ?? initialValues[key]);
       } else {
         // If some nested objects exist, set accordingly
-        if (key === "directorsOfCorporateTrustee" && Array.isArray(data.directorsOfCorporateTrustee)) {
-          setFieldValue("directorsOfCorporateTrustee", data.directorsOfCorporateTrustee);
+        if (
+          key === "directorsOfCorporateTrustee" &&
+          Array.isArray(data.directorsOfCorporateTrustee)
+        ) {
+          setFieldValue(
+            "directorsOfCorporateTrustee",
+            data.directorsOfCorporateTrustee
+          );
         }
         if (key === "directorsOfBareTrust" && data.directorsOfBareTrust) {
           setFieldValue("directorsOfBareTrust", data.directorsOfBareTrust);
@@ -173,7 +180,9 @@ const SmsfDetails = (props) => {
         "error",
         "topRight",
         "Error Notification",
-        `Data of "${props.modalObject?.title || "SMSF Details"}" is not Saved Please! try again`
+        `Data of "${
+          props.modalObject?.title || "SMSF Details"
+        }" is not Saved Please! try again`
       );
     }
   };
@@ -239,7 +248,7 @@ const SmsfDetails = (props) => {
       options: ["Corporate", "Individual"].map((v) => ({ label: v, value: v })),
       placeholder: "Trustee Type",
       width: 180,
-      ModalOption:  ["Corporate", "Individual"], // 👈 add this — triggers modal icon when selected
+      ModalOption: ["Corporate", "Individual"], // 👈 add this — triggers modal icon when selected
       innerModalTitle: "Corporate Trustee Details", // optional but recommended
     },
     {
@@ -376,14 +385,24 @@ const SmsfDetails = (props) => {
           };
 
           return (
-            <Formik initialValues={innerInitial} onSubmit={innerHandleSubmit} enableReinitialize>
+            <Formik
+              initialValues={innerInitial}
+              onSubmit={innerHandleSubmit}
+              enableReinitialize
+            >
               {({ values: iv, setFieldValue: setInnerFieldValue }) => {
                 useEffect(() => {
                   // fill initial director names if present
                   const arr = values.directorsOfCorporateTrustee || [];
-                  setInnerFieldValue("NumberOfDirectors", arr.length > 0 ? arr.length : "");
+                  setInnerFieldValue(
+                    "NumberOfDirectors",
+                    arr.length > 0 ? arr.length : ""
+                  );
                   arr.forEach((d, idx) => {
-                    setInnerFieldValue(`directorName${idx}`, d?.directorName || "");
+                    setInnerFieldValue(
+                      `directorName${idx}`,
+                      d?.directorName || ""
+                    );
                   });
                 }, []);
 
@@ -391,7 +410,9 @@ const SmsfDetails = (props) => {
                   <Form>
                     <div className="px-3">
                       <div className="d-flex gap-2 align-items-center">
-                        <label>How many directors does the Corporate Trustee have :</label>
+                        <label>
+                          How many directors does the Corporate Trustee have :
+                        </label>
                         <div style={{ width: "40%" }}>
                           <Field
                             type="number"
@@ -399,7 +420,8 @@ const SmsfDetails = (props) => {
                             name={`NumberOfDirectors`}
                             className="form-control inputDesignDoubleInput"
                             onChange={(e) => {
-                              const value = e.target.value > 6 ? 6 : e.target.value;
+                              const value =
+                                e.target.value > 6 ? 6 : e.target.value;
                               setInnerFieldValue("NumberOfDirectors", value);
                             }}
                           />
@@ -416,24 +438,31 @@ const SmsfDetails = (props) => {
                               </tr>
                             </thead>
                             <tbody>
-                              {Array.from({ length: iv.NumberOfDirectors }).map((_, index) => (
-                                <tr key={index}>
-                                  <td>{index + 1}</td>
-                                  <td>
-                                    <Field
-                                      type="text"
-                                      placeholder="Director Name"
-                                      id={`directorName${index}`}
-                                      name={`directorName${index}`}
-                                      className="form-control inputDesignDoubleInput"
-                                      onChange={(e) => {
-                                        const v = validateName(e.target.value);
-                                        setInnerFieldValue(`directorName${index}`, v);
-                                      }}
-                                    />
-                                  </td>
-                                </tr>
-                              ))}
+                              {Array.from({ length: iv.NumberOfDirectors }).map(
+                                (_, index) => (
+                                  <tr key={index}>
+                                    <td>{index + 1}</td>
+                                    <td>
+                                      <Field
+                                        type="text"
+                                        placeholder="Director Name"
+                                        id={`directorName${index}`}
+                                        name={`directorName${index}`}
+                                        className="form-control inputDesignDoubleInput"
+                                        onChange={(e) => {
+                                          const v = validateName(
+                                            e.target.value
+                                          );
+                                          setInnerFieldValue(
+                                            `directorName${index}`,
+                                            v
+                                          );
+                                        }}
+                                      />
+                                    </td>
+                                  </tr>
+                                )
+                              )}
                             </tbody>
                           </table>
                         </div>
@@ -443,10 +472,7 @@ const SmsfDetails = (props) => {
                         <Button variant="secondary" onClick={closeModal}>
                           Close
                         </Button>
-                        <Button
-                          type="submit"
-                          className="btn bgColor modalBtn"
-                        >
+                        <Button type="submit" className="btn bgColor modalBtn">
                           Submit
                         </Button>
                       </div>
@@ -490,18 +516,31 @@ const SmsfDetails = (props) => {
           };
 
           return (
-            <Formik initialValues={innerInitial} onSubmit={innerHandleSubmit} enableReinitialize>
+            <Formik
+              initialValues={innerInitial}
+              onSubmit={innerHandleSubmit}
+              enableReinitialize
+            >
               {({ values: iv, setFieldValue: setInnerFieldValue }) => {
                 useEffect(() => {
                   // initialize from parent values if present
                   const data = values.directorsOfBareTrust || {};
                   if (Object.keys(data).length > 0) {
-                    setInnerFieldValue("bareTrusteeName", data.bareTrusteeName || "");
+                    setInnerFieldValue(
+                      "bareTrusteeName",
+                      data.bareTrusteeName || ""
+                    );
                     setInnerFieldValue("ACN", data.ACN || "");
                     if (Array.isArray(data.directorNameArray)) {
-                      setInnerFieldValue("NumberOfDirectors", data.directorNameArray.length || "");
+                      setInnerFieldValue(
+                        "NumberOfDirectors",
+                        data.directorNameArray.length || ""
+                      );
                       data.directorNameArray.forEach((elem, idx) => {
-                        setInnerFieldValue(`directorName${idx}`, elem.directorName || "");
+                        setInnerFieldValue(
+                          `directorName${idx}`,
+                          elem.directorName || ""
+                        );
                       });
                     }
                   } else {
@@ -513,7 +552,9 @@ const SmsfDetails = (props) => {
                   <Form>
                     <div className="px-3">
                       <div className="d-flex gap-2 align-items-center">
-                        <label>How many directors does the bare trust have ?</label>
+                        <label>
+                          How many directors does the bare trust have ?
+                        </label>
                         <div style={{ width: "10%" }}>
                           <Field
                             type="number"
@@ -521,7 +562,8 @@ const SmsfDetails = (props) => {
                             name={`NumberOfDirectors`}
                             className="form-control inputDesignDoubleInput"
                             onChange={(e) => {
-                              const value = e.target.value > 6 ? 6 : e.target.value;
+                              const value =
+                                e.target.value > 6 ? 6 : e.target.value;
                               setInnerFieldValue("NumberOfDirectors", value);
                             }}
                           />
@@ -536,7 +578,9 @@ const SmsfDetails = (props) => {
                                 <th>No#</th>
                                 <th>Bare Trustee Name</th>
                                 <th>ACN</th>
-                                {Array.from({ length: iv.NumberOfDirectors }).map((_, index) => (
+                                {Array.from({
+                                  length: iv.NumberOfDirectors,
+                                }).map((_, index) => (
                                   <th key={index}>Director {index + 1} Name</th>
                                 ))}
                               </tr>
@@ -552,7 +596,10 @@ const SmsfDetails = (props) => {
                                     name={`bareTrusteeName`}
                                     className="form-control inputDesignDoubleInput"
                                     onChange={(e) => {
-                                      setInnerFieldValue("bareTrusteeName", validateName(e.target.value));
+                                      setInnerFieldValue(
+                                        "bareTrusteeName",
+                                        validateName(e.target.value)
+                                      );
                                     }}
                                   />
                                 </td>
@@ -563,11 +610,15 @@ const SmsfDetails = (props) => {
                                     id={`ACN`}
                                     name={`ACN`}
                                     className="form-control inputDesignDoubleInput"
-                                    onChange={(e) => setInnerFieldValue("ACN", e.target.value)}
+                                    onChange={(e) =>
+                                      setInnerFieldValue("ACN", e.target.value)
+                                    }
                                   />
                                 </td>
 
-                                {Array.from({ length: iv.NumberOfDirectors }).map((_, index) => (
+                                {Array.from({
+                                  length: iv.NumberOfDirectors,
+                                }).map((_, index) => (
                                   <td key={index}>
                                     {/* If you want to map corporate trustee directors as select options (like original), you could add a select here */}
                                     <Field
@@ -575,11 +626,21 @@ const SmsfDetails = (props) => {
                                       id={`directorName${index}`}
                                       name={`directorName${index}`}
                                       className="form-select inputDesignDoubleInput"
-                                      onChange={(e) => setInnerFieldValue(`directorName${index}`, e.target.value)}
+                                      onChange={(e) =>
+                                        setInnerFieldValue(
+                                          `directorName${index}`,
+                                          e.target.value
+                                        )
+                                      }
                                     >
                                       <option value="">Select</option>
-                                      {(values.directorsOfCorporateTrustee || []).map((elem, i) => (
-                                        <option key={i} value={elem.directorName}>
+                                      {(
+                                        values.directorsOfCorporateTrustee || []
+                                      ).map((elem, i) => (
+                                        <option
+                                          key={i}
+                                          value={elem.directorName}
+                                        >
                                           {elem.directorName}
                                         </option>
                                       ))}
@@ -596,10 +657,7 @@ const SmsfDetails = (props) => {
                         <Button variant="secondary" onClick={closeModal}>
                           Close
                         </Button>
-                        <Button
-                          type="submit"
-                          className="btn bgColor modalBtn"
-                        >
+                        <Button type="submit" className="btn bgColor modalBtn">
                           Submit
                         </Button>
                       </div>
@@ -651,7 +709,9 @@ const SmsfDetails = (props) => {
                                 }
                                 title="Directors"
                               >
-                                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                <FontAwesomeIcon
+                                  icon={faArrowUpRightFromSquare}
+                                />
                               </Button>
 
                               {/* Bare Trust button — only show if trusteeType is Corporate */}
@@ -660,27 +720,39 @@ const SmsfDetails = (props) => {
                                   className="btn bgColor modalBtn border-0"
                                   onClick={() =>
                                     // only allow opening if corporate directors exist (mimic original behavior)
-                                    (values.directorsOfCorporateTrustee || []).length > 0
+                                    (values.directorsOfCorporateTrustee || [])
+                                      .length > 0
                                       ? handleInnerModal(
                                           "Directors of Bare Trust",
                                           "directorsOfBareTrust",
                                           "directorsOfBareTrust",
                                           values
                                         )
-                                      : openNotificationSuccess("error", "topRight", "Error Notification", "Please! fill Corporate Directer Names First")
+                                      : openNotificationSuccess(
+                                          "error",
+                                          "topRight",
+                                          "Error Notification",
+                                          "Please! fill Corporate Directer Names First"
+                                        )
                                   }
                                   title="Directors of Bare Trust"
                                 >
-                                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+                                  <FontAwesomeIcon
+                                    icon={faArrowUpRightFromSquare}
+                                  />
                                 </Button>
                               )}
                             </div>
                           );
                         },
                       }}
+                      isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
                     />
                   </div>
                 </div>
+                      isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
               </div>
 
               {/* Inner modals rendered using the InnerModal wrapper to match sample pattern */}
