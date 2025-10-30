@@ -1,138 +1,211 @@
 import { Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { toCommaAndDollar } from "../../Assets/Api/Api";
+import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
-// import React from "react";
-
-// import "./AdditionalQueries.css";
-import LifeTPD from "../svgs/WhatsApp Image 2023-08-11 at 19.13.12.jpg";
-import incomeImg from "../svgs/asd.png";
-
-import { useRecoilState, useRecoilValue } from "recoil";
-import { QuestionShift, CRState, defaultUrl } from "../../../Store/Store";
-import { GetAxios, openNotificationSuccess, PatchAxios, PostAxios } from "../../Assets/Api/Api";
-import { Image } from "react-bootstrap";
-import DynamicQuestionBlocks from "../../Assets/DynamicQuestionBlocks/DynamicQuestionBlocks";
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const PersonalInsurance = (props) => {
+  const [UserStatus] = useState(localStorage.getItem("UserStatus"));
 
-  let [CRObject, setCRObject] = useRecoilState(CRState);
+  const initialValues = {};
 
-  const [flagState, setFlagState] = useState(false);
-
-  let DefaultUrl = useRecoilValue(defaultUrl)
-
-  const FetchQuestions = async () => {
+  const fillInitialValues = (setFieldValue) => {
     try {
-      const res = await GetAxios(`${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`);
-      if (res) {
-        setCRObject(res);
-        setFlagState(true);
+      const index = parseFloat(
+        props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
+      );
+      const BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
+
+      let editDetails =
+        props.modalObject.values?.[BaseKey]?.[index]?.[
+          props.modalObject.key + "Details"
+        ] || [];
+
+      if (editDetails && Object.keys(editDetails).length > 0) {
+        Object.keys(editDetails).forEach((field) => {
+          setFieldValue(field, editDetails[field] || "");
+        });
       }
-    } catch (error) {
-      console.error("Error fetching questions:", error);
+    } catch (err) {
+      console.error("Error initializing values:", err);
     }
-  };
-
-  useEffect(() => {
-    FetchQuestions();
-  }, []);
-
-  const handleResponse = (values) => {
-    setCRObject(values);
-    localStorage.setItem("QuestionsState", JSON.stringify(values));
-    props.setQuestionChange(false);
-    localStorage.setItem("Question", "PersonalAssets");
   };
 
   const onSubmit = async (values) => {
-    try {
-      if (!flagState) {
-        const PostRes = await PostAxios(`${DefaultUrl}/api/questions/Add`, values);
-        if (PostRes) {
-          if (props.flagState) {
-            props.setFlagState(false);
-          }
-          handleResponse(values);
-        }
-      } else {
-        const PatchRes = await PatchAxios(`${DefaultUrl}/api/questions/Update/${localStorage.getItem("UserID")}`, values);
-        if (PatchRes) {
-          if (props.flagState) {
-            props.setFlagState(false);
-          }
-          handleResponse(values);
-        }
-      }
-      openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
+    const rows = values || [];
+    console.log("Submitted NewLoadingExclusion values:", values);
+
+    // Save rows back to parent field
+    props.setFieldValue(
+      `${props.modalObject.stakeHolder || ""}${props.modalObject.key}Details`,
+      values
+    );
+
+    props.setFieldValue(
+      `${props.modalObject.stakeHolder || ""}${props.modalObject.key}`,
+      rows.monthlyAmount
+    );
+
+    if (props.flagState) {
+      props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
     }
   };
 
-  let QuestionArray = [
+  const columns = [
     {
-      title: "Do you have any Life, TPD or Trauma cover in place?",
-      img: LifeTPD,
-      key: "life",
+      title: "No#",
+      dataIndex: "index",
+      key: "index",
+      render: (_, __, i) => i + 1,
+      justText: true,
+      width: 60,
     },
-    // {
-    //   title: "Do you have any Income protection cover in place?",
-    //   img: incomeImg,
-    //   key: "incomeProtection",
-    // },
-  ]
-  const QuestionClick = (index, elem, values, setFieldValue) => {
-    // console.log("image clicked in goals", index, elem.key, values);
-    if (values[elem.key] == "No") {
-      setFieldValue(elem.key, "Yes");
-    }
-    if (values[elem.key] == "Yes") {
-      setFieldValue(elem.key, "No");
-    }
-  };
-
+    {
+      title: "Monthly Amount",
+      dataIndex: "monthlyAmount",
+      key: "monthlyAmount",
+      type: "number-toComma",
+      placeholder: "$0,000",
+      width: 160,
+    },
+    {
+      title: "Waiting Period",
+      dataIndex: "waitingPeriod",
+      key: "waitingPeriod",
+      type: "select",
+      options: [
+        { value: "30 Days", label: "30 Days" },
+        { value: "60 Days", label: "60 Days" },
+        { value: "90 Days", label: "90 Days" },
+        { value: "120 Days", label: "120 Days" },
+        { value: "180 Days", label: "180 Days" },
+        { value: "2 Years", label: "2 Years" },
+      ],
+      width: 160,
+    },
+    {
+      title: "Benefit Period",
+      dataIndex: "benefitPeriod",
+      key: "benefitPeriod",
+      type: "select",
+      options: [
+        { value: "2 Years", label: "2 Years" },
+        { value: "5 Years", label: "5 Years" },
+        { value: "To Age 60", label: "To Age 60" },
+        { value: "To Age 65", label: "To Age 65" },
+        { value: "To Age 70", label: "To Age 70" },
+      ],
+      width: 160,
+    },
+    {
+      title: "Own Occ Period",
+      dataIndex: "ownOccPeriod",
+      key: "ownOccPeriod",
+      type: "select",
+      options: [
+        { value: "2 Years", label: "2 Years" },
+        { value: "5 Years", label: "5 Years" },
+        { value: "To Age 60", label: "To Age 60" },
+        { value: "To Age 65", label: "To Age 65" },
+        { value: "To Age 70", label: "To Age 70" },
+      ],
+      width: 160,
+    },
+    {
+      title: "Premium Type",
+      dataIndex: "premiumType",
+      key: "premiumType",
+      type: "select",
+      options: [
+        { value: "Stepped", label: "Stepped" },
+        { value: "Level", label: "Level" },
+      ],
+      width: 150,
+    },
+    {
+      title: "Benefit Type",
+      dataIndex: "benefitType",
+      key: "benefitType",
+      type: "select",
+      options: [
+        { value: "Agreed", label: "Agreed" },
+        { value: "Indemnity", label: "Indemnity" },
+      ],
+      width: 150,
+    },
+    {
+      title: "CPI",
+      dataIndex: "CPI",
+      key: "CPI",
+      type: "yesno",
+      width: 100,
+    },
+    {
+      title: "Increasing Claims",
+      dataIndex: "increasingClaims",
+      key: "increasingClaims",
+      type: "yesno",
+      width: 150,
+    },
+    {
+      title: "Accident Option",
+      dataIndex: "accidentOption",
+      key: "accidentOption",
+      type: "yesno",
+      width: 150,
+    },
+    {
+      title: "Superlinked",
+      dataIndex: "superlinked",
+      key: "superlinked",
+      type: "yesno",
+      width: 150,
+    },
+  ];
 
   return (
-    <div className="container-fluid">
-      <div className="row m-0">
-        <Formik
-          initialValues={CRObject}
-          onSubmit={onSubmit}
-          enableReinitialize
-          innerRef={props.formRef}
-        >
-          {({ values, handleChange, setFieldValue }) => (
-            <Form>
-              <div className="col-md-12 text-center">
+    <Formik
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      enableReinitialize
+      innerRef={props.formRef}
+    >
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
+        useEffect(() => {
+          fillInitialValues(setFieldValue);
+        }, []);
 
-                <div className="row my-3 justify-content-center">
-                  <DynamicQuestionBlocks QuestionArray={QuestionArray} QuestionClick={QuestionClick} values={values} setFieldValue={setFieldValue} />
-                </div>
+        const dataRows = useMemo(() => {
+          return Array.from({ length: 1 }, (_, i) => ({
+            key: i,
+            index: 1,
+            ...values,
+          }));
+        }, [values]);
 
-                <div className="row mt-2 d-none">
-                  <div className="col-md-12">
-                    <button
-                      onClick={() => { }}
-                      type="submit"
-                      className="float-end btn w-25  bgColor modalBtn"
-                    >
-                      Next
-                    </button>
-                    <button
-                      onClick={() => { }}
-                      className="float-end btn w-25  btn-outline  backBtn mx-3 d-none"
-                    >
-                      Back
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </Form>
-          )}
-        </Formik>
-      </div>
-    </div>
+        return (
+          <Form>
+            <div className="mt-4 All_Client reportSection">
+              <AntdTable
+                columns={columns}
+                data={dataRows}
+                values={values}
+                setFieldValue={setFieldValue}
+                handleChange={handleChange}
+                handleBlur={handleBlur}
+                isEditing={props?.isEditing}
+                setIsEditing={props?.setIsEditing}
+              />
+            </div>
+            <button type="submit" style={{ display: "none" }}>
+              Submit
+            </button>
+          </Form>
+        );
+      }}
+    </Formik>
   );
 };
 

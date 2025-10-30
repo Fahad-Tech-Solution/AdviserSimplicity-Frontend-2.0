@@ -221,7 +221,7 @@ const QuestionsNew = (props) => {
                   setFlagState(true);
 
                   setModalObject({
-                    title: "Questions",
+                    title: location.pathname=="/user/personal-insurance"? "Personal Insurance": "Questions",
                     Input: "Name",
                   });
                 }}

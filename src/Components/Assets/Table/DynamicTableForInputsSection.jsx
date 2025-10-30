@@ -59,7 +59,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
         return Array.isArray(value) ? value.join(", ") : value || "";
       if (col?.type === "yesnoModal" && value === "Yes") {
         return (
-          <div className="d-flex align-items-center justify-content-center gap-3">
+          <div className="d-flex align-items-center justify-content-left gap-3">
             {value}
             <DynamicFormField
               fieldType="modal"

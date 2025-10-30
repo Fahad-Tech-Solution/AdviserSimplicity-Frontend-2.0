@@ -45,14 +45,11 @@ const PersonalInsuranceLife = (props) => {
           joint: [],
           PersonalInsurance: [],
           numberOfPersonalInsurance: 0,
-          groupCoverDetails: [],
-          numberOfGroupCover: 0,
         };
 
   const initialValues = {
     NumberOfMap: "",
     PersonalInsurance: [],
-    groupCoverDetails: [],
   };
 
   const fillInitialValues = (setFieldValue) => {
@@ -90,35 +87,6 @@ const PersonalInsuranceLife = (props) => {
     } else {
       setFieldValue("NumberOfMap", "");
       setFieldValue("PersonalInsurance", []);
-    }
-
-    // Fill Group Cover Details
-    if (personalInsurance && personalInsurance.groupCoverDetails?.length) {
-      personalInsurance.groupCoverDetails.forEach((entry, index) => {
-        const fields = [
-          "lifeInsured",
-          "provider",
-          "policyNo",
-          "groupOwner",
-          "startDate",
-          "smoker",
-          "life",
-          "tpd",
-          "trauma",
-          "ip",
-          "premiumPA",
-          "loadingExclusion",
-          "beneficiary",
-        ];
-        fields.forEach((field) =>
-          setFieldValue(
-            `groupCoverDetails[${index}].${field}`,
-            entry[field] || ""
-          )
-        );
-      });
-    } else {
-      setFieldValue("groupCoverDetails", []);
     }
   };
 
@@ -166,30 +134,9 @@ const PersonalInsuranceLife = (props) => {
       });
     }
 
-    const groupCoverEntries = [];
-    for (let i = 0; i < loopLength; i++) {
-      groupCoverEntries.push({
-        lifeInsured: values.groupCoverDetails[i]?.lifeInsured || "",
-        provider: values.groupCoverDetails[i]?.provider || "",
-        policyNo: values.groupCoverDetails[i]?.policyNo || "",
-        groupOwner: values.groupCoverDetails[i]?.groupOwner || "",
-        startDate: values.groupCoverDetails[i]?.startDate || "",
-        smoker: values.groupCoverDetails[i]?.smoker || "",
-        life: values.groupCoverDetails[i]?.life || "",
-        tpd: values.groupCoverDetails[i]?.tpd || "",
-        trauma: values.groupCoverDetails[i]?.trauma || "",
-        ip: values.groupCoverDetails[i]?.ip || "",
-        premiumPA: values.groupCoverDetails[i]?.premiumPA || "",
-        loadingExclusion: values.groupCoverDetails[i]?.loadingExclusion || "",
-        beneficiary: values.groupCoverDetails[i]?.beneficiary || "",
-      });
-    }
-
     const Obj = {
       PersonalInsurance: newEntries,
       numberOfPersonalInsurance: newEntries.length,
-      groupCoverDetails: groupCoverEntries,
-      numberOfGroupCover: groupCoverEntries.length,
       clientFK: localStorage.getItem("UserID"),
     };
 
@@ -409,7 +356,7 @@ const PersonalInsuranceLife = (props) => {
         {({ values, setFieldValue, handleChange, handleBlur }) => {
           useEffect(() => {
             fillInitialValues(setFieldValue);
-          }, [personalInsurance.PersonalInsurance, personalInsurance.groupCoverDetails]);
+          }, [personalInsurance.PersonalInsurance]);
 
           const dataRows = useMemo(() => {
             const num = Number(values.NumberOfMap) || 0;
@@ -430,7 +377,7 @@ const PersonalInsuranceLife = (props) => {
                   key: `groupCoverDetails[${i}]`,
                   owner: i + 1,
                   stakeHolder: `groupCoverDetails[${i}]`,
-                  ...values.groupCoverDetails[i],
+                  ...(values?.groupCoverDetails[i] || []),
                 }))
               : [];
           }, [values.NumberOfMap, values.groupCoverDetails]);
@@ -511,7 +458,6 @@ const PersonalInsuranceLife = (props) => {
               {values.NumberOfMap && (
                 <div className="mt-4 All_Client reportSection">
                   <GroupCoverDetails
-                    values={values}
                     setFieldValue={setFieldValue}
                     handleChange={handleChange}
                     handleBlur={handleBlur}
