@@ -109,14 +109,14 @@ const EstatePlanningWill = (props) => {
       key,
       values, // ✅ correct property
       stackHolder, // ✅ correct key name expected by DynamicDescription
-      question
+      question,
     });
     setFlagState(true);
   };
 
   const onSubmit = async (values) => {
     console.log("EstatePlanningWill onSubmit values:", values);
-    const DataOf = props.modalObject?.Input || "will";
+    const DataOf = props.modalObject?.key || "will";
     const obj = { ...values, clientFK: localStorage.getItem("UserID") };
 
     if (values.owner.includes("client") || values.owner.includes("together")) {
@@ -138,7 +138,7 @@ const EstatePlanningWill = (props) => {
       obj.partner = {};
     }
 
-    console.log("Final obj:", obj);
+    console.log("Final obj:", obj, DataOf);
 
     try {
       let res;
@@ -175,26 +175,25 @@ const EstatePlanningWill = (props) => {
     }
   };
 
-  const options = !["Single", "Widowed"].includes(
-    personalDetailObj.client?.MaritalStatus
-  )
-    ? [
-        {
-          value: "client",
-          label: personalDetailObj.client?.clientPreferredName || "Client",
-        },
-        {
-          value: "partner",
-          label: personalDetailObj.partner?.partnerPreferredName || "Partner",
-        },
-        { value: "together", label: `Together(${RenderName("joint")})` },
-      ]
-    : [
-        {
-          value: "client",
-          label: personalDetailObj.client?.clientPreferredName || "Client",
-        },
-      ];
+  const options =
+    UserStatus === "Married"
+      ? [
+          {
+            value: "client",
+            label: personalDetailObj.client?.clientPreferredName || "Client",
+          },
+          {
+            value: "partner",
+            label: personalDetailObj.partner?.partnerPreferredName || "Partner",
+          },
+          { value: "together", label: `Together(${RenderName("joint")})` },
+        ]
+      : [
+          {
+            value: "client",
+            label: personalDetailObj.client?.clientPreferredName || "Client",
+          },
+        ];
 
   const columns = [
     {
@@ -279,47 +278,43 @@ const EstatePlanningWill = (props) => {
         const tableData = useMemo(() => {
           const rows = [];
 
-          if (values.owner.includes("client")) {
-            rows.push({
+          const owners = values.owner || [];
+          const ownerConfigs = [
+            {
               key: "client",
-              stakeHolder: "client",
-              owner: RenderName("client"),
-              yearSetUp: values?.client?.yearSetUp || "",
-              willsCurrent: values?.client?.willsCurrent || "",
-              executor: values?.client?.executor.length || "",
-              enduringGuardianship: values?.client?.enduringGuardianship || "",
-              testamentaryTrust: values?.client?.testamentaryTrust || "",
-              estatePlanningRadio: values?.client?.estatePlanningRadio || "",
-            });
-          }
-
-          if (values.owner.includes("partner") && UserStatus === "Married") {
-            rows.push({
+              label: "client",
+              condition: owners.includes("client"),
+            },
+            {
               key: "partner",
-              stakeHolder: "partner",
-              owner: RenderName("partner"),
-              yearSetUp: values?.partner?.yearSetUp || "",
-              willsCurrent: values?.partner?.willsCurrent || "",
-              executor: values?.partner?.executor.length || "",
-              enduringGuardianship: values?.partner?.enduringGuardianship || "",
-              testamentaryTrust: values?.partner?.testamentaryTrust || "",
-              estatePlanningRadio: values?.partner?.estatePlanningRadio || "",
-            });
-          }
-
-          if (values.owner.includes("together") && UserStatus === "Married") {
-            rows.push({
+              label: "partner",
+              condition: owners.includes("partner") && UserStatus === "Married",
+            },
+            {
               key: "client",
-              stakeHolder: "client",
-              owner: RenderName("joint"),
-              yearSetUp: values?.client?.yearSetUp || "",
-              willsCurrent: values?.client?.willsCurrent || "",
-              executor: values?.client?.executor.length || "",
-              enduringGuardianship: values?.client?.enduringGuardianship || "",
-              testamentaryTrust: values?.client?.testamentaryTrust || "",
-              estatePlanningRadio: values?.client?.estatePlanningRadio || "",
+              label: "joint",
+              condition:
+                owners.includes("together") && UserStatus === "Married",
+            },
+          ];
+
+          ownerConfigs.forEach(({ key, label, condition }) => {
+            if (!condition) return;
+
+            const target = key === "joint" ? values.client : values[key]; // joint uses client values as before
+
+            rows.push({
+              key,
+              stakeHolder: key,
+              owner: RenderName(label),
+              yearSetUp: target?.yearSetUp || "",
+              willsCurrent: target?.willsCurrent || "",
+              executor: target?.executor?.length || "",
+              enduringGuardianship: target?.enduringGuardianship || "",
+              testamentaryTrust: target?.testamentaryTrust || "",
+              estatePlanningRadio: target?.estatePlanningRadio || "",
             });
-          }
+          });
 
           return rows;
         }, [values]);

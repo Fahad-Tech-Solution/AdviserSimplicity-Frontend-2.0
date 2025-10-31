@@ -141,7 +141,7 @@ const GroupCoverDetails = (props) => {
   return (
     <>
       <h4 className="mt-1 pt-2" onClick={() => console.log(props?.values)}>
-        Group Cover Details
+        {props.title || "Group Cover Details"}
       </h4>
       <div className="mt-4 All_Client reportSection">
         <AntdTable

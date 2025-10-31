@@ -75,13 +75,7 @@ const EstatePlanningPOA = (props) => {
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   let onSubmit = async (values) => {
-    let DataOf = props.modalObject?.key || "POA";
-    console.log(
-      "EstatePlanningPOA onSubmit values:",
-      values,
-      "Key Came From:",
-      DataOf
-    );
+    
     let obj = { ...values };
     obj.clientFK = localStorage.getItem("UserID");
 

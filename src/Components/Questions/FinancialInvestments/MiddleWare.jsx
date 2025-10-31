@@ -70,8 +70,7 @@ const MiddleWare = (props) => {
       ? questionDetail[props.modalObject.key]
       : { client: [], joint: [], partner: [] };
 
-  const initialValues = {
-  };
+  const initialValues = {};
 
   // Modal component mapping
   const componentMapping = {
@@ -203,7 +202,7 @@ const MiddleWare = (props) => {
   const DefaultUrl = useRecoilValue(defaultUrl);
 
   // Submit behaviour preserved from original
-   const onSubmit = async (values) => {
+  const onSubmit = async (values) => {
     try {
       // 1️⃣ Start shaping object for backend
       const obj = {
@@ -449,7 +448,7 @@ const MiddleWare = (props) => {
                 <p
                   className="text-end mt-1 pt-2 d-none"
                   onClick={() => {
-                    console.log(values);
+                    console.log(values, questionDetail, props.modalObject);
                   }}
                 >
                   Test Text

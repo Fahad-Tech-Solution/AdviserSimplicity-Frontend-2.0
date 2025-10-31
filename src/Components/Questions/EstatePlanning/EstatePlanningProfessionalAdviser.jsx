@@ -55,13 +55,13 @@ const EstatePlanningProfessionalAdviser = (props) => {
       [DataOf + "Total"]: advisers.length > 0 ? "Yes" : "No",
     };
 
-    setQuestionDetail((prev) => ({
-      ...prev,
-      professionalAdviser: {
-        ...prev.professionalAdviser,
-        [DataOf]: advisers,
-      },
-    }));
+    // setQuestionDetail((prev) => ({
+    //   ...prev,
+    //   professionalAdviser: {
+    //     ...prev.professionalAdviser,
+    //     [DataOf]: advisers,
+    //   },
+    // }));
 
     try {
       const hasExisting =

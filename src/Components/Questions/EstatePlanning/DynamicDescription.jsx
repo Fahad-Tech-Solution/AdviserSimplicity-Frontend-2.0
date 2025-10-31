@@ -11,12 +11,14 @@ const DynamicDescription = (props) => {
     const index = parseFloat(
       props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
     );
-    const BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
+    const BaseKey = props.modalObject.stakeHolder.split(".");
+
+    console.log("BaseKey:", BaseKey, "Index:", index);
 
     let editDetails =
-      props.modalObject.values?.[BaseKey]?.[index]?.[
-        props.modalObject.key + "description"
-      ];
+      props.modalObject.values?.[BaseKey[0]]?.[BaseKey[1].split("[")[0]]?.[
+        index
+      ]?.[props.modalObject.key + "description"] || [];
 
     if (editDetails) {
       setFieldValue("description", editDetails || "");
