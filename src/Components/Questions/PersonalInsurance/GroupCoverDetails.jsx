@@ -104,6 +104,7 @@ const GroupCoverDetails = (props) => {
       key: "trauma",
       type: "number-toComma",
       placeholder: "Trauma",
+      disabled:true,
       width: 120,
     },
     {

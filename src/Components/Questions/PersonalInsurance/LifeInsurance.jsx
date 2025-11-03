@@ -12,6 +12,7 @@ import {
   PatchAxios,
   PostAxios,
   RenderName,
+  toCommaAndDollar,
 } from "../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
@@ -32,6 +33,7 @@ const PersonalInsuranceLife = (props) => {
   const [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
   const DefaultUrl = useRecoilValue(defaultUrl);
   const bankDetailObj = useRecoilValue(BankDetail);
+
   const [CRObject, setCRObject] = useRecoilState(CRState);
   const [UserStatus] = useState(localStorage.getItem("UserStatus"));
   const [flagState, setFlagState] = useState(false);
@@ -45,6 +47,21 @@ const PersonalInsuranceLife = (props) => {
           partner: { PersonalInsurance: [], groupCoverDetails: [] },
           selectedStakeholders: [],
         };
+  const superAnnuationIssues =
+    questionDetail?.superAnnuationIssues &&
+    Object.keys(questionDetail?.superAnnuationIssues).length > 0
+      ? questionDetail.superAnnuationIssues
+      : { client: [], joint: [], partner: [] };
+
+  const groupInsuranceDetailsAll = ["client", "partner", "joint"].reduce(
+    (acc, key) => {
+      acc[key] = (superAnnuationIssues[key] || [])
+        .filter((item) => item.groupInsurance === "Yes")
+        .map((item) => item || {});
+      return acc;
+    },
+    {}
+  );
 
   const initialValues = {
     client: {
@@ -61,146 +78,316 @@ const PersonalInsuranceLife = (props) => {
   };
 
   const fillInitialValues = (setFieldValue) => {
-    // Set selected stakeholders
-    if (personalInsurance.selectedStakeholders?.length) {
-      setFieldValue(
-        "selectedStakeholders",
-        personalInsurance.selectedStakeholders
-      );
-    } else {
-      setFieldValue("selectedStakeholders", []);
-    }
-
-    // Fill Client Data
-    if (personalInsurance.client?.PersonalInsurance?.length) {
-      setFieldValue(
-        "client.numberOfPolicies",
-        personalInsurance.client.PersonalInsurance.length || 0
-      );
-
-      personalInsurance.client.PersonalInsurance.forEach((entry, index) => {
-        const fields = [
-          "lifeInsured",
-          "provider",
-          "policyNo",
-          "Owner",
-          "startDate",
-          "smoker",
-          "life",
-          "TPD",
-          "trauma",
-          "IP",
-          "premiums",
-          "loadingExclusion",
-          "loadingExclusionValue",
-          "beneficiary",
-          "beneficiariesArray",
-        ];
-        fields.forEach((field) =>
-          setFieldValue(
-            `client.PersonalInsurance[${index}].${field}`,
-            entry[field] || (Array.isArray(entry[field]) ? [] : "")
-          )
+    try {
+      // --- Set selected stakeholders ---
+      if (personalInsurance?.selectedStakeholders?.length) {
+        setFieldValue(
+          "selectedStakeholders",
+          personalInsurance.selectedStakeholders
         );
-      });
-    } else {
-      setFieldValue("client.numberOfPolicies", "");
-      setFieldValue("client.PersonalInsurance", []);
-    }
+      } else {
+        setFieldValue("selectedStakeholders", []);
+      }
 
-    // Fill Client Group Cover Details
-    if (personalInsurance.client?.groupCoverDetails?.length) {
-      personalInsurance.client.groupCoverDetails.forEach((entry, index) => {
-        const fields = [
-          "lifeInsured",
-          "provider",
-          "policyNo",
-          "groupOwner",
-          "startDate",
-          "smoker",
-          "life",
-          "tpd",
-          "trauma",
-          "ip",
-          "premiumPA",
-          "loadingExclusion",
-          "beneficiary",
-        ];
-        fields.forEach((field) =>
-          setFieldValue(
-            `client.groupCoverDetails[${index}].${field}`,
-            entry[field] || ""
-          )
+      // --- Fill Client Personal Insurance ---
+      if (personalInsurance?.client?.PersonalInsurance?.length) {
+        setFieldValue(
+          "client.numberOfPolicies",
+          personalInsurance.client.PersonalInsurance.length || 0
         );
-      });
-    } else {
-      setFieldValue("client.groupCoverDetails", []);
-    }
 
-    // Fill Partner Data
-    if (personalInsurance.partner?.PersonalInsurance?.length) {
-      setFieldValue(
-        "partner.numberOfPolicies",
-        personalInsurance.partner.PersonalInsurance.length || 0
-      );
+        personalInsurance.client.PersonalInsurance.forEach((entry, index) => {
+          const fields = [
+            "lifeInsured",
+            "provider",
+            "policyNo",
+            "Owner",
+            "startDate",
+            "smoker",
+            "life",
+            "TPD",
+            "trauma",
+            "IP",
+            "premiums",
+            "loadingExclusion",
+            "loadingExclusionValue",
+            "beneficiary",
+            "beneficiariesArray",
+          ];
+          fields.forEach((field) =>
+            setFieldValue(
+              `client.PersonalInsurance[${index}].${field}`,
+              entry?.[field] || (Array.isArray(entry?.[field]) ? [] : "")
+            )
+          );
+        });
+      } else {
+        setFieldValue("client.numberOfPolicies", "");
+        setFieldValue("client.PersonalInsurance", []);
+      }
 
-      personalInsurance.partner.PersonalInsurance.forEach((entry, index) => {
-        const fields = [
-          "lifeInsured",
-          "provider",
-          "policyNo",
-          "Owner",
-          "startDate",
-          "smoker",
-          "life",
-          "TPD",
-          "trauma",
-          "IP",
-          "premiums",
-          "loadingExclusion",
-          "loadingExclusionValue",
-          "beneficiary",
-          "beneficiariesArray",
-        ];
-        fields.forEach((field) =>
-          setFieldValue(
-            `partner.PersonalInsurance[${index}].${field}`,
-            entry[field] || (Array.isArray(entry[field]) ? [] : "")
-          )
+      // --- Fill Client Group Cover Details ---
+      if (personalInsurance?.client?.groupCoverDetails?.length) {
+        personalInsurance.client.groupCoverDetails.forEach((entry, index) => {
+          const fields = [
+            "lifeInsured",
+            "provider",
+            "policyNo",
+            "groupOwner",
+            "startDate",
+            "smoker",
+            "life",
+            "tpd",
+            "trauma",
+            "ip",
+            "premiumPA",
+            "loadingExclusion",
+            "beneficiary",
+          ];
+          fields.forEach((field) =>
+            setFieldValue(
+              `client.groupCoverDetails[${index}].${field}`,
+              entry?.[field] || ""
+            )
+          );
+        });
+      } else if (groupInsuranceDetailsAll?.client?.length > 0) {
+        try {
+          groupInsuranceDetailsAll.client.forEach((entry, index) => {
+            setFieldValue(
+              `client.groupCoverDetails[${index}].lifeInsured`,
+              RenderName("client") || ""
+            );
+
+            const fundName =
+              bankDetailObj?.SuperannuationFunds?.map((elem) => ({
+                value: elem._id,
+                label: elem.platformName,
+              })).find((fund) => fund.value === entry?.platformName)?.label ||
+              "";
+
+            setFieldValue(
+              `client.groupCoverDetails[${index}].provider`,
+              fundName || ""
+            );
+            setFieldValue(
+              `client.groupCoverDetails[${index}].policyNo`,
+              entry?.memberNumber || ""
+            );
+            setFieldValue(
+              `client.groupCoverDetails[${index}].groupOwner`,
+              entry?.balanceBenefitDetails?.fundType || ""
+            );
+            setFieldValue(
+              `client.groupCoverDetails[${index}].startDate`,
+              entry?.balanceBenefitDetails?.commencementDate || ""
+            );
+            setFieldValue(`client.groupCoverDetails[${index}].smoker`, "No");
+            setFieldValue(
+              `client.groupCoverDetails[${index}].life`,
+              entry?.groupInsuranceDetails?.lifeCover || 0
+            );
+            setFieldValue(
+              `client.groupCoverDetails[${index}].tpd`,
+              entry?.groupInsuranceDetails?.TPDCover || 0
+            );
+            setFieldValue(`client.groupCoverDetails[${index}].trauma`, "$0");
+            setFieldValue(
+              `client.groupCoverDetails[${index}].ip`,
+              entry?.groupInsuranceDetails?.monthlyIncome || 0
+            );
+
+            const premiumPA =
+              (Number(
+                entry?.groupInsuranceDetails?.lifeCover?.replace(
+                  /[^0-9.-]+/g,
+                  ""
+                )
+              ) || 0) +
+              (Number(
+                entry?.groupInsuranceDetails?.TPDCover?.replace(
+                  /[^0-9.-]+/g,
+                  ""
+                )
+              ) || 0) +
+              (Number(
+                entry?.groupInsuranceDetails?.monthlyIncome?.replace(
+                  /[^0-9.-]+/g,
+                  ""
+                )
+              ) || 0);
+
+            setFieldValue(
+              `client.groupCoverDetails[${index}].premiumPA`,
+              premiumPA
+            );
+            setFieldValue(
+              `client.groupCoverDetails[${index}].loadingExclusion`,
+              "No"
+            );
+            setFieldValue(
+              `client.groupCoverDetails[${index}].beneficiary`,
+              entry?.nominatedBeneficiaries || "No"
+            );
+          });
+        } catch (error) {
+          console.error("Error filling client group cover details:", error);
+          setFieldValue("client.groupCoverDetails", []);
+        }
+      } else {
+        setFieldValue("client.groupCoverDetails", []);
+      }
+
+      // --- Fill Partner Personal Insurance ---
+      if (personalInsurance?.partner?.PersonalInsurance?.length) {
+        setFieldValue(
+          "partner.numberOfPolicies",
+          personalInsurance.partner.PersonalInsurance.length || 0
         );
-      });
-    } else {
-      setFieldValue("partner.numberOfPolicies", "");
-      setFieldValue("partner.PersonalInsurance", []);
-    }
 
-    // Fill Partner Group Cover Details
-    if (personalInsurance.partner?.groupCoverDetails?.length) {
-      personalInsurance.partner.groupCoverDetails.forEach((entry, index) => {
-        const fields = [
-          "lifeInsured",
-          "provider",
-          "policyNo",
-          "groupOwner",
-          "startDate",
-          "smoker",
-          "life",
-          "tpd",
-          "trauma",
-          "ip",
-          "premiumPA",
-          "loadingExclusion",
-          "beneficiary",
-        ];
-        fields.forEach((field) =>
-          setFieldValue(
-            `partner.groupCoverDetails[${index}].${field}`,
-            entry[field] || ""
-          )
-        );
-      });
-    } else {
-      setFieldValue("partner.groupCoverDetails", []);
+        personalInsurance.partner.PersonalInsurance.forEach((entry, index) => {
+          const fields = [
+            "lifeInsured",
+            "provider",
+            "policyNo",
+            "Owner",
+            "startDate",
+            "smoker",
+            "life",
+            "TPD",
+            "trauma",
+            "IP",
+            "premiums",
+            "loadingExclusion",
+            "loadingExclusionValue",
+            "beneficiary",
+            "beneficiariesArray",
+          ];
+          fields.forEach((field) =>
+            setFieldValue(
+              `partner.PersonalInsurance[${index}].${field}`,
+              entry?.[field] || (Array.isArray(entry?.[field]) ? [] : "")
+            )
+          );
+        });
+      } else {
+        setFieldValue("partner.numberOfPolicies", "");
+        setFieldValue("partner.PersonalInsurance", []);
+      }
+
+      // --- Fill Partner Group Cover Details ---
+      if (personalInsurance?.partner?.groupCoverDetails?.length) {
+        personalInsurance.partner.groupCoverDetails.forEach((entry, index) => {
+          const fields = [
+            "lifeInsured",
+            "provider",
+            "policyNo",
+            "groupOwner",
+            "startDate",
+            "smoker",
+            "life",
+            "tpd",
+            "trauma",
+            "ip",
+            "premiumPA",
+            "loadingExclusion",
+            "beneficiary",
+          ];
+          fields.forEach((field) =>
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].${field}`,
+              entry?.[field] || ""
+            )
+          );
+        });
+      } else if (groupInsuranceDetailsAll?.partner?.length > 0) {
+        try {
+          groupInsuranceDetailsAll.partner.forEach((entry, index) => {
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].lifeInsured`,
+              RenderName("partner") || ""
+            );
+
+            const fundName =
+              bankDetailObj?.SuperannuationFunds?.map((elem) => ({
+                value: elem._id,
+                label: elem.platformName,
+              })).find((fund) => fund.value === entry?.platformName)?.label ||
+              "";
+
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].provider`,
+              fundName || ""
+            );
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].policyNo`,
+              entry?.memberNumber || ""
+            );
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].groupOwner`,
+              entry?.balanceBenefitDetails?.fundType || ""
+            );
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].startDate`,
+              entry?.balanceBenefitDetails?.commencementDate || ""
+            );
+            setFieldValue(`partner.groupCoverDetails[${index}].smoker`, "No");
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].life`,
+              entry?.groupInsuranceDetails?.lifeCover || 0
+            );
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].tpd`,
+              entry?.groupInsuranceDetails?.TPDCover || 0
+            );
+            setFieldValue(`partner.groupCoverDetails[${index}].trauma`, "$0");
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].ip`,
+              entry?.groupInsuranceDetails?.monthlyIncome || 0
+            );
+
+            const premiumPA =
+              (Number(
+                entry?.groupInsuranceDetails?.lifeCover?.replace(
+                  /[^0-9.-]+/g,
+                  ""
+                )
+              ) || 0) +
+              (Number(
+                entry?.groupInsuranceDetails?.TPDCover?.replace(
+                  /[^0-9.-]+/g,
+                  ""
+                )
+              ) || 0) +
+              (Number(
+                entry?.groupInsuranceDetails?.monthlyIncome?.replace(
+                  /[^0-9.-]+/g,
+                  ""
+                )
+              ) || 0);
+
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].premiumPA`,
+              premiumPA
+            );
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].loadingExclusion`,
+              "No"
+            );
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].beneficiary`,
+              entry?.nominatedBeneficiaries || "No"
+            );
+          });
+        } catch (error) {
+          console.error("Error filling partner group cover details:", error);
+          setFieldValue("partner.groupCoverDetails", []);
+        }
+      } else {
+        setFieldValue("partner.groupCoverDetails", []);
+      }
+    } catch (error) {
+      console.error("Error filling initial values:", error);
     }
   };
 
@@ -228,98 +415,124 @@ const PersonalInsuranceLife = (props) => {
   };
 
   const onSubmit = async (values) => {
-    const clientEntries = [];
-    const clientLoopLength = parseFloat(values.client.numberOfPolicies) || 0;
-
-    for (let i = 0; i < clientLoopLength; i++) {
-      clientEntries.push({
-        lifeInsured: values.client.PersonalInsurance[i]?.lifeInsured || "",
-        provider: values.client.PersonalInsurance[i]?.provider || "",
-        policyNo: values.client.PersonalInsurance[i]?.policyNo || "",
-        Owner: values.client.PersonalInsurance[i]?.Owner || "",
-        startDate: values.client.PersonalInsurance[i]?.startDate || "",
-        smoker: values.client.PersonalInsurance[i]?.smoker || "",
-        life: values.client.PersonalInsurance[i]?.life || [],
-        TPD: values.client.PersonalInsurance[i]?.TPD || [],
-        trauma: values.client.PersonalInsurance[i]?.trauma || [],
-        IP: values.client.PersonalInsurance[i]?.IP || [],
-        premiums: values.client.PersonalInsurance[i]?.premiums || "",
-        loadingExclusion:
-          values.client.PersonalInsurance[i]?.loadingExclusion || "",
-        loadingExclusionValue:
-          values.client.PersonalInsurance[i]?.loadingExclusionValue || "",
-        beneficiary: values.client.PersonalInsurance[i]?.beneficiary || "",
-        beneficiariesArray:
-          values.client.PersonalInsurance[i]?.beneficiariesArray || [],
+    // Helper function to safely extract array entries
+    const mapEntries = (array, fields) =>
+      (array || []).map((item) => {
+        const obj = {};
+        fields.forEach((field) => {
+          obj[field] = item?.[field] || "";
+        });
+        return obj;
       });
-    }
 
-    const clientGroupCoverEntries = [];
-    for (let i = 0; i < clientLoopLength; i++) {
-      clientGroupCoverEntries.push({
-        lifeInsured: values.client.groupCoverDetails[i]?.lifeInsured || "",
-        provider: values.client.groupCoverDetails[i]?.provider || "",
-        policyNo: values.client.groupCoverDetails[i]?.policyNo || "",
-        groupOwner: values.client.groupCoverDetails[i]?.groupOwner || "",
-        startDate: values.client.groupCoverDetails[i]?.startDate || "",
-        smoker: values.client.groupCoverDetails[i]?.smoker || "",
-        life: values.client.groupCoverDetails[i]?.life || "",
-        tpd: values.client.groupCoverDetails[i]?.tpd || "",
-        trauma: values.client.groupCoverDetails[i]?.trauma || "",
-        ip: values.client.groupCoverDetails[i]?.ip || "",
-        premiumPA: values.client.groupCoverDetails[i]?.premiumPA || "",
-        loadingExclusion:
-          values.client.groupCoverDetails[i]?.loadingExclusion || "",
-        beneficiary: values.client.groupCoverDetails[i]?.beneficiary || "",
-      });
-    }
+    // Fields for Personal Insurance (Client + Partner)
+    const personalFields = [
+      "lifeInsured",
+      "provider",
+      "policyNo",
+      "Owner",
+      "startDate",
+      "smoker",
+      "life",
+      "TPD",
+      "trauma",
+      "IP",
+      "premiums",
+      "loadingExclusion",
+      "loadingExclusionValue",
+      "beneficiary",
+      "beneficiariesArray",
+    ];
 
-    const partnerEntries = [];
-    const partnerLoopLength = parseFloat(values.partner.numberOfPolicies) || 0;
+    // Fields for Group Cover Details (Client + Partner)
+    const groupFields = [
+      "lifeInsured",
+      "provider",
+      "policyNo",
+      "groupOwner",
+      "startDate",
+      "smoker",
+      "life",
+      "tpd",
+      "trauma",
+      "ip",
+      "premiumPA",
+      "loadingExclusion",
+      "beneficiary",
+    ];
 
-    for (let i = 0; i < partnerLoopLength; i++) {
-      partnerEntries.push({
-        lifeInsured: values.partner.PersonalInsurance[i]?.lifeInsured || "",
-        provider: values.partner.PersonalInsurance[i]?.provider || "",
-        policyNo: values.partner.PersonalInsurance[i]?.policyNo || "",
-        Owner: values.partner.PersonalInsurance[i]?.Owner || "",
-        startDate: values.partner.PersonalInsurance[i]?.startDate || "",
-        smoker: values.partner.PersonalInsurance[i]?.smoker || "",
-        life: values.partner.PersonalInsurance[i]?.life || [],
-        TPD: values.partner.PersonalInsurance[i]?.TPD || [],
-        trauma: values.partner.PersonalInsurance[i]?.trauma || [],
-        IP: values.partner.PersonalInsurance[i]?.IP || [],
-        premiums: values.partner.PersonalInsurance[i]?.premiums || "",
-        loadingExclusion:
-          values.partner.PersonalInsurance[i]?.loadingExclusion || "",
-        loadingExclusionValue:
-          values.partner.PersonalInsurance[i]?.loadingExclusionValue || "",
-        beneficiary: values.partner.PersonalInsurance[i]?.beneficiary || "",
-        beneficiariesArray:
-          values.partner.PersonalInsurance[i]?.beneficiariesArray || [],
-      });
-    }
+    // Generate arrays safely even if undefined
+    const clientEntries = mapEntries(
+      values?.client?.PersonalInsurance,
+      personalFields
+    );
+    const partnerEntries = mapEntries(
+      values?.partner?.PersonalInsurance,
+      personalFields
+    );
 
-    const partnerGroupCoverEntries = [];
-    for (let i = 0; i < partnerLoopLength; i++) {
-      partnerGroupCoverEntries.push({
-        lifeInsured: values.partner.groupCoverDetails[i]?.lifeInsured || "",
-        provider: values.partner.groupCoverDetails[i]?.provider || "",
-        policyNo: values.partner.groupCoverDetails[i]?.policyNo || "",
-        groupOwner: values.partner.groupCoverDetails[i]?.groupOwner || "",
-        startDate: values.partner.groupCoverDetails[i]?.startDate || "",
-        smoker: values.partner.groupCoverDetails[i]?.smoker || "",
-        life: values.partner.groupCoverDetails[i]?.life || "",
-        tpd: values.partner.groupCoverDetails[i]?.tpd || "",
-        trauma: values.partner.groupCoverDetails[i]?.trauma || "",
-        ip: values.partner.groupCoverDetails[i]?.ip || "",
-        premiumPA: values.partner.groupCoverDetails[i]?.premiumPA || "",
-        loadingExclusion:
-          values.partner.groupCoverDetails[i]?.loadingExclusion || "",
-        beneficiary: values.partner.groupCoverDetails[i]?.beneficiary || "",
-      });
-    }
+    const clientGroupCoverEntries = mapEntries(
+      values?.client?.groupCoverDetails,
+      groupFields
+    );
+    const partnerGroupCoverEntries = mapEntries(
+      values?.partner?.groupCoverDetails,
+      groupFields
+    );
 
+    // ✅ Helper to convert currency string to number
+    const toNumber = (val) =>
+      Number(String(val || "0").replace(/[^0-9.-]+/g, "")) || 0;
+
+    // ✅ Helper to calculate total of a specific field across multiple arrays
+    const calcTotal = (arrays, fieldNames) =>
+      arrays.reduce((sum, arr) => {
+        (arr || []).forEach((item) => {
+          fieldNames.forEach((field) => {
+            sum += toNumber(item?.[field]);
+          });
+        });
+        return sum;
+      }, 0);
+
+    // ✅ Calculate all required totals
+    const clientLifeInsuranceTotal = calcTotal(
+      [clientEntries, clientGroupCoverEntries],
+      ["life"]
+    );
+    const partnerLifeInsuranceTotal = calcTotal(
+      [partnerEntries, partnerGroupCoverEntries],
+      ["life"]
+    );
+
+    const clientTPDTotal = calcTotal(
+      [clientEntries, clientGroupCoverEntries],
+      ["TPD", "tpd"]
+    );
+    const partnerTPDTotal = calcTotal(
+      [partnerEntries, partnerGroupCoverEntries],
+      ["TPD", "tpd"]
+    );
+
+    const clientTraumaTotal = calcTotal(
+      [clientEntries, clientGroupCoverEntries],
+      ["trauma"]
+    );
+    const partnerTraumaTotal = calcTotal(
+      [partnerEntries, partnerGroupCoverEntries],
+      ["trauma"]
+    );
+
+    const clientIncomeProtectionTotal = calcTotal(
+      [clientEntries, clientGroupCoverEntries],
+      ["IP", "ip"]
+    );
+    const partnerIncomeProtectionTotal = calcTotal(
+      [partnerEntries, partnerGroupCoverEntries],
+      ["IP", "ip"]
+    );
+
+    // Build the final payload
     const Obj = {
       client: {
         PersonalInsurance: clientEntries,
@@ -329,14 +542,29 @@ const PersonalInsuranceLife = (props) => {
         PersonalInsurance: partnerEntries,
         groupCoverDetails: partnerGroupCoverEntries,
       },
-      selectedStakeholders: values.selectedStakeholders || [],
+      clientLifeInsuranceTotal: toCommaAndDollar(clientLifeInsuranceTotal),
+      partnerLifeInsuranceTotal: toCommaAndDollar(partnerLifeInsuranceTotal),
+      clientTPDTotal: toCommaAndDollar(clientTPDTotal),
+      partnerTPDTotal: toCommaAndDollar(partnerTPDTotal),
+      clientTraumaTotal: toCommaAndDollar(clientTraumaTotal),
+      partnerTraumaTotal: toCommaAndDollar(partnerTraumaTotal),
+      clientIncomeProtectionTotal: toCommaAndDollar(
+        clientIncomeProtectionTotal
+      ),
+      partnerIncomeProtectionTotal: toCommaAndDollar(
+        partnerIncomeProtectionTotal
+      ),
+      selectedStakeholders: values?.selectedStakeholders || [],
       clientFK: localStorage.getItem("UserID"),
     };
 
+    console.log(Obj);
+
     try {
+      const apiUrl = `${DefaultUrl}/api/personalInsurance`;
       const res = personalInsurance.clientFK
-        ? await PatchAxios(`${DefaultUrl}/api/personalInsurance/Update`, Obj)
-        : await PostAxios(`${DefaultUrl}/api/personalInsurance/Add`, Obj);
+        ? await PatchAxios(`${apiUrl}/Update`, Obj)
+        : await PostAxios(`${apiUrl}/Add`, Obj);
 
       if (res) {
         const updatedData = { ...questionDetail, personalInsurance: res };
@@ -349,6 +577,7 @@ const PersonalInsuranceLife = (props) => {
         "Success Notification",
         `Data of "${props.modalObject.title}" is Saved`
       );
+
       if (props.flagState) {
         props.setFlagState(false);
         props.setIsEditing(!props.isEditing);
@@ -668,7 +897,12 @@ const PersonalInsuranceLife = (props) => {
 
               {shouldShowClient && (
                 <div className="d-flex flex-row justify-content-center align-items-center gap-4 mb-4">
-                  <p className="text-end mt-1 pt-2 mb-0">
+                  <p
+                    className="text-end mt-1 pt-2 mb-0"
+                    onClick={() => {
+                      console.log(personalInsurance);
+                    }}
+                  >
                     How many {props.modalObject.title} does{" "}
                     {RenderName("client")} have:
                   </p>
@@ -769,20 +1003,21 @@ const PersonalInsuranceLife = (props) => {
                       setIsEditing={props?.setIsEditing}
                     />
                   </div>
-
-                  <div className="mt-4 All_Client reportSection">
-                    <GroupCoverDetails
-                      values={values}
-                      setFieldValue={setFieldValue}
-                      handleChange={handleChange}
-                      handleBlur={handleBlur}
-                      isEditing={props?.isEditing}
-                      setIsEditing={props?.setIsEditing}
-                      groupDataRows={clientGroupDataRows}
-                      stakeholder="client"
-                      title={`${RenderName("client")} - Group Cover Details`}
-                    />
-                  </div>
+                  {groupInsuranceDetailsAll?.client?.length > 0 && (
+                    <div className="mt-4 All_Client reportSection">
+                      <GroupCoverDetails
+                        values={values}
+                        setFieldValue={setFieldValue}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                        isEditing={props?.isEditing}
+                        setIsEditing={props?.setIsEditing}
+                        groupDataRows={clientGroupDataRows}
+                        stakeholder="client"
+                        title={`${RenderName("client")} - Group Cover Details`}
+                      />
+                    </div>
+                  )}
                 </>
               )}
 
@@ -803,20 +1038,21 @@ const PersonalInsuranceLife = (props) => {
                       setIsEditing={props?.setIsEditing}
                     />
                   </div>
-
-                  <div className="mt-4 All_Client reportSection">
-                    <GroupCoverDetails
-                      values={values}
-                      setFieldValue={setFieldValue}
-                      handleChange={handleChange}
-                      handleBlur={handleBlur}
-                      isEditing={props?.isEditing}
-                      setIsEditing={props?.setIsEditing}
-                      groupDataRows={partnerGroupDataRows}
-                      stakeholder="partner"
-                      title={`${RenderName("partner")} - Group Cover Details`}
-                    />
-                  </div>
+                  {groupInsuranceDetailsAll?.partner?.length > 0 && (
+                    <div className="mt-4 All_Client reportSection">
+                      <GroupCoverDetails
+                        values={values}
+                        setFieldValue={setFieldValue}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                        isEditing={props?.isEditing}
+                        setIsEditing={props?.setIsEditing}
+                        groupDataRows={partnerGroupDataRows}
+                        stakeholder="partner"
+                        title={`${RenderName("partner")} - Group Cover Details`}
+                      />
+                    </div>
+                  )}
                 </>
               )}
             </Form>
