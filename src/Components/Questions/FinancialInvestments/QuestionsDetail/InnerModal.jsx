@@ -148,6 +148,7 @@ const InnerModal = (props) => {
     "New Pension Rollover",
     "Home Loan",
     "Balance Rollover Amount",
+    "Accumulations Benefits",
   ];
 
   let mdTitles = ["Other Percentage Amount", "Trustee Name"];

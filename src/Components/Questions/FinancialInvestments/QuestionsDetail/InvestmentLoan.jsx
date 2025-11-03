@@ -405,69 +405,7 @@ const InvestmentLoan = (props) => {
     );
   };
 
-  // const rowConfig = [
-  //   {
-  //     name: "lender",
-  //     type: "select",
-  //     options: lenderOption,
-  //     placeholder: "Lender",
-  //     styleSet: { width: "20rem" },
-  //   },
-  //   {
-  //     name: "loanBalance",
-  //     type: "number-toComma",
-  //     placeholder: "Loan Balance",
-  //   },
-  //   {
-  //     name: "loanType",
-  //     type: "select",
-  //     options: optionsLender,
-  //     placeholder: "Loan Type",
-  //   },
-  //   {
-  //     name: "repaymentsAmount",
-  //     type: "number-toComma",
-  //     placeholder: "Repayments Amount",
-  //   },
-  //   {
-  //     name: "frequency",
-  //     type: "select",
-  //     options: optionsFrequency,
-  //     placeholder: "Frequency",
-  //     callBack: true,
-  //     func: calculateAnnualRepayments,
-  //   },
-  //   {
-  //     name: "annualRepayments",
-  //     type: "number-toComma-and-MultiSelect",
-  //     placeholder: "Annual Repayments",
-  //     name2: "serviceFeeType",
-  //     placeholder2: "Service Fee Type",
-  //     styleSet: { width: "20rem" },
-  //   },
-  //   {
-  //     name: "interestRate",
-  //     type: "number-toPercent",
-  //     placeholder: "Interest Rate",
-  //   },
-  //   {
-  //     name: "loanTerm",
-  //     type: "select",
-  //     options: loanTermOptions,
-  //     placeholder: "Loan Term",
-  //   },
-  //   {
-  //     name: "loanTermRemaining",
-  //     type: "select",
-  //     options: loanTermOptions,
-  //     placeholder: "Loan Term Remaining",
-  //   },
-  //   {
-  //     name: "deductibleLoanAmount",
-  //     type: "number-toPercent",
-  //     placeholder: "Deductible Loan Amount",
-  //   },
-  // ];
+  
 
   const options =
     UserStatus !== "Single"
