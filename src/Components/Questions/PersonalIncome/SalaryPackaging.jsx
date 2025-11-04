@@ -91,7 +91,7 @@ const SalaryPackaging = (props) => {
     {
       key: "FBTPaidByEmployer",
       dataIndex: "FBTPaidByEmployer",
-      type: "yesno", width: 100,
+      type: "yesno", 
       title: "FBT Paid By Employer",
       width: 100,
       render: (_, record) => (
