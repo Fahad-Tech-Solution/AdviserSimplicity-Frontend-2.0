@@ -377,7 +377,7 @@ const CashFlowInvestmentsProperty = (props) => {
     },
     {
       name: "rentalIncome",
-      type: "yesno",
+      type: "yesno", width: 100,
       placeholder: "Rental Income",
     },
     {

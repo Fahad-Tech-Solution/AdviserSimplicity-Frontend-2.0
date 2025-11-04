@@ -119,7 +119,7 @@ const LoginForm = () => {
         navigate(`/user/warning?message=${res.action}`);
       } else {
         // Case 4: All good
-        navigate("/user/dashboard");
+        navigate("/user/my-clients");
       }
     } catch (error) {
       console.error("Login error:", error);

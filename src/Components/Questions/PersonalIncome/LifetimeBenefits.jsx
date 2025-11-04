@@ -217,7 +217,7 @@ const LifeTimeBeneFits = (props) => {
       title: "Is Pension Tax Fee",
       dataIndex: "isPension",
       key: "isPension",
-      type: "yesno",
+      type: "yesno", width: 100,
     },
   ];
 

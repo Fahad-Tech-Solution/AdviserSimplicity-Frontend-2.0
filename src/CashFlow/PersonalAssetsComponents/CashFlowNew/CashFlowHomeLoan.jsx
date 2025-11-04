@@ -218,7 +218,7 @@ const CashFlowHomeLoan = (props) => {
     },
     {
       name: "applyMinimumRepaymentsOR",
-      type: "yesno",
+      type: "yesno", width: 100,
       placeholder: "Apply Minimum Repayments OR",
     },
     {
@@ -233,7 +233,7 @@ const CashFlowHomeLoan = (props) => {
     },
     {
       name: "surplusToHomeLoan",
-      type: "yesno",
+      type: "yesno", width: 100,
     },
   ];
 

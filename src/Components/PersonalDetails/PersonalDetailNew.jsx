@@ -61,14 +61,12 @@ const contactSchema = Yup.object({
     .matches(
       ausPhoneRegex,
       "Valid Australian Home Phone number Format: 0X XXXX XXXX"
-    )
-    .required("Home Phone is required"),
+    ),
   workPhone: Yup.string()
     .matches(
       ausPhoneRegex,
       "Valid Australian Work Phone number Format: 0X XXXX XXXX"
-    )
-    .required("Work Phone is required"),
+    ),
   email: Yup.string().email("Invalid email").required("Email is required"),
 });
 
@@ -505,21 +503,21 @@ const PersonalDetailNew = () => {
     {
       title: "Smoker",
       dataIndex: "smoker",
-      type: "yesno",
+      type: "yesno", 
       key: "smoker",
       width: 100,
     },
     {
       title: "Tax Resident",
       dataIndex: "taxRes",
-      type: "yesno",
+      type: "yesno", 
       key: "taxRes",
       width: 100,
     },
     {
       title: "Private Health Cover",
       dataIndex: "healthCover",
-      type: "yesno",
+      type: "yesno", 
       key: "healthCover",
       width: 100,
     },
@@ -547,6 +545,7 @@ const PersonalDetailNew = () => {
       type: "text",
       key: "homeAddress",
       CheckError: true,
+      width: 300,
     },
     {
       title: "Postcode/Suburb",
@@ -693,7 +692,7 @@ const PersonalDetailNew = () => {
     {
       title: "Dependent",
       dataIndex: "depenantChild",
-      type: "yesno",
+      type: "yesno", 
       key: "depenantChild",
       CheckError: true,
       width: 100,
@@ -861,7 +860,7 @@ const PersonalDetailNew = () => {
         CRObjectNoUse.SMSFManagedFundsTab === "No" &&
         CRObjectNoUse.businessAsInvestmentTab === "No"
       ) {
-        setModalObject({ title: "Important Questions" });
+        setModalObject({ title: "Add Section" });
         setFlagState(true);
       }
     }
@@ -1121,7 +1120,7 @@ const PersonalDetailNew = () => {
 
                 {switchStep == 1 && (
                   <>
-                    <h3 className="mt-4 fw-bold">Personal Details</h3>
+                    <h4 className="mt-4 fw-bold">Personal Details</h4>
                     <AntdDynamicTable
                       columns={personalFields}
                       data={tableData}
@@ -1147,14 +1146,14 @@ const PersonalDetailNew = () => {
                         />
                       )}
 
-                    <h3
+                    <h4
                       className="mt-5 fw-bold"
                       onClick={() => {
                         console.log(values);
                       }}
                     >
                       Contact Details
-                    </h3>
+                    </h4>
                     <AntdDynamicTable
                       columns={contactFields}
                       data={contactTableData}
@@ -1180,14 +1179,14 @@ const PersonalDetailNew = () => {
                         />
                       )}
 
-                    <h3
+                    <h4
                       className="mt-5 fw-bold"
                       onClick={() => {
                         console.log(values);
                       }}
                     >
                       Children Details
-                    </h3>
+                    </h4>
 
                     <div className="row justify-content-start align-items-center mb-3 d-none">
                       <div className="col-md-3">
@@ -1246,18 +1245,35 @@ const PersonalDetailNew = () => {
                       )}
 
                     <div className="row justify-content-center align-items-center mb-3 mt-4">
-                      <div className="col-md-4">
-                        <Button
-                          type="primary"
-                          htmlType="submit"
-                          className="w-100"
-                          onClick={() => {
-                            setErrorShow(true);
-                          }}
-                        >
-                          Submit
-                        </Button>
-                      </div>
+                      {!isEditing && (
+                        <div className="col-md-4">
+                          <Button
+                            htmlType="button"
+                            className="w-100"
+                            onClick={() => {
+                              // setSwitchStep(1);
+                              setErrorShow(true);
+                              setIsEditing(!isEditing);
+                            }}
+                          >
+                            Edit
+                          </Button>
+                        </div>
+                      )}
+                      {isEditing && (
+                        <div className="col-md-4">
+                          <Button
+                            type="primary"
+                            htmlType="submit"
+                            className="w-100"
+                            onClick={() => {
+                              setErrorShow(true);
+                            }}
+                          >
+                            Submit
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </>
                 )}
@@ -1282,8 +1298,8 @@ const PersonalDetailNew = () => {
                           className="w-100"
                           onClick={() => {
                             setSwitchStep(1);
-                            setErrorShow(true);
-                            setIsEditing(!isEditing);
+                            // setErrorShow(true);
+                            // setIsEditing(!isEditing);
                           }}
                         >
                           Edit
@@ -1297,12 +1313,12 @@ const PersonalDetailNew = () => {
                           className="w-100"
                           onClick={() => {
                             setModalObject({
-                              title: "Important Questions",
+                              title: "Add Section",
                             });
                             setFlagState(true);
                           }}
                         >
-                          Edit Questions
+                          Add Section
                         </Button>
                       </div>
                       <div className="col-md-2 mt-4">

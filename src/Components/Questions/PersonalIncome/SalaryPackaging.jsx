@@ -30,6 +30,8 @@ const SalaryPackaging = (props) => {
       setFieldValue("costBaseOfCar", Data.costBaseOfCar);
       setFieldValue("FBTPaidByEmployer", Data.FBTPaidByEmployer);
       setFieldValue("runningCostsOfCar", Data.runningCostsOfCar);
+    } else {
+      props.setIsEditing(!props.isEditing);
     }
   };
 
@@ -89,7 +91,7 @@ const SalaryPackaging = (props) => {
     {
       key: "FBTPaidByEmployer",
       dataIndex: "FBTPaidByEmployer",
-      type: "yesno",
+      type: "yesno", width: 100,
       title: "FBT Paid By Employer",
       width: 100,
       render: (_, record) => (

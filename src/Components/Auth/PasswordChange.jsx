@@ -84,7 +84,7 @@ const PasswordChange = () => {
           "Your password has been updated successfully."
         );
         resetForm();
-        navigate("/user/dashboard");
+        navigate("/user/my-clients");
       }
     } catch (error) {
       setLoginError(true);

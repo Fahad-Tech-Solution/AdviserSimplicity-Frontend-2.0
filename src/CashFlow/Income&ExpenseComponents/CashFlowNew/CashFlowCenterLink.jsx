@@ -262,15 +262,15 @@ const CashFlowCenterLink = (props) => {
     },
     {
       name: "allowCarerAllowance",
-      type: "yesno",
+      type: "yesno", width: 100,
     },
     {
       name: "isClientRenting",
-      type: "yesno",
+      type: "yesno", width: 100,
     },
     {
       name: "applySeparatedByIllness",
-      type: "yesno",
+      type: "yesno", width: 100,
     },
 
     // { name: "businessAddress", type: "text", placeholder: "Business Address" },

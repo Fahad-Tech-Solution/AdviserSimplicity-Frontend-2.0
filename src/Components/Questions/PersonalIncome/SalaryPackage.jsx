@@ -32,6 +32,7 @@ const SalaryPackage = (props) => {
         .length > 0
     ) {
       let Data = parentValues[`${parentKey.replace(".", "")}`][`${key}`];
+
       setFieldValue(
         "remunerationType",
         Data.remunerationType || "Gross Salary"
@@ -45,6 +46,8 @@ const SalaryPackage = (props) => {
         Data.salarySacrificeContributions
       );
       setFieldValue("afterTaxContributions", Data.afterTaxContributions);
+    } else {
+      props.setIsEditing(!props.isEditing);
     }
   };
 

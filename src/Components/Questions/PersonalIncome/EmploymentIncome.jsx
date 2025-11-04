@@ -169,7 +169,7 @@ const EmploymentIncome = (props) => {
 
     // Check for client ownership
     if (values.owner.includes("client")) {
-      obj.clientTotal = obj.client.SalaryPackageModal.grossSalary;
+      obj.clientTotal = obj?.client?.SalaryPackageModal?.grossSalary || "$0";
     } else {
       obj.clientTotal = "";
       obj.client = {};
@@ -177,7 +177,7 @@ const EmploymentIncome = (props) => {
 
     // Check for partner ownership
     if (values.owner.includes("partner")) {
-      obj.partnerTotal = obj.partner.SalaryPackageModal.grossSalary;
+      obj.partnerTotal = obj?.partner?.SalaryPackageModal?.grossSalary || "$0";
     } else {
       obj.partnerTotal = "";
       obj.partner = {};
@@ -360,8 +360,8 @@ const EmploymentIncome = (props) => {
       title: "Choice of Fund",
       dataIndex: "choiceOfFund",
       key: "choiceOfFund",
-      type: "yesno",
-      width: 150,
+      type: "yesno", width: 100,
+      
     },
   ];
 

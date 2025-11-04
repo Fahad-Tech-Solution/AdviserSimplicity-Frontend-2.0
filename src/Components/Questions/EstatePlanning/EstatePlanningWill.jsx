@@ -218,8 +218,8 @@ const EstatePlanningWill = (props) => {
       title: "Are Your Wills Current",
       dataIndex: "willsCurrent",
       key: "willsCurrent",
-      type: "yesno",
-      width: 150,
+      type: "yesno", width: 100,
+      
       disabled: (values, stakeHolder) =>
         values.owner.includes("together") && stakeHolder === "partner",
     },
@@ -236,8 +236,8 @@ const EstatePlanningWill = (props) => {
       title: "Enduring Guardianship",
       dataIndex: "enduringGuardianship",
       key: "enduringGuardianship",
-      type: "yesno",
-      width: 150,
+      type: "yesno", width: 100,
+      
       disabled: (values, stakeHolder) =>
         values.owner.includes("together") && stakeHolder === "partner",
     },
@@ -245,8 +245,8 @@ const EstatePlanningWill = (props) => {
       title: "Testamentary Trust",
       dataIndex: "testamentaryTrust",
       key: "testamentaryTrust",
-      type: "yesno",
-      width: 150,
+      type: "yesno", width: 100,
+      
       disabled: (values, stakeHolder) =>
         values.owner.includes("together") && stakeHolder === "partner",
     },

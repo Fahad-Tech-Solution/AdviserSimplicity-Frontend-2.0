@@ -41,12 +41,15 @@ import {
   FiUser,
 } from "react-icons/fi";
 import {
+  MdInbox,
   MdInput,
   MdLocationPin,
   MdOutlineAccountBalance,
   MdOutlineSecurity,
   MdOutlineTrackChanges,
 } from "react-icons/md";
+import ModalComponent from "../Questions/FinancialInvestments/ModalComponent";
+import ImportantQuestion from "../Questions/ImportantQuestion/ImportantQuestion";
 
 const { SubMenu } = Menu;
 
@@ -65,6 +68,9 @@ const AdminSideBar = (props) => {
   const [loggedUser, setLoggedInUserData] = useRecoilState(LoggedInUserData);
   const [loginTokenJwt, setLoginTokenJwt] =
     useRecoilState(LoggedInUserTokenJwt);
+
+  let [flagState, setFlagState] = useState(false);
+  let [modalObject, setModalObject] = useState({});
 
   let superAdmin =
     loggedUser?.roleID?.permissions.includes("superAdmin") || false;
@@ -172,11 +178,19 @@ const AdminSideBar = (props) => {
         </Menu.Item>
       )}
 
+      <ModalComponent
+        modalObject={modalObject}
+        setFlagState={setFlagState}
+        flagState={flagState}
+      >
+        <ImportantQuestion />
+      </ModalComponent>
+
       <Menu.Item
-        key={superAdmin ? "/super/admin/dashboard" : "/user/dashboard"}
+        key={superAdmin ? "/super/admin/dashboard" : "/user/my-clients"}
         icon={<FaTachometerAlt />}
         onClick={() =>
-          nav(superAdmin ? "/super/admin/dashboard" : "/user/dashboard")
+          nav(superAdmin ? "/super/admin/dashboard" : "/user/my-clients")
         }
         style={{ fontWeight: "600" }}
       >
@@ -289,6 +303,19 @@ const AdminSideBar = (props) => {
                   style={{ fontWeight: "600", color: "#36b446" }}
                 >
                   View Risk Profile
+                </Menu.Item>
+                <Menu.Item
+                  key="/user/risk-profile"
+                  onClick={() => {
+                    setModalObject({
+                      title: "Add Section",
+                    });
+                    setFlagState(true);
+                  }}
+                  icon={<MdInbox />}
+                  style={{ fontWeight: "600", color: "#36b446" }}
+                >
+                  Add Section
                 </Menu.Item>
               </>
             )}

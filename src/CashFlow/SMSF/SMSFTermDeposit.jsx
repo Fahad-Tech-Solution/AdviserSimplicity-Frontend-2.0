@@ -257,7 +257,7 @@ const SMSFTermDeposit = (props) => {
       },
       {
         name: "reinvestIncome",
-        type: "yesno",
+        type: "yesno", width: 100,
         placeholder: "Reinvest income",
       },
       {

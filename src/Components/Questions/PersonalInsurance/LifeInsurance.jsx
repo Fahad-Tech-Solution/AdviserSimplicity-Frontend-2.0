@@ -679,8 +679,8 @@ const PersonalInsuranceLife = (props) => {
       title: "Smoker",
       dataIndex: "smoker",
       key: "smoker",
-      type: "yesno",
-      width: 120,
+      type: "yesno", width: 100,
+      
     },
     {
       title: "Life",

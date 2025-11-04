@@ -1,7 +1,27 @@
 import { Form, Formik } from "formik";
 import React, { useEffect, useMemo } from "react";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, Alert } from "antd";
+import * as Yup from "yup"; // Add Yup import
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
+
+// Validation schema for each leave type
+const leaveTypeSchema = Yup.object({
+  leaveType: Yup.string().required("Leave type is required"),
+  amount: Yup.number()
+    .typeError("Amount must be a number")
+    .min(0, "Amount cannot be negative")
+    .required("Amount is required"),
+  time: Yup.string()
+    .oneOf(["Days", "Weeks", "Hours"], "Invalid time unit")
+    .required("Time unit is required"),
+});
+
+// Main validation schema
+const validationSchema = Yup.object({
+  annual: leaveTypeSchema,
+  sick: leaveTypeSchema,
+  longService: leaveTypeSchema,
+});
 
 const AntDynamicTable = DynamicTableForInputsSection("antd");
 const LeaveEntitlementsModal = (props) => {
@@ -32,6 +52,8 @@ const LeaveEntitlementsModal = (props) => {
         modalData.longServiceLeaveAmount ?? ""
       );
       setFieldValue("longService.time", modalData.longServiceLeaveTime ?? "");
+    } else {
+      props.setIsEditing(!props.isEditing);
     }
   };
 
@@ -67,6 +89,7 @@ const LeaveEntitlementsModal = (props) => {
       type: "text",
       title: "Leave Type",
       disabled: true,
+      CheckError: true,
     },
     {
       key: "amount",
@@ -74,6 +97,7 @@ const LeaveEntitlementsModal = (props) => {
       type: "number",
       title: "Amount",
       placeholder: "Enter amount",
+      CheckError: true,
     },
     {
       key: "time",
@@ -86,17 +110,30 @@ const LeaveEntitlementsModal = (props) => {
         { value: "Weeks", label: "Weeks" },
         { value: "Hours", label: "Hours" },
       ],
+      CheckError: true,
     },
   ];
+
+  const getFieldTitle = (BaseKey, values, key) => {
+    return values?.[BaseKey]?.[key] || BaseKey;
+  };
 
   return (
     <Formik
       initialValues={initialValues} // start empty, filled with setFieldValue
       onSubmit={onSubmit}
+      validationSchema={validationSchema}
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, setFieldValue, handleChange, handleBlur }) => {
+      {({
+        values,
+        setFieldValue,
+        handleChange,
+        handleBlur,
+        errors,
+        touched,
+      }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, [parentValues]);
@@ -142,6 +179,35 @@ const LeaveEntitlementsModal = (props) => {
                 },
               }}
             >
+              {Object.keys(errors).length > 0 && touched && (
+                <Alert
+                  type="error"
+                  message="Validation Errors"
+                  description={
+                    <ul className="mb-0">
+                      {Object.entries(errors).map(([key, value]) => {
+                        const errorKeys = Object.keys(value || {});
+                        return errorKeys.map((errorKey) => (
+                          <li key={`${key}-${errorKey}`}>
+                            {`${getFieldTitle(
+                              key,
+                              values,
+                              "leaveType"
+                            )}: ${
+                              typeof value[errorKey] === "string"
+                                ? value[errorKey]
+                                : Object.values(value[errorKey])[0]
+                            }`}
+                          </li>
+                        ));
+                      })}
+                    </ul>
+                  }
+                  className="mb-4"
+                  showIcon
+                />
+              )}
+
               <AntDynamicTable
                 columns={tableFields}
                 data={tableData}
@@ -152,6 +218,8 @@ const LeaveEntitlementsModal = (props) => {
                 handleSubmit={props?.handleOk}
                 isEditing={props?.isEditing}
                 setIsEditing={props?.setIsEditing}
+                errors={errors}
+                touched={touched}
               />
             </ConfigProvider>
           </Form>

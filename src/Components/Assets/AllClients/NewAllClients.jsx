@@ -324,11 +324,11 @@ const NewAllClients = (props) => {
 
   let columnsGenerator = () => {
     const columns = [
-      {
-        title: "#",
-        key: "index",
-        render: (text, row, index) => index + 1 || "--",
-      },
+      // {
+      //   title: "#",
+      //   key: "index",
+      //   render: (text, row, index) => index + 1 || "--",
+      // },
       {
         title: "Household",
         key: "clientLastName",

@@ -130,22 +130,22 @@ const NewLoadingExclusion = (props) => {
       title: "Trauma Plus",
       dataIndex: "traumaPlus",
       key: "traumaPlus",
-      type: "yesno",
-      width: 130,
+      type: "yesno", width: 100,
+      
     },
     {
       title: "CPI",
       dataIndex: "CPI",
       key: "CPI",
-      type: "yesno",
-      width: 130,
+      type: "yesno", width: 100,
+      
     },
     {
       title: "Superlinked",
       dataIndex: "superlinked",
       key: "superlinked",
-      type: "yesno",
-      width: 150,
+      type: "yesno", width: 100,
+      
     },
   ];
 

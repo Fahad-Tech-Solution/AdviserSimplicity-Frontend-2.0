@@ -174,6 +174,7 @@ const SoleTrader = (props) => {
       key: "businessName",
       type: "text",
       placeholder: "Business Name",
+      width: 200,
     },
     {
       title: "ABN",

@@ -57,7 +57,10 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
       if (col?.type === "checkbox") return value ? "Checked" : "Un-Checked";
       if (col?.type === "select-multi-antd")
         return Array.isArray(value) ? value.join(", ") : value || "";
-      if (col?.type === "yesnoModal" && value === "Yes") {
+      if (
+        (col?.type === "yesnoModal" && value === "Yes") ||
+        col?.type === "modal"
+      ) {
         return (
           <div className="d-flex align-items-center justify-content-left gap-3">
             {value}
@@ -72,6 +75,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
               handleBlur={handleBlur}
               handleInnerModal={
                 col?.func ||
+                col?.handleInnerModal ||
                 (() => {
                   console.log("No function defined");
                 })
