@@ -1,6 +1,10 @@
 import DynamicQuestionBlocks from "../../Assets/DynamicQuestionBlocks/DynamicQuestionBlocks";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { CRState, defaultUrl } from "../../../Store/Store";
+import {
+  CRState,
+  defaultUrl,
+  SelectedClientDetails,
+} from "../../../Store/Store";
 
 import Business_SMSF from "../svgs/money-bag-svgrepo-com.svg";
 import Questions_People from "../svgs/Questions_People.png";
@@ -13,15 +17,19 @@ import propertyValue from "../svgs/property-value.svg";
 
 import { Form, Formik } from "formik";
 import {
+  GetAxios,
   openNotificationSuccess,
   PatchAxios,
   PostAxios,
 } from "../../Assets/Api/Api";
+import { useEffect, useState } from "react";
+import { ConfigProvider, Spin } from "antd";
 
 const ImportantQuestion = (props) => {
   let [CRObjectNoUse, setCRObject] = useRecoilState(CRState);
   let CRObject = useRecoilValue(CRState);
-
+  let selectedClientDetails = useRecoilValue(SelectedClientDetails);
+  const [loading, setLeading] = useState(false);
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   let QuestionArray = [
@@ -110,8 +118,148 @@ const ImportantQuestion = (props) => {
     }
   };
 
+  useEffect(() => {
+    console.log("selectedClientDetails", selectedClientDetails);
+    console.log("CRObject", CRObject);
+    if (
+      (!CRObject?._id && selectedClientDetails?._id) ||
+      (selectedClientDetails._id !== CRObject.clientFK)
+    ) {
+      getQuestions(selectedClientDetails._id);
+    }
+  }, []);
+
+  async function getQuestions(id) {
+    setLeading(true);
+    try {
+      const res = await GetAxios(`${DefaultUrl}/api/questions/${id}`);
+      if (res) {
+        console.log("res", res);
+        setCRObject(res);
+      }
+    } catch (error) {
+      setCRObject({
+        //Financial Assets
+        QuestionsFlag: false,
+        clientFK: "",
+
+        bankAccountFinance: "No",
+        termDepositsFinance: "No",
+        australianShareMarket: "No",
+        managedFund: "No",
+        investmentBondFinance: "No",
+        managedFundsLOC: "No",
+        managedFundsMarginLoan: "No",
+
+        car: "No",
+        boat: "No",
+        caravan: "No",
+        houseHold: "No",
+        otherAssets: "No",
+
+        personalLoans: "No",
+
+        creditCards: "No",
+
+        familyHome: "No",
+        familyHomeLoan: "No",
+        numberOfHolidayHome: 0,
+
+        investmentPropertyDetails: "No",
+        investmentPropertyLoan: "No",
+        incomeExpenses: "No",
+
+        superAnnuationIssues: "No",
+        accountBasedPensionIssues: "No",
+        annuitiesIssues: "No",
+
+        will: "No",
+        POA: "No",
+        professionalAdviser: "No",
+
+        incomeFromOwnBusiness: "No",
+        incomeFromSoleTrader: "No",
+        incomeFromPartnership: "No",
+        incomeFromCentrelink: "No",
+        incomeFromSuperPayment: "No",
+        incomeFromOverseasPension: "No",
+        incomeFromInheritance: "No",
+        incomeFromLumpsumExpense: "No",
+        incomeFromRegularLivingExpenses: "Yes", // this one should be yes always
+
+        BusinessAsCompanyStructure: "No",
+        BusinessAsTrusts: "No",
+
+        //keys which just controls rendering
+        investmentPropertyTab: "No",
+        personalInsuranceTab: "No",
+
+        // companyStructureBusinessTab: "No",
+        // trustStructureBusinessTab: "No",
+
+        SMSFManagedFundsTab: "No",
+        businessAsInvestmentTab: "No",
+
+        SMSFBank: "Yes",
+        SMSFTermDeposits: "No",
+        SMSFAustralianShares: "No",
+        SMSFManagedFunds: "No",
+        SMSFInvestmentLoan: "No",
+        SMSFInvestmentProperties: "No",
+        numberOfSMSFInvestmentProperties: 0,
+        SMSFPensionPhase: "No",
+
+        //loop keys
+        // SMSFInvestmentPropertiesLoan
+        // SMSFInvestmentExpenses
+
+        SMSFDetails: "Yes", // this one should be yes always
+        SMSFAccumulationDetails: "Yes", // this one should be yes always
+
+        familyBank: "Yes", // this one should be yes always
+
+        familyTermDeposit: "No",
+        familyAustralianShare: "No",
+        familyMangedFunds: "No",
+        familyInvestmentHomeLoan: "No",
+        familyInvestmentProperties: "No",
+        numberOfFamilyInvestmentProperties: 0,
+        familyPensionPhase: "No",
+
+        SMSFOtherInvestment: "No",
+        familyOtherInvestment: "No",
+
+        //loop keys
+        // familyInvestmentPropertiesLoan
+        // familyInvestmentExpenses
+
+        familyDetails: "Yes", // this one should be yes always
+
+        life: "Yes",
+        TPD: "Yes",
+        trauma: "Yes",
+        incomeProtection: "Yes",
+      });
+      console.error("Error fetching questions:", error);
+    } finally {
+      setLeading(false);
+    }
+  }
+
   return (
-    <div>
+    <div className="position-relative">
+      {loading && (
+        <div
+          className="position-absolute top-0 d-flex justify-content-center align-items-center bg-gray"
+          style={{
+            width: "100%",
+            height: "100%",
+            zIndex: "1000",
+          }}
+        >
+          <Spin size="large" />
+        </div>
+      )}
       <Formik
         initialValues={CRObject}
         onSubmit={onSubmit}

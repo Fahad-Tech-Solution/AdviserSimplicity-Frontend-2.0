@@ -65,8 +65,8 @@ export default function BuyAdviserlink() {
         return;
       }
 
-      const successUrl = `${window.location.origin}/user/dashboard`;
-      const cancelUrl = `${window.location.origin}/user/dashboard`;
+      const successUrl = `${window.location.origin}/user/my-clients`;
+      const cancelUrl = `${window.location.origin}/user/my-clients`;
 
       const payload = { priceId, email, successUrl, cancelUrl };
 

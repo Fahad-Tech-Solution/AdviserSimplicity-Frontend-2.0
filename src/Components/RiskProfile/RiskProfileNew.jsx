@@ -69,7 +69,7 @@ const RiskProfileNew = () => {
           "Info Notification",
           "Please! select a user first"
         );
-        Nav("/user/dashboard");
+        Nav("/user/my-clients");
       }
     }
   }, []);

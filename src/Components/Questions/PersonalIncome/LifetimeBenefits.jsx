@@ -15,6 +15,8 @@ import {
 import { AntdCreatableMultiSelect } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
+const AntdTable = DynamicTableForInputsSection("antd");
+
 const LifeTimeBeneFits = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
   const [, setQuestionDetail] = useRecoilState(QuestionDetail);
@@ -140,6 +142,7 @@ const LifeTimeBeneFits = (props) => {
 
       if (props.flagState) {
         props.setFlagState(false);
+        props.setIsEditing(!props.isEditing);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
@@ -178,8 +181,6 @@ const LifeTimeBeneFits = (props) => {
     }
   };
 
-  const AntdTable = DynamicTableForInputsSection("antd");
-
   const columns = [
     { title: "Owner", dataIndex: "owner", key: "owner" },
     {
@@ -192,7 +193,7 @@ const LifeTimeBeneFits = (props) => {
       trrigger: () => document.querySelector("table"),
     },
     {
-      title: "Regular Income per Fortnight",
+      title: "Fortnight Payment",
       dataIndex: "regularIncomePerFortnight",
       key: "regularIncomePerFortnight",
       type: "number-toComma",
@@ -200,7 +201,7 @@ const LifeTimeBeneFits = (props) => {
       func: Formula,
     },
     {
-      title: "Regular Income p.a",
+      title: "Annual Payment",
       dataIndex: "regularIncomePA",
       key: "regularIncomePA",
       type: "number-toComma",
@@ -216,7 +217,7 @@ const LifeTimeBeneFits = (props) => {
       title: "Is Pension Tax Fee",
       dataIndex: "isPension",
       key: "isPension",
-      type: "yesno",
+      type: "yesno", width: 100,
     },
   ];
 
@@ -302,6 +303,9 @@ const LifeTimeBeneFits = (props) => {
                         setFieldValue={setFieldValue}
                         handleChange={handleChange}
                         handleBlur={handleBlur}
+                        handleSubmit={props?.handleOk}
+                                   isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
                       />
                     </div>
                   )}

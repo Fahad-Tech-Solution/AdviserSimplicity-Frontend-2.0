@@ -350,7 +350,7 @@ const CashFlowInvestmentLoansLOC = (props) => {
     },
     {
       name: "applyMinimumRepaymentsOR",
-      type: "yesno",
+      type: "yesno", width: 100,
       placeholder: "Apply Minimum Repayments OR",
     },
     {

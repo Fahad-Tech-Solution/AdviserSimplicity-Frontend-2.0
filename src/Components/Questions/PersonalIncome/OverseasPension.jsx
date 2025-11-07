@@ -8,9 +8,12 @@ import {
   PatchAxios,
   PostAxios,
   RenderName,
+  toCommaAndDollar,
 } from "../../Assets/Api/Api";
 import { AntdCreatableMultiSelect } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
+
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const OverseasPension = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
@@ -31,11 +34,15 @@ const OverseasPension = (props) => {
     owner: [],
     client: {
       country: "",
-      regularIncomePA: "",
+      frequency: "",
+      regularPayment: "",
+      annualPayment: "",
     },
     partner: {
       country: "",
-      regularIncomePA: "",
+      frequency: "",
+      regularPayment: "",
+      annualPayment: "",
     },
   };
 
@@ -52,8 +59,13 @@ const OverseasPension = (props) => {
         if (data.client && Object.keys(data.client).length) {
           setFieldValue("client.country", data.client.country || "");
           setFieldValue(
-            "client.regularIncomePA",
-            data.client.regularIncomePA || ""
+            "client.annualPayment",
+            data.client.annualPayment || ""
+          );
+          setFieldValue("client.frequency", data.client.frequency || "");
+          setFieldValue(
+            "client.regularPayment",
+            data.client.regularPayment || ""
           );
         }
       }
@@ -66,16 +78,19 @@ const OverseasPension = (props) => {
       ) {
         if (data.partner && Object.keys(data.partner).length) {
           setFieldValue("partner.country", data.partner.country || "");
+          setFieldValue("partner.frequency", data.partner.frequency || "");
           setFieldValue(
-            "partner.regularIncomePA",
-            data.partner.regularIncomePA || ""
+            "partner.regularPayment",
+            data.partner.regularPayment || ""
+          );
+          setFieldValue(
+            "partner.annualPayment",
+            data.partner.annualPayment || ""
           );
         }
       }
     }
   };
-
-  const AntdTable = DynamicTableForInputsSection("antd");
 
   const DefaultUrl = useRecoilValue(defaultUrl);
 
@@ -84,14 +99,14 @@ const OverseasPension = (props) => {
     obj.clientFK = localStorage.getItem("UserID");
 
     if (values.owner.includes("client")) {
-      obj.clientTotal = values.client.regularIncomePA;
+      obj.clientTotal = values.client.annualPayment;
     } else {
       obj.client = {};
       obj.clientTotal = "";
     }
 
     if (values.owner.includes("partner") && UserStatus === "Married") {
-      obj.partnerTotal = values.partner.regularIncomePA;
+      obj.partnerTotal = values.partner.annualPayment;
     } else {
       obj.partner = {};
       obj.partnerTotal = "";
@@ -130,6 +145,7 @@ const OverseasPension = (props) => {
 
       if (props.flagState) {
         props.setFlagState(false);
+        props.setIsEditing(!props.isEditing);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
@@ -140,6 +156,61 @@ const OverseasPension = (props) => {
         `Data of "${props.modalObject.title}" is not Saved. Please try again.`
       );
     }
+  };
+  let optionsFrequency = [
+    { value: 26, label: "Fortnightly" },
+    { value: 12, label: "Monthly" },
+  ];
+
+  const calculateAnnualRepayments = (
+    values,
+    setFieldValue,
+    thisInput,
+    stackHolder
+  ) => {
+    console.log(
+      // values,
+      // thisInput.value,
+      stackHolder,
+      "calculateannualPayment"
+    );
+    // safely extract numeric values
+    const cleanNumber = (val) => {
+      if (val === undefined || val === null) return 0;
+      if (typeof val === "number") return val;
+      const cleaned = String(val).replace(/[^0-9.-]+/g, "");
+      const parsed = parseFloat(cleaned);
+      return isNaN(parsed) ? 0 : parsed;
+    };
+
+    let regularPayment = cleanNumber(
+      values?.[stackHolder.replace(".", "")]?.regularPayment
+    );
+    let frequency = cleanNumber(
+      values?.[stackHolder.replace(".", "")]?.frequency
+    );
+
+    // Handle real-time updates from current input
+    switch (thisInput.name) {
+      case stackHolder + "regularPayment":
+        regularPayment = cleanNumber(thisInput.value);
+        break;
+      case stackHolder + "frequency":
+        frequency = cleanNumber(thisInput.value);
+        break;
+      default:
+        break;
+    }
+
+    console.log(regularPayment, frequency, "regularPayment, frequency");
+
+    const annualPayment = regularPayment * frequency;
+
+    // ✅ Corrected field path
+    setFieldValue(
+      `${stackHolder}annualPayment`,
+      toCommaAndDollar(annualPayment || 0)
+    );
   };
 
   const columns = [
@@ -152,11 +223,32 @@ const OverseasPension = (props) => {
       placeholder: "Country",
     },
     {
-      title: "Regular Income p.a",
-      dataIndex: "regularIncomePA",
-      key: "regularIncomePA",
+      title: "Frequency",
+      dataIndex: "frequency",
+      key: "frequency",
+      type: "select", // simple static text or could be DynamicFormField if editable
+      options: optionsFrequency,
+      width: 150,
+      callBack: true,
+      func: calculateAnnualRepayments,
+      selectedOptionValue: true,
+    },
+    {
+      title: "Regular Payment",
+      dataIndex: "regularPayment",
+      key: "regularPayment",
       type: "number-toComma",
-      placeholder: "Regular Income p.a",
+      placeholder: "Regular Payment",
+      callBack: true,
+      func: calculateAnnualRepayments,
+    },
+    {
+      // title: "Regular Income p.a",
+      title: "Annual Payment",
+      dataIndex: "annualPayment",
+      key: "annualPayment",
+      type: "number-toComma",
+      placeholder: "Annual Payment",
     },
   ];
 
@@ -180,7 +272,9 @@ const OverseasPension = (props) => {
                   owner: RenderName("client"),
                   stakeHolder: "client",
                   country: values.client?.country || "",
-                  regularIncomePA: values.client?.regularIncomePA || "",
+                  frequency: values.client?.frequency || "",
+                  regularPayment: values.client?.regularPayment || "",
+                  annualPayment: values.client?.annualPayment || "",
                 },
               ]
             : []),
@@ -191,7 +285,9 @@ const OverseasPension = (props) => {
                   owner: RenderName("partner"),
                   stakeHolder: "partner",
                   country: values.partner?.country || "",
-                  regularIncomePA: values.partner?.regularIncomePA || "",
+                  frequency: values.partner?.frequency || "",
+                  regularPayment: values.partner?.regularPayment || "",
+                  annualPayment: values.partner?.annualPayment || "",
                 },
               ]
             : []),
@@ -226,6 +322,9 @@ const OverseasPension = (props) => {
                         setFieldValue={setFieldValue}
                         handleChange={handleChange}
                         handleBlur={handleBlur}
+                        handleSubmit={props?.handleOk}
+                        isEditing={props?.isEditing}
+                        setIsEditing={props?.setIsEditing}
                       />
                     </div>
                   )}

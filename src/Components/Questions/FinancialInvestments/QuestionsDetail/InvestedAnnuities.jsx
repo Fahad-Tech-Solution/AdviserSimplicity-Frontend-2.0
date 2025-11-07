@@ -1,639 +1,400 @@
-import { Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
-import { Button, InputGroup, Row, Table } from "react-bootstrap";
+// InvestedAnnuities.jsx
+import React, { useEffect, useMemo, useState } from "react";
+import { Formik, Form } from "formik";
 import { useRecoilValue } from "recoil";
-import {
-  BankDetail,
-  defaultUrl,
-  QuestionDetail,
-} from "../../../../Store/Store";
-import {
-  openNotificationSuccess,
-  RenderName,
-  toCommaAndDollar,
-} from "../../../Assets/Api/Api";
-
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
+import { ConfigProvider, Select } from "antd";
+import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
 import InnerModal from "./InnerModal";
 import PortfolioValue from "./PortfolioValue";
-import DynamicYesNo from "./DynamicYesNo";
 import MemberNumber from "./MemberNumber";
 import GroupInsurance from "./GroupInsurance";
 import Contributions from "./Contributions";
 import Beneficiaries from "./Beneficiaries";
 import AnnualPensionPaymentInnerModal from "./AnnualPensionPaymentInnerModal";
 
+import {
+  BankDetail,
+  QuestionDetail,
+  defaultUrl,
+} from "../../../../Store/Store";
+import {
+  openNotificationSuccess,
+  toCommaAndDollar,
+  RenderName,
+} from "../../../Assets/Api/Api";
+
+const AntdTable = DynamicTableForInputsSection("antd");
+const { Option } = Select;
+
 const InvestedAnnuities = (props) => {
-  let questionDetail = useRecoilValue(QuestionDetail);
+  const questionDetail = useRecoilValue(QuestionDetail);
+  const bankDetailObj = useRecoilValue(BankDetail);
+  const DefaultUrl = useRecoilValue(defaultUrl);
 
-  let bankDetailObj = useRecoilValue(BankDetail);
+  const [flagState, setFlagState] = useState(false);
+  const [modalObject, setModalObject] = useState({});
 
-  let [nameSet] = useState(() => {
-    if (props.modalObject.Input === "client") {
-      return localStorage.getItem("UserName");
-    } else if (props.modalObject.Input === "partner") {
-      return localStorage.getItem("PartnerName");
-    } else if (props.modalObject.Input === "joint") {
+  const [nameSet] = useState(() => {
+    if (props.modalObject.Input === "client")
+      return localStorage.getItem("UserName") || "";
+    else if (props.modalObject.Input === "partner")
+      return localStorage.getItem("PartnerName") || "";
+    else if (props.modalObject.Input === "joint")
       return (
-        localStorage.getItem("UserName") +
+        (localStorage.getItem("UserName") || "") +
         " & " +
-        localStorage.getItem("PartnerName")
+        (localStorage.getItem("PartnerName") || "")
       );
-    }
+    return "";
   });
+  
+  const existingData =
+    props.modalObject.values?.[
+      props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "")
+    ]?.[props.modalObject.Input + "Array"] || [];
 
-  let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
-
-  let annuitiesIssues =
-    Object.keys(questionDetail.annuitiesIssues).length > 0
-      ? questionDetail.annuitiesIssues
-      : {
-          client: [],
-          partner: [],
-          joint: [],
-        }; // Use an empty object as default if annuitiesIssues is undefined
-
-  let initialValues = { NumberOfMap: "" };
-
-  const [dynamicFields, setDynamicFields] = useState([]);
-
-  useEffect(() => {
-    if (
-      props.modalObject.values[props.modalObject.Input] &&
-      props.modalObject.values[props.modalObject.Input].length
-    ) {
-      let arr = [];
-
-      for (
-        let i = 0;
-        i < props.modalObject.values[props.modalObject.Input].length;
-        i++
-      ) {
-        arr.push("");
-      }
-      setDynamicFields(arr);
-    }
-  }, []);
+  const initialValues = {
+    NumberOfMap: existingData.length || "",
+    investedAnnuities: existingData.length ? existingData : [],
+  };
 
   const fillInitialValues = (setFieldValue) => {
-    if (
-      props.modalObject.values[props.modalObject.Input] &&
-      props.modalObject.values[props.modalObject.Input].length > 0
-    ) {
-      setFieldValue(
-        `NumberOfMap`,
-        props.modalObject.values[props.modalObject.Input].length || ""
-      );
-
-      let FoundArray = props.modalObject.values[props.modalObject.Input];
-      // alert(FoundArray.length)
-      FoundArray.forEach((data, i) => {
-        if (data) {
-          setFieldValue(`productProvider${i}`, data.productProvider || "");
-          setFieldValue(`accountNumber${i}`, data.accountNumber || "");
-          setFieldValue(`sourceFunds${i}`, data.sourceFunds || "");
-          setFieldValue(
-            `originalInvestmentAmount${i}`,
-            data.originalInvestmentAmount || ""
-          );
-          setFieldValue(
-            `returnCapitalValue${i}`,
-            data.returnCapitalValue || ""
-          );
-          setFieldValue(
-            `annualAnnuityPayment${i}`,
-            data.annualAnnuityPayment || ""
-          );
-          setFieldValue(
-            `annualPensionPaymentArray${i}`,
-            data.annualPensionPaymentArray || ""
-          );
-          setFieldValue(`annuityType${i}`, data.annuityType || "");
-          setFieldValue(`term${i}`, data.term || "");
-          setFieldValue(`yearsMaturity${i}`, data.yearsMaturity || "");
-          setFieldValue(
-            `beneficiariesArray${i}`,
-            data.beneficiariesArray || ""
-          );
-          setFieldValue(
-            `nominatedBeneficiaries${i}`,
-            data.nominatedBeneficiaries || ""
-          );
-          setFieldValue(`annualAdvice${i}`, data.annualAdvice || "");
-        }
-      });
+    if (existingData.length) {
+      setFieldValue("investedAnnuities", existingData);
+      setFieldValue("NumberOfMap", existingData.length);
     }
   };
 
-  let handleInput = (e, setFieldValue) => {
-    const value = e.target.value > 10 ? 10 : e.target.value;
+  const handleInput = (e, setFieldValue) => {
+    const raw = e?.target?.value ?? e;
+    const value = raw > 10 ? 10 : raw;
+    setFieldValue("NumberOfMap", value);
 
-    setFieldValue(e.target.id, value);
-
-    let arr = [];
-
-    for (let i = 0; i < value; i++) {
-      arr.push("");
-    }
-
-    setDynamicFields(arr);
+    const arrLength = Number(value) || 0;
+    const newArray = Array(arrLength)
+      .fill()
+      .map((_, i) => ({
+        productProvider: "",
+        accountNumber: "",
+        sourceFunds: "",
+        originalInvestmentAmount: "",
+        returnCapitalValue: "",
+        annualAnnuityPayment: "",
+        annualPensionPaymentArray: [],
+        annuityType: "",
+        term: "",
+        yearsMaturity: "",
+        nominatedBeneficiaries: "",
+        beneficiariesArray: [],
+        annualAdvice: "",
+        ...(initialValues.investedAnnuities[i] || {}),
+      }));
+    setFieldValue("investedAnnuities", newArray);
   };
 
-  let handleInnerModal = (
-    title,
-    question,
+  const handleInnerModal = (
+    innerModalTitle,
     key,
-    mainKey,
-    key3,
-    editArray,
-    index,
-    values
+    stakeHolder,
+    values,
+    type,
+    question
   ) => {
-    console.log(values);
-    let ParentModal = props.modalObject.title;
+    const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
+    const BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
+
     setModalObject({
-      title,
+      title: `${RenderName(
+        props.modalObject.stakeHolder.replace(".", "")
+      )}${innerModalTitle}`,
       question,
       key,
-      mainKey,
-      key3,
-      editArray: editArray || [],
-      index,
+      stakeHolder,
+      editArray: values?.[BaseKey]?.[index]?.[key] || [],
       values,
-      ParentModal,
+      ParentModalObject: props.modalObject,
     });
     setFlagState(true);
   };
 
-  let DefaultUrl = useRecoilValue(defaultUrl);
+  const onSubmit = async (values) => {
+    const DataOf = props.modalObject.Input;
+    const newEntries = values.investedAnnuities || [];
 
-  let onSubmit = async (values) => {
-    // console.log(values);
-    // return (false);
-    // Extract the number of maps from the values
-    const numberOfMaps = parseInt(values.NumberOfMap, 10);
-    const newEntries = [];
+    const total = newEntries.reduce((sum, entry) => {
+      const val = parseFloat(
+        (entry.originalInvestmentAmount || "0").replace(/[^0-9.-]+/g, "")
+      );
+      return sum + val;
+    }, 0);
 
-    // Iterate through each map entry and create a new object
-    for (let i = 0; i < numberOfMaps; i++) {
-      const newEntry = {
-        productProvider: values[`productProvider${i}`] || "",
-        accountNumber: values[`accountNumber${i}`] || "",
-        sourceFunds: values[`sourceFunds${i}`] || "",
-        originalInvestmentAmount: values[`originalInvestmentAmount${i}`] || "",
-        returnCapitalValue: values[`returnCapitalValue${i}`] || "",
-        annualAnnuityPayment: values[`annualAnnuityPayment${i}`] || "",
-        annualPensionPaymentArray:
-          values[`annualPensionPaymentArray${i}`] || "",
-        annuityType: values[`annuityType${i}`] || "",
-        term: values[`term${i}`] || "",
-        yearsMaturity: values[`yearsMaturity${i}`] || "",
-        nominatedBeneficiaries: values[`nominatedBeneficiaries${i}`] || "",
-        beneficiariesArray: values[`beneficiariesArray${i}`] || "",
-        annualAdvice: values[`annualAdvice${i}`] || "",
-      };
-
-      newEntries.push(newEntry);
-    }
-
-    // Log the new entries to verify
-    console.log(newEntries);
-
-    let DataOf = props.modalObject.Input;
-
-    props.setFieldValue(DataOf, newEntries);
-
-    let total = newEntries.reduce(
-      (total, entry) =>
-        total +
-        parseFloat(entry.originalInvestmentAmount.replace(/[^0-9.-]+/g, "")),
-      0
+    // set parent's field with the array
+    props.setFieldValue(
+      props.modalObject.stakeHolder + DataOf + "Array",
+      newEntries
     );
 
-    props.setFieldValue(DataOf + "CurrentBalance", toCommaAndDollar(total));
+    props.setFieldValue(
+      props.modalObject.stakeHolder + "currentBalance",
+      toCommaAndDollar(total)
+    );
 
-    props.modalObject.setShowError((prevState) => ({
-      ...prevState,
+    props.modalObject.setShowError?.((prev) => ({
+      ...prev,
       [`${DataOf + "CurrentBalance"}Error`]: false,
       [`${DataOf + "CurrentBalance"}Message`]: "",
     }));
 
-    // Reset the flag state if necessary
     if (props.flagState) {
       props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
     }
   };
 
   const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
     value: (i + 1).toString(),
-    label: ("Year " + (i + 1)).toString(),
+    label: `Year ${i + 1}`,
   }));
+
+  const columns = [
+    {
+      title: "No#",
+      dataIndex: "owner",
+      key: "owner",
+      width: 60,
+    },
+    {
+      title: "Product Provider",
+      dataIndex: "productProvider",
+      key: "productProvider",
+      type: "select",
+      options:
+        bankDetailObj?.Annuities?.map((elem) => ({
+          value: elem._id,
+          label: elem.platformName,
+        })) || [],
+      placeholder: "Select Provider",
+      selectedOptionValue: true,
+    },
+    {
+      title: "Account Number",
+      dataIndex: "accountNumber",
+      key: "accountNumber",
+      type: "number",
+      placeholder: "Account Number",
+    },
+    {
+      title: "Source of Funds",
+      dataIndex: "sourceFunds",
+      key: "sourceFunds",
+      type: "select",
+      options: [
+        { value: "Ordinary", label: "Ordinary" },
+        { value: "Super", label: "Super" },
+      ],
+      placeholder: "Select Source",
+    },
+    {
+      title: "Original Investment Amount",
+      dataIndex: "originalInvestmentAmount",
+      key: "originalInvestmentAmount",
+      type: "number-toComma",
+      placeholder: "Investment Amount",
+    },
+    {
+      title: "Return of Capital Value",
+      dataIndex: "returnCapitalValue",
+      key: "returnCapitalValue",
+      type: "number-toComma",
+      placeholder: "Return of Capital",
+    },
+    {
+      title: "Annual Annuity Payment",
+      dataIndex: "annualAnnuityPayment",
+      key: "annualAnnuityPayment",
+      type: "number-toComma-Modal",
+      innerModalTitle: "_Annual Pension Payment",
+      func: (innerModalTitle, values, key, stakeHolder) =>
+        handleInnerModal(
+          innerModalTitle,
+          key,
+          stakeHolder,
+          values,
+          "Annual Pension Payment"
+        ),
+    },
+    {
+      title: "Annuity Type",
+      dataIndex: "annuityType",
+      key: "annuityType",
+      type: "select",
+      options: [
+        { value: "Fixed Term", label: "Fixed Term" },
+        { value: "Lifetime", label: "Lifetime" },
+      ],
+      placeholder: "Select Type",
+    },
+    {
+      title: "Term",
+      dataIndex: "term",
+      key: "term",
+      type: "select",
+      options: loanTermOptions,
+      placeholder: "Select Term",
+      conditionalDisable: (record, values) =>
+        values?.[record.baseKey]?.[record.index]?.annuityType === "Lifetime",
+    },
+    {
+      title: "Years to Maturity",
+      dataIndex: "yearsMaturity",
+      key: "yearsMaturity",
+      type: "select",
+      options: loanTermOptions,
+      placeholder: "Select Years",
+      conditionalDisable: (record, values) =>
+        values?.[record.baseKey]?.[record.index]?.annuityType === "Lifetime",
+    },
+    {
+      title: "Nominated Beneficiaries",
+      dataIndex: "nominatedBeneficiaries",
+      key: "nominatedBeneficiaries",
+      type: "yesnoModal",
+      innerModalTitle: "_Beneficiaries",
+      placeholder: "Beneficiaries",
+      callBack: true,
+      func: (innerModalTitle, values, key, stakeHolder) =>
+        handleInnerModal(
+          innerModalTitle,
+          key,
+          stakeHolder,
+          values,
+          "Beneficiaries",
+          `How many beneficiaries do ${nameSet} have :`
+        ),
+    },
+    {
+      title: "Annual Advice Service Fee",
+      dataIndex: "annualAdvice",
+      key: "annualAdvice",
+      type: "number-toComma",
+      placeholder: "Annual Fee",
+    },
+  ];
+
+  const componentMapping = {
+    nominatedBeneficiaries: <Beneficiaries />,
+    annualAnnuityPayment: <AnnualPensionPaymentInnerModal />,
+  };
+
+  const ModalContent = (obj) => componentMapping[obj.key] || null;
 
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={onSubmit}
       enableReinitialize
+      onSubmit={onSubmit}
       innerRef={props.formRef}
     >
-      {({ values, setFieldValue, handleChange }) => {
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
-        }, []);
+        }, [existingData]);
+
+        const dataRows = useMemo(() => {
+          const num = Number(values.NumberOfMap) || 0;
+          if (num > 0) {
+            return Array.from({ length: num }, (_, i) => ({
+              key: `investedAnnuities.${i}`,
+              owner: i + 1,
+              stakeHolder: `investedAnnuities[${i}]`,
+              productProvider:
+                values.investedAnnuities?.[i]?.productProvider || "",
+              accountNumber: values.investedAnnuities?.[i]?.accountNumber || "",
+              sourceFunds: values.investedAnnuities?.[i]?.sourceFunds || "",
+              originalInvestmentAmount:
+                values.investedAnnuities?.[i]?.originalInvestmentAmount || "",
+              returnCapitalValue:
+                values.investedAnnuities?.[i]?.returnCapitalValue || "",
+              annualAnnuityPayment:
+                values.investedAnnuities?.[i]?.annualAnnuityPayment || "",
+              annuityType: values.investedAnnuities?.[i]?.annuityType || "",
+              term: values.investedAnnuities?.[i]?.term || "",
+              yearsMaturity: values.investedAnnuities?.[i]?.yearsMaturity || "",
+              nominatedBeneficiaries:
+                values.investedAnnuities?.[i]?.nominatedBeneficiaries || "",
+              annualAdvice: values.investedAnnuities?.[i]?.annualAdvice || "",
+            }));
+          }
+          return [];
+        }, [values.NumberOfMap, values.investedAnnuities]);
 
         return (
           <Form>
-            <Row>
-              <InnerModal
-                modalObject={modalObject}
-                setFieldValue={setFieldValue}
-                setFlagState={setFlagState}
-                flagState={flagState}
+            <InnerModal
+              modalObject={modalObject}
+              setFieldValue={setFieldValue}
+              setFlagState={setFlagState}
+              flagState={flagState}
+            >
+              {ModalContent(modalObject)}
+            </InnerModal>
+
+            <div className="d-flex justify-content-center align-items-center gap-4">
+              <p
+                className="text-end mt-1 pt-2"
+                onClick={() => {
+                  console.log(values);
+                }}
               >
-                {modalObject.key === "portfolioArray" ? (
-                  <PortfolioValue />
-                ) : modalObject.key === "memberArray" ? (
-                  <MemberNumber />
-                ) : modalObject.key === "groupInsuranceArray" ? (
-                  <GroupInsurance />
-                ) : modalObject.key === "ContributionsArray" ? (
-                  <Contributions />
-                ) : modalObject.key === "beneficiariesArray" ? (
-                  <Beneficiaries />
-                ) : modalObject.key === "annualPensionPaymentArray" ? (
-                  <AnnualPensionPaymentInnerModal />
-                ) : (
-                  ""
-                )}
-              </InnerModal>
-              <div className="col-md-12">
-                <div className="row justify-content-center">
-                  <div className="d-flex flex-row justify-content-center align-items-center gap-2">
-                    <p className="text-end mt-3">
-                      How many Annuities does {nameSet} have :
-                    </p>
-
-                    <div style={{ width: "8%" }}>
-                      <Field
-                        type="number"
-                        id="NumberOfMap"
-                        name="NumberOfMap"
-                        className="form-control inputDesignDoubleInput"
-                        onChange={(e) => handleInput(e, setFieldValue)}
-                      />
-                    </div>
-                  </div>
-                  {values.NumberOfMap > 0 && (
-                    <div className="mt-4">
-                      <Table striped bordered responsive hover>
-                        <thead>
-                          <tr>
-                            <th
-                              onClick={() => {
-                                console.log(values);
-                              }}
-                            >
-                              No#
-                            </th>
-                            <th>Product Provider</th>
-                            <th>Account Number</th>
-                            <th>Source of Funds</th>
-                            <th>Original Investment Amount</th>
-                            <th>Return of Capital Value</th>
-                            <th>Annual Annuity Payment</th>
-                            <th>Annuity Type</th>
-                            <th>Term</th>
-                            <th>Years to Maturity</th>
-                            <th>Nominated Beneficiaries</th>
-                            <th>Annual Advice Service Fee </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {dynamicFields.map((elem, i) => {
-                            return (
-                              <tr key={i}>
-                                <td>{1 + i}</td>
-                                <td>
-                                  <Field
-                                    as="select"
-                                    placeholder="Product Provider"
-                                    id={`productProvider${i}`}
-                                    name={`productProvider${i}`}
-                                    className="form-select inputDesignDoubleInput"
-                                  >
-                                    <option value={""}>Please Select</option>
-                                    {bankDetailObj?.Annuities &&
-                                    bankDetailObj.Annuities.length > 0 ? (
-                                      bankDetailObj.Annuities.map(
-                                        (elem, index) => (
-                                          <option key={index} value={elem._id}>
-                                            {elem.platformName}
-                                          </option>
-                                        )
-                                      )
-                                    ) : (
-                                      <option disabled>
-                                        No Platforms Added in Annuities
-                                      </option>
-                                    )}
-                                  </Field>
-                                </td>
-                                <td>
-                                  <Field
-                                    style={{ minWidth: "100px" }}
-                                    type="number"
-                                    placeholder="Account Number"
-                                    id={`accountNumber${i}`}
-                                    name={`accountNumber${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    style={{ minWidth: "100px" }}
-                                    placeholder="Source of Funds"
-                                    id={`sourceFunds${i}`}
-                                    as="select"
-                                    name={`sourceFunds${i}`}
-                                    className="form-select inputDesignDoubleInput"
-                                  >
-                                    <option value="">Select</option>
-                                    <option value="Ordinary">Ordinary</option>
-                                    <option value="Super">Super</option>
-                                  </Field>
-                                </td>
-                                <td>
-                                  <Field
-                                    type="text"
-                                    style={{ minWidth: "100px" }}
-                                    placeholder="Original Investment Amount"
-                                    id={`originalInvestmentAmount${i}`}
-                                    name={`originalInvestmentAmount${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                    onChange={(e) => {
-                                      setFieldValue(
-                                        e.target.name,
-                                        toCommaAndDollar(
-                                          e.target.value.replace(
-                                            /[^0-9.-]+/g,
-                                            ""
-                                          )
-                                        )
-                                      );
-                                    }}
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    style={{ minWidth: "100px" }}
-                                    type="text"
-                                    placeholder="Return of Capital Value"
-                                    id={`returnCapitalValue${i}`}
-                                    name={`returnCapitalValue${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                    onChange={(e) => {
-                                      setFieldValue(
-                                        e.target.name,
-                                        toCommaAndDollar(
-                                          e.target.value.replace(
-                                            /[^0-9.-]+/g,
-                                            ""
-                                          )
-                                        )
-                                      );
-                                    }}
-                                  />
-                                </td>
-                                <td>
-                                  <InputGroup
-                                    className="mb-3"
-                                    style={{ width: "150px" }}
-                                  >
-                                    <Field
-                                      type="text"
-                                      placeholder="Pension Payment"
-                                      id={`annualAnnuityPayment${i}`}
-                                      name={`annualAnnuityPayment${i}`}
-                                      className="form-control inputDesignDoubleInput"
-                                      onChange={(e) => {
-                                        setFieldValue(
-                                          e.target.name,
-                                          toCommaAndDollar(
-                                            e.target.value.replace(
-                                              /[^0-9.-]+/g,
-                                              ""
-                                            )
-                                          )
-                                        );
-                                      }}
-                                    />
-                                    <Button
-                                      className="btn bgColor modalBtn border-0"
-                                      id="button-addon2"
-                                      onClick={() => {
-                                        // if (values[`productProvider${i}`]) {
-                                        let name = RenderName(
-                                          props.modalObject.Input
-                                        );
-                                        //     bankDetailObj.map((elem, index) => {
-
-                                        //         if (elem._id === values[`productProvider${i}`]) {
-                                        //             name = elem.platformName
-                                        //         }
-
-                                        //     });
-                                        handleInnerModal(
-                                          name + "_Annual Pension Payment",
-                                          "",
-                                          "annualPensionPaymentArray",
-                                          "annualAnnuityPayment",
-                                          "",
-                                          values[
-                                            `annualPensionPaymentArray${i}`
-                                          ],
-                                          i,
-                                          values
-                                        );
-                                        // }
-                                        // else {
-                                        //     // type, placement, message, description
-                                        //     openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
-                                        // }
-                                      }}
-                                    >
-                                      <FontAwesomeIcon
-                                        icon={faArrowUpRightFromSquare}
-                                      />
-                                    </Button>
-                                  </InputGroup>
-                                </td>
-                                <td>
-                                  <Field
-                                    style={{ minWidth: "100px" }}
-                                    type="text"
-                                    placeholder="Annuity Type"
-                                    id={`annuityType${i}`}
-                                    name={`annuityType${i}`}
-                                    as="select"
-                                    className="form-select inputDesignDoubleInput"
-                                    onChange={(e) => {
-                                      setFieldValue(
-                                        e.target.name,
-                                        e.target.value
-                                      );
-                                      if (e.target.value === "Lifetime") {
-                                        setFieldValue(`term${i}`, "");
-                                        setFieldValue(`yearsMaturity${i}`, "");
-                                      }
-                                    }}
-                                  >
-                                    <option value="">Select</option>
-                                    <option value="Fixed Term">
-                                      Fixed Term
-                                    </option>
-                                    <option value="Lifetime">Life Time</option>
-                                  </Field>
-                                </td>
-                                <td>
-                                  {values[`annuityType${i}`] !==
-                                    "Fixed Term" && (
-                                    <Field
-                                      style={{ minWidth: "100px" }}
-                                      type="number"
-                                      placeholder="Term"
-                                      id={`term${i}`}
-                                      name={`term${i}`}
-                                      className="form-control inputDesignDoubleInput"
-                                      disabled={
-                                        values[`annuityType${i}`] == "Lifetime"
-                                      }
-                                    />
-                                  )}
-                                  {values[`annuityType${i}`] ===
-                                    "Fixed Term" && (
-                                    <Field
-                                      placeholder="Term"
-                                      id={`term${i}`}
-                                      name={`term${i}`}
-                                      as="select"
-                                      className="form-select inputDesignDoubleInput"
-                                    >
-                                      <option value="">Select</option>
-                                      {loanTermOptions.map((option) => (
-                                        <option
-                                          key={option.value}
-                                          value={option.value}
-                                        >
-                                          {option.label}
-                                        </option>
-                                      ))}
-                                    </Field>
-                                  )}
-                                </td>
-                                <td>
-                                  {values[`annuityType${i}`] !==
-                                    "Fixed Term" && (
-                                    <Field
-                                      style={{ minWidth: "100px" }}
-                                      type="number"
-                                      placeholder="Years to Maturity"
-                                      disabled={
-                                        values[`annuityType${i}`] == "Lifetime"
-                                      }
-                                      id={`yearsMaturity${i}`}
-                                      name={`yearsMaturity${i}`}
-                                      className="form-control inputDesignDoubleInput"
-                                    />
-                                  )}
-                                  {values[`annuityType${i}`] ===
-                                    "Fixed Term" && (
-                                    <Field
-                                      placeholder="Years to Maturity"
-                                      id={`yearsMaturity${i}`}
-                                      name={`yearsMaturity${i}`}
-                                      as="select"
-                                      className="form-select inputDesignDoubleInput"
-                                    >
-                                      <option value="">Select</option>
-                                      {loanTermOptions.map((option) => (
-                                        <option
-                                          key={option.value}
-                                          value={option.value}
-                                        >
-                                          {option.label}
-                                        </option>
-                                      ))}
-                                    </Field>
-                                  )}
-                                </td>
-                                <td>
-                                  <div className="d-flex flex-column justify-content-center align-items-center gap-2">
-                                    <DynamicYesNo
-                                      name={`nominatedBeneficiaries${i}`}
-                                      values={values}
-                                      handleChange={handleChange}
-                                    />
-                                    {values[`nominatedBeneficiaries${i}`] ===
-                                      "Yes" && (
-                                      <Button
-                                        className="btn bgColor modalBtn border-0"
-                                        id="button-addon2"
-                                        onClick={() => {
-                                          // if (values[`productProvider${i}`]) {
-                                          let name = RenderName(
-                                            props.modalObject.Input
-                                          );
-                                          //     bankDetailObj.map((elem, index) => {
-
-                                          //         if (elem._id === values[`productProvider${i}`]) {
-                                          //             name = elem.platformName
-                                          //         }
-
-                                          //     });
-                                          handleInnerModal(
-                                            name + "_Beneficiaries",
-                                            `How many beneficiaries do ${nameSet} have :`,
-                                            "beneficiariesArray",
-                                            "",
-                                            "",
-                                            values[`beneficiariesArray${i}`],
-                                            i
-                                          );
-                                          // }
-                                          // else {
-                                          //     // type, placement, message, description
-                                          //     openNotificationSuccess("error", 'topRight', "Error Notification", "Please! Select Fund Name First")
-                                          // }
-                                        }}
-                                      >
-                                        <FontAwesomeIcon
-                                          icon={faArrowUpRightFromSquare}
-                                        />
-                                      </Button>
-                                    )}
-                                  </div>
-                                </td>
-                                <td>
-                                  <Field
-                                    type="number"
-                                    placeholder="Annual Advice Service Fee"
-                                    id={`annualAdvice${i}`}
-                                    name={`annualAdvice${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </Table>
-                    </div>
-                  )}
-                </div>
+                How many Annuities does {nameSet} have:
+              </p>
+              <div style={{ minWidth: "10%" }}>
+                <ConfigProvider
+                  theme={{
+                    components: {
+                      Select: {
+                        colorBorder: "#36b446",
+                      },
+                    },
+                  }}
+                >
+                  <Select
+                    id="NumberOfMap"
+                    name="NumberOfMap"
+                    className="w-100 h-100"
+                    placeholder="Select"
+                    size="large"
+                    value={values.NumberOfMap || undefined}
+                    onChange={(value) =>
+                      handleInput({ target: { value } }, setFieldValue)
+                    }
+                    onBlur={handleBlur}
+                    getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                  >
+                    {Array.from({ length: 3 }, (_, i) => (
+                      <Option key={i} value={i + 1}>
+                        {i + 1}
+                      </Option>
+                    ))}
+                  </Select>
+                </ConfigProvider>
               </div>
-            </Row>
+            </div>
+
+            {values.NumberOfMap && (
+              <div className="mt-4 All_Client reportSection">
+                <AntdTable
+                  columns={columns}
+                  data={dataRows}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
+                />
+              </div>
+            )}
           </Form>
         );
       }}

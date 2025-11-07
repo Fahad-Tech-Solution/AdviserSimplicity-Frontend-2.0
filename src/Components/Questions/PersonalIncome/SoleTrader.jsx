@@ -12,6 +12,8 @@ import {
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 import { AntdCreatableMultiSelect } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 
+const AntdTable = DynamicTableForInputsSection("antd");
+
 const SoleTrader = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
   const [, setQuestionDetail] = useRecoilState(QuestionDetail);
@@ -34,6 +36,7 @@ const SoleTrader = (props) => {
       businessName: "",
       ABN: "",
       businessAddress: "",
+      postCode: "",
       netBusinessIncome: "",
       goodWill: "",
     },
@@ -41,6 +44,7 @@ const SoleTrader = (props) => {
       businessName: "",
       ABN: "",
       businessAddress: "",
+      postCode: "",
       netBusinessIncome: "",
       goodWill: "",
     },
@@ -62,6 +66,10 @@ const SoleTrader = (props) => {
           setFieldValue(
             "client.businessAddress",
             data.client.businessAddress || ""
+          );
+          setFieldValue(
+            "client.postCode",
+            data.client.postCode || ""
           );
           setFieldValue(
             "client.netBusinessIncome",
@@ -88,6 +96,10 @@ const SoleTrader = (props) => {
             data.partner.businessAddress || ""
           );
           setFieldValue(
+            "partner.postCode",
+            data.partner.postCode || ""
+          );
+          setFieldValue(
             "partner.netBusinessIncome",
             data.partner.netBusinessIncome || ""
           );
@@ -96,8 +108,6 @@ const SoleTrader = (props) => {
       }
     }
   };
-
-  const AntdTable = DynamicTableForInputsSection("antd");
 
   const DefaultUrl = useRecoilValue(defaultUrl);
 
@@ -149,6 +159,7 @@ const SoleTrader = (props) => {
 
       if (props.flagState) {
         props.setFlagState(false);
+        props.setIsEditing(!props.isEditing);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
@@ -173,6 +184,7 @@ const SoleTrader = (props) => {
       key: "businessName",
       type: "text",
       placeholder: "Business Name",
+      width: 200,
     },
     {
       title: "ABN",
@@ -187,6 +199,13 @@ const SoleTrader = (props) => {
       key: "businessAddress",
       type: "text",
       placeholder: "Business Address",
+    },
+    {
+      title: "Postcode/Suburb",
+      dataIndex: "postCode",
+      key: "postCode",
+      type: "text",
+      placeholder: "Postcode/Suburb",
     },
     {
       title: "Net Business Income",
@@ -226,6 +245,7 @@ const SoleTrader = (props) => {
                   businessName: values.client?.businessName || "",
                   ABN: values.client?.ABN || "",
                   businessAddress: values.client?.businessAddress || "",
+                  postCode: values.client?.postCode || "",
                   netBusinessIncome: values.client?.netBusinessIncome || "",
                   goodWill: values.client?.goodWill || "",
                 },
@@ -240,6 +260,7 @@ const SoleTrader = (props) => {
                   businessName: values.partner?.businessName || "",
                   ABN: values.partner?.ABN || "",
                   businessAddress: values.partner?.businessAddress || "",
+                  postCode: values.partner?.postCode || "",
                   netBusinessIncome: values.partner?.netBusinessIncome || "",
                   goodWill: values.partner?.goodWill || "",
                 },
@@ -278,6 +299,9 @@ const SoleTrader = (props) => {
                         handleChange={handleChange}
                         handleBlur={handleBlur}
                         handleInnerModal={handleInnerModal}
+                        handleSubmit={props?.handleOk}
+                        isEditing={props?.isEditing}
+                        setIsEditing={props?.setIsEditing}
                       />
                     </div>
                   )}

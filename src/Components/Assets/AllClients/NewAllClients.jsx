@@ -1,7 +1,6 @@
 import React, { Children, useEffect, useState } from "react";
 import {
   AllUsers,
-  BankDetail,
   CRState,
   defaultUrl,
   Loading,
@@ -51,7 +50,6 @@ const NewAllClients = (props) => {
   const [showFilters, setShowFilters] = useState(false);
   let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
   let [prospectsCDF, setProspectsCDF] = useRecoilState(ProspectsCDF);
-  let [bankDetailObj, setBankDetailObj] = useRecoilState(BankDetail);
 
   let [stepsStatus, setStepsStatus] = useRecoilState(StepsStatus);
   let [selectedClientDetails, setSelectedClientDetails] = useRecoilState(
@@ -326,11 +324,11 @@ const NewAllClients = (props) => {
 
   let columnsGenerator = () => {
     const columns = [
-      {
-        title: "#",
-        key: "index",
-        render: (text, row, index) => index + 1 || "--",
-      },
+      // {
+      //   title: "#",
+      //   key: "index",
+      //   render: (text, row, index) => index + 1 || "--",
+      // },
       {
         title: "Household",
         key: "clientLastName",

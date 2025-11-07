@@ -14,23 +14,26 @@ import {
   RenderName,
   toCommaAndDollar,
 } from "../../Assets/Api/Api";
-import { Button } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
-import DynamicYesNo from "../FinancialInvestments/QuestionsDetail/DynamicYesNo";
-import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
-import Beneficiaries from "../FinancialInvestments/QuestionsDetail/Beneficiaries";
+import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
 import NewLoadingExclusion from "./NewLoadingExclusion";
+import Beneficiaries from "../FinancialInvestments/QuestionsDetail/Beneficiaries";
 import PremiumsDetails from "./PremiumsDetails";
+import { ConfigProvider, Select } from "antd";
+import PersonalInsurance from "./PersonalInsurance";
+import DynamicDescription from "../EstatePlanning/DynamicDescription";
+import GroupCoverDetails from "./GroupCoverDetails";
+import BeneficiariesPersonalInsurance from "./BeneficiariesPersonalInsurance";
 
 const AntdTable = DynamicTableForInputsSection("antd");
+const { Option } = Select;
 
 const PersonalInsuranceLife = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
   const [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
   const DefaultUrl = useRecoilValue(defaultUrl);
   const bankDetailObj = useRecoilValue(BankDetail);
+
   const [CRObject, setCRObject] = useRecoilState(CRState);
   const [UserStatus] = useState(localStorage.getItem("UserStatus"));
   const [flagState, setFlagState] = useState(false);
@@ -40,299 +43,607 @@ const PersonalInsuranceLife = (props) => {
     Object.keys(questionDetail.personalInsurance || {}).length > 0
       ? questionDetail.personalInsurance
       : {
-        client: [],
-        partner: [],
-        joint: [],
-        PersonalInsurance: [],
-        numberOfPersonalInsurance: 0,
-      };
+          client: { PersonalInsurance: [], groupCoverDetails: [] },
+          partner: { PersonalInsurance: [], groupCoverDetails: [] },
+          selectedStakeholders: [],
+        };
+  const superAnnuationIssues =
+    questionDetail?.superAnnuationIssues &&
+    Object.keys(questionDetail?.superAnnuationIssues).length > 0
+      ? questionDetail.superAnnuationIssues
+      : { client: [], joint: [], partner: [] };
+
+  const groupInsuranceDetailsAll = ["client", "partner", "joint"].reduce(
+    (acc, key) => {
+      acc[key] = (superAnnuationIssues[key] || [])
+        .filter((item) => item.groupInsurance === "Yes")
+        .map((item) => item || {});
+      return acc;
+    },
+    {}
+  );
 
   const initialValues = {
-    NumberOfMap: "",
-    PersonalInsurance: [],
+    client: {
+      numberOfPolicies: "",
+      PersonalInsurance: [],
+      groupCoverDetails: [],
+    },
+    partner: {
+      numberOfPolicies: "",
+      PersonalInsurance: [],
+      groupCoverDetails: [],
+    },
+    selectedStakeholders: [],
   };
 
   const fillInitialValues = (setFieldValue) => {
-    const userStatus = localStorage.getItem("UserStatus");
+    try {
+      // --- Set selected stakeholders ---
+      if (personalInsurance?.selectedStakeholders?.length) {
+        setFieldValue(
+          "selectedStakeholders",
+          personalInsurance.selectedStakeholders
+        );
+      } else {
+        setFieldValue("selectedStakeholders", []);
+      }
 
-    if (personalInsurance && personalInsurance.PersonalInsurance?.length) {
-      setFieldValue(
-        "NumberOfMap",
-        personalInsurance.numberOfPersonalInsurance || 0
-      );
+      // --- Fill Client Personal Insurance ---
+      if (personalInsurance?.client?.PersonalInsurance?.length) {
+        setFieldValue(
+          "client.numberOfPolicies",
+          personalInsurance.client.PersonalInsurance.length || 0
+        );
 
-      personalInsurance.PersonalInsurance.forEach((entry, index) => {
-        setFieldValue(`PersonalInsurance[${index}].lifeInsured`, entry.lifeInsured || "");
-        setFieldValue(`PersonalInsurance[${index}].provider`, entry.provider || "");
-        setFieldValue(`PersonalInsurance[${index}].policyNo`, entry.policyNo || "");
-        setFieldValue(`PersonalInsurance[${index}].Owner`, entry.Owner || "");
-        setFieldValue(`PersonalInsurance[${index}].startDate`, entry.startDate || "");
-        setFieldValue(`PersonalInsurance[${index}].sumInsured`, entry.sumInsured || []);
-        setFieldValue(`PersonalInsurance[${index}].sumInsuredDetails`, entry.sumInsuredSum || "");
-        setFieldValue(`PersonalInsurance[${index}].premiums`, entry.premiums || "");
-        setFieldValue(`PersonalInsurance[${index}].premiumsDetails`, entry.premiumsDetails || []);
-        setFieldValue(`PersonalInsurance[${index}].loadingExclusion`, entry.loadingExclusion || "No");
-        setFieldValue(`PersonalInsurance[${index}].loadingExclusion_input`, entry.loadingExclusionValue || "");
-        setFieldValue(`PersonalInsurance[${index}].beneficiary`, entry.beneficiary || "");
-        setFieldValue(`PersonalInsurance[${index}].beneficiaryDetails`, entry.beneficiaryDetails || []);
-      });
-    } else {
-      setFieldValue("NumberOfMap", "");
-      setFieldValue("PersonalInsurance", []);
+        personalInsurance.client.PersonalInsurance.forEach((entry, index) => {
+          const fields = [
+            "lifeInsured",
+            "provider",
+            "policyNo",
+            "Owner",
+            "startDate",
+            "smoker",
+            "life",
+            "TPD",
+            "trauma",
+            "IP",
+            "premiums",
+            "loadingExclusion",
+            "loadingExclusionValue",
+            "beneficiary",
+            "beneficiariesArray",
+          ];
+          fields.forEach((field) =>
+            setFieldValue(
+              `client.PersonalInsurance[${index}].${field}`,
+              entry?.[field] || (Array.isArray(entry?.[field]) ? [] : "")
+            )
+          );
+        });
+      } else {
+        setFieldValue("client.numberOfPolicies", "");
+        setFieldValue("client.PersonalInsurance", []);
+      }
+
+      // --- Fill Client Group Cover Details ---
+      if (personalInsurance?.client?.groupCoverDetails?.length) {
+        personalInsurance.client.groupCoverDetails.forEach((entry, index) => {
+          const fields = [
+            "lifeInsured",
+            "provider",
+            "policyNo",
+            "groupOwner",
+            "startDate",
+            "smoker",
+            "life",
+            "tpd",
+            "trauma",
+            "ip",
+            "premiumPA",
+            "loadingExclusion",
+            "beneficiary",
+          ];
+          fields.forEach((field) =>
+            setFieldValue(
+              `client.groupCoverDetails[${index}].${field}`,
+              entry?.[field] || ""
+            )
+          );
+        });
+      } else if (groupInsuranceDetailsAll?.client?.length > 0) {
+        try {
+          groupInsuranceDetailsAll.client.forEach((entry, index) => {
+            setFieldValue(
+              `client.groupCoverDetails[${index}].lifeInsured`,
+              RenderName("client") || ""
+            );
+
+            const fundName =
+              bankDetailObj?.SuperannuationFunds?.map((elem) => ({
+                value: elem._id,
+                label: elem.platformName,
+              })).find((fund) => fund.value === entry?.platformName)?.label ||
+              "";
+
+            setFieldValue(
+              `client.groupCoverDetails[${index}].provider`,
+              fundName || ""
+            );
+            setFieldValue(
+              `client.groupCoverDetails[${index}].policyNo`,
+              entry?.memberNumber || ""
+            );
+            setFieldValue(
+              `client.groupCoverDetails[${index}].groupOwner`,
+              entry?.balanceBenefitDetails?.fundType || ""
+            );
+            setFieldValue(
+              `client.groupCoverDetails[${index}].startDate`,
+              entry?.balanceBenefitDetails?.commencementDate || ""
+            );
+            setFieldValue(`client.groupCoverDetails[${index}].smoker`, "No");
+            setFieldValue(
+              `client.groupCoverDetails[${index}].life`,
+              entry?.groupInsuranceDetails?.lifeCover || 0
+            );
+            setFieldValue(
+              `client.groupCoverDetails[${index}].tpd`,
+              entry?.groupInsuranceDetails?.TPDCover || 0
+            );
+            setFieldValue(`client.groupCoverDetails[${index}].trauma`, "$0");
+            setFieldValue(
+              `client.groupCoverDetails[${index}].ip`,
+              entry?.groupInsuranceDetails?.monthlyIncome || 0
+            );
+
+            const premiumPA =
+              (Number(
+                entry?.groupInsuranceDetails?.lifeCover?.replace(
+                  /[^0-9.-]+/g,
+                  ""
+                )
+              ) || 0) +
+              (Number(
+                entry?.groupInsuranceDetails?.TPDCover?.replace(
+                  /[^0-9.-]+/g,
+                  ""
+                )
+              ) || 0) +
+              (Number(
+                entry?.groupInsuranceDetails?.monthlyIncome?.replace(
+                  /[^0-9.-]+/g,
+                  ""
+                )
+              ) || 0);
+
+            setFieldValue(
+              `client.groupCoverDetails[${index}].premiumPA`,
+              premiumPA
+            );
+            setFieldValue(
+              `client.groupCoverDetails[${index}].loadingExclusion`,
+              "No"
+            );
+            setFieldValue(
+              `client.groupCoverDetails[${index}].beneficiary`,
+              entry?.nominatedBeneficiaries || "No"
+            );
+          });
+        } catch (error) {
+          console.error("Error filling client group cover details:", error);
+          setFieldValue("client.groupCoverDetails", []);
+        }
+      } else {
+        setFieldValue("client.groupCoverDetails", []);
+      }
+
+      // --- Fill Partner Personal Insurance ---
+      if (personalInsurance?.partner?.PersonalInsurance?.length) {
+        setFieldValue(
+          "partner.numberOfPolicies",
+          personalInsurance.partner.PersonalInsurance.length || 0
+        );
+
+        personalInsurance.partner.PersonalInsurance.forEach((entry, index) => {
+          const fields = [
+            "lifeInsured",
+            "provider",
+            "policyNo",
+            "Owner",
+            "startDate",
+            "smoker",
+            "life",
+            "TPD",
+            "trauma",
+            "IP",
+            "premiums",
+            "loadingExclusion",
+            "loadingExclusionValue",
+            "beneficiary",
+            "beneficiariesArray",
+          ];
+          fields.forEach((field) =>
+            setFieldValue(
+              `partner.PersonalInsurance[${index}].${field}`,
+              entry?.[field] || (Array.isArray(entry?.[field]) ? [] : "")
+            )
+          );
+        });
+      } else {
+        setFieldValue("partner.numberOfPolicies", "");
+        setFieldValue("partner.PersonalInsurance", []);
+      }
+
+      // --- Fill Partner Group Cover Details ---
+      if (personalInsurance?.partner?.groupCoverDetails?.length) {
+        personalInsurance.partner.groupCoverDetails.forEach((entry, index) => {
+          const fields = [
+            "lifeInsured",
+            "provider",
+            "policyNo",
+            "groupOwner",
+            "startDate",
+            "smoker",
+            "life",
+            "tpd",
+            "trauma",
+            "ip",
+            "premiumPA",
+            "loadingExclusion",
+            "beneficiary",
+          ];
+          fields.forEach((field) =>
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].${field}`,
+              entry?.[field] || ""
+            )
+          );
+        });
+      } else if (groupInsuranceDetailsAll?.partner?.length > 0) {
+        try {
+          groupInsuranceDetailsAll.partner.forEach((entry, index) => {
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].lifeInsured`,
+              RenderName("partner") || ""
+            );
+
+            const fundName =
+              bankDetailObj?.SuperannuationFunds?.map((elem) => ({
+                value: elem._id,
+                label: elem.platformName,
+              })).find((fund) => fund.value === entry?.platformName)?.label ||
+              "";
+
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].provider`,
+              fundName || ""
+            );
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].policyNo`,
+              entry?.memberNumber || ""
+            );
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].groupOwner`,
+              entry?.balanceBenefitDetails?.fundType || ""
+            );
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].startDate`,
+              entry?.balanceBenefitDetails?.commencementDate || ""
+            );
+            setFieldValue(`partner.groupCoverDetails[${index}].smoker`, "No");
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].life`,
+              entry?.groupInsuranceDetails?.lifeCover || 0
+            );
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].tpd`,
+              entry?.groupInsuranceDetails?.TPDCover || 0
+            );
+            setFieldValue(`partner.groupCoverDetails[${index}].trauma`, "$0");
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].ip`,
+              entry?.groupInsuranceDetails?.monthlyIncome || 0
+            );
+
+            const premiumPA =
+              (Number(
+                entry?.groupInsuranceDetails?.lifeCover?.replace(
+                  /[^0-9.-]+/g,
+                  ""
+                )
+              ) || 0) +
+              (Number(
+                entry?.groupInsuranceDetails?.TPDCover?.replace(
+                  /[^0-9.-]+/g,
+                  ""
+                )
+              ) || 0) +
+              (Number(
+                entry?.groupInsuranceDetails?.monthlyIncome?.replace(
+                  /[^0-9.-]+/g,
+                  ""
+                )
+              ) || 0);
+
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].premiumPA`,
+              premiumPA
+            );
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].loadingExclusion`,
+              "No"
+            );
+            setFieldValue(
+              `partner.groupCoverDetails[${index}].beneficiary`,
+              entry?.nominatedBeneficiaries || "No"
+            );
+          });
+        } catch (error) {
+          console.error("Error filling partner group cover details:", error);
+          setFieldValue("partner.groupCoverDetails", []);
+        }
+      } else {
+        setFieldValue("partner.groupCoverDetails", []);
+      }
+    } catch (error) {
+      console.error("Error filling initial values:", error);
     }
   };
 
+  const handleInnerModal = (innerModalTitle, values, key, stakeHolder) => {
+    const [stakeholderType, index] = stakeHolder
+      .split("[")[1]
+      .replace("]", "")
+      .split(".");
+    const baseKey = stakeHolder.split("[")[0].split(".");
 
+    console.log(baseKey);
 
-  let handleInnerModal = (innerModalTitle, values, key, stakeHolder) => {
-
-    let index = stakeHolder.replace(/[^0-9]+/g, "");
-    let BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
-
-    let title = RenderName(values?.[BaseKey]?.[index].lifeInsured) + innerModalTitle;
-
-    console.log(innerModalTitle, key, values, stakeHolder, title, index, BaseKey, values?.[BaseKey]?.[index].lifeInsured)
+    const title = RenderName(baseKey[0]) + innerModalTitle;
+    let finalKey = key;
+    if (["life", "TPD", "trauma"].includes(key)) {
+      finalKey = "LifeTPDTrauma";
+    }
     setModalObject({
       title,
-      key,
-      parentValues: values,
+      key: finalKey,
+      values,
       stakeHolder,
     });
     setFlagState(true);
   };
 
-const onSubmit = async (values, { setFieldValue }) => {
-  try {
-    const loopLength = parseFloat(values.NumberOfMap) || 0;
-    const newEntries = [];
+  const onSubmit = async (values) => {
+    // Helper function to safely extract array entries
+    const mapEntries = (array, fields) =>
+      (array || []).map((item) => {
+        const obj = {};
+        fields.forEach((field) => {
+          obj[field] = item?.[field] || "";
+        });
+        return obj;
+      });
 
-    // 🟢 FIX: Use the nested structure from your form
-    for (let i = 0; i < loopLength; i++) {
-      const entry = values.PersonalInsurance?.[i] || {};
-      
-      const newEntry = {
-        lifeInsured: entry.lifeInsured || "",
-        provider: entry.provider || "",
-        policyNo: entry.policyNo || "",
-        owner: entry.Owner || "", // Note: your form uses 'Owner' with capital O
-        startDate: entry.startDate || "",
-        sumInsuredSum: entry.sumInsuredDetails || "", // Your form uses sumInsuredDetails
-        sumInsured: entry.sumInsured || [],
-        premiums: entry.premiums || "",
-        premiumsDetails: entry.premiumsDetails || [],
-        loadingExclusion: entry.loadingExclusion || "",
-        loadingExclusionValue: entry.loadingExclusion_input || "", // Your form uses loadingExclusion_input
-        beneficiary: entry.beneficiary || "",
-        beneficiariesArray: entry.beneficiaryDetails || [], // Your form uses beneficiaryDetails
-      };
+    // Fields for Personal Insurance (Client + Partner)
+    const personalFields = [
+      "lifeInsured",
+      "provider",
+      "policyNo",
+      "Owner",
+      "startDate",
+      "smoker",
+      "life",
+      "TPD",
+      "trauma",
+      "IP",
+      "premiums",
+      "loadingExclusion",
+      "loadingExclusionValue",
+      "beneficiary",
+      "beneficiariesArray",
+    ];
 
-      newEntries.push(newEntry);
-    }
+    // Fields for Group Cover Details (Client + Partner)
+    const groupFields = [
+      "lifeInsured",
+      "provider",
+      "policyNo",
+      "groupOwner",
+      "startDate",
+      "smoker",
+      "life",
+      "tpd",
+      "trauma",
+      "ip",
+      "premiumPA",
+      "loadingExclusion",
+      "beneficiary",
+    ];
 
-    // 🧾 Build base API object
+    // Generate arrays safely even if undefined
+    const clientEntries = mapEntries(
+      values?.client?.PersonalInsurance,
+      personalFields
+    );
+    const partnerEntries = mapEntries(
+      values?.partner?.PersonalInsurance,
+      personalFields
+    );
+
+    const clientGroupCoverEntries = mapEntries(
+      values?.client?.groupCoverDetails,
+      groupFields
+    );
+    const partnerGroupCoverEntries = mapEntries(
+      values?.partner?.groupCoverDetails,
+      groupFields
+    );
+
+    // ✅ Helper to convert currency string to number
+    const toNumber = (val) =>
+      Number(String(val || "0").replace(/[^0-9.-]+/g, "")) || 0;
+
+    // ✅ Helper to calculate total of a specific field across multiple arrays
+    const calcTotal = (arrays, fieldNames) =>
+      arrays.reduce((sum, arr) => {
+        (arr || []).forEach((item) => {
+          fieldNames.forEach((field) => {
+            sum += toNumber(item?.[field]);
+          });
+        });
+        return sum;
+      }, 0);
+
+    // ✅ Calculate all required totals
+    const clientLifeInsuranceTotal = calcTotal(
+      [clientEntries, clientGroupCoverEntries],
+      ["life"]
+    );
+    const partnerLifeInsuranceTotal = calcTotal(
+      [partnerEntries, partnerGroupCoverEntries],
+      ["life"]
+    );
+
+    const clientTPDTotal = calcTotal(
+      [clientEntries, clientGroupCoverEntries],
+      ["TPD", "tpd"]
+    );
+    const partnerTPDTotal = calcTotal(
+      [partnerEntries, partnerGroupCoverEntries],
+      ["TPD", "tpd"]
+    );
+
+    const clientTraumaTotal = calcTotal(
+      [clientEntries, clientGroupCoverEntries],
+      ["trauma"]
+    );
+    const partnerTraumaTotal = calcTotal(
+      [partnerEntries, partnerGroupCoverEntries],
+      ["trauma"]
+    );
+
+    const clientIncomeProtectionTotal = calcTotal(
+      [clientEntries, clientGroupCoverEntries],
+      ["IP", "ip"]
+    );
+    const partnerIncomeProtectionTotal = calcTotal(
+      [partnerEntries, partnerGroupCoverEntries],
+      ["IP", "ip"]
+    );
+
+    // Build the final payload
     const Obj = {
-      PersonalInsurance: newEntries,
-      numberOfPersonalInsurance: newEntries.length,
+      client: {
+        PersonalInsurance: clientEntries,
+        groupCoverDetails: clientGroupCoverEntries,
+      },
+      partner: {
+        PersonalInsurance: partnerEntries,
+        groupCoverDetails: partnerGroupCoverEntries,
+      },
+      clientLifeInsuranceTotal: toCommaAndDollar(clientLifeInsuranceTotal),
+      partnerLifeInsuranceTotal: toCommaAndDollar(partnerLifeInsuranceTotal),
+      clientTPDTotal: toCommaAndDollar(clientTPDTotal),
+      partnerTPDTotal: toCommaAndDollar(partnerTPDTotal),
+      clientTraumaTotal: toCommaAndDollar(clientTraumaTotal),
+      partnerTraumaTotal: toCommaAndDollar(partnerTraumaTotal),
+      clientIncomeProtectionTotal: toCommaAndDollar(
+        clientIncomeProtectionTotal
+      ),
+      partnerIncomeProtectionTotal: toCommaAndDollar(
+        partnerIncomeProtectionTotal
+      ),
+      selectedStakeholders: values?.selectedStakeholders || [],
       clientFK: localStorage.getItem("UserID"),
     };
 
-    // -------------------------------------------------------------
-    // 🧮 TOTAL PREMIUM CALCULATION (THIS PART NOW GETS CALLED CORRECTLY)
-    // -------------------------------------------------------------
+    console.log(Obj);
 
-    const obj = {
-      clientLifeInsuranceTotal: 0,
-      clientTPDTotal: 0,
-      clientTraumaTotal: 0,
-      clientIncomeProtectionTotal: 0,
+    try {
+      const apiUrl = `${DefaultUrl}/api/personalInsurance`;
+      const res = personalInsurance.clientFK
+        ? await PatchAxios(`${apiUrl}/Update`, Obj)
+        : await PostAxios(`${apiUrl}/Add`, Obj);
 
-      partnerLifeInsuranceTotal: 0,
-      partnerTPDTotal: 0,
-      partnerTraumaTotal: 0,
-      partnerIncomeProtectionTotal: 0,
-    };
+      if (res) {
+        const updatedData = { ...questionDetail, personalInsurance: res };
+        setQuestionDetail(updatedData);
+      }
 
-    // Separate by lifeInsured type
-    const clientArray = newEntries.filter(
-      (e) => e.lifeInsured?.toLowerCase() === "client"
-    );
-    const partnerArray = newEntries.filter(
-      (e) => e.lifeInsured?.toLowerCase() === "partner"
-    );
-    const bothArray = newEntries.filter(
-      (e) => e.lifeInsured?.toLowerCase() === "client+partner"
-    );
+      openNotificationSuccess(
+        "success",
+        "topRight",
+        "Success Notification",
+        `Data of "${props.modalObject.title}" is Saved`
+      );
 
-    // Helper function to parse premium value
-    const parsePremium = (premiumStr) => {
-      if (!premiumStr) return 0;
-      return parseFloat(premiumStr.replace(/[^0-9.-]+/g, "")) || 0;
-    };
-
-    // ---- Client entries ----
-    clientArray.forEach((entry) => {
-      const premiumValue = parsePremium(entry.premiums);
-      const sumInsuredArray = Array.isArray(entry.sumInsured) ? entry.sumInsured : [];
-      
-      sumInsuredArray.forEach((SumData) => {
-        if (SumData.coverType === "Life")
-          obj.clientLifeInsuranceTotal += premiumValue;
-        else if (SumData.coverType === "TPD")
-          obj.clientTPDTotal += premiumValue;
-        else if (SumData.coverType === "Trauma")
-          obj.clientTraumaTotal += premiumValue;
-        else if (SumData.coverType === "Income protection")
-          obj.clientIncomeProtectionTotal += premiumValue;
-      });
-    });
-
-    // ---- Partner entries ----
-    partnerArray.forEach((entry) => {
-      const premiumValue = parsePremium(entry.premiums);
-      const sumInsuredArray = Array.isArray(entry.sumInsured) ? entry.sumInsured : [];
-      
-      sumInsuredArray.forEach((SumData) => {
-        if (SumData.coverType === "Life")
-          obj.partnerLifeInsuranceTotal += premiumValue;
-        else if (SumData.coverType === "TPD")
-          obj.partnerTPDTotal += premiumValue;
-        else if (SumData.coverType === "Trauma")
-          obj.partnerTraumaTotal += premiumValue;
-        else if (SumData.coverType === "Income protection")
-          obj.partnerIncomeProtectionTotal += premiumValue;
-      });
-    });
-
-    // ---- Both entries (split half each) ----
-    bothArray.forEach((entry) => {
-      const premiumValue = parsePremium(entry.premiums) / 2;
-      const sumInsuredArray = Array.isArray(entry.sumInsured) ? entry.sumInsured : [];
-      
-      sumInsuredArray.forEach((SumData) => {
-        if (SumData.coverType === "Life") {
-          obj.clientLifeInsuranceTotal += premiumValue;
-          obj.partnerLifeInsuranceTotal += premiumValue;
-        } else if (SumData.coverType === "TPD") {
-          obj.clientTPDTotal += premiumValue;
-          obj.partnerTPDTotal += premiumValue;
-        } else if (SumData.coverType === "Trauma") {
-          obj.clientTraumaTotal += premiumValue;
-          obj.partnerTraumaTotal += premiumValue;
-        } else if (SumData.coverType === "Income protection") {
-          obj.clientIncomeProtectionTotal += premiumValue;
-          obj.partnerIncomeProtectionTotal += premiumValue;
-        }
-      });
-    });
-
-    // Format totals and attach to Obj
-    Obj.clientLifeInsuranceTotal = toCommaAndDollar(obj.clientLifeInsuranceTotal);
-    Obj.clientTPDTotal = toCommaAndDollar(obj.clientTPDTotal);
-    Obj.clientTraumaTotal = toCommaAndDollar(obj.clientTraumaTotal);
-    Obj.clientIncomeProtectionTotal = toCommaAndDollar(obj.clientIncomeProtectionTotal);
-
-    Obj.partnerLifeInsuranceTotal = toCommaAndDollar(obj.partnerLifeInsuranceTotal);
-    Obj.partnerTPDTotal = toCommaAndDollar(obj.partnerTPDTotal);
-    Obj.partnerTraumaTotal = toCommaAndDollar(obj.partnerTraumaTotal);
-    Obj.partnerIncomeProtectionTotal = toCommaAndDollar(obj.partnerIncomeProtectionTotal);
-
-    // -------------------------------------------------------------
-    // 🧩 REST OF YOUR API CODE REMAINS THE SAME...
-    // -------------------------------------------------------------
-
-    const bankAccountArray = personalInsurance.clientFK || "";
-    let res;
-
-    if (!bankAccountArray) {
-      res = await PostAxios(`${DefaultUrl}/api/personalInsurance/Add`, Obj);
-    } else {
-      res = await PatchAxios(`${DefaultUrl}/api/personalInsurance/Update`, Obj);
+      if (props.flagState) {
+        props.setFlagState(false);
+        props.setIsEditing(!props.isEditing);
+      }
+    } catch (error) {
+      console.error("Error occurred while making API call:", error);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        `Data of "${props.modalObject.title}" is not Saved. Please try again!`
+      );
     }
-
-    if (res) {
-      const updatedData = { ...questionDetail, personalInsurance: res };
-      setQuestionDetail(updatedData);
-      await updateQuestions();
-    }
-
-    openNotificationSuccess(
-      "success",
-      "topRight",
-      "Success Notification",
-      `Data of "${props.modalObject.title}" is Saved`
-    );
-
-    if (props.flagState) props.setFlagState(false);
-  } catch (error) {
-    console.error("Error occurred while making API call:", error);
-    openNotificationSuccess(
-      "error",
-      "topRight",
-      "Error Notification",
-      `Data of "${props.modalObject.title}" is not Saved. Please try again!`
-    );
-  }
-};
-
-// Don't forget to add back the updateQuestions function if needed
-let updateQuestions = async () => {
-  let values = { ...CRObject, life: "Yes" };
-  try {
-    const PatchRes = await PatchAxios(
-      `${DefaultUrl}/api/questions/Update/${localStorage.getItem("UserID")}`,
-      values
-    );
-    console.log(PatchRes, "PatchRes");
-    setCRObject(PatchRes);
-  } catch (error) {
-    console.error("Error submitting form:", error);
-  }
-};
-
+  };
 
   const columns = [
     {
       title: "No#",
-      dataIndex: "index",
+      dataIndex: "owner",
       key: "owner",
       render: (_, __, i) => i + 1,
+      justText: true,
       width: 60,
     },
     {
       title: "Life Insured",
       dataIndex: "lifeInsured",
       key: "lifeInsured",
-      selectedOptionValue:true,
-      type: "select",
+      type: "select-antd",
+      selectedOptionValue: true,
       placeholder: "Select Life Insured",
       options: [
         { value: "client", label: RenderName("client") },
         ...(UserStatus !== "Single"
           ? [
-            { value: "partner", label: RenderName("partner") },
-            { value: `joint`, label: `${RenderName("client")} & ${RenderName("partner")}` },
-          ]
+              { value: "partner", label: RenderName("partner") },
+              {
+                value: "joint",
+                label: `${RenderName("client")} & ${RenderName("partner")}`,
+              },
+            ]
           : []),
       ],
-
-      width: 200,
+      width: 180,
     },
     {
       title: "Provider",
       dataIndex: "provider",
       key: "provider",
-      type: "select",
-      
-      selectedOptionValue:true,
+      type: "select-antd",
+      selectedOptionValue: true,
       placeholder: "Select Provider",
       options:
-        bankDetailObj?.PersonalInsurances && bankDetailObj.PersonalInsurances.length > 0
+        bankDetailObj?.PersonalInsurances?.length > 0
           ? bankDetailObj.PersonalInsurances.map((elem) => ({
-            value: elem._id,
-            label: elem.platformName,
-          }))
-          : [{ value: "", label: "No Platforms Added in Personal Insurances", disabled: true }],
-      width: 200,
+              value: elem._id,
+              label: elem.platformName,
+            }))
+          : [
+              {
+                value: "",
+                label: "No Providers Available",
+                disabled: true,
+              },
+            ],
+      width: 180,
     },
     {
       title: "Policy No",
@@ -340,13 +651,13 @@ let updateQuestions = async () => {
       key: "policyNo",
       type: "number",
       placeholder: "Policy No",
-      width: 150,
+      width: 130,
     },
     {
       title: "Owner",
       dataIndex: "Owner",
       key: "Owner",
-      type: "select",
+      type: "select-antd",
       placeholder: "Select Owner",
       options: [
         { value: "SMSF", label: "SMSF" },
@@ -354,7 +665,7 @@ let updateQuestions = async () => {
         { value: "Company (Pty Ltd)", label: "Company (Pty Ltd)" },
         { value: "Family Trust", label: "Family Trust" },
       ],
-      width: 200,
+      width: 180,
     },
     {
       title: "Start Date",
@@ -365,14 +676,51 @@ let updateQuestions = async () => {
       width: 150,
     },
     {
-      title: "Sum Insured",
-      dataIndex: "sumInsured",
-      key: "sumInsured",
+      title: "Smoker",
+      dataIndex: "smoker",
+      key: "smoker",
+      type: "yesno", width: 100,
+      
+    },
+    {
+      title: "Life",
+      dataIndex: "life",
+      key: "life",
       type: "number-toComma-Modal",
-      placeholder: "Sum Insured",
-      width: 200,
-      innerModalTitle: "_Sum Insured",
+      placeholder: "Life",
+      innerModalTitle: "_Life",
       func: handleInnerModal,
+      width: 140,
+    },
+    {
+      title: "TPD",
+      dataIndex: "TPD",
+      key: "TPD",
+      type: "number-toComma-Modal",
+      placeholder: "TPD",
+      innerModalTitle: "_TPD",
+      func: handleInnerModal,
+      width: 140,
+    },
+    {
+      title: "Trauma",
+      dataIndex: "trauma",
+      key: "trauma",
+      type: "number-toComma-Modal",
+      placeholder: "Trauma",
+      innerModalTitle: "_Trauma",
+      func: handleInnerModal,
+      width: 140,
+    },
+    {
+      title: "IP",
+      dataIndex: "IP",
+      key: "IP",
+      type: "number-toComma-Modal",
+      placeholder: "IP",
+      innerModalTitle: "_IP",
+      func: handleInnerModal,
+      width: 140,
     },
     {
       title: "Premiums p.a",
@@ -381,16 +729,18 @@ let updateQuestions = async () => {
       type: "number-toComma-Modal",
       placeholder: "Premiums p.a",
       innerModalTitle: "_Premiums p.a",
-      width: 200,
       func: handleInnerModal,
+      width: 160,
     },
     {
       title: "Loading/Exclusion",
       dataIndex: "loadingExclusion",
       key: "loadingExclusion",
-      placeholder: "Loading/Exclusion",
-      type: "yesnoInput",
+      type: "yesnoModal",
       width: 190,
+      innerModalTitle: "_Loading/Exclusion",
+      callBack: true,
+      func: handleInnerModal,
     },
     {
       title: "Beneficiary",
@@ -405,37 +755,89 @@ let updateQuestions = async () => {
   ];
 
   const componentMapping = {
-    sumInsured: <NewLoadingExclusion />,
+    LifeTPDTrauma: <NewLoadingExclusion />,
+    life: <NewLoadingExclusion />,
+    TPD: <NewLoadingExclusion />,
+    trauma: <NewLoadingExclusion />,
+    IP: <PersonalInsurance />,
     premiums: <PremiumsDetails />,
-    beneficiary: <Beneficiaries />,
+    beneficiary: <BeneficiariesPersonalInsurance />,
+    loadingExclusion: <DynamicDescription />,
   };
 
-  const ModalContent = (obj) => {
-    let maKeaBtao = obj.key;
-    return componentMapping[maKeaBtao] || null;
-  };
-
+  const ModalContent = (obj) => componentMapping[obj.key] || null;
 
   return (
     <div>
-      <Formik initialValues={initialValues} onSubmit={onSubmit} enableReinitialize innerRef={props.formRef}>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={onSubmit}
+        enableReinitialize
+        innerRef={props.formRef}
+      >
         {({ values, setFieldValue, handleChange, handleBlur }) => {
           useEffect(() => {
-            
             fillInitialValues(setFieldValue);
-          }, [personalInsurance.PersonalInsurance]);
+          }, [personalInsurance.client, personalInsurance.partner]);
 
-          const dataRows = useMemo(() => {
-            const num = Number(values.NumberOfMap) || 0;
-            if (num > 0) {
-              return Array.from({ length: num }, (_, i) => ({
-                key: `PersonalInsurance[${i}]`,
-                stakeHolder: `PersonalInsurance[${i}]`,
-                ...values.PersonalInsurance[i],
-              }));
-            }
-            return [];
-          }, [values.NumberOfMap, values.PersonalInsurance]);
+          const clientDataRows = useMemo(() => {
+            const num = Number(values.client.numberOfPolicies) || 0;
+            return num > 0
+              ? Array.from({ length: num }, (_, i) => ({
+                  key: `client.PersonalInsurance[${i}]`,
+                  owner: i + 1,
+                  stakeHolder: `client.PersonalInsurance[${i}]`,
+                  ...values.client.PersonalInsurance[i],
+                }))
+              : [];
+          }, [values.client.numberOfPolicies, values.client.PersonalInsurance]);
+
+          const clientGroupDataRows = useMemo(() => {
+            const num = Number(values.client.numberOfPolicies) || 0;
+            return num > 0
+              ? Array.from({ length: num }, (_, i) => ({
+                  key: `client.groupCoverDetails[${i}]`,
+                  owner: i + 1,
+                  stakeHolder: `client.groupCoverDetails[${i}]`,
+                  ...values.client.groupCoverDetails[i],
+                }))
+              : [];
+          }, [values.client.numberOfPolicies, values.client.groupCoverDetails]);
+
+          const partnerDataRows = useMemo(() => {
+            const num = Number(values.partner.numberOfPolicies) || 0;
+            return num > 0
+              ? Array.from({ length: num }, (_, i) => ({
+                  key: `partner.PersonalInsurance[${i}]`,
+                  owner: i + 1,
+                  stakeHolder: `partner.PersonalInsurance[${i}]`,
+                  ...values.partner.PersonalInsurance[i],
+                }))
+              : [];
+          }, [
+            values.partner.numberOfPolicies,
+            values.partner.PersonalInsurance,
+          ]);
+
+          const partnerGroupDataRows = useMemo(() => {
+            const num = Number(values.partner.numberOfPolicies) || 0;
+            return num > 0
+              ? Array.from({ length: num }, (_, i) => ({
+                  key: `partner.groupCoverDetails[${i}]`,
+                  owner: i + 1,
+                  stakeHolder: `partner.groupCoverDetails[${i}]`,
+                  ...values.partner.groupCoverDetails[i],
+                }))
+              : [];
+          }, [
+            values.partner.numberOfPolicies,
+            values.partner.groupCoverDetails,
+          ]);
+
+          // Determine which stakeholders to display
+          const selectedStakeholders = values.selectedStakeholders || [];
+          const shouldShowClient = selectedStakeholders.includes("client");
+          const shouldShowPartner = selectedStakeholders.includes("partner");
 
           return (
             <Form>
@@ -448,41 +850,211 @@ let updateQuestions = async () => {
                 {ModalContent(modalObject)}
               </InnerModal>
 
-              <div className="d-flex flex-row justify-content-center align-items-center gap-4">
-                <p className="text-end mt-1 pt-2" onClick={()=>console.log(values)}>
-                  How many {props.modalObject.title} does {RenderName("client")}{" "}
-                  {UserStatus === "Married" && `and ${RenderName("partner")}`} have :
+              <div className="d-flex flex-row justify-content-center align-items-center gap-4 mb-4">
+                <p
+                  className="text-end mt-1 pt-2 mb-0"
+                  onClick={() => {
+                    console.log(values);
+                  }}
+                >
+                  Owner:
                 </p>
-                <div style={{ minWidth: "10%" }}>
-                  <Field
-                    as="select"
-                    id="NumberOfMap"
-                    name="NumberOfMap"
-                    className="form-select inputDesignDoubleInput"
+
+                <div style={{ minWidth: "20%" }}>
+                  <ConfigProvider
+                    theme={{
+                      components: {
+                        Select: {
+                          colorBorder: "#36b446",
+                        },
+                      },
+                    }}
                   >
-                    <option value="">Select</option>
-                    {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
-                      <option key={num} value={num}>
-                        {num}
-                      </option>
-                    ))}
-                  </Field>
+                    <Select
+                      id="selectedStakeholders"
+                      name="selectedStakeholders"
+                      mode="multiple"
+                      className="w-100 h-100"
+                      placeholder="Select Client/Partner"
+                      size="large"
+                      value={values.selectedStakeholders}
+                      onChange={(value) => {
+                        setFieldValue("selectedStakeholders", value);
+                      }}
+                      onBlur={handleBlur}
+                      getPopupContainer={(triggerNode) =>
+                        triggerNode.parentNode
+                      }
+                    >
+                      <Option value="client">{RenderName("client")}</Option>
+                      {UserStatus !== "Single" && (
+                        <Option value="partner">{RenderName("partner")}</Option>
+                      )}
+                    </Select>
+                  </ConfigProvider>
                 </div>
               </div>
 
-              {values.NumberOfMap && (
-                <div className="mt-4 All_Client reportSection">
-                  <AntdTable
-                    columns={columns}
-                    data={dataRows}
-                    values={values}
-                    setFieldValue={setFieldValue}
-                    handleChange={handleChange}
-                    handleBlur={handleBlur}
-                  />
+              {shouldShowClient && (
+                <div className="d-flex flex-row justify-content-center align-items-center gap-4 mb-4">
+                  <p
+                    className="text-end mt-1 pt-2 mb-0"
+                    onClick={() => {
+                      console.log(personalInsurance);
+                    }}
+                  >
+                    How many {props.modalObject.title} does{" "}
+                    {RenderName("client")} have:
+                  </p>
+
+                  <div style={{ minWidth: "10%" }}>
+                    <ConfigProvider
+                      theme={{
+                        components: {
+                          Select: {
+                            colorBorder: "#36b446",
+                          },
+                        },
+                      }}
+                    >
+                      <Select
+                        id="client.numberOfPolicies"
+                        name="client.numberOfPolicies"
+                        className="w-100 h-100"
+                        placeholder="Select"
+                        size="large"
+                        value={values.client.numberOfPolicies || undefined}
+                        onChange={(value) => {
+                          setFieldValue("client.numberOfPolicies", value);
+                        }}
+                        onBlur={handleBlur}
+                        getPopupContainer={(triggerNode) =>
+                          triggerNode.parentNode
+                        }
+                      >
+                        {Array.from({ length: 10 }, (_, i) => (
+                          <Option key={i} value={i + 1}>
+                            {i + 1}
+                          </Option>
+                        ))}
+                      </Select>
+                    </ConfigProvider>
+                  </div>
                 </div>
               )}
-              <button type="submit" style={{ display: "none" }}>Submit</button>
+
+              {shouldShowPartner && (
+                <div className="d-flex flex-row justify-content-center align-items-center gap-4 mb-4">
+                  <p className="text-end mt-1 pt-2 mb-0">
+                    How many {props.modalObject.title} does{" "}
+                    {RenderName("partner")} have:
+                  </p>
+
+                  <div style={{ minWidth: "10%" }}>
+                    <ConfigProvider
+                      theme={{
+                        components: {
+                          Select: {
+                            colorBorder: "#36b446",
+                          },
+                        },
+                      }}
+                    >
+                      <Select
+                        id="partner.numberOfPolicies"
+                        name="partner.numberOfPolicies"
+                        className="w-100 h-100"
+                        placeholder="Select"
+                        size="large"
+                        value={values.partner.numberOfPolicies || undefined}
+                        onChange={(value) => {
+                          setFieldValue("partner.numberOfPolicies", value);
+                        }}
+                        onBlur={handleBlur}
+                        getPopupContainer={(triggerNode) =>
+                          triggerNode.parentNode
+                        }
+                      >
+                        {Array.from({ length: 10 }, (_, i) => (
+                          <Option key={i} value={i + 1}>
+                            {i + 1}
+                          </Option>
+                        ))}
+                      </Select>
+                    </ConfigProvider>
+                  </div>
+                </div>
+              )}
+
+              {shouldShowClient && values.client.numberOfPolicies && (
+                <>
+                  <h4 className="mt-4 pt-2">
+                    {RenderName("client")} - Personal Insurance
+                  </h4>
+                  <div className="mt-2 All_Client reportSection">
+                    <AntdTable
+                      columns={columns}
+                      data={clientDataRows}
+                      values={values}
+                      setFieldValue={setFieldValue}
+                      handleChange={handleChange}
+                      handleBlur={handleBlur}
+                      isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
+                    />
+                  </div>
+                  {groupInsuranceDetailsAll?.client?.length > 0 && (
+                    <div className="mt-4 All_Client reportSection">
+                      <GroupCoverDetails
+                        values={values}
+                        setFieldValue={setFieldValue}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                        isEditing={props?.isEditing}
+                        setIsEditing={props?.setIsEditing}
+                        groupDataRows={clientGroupDataRows}
+                        stakeholder="client"
+                        title={`${RenderName("client")} - Group Cover Details`}
+                      />
+                    </div>
+                  )}
+                </>
+              )}
+
+              {shouldShowPartner && values.partner.numberOfPolicies && (
+                <>
+                  <h4 className="mt-4 pt-2">
+                    {RenderName("partner")} - Personal Insurance
+                  </h4>
+                  <div className="mt-2 All_Client reportSection">
+                    <AntdTable
+                      columns={columns}
+                      data={partnerDataRows}
+                      values={values}
+                      setFieldValue={setFieldValue}
+                      handleChange={handleChange}
+                      handleBlur={handleBlur}
+                      isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
+                    />
+                  </div>
+                  {groupInsuranceDetailsAll?.partner?.length > 0 && (
+                    <div className="mt-4 All_Client reportSection">
+                      <GroupCoverDetails
+                        values={values}
+                        setFieldValue={setFieldValue}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                        isEditing={props?.isEditing}
+                        setIsEditing={props?.setIsEditing}
+                        groupDataRows={partnerGroupDataRows}
+                        stakeholder="partner"
+                        title={`${RenderName("partner")} - Group Cover Details`}
+                      />
+                    </div>
+                  )}
+                </>
+              )}
             </Form>
           );
         }}

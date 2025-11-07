@@ -13,6 +13,7 @@ import {
 import { AntdCreatableMultiSelect } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
+const AntdTable = DynamicTableForInputsSection("antd");
 const CenterLinkPayments = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
   const [, setQuestionDetail] = useRecoilState(QuestionDetail);
@@ -91,7 +92,6 @@ const CenterLinkPayments = (props) => {
     }
   };
 
-  const AntdTable = DynamicTableForInputsSection("antd");
   const DefaultUrl = useRecoilValue(defaultUrl);
 
   const onSubmit = async (values) => {
@@ -140,7 +140,10 @@ const CenterLinkPayments = (props) => {
         `Data of "${props.modalObject.title}" is Saved`
       );
 
-      if (props.flagState) props.setFlagState(false);
+      if (props.flagState) {
+        props.setFlagState(false);
+        props.setIsEditing(!props.isEditing);
+      }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
       openNotificationSuccess(
@@ -158,7 +161,7 @@ const CenterLinkPayments = (props) => {
       title: "CRN",
       dataIndex: "CRN",
       key: "CRN",
-      type: "number",
+      type: "text",
       placeholder: "CRN",
     },
     {
@@ -198,7 +201,7 @@ const CenterLinkPayments = (props) => {
       },
     },
     {
-      title: "Annual Payment Amount",
+      title: "Annual Payment",
       dataIndex: "annualPaymentAmount",
       key: "annualPaymentAmount",
       type: "number-toComma",
@@ -207,7 +210,7 @@ const CenterLinkPayments = (props) => {
       disabled: true,
     },
     {
-      title: "Centrelink Cards Held",
+      title: "Concession Cards",
       dataIndex: "centrelinkCardsHeld",
       key: "centrelinkCardsHeld",
       type: "select-multi-antd",
@@ -305,6 +308,9 @@ const CenterLinkPayments = (props) => {
                       handleChange={handleChange}
                       handleBlur={handleBlur}
                       handleInnerModal={handleInnerModal}
+                      handleSubmit={props?.handleOk}
+                      isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
                     />
                   </div>
                 )}

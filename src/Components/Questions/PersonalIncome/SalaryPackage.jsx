@@ -13,6 +13,8 @@ import {
 } from "../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
+const AntDTableHOC = DynamicTableForInputsSection("antd");
+
 const SalaryPackage = (props) => {
   let { title, key, parentValues, parentKey } = props.modalObject;
 
@@ -30,6 +32,7 @@ const SalaryPackage = (props) => {
         .length > 0
     ) {
       let Data = parentValues[`${parentKey.replace(".", "")}`][`${key}`];
+
       setFieldValue(
         "remunerationType",
         Data.remunerationType || "Gross Salary"
@@ -43,6 +46,8 @@ const SalaryPackage = (props) => {
         Data.salarySacrificeContributions
       );
       setFieldValue("afterTaxContributions", Data.afterTaxContributions);
+    } else {
+      props.setIsEditing(!props.isEditing);
     }
   };
 
@@ -64,6 +69,7 @@ const SalaryPackage = (props) => {
     // Reset the flag state if necessary
     if (props.flagState) {
       props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
     }
   };
 
@@ -100,7 +106,9 @@ const SalaryPackage = (props) => {
     const validGrossSalary = !isNaN(parseFloat(grossSalary))
       ? toCommaAndDollar(grossSalary)
       : "0$";
-    const validSGC = !isNaN(parseFloat(SGC)) ? parseFloat(SGC).toFixed(2) : "0";
+    const validSGC = !isNaN(parseFloat(SGC))
+      ? toCommaAndDollar(parseFloat(SGC).toFixed(2))
+      : "$0";
 
     if (remunerationType === "Gross Salary") {
       setFieldValue("grossSalary", validGrossSalary);
@@ -110,8 +118,6 @@ const SalaryPackage = (props) => {
       setFieldValue("SGC", validSGC);
     }
   };
-
-  const AntDTableHOC = DynamicTableForInputsSection("antd");
 
   const columns = [
     {
@@ -250,6 +256,9 @@ const SalaryPackage = (props) => {
                       setFieldValue={setFieldValue}
                       handleChange={handleChange}
                       handleBlur={handleBlur}
+                      handleSubmit={props?.handleOk}
+                      isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
                     />
                   </div>
                 </div>

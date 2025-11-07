@@ -497,7 +497,7 @@ const CashFlowCashBankDetails = (props) => {
 
       const newObject = {
         name: "reinvestIncome",
-        type: "yesno",
+        type: "yesno", width: 100,
         placeholder: "Reinvest income",
       };
 

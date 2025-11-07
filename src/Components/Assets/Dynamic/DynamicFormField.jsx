@@ -23,8 +23,10 @@ import { Form, InputGroup } from "react-bootstrap";
 import {
   DatePicker as AntDate,
   Checkbox,
+  ConfigProvider,
   Drawer,
   Popover,
+  Radio,
   Select,
   Spin,
 } from "antd";
@@ -51,8 +53,8 @@ const DynamicFormField = ({
 
   const getNestedValue = (obj, path) => {
     if (!obj || !path) return undefined;
-    const normalizedPath = path.replace(/\[(\d+)\]/g, '.$1'); // Convert [0] to .0
-    return normalizedPath.split('.').reduce((acc, key) => {
+    const normalizedPath = path.replace(/\[(\d+)\]/g, ".$1"); // Convert [0] to .0
+    return normalizedPath.split(".").reduce((acc, key) => {
       return acc && Object.prototype.hasOwnProperty.call(acc, key)
         ? acc[key]
         : undefined;
@@ -162,6 +164,71 @@ const DynamicFormField = ({
         </>
       );
 
+    case "radio":
+      return (
+        <>
+          <ConfigProvider
+            theme={{
+              components: {
+                Radio: {
+                  colorPrimary: "#36b446", // ✅ your green theme
+                  colorPrimaryHover: "#2fa23b",
+                  colorPrimaryActive: "#2fa23b",
+                },
+              },
+            }}
+          >
+            <Field name={stakeHolder ? stakeHolder + name : name}>
+              {({ field, form }) => (
+                <Radio.Group
+                  className="w-100"
+                  id={name}
+                  value={field.value}
+                  onChange={(e) => {
+                    form.setFieldValue(field.name, e.target.value);
+                    handleChange(e);
+                    if (all.callBack) {
+                      all.func(
+                        values,
+                        setFieldValue,
+                        { name: field.name, value: e.target.value },
+                        stakeHolder
+                      );
+                    }
+                  }}
+                  disabled={
+                    typeof all?.disabled === "function"
+                      ? all.disabled(values, stakeHolder)
+                      : all?.disabled || false
+                  }
+                >
+                  <div className="d-flex flex-row gap-2">
+                    {Array.isArray(all?.options) &&
+                      all.options.map((opt, idx) => (
+                        <Radio
+                          key={idx}
+                          value={opt.value}
+                          className="radio-custom-style"
+                        >
+                          {opt.label || opt.lable || opt.value}
+                        </Radio>
+                      ))}
+                  </div>
+                </Radio.Group>
+              )}
+            </Field>
+          </ConfigProvider>
+
+          {all?.CheckError && (
+            <ErrorMessage
+              name={stakeHolder ? stakeHolder + name : name}
+              component="div"
+              className="text-danger small mt-1"
+            />
+          )}
+        </>
+      );
+
     case "postal-with-checkbox":
       return (
         <>
@@ -219,7 +286,7 @@ const DynamicFormField = ({
       );
 
     case "number-toPercent":
-      let FormulaSetting = () => { };
+      let FormulaSetting = () => {};
 
       if (all.callBack) {
         // alert(all.callBack);
@@ -417,81 +484,83 @@ const DynamicFormField = ({
         </>
       );
 
-   case "antdate":
-  // utility: join stakeHolder + name safely (supports array indices like "stakeholders[0].")
-  const buildFieldName = (stakeHolder, name) => {
-    if (!stakeHolder) return name;
-    // ensure no duplicate dots or missing brackets
-    return stakeHolder.endsWith(".") || stakeHolder.endsWith("]")
-      ? `${stakeHolder}${name}`
-      : `${stakeHolder}.${name}`;
-  };
+    case "antdate":
+      // utility: join stakeHolder + name safely (supports array indices like "stakeholders[0].")
+      const buildFieldName = (stakeHolder, name) => {
+        if (!stakeHolder) return name;
+        // ensure no duplicate dots or missing brackets
+        return stakeHolder.endsWith(".") || stakeHolder.endsWith("]")
+          ? `${stakeHolder}${name}`
+          : `${stakeHolder}.${name}`;
+      };
 
-  // utility: safely access nested object with support for bracket paths
-  const getValueByPath = (obj, path) => {
-    try {
-      return path
-        .replace(/\[(\w+)\]/g, ".$1") // convert [0] → .0
-        .split(".")
-        .reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : null), obj);
-    } catch {
-      return null;
-    }
-  };
-
-  return (
-    <>
-      <AntDate
-        className="form-control inputDesignDoubleInput"
-        value={(() => {
-          const fieldName = buildFieldName(stakeHolder, name);
-          const rawValue = getValueByPath(values, fieldName);
-          return rawValue ? dayjs(rawValue) : null;
-        })()}
-        onChange={(date) => {
-          const fieldName = buildFieldName(stakeHolder, name);
-          const isoValue = date
-            ? date.hour(12).minute(0).second(0).millisecond(0).toISOString()
-            : null;
-
-          setFieldValue(fieldName, isoValue);
-
-          if (all.callBack) {
-            all.func(
-              values,
-              setFieldValue,
-              { name: fieldName, value: isoValue },
-              stakeHolder
+      // utility: safely access nested object with support for bracket paths
+      const getValueByPath = (obj, path) => {
+        try {
+          return path
+            .replace(/\[(\w+)\]/g, ".$1") // convert [0] → .0
+            .split(".")
+            .reduce(
+              (acc, key) => (acc && acc[key] !== undefined ? acc[key] : null),
+              obj
             );
-          }
-        }}
-        onBlur={() => {
-          const fieldName = buildFieldName(stakeHolder, name);
-          handleBlur({ target: { name: fieldName } });
-        }}
-        id={buildFieldName(stakeHolder, name)}
-        name={buildFieldName(stakeHolder, name)}
-        disabled={
-          typeof all?.disabled === "function"
-            ? all.disabled(values, stakeHolder)
-            : all?.disabled || false
+        } catch {
+          return null;
         }
-        format="DD/MM/YYYY"
-        allowClear
-        getPopupContainer={(triggerNode) =>
-          triggerNode.closest("table") || triggerNode
-        }
-      />
-      {all?.CheckError && (
-        <ErrorMessage
-          name={buildFieldName(stakeHolder, name)}
-          component="div"
-          className="text-danger small mt-1"
-        />
-      )}
-    </>
-  );
+      };
 
+      return (
+        <>
+          <AntDate
+            className="form-control inputDesignDoubleInput"
+            value={(() => {
+              const fieldName = buildFieldName(stakeHolder, name);
+              const rawValue = getValueByPath(values, fieldName);
+              return rawValue ? dayjs(rawValue) : null;
+            })()}
+            onChange={(date) => {
+              const fieldName = buildFieldName(stakeHolder, name);
+              const isoValue = date
+                ? date.hour(12).minute(0).second(0).millisecond(0).toISOString()
+                : null;
+
+              setFieldValue(fieldName, isoValue);
+
+              if (all.callBack) {
+                all.func(
+                  values,
+                  setFieldValue,
+                  { name: fieldName, value: isoValue },
+                  stakeHolder
+                );
+              }
+            }}
+            onBlur={() => {
+              const fieldName = buildFieldName(stakeHolder, name);
+              handleBlur({ target: { name: fieldName } });
+            }}
+            id={buildFieldName(stakeHolder, name)}
+            name={buildFieldName(stakeHolder, name)}
+            disabled={
+              typeof all?.disabled === "function"
+                ? all.disabled(values, stakeHolder)
+                : all?.disabled || false
+            }
+            format="DD/MM/YYYY"
+            allowClear
+            getPopupContainer={(triggerNode) =>
+              triggerNode.closest("table") || triggerNode
+            }
+          />
+          {all?.CheckError && (
+            <ErrorMessage
+              name={buildFieldName(stakeHolder, name)}
+              component="div"
+              className="text-danger small mt-1"
+            />
+          )}
+        </>
+      );
 
     case "number-toComma-and-MultiSelect":
       return (
@@ -586,63 +655,60 @@ const DynamicFormField = ({
       );
 
     case "selectModal":
+      const currentValue = stakeHolder
+        ? values?.[stakeHolder.slice(0, -1)]?.[name]
+        : values?.[name];
+
+      const showModalButton = Array.isArray(all.ModalOption)
+        ? all.ModalOption.includes(currentValue)
+        : currentValue === all.ModalOption;
+
       return (
         <React.Fragment>
-          <InputGroup
-            className={
-              (stakeHolder
-                ? values?.[stakeHolder.slice(0, -1)]?.[name]
-                : values?.[name]) === all.ModalOption
-                ? "GInputSelect"
-                : ""
-            }
-          >
+          <InputGroup className={showModalButton ? "GInputSelect" : ""}>
             <Field
               as="select"
               name={stakeHolder ? stakeHolder + name : name}
               className="form-select inputDesignDoubleInput"
               disabled={
                 typeof all?.disabled === "function"
-                  ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+                  ? all.disabled(values, stakeHolder)
                   : all?.disabled || false
               }
               onChange={(e) => {
                 handleChange(e);
                 if (all.callBack) {
-                  all.func(values, setFieldValue, e.target, stakeHolder);
+                  all.callBack(values, setFieldValue, e.target, stakeHolder);
                 }
               }}
             >
               <option value="">Select</option>
               {options.map((option) => (
-                <option
-                  key={option.value}
-                  value={option.value}
-                  selected={option?.selected}
-                >
+                <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
               ))}
             </Field>
 
-            {(stakeHolder
-              ? values?.[stakeHolder.slice(0, -1)]?.[name]
-              : values?.[name]) === all.ModalOption && (
-                <Button
-                  className="btn bgColor modalBtn border-0"
-                  onClick={() =>
-                    handleInnerModal(
-                      innerModalTitle,
-                      values,
-                      all.key,
-                      stakeHolder
-                    )
-                  }
-                >
-                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                </Button>
-              )}
+            {/* ✅ Button should call handleInnerModal (via all.func) */}
+            {showModalButton && (
+              <Button
+                className="btn bgColor modalBtn border-0"
+                onClick={() =>
+                  all.func &&
+                  all.func(
+                    all.innerModalTitle || "Details", // modal title
+                    values, // form values
+                    all.key || name, // field key
+                    stakeHolder // stakeholder context
+                  )
+                }
+              >
+                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+              </Button>
+            )}
           </InputGroup>
+
           {all?.CheckError && (
             <ErrorMessage
               name={stakeHolder ? stakeHolder + name : name}
@@ -731,67 +797,130 @@ const DynamicFormField = ({
         </>
       );
 
-    case "postcode-antd":
+    case "select-antd":
       return (
-        <Field name={stakeHolder ? stakeHolder + name : name}>
-          {({ field, form }) => {
-            const [optionsData, setOptionsData] = useState([]);
-            const [loading, setLoading] = useState(false);
-            const USERNAME = "usamasaeed3k";
-            const handleSearch = async (query) => {
-              if (!query) {
-                setOptionsData([]);
-                return;
-              }
-              setLoading(true);
-              try {
-                const res = await axios.get(
-                  `https://secure.geonames.org/postalCodeSearchJSON?placename=${encodeURIComponent(
-                    query
-                  )}&country=AU&maxRows=10&username=${USERNAME}`
-                );
-
-                const mapped = (res.data.postalCodes || []).map((place) => ({
-                  value: `${place.placeName} (${place.postalCode})`,
-                  label: `${place.placeName} (${place.postalCode})`,
-                }));
-                setOptionsData(mapped);
-              } catch (err) {
-                console.error("Error fetching postcodes:", err);
-              }
-              setLoading(false);
-            };
-
-            return (
-              <>
+        <>
+          <Field name={stakeHolder ? stakeHolder + name : name}>
+            {({ field, form }) => (
+              <ConfigProvider
+                theme={{
+                  components: {
+                    Select: {
+                      colorBorder: "#36b446",
+                    },
+                  },
+                }}
+              >
                 <Select
+                  {...field}
                   showSearch
                   allowClear
-                  value={field.value || undefined}
-                  placeholder="Type suburb or postcode..."
-                  onSearch={handleSearch}
-                  onChange={(val) => form.setFieldValue(field.name, val)}
-                  filterOption={false} // 👈 important, we use server filtering
-                  notFoundContent={loading ? <Spin size="small" /> : null}
-                  options={optionsData}
-                  style={{ width: "100%", height: "7vh" }}
+                  placeholder="Select an option"
+                  options={[{ value: "", label: "Select" }, ...options]}
                   disabled={
                     typeof all?.disabled === "function"
-                      ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+                      ? all.disabled(values, stakeHolder)
                       : all?.disabled || false
                   }
+                  // 🔍 Custom filter logic for search
+                  filterOption={(input, option) =>
+                    option?.label?.toLowerCase().includes(input.toLowerCase())
+                  }
+                  onChange={(value) => {
+                    form.setFieldValue(field.name, value);
+                    if (all.func) {
+                      all.func(
+                        values,
+                        setFieldValue,
+                        { name: field.name, value },
+                        stakeHolder
+                      );
+                    }
+                  }}
+                  // getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                  getPopupContainer={(triggerNode) =>
+                    triggerNode.closest("table") || triggerNode
+                  }
+                  style={{ width: "100%" }}
+                  size="large"
                 />
-                {all?.CheckError && (
-                  <ErrorMessage
-                    name={field.name}
-                    component="div"
-                    className="text-danger small mt-1"
+              </ConfigProvider>
+            )}
+          </Field>
+
+          {all?.CheckError && (
+            <ErrorMessage
+              name={stakeHolder ? stakeHolder + name : name}
+              component="div"
+              className="text-danger small mt-1"
+            />
+          )}
+        </>
+      );
+
+    case "postcode-antd":
+      return (
+        <>
+          <Field name={stakeHolder ? stakeHolder + name : name}>
+            {({ field, form }) => {
+              const [optionsData, setOptionsData] = useState([]);
+              const [loading, setLoading] = useState(false);
+              const USERNAME = "usamasaeed3k";
+              const handleSearch = async (query) => {
+                if (!query) {
+                  setOptionsData([]);
+                  return;
+                }
+                setLoading(true);
+                try {
+                  const res = await axios.get(
+                    `https://secure.geonames.org/postalCodeSearchJSON?placename=${encodeURIComponent(
+                      query
+                    )}&country=AU&maxRows=10&username=${USERNAME}`
+                  );
+
+                  const mapped = (res.data.postalCodes || []).map((place) => ({
+                    value: `${place.placeName} (${place.postalCode})`,
+                    label: `${place.placeName} (${place.postalCode})`,
+                  }));
+                  setOptionsData(mapped);
+                } catch (err) {
+                  console.error("Error fetching postcodes:", err);
+                }
+                setLoading(false);
+              };
+
+              return (
+                <>
+                  <Select
+                    showSearch
+                    allowClear
+                    value={field.value || undefined}
+                    placeholder="Type suburb or postcode..."
+                    onSearch={handleSearch}
+                    onChange={(val) => form.setFieldValue(field.name, val)}
+                    filterOption={false} // 👈 important, we use server filtering
+                    notFoundContent={loading ? <Spin size="small" /> : null}
+                    options={optionsData}
+                    style={{ width: "100%", height: "7vh" }}
+                    disabled={
+                      typeof all?.disabled === "function"
+                        ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+                        : all?.disabled || false
+                    }
                   />
-                )}
-              </>
-            );
-          }}
-        </Field>
+                </>
+              );
+            }}
+          </Field>
+          {all?.CheckError && (
+            <ErrorMessage
+              name={stakeHolder ? stakeHolder + name : name}
+              component="div"
+              className="text-danger small mt-1"
+            />
+          )}
+        </>
       );
 
     case "select-creatable":
@@ -840,100 +969,68 @@ const DynamicFormField = ({
           />
           {(stakeHolder
             ? getNestedValue(values, `${stakeHolder}${name}`)
-            : getNestedValue(values, name)
-          ) === "Yes" && (
-              <div className="d-flex justify-content-center align-items-center pt-2">
-
-                <Button
-                  className="btn bgColor modalBtn border-0"
-                  id="button-addon2"
-                  onClick={() => {
-                    if (all.callBack) {
-                      all.func(innerModalTitle, values, all.key, stakeHolder);
-                    }
-                  }}
-                >
-                  <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                </Button>
-              </div>
-            )
-          }
-        </React.Fragment >
+            : getNestedValue(values, name)) === "Yes" && (
+            <div className="d-flex justify-content-center align-items-center pt-2">
+              <Button
+                className="btn bgColor modalBtn border-0"
+                id="button-addon2"
+                onClick={() => {
+                  if (all.callBack) {
+                    all.func(innerModalTitle, values, all.key, stakeHolder);
+                  }
+                }}
+              >
+                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+              </Button>
+            </div>
+          )}
+        </React.Fragment>
       );
 
- case "yesnoInput":
-  return (
-    <React.Fragment>
-      <DynamicYesNo
-        name={stakeHolder ? stakeHolder + name : name}
-        values={values}
-        handleChange={handleChange}
-        setFieldValue={setFieldValue}
-      />
-
-      {(
-        stakeHolder
-          ? getNestedValue(values, `${stakeHolder}${name}`)
-          : getNestedValue(values, name)
-      ) === "Yes" && (
-        <div className="pt-2">
-          <Field
-            name={
-              stakeHolder
-                ? `${stakeHolder}${name}_input`
-                : `${name}_input`
-            }
-            type="text"
-            className="form-control"
-            placeholder={placeholder}
-            value={
-              stakeHolder
-                ? getNestedValue(values, `${stakeHolder}${name}_input`) || ""
-                : values[`${name}_input`] || ""
-            }
-            onChange={(e) =>
-              setFieldValue(
-                stakeHolder
-                  ? `${stakeHolder}${name}_input`
-                  : `${name}_input`,
-                e.target.value
-              )
-            }
+    case "yesnoInput":
+      return (
+        <React.Fragment>
+          <DynamicYesNo
+            name={stakeHolder ? stakeHolder + name : name}
+            values={values}
+            handleChange={handleChange}
+            setFieldValue={setFieldValue}
           />
-        </div>
-      )}
-    </React.Fragment>
-  );
+          {(stakeHolder
+            ? getNestedValue(values, `${stakeHolder}${name}`)
+            : getNestedValue(values, name)) === "Yes" && (
+            <div className="pt-2">
+              <Field
+                name={
+                  stakeHolder ? `${stakeHolder}${name}_input` : `${name}_input`
+                }
+                type="text"
+                className="form-control"
+                placeholder={placeholder}
+                onChange={handleChange}
+                value={
+                  stakeHolder
+                    ? getNestedValue(values, `${stakeHolder}${name}_input`) ||
+                      ""
+                    : values[`${name}_input`] || ""
+                }
+              />
+            </div>
+          )}
+        </React.Fragment>
+      );
 
     case "modal":
       return (
         <div className="d-flex justify-content-center align-items-center ">
-          <ButtonDrawer
-            title={innerModalTitle}
-            buttonIcon={faArrowUpRightFromSquare}
-            placement="bottom"
-            height={all?.Drawerheight}
-            width={all?.DrawerWidth}
-            DrawerContent={all?.PopoverContent?.(
-              innerModalTitle,
-              values,
-              all,
-              stakeHolder
-            )}
-            setOpen={setOpen}
-            open={open}
+          <Button
+            className="btn bgColor modalBtn border-0"
+            onClick={() => {
+              handleInnerModal(innerModalTitle, values, all.key, stakeHolder);
+            }}
           >
-            <Button
-              className="btn bgColor modalBtn border-0"
-              onClick={() => {
-                handleInnerModal(innerModalTitle, values, all.key, stakeHolder);
-              }}
-              onMouseEnter={() => setOpen(true)}
-              onMouseLeave={() => setOpen(false)}
-            >
-              <FontAwesomeIcon icon={faArrowUpRightFromSquare} />{" "}
-            </Button>
-          </ButtonDrawer>
+            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />{" "}
+          </Button>
         </div>
       );
 

@@ -132,8 +132,6 @@ const CreditCard = (props) => {
     );
   };
 
-  const FormulaSetting = () => {};
-
   const onSubmit = async (values) => {
     const creditCardData = values.creditCards;
     const DataOf = "client";
@@ -183,7 +181,10 @@ const CreditCard = (props) => {
 
       if (props.setFieldValue)
         props.setFieldValue("creditCards", creditCardData);
-      if (props.flagState) props.setFlagState(false);
+      if (props.flagState) {
+        props.setFlagState(false);
+        props.setIsEditing(!props.isEditing);
+      }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
       openNotificationSuccess(
@@ -210,6 +211,7 @@ const CreditCard = (props) => {
       type: "select",
       options: lenderOption,
       placeholder: "Lender",
+      selectedOptionValue: true,
       width: 260,
     },
     {
@@ -243,6 +245,7 @@ const CreditCard = (props) => {
       dataIndex: "Frequency",
       key: "Frequency",
       type: "select",
+      selectedOptionValue: true,
       options: [
         { value: "52", label: "Weekly" },
         { value: "26", label: "Fortnightly" },
@@ -354,6 +357,9 @@ const CreditCard = (props) => {
                   setFieldValue={setFieldValue}
                   handleChange={handleChange}
                   handleBlur={handleBlur}
+                  handleSubmit={props?.handleOk}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
                 />
               </div>
             )}

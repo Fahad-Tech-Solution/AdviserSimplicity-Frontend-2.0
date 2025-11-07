@@ -116,7 +116,7 @@ const ProfileCard = ({ owner = "client", Data }) => {
             {
               icon: <FiMapPin color="#36b446" size={20} />,
               text: `${contact?.homeAddress || "N/A"} ${
-                contact?.postcodeSuburb ? `(${contact.postcodeSuburb})` : ""
+                contact?.postcodeSuburb ? `${contact.postcodeSuburb}` : ""
               }`,
             },
           ]}

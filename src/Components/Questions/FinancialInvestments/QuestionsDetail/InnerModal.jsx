@@ -17,6 +17,7 @@ const InnerModal = (props) => {
   const childButtonDownloadRef = useRef(null);
   const intervalRef = useRef(null); // Store the interval reference
   const [progress, setProgress] = useRecoilState(Progress);
+  const [isEditing, setIsEditing] = useState(false);
 
   let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
     useRecoilState(CashFlowReCalculateLoading);
@@ -98,12 +99,10 @@ const InnerModal = (props) => {
     "Insurances Attached",
     "Pension Benefits",
     "Balance & Benefit Details",
-    // "Home Loan",
     "Australian Shares/ETFs Detail",
     "Managed Funds Detail",
     "Super Funds Detail",
     "Investment Bond Detail",
-    // "Account Based Pension Detail",
     "Invested in Annuities Detail",
     "Property Loan Details",
     "Risk Goals",
@@ -117,21 +116,15 @@ const InnerModal = (props) => {
     "Salary Packaging Car",
     "Accumulation Details",
     "Salary Packaging",
-    // "Balance Rollover Amount"
-    // "Insurance Premiums"
-    // "Portfolio Value"
-    // "Bank Accounts Detail"
   ]; // Add other titles that should use "xl" here
 
   const xlKeys = [
-    "balanceBenefitDetailsArray",
-    "groupInsuranceArray",
+    "balanceBenefit",
+    "groupInsurance",
     "premiumsDetails",
     "sumInsured",
-    "beneficiariesArray",
+    "beneficiaries",
     "totalCostBase",
-    // "ContributionsArray"
-    // "Bank Accounts Detail"
   ]; // Add other titles that should use "xl" here
 
   let fullTitles = [
@@ -157,7 +150,7 @@ const InnerModal = (props) => {
     "Balance Rollover Amount",
   ];
 
-  let mdTitles = ["Other Percentage Amount"];
+  let mdTitles = ["Other Percentage Amount", "Trustee Name"];
 
   let [size, setSize] = useState("md");
 
@@ -199,6 +192,7 @@ const InnerModal = (props) => {
           setProgress(0);
           setCashFlowReCalculateLoading(false);
           setCashFlowDownloading(false);
+          setIsEditing(false);
         }}
       >
         <Element id="modal-container"></Element>
@@ -217,23 +211,29 @@ const InnerModal = (props) => {
                 setFieldValue,
                 childButtonRef,
                 childButtonDownloadRef,
+                handleOk,
+                isEditing,
+                setIsEditing,
               })
             : "no Child exist"}
         </Modal.Body>
 
         <Modal.Footer>
-          <Button
-            variant="secondary"
-            style={{ width: "12.5%", minWidth: "fit-content" }}
-            onClick={() => {
-              props.setFlagState(false);
-              setProgress(0);
-              setCashFlowReCalculateLoading(false);
-              setCashFlowDownloading(false);
-            }}
-          >
-            Close
-          </Button>
+          {!isEditing && (
+            <Button
+              variant="secondary"
+              style={{ width: "12.5%", minWidth: "fit-content" }}
+              className="heartbeat"
+              onClick={() => {
+                if (!isEditing) {
+                  setIsEditing(!isEditing);
+                  return;
+                }
+              }}
+            >
+              Edit
+            </Button>
+          )}
 
           {props.modalObject?.cal && (
             <Button
@@ -282,15 +282,16 @@ const InnerModal = (props) => {
               )}
             </Button>
           )}
-
-          <button
-            type="button"
-            className="btn bgColor modalBtn"
-            style={{ width: "12.5%", minWidth: "fit-content" }}
-            onClick={handleOk}
-          >
-            Submit
-          </button>
+          {isEditing && (
+            <button
+              type="button"
+              className="btn bgColor modalBtn"
+              style={{ width: "12.5%", minWidth: "fit-content" }}
+              onClick={handleOk}
+            >
+              Save & Exit
+            </button>
+          )}
         </Modal.Footer>
       </Modal>
     </div>

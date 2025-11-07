@@ -162,7 +162,10 @@ const AssetInfo = (props) => {
         `Data of "${props.modalObject.title}" is Saved`
       );
 
-      if (props.flagState) props.setFlagState(false);
+      if (props.flagState) {
+        props.setFlagState(false);
+        props.setIsEditing(!props.isEditing);
+      }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
       openNotificationSuccess(
@@ -208,7 +211,8 @@ const AssetInfo = (props) => {
   ];
 
   const onlyJoint = ["Boat", "Caravan", "Contents"];
-  const onlyClient = ["Other Assets"];
+  // const onlyClient = ["Other Assets"];
+  const onlyClient = [];
 
   const options = onlyJoint.includes(props.modalObject.title)
     ? [{ value: "joint", label: RenderName("joint") }]
@@ -267,16 +271,19 @@ const AssetInfo = (props) => {
             <Row>
               <div className="col-md-12">
                 {/* Owner Selector */}
-                <div className="d-flex flex-row justify-content-center align-items-center gap-2">
-                  <label className="text-end">Owner</label>
-                  <div style={{ minWidth: "200px" }}>
-                    <Field
-                      name="owner"
-                      component={AntdCreatableMultiSelect}
-                      options={options}
-                    />
-                  </div>
-                </div>
+{(props.modalObject?.key === "car" || props.modalObject?.key === "otherAssets") && (
+  <div className="d-flex flex-row justify-content-center align-items-center gap-2">
+    <label className="text-end mb-0">Owner</label>
+    <div style={{ minWidth: "200px" }}>
+      <Field
+        name="owner"
+        component={AntdCreatableMultiSelect}
+        options={options}
+      />
+    </div>
+  </div>
+)}
+
 
                 {values.owner.length > 0 && (
                   <div className="mt-4 All_Client reportSection">
@@ -287,6 +294,9 @@ const AssetInfo = (props) => {
                       setFieldValue={setFieldValue}
                       handleChange={handleChange}
                       handleBlur={handleBlur}
+                      handleSubmit={props?.handleOk}
+                      isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
                     />
                   </div>
                 )}

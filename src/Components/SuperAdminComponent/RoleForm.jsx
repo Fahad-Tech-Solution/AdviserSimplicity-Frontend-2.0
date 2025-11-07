@@ -142,17 +142,17 @@ const RoleForm = (props) => {
     },
     {
       name: "factFind",
-      type: "yesno",
+      type: "yesno", width: 100,
       disabled: isDisabled,
     },
     {
       name: "cashFlow",
-      type: "yesno",
+      type: "yesno", width: 100,
       disabled: isDisabled,
     },
     {
       name: "prospects",
-      type: "yesno",
+      type: "yesno", width: 100,
       disabled: isDisabled,
     },
   ];

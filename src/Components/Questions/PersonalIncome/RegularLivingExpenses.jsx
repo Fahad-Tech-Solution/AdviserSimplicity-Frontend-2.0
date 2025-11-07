@@ -11,16 +11,22 @@ import {
   PostAxios,
   PatchAxios,
   openNotificationSuccess,
+  toCommaAndDollar,
 } from "../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
 const { Title } = Typography;
+const AntDTableHOC = DynamicTableForInputsSection("antd");
 
 const RegularLivingExpenses = (props) => {
   const DefaultUrl = useRecoilValue(defaultUrl);
   const [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
   const personalDetailObj = useRecoilValue(PersonalDetailsData);
 
+  let regularLivingExpenses =
+    Object.keys(questionDetail["generalLivingExpenses"] || {}).length > 0
+      ? questionDetail["generalLivingExpenses"]
+      : {};
   const expenseTypes = [
     { name: "Rent", id: "houseHoldRent" },
     { name: "Gas", id: "houseHoldGas" },
@@ -65,6 +71,7 @@ const RegularLivingExpenses = (props) => {
       ...expenseTypes.map((Item, index) => {
         return {
           key: Item.name + "_" + index,
+          dbKey: Item.id,
           name: Item.name,
           amount: "",
           frequency: "",
@@ -77,6 +84,7 @@ const RegularLivingExpenses = (props) => {
           key: Item.name + "_" + index,
           name: Item.name,
           amount: "",
+          dbKey: Item.id,
           frequency: "",
         };
       }),
@@ -87,6 +95,7 @@ const RegularLivingExpenses = (props) => {
           key: Item.name + "_" + index,
           name: Item.name,
           amount: "",
+          dbKey: Item.id,
           frequency: "",
         };
       }),
@@ -97,16 +106,7 @@ const RegularLivingExpenses = (props) => {
           key: Item.name + "_" + index,
           name: Item.name,
           amount: "",
-          frequency: "",
-        };
-      }),
-    ],
-    other: [
-      ...insuranceExpenses.map((Item, index) => {
-        return {
-          key: Item.name + "_" + index,
-          name: Item.name,
-          amount: "",
+          dbKey: Item.id,
           frequency: "",
         };
       }),
@@ -118,59 +118,128 @@ const RegularLivingExpenses = (props) => {
     personal: 0,
     transport: 0,
     insurance: 0,
-    other: 0,
   });
 
-  const fillInitialValues = (setFieldValue) => {
-    const data = questionDetail?.regularLivingExpenses;
-    if (data) {
-      console.log("🧩 Populating initial values:", data);
-      setFieldValue("household", data.household || []);
-      setFieldValue("personal", data.personal || []);
-      setFieldValue("transport", data.transport || []);
-      setFieldValue("insurance", data.insurance || []);
-      setFieldValue("other", data.other || []);
+  const fillInitialValues = (setFieldValue, questionDetail) => {
+    const data = regularLivingExpenses;
+    // console.log(regularLivingExpenses);
+    if (!data || !data._id) return false;
+
+    // console.log("🧩 Populating initial values from DB:", data);
+
+    // Helper to generate section data based on your predefined arrays
+    const mapSection = (expenseArray) => {
+      return expenseArray.map((item, index) => {
+        const amount = data[item.id] || "";
+        const frequency = data[`${item.id}Type`] || "";
+
+        const amountNum = parseFloat(
+          String(amount || "0").replace(/[^0-9.-]+/g, "")
+        );
+        const freqNum = parseFloat(frequency || "0");
+
+        return {
+          key: `${item.name}_${index}`,
+          dbKey: item.id,
+          name: item.name,
+          amount,
+          frequency,
+          total:
+            amount && frequency ? toCommaAndDollar(amountNum * freqNum) : "",
+        };
+      });
+    };
+
+    // console.log(mapSection(expenseTypes));
+
+    // Apply to all sections using your predefined mappings
+    setFieldValue("household", mapSection(expenseTypes));
+    setFieldValue("personal", mapSection(personalExpenses));
+    setFieldValue("transport", mapSection(transportExpenses));
+    setFieldValue("insurance", mapSection(insuranceExpenses));
+
+    // optional: if you also have an "other" section
+    if (typeof otherExpenses !== "undefined") {
+      setFieldValue("other", mapSection(otherExpenses));
     }
+
+    return true;
   };
 
   const calculateTotals = (values) => {
     const sectionTotals = {};
-    console.log(values);
+    // console.log(values);
 
-    // Object.keys(values).forEach((section) => {
-    //   sectionTotals[section] = values[section].reduce(
-    //     (acc, curr) => acc + (parseFloat(curr.amount) || 0),
-    //     0
-    //   );
-    // });
-    // setTotals(sectionTotals);
-    console.log("🧮 Totals calculated:", sectionTotals);
+    Object.keys(values).forEach((section) => {
+      sectionTotals[section] = values[section].reduce(
+        (acc, curr) =>
+          acc +
+          (parseFloat(curr.amount.replace(/[^0-9.-]+/g, "")) || 0) *
+            parseFloat(curr.frequency || 0),
+        0
+      );
+    });
+
+    setTotals(sectionTotals);
+    // console.log("🧮 Totals calculated:", sectionTotals);
+  };
+
+  const convertValuesForBackend = (values) => {
+    const result = {};
+
+    Object.entries(values).forEach(([section, items]) => {
+      items.forEach((item) => {
+        if (!item.dbKey) return;
+
+        // make first letter lowercase after prefix (ex: houseHoldWaterRates)
+        const finalKey = item.dbKey;
+
+        // assign values
+        result[finalKey] = item.amount || "$0";
+        result[`${finalKey}Type`] = item.frequency || "0";
+      });
+    });
+
+    result["generalLivingExpensesTotal"] = toCommaAndDollar(
+      Object.values(totals).reduce(
+        (sum, val) => sum + (parseFloat(val) || 0),
+        0
+      )
+    );
+    return result;
   };
 
   const onSubmit = async (values) => {
-    console.log("🚀 Submitting Regular Living Expenses:", values);
+    // console.log(
+    //   "🚀 Submitting Regular Living Expenses:",
+    //   values,
+    //   convertValuesForBackend(values)
+    // );
 
-    const obj = { ...values, clientFK: localStorage.getItem("UserID") };
+    const obj = {
+      ...convertValuesForBackend(values),
+      clientFK: localStorage.getItem("UserID"),
+    };
 
     try {
       let res;
-      if (!questionDetail.regularLivingExpenses?._id) {
+      if (!questionDetail.generalLivingExpenses?._id) {
         console.log("📤 Sending POST request...");
         res = await PostAxios(
-          `${DefaultUrl}/api/regularLivingExpenses/Add`,
+          `${DefaultUrl}/api/generalLivingExpenses/Add`,
           obj
         );
       } else {
         console.log("📤 Sending PATCH request...");
         res = await PatchAxios(
-          `${DefaultUrl}/api/regularLivingExpenses/Update`,
+          `${DefaultUrl}/api/generalLivingExpenses/Update`,
           obj
         );
       }
 
       if (res) {
         console.log("✅ API Response:", res);
-        const updatedData = { ...questionDetail, regularLivingExpenses: res };
+        const updatedData = { ...questionDetail, generalLivingExpenses: res };
         setQuestionDetail(updatedData);
 
         openNotificationSuccess(
@@ -179,6 +248,11 @@ const RegularLivingExpenses = (props) => {
           "Success Notification",
           'Data of "Regular Living Expenses" saved successfully.'
         );
+
+        if (props.flagState) {
+          props.setFlagState(false);
+          props.setIsEditing(!props.isEditing);
+        }
       }
     } catch (error) {
       console.error("🔥 Error during save:", error);
@@ -191,7 +265,39 @@ const RegularLivingExpenses = (props) => {
     }
   };
 
-  const AntDTableHOC = DynamicTableForInputsSection("antd");
+  const getNestedValue = (obj, path) => {
+    try {
+      return path
+        .replace(/\[(\d+)\]/g, ".$1") // convert [0] → .0
+        .split(".")
+        .filter(Boolean)
+        .reduce(
+          (acc, key) => (acc && acc[key] !== undefined ? acc[key] : undefined),
+          obj
+        );
+    } catch {
+      return undefined;
+    }
+  };
+
+  const calculateTotal = (values, setFieldValue, thisInput, stakeHolder) => {
+    const cleanPath = stakeHolder.replace(/\.$/, ""); // remove trailing dot if exists
+    const baseObj = getNestedValue(values, cleanPath);
+
+    let amount = parseFloat(baseObj?.amount?.replace(/[^0-9.-]+/g, "") || 0);
+    let frequency = parseFloat(baseObj?.frequency || 0);
+
+    switch (thisInput.name) {
+      case stakeHolder + "amount":
+        amount = parseFloat(thisInput.value.replace(/[^0-9.-]+/g, "") || 0);
+        break;
+      case stakeHolder + "frequency":
+        frequency = parseFloat(thisInput.value || 0);
+        break;
+    }
+
+    setFieldValue(stakeHolder + "total", toCommaAndDollar(amount * frequency));
+  };
 
   const columns = [
     {
@@ -205,12 +311,15 @@ const RegularLivingExpenses = (props) => {
       key: "amount",
       type: "number-toComma",
       placeholder: "Enter Amount",
+      callBack: true,
+      func: calculateTotal,
     },
     {
       title: "Frequency",
       dataIndex: "frequency",
       key: "frequency",
       type: "select",
+      selectedOptionValue: true,
       options: [
         { value: 52, label: "Weekly" },
         { value: 26, label: "Fortnightly" },
@@ -219,6 +328,15 @@ const RegularLivingExpenses = (props) => {
         { value: 2, label: "Six-Monthly" },
         { value: 1, label: "Annually" },
       ],
+      callBack: true,
+      func: calculateTotal,
+    },
+    {
+      title: "Total",
+      dataIndex: "total",
+      key: "total",
+      type: "number-toComma",
+      disabled: true,
     },
   ];
 
@@ -227,6 +345,7 @@ const RegularLivingExpenses = (props) => {
       initialValues={initialValues}
       enableReinitialize
       onSubmit={onSubmit}
+      innerRef={props.formRef}
     >
       {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
@@ -255,6 +374,7 @@ const RegularLivingExpenses = (props) => {
               name: item.name || "",
               amount: item.amount || "",
               frequency: item.frequency || "",
+              total: item.total,
             }));
 
           return {
@@ -262,7 +382,7 @@ const RegularLivingExpenses = (props) => {
             personal: buildTableData("personal"),
             transport: buildTableData("transport"),
             insurance: buildTableData("insurance"),
-            other: buildTableData("other"),
+            // other: buildTableData("other"),
           };
         }, [values]);
 
@@ -285,6 +405,9 @@ const RegularLivingExpenses = (props) => {
                   handleChange={handleChange}
                   handleBlur={handleBlur}
                   sectionKey="household"
+                  handleSubmit={props?.handleOk}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
                 />
               </div>
             ),
@@ -307,6 +430,9 @@ const RegularLivingExpenses = (props) => {
                   handleChange={handleChange}
                   handleBlur={handleBlur}
                   sectionKey="personal"
+                  handleSubmit={props?.handleOk}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
                 />
               </div>
             ),
@@ -329,6 +455,9 @@ const RegularLivingExpenses = (props) => {
                   handleChange={handleChange}
                   handleBlur={handleBlur}
                   sectionKey="transport"
+                  handleSubmit={props?.handleOk}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
                 />
               </div>
             ),
@@ -351,32 +480,13 @@ const RegularLivingExpenses = (props) => {
                   handleChange={handleChange}
                   handleBlur={handleBlur}
                   sectionKey="insurance"
+                  handleSubmit={props?.handleOk}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
                 />
               </div>
             ),
           },
-          // {
-          //   key: "5",
-          //   label: (
-          //     <div className="d-flex justify-content-between align-items-center w-100">
-          //       <span>💡 Other Expenses</span>
-          //       <strong>${totals.other?.toLocaleString() || 0}</strong>
-          //     </div>
-          //   ),
-          //   children: (
-          //     <div className="All_Client reportSection">
-          //       <AntDTableHOC
-          //         columns={columns}
-          //         data={tableData.other}
-          //         values={values}
-          //         setFieldValue={setFieldValue}
-          //         handleChange={handleChange}
-          //         handleBlur={handleBlur}
-          //         sectionKey="other"
-          //       />
-          //     </div>
-          //   ),
-          // },
         ];
 
         return (
@@ -398,7 +508,7 @@ const RegularLivingExpenses = (props) => {
                     console.log(values);
                   }}
                 >
-                  <strong>Total Monthly Expenses:</strong>{" "}
+                  <strong>Total Expenses:</strong>{" "}
                   <span className="float-end">
                     ${totalOverall.toLocaleString()}
                   </span>
@@ -414,17 +524,6 @@ const RegularLivingExpenses = (props) => {
                   borderRadius: "12px",
                 }}
               />
-
-              {/* <Divider />
-
-              <div className="text-end mt-3">
-                <h5>
-                  <strong>Total Monthly Expenses:</strong>{" "}
-                  <span style={{ color: "#36b446" }}>
-                    ${totalOverall.toLocaleString()}
-                  </span>
-                </h5>
-              </div> */}
             </div>
           </Form>
         );

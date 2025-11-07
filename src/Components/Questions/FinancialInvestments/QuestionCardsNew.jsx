@@ -62,12 +62,9 @@ import Partnership from "../PersonalIncome/Partnership";
 import CenterLinkPayments from "../PersonalIncome/CenterLinkPayments";
 import LifeTimeBeneFits from "../PersonalIncome/LifetimeBenefits";
 import OverseasPension from "../PersonalIncome/OverseasPension";
-import Inheritance from "../PersonalIncome/Inheritance";
-import LumpsumExpenses from "../PersonalIncome/LumpsumExpenses";
 import RegularLivingExpenses from "../PersonalIncome/RegularLivingExpenses";
 import SoleTrader from "../PersonalIncome/SoleTrader";
 import { FaRegSave } from "react-icons/fa";
-import ButtonDrawer from "../../Assets/Dynamic/ButtonDrawer";
 import MiddleWare from "./MiddleWare";
 import InvestmentPropertyDetails from "./QuestionsDetail/InvestmentPropertyDetails";
 import InvestmentLoan from "./QuestionsDetail/InvestmentLoan";
@@ -86,7 +83,7 @@ import FamilyDetails from "../QuestoinsFamilyTrust/FamilyDetails";
 const questionConfig = {
   "/user/personal-income": [
     {
-      title: "Employment Income",
+      title: "Employment",
       keyName: "incomeFromOwnBusiness",
       img: businessmanSvg,
       component: <EmploymentIncome />,
@@ -106,13 +103,13 @@ const questionConfig = {
       component: <Partnership />,
     },
     {
-      title: "Centerlink Payments",
+      title: "Centerlink",
       keyName: "incomeFromCentrelink",
       img: gearsSvg,
       component: <CenterLinkPayments />,
     },
     {
-      title: "LifeTime Benefits",
+      title: "Lifetime Pension",
       keyName: "incomeFromSuperPayment",
       img: moneySvg,
       component: <LifeTimeBeneFits />,
@@ -124,12 +121,16 @@ const questionConfig = {
       component: <OverseasPension />,
     },
     {
-      title: "Regular Living Expenses",
+      title: "Living Expenses",
       keyName: "incomeFromRegularLivingExpenses",
       img: moneyBagPng,
       component: <RegularLivingExpenses />,
       variant: "case3",
       Labels: ["General Living", "Retirement Living"],
+      dataKey: "generalLivingExpenses",
+      BaceKeys: {
+        client: "generalLivingExpensesTotal",
+      },
       customButtonAction: async (
         values,
         questionDetail,
@@ -209,6 +210,9 @@ const questionConfig = {
       keyName: "familyHome",
       img: homeSvg,
       component: <OwnFamilyHome />,
+      // clientOnly: true,
+      Labels: ["Total Market Value", "Loan Amount"],
+
     },
     {
       title: "Car",
@@ -252,10 +256,17 @@ const questionConfig = {
       keyName: "otherAssets",
       api: "/personalAssets",
       img: settingMoneySvg,
-      variant: "case4",
+      variant: "case2",
       component: <AssetInfo />,
-      DrawerWidth: "60%",
-      Drawerheight: 200,
+      Labels: [
+        {
+          label: "Other Assets",
+          value: (questionDetail) =>
+            questionDetail?.otherAssets?.clientTotal ?? "",
+          component: <AssetInfo />,
+          key: "otherAssets",
+        },
+      ],
     },
     {
       title: "Personal Debt",
@@ -336,6 +347,7 @@ const questionConfig = {
       keyName: "investmentPropertyDetails",
       img: property,
       component: <InvestmentPropertyDetails />,
+      Labels: ["Total Market Value", "Total Loan"],
     },
     {
       title: "Investment Loan",
@@ -554,6 +566,7 @@ const QuestionCard = (props) => {
     img,
     variant = "case1", // "case1" | "case2" | "case3" | "case4"
     partnerModal = false,
+    clientOnly = false,
     onOpen,
     questionDetail = {},
     personalDetailObj = {},
@@ -570,13 +583,19 @@ const QuestionCard = (props) => {
     dataKey = null,
   } = props;
 
-  const [open, setOpen] = useState(false);
-  const [clientOpen, setClientOpen] = useState(false);
-  const [partnerOpen, setPartnerOpen] = useState(false);
-
-  const clientName = personalDetailObj.client?.clientPreferredName || "Client";
+  const clientName =
+    Labels.length > 0
+      ? Labels[0]
+      : personalDetailObj.client?.clientPreferredName || "Client";
   const partnerName =
-    personalDetailObj.partner?.partnerPreferredName || "Partner";
+    Labels.length > 1
+      ? Labels[1]
+      : personalDetailObj.partner?.partnerPreferredName || "Partner";
+
+  const jointName =
+    personalDetailObj.client?.clientPreferredName +
+      personalDetailObj.partner?.partnerPreferredName || "joint";
+
   const isSingle = ["Single", "Widowed"].includes(
     personalDetailObj.client?.clientMaritalStatus
   );
@@ -588,19 +607,19 @@ const QuestionCard = (props) => {
       BaceKeys && Object.keys(BaceKeys).length > 0
         ? BaceKeys.client
         : "clientTotal"
-    ] ?? "";
+    ] ?? "$0";
   const partnerValue =
     questionDetail?.[sourceKey]?.[
       BaceKeys && Object.keys(BaceKeys).length > 0
         ? BaceKeys.partner
         : "partnerTotal"
-    ] ?? "";
+    ] ?? "$0";
   const jointValue =
     questionDetail?.[sourceKey]?.[
       BaceKeys && Object.keys(BaceKeys).length > 0
         ? BaceKeys.joint
         : "jointTotal"
-    ] ?? "";
+    ] ?? "$0";
 
   const initialValues = getInitialValues?.(questionDetail) || {};
 
@@ -609,82 +628,47 @@ const QuestionCard = (props) => {
     return (
       <>
         <div className="text-center mb-3">
-          <img src={img} alt={title} width={60} height={60} />
+          <img src={img} alt={title} width={70} height={70} />
         </div>
 
         {/* Client */}
         <div className="mb-3 text-center d-flex flex-column align-items-center justify-content-center">
-          <ButtonDrawer
-            title={title}
-            placement="bottom"
-            height={props?.Drawerheight}
-            width={props?.DrawerWidth}
-            DrawerContent={PopoverContent(
-              title,
-              keyName,
-              component,
-              "client",
-              props.api
-            )}
-            open={clientOpen}
-            setOpen={setClientOpen}
+          <button
+            className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
+            onClick={() =>
+              onOpen(title, keyName, component, "client", props?.api)
+            }
+            style={{ width: 28, height: 28, padding: 0 }}
           >
-            <button
-              className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
-              onClick={() =>
-                onOpen(title, keyName, component, "client", props?.api)
-              }
-              onMouseEnter={() => setClientOpen(true)}
-              onMouseLeave={() => setClientOpen(false)}
-              style={{ width: 28, height: 28, padding: 0 }}
-            >
-              <FaArrowUpRightFromSquare size={14} />
-            </button>
-          </ButtonDrawer>
+            <FaArrowUpRightFromSquare size={14} />
+          </button>
           <div className="mb-2">{clientName}</div>
           <input
             className="form-control inputDesign text-center"
-            value={clientValue}
+            value={clientValue || "$0"}
             readOnly
             placeholder={title}
           />
         </div>
 
         {/* Partner */}
-        {!isSingle && (
+        {!isSingle && !clientOnly && (
           <div className="mb-3 text-center d-flex flex-column align-items-center justify-content-center">
             {props?.showPartnerButton && (
-              <ButtonDrawer
-                title={title}
-                placement="bottom"
-                height={props?.Drawerheight}
-                width={props?.DrawerWidth}
-                DrawerContent={PopoverContent(
-                  title,
-                  keyName,
-                  component,
-                  "partner"
-                )}
-                open={partnerOpen}
-                setOpen={setPartnerOpen}
+              <button
+                className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
+                onClick={() =>
+                  onOpen(title, keyName, component, "partner", props?.api)
+                }
+                style={{ width: 28, height: 28, padding: 0 }}
               >
-                <button
-                  className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
-                  onClick={() =>
-                    onOpen(title, keyName, component, "partner", props?.api)
-                  }
-                  onMouseEnter={() => setPartnerOpen(true)}
-                  onMouseLeave={() => setPartnerOpen(false)}
-                  style={{ width: 28, height: 28, padding: 0 }}
-                >
-                  <FaArrowUpRightFromSquare size={14} />
-                </button>
-              </ButtonDrawer>
+                <FaArrowUpRightFromSquare size={14} />
+              </button>
             )}
             <div className="mb-2">{partnerName}</div>
             <input
               className="form-control inputDesign text-center"
-              value={partnerValue}
+              value={partnerValue || "$0"}
               readOnly
               placeholder={title}
             />
@@ -702,8 +686,6 @@ const QuestionCard = (props) => {
     DrawerWidth,
     onOpen, // Add this prop
   }) => {
-    const [openNew, setOpenNew] = useState(false);
-
     const handleOpen = () => {
       // Pass the specific label's data to the modal
       onOpen(lbl.label, lbl.key, lbl.component);
@@ -713,32 +695,23 @@ const QuestionCard = (props) => {
       <div className="mb-3 text-center">
         <div className="d-flex justify-content-center align-items-center gap-2 mb-2">
           <span>{lbl.label}</span>
-          <ButtonDrawer
-            title={lbl.label}
-            placement="bottom"
-            height={Drawerheight}
-            width={DrawerWidth}
-            DrawerContent={PopoverContent(lbl.label, lbl.key, lbl.component)}
-            open={openNew}
-            setOpen={setOpenNew}
+
+          <button
+            className="btn btn-sm bg-secondary rounded-circle text-light d-flex align-items-center justify-content-center"
+            onClick={handleOpen} // Use the local handleOpen
+            style={{ width: 28, height: 28, padding: 0 }}
           >
-            <button
-              className="btn btn-sm bg-secondary rounded-circle text-light d-flex align-items-center justify-content-center"
-              onClick={handleOpen} // Use the local handleOpen
-              onMouseEnter={() => setOpenNew(true)}
-              onMouseLeave={() => setOpenNew(false)}
-              style={{ width: 28, height: 28, padding: 0 }}
-            >
-              <FaArrowUpRightFromSquare size={14} />
-            </button>
-          </ButtonDrawer>
+            <FaArrowUpRightFromSquare size={14} />
+          </button>
         </div>
-        <input
-          className="form-control inputDesign text-center"
-          value={lbl.value?.(questionDetail) || ""}
-          readOnly
-          placeholder={title}
-        />
+        <div className="d-flex align-item-center justify-content-center">
+          <input
+            className="form-control inputDesign text-center"
+            value={lbl.value?.(questionDetail) || "$0"}
+            readOnly
+            placeholder={title}
+          />
+        </div>
       </div>
     );
   };
@@ -747,7 +720,7 @@ const QuestionCard = (props) => {
   const renderCase2 = () => (
     <>
       <div className="text-center mb-3">
-        <img src={img} alt={title} width={60} height={60} />
+        <img src={img} alt={title} width={70} height={70} />
       </div>
       {Labels.map((lbl, i) => (
         <LabelItem
@@ -767,37 +740,24 @@ const QuestionCard = (props) => {
   const renderCase3 = () => (
     <>
       <div className="text-center mb-4">
-        <img src={img} alt={title} width={60} height={60} />
+        <img src={img} alt={title} width={70} height={70} />
       </div>
       <div className="mb-3">
         <div className="d-flex align-items-center justify-content-center gap-2 mb-2">
           <span className="fw-medium">{Labels[0]}</span>
-
-          <ButtonDrawer
-            title={title}
-            placement="bottom"
-            height={props?.Drawerheight}
-            width={props?.DrawerWidth}
-            DrawerContent={PopoverContent(title, keyName, component)}
-            open={open}
-            setOpen={setOpen}
+          <button
+            className="btn btn-sm bg-secondary rounded-circle text-light d-flex align-items-center justify-content-center"
+            style={{ width: 28, height: 28, padding: 0 }}
+            onClick={() => onOpen?.(title, keyName, component)}
           >
-            <button
-              className="btn btn-sm bg-secondary rounded-circle text-light d-flex align-items-center justify-content-center"
-              style={{ width: 28, height: 28, padding: 0 }}
-              onClick={() => onOpen?.(title, keyName, component)}
-              onMouseEnter={() => setOpen(true)}
-              onMouseLeave={() => setOpen(false)}
-            >
-              <FaArrowUpRightFromSquare size={14} />
-            </button>
-          </ButtonDrawer>
+            <FaArrowUpRightFromSquare size={14} />
+          </button>
         </div>
-        <div className="input-group">
+        <div className="input-group justify-content-center">
           <input
             className="form-control inputDesign text-center"
             placeholder={Labels[0]}
-            value={clientValue}
+            value={clientValue || "$0"}
             readOnly
           />
         </div>
@@ -818,11 +778,11 @@ const QuestionCard = (props) => {
         enableReinitialize
       >
         {({ setFieldValue }) => (
-          <Form>
-            <InputGroup className="inputDesign p-0 flex-nowrap">
+          <Form className="d-flex justify-content-center align-items-stretch">
+            <InputGroup className="inputDesign justify-content-center p-0 flex-nowrap">
               <Field
                 name="retirementLivingExpense"
-                className="form-control inputDesign text-center"
+                className="form-control inputDesignDoubleInput text-center"
                 placeholder="Retirement Living Expense"
                 onChange={(e) =>
                   setFieldValue(
@@ -845,46 +805,28 @@ const QuestionCard = (props) => {
   const renderCase4 = () => (
     <>
       <div className="text-center mb-3">
-        <img src={img} alt={title} width={60} height={60} />
+        <img src={img} alt={title} width={70} height={70} />
       </div>
       <div className="d-flex flex-column align-items-center justify-content-center">
-        <ButtonDrawer
-          // title={title}
-          placement="top"
-          height={props?.Drawerheight}
-          width={props?.DrawerWidth}
-          DrawerContent={PopoverContent(
-            title,
-            keyName,
-            component,
-            "joint",
-            props.api
-          )}
-          open={open}
-          setOpen={setOpen}
+        <button
+          className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
+          onClick={() => onOpen(title, keyName, component, "joint", props.api)}
+          style={{ width: 28, height: 28, padding: 0 }}
         >
-          <button
-            className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
-            onClick={() =>
-              onOpen(title, keyName, component, "joint", props.api)
-            }
-            style={{ width: 28, height: 28, padding: 0 }}
-            onMouseEnter={() => setOpen(true)}
-            onMouseLeave={() => setOpen(false)}
-          >
-            <FaArrowUpRightFromSquare size={14} />
-          </button>
-        </ButtonDrawer>
+          <FaArrowUpRightFromSquare size={14} />
+        </button>
       </div>
       <div className="text-center mb-2">
         {clientName} & {partnerName}
       </div>
-      <input
-        className="form-control inputDesign text-center"
-        value={jointValue || clientValue || ""}
-        readOnly
-        placeholder={title}
-      />
+      <div className="d-flex align-item-center justify-content-center">
+        <input
+          className="form-control inputDesign text-center"
+          value={jointValue || clientValue || "$0"}
+          readOnly
+          placeholder={title}
+        />
+      </div>
     </>
   );
 
@@ -921,7 +863,7 @@ const QuestionCardsDemo = ({ questionKey, CRObject }) => {
   const [flagState, setFlagState] = useState(false);
 
   const handleOpen = (title, keyName, component, Input) => {
-    console.log(title, keyName);
+    // console.log(title, keyName);
     setModalInfo({ title, key: keyName, component, Input });
     setFlagState(true);
   };

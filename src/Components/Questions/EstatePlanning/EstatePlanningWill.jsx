@@ -1,7 +1,11 @@
 import { Field, Form, Formik } from "formik";
 import React, { useEffect, useMemo, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { defaultUrl, QuestionDetail, PersonalDetailsData } from "../../../Store/Store";
+import {
+  defaultUrl,
+  QuestionDetail,
+  PersonalDetailsData,
+} from "../../../Store/Store";
 import {
   openNotificationSuccess,
   PatchAxios,
@@ -14,6 +18,9 @@ import { AntdCreatableMultiSelect } from "../FinancialInvestments/QuestionsDetai
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 import { Tooltip } from "antd";
 import { FaCircleQuestion } from "react-icons/fa6";
+import Executor from "./Executor";
+
+const AntDTableHOC = DynamicTableForInputsSection("antd");
 
 const EstatePlanningWill = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
@@ -38,21 +45,45 @@ const EstatePlanningWill = (props) => {
       if (will.owner?.includes("client") || will.owner?.includes("together")) {
         setFieldValue("client.yearSetUp", will.client?.yearSetUp || "");
         setFieldValue("client.willsCurrent", will.client?.willsCurrent || "");
-        setFieldValue("client.executor", will.client?.executor || "");
-        setFieldValue("client.enduringGuardianship", will.client?.enduringGuardianship || "");
-        setFieldValue("client.testamentaryTrust", will.client?.testamentaryTrust || "");
-        setFieldValue("client.estatePlanningRadio", will.client?.estatePlanningRadio || "");
-        setFieldValue("client.estatePlanning", will.client?.estatePlanning || "");
+        setFieldValue("client.executor", will.client?.executor || []);
+        setFieldValue(
+          "client.enduringGuardianship",
+          will.client?.enduringGuardianship || ""
+        );
+        setFieldValue(
+          "client.testamentaryTrust",
+          will.client?.testamentaryTrust || ""
+        );
+        setFieldValue(
+          "client.estatePlanningRadio",
+          will.client?.estatePlanningRadio || ""
+        );
+        setFieldValue(
+          "client.estatePlanning",
+          will.client?.estatePlanning || []
+        );
       }
 
-      if (will.owner?.includes("partner") || will.owner?.includes("together")) {
+      if (will.owner?.includes("partner")) {
         setFieldValue("partner.yearSetUp", will.partner?.yearSetUp || "");
         setFieldValue("partner.willsCurrent", will.partner?.willsCurrent || "");
-        setFieldValue("partner.executor", will.partner?.executor || "");
-        setFieldValue("partner.enduringGuardianship", will.partner?.enduringGuardianship || "");
-        setFieldValue("partner.testamentaryTrust", will.partner?.testamentaryTrust || "");
-        setFieldValue("partner.estatePlanningRadio", will.partner?.estatePlanningRadio || "");
-        setFieldValue("partner.estatePlanning", will.partner?.estatePlanning || "");
+        setFieldValue("partner.executor", will.partner?.executor || []);
+        setFieldValue(
+          "partner.enduringGuardianship",
+          will.partner?.enduringGuardianship || ""
+        );
+        setFieldValue(
+          "partner.testamentaryTrust",
+          will.partner?.testamentaryTrust || ""
+        );
+        setFieldValue(
+          "partner.estatePlanningRadio",
+          will.partner?.estatePlanningRadio || ""
+        );
+        setFieldValue(
+          "partner.estatePlanning",
+          will.partner?.estatePlanning || []
+        );
       }
     }
   };
@@ -63,31 +94,42 @@ const EstatePlanningWill = (props) => {
       console.error("Values is undefined in handleInnerModal");
       return;
     }
+
+    let question =
+      key === "executor"
+        ? `How many Executors does ${RenderName(
+            stackHolder.replace(".", "")
+          )} have:`
+        : `How many Estate Plannes does ${RenderName(
+            stackHolder.replace(".", "")
+          )} have:`;
+
     setModalObject({
       title,
       key,
       values, // ✅ correct property
       stackHolder, // ✅ correct key name expected by DynamicDescription
+      question,
     });
     setFlagState(true);
   };
 
   const onSubmit = async (values) => {
     console.log("EstatePlanningWill onSubmit values:", values);
-    const DataOf = props.modalObject?.Input || "will";
+    const DataOf = props.modalObject?.key || "will";
     const obj = { ...values, clientFK: localStorage.getItem("UserID") };
 
     if (values.owner.includes("client") || values.owner.includes("together")) {
-      obj.clientTotal = values.client?.yearSetUp?.toString() || "";
+      obj.clientTotal = "Yes";
     } else {
-      obj.clientTotal = "";
+      obj.clientTotal = "No";
       obj.client = {};
     }
 
     if (values.owner.includes("partner") || values.owner.includes("together")) {
-      obj.partnerTotal = values.partner?.yearSetUp?.toString() || "";
+      obj.partnerTotal = "Yes";
     } else {
-      obj.partnerTotal = "";
+      obj.partnerTotal = "No";
       obj.partner = {};
     }
 
@@ -96,7 +138,7 @@ const EstatePlanningWill = (props) => {
       obj.partner = {};
     }
 
-    console.log("Final obj:", obj);
+    console.log("Final obj:", obj, DataOf);
 
     try {
       let res;
@@ -115,7 +157,10 @@ const EstatePlanningWill = (props) => {
           "Success Notification",
           `Data of "${props.modalObject?.title || "Will"}" is Saved`
         );
-        if (props.flagState) props.setFlagState(false);
+        if (props.flagState) {
+          props.setFlagState(false);
+          props.setIsEditing(!props.isEditing);
+        }
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
@@ -123,21 +168,32 @@ const EstatePlanningWill = (props) => {
         "error",
         "topRight",
         "Error Notification",
-        `Data of "${props.modalObject?.title || "Will"}" is not Saved. Please try again.`
+        `Data of "${
+          props.modalObject?.title || "Will"
+        }" is not Saved. Please try again.`
       );
     }
   };
 
   const options =
-    !["Single", "Widowed"].includes(personalDetailObj.client?.MaritalStatus)
+    UserStatus === "Married"
       ? [
-          { value: "client", label: personalDetailObj.client?.clientPreferredName || "Client" },
-          { value: "partner", label: personalDetailObj.partner?.partnerPreferredName || "Partner" },
+          {
+            value: "client",
+            label: personalDetailObj.client?.clientPreferredName || "Client",
+          },
+          {
+            value: "partner",
+            label: personalDetailObj.partner?.partnerPreferredName || "Partner",
+          },
           { value: "together", label: `Together(${RenderName("joint")})` },
         ]
-      : [{ value: "client", label: personalDetailObj.client?.clientPreferredName || "Client" }];
-
-  const AntDTableHOC = DynamicTableForInputsSection("antd");
+      : [
+          {
+            value: "client",
+            label: personalDetailObj.client?.clientPreferredName || "Client",
+          },
+        ];
 
   const columns = [
     {
@@ -162,8 +218,8 @@ const EstatePlanningWill = (props) => {
       title: "Are Your Wills Current",
       dataIndex: "willsCurrent",
       key: "willsCurrent",
-      type: "yesno",
-      width: 150,
+      type: "yesno", width: 100,
+      
       disabled: (values, stakeHolder) =>
         values.owner.includes("together") && stakeHolder === "partner",
     },
@@ -175,35 +231,13 @@ const EstatePlanningWill = (props) => {
       width: 150,
       handleInnerModal,
       innerModalTitle: "Executor",
-      Drawerheight: 220,
-      DrawerWidth: "80%",
-      disabled: (values, stakeHolder) =>
-        values.owner.includes("together") && stakeHolder === "partner",
-      PopoverContent: (innerModalTitle, values, all, stakeHolder, setFieldValue) => {
-        const modalObject = {
-          title: innerModalTitle,
-          key: all.key,
-          values, // ✅ corrected property name
-          stackHolder: stakeHolder, // ✅ matches DynamicDescription
-        };
-        return (
-          <div style={{ height: "80px", margin: "-20px 0 0 0" }}>
-            <DynamicDescription
-              modalObject={modalObject}
-              setFieldValue={setFieldValue}
-              setFlagState={setFlagState}
-              flagState={flagState}
-            />
-          </div>
-        );
-      },
     },
     {
       title: "Enduring Guardianship",
       dataIndex: "enduringGuardianship",
       key: "enduringGuardianship",
-      type: "yesno",
-      width: 150,
+      type: "yesno", width: 100,
+      
       disabled: (values, stakeHolder) =>
         values.owner.includes("together") && stakeHolder === "partner",
     },
@@ -211,8 +245,8 @@ const EstatePlanningWill = (props) => {
       title: "Testamentary Trust",
       dataIndex: "testamentaryTrust",
       key: "testamentaryTrust",
-      type: "yesno",
-      width: 150,
+      type: "yesno", width: 100,
+      
       disabled: (values, stakeHolder) =>
         values.owner.includes("together") && stakeHolder === "partner",
     },
@@ -226,28 +260,6 @@ const EstatePlanningWill = (props) => {
       callBack: true,
       func: handleInnerModal,
       innerModalTitle: "Estate Planning",
-      Drawerheight: 220,
-      DrawerWidth: "80%",
-      disabled: (values, stakeHolder) =>
-        values.owner.includes("together") && stakeHolder === "partner",
-      PopoverContent: (innerModalTitle, values, all, stakeHolder, setFieldValue) => {
-        const modalObject = {
-          title: innerModalTitle,
-          key: all.key,
-          values, // ✅ corrected property name
-          stackHolder: stakeHolder, // ✅ matches DynamicDescription
-        };
-        return (
-          <div style={{ height: "80px", margin: "-20px 0 0 0" }}>
-            <DynamicDescription
-              modalObject={modalObject}
-              setFieldValue={setFieldValue}
-              setFlagState={setFlagState}
-              flagState={flagState}
-            />
-          </div>
-        );
-      },
     },
   ];
 
@@ -266,33 +278,43 @@ const EstatePlanningWill = (props) => {
         const tableData = useMemo(() => {
           const rows = [];
 
-          if (values.owner.includes("client") || values.owner.includes("together")) {
-            rows.push({
+          const owners = values.owner || [];
+          const ownerConfigs = [
+            {
               key: "client",
-              stakeHolder: "client",
-              owner: RenderName("client"),
-              yearSetUp: values?.client?.yearSetUp || "",
-              willsCurrent: values?.client?.willsCurrent || "",
-              executor: values?.client?.executor || "",
-              enduringGuardianship: values?.client?.enduringGuardianship || "",
-              testamentaryTrust: values?.client?.testamentaryTrust || "",
-              estatePlanningRadio: values?.client?.estatePlanningRadio || "",
-            });
-          }
-
-          if ((values.owner.includes("partner") || values.owner.includes("together")) && UserStatus === "Married") {
-            rows.push({
+              label: "client",
+              condition: owners.includes("client"),
+            },
+            {
               key: "partner",
-              stakeHolder: "partner",
-              owner: RenderName("partner"),
-              yearSetUp: values?.partner?.yearSetUp || "",
-              willsCurrent: values?.partner?.willsCurrent || "",
-              executor: values?.partner?.executor || "",
-              enduringGuardianship: values?.partner?.enduringGuardianship || "",
-              testamentaryTrust: values?.partner?.testamentaryTrust || "",
-              estatePlanningRadio: values?.partner?.estatePlanningRadio || "",
+              label: "partner",
+              condition: owners.includes("partner") && UserStatus === "Married",
+            },
+            {
+              key: "client",
+              label: "joint",
+              condition:
+                owners.includes("together") && UserStatus === "Married",
+            },
+          ];
+
+          ownerConfigs.forEach(({ key, label, condition }) => {
+            if (!condition) return;
+
+            const target = key === "joint" ? values.client : values[key]; // joint uses client values as before
+
+            rows.push({
+              key,
+              stakeHolder: key,
+              owner: RenderName(label),
+              yearSetUp: target?.yearSetUp || "",
+              willsCurrent: target?.willsCurrent || "",
+              executor: target?.executor?.length || "",
+              enduringGuardianship: target?.enduringGuardianship || "",
+              testamentaryTrust: target?.testamentaryTrust || "",
+              estatePlanningRadio: target?.estatePlanningRadio || "",
             });
-          }
+          });
 
           return rows;
         }, [values]);
@@ -306,19 +328,21 @@ const EstatePlanningWill = (props) => {
                 setFlagState={setFlagState}
                 flagState={flagState}
               >
-                {modalObject.key === "executor" || modalObject.key === "estatePlanning" ? (
-                  <DynamicDescription
-                    modalObject={modalObject}
-                    setFieldValue={setFieldValue}
-                    setFlagState={setFlagState}
-                    flagState={flagState}
-                  />
+                {modalObject.key === "executor" ||
+                modalObject.key === "estatePlanning" ? (
+                  <Executor />
                 ) : null}
               </InnerModal>
 
               <div className="col-md-12">
                 <div className="d-flex flex-row justify-content-center align-items-center gap-4">
-                  <label htmlFor="" className="text-end">
+                  <label
+                    htmlFor=""
+                    className="text-end"
+                    onClick={() => {
+                      console.log(values);
+                    }}
+                  >
                     Owner
                   </label>
                   <div style={{ minWidth: "200px" }}>
@@ -327,8 +351,11 @@ const EstatePlanningWill = (props) => {
                       component={AntdCreatableMultiSelect}
                       options={options}
                       onChangefun={(selection) => {
-                        const selectionArray = selection;
-                        const hasTogether = selectionArray.some((item) => item.value === "together");
+                        console.log("Selected owner:", selection);
+                        const selectionArray = selection.target.value || [];
+                        const hasTogether = selectionArray.some(
+                          (item) => item === "together"
+                        );
                         if (hasTogether) {
                           setFieldValue("owner", ["together"]);
                         }
@@ -340,7 +367,9 @@ const EstatePlanningWill = (props) => {
                       placement="top"
                       title="When yes is selected for Partner for Wills and POA have an option to copy details from Client Answers for Will and POA this will apply for when client and partner have a Will together."
                     >
-                      <FaCircleQuestion style={{ fontSize: "18px", cursor: "pointer" }} />
+                      <FaCircleQuestion
+                        style={{ fontSize: "18px", cursor: "pointer" }}
+                      />
                     </Tooltip>
                   )}
                 </div>
@@ -356,6 +385,8 @@ const EstatePlanningWill = (props) => {
                       setFieldValue={setFieldValue}
                       handleChange={handleChange}
                       handleBlur={handleBlur}
+                      isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
                     />
                   </div>
                 </div>

@@ -49,21 +49,9 @@ const Dashboard = (props) => {
   }, [prospectsCDF]);
 
   return (
-    <div className="DashBoard px-0">
-      <h5 className="Greetings PoppinsFamily">
-        👋 Welcome,{" "}
-        {loggedInUserData &&
-        typeof loggedInUserData === "object" &&
-        Object.keys(loggedInUserData).length > 0
-          ? toTitleCase(
-              `${loggedInUserData.firstName || ""} ${
-                loggedInUserData.lastName || ""
-              }`.trim()
-            )
-          : "Guest"}
-      </h5>
+    <div className="DashBoard">
       <div className="row justify-content-stretch d-none">
-        <div className={"col-md-3 mt-3 mt-md-0"}>
+        <div className={"col-md-3 mt-2 mt-md-0"}>
           <Card className=" overflow-hidden custom_Shadow pb-3 h-100 d-flex flex-column justify-content-center align-items-center">
             <div className="mt-4">
               <CustomApexChart
@@ -107,9 +95,9 @@ const Dashboard = (props) => {
           </Card>
         </div>
       </div>
-      <div className="row mt-4">
-        <div className="col-md-12">
-          <Card className="custom_Shadow mb-5">
+      <div className="row mt-2 ">
+        <div className="col-md-12 px-1">
+          <Card className="custom_Shadow border-0 mb-5">
             <div className="d-flex flex-column justify-content-center align-items-center py-3">
               <div style={{ width: "98%", marginTop: "-10px" }}>
                 <NewAllClients />

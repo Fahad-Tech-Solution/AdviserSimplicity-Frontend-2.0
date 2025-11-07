@@ -24,6 +24,8 @@ import {
 } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
+const AntDTableHOC = DynamicTableForInputsSection("antd");
+
 const EmploymentIncome = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   const personalDetailObj = useRecoilValue(PersonalDetailsData);
@@ -37,10 +39,10 @@ const EmploymentIncome = (props) => {
     Object.keys(questionDetail.incomeFromOwnBusiness || {}).length > 0
       ? questionDetail.incomeFromOwnBusiness
       : {
-        client: [],
-        partner: [],
-        joint: [],
-      }; // Use an empty object as default if incomeFromOwnBusiness is undefined
+          client: [],
+          partner: [],
+          joint: [],
+        }; // Use an empty object as default if incomeFromOwnBusiness is undefined
 
   let initialValues = {
     owner: "",
@@ -167,7 +169,7 @@ const EmploymentIncome = (props) => {
 
     // Check for client ownership
     if (values.owner.includes("client")) {
-      obj.clientTotal = obj.client.SalaryPackageModal.grossSalary;
+      obj.clientTotal = obj?.client?.SalaryPackageModal?.grossSalary || "$0";
     } else {
       obj.clientTotal = "";
       obj.client = {};
@@ -175,7 +177,7 @@ const EmploymentIncome = (props) => {
 
     // Check for partner ownership
     if (values.owner.includes("partner")) {
-      obj.partnerTotal = obj.partner.SalaryPackageModal.grossSalary;
+      obj.partnerTotal = obj?.partner?.SalaryPackageModal?.grossSalary || "$0";
     } else {
       obj.partnerTotal = "";
       obj.partner = {};
@@ -206,7 +208,7 @@ const EmploymentIncome = (props) => {
       }
 
       if (res) {
-        console.log(res);
+        // console.log(res);
         const updatedData = { ...questionDetail, incomeFromOwnBusiness: res };
         setQuestionDetail(updatedData);
       }
@@ -221,6 +223,7 @@ const EmploymentIncome = (props) => {
       // Reset the flag state if necessary
       if (props.flagState) {
         props.setFlagState(false);
+        props.setIsEditing(!props.isEditing);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
@@ -229,8 +232,8 @@ const EmploymentIncome = (props) => {
         "topRight",
         "Error Notification",
         'Data of "' +
-        props.modalObject.title +
-        '" is not Saved. Please try again.'
+          props.modalObject.title +
+          '" is not Saved. Please try again.'
       );
     }
   };
@@ -247,26 +250,24 @@ const EmploymentIncome = (props) => {
   };
 
   const options = !["Single", "Widowed"].includes(
-    personalDetailObj.client?.MaritalStatus
+    personalDetailObj.client?.clientMaritalStatus?.trim()
   )
     ? [
-      {
-        value: "client",
-        label: personalDetailObj.client?.clientPreferredName,
-      },
-      {
-        value: "partner",
-        label: personalDetailObj.partner?.partnerPreferredName,
-      },
-    ]
+        {
+          value: "client",
+          label: personalDetailObj.client?.clientPreferredName,
+        },
+        {
+          value: "partner",
+          label: personalDetailObj.partner?.partnerPreferredName,
+        },
+      ]
     : [
-      {
-        value: "client",
-        label: personalDetailObj.client?.clientPreferredName,
-      },
-    ];
-
-  const AntDTableHOC = DynamicTableForInputsSection("antd");
+        {
+          value: "client",
+          label: personalDetailObj.client?.clientPreferredName,
+        },
+      ];
 
   const columns = [
     {
@@ -298,7 +299,7 @@ const EmploymentIncome = (props) => {
         { label: "Contract", value: "Contract" },
         { label: "On Leave", value: "OnLeave" },
       ],
-      width: 200,
+      width: 150,
     },
     {
       title: "Name of Company",
@@ -314,7 +315,7 @@ const EmploymentIncome = (props) => {
       key: "startDate",
       type: "antdate",
       placeholder: "dd/mm/yyyy",
-      width: 200,
+      width: 150,
     },
     {
       title: "Hours Worked",
@@ -322,47 +323,16 @@ const EmploymentIncome = (props) => {
       key: "hoursWorked",
       type: "number",
       placeholder: "Enter Hours Worked",
-      width: 200,
+      width: 100,
     },
     {
       title: "Salary Detail",
       dataIndex: "salaryPackage",
       key: "SalaryPackageModal",
       type: "modal", // 🔥 handled by DynamicFormField as button modal
-      width: 150,
+      width: 100,
       handleInnerModal: handleInnerModal,
       innerModalTitle: "Salary Detail",
-      Drawerheight: 220,
-      DrawerWidth: "80%",
-      PopoverContent: (
-        innerModalTitle,
-        values,
-        all,
-        stakeHolder,
-        setFieldValue
-      ) => {
-        let modalObject = {
-          title: innerModalTitle,
-          key: all.key,
-          parentValues: values,
-          parentKey: stakeHolder,
-        };
-        return (
-          <div
-            style={{
-              height: "80px",
-              margin: "-20px 0px 0px 0px",
-            }}
-          >
-            <SalaryPackage
-              modalObject={modalObject}
-              setFieldValue={setFieldValue}
-              setFlagState={setFlagState}
-              flagState={flagState}
-            />
-          </div>
-        );
-      },
     },
     {
       title: "Salary Packaging",
@@ -372,39 +342,8 @@ const EmploymentIncome = (props) => {
       width: 170,
       callBack: true,
       func: handleInnerModal,
+      handleInnerModal: handleInnerModal,
       innerModalTitle: "Salary Packaging",
-      Drawerheight: 220,
-      DrawerWidth: "80%",
-      PopoverContent: (
-        innerModalTitle,
-        values,
-        all,
-        stakeHolder,
-        setFieldValue
-      ) => {
-        let modalObject = {
-          title: innerModalTitle,
-          key: all.key,
-          parentValues: values,
-          parentKey: stakeHolder,
-        };
-
-        return (
-          <div
-            style={{
-              height: "80px",
-              margin: "-20px 0px 0px 0px",
-            }}
-          >
-            <SalaryPackaging
-              modalObject={modalObject}
-              setFieldValue={setFieldValue}
-              setFlagState={setFlagState}
-              flagState={flagState}
-            />
-          </div>
-        );
-      },
     },
     {
       title: "Leave Entitlements",
@@ -416,45 +355,13 @@ const EmploymentIncome = (props) => {
       callBack: true,
       func: handleInnerModal,
       innerModalTitle: "Leave entitlements",
-      Drawerheight: 320,
-      DrawerWidth: "60%",
-      PopoverContent: (
-        innerModalTitle,
-        values,
-        all,
-        stakeHolder,
-        setFieldValue
-      ) => {
-        let modalObject = {
-          title: innerModalTitle,
-          key: all.key,
-          parentValues: values,
-          parentKey: stakeHolder,
-        };
-
-        return (
-          <div
-            style={{
-              height: "80px",
-              margin: "-20px 0px 0px 0px",
-            }}
-          >
-            <LeaveEntitlementsModal
-              modalObject={modalObject}
-              setFieldValue={setFieldValue}
-              setFlagState={setFlagState}
-              flagState={flagState}
-            />
-          </div>
-        );
-      },
     },
     {
       title: "Choice of Fund",
       dataIndex: "choiceOfFund",
       key: "choiceOfFund",
-      type: "yesno",
-      width: 150,
+      type: "yesno", width: 100,
+      
     },
   ];
 
@@ -544,7 +451,7 @@ const EmploymentIncome = (props) => {
                       console.log(values);
                     }}
                   >
-                    Order
+                    Owner
                   </label>
 
                   <div style={{ minWidth: "200px" }}>
@@ -552,7 +459,7 @@ const EmploymentIncome = (props) => {
                       name={`owner`}
                       component={AntdCreatableMultiSelect}
                       options={options}
-                      onChangefun={() => { }}
+                      onChangefun={() => {}}
                     />
                   </div>
                 </div>
@@ -568,6 +475,9 @@ const EmploymentIncome = (props) => {
                       setFieldValue={setFieldValue}
                       handleChange={handleChange}
                       handleBlur={handleBlur}
+                      handleSubmit={props?.handleOk}
+                      isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
                     />
                   </div>
                 </div>

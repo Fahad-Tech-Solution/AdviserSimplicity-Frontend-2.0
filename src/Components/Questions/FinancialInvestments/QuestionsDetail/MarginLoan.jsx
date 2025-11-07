@@ -16,6 +16,7 @@ import {
 } from "../../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
 import { AntdCreatableMultiSelect } from "./CreatableMultiSelectField";
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const MarginLoan = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
@@ -100,10 +101,16 @@ const MarginLoan = (props) => {
     label: `Year ${i + 1}`,
   }));
 
-  const FormulaSetting = (values, setFieldValue, current, stakeHolder) => {
-    const monthly = parseFloat(current.value.replace(/[^0-9.-]+/g, "")) || 0;
-    const annual = toCommaAndDollar(monthly * 12);
-    setFieldValue(`${stakeHolder}.annualLoan`, annual);
+  const FormulaSetting = (values, setFieldValue, currentInput, stakeHolder) => {
+    if (!currentInput) return;
+
+    const monthly =
+      parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
+    const annual = monthly * 12;
+
+    console.log("FormulaSetting:", { monthly, annual });
+
+    setFieldValue(stakeHolder + "annualLoan", toCommaAndDollar(annual));
   };
 
   const onSubmit = async (values) => {
@@ -175,7 +182,10 @@ const MarginLoan = (props) => {
         `Data of "${props.modalObject.title}" is Saved`
       );
 
-      if (props.flagState) props.setFlagState(false);
+      if (props.flagState) {
+        props.setFlagState(false);
+        props.setIsEditing(!props.isEditing);
+      }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
       openNotificationSuccess(
@@ -195,6 +205,7 @@ const MarginLoan = (props) => {
       key: "lender",
       type: "select",
       options: lenderOption,
+      selectedOptionValue: true,
       width: 200,
     },
     {
@@ -256,8 +267,6 @@ const MarginLoan = (props) => {
       width: 200,
     },
   ];
-
-  const AntdTable = DynamicTableForInputsSection("antd");
 
   const ownerOptions = () => {
     const opts = [{ value: "client", label: RenderName("client") }];
@@ -322,7 +331,14 @@ const MarginLoan = (props) => {
             <Row>
               <div className="col-md-12">
                 <div className="d-flex justify-content-center align-items-center gap-4">
-                  <label className="text-end">Owner</label>
+                  <label
+                    className="text-end"
+                    onClick={() => {
+                      console.log(values);
+                    }}
+                  >
+                    Owner
+                  </label>
                   <div style={{ minWidth: "250px" }}>
                     <Field
                       name="owner"
@@ -342,6 +358,8 @@ const MarginLoan = (props) => {
                       handleChange={handleChange}
                       handleBlur={handleBlur}
                       handleInnerModal={handleInnerModal}
+                      isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
                     />
                   </div>
                 )}

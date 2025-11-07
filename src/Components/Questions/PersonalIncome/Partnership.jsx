@@ -14,6 +14,8 @@ import {
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 import { AntdCreatableMultiSelect } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 
+  const AntdTable = DynamicTableForInputsSection("antd");
+
 const Partnership = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
   const [, setQuestionDetail] = useRecoilState(QuestionDetail);
@@ -35,6 +37,7 @@ const Partnership = (props) => {
       businessName: "",
       ABN: "",
       businessAddress: "",
+      postCode: "",
       totalNetPartnershipIncome: "",
       shareOfPartnership: "",
       share: "",
@@ -44,6 +47,7 @@ const Partnership = (props) => {
       businessName: "",
       ABN: "",
       businessAddress: "",
+      postCode: "",
       totalNetPartnershipIncome: "",
       shareOfPartnership: "",
       share: "",
@@ -64,20 +68,19 @@ const Partnership = (props) => {
           data.client.businessAddress || ""
         );
         setFieldValue(
+          "client.postCode",
+          data.client.postCode || ""
+        );
+        setFieldValue(
           "client.totalNetPartnershipIncome",
           data.client.totalNetPartnershipIncome
-            ? toCommaAndDollar(data.client.totalNetPartnershipIncome)
-            : ""
         );
         setFieldValue(
           "client.shareOfPartnership",
           data.client.shareOfPartnership || ""
         );
         setFieldValue("client.share", data.client.share || "");
-        setFieldValue(
-          "client.goodWill",
-          data.client.goodWill ? toCommaAndDollar(data.client.goodWill) : ""
-        );
+        setFieldValue("client.goodWill", data.client.goodWill);
       }
 
       if (
@@ -92,20 +95,19 @@ const Partnership = (props) => {
           data.partner.businessAddress || ""
         );
         setFieldValue(
+          "partner.postCode",
+          data.partner.postCode || ""
+        );
+        setFieldValue(
           "partner.totalNetPartnershipIncome",
           data.partner.totalNetPartnershipIncome
-            ? toCommaAndDollar(data.partner.totalNetPartnershipIncome)
-            : ""
         );
         setFieldValue(
           "partner.shareOfPartnership",
           data.partner.shareOfPartnership || ""
         );
         setFieldValue("partner.share", data.partner.share || "");
-        setFieldValue(
-          "partner.goodWill",
-          data.partner.goodWill ? toCommaAndDollar(data.partner.goodWill) : ""
-        );
+        setFieldValue("partner.goodWill", data.partner.goodWill);
       }
     }
   };
@@ -147,7 +149,6 @@ const Partnership = (props) => {
     }
   };
 
-  const AntdTable = DynamicTableForInputsSection("antd");
   const DefaultUrl = useRecoilValue(defaultUrl);
 
   const onSubmit = async (values) => {
@@ -155,35 +156,26 @@ const Partnership = (props) => {
       ...values,
       client: {
         ...values.client,
-        totalNetPartnershipIncome: toNumericValue(
-          values.client.totalNetPartnershipIncome
-        ),
-        share: toNumericValue(values.client.share),
-        goodWill: toNumericValue(values.client.goodWill),
       },
       partner: {
         ...values.partner,
-        totalNetPartnershipIncome: toNumericValue(
-          values.partner.totalNetPartnershipIncome
-        ),
-        share: toNumericValue(values.partner.share),
-        goodWill: toNumericValue(values.partner.goodWill),
       },
     };
+
     obj.clientFK = localStorage.getItem("UserID") || "";
 
     if (!values.owner.includes("client")) {
       obj.client = {};
       obj.clientTotal = "";
     } else {
-      obj.clientTotal = toNumericValue(values.client.share);
+      obj.clientTotal = values.client.share;
     }
 
     if (!values.owner.includes("partner") || UserStatus !== "Married") {
       obj.partner = {};
       obj.partnerTotal = "";
     } else {
-      obj.partnerTotal = toNumericValue(values.partner.share);
+      obj.partnerTotal = values.partner.share;
     }
 
     try {
@@ -217,6 +209,7 @@ const Partnership = (props) => {
 
       if (props.flagState) {
         props.setFlagState(false);
+        props.setIsEditing(!props.isEditing);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
@@ -259,6 +252,13 @@ const Partnership = (props) => {
       key: "businessAddress",
       type: "text",
       placeholder: "Business Address",
+    },
+        {
+      title: "Postcode/Suburb",
+      dataIndex: "postCode",
+      key: "postCode",
+      type: "text",
+      placeholder: "Postcode/Suburb",
     },
     {
       title: "Total Net Partnership Income",
@@ -317,6 +317,7 @@ const Partnership = (props) => {
                   businessName: values.client?.businessName || "",
                   ABN: values.client?.ABN || "",
                   businessAddress: values.client?.businessAddress || "",
+                  postCode: values.client?.postCode || "",
                   totalNetPartnershipIncome:
                     values.client?.totalNetPartnershipIncome || "",
                   shareOfPartnership: values.client?.shareOfPartnership || "",
@@ -334,6 +335,7 @@ const Partnership = (props) => {
                   businessName: values.partner?.businessName || "",
                   ABN: values.partner?.ABN || "",
                   businessAddress: values.partner?.businessAddress || "",
+                  postCode: values.partner?.postCode || "",
                   totalNetPartnershipIncome:
                     values.partner?.totalNetPartnershipIncome || "",
                   shareOfPartnership: values.partner?.shareOfPartnership || "",
@@ -374,6 +376,9 @@ const Partnership = (props) => {
                         handleChange={handleChange}
                         handleBlur={handleBlur}
                         handleInnerModal={handleInnerModal}
+                        handleSubmit={props?.handleOk}
+                                   isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
                       />
                     </div>
                   )}

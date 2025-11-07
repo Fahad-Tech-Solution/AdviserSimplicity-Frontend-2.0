@@ -30,6 +30,8 @@ const SalaryPackaging = (props) => {
       setFieldValue("costBaseOfCar", Data.costBaseOfCar);
       setFieldValue("FBTPaidByEmployer", Data.FBTPaidByEmployer);
       setFieldValue("runningCostsOfCar", Data.runningCostsOfCar);
+    } else {
+      props.setIsEditing(!props.isEditing);
     }
   };
 
@@ -51,6 +53,7 @@ const SalaryPackaging = (props) => {
 
     if (props.flagState) {
       props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
     }
   };
 
@@ -73,26 +76,22 @@ const SalaryPackaging = (props) => {
     {
       key: "creditCardMortgageRepayments",
       dataIndex: "creditCardMortgageRepayments",
-      type: "text",
+      type: "number-toComma",
       title: "Credit Card/Mortgage Repayments",
       placeholder: "Enter amount",
       width: 100,
-      formatter: (val) =>
-        val ? toCommaAndDollar(val.replace(/[^0-9.-]+/g, "")) : "",
     },
     {
       key: "costBaseOfCar",
       dataIndex: "costBaseOfCar",
-      type: "text",
+      type: "number-toComma",
       title: "Cost Base of Car",
       placeholder: "Enter cost",
-      formatter: (val) =>
-        val ? toCommaAndDollar(val.replace(/[^0-9.-]+/g, "")) : "",
     },
     {
       key: "FBTPaidByEmployer",
       dataIndex: "FBTPaidByEmployer",
-      type: "yesno",
+      type: "yesno", 
       title: "FBT Paid By Employer",
       width: 100,
       render: (_, record) => (
@@ -109,11 +108,9 @@ const SalaryPackaging = (props) => {
     {
       key: "runningCostsOfCar",
       dataIndex: "runningCostsOfCar",
-      type: "text",
+      type: "number-toComma",
       title: "Running Costs of Car",
       placeholder: "Enter costs",
-      formatter: (val) =>
-        val ? toCommaAndDollar(val.replace(/[^0-9.-]+/g, "")) : "",
     },
   ];
 
@@ -178,6 +175,9 @@ const SalaryPackaging = (props) => {
                 setFieldValue={setFieldValue}
                 handleChange={handleChange}
                 handleBlur={handleBlur}
+                handleSubmit={props?.handleOk}
+                isEditing={props?.isEditing}
+                setIsEditing={props?.setIsEditing}
               />
             </ConfigProvider>
           </Form>
