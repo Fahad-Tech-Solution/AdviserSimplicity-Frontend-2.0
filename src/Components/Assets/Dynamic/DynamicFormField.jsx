@@ -923,6 +923,61 @@ const DynamicFormField = ({
         </>
       );
 
+
+// Add this new case in DynamicFormField.jsx
+case "partner-home-address":
+  return (
+    <>
+      <Field
+        type="text"
+        placeholder={placeholder}
+        name={stakeHolder ? stakeHolder + name : name}
+        id={name}
+        className="form-control inputDesignDoubleInput"
+        onChange={(e) => {
+          handleChange(e);
+          if (all.callBack) {
+            all.func(values, setFieldValue, e.target, stakeHolder);
+          }
+        }}
+        onBlur={handleBlur}
+        disabled={
+          typeof all?.disabled === "function"
+            ? all.disabled(values, stakeHolder)
+            : all?.disabled || false
+        }
+      />
+      
+      {/* Same as Client Address Checkbox */}
+      <div className="mt-2">
+        <Field name={`${stakeHolder}SameAsClientAddress`}>
+          {({ field, form }) => (
+            <Checkbox
+              checked={field.value || false}
+              onChange={(e) => {
+                form.setFieldValue(field.name, e.target.checked);
+                if (all.checkCallBack) {
+                  all.checkfunc(values, setFieldValue, e.target, stakeHolder);
+                }
+              }}
+            >
+              Same as Client Address
+            </Checkbox>
+          )}
+        </Field>
+      </div>
+      
+      {all?.CheckError && (
+        <ErrorMessage
+          name={stakeHolder ? stakeHolder + name : name}
+          component="div"
+          className="text-danger small mt-1"
+        />
+      )}
+    </>
+  );
+
+
     case "select-creatable":
       return (
         <>

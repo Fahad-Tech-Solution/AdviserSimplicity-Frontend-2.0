@@ -503,21 +503,21 @@ const PersonalDetailNew = () => {
     {
       title: "Smoker",
       dataIndex: "smoker",
-      type: "yesno", 
+      type: "yesno",
       key: "smoker",
       width: 100,
     },
     {
       title: "Tax Resident",
       dataIndex: "taxRes",
-      type: "yesno", 
+      type: "yesno",
       key: "taxRes",
       width: 100,
     },
     {
       title: "Private Health Cover",
       dataIndex: "healthCover",
-      type: "yesno", 
+      type: "yesno",
       key: "healthCover",
       width: 100,
     },
@@ -546,8 +546,9 @@ const PersonalDetailNew = () => {
       key: "homeAddress",
       CheckError: true,
       width: 300,
-        style: { height: '0px' },
-      
+      style: { height: '0px' },
+      isPartnerHomeAddress: true,
+
     },
     {
       title: "Postcode/Suburb",
@@ -694,7 +695,7 @@ const PersonalDetailNew = () => {
     {
       title: "Dependent",
       dataIndex: "depenantChild",
-      type: "yesno", 
+      type: "yesno",
       key: "depenantChild",
       CheckError: true,
       width: 100,
@@ -795,13 +796,13 @@ const PersonalDetailNew = () => {
       const foundId = personalDetailObj?._id;
       const res = foundId
         ? await PatchAxios(`${defaultUrlValue}/api/personalDetails/Update`, {
-            ...payload,
-            _id: foundId,
-          })
+          ...payload,
+          _id: foundId,
+        })
         : await PostAxios(
-            `${defaultUrlValue}/api/personalDetails/Add`,
-            payload
-          );
+          `${defaultUrlValue}/api/personalDetails/Add`,
+          payload
+        );
 
       if (res) {
         localStorage.setItem("UserID", res._id);
@@ -1288,10 +1289,10 @@ const PersonalDetailNew = () => {
                       {!["Single", "Widowed", ""].includes(
                         values.client.marital
                       ) && (
-                        <div className="col-md-3 mt-4">
-                          <ProfileCard owner="partner" Data={values.partner} />
-                        </div>
-                      )}
+                          <div className="col-md-3 mt-4">
+                            <ProfileCard owner="partner" Data={values.partner} />
+                          </div>
+                        )}
                     </div>
                     <div className="row justify-content-center">
                       <div className="col-md-2 mt-4">
