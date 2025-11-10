@@ -116,7 +116,7 @@ const GoalsObjectivesQuestions = (props) => {
                 <div className="col-md-12 text-center">
                   <div className="d-flex flex-row justify-content-center align-items-center gap-2 my-3">
                     <label htmlFor="" className="">
-                      Choose a Financial Plans:
+                     Scope of Advice :
                     </label>
 
                     <div style={{ minWidth: "30%" }}>
