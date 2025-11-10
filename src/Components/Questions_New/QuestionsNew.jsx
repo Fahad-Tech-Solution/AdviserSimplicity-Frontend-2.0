@@ -234,24 +234,24 @@ const QuestionsNew = (props) => {
                 onClick={() => {
                   setFlagState(true);
 
-                  let title = "Questions"; // default
-                  if (location.pathname === "/user/personal-insurance") {
-                    title = "Personal Insurance";
-                  } else if (location.pathname === "/user/personal-income") {
-                    title = "Personal Income & Expenses";
-                  }
-                  else if (location.pathname === "/user/personal-assets") {
-                    title = "Personal Assets & Debt";
-                  }
-                  else if (location.pathname === "/user/estate-planning") {
-                    title = "Estate Planning & Professional Adviser";
-                  }
-                  else if (location.pathname === "/user/business-entities") {
-                    title = "Business Entities";
-                  }
-                  else if (location.pathname === "/user/financial-investments") {
-                    title = "Financial Investments";
-                  }
+                  let title = obj?.[location.pathname].Title || "Questions"; // default
+                  // if (location.pathname === "/user/personal-insurance") {
+                  //   title = "Personal Insurance";
+                  // } else if (location.pathname === "/user/personal-income") {
+                  //   title = "Personal Income & Expenses";
+                  // }
+                  // else if (location.pathname === "/user/personal-assets") {
+                  //   title = "Personal Assets & Debt";
+                  // }
+                  // else if (location.pathname === "/user/estate-planning") {
+                  //   title = "Estate Planning & Professional Adviser";
+                  // }
+                  // else if (location.pathname === "/user/business-entities") {
+                  //   title = "Business Entities";
+                  // }
+                  // else if (location.pathname === "/user/financial-investments") {
+                  //   title = "Financial Investments";
+                  // }
 
 
                   setModalObject({
@@ -262,6 +262,7 @@ const QuestionsNew = (props) => {
               >
                 <img className="img-fluid min-w-25" src={Add} alt="" />
               </div>
+
             </div>
 
             <QuestionCardsNew

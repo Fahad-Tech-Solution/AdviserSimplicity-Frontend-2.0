@@ -213,30 +213,20 @@ const AssetInfo = (props) => {
     ...baseColumns,
   ];
 
-  const onlyJoint = ["Boat", "Caravan", "Contents","Other Assets"];
+  const onlyJoint = ["Boat", "Caravan", "Contents"];
   // const onlyClient = ["Other Assets"];
   const onlyClient = [];
 
-  // const options = onlyJoint.includes(props.modalObject.title)
-  //   ? [{ value: "joint", label: RenderName("joint") }]
-  //   : onlyClient.includes(props.modalObject.title)
-  //   ? [{ value: "client", label: RenderName("client") }]
-  //   : UserStatus !== "Single"
-  //   ? [
-  //       { value: "client", label: RenderName("client") },
-  //       { value: "partner", label: RenderName("partner") },
-  //     ]
-  //   : [{ value: "client", label: RenderName("client") }];
-
-  // 🔹 Generate owner selection options
-const options = onlyJoint.includes(props.modalObject.title)
-  ? [{ value: "joint", label: RenderName("joint") }]
-  : UserStatus !== "Single"
-  ? [
-      { value: "client", label: RenderName("client") },
-      { value: "partner", label: RenderName("partner") },
-    ]
-  : [{ value: "client", label: RenderName("client") }];
+  const options = onlyJoint.includes(props.modalObject.title)
+    ? [{ value: "joint", label: RenderName("joint") }]
+    : onlyClient.includes(props.modalObject.title)
+    ? [{ value: "client", label: RenderName("client") }]
+    : UserStatus !== "Single"
+    ? [
+        { value: "client", label: RenderName("client") },
+        { value: "partner", label: RenderName("partner") },
+      ]
+    : [{ value: "client", label: RenderName("client") }];
 
   return (
     <Formik
@@ -284,7 +274,7 @@ const options = onlyJoint.includes(props.modalObject.title)
             <Row>
               <div className="col-md-12">
                 {/* Owner Selector */}
-{(props.modalObject?.key === "car") && (
+{(props.modalObject?.key === "car" || props.modalObject?.key === "otherAssets") && (
   <div className="d-flex flex-row justify-content-center align-items-center gap-2">
     <label className="text-end mb-0">Owner</label>
     <div style={{ minWidth: "200px" }}>

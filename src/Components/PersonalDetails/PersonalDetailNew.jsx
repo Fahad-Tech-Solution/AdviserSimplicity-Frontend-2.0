@@ -543,6 +543,10 @@ const PersonalDetailNew = () => {
       type: "textarea",
       key: "homeAddress",
       CheckError: true,
+      width: 300,
+      style: { height: '0px' },
+      isPartnerHomeAddress: true,
+
     },
     {
       title: "Postcode/Suburb",
@@ -790,13 +794,13 @@ const PersonalDetailNew = () => {
       const foundId = personalDetailObj?._id;
       const res = foundId
         ? await PatchAxios(`${defaultUrlValue}/api/personalDetails/Update`, {
-            ...payload,
-            _id: foundId,
-          })
+          ...payload,
+          _id: foundId,
+        })
         : await PostAxios(
-            `${defaultUrlValue}/api/personalDetails/Add`,
-            payload
-          );
+          `${defaultUrlValue}/api/personalDetails/Add`,
+          payload
+        );
 
       if (res) {
         localStorage.setItem("UserID", res._id);
@@ -1243,10 +1247,10 @@ const PersonalDetailNew = () => {
 
                     <div className="row justify-content-center align-items-center mb-3 mt-4">
                       {!isEditing && (
-                        <div className="col-md-4 d-flex justify-content-center">
+                        <div className="col-md-4">
                           <Button
                             htmlType="button"
-                            className="w-50"
+                            className="w-100"
                             onClick={() => {
                               // setSwitchStep(1);
                               setErrorShow(true);
@@ -1258,11 +1262,11 @@ const PersonalDetailNew = () => {
                         </div>
                       )}
                       {isEditing && (
-                        <div className="col-md-4 d-flex justify-content-center ">
+                        <div className="col-md-4">
                           <Button
                             type="primary"
                             htmlType="submit"
-                            className=" w-50"
+                            className="w-100"
                             onClick={() => {
                               setErrorShow(true);
                             }}
@@ -1283,10 +1287,10 @@ const PersonalDetailNew = () => {
                       {!["Single", "Widowed", ""].includes(
                         values.client.marital
                       ) && (
-                        <div className="col-md-3 mt-4">
-                          <ProfileCard owner="partner" Data={values.partner} />
-                        </div>
-                      )}
+                          <div className="col-md-3 mt-4">
+                            <ProfileCard owner="partner" Data={values.partner} />
+                          </div>
+                        )}
                     </div>
                     <div className="row justify-content-center">
                       <div className="col-md-2 mt-4">
