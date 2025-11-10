@@ -91,7 +91,7 @@ const LeaveEntitlementsModal = (props) => {
       disabled: true,
       CheckError: true,
     },
-     {
+    {
       key: "time",
       dataIndex: "time",
       type: "select",
@@ -112,7 +112,6 @@ const LeaveEntitlementsModal = (props) => {
       placeholder: "Enter amount",
       CheckError: true,
     },
-   
   ];
 
   const getFieldTitle = (BaseKey, values, key) => {
@@ -126,6 +125,7 @@ const LeaveEntitlementsModal = (props) => {
       validationSchema={validationSchema}
       enableReinitialize
       innerRef={props.formRef}
+      validateOnMount={false} // ⬅️ Important
     >
       {({
         values,
@@ -190,11 +190,7 @@ const LeaveEntitlementsModal = (props) => {
                         const errorKeys = Object.keys(value || {});
                         return errorKeys.map((errorKey) => (
                           <li key={`${key}-${errorKey}`}>
-                            {`${getFieldTitle(
-                              key,
-                              values,
-                              "leaveType"
-                            )}: ${
+                            {`${getFieldTitle(key, values, "leaveType")}: ${
                               typeof value[errorKey] === "string"
                                 ? value[errorKey]
                                 : Object.values(value[errorKey])[0]

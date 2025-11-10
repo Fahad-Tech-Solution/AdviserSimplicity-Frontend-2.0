@@ -778,7 +778,7 @@ const NewAllClients = (props) => {
       </ModalComponent>
 
       <ReusableHeader
-        title="My Clients"
+        title=""
         expanded={expanded}
         selectedValue={selectedValue}
         options={PerosnalDetail.map((item) => ({

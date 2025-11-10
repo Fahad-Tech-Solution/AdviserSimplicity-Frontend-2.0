@@ -640,10 +640,6 @@ input:checked + label {
   z-index: 100;
 }
 
-.AdminSideBar.collapsed {
-  width: 80px;
-  /* collapsed width */
-}
 
 .QuestionIcon {
   width: 10%;

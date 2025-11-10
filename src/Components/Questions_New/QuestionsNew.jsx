@@ -214,20 +214,7 @@ const QuestionsNew = (props) => {
         <div className="col-md-12">
           <div className="pb-4 bg-white  borderOverAll  rounded text-center">
             <div>
-              {/* <div
-                className="QuestionIcon p-3"
-                role="button"
-                onClick={() => {
-                  setFlagState(true);
-
-                  setModalObject({
-                    title: location.pathname=="/user/personal-insurance"? "Personal Insurance": "Questions",
-                    Input: "Name",
-                  });
-                }}
-              >
-                <img className="img-fluid min-w-25" src={Add} alt="" />
-              </div> */}
+             
               <div
                 className="QuestionIcon p-3"
                 role="button"
@@ -235,24 +222,6 @@ const QuestionsNew = (props) => {
                   setFlagState(true);
 
                   let title = obj?.[location.pathname].Title || "Questions"; // default
-                  // if (location.pathname === "/user/personal-insurance") {
-                  //   title = "Personal Insurance";
-                  // } else if (location.pathname === "/user/personal-income") {
-                  //   title = "Personal Income & Expenses";
-                  // }
-                  // else if (location.pathname === "/user/personal-assets") {
-                  //   title = "Personal Assets & Debt";
-                  // }
-                  // else if (location.pathname === "/user/estate-planning") {
-                  //   title = "Estate Planning & Professional Adviser";
-                  // }
-                  // else if (location.pathname === "/user/business-entities") {
-                  //   title = "Business Entities";
-                  // }
-                  // else if (location.pathname === "/user/financial-investments") {
-                  //   title = "Financial Investments";
-                  // }
-
 
                   setModalObject({
                     title,
