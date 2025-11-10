@@ -548,7 +548,6 @@ const PersonalDetailNew = () => {
       width: 300,
       style: { height: '0px' },
       isPartnerHomeAddress: true,
-
     },
     {
       title: "Postcode/Suburb",
