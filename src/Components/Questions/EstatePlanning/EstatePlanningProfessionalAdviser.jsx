@@ -9,8 +9,10 @@ import {
   RenderName,
 } from "../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
+import { ConfigProvider, Select } from "antd";
 
 const AntdTable = DynamicTableForInputsSection("antd");
+const { Option } = Select;
 
 const EstatePlanningProfessionalAdviser = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
@@ -18,118 +20,60 @@ const EstatePlanningProfessionalAdviser = (props) => {
   const DefaultUrl = useRecoilValue(defaultUrl);
   const [nameSet] = useState(RenderName(props.modalObject.Input));
 
-  const professionalAdviser =
-    Object.keys(questionDetail.professionalAdviser || {}).length > 0
-      ? questionDetail.professionalAdviser
-      : {
-          client: [],
-          partner: [],
-          joint: [],
-        };
+  const existingData =
+    questionDetail?.professionalAdviser?.[props.modalObject.Input] || [];
 
-  const initialValues = professionalAdviser[props.modalObject.Input]?.length
-    ? { NumberOfMap: professionalAdviser[props.modalObject.Input].length }
-    : { NumberOfMap: "" };
+  const initialValues = {
+    professionalAdvisersTypes: existingData.map((d) => d.POAType) || [],
+    professionalAdviser: existingData || [],
+  };
 
-  const [dynamicFields, setDynamicFields] = useState([]);
-
-  useEffect(() => {
-    if (
-      professionalAdviser[props.modalObject.Input] &&
-      professionalAdviser[props.modalObject.Input].length
-    ) {
-      setDynamicFields(
-        Array(professionalAdviser[props.modalObject.Input].length).fill("")
-      );
-    }
-  }, [professionalAdviser[props.modalObject.Input]]);
-
+  // -----------------------------
+  // Fill form with existing data
+  // -----------------------------
   const fillInitialValues = (setFieldValue) => {
-    if (
-      professionalAdviser[props.modalObject.Input] &&
-      professionalAdviser[props.modalObject.Input].length
-    ) {
-      professionalAdviser[props.modalObject.Input].forEach((data, i) => {
-        if (data) {
-          setFieldValue(
-            `professionalAdviser[${i}].POAType`,
-            data.POAType || ""
-          );
-          setFieldValue(
-            `professionalAdviser[${i}].adviserName`,
-            data.adviserName || ""
-          );
-          setFieldValue(
-            `professionalAdviser[${i}].company`,
-            data.company || ""
-          );
-          setFieldValue(`professionalAdviser[${i}].phone`, data.phone || "");
-          setFieldValue(`professionalAdviser[${i}].email`, data.email || "");
-        }
-      });
+    if (existingData.length) {
+      setFieldValue("professionalAdviser", existingData);
+      setFieldValue(
+        "professionalAdvisersTypes",
+        existingData.map((item) => item.POAType)
+      );
+      setFieldValue("NumberOfMap", existingData.length);
     }
   };
 
-  const handleInput = (e, setFieldValue) => {
-    const value = e.target.value > 10 ? 10 : e.target.value;
-    setFieldValue("NumberOfMap", value);
-    setDynamicFields(Array(Number(value)).fill(""));
-    setFieldValue(
-      "professionalAdviser",
-      Array(Number(value))
-        .fill()
-        .map(() => ({
-          POAType: "",
-          adviserName: "",
-          company: "",
-          phone: "",
-          email: "",
-        }))
-    );
-  };
-
+  // -----------------------------
+  // Submit Handler
+  // -----------------------------
   const onSubmit = async (values) => {
-    const numberOfMaps = parseInt(values.NumberOfMap, 10) || 0;
-    const newEntries = [];
-
-    for (let i = 0; i < numberOfMaps; i++) {
-      const newEntry = {
-        POAType: values.professionalAdviser?.[i]?.POAType || "",
-        adviserName: values.professionalAdviser?.[i]?.adviserName || "",
-        company: values.professionalAdviser?.[i]?.company || "",
-        phone: values.professionalAdviser?.[i]?.phone || "",
-        email: values.professionalAdviser?.[i]?.email || "",
-      };
-      newEntries.push(newEntry);
-    }
-
+    const advisers = values.professionalAdviser || [];
     const DataOf = props.modalObject.Input;
+
     const obj = {
       clientFK: localStorage.getItem("UserID"),
-      [DataOf]: newEntries,
-      [DataOf + "Total"]: newEntries.length,
+      [DataOf]: advisers,
+      [DataOf + "Total"]: advisers.length > 0 ? "Yes" : "No",
     };
 
-    setQuestionDetail((prev) => ({
-      ...prev,
-      professionalAdviser: {
-        ...prev.professionalAdviser,
-        [DataOf]: newEntries,
-      },
-    }));
+    // setQuestionDetail((prev) => ({
+    //   ...prev,
+    //   professionalAdviser: {
+    //     ...prev.professionalAdviser,
+    //     [DataOf]: advisers,
+    //   },
+    // }));
 
     try {
-      let res;
-      const bankAccountArray = professionalAdviser.clientFK || "";
-      if (!bankAccountArray) {
-        res = await PostAxios(`${DefaultUrl}/api/professionalAdviser/Add`, obj);
-      } else {
-        obj.collection = props.modalObject.Input;
-        res = await PatchAxios(
-          `${DefaultUrl}/api/professionalAdviser/Update`,
-          obj
-        );
-      }
+      const hasExisting =
+        questionDetail?.professionalAdviser?.clientFK ||
+        questionDetail?.professionalAdviser?._id;
+
+      const res = hasExisting
+        ? await PatchAxios(`${DefaultUrl}/api/professionalAdviser/Update`, {
+            ...obj,
+            collection: DataOf,
+          })
+        : await PostAxios(`${DefaultUrl}/api/professionalAdviser/Add`, obj);
 
       if (res) {
         const updatedData = { ...questionDetail, professionalAdviser: res };
@@ -140,22 +84,27 @@ const EstatePlanningProfessionalAdviser = (props) => {
         "success",
         "topRight",
         "Success Notification",
-        `Data of "${props.modalObject.title}" is Saved`
+        `Data of "${props.modalObject.title}" is saved successfully`
       );
+
       if (props.flagState) {
         props.setFlagState(false);
+        props.setIsEditing(!props.isEditing);
       }
     } catch (error) {
-      console.error("Error occurred while making API call:", error);
+      console.error("Error occurred while saving:", error);
       openNotificationSuccess(
         "error",
         "topRight",
         "Error Notification",
-        `Data of "${props.modalObject.title}" is not Saved. Please try again!`
+        `Failed to save "${props.modalObject.title}". Please try again.`
       );
     }
   };
 
+  // -----------------------------
+  // Table Columns
+  // -----------------------------
   const columns = [
     {
       title: "No#",
@@ -168,15 +117,9 @@ const EstatePlanningProfessionalAdviser = (props) => {
       title: "Adviser Type",
       dataIndex: "POAType",
       key: "POAType",
-      type: "select",
-      options: [
-        { value: "Accountant", label: "Accountant" },
-        { value: "Lawyer/Solicitor", label: "Lawyer/Solicitor" },
-        { value: "Insurance adviser", label: "Insurance adviser" },
-        { value: "Doctor", label: "Doctor" },
-        { value: "Other", label: "Other" },
-      ],
-      placeholder: "Adviser Type",
+      type: "text",
+      justText: true,
+      disabled: true,
       width: 200,
     },
     {
@@ -213,12 +156,12 @@ const EstatePlanningProfessionalAdviser = (props) => {
     },
   ];
 
+  // -----------------------------
+  // Main Render
+  // -----------------------------
   return (
     <Formik
-      initialValues={{
-        ...initialValues,
-        professionalAdviser: professionalAdviser[props.modalObject.Input] || [],
-      }}
+      initialValues={initialValues}
       enableReinitialize
       innerRef={props.formRef}
       onSubmit={onSubmit}
@@ -226,26 +169,25 @@ const EstatePlanningProfessionalAdviser = (props) => {
       {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
-        }, [professionalAdviser[props.modalObject.Input]]);
+        }, [existingData]);
 
+        // Build dynamic data rows based on selected adviser types
         const dataRows = useMemo(() => {
-          const num = Number(values.NumberOfMap) || 0;
-          if (num > 0) {
-            return Array.from({ length: num }, (_, i) => ({
-              key: `professionalAdviser.${i}`,
-              stakeHolder: `professionalAdviser[${i}]`,
-              POAType: values.professionalAdviser?.[i]?.POAType || "",
-              adviserName: values.professionalAdviser?.[i]?.adviserName || "",
-              company: values.professionalAdviser?.[i]?.company || "",
-              phone: values.professionalAdviser?.[i]?.phone || "",
-              email: values.professionalAdviser?.[i]?.email || "",
-            }));
-          }
-          return [];
-        }, [values.NumberOfMap, values.professionalAdviser]);
+          const selectedTypes = values.professionalAdvisersTypes || [];
+          return selectedTypes.map((type, i) => ({
+            key: `professionalAdviser.${i}`,
+            stakeHolder: `professionalAdviser[${i}]`,
+            POAType: type,
+            adviserName: values.professionalAdviser?.[i]?.adviserName || "",
+            company: values.professionalAdviser?.[i]?.company || "",
+            phone: values.professionalAdviser?.[i]?.phone || "",
+            email: values.professionalAdviser?.[i]?.email || "",
+          }));
+        }, [values.professionalAdvisersTypes, values.professionalAdviser]);
 
         return (
           <Form>
+            {/* Heading + Multiselect */}
             <div className="d-flex justify-content-center align-items-center gap-4">
               <p
                 className="text-end mt-1 pt-2"
@@ -253,32 +195,68 @@ const EstatePlanningProfessionalAdviser = (props) => {
                   console.log(values);
                 }}
               >
-                How many {props.modalObject.title} does {nameSet} have :
+                Select {props.modalObject.title} types for {nameSet}:
               </p>
-              <div style={{ minWidth: "10%" }}>
-                <select
-                  id="NumberOfMap"
-                  name="NumberOfMap"
-                  className="form-select inputDesignDoubleInput"
-                  onChange={(e) => handleInput(e, setFieldValue)}
-                  value={values.NumberOfMap}
+              <div style={{ minWidth: "35%" }}>
+                <ConfigProvider
+                  theme={{
+                    components: { Select: { colorBorder: "#36b446" } },
+                  }}
                 >
-                  <option value="">Select</option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="6">6</option>
-                  <option value="7">7</option>
-                  <option value="8">8</option>
-                  <option value="9">9</option>
-                  <option value="10">10</option>
-                </select>
+                  <Select
+                    id="professionalAdvisersTypes"
+                    name="professionalAdvisersTypes"
+                    mode="multiple"
+                    allowClear
+                    className="w-100"
+                    placeholder="Select Adviser Types"
+                    size="large"
+                    value={values.professionalAdvisersTypes || []}
+                    onChange={(selectedValues) => {
+                      const advisersArray = (selectedValues || []).map(
+                        (type) => {
+                          // preserve existing values if type already exists
+                          const existing = values.professionalAdviser?.find(
+                            (adv) => adv.POAType === type
+                          );
+                          return (
+                            existing || {
+                              POAType: type,
+                              adviserName: "",
+                              company: "",
+                              phone: "",
+                              email: "",
+                            }
+                          );
+                        }
+                      );
+                      setFieldValue(
+                        "professionalAdvisersTypes",
+                        selectedValues
+                      );
+                      setFieldValue("NumberOfMap", advisersArray.length);
+                      setFieldValue("professionalAdviser", advisersArray);
+                    }}
+                    getPopupContainer={(node) => node.parentNode}
+                  >
+                    {[
+                      "Accountant",
+                      "Insurance Adviser",
+                      "Doctor",
+                      "Lawyer/Solicitor",
+                      "Other",
+                    ].map((type) => (
+                      <Option key={type} value={type}>
+                        {type}
+                      </Option>
+                    ))}
+                  </Select>
+                </ConfigProvider>
               </div>
             </div>
 
-            {values.NumberOfMap && (
+            {/* Table */}
+            {values.professionalAdvisersTypes?.length > 0 && (
               <div className="mt-4 All_Client reportSection">
                 <AntdTable
                   columns={columns}
@@ -287,9 +265,13 @@ const EstatePlanningProfessionalAdviser = (props) => {
                   setFieldValue={setFieldValue}
                   handleChange={handleChange}
                   handleBlur={handleBlur}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
                 />
               </div>
             )}
+
+            {/* Hidden Submit Button */}
             <button type="submit" style={{ display: "none" }}>
               Submit
             </button>

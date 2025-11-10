@@ -337,7 +337,7 @@ const CFAnnuities = (props) => {
       },
       {
         name: "IsThisReversionaryAnnuity",
-        type: "yesno",
+        type: "yesno", width: 100,
         placeholder: "Is this a Reversionary Annuity",
       },
       {

@@ -108,7 +108,7 @@ const ModalComponent = (props) => {
   }, [props.setQuestionChange, props.Question]);
 
   const xlTitles = [
-    "Important Questions",
+    "Add Section",
     "Questions",
     "Investment Loan",
     "Margin Loan",
@@ -255,7 +255,7 @@ const ModalComponent = (props) => {
 
     if (action === "view") return false;
     if (title === "Questions") return true;
-    if (title === "Important Questions") return true;
+    if (title === "Add Section") return true;
     if (title !== "Questions" && isEditing === true) return true;
 
     return false;
@@ -311,7 +311,7 @@ const ModalComponent = (props) => {
           <Modal.Footer>
             {!isEditing &&
               props.modalObject?.title !== "Questions" &&
-              props.modalObject?.title !== "Important Questions" && (
+              props.modalObject?.title !== "Add Section" && (
                 <Button
                   variant="secondary"
                   style={{ width: "12.5%", minWidth: "fit-content" }}
@@ -385,7 +385,7 @@ const ModalComponent = (props) => {
                 }}
                 style={{ padding: "18px" }}
               >
-                Edit Important Questions
+                Add Section
               </AntButton>
             )}
 
@@ -406,7 +406,7 @@ const ModalComponent = (props) => {
         <ModalComponent
           flagState={showInnerModal}
           setFlagState={setShowInnerModal}
-          modalObject={{ title: "Important Questions" }}
+          modalObject={{ title: "Add Section" }}
         >
           <ImportantQuestion />
         </ModalComponent>

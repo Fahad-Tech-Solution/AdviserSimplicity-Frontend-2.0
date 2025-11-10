@@ -235,7 +235,7 @@ const WestFamilyTrustInvestment = (props) => {
     },
     {
       name: "distributionTakenAsCash",
-      type: "yesno",
+      type: "yesno", width: 100,
       placeholder: "Distribution Taken as Cash",
     },
     {

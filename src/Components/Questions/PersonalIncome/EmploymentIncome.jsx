@@ -169,7 +169,7 @@ const EmploymentIncome = (props) => {
 
     // Check for client ownership
     if (values.owner.includes("client")) {
-      obj.clientTotal = obj.client.SalaryPackageModal.grossSalary;
+      obj.clientTotal = obj?.client?.SalaryPackageModal?.grossSalary || "$0";
     } else {
       obj.clientTotal = "";
       obj.client = {};
@@ -177,7 +177,7 @@ const EmploymentIncome = (props) => {
 
     // Check for partner ownership
     if (values.owner.includes("partner")) {
-      obj.partnerTotal = obj.partner.SalaryPackageModal.grossSalary;
+      obj.partnerTotal = obj?.partner?.SalaryPackageModal?.grossSalary || "$0";
     } else {
       obj.partnerTotal = "";
       obj.partner = {};
@@ -339,7 +339,7 @@ const EmploymentIncome = (props) => {
       dataIndex: "salaryPackagingRadio",
       key: "SalaryPackaging",
       type: "yesnoModal", // yes/no with modal
-      width: 170,
+      width: 100,
       callBack: true,
       func: handleInnerModal,
       handleInnerModal: handleInnerModal,
@@ -350,7 +350,7 @@ const EmploymentIncome = (props) => {
       dataIndex: "leaveEntitlementsRadio",
       key: "LeaveEntitlementsModal",
       type: "yesnoModal",
-      width: 170,
+      width: 100,
       handleInnerModal: handleInnerModal,
       callBack: true,
       func: handleInnerModal,
@@ -361,7 +361,8 @@ const EmploymentIncome = (props) => {
       dataIndex: "choiceOfFund",
       key: "choiceOfFund",
       type: "yesno",
-      width: 150,
+       width: 100,
+      
     },
   ];
 

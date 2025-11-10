@@ -39,7 +39,7 @@ function AuthRouts() {
 
   const routeConfigs = [
     {
-      path: "/dashboard",
+      path: "/my-clients",
       element: (collapsed) => <Dashboard collapsed={collapsed} />,
     },
     { path: "/all-client", element: () => <AllClients /> },

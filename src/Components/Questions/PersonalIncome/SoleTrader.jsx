@@ -36,6 +36,7 @@ const SoleTrader = (props) => {
       businessName: "",
       ABN: "",
       businessAddress: "",
+      postCode: "",
       netBusinessIncome: "",
       goodWill: "",
     },
@@ -43,6 +44,7 @@ const SoleTrader = (props) => {
       businessName: "",
       ABN: "",
       businessAddress: "",
+      postCode: "",
       netBusinessIncome: "",
       goodWill: "",
     },
@@ -64,6 +66,10 @@ const SoleTrader = (props) => {
           setFieldValue(
             "client.businessAddress",
             data.client.businessAddress || ""
+          );
+          setFieldValue(
+            "client.postCode",
+            data.client.postCode || ""
           );
           setFieldValue(
             "client.netBusinessIncome",
@@ -88,6 +94,10 @@ const SoleTrader = (props) => {
           setFieldValue(
             "partner.businessAddress",
             data.partner.businessAddress || ""
+          );
+          setFieldValue(
+            "partner.postCode",
+            data.partner.postCode || ""
           );
           setFieldValue(
             "partner.netBusinessIncome",
@@ -174,6 +184,7 @@ const SoleTrader = (props) => {
       key: "businessName",
       type: "text",
       placeholder: "Business Name",
+      width: 250,
     },
     {
       title: "ABN",
@@ -188,6 +199,15 @@ const SoleTrader = (props) => {
       key: "businessAddress",
       type: "text",
       placeholder: "Business Address",
+    },
+    {
+      title: "Postcode/Suburb",
+      dataIndex: "postCode",
+      key: "postCode",
+      type: "postcode-antd",
+      placeholder: "Postcode/Suburb",
+      CheckError: true,
+
     },
     {
       title: "Net Business Income",
@@ -227,6 +247,7 @@ const SoleTrader = (props) => {
                   businessName: values.client?.businessName || "",
                   ABN: values.client?.ABN || "",
                   businessAddress: values.client?.businessAddress || "",
+                  postCode: values.client?.postCode || "",
                   netBusinessIncome: values.client?.netBusinessIncome || "",
                   goodWill: values.client?.goodWill || "",
                 },
@@ -241,6 +262,7 @@ const SoleTrader = (props) => {
                   businessName: values.partner?.businessName || "",
                   ABN: values.partner?.ABN || "",
                   businessAddress: values.partner?.businessAddress || "",
+                  postCode: values.partner?.postCode || "",
                   netBusinessIncome: values.partner?.netBusinessIncome || "",
                   goodWill: values.partner?.goodWill || "",
                 },

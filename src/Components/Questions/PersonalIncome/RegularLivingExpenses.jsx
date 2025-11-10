@@ -508,7 +508,7 @@ const RegularLivingExpenses = (props) => {
                     console.log(values);
                   }}
                 >
-                  <strong>Total Monthly Expenses:</strong>{" "}
+                  <strong>Total Expenses:</strong>{" "}
                   <span className="float-end">
                     ${totalOverall.toLocaleString()}
                   </span>

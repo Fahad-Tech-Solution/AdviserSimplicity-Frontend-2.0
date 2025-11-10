@@ -20,7 +20,10 @@ const AssetInfo = (props) => {
 
   const [UserStatus] = useState(localStorage.getItem("UserStatus"));
 
-  const initialValues = { owner: [] };
+  const initialValues = { 
+    // owner: [] 
+    owner: props.modalObject?.key === "car" ? [] : ["joint"]
+  };
 
   const fillInitialValues = (setFieldValue) => {
     if (
@@ -80,7 +83,8 @@ const AssetInfo = (props) => {
             setFieldValue("joint.currentValue", data.joint.currentValue || "");
             if (props.modalObject.key === "car") {
               setFieldValue("joint.modelOfCar", data.joint.modelOfCar || "");
-            } else if (props.modalObject.key === "otherAssets") {
+            } 
+            else if (props.modalObject.key === "otherAssets") {
               setFieldValue("joint.description", data.joint.description || "");
             }
           }
@@ -95,8 +99,7 @@ const AssetInfo = (props) => {
     const obj = { ...values, clientFK: localStorage.getItem("UserID") };
 
     if (
-      props.modalObject.title === "Car" ||
-      props.modalObject.title === "Other Assets"
+      props.modalObject.title === "Car" 
     ) {
       if (
         values.owner.includes("client") ||
@@ -210,19 +213,30 @@ const AssetInfo = (props) => {
     ...baseColumns,
   ];
 
-  const onlyJoint = ["Boat", "Caravan", "Contents"];
-  const onlyClient = ["Other Assets"];
+  const onlyJoint = ["Boat", "Caravan", "Contents","Other Assets"];
+  // const onlyClient = ["Other Assets"];
+  const onlyClient = [];
 
-  const options = onlyJoint.includes(props.modalObject.title)
-    ? [{ value: "joint", label: RenderName("joint") }]
-    : onlyClient.includes(props.modalObject.title)
-    ? [{ value: "client", label: RenderName("client") }]
-    : UserStatus !== "Single"
-    ? [
-        { value: "client", label: RenderName("client") },
-        { value: "partner", label: RenderName("partner") },
-      ]
-    : [{ value: "client", label: RenderName("client") }];
+  // const options = onlyJoint.includes(props.modalObject.title)
+  //   ? [{ value: "joint", label: RenderName("joint") }]
+  //   : onlyClient.includes(props.modalObject.title)
+  //   ? [{ value: "client", label: RenderName("client") }]
+  //   : UserStatus !== "Single"
+  //   ? [
+  //       { value: "client", label: RenderName("client") },
+  //       { value: "partner", label: RenderName("partner") },
+  //     ]
+  //   : [{ value: "client", label: RenderName("client") }];
+
+  // 🔹 Generate owner selection options
+const options = onlyJoint.includes(props.modalObject.title)
+  ? [{ value: "joint", label: RenderName("joint") }]
+  : UserStatus !== "Single"
+  ? [
+      { value: "client", label: RenderName("client") },
+      { value: "partner", label: RenderName("partner") },
+    ]
+  : [{ value: "client", label: RenderName("client") }];
 
   return (
     <Formik
@@ -270,16 +284,19 @@ const AssetInfo = (props) => {
             <Row>
               <div className="col-md-12">
                 {/* Owner Selector */}
-                <div className="d-flex flex-row justify-content-center align-items-center gap-2">
-                  <label className="text-end">Owner</label>
-                  <div style={{ minWidth: "200px" }}>
-                    <Field
-                      name="owner"
-                      component={AntdCreatableMultiSelect}
-                      options={options}
-                    />
-                  </div>
-                </div>
+{(props.modalObject?.key === "car") && (
+  <div className="d-flex flex-row justify-content-center align-items-center gap-2">
+    <label className="text-end mb-0">Owner</label>
+    <div style={{ minWidth: "200px" }}>
+      <Field
+        name="owner"
+        component={AntdCreatableMultiSelect}
+        options={options}
+      />
+    </div>
+  </div>
+)}
+
 
                 {values.owner.length > 0 && (
                   <div className="mt-4 All_Client reportSection">

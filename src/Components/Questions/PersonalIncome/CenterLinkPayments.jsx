@@ -161,7 +161,7 @@ const CenterLinkPayments = (props) => {
       title: "CRN",
       dataIndex: "CRN",
       key: "CRN",
-      type: "number",
+      type: "text",
       placeholder: "CRN",
     },
     {
@@ -201,7 +201,7 @@ const CenterLinkPayments = (props) => {
       },
     },
     {
-      title: "Annual Payment Amount",
+      title: "Annual Payment",
       dataIndex: "annualPaymentAmount",
       key: "annualPaymentAmount",
       type: "number-toComma",
@@ -210,7 +210,7 @@ const CenterLinkPayments = (props) => {
       disabled: true,
     },
     {
-      title: "Centrelink Cards Held",
+      title: "Concession Cards",
       dataIndex: "centrelinkCardsHeld",
       key: "centrelinkCardsHeld",
       type: "select-multi-antd",

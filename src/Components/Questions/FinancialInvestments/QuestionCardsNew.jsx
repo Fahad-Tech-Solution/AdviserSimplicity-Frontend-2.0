@@ -109,7 +109,7 @@ const questionConfig = {
       component: <CenterLinkPayments />,
     },
     {
-      title: "LifeTime Pension",
+      title: "Lifetime Pension",
       keyName: "incomeFromSuperPayment",
       img: moneySvg,
       component: <LifeTimeBeneFits />,
@@ -210,7 +210,9 @@ const questionConfig = {
       keyName: "familyHome",
       img: homeSvg,
       component: <OwnFamilyHome />,
-      clientOnly: true,
+      // clientOnly: true,
+      Labels: ["Total Market Value", "Loan Amount"],
+
     },
     {
       title: "Car",
@@ -228,6 +230,8 @@ const questionConfig = {
       component: <AssetInfo />,
       DrawerWidth: "60%",
       Drawerheight: 200,
+      Labels: ["Joint"],
+
     },
     {
       title: "Boat",
@@ -238,6 +242,8 @@ const questionConfig = {
       component: <AssetInfo />,
       DrawerWidth: "60%",
       Drawerheight: 200,
+      Labels: ["Joint"],
+
     },
     {
       title: "Caravan",
@@ -248,24 +254,38 @@ const questionConfig = {
       component: <AssetInfo />,
       DrawerWidth: "60%",
       Drawerheight: 200,
+      Labels: ["Joint"],
+
     },
     {
       title: "Other Assets",
       keyName: "otherAssets",
-      api: "/personalAssets",
       img: settingMoneySvg,
-      variant: "case2",
+      variant: "case4",
+      api: "/personalAssets",
       component: <AssetInfo />,
-      Labels: [
-        {
-          label: "Other Assets",
-          value: (questionDetail) =>
-            questionDetail?.otherAssets?.clientTotal ?? "",
-          component: <AssetInfo />,
-          key: "otherAssets",
-        },
-      ],
+      DrawerWidth: "60%",
+      Drawerheight: 200,
+      Labels: ["Joint"],
+
     },
+    // {
+    //   title: "Other Assets",
+    //   keyName: "otherAssets",
+    //   api: "/personalAssets",
+    //   img: settingMoneySvg,
+    //   variant: "case2",
+    //   component: <AssetInfo />,
+    //   Labels: [
+    //     {
+    //       label: "Other Assets",
+    //       value: (questionDetail) =>
+    //         questionDetail?.otherAssets?.clientTotal ?? "",
+    //       component: <AssetInfo />,
+    //       key: "otherAssets",
+    //     },
+    //   ],
+    // },
     {
       title: "Personal Debt",
       keyName: "personalLoans",
@@ -800,23 +820,66 @@ const QuestionCard = (props) => {
   );
 
   // 🧩 CASE 4: Simple one-input
-  const renderCase4 = () => (
+  // const renderCase4 = () => (
+  //   <>
+  //     <div className="text-center mb-3">
+  //       <img src={img} alt={title} width={70} height={70} />
+  //     </div>
+  //     <div className="d-flex flex-column align-items-center justify-content-center">
+  //       <button
+  //         className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
+  //         onClick={() => onOpen(title, keyName, component, "joint", props.api)}
+  //         style={{ width: 28, height: 28, padding: 0 }}
+  //       >
+  //         <FaArrowUpRightFromSquare size={14} />
+  //       </button>
+  //     </div>
+  //     <div className="text-center mb-2">
+  //       {clientName} & {partnerName}
+  //     </div>
+  //     <div className="d-flex align-item-center justify-content-center">
+  //       <input
+  //         className="form-control inputDesign text-center"
+  //         value={jointValue || clientValue || "$0"}
+  //         readOnly
+  //         placeholder={title}
+  //       />
+  //     </div>
+  //   </>
+  // );
+const renderCase4 = () => {
+  const jointOnlyTitles = ["Contents", "Boat", "Caravan", "Other Assets"];
+  const isJointOnly = jointOnlyTitles.includes(title);
+
+  return (
     <>
       <div className="text-center mb-3">
         <img src={img} alt={title} width={70} height={70} />
       </div>
+
       <div className="d-flex flex-column align-items-center justify-content-center">
         <button
           className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
-          onClick={() => onOpen(title, keyName, component, "joint", props.api)}
+          onClick={() =>
+            onOpen(
+              title,
+              keyName,
+              component,
+              isJointOnly ? "joint" : undefined,
+              props.api
+            )
+          }
           style={{ width: 28, height: 28, padding: 0 }}
         >
           <FaArrowUpRightFromSquare size={14} />
         </button>
       </div>
+
+      {/* ✅ Show correct owner name */}
       <div className="text-center mb-2">
-        {clientName} & {partnerName}
+        {isJointOnly ? "Joint" : `${clientName} & ${partnerName}`}
       </div>
+
       <div className="d-flex align-item-center justify-content-center">
         <input
           className="form-control inputDesign text-center"
@@ -827,6 +890,9 @@ const QuestionCard = (props) => {
       </div>
     </>
   );
+};
+
+
 
   const renderVariant = {
     case1: renderCase1,

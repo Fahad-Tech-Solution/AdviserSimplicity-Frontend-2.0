@@ -122,7 +122,7 @@ const PensionPayments = (props) => {
     },
     {
       name: "reversionaryPensionOption",
-      type: "yesno",
+      type: "yesno", width: 100,
       placeholder: "Reversionary Pension Option",
     },
     {

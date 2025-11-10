@@ -143,7 +143,7 @@ const CreditCard = (props) => {
         creditCardData.reduce(
           (total, entry) =>
             total +
-            parseFloat(entry.AnnualRepayments?.replace(/[^0-9.-]+/g, "") || 0),
+            parseFloat(entry.LoanBalance?.replace(/[^0-9.-]+/g, "") || 0),
           0
         )
       ),
@@ -215,11 +215,11 @@ const CreditCard = (props) => {
       width: 260,
     },
     {
-      title: "Loan Balance",
+      title: "Outstanding Balance",
       dataIndex: "LoanBalance",
       key: "LoanBalance",
       type: "number-toComma",
-      placeholder: "Loan Balance",
+      placeholder: "Outstanding Balance",
     },
     {
       title: "Loan Type",
@@ -331,7 +331,7 @@ const CreditCard = (props) => {
                   console.log(values);
                 }}
               >
-                How many {props.modalObject.title} does {nameSet} have :
+                Number of {props.modalObject.title} :
               </p>
               <div style={{ minWidth: "10%" }}>
                 <select

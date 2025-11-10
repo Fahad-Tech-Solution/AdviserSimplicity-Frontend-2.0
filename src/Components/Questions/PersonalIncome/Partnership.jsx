@@ -37,6 +37,7 @@ const Partnership = (props) => {
       businessName: "",
       ABN: "",
       businessAddress: "",
+      postCode: "",
       totalNetPartnershipIncome: "",
       shareOfPartnership: "",
       share: "",
@@ -46,6 +47,7 @@ const Partnership = (props) => {
       businessName: "",
       ABN: "",
       businessAddress: "",
+      postCode: "",
       totalNetPartnershipIncome: "",
       shareOfPartnership: "",
       share: "",
@@ -64,6 +66,10 @@ const Partnership = (props) => {
         setFieldValue(
           "client.businessAddress",
           data.client.businessAddress || ""
+        );
+        setFieldValue(
+          "client.postCode",
+          data.client.postCode || ""
         );
         setFieldValue(
           "client.totalNetPartnershipIncome",
@@ -87,6 +93,10 @@ const Partnership = (props) => {
         setFieldValue(
           "partner.businessAddress",
           data.partner.businessAddress || ""
+        );
+        setFieldValue(
+          "partner.postCode",
+          data.partner.postCode || ""
         );
         setFieldValue(
           "partner.totalNetPartnershipIncome",
@@ -243,6 +253,13 @@ const Partnership = (props) => {
       type: "text",
       placeholder: "Business Address",
     },
+        {
+      title: "Postcode/Suburb",
+      dataIndex: "postCode",
+      key: "postCode",
+      type: "postcode-antd",
+      placeholder: "Postcode/Suburb",
+    },
     {
       title: "Total Net Partnership Income",
       dataIndex: "totalNetPartnershipIncome",
@@ -300,6 +317,7 @@ const Partnership = (props) => {
                   businessName: values.client?.businessName || "",
                   ABN: values.client?.ABN || "",
                   businessAddress: values.client?.businessAddress || "",
+                  postCode: values.client?.postCode || "",
                   totalNetPartnershipIncome:
                     values.client?.totalNetPartnershipIncome || "",
                   shareOfPartnership: values.client?.shareOfPartnership || "",
@@ -317,6 +335,7 @@ const Partnership = (props) => {
                   businessName: values.partner?.businessName || "",
                   ABN: values.partner?.ABN || "",
                   businessAddress: values.partner?.businessAddress || "",
+                  postCode: values.partner?.postCode || "",
                   totalNetPartnershipIncome:
                     values.partner?.totalNetPartnershipIncome || "",
                   shareOfPartnership: values.partner?.shareOfPartnership || "",

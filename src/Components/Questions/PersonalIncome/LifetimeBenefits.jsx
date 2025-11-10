@@ -193,7 +193,7 @@ const LifeTimeBeneFits = (props) => {
       trrigger: () => document.querySelector("table"),
     },
     {
-      title: "Regular Income per Fortnight",
+      title: "Fortnight Payment",
       dataIndex: "regularIncomePerFortnight",
       key: "regularIncomePerFortnight",
       type: "number-toComma",
@@ -201,7 +201,7 @@ const LifeTimeBeneFits = (props) => {
       func: Formula,
     },
     {
-      title: "Regular Income p.a",
+      title: "Annual Payment",
       dataIndex: "regularIncomePA",
       key: "regularIncomePA",
       type: "number-toComma",
@@ -217,7 +217,7 @@ const LifeTimeBeneFits = (props) => {
       title: "Is Pension Tax Fee",
       dataIndex: "isPension",
       key: "isPension",
-      type: "yesno",
+      type: "yesno", width: 100,
     },
   ];
 

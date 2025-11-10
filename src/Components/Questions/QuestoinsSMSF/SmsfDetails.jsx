@@ -157,6 +157,9 @@ const SmsfDetails = (props) => {
       func: handleInnerModal,
       handleInnerModal: handleInnerModal,
       innerModalTitle: "Directors Of Bare Trust",
+
+      // we'll use the AntDHOC to render a Yes/No control or call back to render custom
+      // The AntD HOC in your sample already knows how to render various `type` values.
     },
     {
       title: "Name of Accountant",

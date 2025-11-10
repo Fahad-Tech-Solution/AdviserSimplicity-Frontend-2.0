@@ -43,9 +43,11 @@ const OwnFamilyHome = (props) => {
     if (familyHome && familyHome._id) {
       setFieldValue("currentValue", familyHome.currentValue || "");
       setFieldValue("costBase", familyHome.costBase || "");
+      setFieldValue("postCode", familyHome.postCode || "");
       setFieldValue("clientOwnership", familyHome.clientOwnership || "");
       setFieldValue("partnerOwnership", familyHome.partnerOwnership || "");
-      setFieldValue("loanAttached", familyHome.loanAttached || "");
+      // setFieldValue("loanAttached", familyHome.loanAttached || "");
+      // setFieldValue("loanAttached", familyHome.loanAttached || "");
       setFieldValue("HomeLoanModal", familyHome.HomeLoanModal || {});
       setFieldValue("loanAmount", familyHome?.HomeLoanModal?.loanBalance || "");
       setFieldValue(
@@ -61,19 +63,26 @@ const OwnFamilyHome = (props) => {
     let obj = {
       currentValue: values.currentValue,
       costBase: values.costBase,
+      postCode: values.postCode,
       clientOwnership: values.clientOwnership,
       partnerOwnership: values.partnerOwnership,
-      loanAttached: values.loanAttached,
+      // loanAttached: values.loanAttached,
+      // HomeLoanModal:
+      //   values.loanAttached === "Yes"
+      //     ? Object.keys(values.HomeLoanModal || {}).length > 0
+      //       ? values.HomeLoanModal
+      //       : undefined
+      //     : undefined,
       HomeLoanModal:
-        values.loanAttached === "Yes"
-          ? Object.keys(values.HomeLoanModal || {}).length > 0
-            ? values.HomeLoanModal
-            : undefined
-          : undefined,
+  Object.keys(values.HomeLoanModal || {}).length > 0
+    ? values.HomeLoanModal
+    : undefined,
+
     };
 
     obj.clientFK = localStorage.getItem("UserID");
     obj["clientTotal"] = obj.currentValue;
+    obj["partnerTotal"] = obj.HomeLoanModal.loanBalance;
 
     const bankAccountArray = familyHome.clientFK || "";
 
@@ -119,6 +128,47 @@ const OwnFamilyHome = (props) => {
     setFlagState(true);
   };
 
+const handleOwnershipChange = (values, setFieldValue, thisInput, stackHolder = "") => {
+  // Safely clean input
+  const cleanNumber = (val) => {
+    if (val === undefined || val === null) return 0;
+    const cleaned = String(val).replace(/[^0-9.]+/g, "");
+    const parsed = parseFloat(cleaned);
+    return isNaN(parsed) ? 0 : parsed;
+  };
+
+  const holderKey = typeof stackHolder === "string" ? stackHolder.replace(".", "") : "";
+
+  // Extract current values
+  let partnerOwnership = cleanNumber(values?.[holderKey]?.partnerOwnership);
+  let clientOwnership = cleanNumber(values?.[holderKey]?.clientOwnership);
+
+  // Detect which field was changed
+  if (thisInput.name === `${stackHolder}partnerOwnership`) {
+    partnerOwnership = cleanNumber(thisInput.value);
+    clientOwnership = 100 - partnerOwnership;
+  } else if (thisInput.name === `${stackHolder}clientOwnership`) {
+    clientOwnership = cleanNumber(thisInput.value);
+    partnerOwnership = 100 - clientOwnership;
+  }
+
+  // Clamp between 0–100
+  partnerOwnership = Math.max(0, Math.min(100, partnerOwnership));
+  clientOwnership = Math.max(0, Math.min(100, clientOwnership));
+
+  // Format both to two decimals with %
+  const formatPercent = (val) => `${val.toFixed(2)}%`;
+
+  // Update both fields live
+  setFieldValue(`${stackHolder}partnerOwnership`, formatPercent(partnerOwnership));
+  setFieldValue(`${stackHolder}clientOwnership`, formatPercent(clientOwnership));
+};
+
+
+
+
+
+
   // ✅ AntD table column configuration
   const columns = [
     {
@@ -128,6 +178,13 @@ const OwnFamilyHome = (props) => {
       type: "text",
       placeholder: "Address",
       disabled: true,
+    },
+    {
+      title: "Postcode/Suburb",
+      dataIndex: "postCode",
+      key: "postCode",
+      type: "postcode-antd",
+      placeholder: "Postcode/Suburb",
     },
     {
       title: (
@@ -155,12 +212,15 @@ const OwnFamilyHome = (props) => {
       type: "number-toComma",
       placeholder: "Cost base",
     },
+
     {
       title: "Client Ownership",
       dataIndex: "clientOwnership",
       key: "clientOwnership",
       type: "number-toPercent",
       placeholder: "Client Ownership",
+      callBack: true,
+      func: handleOwnershipChange,
     },
     {
       title: "Partner Ownership",
@@ -168,12 +228,15 @@ const OwnFamilyHome = (props) => {
       key: "partnerOwnership",
       type: "number-toPercent",
       placeholder: "Partner Ownership",
+      callBack: true,
+      func: handleOwnershipChange,
     },
     {
-      title: "Loan Attached",
+      title: "Loan Amount",
       dataIndex: "loanAttached",
       key: "familyHomeLoan",
-      type: "yesnoModal",
+      // type: "yesnoModal",
+      type: "modal",
       innerModalTitle: "Home Loan",
       callBack: true,
       func: handleInnerModal,
@@ -199,9 +262,11 @@ const OwnFamilyHome = (props) => {
             address: values.address,
             currentValue: values.currentValue,
             costBase: values.costBase,
+            postCode: values.postCode,
             clientOwnership: values.clientOwnership,
             partnerOwnership: values.partnerOwnership,
-            loanAttached: values.loanAttached,
+            // loanAttached: values.loanAttached,
+            loanAttached: values?.HomeLoanModal?.loanBalance || "$0" ,
             loanAmount: values.loanAmount,
             annualRepayments: values.annualRepayments,
           },

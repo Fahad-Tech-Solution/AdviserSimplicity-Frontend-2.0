@@ -130,6 +130,99 @@ const DynamicFormField = ({
         </>
       );
 
+case "partner-home-address":
+  return (
+    <>
+      <Field
+        type="text"
+        placeholder={placeholder}
+        name={stakeHolder ? stakeHolder + name : name}
+        id={name}
+        className="form-control inputDesignDoubleInput"
+        onChange={(e) => {
+          handleChange(e);
+          if (all.callBack) {
+            all.func(values, setFieldValue, e.target, stakeHolder);
+          }
+        }}
+        disabled={
+          typeof all?.disabled === "function"
+            ? all.disabled(values, stakeHolder)
+            : all?.disabled || false
+        }
+      />
+      
+      {/* Same as Client Address Checkbox */}
+      <div className="mt-2">
+        <Field name={`${stakeHolder}SameAsClientAddress`}>
+          {({ field, form }) => (
+            <Checkbox
+              checked={field.value || false}
+              onChange={(e) => {
+                form.setFieldValue(field.name, e.target.checked);
+                if (all.checkCallBack) {
+                  all.checkfunc(values, setFieldValue, e.target, stakeHolder);
+                }
+              }}
+            >
+              Same as Client Address
+            </Checkbox>
+          )}
+        </Field>
+      </div>
+      
+      {all?.CheckError && (
+        <ErrorMessage
+          name={stakeHolder ? stakeHolder + name : name}
+          component="div"
+          className="text-danger small mt-1"
+        />
+      )}
+    </>
+  );
+      
+    case "textarea":
+  return (
+    <>
+      <Field
+        as="textarea"
+        placeholder={placeholder}
+        name={stakeHolder ? stakeHolder + name : name}
+        id={name}
+        className="form-control inputDesignDoubleInput"
+        rows={2} // ✅ starts with 2 rows
+        style={{
+          overflow: "hidden", // ✅ hides scrollbars
+          resize: "none", // ✅ user can't resize manually
+          ...all?.style,
+        }}
+        onInput={(e) => {
+          // ✅ auto-resize logic
+          e.target.style.height = "auto";
+          e.target.style.height = `${e.target.scrollHeight}px`;
+        }}
+        onChange={(e) => {
+          handleChange(e);
+          if (all.callBack) {
+            all.func(values, setFieldValue, e.target, stakeHolder);
+          }
+        }}
+        disabled={
+          typeof all?.disabled === "function"
+            ? all.disabled(values, stakeHolder)
+            : all?.disabled || false
+        }
+      />
+      {all?.CheckError && (
+        <ErrorMessage
+          name={stakeHolder ? stakeHolder + name : name}
+          component="div"
+          className="text-danger small mt-1"
+        />
+      )}
+    </>
+  );
+
     case "checkbox":
       return (
         <>
@@ -284,6 +377,10 @@ const DynamicFormField = ({
           </div>
         </>
       );
+
+
+
+
 
     case "number-toPercent":
       let FormulaSetting = () => {};
@@ -654,139 +751,70 @@ const DynamicFormField = ({
         </>
       );
 
-    // case "selectModal":
-    //   return (
-    //     <React.Fragment>
-    //       <InputGroup
-    //         className={
-    //           (stakeHolder
-    //             ? values?.[stakeHolder.slice(0, -1)]?.[name]
-    //             : values?.[name]) === all.ModalOption
-    //             ? "GInputSelect"
-    //             : ""
-    //         }
-    //       >
-    //         <Field
-    //           as="select"
-    //           name={stakeHolder ? stakeHolder + name : name}
-    //           className="form-select inputDesignDoubleInput"
-    //           disabled={
-    //             typeof all?.disabled === "function"
-    //               ? all.disabled(values, stakeHolder) // pass form values to compute disabled
-    //               : all?.disabled || false
-    //           }
-    //           onChange={(e) => {
-    //             handleChange(e);
-    //             if (all.callBack) {
-    //               all.func(values, setFieldValue, e.target, stakeHolder);
-    //             }
-    //           }}
-    //         >
-    //           <option value="">Select</option>
-    //           {options.map((option) => (
-    //             <option
-    //               key={option.value}
-    //               value={option.value}
-    //               selected={option?.selected}
-    //             >
-    //               {option.label}
-    //             </option>
-    //           ))}
-    //         </Field>
-
-    //         {(stakeHolder
-    //           ? values?.[stakeHolder.slice(0, -1)]?.[name]
-    //           : values?.[name]) === all.ModalOption && (
-    //           <Button
-    //             className="btn bgColor modalBtn border-0"
-    //             onClick={() =>
-    //               handleInnerModal(
-    //                 innerModalTitle,
-    //                 values,
-    //                 all.key,
-    //                 stakeHolder
-    //               )
-    //             }
-    //           >
-    //             <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-    //           </Button>
-    //         )}
-    //       </InputGroup>
-    //       {all?.CheckError && (
-    //         <ErrorMessage
-    //           name={stakeHolder ? stakeHolder + name : name}
-    //           component="div"
-    //           className="text-danger small mt-1"
-    //         />
-    //       )}
-    //     </React.Fragment>
-    //   );
-
-
     case "selectModal":
-  const currentValue = stakeHolder
-    ? values?.[stakeHolder.slice(0, -1)]?.[name]
-    : values?.[name];
+      const currentValue = stakeHolder
+        ? values?.[stakeHolder.slice(0, -1)]?.[name]
+        : values?.[name];
 
-  const showModalButton = Array.isArray(all.ModalOption)
-    ? all.ModalOption.includes(currentValue)
-    : currentValue === all.ModalOption;
+      const showModalButton = Array.isArray(all.ModalOption)
+        ? all.ModalOption.includes(currentValue)
+        : currentValue === all.ModalOption;
 
-  return (
-    <React.Fragment>
-      <InputGroup className={showModalButton ? "GInputSelect" : ""}>
-        <Field
-          as="select"
-          name={stakeHolder ? stakeHolder + name : name}
-          className="form-select inputDesignDoubleInput"
-          disabled={
-            typeof all?.disabled === "function"
-              ? all.disabled(values, stakeHolder)
-              : all?.disabled || false
-          }
-          onChange={(e) => {
-            handleChange(e);
-            if (all.callBack) {
-              all.callBack(values, setFieldValue, e.target, stakeHolder);
-            }
-          }}
-        >
-          <option value="">Select</option>
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </Field>
+      return (
+        <React.Fragment>
+          <InputGroup className={showModalButton ? "GInputSelect" : ""}>
+            <Field
+              as="select"
+              name={stakeHolder ? stakeHolder + name : name}
+              className="form-select inputDesignDoubleInput"
+              disabled={
+                typeof all?.disabled === "function"
+                  ? all.disabled(values, stakeHolder)
+                  : all?.disabled || false
+              }
+              onChange={(e) => {
+                handleChange(e);
+                if (all.callBack) {
+                  all.callBack(values, setFieldValue, e.target, stakeHolder);
+                }
+              }}
+            >
+              <option value="">Select</option>
+              {options.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </Field>
 
-        {/* ✅ Button should call handleInnerModal (via all.func) */}
-        {showModalButton && (
-          <Button
-            className="btn bgColor modalBtn border-0"
-            onClick={() =>
-              all.func &&
-              all.func(
-                all.innerModalTitle || "Details", // modal title
-                values,                           // form values
-                all.key || name,                  // field key
-                stakeHolder                       // stakeholder context
-              )
-            }
-          >
-            <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-          </Button>
-        )}
-      </InputGroup>
+            {/* ✅ Button should call handleInnerModal (via all.func) */}
+            {showModalButton && (
+              <Button
+                className="btn bgColor modalBtn border-0"
+                onClick={() =>
+                  all.func &&
+                  all.func(
+                    all.innerModalTitle || "Details", // modal title
+                    values, // form values
+                    all.key || name, // field key
+                    stakeHolder // stakeholder context
+                  )
+                }
+              >
+                <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+              </Button>
+            )}
+          </InputGroup>
 
-      {all?.CheckError && (
-        <ErrorMessage
-          name={stakeHolder ? stakeHolder + name : name}
-          component="div"
-          className="text-danger small mt-1"
-        />
-      )}
-    </React.Fragment>
-  );
+          {all?.CheckError && (
+            <ErrorMessage
+              name={stakeHolder ? stakeHolder + name : name}
+              component="div"
+              className="text-danger small mt-1"
+            />
+          )}
+        </React.Fragment>
+      );
 
     case "select-creatableMulti":
       return (
@@ -885,7 +913,7 @@ const DynamicFormField = ({
                   showSearch
                   allowClear
                   placeholder="Select an option"
-                  options={options}
+                  options={[{ value: "", label: "Select" }, ...options]}
                   disabled={
                     typeof all?.disabled === "function"
                       ? all.disabled(values, stakeHolder)
@@ -961,23 +989,25 @@ const DynamicFormField = ({
 
               return (
                 <>
-                  <Select
-                    showSearch
-                    allowClear
-                    value={field.value || undefined}
-                    placeholder="Type suburb or postcode..."
-                    onSearch={handleSearch}
-                    onChange={(val) => form.setFieldValue(field.name, val)}
-                    filterOption={false} // 👈 important, we use server filtering
-                    notFoundContent={loading ? <Spin size="small" /> : null}
-                    options={optionsData}
-                    style={{ width: "100%", height: "7vh" }}
-                    disabled={
-                      typeof all?.disabled === "function"
-                        ? all.disabled(values, stakeHolder) // pass form values to compute disabled
-                        : all?.disabled || false
-                    }
-                  />
+              <Select
+  showSearch
+  allowClear
+  value={field.value || undefined}
+  placeholder="Type suburb or postcode..."
+  onSearch={handleSearch}
+  onChange={(val) => form.setFieldValue(field.name, val)}
+  filterOption={false}
+  notFoundContent={loading ? <Spin size="small" /> : null}
+  options={optionsData}
+  style={{ width: "100%", height: "7vh" }}
+  disabled={
+    typeof all?.disabled === "function"
+      ? all.disabled(values, stakeHolder)
+      : all?.disabled || false
+  }
+  getPopupContainer={(triggerNode) => triggerNode.parentNode}
+/>
+
                 </>
               );
             }}

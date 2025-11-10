@@ -252,7 +252,7 @@ const CashFlowLifetimeBenefit = (props) => {
     },
     {
       name: "taxFree",
-      type: "yesno",
+      type: "yesno", width: 100,
     },
     {
       name: "centrelinkDeductibleAmount",
