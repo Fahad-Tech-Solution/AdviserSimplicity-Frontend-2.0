@@ -100,22 +100,6 @@ const SalaryPackage = (props) => {
   };
 
 
-
-  props.setFieldValue(`${parentKey}${key}`, Obj);
-
-  // ✅ change main button to "Save & Exit"
-  if (props.setIsEditing) {
-    props.setIsEditing(true);
-  }
-
-  // ✅ toggle inner modal state
-  if (props.flagState) {
-    props.setFlagState(false);
-    props.setIsEditing(false);
-  }
-};
-
-
   // ✅ Table column definitions
   const columns = [
     {
