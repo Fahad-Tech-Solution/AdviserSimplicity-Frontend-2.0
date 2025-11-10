@@ -148,7 +148,7 @@ const PersonalLoan = (props) => {
         personalLoanData.reduce(
           (total, entry) =>
             total +
-            parseFloat(entry.AnnualRepayments.replace(/[^0-9.-]+/g, "") || 0),
+            parseFloat(entry.LoanBalance.replace(/[^0-9.-]+/g, "") || 0),
           0
         )
       ),
@@ -338,7 +338,7 @@ const PersonalLoan = (props) => {
           <Form>
             <div className="d-flex justify-content-center align-items-center gap-4">
               <p className="text-end mt-1 pt-2">
-                How many {props.modalObject.title} does {nameSet} have :
+                Number of {props.modalObject.title} :
               </p>
               <div style={{ minWidth: "10%" }}>
                 <select

@@ -57,16 +57,14 @@ const contactSchema = Yup.object({
       "Valid Australian Mobile Phone number Format: 0X XXXX XXXX"
     )
     .required("Mobile Phone is required"),
-  homePhone: Yup.string()
-    .matches(
-      ausPhoneRegex,
-      "Valid Australian Home Phone number Format: 0X XXXX XXXX"
-    ),
-  workPhone: Yup.string()
-    .matches(
-      ausPhoneRegex,
-      "Valid Australian Work Phone number Format: 0X XXXX XXXX"
-    ),
+  homePhone: Yup.string().matches(
+    ausPhoneRegex,
+    "Valid Australian Home Phone number Format: 0X XXXX XXXX"
+  ),
+  workPhone: Yup.string().matches(
+    ausPhoneRegex,
+    "Valid Australian Work Phone number Format: 0X XXXX XXXX"
+  ),
   email: Yup.string().email("Invalid email").required("Email is required"),
 });
 
@@ -542,10 +540,9 @@ const PersonalDetailNew = () => {
     {
       title: "Home Address",
       dataIndex: "homeAddress",
-      type: "text",
+      type: "textarea",
       key: "homeAddress",
       CheckError: true,
-      width: 300,
     },
     {
       title: "Postcode/Suburb",
@@ -1246,10 +1243,10 @@ const PersonalDetailNew = () => {
 
                     <div className="row justify-content-center align-items-center mb-3 mt-4">
                       {!isEditing && (
-                        <div className="col-md-4">
+                        <div className="col-md-4 d-flex justify-content-center">
                           <Button
                             htmlType="button"
-                            className="w-100"
+                            className="w-50"
                             onClick={() => {
                               // setSwitchStep(1);
                               setErrorShow(true);
@@ -1261,11 +1258,11 @@ const PersonalDetailNew = () => {
                         </div>
                       )}
                       {isEditing && (
-                        <div className="col-md-4">
+                        <div className="col-md-4 d-flex justify-content-center ">
                           <Button
                             type="primary"
                             htmlType="submit"
-                            className="w-100"
+                            className=" w-50"
                             onClick={() => {
                               setErrorShow(true);
                             }}

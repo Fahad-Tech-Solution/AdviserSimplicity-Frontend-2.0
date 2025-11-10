@@ -130,6 +130,99 @@ const DynamicFormField = ({
         </>
       );
 
+case "partner-home-address":
+  return (
+    <>
+      <Field
+        type="text"
+        placeholder={placeholder}
+        name={stakeHolder ? stakeHolder + name : name}
+        id={name}
+        className="form-control inputDesignDoubleInput"
+        onChange={(e) => {
+          handleChange(e);
+          if (all.callBack) {
+            all.func(values, setFieldValue, e.target, stakeHolder);
+          }
+        }}
+        disabled={
+          typeof all?.disabled === "function"
+            ? all.disabled(values, stakeHolder)
+            : all?.disabled || false
+        }
+      />
+      
+      {/* Same as Client Address Checkbox */}
+      <div className="mt-2">
+        <Field name={`${stakeHolder}SameAsClientAddress`}>
+          {({ field, form }) => (
+            <Checkbox
+              checked={field.value || false}
+              onChange={(e) => {
+                form.setFieldValue(field.name, e.target.checked);
+                if (all.checkCallBack) {
+                  all.checkfunc(values, setFieldValue, e.target, stakeHolder);
+                }
+              }}
+            >
+              Same as Client Address
+            </Checkbox>
+          )}
+        </Field>
+      </div>
+      
+      {all?.CheckError && (
+        <ErrorMessage
+          name={stakeHolder ? stakeHolder + name : name}
+          component="div"
+          className="text-danger small mt-1"
+        />
+      )}
+    </>
+  );
+      
+    case "textarea":
+  return (
+    <>
+      <Field
+        as="textarea"
+        placeholder={placeholder}
+        name={stakeHolder ? stakeHolder + name : name}
+        id={name}
+        className="form-control inputDesignDoubleInput"
+        rows={2} // ✅ starts with 2 rows
+        style={{
+          overflow: "hidden", // ✅ hides scrollbars
+          resize: "none", // ✅ user can't resize manually
+          ...all?.style,
+        }}
+        onInput={(e) => {
+          // ✅ auto-resize logic
+          e.target.style.height = "auto";
+          e.target.style.height = `${e.target.scrollHeight}px`;
+        }}
+        onChange={(e) => {
+          handleChange(e);
+          if (all.callBack) {
+            all.func(values, setFieldValue, e.target, stakeHolder);
+          }
+        }}
+        disabled={
+          typeof all?.disabled === "function"
+            ? all.disabled(values, stakeHolder)
+            : all?.disabled || false
+        }
+      />
+      {all?.CheckError && (
+        <ErrorMessage
+          name={stakeHolder ? stakeHolder + name : name}
+          component="div"
+          className="text-danger small mt-1"
+        />
+      )}
+    </>
+  );
+
     case "checkbox":
       return (
         <>
@@ -284,6 +377,10 @@ const DynamicFormField = ({
           </div>
         </>
       );
+
+
+
+
 
     case "number-toPercent":
       let FormulaSetting = () => {};
@@ -892,23 +989,25 @@ const DynamicFormField = ({
 
               return (
                 <>
-                  <Select
-                    showSearch
-                    allowClear
-                    value={field.value || undefined}
-                    placeholder="Type suburb or postcode..."
-                    onSearch={handleSearch}
-                    onChange={(val) => form.setFieldValue(field.name, val)}
-                    filterOption={false} // 👈 important, we use server filtering
-                    notFoundContent={loading ? <Spin size="small" /> : null}
-                    options={optionsData}
-                    style={{ width: "100%", height: "7vh" }}
-                    disabled={
-                      typeof all?.disabled === "function"
-                        ? all.disabled(values, stakeHolder) // pass form values to compute disabled
-                        : all?.disabled || false
-                    }
-                  />
+              <Select
+  showSearch
+  allowClear
+  value={field.value || undefined}
+  placeholder="Type suburb or postcode..."
+  onSearch={handleSearch}
+  onChange={(val) => form.setFieldValue(field.name, val)}
+  filterOption={false}
+  notFoundContent={loading ? <Spin size="small" /> : null}
+  options={optionsData}
+  style={{ width: "100%", height: "7vh" }}
+  disabled={
+    typeof all?.disabled === "function"
+      ? all.disabled(values, stakeHolder)
+      : all?.disabled || false
+  }
+  getPopupContainer={(triggerNode) => triggerNode.parentNode}
+/>
+
                 </>
               );
             }}

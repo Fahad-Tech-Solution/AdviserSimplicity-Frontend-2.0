@@ -1,60 +1,86 @@
 import { Field, Form, Formik } from "formik";
 import React, { useEffect, useMemo, useState } from "react";
-import { Row, Table } from "react-bootstrap";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { defaultUrl, QuestionDetail } from "../../../Store/Store";
+import { Row } from "react-bootstrap";
+import { useRecoilValue } from "recoil";
+import { defaultUrl } from "../../../Store/Store";
 import {
-  handleInputChange,
-  handleInputFocus,
-  handleInputKeyDown,
-  handleInputBlur,
   toCommaAndDollar,
-  toPercentage,
 } from "../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
 const AntDTableHOC = DynamicTableForInputsSection("antd");
 
 const SalaryPackage = (props) => {
-  let { title, key, parentValues, parentKey } = props.modalObject;
+  const { title, key, parentValues, parentKey } = props.modalObject;
 
-  let initialValues = {
-    remunerationType: "Gross Salary",
-    SG: "12%",
-  };
+  const DefaultUrl = useRecoilValue(defaultUrl);
 
+  // ✅ Fill data if exists, otherwise switch to edit mode
   const fillInitialValues = (setFieldValue) => {
-    // if (parentValues._id && parentValues?.key) {
+    const existingData =
+      parentValues?.[`${parentKey.replace(".", "")}`]?.[`${key}`];
 
-    if (
-      parentValues?.[`${parentKey.replace(".", "")}`]?.[`${key}`] &&
-      Object.keys(parentValues?.[`${parentKey.replace(".", "")}`]?.[`${key}`])
-        .length > 0
-    ) {
-      let Data = parentValues[`${parentKey.replace(".", "")}`][`${key}`];
-
-      setFieldValue(
-        "remunerationType",
-        Data.remunerationType || "Gross Salary"
-      );
-      setFieldValue("amount", Data.amount);
-      setFieldValue("SG", Data.SG || "12%");
-      setFieldValue("grossSalary", Data.grossSalary);
-      setFieldValue("SGC", Data.SGC);
-      setFieldValue(
-        "salarySacrificeContributions",
-        Data.salarySacrificeContributions
-      );
-      setFieldValue("afterTaxContributions", Data.afterTaxContributions);
+    if (existingData && Object.keys(existingData).length > 0) {
+      setFieldValue("remunerationType", existingData.remunerationType || "Gross Salary");
+      setFieldValue("amount", existingData.amount || "");
+      setFieldValue("SG", existingData.SG || "12%");
+      setFieldValue("grossSalary", existingData.grossSalary || "");
+      setFieldValue("SGC", existingData.SGC || "");
+      setFieldValue("salarySacrificeContributions", existingData.salarySacrificeContributions || "");
+      setFieldValue("afterTaxContributions", existingData.afterTaxContributions || "");
     } else {
-      props.setIsEditing(!props.isEditing);
+      props.setIsEditing(true);
     }
   };
 
-  let onSubmit = async (values) => {
-    console.log(values);
+  // ✅ Initial values
+  const initialValues = {
+    remunerationType: "Gross Salary",
+    amount: "",
+    SG: "12%",
+    grossSalary: "",
+    SGC: "",
+    salarySacrificeContributions: "",
+    afterTaxContributions: "",
+  };
 
-    let Obj = {
+  // ✅ Formula logic
+  const FormulaSetting = (values, setFieldValue, currentInput) => {
+    let remunerationType = values.remunerationType;
+    let amount = parseFloat(values.amount?.replace(/[^0-9.-]+/g, "")) || 0;
+    let SG = parseFloat(values.SG?.replace(/[^0-9.-]+/g, "")) || 0;
+
+    switch (currentInput?.name) {
+      case "remunerationType":
+        remunerationType = currentInput.value;
+        break;
+      case "amount":
+        amount = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
+        break;
+      default:
+        SG = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
+        SG = SG > 100 ? 100 : SG;
+        break;
+    }
+
+    let grossSalary = 0;
+    let SGC = 0;
+
+    if (remunerationType === "Gross Salary") {
+      grossSalary = amount;
+      SGC = (amount * (SG / 100)).toFixed(2);
+    } else {
+      grossSalary = (amount / (1 + SG / 100)).toFixed(2);
+      SGC = (amount - grossSalary).toFixed(2);
+    }
+
+    setFieldValue("grossSalary", toCommaAndDollar(grossSalary));
+    setFieldValue("SGC", toCommaAndDollar(SGC));
+  };
+
+  // ✅ Submit handler (save to main object)
+  const onSubmit = async (values) => {
+    const Obj = {
       remunerationType: values.remunerationType,
       amount: values.amount,
       SG: values.SG,
@@ -66,59 +92,31 @@ const SalaryPackage = (props) => {
 
     props.setFieldValue(`${parentKey}${key}`, Obj);
 
-    // Reset the flag state if necessary
+    // ✅ toggle edit/view
     if (props.flagState) {
       props.setFlagState(false);
-      props.setIsEditing(!props.isEditing);
+      props.setIsEditing(false);
     }
   };
 
-  const FormulaSetting = (values, setFieldValue, currentInput, stakholder) => {
-    let remunerationType = values.remunerationType;
-    let amount = parseFloat(values.amount.replace(/[^0-9.-]+/g, "")) || 0;
-    let SG = parseFloat(values.SG.replace(/[^0-9.-]+/g, "")) || 0;
 
-    let grossSalary = 0;
-    let SGC = 0;
 
-    switch (currentInput.name) {
-      case "remunerationType":
-        remunerationType = currentInput.value;
-        break;
-      case "amount":
-        amount = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
-        break;
-      default:
-        SG = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
-        SG = SG > 100 ? 100 : SG; // Cap SG at 100
-        break;
-    }
+  props.setFieldValue(`${parentKey}${key}`, Obj);
 
-    if (remunerationType === "Gross Salary") {
-      grossSalary = amount || 0;
-      SGC = (amount * (SG / 100)).toFixed(2);
-    } else {
-      grossSalary = (amount / (1 + SG / 100)).toFixed(2);
-      SGC = (amount - grossSalary).toFixed(2);
-    }
+  // ✅ change main button to "Save & Exit"
+  if (props.setIsEditing) {
+    props.setIsEditing(true);
+  }
 
-    // Ensure that SGC and grossSalary are valid numbers
-    const validGrossSalary = !isNaN(parseFloat(grossSalary))
-      ? toCommaAndDollar(grossSalary)
-      : "0$";
-    const validSGC = !isNaN(parseFloat(SGC))
-      ? toCommaAndDollar(parseFloat(SGC).toFixed(2))
-      : "$0";
+  // ✅ toggle inner modal state
+  if (props.flagState) {
+    props.setFlagState(false);
+    props.setIsEditing(false);
+  }
+};
 
-    if (remunerationType === "Gross Salary") {
-      setFieldValue("grossSalary", validGrossSalary);
-      setFieldValue("SGC", validSGC);
-    } else {
-      setFieldValue("grossSalary", validGrossSalary);
-      setFieldValue("SGC", validSGC);
-    }
-  };
 
+  // ✅ Table column definitions
   const columns = [
     {
       title: "Remuneration Type",
@@ -131,25 +129,21 @@ const SalaryPackage = (props) => {
         { label: "Total Package", value: "Total Package" },
       ],
       width: 100,
-      callBack: true, // if you need to hook into FormulaSetting
-      func: (e, values, setFieldValue) => {
-        // same as your onChange(e) + FormulaSetting(...)
-        FormulaSetting(values, setFieldValue, e.target);
-      },
+      callBack: true,
+      func: (values, setFieldValue, thisInput) =>
+        FormulaSetting(values, setFieldValue, thisInput),
     },
     {
       title: "Amount",
       dataIndex: "amount",
       key: "amount",
-      type: "number-toComma", // custom type so you can format $ + commas
+      type: "number-toComma",
       placeholder: "Enter Amount",
       width: 130,
       callBack: true,
       func: (values, setFieldValue, thisInput) => {
-        setFieldValue(
-          thisInput.name,
-          toCommaAndDollar(thisInput.value.replace(/[^0-9.-]+/g, ""))
-        );
+        const cleanVal = thisInput.value.replace(/[^0-9.-]+/g, "");
+        setFieldValue(thisInput.name, toCommaAndDollar(cleanVal));
         FormulaSetting(values, setFieldValue, thisInput);
       },
     },
@@ -190,10 +184,8 @@ const SalaryPackage = (props) => {
       width: 100,
       callBack: true,
       func: (values, setFieldValue, thisInput) => {
-        setFieldValue(
-          thisInput,
-          toCommaAndDollar(thisInput.value.replace(/[^0-9.-]+/g, ""))
-        );
+        const cleanVal = thisInput.value.replace(/[^0-9.-]+/g, "");
+        setFieldValue(thisInput.name, toCommaAndDollar(cleanVal));
       },
     },
     {
@@ -205,10 +197,8 @@ const SalaryPackage = (props) => {
       width: 100,
       callBack: true,
       func: (values, setFieldValue, thisInput) => {
-        setFieldValue(
-          thisInput,
-          toCommaAndDollar(thisInput.value.replace(/[^0-9.-]+/g, ""))
-        );
+        const cleanVal = thisInput.value.replace(/[^0-9.-]+/g, "");
+        setFieldValue(thisInput.name, toCommaAndDollar(cleanVal));
       },
     },
   ];
@@ -220,27 +210,25 @@ const SalaryPackage = (props) => {
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, handleChange, setFieldValue, handleBlur }) => {
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
-        }, [values.NumberOfMap]);
+        }, []);
 
         const tableData = useMemo(() => {
-          const rows = [];
-
-          rows.push({
-            key: parentKey.replace(".", ""),
-            remunerationType: values?.remunerationType || "--",
-            amount: values?.amount || "--",
-            SG: values?.SG || "--",
-            grossSalary: values?.grossSalary || "--",
-            SGC: values?.SGC || "--",
-            salarySacrificeContributions:
-              values?.salarySacrificeContributions || "--",
-            afterTaxContributions: values?.afterTaxContributions || "--",
-          });
-
-          return rows;
+          return [
+            {
+              key: parentKey.replace(".", ""),
+              remunerationType: values?.remunerationType || "",
+              amount: values?.amount || "",
+              SG: values?.SG || "",
+              grossSalary: values?.grossSalary || "",
+              SGC: values?.SGC || "",
+              salarySacrificeContributions:
+                values?.salarySacrificeContributions || "",
+              afterTaxContributions: values?.afterTaxContributions || "",
+            },
+          ];
         }, [values]);
 
         return (

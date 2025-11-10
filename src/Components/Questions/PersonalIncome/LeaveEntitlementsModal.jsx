@@ -91,15 +91,7 @@ const LeaveEntitlementsModal = (props) => {
       disabled: true,
       CheckError: true,
     },
-    {
-      key: "amount",
-      dataIndex: "amount",
-      type: "number",
-      title: "Amount",
-      placeholder: "Enter amount",
-      CheckError: true,
-    },
-    {
+     {
       key: "time",
       dataIndex: "time",
       type: "select",
@@ -112,6 +104,15 @@ const LeaveEntitlementsModal = (props) => {
       ],
       CheckError: true,
     },
+    {
+      key: "amount",
+      dataIndex: "amount",
+      type: "number",
+      title: "Amount",
+      placeholder: "Enter amount",
+      CheckError: true,
+    },
+   
   ];
 
   const getFieldTitle = (BaseKey, values, key) => {
