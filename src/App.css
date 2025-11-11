@@ -640,7 +640,6 @@ input:checked + label {
   z-index: 100;
 }
 
-
 .QuestionIcon {
   width: 10%;
   margin: auto;
@@ -820,6 +819,11 @@ input:checked + label {
   min-width: 3rem !important;
   border-top-right-radius: 0px !important;
   border-bottom-right-radius: 0px !important;
+}
+
+.goalsPara span {
+  all: unset;
+  color: red;
 }
 
 @media only screen and (min-width: 1045px) {

@@ -4,7 +4,10 @@ import { defaultUrl, GQState } from "../../Store/Store";
 import { Field, Form, Formik } from "formik";
 import { PatchAxios, PostAxios } from "../Assets/Api/Api";
 import { Image, Row } from "react-bootstrap";
-import { CreatableMultiSelectField } from "../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import {
+  AntdCreatableMultiSelect,
+  CreatableMultiSelectField,
+} from "../Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 
 const GoalsObjectivesQuestions = (props) => {
   let [GQObject, setGQObject] = useRecoilState(GQState);
@@ -116,14 +119,13 @@ const GoalsObjectivesQuestions = (props) => {
                 <div className="col-md-12 text-center">
                   <div className="d-flex flex-row justify-content-center align-items-center gap-2 my-3">
                     <label htmlFor="" className="">
-                     Scope of Advice :
+                      Scope of Advice :
                     </label>
 
                     <div style={{ minWidth: "30%" }}>
                       <Field
                         name={`scope`}
-                        component={CreatableMultiSelectField}
-                        label="Multi Select Field"
+                        component={AntdCreatableMultiSelect}
                         options={options}
                       />
                     </div>

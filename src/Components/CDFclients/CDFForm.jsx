@@ -103,7 +103,7 @@ const CDFForm = (props) => {
         return (
           <Form className="w-100">
             <div className="row px-5 mt-4">
-              <h3 className="text-center text-green">Area of Advise Needed</h3>
+              <h3 className="text-center text-green">Area of Advice Needed</h3>
 
               <div className="col-md-12 text-center ">
                 <div className="row my-3 justify-content-center">
