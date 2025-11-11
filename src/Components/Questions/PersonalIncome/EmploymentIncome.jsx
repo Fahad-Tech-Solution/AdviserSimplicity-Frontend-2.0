@@ -352,7 +352,7 @@ const EmploymentIncome = (props) => {
       type: "yesnoModal",
       width: 100,
       handleInnerModal: handleInnerModal,
-      callBack: true,
+      callBack: true, 
       func: handleInnerModal,
       innerModalTitle: "Leave entitlements",
     },

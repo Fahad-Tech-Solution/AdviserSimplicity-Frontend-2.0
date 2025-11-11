@@ -11,6 +11,7 @@ import { useRecoilState } from "recoil";
 import { ConfigProvider, Spin, Button as AntButton } from "antd";
 import CustomLoadingBar from "./CustomLoadingBar";
 import ImportantQuestion from "../ImportantQuestion/ImportantQuestion";
+import { RenderName } from "../../Assets/Api/Api";
 
 const ModalComponent = (props) => {
   const formRef = useRef(null); // Create a ref to store the form instance
@@ -273,6 +274,8 @@ const ModalComponent = (props) => {
     "Self Manged Super Fund",
     "Family Trust",
     "Goals and Objectives",
+    "Profile Pic " + RenderName(props.modalObject?.owner),
+    "View Client Details"
     // "Personal Insurance",
   ];
 

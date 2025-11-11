@@ -760,7 +760,9 @@ const GoalsObjectiveNew = () => {
 
                   return (
                     <div
-                      className={`${evenClass ? "col-md-3" : "col-md-4"}  mb-4`}
+                      className={`${
+                        isEvenNumberOfYes ? "col-md-3" : "col-md-4"
+                      }  mb-4`}
                       key={index}
                     >
                       <Card
