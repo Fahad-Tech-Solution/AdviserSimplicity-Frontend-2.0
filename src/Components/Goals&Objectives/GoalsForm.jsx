@@ -231,6 +231,7 @@ const GoalsForm = (props) => {
 
                 <div
                   className="formatted-content form-control inputDesignDoubleInput goalsPara"
+                  style={{ minHeight: "10vh" }}
                   ref={formattedContentRef}
                   contentEditable={props?.isEditing}
                   onInput={(e) => {
