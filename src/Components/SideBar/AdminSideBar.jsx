@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Drawer, Menu } from "antd";
+import { Button, ConfigProvider, Drawer, Menu } from "antd";
 
 import { RiAppsLine, RiExchange2Line, RiMenuFill } from "react-icons/ri";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -194,7 +194,7 @@ const AdminSideBar = (props) => {
         }
         style={{ fontWeight: "600" }}
       >
-        Dashboard
+        {superAdmin ? "Dashboard" : "My Clients"}
       </Menu.Item>
 
       {isMobile && (
@@ -256,36 +256,56 @@ const AdminSideBar = (props) => {
             icon={<RiAppsLine />}
             title="Discovery"
           >
-            <Menu.Item
-              key="/user/all-client"
-              onClick={() => {
-                if (selectedClientDetails?._id) {
-                  localStorage.setItem("UserID", selectedClientDetails._id);
-                  localStorage.setItem(
-                    "selected client",
-                    JSON.stringify([selectedClientDetails.key])
-                  );
-                  localStorage.setItem(
-                    "Email",
-                    selectedClientDetails.client.Email
-                  );
-                  setQuestionDetail({});
-                  setStepsStatus(false);
-                  nav("/user/personal-detail#" + selectedClientDetails._id);
-                } else {
-                  openNotificationSuccess(
-                    "warning",
-                    "topRight",
-                    "No Client Selected",
-                    "Please select a client before proceeding."
-                  );
-                }
-              }}
-              icon={<MdOutlineAccountBalance />}
-              style={{ fontWeight: "600", color: "#36b446" }}
+            <SubMenu
+              key="/user/personal-detail"
+              icon={<MdOutlineAccountBalance style={{ color: "#36b446" }} />}
+              title={
+                <span
+                  style={{ fontWeight: "600", color: "#36b446" }}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent submenu toggle
+                    if (selectedClientDetails?._id) {
+                      localStorage.setItem("UserID", selectedClientDetails._id);
+                      localStorage.setItem(
+                        "selected client",
+                        JSON.stringify([selectedClientDetails.key])
+                      );
+                      localStorage.setItem(
+                        "Email",
+                        selectedClientDetails.client.Email
+                      );
+                      setQuestionDetail({});
+                      setStepsStatus(false);
+                      nav("/user/personal-detail#" + selectedClientDetails._id);
+                    } else {
+                      openNotificationSuccess(
+                        "warning",
+                        "topRight",
+                        "No Client Selected",
+                        "Please select a client before proceeding."
+                      );
+                    }
+                  }}
+                >
+                  Financial Details
+                </span>
+              }
             >
-              Financial Details
-            </Menu.Item>
+              <Menu.Item
+                key="/user/risk-profile"
+                onClick={() => {
+                  setModalObject({ title: "Add Section" });
+                  setFlagState(true);
+                }}
+                icon={<MdInbox />}
+                style={{ fontWeight: "600", color: "#36b446" }}
+              >
+                Add Section
+              </Menu.Item>
+            </SubMenu>
+
+         
+
             {selectedClientDetails?.client && (
               <>
                 <Menu.Item
@@ -304,19 +324,6 @@ const AdminSideBar = (props) => {
                 >
                   View Risk Profile
                 </Menu.Item>
-                <Menu.Item
-                  key="/user/risk-profile"
-                  onClick={() => {
-                    setModalObject({
-                      title: "Add Section",
-                    });
-                    setFlagState(true);
-                  }}
-                  icon={<MdInbox />}
-                  style={{ fontWeight: "600", color: "#36b446" }}
-                >
-                  Add Section
-                </Menu.Item>
               </>
             )}
           </SubMenu>
@@ -329,14 +336,6 @@ const AdminSideBar = (props) => {
                 icon={<FaChessKnight />}
                 title="Strategy"
               >
-                {/* <Menu.Item
-                key="/user/cashflow/allusers"
-                onClick={() => nav("/user/cashflow/allusers")}
-                style={{ fontWeight: "600" }}
-              >
-                All Strategy Scenarios
-              </Menu.Item> */}
-
                 <Menu.Item
                   key="/user/cashflow/one-client"
                   onClick={() => nav("/user/cashflow/one-client")}

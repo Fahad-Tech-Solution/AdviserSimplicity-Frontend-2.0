@@ -109,7 +109,16 @@ const ModalComponent = (props) => {
 
   const xlTitles = [
     "Add Section",
-    "Questions",
+    "Financial Investments",
+    "Personal Assets & Liabilities",
+    "Property",
+    "Investment",
+    "Super and Retirement",
+    "Estate Planning & Professional Adviser",
+    "Personal Income and Expenses",
+    "Business Entities & Tax Structures",
+    "Self Manged Super Fund",
+    "Family Trust",
     "Investment Loan",
     "Margin Loan",
     "Personal Loan",
@@ -207,6 +216,9 @@ const ModalComponent = (props) => {
     "Family Trust Investment Loan",
     "Family Details",
     "Life Insurance",
+    "TPD",
+    "Trauma",
+    "Income Protection",
     "Personal Insurance",
     "Investment Loan",
     "Margin Loan",
@@ -249,14 +261,28 @@ const ModalComponent = (props) => {
     ? "xl"
     : "lg";
 
+  let QuestionSections = [
+    "Financial Investments",
+    "Personal Assets & Liabilities",
+    "Property",
+    "Investment",
+    "Super and Retirement",
+    "Estate Planning & Professional Adviser",
+    "Personal Income and Expenses",
+    "Business Entities & Tax Structures",
+    "Self Manged Super Fund",
+    "Family Trust",
+    // "Personal Insurance",
+  ];
+
   const shouldRenderSubmitButton = () => {
     const action = props?.modalObject?.Action?.toLowerCase();
     const title = props?.modalObject?.title;
 
     if (action === "view") return false;
-    if (title === "Questions") return true;
+    if (QuestionSections.includes(title)) return true;
     if (title === "Add Section") return true;
-    if (title !== "Questions" && isEditing === true) return true;
+    if (!QuestionSections.includes(title) && isEditing === true) return true;
 
     return false;
   };
@@ -310,7 +336,7 @@ const ModalComponent = (props) => {
         {FooterButtonRender && (
           <Modal.Footer>
             {!isEditing &&
-              props.modalObject?.title !== "Questions" &&
+              !QuestionSections.includes(props.modalObject?.title) &&
               props.modalObject?.title !== "Add Section" && (
                 <Button
                   variant="secondary"

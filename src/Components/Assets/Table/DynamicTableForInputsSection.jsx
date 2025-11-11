@@ -28,7 +28,17 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
     isEditing = false,
     setIsEditing = () => {},
   }) {
-    // Simple renderCell without complex memoization
+    // Helper function to get nested value from form values
+    const getNestedValue = (obj, path) => {
+      if (!obj || !path) return undefined;
+      const normalizedPath = path.replace(/\[(\d+)\]/g, ".$1");
+      return normalizedPath.split(".").reduce((acc, key) => {
+        return acc && Object.prototype.hasOwnProperty.call(acc, key)
+          ? acc[key]
+          : undefined;
+      }, obj);
+    };
+
     const renderCell = (record, col) => {
       const value = record[col.dataIndex];
 
@@ -38,7 +48,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
         if (col.key === "homeAddress" && record.stakeHolder === "partner.contact") {
           return (
             <DynamicFormField
-              fieldType="partner-home-address"
+              fieldType="partner-home-address" // Use the new field type
               name={col?.dataIndex || ""}
               placeholder={col?.placeholder || ""}
               options={col?.options || []}
@@ -46,8 +56,15 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
               setFieldValue={setFieldValue}
               handleChange={handleChange}
               handleBlur={handleBlur}
-              handleInnerModal={col?.handleInnerModal}
-              innerModalTitle={record?.innerModalTitle || col?.innerModalTitle || ""}
+              handleInnerModal={
+                col?.handleInnerModal ||
+                (() => {
+                  console.log("No function defined");
+                })
+              }
+              innerModalTitle={
+                record?.innerModalTitle || col?.innerModalTitle || ""
+              }
               all={{
                 ...col,
                 checkCallBack: true,
@@ -56,9 +73,11 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
                   const clientPostcode = getNestedValue(values, "client.contact.postcodeSuburb");
                   
                   if (thisInput.checked) {
+                    // Set partner address same as client
                     setFieldValue("partner.contact.homeAddress", clientHomeAddress || "");
                     setFieldValue("partner.contact.postcodeSuburb", clientPostcode || "");
                     
+                    // Also trigger postal address if SameAsAbove is checked
                     if (getNestedValue(values, "partner.contact.SameAsAbove")) {
                       setFieldValue("partner.contact.postalAddress", clientHomeAddress || "");
                       setFieldValue("partner.contact.postalPostCode", clientPostcode || "");
@@ -84,8 +103,15 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
             setFieldValue={setFieldValue}
             handleChange={handleChange}
             handleBlur={handleBlur}
-            handleInnerModal={col?.handleInnerModal}
-            innerModalTitle={record?.innerModalTitle || col?.innerModalTitle || ""}
+            handleInnerModal={
+              col?.handleInnerModal ||
+              (() => {
+                console.log("No function defined");
+              })
+            }
+            innerModalTitle={
+              record?.innerModalTitle || col?.innerModalTitle || ""
+            }
             all={col || {}}
             {...(record?.stakeHolder
               ? { stakeHolder: record.stakeHolder + "." }
@@ -98,8 +124,15 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
       if (col?.type === "antdate") return value ? ConvertDate(value) : "--";
       if (col?.type === "checkbox") return value ? "Checked" : "Un-Checked";
       if (col?.type === "select-multi-antd")
+      // ✅ When not editing → format value for display
+      if (col?.type === "antdate") return value ? ConvertDate(value) : "--";
+      if (col?.type === "checkbox") return value ? "Checked" : "Un-Checked";
+      if (col?.type === "select-multi-antd")
         return Array.isArray(value) ? value.join(", ") : value || "";
-      if ((col?.type === "yesnoModal" && value === "Yes") || col?.type === "modal") {
+      if (
+        (col?.type === "yesnoModal" && value === "Yes") ||
+        col?.type === "modal"
+      ) {
         return (
           <div className="d-flex align-items-center justify-content-left gap-3">
             {value}
@@ -112,8 +145,16 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
               setFieldValue={setFieldValue}
               handleChange={handleChange}
               handleBlur={handleBlur}
-              handleInnerModal={col?.func || col?.handleInnerModal}
-              innerModalTitle={record?.innerModalTitle || col?.innerModalTitle || ""}
+              handleInnerModal={
+                col?.func ||
+                col?.handleInnerModal ||
+                (() => {
+                  console.log("No function defined");
+                })
+              }
+              innerModalTitle={
+                record?.innerModalTitle || col?.innerModalTitle || ""
+              }
               all={col || {}}
               {...(record?.stakeHolder
                 ? { stakeHolder: record.stakeHolder + "." }
@@ -123,7 +164,9 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
         );
       }
       if (col?.selectedOptionValue) {
-        const selectedOption = col?.options?.find((item) => item.value == value);
+        const selectedOption = col?.options?.find(
+          (item) => item.value == value
+        );
         return selectedOption ? selectedOption.label : value || "--";
       }
 
@@ -171,6 +214,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
       });
     }, [columns, isEditing, data.length]); // Only depend on what actually changes
 
+    // ✅ Global action column (only one cell)
     const actionColumn = {
       title: "Action",
       key: "action",
@@ -192,26 +236,54 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
             {isEditing ? "Save All" : "Edit All"}
           </Typography.Link>
         ) : (
+          // ⬇️ Empty cell for other rows - FIXED: Return proper object
           { children: null, props: { colSpan: 0 } }
         ),
     };
 
-    const allColumns = [...memoizedColumns];
+    // const allColumns = [...columns, actionColumn];
+    const allColumns = [...columns];
 
     // ✅ ANT DESIGN TABLE
     if (type === "antd") {
       return (
         <AntTable
-          columns={allColumns}
+          columns={allColumns.map((col) => {
+            if (col.key === "action") {
+              return {
+                ...col,
+                width: isEditing ? col.width || 150 : undefined,
+                onCell: (_, index) =>
+                  index === 0
+                    ? { rowSpan: data.length }
+                    : { rowSpan: 0 },
+              };
+            } else if (col.key === "owner" || col?.justText) {
+              return {
+                ...col,
+                width: isEditing ? col.width || 150 : undefined,
+              };
+            }
+            return {
+              ...col,
+              width: isEditing ? col.width || 150 : undefined,
+              render: (text, record) => renderCell(record, col),
+            };
+          })}
           dataSource={data}
           pagination={pagination}
+          customPagination={{
+            pageSize: 10,
+            position: ["bottomRight"],
+            className: "custom-pagination",
+          }}
           rowKey="key"
           scroll={{ x: "max-content" }}
         />
       );
     }
 
-    // ✅ BOOTSTRAP TABLE
+    // ✅ BOOTSTRAP TABLE (similar approach)
     if (type === "bootstrap") {
       return (
         <BootstrapTable striped bordered hover responsive>
@@ -225,11 +297,14 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
           <tbody>
             {data.map((record, rowIndex) => (
               <tr key={record.key}>
-                {memoizedColumns.map((col) => (
+                {columns.map((col) => (
                   <td key={col.key}>{renderCell(record, col)}</td>
                 ))}
-                {rowIndex === 0 && (
-                  <td rowSpan={data.length} className="text-center align-middle">
+                {rowIndex === 0 ? (
+                  <td
+                    rowSpan={data.length}
+                    className="text-center align-middle"
+                  >
                     <Button
                       variant={isEditing ? "success" : "primary"}
                       onClick={() => setIsEditing((prev) => !prev)}
@@ -237,7 +312,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
                       {isEditing ? "Save All" : "Edit All"}
                     </Button>
                   </td>
-                )}
+                ) : null}
               </tr>
             ))}
           </tbody>

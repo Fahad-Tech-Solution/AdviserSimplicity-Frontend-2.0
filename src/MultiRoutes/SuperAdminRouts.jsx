@@ -4,16 +4,6 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import AdminLayouts from './AdminLayouts';
 
 const SuperAdminRoutes = () => {
-  let nav = useNavigate();
-
-  // useEffect(() => {
-  //   let accessTokenJWT = localStorage.getItem("SAdminToken");
-  //   // If there is no token, navigate to the login page
-  //   if (!accessTokenJWT) {
-  //     nav("/SuperAdmin/Login");
-  //   }
-  // }, [nav]);  // Added nav to the dependency array
-
   return (
     <div>
       <Routes>

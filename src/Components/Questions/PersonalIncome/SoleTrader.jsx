@@ -184,7 +184,7 @@ const SoleTrader = (props) => {
       key: "businessName",
       type: "text",
       placeholder: "Business Name",
-      width: 200,
+      width: 250,
     },
     {
       title: "ABN",
@@ -204,8 +204,10 @@ const SoleTrader = (props) => {
       title: "Postcode/Suburb",
       dataIndex: "postCode",
       key: "postCode",
-      type: "text",
+      type: "postcode-antd",
       placeholder: "Postcode/Suburb",
+      CheckError: true,
+
     },
     {
       title: "Net Business Income",

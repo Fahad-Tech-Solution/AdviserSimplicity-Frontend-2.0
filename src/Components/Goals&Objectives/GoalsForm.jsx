@@ -239,6 +239,7 @@ const GoalsForm = (props) => {
                                         </tr>
                                     </tbody>
                                 </Table>
+                                
                                 {showDropDown ||
                                     <div className='col-md-12 pe-3'>
                                         <label htmlFor='description' className='fw-bold'>Description:</label>

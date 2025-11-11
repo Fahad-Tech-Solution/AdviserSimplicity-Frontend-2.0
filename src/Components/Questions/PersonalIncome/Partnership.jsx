@@ -257,7 +257,7 @@ const Partnership = (props) => {
       title: "Postcode/Suburb",
       dataIndex: "postCode",
       key: "postCode",
-      type: "text",
+      type: "postcode-antd",
       placeholder: "Postcode/Suburb",
     },
     {

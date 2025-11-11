@@ -20,7 +20,10 @@ const AssetInfo = (props) => {
 
   const [UserStatus] = useState(localStorage.getItem("UserStatus"));
 
-  const initialValues = { owner: [] };
+  const initialValues = { 
+    // owner: [] 
+    owner: props.modalObject?.key === "car" ? [] : ["joint"]
+  };
 
   const fillInitialValues = (setFieldValue) => {
     if (
@@ -80,7 +83,8 @@ const AssetInfo = (props) => {
             setFieldValue("joint.currentValue", data.joint.currentValue || "");
             if (props.modalObject.key === "car") {
               setFieldValue("joint.modelOfCar", data.joint.modelOfCar || "");
-            } else if (props.modalObject.key === "otherAssets") {
+            } 
+            else if (props.modalObject.key === "otherAssets") {
               setFieldValue("joint.description", data.joint.description || "");
             }
           }
@@ -95,8 +99,7 @@ const AssetInfo = (props) => {
     const obj = { ...values, clientFK: localStorage.getItem("UserID") };
 
     if (
-      props.modalObject.title === "Car" ||
-      props.modalObject.title === "Other Assets"
+      props.modalObject.title === "Car" 
     ) {
       if (
         values.owner.includes("client") ||

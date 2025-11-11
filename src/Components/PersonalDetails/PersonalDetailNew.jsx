@@ -57,16 +57,14 @@ const contactSchema = Yup.object({
       "Valid Australian Mobile Phone number Format: 0X XXXX XXXX"
     )
     .required("Mobile Phone is required"),
-  homePhone: Yup.string()
-    .matches(
-      ausPhoneRegex,
-      "Valid Australian Home Phone number Format: 0X XXXX XXXX"
-    ),
-  workPhone: Yup.string()
-    .matches(
-      ausPhoneRegex,
-      "Valid Australian Work Phone number Format: 0X XXXX XXXX"
-    ),
+  homePhone: Yup.string().matches(
+    ausPhoneRegex,
+    "Valid Australian Home Phone number Format: 0X XXXX XXXX"
+  ),
+  workPhone: Yup.string().matches(
+    ausPhoneRegex,
+    "Valid Australian Work Phone number Format: 0X XXXX XXXX"
+  ),
   email: Yup.string().email("Invalid email").required("Email is required"),
 });
 
@@ -238,53 +236,6 @@ const mapChildrenForSubmit = (children = []) =>
     dob: formatDate(child.dob),
     age: child.age,
   }));
-
-// const SectionErrorAlert = ({
-//   title,
-//   columns,
-//   errors,
-//   errorShow,
-//   flattenErrors,
-//   BaseKey, // 🆕 can be string or array
-// }) => {
-//   const fieldKeys = columns.map((col) => col.dataIndex);
-
-//   // Normalize BaseKey to an array
-//   const baseKeys = Array.isArray(BaseKey) ? BaseKey : [BaseKey];
-
-//   const sectionErrors = flattenErrors(errors).filter(([field]) => {
-//     const parts = field.split(".");
-//     const base = parts[0]; // e.g. client, partner, joint, etc.
-//     const lastKey = parts.pop();
-
-//     const matchesBase = !BaseKey || baseKeys.some((key) => key && base === key);
-//     const matchesField = fieldKeys.includes(lastKey);
-
-//     return matchesBase && matchesField;
-//   });
-
-//   if (!errorShow || sectionErrors.length === 0) return null;
-
-//   return (
-//     <div className="mt-3">
-//       <Alert
-//         message={`Validation Errors (${title})`}
-//         description={
-//           <ul style={{ marginLeft: 20 }}>
-//             {sectionErrors.map(([field, errorMsg]) => (
-//               <li key={field}>
-//                 <strong>{errorMsg}</strong>
-//               </li>
-//             ))}
-//           </ul>
-//         }
-//         type="error"
-//         showIcon
-//         className="mb-3"
-//       />
-//     </div>
-//   );
-// };
 
 const SectionErrorAlert = ({
   title,
@@ -542,11 +493,11 @@ const PersonalDetailNew = () => {
     {
       title: "Home Address",
       dataIndex: "homeAddress",
-      type: "text",
+      type: "textarea",
       key: "homeAddress",
       CheckError: true,
       width: 300,
-      style: { height: '0px' },
+      style: { height: "0px" },
       isPartnerHomeAddress: true,
     },
     {
@@ -781,7 +732,7 @@ const PersonalDetailNew = () => {
       haveAnyChildren: values.haveAnyChildren,
       children: {
         arrayOfChildren:
-          values.haveAnyChildren === "Yes"
+          values.haveAnyChildren === "Yes" && values.numberOfChildren > 0
             ? mapChildrenForSubmit(values.children)
             : [],
       },
@@ -795,15 +746,16 @@ const PersonalDetailNew = () => {
       const foundId = personalDetailObj?._id;
       const res = foundId
         ? await PatchAxios(`${defaultUrlValue}/api/personalDetails/Update`, {
-          ...payload,
-          _id: foundId,
-        })
+            ...payload,
+            _id: foundId,
+          })
         : await PostAxios(
-          `${defaultUrlValue}/api/personalDetails/Add`,
-          payload
-        );
+            `${defaultUrlValue}/api/personalDetails/Add`,
+            payload
+          );
 
       if (res) {
+        console.log(res);
         localStorage.setItem("UserID", res._id);
         localStorage.setItem("UserName", res.client?.preferred || "");
         localStorage.setItem("Emial", res.client?.Email || "");
@@ -849,24 +801,24 @@ const PersonalDetailNew = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (
-      switchStep === 2 &&
-      CRObjectNoUse &&
-      Object.keys(CRObjectNoUse).length > 0
-    ) {
-      if (
-        CRObjectNoUse.investmentPropertyTab === "No" &&
-        CRObjectNoUse.personalInsuranceTab === "No" &&
-        CRObjectNoUse.BusinessAsCompanyStructure === "No" &&
-        CRObjectNoUse.SMSFManagedFundsTab === "No" &&
-        CRObjectNoUse.businessAsInvestmentTab === "No"
-      ) {
-        setModalObject({ title: "Add Section" });
-        setFlagState(true);
-      }
-    }
-  }, [switchStep, CRObjectNoUse]); // 👈 also depend on CRObjectNoUse
+  // useEffect(() => {
+  //   if (
+  //     switchStep === 2 &&
+  //     CRObjectNoUse &&
+  //     Object.keys(CRObjectNoUse).length > 0
+  //   ) {
+  //     if (
+  //       CRObjectNoUse.investmentPropertyTab === "No" &&
+  //       CRObjectNoUse.personalInsuranceTab === "No" &&
+  //       CRObjectNoUse.BusinessAsCompanyStructure === "No" &&
+  //       CRObjectNoUse.SMSFManagedFundsTab === "No" &&
+  //       CRObjectNoUse.businessAsInvestmentTab === "No"
+  //     ) {
+  //       setModalObject({ title: "Add Section" });
+  //       setFlagState(true);
+  //     }
+  //   }
+  // }, [switchStep, CRObjectNoUse]); // 👈 also depend on CRObjectNoUse
 
   async function getQuestions(id) {
     try {
@@ -1248,7 +1200,7 @@ const PersonalDetailNew = () => {
 
                     <div className="row justify-content-center align-items-center mb-3 mt-4">
                       {!isEditing && (
-                        <div className="col-md-4">
+                        <div className="col-md-2">
                           <Button
                             htmlType="button"
                             className="w-100"
@@ -1263,7 +1215,7 @@ const PersonalDetailNew = () => {
                         </div>
                       )}
                       {isEditing && (
-                        <div className="col-md-4">
+                        <div className="col-md-2">
                           <Button
                             type="primary"
                             htmlType="submit"
@@ -1288,10 +1240,10 @@ const PersonalDetailNew = () => {
                       {!["Single", "Widowed", ""].includes(
                         values.client.marital
                       ) && (
-                          <div className="col-md-3 mt-4">
-                            <ProfileCard owner="partner" Data={values.partner} />
-                          </div>
-                        )}
+                        <div className="col-md-3 mt-4">
+                          <ProfileCard owner="partner" Data={values.partner} />
+                        </div>
+                      )}
                     </div>
                     <div className="row justify-content-center">
                       <div className="col-md-2 mt-4">
@@ -1308,7 +1260,7 @@ const PersonalDetailNew = () => {
                         </Button>
                       </div>
                       <div className="col-md-2 mt-4">
-                        <Button
+                        {/* <Button
                           htmlType="button"
                           color="default"
                           variant="filled"
@@ -1321,7 +1273,7 @@ const PersonalDetailNew = () => {
                           }}
                         >
                           Add Section
-                        </Button>
+                        </Button> */}
                       </div>
                       <div className="col-md-2 mt-4">
                         <Button

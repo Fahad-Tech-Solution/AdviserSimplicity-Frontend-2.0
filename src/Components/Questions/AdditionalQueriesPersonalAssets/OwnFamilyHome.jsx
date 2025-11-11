@@ -46,7 +46,8 @@ const OwnFamilyHome = (props) => {
       setFieldValue("postCode", familyHome.postCode || "");
       setFieldValue("clientOwnership", familyHome.clientOwnership || "");
       setFieldValue("partnerOwnership", familyHome.partnerOwnership || "");
-      setFieldValue("loanAttached", familyHome.loanAttached || "");
+      // setFieldValue("loanAttached", familyHome.loanAttached || "");
+      // setFieldValue("loanAttached", familyHome.loanAttached || "");
       setFieldValue("HomeLoanModal", familyHome.HomeLoanModal || {});
       setFieldValue("loanAmount", familyHome?.HomeLoanModal?.loanBalance || "");
       setFieldValue(
@@ -65,13 +66,18 @@ const OwnFamilyHome = (props) => {
       postCode: values.postCode,
       clientOwnership: values.clientOwnership,
       partnerOwnership: values.partnerOwnership,
-      loanAttached: values.loanAttached,
+      // loanAttached: values.loanAttached,
+      // HomeLoanModal:
+      //   values.loanAttached === "Yes"
+      //     ? Object.keys(values.HomeLoanModal || {}).length > 0
+      //       ? values.HomeLoanModal
+      //       : undefined
+      //     : undefined,
       HomeLoanModal:
-        values.loanAttached === "Yes"
-          ? Object.keys(values.HomeLoanModal || {}).length > 0
-            ? values.HomeLoanModal
-            : undefined
-          : undefined,
+  Object.keys(values.HomeLoanModal || {}).length > 0
+    ? values.HomeLoanModal
+    : undefined,
+
     };
 
     obj.clientFK = localStorage.getItem("UserID");
@@ -177,7 +183,7 @@ const handleOwnershipChange = (values, setFieldValue, thisInput, stackHolder = "
       title: "Postcode/Suburb",
       dataIndex: "postCode",
       key: "postCode",
-      type: "text",
+      type: "postcode-antd",
       placeholder: "Postcode/Suburb",
     },
     {
@@ -229,7 +235,8 @@ const handleOwnershipChange = (values, setFieldValue, thisInput, stackHolder = "
       title: "Loan Amount",
       dataIndex: "loanAttached",
       key: "familyHomeLoan",
-      type: "yesnoModal",
+      // type: "yesnoModal",
+      type: "modal",
       innerModalTitle: "Home Loan",
       callBack: true,
       func: handleInnerModal,
@@ -258,7 +265,8 @@ const handleOwnershipChange = (values, setFieldValue, thisInput, stackHolder = "
             postCode: values.postCode,
             clientOwnership: values.clientOwnership,
             partnerOwnership: values.partnerOwnership,
-            loanAttached: values.loanAttached,
+            // loanAttached: values.loanAttached,
+            loanAttached: values?.HomeLoanModal?.loanBalance || "$0" ,
             loanAmount: values.loanAmount,
             annualRepayments: values.annualRepayments,
           },

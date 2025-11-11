@@ -339,7 +339,7 @@ const EmploymentIncome = (props) => {
       dataIndex: "salaryPackagingRadio",
       key: "SalaryPackaging",
       type: "yesnoModal", // yes/no with modal
-      width: 170,
+      width: 100,
       callBack: true,
       func: handleInnerModal,
       handleInnerModal: handleInnerModal,
@@ -350,7 +350,7 @@ const EmploymentIncome = (props) => {
       dataIndex: "leaveEntitlementsRadio",
       key: "LeaveEntitlementsModal",
       type: "yesnoModal",
-      width: 170,
+      width: 100,
       handleInnerModal: handleInnerModal,
       callBack: true,
       func: handleInnerModal,
@@ -360,7 +360,8 @@ const EmploymentIncome = (props) => {
       title: "Choice of Fund",
       dataIndex: "choiceOfFund",
       key: "choiceOfFund",
-      type: "yesno", width: 100,
+      type: "yesno",
+       width: 100,
       
     },
   ];
