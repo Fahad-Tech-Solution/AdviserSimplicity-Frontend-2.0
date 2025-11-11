@@ -140,7 +140,7 @@ const ModalComponent = (props) => {
     "Investment Home Loan",
     "Family Trust Details",
     "Family Trust Investment Loan",
-    "Goals and Objectives Questions",
+    "Goals and Objectives",
     "Set up a Budget",
     "Pay off Credit Card/Debt",
     "Protect my Lifestyle & Family",
@@ -195,7 +195,7 @@ const ModalComponent = (props) => {
     "Cash",
     "Investment Bonds",
     "Investment Loans (LOC)",
-    "LifeTime Pension",
+    "Lifetime Pension",
     "SMSF Accumulation Details",
     "SMSF Bank",
     "SMSF Term Deposit",
@@ -272,6 +272,7 @@ const ModalComponent = (props) => {
     "Business Entities & Tax Structures",
     "Self Manged Super Fund",
     "Family Trust",
+    "Goals and Objectives",
     // "Personal Insurance",
   ];
 

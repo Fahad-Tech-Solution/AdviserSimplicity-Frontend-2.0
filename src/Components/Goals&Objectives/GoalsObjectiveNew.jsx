@@ -717,7 +717,7 @@ const GoalsObjectiveNew = () => {
               style={{ marginTop: "-50px", width: "9%" }}
               onClick={() => {
                 modalOpenQuestions({
-                  title: "Goals and Objectives ",
+                  title: "Goals and Objectives",
                   key: "MainModal",
                   allGoals,
                 });
@@ -743,8 +743,26 @@ const GoalsObjectiveNew = () => {
             <React.Fragment>
               {reorderdGoals.map((goal, index) => {
                 if (GQSObj[goal.key] === "Yes") {
+                  // count how many entries in GQSObj are "Yes" and determine even/odd
+                  const yesKeys = Object.keys(GQSObj || {}).filter(
+                    (k) => GQSObj[k] === "Yes"
+                  );
+                  const numberOfYes = yesKeys.length;
+                  const isEvenNumberOfYes = numberOfYes % 2 === 0;
+
+                  // (optional) expose values for layout decisions
+                  console.log(
+                    "Goals with Yes:",
+                    numberOfYes,
+                    "isEven:",
+                    isEvenNumberOfYes
+                  );
+
                   return (
-                    <div className={`col-md-3  mb-4`} key={index}>
+                    <div
+                      className={`${evenClass ? "col-md-3" : "col-md-4"}  mb-4`}
+                      key={index}
+                    >
                       <Card
                         className="py-4 shadow GoalsobjectiveCard px-4"
                         style={{ borderRadius: "20px", height: "100%" }}
@@ -791,7 +809,7 @@ const GoalsObjectiveNew = () => {
                             estimatedValue: "",
                             description: "",
                           }}
-                          onSubmit={() => { }}
+                          onSubmit={() => {}}
                           enableReinitialize
                         >
                           {({ values, setFieldValue }) => {
@@ -807,27 +825,21 @@ const GoalsObjectiveNew = () => {
                                         Scope of Advice
                                       </label>
 
-
                                       {goal.modalBtn === "label" && (
-                                        <label 
+                                        <label
                                           role="button"
                                           className="mb-0 bg-secondary rounded-circle text-light py-1 px-2 curser-pointer"
                                           onClick={() => {
                                             modalOpen(goal);
-                                          
                                           }}
-
                                         >
-
                                           <div>
                                             <FontAwesomeIcon
                                               icon={faArrowUpRightFromSquare}
                                             />
                                           </div>
                                         </label>
-
                                       )}
-
                                     </div>
                                   </div>
                                 </div>
@@ -840,31 +852,12 @@ const GoalsObjectiveNew = () => {
                                     placeholder="Scope of Advice"
                                     name="scopeOfAdvice"
                                     readOnly
-                                    value={goalsDetail[goal.key]?.scopeOfAdvice || ""}
+                                    value={
+                                      goalsDetail[goal.key]?.scopeOfAdvice || ""
+                                    }
                                   />
                                 </div>
 
-                                {/* <div
-                                  className={`row justify-content-center align-items-center my-2 `}
-                                > */}
-                                {/* <div className="col-12 p-0 ">
-                                    <label
-                                      className=" d-block text-center"
-                                      htmlFor={"when" + [goal.key]}
-                                    >
-                                      When{" "}
-                                    </label>
-                                  </div> */}
-                                {/* </div> */}
-                                {/* <Field
-                                  type="text"
-                                  className={`form-control inputDesign `}
-                                  id={"when" + [goal.key]}
-                                  placeholder={"When"}
-                                  name={"when"}
-                                  readOnly
-                                  value={goalsDetail[goal.key]?.when || ""}
-                                /> */}
                                 <div
                                   className={`row justify-content-center align-items-center my-2 `}
                                 >
@@ -877,22 +870,22 @@ const GoalsObjectiveNew = () => {
                                     </label>
                                   </div>
                                 </div>
-                                 <div className="d-flex justify-content-center align-items-center">
-                               
-                                <Field
-                                  type="text"
-                                  className={`form-control inputDesign `}
-                                  id={"estimatedValue" + [goal.key]}
-                                  placeholder={"Amount"}
-                                  name={"estimatedValue"}
-                                  readOnly
-                                  value={
-                                    goalsDetail[goal.key]?.estimatedValue
-                                      ? `${goalsDetail[goal.key].estimatedValue
-                                      }`
-                                      : ""
-                                  }
-                                />
+                                <div className="d-flex justify-content-center align-items-center">
+                                  <Field
+                                    type="text"
+                                    className={`form-control inputDesign `}
+                                    id={"estimatedValue" + [goal.key]}
+                                    placeholder={"Amount"}
+                                    name={"estimatedValue"}
+                                    readOnly
+                                    value={
+                                      goalsDetail[goal.key]?.estimatedValue
+                                        ? `${
+                                            goalsDetail[goal.key].estimatedValue
+                                          }`
+                                        : ""
+                                    }
+                                  />
                                 </div>
 
                                 {goal.modalBtn === "button" && (
