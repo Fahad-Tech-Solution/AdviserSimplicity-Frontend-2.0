@@ -493,7 +493,6 @@ const NewAllClients = (props) => {
 
   useEffect(() => {
     fetchPersonalDetials();
-
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   let fetchPersonalDetials = async () => {
@@ -520,8 +519,6 @@ const NewAllClients = (props) => {
     }
   };
 
- 
-
   let Navigate = useNavigate();
 
   let OpenModel = (text, row, index) => {
@@ -532,6 +529,7 @@ const NewAllClients = (props) => {
         setModalObject({
           title: "View Client Details",
           row,
+          noFooter: true,
         });
         setFlagState(true);
 

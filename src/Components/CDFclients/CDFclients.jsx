@@ -347,7 +347,7 @@ const CDFclients = () => {
 
     const actionsMap = {
       View: () => {
-        setModalObject({ title: "CDF View Details", row });
+        setModalObject({ title: "CDF View Details", row, noFooter: true });
         setFlagState(true);
       },
       Successful: () => {
@@ -368,7 +368,7 @@ const CDFclients = () => {
         }
       },
       default: () => {
-        setModalObject({ title: "CDF Details", row });
+        setModalObject({ title: "CDF Details", row, noFooter: true });
         setFlagState(true);
       },
     };
@@ -568,21 +568,14 @@ const CDFclients = () => {
               </Col>
             </Row>
 
+            {/* changes */}
 
-      
-  
-{/* changes */}
-
-{/* <div style={{ padding: 20, width: "100%" }}>
+            {/* <div style={{ padding: 20, width: "100%" }}>
   <h2>Editable Table</h2>
   <EditableTable columns={col} dataSource={originData} />
 </div> */}
 
-{/* changes */}
-
-
-
-
+            {/* changes */}
           </Card>
         </div>
       </div>

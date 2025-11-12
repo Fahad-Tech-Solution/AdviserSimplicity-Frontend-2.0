@@ -275,7 +275,8 @@ const ModalComponent = (props) => {
     "Family Trust",
     "Goals and Objectives",
     "Profile Pic " + RenderName(props.modalObject?.owner),
-    "View Client Details"
+    "View Client Details",
+    "CDF Details"
     // "Personal Insurance",
   ];
 
