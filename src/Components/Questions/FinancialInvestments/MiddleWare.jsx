@@ -21,6 +21,7 @@ import InvestedAnnuities from "./QuestionsDetail/InvestedAnnuities";
 import TradingCompany from "../BusinessEntities/TradingCompany";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 import BankTermForm from "./QuestionsDetail/BankTermForm";
+import TradingTrust from "../BusinessEntities/TradingTrust";
 
 const AntdTable = DynamicTableForInputsSection("antd");
 
@@ -83,6 +84,7 @@ const MiddleWare = (props) => {
     "Account Based Pension Detail": <AccountBasedPension />,
     "Annuities Detail": <InvestedAnnuities />,
     "Business as Company Structure Detail": <TradingCompany />,
+    "Business as Trusts Detail": <TradingTrust />,
     "SMSF Bank Accounts Detail": <BankTermForm />,
     "SMSF Term Deposits Detail": <BankTermForm />,
     "SMSF Australian Shares/ETFs Detail": <AustralianShares />,
