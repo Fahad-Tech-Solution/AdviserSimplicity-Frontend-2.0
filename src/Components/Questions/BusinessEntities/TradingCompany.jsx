@@ -1,322 +1,338 @@
-import { Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
-import { Button, InputGroup, Row, Table } from "react-bootstrap";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { Formik, Form } from "formik";
+import React, { useEffect, useMemo, useState } from "react";
+import { useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { handleInputBlur, handleInputChange, handleInputFocus, handleInputKeyDown, PatchAxios, PostAxios, toCommaAndDollar, toPercentage } from "../../Assets/Api/Api";
+import {
+  toCommaAndDollar,
+  toPercentage,
+  handleInputChange,
+  handleInputFocus,
+  handleInputKeyDown,
+  handleInputBlur
+} from "../../Assets/Api/Api";
 import DynamicYesNo from "../FinancialInvestments/QuestionsDetail/DynamicYesNo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 import TradingTrust from "./TradingTrust";
 import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
-// import Select from "react-select";
+import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
+import { ConfigProvider, Select, Button, Input } from "antd";
 
+const AntdTable = DynamicTableForInputsSection("antd");
+const { Option } = Select;
 
 const TradingCompany = (props) => {
-  let questionDetail = useRecoilValue(QuestionDetail);
-  let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+  const questionDetail = useRecoilValue(QuestionDetail);
+  const [flagState, setFlagState] = useState(false);
+  const [modalObject, setModalObject] = useState({});
 
-  const [title, setTitle] = useState(() => {
-    // let head = props.modalObject.title;
+  const [title] = useState(() => {
     let currentTitle = props.modalObject.title;
-
-    // Check if the title contains an underscore
     if (currentTitle.includes('_')) {
-      currentTitle = (currentTitle.split('_').slice(1))[0];
+      currentTitle = currentTitle.split('_').slice(1)[0];
     }
-
-    return currentTitle
+    return currentTitle;
   });
 
-  let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
-
-
-  let [nameSet] = useState(() => {
-    if (props.modalObject.Input === "client") {
-      return (localStorage.getItem("UserName"))
+  const [nameSet] = useState(() => {
+    const input = props.modalObject.Input;
+    if (input === "client") {
+      return localStorage.getItem("UserName");
+    } else if (input === "partner") {
+      return localStorage.getItem("PartnerName");
+    } else if (input === "joint") {
+      return localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName");
     }
-    else if (props.modalObject.Input === "partner") {
-      return (localStorage.getItem("PartnerName"))
-    }
-    else if (props.modalObject.Input === "joint") {
-      return (localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName"))
-    }
-  })
+    return "";
+  });
 
-  let initialValues = { NumberOfMap: "" };
+  // Load existing data if available
+  const existingData =
+    props.modalObject.values?.[
+    props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "")
+    ]?.[props.modalObject.Input + "Array"] || [];
+
+  const initialValues = {
+    NumberOfMap: existingData.length || "",
+    tradingCompanies: existingData.length ? existingData : [],
+  };
 
   const [dynamicFields, setDynamicFields] = useState([]);
 
+  useEffect(() => {
+    if (existingData.length) {
+      setDynamicFields(Array(existingData.length).fill(""));
+    }
+  }, [existingData]);
+
   const fillInitialValues = (setFieldValue) => {
-    console.log("Values", props.modalObject.values[props.modalObject.Input])
-
-    if (props.modalObject?.values[props.modalObject.Input] && props.modalObject.values[props.modalObject.Input].length > 0) {
-      setFieldValue("NumberOfMap", props.modalObject.values[props.modalObject.Input].length);
-
-      let data = props.modalObject.values[props.modalObject.Input];
-
-      data.map((elem, i) => {
-        setFieldValue("businessName" + i, elem.businessName);
-        setFieldValue("aBNACN" + i, elem.aBNACN);
-        setFieldValue("businessAddress" + i, elem.businessAddress);
-        setFieldValue("numberOfDirectors" + i, elem.numberOfDirectors);
-        setFieldValue("directorship" + i, elem.directorship);
-        setFieldValue("shareholding" + i, elem.shareholding);
-        setFieldValue("dividendReceived" + i, elem.dividendReceived);
-        setFieldValue("equityPosition" + i, elem.equityPosition);
-        setFieldValue("equityPositionArray" + i, elem.equityPositionArray);
-      })
-
+    if (existingData.length) {
+      setFieldValue("tradingCompanies", existingData);
     }
-
-
   };
 
-  let handleInput = (e, setFieldValue) => {
-    const value = e.target.value > 3 ? 3 : e.target.value;
-    setFieldValue(e.target.id, value);
+  const handleInnerModal = (innerModalTitle, key, stakeHolder, values) => {
+    const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
+    const BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
 
-    let arr = [];
-
-    for (let i = 0; i < value; i++) {
-      arr.push("");
-    }
-
-    setDynamicFields(arr);
+    setModalObject({
+      title: `${nameSet} ${innerModalTitle}`,
+      key,
+      stakeHolder,
+      editArray: values?.[BaseKey]?.[index]?.[key] || [],
+      values,
+      ParentModalObject: props.modalObject,
+    });
+    setFlagState(true);
   };
 
-  let DefaultUrl = useRecoilValue(defaultUrl);
+  const onSubmit = async (values) => {
+    const DataOf = props.modalObject.Input;
+    const companyData = values.tradingCompanies || [];
 
-  let onSubmit = async (values) => {
+    // Calculate total equity position
+    const totalEquity = companyData.reduce(
+      (sum, entry) => sum + parseFloat(entry.equityPosition?.replace(/[^0-9.-]+/g, "") || 0),
+      0
+    );
 
-    console.log(JSON.stringify(values));
+    props.setFieldValue(
+      props.modalObject.stakeHolder + DataOf + "Array",
+      companyData
+    );
 
-    const numberOfMaps = parseInt(values.NumberOfMap, 10);
-    const newEntries = [];
+    props.setFieldValue(
+      props.modalObject.stakeHolder + "currentBalance",
+      toCommaAndDollar(totalEquity)
+    );
 
-    // Iterate through each map entry and create a new object
-    for (let i = 0; i < numberOfMaps; i++) {
-      const newEntry = {
-        businessName: values[`businessName${i}`] || "",
-        aBNACN: values[`aBNACN${i}`] || "",
-        businessAddress: values[`businessAddress${i}`] || "",
-        numberOfDirectors: values[`numberOfDirectors${i}`] || "",
-        directorship: values[`directorship${i}`] || "",
-        shareholding: values[`shareholding${i}`] || "",
-        dividendReceived: values[`dividendReceived${i}`] || "",
-        equityPosition: values[`equityPosition${i}`] || "",
-        equityPositionArray: values[`equityPositionArray${i}`] || "",
-      };
-      newEntries.push(newEntry);
-    }
-
-
-    // Log the new entries to verify
-
-    let DataOf = props.modalObject.Input;
-
-    console.log(newEntries, DataOf, values);
-
-    // Calculate total currentBalance
-    let total = newEntries.reduce((total, entry) => total + parseFloat((entry.equityPosition).replace(/[^0-9.-]+/g, "")), 0);
-
-    props.setFieldValue(DataOf, newEntries);
-
-    props.setFieldValue(DataOf + "CurrentBalance", toCommaAndDollar(total));
-
-
-    props.modalObject.setShowError(prevState => ({
-      ...prevState,
-      [`${DataOf + "CurrentBalance"}Error`]: false,
-      [`${DataOf + "CurrentBalance"}Message`]: "",
-    }))
+    props.modalObject.setShowError?.((prev) => ({
+      ...prev,
+      [`${DataOf + "currentBalance"}Error`]: false,
+      [`${DataOf + "currentBalance"}Message`]: "",
+    }));
 
     if (props.flagState) {
       props.setFlagState(false);
     }
-
   };
 
-  let FormulaSetting = () => { }
+  const columns = [
+    {
+      title: "No#",
+      dataIndex: "owner",
+      key: "owner",
+      width: 60,
+    },
+    {
+      title: "Business Name",
+      dataIndex: "businessName",
+      key: "businessName",
+      type: "text",
+      placeholder: "Business Name",
+      width: 200,
+    },
+    {
+      title: "ABN/ACN",
+      dataIndex: "aBNACN",
+      key: "aBNACN",
+      type: "number",
+      placeholder: "ABN/ACN",
+    },
+    {
+      title: "Business Address",
+      dataIndex: "businessAddress",
+      key: "businessAddress",
+      type: "number",
+      placeholder: "Business Address",
+      width: 200,
+    },
+    {
+      title: "Number of Directors",
+      dataIndex: "numberOfDirectors",
+      key: "numberOfDirectors",
+      type: "number",
+      placeholder: "Number of Directors",
+      width: 200,
+    },
+    {
+      title: "Directorship",
+      dataIndex: "directorship",
+      key: "directorship",
+      type: "yesno",
+      // render: (_, record, index) => (
+      //   <DynamicYesNo
+      //     name={`tradingCompanies[${index}].directorship`}
+      //     values={record}
+      //     handleChange={(e) => {
+      //       // Handle change for DynamicYesNo component
+      //       console.log("Directorship change:", e.target.value);
+      //     }}
+      //   />
+      // ),
+    },
+    {
+      title: "Shareholding",
+      dataIndex: "shareholding",
+      key: "shareholding",
+      type: "number-toPercent",
+      placeholder: "Shareholding",
+      customOnChange: (e, setFieldValue, values, fieldName) => {
+        handleInputChange(e, setFieldValue, () => { }, values);
+      },
+      customOnFocus: (e, setFieldValue) => {
+        handleInputFocus(e, setFieldValue);
+      },
+      customOnKeyDown: (e) => {
+        handleInputKeyDown(e);
+      },
+      customOnBlur: (e, setFieldValue, values, fieldName) => {
+        handleInputBlur(e, setFieldValue, toPercentage, () => { }, values);
+      },
+    },
+    {
+      title: "Dividend Received",
+      dataIndex: "dividendReceived",
+      key: "dividendReceived",
+      type: "number-toComma",
+      placeholder: "Dividend Received",
+      width: 180,
+      customOnChange: (e, setFieldValue, values, fieldName) => {
+        const value = toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, ""));
+        setFieldValue(fieldName, value);
+      },
+    },
+    {
+      title: "Equity Position",
+      dataIndex: "equityPosition",
+      key: "equityPosition",
+      type: "number-toComma",
+      innerModalTitle: "Business as Trusts",
+      placeholder: "Equity Position",
+      width: 160,
+      customOnChange: (e, setFieldValue, values, fieldName) => {
+        const value = toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, ""));
+        setFieldValue(fieldName, value);
+      },
+      func: (innerModalTitle, values, key, stakeHolder) =>
+        handleInnerModal(innerModalTitle, key, stakeHolder, values),
+      renderSuffix: (record, index) => (
+        <Button
+          className="bgColor modalBtn border-0"
+          onClick={() => {
+            handleInnerModal(
+              "Business as Trusts",
+              `equityPositionArray`,
+              `tradingCompanies[${index}]`,
+              values
+            );
+          }}
+        >
+          <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+        </Button>
+      ),
+    },
+  ];
 
-  let handleInnerModal = (title, key, mainKey, values) => {
-    setModalObject({
-      title,
-      key,
-      mainKey,
-      values
-    })
-    setFlagState(true);
-  }
+  const ModalContent = (obj) => {
+    return obj.title === "Business as Trusts" ? <TradingTrust /> : null;
+  };
 
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={onSubmit}
       enableReinitialize
       innerRef={props.formRef}
+      onSubmit={onSubmit}
     >
-      {({ values, setFieldValue, handleChange }) => {
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
-        }, []);
+        }, [existingData]);
+
+        const dataRows = useMemo(() => {
+          const num = Number(values.NumberOfMap) || 0;
+          if (num > 0) {
+            return Array.from({ length: num }, (_, i) => ({
+              key: `tradingCompanies.${i}`,
+              owner: i + 1,
+              stakeHolder: `tradingCompanies[${i}]`,
+              businessName: values.tradingCompanies?.[i]?.businessName || "",
+              aBNACN: values.tradingCompanies?.[i]?.aBNACN || "",
+              businessAddress: values.tradingCompanies?.[i]?.businessAddress || "",
+              numberOfDirectors: values.tradingCompanies?.[i]?.numberOfDirectors || "",
+              directorship: values.tradingCompanies?.[i]?.directorship || "",
+              shareholding: values.tradingCompanies?.[i]?.shareholding || "",
+              dividendReceived: values.tradingCompanies?.[i]?.dividendReceived || "",
+              equityPosition: values.tradingCompanies?.[i]?.equityPosition || "",
+              equityPositionArray: values.tradingCompanies?.[i]?.equityPositionArray || "",
+            }));
+          }
+          return [];
+        }, [values.NumberOfMap, values.tradingCompanies]);
 
         return (
           <Form>
-            <Row>
+            <InnerModal
+              modalObject={modalObject}
+              setFieldValue={setFieldValue}
+              setFlagState={setFlagState}
+              flagState={flagState}
+            >
+              {ModalContent(modalObject)}
+            </InnerModal>
 
-              <InnerModal modalObject={modalObject} setFieldValue={setFieldValue} setFlagState={setFlagState} flagState={flagState} >
-                {
-                  modalObject.title === "Business as Trusts" ? <TradingTrust /> : ""
-                }
-              </InnerModal>
-
-              <div className="col-md-12">
-                <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
-                  <label htmlFor='' className=''>
-                    How many {title} does {nameSet} have :
-                  </label>
-
-                  <div style={{ width: "10%" }} >
-                    <Field
-                      type="number"
-                      id="NumberOfMap"
-                      name="NumberOfMap"
-                      className="form-control inputDesignDoubleInput"
-                      onChange={(e) => handleInput(e, setFieldValue)}
-                    />
-                  </div>
-                </div>
-
-                <div className="row justify-content-center">
-                  {values.NumberOfMap && (
-                    <div className="mt-4">
-                      <Table striped bordered responsive hover>
-                        <thead>
-                          <tr>
-                            <th
-                              onClick={() => {
-                                console.log(values);
-                              }}
-                            >
-                              No#
-                            </th>
-                            <th>Business Name</th>
-                            <th>ABN/ACN</th>
-                            <th>Business Address</th>
-                            <th>Number of Directors</th>
-                            <th>Directorship</th>
-                            <th>Shareholding</th>
-                            <th>Dividend Received</th>
-                            <th>Equity Position</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {Array.from({ length: values.NumberOfMap }).map((_, i) => {
-                            return (
-                              <tr key={i}>
-                                <td>{1 + i}</td>
-                                <td>
-                                  {" "}
-                                  <Field
-                                    type="text"
-                                    placeholder="Business Name"
-                                    id={`businessName${i}`}
-                                    name={`businessName${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="number"
-                                    placeholder="ABN/ACN"
-                                    id={`aBNACN${i}`}
-                                    name={`aBNACN${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="text"
-                                    placeholder="Business Address"
-                                    id={`businessAddress${i}`}
-                                    name={`businessAddress${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="number"
-                                    placeholder="Number of Directors"
-                                    id={`numberOfDirectors${i}`}
-                                    name={`numberOfDirectors${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                  />
-                                </td>
-                                <td>
-                                  <DynamicYesNo
-                                    name={`directorship${i}`}
-                                    values={values}
-                                    handleChange={handleChange}
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="text"
-                                    placeholder="Shareholding"
-                                    id={`shareholding${i}`}
-                                    name={`shareholding${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                    onChange={(e) => handleInputChange(e, setFieldValue, FormulaSetting, values)}
-                                    onFocus={(e) => handleInputFocus(e, setFieldValue)}
-                                    onKeyDown={(e) => handleInputKeyDown(e)}
-                                    onBlur={(e) => handleInputBlur(e, setFieldValue, toPercentage, FormulaSetting, values)}
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="text"
-                                    placeholder="Dividend Received"
-                                    id={`dividendReceived${i}`}
-                                    name={`dividendReceived${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                    onChange={(e) => {
-                                      setFieldValue(e.target.name,
-                                        toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                    }}
-                                  />
-                                </td>
-                                <td>
-                                  <InputGroup className="mb-3" style={{ width: "150px" }}>
-                                    <Field
-                                      type="text"
-                                      placeholder="Equity Position"
-                                      id={`equityPosition${i}`}
-                                      name={`equityPosition${i}`}
-                                      className="form-control inputDesignDoubleInput"
-                                      onChange={(e) => {
-                                        setFieldValue(e.target.name,
-                                          toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                      }}
-                                    />
-                                    <Button className='btn bgColor modalBtn border-0' id="button-addon2" onClick={() => {
-                                      handleInnerModal("Business as Trusts", `equityPositionArray${i}`, `equityPosition${i}`, values)
-                                    }}>
-                                      <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-                                    </Button>
-                                  </InputGroup>
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </Table>
-                    </div>
-                  )}
-                </div>
+            <div className="d-flex justify-content-center align-items-center gap-4">
+              <p className="text-end mt-1 pt-2">
+                How many {title} does {nameSet} have:
+              </p>
+              <div style={{ minWidth: "10%" }}>
+                <ConfigProvider
+                  theme={{
+                    components: {
+                      Select: {
+                        colorBorder: "#36b446",
+                      },
+                    },
+                  }}
+                >
+                  <Select
+                    id="NumberOfMap"
+                    name="NumberOfMap"
+                    className="w-100 h-100"
+                    placeholder="Select"
+                    size="large"
+                    value={values.NumberOfMap || undefined}
+                    onChange={(value) => {
+                      setFieldValue("NumberOfMap", value);
+                    }}
+                    onBlur={handleBlur}
+                    getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                  >
+                    {Array.from({ length: 10 }, (_, i) => (
+                      <Option key={i} value={i + 1}>
+                        {i + 1}
+                      </Option>
+                    ))}
+                  </Select>
+                </ConfigProvider>
               </div>
-            </Row>
+            </div>
+
+            {values.NumberOfMap && (
+              <div className="mt-4 All_Client reportSection">
+                <AntdTable
+                  columns={columns}
+                  data={dataRows}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
+                />
+              </div>
+            )}
           </Form>
         );
       }}
