@@ -213,12 +213,12 @@ const ManagedFunds = (props) => {
 
     props.setFieldValue(
       props.modalObject.stakeHolder + "currentBalance",
-      toCommaAndDollar(totalFee)
+      toCommaAndDollar(totalCostBase)
     );
 
     props.setFieldValue(
       props.modalObject.stakeHolder + "costBase",
-      toCommaAndDollar(totalCostBase)
+      toCommaAndDollar(totalFee)
     );
 
     // 🚫 Clear related validation errors (if any)

@@ -180,30 +180,31 @@ const LeaveEntitlementsModal = (props) => {
                 },
               }}
             >
-              {Object.keys(errors).length > 0 && touched && (
-                <Alert
-                  type="error"
-                  message="Validation Errors"
-                  description={
-                    <ul className="mb-0">
-                      {Object.entries(errors).map(([key, value]) => {
-                        const errorKeys = Object.keys(value || {});
-                        return errorKeys.map((errorKey) => (
-                          <li key={`${key}-${errorKey}`}>
-                            {`${getFieldTitle(key, values, "leaveType")}: ${
-                              typeof value[errorKey] === "string"
-                                ? value[errorKey]
-                                : Object.values(value[errorKey])[0]
-                            }`}
-                          </li>
-                        ));
-                      })}
-                    </ul>
-                  }
-                  className="mb-4"
-                  showIcon
-                />
-              )}
+              {Object.keys(errors).length > 0 &&
+                Object.keys(touched).length > 0 && (
+                  <Alert
+                    type="error"
+                    message="Validation Errors"
+                    description={
+                      <ul className="mb-0">
+                        {Object.entries(errors).map(([key, value]) => {
+                          const errorKeys = Object.keys(value || {});
+                          return errorKeys.map((errorKey) => (
+                            <li key={`${key}-${errorKey}`}>
+                              {`${getFieldTitle(key, values, "leaveType")}: ${
+                                typeof value[errorKey] === "string"
+                                  ? value[errorKey]
+                                  : Object.values(value[errorKey])[0]
+                              }`}
+                            </li>
+                          ));
+                        })}
+                      </ul>
+                    }
+                    className="mb-4"
+                    showIcon
+                  />
+                )}
 
               <AntDynamicTable
                 columns={tableFields}

@@ -141,12 +141,6 @@ function Options(props) {
 
     Risk = cLocation.startsWith("/user/risk-profile");
 
-    if (
-      ["/user/SMSF", "/user/family-trust", "Goals-And-Objectives"].includes(
-        cLocation
-      )
-    )
-      Opt = "Opt2";
     if (Risk) Opt = "Opt3";
 
     setOptRender(Opt);
@@ -154,11 +148,7 @@ function Options(props) {
 
     const { itemsOpt, itemsQuestion } = content;
     const itemsToRender =
-      Opt === "Opt3"
-        ? itemsQuestion
-        : Opt === "Opt1"
-        ? itemsOpt.slice(0, 7)
-        : itemsOpt.slice(7, 14);
+      Opt === "Opt3" ? itemsQuestion : itemsOpt.slice(0, 14);
 
     const conditionCheck = Opt === "Opt3" ? true : CRObject;
 

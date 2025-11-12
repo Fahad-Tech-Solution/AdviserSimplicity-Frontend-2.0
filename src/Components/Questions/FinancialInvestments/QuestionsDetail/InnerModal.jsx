@@ -115,6 +115,7 @@ const InnerModal = (props) => {
     "Reduced Salary Income",
     "Salary Packaging Car",
     "Accumulation Details",
+    "Salary Detail",
     "Salary Packaging",
   ]; // Add other titles that should use "xl" here
 
@@ -138,7 +139,6 @@ const InnerModal = (props) => {
     "SMSF Accumulation Details",
     "Accumulations Benefits",
     "Pension Benefits",
-    "Salary Detail",
     "SMSF Platform Investments Detail",
     "Loan Balance",
     "Concessional Contributions",

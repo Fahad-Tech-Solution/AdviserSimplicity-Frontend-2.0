@@ -338,7 +338,7 @@ const AustralianShares = (props) => {
                     onBlur={handleBlur}
                     getPopupContainer={(triggerNode) => triggerNode.parentNode}
                   >
-                    {Array.from({ length: 20 }, (_, i) => (
+                    {Array.from({ length: 50 }, (_, i) => (
                       <Option key={i} value={i + 1}>
                         {i + 1}
                       </Option>

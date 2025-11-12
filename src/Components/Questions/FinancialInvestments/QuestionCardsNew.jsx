@@ -212,7 +212,6 @@ const questionConfig = {
       component: <OwnFamilyHome />,
       // clientOnly: true,
       Labels: ["Total Market Value", "Loan Amount"],
-
     },
     {
       title: "Car",
@@ -231,7 +230,6 @@ const questionConfig = {
       DrawerWidth: "60%",
       Drawerheight: 200,
       Labels: ["Joint"],
-
     },
     {
       title: "Boat",
@@ -243,7 +241,6 @@ const questionConfig = {
       DrawerWidth: "60%",
       Drawerheight: 200,
       Labels: ["Joint"],
-
     },
     {
       title: "Caravan",
@@ -255,7 +252,6 @@ const questionConfig = {
       DrawerWidth: "60%",
       Drawerheight: 200,
       Labels: ["Joint"],
-
     },
     {
       title: "Other Assets",
@@ -267,7 +263,6 @@ const questionConfig = {
       DrawerWidth: "60%",
       Drawerheight: 200,
       Labels: ["Joint"],
-
     },
     // {
     //   title: "Other Assets",
@@ -847,52 +842,50 @@ const QuestionCard = (props) => {
   //     </div>
   //   </>
   // );
-const renderCase4 = () => {
-  const jointOnlyTitles = ["Contents", "Boat", "Caravan", "Other Assets"];
-  const isJointOnly = jointOnlyTitles.includes(title);
+  const renderCase4 = () => {
+    const jointOnlyTitles = ["Contents", "Boat", "Caravan", "Other Assets"];
+    const isJointOnly = jointOnlyTitles.includes(title);
 
-  return (
-    <>
-      <div className="text-center mb-3">
-        <img src={img} alt={title} width={70} height={70} />
-      </div>
+    return (
+      <>
+        <div className="text-center mb-3">
+          <img src={img} alt={title} width={70} height={70} />
+        </div>
 
-      <div className="d-flex flex-column align-items-center justify-content-center">
-        <button
-          className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
-          onClick={() =>
-            onOpen(
-              title,
-              keyName,
-              component,
-              isJointOnly ? "joint" : undefined,
-              props.api
-            )
-          }
-          style={{ width: 28, height: 28, padding: 0 }}
-        >
-          <FaArrowUpRightFromSquare size={14} />
-        </button>
-      </div>
+        <div className="d-flex flex-column align-items-center justify-content-center">
+          <button
+            className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
+            onClick={() =>
+              onOpen(
+                title,
+                keyName,
+                component,
+                isJointOnly ? "joint" : undefined,
+                props.api
+              )
+            }
+            style={{ width: 28, height: 28, padding: 0 }}
+          >
+            <FaArrowUpRightFromSquare size={14} />
+          </button>
+        </div>
 
-      {/* ✅ Show correct owner name */}
-      <div className="text-center mb-2">
-        {isJointOnly ? "Joint" : `${clientName} & ${partnerName}`}
-      </div>
+        {/* ✅ Show correct owner name */}
+        <div className="text-center mb-2">
+          {isJointOnly ? "Joint" : `${clientName} & ${partnerName}`}
+        </div>
 
-      <div className="d-flex align-item-center justify-content-center">
-        <input
-          className="form-control inputDesign text-center"
-          value={jointValue || clientValue || "$0"}
-          readOnly
-          placeholder={title}
-        />
-      </div>
-    </>
-  );
-};
-
-
+        <div className="d-flex align-item-center justify-content-center">
+          <input
+            className="form-control inputDesign text-center"
+            value={jointValue || clientValue || "$0"}
+            readOnly
+            placeholder={title}
+          />
+        </div>
+      </>
+    );
+  };
 
   const renderVariant = {
     case1: renderCase1,
@@ -903,7 +896,10 @@ const renderCase4 = () => {
 
   return (
     <div className={`${evenClass ? "col-md-3" : "col-md-4"} mb-4`}>
-      <div className="card shadow px-4 py-4 h-100 borderOverAll GoalsobjectiveCard rounded-4">
+      <div
+        className="card shadow px-4 py-4 borderOverAll GoalsobjectiveCard rounded-4"
+        style={{ minHeight: "50vh" }}
+      >
         <h5
           className="text-center fw-bold mb-3"
           onClick={() => {

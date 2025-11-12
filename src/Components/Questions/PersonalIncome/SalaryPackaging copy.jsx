@@ -1,50 +1,41 @@
 import { Field, Form, Formik } from "formik";
 import React, { useEffect, useMemo } from "react";
-import { ConfigProvider, Alert } from "antd";
+import { ConfigProvider } from "antd";
 import { useRecoilValue } from "recoil";
-import * as Yup from "yup"; // ✅ Yup for validation
 import { defaultUrl } from "../../../Store/Store";
+import { toCommaAndDollar } from "../../Assets/Api/Api";
 import DynamicYesNo from "../FinancialInvestments/QuestionsDetail/DynamicYesNo";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
-// ✅ Validation schema
-const validationSchema = Yup.object({
-  employerFBTStatus: Yup.string().required("Employer FBT Status is required"),
-  creditCardMortgageRepayments: Yup.string()
-    .typeError("Credit Card/Mortgage Repayments must be a number")
-    .required("Credit Card/Mortgage Repayments is required"),
-  costBaseOfCar: Yup.string()
-    .typeError("Cost Base of Car must be a number")
-    .required("Cost Base of Car is required"),
-  FBTPaidByEmployer: Yup.string()
-    .oneOf(["Yes", "No"], "Invalid option")
-    .required("FBT Paid By Employer is required"),
-  runningCostsOfCar: Yup.string()
-    .typeError("Running Costs of Car must be a number")
-    .required("Running Costs of Car is required"),
-});
-
 const SalaryPackaging = (props) => {
   const { key, parentValues, parentKey } = props.modalObject;
-  const DefaultUrl = useRecoilValue(defaultUrl);
 
-  // ✅ Fill initial values dynamically
   const fillInitialValues = (setFieldValue) => {
-    const data =
-      parentValues?.[`${parentKey.replace(".", "")}`]?.[`${key}Modal`] || {};
-    if (Object.keys(data).length > 0) {
-      setFieldValue("employerFBTStatus", data.employerFBTStatus || "");
+    // if (parentValues._id && parentValues?.key) {
+    // console.log(JSON.stringify(parentValues));
+    if (
+      parentValues?.[`${parentKey.replace(".", "")}`]?.[`${key}Modal`] &&
+      Object.keys(
+        parentValues?.[`${parentKey.replace(".", "")}`]?.[`${key}Modal`]
+      ).length > 0
+    ) {
+      let Data = parentValues[`${parentKey.replace(".", "")}`][`${key}Modal`];
+      console.log("incondition", JSON.stringify(Data));
+
+      setFieldValue("employerFBTStatus", Data.employerFBTStatus);
       setFieldValue(
         "creditCardMortgageRepayments",
-        data.creditCardMortgageRepayments || ""
+        Data.creditCardMortgageRepayments
       );
-      setFieldValue("costBaseOfCar", data.costBaseOfCar || "");
-      setFieldValue("FBTPaidByEmployer", data.FBTPaidByEmployer || "");
-      setFieldValue("runningCostsOfCar", data.runningCostsOfCar || "");
+      setFieldValue("costBaseOfCar", Data.costBaseOfCar);
+      setFieldValue("FBTPaidByEmployer", Data.FBTPaidByEmployer);
+      setFieldValue("runningCostsOfCar", Data.runningCostsOfCar);
     } else {
       props.setIsEditing(!props.isEditing);
     }
   };
+
+  const DefaultUrl = useRecoilValue(defaultUrl);
 
   // ✅ Submit handler
   const onSubmit = async (values) => {
@@ -81,7 +72,6 @@ const SalaryPackaging = (props) => {
         { value: "Exempt (30K Cap)", label: "Exempt (30K Cap)" },
         { value: "Rebatable", label: "Rebatable" },
       ],
-      CheckError: true, // ✅ include to show validation
     },
     {
       key: "creditCardMortgageRepayments",
@@ -90,7 +80,6 @@ const SalaryPackaging = (props) => {
       title: "Credit Card/Mortgage Repayments",
       placeholder: "Enter amount",
       width: 100,
-      CheckError: true,
     },
     {
       key: "costBaseOfCar",
@@ -98,15 +87,13 @@ const SalaryPackaging = (props) => {
       type: "number-toComma",
       title: "Cost Base of Car",
       placeholder: "Enter cost",
-      CheckError: true,
     },
     {
       key: "FBTPaidByEmployer",
       dataIndex: "FBTPaidByEmployer",
-      type: "yesno",
+      type: "yesno", 
       title: "FBT Paid By Employer",
       width: 100,
-      CheckError: true,
       render: (_, record) => (
         <DynamicYesNo
           name="FBTPaidByEmployer"
@@ -124,38 +111,39 @@ const SalaryPackaging = (props) => {
       type: "number-toComma",
       title: "Running Costs of Car",
       placeholder: "Enter costs",
-      CheckError: true,
     },
   ];
 
+  // ✅ Initialize AntD DynamicTable
   const AntDynamicTable = DynamicTableForInputsSection("antd");
 
   return (
     <Formik
-      initialValues={{
-        employerFBTStatus: "",
-        creditCardMortgageRepayments: "",
-        costBaseOfCar: "",
-        FBTPaidByEmployer: "",
-        runningCostsOfCar: "",
-      }}
-      validationSchema={validationSchema} // ✅ Yup validation
+      initialValues={{}} // ✅ derived from parent
       onSubmit={onSubmit}
-      enableReinitialize
+      enableReinitialize // ✅ important: updates form values on edit
       innerRef={props.formRef}
-      validateOnMount={false}
     >
-      {({
-        values,
-        handleChange,
-        setFieldValue,
-        handleBlur,
-        errors,
-        touched,
-      }) => {
+      {({ values, handleChange, setFieldValue, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
-        }, [parentValues]);
+        }, [values.NumberOfMap]);
+
+        const tableData = useMemo(() => {
+          const rows = [];
+
+          rows.push({
+            key: "client",
+            employerFBTStatus: values?.employerFBTStatus || "--",
+            creditCardMortgageRepayments:
+              values?.creditCardMortgageRepayments || "",
+            costBaseOfCar: values?.costBaseOfCar || "",
+            FBTPaidByEmployer: values?.FBTPaidByEmployer || "",
+            runningCostsOfCar: values?.runningCostsOfCar || "",
+          });
+
+          return rows;
+        }, [values]);
 
         return (
           <Form>
@@ -170,24 +158,6 @@ const SalaryPackaging = (props) => {
                 },
               }}
             >
-              {/* ✅ Validation Alert */}
-              {Object.keys(errors).length > 0 &&
-                Object.keys(touched).length > 0 && (
-                  <Alert
-                    type="error"
-                    message="Validation Errors"
-                    description={
-                      <ul className="mb-0">
-                        {Object.entries(errors).map(([field, msg]) => (
-                          <li key={field}>{msg}</li>
-                        ))}
-                      </ul>
-                    }
-                    className="mb-4"
-                    showIcon
-                  />
-                )}
-
               <AntDynamicTable
                 columns={tableFields}
                 data={[
@@ -208,8 +178,6 @@ const SalaryPackaging = (props) => {
                 handleSubmit={props?.handleOk}
                 isEditing={props?.isEditing}
                 setIsEditing={props?.setIsEditing}
-                errors={errors}
-                touched={touched}
               />
             </ConfigProvider>
           </Form>

@@ -116,7 +116,7 @@ const GoalsObjectivesQuestions = (props) => {
 
             return (
               <Form>
-                <div className="col-md-12 text-center">
+                <div className="col-md-12">
                   <div className="d-flex flex-row justify-content-center align-items-center gap-2 my-3">
                     <label htmlFor="" className="">
                       Scope of Advice :
@@ -131,7 +131,7 @@ const GoalsObjectivesQuestions = (props) => {
                     </div>
                   </div>
 
-                  <Row className="justify-content-center">
+                  <Row className="justify-content-center text-center">
                     {Object.entries(props.modalObject.allGoals).map(
                       ([category, goals]) => {
                         return (

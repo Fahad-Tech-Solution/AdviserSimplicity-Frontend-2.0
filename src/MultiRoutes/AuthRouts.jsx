@@ -24,7 +24,7 @@ import RiskProfileNew from "../Components/RiskProfile/RiskProfileNew";
 import PersonalInsuranceLife from "../Components/Questions/PersonalInsurance/LifeInsurance";
 import CDFclients from "../Components/CDFclients/CDFclients";
 import ProfileTemp from "../Components/Assets/ProfileSection/ProfileTemp";
-// import MyTeam from "../Components/SuperAdminComponent/myTeam";
+import MyTeam from "../Components/SuperAdminComponent/MyTeam";
 
 import { Header } from "antd/es/layout/layout";
 import { BankDetail, defaultUrl, Employees, Roles } from "../Store/Store";
@@ -146,7 +146,7 @@ function AuthRouts() {
     { path: "/risk-profile/*", element: () => <RiskProfileNew /> },
     { path: "/CDF-prospects", element: () => <CDFclients /> },
     { path: "/profile", element: () => <ProfileTemp /> },
-    // { path: "/my-team", element: () => <MyTeam /> },
+    { path: "/my-team", element: () => <MyTeam /> },
   ];
 
   const [role, setRoles] = useRecoilState(Roles);

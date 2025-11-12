@@ -23,8 +23,10 @@ import InnerModal from "./InnerModal";
 import InvestmentPropertyLoan from "./InvestmentPropertyLoan";
 import QuestionIncomeExpanse from "./QuestionIncomeExpanse";
 import { FaRegBuilding } from "react-icons/fa6";
+import { ConfigProvider, Select } from "antd";
 
 const AntDTableHOC = DynamicTableForInputsSection("antd");
+const { Option } = Select;
 
 const InvestmentPropertyDetails = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
@@ -471,20 +473,37 @@ const InvestmentPropertyDetails = (props) => {
                     </div> */}
 
                     <div style={{ minWidth: "10%" }}>
-                      <select
-                        id="NumberOfMap"
-                        name="NumberOfMap"
-                        className="form-select inputDesignDoubleInput"
-                        onChange={(e) => handleInput(e, setFieldValue)}
-                        value={values.NumberOfMap}
+                      <ConfigProvider
+                        theme={{
+                          components: {
+                            Select: {
+                              colorBorder: "#36b446",
+                            },
+                          },
+                        }}
                       >
-                        <option value="">Select</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                      </select>
+                        <Select
+                          id="NumberOfMap"
+                          name="NumberOfMap"
+                          className="w-100 h-100"
+                          placeholder="Select"
+                          size="large"
+                          value={values.NumberOfMap || undefined}
+                          onChange={(value) => {
+                            handleInput({ target: { value } }, setFieldValue);
+                          }}
+                          onBlur={handleBlur}
+                          getPopupContainer={(triggerNode) =>
+                            triggerNode.parentNode
+                          }
+                        >
+                          {Array.from({ length: 10 }, (_, i) => (
+                            <Option key={i} value={i + 1}>
+                              {i + 1}
+                            </Option>
+                          ))}
+                        </Select>
+                      </ConfigProvider>
                     </div>
                   </div>
 
