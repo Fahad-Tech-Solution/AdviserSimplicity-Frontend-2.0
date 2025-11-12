@@ -7,6 +7,7 @@ import { Card, InputGroup } from "react-bootstrap";
 
 // // import BankImg from "../Questions/svgs/bank.svg";
 // import nursingcare from "../Questions/svgs/nursingcare.svg";
+import Tax_Rate from "../Questions/svgs/Tax_Rate.png";
 import lumpsum from "../Questions/svgs/lumpsum.png";
 import CareforAgeingFamilyMember from "../Questions/svgs/CareforAgeingFamilyMember.png";
 import bill from "../Questions/svgs/bill.png";
@@ -120,9 +121,8 @@ const GoalsObjectiveNew = () => {
           {
             text: "<span>I/We</span> would like to know what to do with the leftover funds now sitting in <span>our/my</span> mum/dads bank account from the sale of their home, as they have now moved into aged care. They currently have around $X,000 in cash, and <span>we/I</span> are looking to invest approximately $X,000 to help generate a steady income stream. Ideally, <span>we/I</span> are seeking an option that offers a reliable or guaranteed return, if possible, to assist with funding Mum's/Dad's ongoing aged care fees. Given the purpose is to support care costs over the long term, <span>we/I</span> would prefer a low-risk investment that provides stability and certainty around both income and capital.",
           },
-        ]
+        ],
       },
-
     ],
     Cashflow: [
       {
@@ -147,7 +147,7 @@ const GoalsObjectiveNew = () => {
         descriptionArray: [
           {
             text: "<span>I/We</span> would like to build an emergency fund to provide a financial safety net for unexpected expenses. <span>I/We</span> want to gradually save enough to cover at least three to six months of living expenses, ensuring <span>we/I</span> have peace of mind knowing funds are available if needed. <span>I/We</span> would like guidance on how much to aim for and the best place to keep these savings while still earning a reasonable return.",
-          }
+          },
         ],
         scopeOfAdvice: "Cashflow",
       },
@@ -160,7 +160,7 @@ const GoalsObjectiveNew = () => {
         descriptionArray: [
           {
             text: "<span>I/We</span> would like advice on how to make the most of <span>our/my</span> surplus income. <span>I/We</span> want to understand the best way to use this extra money whether to save, invest, contribute more to super, or reduce debt in a way that aligns with <span>our/my</span> short and long-term goals. <span>I/We</span> would like guidance on creating a clear strategy that helps improve <span>our/my</span> overall financial position while maintaining flexibility for lifestyle needs. <span>I/We</span> currently have around $X,000 of surplus funds each week/fortnight/month to work with. ",
-          }
+          },
         ],
         scopeOfAdvice: "Cashflow",
       },
@@ -251,7 +251,7 @@ const GoalsObjectiveNew = () => {
         descriptionArray: [
           {
             text: "<span>I/We</span> would like to upgrade <span>our/my</span> current family home to better suit <span>our/my</span> lifestyle and future needs. <span>I/We</span> are looking for a property that offers more space, comfort, or improved location for <span>our/my</span> family. <span>I/We</span> would like guidance on how much <span>we/I</span> can afford to spend and how this will affect <span>our/my</span> cashflow. <span>We/I</span> also want to know if <span>we/I</span> can also afford to keep <span>our/my</span> current home and rent it out. ",
-          }
+          },
         ],
         scopeOfAdvice: "Cashflow",
       },
@@ -368,6 +368,19 @@ const GoalsObjectiveNew = () => {
         descriptionArray: [],
         scopeOfAdvice: "Estate Planning",
       },
+      {
+        title: "Reduce Tax to my Beneficiaries",
+        key: "reduceTaxBeneficiaries",
+        img: Tax_Rate,
+        modalBtn: "label",
+        whenScopeIs: "Estate Planning",
+        descriptionArray: [
+          {
+            text: "<span>I/We</span> would like to make sure that <span>our/my</span> superannuation money is structured in a way that reduces the amount of tax payable by <span>our/my</span> beneficiaries/<span>my</span> kids when <span>we/I</span> pass away. <span>I/We</span> want to understand what can be done to ensure more of <span>our/my</span> super money is passed to them, rather than being lost to unnecessary tax.",
+          },
+        ],
+        scopeOfAdvice: "Estate Planning",
+      },
     ],
     Investment: [
       {
@@ -392,7 +405,7 @@ const GoalsObjectiveNew = () => {
         descriptionArray: [
           {
             text: "<span>I/We/Client Name</span> would like to review <span>our/my/his/her</span> current investment portfolio to ensure it remains aligned with <span>our/my/his/her</span> goals, timeframes, and comfort with risk. <span>I/We/Client Name</span> want to make sure <span>our/my/his/her</span> investments are well diversified and positioned to achieve long-term growth while balancing risk appropriately. <span>I/We/Client Name</span> would also like guidance on whether any changes are needed to help <span>us/me/him/her</span> reduce <span>our/my/his/her</span> goals.",
-          }
+          },
         ],
         scopeOfAdvice: "Investment",
       },
@@ -409,7 +422,7 @@ const GoalsObjectiveNew = () => {
           },
           {
             text: "<span>I/We</span> would like to understand how receiving an inheritance will affect <span>our/my</span> Centrelink entitlements. <span>I/We</span> want to know whether this money will impact any current Centrelink payments. <span>I/We</span> would like advice on the best way to manage the inheritance to minimise any reduction in payments if possible.",
-          }
+          },
         ],
       },
       {
@@ -448,7 +461,7 @@ const GoalsObjectiveNew = () => {
         descriptionArray: [
           {
             text: "<span>I/We</span> would like to set up a regular savings plan to help build <span>our/my</span> savings over time. <span>I/We</span> want to put aside a set amount each week/fortnight/month to create a habit of saving and work towards future goals such as travel, a new home, or general financial security. <span>I/We</span> are looking for a simple and consistent approach that helps grow <span>our/my</span> savings while keeping the funds flexible and accessible if needed.",
-          }
+          },
         ],
       },
       {
@@ -591,10 +604,8 @@ const GoalsObjectiveNew = () => {
             text: "<span>I/We</span> would like to be able to receive an amount of <span>$X,000 per week/fortnight/month</span> for <span>us/me</span> to be comfortable in <span>our/my</span> retirement and live the way <span>I/we</span> want to. This amount will allow <span>us/me</span> to maintain <span>our/my</span> current lifestyle, cover regular living costs, <span>and have the freedom to enjoy activities such as travel, dining out, or spending time with family and friends</span>. The goal is to create a steady and reliable income that provides peace of mind and supports the lifestyle <span>we/I</span> value most throughout retirement. As part of this <span>I/we</span> want to know how long our money will last us.",
           },
           {
-
             text: "<span>I/We</span> would like to plan for <span>our/my</span> retirement to ensure <span>we/I</span> have enough income to live comfortably and enjoy the lifestyle <span>we/I</span> want. <span>I/We</span> would like to be able to receive an income of <span>$X,000 per week/fortnight/month</span> for <span>us/me</span> to be comfortable in <span>our/my</span> retirement and live the way <span>I/we</span> want to. This amount will allow <span>us/me</span> to maintain <span>our/my</span> current lifestyle, cover regular living costs, and have the freedom to enjoy activities such as travel, dining out, or spending time with family and friends. <span>I/We</span> want to understand how much will be needed to retire, how long <span>our/my</span> money will last, and what steps can be taken now to achieve this.",
           },
-
         ],
         scopeOfAdvice: "Retirement Planning",
       },
@@ -655,10 +666,8 @@ const GoalsObjectiveNew = () => {
             text: "<span>I/We/Client Name</span> would like to review <span>our/my/his/her</span> current super to make sure it remains suitable for <span>our/my/his/her</span> needs. <span>I/We/Client Name</span> are looking for a product that offers better features, ease of use, and flexibility in managing <span>our/my/his/her</span> super. <span>I/We/Client Name</span> want to ensure <span>our/my/his/her</span> super is invested in a way that matches <span>our/my/his/her</span> goals and comfort with risk. Although cost is a consideration, it is not the underlying factor in this review.",
           },
           {
-            text: "<span>I/We/Client Name</span> would like to review <span>our/my/his/her</span> super to make sure it still suits <span>our/my/his/her</span> needs and is on track to support <span>our/my/his/her</span> retirement plans. <span>I/We/Client Name</span> are looking for a super fund that is easy to use, flexible, and offers the right options to help <span>us/me/him/her</span> prepare for retirement. <span>I/We/Client Name</span> want to ensure <span>our/my/his/her</span> super is invested in a way that matches <span>our/my/his/her</span> goals and comfort with risk. Although cost is a consideration, it is not the underlying factor in this review."
+            text: "<span>I/We/Client Name</span> would like to review <span>our/my/his/her</span> super to make sure it still suits <span>our/my/his/her</span> needs and is on track to support <span>our/my/his/her</span> retirement plans. <span>I/We/Client Name</span> are looking for a super fund that is easy to use, flexible, and offers the right options to help <span>us/me/him/her</span> prepare for retirement. <span>I/We/Client Name</span> want to ensure <span>our/my/his/her</span> super is invested in a way that matches <span>our/my/his/her</span> goals and comfort with risk. Although cost is a consideration, it is not the underlying factor in this review.",
           },
-
-
         ],
         scopeOfAdvice: "Superannuation",
       },
@@ -696,8 +705,7 @@ const GoalsObjectiveNew = () => {
           },
           {
             text: " <span>I/We/Client Name</span> would like to build up <span>our/my/his/her</span> super as much as possible before <span>I/We/Client Name</span> retire so that <span>we/I/he/she</span> have more money for retirement. <span>I/We/Client Name</span> plan to make regular after-tax contributions of around <span>$X,000</span> per month to help grow <span>our/my/his/her</span> super balance over time. (Regular Non-Concessional)",
-          }
-
+          },
         ],
         scopeOfAdvice: "Superannuation",
       },
@@ -713,19 +721,6 @@ const GoalsObjectiveNew = () => {
           },
         ],
         scopeOfAdvice: "Superannuation",
-      },
-      {
-        title: "Reduce Tax to my Beneficiaries ",
-        key: "reduceTaxBeneficiaries ",
-        img: lumpsum,
-        modalBtn: "label",
-        whenScopeIs: "Investments",
-        descriptionArray: [
-          {
-            text: "<span>I/We</span> would like to make sure that <span>our/my</span> superannuation money is structured in a way that reduces the amount of tax payable by <span>our/my</span> beneficiaries/<span>my</span> kids when <span>we/I</span> pass away. <span>I/We</span> want to understand what can be done to ensure more of <span>our/my</span> super money is passed to them, rather than being lost to unnecessary tax.",
-          }
-        ],
-        scopeOfAdvice: "Investments ",
       },
     ],
   };
@@ -863,17 +858,11 @@ const GoalsObjectiveNew = () => {
                   const numberOfYes = yesKeys.length;
                   const isEvenNumberOfYes = numberOfYes % 2 === 0;
 
-                  // (optional) expose values for layout decisions
-                  console.log(
-                    "Goals with Yes:",
-                    numberOfYes,
-                    "isEven:",
-                    isEvenNumberOfYes
-                  );
-
                   return (
                     <div
-                      className={`${isEvenNumberOfYes ? "col-md-3" : "col-md-4"}  mb-4`}
+                      className={`${
+                        isEvenNumberOfYes ? "col-md-3" : "col-md-4"
+                      }  mb-4`}
                       key={index}
                     >
                       <Card
@@ -922,7 +911,7 @@ const GoalsObjectiveNew = () => {
                             estimatedValue: "",
                             description: "",
                           }}
-                          onSubmit={() => { }}
+                          onSubmit={() => {}}
                           enableReinitialize
                         >
                           {({ values, setFieldValue }) => {
@@ -993,8 +982,9 @@ const GoalsObjectiveNew = () => {
                                     readOnly
                                     value={
                                       goalsDetail[goal.key]?.estimatedValue
-                                        ? `${goalsDetail[goal.key].estimatedValue
-                                        }`
+                                        ? `${
+                                            goalsDetail[goal.key].estimatedValue
+                                          }`
                                         : ""
                                     }
                                   />

@@ -124,7 +124,7 @@ const GoalsForm = (props) => {
   };
 
   const initialValues = {
-    scopeOfAdvice: "",
+    scopeOfAdvice: props.modalObject.scopeOfAdvice.trim() || "",
     when: "",
     estimatedValue: "",
     description: "",
@@ -132,7 +132,12 @@ const GoalsForm = (props) => {
 
   const fillInitialValues = (setFieldValue) => {
     if (CurrentGoalData && CurrentGoalData.clientFK) {
-      setFieldValue("scopeOfAdvice", CurrentGoalData.scopeOfAdvice || "");
+      setFieldValue(
+        "scopeOfAdvice",
+        CurrentGoalData.scopeOfAdvice ||
+          props.modalObject.scopeOfAdvice.trim() ||
+          ""
+      );
       setFieldValue("when", CurrentGoalData.when || "");
       setFieldValue("estimatedValue", CurrentGoalData.estimatedValue || "");
       setFieldValue("description", CurrentGoalData.description || "");
