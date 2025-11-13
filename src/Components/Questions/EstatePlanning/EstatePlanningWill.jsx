@@ -327,6 +327,7 @@ const EstatePlanningWill = (props) => {
                 setFieldValue={setFieldValue}
                 setFlagState={setFlagState}
                 flagState={flagState}
+                setIsEditing={props.setIsEditing}
               >
                 {modalObject.key === "executor" ||
                 modalObject.key === "estatePlanning" ? (

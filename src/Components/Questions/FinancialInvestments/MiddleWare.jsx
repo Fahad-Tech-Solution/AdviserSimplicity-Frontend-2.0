@@ -50,7 +50,7 @@ const MiddleWare = (props) => {
     "Account Based Pension",
     "Annuities",
     "Business as Company Structure",
-    "Business as Trusts",
+    "Business as Trusts Structure",
   ];
   const clientPartnerOnly = clientPartnerArray.includes(
     props.modalObject.title
@@ -84,7 +84,7 @@ const MiddleWare = (props) => {
     "Account Based Pension Detail": <AccountBasedPension />,
     "Annuities Detail": <InvestedAnnuities />,
     "Business as Company Structure Detail": <TradingCompany />,
-    "Business as Trusts Detail": <TradingTrust />,
+    "Business as Trusts Structure Detail": <TradingTrust />,
     "SMSF Bank Accounts Detail": <BankTermForm />,
     "SMSF Term Deposits Detail": <BankTermForm />,
     "SMSF Australian Shares/ETFs Detail": <AustralianShares />,
@@ -358,11 +358,17 @@ const MiddleWare = (props) => {
     };
 
     const currentBalanceCol = {
-      title: LabelPortfolio ? "Portfolio Value" : "Current Balance",
+      title: LabelPortfolio
+        ? "Portfolio Value"
+        : props.modalObject.key == "BusinessAsCompanyStructure"
+        ? "Equity Value"
+        : props.modalObject.key == "BusinessAsTrusts"
+        ? "Business Value"
+        : "Current Balance",
       dataIndex: "currentBalance",
       key: "currentBalance",
       type: "number-toComma-Modal",
-      placeholder: "Current Balance",
+      placeholder: LabelPortfolio ? "Portfolio Value" : "Current Balance",
       callBackModal: true,
       callBack: true,
       func: OpenInnerModal,
@@ -443,6 +449,7 @@ const MiddleWare = (props) => {
                   setFieldValue={setFieldValue}
                   setFlagState={setFlagState}
                   flagState={flagState}
+                  setIsEditing={props.setIsEditing}
                 >
                   {ModalContent(modalObject)}
                 </InnerModal>

@@ -754,8 +754,9 @@ const DynamicFormField = ({
 
     case "selectModal":
       const currentValue = stakeHolder
-        ? values?.[stakeHolder.slice(0, -1)]?.[name]
+        ? getNestedValue(values, `${stakeHolder}${name}`)
         : values?.[name];
+
 
       const showModalButton = Array.isArray(all.ModalOption)
         ? all.ModalOption.includes(currentValue)

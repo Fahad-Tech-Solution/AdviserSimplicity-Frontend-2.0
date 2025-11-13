@@ -343,6 +343,7 @@ const SuperFunds = (props) => {
               setFieldValue={setFieldValue}
               setFlagState={setFlagState}
               flagState={flagState}
+              setIsEditing={props.setIsEditing}
             >
               {ModalContent(modalObject)}
             </InnerModal>

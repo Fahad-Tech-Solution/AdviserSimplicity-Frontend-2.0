@@ -197,12 +197,7 @@ const GroupInsurance = (props) => {
 
         return (
           <Form>
-            <InnerModal
-              modalObject={modalObject}
-              setFieldValue={setFieldValue}
-              setFlagState={setFlagState}
-              flagState={flagState}
-            />
+       
 
             <div className="mt-4 All_Client reportSection">
               <AntdTable

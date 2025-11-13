@@ -257,24 +257,7 @@ const FamilyTrustBankAccount = (props) => {
               >
                 {/* Modal content can be added here */}
               </InnerModal>
-              {/*
-              <div className="col-md-12">
-                <div className="d-flex justify-content-center align-items-center gap-4">
-                  <label htmlFor="" className="text-end ">
-                    Owner
-                  </label>
-
-                  <div style={{ minWidth: "25%" }}>
-                    <Field
-                      name={`owner`}
-                      component={CreatableMultiSelectField}
-                      label="Multi Select Field"
-                      options={options}
-                    />
-                  </div>
-                </div>
-              </div>
-         */}
+             
 
               {values.owner.length > 0 && (
                 <div className="mt-4">

@@ -25,9 +25,10 @@ const InnerModal = (props) => {
   let [cashFlowDownloading, setCashFlowDownloading] =
     useRecoilState(CashFlowDownloading);
 
-  const handleOk = () => {
+  const handleOk = async () => {
     if (formRef.current) {
-      formRef.current.handleSubmit(); // Trigger Formik's handleSubmit
+      let submit = await formRef.current.handleSubmit(); // Trigger Formik's handleSubmit
+      props.setIsEditing(true);
       setProgress(0);
       setCashFlowReCalculateLoading(false);
       setCashFlowDownloading(false);
@@ -126,6 +127,7 @@ const InnerModal = (props) => {
     "sumInsured",
     "beneficiaries",
     "totalCostBase",
+    "BusinessAsTrusts",
   ]; // Add other titles that should use "xl" here
 
   let fullTitles = [
@@ -289,7 +291,7 @@ const InnerModal = (props) => {
               style={{ width: "12.5%", minWidth: "fit-content" }}
               onClick={handleOk}
             >
-              Save & Exit
+              Proceed & Exit
             </button>
           )}
         </Modal.Footer>

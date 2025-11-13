@@ -285,6 +285,7 @@ const EstatePlanningPOA = (props) => {
                 setFieldValue={setFieldValue}
                 setFlagState={setFlagState}
                 flagState={flagState}
+                setIsEditing={props.setIsEditing}
               >
                 {modalObject.key === "POAName" ? <Executor /> : null}
               </InnerModal>

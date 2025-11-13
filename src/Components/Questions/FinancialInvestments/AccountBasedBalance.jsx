@@ -269,6 +269,7 @@ const AccountBasedBalance = (props) => {
               setFieldValue={setFieldValue}
               setFlagState={setFlagState}
               flagState={flagState}
+              setIsEditing={props.setIsEditing}
             >
               <PortfolioValue />
             </InnerModal>

@@ -450,7 +450,7 @@ const questionConfig = {
       component: <MiddleWare />,
     },
     {
-      title: "Business as Trusts",
+      title: "Business as Trusts Structure",
       keyName: "BusinessAsTrusts",
       img: businessIncomePng,
       component: <MiddleWare />,
@@ -814,34 +814,6 @@ const QuestionCard = (props) => {
     </>
   );
 
-  // 🧩 CASE 4: Simple one-input
-  // const renderCase4 = () => (
-  //   <>
-  //     <div className="text-center mb-3">
-  //       <img src={img} alt={title} width={70} height={70} />
-  //     </div>
-  //     <div className="d-flex flex-column align-items-center justify-content-center">
-  //       <button
-  //         className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
-  //         onClick={() => onOpen(title, keyName, component, "joint", props.api)}
-  //         style={{ width: 28, height: 28, padding: 0 }}
-  //       >
-  //         <FaArrowUpRightFromSquare size={14} />
-  //       </button>
-  //     </div>
-  //     <div className="text-center mb-2">
-  //       {clientName} & {partnerName}
-  //     </div>
-  //     <div className="d-flex align-item-center justify-content-center">
-  //       <input
-  //         className="form-control inputDesign text-center"
-  //         value={jointValue || clientValue || "$0"}
-  //         readOnly
-  //         placeholder={title}
-  //       />
-  //     </div>
-  //   </>
-  // );
   const renderCase4 = () => {
     const jointOnlyTitles = ["Contents", "Boat", "Caravan", "Other Assets"];
     const isJointOnly = jointOnlyTitles.includes(title);
@@ -898,7 +870,7 @@ const QuestionCard = (props) => {
     <div className={`${evenClass ? "col-md-3" : "col-md-4"} mb-4`}>
       <div
         className="card shadow px-4 py-4 borderOverAll GoalsobjectiveCard rounded-4"
-        style={{ minHeight: "50vh" }}
+        style={{ minHeight: "68vh" }}
       >
         <h5
           className="text-center fw-bold mb-3"

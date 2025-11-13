@@ -278,6 +278,7 @@ const TradingCompany = (props) => {
               setFieldValue={setFieldValue}
               setFlagState={setFlagState}
               flagState={flagState}
+              setIsEditing={props.setIsEditing}
             >
               {ModalContent(modalObject)}
             </InnerModal>
@@ -309,7 +310,7 @@ const TradingCompany = (props) => {
                     onBlur={handleBlur}
                     getPopupContainer={(triggerNode) => triggerNode.parentNode}
                   >
-                    {Array.from({ length: 10 }, (_, i) => (
+                    {Array.from({ length: 3 }, (_, i) => (
                       <Option key={i} value={i + 1}>
                         {i + 1}
                       </Option>

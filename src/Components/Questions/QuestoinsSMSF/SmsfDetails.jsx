@@ -66,6 +66,7 @@ const SmsfDetails = (props) => {
       key,
       stakeHolder,
       ParentModal,
+      directorLimit: 6,
     });
     setFlagState(true);
   };
@@ -275,6 +276,7 @@ const SmsfDetails = (props) => {
                     setFieldValue={setFieldValue}
                     setFlagState={setFlagState}
                     flagState={flagState}
+                    setIsEditing={props.setIsEditing}
                   >
                     {modalObject.key === "trusteeType" ? (
                       <InnerDirectors />
