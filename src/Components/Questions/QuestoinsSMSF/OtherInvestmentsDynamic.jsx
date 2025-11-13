@@ -1,22 +1,18 @@
 import { Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
-import { Row, Table } from 'react-bootstrap';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { BankDetail, defaultUrl, QuestionDetail } from '../../../Store/Store';
-import { openNotificationSuccess, PatchAxios, PostAxios, RenderName, toCommaAndDollar } from '../../Assets/Api/Api';
-import axios from 'axios';
-import DynamicTableRow from '../../Assets/Dynamic/DynamicTableRow';
-import { CreatableMultiSelectField } from '../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField';
+import { openNotificationSuccess, PatchAxios, PostAxios, toCommaAndDollar } from '../../Assets/Api/Api';
+import DynamicTableForInputsSection from '../../Assets/Table/DynamicTableForInputsSection';
+
+const AntDTableHOC = DynamicTableForInputsSection("antd");
 
 const OtherInvestmentsDynamic = (props) => {
     let questionDetail = useRecoilValue(QuestionDetail);
     let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
-
     let bankDetailObj = useRecoilValue(BankDetail);
 
-
     let [lenderOption, setLenderOption] = useState(() => {
-
         if (!bankDetailObj?.FinancialInstitutions) return [];
 
         // Create an options array
@@ -26,17 +22,15 @@ const OtherInvestmentsDynamic = (props) => {
         }));
 
         return optionsArray;
-    })
+    });
 
-
-
-    let managedFundsLOC = Object.keys(questionDetail[props.modalObject.index] || {}).length > 0 ? questionDetail[props.modalObject.index] : {
-        client: [],
-        partner: [],
-        joint: [],
-
-    }; // Use an empty object as default if managedFundsLOC is undefined
-
+    let managedFundsLOC = Object.keys(questionDetail[props.modalObject.key] || {}).length > 0 
+        ? questionDetail[props.modalObject.key] 
+        : {
+            client: [],
+            partner: [],
+            joint: [],
+        };
 
     let initialValues = {
         investmentName: "",
@@ -44,13 +38,10 @@ const OtherInvestmentsDynamic = (props) => {
         costBase: "",
     };
 
-
     const fillInitialValues = (setFieldValue) => {
-
         console.log(managedFundsLOC);
 
         if (managedFundsLOC && managedFundsLOC._id) {
-
             // For client-related fields if "client" is included in the owner array
             if (managedFundsLOC && Object.keys(managedFundsLOC).length) {
                 setFieldValue(`investmentName`, managedFundsLOC.investmentName || "");
@@ -60,7 +51,7 @@ const OtherInvestmentsDynamic = (props) => {
         }
     };
 
-    let DefaultUrl = useRecoilValue(defaultUrl)
+    let DefaultUrl = useRecoilValue(defaultUrl);
 
     let onSubmit = async (values) => {
         let obj = values;
@@ -76,15 +67,15 @@ const OtherInvestmentsDynamic = (props) => {
             let res;
             if (!bankAccountArray) {
                 // Make a POST request if no bank account is found
-                res = await PostAxios(`${DefaultUrl}/api/${props.modalObject.index}/Add`, obj);
+                res = await PostAxios(`${DefaultUrl}/api/${props.modalObject.key}/Add`, obj);
             } else {
                 // Make a PATCH request if a bank account is found
-                res = await PatchAxios(`${DefaultUrl}/api/${props.modalObject.index}/Update`, obj);
+                res = await PatchAxios(`${DefaultUrl}/api/${props.modalObject.key}/Update`, obj);
             }
 
             if (res) {
                 console.log(res);
-                const updatedData = { ...questionDetail, [props.modalObject.index]: res };
+                const updatedData = { ...questionDetail, [props.modalObject.key]: res };
                 setQuestionDetail(updatedData);
             }
             openNotificationSuccess("success", "topRight", "Success Notification", `Data of "${props.modalObject.title}" is Saved`);
@@ -99,16 +90,33 @@ const OtherInvestmentsDynamic = (props) => {
         }
     };
 
-    let optionsLender = [
-        { value: "i/only", label: "i/only" },
-        { value: "P&I", label: "P&I" },
-    ]
-
-    const rowConfig = [
-        { name: 'investmentName', type: 'text', placeholder: 'Name of Investment', styleSet: { width: "20rem" }, },
-        { name: 'currentValue', type: 'number-toComma', placeholder: 'Current Value', },
-        { name: 'costBase', type: 'number-toComma', placeholder: 'Cost Base', },
-    ]
+    // Define columns for Ant Design table
+    const columns = [
+        {
+            title: "Name of Investment",
+            dataIndex: "investmentName",
+            key: "investmentName",
+            type: "text",
+            placeholder: "Name of Investment",
+            width: 200,
+        },
+        {
+            title: "Current Value",
+            dataIndex: "currentValue",
+            key: "currentValue",
+            type: "number-toComma",
+            placeholder: "Current Value",
+            width: 150,
+        },
+        {
+            title: "Cost Base",
+            dataIndex: "costBase",
+            key: "costBase",
+            type: "number-toComma",
+            placeholder: "Cost Base",
+            width: 150,
+        },
+    ];
 
     return (
         <Formik
@@ -122,38 +130,35 @@ const OtherInvestmentsDynamic = (props) => {
                     fillInitialValues(setFieldValue);
                 }, []);
 
+                // Prepare table data INSIDE the Formik render function
+                const tableData = [
+                    {
+                        key: "investment",
+                        investmentName: values?.investmentName || "",
+                        currentValue: values?.currentValue || "",
+                        costBase: values?.costBase || "",
+                    },
+                ];
+
                 return (
                     <Form>
-                        <Row>
+                        <div className="row">
                             <div className="col-md-12">
-                                <div className='row justify-content-center'>
-                                    <div className='mt-4'>
-                                        <Table striped bordered responsive hover>
-                                            <thead>
-                                                <tr>
-                                                    <th>Name of Investment</th>
-                                                    <th>Current Value</th>
-                                                    <th>Cost Base</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-
-                                                <DynamicTableRow
-                                                    rowConfig={rowConfig}
-                                                    values={values}
-                                                    setFieldValue={setFieldValue}
-                                                    handleChange={handleChange}
-                                                    handleBlur={handleBlur}
-                                                />
-
-
-                                            </tbody>
-                                        </Table>
-                                    </div>
-
+                                <div className="mt-4 All_Client reportSection">
+                                    <AntDTableHOC
+                                        columns={columns}
+                                        data={tableData}
+                                        values={values}
+                                        setFieldValue={setFieldValue}
+                                        handleChange={handleChange}
+                                        handleBlur={handleBlur}
+                                        handleSubmit={props?.handleOk}
+                                        isEditing={props?.isEditing}
+                                        setIsEditing={props?.setIsEditing}
+                                    />
                                 </div>
                             </div>
-                        </Row>
+                        </div>
                     </Form>
                 );
             }}
