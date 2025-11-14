@@ -282,6 +282,7 @@ const handleOwnershipChange = (values, setFieldValue, thisInput, stackHolder = "
                   setFieldValue={setFieldValue}
                   setFlagState={setFlagState}
                   flagState={flagState}
+                  setIsEditing={props.setIsEditing}
                 >
                   {modalObject.key === "familyHomeLoan" ? (
                     <HomeLoan

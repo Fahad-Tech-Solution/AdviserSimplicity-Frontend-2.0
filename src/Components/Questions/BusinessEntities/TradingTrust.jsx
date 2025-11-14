@@ -2,173 +2,23 @@ import { Formik, Form } from "formik";
 import React, { useEffect, useMemo, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { defaultUrl } from "../../../Store/Store";
-import { 
-  toCommaAndDollar, 
+import {
+  toCommaAndDollar,
   toPercentage,
   handleInputChange,
   handleInputFocus,
   handleInputKeyDown,
-  handleInputBlur
+  handleInputBlur,
 } from "../../Assets/Api/Api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 import { ConfigProvider, Select, Button, Input, Modal } from "antd";
+import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
+import InnerDirectors from "../QuestoinsSMSF/InnerDirectors";
 
 const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
-
-function InnerDirectors(props) {
-  const innerInitialValues = { 
-    NumberOfDirectors: props.modalObject.values?.[`NumberOfDirectors${props.modalObject.index}`] || "" 
-  };
-
-  const handleInnerSubmit = (values) => {
-    const newEntries = [];
-
-    for (let i = 0; i < parseFloat(values.NumberOfDirectors); i++) {
-      const newEntry = {
-        directorName: values[`directorName${i}`] || "",
-      };
-      newEntries.push(newEntry);
-    }
-
-    props.setFieldValue(`NumberOfDirectors${props.modalObject.index}`, parseFloat(values.NumberOfDirectors));
-    props.setFieldValue(`directorsNames${props.modalObject.index}`, newEntries);
-
-    if (props.flagState) {
-      props.setFlagState(false);
-    }
-  };
-
-  const fillInitialValues = (setFieldValue) => {
-    const directors = props.modalObject.values?.[`directorsNames${props.modalObject.index}`] || [];
-    
-    if (directors.length > 0) {
-      directors.forEach((element, index) => {
-        setFieldValue(`directorName${index}`, element.directorName);
-      });
-    }
-  };
-
-  const columns = [
-    {
-      title: "No#",
-      dataIndex: "owner",
-      key: "owner",
-      width: 60,
-    },
-    {
-      title: "Director Name",
-      dataIndex: "directorName",
-      key: "directorName",
-      type: "text",
-      placeholder: "Director Name",
-    },
-  ];
-
-  return (
-    <Modal
-      centered
-      width={600}
-      open={props.flagState}
-      onCancel={() => props.setFlagState(false)}
-      footer={null}
-    >
-      <Formik
-        initialValues={innerInitialValues}
-        onSubmit={handleInnerSubmit}
-        enableReinitialize
-      >
-        {({ values, setFieldValue, handleChange, handleBlur }) => {
-          useEffect(() => {
-            fillInitialValues(setFieldValue);
-          }, []);
-
-          const dataRows = useMemo(() => {
-            const num = Number(values.NumberOfDirectors) || 0;
-            if (num > 0) {
-              return Array.from({ length: num }, (_, i) => ({
-                key: `director.${i}`,
-                owner: i + 1,
-                stakeHolder: `director[${i}]`,
-                directorName: values[`directorName${i}`] || "",
-              }));
-            }
-            return [];
-          }, [values.NumberOfDirectors, values]);
-
-          return (
-            <Form>
-              <Modal.Header>
-                <Modal.Title>Directors</Modal.Title>
-              </Modal.Header>
-              <Modal.Body className="px-4">
-                <div className="d-flex justify-content-center align-items-center gap-4">
-                  <p className="text-end mt-1 pt-2">
-                    How many directors does the Corporate Trustee have:
-                  </p>
-                  <div style={{ minWidth: "20%" }}>
-                    <ConfigProvider
-                      theme={{
-                        components: {
-                          Select: {
-                            colorBorder: "#36b446",
-                          },
-                        },
-                      }}
-                    >
-                      <Select
-                        id="NumberOfDirectors"
-                        name="NumberOfDirectors"
-                        className="w-100 h-100"
-                        placeholder="Select"
-                        size="large"
-                        value={values.NumberOfDirectors || undefined}
-                        onChange={(value) => {
-                          setFieldValue("NumberOfDirectors", value);
-                        }}
-                        onBlur={handleBlur}
-                        getPopupContainer={(triggerNode) => triggerNode.parentNode}
-                      >
-                        {Array.from({ length: 4 }, (_, i) => (
-                          <Option key={i} value={i + 1}>
-                            {i + 1}
-                          </Option>
-                        ))}
-                      </Select>
-                    </ConfigProvider>
-                  </div>
-                </div>
-
-                {values.NumberOfDirectors && (
-                  <div className="mt-4">
-                    <AntdTable
-                      columns={columns}
-                      data={dataRows}
-                      values={values}
-                      setFieldValue={setFieldValue}
-                      handleChange={handleChange}
-                      handleBlur={handleBlur}
-                    />
-                  </div>
-                )}
-              </Modal.Body>
-              <Modal.Footer>
-                <Button onClick={() => props.setFlagState(false)}>
-                  Close
-                </Button>
-                <Button type="primary" className="bgColor modalBtn" htmlType="submit">
-                  Submit
-                </Button>
-              </Modal.Footer>
-            </Form>
-          );
-        }}
-      </Formik>
-    </Modal>
-  );
-}
 
 const TradingTrust = (props) => {
   const [flagState, setFlagState] = useState(false);
@@ -182,13 +32,20 @@ const TradingTrust = (props) => {
     } else if (input === "partner") {
       return localStorage.getItem("PartnerName");
     } else if (input === "joint") {
-      return localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName");
+      return (
+        localStorage.getItem("UserName") +
+        " & " +
+        localStorage.getItem("PartnerName")
+      );
     }
     return "";
   });
 
   // Load existing data if available
-  const existingData = props.modalObject.values?.[props.modalObject.key] || [];
+  const existingData =
+    props.modalObject.values?.[
+      props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "")
+    ]?.[props.modalObject.Input + "Array"] || [];
 
   const initialValues = {
     NumberOfMap: existingData.length || "",
@@ -201,46 +58,58 @@ const TradingTrust = (props) => {
     }
   };
 
-   const onSubmit = async (values) => {
-      const DataOf = props.modalObject.Input;
-      const companyData = values.tradingTrusts || [];
-  
-      // Calculate total equity position
-      const totalEquity = companyData.reduce(
-        (sum, entry) => sum + parseFloat(entry.businessValuation?.replace(/[^0-9.-]+/g, "") || 0),
-        0
-      );
-  
-      props.setFieldValue(
-        props.modalObject.stakeHolder + DataOf + "Array",
-        companyData
-      );
-  
-      props.setFieldValue(
-        props.modalObject.stakeHolder + "currentBalance",
-        toCommaAndDollar(totalEquity)
-      );
-  
-      props.modalObject.setShowError?.((prev) => ({
-        ...prev,
-        [`${DataOf + "currentBalance"}Error`]: false,
-        [`${DataOf + "currentBalance"}Message`]: "",
-      }));
-  
-      if (props.flagState) {
-        props.setFlagState(false);
-      }
-    };
+  const onSubmit = async (values) => {
+    const DataOf = props.modalObject.Input;
+    const companyData = values.tradingTrusts || [];
 
-  const handleInnerModal = (innerModalTitle, key, stakeHolder, values, index) => {
+    // Calculate total equity position
+    const totalEquity = companyData.reduce(
+      (sum, entry) =>
+        sum +
+        parseFloat(entry.businessValuation?.replace(/[^0-9.-]+/g, "") || 0),
+      0
+    );
+
+    props.setFieldValue(
+      props.modalObject.stakeHolder + DataOf + "Array",
+      companyData
+    );
+
+    props.setFieldValue(
+      props.modalObject.stakeHolder + "currentBalance",
+      toCommaAndDollar(totalEquity)
+    );
+
+    props.modalObject.setShowError?.((prev) => ({
+      ...prev,
+      [`${DataOf + "currentBalance"}Error`]: false,
+      [`${DataOf + "currentBalance"}Message`]: "",
+    }));
+
+    if (props.flagState) {
+      props.setFlagState(false);
+    }
+  };
+
+  let handleInnerModal = (innerModalTitle, values, key, stakeHolder) => {
+    console.log(
+      "handleInnerModal: ",
+      innerModalTitle,
+      values,
+      key,
+      stakeHolder
+    );
+    let ParentModal = props.modalObject.title;
     setModalObject({
       title: innerModalTitle,
+      innerModalTitle,
+      values,
       key,
       stakeHolder,
-      values,
-      index,
+      ParentModal,
+      directorLimit: 4,
     });
-    setInnerFlagState(true);
+    setFlagState(true);
   };
 
   const columns = [
@@ -255,7 +124,7 @@ const TradingTrust = (props) => {
       dataIndex: "businessName",
       key: "businessName",
       type: "text",
-      width:200,
+      width: 200,
       placeholder: "Business Name",
     },
     {
@@ -271,48 +140,19 @@ const TradingTrust = (props) => {
       key: "businessAddress",
       type: "text",
       placeholder: "Business Address",
-      width:200,
-
+      width: 200,
     },
     {
       title: "Trustee Type",
       dataIndex: "trusteeType",
       key: "trusteeType",
-      type: "select",
-      options: [
-        { value: "Corporate", label: "Corporate" },
-        { value: "Individual", label: "Individual" },
-      ],
+      type: "selectModal",
+      options: ["Corporate", "Individual"].map((v) => ({ label: v, value: v })),
       placeholder: "Trustee Type",
-      customOnChange: (value, setFieldValue, values, fieldName, index) => {
-        setFieldValue(fieldName, value);
-        // Clear director data if trustee type is not Corporate
-        if (value !== "Corporate") {
-          setFieldValue(`tradingTrusts[${index}].NumberOfDirectors`, "");
-          setFieldValue(`tradingTrusts[${index}].directorsNames`, []);
-        }
-      },
-      renderSuffix: (record, index) => {
-        if (record.trusteeType === "Corporate") {
-          return (
-            <Button 
-              className="bgColor modalBtn border-0" 
-              onClick={() => {
-                handleInnerModal(
-                  "Directors",
-                  "directorsNames",
-                  "trusteeType",
-                  values,
-                  index
-                );
-              }}
-            >
-              <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
-            </Button>
-          );
-        }
-        return null;
-      },
+      width: 180,
+      ModalOption: ["Corporate", "Individual"], // 👈 add this — triggers modal icon when selected
+      func: handleInnerModal,
+      innerModalTitle: "Trustee Name", // optional but recommended
     },
     {
       title: "Trustee Name",
@@ -334,41 +174,23 @@ const TradingTrust = (props) => {
       key: "businessOwnership",
       type: "number-toPercent",
       placeholder: "Business Ownership",
-      width:200,
-      customOnChange: (e, setFieldValue, values, fieldName) => {
-        handleInputChange(e, setFieldValue, () => {}, values);
-      },
-      customOnFocus: (e, setFieldValue) => {
-        handleInputFocus(e, setFieldValue);
-      },
-      customOnKeyDown: (e) => {
-        handleInputKeyDown(e);
-      },
-      customOnBlur: (e, setFieldValue, values, fieldName) => {
-        handleInputBlur(e, setFieldValue, toPercentage, () => {}, values);
-      },
+      width: 200,
     },
     {
       title: "Distribution Received",
       dataIndex: "distributionReceived",
       key: "distributionReceived",
-      type: "text",
+      type: "number-toComma",
       placeholder: "Distribution Received",
-      width:200,
-
+      width: 200,
     },
     {
       title: "Business Valuation",
       dataIndex: "businessValuation",
       key: "businessValuation",
       type: "number-toComma",
-      width:200,
-
+      width: 200,
       placeholder: "Business Valuation",
-      customOnChange: (e, setFieldValue, values, fieldName) => {
-        const value = toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, ""));
-        setFieldValue(fieldName, value);
-      },
     },
   ];
 
@@ -397,10 +219,14 @@ const TradingTrust = (props) => {
               trusteeType: values.tradingTrusts?.[i]?.trusteeType || "",
               trusteeName: values.tradingTrusts?.[i]?.trusteeName || "",
               aNC: values.tradingTrusts?.[i]?.aNC || "",
-              businessOwnership: values.tradingTrusts?.[i]?.businessOwnership || "",
-              distributionReceived: values.tradingTrusts?.[i]?.distributionReceived || "",
-              businessValuation: values.tradingTrusts?.[i]?.businessValuation || "",
-              NumberOfDirectors: values.tradingTrusts?.[i]?.NumberOfDirectors || "",
+              businessOwnership:
+                values.tradingTrusts?.[i]?.businessOwnership || "",
+              distributionReceived:
+                values.tradingTrusts?.[i]?.distributionReceived || "",
+              businessValuation:
+                values.tradingTrusts?.[i]?.businessValuation || "",
+              NumberOfDirectors:
+                values.tradingTrusts?.[i]?.NumberOfDirectors || "",
               directorsNames: values.tradingTrusts?.[i]?.directorsNames || [],
             }));
           }
@@ -409,12 +235,15 @@ const TradingTrust = (props) => {
 
         return (
           <Form>
-            <InnerDirectors 
-              setFieldValue={setFieldValue} 
-              flagState={innerFlagState} 
-              setFlagState={setInnerFlagState} 
-              modalObject={modalObject} 
-            />
+            <InnerModal
+              modalObject={modalObject}
+              setFieldValue={setFieldValue}
+              setFlagState={setFlagState}
+              flagState={flagState}
+              setIsEditing={props.setIsEditing}
+            >
+              <InnerDirectors />
+            </InnerModal>
 
             <div className="d-flex justify-content-center align-items-center gap-4">
               <p className="text-end mt-1 pt-2">
@@ -443,7 +272,7 @@ const TradingTrust = (props) => {
                     onBlur={handleBlur}
                     getPopupContainer={(triggerNode) => triggerNode.parentNode}
                   >
-                    {Array.from({ length: 10 }, (_, i) => (
+                    {Array.from({ length: 3 }, (_, i) => (
                       <Option key={i} value={i + 1}>
                         {i + 1}
                       </Option>

@@ -8,7 +8,7 @@ import {
   Progress,
 } from "../../../Store/Store";
 import { useRecoilState } from "recoil";
-import { ConfigProvider, Spin, Button as AntButton } from "antd";
+import { ConfigProvider, Spin, Button as AntButton, Badge } from "antd";
 import CustomLoadingBar from "./CustomLoadingBar";
 import ImportantQuestion from "../ImportantQuestion/ImportantQuestion";
 import { RenderName } from "../../Assets/Api/Api";
@@ -276,7 +276,7 @@ const ModalComponent = (props) => {
     "Goals and Objectives",
     "Profile Pic " + RenderName(props.modalObject?.owner),
     "View Client Details",
-    "CDF Details"
+    "CDF Details",
     // "Personal Insurance",
   ];
 
@@ -423,11 +423,26 @@ const ModalComponent = (props) => {
             {submitButtonRender && (
               <button
                 type="button"
-                className="btn bgColor modalBtn"
+                className="btn bgColor modalBtn d-flex justify-content-center align-items-center"
                 style={{ width: "12.5%", minWidth: "fit-content" }}
                 onClick={handleOk}
               >
-                Save & Exit
+                Save & Exit &nbsp;
+                <ConfigProvider
+                  theme={{
+                    components: {
+                      Badge: {
+                        dotSize: 20,
+                      },
+                    },
+                  }}
+                >
+                  <Badge
+                    dot
+                    color="red"
+                    className="heartbeat-dot marginDot"
+                  />
+                </ConfigProvider>
               </button>
             )}
           </Modal.Footer>

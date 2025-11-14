@@ -347,6 +347,7 @@ const ManagedFunds = (props) => {
               setFieldValue={setFieldValue}
               setFlagState={setFlagState}
               flagState={flagState}
+              setIsEditing={props.setIsEditing}
             >
               {modalObject.key === "portfolioValue" ? (
                 <PortfolioValue />

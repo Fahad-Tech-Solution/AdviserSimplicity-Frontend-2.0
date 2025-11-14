@@ -512,6 +512,7 @@ const InvestmentPropertyDetails = (props) => {
                     setFieldValue={setFieldValue}
                     setFlagState={setFlagState}
                     flagState={flagState}
+                    setIsEditing={props.setIsEditing}
                   >
                     {modalObject.key === "propertyLoanDetails" ? (
                       <InvestmentPropertyLoan />

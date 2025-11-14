@@ -1,47 +1,11 @@
 import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState, useMemo } from "react";
-import { Row, Table } from "react-bootstrap";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { BankDetail, defaultUrl, QuestionDetail } from "../../../Store/Store";
-import {
-  handleInputBlur,
-  handleInputChange,
-  handleInputFocus,
-  handleInputKeyDown,
-  PatchAxios,
-  PostAxios,
-  toCommaAndDollar,
-  toPercentage,
-} from "../../Assets/Api/Api";
-import axios from "axios";
+import { Row,} from "react-bootstrap";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
+import { ConfigProvider, Select } from "antd";
 const AntDTableHOC = DynamicTableForInputsSection("antd");
 
 const InnerDirectors = (props) => {
-  console.log("props in investment property loan", props);
-  let bankDetailObj = useRecoilValue(BankDetail);
-  const [dynamicFields, setDynamicFields] = useState([]);
-
-  let handleInput = (e, setFieldValue) => {
-    let value = 0;
-
-    if (SwitchFlag) {
-      value = e.target.value > 10 ? 10 : e.target.value;
-    } else {
-      value = e.target.value > 5 ? 5 : e.target.value;
-    }
-
-    setFieldValue(e.target.id, value);
-
-    let arr = [];
-
-    for (let i = 0; i < value; i++) {
-      arr.push("");
-    }
-
-    setDynamicFields(arr);
-  };
-  let [SwitchFlag, setSwitchFlag] = useState(false);
 
   let [nameSet] = useState(() => {
     if (props.modalObject.Input === "client") {
@@ -94,7 +58,6 @@ const InnerDirectors = (props) => {
     }
   };
 
-  let DefaultUrl = useRecoilValue(defaultUrl);
 
   let onSubmit = async (values) => {
     console.log("Submitted values in InnerDirectors:", values);
@@ -163,19 +126,7 @@ const InnerDirectors = (props) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
-        // const tableData = useMemo(() => {
-        //   // console.log("values:", values);
-        //   const rows = [
-        //     {
-        //       key: 0,
-        //       owner: nameSet,
-        //       directorName: values?.directorName || "",
 
-        //     },
-        //   ];
-
-        //   return rows;
-        // }, [values]);
         const tableData = useMemo(() => {
           const num = Number(values.NumberOfMap) || 0;
           if (num > 0) {
@@ -186,21 +137,8 @@ const InnerDirectors = (props) => {
             }));
           }
           return [];
+          
         }, [values.NumberOfMap, values.directors]);
-
-        // const tableData = useMemo(() => {
-        //   const num = Number(values.NumberOfMap) || 0;
-        //   console.log("values.NumberOfMap: ", values.NumberOfMap);
-        //   if (num > 0) {
-        //     return Array.from({ length: num }, (_, i) => ({
-        //       key: `directors.${i}`,
-        //       // stakeHolder: `directors[${i}]`,
-        //       directorName: values.directors?.[i]?.directorName || "",
-        //     }));
-        //   }
-
-        //   return [];
-        // }, [values.NumberOfMap, values.directors]);
 
         return (
           <Form>
@@ -217,33 +155,41 @@ const InnerDirectors = (props) => {
                       How many {props.modalObject.title} does {nameSet} have :
                     </p>
 
-                    {/* <div style={{ width: "8%" }}>
-                      <Field
-                        type="number"
-                        id="NumberOfMap"
-                        name="NumberOfMap"
-                        className="form-control inputDesignDoubleInput"
-                        onChange={(e) => handleInput(e, setFieldValue)}
-                      />
-// is coment mai likh dia
-                    </div> */}
-
                     <div style={{ minWidth: "10%" }}>
-                      <select
-                        id="NumberOfMap"
-                        name="NumberOfMap"
-                        className="form-select inputDesignDoubleInput"
-                        onChange={(e) => handleInput(e, setFieldValue)}
-                        value={values.NumberOfMap}
+                      <ConfigProvider
+                        theme={{
+                          components: {
+                            Select: {
+                              colorBorder: "#36b446",
+                            },
+                          },
+                        }}
                       >
-                        <option value="">Select</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                      </select>
+                        <Select
+                          id="NumberOfMap"
+                          name="NumberOfMap"
+                          className="w-100 h-100"
+                          placeholder="Select"
+                          size="large"
+                          value={values.NumberOfMap || undefined}
+                          onChange={(value) => {
+                            setFieldValue("NumberOfMap", value);
+                          }}
+                          onBlur={handleBlur}
+                          getPopupContainer={(triggerNode) =>
+                            triggerNode.parentNode
+                          }
+                        >
+                          {Array.from(
+                            { length: props.modalObject.directorLimit || 0 },
+                            (_, i) => (
+                              <Option key={i} value={i + 1}>
+                                {i + 1}
+                              </Option>
+                            )
+                          )}
+                        </Select>
+                      </ConfigProvider>
                     </div>
                   </div>
 

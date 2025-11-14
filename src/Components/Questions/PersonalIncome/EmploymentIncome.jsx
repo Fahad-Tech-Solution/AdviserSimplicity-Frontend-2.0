@@ -352,7 +352,7 @@ const EmploymentIncome = (props) => {
       type: "yesnoModal",
       width: 100,
       handleInnerModal: handleInnerModal,
-      callBack: true, 
+      callBack: true,
       func: handleInnerModal,
       innerModalTitle: "Leave entitlements",
     },
@@ -361,8 +361,7 @@ const EmploymentIncome = (props) => {
       dataIndex: "choiceOfFund",
       key: "choiceOfFund",
       type: "yesno",
-       width: 100,
-      
+      width: 100,
     },
   ];
 
@@ -431,6 +430,7 @@ const EmploymentIncome = (props) => {
                 setFieldValue={setFieldValue}
                 setFlagState={setFlagState}
                 flagState={flagState}
+                setIsEditing={props.setIsEditing}
               >
                 {modalObject.key === "SalaryPackageModal" ? (
                   <SalaryPackage />

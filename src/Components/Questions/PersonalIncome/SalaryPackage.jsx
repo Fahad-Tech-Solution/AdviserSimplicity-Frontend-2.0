@@ -3,9 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Row } from "react-bootstrap";
 import { useRecoilValue } from "recoil";
 import { defaultUrl } from "../../../Store/Store";
-import {
-  toCommaAndDollar,
-} from "../../Assets/Api/Api";
+import { toCommaAndDollar } from "../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 
 const AntDTableHOC = DynamicTableForInputsSection("antd");
@@ -21,13 +19,22 @@ const SalaryPackage = (props) => {
       parentValues?.[`${parentKey.replace(".", "")}`]?.[`${key}`];
 
     if (existingData && Object.keys(existingData).length > 0) {
-      setFieldValue("remunerationType", existingData.remunerationType || "Gross Salary");
+      setFieldValue(
+        "remunerationType",
+        existingData.remunerationType || "Gross Salary"
+      );
       setFieldValue("amount", existingData.amount || "");
       setFieldValue("SG", existingData.SG || "12%");
       setFieldValue("grossSalary", existingData.grossSalary || "");
       setFieldValue("SGC", existingData.SGC || "");
-      setFieldValue("salarySacrificeContributions", existingData.salarySacrificeContributions || "");
-      setFieldValue("afterTaxContributions", existingData.afterTaxContributions || "");
+      setFieldValue(
+        "salarySacrificeContributions",
+        existingData.salarySacrificeContributions || ""
+      );
+      setFieldValue(
+        "afterTaxContributions",
+        existingData.afterTaxContributions || ""
+      );
     } else {
       props.setIsEditing(true);
     }
@@ -98,7 +105,6 @@ const SalaryPackage = (props) => {
       props.setIsEditing(false);
     }
   };
-
 
   // ✅ Table column definitions
   const columns = [
