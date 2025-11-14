@@ -228,13 +228,13 @@ const SmsfAccumulationDetails = (props) => {
       title: "No#",
       dataIndex: "owner",
       key: "owner",
-      width: 60,
+      width: 50,
     },
     {
       title: "Member",
       dataIndex: "member",
       key: "member",
-      width: 150,
+      width: 100,
       justText:true,
     },
     {
