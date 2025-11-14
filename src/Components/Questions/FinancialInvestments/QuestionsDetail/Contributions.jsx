@@ -16,8 +16,8 @@ const Contributions = (props) => {
 
   // ---------------- INITIAL VALUES ----------------
   const initialValues = {
-    NumberOfMap: props.modalObject?.editArray?.newEntries?.length || "",
-    newEntries: props.modalObject?.editArray?.newEntries || [],
+    NumberOfMap: "",
+    newEntries:  [],
   };
 
   // ---------------- FILL EXISTING DATA ----------------
