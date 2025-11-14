@@ -1,4 +1,4 @@
-import { ConfigProvider, Spin } from "antd";
+import { ConfigProvider, Spin, Modal as AntDModal } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { FaDownload, FaInfoCircle } from "react-icons/fa";
@@ -12,6 +12,7 @@ import {
 import CustomLoadingBar from "../CustomLoadingBar";
 
 const InnerModal = (props) => {
+  const { confirm } = AntDModal;
   const formRef = useRef(null); // Create a ref to store the form instance
   const childButtonRef = useRef(null);
   const childButtonDownloadRef = useRef(null);
@@ -190,11 +191,31 @@ const InnerModal = (props) => {
         // centered
         show={props.flagState}
         onHide={() => {
-          props.setFlagState(false);
-          setProgress(0);
-          setCashFlowReCalculateLoading(false);
-          setCashFlowDownloading(false);
-          setIsEditing(false);
+          if (!isEditing) {
+            props.setFlagState(false);
+            setProgress(0);
+            setCashFlowReCalculateLoading(false);
+            setCashFlowDownloading(false);
+            setIsEditing(false);
+            return false;
+          }
+
+          confirm({
+            title: "Discard changes?",
+            content:
+              "You have unsaved changes. If you close now, all unsaved changes will be lost. Do you want to discard them?",
+            okText: "Discard",
+            okType: "danger",
+            cancelText: "Keep Editing",
+            centered: true,
+            onOk: async () => {
+              props.setFlagState(false);
+              setProgress(0);
+              setCashFlowReCalculateLoading(false);
+              setCashFlowDownloading(false);
+              setIsEditing(false);
+            },
+          });
         }}
       >
         <Element id="modal-container"></Element>
@@ -291,7 +312,7 @@ const InnerModal = (props) => {
               style={{ width: "12.5%", minWidth: "fit-content" }}
               onClick={handleOk}
             >
-              Proceed & Exit
+              Confirm & Exit
             </button>
           )}
         </Modal.Footer>

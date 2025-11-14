@@ -7,7 +7,7 @@ import {
   openNotificationSuccess,
   PatchAxios,
   PostAxios,
-  validateName
+  validateName,
 } from "../../Assets/Api/Api";
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -19,156 +19,33 @@ import InnerBareTrust from "../QuestoinsSMSF/InnerBareTrust";
 
 const AntDTableHOC = DynamicTableForInputsSection("antd");
 
-// function InnerDirectors(props) {
-//   let innerinitialValues = { NumberOfDirectors: "" };
-
-//   let handleInnerSubmit = (values) => {
-//     console.log(values);
-
-//     let newEntries = [];
-
-//     for (let i = 0; i < parseFloat(values.NumberOfDirectors); i++) {
-//       const newEntry = {
-//         directorName: values[`directorName${i}`] || "",
-//       };
-//       newEntries.push(newEntry);
-//     }
-
-//     props.setFieldValue("directorsOfCorporateTrustee", newEntries);
-
-//     if (props.flagState) {
-//       props.setFlagState(false);
-//     }
-//   };
-
-//   let handleInput = (e, setFieldValue, limit) => {
-//     const value = e.target.value > limit ? limit : e.target.value;
-//     setFieldValue(e.target.id, value);
-//   };
-
-//   let innerfillInitialValues = (setFieldValue) => {
-//     console.log(props.modalObject.values, props.modalObject.values[`directorsOfCorporateTrustee`]);
-
-//     setFieldValue(
-//       "NumberOfDirectors",
-//       props.modalObject.values[`directorsOfCorporateTrustee`]?.length > 0 
-//         ? props.modalObject.values[`directorsOfCorporateTrustee`].length 
-//         : ""
-//     );
-
-//     let director = props.modalObject.values[`directorsOfCorporateTrustee`] || [];
-
-//     director.forEach((element, index) => {
-//       setFieldValue("directorName" + index, element.directorName);
-//     });
-//   };
-
-//   return (
-//     <Modal centered size={"md"} backdrop="static" show={props.flagState} onHide={() => props.setFlagState(false)}>
-//       <Modal.Header closeButton>
-//         <Modal.Title>Directors</Modal.Title>
-//       </Modal.Header>
-//       <Formik initialValues={innerinitialValues} onSubmit={handleInnerSubmit} enableReinitialize>
-//         {({ values, setFieldValue, handleChange }) => {
-//           useEffect(() => {
-//             innerfillInitialValues(setFieldValue);
-//           }, []);
-//           return (
-//             <Form>
-//               <Modal.Body className="px-4">
-//                 <div className="col-md-12">
-//                   <div className='d-flex flex-row justify-content-center align-items-center gap-2'>
-//                     <label htmlFor='' className=''>
-//                       How many directors does the Corporate Trustee have :
-//                     </label>
-//                     <div style={{ width: "40%" }}>
-//                       <Field 
-//                         type="number" 
-//                         id={`NumberOfDirectors`} 
-//                         name={`NumberOfDirectors`} 
-//                         className="form-control inputDesignDoubleInput" 
-//                         onChange={e => handleInput(e, setFieldValue, 4)} 
-//                       />
-//                     </div>
-//                   </div>
-
-//                   <div className="row justify-content-center">
-//                     {values.NumberOfDirectors && (
-//                       <div className="mt-4">
-//                         <Table striped bordered responsive hover>
-//                           <thead>
-//                             <tr>
-//                               <th onClick={() => console.log(values)}>No#</th>
-//                               <th>Director Name</th>
-//                             </tr>
-//                           </thead>
-//                           <tbody>
-//                             {Array.from({ length: values.NumberOfDirectors }).map((_, index) => (
-//                               <tr key={index}>
-//                                 <td>{index + 1}</td>
-//                                 <td>
-//                                   <Field 
-//                                     type="text" 
-//                                     placeholder="Director Name" 
-//                                     id={`directorName${index}`} 
-//                                     name={`directorName${index}`} 
-//                                     className="form-control inputDesignDoubleInput"
-//                                     onChange={(e) => {
-//                                       setFieldValue(e.target.name, validateName(e.target.value));
-//                                     }}
-//                                   />
-//                                 </td>
-//                               </tr>
-//                             ))}
-//                           </tbody>
-//                         </Table>
-//                       </div>
-//                     )}
-//                   </div>
-//                 </div>
-//               </Modal.Body>
-//               <Modal.Footer>
-//                 <Button variant="secondary" onClick={() => props.setFlagState(false)}>
-//                   Close
-//                 </Button>
-//                 <Button type='submit' className='btn bgColor modalBtn'>
-//                   Submit
-//                 </Button>
-//               </Modal.Footer>
-//             </Form>
-//           );
-//         }}
-//       </Formik>
-//     </Modal>
-//   );
-// }
-
 const FamilyDetails = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
 
-  let familyDetails = Object.keys(questionDetail.familyDetails || {}).length > 0
-    ? questionDetail.familyDetails
-    : {
-      familyTrustOwner: [],
-      partner: [],
-      joint: [],
-    };
+  let familyDetails =
+    Object.keys(questionDetail.familyDetails || {}).length > 0
+      ? questionDetail.familyDetails
+      : {
+          familyTrustOwner: [],
+          partner: [],
+          joint: [],
+        };
 
   let initialValues = {
-    "trustName": "",
-    "trustType": "",
-    "ABN": "",
-    "registeredOffice": "",
-    "placeOfBusiness": "",
-    "establishmentDate": "",
-    "trusteeType": "",
-    "trusteeName": "",
-    "ACN": "",
-    "nameOfAccountant": "",
-    "directorsOfCorporateTrustee": [],
+    trustName: "",
+    trustType: "",
+    ABN: "",
+    registeredOffice: "",
+    placeOfBusiness: "",
+    establishmentDate: "",
+    trusteeType: "",
+    trusteeName: "",
+    ACN: "",
+    nameOfAccountant: "",
+    directorsOfCorporateTrustee: [],
   };
 
   const fillInitialValues = (setFieldValue) => {
@@ -208,7 +85,7 @@ const FamilyDetails = (props) => {
         "success",
         "topRight",
         "Success Notification",
-        "Data of \"" + props.modalObject.title + "\" is Saved"
+        'Data of "' + props.modalObject.title + '" is Saved'
       );
 
       if (props.flagState) {
@@ -220,20 +97,22 @@ const FamilyDetails = (props) => {
         "error",
         "topRight",
         "Error Notification",
-        "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again"
+        'Data of "' +
+          props.modalObject.title +
+          '" is not Saved Please! try again'
       );
     }
   };
 
-
   const trustTypeOptions = ["Discretionary", "Other"];
 
-  let handleInnerModal = (title, key, mainKey, values) => {
+  let handleInnerModal = (title, values, key, stackHolder) => {
     setModalObject({
       title,
       key,
-      mainKey,
+      stackHolder,
       values,
+      directorLimit: 4,
     });
     setFlagState(true);
   };
@@ -262,7 +141,10 @@ const FamilyDetails = (props) => {
       key: "trustType",
       type: "selectModal",
       placeholder: "Select Trust Type",
-      options: trustTypeOptions.map(option => ({ label: option, value: option })),
+      options: trustTypeOptions.map((option) => ({
+        label: option,
+        value: option,
+      })),
       width: 150,
     },
     {
@@ -379,22 +261,21 @@ const FamilyDetails = (props) => {
         return (
           <Form>
             <div className="row">
-              {/* <InnerDirectors 
-                setFieldValue={setFieldValue} 
-                flagState={flagState} 
-                setFlagState={setFlagState} 
-                modalObject={modalObject} 
-              /> */}
+              <p
+                className="text-end mt-1 pt-2 "
+                onClick={() => {
+                  console.log(values);
+                }}
+              >
+                Test Text
+              </p>
               <InnerModal
                 modalObject={modalObject}
                 setFieldValue={setFieldValue}
                 setFlagState={setFlagState}
                 flagState={flagState}
               >
-                
-                  <InnerDirectors />
-               
-             
+                <InnerDirectors />
               </InnerModal>
 
               <div className="col-md-12">

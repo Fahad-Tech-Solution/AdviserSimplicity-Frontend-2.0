@@ -141,7 +141,17 @@ const GoalsForm = (props) => {
       setFieldValue("when", CurrentGoalData.when || "");
       setFieldValue("estimatedValue", CurrentGoalData.estimatedValue || "");
       setFieldValue("description", CurrentGoalData.description || "");
-      setContent(CurrentGoalData.description);
+      
+      autoDescription(
+        {
+          value:
+            CurrentGoalData.scopeOfAdvice ||
+            props.modalObject.scopeOfAdvice.trim() ||
+            "",
+        },
+        setFieldValue,
+        () => {}
+      );
     }
   };
 
@@ -156,6 +166,7 @@ const GoalsForm = (props) => {
       title: "Scope of Advice",
       dataIndex: "scopeOfAdvice",
       key: "scopeOfAdvice",
+      justText: true,
       type: "select",
       options: [
         "Age Care",
