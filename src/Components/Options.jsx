@@ -22,6 +22,9 @@ import {
   FaTriangleExclamation,
   FaGraduationCap,
   FaChartPie,
+  FaRegBuilding,
+  FaPiggyBank,
+  FaRegHandshake,
 } from "react-icons/fa6";
 import {
   FaEdit,
@@ -55,6 +58,12 @@ import {
 
 import "./options.css";
 import { FiLogOut } from "react-icons/fi";
+import {
+  IoDocumentTextOutline,
+  IoNewspaperOutline,
+  IoShieldCheckmark,
+} from "react-icons/io5";
+import { AiOutlineFileProtect } from "react-icons/ai";
 
 const iconMap = {
   FaBriefcase,
@@ -77,6 +86,13 @@ const iconMap = {
   MdOutlineTimeline,
   RiCoinsFill,
   RiDiscountPercentFill,
+  IoNewspaperOutline,
+  FaRegBuilding,
+  IoDocumentTextOutline,
+  AiOutlineFileProtect,
+  IoShieldCheckmark,
+  FaPiggyBank,
+  FaRegHandshake,
 };
 
 function Options(props) {
@@ -214,7 +230,7 @@ function Options(props) {
                 fontWeight: isCurrentStep ? "600" : "500",
               }}
             >
-              {item.subTitle}
+              {(item.subTitle)}
             </span>
           ),
         };
@@ -396,6 +412,7 @@ function Options(props) {
                     />
                   </ConfigProvider>
                 </div>
+                <FaRegHandshake />
               </div>
             </div>
           </div>

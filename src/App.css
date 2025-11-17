@@ -672,7 +672,7 @@ input:checked + label {
 }
 .GoalsobjectiveCard h5 {
   font-weight: 600;
-  font-size: 19px;
+  font-size: 18px;
 }
 
 .borderOverAll {
@@ -978,7 +978,6 @@ input:checked + label {
     animation-timing-function: ease-out;
   }
 }
-
 
 /* Animate the Ant Design badge dot */
 .heartbeat-dot {

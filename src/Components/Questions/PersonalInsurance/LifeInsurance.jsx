@@ -1,5 +1,5 @@
 import { Field, Form, Formik } from "formik";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   BankDetail,
@@ -34,10 +34,12 @@ const PersonalInsuranceLife = (props) => {
   const DefaultUrl = useRecoilValue(defaultUrl);
   const bankDetailObj = useRecoilValue(BankDetail);
 
-  const [CRObject, setCRObject] = useRecoilState(CRState);
   const [UserStatus] = useState(localStorage.getItem("UserStatus"));
+
   const [flagState, setFlagState] = useState(false);
   const [modalObject, setModalObject] = useState({});
+
+  const prevClientRowsRef = useRef([]);
 
   const personalInsurance =
     Object.keys(questionDetail.personalInsurance || {}).length > 0
@@ -679,8 +681,8 @@ const PersonalInsuranceLife = (props) => {
       title: "Smoker",
       dataIndex: "smoker",
       key: "smoker",
-      type: "yesno", width: 100,
-      
+      type: "yesno",
+      width: 100,
     },
     {
       title: "Life",
@@ -778,19 +780,47 @@ const PersonalInsuranceLife = (props) => {
         {({ values, setFieldValue, handleChange, handleBlur }) => {
           useEffect(() => {
             fillInitialValues(setFieldValue);
-          }, [personalInsurance.client, personalInsurance.partner]);
+          }, []);
+
+          // useEffect(() => {
+          //   // Prevent resetting values when inner modal is open
+          //   if (!flagState) {
+          //     fillInitialValues(setFieldValue);
+          //   }
+          // }, [personalInsurance.client, personalInsurance.partner, flagState]);
+
+          // const clientDataRows = useMemo(() => {
+          //   const num = Number(values.client.numberOfPolicies) || 0;
+          //   return num > 0
+          //     ? Array.from({ length: num }, (_, i) => ({
+          //         key: `client.PersonalInsurance[${i}]`,
+          //         owner: i + 1,
+          //         stakeHolder: `client.PersonalInsurance[${i}]`,
+          //         ...values.client.PersonalInsurance[i],
+          //       }))
+          //     : [];
+          // }, [values.client.numberOfPolicies, values.client.PersonalInsurance]);
 
           const clientDataRows = useMemo(() => {
+            if (flagState) return prevClientRowsRef.current; // 💚 PREVENT RESET
+
             const num = Number(values.client.numberOfPolicies) || 0;
-            return num > 0
-              ? Array.from({ length: num }, (_, i) => ({
-                  key: `client.PersonalInsurance[${i}]`,
-                  owner: i + 1,
-                  stakeHolder: `client.PersonalInsurance[${i}]`,
-                  ...values.client.PersonalInsurance[i],
-                }))
-              : [];
-          }, [values.client.numberOfPolicies, values.client.PersonalInsurance]);
+            const rows =
+              num > 0
+                ? Array.from({ length: num }, (_, i) => ({
+                    key: `client.PersonalInsurance[${i}]`,
+                    stakeHolder: `client.PersonalInsurance[${i}]`,
+                    ...values.client.PersonalInsurance[i],
+                  }))
+                : [];
+
+            prevClientRowsRef.current = rows; // cache rows
+            return rows;
+          }, [
+            values.client.numberOfPolicies,
+            values.client.PersonalInsurance,
+            flagState,
+          ]);
 
           const clientGroupDataRows = useMemo(() => {
             const num = Number(values.client.numberOfPolicies) || 0;
@@ -879,6 +909,7 @@ const PersonalInsuranceLife = (props) => {
                       placeholder="Select Client/Partner"
                       size="large"
                       value={values.selectedStakeholders}
+                      disabled={!props?.isEditing}
                       onChange={(value) => {
                         setFieldValue("selectedStakeholders", value);
                       }}
@@ -924,6 +955,7 @@ const PersonalInsuranceLife = (props) => {
                         className="w-100 h-100"
                         placeholder="Select"
                         size="large"
+                        disabled={!props?.isEditing}
                         value={values.client.numberOfPolicies || undefined}
                         onChange={(value) => {
                           setFieldValue("client.numberOfPolicies", value);
@@ -967,6 +999,7 @@ const PersonalInsuranceLife = (props) => {
                         className="w-100 h-100"
                         placeholder="Select"
                         size="large"
+                        disabled={!props?.isEditing}
                         value={values.partner.numberOfPolicies || undefined}
                         onChange={(value) => {
                           setFieldValue("partner.numberOfPolicies", value);

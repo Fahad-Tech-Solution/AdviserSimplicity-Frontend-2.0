@@ -35,15 +35,21 @@ const InnerDirectors = (props) => {
     const key = modalObject?.key;
     const values = modalObject?.values;
 
-    let index = parseFloat(
-      props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
-    );
-    let BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
+    console.log(props.modalObject.stakeHolder, "innerDirectors Form ");
 
     let savedDirectors = [];
 
-    if (index && BaseKey) {
-      savedDirectors = values?.[BaseKey]?.[index]?.directorsOfCorporateTrustee;
+    if (props.modalObject.stakeHolder) {
+      let index = parseFloat(
+        props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
+      );
+      let BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
+      if (index) {
+        savedDirectors =
+          values?.[BaseKey]?.[index]?.directorsOfCorporateTrustee;
+      } else {
+        savedDirectors = values?.[BaseKey]?.directorsOfCorporateTrustee;
+      }
     } else {
       savedDirectors = values?.directorsOfCorporateTrustee;
     }
