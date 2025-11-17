@@ -427,22 +427,7 @@ const ModalComponent = (props) => {
                 style={{ width: "12.5%", minWidth: "fit-content" }}
                 onClick={handleOk}
               >
-                Save & Exit &nbsp;
-                <ConfigProvider
-                  theme={{
-                    components: {
-                      Badge: {
-                        dotSize: 20,
-                      },
-                    },
-                  }}
-                >
-                  <Badge
-                    dot
-                    color="red"
-                    className="heartbeat-dot marginDot"
-                  />
-                </ConfigProvider>
+                Save & Exit
               </button>
             )}
           </Modal.Footer>

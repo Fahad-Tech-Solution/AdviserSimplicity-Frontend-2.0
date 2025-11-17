@@ -1,14 +1,13 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Form, Formik } from "formik";
-import { Row } from "react-bootstrap";
-import { ConfigProvider, Select } from "antd";
+import { Field, Form, Formik } from "formik";
+import React, { useEffect, useState, useMemo } from "react";
+import { Row,} from "react-bootstrap";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
-
+import { ConfigProvider, Select } from "antd";
 const AntDTableHOC = DynamicTableForInputsSection("antd");
-const { Option } = Select;
 
 const InnerDirectors = (props) => {
-  const [nameSet] = useState(() => {
+
+  let [nameSet] = useState(() => {
     if (props.modalObject.Input === "client") {
       return localStorage.getItem("UserName");
     } else if (props.modalObject.Input === "partner") {
@@ -22,112 +21,123 @@ const InnerDirectors = (props) => {
     }
   });
 
-  const initialValues = {
-    NumberOfMap: "",
-    directors: [],
-  };
+  let initialValues = {};
 
-  /** ---------------------------------------------
-   *  LOAD EXISTING SAVED VALUES INTO FORM
-   * --------------------------------------------- */
   const fillInitialValues = (setFieldValue) => {
+    console.log("props.modalObject innerdirectors111", props);
+
     const { modalObject } = props;
-    const key = modalObject?.key;
-    const values = modalObject?.values;
+    const key = modalObject?.key; // e.g. "trusteeType"
+    const values = modalObject?.values; // the whole object
 
-    let index = parseFloat(
-      props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
-    );
-    let BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
+    // Extract data related to that key (e.g. trusteeType or directors array)
+    let propertyLoanData = values?.[key];
+    console.log("fillInitialValues -> trustee", propertyLoanData);
 
-    let savedDirectors = [];
-
-    if (index && BaseKey) {
-      savedDirectors = values?.[BaseKey]?.[index]?.directorsOfCorporateTrustee;
-    } else {
-      savedDirectors = values?.directorsOfCorporateTrustee;
+    // 🟢 Case 1: If trusteeType or other single field
+    if (propertyLoanData && !Array.isArray(propertyLoanData)) {
+      setFieldValue(key, propertyLoanData);
     }
 
-    if (savedDirectors && Array.isArray(savedDirectors)) {
-      setFieldValue("NumberOfMap", savedDirectors.length.toString());
+    // 🟢 Case 2: If it's a list (like directorsOfCorporateTrustee)
+    if (
+      values?.directorsOfCorporateTrustee &&
+      Array.isArray(values.directorsOfCorporateTrustee)
+    ) {
+      setFieldValue(
+        "NumberOfMap",
+        values.directorsOfCorporateTrustee.length.toString()
+      );
 
-      savedDirectors.forEach((dir, index) => {
-        setFieldValue(`directors[${index}].directorName`, dir.directorName);
+      values.directorsOfCorporateTrustee.forEach((data, index) => {
+        setFieldValue(
+          `directors[${index}].directorName`,
+          data.directorName || ""
+        );
       });
     }
   };
 
-  /** ---------------------------------------------
-   *  SUBMIT HANDLER
-   * --------------------------------------------- */
-  const onSubmit = async (values) => {
-    const count = parseInt(values.NumberOfMap, 10) || 0;
 
+  let onSubmit = async (values) => {
+    console.log("Submitted values in InnerDirectors:", values);
+
+    const numberOfMaps = parseInt(values.NumberOfMap, 10) || 0;
     const newEntries = [];
 
-    for (let i = 0; i < count; i++) {
+    // 🟢 Loop through all director entries
+    for (let i = 0; i < numberOfMaps; i++) {
+      const director = values.directors?.[i] || {};
       newEntries.push({
-        directorName: values.directors?.[i]?.directorName || "",
+        directorName: director.directorName || "",
       });
     }
-    if (props?.modalObject?.stakeHolder) {
-      props.setFieldValue(
-        props.modalObject.stakeHolder + "directorsOfCorporateTrustee",
-        newEntries
-      );
-    } else {
-      props.setFieldValue("directorsOfCorporateTrustee", newEntries);
-    }
 
+    console.log("newEntries:", newEntries);
+
+    // 🟢 Save into main object under 'directorsOfCorporateTrustee'
+    props.setFieldValue("directorsOfCorporateTrustee", newEntries);
+
+    // 🟢 Optional: if you’re computing totals or doing extra logic
+    // (you can safely remove this block if not needed)
+    const total = newEntries.reduce((sum, entry) => {
+      const num =
+        parseFloat(entry.directorName?.replace(/[^0-9.-]+/g, "")) || 0;
+      return sum + num;
+    }, 0);
+
+    console.log("Total (if numeric fields):", total);
+
+    // 🟢 Close modal
     if (props.flagState) {
       props.setFlagState(false);
       props.setIsEditing(!props.isEditing);
     }
   };
 
-  /** ---------------------------------------------
-   *  ANT DESIGN TABLE COLUMNS
-   * --------------------------------------------- */
   const columns = [
     {
       title: "No#",
       dataIndex: "owner",
       key: "owner",
-      render: (_, __, idx) => idx + 1,
+      render: (_, __, i) => i + 1,
       width: 60,
     },
     {
-      title: "Director Name",
+      title: "Trustee Name",
       dataIndex: "directorName",
       key: "directorName",
-      type: "text",
-      placeholder: "Director Name",
-      width: 200,
+      type: "text", // simple static text or could be DynamicFormField if editable
+      width: 150,
+      placeholder: "Trustee Name",
+
+      // selectedOptionValue: true,
     },
   ];
 
   return (
     <Formik
       initialValues={initialValues}
+      onSubmit={onSubmit}
       enableReinitialize
       innerRef={props.formRef}
-      onSubmit={onSubmit}
     >
-      {({ values, setFieldValue, handleBlur, handleChange }) => {
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
 
-        /** ---------------------------------------------
-         *  Build Table Rows Dynamically
-         *  --------------------------------------------- */
         const tableData = useMemo(() => {
-          const count = Number(values.NumberOfMap) || 0;
-          return Array.from({ length: count }, (_, i) => ({
-            key: `directors.${i}`,
-            stakeHolder: `directors[${i}]`,
-            directorName: values.directors?.[i]?.directorName || "",
-          }));
+          const num = Number(values.NumberOfMap) || 0;
+          if (num > 0) {
+            return Array.from({ length: num }, (_, i) => ({
+              key: `directors.${i}`,
+              stakeHolder: `directors[${i}]`, // important for DynamicTable mapping
+              directorName: values.directors?.[i]?.directorName || "",
+            }));
+          }
+          return [];
+          
         }, [values.NumberOfMap, values.directors]);
 
         return (
@@ -135,16 +145,24 @@ const InnerDirectors = (props) => {
             <Row>
               <div className="col-md-12">
                 <div className="row justify-content-center">
-                  {/* LABEL + SELECT */}
                   <div className="d-flex flex-row justify-content-center align-items-center gap-2">
-                    <p className="text-end mt-3">
-                      How many {props.modalObject.title} does {nameSet} have:
+                    <p
+                      className="text-end mt-3"
+                      onClick={() => {
+                        console.log(values);
+                      }}
+                    >
+                      How many {props.modalObject.title} does {nameSet} have :
                     </p>
 
                     <div style={{ minWidth: "10%" }}>
                       <ConfigProvider
                         theme={{
-                          components: { Select: { colorBorder: "#36b446" } },
+                          components: {
+                            Select: {
+                              colorBorder: "#36b446",
+                            },
+                          },
                         }}
                       >
                         <Select
@@ -158,7 +176,9 @@ const InnerDirectors = (props) => {
                             setFieldValue("NumberOfMap", value);
                           }}
                           onBlur={handleBlur}
-                          getPopupContainer={(t) => t.parentNode}
+                          getPopupContainer={(triggerNode) =>
+                            triggerNode.parentNode
+                          }
                         >
                           {Array.from(
                             { length: props.modalObject.directorLimit || 0 },
@@ -173,7 +193,6 @@ const InnerDirectors = (props) => {
                     </div>
                   </div>
 
-                  {/* TABLE */}
                   {values.NumberOfMap && (
                     <div className="mt-4 All_Client reportSection">
                       <AntDTableHOC
@@ -191,9 +210,6 @@ const InnerDirectors = (props) => {
                 </div>
               </div>
             </Row>
-
-            {/* Hidden Submit Button */}
-            <button type="submit" style={{ display: "none" }} />
           </Form>
         );
       }}
