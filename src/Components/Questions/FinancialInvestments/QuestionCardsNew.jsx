@@ -458,56 +458,55 @@ const questionConfig = {
   ],
   "/user/SMSF": [
     {
-      title: "SMSF Details",
+      title: "Details",
       keyName: "SMSFDetails",
       component: <SmsfDetails />,
       img: will,
     },
     {
-      title: "SMSF Accumulation Details",
+      title: "Accumulation Details",
       keyName: "SMSFAccumulationDetails",
       component: <SmsfAccumulationDetails />,
       img: property,
     },
     {
-      title: "SMSF Pension Phase",
+      title: "Pension Phase",
       keyName: "SMSFPensionPhase",
       component: <SmsfPensionAccountMiddleWare />,
       img: calender,
     },
     {
-      title: "SMSF Bank Accounts",
+      title: "Bank Accounts",
       keyName: "SMSFBank",
       img: BankImg,
       component: <MiddleWare />,
     },
     {
-      title: "SMSF Term Deposits",
+      title: "Term Deposits",
       keyName: "SMSFTermDeposits",
       img: TermImg,
       component: <MiddleWare />,
     },
     {
-      title: "SMSF Australian Shares/ETFs",
+      title: "Australian Shares/ETFs",
       keyName: "SMSFAustralianShares",
       img: PortFolio,
       component: <MiddleWare />,
     },
     {
-      title: "SMSF Platform Investments",
+      title: "Platform Investments",
       keyName: "SMSFManagedFunds",
       img: funds,
       component: <MiddleWare />,
     },
-
     {
-      title: "SMSF Investment Loan",
+      title: "Investment Loan",
       keyName: "SMSFInvestmentLoan",
       img: analytics,
       component: <InvestmentLoan />,
     },
     {
-      title: "SMSF Investment Properties",
+      title: "Investment Properties",
       keyName: "SMSFInvestmentProperties",
       img: people,
       component: <InvestmentPropertyDetails />,
@@ -521,49 +520,49 @@ const questionConfig = {
   ],
   "/user/family-trust": [
     {
-      title: "Family Trust Details",
+      title: "Details",
       keyName: "familyDetails",
       img: will,
       component: <FamilyDetails />,
     },
     {
-      title: "Family Trust Bank Accounts",
+      title: "Bank Accounts",
       keyName: "familyBank",
       img: BankImg,
       component: <MiddleWare />,
     },
     {
-      title: "Family Trust Term Deposits",
+      title: "Term Deposits",
       keyName: "familyTermDeposit",
       img: TermImg,
       component: <MiddleWare />,
     },
     {
-      title: "Family Trust Australian Shares/ETFs",
+      title: "Australian Shares/ETFs",
       keyName: "familyAustralianShare",
       img: PortFolio,
       component: <MiddleWare />,
     },
     {
-      title: "Family Trust Platform Investments",
+      title: "Platform Investment",
       keyName: "familyMangedFunds",
       img: funds,
       component: <MiddleWare />,
     },
     {
-      title: "Family Trust Investment Loan",
+      title: "Investment Loan",
       keyName: "familyInvestmentHomeLoan",
       img: analytics,
       component: <InvestmentLoan />,
     },
     {
-      title: "Family Trust Investment Property",
+      title: "Investment Property",
       keyName: "familyInvestmentProperties",
       img: people,
       component: <InvestmentPropertyDetails />,
     },
     {
-      title: "Other Family Investments",
+      title: "Other Investments",
       keyName: "familyOtherInvestment",
       img: investmentCircle,
       component: <OtherInvestmentsDynamic />,
@@ -646,16 +645,35 @@ const QuestionCard = (props) => {
 
         {/* Client */}
         <div className="mb-3 text-center d-flex flex-column align-items-center justify-content-center">
-          <button
-            className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
-            onClick={() =>
-              onOpen(title, keyName, component, "client", props?.api)
-            }
-            style={{ width: 28, height: 28, padding: 0 }}
-          >
-            <FaArrowUpRightFromSquare size={14} />
-          </button>
-          <div className="mb-2">{clientName}</div>
+          {!props?.showPartnerButton && (
+            <>
+              <button
+                className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
+                onClick={() =>
+                  onOpen(title, keyName, component, "client", props?.api)
+                }
+                style={{ width: 28, height: 28, padding: 0 }}
+              >
+                <FaArrowUpRightFromSquare size={14} />
+              </button>
+              <div className="mb-2">{clientName}</div>
+            </>
+          )}
+          {props?.showPartnerButton && (
+            <div className="d-flex justify-content-center align-items-center gap-2 mb-2">
+              <div className="mb-2">{clientName}</div>
+
+              <button
+                className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
+                onClick={() =>
+                  onOpen(title, keyName, component, "client", props?.api)
+                }
+                style={{ width: 28, height: 28, padding: 0 }}
+              >
+                <FaArrowUpRightFromSquare size={14} />
+              </button>
+            </div>
+          )}
           <input
             className="form-control inputDesign text-center"
             value={clientValue || "$0"}
@@ -667,18 +685,22 @@ const QuestionCard = (props) => {
         {/* Partner */}
         {!isSingle && !clientOnly && (
           <div className="mb-3 text-center d-flex flex-column align-items-center justify-content-center">
-            {props?.showPartnerButton && (
-              <button
-                className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
-                onClick={() =>
-                  onOpen(title, keyName, component, "partner", props?.api)
-                }
-                style={{ width: 28, height: 28, padding: 0 }}
-              >
-                <FaArrowUpRightFromSquare size={14} />
-              </button>
-            )}
-            <div className="mb-2">{partnerName}</div>
+            <div className="d-flex justify-content-center align-items-center gap-2 mb-2">
+              <div className="mb-2">{partnerName}</div>
+
+              {props?.showPartnerButton && (
+                <button
+                  className="btn btn-sm bg-secondary rounded-circle text-light mb-2 d-flex align-items-center justify-content-center"
+                  onClick={() =>
+                    onOpen(title, keyName, component, "partner", props?.api)
+                  }
+                  style={{ width: 28, height: 28, padding: 0 }}
+                >
+                  <FaArrowUpRightFromSquare size={14} />
+                </button>
+              )}
+            </div>
+
             <input
               className="form-control inputDesign text-center"
               value={partnerValue || "$0"}
@@ -870,7 +892,7 @@ const QuestionCard = (props) => {
     <div className={`${evenClass ? "col-md-3" : "col-md-4"} mb-4`}>
       <div
         className="card shadow px-4 py-4 borderOverAll GoalsobjectiveCard rounded-4"
-        style={{ minHeight: "68vh" }}
+        style={{ height: "390px" }}
       >
         <h5
           className="text-center fw-bold mb-3"
@@ -944,7 +966,7 @@ const QuestionCardsDemo = ({ questionKey, CRObject }) => {
   };
 
   const generateTitle = (data) => {
-    if (data.title === "SMSF Details") {
+    if (data.keyName === "SMSFDetails") {
       return questionDetail?.SMSFDetails?.SMSFOwner?.fundName || data.title;
     }
     return data.title;

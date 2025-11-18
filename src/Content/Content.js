@@ -85,21 +85,21 @@ export const content = {
     {
       subTitle: "Estate Planning & Professional Advisers",
       statusStep: 40,
-      icon: "FaQuestionCircle",
+      icon: "IoDocumentTextOutline",
       route: "/user/estate-planning",
       condition: (CRObject) => true,
     },
     {
       subTitle: "Personal Insurance",
       statusStep: 48,
-      icon: "FaMoneyCheckDollar",
+      icon: "IoShieldCheckmark",
       route: "/user/personal-insurance",
       condition: (CRObject) => CRObject?.personalInsuranceTab === "Yes",
     },
     {
       subTitle: "Business Entities",
       statusStep: 56,
-      icon: "FaBriefcase",
+      icon: "FaRegBuilding",
       route: "/user/business-entities",
       condition: (CRObject) =>
         CRObject?.BusinessAsCompanyStructure === "Yes" ||
@@ -108,14 +108,14 @@ export const content = {
     {
       subTitle: "SMSF",
       statusStep: 64,
-      icon: "FaGift",
+      icon: "FaPiggyBank",
       route: "/user/SMSF",
       condition: (CRObject) => CRObject?.SMSFManagedFundsTab === "Yes",
     },
     {
       subTitle: "Investment Trust",
       statusStep: 72,
-      icon: "MdFamilyRestroom",
+      icon: "FaRegHandshake",
       route: "/user/family-trust",
       condition: (CRObject) => CRObject?.businessAsInvestmentTab === "Yes",
     },

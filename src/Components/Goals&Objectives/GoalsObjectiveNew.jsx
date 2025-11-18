@@ -115,7 +115,7 @@ const GoalsObjectiveNew = () => {
         // img: BankImg,
         img: CareforAgeingFamilyMember,
         modalBtn: "label",
-        whenScopeIs: "",
+        whenScopeIs: "Age Care",
         scopeOfAdvice: "Age Care",
         descriptionArray: [
           {
@@ -130,7 +130,7 @@ const GoalsObjectiveNew = () => {
         key: "budgetGoal",
         img: bill,
         modalBtn: "label",
-        whenScopeIs: "",
+        whenScopeIs: "Cashflow",
         descriptionArray: [
           {
             text: "<span>I/We</span> would like to set up a budget to help manage <span>our/my</span> income and expenses more effectively. <span>I/We</span> want to understand where <span>our/my</span> money is going each week/fortnight/month and find ways to save more without impacting <span>our/my</span> lifestyle. <span>I/We</span> would like guidance on creating a simple, realistic plan that helps <span>us/me</span> stay on track with bills, manage surplus cashflow, and work towards <span>our/my</span> financial goals with confidence.",
@@ -143,7 +143,7 @@ const GoalsObjectiveNew = () => {
         key: "emergencyFundGoal",
         img: briefcase,
         modalBtn: "label",
-        whenScopeIs: "",
+        whenScopeIs: "Cashflow",
         descriptionArray: [
           {
             text: "<span>I/We</span> would like to build an emergency fund to provide a financial safety net for unexpected expenses. <span>I/We</span> want to gradually save enough to cover at least three to six months of living expenses, ensuring <span>we/I</span> have peace of mind knowing funds are available if needed. <span>I/We</span> would like guidance on how much to aim for and the best place to keep these savings while still earning a reasonable return.",
@@ -156,7 +156,7 @@ const GoalsObjectiveNew = () => {
         key: "adviceOnSurplusIncomeGoal",
         img: savingMoney,
         modalBtn: "label",
-        whenScopeIs: "",
+        whenScopeIs: "Cashflow",
         descriptionArray: [
           {
             text: "<span>I/We</span> would like advice on how to make the most of <span>our/my</span> surplus income. <span>I/We</span> want to understand the best way to use this extra money whether to save, invest, contribute more to super, or reduce debt in a way that aligns with <span>our/my</span> short and long-term goals. <span>I/We</span> would like guidance on creating a clear strategy that helps improve <span>our/my</span> overall financial position while maintaining flexibility for lifestyle needs. <span>I/We</span> currently have around $X,000 of surplus funds each week/fortnight/month to work with. ",
@@ -169,7 +169,7 @@ const GoalsObjectiveNew = () => {
         key: "weddingGoal",
         img: marriageRings,
         modalBtn: "label",
-        whenScopeIs: "",
+        whenScopeIs: "Cashflow",
         descriptionArray: [
           {
             text: "<span>I/We</span> would like to start saving for <span>our/my</span> upcoming wedding to make sure <span>we/I</span> can cover the costs without financial stress. <span>I/We</span> want to set aside regular savings to pay for expenses such as the venue, catering, and travel, while keeping <span>our/my</span> other financial goals on track. <span>I/We</span> would like guidance on how much to save each month and the best way to manage these funds to reach <span>our/my</span> target amount in time for the wedding. <span>I/We</span> estimate this will cost <span>us/me</span> approximately $xx,000. ",
@@ -234,7 +234,7 @@ const GoalsObjectiveNew = () => {
         key: "houseGoal",
         img: home,
         modalBtn: "label",
-        whenScopeIs: "",
+        whenScopeIs: "Cashflow",
         descriptionArray: [
           {
             text: "<span>I/We</span> would like to buy <span>our/my</span> first home to provide stability and security for <span>our/my</span> future. <span>I/We</span> would like guidance on how much <span>we/I</span> can afford to spend; how much deposit is needed and if <span>we/I</span> can afford to do this. <span>I/We</span> also want to make sure the purchase fits within <span>our/my</span> broader financial goals while maintaining enough savings for lifestyle and other commitments. ",
@@ -247,7 +247,7 @@ const GoalsObjectiveNew = () => {
         key: "upgradeFamilyHomeGoal",
         img: upgradeHome,
         modalBtn: "label",
-        whenScopeIs: "",
+        whenScopeIs: "Cashflow",
         descriptionArray: [
           {
             text: "<span>I/We</span> would like to upgrade <span>our/my</span> current family home to better suit <span>our/my</span> lifestyle and future needs. <span>I/We</span> are looking for a property that offers more space, comfort, or improved location for <span>our/my</span> family. <span>I/We</span> would like guidance on how much <span>we/I</span> can afford to spend and how this will affect <span>our/my</span> cashflow. <span>We/I</span> also want to know if <span>we/I</span> can also afford to keep <span>our/my</span> current home and rent it out. ",
@@ -273,8 +273,12 @@ const GoalsObjectiveNew = () => {
         key: "downSizeFamilyHomeGoal",
         img: shiftHome,
         modalBtn: "label",
-        whenScopeIs: "",
-        descriptionArray: [],
+        whenScopeIs: "Cashflow",
+        descriptionArray: [
+          {
+            text: "<span>I/We</span> would like to downsize <span>our/my</span> current family home to a smaller and more manageable property that better suits <span>our/my</span> lifestyle and retirement plans. <span>I/We</span> are looking to simplify living arrangements, reduce ongoing costs, and potentially free up some of the home’s value to support <span>our/my</span> future goals or retirement income. <span>I/We would also like to explore whether some of the leftover sale proceeds can be contributed into our/my super to help boost retirement our/my savings.</span>",
+          },
+        ],
         scopeOfAdvice: "Cashflow",
       },
       {
@@ -282,7 +286,7 @@ const GoalsObjectiveNew = () => {
         key: "investmentPropertyGoal",
         img: investment,
         modalBtn: "label",
-        whenScopeIs: "",
+        whenScopeIs: "Cashflow",
         descriptionArray: [
           {
             text: "<span>I/We</span> would like to buy an investment property to help build <span>our/my</span> long-term wealth and create an additional source of income. <span>I/We</span> want to understand how much <span>we/I</span> can afford to borrow, what deposit is needed, and how the property purchase will fit within <span>our/my</span> overall financial plan. <span>I/We</span> would also like to know how this decision will affect <span>our/my</span> overall cashflow and tax position, and whether there are other investment options worth considering if <span>we/I</span> decide not to proceed with this purchase.",
@@ -401,7 +405,7 @@ const GoalsObjectiveNew = () => {
         key: "reviewInvestmentPortfolioGoal",
         img: investmentChart,
         modalBtn: "label",
-        whenScopeIs: "",
+        whenScopeIs: "Investment",
         descriptionArray: [
           {
             text: "<span>I/We/Client Name</span> would like to review <span>our/my/his/her</span> current investment portfolio to ensure it remains aligned with <span>our/my/his/her</span> goals, timeframes, and comfort with risk. <span>I/We/Client Name</span> want to make sure <span>our/my/his/her</span> investments are well diversified and positioned to achieve long-term growth while balancing risk appropriately. <span>I/We/Client Name</span> would also like guidance on whether any changes are needed to help <span>us/me/him/her</span> reduce <span>our/my/his/her</span> goals.",
@@ -414,7 +418,7 @@ const GoalsObjectiveNew = () => {
         key: "inheritanceGoal",
         img: inheritance,
         modalBtn: "label",
-        whenScopeIs: "",
+        whenScopeIs: "Investment",
         scopeOfAdvice: "Investment",
         descriptionArray: [
           {
@@ -430,7 +434,7 @@ const GoalsObjectiveNew = () => {
         key: "payLessTaxGoal",
         img: taxCutting,
         modalBtn: "label",
-        whenScopeIs: "",
+        whenScopeIs: "Investment",
         scopeOfAdvice: "Investment",
         descriptionArray: [
           {
@@ -443,7 +447,7 @@ const GoalsObjectiveNew = () => {
         key: "childrenEducationGoal",
         img: graduationMortarboard,
         modalBtn: "label",
-        whenScopeIs: "",
+        whenScopeIs: "Investment",
         scopeOfAdvice: "Investment",
         descriptionArray: [
           {
@@ -456,7 +460,7 @@ const GoalsObjectiveNew = () => {
         key: "regularSavingsGoal",
         img: clipboard,
         modalBtn: "label",
-        whenScopeIs: "",
+        whenScopeIs: "Investment",
         scopeOfAdvice: "Investment",
         descriptionArray: [
           {
@@ -627,8 +631,12 @@ const GoalsObjectiveNew = () => {
         key: "planForRetirementGoal",
         img: timeMoney,
         modalBtn: "label",
-        whenScopeIs: "",
-        descriptionArray: [],
+        whenScopeIs: "Retirement Planning",
+        descriptionArray: [
+          {
+            text: "<span>I/We</span> would like to plan for <span>our/my</span> retirement to ensure <span>we/I</span> have enough income to live comfortably and enjoy the lifestyle <span>we/I</span> want. <span>I/We</span> would like to be able to receive an income of <span>$X,000 per week/fortnight/month</span> for <span>us/me</span> to be comfortable in <span>our/my</span> retirement and live the way <span>I/we</span> want to. This amount will allow <span>us/me</span> to maintain <span>our/my</span> current lifestyle, cover regular living costs, and have the freedom to enjoy activities such as travel, dining out, or spending time with family and friends. <span>I/We</span> want to understand how much will be needed to retire, how long <span>our/my</span> money will last, and what steps can be taken now to achieve this.",
+          },
+        ],
         scopeOfAdvice: "Retirement Planning",
       },
     ],
@@ -924,7 +932,7 @@ const GoalsObjectiveNew = () => {
                                         className=" d-block text-center"
                                         htmlFor={"scopeOfAdvice" + [goal.key]}
                                       >
-                                        Scope of Advice
+                                        Scope
                                       </label>
 
                                       {goal.modalBtn === "label" && (

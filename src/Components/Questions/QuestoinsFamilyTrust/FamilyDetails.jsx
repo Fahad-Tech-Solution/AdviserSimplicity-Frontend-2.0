@@ -261,14 +261,6 @@ const FamilyDetails = (props) => {
         return (
           <Form>
             <div className="row">
-              <p
-                className="text-end mt-1 pt-2 "
-                onClick={() => {
-                  console.log(values);
-                }}
-              >
-                Test Text
-              </p>
               <InnerModal
                 modalObject={modalObject}
                 setFieldValue={setFieldValue}
