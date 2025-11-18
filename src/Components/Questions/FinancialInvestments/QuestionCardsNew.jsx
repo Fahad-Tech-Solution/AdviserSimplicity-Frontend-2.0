@@ -12,6 +12,7 @@ import {
   openNotificationSuccess,
   PatchAxios,
   PostAxios,
+  RenderName,
   toCommaAndDollar,
 } from "../../Assets/Api/Api";
 import ModalComponent from "./ModalComponent";
@@ -516,6 +517,17 @@ const questionConfig = {
       keyName: "SMSFOtherInvestment",
       img: investmentCircle,
       component: <OtherInvestmentsDynamic />,
+      variant: "case2",
+      Labels: [
+        {
+          label: "client",
+          value: (questionDetail) =>
+            questionDetail?.creditCards?.clientTotal ?? "",
+          component: <OtherInvestmentsDynamic />,
+          key: "SMSFOtherInvestment",
+          maintitle: true,
+        },
+      ],
     },
   ],
   "/user/family-trust": [
@@ -566,6 +578,17 @@ const questionConfig = {
       keyName: "familyOtherInvestment",
       img: investmentCircle,
       component: <OtherInvestmentsDynamic />,
+      variant: "case2",
+      Labels: [
+        {
+          label: "client",
+          value: (questionDetail) =>
+            questionDetail?.creditCards?.clientTotal ?? "",
+          component: <OtherInvestmentsDynamic />,
+          key: "familyOtherInvestment",
+          maintitle: true,
+        },
+      ],
     },
   ],
 };
@@ -723,13 +746,17 @@ const QuestionCard = (props) => {
   }) => {
     const handleOpen = () => {
       // Pass the specific label's data to the modal
-      onOpen(lbl.label, lbl.key, lbl.component);
+      onOpen(lbl?.maintitle ? title : lbl.label, lbl.key, lbl.component);
     };
 
     return (
       <div className="mb-3 text-center">
         <div className="d-flex justify-content-center align-items-center gap-2 mb-2">
-          <span>{lbl.label}</span>
+          <span>
+            {["client", "partner", "joint"].includes(lbl.label)
+              ? RenderName(lbl.label)
+              : lbl.label}
+          </span>
 
           <button
             className="btn btn-sm bg-secondary rounded-circle text-light d-flex align-items-center justify-content-center"

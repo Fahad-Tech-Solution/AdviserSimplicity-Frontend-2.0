@@ -9,23 +9,28 @@ import people from "../svgs/Questions_People.png";
 import property from "../svgs/property-value.svg";
 import investmentCircle from "../svgs/investmentCircle.png";
 
-
 import { useRecoilState, useRecoilValue } from "recoil";
 import { QuestionShift, CRState, defaultUrl } from "../../../Store/Store";
-import { GetAxios, openNotificationSuccess, PatchAxios, PostAxios } from "../../Assets/Api/Api";
+import {
+  GetAxios,
+  openNotificationSuccess,
+  PatchAxios,
+  PostAxios,
+} from "../../Assets/Api/Api";
 import DynamicQuestionBlocks from "../../Assets/DynamicQuestionBlocks/DynamicQuestionBlocks";
 
 const QuestionsSMSF = (props) => {
-
   let [CRObject, setCRObject] = useRecoilState(CRState);
 
   const [flagState, setFlagState] = useState(false);
 
-  let DefaultUrl = useRecoilValue(defaultUrl)
+  let DefaultUrl = useRecoilValue(defaultUrl);
 
   const FetchQuestions = async () => {
     try {
-      const res = await GetAxios(`${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`);
+      const res = await GetAxios(
+        `${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`
+      );
       if (res) {
         setCRObject(res);
         setFlagState(true);
@@ -49,7 +54,10 @@ const QuestionsSMSF = (props) => {
   const onSubmit = async (values) => {
     try {
       if (!flagState) {
-        const PostRes = await PostAxios(`${DefaultUrl}/api/questions/Add`, values);
+        const PostRes = await PostAxios(
+          `${DefaultUrl}/api/questions/Add`,
+          values
+        );
         if (PostRes) {
           if (props.flagState) {
             props.setFlagState(false);
@@ -57,7 +65,12 @@ const QuestionsSMSF = (props) => {
           handleResponse(values);
         }
       } else {
-        const PatchRes = await PatchAxios(`${DefaultUrl}/api/questions/Update/${localStorage.getItem("UserID")}`, values);
+        const PatchRes = await PatchAxios(
+          `${DefaultUrl}/api/questions/Update/${localStorage.getItem(
+            "UserID"
+          )}`,
+          values
+        );
         if (PatchRes) {
           if (props.flagState) {
             props.setFlagState(false);
@@ -65,50 +78,62 @@ const QuestionsSMSF = (props) => {
           handleResponse(values);
         }
       }
-      openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
+      openNotificationSuccess(
+        "success",
+        "topRight",
+        "Success Notification",
+        'Data of "' + props.modalObject.title + '" is Saved'
+      );
     } catch (error) {
       console.error("Error submitting form:", error);
-      openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        'Data of "' +
+          props.modalObject.title +
+          '" is not Saved Please! try again'
+      );
     }
   };
 
   let QuestionArray = [
     {
-      title: "Does your SMSF have any Money invested in Term Deposits?",
+      title: "Term Deposits",
       img: TermImg,
       key: "SMSFTermDeposits",
     },
     {
-      title: "Does  your SMSF have any Money invested Australian Shares?",
+      title: "Australian Shares/ETFs",
       img: PortFolio,
       key: "SMSFAustralianShares",
     },
     {
-      title: "Do you SMSF have any Money invested in Managed Funds or via a Platform?",
+      title: "Platform Investments",
       img: funds,
       key: "SMSFManagedFunds",
     },
     {
-      title: "Does  your SMSF have an  Investment Loan (LOC)  attached to any of its investments?",
+      title: "Investment Loans",
       img: analytics,
       key: "SMSFInvestmentLoan",
     },
     {
-      title: "Does your SMSF have any investment Properties?",
+      title: "Investment Properties",
       img: property,
       key: "SMSFInvestmentProperties",
     },
     {
-      title: "Does your SMSF have any money in Pension Phase?",
+      title: "Account Based Pensions",
       img: people,
       key: "SMSFPensionPhase",
     },
     {
-      title: "Other Investment",
+      title: "Other investments",
       img: investmentCircle,
       key: "SMSFOtherInvestment",
     },
-  ]
+  ];
   const QuestionClick = (index, elem, values, setFieldValue) => {
     // console.log("image clicked in goals", index, elem.key, values);
     if (values[elem.key] == "No") {
@@ -118,7 +143,6 @@ const QuestionsSMSF = (props) => {
       setFieldValue(elem.key, "No");
     }
   };
-
 
   return (
     <div className="container-fluid my-4">
@@ -135,14 +159,23 @@ const QuestionsSMSF = (props) => {
                 <h4 className="heading d-none">Self Manged Super Fund </h4>
 
                 <div className="row my-3 justify-content-center">
-                  <DynamicQuestionBlocks QuestionArray={QuestionArray} QuestionClick={QuestionClick} values={values} setFieldValue={setFieldValue} />
+                  <DynamicQuestionBlocks
+                    QuestionArray={QuestionArray}
+                    QuestionClick={QuestionClick}
+                    values={values}
+                    setFieldValue={setFieldValue}
+                  />
                 </div>
 
                 <div className="row mt-2 d-none">
                   <div className="col-md-12">
                     <button
                       onClick={() => {
-                        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+                        window.scrollTo({
+                          top: 0,
+                          left: 0,
+                          behavior: "smooth",
+                        });
                       }}
                       type="submit"
                       className="float-end btn w-25 bgColor modalBtn"
@@ -151,12 +184,15 @@ const QuestionsSMSF = (props) => {
                     </button>
                     <button
                       onClick={() => {
-                        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+                        window.scrollTo({
+                          top: 0,
+                          left: 0,
+                          behavior: "smooth",
+                        });
                         setQuestionChange("ProfessionalAdvisor");
                       }}
                       type="button"
                       className="float-end btn w-25  btn-outline  backBtn mx-3"
-
                     >
                       Back
                     </button>

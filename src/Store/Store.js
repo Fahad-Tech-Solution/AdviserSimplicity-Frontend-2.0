@@ -348,7 +348,7 @@ export const GQState = atom({
     startFamilyGoal: "No",
     upgradeFamilyHomeGoal: "No",
     weddingGoal: "No",
-    lumpSumContributionSuper:"No"
+    lumpSumContributionSuper: "No",
   },
 });
 

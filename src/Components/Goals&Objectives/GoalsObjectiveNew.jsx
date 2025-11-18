@@ -159,7 +159,7 @@ const GoalsObjectiveNew = () => {
         whenScopeIs: "Cashflow",
         descriptionArray: [
           {
-            text: "<span>I/We</span> would like advice on how to make the most of <span>our/my</span> surplus income. <span>I/We</span> want to understand the best way to use this extra money whether to save, invest, contribute more to super, or reduce debt in a way that aligns with <span>our/my</span> short and long-term goals. <span>I/We</span> would like guidance on creating a clear strategy that helps improve <span>our/my</span> overall financial position while maintaining flexibility for lifestyle needs. <span>I/We</span> currently have around $X,000 of surplus funds each week/fortnight/month to work with. ",
+            text: "<span>I/We</span> would like advice on how to make the most of <span>our/my</span> surplus income. <span>I/We</span> want to understand the best way to use this extra money whether to <span>save, invest, contribute more to super, or reduce debt</span> in a way that aligns with <span>our/my</span> short and long-term goals. <span>I/We</span> would like guidance on creating a clear strategy that helps improve <span>our/my</span> overall financial position while maintaining flexibility for lifestyle needs. <span>I/We</span> currently have around <span>$X,000</span> of surplus funds each <span>week/fortnight/month</span> to work with. ",
           },
         ],
         scopeOfAdvice: "Cashflow",
@@ -172,7 +172,7 @@ const GoalsObjectiveNew = () => {
         whenScopeIs: "Cashflow",
         descriptionArray: [
           {
-            text: "<span>I/We</span> would like to start saving for <span>our/my</span> upcoming wedding to make sure <span>we/I</span> can cover the costs without financial stress. <span>I/We</span> want to set aside regular savings to pay for expenses such as the venue, catering, and travel, while keeping <span>our/my</span> other financial goals on track. <span>I/We</span> would like guidance on how much to save each month and the best way to manage these funds to reach <span>our/my</span> target amount in time for the wedding. <span>I/We</span> estimate this will cost <span>us/me</span> approximately $xx,000. ",
+            text: "<span>I/We</span> would like to start saving for <span>our/my</span> upcoming wedding to make sure <span>we/I</span> can cover the costs without financial stress. <span>I/We</span> want to set aside regular savings to pay for expenses such as the venue, catering, and travel, while keeping <span>our/my</span> other financial goals on track. <span>I/We</span> would like guidance on how much to save each month and the best way to manage these funds to reach our/my target amount in time for the wedding. <span>I/We</span> estimate this will cost us/me approximately <span>$xx,000</span>. ",
           },
         ],
         scopeOfAdvice: "Cashflow",
@@ -250,7 +250,7 @@ const GoalsObjectiveNew = () => {
         whenScopeIs: "Cashflow",
         descriptionArray: [
           {
-            text: "<span>I/We</span> would like to upgrade <span>our/my</span> current family home to better suit <span>our/my</span> lifestyle and future needs. <span>I/We</span> are looking for a property that offers more space, comfort, or improved location for <span>our/my</span> family. <span>I/We</span> would like guidance on how much <span>we/I</span> can afford to spend and how this will affect <span>our/my</span> cashflow. <span>We/I</span> also want to know if <span>we/I</span> can also afford to keep <span>our/my</span> current home and rent it out. ",
+            text: "<span>I/We</span> would like to upgrade our/my current family home to better suit <span>our/my</span> lifestyle and future needs. <span>I/We</span> are looking for a property that offers more space, comfort, or improved location for <span>our/my</span> family. I/We would like guidance on how much <span>we/I</span> can afford to spend and how this will affect our cashflow. <span>We/I also want to know if we/I can also afford to keep our/my current home and rent it out.</span> ",
           },
         ],
         scopeOfAdvice: "Cashflow",
@@ -829,6 +829,7 @@ const GoalsObjectiveNew = () => {
         <div className="col-md-12">
           <div className="d-flex justify-content-center ">
             <div
+              role="button"
               className="QuestionIcon p-3 curser-pointer"
               style={{ marginTop: "-50px", width: "9%" }}
               onClick={() => {

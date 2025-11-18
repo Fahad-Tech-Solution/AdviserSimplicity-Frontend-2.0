@@ -780,15 +780,25 @@ const NewAllClients = (props) => {
         expanded={expanded}
         selectedValue={selectedValue}
         options={PerosnalDetail.map((item) => ({
-          value: item.client.Email,
+          value: item.client.Email, // or client ID if available
           label: `${item.client.clientGivenName || ""} ${
             item.client.clientLastName || ""
           }`,
+          email: item.client.Email,
+          phone: item.client.clientWorkPhone,
         }))}
         onSearchClick={() => setExpanded(true)}
         onCloseClick={() => {
           setExpanded(false);
           setSelectedValue(null);
+        }}
+        filterOption={(input, option) => {
+          const searchText = input.toLowerCase();
+          return (
+            option?.label?.toLowerCase().includes(searchText) ||
+            option?.email?.toLowerCase().includes(searchText) ||
+            option?.phone?.toLowerCase().includes(searchText)
+          );
         }}
         onChange={(val) => {
           console.log(val);

@@ -14,6 +14,8 @@ const ReusableHeader = ({
   onChange, // fn for Select
   onAddClick, // fn for "Add" button
   addButtonLabel = "Add", // optional label
+  filterOption = (input, option) =>
+    option?.label?.toLowerCase().includes(input.toLowerCase()),
 }) => {
   return (
     <div className="d-flex w-100 justify-content-between align-items-center gap-3">
@@ -37,9 +39,7 @@ const ReusableHeader = ({
                 style={{ width: 200 }}
                 placeholder="Search to Select"
                 optionFilterProp="label"
-                filterOption={(input, option) =>
-                  option?.label?.toLowerCase().includes(input.toLowerCase())
-                }
+                filterOption={filterOption}
                 filterSort={(a, b) =>
                   (a?.label ?? "")
                     .toLowerCase()
