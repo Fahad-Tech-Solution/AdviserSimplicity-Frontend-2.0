@@ -1,119 +1,110 @@
 import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
-import { Row, Table } from "react-bootstrap";
+import { Row } from "react-bootstrap";
 import { useRecoilValue } from "recoil";
 import { defaultUrl } from "../../../Store/Store";
-import DatePicker from "react-datepicker";
 import { handleInputBlur, handleInputChange, handleInputFocus, handleInputKeyDown, toCommaAndDollar, toPercentage } from "../../Assets/Api/Api";
+import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
+import { ConfigProvider, Input } from "antd";
+
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const PensionBenefits = (props) => {
-
-  let initialValues = { NumberOfMap: "1" };
-
-
-
   const [dynamicFields, setDynamicFields] = useState([]);
 
-  const fillInitialValues = (setFieldValue) => {
-    if (props.modalObject.editArray.length) {
-      let arr = [];
+  // Safely access modalObject from props with fallbacks
+  const modalObject = props.modalObject || {};
+  const index = parseFloat(
+    props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
+  );
+  const BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
 
-      for (let i = 0; i < props.modalObject.editArray.length; i++) {
-        arr.push("");
-      }
+  // Ensure existingData is always an array
+  const existingData =
+    props.modalObject.values?.[BaseKey]?.[index]?.[props.modalObject.key + "Array"] || [];
 
-      setDynamicFields(arr);
-    }
 
-    if (props.modalObject.editArray) {
-      props.modalObject.editArray.forEach((data, i) => {
-        if (data) {
-          console.log(data.investmentOption);
-          setFieldValue(`commencementDate${i}`, data.commencementDate || "");
-          setFieldValue(`originalPurchaseDate${i}`, data.originalPurchaseDate || "");
-          setFieldValue(`eligibleServiceDate${i}`, data.eligibleServiceDate || "");
-          setFieldValue(`taxFree${i}`, data.taxFree || "");
-          setFieldValue(`currentBalance${i}`, data.currentBalance || "");
-          setFieldValue(`taxFreeComponent${i}`, data.taxFreeComponent || "");
-          setFieldValue(`taxableComponent${i}`, data.taxableComponent || "");
-          setFieldValue(`deductibleAmount${i}`, data.deductibleAmount || "");
-          setFieldValue(`LumpsumWithdrawalTaken${i}`, data.LumpsumWithdrawalTaken || "");
-        }
-      });
-    }
+  const initialValues = {
 
   };
 
-  let onSubmit = async (values) => {
-    console.log(values);
+  const fillInitialValues = (setFieldValue) => {
+    if (existingData.length > 0) {
+      setFieldValue("NumberOfMap", existingData.length);
+      setFieldValue("pensionBenefits", existingData);
+    }
+  };
 
+  const onSubmit = async (values) => {
+    console.log("PensionBenefits onSubmit values:", values);
+
+    const numberOfMaps = parseInt(values.NumberOfMap, 10);
     const newEntries = [];
 
-    let loopLength = parseFloat(values.NumberOfMap);
-
-    // Iterate through each map entry and create a new object
-    for (let i = 0; i < loopLength; i++) {
-      // alert("loop chala")
+    for (let i = 0; i < numberOfMaps; i++) {
       const newEntry = {
-        commencementDate: values[`commencementDate${i}`] || "",
-        originalPurchaseDate: values[`originalPurchaseDate${i}`] || "",
-        eligibleServiceDate: values[`eligibleServiceDate${i}`] || "",
-        taxFree: values[`taxFree${i}`] || "",
-        currentBalance: values[`currentBalance${i}`] || "",
-        taxFreeComponent: values[`taxFreeComponent${i}`] || "",
-        taxableComponent: values[`taxableComponent${i}`] || "",
-        deductibleAmount: values[`deductibleAmount${i}`] || "",
-        LumpsumWithdrawalTaken: values[`LumpsumWithdrawalTaken${i}`] || "",
+        commencementDate: values.pensionBenefits?.[i]?.commencementDate || "",
+        originalPurchaseDate: values.pensionBenefits?.[i]?.originalPurchaseDate || "",
+        eligibleServiceDate: values.pensionBenefits?.[i]?.eligibleServiceDate || "",
+        taxFree: values.pensionBenefits?.[i]?.taxFree || "",
+        currentBalance: values.pensionBenefits?.[i]?.currentBalance || "",
+        taxFreeComponent: values.pensionBenefits?.[i]?.taxFreeComponent || "",
+        taxableComponent: values.pensionBenefits?.[i]?.taxableComponent || "",
+        deductibleAmount: values.pensionBenefits?.[i]?.deductibleAmount || "",
+        LumpsumWithdrawalTaken: values.pensionBenefits?.[i]?.LumpsumWithdrawalTaken || "",
       };
       newEntries.push(newEntry);
     }
 
-    // Log the new entries to verify
-    console.log(newEntries);
+    console.log("PensionBenefits newEntries:", newEntries);
 
-    let total = newEntries.reduce(
-      (total, entry) => total + parseFloat(entry.taxableComponent.replace(/[^0-9.-]+/g, "")),
+    const total = newEntries.reduce(
+      (total, entry) => total + parseFloat((entry.taxableComponent || "0").replace(/[^0-9.-]+/g, "") || 0),
       0
     );
 
-    props.setFieldValue(
-      `${props.modalObject.key}${props.modalObject.index}`,
-      newEntries
-    );
-    props.setFieldValue(
-      `${props.modalObject.key3}${props.modalObject.index}`,
-      toCommaAndDollar(total)
-    );
-    props.setFieldValue(
-      `${props.modalObject.mainKey}${props.modalObject.index}`,
-      toCommaAndDollar(total)
-    );
+    console.log("PensionBenefits modalObject:", `${modalObject.stakeHolder}${modalObject.key}`,total);
 
-    // Reset the flag state if necessary
-    if (props.flagState) {
+    if (props.setFieldValue && modalObject.stakeHolder && modalObject.key) {
+      props.setFieldValue(
+        `${modalObject.stakeHolder}${modalObject.key}Array`,
+        newEntries
+      );
+      props.setFieldValue(
+        `${modalObject.stakeHolder}${modalObject.key}`,
+        toCommaAndDollar(total)
+      );
+      
+    }
+
+
+
+    // Close modal - check for both flagState variations used in parent
+    if (props.flagState !== undefined) {
+      props.setFlagState(false);
+    }
+
+    // Alternative flag state from parent's InnerModal
+    if (props.setFlagState && props.flagState !== undefined) {
       props.setFlagState(false);
     }
   };
 
-  
-  const FormulaSetting = (values, setFieldValue, currentInput, stockholder) => {
+  const FormulaSetting = (values, setFieldValue, currentInput, stakeHolder) => {
     try {
-      console.log(values, setFieldValue, currentInput, stockholder);
+    
+      const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
 
-      // Safely parse numeric values
-      let taxFree = parseFloat(values[`taxFree0`]?.replace(/[^0-9.-]+/g, "") || 0) || 0;
-      let currentBalance = parseFloat(values[`currentBalance0`]?.replace(/[^0-9.-]+/g, "") || 0) || 0;
+      // Safely parse numeric values from the array structure
+      let taxFree = parseFloat(values.pensionBenefits?.[index]?.taxFree?.replace(/[^0-9.-]+/g, "") || 0) || 0;
+      let currentBalance = parseFloat(values.pensionBenefits?.[index]?.currentBalance?.replace(/[^0-9.-]+/g, "") || 0) || 0;
 
       // Update values based on current input
-      switch (currentInput.name) {
-        case "taxFree0":
-          taxFree = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
-          break;
-        case "currentBalance0":
-          currentBalance = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
-          break;
-        default:
-          console.warn("Unhandled input name:", currentInput.name);
+      const fieldName = currentInput.name;
+      if (fieldName.includes('taxFree')) {
+        taxFree = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
+      } else if (fieldName.includes('currentBalance')) {
+        currentBalance = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
       }
 
       // Calculate components
@@ -121,16 +112,133 @@ const PensionBenefits = (props) => {
       const taxableComponent = currentBalance - taxFreeComponent;
 
       // Set field values, formatting as needed
-      setFieldValue("taxFreeComponent0", toCommaAndDollar(taxFreeComponent));
-      setFieldValue("taxableComponent0", toCommaAndDollar(taxableComponent));
+      setFieldValue(stakeHolder+`taxFreeComponent`, toCommaAndDollar(taxFreeComponent));
+      setFieldValue(stakeHolder+`taxableComponent`, toCommaAndDollar(taxableComponent));
 
     } catch (error) {
       console.error("An error occurred in FormulaSetting:", error);
     }
   };
 
+  const handleInput = (e, setFieldValue, values) => {
+    const value = e.target.value > 5 ? 5 : e.target.value;
+    setFieldValue(e.target.id, value);
 
+    // Update pensionBenefits array based on new count
+    const newCount = parseInt(value, 10) || 0;
+    const currentBenefits = values.pensionBenefits || [];
 
+    if (newCount > currentBenefits.length) {
+      // Add new empty benefits
+      const newBenefits = [...currentBenefits];
+      for (let i = currentBenefits.length; i < newCount; i++) {
+        newBenefits.push({
+          commencementDate: "",
+          originalPurchaseDate: "",
+          eligibleServiceDate: "",
+          taxFree: "",
+          currentBalance: "",
+          taxFreeComponent: "",
+          taxableComponent: "",
+          deductibleAmount: "",
+          LumpsumWithdrawalTaken: "",
+        });
+      }
+      setFieldValue("pensionBenefits", newBenefits);
+    } else if (newCount < currentBenefits.length) {
+      // Remove extra benefits
+      setFieldValue("pensionBenefits", currentBenefits.slice(0, newCount));
+    }
+  };
+
+  // Define columns for Antd Table
+  const columns = [
+    {
+      title: "No#",
+      dataIndex: "owner",
+      key: "owner",
+      width: 50,
+    },
+    {
+      title: "Commencement Date",
+      dataIndex: "commencementDate",
+      key: "commencementDate",
+      type: "antdate",
+      placeholder: "Commencement Date",
+      width: 150,
+    },
+    {
+      title: "Original Purchase Price",
+      dataIndex: "originalPurchaseDate",
+      key: "originalPurchaseDate",
+      type: "number-toComma",
+      placeholder: "Original Purchase Price",
+      width: 150,
+    },
+    {
+      title: "Eligible Service Date",
+      dataIndex: "eligibleServiceDate",
+      key: "eligibleServiceDate",
+      type: "antdate",
+      placeholder: "Eligible Service Date",
+      width: 150,
+    },
+    {
+      title: "Tax Free",
+      dataIndex: "taxFree",
+      key: "taxFree",
+      type: "number-toPercent",
+      placeholder: "Tax Free",
+      width: 100,
+      callBack:true,
+      func: FormulaSetting,
+    },
+    {
+      title: "Current Balance",
+      dataIndex: "currentBalance",
+      key: "currentBalance",
+      type: "number-toComma",
+      placeholder: "Current Balance",
+      width: 120,
+      callBack:true,
+      func: FormulaSetting,
+    },
+    {
+      title: "Tax Free Component",
+      dataIndex: "taxFreeComponent",
+      key: "taxFreeComponent",
+      type: "number-toComma",
+      placeholder: "Tax Free Component",
+      width: 140,
+      disabled: true,
+    },
+    {
+      title: "Taxable Component",
+      dataIndex: "taxableComponent",
+      key: "taxableComponent",
+      type: "number-toComma",
+     
+      placeholder: "Taxable Component",
+      width: 140,
+      disabled: true,
+    },
+    {
+      title: "Deductible Amount",
+      dataIndex: "deductibleAmount",
+      key: "deductibleAmount",
+      type: "number-toComma",
+      placeholder: "Deductible Amount",
+      width: 140,
+    },
+    {
+      title: "Lumpsum Withdrawal Taken",
+      dataIndex: "LumpsumWithdrawalTaken",
+      key: "LumpsumWithdrawalTaken",
+      type: "number-toComma",
+      placeholder: "Lumpsum Withdrawal Taken",
+      width: 160,
+    },
+  ];
 
   return (
     <Formik
@@ -139,187 +247,69 @@ const PensionBenefits = (props) => {
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, handleChange, setFieldValue, handleBlur }) => {
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
+
+        // Prepare data for Antd Table
+        const dataRows = Array.isArray(values.pensionBenefits)
+          ? values.pensionBenefits.map((item, index) => ({
+            key: `pensionBenefits.${index}`,
+            owner: index + 1,
+            stakeHolder: `pensionBenefits[${index}]`,
+            commencementDate: item?.commencementDate || "",
+            originalPurchaseDate: item?.originalPurchaseDate || "",
+            eligibleServiceDate: item?.eligibleServiceDate || "",
+            taxFree: item?.taxFree || "",
+            currentBalance: item?.currentBalance || "",
+            taxFreeComponent: item?.taxFreeComponent || "",
+            taxableComponent: item?.taxableComponent || "",
+            deductibleAmount: item?.deductibleAmount || "",
+            LumpsumWithdrawalTaken: item?.LumpsumWithdrawalTaken || "",
+          }))
+          : [];
 
         return (
           <Form>
             <Row>
               <div className="col-md-12">
                 <div className="row justify-content-center">
-                  <div className="col-md-7 d-none">
+                  <div className="col-md-5">
                     <p className="text-end mt-1">
-                      {props.modalObject.question}
+                      {modalObject.question || "How many Pension Benefits do you have?"}
                     </p>
                   </div>
-                  <div className="col-md-3 d-none">
-                    <Field
-                      type="text"
+                  <div className="col-md-2">
+                    <select
                       id="NumberOfMap"
                       name="NumberOfMap"
-                      className="form-control inputDesignDoubleInput"
-                    />
+                      className="form-select inputDesignDoubleInput w-100"
+                      onChange={(e) => handleInput(e, setFieldValue, values)}
+                      onBlur={handleBlur}
+                      value={values.NumberOfMap || ""}
+                    >
+                      <option value="">Select</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                    </select>
                   </div>
-                  {values.NumberOfMap && (
-                    <div className="mt-4">
-                      <Table striped bordered responsive hover>
-                        <thead>
-                          <tr>
-                            <th>No#</th>
-                            <th>Commencement Date</th>
-                            <th>Original Purchase Price</th>
-                            <th>Eligible Service Date</th>
-                            <th>Tax Free</th>
-                            <th>Current Balance</th>
-                            <th>Tax Free component </th>
-                            <th>Taxable component </th>
-                            <th>Deductible amount</th>
-                            <th>Lumpsum Withdrawal Taken</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {" "}
-                          {Array.from({ length: values.NumberOfMap }).map((_, i) => {
-                            return (
-                              <tr key={i}>
-                                <td>{1 + i}</td>
-                                <td style={{ minWidth: "8rem" }}>
-                                  <DatePicker
-                                    className="form-control inputDesignDoubleInput shadow DateInputPadding"
-                                    showIcon
-                                    id={`commencementDate${i}`}
-                                    name={`commencementDate${i}`}
-                                    selected={values[`commencementDate${i}`]}
-                                    onChange={(date) =>
-                                      setFieldValue(`commencementDate${i}`, date)
-                                    }
-                                    dateFormat="dd/MM/yyyy"
-                                    placeholderText="dd/mm/yyyy"
-                                    maxDate={new Date()}
-                                    showMonthDropdown
-                                    showYearDropdown
-                                    dropdownMode="select"
-                                    onBlur={handleBlur}
-                                    wrapperClassName="w-100"
-                                  />
-                                </td>
-                                <td style={{ minWidth: "8rem" }}>
-                                  {" "}
-                                  <Field
-                                    type="text"
-                                    placeholder="Original Purchase prise "
-                                    id={`originalPurchaseDate${i}`}
-                                    name={`originalPurchaseDate${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                    onChange={(e) => {
-                                      setFieldValue(e.target.name,
-                                        toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                    }}
-                                  />
-                                </td>
-                                <td style={{ minWidth: "8rem" }}>
-                                  {" "}
-                                  <DatePicker
-                                    className="form-control inputDesignDoubleInput shadow DateInputPadding"
-                                    showIcon
-                                    id={`eligibleServiceDate${i}`}
-                                    name={`eligibleServiceDate${i}`}
-                                    selected={values[`eligibleServiceDate${i}`]}
-                                    onChange={(date) =>
-                                      setFieldValue(
-                                        `eligibleServiceDate${i}`,
-                                        date
-                                      )
-                                    }
-                                    dateFormat="dd/MM/yyyy"
-                                    placeholderText="dd/mm/yyyy"
-                                    maxDate={new Date()}
-                                    showMonthDropdown
-                                    showYearDropdown
-                                    dropdownMode="select"
-                                    onBlur={handleBlur}
-                                    wrapperClassName="w-100"
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="text"
-                                    placeholder="Tax Free"
-                                    style={{ width: "10rem" }}
-                                    id={`taxFree${i}`}
-                                    name={`taxFree${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                    onChange={(e) => handleInputChange(e, setFieldValue, FormulaSetting, values)}
-                                    onFocus={(e) => handleInputFocus(e, setFieldValue)}
-                                    onKeyDown={(e) => handleInputKeyDown(e)}
-                                    onBlur={(e) => handleInputBlur(e, setFieldValue, toPercentage, FormulaSetting, values)}
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="text"
-                                    style={{ width: "10rem" }}
-                                    placeholder="Current Balance"
-                                    id={`currentBalance${i}`}
-                                    name={`currentBalance${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                    onChange={(e) => {
-                                      setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                      FormulaSetting(values, setFieldValue, e.target);
-                                    }}
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="text"
-                                    placeholder="Tax Free component"
-                                    id={`taxFreeComponent${i}`}
-                                    name={`taxFreeComponent${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                    disabled
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="text"
-                                    placeholder="Taxable component"
-                                    id={`taxableComponent${i}`}
-                                    name={`taxableComponent${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                    disabled
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="text"
-                                    placeholder="Deductible amount"
-                                    id={`deductibleAmount${i}`}
-                                    name={`deductibleAmount${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                    onChange={(e) => {
-                                      setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                    }}
-                                  />
-                                </td>
-                                <td>
-                                  <Field
-                                    type="text"
-                                    placeholder="Lumpsum Withdrawal Taken"
-                                    id={`LumpsumWithdrawalTaken${i}`}
-                                    name={`LumpsumWithdrawalTaken${i}`}
-                                    className="form-control inputDesignDoubleInput"
-                                    onChange={(e) => {
-                                      setFieldValue(e.target.name, toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")));
-                                    }}
-                                  />
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </Table>
+
+                  {values.NumberOfMap && values.NumberOfMap > 0 && (
+                    <div className="mt-4 All_Client reportSection">
+                      <AntdTable
+                        columns={columns}
+                        data={dataRows}
+                        values={values}
+                        setFieldValue={setFieldValue}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                        isEditing={props?.isEditing}
+                        setIsEditing={props?.setIsEditing}
+                      />
                     </div>
                   )}
                 </div>

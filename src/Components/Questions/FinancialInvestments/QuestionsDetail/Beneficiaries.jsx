@@ -41,10 +41,10 @@ const Beneficiaries = (props) => {
         props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
       );
       const BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
-    
+
       let data =
         props.modalObject.values?.[BaseKey]?.[index]?.[
-          props.modalObject.key + "Details"
+        props.modalObject.key + "Details"
         ] || [];
 
       setFieldValue("NumberOfMap", data?.[`${props.modalObject.key}Array`].length || 1);

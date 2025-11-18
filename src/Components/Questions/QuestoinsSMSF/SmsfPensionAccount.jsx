@@ -43,24 +43,25 @@ const SmsfPensionAccount = (props) => {
     );
     let BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
 
+    // Get existing data safely
     const existingData =
-        props.modalObject.values?.[BaseKey]?.[index]?.[props.modalObject.key + "Array"] || [];
+        props.modalObject.values?.[
+        props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "")
+        ]?.[props.modalObject.Input + "Array"] || [];
 
     const initialValues = {
         NumberOfMap: existingData.length || "",
-        pensionAccounts: existingData.length ? existingData : [],
+        accountBasedPensions: existingData.length ? existingData : [],
     };
 
+    // fill initial values into form fields (when form mounts or existingData changes)
     const fillInitialValues = (setFieldValue) => {
-        console.log(existingData);
-
+        console.log(existingData)
         if (existingData.length) {
-            setFieldValue("pensionAccounts", existingData);
+            setFieldValue("accountBasedPensions", existingData);
+            setFieldValue("NumberOfMap", existingData.length);
         }
     };
-
-
-
     const handleInnerModal = (
         innerModalTitle,
         key,
@@ -72,15 +73,32 @@ const SmsfPensionAccount = (props) => {
         const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
         const BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
 
-        setModalObject({
+        // Get the data for the specific pension account
+        const currentPensionAccount = values?.pensionAccounts?.[index] || {};
+
+        // Prepare modal object with all required props for Beneficiaries
+        const modalObj = {
             title: `${nameSet}${innerModalTitle}`,
             question,
             key,
             stakeHolder,
-            editArray: values?.pensionAccounts?.[index]?.[key] || [],
-            values,
+            editArray: currentPensionAccount[key] || [],
+            values: values,
             ParentModalObject: props.modalObject,
-        });
+            mainKey: props.modalObject.mainKey,
+            index: props.modalObject.index,
+            Input: props.modalObject.Input,
+            // Add these props specifically for Beneficiaries component
+            setIsEditing: props.setIsEditing,
+            isEditing: props.isEditing,
+            setFlagState: setFlagState,
+            flagState: flagState,
+            setFieldValue: props.setFieldValue,
+            formRef: props.formRef,
+        };
+
+        console.log("Modal Object for Beneficiaries:", modalObj);
+        setModalObject(modalObj);
         setFlagState(true);
     };
 
@@ -93,11 +111,11 @@ const SmsfPensionAccount = (props) => {
         for (let i = 0; i < numberOfMaps; i++) {
             const newEntry = {
                 pensionBenefits: values.pensionAccounts[i]?.pensionBenefits || "",
-                pensionBenefitsarray: values.pensionAccounts[i]?.pensionBenefitsarray || "",
+                pensionBenefitsarray: values.pensionAccounts[i]?.pensionBenefitsarray || [],
                 pensionPayment: values.pensionAccounts[i]?.pensionPayment || "",
                 pensionType: values.pensionAccounts[i]?.pensionType || "",
                 nominatedBeneficiaries: values.pensionAccounts[i]?.nominatedBeneficiaries || "",
-                beneficiariesArray: values.pensionAccounts[i]?.beneficiariesArray || "",
+                beneficiariesArray: values.pensionAccounts[i]?.beneficiariesArray || [],
             };
             newEntries.push(newEntry);
         }
@@ -117,13 +135,11 @@ const SmsfPensionAccount = (props) => {
         }
     };
 
-
-
     const CheckInputValue = (values, setFieldValue, currentInput, stakeHolder) => {
         const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
         const pensionBenefitsarray = values?.pensionAccounts?.[index]?.pensionBenefitsarray;
 
-        if (!pensionBenefitsarray) return;
+        if (!pensionBenefitsarray || !Array.isArray(pensionBenefitsarray)) return;
 
         const ExpectedSum = parseFloat(pensionBenefitsarray.reduce(
             (total, entry) => total + parseFloat((entry.taxableComponent || "0").replace(/[^0-9.-]+/g, "") || 0),
@@ -148,7 +164,6 @@ const SmsfPensionAccount = (props) => {
         }
     };
 
-    // Updated handleInput function to work with select
     const handleInput = (e, setFieldValue, values) => {
         const value = e.target.value > 5 ? 5 : e.target.value;
         setFieldValue(e.target.id, value);
@@ -163,11 +178,11 @@ const SmsfPensionAccount = (props) => {
             for (let i = currentAccounts.length; i < newCount; i++) {
                 newAccounts.push({
                     pensionBenefits: "",
-                    pensionBenefitsarray: "",
+                    pensionBenefitsarray: [],
                     pensionPayment: "",
                     pensionType: "",
                     nominatedBeneficiaries: "",
-                    beneficiariesArray: "",
+                    beneficiariesArray: [],
                 });
             }
             setFieldValue("pensionAccounts", newAccounts);
@@ -197,7 +212,7 @@ const SmsfPensionAccount = (props) => {
             func: (innerModalTitle, values, key, stakeHolder) =>
                 handleInnerModal(
                     innerModalTitle,
-                    "pensionBenefits", // This is the key that stores the array data
+                    "pensionBenefits",
                     stakeHolder,
                     values,
                     "Pension Benefits",
@@ -236,7 +251,7 @@ const SmsfPensionAccount = (props) => {
             func: (innerModalTitle, values, key, stakeHolder) =>
                 handleInnerModal(
                     innerModalTitle,
-                    "beneficiaries", // This is the key that stores the array data
+                    key,
                     stakeHolder,
                     values,
                     "Beneficiaries",
@@ -249,7 +264,7 @@ const SmsfPensionAccount = (props) => {
     const ModalContent = (obj) => {
         if (obj.key === "pensionBenefits") {
             return <PensionBenefits />;
-        } else if (obj.key === "beneficiaries") {
+        } else if (obj.key === "nominatedBeneficiaries") {
             return <Beneficiaries />;
         }
         return null;
@@ -284,6 +299,9 @@ const SmsfPensionAccount = (props) => {
                             setFieldValue={setFieldValue}
                             setFlagState={setFlagState}
                             flagState={flagState}
+                            setIsEditing={props.setIsEditing}
+                            isEditing={props.isEditing}
+                            formRef={props.formRef}
                         >
                             {ModalContent(modalObject)}
                         </InnerModal>
@@ -292,13 +310,12 @@ const SmsfPensionAccount = (props) => {
                             <div className="col-md-12">
                                 <div className="row justify-content-center">
                                     <div className="col-md-5">
-                                        <p className="text-end mt-1">
+                                        <p className="text-end mt-1" onClick={() => console.log(values)}>
                                             How many {props.modalObject.title} does{" "}
                                             {nameSet} have:
                                         </p>
                                     </div>
                                     <div className="col-md-2">
-                                        {/* Using regular HTML select like InnerBareTrust */}
                                         <select
                                             id="NumberOfMap"
                                             name="NumberOfMap"
