@@ -23,8 +23,6 @@ import SmsfPensionAccount from "./SmsfPensionAccount";
 const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
 
-
-
 const SmsfPensionAccountMiddleWare = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);

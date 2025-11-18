@@ -41,8 +41,10 @@ import property from "../svgs/property-value.svg";
 import loan from "../svgs/loan.svg";
 import piggybank1 from "../svgs/piggy-bank.svg";
 import calender from "../svgs/calendar.png";
+import SMSFAccumulationDetails from "../svgs/SMSF-Accumulation-Details.png";
 import piggybank2 from "../svgs/piggy-bank-new.svg";
 import will from "../svgs/page-with-curl-svgrepo-com.svg";
+import familyInvestmentDetails from "../svgs/Family investment Details.png";
 import advisor from "../svgs/online-interview-male-svgrepo-com.svg";
 import POA from "../svgs/conversation-person-svgrepo-com.svg";
 import lifeImg from "../svgs/lifeimg.svg";
@@ -78,7 +80,7 @@ import PersonalInsuranceLife from "../PersonalInsurance/LifeInsurance";
 import OtherInvestmentsDynamic from "../QuestoinsSMSF/OtherInvestmentsDynamic";
 import SmsfDetails from "../QuestoinsSMSF/SmsfDetails";
 import SmsfAccumulationDetails from "../QuestoinsSMSF/SmsfAccumulationDetails";
-import SmsfPensionAccountMiddleWare from "../QuestoinsSMSF/PensionAccount";
+import SmsfPensionAccountMiddleWare from "../QuestoinsSMSF/SmsfPensionAccountMiddleWare";
 import FamilyDetails from "../QuestoinsFamilyTrust/FamilyDetails";
 /*------------------------------------ CONFIG ------------------------------------*/
 const questionConfig = {
@@ -468,13 +470,13 @@ const questionConfig = {
       title: "Accumulation Details",
       keyName: "SMSFAccumulationDetails",
       component: <SmsfAccumulationDetails />,
-      img: property,
+      img: piggybank1,
     },
     {
       title: "Pension Phase",
       keyName: "SMSFPensionPhase",
       component: <SmsfPensionAccountMiddleWare />,
-      img: calender,
+      img: piggybank2,
     },
     {
       title: "Bank Accounts",
@@ -534,7 +536,7 @@ const questionConfig = {
     {
       title: "Details",
       keyName: "familyDetails",
-      img: will,
+      img: familyInvestmentDetails,
       component: <FamilyDetails />,
     },
     {
