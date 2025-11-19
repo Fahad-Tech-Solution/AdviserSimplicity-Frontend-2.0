@@ -513,6 +513,7 @@ const questionConfig = {
       keyName: "SMSFInvestmentProperties",
       img: people,
       component: <InvestmentPropertyDetails />,
+      Labels: ["Total Market Value", "Total Loan"],
     },
     {
       title: "Other Investments",
@@ -574,7 +575,9 @@ const questionConfig = {
       keyName: "familyInvestmentProperties",
       img: people,
       component: <InvestmentPropertyDetails />,
+      Labels: ["Total Market Value", "Total Loan"],
     },
+ 
     {
       title: "Other Investments",
       keyName: "familyOtherInvestment",
@@ -645,6 +648,7 @@ const QuestionCard = (props) => {
         ? BaceKeys.client
         : "clientTotal"
     ] ?? "$0";
+
   const partnerValue =
     questionDetail?.[sourceKey]?.[
       BaceKeys && Object.keys(BaceKeys).length > 0

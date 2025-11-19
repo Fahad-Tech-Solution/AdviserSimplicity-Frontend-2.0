@@ -159,25 +159,7 @@ const InvestmentPropertyDetails = (props) => {
     }
   };
 
-  let handleInput = (e, setFieldValue) => {
-    let value = 0;
 
-    if (SwitchFlag) {
-      value = e.target.value > 10 ? 10 : e.target.value;
-    } else {
-      value = e.target.value > 5 ? 5 : e.target.value;
-    }
-
-    setFieldValue(e.target.id, value);
-
-    let arr = [];
-
-    for (let i = 0; i < value; i++) {
-      arr.push("");
-    }
-
-    setDynamicFields(arr);
-  };
 
   let DefaultUrl = useRecoilValue(defaultUrl);
 
@@ -206,6 +188,8 @@ const InvestmentPropertyDetails = (props) => {
           expensesArray: item.incomeExpensesArray || "",
         }));
 
+
+      //!  just need to change payload add checks on bases of keys 
       // Create payload for backend
       const payload = {
         clientFK: localStorage.getItem("UserID"),
@@ -229,6 +213,7 @@ const InvestmentPropertyDetails = (props) => {
           )
         ),
       };
+      //!  just need to chnage above code  
 
       console.log(payload, "Final Payload for Backend");
 
@@ -461,17 +446,6 @@ const InvestmentPropertyDetails = (props) => {
                       How many {props.modalObject.title} does {nameSet} have :
                     </p>
 
-                    {/* <div style={{ width: "8%" }}>
-                      <Field
-                        type="number"
-                        id="NumberOfMap"
-                        name="NumberOfMap"
-                        className="form-control inputDesignDoubleInput"
-                        onChange={(e) => handleInput(e, setFieldValue)}
-                      />
-
-                    </div> */}
-
                     <div style={{ minWidth: "10%" }}>
                       <ConfigProvider
                         theme={{
@@ -490,7 +464,7 @@ const InvestmentPropertyDetails = (props) => {
                           size="large"
                           value={values.NumberOfMap || undefined}
                           onChange={(value) => {
-                            handleInput({ target: { value } }, setFieldValue);
+                            setFieldValue("NumberOfMap", value);
                           }}
                           onBlur={handleBlur}
                           getPopupContainer={(triggerNode) =>

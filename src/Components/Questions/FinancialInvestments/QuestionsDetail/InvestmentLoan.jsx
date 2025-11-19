@@ -224,39 +224,39 @@ const InvestmentLoan = (props) => {
 
   let onSubmit = async (values) => {
     console.log(values, "values");
+
     let obj = values;
     obj.clientFK = localStorage.getItem("UserID");
 
-    let fiftyPercent;
+    let fiftyPercent = 0;
+    if (values.owner.includes("joint")) {
+      try {
+        // Safely parse the value after removing non-numeric characters
+        let annualRepayments =
+          parseFloat(
+            (obj.joint?.annualRepayments || "0").replace(/[^0-9.-]+/g, "")
+          ) 
 
-    try {
-      // Safely parse the value after removing non-numeric characters
-      let annualRepayments =
-        parseFloat(
-          (obj.joint?.annualRepayments || "0").replace(/[^0-9.-]+/g, "")
-        ) *
-        parseFloat(
-          (obj.joint?.serviceFeeType || "0").replace(/[^0-9.-]+/g, "")
-        );
-
-      // Check if the parsed value is a valid number
-      if (isNaN(annualRepayments) || annualRepayments === undefined) {
-        fiftyPercent = 0; // Set to 0 if invalid
-      } else {
-        fiftyPercent = annualRepayments / 2; // Calculate fifty percent if valid
+        // Check if the parsed value is a valid number
+        if (isNaN(annualRepayments) || annualRepayments === undefined) {
+          fiftyPercent = 0; // Set to 0 if invalid
+        } else {
+          fiftyPercent = annualRepayments / 2; // Calculate fifty percent if valid
+        }
+      } catch (error) {
+        // Handle any unexpected errors
+        console.error("Error calculating fiftyPercent:", error);
+        fiftyPercent = 0; // Set to 0 in case of error
       }
-    } catch (error) {
-      // Handle any unexpected errors
-      console.error("Error calculating fiftyPercent:", error);
-      fiftyPercent = 0; // Set to 0 in case of error
     }
+    console.log(fiftyPercent, "fiftyPercent");
 
     // For "client" related calculations
     if (values.owner.includes("client")) {
       console.log(obj.client, "obj.client");
+
       obj.clientTotal = toCommaAndDollar(
-        parseFloat(obj.client.annualRepayments.replace(/[^0-9.-]+/g, "")) *
-          parseFloat(obj.client.frequency.replace(/[^0-9.-]+/g, "")) +
+        parseFloat(obj.client.annualRepayments.replace(/[^0-9.-]+/g, "")) +
           fiftyPercent
       );
     } else if (values.owner.includes("joint")) {
@@ -269,8 +269,7 @@ const InvestmentLoan = (props) => {
     // For "partner" related calculations
     if (values.owner.includes("partner") && UserStatus === "Married") {
       obj.partnerTotal = toCommaAndDollar(
-        parseFloat(obj.partner?.annualRepayments.replace(/[^0-9.-]+/g, "")) *
-          parseFloat(obj.partner?.frequency.replace(/[^0-9.-]+/g, "")) +
+        parseFloat(obj.partner?.annualRepayments.replace(/[^0-9.-]+/g, ""))  +
           fiftyPercent
       );
     } else if (values.owner.includes("joint")) {
@@ -405,70 +404,6 @@ const InvestmentLoan = (props) => {
     );
   };
 
-  // const rowConfig = [
-  //   {
-  //     name: "lender",
-  //     type: "select",
-  //     options: lenderOption,
-  //     placeholder: "Lender",
-  //     styleSet: { width: "20rem" },
-  //   },
-  //   {
-  //     name: "loanBalance",
-  //     type: "number-toComma",
-  //     placeholder: "Loan Balance",
-  //   },
-  //   {
-  //     name: "loanType",
-  //     type: "select",
-  //     options: optionsLender,
-  //     placeholder: "Loan Type",
-  //   },
-  //   {
-  //     name: "repaymentsAmount",
-  //     type: "number-toComma",
-  //     placeholder: "Repayments Amount",
-  //   },
-  //   {
-  //     name: "frequency",
-  //     type: "select",
-  //     options: optionsFrequency,
-  //     placeholder: "Frequency",
-  //     callBack: true,
-  //     func: calculateAnnualRepayments,
-  //   },
-  //   {
-  //     name: "annualRepayments",
-  //     type: "number-toComma-and-MultiSelect",
-  //     placeholder: "Annual Repayments",
-  //     name2: "serviceFeeType",
-  //     placeholder2: "Service Fee Type",
-  //     styleSet: { width: "20rem" },
-  //   },
-  //   {
-  //     name: "interestRate",
-  //     type: "number-toPercent",
-  //     placeholder: "Interest Rate",
-  //   },
-  //   {
-  //     name: "loanTerm",
-  //     type: "select",
-  //     options: loanTermOptions,
-  //     placeholder: "Loan Term",
-  //   },
-  //   {
-  //     name: "loanTermRemaining",
-  //     type: "select",
-  //     options: loanTermOptions,
-  //     placeholder: "Loan Term Remaining",
-  //   },
-  //   {
-  //     name: "deductibleLoanAmount",
-  //     type: "number-toPercent",
-  //     placeholder: "Deductible Loan Amount",
-  //   },
-  // ];
-
   const options =
     UserStatus !== "Single"
       ? [
@@ -598,8 +533,6 @@ const InvestmentLoan = (props) => {
               key: "client",
               stakeHolder: "client", // 🔥 pass this to renderCell
               owner: RenderName("client"),
-              // lender: values?.client?.lender || "",
-              // loanBalance: values?.client?.loanBalance || "",
               ...values.client,
             });
           }
@@ -609,6 +542,15 @@ const InvestmentLoan = (props) => {
               key: "partner",
               stakeHolder: "partner", // 🔥 pass this to renderCell
               owner: RenderName("partner"),
+              ...values.partner,
+            });
+          }
+
+          if (values.owner.includes("joint")) {
+            rows.push({
+              key: "joint",
+              stakeHolder: "joint", // 🔥 pass this to renderCell
+              owner: RenderName("joint"),
               ...values.partner,
             });
           }
