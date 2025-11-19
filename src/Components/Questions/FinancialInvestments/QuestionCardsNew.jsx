@@ -467,13 +467,13 @@ const questionConfig = {
       img: will,
     },
     {
-      title: "Accumulation Details",
+      title: "Accumulation Account",
       keyName: "SMSFAccumulationDetails",
       component: <SmsfAccumulationDetails />,
       img: piggybank1,
     },
     {
-      title: "Pension Phase",
+      title: "Pension Account",
       keyName: "SMSFPensionPhase",
       component: <SmsfPensionAccountMiddleWare />,
       img: piggybank2,
@@ -483,30 +483,84 @@ const questionConfig = {
       keyName: "SMSFBank",
       img: BankImg,
       component: <MiddleWare />,
+      variant: "case2",
+      Labels: [
+        {
+          label: "SMSF",
+          value: (questionDetail) => questionDetail?.SMSFBank?.SMSFTotal ?? "",
+          component: <MiddleWare />,
+          key: "SMSFBank",
+          maintitle: true,
+        },
+      ],
     },
     {
       title: "Term Deposits",
       keyName: "SMSFTermDeposits",
       img: TermImg,
       component: <MiddleWare />,
+      variant: "case2",
+      Labels: [
+        {
+          label: "SMSF",
+          value: (questionDetail) =>
+            questionDetail?.SMSFTermDeposits?.clientTotal ?? "",
+          component: <MiddleWare />,
+          key: "SMSFTermDeposits",
+          maintitle: true,
+        },
+      ],
     },
     {
       title: "Australian Shares/ETFs",
       keyName: "SMSFAustralianShares",
       img: PortFolio,
       component: <MiddleWare />,
+      variant: "case2",
+      Labels: [
+        {
+          label: "SMSF",
+          value: (questionDetail) =>
+            questionDetail?.SMSFAustralianShares?.clientTotal ?? "",
+          component: <MiddleWare />,
+          key: "SMSFAustralianShares",
+          maintitle: true,
+        },
+      ],
     },
     {
       title: "Platform Investments",
       keyName: "SMSFManagedFunds",
       img: funds,
       component: <MiddleWare />,
+      variant: "case2",
+      Labels: [
+        {
+          label: "SMSF",
+          value: (questionDetail) =>
+            questionDetail?.SMSFManagedFunds?.clientTotal ?? "",
+          component: <MiddleWare />,
+          key: "SMSFManagedFunds",
+          maintitle: true,
+        },
+      ],
     },
     {
       title: "Investment Loan",
       keyName: "SMSFInvestmentLoan",
       img: analytics,
       component: <InvestmentLoan />,
+      variant: "case2",
+      Labels: [
+        {
+          label: "SMSF",
+          value: (questionDetail) =>
+            questionDetail?.SMSFInvestmentLoan?.clientTotal ?? "",
+          component: <InvestmentLoan />,
+          key: "SMSFInvestmentLoan",
+          maintitle: true,
+        },
+      ],
     },
     {
       title: "Investment Properties",
@@ -523,9 +577,9 @@ const questionConfig = {
       variant: "case2",
       Labels: [
         {
-          label: "client",
+          label: "SMSF",
           value: (questionDetail) =>
-            questionDetail?.creditCards?.clientTotal ?? "",
+            questionDetail?.SMSFOtherInvestment?.clientTotal ?? "",
           component: <OtherInvestmentsDynamic />,
           key: "SMSFOtherInvestment",
           maintitle: true,
@@ -545,30 +599,85 @@ const questionConfig = {
       keyName: "familyBank",
       img: BankImg,
       component: <MiddleWare />,
+      variant: "case2",
+      Labels: [
+        {
+          label: "Trust",
+          value: (questionDetail) =>
+            questionDetail?.familyBank?.clientTotal ?? "",
+          component: <MiddleWare />,
+          key: "familyBank",
+          maintitle: true,
+        },
+      ],
     },
     {
       title: "Term Deposits",
       keyName: "familyTermDeposit",
       img: TermImg,
       component: <MiddleWare />,
+      variant: "case2",
+      Labels: [
+        {
+          label: "Trust",
+          value: (questionDetail) =>
+            questionDetail?.familyTermDeposit?.clientTotal ?? "",
+          component: <MiddleWare />,
+          key: "familyTermDeposit",
+          maintitle: true,
+        },
+      ],
     },
     {
       title: "Australian Shares/ETFs",
       keyName: "familyAustralianShare",
       img: PortFolio,
       component: <MiddleWare />,
+      variant: "case2",
+      Labels: [
+        {
+          label: "Trust",
+          value: (questionDetail) =>
+            questionDetail?.familyAustralianShare?.clientTotal ?? "",
+          component: <MiddleWare />,
+          key: "familyAustralianShare",
+          maintitle: true,
+        },
+      ],
     },
     {
       title: "Platform Investment",
       keyName: "familyMangedFunds",
       img: funds,
       component: <MiddleWare />,
+      variant: "case2",
+      Labels: [
+        {
+          label: "Trust",
+          value: (questionDetail) =>
+            questionDetail?.familyMangedFunds?.clientTotal ?? "",
+          component: <MiddleWare />,
+          key: "familyMangedFunds",
+          maintitle: true,
+        },
+      ],
     },
     {
       title: "Investment Loan",
       keyName: "familyInvestmentHomeLoan",
       img: analytics,
       component: <InvestmentLoan />,
+      variant: "case2",
+      Labels: [
+        {
+          label: "Trust",
+          value: (questionDetail) =>
+            questionDetail?.familyInvestmentHomeLoan?.clientTotal ?? "",
+          component: <InvestmentLoan />,
+          key: "familyInvestmentHomeLoan",
+          maintitle: true,
+        },
+      ],
     },
     {
       title: "Investment Property",
@@ -577,7 +686,7 @@ const questionConfig = {
       component: <InvestmentPropertyDetails />,
       Labels: ["Total Market Value", "Total Loan"],
     },
- 
+
     {
       title: "Other Investments",
       keyName: "familyOtherInvestment",
@@ -586,9 +695,9 @@ const questionConfig = {
       variant: "case2",
       Labels: [
         {
-          label: "client",
+          label: "Trust",
           value: (questionDetail) =>
-            questionDetail?.creditCards?.clientTotal ?? "",
+            questionDetail?.familyOtherInvestment?.clientTotal ?? "",
           component: <OtherInvestmentsDynamic />,
           key: "familyOtherInvestment",
           maintitle: true,

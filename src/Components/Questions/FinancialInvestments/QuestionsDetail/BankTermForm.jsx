@@ -180,7 +180,7 @@ const BankTermForm = (props) => {
                   console.log(props.modalObject.values);
                 }}
               >
-                How many {title} does {nameSet} have :
+                Number of {title}:
               </p>
               <div style={{ minWidth: "10%" }}>
                 <ConfigProvider

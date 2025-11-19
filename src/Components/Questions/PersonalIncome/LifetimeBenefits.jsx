@@ -280,7 +280,7 @@ const LifeTimeBeneFits = (props) => {
               <div className="col-md-12">
                 <div className="row justify-content-center">
                   <div className="col-md-12">
-                    <div className="d-flex justify-content-center align-items-center gap-4">
+                    <div className="d-flex justify-content-start align-items-center gap-4">
                       <label htmlFor="" className="text-end ">
                         Owner
                       </label>
