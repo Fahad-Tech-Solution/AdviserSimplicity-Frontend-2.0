@@ -46,10 +46,10 @@ const InvestmentLoan = (props) => {
     Object.keys(questionDetail[props.modalObject.key] || {}).length > 0
       ? questionDetail[props.modalObject.key]
       : {
-          client: [],
-          partner: [],
-          joint: [],
-        }; // Use an empty object as default if managedFundsLOC is undefined
+        client: [],
+        partner: [],
+        joint: [],
+      }; // Use an empty object as default if managedFundsLOC is undefined
 
   let initialValues = {
     owner: "",
@@ -66,6 +66,13 @@ const InvestmentLoan = (props) => {
 
   const fillInitialValues = (setFieldValue) => {
     console.log(managedFundsLOC);
+
+    if (props.modalObject.key === "SMSFInvestmentLoan") {
+      setFieldValue("owner", ["SMSF"]);
+    } else if (props.modalObject.key === "familyInvestmentHomeLoan") {
+      setFieldValue("owner", ["trust"]);
+    }
+
 
     if (managedFundsLOC && managedFundsLOC._id) {
       // Set the owner field, which is now an array
@@ -235,7 +242,7 @@ const InvestmentLoan = (props) => {
         let annualRepayments =
           parseFloat(
             (obj.joint?.annualRepayments || "0").replace(/[^0-9.-]+/g, "")
-          ) 
+          )
 
         // Check if the parsed value is a valid number
         if (isNaN(annualRepayments) || annualRepayments === undefined) {
@@ -257,7 +264,7 @@ const InvestmentLoan = (props) => {
 
       obj.clientTotal = toCommaAndDollar(
         parseFloat(obj.client.annualRepayments.replace(/[^0-9.-]+/g, "")) +
-          fiftyPercent
+        fiftyPercent
       );
     } else if (values.owner.includes("joint")) {
       obj.clientTotal = toCommaAndDollar(fiftyPercent);
@@ -269,8 +276,8 @@ const InvestmentLoan = (props) => {
     // For "partner" related calculations
     if (values.owner.includes("partner") && UserStatus === "Married") {
       obj.partnerTotal = toCommaAndDollar(
-        parseFloat(obj.partner?.annualRepayments.replace(/[^0-9.-]+/g, ""))  +
-          fiftyPercent
+        parseFloat(obj.partner?.annualRepayments.replace(/[^0-9.-]+/g, "")) +
+        fiftyPercent
       );
     } else if (values.owner.includes("joint")) {
       obj.partnerTotal = toCommaAndDollar(fiftyPercent);
@@ -407,10 +414,10 @@ const InvestmentLoan = (props) => {
   const options =
     UserStatus !== "Single"
       ? [
-          { value: "client", label: RenderName("client") },
-          { value: "partner", label: RenderName("partner") },
-          { value: "joint", label: RenderName("joint") },
-        ]
+        { value: "client", label: RenderName("client") },
+        { value: "partner", label: RenderName("partner") },
+        { value: "joint", label: RenderName("joint") },
+      ]
       : [{ value: "client", label: RenderName("client") }];
 
   const AntDTableHOC = DynamicTableForInputsSection("antd");
@@ -554,7 +561,22 @@ const InvestmentLoan = (props) => {
               ...values.partner,
             });
           }
-
+          if (values.owner.includes("SMSF")) {
+            rows.push({
+              key: "SMSF",
+              stakeHolder: "SMSF", // 🔥 pass this to renderCell
+              owner: "SMSF",
+              ...values.SMSF,
+            });
+          }
+          if (values.owner.includes("trust")) {
+            rows.push({
+              key: "trust",
+              stakeHolder: "trust", // 🔥 pass this to renderCell
+              owner: "Trust",
+              ...values.trust,
+            });
+          }
           return rows;
         }, [values]);
 
@@ -564,8 +586,15 @@ const InvestmentLoan = (props) => {
               <div className="col-md-12">
                 <div className="row justify-content-center">
                   <div className="col-md-12">
-                    <div className="d-flex flex-row justify-content-start align-items-center gap-2">
-                      <label htmlFor="" className="text-end ">
+
+                    <div
+                      className={`d-flex flex-row justify-content-start align-items-center gap-2 ${props.modalObject.key === "familyInvestmentHomeLoan" ||
+                          props.modalObject.key === "SMSFInvestmentLoan"
+                          ? "d-none"
+                          : ""
+                        }`}
+                    >
+                      <label htmlFor="" className="text-end " onClick={() => console.log(props.modalObject)}>
                         {props.modalObject.title !== "Investment Loan"
                           ? "Members"
                           : "Owner"}
@@ -579,14 +608,18 @@ const InvestmentLoan = (props) => {
                           options={options}
                         />
                       </div> */}
-                      <div style={{ minWidth: "200px" }}>
+                      <div
+                        style={{ minWidth: "200px" }}
+
+                      >
                         <Field
                           name={`owner`}
                           component={AntdCreatableMultiSelect}
                           options={options}
-                          onChangefun={() => {}}
+                          onChangefun={() => { }}
                         />
                       </div>
+
                     </div>
                   </div>
                   {values.owner.length > 0 && (
