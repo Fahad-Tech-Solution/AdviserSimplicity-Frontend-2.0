@@ -35,6 +35,22 @@ const InvestmentPropertyDetails = (props) => {
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
 
+  let [client, setClient] = useState(() => {
+    switch (props.modalObject.key) {
+      case "investmentPropertyDetails":
+        return "client";
+        break;
+
+      case "SMSFInvestmentProperties":
+        return "SMSF";
+        break;
+
+      case "familyInvestmentProperties":
+        return "trust";
+        break;
+    }
+  });
+
   let [SwitchFlag, setSwitchFlag] = useState(false);
 
   let [investmentPropertyDetails, setinvestmentPropertyDetails] = useState({
@@ -57,13 +73,6 @@ const InvestmentPropertyDetails = (props) => {
     }
   });
 
-  // let investmentPropertyDetails = Object.keys(questionDetail[props.modalObject.key]).length > 0 ? questionDetail[props.modalObject.key] : {
-  //     client: [],
-  //     partner: [],
-  //     joint: [],
-
-  // }; // Use an empty object as default if investmentPropertyDetails is undefined
-
   let initialValues = { NumberOfMap: "" };
 
   const [dynamicFields, setDynamicFields] = useState([]);
@@ -81,10 +90,10 @@ const InvestmentPropertyDetails = (props) => {
       Object.keys(questionDetail[props.modalObject.key] || {}).length > 0
         ? questionDetail[props.modalObject.key]
         : {
-          client: [],
-          partner: [],
-          joint: [],
-        };
+            client: [],
+            partner: [],
+            joint: [],
+          };
 
     setinvestmentPropertyDetails(data);
 
@@ -102,7 +111,7 @@ const InvestmentPropertyDetails = (props) => {
   }, [props.modalObject]);
 
   const fillInitialValues = (setFieldValue) => {
-    const dataSet = investmentPropertyDetails?.client;
+    const dataSet = investmentPropertyDetails?.[client];
     console.log(dataSet, "dataSet");
 
     if (Array.isArray(dataSet) && dataSet.length > 0) {
@@ -194,40 +203,21 @@ const InvestmentPropertyDetails = (props) => {
           0
         )
       );
-       const TotalLoan = toCommaAndDollar(
+      const TotalLoan = toCommaAndDollar(
         newEntries.reduce(
           (total, entry) =>
             total +
-            (parseFloat(entry.propertyLoanDetails?.replace(/[^0-9.-]+/g, "")) || 0),
+            (parseFloat(entry.propertyLoanDetails?.replace(/[^0-9.-]+/g, "")) ||
+              0),
           0
         )
       );
 
-      let client = "";
-
-
-      switch (key) {
-        case "investmentPropertyDetails":
-          client = "client";
-          // clientTotalKey = "totalMarketValue";
-          break;
-
-        case "SMSFInvestmentProperties":
-          client = "smsf";
-          // clientTotalKey = "smsfTotal";
-          break;
-
-        case "familyInvestmentProperties":
-          client = "trust";
-          // clientTotalKey = "trustTotal";
-          break;
-      }
-
       const payload = {
         clientFK: localStorage.getItem("UserID"),
-        [client]:newEntries,
-        totalMarketValue: TotalMarketValue, 
-        totalLoanAmount: TotalLoan, 
+        [client]: newEntries,
+        totalMarketValue: TotalMarketValue,
+        totalLoanAmount: TotalLoan,
       };
 
       //!  just need to chnage above code
@@ -283,13 +273,13 @@ const InvestmentPropertyDetails = (props) => {
       // Safely parse and set default to 0 if values are undefined or invalid
       let ClientOwnership = values["ClientOwnership" + index]
         ? parseFloat(
-          values["ClientOwnership" + index].replace(/[^0-9.-]+/g, "")
-        )
+            values["ClientOwnership" + index].replace(/[^0-9.-]+/g, "")
+          )
         : 0;
       let PartnerOwnership = values["PartnerOwnership" + index]
         ? parseFloat(
-          values["PartnerOwnership" + index].replace(/[^0-9.-]+/g, "")
-        )
+            values["PartnerOwnership" + index].replace(/[^0-9.-]+/g, "")
+          )
         : 0;
 
       // Update values based on the current input name

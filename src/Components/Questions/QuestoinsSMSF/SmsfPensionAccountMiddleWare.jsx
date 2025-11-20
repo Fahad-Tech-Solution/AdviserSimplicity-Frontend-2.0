@@ -249,7 +249,6 @@ const SmsfPensionAccountMiddleWare = (props) => {
       ? [
           { value: "client", label: RenderName("client") },
           { value: "partner", label: RenderName("partner") },
-          { value: "joint", label: RenderName("joint") },
         ]
       : [{ value: "client", label: RenderName("client") }];
 
@@ -266,7 +265,7 @@ const SmsfPensionAccountMiddleWare = (props) => {
       dataIndex: "pensionBenefitsTotal",
       key: "pensionBenefitsTotal",
       type: "number-toComma-Modal",
-      innerModalTitle: "_Pension Benefits Details",
+      innerModalTitle: "_Pension Benefits",
       placeholder: "Pension Benefits",
       validate: true,
       errorState: ShowError,
@@ -277,7 +276,7 @@ const SmsfPensionAccountMiddleWare = (props) => {
           stakeHolder,
           values,
           "Pension Benefits",
-          `How many Pension Benefits does this member have?`
+          `Number of Pension Benefits`
         ),
       checkInput: CheckInputValue,
     },
@@ -302,36 +301,13 @@ const SmsfPensionAccountMiddleWare = (props) => {
           fillInitialValues(setFieldValue);
         }, [existingMembers]);
 
-        // Update table data when selected members change
-        useEffect(() => {
-          if (values.selectedMembers && values.selectedMembers.length > 0) {
-            const newPensionData = values.selectedMembers.map(
-              (member, index) => {
-                // Find existing data for this member or create new
-                const existingData =
-                  values.pensionData?.find((item) => item.member === member) ||
-                  {};
-                return {
-                  member,
-                  pensionBenefitsTotal: existingData.pensionBenefitsTotal || "",
-                  pensionBenefitsTotalArray:
-                    existingData.pensionBenefitsTotalArray || "",
-                };
-              }
-            );
-            setFieldValue("pensionData", newPensionData);
-          } else {
-            setFieldValue("pensionData", []);
-          }
-        }, [values.selectedMembers]);
-
         const dataRows = useMemo(() => {
           if (values.pensionData && values.pensionData.length > 0) {
-            return values.pensionData.map((item, index) => ({
+            return values.selectedMembers.map((item, index) => ({
               key: `pensionData.${index}`,
               stakeHolder: `pensionData[${index}]`,
-              member: RenderName(values.selectedMembers[index]) || "",
-              pensionBenefitsTotal: item.pensionBenefitsTotal || "",
+              member: RenderName(item) || "",
+              pensionData: values.pensionData,
             }));
           }
           return [];
@@ -356,8 +332,7 @@ const SmsfPensionAccountMiddleWare = (props) => {
                   console.log(values);
                 }}
               >
-                Members of SMSF{" "}
-                {questionDetail.SMSFDetails?.SMSFOwner?.fundName}
+                Members of SMSF
               </p>
               <div style={{ minWidth: "25%" }}>
                 <ConfigProvider

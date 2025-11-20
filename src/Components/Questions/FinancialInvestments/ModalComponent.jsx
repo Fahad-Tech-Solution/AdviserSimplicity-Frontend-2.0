@@ -232,9 +232,11 @@ const ModalComponent = (props) => {
     "Own a Family Home",
     "Investments Property",
     "Super Fund",
-    // "Annuities",
+    "Details",
     // "Account Based Pension",
     "Family Trust Investment Properties",
+    RenderName("client") + "_Pension Benefits",
+    RenderName("partner") + "_Pension Benefits",
   ];
 
   let xlKey = [

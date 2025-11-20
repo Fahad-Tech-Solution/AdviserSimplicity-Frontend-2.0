@@ -233,7 +233,6 @@ const SmsfAccumulationDetails = (props) => {
       ? [
           { value: "client", label: RenderName("client") },
           { value: "partner", label: RenderName("partner") },
-          { value: "joint", label: RenderName("joint") },
         ]
       : [{ value: RenderName("client"), label: RenderName("client") }];
 
@@ -286,7 +285,7 @@ const SmsfAccumulationDetails = (props) => {
           stakeHolder,
           values,
           "Contributions",
-          `How many financial years do ${nameSet} want to display?`
+          `Number of contributions `
         ),
       customComponent: DynamicYesNo,
     },
@@ -305,7 +304,7 @@ const SmsfAccumulationDetails = (props) => {
           stakeHolder,
           values,
           "Beneficiaries",
-          `How many beneficiaries do ${nameSet} have?`
+          `Number of beneficiaries`
         ),
       customComponent: DynamicYesNo,
     },
@@ -337,14 +336,16 @@ const SmsfAccumulationDetails = (props) => {
 
         const dataRows = useMemo(() => {
           if (values.selectedMembers && values.selectedMembers.length > 0) {
-            return values.smsfAccumulation.map((item, index) => ({
+            return values.selectedMembers.map((item, index) => ({
               key: `smsfAccumulation.${index}`,
               owner: index + 1,
               stakeHolder: `smsfAccumulation[${index}]`,
-              member: RenderName(values.selectedMembers[index]) || "",
-              accumulationBenefits: item.accumulationBenefits || "",
-              contributions: item.contributions || "",
-              nominatedBeneficiaries: item.nominatedBeneficiaries || "",
+              member: item || "",
+              accumulationBenefits:
+                smsfAccumulation[index].accumulationBenefits || "",
+              contributions: smsfAccumulation[index].contributions || "",
+              nominatedBeneficiaries:
+                smsfAccumulation[index].nominatedBeneficiaries || "",
             }));
           }
           return [];
@@ -369,8 +370,7 @@ const SmsfAccumulationDetails = (props) => {
                   console.log(values);
                 }}
               >
-                Members of SMSF{" "}
-                {questionDetail.SMSFDetails?.SMSFOwner?.fundName}
+                Members of SMSF
               </p>
               <div style={{ minWidth: "25%" }}>
                 <ConfigProvider

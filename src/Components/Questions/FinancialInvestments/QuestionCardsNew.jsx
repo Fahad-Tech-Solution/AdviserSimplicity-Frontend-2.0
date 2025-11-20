@@ -214,7 +214,7 @@ const questionConfig = {
       img: homeSvg,
       component: <OwnFamilyHome />,
       // clientOnly: true,
-      Labels: ["Total Market Value", "Loan Amount"],
+      Labels: ["Property Portfolio", "Loan Amount"],
     },
     {
       title: "Car",
@@ -363,7 +363,7 @@ const questionConfig = {
       keyName: "investmentPropertyDetails",
       img: property,
       component: <InvestmentPropertyDetails />,
-      Labels: ["Total Market Value", "Total Loan"],
+      Labels: ["Property Portfolio", "Total Debt"],
     },
     {
       title: "Investment Loan",
@@ -567,7 +567,27 @@ const questionConfig = {
       keyName: "SMSFInvestmentProperties",
       img: people,
       component: <InvestmentPropertyDetails />,
-      Labels: ["Total Market Value", "Total Loan"],
+      variant: "case2",
+      // Labels: ["Property Portfolio", "Total Debt"],
+      Labels: [
+        {
+          label: "Property Portfolio",
+          value: (questionDetail) =>
+            questionDetail?.SMSFInvestmentProperties?.totalMarketValue ?? "",
+          component: <InvestmentPropertyDetails />,
+          key: "SMSFInvestmentProperties",
+          maintitle: true,
+        },
+        {
+          label: "Total Debt",
+          value: (questionDetail) =>
+            questionDetail?.SMSFInvestmentProperties?.totalLoanAmount ?? "",
+          component: <InvestmentPropertyDetails />,
+          key: "SMSFInvestmentProperties",
+          maintitle: true,
+          modalButton: false,
+        },
+      ],
     },
     {
       title: "Other Investments",
@@ -684,7 +704,7 @@ const questionConfig = {
       keyName: "familyInvestmentProperties",
       img: people,
       component: <InvestmentPropertyDetails />,
-      Labels: ["Total Market Value", "Total Loan"],
+      Labels: ["Property Portfolio", "Total Debt"],
     },
 
     {
@@ -859,6 +879,7 @@ const QuestionCard = (props) => {
     DrawerWidth,
     onOpen, // Add this prop
   }) => {
+    const { modalButton = true } = lbl || {};
     const handleOpen = () => {
       // Pass the specific label's data to the modal
       onOpen(lbl?.maintitle ? title : lbl.label, lbl.key, lbl.component);
@@ -872,14 +893,15 @@ const QuestionCard = (props) => {
               ? RenderName(lbl.label)
               : lbl.label}
           </span>
-
-          <button
-            className="btn btn-sm bg-secondary rounded-circle text-light d-flex align-items-center justify-content-center"
-            onClick={handleOpen} // Use the local handleOpen
-            style={{ width: 28, height: 28, padding: 0 }}
-          >
-            <FaArrowUpRightFromSquare size={14} />
-          </button>
+          {modalButton && (
+            <button
+              className="btn btn-sm bg-secondary rounded-circle text-light d-flex align-items-center justify-content-center"
+              onClick={handleOpen} // Use the local handleOpen
+              style={{ width: 28, height: 28, padding: 0 }}
+            >
+              <FaArrowUpRightFromSquare size={14} />
+            </button>
+          )}
         </div>
         <div className="d-flex align-item-center justify-content-center">
           <input

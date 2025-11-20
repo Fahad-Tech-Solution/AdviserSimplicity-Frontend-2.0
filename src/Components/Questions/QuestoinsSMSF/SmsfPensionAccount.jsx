@@ -348,7 +348,7 @@ const SmsfPensionAccount = (props) => {
                 <div className="row">
                   <div className="d-flex flex-row justify-content-start align-items-center gap-3 mt-2 w-100">
                     <p className=" mt-1" onClick={() => console.log(values)}>
-                      How many {props.modalObject.title} does {nameSet} have:
+                      {props?.modalObject?.question||"No question found"}
                     </p>
                     <div style={{ width: "10%" }}>
                       <select
