@@ -159,8 +159,6 @@ const InvestmentPropertyDetails = (props) => {
     }
   };
 
-
-
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   const onSubmit = async (values) => {
@@ -188,35 +186,31 @@ const InvestmentPropertyDetails = (props) => {
           expensesArray: item.incomeExpensesArray || "",
         }));
 
-// investmentPropertyDetails
-// InvestmentProperties
-// SMSFInvestmentProperties
-
-      //!  just need to change payload add checks on bases of keys 
+      //!  just need to change payload add checks on bases of keys
       // Create payload for backend
-     const payload = {
-  clientFK: localStorage.getItem("UserID"),
-  client: newEntries,
-  clientTotal: toCommaAndDollar(
-    newEntries.reduce(
-      (total, entry) =>
-        total +
-        (parseFloat(entry.CurrentValue?.replace(/[^0-9.-]+/g, "")) || 0),
-      0
-    )
-  ),
-  partnerTotal: toCommaAndDollar(
-    newEntries.reduce(
-      (total, entry) =>
-        total +
-        (parseFloat(
-          entry.propertyLoanDetails?.replace(/[^0-9.-]+/g, "")
-        ) || 0),
-      0
-    )
-  ),
-};
-      //!  just need to chnage above code  
+      const payload = {
+        clientFK: localStorage.getItem("UserID"),
+        client: newEntries,
+        clientTotal: toCommaAndDollar(
+          newEntries.reduce(
+            (total, entry) =>
+              total +
+              (parseFloat(entry.CurrentValue?.replace(/[^0-9.-]+/g, "")) || 0),
+            0
+          )
+        ),
+        partnerTotal: toCommaAndDollar(
+          newEntries.reduce(
+            (total, entry) =>
+              total +
+              (parseFloat(
+                entry.propertyLoanDetails?.replace(/[^0-9.-]+/g, "")
+              ) || 0),
+            0
+          )
+        ),
+      };
+      //!  just need to chnage above code
 
       console.log(payload, "Final Payload for Backend");
 
@@ -439,14 +433,14 @@ const InvestmentPropertyDetails = (props) => {
             <Row>
               <div className="col-md-12">
                 <div className="row justify-content-center">
-                  <div className="d-flex flex-row justify-content-center align-items-center gap-2">
+                  <div className="d-flex flex-row justify-content-start align-items-center gap-2">
                     <p
                       className="text-end mt-3"
                       onClick={() => {
                         console.log(values);
                       }}
                     >
-                      How many {props.modalObject.title} does {nameSet} have :
+                      Number of {props.modalObject.title} :
                     </p>
 
                     <div style={{ minWidth: "10%" }}>

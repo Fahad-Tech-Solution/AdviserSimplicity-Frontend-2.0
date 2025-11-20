@@ -120,7 +120,6 @@ const ModalComponent = (props) => {
     "Business Entities & Tax Structures",
     "Self Manged Super Fund",
     "Family Trust",
-    "Investment Loan",
     "Margin Loan",
     "Personal Loan",
     "Credit Card",
@@ -191,7 +190,7 @@ const ModalComponent = (props) => {
     "Family Investment Home Expanse",
     "Personal Loans",
     "Australian Shares",
-    "Platform Investment",
+    // "Platform Investment",
     "Other Investments",
     "Cash",
     "Investment Bonds",
@@ -214,6 +213,7 @@ const ModalComponent = (props) => {
 
   let fullTitles = [
     "Employment",
+    "Investment Loan",
     "Family Trust Investment Loan",
     "Family Details",
     "Life Insurance",
@@ -221,7 +221,6 @@ const ModalComponent = (props) => {
     "Trauma",
     "Income Protection",
     "Personal Insurance",
-    "Investment Loan",
     "Margin Loan",
     "SMSF Details",
     "SMSF Investment Properties",

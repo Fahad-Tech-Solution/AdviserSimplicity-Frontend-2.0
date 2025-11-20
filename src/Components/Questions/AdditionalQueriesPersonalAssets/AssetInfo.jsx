@@ -20,9 +20,9 @@ const AssetInfo = (props) => {
 
   const [UserStatus] = useState(localStorage.getItem("UserStatus"));
 
-  const initialValues = { 
-    // owner: [] 
-    owner: props.modalObject?.key === "car" ? [] : ["joint"]
+  const initialValues = {
+    // owner: []
+    owner: props.modalObject?.key === "car" ? [] : ["joint"],
   };
 
   const fillInitialValues = (setFieldValue) => {
@@ -83,8 +83,7 @@ const AssetInfo = (props) => {
             setFieldValue("joint.currentValue", data.joint.currentValue || "");
             if (props.modalObject.key === "car") {
               setFieldValue("joint.modelOfCar", data.joint.modelOfCar || "");
-            } 
-            else if (props.modalObject.key === "otherAssets") {
+            } else if (props.modalObject.key === "otherAssets") {
               setFieldValue("joint.description", data.joint.description || "");
             }
           }
@@ -98,9 +97,7 @@ const AssetInfo = (props) => {
   const onSubmit = async (values) => {
     const obj = { ...values, clientFK: localStorage.getItem("UserID") };
 
-    if (
-      props.modalObject.title === "Car" 
-    ) {
+    if (props.modalObject.title === "Car") {
       if (
         values.owner.includes("client") ||
         values.owner.includes("client+partner")
@@ -274,19 +271,19 @@ const AssetInfo = (props) => {
             <Row>
               <div className="col-md-12">
                 {/* Owner Selector */}
-{(props.modalObject?.key === "car" || props.modalObject?.key === "otherAssets") && (
-  <div className="d-flex flex-row justify-content-center align-items-center gap-2">
-    <label className="text-end mb-0">Owner</label>
-    <div style={{ minWidth: "200px" }}>
-      <Field
-        name="owner"
-        component={AntdCreatableMultiSelect}
-        options={options}
-      />
-    </div>
-  </div>
-)}
-
+                {(props.modalObject?.key === "car" ||
+                  props.modalObject?.key === "otherAssets") && (
+                  <div className="d-flex flex-row justify-content-start align-items-center gap-2">
+                    <label className="text-end mb-0">Owner</label>
+                    <div style={{ minWidth: "200px" }}>
+                      <Field
+                        name="owner"
+                        component={AntdCreatableMultiSelect}
+                        options={options}
+                      />
+                    </div>
+                  </div>
+                )}
 
                 {values.owner.length > 0 && (
                   <div className="mt-4 All_Client reportSection">

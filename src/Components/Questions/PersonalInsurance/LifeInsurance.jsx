@@ -881,7 +881,7 @@ const PersonalInsuranceLife = (props) => {
                 {ModalContent(modalObject)}
               </InnerModal>
 
-              <div className="d-flex flex-row justify-content-center align-items-center gap-4 mb-4">
+              <div className="d-flex flex-row justify-content-start align-items-center gap-4 mb-4">
                 <p
                   className="text-end mt-1 pt-2 mb-0"
                   onClick={() => {
@@ -928,15 +928,14 @@ const PersonalInsuranceLife = (props) => {
               </div>
 
               {shouldShowClient && (
-                <div className="d-flex flex-row justify-content-center align-items-center gap-4 mb-4">
+                <div className="d-flex flex-row justify-content-start align-items-center gap-4 mb-4">
                   <p
                     className="text-end mt-1 pt-2 mb-0"
                     onClick={() => {
                       console.log(personalInsurance);
                     }}
                   >
-                    How many {props.modalObject.title} does{" "}
-                    {RenderName("client")} have:
+                    Number of {props.modalObject.title}:
                   </p>
 
                   <div style={{ minWidth: "10%" }}>
@@ -977,10 +976,9 @@ const PersonalInsuranceLife = (props) => {
               )}
 
               {shouldShowPartner && (
-                <div className="d-flex flex-row justify-content-center align-items-center gap-4 mb-4">
+                <div className="d-flex flex-row justify-content-start align-items-center gap-4 mb-4">
                   <p className="text-end mt-1 pt-2 mb-0">
-                    How many {props.modalObject.title} does{" "}
-                    {RenderName("partner")} have:
+                    Number of {props.modalObject.title}:
                   </p>
 
                   <div style={{ minWidth: "10%" }}>

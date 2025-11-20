@@ -359,9 +359,7 @@ const ManagedFunds = (props) => {
             </InnerModal>
 
             <div className="d-flex justify-content-center align-items-center gap-4">
-              <p className="text-end mt-1 pt-2 ">
-                How many Platforms does {nameSet} have :
-              </p>
+              <p className="text-end mt-1 pt-2 ">Number of {nameSet} :</p>
               <div style={{ minWidth: "10%" }}>
                 <ConfigProvider
                   theme={{
