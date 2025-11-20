@@ -188,31 +188,34 @@ const InvestmentPropertyDetails = (props) => {
           expensesArray: item.incomeExpensesArray || "",
         }));
 
+// investmentPropertyDetails
+// InvestmentProperties
+// SMSFInvestmentProperties
 
       //!  just need to change payload add checks on bases of keys 
       // Create payload for backend
-      const payload = {
-        clientFK: localStorage.getItem("UserID"),
-        client: newEntries,
-        clientTotal: toCommaAndDollar(
-          newEntries.reduce(
-            (total, entry) =>
-              total +
-              (parseFloat(entry.CurrentValue?.replace(/[^0-9.-]+/g, "")) || 0),
-            0
-          )
-        ),
-        partnerTotal: toCommaAndDollar(
-          newEntries.reduce(
-            (total, entry) =>
-              total +
-              (parseFloat(
-                entry.propertyLoanDetails?.replace(/[^0-9.-]+/g, "")
-              ) || 0),
-            0
-          )
-        ),
-      };
+     const payload = {
+  clientFK: localStorage.getItem("UserID"),
+  client: newEntries,
+  clientTotal: toCommaAndDollar(
+    newEntries.reduce(
+      (total, entry) =>
+        total +
+        (parseFloat(entry.CurrentValue?.replace(/[^0-9.-]+/g, "")) || 0),
+      0
+    )
+  ),
+  partnerTotal: toCommaAndDollar(
+    newEntries.reduce(
+      (total, entry) =>
+        total +
+        (parseFloat(
+          entry.propertyLoanDetails?.replace(/[^0-9.-]+/g, "")
+        ) || 0),
+      0
+    )
+  ),
+};
       //!  just need to chnage above code  
 
       console.log(payload, "Final Payload for Backend");
