@@ -81,10 +81,10 @@ const InvestmentPropertyDetails = (props) => {
       Object.keys(questionDetail[props.modalObject.key] || {}).length > 0
         ? questionDetail[props.modalObject.key]
         : {
-            client: [],
-            partner: [],
-            joint: [],
-          };
+          client: [],
+          partner: [],
+          joint: [],
+        };
 
     setinvestmentPropertyDetails(data);
 
@@ -186,30 +186,50 @@ const InvestmentPropertyDetails = (props) => {
           expensesArray: item.incomeExpensesArray || "",
         }));
 
-      //!  just need to change payload add checks on bases of keys
-      // Create payload for backend
+      const TotalMarketValue = toCommaAndDollar(
+        newEntries.reduce(
+          (total, entry) =>
+            total +
+            (parseFloat(entry.CurrentValue?.replace(/[^0-9.-]+/g, "")) || 0),
+          0
+        )
+      );
+       const TotalLoan = toCommaAndDollar(
+        newEntries.reduce(
+          (total, entry) =>
+            total +
+            (parseFloat(entry.propertyLoanDetails?.replace(/[^0-9.-]+/g, "")) || 0),
+          0
+        )
+      );
+
+      let client = "";
+
+
+      switch (key) {
+        case "investmentPropertyDetails":
+          client = "client";
+          // clientTotalKey = "totalMarketValue";
+          break;
+
+        case "SMSFInvestmentProperties":
+          client = "smsf";
+          // clientTotalKey = "smsfTotal";
+          break;
+
+        case "familyInvestmentProperties":
+          client = "trust";
+          // clientTotalKey = "trustTotal";
+          break;
+      }
+
       const payload = {
         clientFK: localStorage.getItem("UserID"),
-        client: newEntries,
-        clientTotal: toCommaAndDollar(
-          newEntries.reduce(
-            (total, entry) =>
-              total +
-              (parseFloat(entry.CurrentValue?.replace(/[^0-9.-]+/g, "")) || 0),
-            0
-          )
-        ),
-        partnerTotal: toCommaAndDollar(
-          newEntries.reduce(
-            (total, entry) =>
-              total +
-              (parseFloat(
-                entry.propertyLoanDetails?.replace(/[^0-9.-]+/g, "")
-              ) || 0),
-            0
-          )
-        ),
+        [client]:newEntries,
+        totalMarketValue: TotalMarketValue, 
+        totalLoanAmount: TotalLoan, 
       };
+
       //!  just need to chnage above code
 
       console.log(payload, "Final Payload for Backend");
@@ -263,13 +283,13 @@ const InvestmentPropertyDetails = (props) => {
       // Safely parse and set default to 0 if values are undefined or invalid
       let ClientOwnership = values["ClientOwnership" + index]
         ? parseFloat(
-            values["ClientOwnership" + index].replace(/[^0-9.-]+/g, "")
-          )
+          values["ClientOwnership" + index].replace(/[^0-9.-]+/g, "")
+        )
         : 0;
       let PartnerOwnership = values["PartnerOwnership" + index]
         ? parseFloat(
-            values["PartnerOwnership" + index].replace(/[^0-9.-]+/g, "")
-          )
+          values["PartnerOwnership" + index].replace(/[^0-9.-]+/g, "")
+        )
         : 0;
 
       // Update values based on the current input name
