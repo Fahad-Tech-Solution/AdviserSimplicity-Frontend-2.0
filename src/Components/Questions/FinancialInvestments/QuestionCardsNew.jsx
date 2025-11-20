@@ -504,7 +504,7 @@ const questionConfig = {
         {
           label: "SMSF",
           value: (questionDetail) =>
-            questionDetail?.SMSFTermDeposits?.clientTotal ?? "",
+            questionDetail?.SMSFTermDeposits?.SMSFTotal ?? "",
           component: <MiddleWare />,
           key: "SMSFTermDeposits",
           maintitle: true,
@@ -521,7 +521,7 @@ const questionConfig = {
         {
           label: "SMSF",
           value: (questionDetail) =>
-            questionDetail?.SMSFAustralianShares?.clientTotal ?? "",
+            questionDetail?.SMSFAustralianShares?.SMSFTotal ?? "",
           component: <MiddleWare />,
           key: "SMSFAustralianShares",
           maintitle: true,
@@ -538,7 +538,7 @@ const questionConfig = {
         {
           label: "SMSF",
           value: (questionDetail) =>
-            questionDetail?.SMSFManagedFunds?.clientTotal ?? "",
+            questionDetail?.SMSFManagedFunds?.SMSFTotal ?? "",
           component: <MiddleWare />,
           key: "SMSFManagedFunds",
           maintitle: true,

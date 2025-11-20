@@ -102,6 +102,7 @@ const ManagedFunds = (props) => {
     let index = stakeHolder.replace(/[^0-9-]+/g, "");
     let BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
     let selectedPlatformId = values?.[BaseKey]?.[index]?.platformName || "";
+
     if (!selectedPlatformId) {
       openNotificationSuccess(
         "error",
@@ -111,6 +112,7 @@ const ManagedFunds = (props) => {
       );
       return false;
     }
+
     const platforms =
       title === "Platform Investments Detail" ||
       title == "SMSF Platform Investments Detail" ||
@@ -123,13 +125,15 @@ const ManagedFunds = (props) => {
 
     console.log(Platform);
 
+    let titlePrefix = ["client", "partner", "joint"].includes(
+      props.modalObject.stakeHolder.replace(".", "")
+    )
+      ? RenderName(props.modalObject.stakeHolder.replace(".", ""))
+      : props.modalObject.stakeHolder.replace(".", "");
+
     setModalObject({
-      title:
-        RenderName(props.modalObject.stakeHolder.replace(".", "")) +
-        innerModalTitle,
-      question: `How many Underlying Investments does ${RenderName(
-        props.modalObject.stakeHolder.replace(".", "")
-      )} have :`,
+      title: titlePrefix + innerModalTitle,
+      question: `How many Underlying Investments does ${titlePrefix} have :`,
       key,
       stakeHolder,
       editArray: values?.[BaseKey]?.[index]?.[key + "Array"] || [],
@@ -359,7 +363,7 @@ const ManagedFunds = (props) => {
             </InnerModal>
 
             <div className="d-flex justify-content-center align-items-center gap-4">
-              <p className="text-end mt-1 pt-2 ">Number of {nameSet} :</p>
+              <p className="text-end mt-1 pt-2 ">Number of {title} :</p>
               <div style={{ minWidth: "10%" }}>
                 <ConfigProvider
                   theme={{

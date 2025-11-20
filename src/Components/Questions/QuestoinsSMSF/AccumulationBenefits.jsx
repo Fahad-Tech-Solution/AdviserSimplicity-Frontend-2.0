@@ -29,10 +29,12 @@ const AccumulationBenefits = (props) => {
 
     let data =
       props.modalObject.values?.[BaseKey]?.[index]?.[
-      props.modalObject.key + "Array"
+        props.modalObject.key + "Array"
       ] || [];
 
-    setFieldValue("NumberOfMap", data.length||1);
+    console.log("Data", data);
+    
+    setFieldValue("NumberOfMap", data.length || 1);
     setFieldValue("newEntries", data);
   };
 
@@ -70,16 +72,17 @@ const AccumulationBenefits = (props) => {
       filteredEntries
     );
 
-
     const totalTaxFreeComponent = filteredEntries.reduce(
       (sum, entry) =>
-        sum + parseFloat(entry.taxFreeComponent?.replace(/[^0-9.-]+/g, "") || 0),
+        sum +
+        parseFloat(entry.taxFreeComponent?.replace(/[^0-9.-]+/g, "") || 0),
       0
     );
 
     props.setFieldValue(
       `${props.modalObject.stakeHolder}${props.modalObject.key}`,
-      toCommaAndDollar(totalTaxFreeComponent));
+      toCommaAndDollar(totalTaxFreeComponent)
+    );
 
     if (props.flagState) {
       props.setFlagState(false);
@@ -90,7 +93,12 @@ const AccumulationBenefits = (props) => {
   };
 
   // ---------------- CALCULATE BENEFITS ----------------
-  const CalculateBenefits = (values, setFieldValue, currentInput, stakeHolder) => {
+  const CalculateBenefits = (
+    values,
+    setFieldValue,
+    currentInput,
+    stakeHolder
+  ) => {
     try {
       console.log("Calculating accumulation benefits...");
       const index = parseFloat(stakeHolder?.match(/\[(\d+)\]/)?.[1] || 0);
@@ -134,7 +142,8 @@ const AccumulationBenefits = (props) => {
       const taxableComponent = currentBalance - taxFreeComponent;
 
       // Calculate preserved amount
-      const preservedAmount = currentBalance - restrictedNonPreserved - unRestrictedNonPreserved;
+      const preservedAmount =
+        currentBalance - restrictedNonPreserved - unRestrictedNonPreserved;
 
       // Update calculated fields
       setFieldValue(
@@ -146,7 +155,6 @@ const AccumulationBenefits = (props) => {
         `newEntries[${index}].preservedAmount`,
         toCommaAndDollar(preservedAmount)
       );
-
     } catch (err) {
       console.error("❌ Calculation error:", err);
     }
@@ -159,7 +167,7 @@ const AccumulationBenefits = (props) => {
       dataIndex: "no",
       key: "no",
       justText: true,
-      width: 60
+      width: 60,
     },
     {
       title: "Commencement Date",
@@ -278,9 +286,7 @@ const AccumulationBenefits = (props) => {
                     Select: { colorBorder: "#36b446" },
                   },
                 }}
-              >
-
-              </ConfigProvider>
+              ></ConfigProvider>
             </div>
 
             {values.NumberOfMap && (

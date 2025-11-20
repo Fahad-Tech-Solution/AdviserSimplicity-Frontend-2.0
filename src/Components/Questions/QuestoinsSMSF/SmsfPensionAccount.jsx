@@ -55,7 +55,6 @@ const SmsfPensionAccount = (props) => {
 
   const initialValues = {
     NumberOfMap: existingData.length || "",
-    accountBasedPensions: existingData.length ? existingData : [],
   };
 
   // fill initial values into form fields (when form mounts or existingData changes)
@@ -115,13 +114,14 @@ const SmsfPensionAccount = (props) => {
     for (let i = 0; i < numberOfMaps; i++) {
       const newEntry = {
         pensionBenefits: values.pensionAccounts[i]?.pensionBenefits || "",
-        pensionBenefitsarray:
-          values.pensionAccounts[i]?.pensionBenefitsarray || [],
+        pensionBenefitsArray:
+          values.pensionAccounts[i]?.pensionBenefitsArray || [],
         pensionPayment: values.pensionAccounts[i]?.pensionPayment || "",
         pensionType: values.pensionAccounts[i]?.pensionType || "",
         nominatedBeneficiaries:
           values.pensionAccounts[i]?.nominatedBeneficiaries || "",
-        beneficiariesArray: values.pensionAccounts[i]?.beneficiariesArray || [],
+        nominatedBeneficiariesDetails:
+          values.pensionAccounts[i]?.nominatedBeneficiariesDetails || [],
       };
       newEntries.push(newEntry);
     }
@@ -161,13 +161,13 @@ const SmsfPensionAccount = (props) => {
     stakeHolder
   ) => {
     const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
-    const pensionBenefitsarray =
-      values?.pensionAccounts?.[index]?.pensionBenefitsarray;
+    const pensionBenefitsArray =
+      values?.pensionAccounts?.[index]?.pensionBenefitsArray;
 
-    if (!pensionBenefitsarray || !Array.isArray(pensionBenefitsarray)) return;
+    if (!pensionBenefitsArray || !Array.isArray(pensionBenefitsArray)) return;
 
     const ExpectedSum = parseFloat(
-      pensionBenefitsarray.reduce(
+      pensionBenefitsArray.reduce(
         (total, entry) =>
           total +
           parseFloat(
@@ -211,11 +211,11 @@ const SmsfPensionAccount = (props) => {
       for (let i = currentAccounts.length; i < newCount; i++) {
         newAccounts.push({
           pensionBenefits: "",
-          pensionBenefitsarray: [],
+          pensionBenefitsArray: [],
           pensionPayment: "",
           pensionType: "",
           nominatedBeneficiaries: "",
-          beneficiariesArray: [],
+          nominatedBeneficiariesArray: [],
         });
       }
       setFieldValue("pensionAccounts", newAccounts);
@@ -321,9 +321,12 @@ const SmsfPensionAccount = (props) => {
             owner: index + 1,
             stakeHolder: `pensionAccounts[${index}]`,
             pensionBenefits: item.pensionBenefits || "",
+
             pensionPayment: item.pensionPayment || "",
             pensionType: item.pensionType || "",
             nominatedBeneficiaries: item.nominatedBeneficiaries || "",
+            nominatedBeneficiariesDetails:
+              item.nominatedBeneficiariesDetails || "",
           })) || [];
 
         return (
@@ -342,31 +345,26 @@ const SmsfPensionAccount = (props) => {
 
             <Row>
               <div className="col-md-12">
-                <div className="row justify-content-center">
-                  <div className="col-md-5">
-                    <p
-                      className="text-end mt-1"
-                      onClick={() => console.log(values)}
-                    >
+                <div className="row">
+                  <div className="d-flex flex-row justify-content-start align-items-center gap-3 mt-2 w-100">
+                    <p className=" mt-1" onClick={() => console.log(values)}>
                       How many {props.modalObject.title} does {nameSet} have:
                     </p>
-                  </div>
-                  <div className="col-md-2">
-                    <select
-                      id="NumberOfMap"
-                      name="NumberOfMap"
-                      className="form-select inputDesignDoubleInput w-100"
-                      onChange={(e) => handleInput(e, setFieldValue, values)}
-                      onBlur={handleBlur}
-                      value={values.NumberOfMap || ""}
-                    >
-                      <option value="">Select</option>
-                      <option value="1">1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                      <option value="4">4</option>
-                      <option value="5">5</option>
-                    </select>
+                    <div style={{ width: "10%" }}>
+                      <select
+                        id="NumberOfMap"
+                        name="NumberOfMap"
+                        className="form-select inputDesignDoubleInput w-100"
+                        onChange={(e) => handleInput(e, setFieldValue, values)}
+                        onBlur={handleBlur}
+                        value={values.NumberOfMap || ""}
+                      >
+                        <option value="">Select</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                      </select>
+                    </div>
                   </div>
 
                   {values.NumberOfMap && values.NumberOfMap > 0 && (

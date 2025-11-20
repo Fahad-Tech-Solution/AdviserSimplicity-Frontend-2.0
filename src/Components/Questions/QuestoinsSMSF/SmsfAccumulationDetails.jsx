@@ -2,12 +2,12 @@ import { Formik, Form } from "formik";
 import React, { useEffect, useMemo, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
-import { 
-  openNotificationSuccess, 
-  PatchAxios, 
-  PostAxios, 
-  RenderName, 
-  toCommaAndDollar 
+import {
+  openNotificationSuccess,
+  PatchAxios,
+  PostAxios,
+  RenderName,
+  toCommaAndDollar,
 } from "../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
@@ -27,7 +27,7 @@ const SmsfAccumulationDetails = (props) => {
   const [flagState, setFlagState] = useState(false);
   const [modalObject, setModalObject] = useState({});
 
-  const UserStatus = localStorage.getItem('UserStatus');
+  const UserStatus = localStorage.getItem("UserStatus");
 
   // Determine name based on stakeholder
   const [nameSet] = useState(() => {
@@ -36,42 +36,24 @@ const SmsfAccumulationDetails = (props) => {
     } else if (props.modalObject.Input === "partner") {
       return localStorage.getItem("PartnerName");
     } else if (props.modalObject.Input === "joint") {
-      return localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName");
+      return (
+        localStorage.getItem("UserName") +
+        " & " +
+        localStorage.getItem("PartnerName")
+      );
     }
     return "";
   });
 
   // Load existing data if available
-  const SMSFAccumulationDetails = Object.keys(questionDetail.SMSFAccumulationDetails).length > 0 
-    ? questionDetail.SMSFAccumulationDetails 
-    : { client: [], partner: [], joint: [] };
+  const SMSFAccumulationDetails =
+    Object.keys(questionDetail.SMSFAccumulationDetails).length > 0
+      ? questionDetail.SMSFAccumulationDetails
+      : { client: [], partner: [], joint: [] };
 
   const existingMembers = SMSFAccumulationDetails.member || [];
 
-  const initialValues = {
-    selectedMembers: existingMembers,
-    smsfAccumulation: existingMembers.length ? existingMembers.map((member, index) => {
-      let memberData = {};
-      
-      if (member === "client" && SMSFAccumulationDetails.client.length > 0) {
-        memberData = SMSFAccumulationDetails.client[0];
-      } else if (member === "partner" && SMSFAccumulationDetails.partner.length > 0) {
-        memberData = SMSFAccumulationDetails.partner[0];
-      } else if (member === "joint" && SMSFAccumulationDetails.joint.length > 0) {
-        memberData = SMSFAccumulationDetails.joint[0];
-      }
-      
-      return {
-        member,
-        accumulationBenefits: memberData.accumulationBenefits || "",
-        accumulationBenefitsarray: memberData.accumulationBenefitsarray || "",
-        contributions: memberData.contributions || "",
-        contributionsArray: memberData.contributionsArray || "",
-        nominatedBeneficiaries: memberData.nominatedBeneficiaries || "",
-        beneficiariesArray: memberData.beneficiariesArray || "",
-      };
-    }) : [],
-  };
+  const initialValues = {};
 
   const [dynamicFields, setDynamicFields] = useState([]);
 
@@ -82,9 +64,36 @@ const SmsfAccumulationDetails = (props) => {
   }, [existingMembers]);
 
   const fillInitialValues = (setFieldValue) => {
+    console.log(
+      "Filling initial values with existing members:",
+      SMSFAccumulationDetails
+    );
     if (existingMembers.length) {
+      let smsfAccumulation = existingMembers.map((member, index) => {
+        return {
+          member,
+          accumulationBenefits:
+            SMSFAccumulationDetails?.[member]?.[0]?.accumulationBenefits || "",
+          accumulationBenefitsArray:
+            SMSFAccumulationDetails?.[member]?.[0]?.accumulationBenefitsArray ||
+            [],
+          contributions:
+            SMSFAccumulationDetails?.[member]?.[0]?.contributions || "",
+          contributionsArray:
+            SMSFAccumulationDetails?.[member]?.[0]?.contributionsArray || [],
+          nominatedBeneficiaries:
+            SMSFAccumulationDetails?.[member]?.[0]?.nominatedBeneficiaries ||
+            "",
+          nominatedBeneficiariesDetails:
+            SMSFAccumulationDetails?.[member]?.[0]
+              ?.nominatedBeneficiariesDetails || {},
+        };
+      });
+
+      console.log("smsfAccumulation--", smsfAccumulation);
+
+      setFieldValue("smsfAccumulation", smsfAccumulation);
       setFieldValue("selectedMembers", existingMembers);
-      setFieldValue("smsfAccumulation", initialValues.smsfAccumulation);
     }
   };
 
@@ -111,25 +120,35 @@ const SmsfAccumulationDetails = (props) => {
     setFlagState(true);
   };
 
-  const CheckInputValue = (values, setFieldValue, currentInput, stakeHolder) => {
+  const CheckInputValue = (
+    values,
+    setFieldValue,
+    currentInput,
+    stakeHolder
+  ) => {
     const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
-    const accumulationBenefitsarray = values?.smsfAccumulation?.[index]?.accumulationBenefitsarray;
+    const accumulationBenefitsarray =
+      values?.smsfAccumulation?.[index]?.accumulationBenefitsarray;
 
     if (!accumulationBenefitsarray) return;
 
-    const ExpectedSum = parseFloat(accumulationBenefitsarray.taxFreeComponent?.replace(/[^0-9.-]+/g, "") || 0);
+    const ExpectedSum = parseFloat(
+      accumulationBenefitsarray.taxFreeComponent?.replace(/[^0-9.-]+/g, "") || 0
+    );
     const data = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, ""));
 
     console.log(ExpectedSum, data, currentInput.name, ShowError);
 
     if (ExpectedSum !== data) {
-      setShowError(prevState => ({
+      setShowError((prevState) => ({
         ...prevState,
         [`accumulationBenefits${index}Error`]: true,
-        [`accumulationBenefits${index}Message`]: "Total must be equal to the sum of all Investment value filled in the popup. The sum is " + toCommaAndDollar(ExpectedSum),
+        [`accumulationBenefits${index}Message`]:
+          "Total must be equal to the sum of all Investment value filled in the popup. The sum is " +
+          toCommaAndDollar(ExpectedSum),
       }));
     } else {
-      setShowError(prevState => ({
+      setShowError((prevState) => ({
         ...prevState,
         [`accumulationBenefits${index}Error`]: false,
         [`accumulationBenefits${index}Message`]: "",
@@ -140,56 +159,42 @@ const SmsfAccumulationDetails = (props) => {
   const DefaultUrl = useRecoilValue(defaultUrl);
 
   const onSubmit = async (values) => {
-    console.log(JSON.stringify(values));
-    
+    console.log(values);
+
     const fundData = values.smsfAccumulation || [];
 
     // Prepare the object for API call
     const obj = {
       clientFK: localStorage.getItem("UserID"),
-      member: values.selectedMembers || []
+      member: values.selectedMembers || [],
     };
 
     // Map data to client, partner, joint based on member type
     fundData.forEach((item, index) => {
       const newEntry = {
         accumulationBenefits: item.accumulationBenefits || "",
-        accumulationBenefitsarray: item.accumulationBenefitsarray || "",
+        accumulationBenefitsArray: item.accumulationBenefitsArray || "",
         contributions: item.contributions || "",
         contributionsArray: item.contributionsArray || "",
         nominatedBeneficiaries: item.nominatedBeneficiaries || "",
-        beneficiariesArray: item.beneficiariesArray || "",
+        nominatedBeneficiariesDetails: item.nominatedBeneficiariesDetails || "",
       };
 
-      if (item.member === "client") {
-        obj.client = [newEntry];
-        obj.clientTotal = toCommaAndDollar(obj.client.reduce(
-          (total, entry) => total + parseFloat(entry.accumulationBenefits.replace(/[^0-9.-]+/g, "") || 0),
-          0
-        ));
-      } else if (item.member === "partner") {
-        obj.partner = [newEntry];
-        obj.partnerTotal = toCommaAndDollar(obj.partner.reduce(
-          (total, entry) => total + parseFloat(entry.accumulationBenefits.replace(/[^0-9.-]+/g, "") || 0),
-          0
-        ));
-      } else if (item.member === "joint") {
-        obj.joint = [newEntry];
-        obj.jointTotal = toCommaAndDollar(obj.joint.reduce(
-          (total, entry) => total + parseFloat(entry.accumulationBenefits.replace(/[^0-9.-]+/g, "") || 0),
-          0
-        ));
-      }
+      obj[item.member] = [newEntry];
+      obj[item.member + "Total"] = item.accumulationBenefits;
     });
 
-    console.log(JSON.stringify(obj), "Final Obj");
+    console.log(obj, "Final Obj");
 
     const bankAccountArray = SMSFAccumulationDetails.clientFK || "";
-
+    return false;
     try {
       let res;
       if (!bankAccountArray) {
-        res = await PostAxios(`${DefaultUrl}/api/SMSFAccumulationDetails/Add`, obj);
+        res = await PostAxios(
+          `${DefaultUrl}/api/SMSFAccumulationDetails/Add`,
+          obj
+        );
       } else {
         res = await PatchAxios(
           `${DefaultUrl}/api/SMSFAccumulationDetails/Update`,
@@ -202,26 +207,35 @@ const SmsfAccumulationDetails = (props) => {
         setQuestionDetail(updatedData);
       }
 
-      openNotificationSuccess("success", "topRight", "Success Notification", 
-        `Data of "${props.modalObject.title}" is Saved`);
-      
+      openNotificationSuccess(
+        "success",
+        "topRight",
+        "Success Notification",
+        `Data of "${props.modalObject.title}" is Saved`
+      );
+
       if (props.flagState) {
         props.setFlagState(false);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
-      openNotificationSuccess("error", "topRight", "Error Notification", 
-        `Data of "${props.modalObject.title}" is not Saved Please! try again`);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        `Data of "${props.modalObject.title}" is not Saved Please! try again`
+      );
     }
   };
 
-  const memberOptions = (UserStatus !== "Single") 
-    ? [
-        { value:"client", label: RenderName("client") },
-        { value: "partner", label: RenderName("partner") },
-        { value: "joint", label: RenderName("joint") }
-      ]
-    : [{ value:  RenderName("client"), label: RenderName("client") }];
+  const memberOptions =
+    UserStatus !== "Single"
+      ? [
+          { value: "client", label: RenderName("client") },
+          { value: "partner", label: RenderName("partner") },
+          { value: "joint", label: RenderName("joint") },
+        ]
+      : [{ value: RenderName("client"), label: RenderName("client") }];
 
   const columns = [
     {
@@ -235,7 +249,7 @@ const SmsfAccumulationDetails = (props) => {
       dataIndex: "member",
       key: "member",
       width: 100,
-      justText:true,
+      justText: true,
     },
     {
       title: "Accumulation Benefits",
@@ -320,29 +334,9 @@ const SmsfAccumulationDetails = (props) => {
         }, [existingMembers]);
 
         // Update table data when selected members change
-        useEffect(() => {
-          if (values.selectedMembers && values.selectedMembers.length > 0) {
-            const newSmsfAccumulation = values.selectedMembers.map((member, index) => {
-              // Find existing data for this member or create new
-              const existingData = values.smsfAccumulation?.find(item => item.member === member) || {};
-              return {
-                member,
-                accumulationBenefits: existingData.accumulationBenefits || "",
-                accumulationBenefitsarray: existingData.accumulationBenefitsarray || "",
-                contributions: existingData.contributions || "",
-                contributionsArray: existingData.contributionsArray || "",
-                nominatedBeneficiaries: existingData.nominatedBeneficiaries || "",
-                beneficiariesArray: existingData.beneficiariesArray || "",
-              };
-            });
-            setFieldValue("smsfAccumulation", newSmsfAccumulation);
-          } else {
-            setFieldValue("smsfAccumulation", []);
-          }
-        }, [values.selectedMembers]);
 
         const dataRows = useMemo(() => {
-          if (values.smsfAccumulation && values.smsfAccumulation.length > 0) {
+          if (values.selectedMembers && values.selectedMembers.length > 0) {
             return values.smsfAccumulation.map((item, index) => ({
               key: `smsfAccumulation.${index}`,
               owner: index + 1,
@@ -369,8 +363,14 @@ const SmsfAccumulationDetails = (props) => {
             </InnerModal>
 
             <div className="d-flex justify-content-start align-items-center gap-4">
-              <p className="text-end mt-1 pt-2" onClick={()=>{console.log(values)}}>
-                Members of SMSF {questionDetail.SMSFDetails?.SMSFOwner?.fundName}
+              <p
+                className="text-end mt-1 pt-2"
+                onClick={() => {
+                  console.log(values);
+                }}
+              >
+                Members of SMSF{" "}
+                {questionDetail.SMSFDetails?.SMSFOwner?.fundName}
               </p>
               <div style={{ minWidth: "25%" }}>
                 <ConfigProvider
@@ -396,7 +396,7 @@ const SmsfAccumulationDetails = (props) => {
                     onBlur={handleBlur}
                     getPopupContainer={(triggerNode) => triggerNode.parentNode}
                   >
-                    {memberOptions.map(option => (
+                    {memberOptions.map((option) => (
                       <Option key={option.value} value={option.value}>
                         {option.label}
                       </Option>

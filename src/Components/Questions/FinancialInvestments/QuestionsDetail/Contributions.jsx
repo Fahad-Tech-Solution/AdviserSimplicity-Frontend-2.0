@@ -17,7 +17,7 @@ const Contributions = (props) => {
   // ---------------- INITIAL VALUES ----------------
   const initialValues = {
     NumberOfMap: "",
-    newEntries:  [],
+    newEntries: [],
   };
 
   // ---------------- FILL EXISTING DATA ----------------
@@ -189,39 +189,37 @@ const Contributions = (props) => {
 
         return (
           <Form>
-            <div className="d-flex flex-column justify-content-center align-items-center gap-3 mt-2 ">
-              <ConfigProvider
-                theme={{
-                  components: {
-                    Select: { colorBorder: "#36b446" },
-                  },
-                }}
-              >
-                <div className="d-flex flex-row justify-content-center align-items-center gap-3 mt-2 w-75">
-                  <p className="mt-3">{props.modalObject.question}</p>
+            <ConfigProvider
+              theme={{
+                components: {
+                  Select: { colorBorder: "#36b446" },
+                },
+              }}
+            >
+              <div className="d-flex flex-row justify-content-start align-items-center gap-3 mt-2 w-75">
+                <p className="mt-3">{props.modalObject.question}</p>
 
-                  <Select
-                    id="NumberOfMap"
-                    name="NumberOfMap"
-                    className="w-25"
-                    placeholder="Select Count"
-                    size="large"
-                    value={values.NumberOfMap || undefined}
-                    onChange={(value) => handleInput(value, setFieldValue)}
-                    onBlur={handleBlur}
-                    getPopupContainer={(triggerNode) => triggerNode.parentNode}
-                  >
-                    {Array.from({ length: 10 }, (_, i) => (
-                      <Option key={i + 1} value={i + 1}>
-                        {i + 1}
-                      </Option>
-                    ))}
-                  </Select>
-                </div>
-              </ConfigProvider>
-            </div>
+                <Select
+                  id="NumberOfMap"
+                  name="NumberOfMap"
+                  className="w-25"
+                  placeholder="Select Count"
+                  size="large"
+                  value={values.NumberOfMap || undefined}
+                  onChange={(value) => handleInput(value, setFieldValue)}
+                  onBlur={handleBlur}
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                >
+                  {Array.from({ length: 10 }, (_, i) => (
+                    <Option key={i + 1} value={i + 1}>
+                      {i + 1}
+                    </Option>
+                  ))}
+                </Select>
+              </div>
+            </ConfigProvider>
 
-            {values.NumberOfMap && (
+            {values.NumberOfMap >= 1 && (
               <div className="mt-4 All_Client reportSection">
                 <AntdTable
                   columns={columns}

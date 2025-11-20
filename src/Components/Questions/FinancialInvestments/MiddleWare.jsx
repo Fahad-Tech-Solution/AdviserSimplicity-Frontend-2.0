@@ -1,7 +1,7 @@
 // MiddleWare.jsx
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { Form, Formik } from "formik";
-import { Placeholder, Row } from "react-bootstrap";
+import { Row } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
 import {
@@ -25,536 +25,383 @@ import TradingTrust from "../BusinessEntities/TradingTrust";
 
 const AntdTable = DynamicTableForInputsSection("antd");
 
+// Constants for better maintainability
+const SWITCH_ARRAY = [
+  "Australian Shares/ETFs",
+  "SMSF Australian Shares/ETFs",
+  "Family Trust Australian Shares/ETFs",
+  "Platform Investments",
+  "Family Trust Platform Investments",
+  "SMSF Platform Investments",
+  "Investment Bond",
+];
+
+const CLIENT_PARTNER_ARRAY = [
+  "Super Funds",
+  "Account Based Pension",
+  "Annuities",
+  "Business as Company Structure",
+  "Business as Trusts Structure",
+];
+
+const LABEL_PORTFOLIO_VALUES = [
+  "Platform Investments",
+  "Family Trust Platform Investments",
+  "SMSF Platform Investments",
+  "Investment Bond",
+];
+
+const SMSF_KEYS = [
+  "SMSFBank",
+  "SMSFTermDeposits",
+  "SMSFAustralianShares",
+  "SMSFManagedFunds",
+  "SMSFInvestmentLoan",
+];
+
+const FAMILY_TRUST_KEYS = [
+  "familyBank",
+  "familyTermDeposit",
+  "familyAustralianShare",
+  "familyMangedFunds",
+];
+
+const COMPONENT_MAPPING = {
+  "Bank Accounts": BankTermForm,
+  "Term Deposits": BankTermForm,
+  "Australian Shares/ETFs": AustralianShares,
+  "Platform Investments": ManagedFunds,
+  "Investment Bond": ManagedFunds,
+  "Super Funds": SuperFunds,
+  "Account Based Pension": AccountBasedPension,
+  Annuities: InvestedAnnuities,
+  "Business as Company Structure": TradingCompany,
+  "Business as Trusts Structure": TradingTrust,
+  "SMSF Bank Accounts": BankTermForm,
+  "SMSF Term Deposits": BankTermForm,
+  "SMSF Australian Shares/ETFs": AustralianShares,
+  "SMSF Platform Investments": ManagedFunds,
+  "SMSF Investment Bond": ManagedFunds,
+  "Family Trust Bank Accounts": BankTermForm,
+  "Family Trust Term Deposits": BankTermForm,
+  "Family Trust Australian Shares/ETFs": AustralianShares,
+  "Family Trust Platform Investments": ManagedFunds,
+};
+
+const PAGE_LIMITS = {
+  bankAccountFinance: 10,
+  termDepositsFinance: 10,
+  australianShareMarket: 50,
+};
+
 const MiddleWare = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
   const [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+  const DefaultUrl = useRecoilValue(defaultUrl);
 
   const [flagState, setFlagState] = useState(false);
   const [modalObject, setModalObject] = useState({});
   const [showError, setShowError] = useState({});
 
-  // modal title arrays (preserve original logic)
-  const switchArray = [
-    "Australian Shares/ETFs",
-    "SMSF Australian Shares/ETFs",
-    "Family Trust Australian Shares/ETFs",
-    "Platform Investments",
-    "Family Trust Platform Investments",
-    "SMSF Platform Investments",
-    "Investment Bond",
-  ];
-  const attrebuteSet = switchArray.includes(props.modalObject.title);
+  // Derived values
+  const { modalObject: propModalObj } = props;
+  const hasAttributes = SWITCH_ARRAY.includes(propModalObj.title);
+  const clientPartnerOnly = CLIENT_PARTNER_ARRAY.includes(propModalObj.title);
+  const hasPortfolioLabel = LABEL_PORTFOLIO_VALUES.includes(propModalObj.title);
+  const isSMSF = SMSF_KEYS.includes(propModalObj.key);
+  const isFamilyTrust = FAMILY_TRUST_KEYS.includes(propModalObj.key);
+  const isRegularEntity = !isSMSF && !isFamilyTrust;
 
-  const clientPartnerArray = [
-    "Super Funds",
-    "Account Based Pension",
-    "Annuities",
-    "Business as Company Structure",
-    "Business as Trusts Structure",
-  ];
-  const clientPartnerOnly = clientPartnerArray.includes(
-    props.modalObject.title
-  );
-
-  const LabelPortfolioValue = [
-    "Platform Investments",
-    "Family Trust Platform Investments",
-    "SMSF Platform Investments",
-    "Investment Bond",
-  ];
-  const LabelPortfolio = LabelPortfolioValue.includes(props.modalObject.title);
-
-  // read backend block for this modal key
-  const BankAccountFinance =
-    questionDetail[props.modalObject.key] &&
-    Object.keys(questionDetail[props.modalObject.key]).length > 0
-      ? questionDetail[props.modalObject.key]
+  // Backend data
+  const backendData = questionDetail[propModalObj.key];
+  const bankAccountFinance =
+    backendData && Object.keys(backendData).length > 0
+      ? backendData
       : { client: [], joint: [], partner: [] };
 
-  const initialValues = {};
+  // Helper functions
+  const getModalTitle = useCallback((title) => {
+    return title.includes("_") ? title.split("_").slice(1).join("_") : title;
+  }, []);
 
-  // Modal component mapping
-  const componentMapping = {
-    "Bank Accounts": <BankTermForm />, // example mapping - original mapping is used below in ModalContent
-    "Term Deposits": <BankTermForm />,
-    "Australian Shares/ETFs": <AustralianShares />,
-    "Platform Investments": <ManagedFunds />,
-    "Investment Bond": <ManagedFunds />,
-    "Super Funds": <SuperFunds />,
-    "Account Based Pension": <AccountBasedPension />,
-    Annuities: <InvestedAnnuities />,
-    "Business as Company Structure": <TradingCompany />,
-    "Business as Trusts Structure": <TradingTrust />,
-    "SMSF Bank Accounts": <BankTermForm />,
-    "SMSF Term Deposits": <BankTermForm />,
-    "SMSF Australian Shares/ETFs": <AustralianShares />,
-    "SMSF Platform Investments": <ManagedFunds />,
-    "SMSF Investment Bond": <ManagedFunds />,
-    "Family Trust Bank Accounts": <BankTermForm />,
-    "Family Trust Term Deposits": <BankTermForm />,
-    "Family Trust Australian Shares/ETFs": <AustralianShares />,
-    "Family Trust Platform Investments": <ManagedFunds />,
-  };
+  const ModalContent = useCallback(
+    (obj) => {
+      if (!obj?.title) return null;
+      const Component = COMPONENT_MAPPING[getModalTitle(obj.title)];
+      return Component ? <Component /> : null;
+    },
+    [getModalTitle]
+  );
 
-  const ModalContent = (obj) => {
-    if (!obj || typeof obj.title !== "string") return null;
-    let title = obj.title;
-    if (title.includes("_")) {
-      title = title.split("_").slice(1).join("_");
-    }
-    return componentMapping[title] || null;
-  };
+  const fillInitialValues = useCallback(
+    (setFieldValue) => {
+      if (!bankAccountFinance?.clientFK) return;
 
-  // Fill initial values from backend data into Formik structure
-  const fillInitialValues = (setFieldValue) => {
-    try {
-      // 🧩 If no data available, return
-      if (!BankAccountFinance || !BankAccountFinance.clientFK) return;
-
-      if (
-        [
-          "SMSFBank",
-          "SMSFTermDeposits",
-          "SMSFAustralianShares",
-          "SMSFManagedFunds",
-          "SMSFInvestmentLoan",
-        ].includes(props.modalObject.key)
-      ) {
-        setFieldValue("SMSF", {
-          currentBalanceArray: BankAccountFinance.SMSF || [],
-          currentBalance: BankAccountFinance.SMSFCurrentBalance || "",
-          costBase: BankAccountFinance.SMSFCostBaseTemp || "",
-        });
-      }
-      if (
-        [
-          "familyBank",
-          "familyTermDeposit",
-          "familyAustralianShare",
-          "familyMangedFunds",
-        ].includes(props.modalObject.key)
-      ) {
-      }
-
-      if (
-        [
-          "familyBank",
-          "familyTermDeposit",
-          "familyAustralianShare",
-          "familyMangedFunds",
-          "SMSFBank",
-          "SMSFTermDeposits",
-          "SMSFAustralianShares",
-          "SMSFManagedFunds",
-          "SMSFInvestmentLoan",
-        ].includes(props.modalObject.key) === false
-      ) {
-        // ✅ Client section
-        setFieldValue("client", {
-          currentBalanceArray: BankAccountFinance.client || [],
-          currentBalance: BankAccountFinance.clientCurrentBalance || "",
-          costBase: BankAccountFinance.clientCostBaseTemp || "",
-        });
-
-        // Add cost base temp if needed
-        setFieldValue(
-          "clientCostBase",
-          BankAccountFinance.clientCostBaseTemp ||
-            BankAccountFinance.clientCostBase ||
-            ""
-        );
-
-        // ✅ Partner & Joint (only when Married)
-        if (localStorage.getItem("UserStatus") === "Married") {
-          setFieldValue("partner", {
-            currentBalanceArray: BankAccountFinance.partner || [],
-            currentBalance: BankAccountFinance.partnerCurrentBalance || "",
-            costBase: BankAccountFinance.partnerCostBaseTemp || "",
+      try {
+        if (isSMSF) {
+          setFieldValue("SMSF", {
+            currentBalanceArray: bankAccountFinance.SMSF || [],
+            currentBalance: bankAccountFinance.SMSFCurrentBalance || "",
+            costBase: bankAccountFinance.SMSFCostBaseTemp || "",
+          });
+        } else if (isFamilyTrust) {
+          // Family trust initialization can be added here if needed
+        } else if (isRegularEntity) {
+          // Client section
+          setFieldValue("client", {
+            currentBalanceArray: bankAccountFinance.client || [],
+            currentBalance: bankAccountFinance.clientCurrentBalance || "",
+            costBase: bankAccountFinance.clientCostBaseTemp || "",
           });
 
           setFieldValue(
-            "partnerCostBase",
-            BankAccountFinance.partnerCostBaseTemp ||
-              BankAccountFinance.partnerCostBase ||
+            "clientCostBase",
+            bankAccountFinance.clientCostBaseTemp ||
+              bankAccountFinance.clientCostBase ||
               ""
           );
 
-          if (!clientPartnerOnly) {
-            setFieldValue("joint", {
-              currentBalanceArray: BankAccountFinance.joint || [],
-              currentBalance: BankAccountFinance.jointCurrentBalance || "",
-              costBase: BankAccountFinance.jointCostBaseTemp || "",
+          // Partner & Joint (only when Married)
+          if (localStorage.getItem("UserStatus") === "Married") {
+            setFieldValue("partner", {
+              currentBalanceArray: bankAccountFinance.partner || [],
+              currentBalance: bankAccountFinance.partnerCurrentBalance || "",
+              costBase: bankAccountFinance.partnerCostBaseTemp || "",
             });
 
             setFieldValue(
-              "jointCostBase",
-              BankAccountFinance.jointCostBaseTemp ||
-                BankAccountFinance.jointCostBase ||
+              "partnerCostBase",
+              bankAccountFinance.partnerCostBaseTemp ||
+                bankAccountFinance.partnerCostBase ||
                 ""
             );
+
+            if (!clientPartnerOnly) {
+              setFieldValue("joint", {
+                currentBalanceArray: bankAccountFinance.joint || [],
+                currentBalance: bankAccountFinance.jointCurrentBalance || "",
+                costBase: bankAccountFinance.jointCostBaseTemp || "",
+              });
+
+              setFieldValue(
+                "jointCostBase",
+                bankAccountFinance.jointCostBaseTemp ||
+                  bankAccountFinance.jointCostBase ||
+                  ""
+              );
+            }
           }
         }
+      } catch (err) {
+        console.error("fillInitialValues error:", err);
       }
-    } catch (err) {
-      console.error("fillInitialValues error:", err);
-    }
-  };
+    },
+    [
+      bankAccountFinance,
+      isSMSF,
+      isFamilyTrust,
+      isRegularEntity,
+      clientPartnerOnly,
+    ]
+  );
 
-  // local value checker used by inputs and modal callbacks
-  const checkValuesLocal = (
-    valuesObj,
-    setFieldValue,
-    currentInput,
-    stakeHolder
-  ) => {
-    // currentInput: { name, value }
-    const checkState = currentInput.name.replace(
-      /CurrentBalance|CostBaseTemp$/,
-      ""
-    );
-    const fromWith =
-      parseFloat(String(currentInput.value || "0").replace(/[^0-9.-]+/g, "")) ||
-      0;
-
-    const expectedTotal = calculateExpectedTotal(
-      props.modalObject.title,
-      valuesObj[checkState] || [],
-      currentInput.name,
-      checkState
-    );
-
-    setShowError((prev) => ({
-      ...prev,
-      [`${currentInput.name}Error`]:
-        expectedTotal !== 0 && expectedTotal !== fromWith,
-      [`${currentInput.name}Message`]:
-        expectedTotal !== fromWith
-          ? `Total must be equal to the sum of all ${
-              currentInput.name.includes("CostBase")
-                ? "Cost Base"
-                : "current balance"
-            } filled in the popup. The sum is ${toCommaAndDollar(
-              expectedTotal
-            )}`
-          : "",
-    }));
-  };
-
-  const DefaultUrl = useRecoilValue(defaultUrl);
-
-  // Submit behaviour preserved from original
-  // const onSubmit = async (values) => {
-  //   try {
-  //     // 1️⃣ Start shaping object for backend
-  //     const obj = {
-  //       client: values?.client?.currentBalanceArray || [],
-  //       partner: values?.partner?.currentBalanceArray || [],
-  //       joint: values?.joint?.currentBalanceArray || [],
-  //       clientCurrentBalance: values?.client?.currentBalance || "$0",
-  //       partnerCurrentBalance: values?.partner?.currentBalance || "$0",
-  //       jointCurrentBalance: values?.joint?.currentBalance || "$0",
-  //       clientCostBaseTemp: values?.client?.costBase || "",
-  //       partnerCostBaseTemp: values?.partner?.costBase || "",
-  //       jointCostBaseTemp: values?.joint?.costBase || "",
-  //     };
-
-  //     // remove temp cost base fields if not attribute set
-  //     if (!attrebuteSet) {
-  //       delete obj.clientCostBaseTemp;
-  //       delete obj.partnerCostBaseTemp;
-  //       delete obj.jointCostBaseTemp;
-  //     }
-
-  //     // 2️⃣ Add client foreign key
-  //     obj.clientFK = localStorage.getItem("UserID");
-
-  //     // 3️⃣ Compute totals with 50/50 joint split logic
-  //     if (
-  //       obj.jointCurrentBalance &&
-  //       parseFloat(
-  //         String(obj.jointCurrentBalance).replace(/[^0-9.-]+/g, "")
-  //       ) !== 0
-  //     ) {
-  //       let fiftyPercent = 0;
-  //       try {
-  //         const jointValue =
-  //           parseFloat(
-  //             String(obj.jointCurrentBalance).replace(/[^0-9.-]+/g, "")
-  //           ) || 0;
-  //         fiftyPercent = jointValue / 2;
-  //       } catch (err) {
-  //         console.error("Error parsing jointCurrentBalance:", err);
-  //         fiftyPercent = 0;
-  //       }
-
-  //       if (fiftyPercent === 0) {
-  //         obj.clientTotal = obj.clientCurrentBalance || "$0";
-  //         obj.partnerTotal = obj.partnerCurrentBalance || "$0";
-  //       } else {
-  //         obj.clientTotal = toCommaAndDollar(
-  //           (parseFloat(
-  //             String(obj.clientCurrentBalance || "0").replace(/[^0-9.-]+/g, "")
-  //           ) || 0) + fiftyPercent
-  //         );
-  //         obj.partnerTotal = toCommaAndDollar(
-  //           (parseFloat(
-  //             String(obj.partnerCurrentBalance || "0").replace(/[^0-9.-]+/g, "")
-  //           ) || 0) + fiftyPercent
-  //         );
-  //       }
-  //     } else {
-  //       obj.clientTotal = obj.clientCurrentBalance || "$0";
-  //       obj.partnerTotal = obj.partnerCurrentBalance || "$0";
-  //     }
-
-  //     // 4️⃣ Optional: handle client-partner-only case
-  //     if (clientPartnerOnly) {
-  //       obj.jointCurrentBalance = undefined;
-  //       obj.joint = undefined;
-  //     }
-
-  //     // 5️⃣ Perform API call
-  //     const bankAccountArray = BankAccountFinance.clientFK || "";
-
-  //     let res;
-  //     if (!bankAccountArray) {
-  //       res = await PostAxios(
-  //         `${DefaultUrl}/api/${props.modalObject.key}/Add`,
-  //         obj
-  //       );
-  //     } else {
-  //       res = await PatchAxios(
-  //         `${DefaultUrl}/api/${props.modalObject.key}/Update`,
-  //         obj
-  //       );
-  //     }
-
-  //     // 6️⃣ Update state and notify success
-  //     if (res) {
-  //       const updatedData = {
-  //         ...questionDetailObj,
-  //         [props.modalObject.key]: res,
-  //       };
-  //       setQuestionDetail(updatedData);
-
-  //       openNotificationSuccess(
-  //         "success",
-  //         "topRight",
-  //         "Success Notification",
-  //         `Data of "${props.modalObject.title}" is Saved`
-  //       );
-
-  //       if (props.flagState) {
-  //         props.setFlagState(false);
-  //         props.setIsEditing(!props.isEditing);
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error("onSubmit error:", error);
-  //     openNotificationSuccess(
-  //       "error",
-  //       "topRight",
-  //       "Error Notification",
-  //       `Data of "${props.modalObject.title}" is not Saved Please! try again`
-  //     );
-  //   }
-  // };
-
-  const onSubmit = async (values) => {
-    try {
-      console.log(values);
-
-      // Helpers
-      const toNumber = (v) =>
-        parseFloat(String(v || "0").replace(/[^0-9.-]+/g, "")) || 0;
-
-      const money = (v) => toCommaAndDollar(toNumber(v));
-
-      const clientFK = localStorage.getItem("UserID");
-      const hasAttributes = attrebuteSet;
-      const alreadySaved = BankAccountFinance?.clientFK;
-      let obj = {};
-
-      if (
-        [
-          "SMSFBank",
-          "SMSFTermDeposits",
-          "SMSFAustralianShares",
-          "SMSFManagedFunds",
-          "SMSFInvestmentLoan",
-        ].includes(props.modalObject.key)
-      ) {
-        obj = {
-          SMSF: values?.SMSF?.currentBalanceArray || {},
-          SMSFCurrentBalance: values?.SMSF?.currentBalance || "$0",
-          SMSFTotal: values?.SMSF?.currentBalance || "$0",
-          clientFK,
-        };
-      }
-      if (
-        [
-          "familyBank",
-          "familyTermDeposit",
-          "familyAustralianShare",
-          "familyMangedFunds",
-        ].includes(props.modalObject.key)
-      ) {
-        obj = {
-          trust: values?.trust || {},
-          trustCurrentBalance: trust.currentBalance || "$0",
-          clientFK,
-        };
-      }
-
-      if (
-        [
-          "familyBank",
-          "familyTermDeposit",
-          "familyAustralianShare",
-          "familyMangedFunds",
-          "SMSFBank",
-          "SMSFTermDeposits",
-          "SMSFAustralianShares",
-          "SMSFManagedFunds",
-          "SMSFInvestmentLoan",
-        ].includes(props.modalObject.key) === false
-      ) {
-        const client = values?.client || {};
-        const partner = values?.partner || {};
-        const joint = values?.joint || {};
-
-        // 1️⃣ Build main object
-        obj = {
-          client: client.currentBalanceArray || [],
-          partner: partner.currentBalanceArray || [],
-          joint: joint.currentBalanceArray || [],
-
-          clientCurrentBalance: client.currentBalance || "$0",
-          partnerCurrentBalance: partner.currentBalance || "$0",
-          jointCurrentBalance: joint.currentBalance || "$0",
-
-          clientFK,
-        };
-
-        // 2️⃣ Only include cost bases if attributes exist
-        if (hasAttributes) {
-          obj.clientCostBaseTemp = client.costBase || "";
-          obj.partnerCostBaseTemp = partner.costBase || "";
-          obj.jointCostBaseTemp = joint.costBase || "";
-        }
-
-        // 3️⃣ Compute totals with optional 50/50 split
-        const jointValue = toNumber(obj.jointCurrentBalance);
-        const halfJoint = jointValue / 2;
-
-        const clientBase = toNumber(obj.clientCurrentBalance);
-        const partnerBase = toNumber(obj.partnerCurrentBalance);
-
-        if (jointValue > 0) {
-          obj.clientTotal = money(clientBase + halfJoint);
-          obj.partnerTotal = money(partnerBase + halfJoint);
-        } else {
-          obj.clientTotal = client.currentBalance || "$0";
-          obj.partnerTotal = partner.currentBalance || "$0";
-        }
-
-        // 4️⃣ If only client/partner, remove joint fields
-        if (clientPartnerOnly) {
-          delete obj.jointCurrentBalance;
-          delete obj.joint;
-        }
-      }
-
-      console.log("Submitting object:", obj);
-
-      // 5️⃣ API request (smart POST/PATCH)
-      const url = `${DefaultUrl}/api/${props.modalObject.key}`;
-      const apiCall = alreadySaved
-        ? PatchAxios(`${url}/Update`, obj)
-        : PostAxios(`${url}/Add`, obj);
-
-      const res = await apiCall;
-
-      // 6️⃣ Update global state
-      if (res) {
-        setQuestionDetail({
-          ...questionDetailObj,
-          [props.modalObject.key]: res,
-        });
-
-        openNotificationSuccess(
-          "success",
-          "topRight",
-          "Success Notification",
-          `Data of "${props.modalObject.title}" is Saved`
-        );
-
-        if (props.flagState) {
-          props.setFlagState(false);
-          props.setIsEditing(!props.isEditing);
-        }
-      }
-    } catch (error) {
-      console.error("onSubmit error:", error);
-
-      openNotificationSuccess(
-        "error",
-        "topRight",
-        "Error Notification",
-        `Data of "${props.modalObject.title}" is not saved. Please try again!`
+  const checkValuesLocal = useCallback(
+    (valuesObj, setFieldValue, currentInput, stakeHolder) => {
+      const checkState = currentInput.name.replace(
+        /CurrentBalance|CostBaseTemp$/,
+        ""
       );
-    }
-  };
+      const inputValue =
+        parseFloat(
+          String(currentInput.value || "0").replace(/[^0-9.-]+/g, "")
+        ) || 0;
 
-  let PageLimit = {
-    bankAccountFinance: 10,
-    termDepositsFinance: 10,
-    australianShareMarket: 50,
-  };
+      const expectedTotal = calculateExpectedTotal(
+        propModalObj.title,
+        valuesObj[checkState] || [],
+        currentInput.name,
+        checkState
+      );
 
-  // open inner modal
-  async function OpenInnerModal(title, values, key, stakeHolder) {
-    setModalObject({
-      title,
-      Input: key,
-      key: props.modalObject.key,
-      values,
-      pageLimit: PageLimit[props.modalObject.key],
-      stakeHolder,
-      ShowError: showError,
-      setShowError,
-    });
-    setFlagState(true);
-  }
+      const hasError = expectedTotal !== 0 && expectedTotal !== inputValue;
+      const errorMessage = hasError
+        ? `Total must be equal to the sum of all ${
+            currentInput.name.includes("CostBase")
+              ? "Cost Base"
+              : "current balance"
+          } filled in the popup. The sum is ${toCommaAndDollar(expectedTotal)}`
+        : "";
 
-  // Table columns (AntD-style) — 3 rows: client / partner / joint
-  const columns = useMemo(() => {
-    const ownerCol = {
+      setShowError((prev) => ({
+        ...prev,
+        [`${currentInput.name}Error`]: hasError,
+        [`${currentInput.name}Message`]: errorMessage,
+      }));
+    },
+    [propModalObj.title]
+  );
+
+  const onSubmit = useCallback(
+    async (values) => {
+      try {
+        const toNumber = (value) =>
+          parseFloat(String(value || "0").replace(/[^0-9.-]+/g, "")) || 0;
+        const formatMoney = (value) => toCommaAndDollar(toNumber(value));
+        const clientFK = localStorage.getItem("UserID");
+        const alreadySaved = bankAccountFinance?.clientFK;
+
+        let submissionData = { clientFK };
+
+        if (isSMSF) {
+          submissionData = {
+            ...submissionData,
+            SMSF: values?.SMSF?.currentBalanceArray || {},
+            SMSFCurrentBalance: values?.SMSF?.currentBalance || "$0",
+            SMSFTotal: values?.SMSF?.currentBalance || "$0",
+            ...(hasAttributes && {
+              SMSFCostBaseTemp: values?.SMSF?.costBase || "",
+            }),
+          };
+        } else if (isFamilyTrust) {
+          submissionData = {
+            ...submissionData,
+            trust: values?.trust || {},
+            trustCurrentBalance: values?.trust?.currentBalance || "$0",
+          };
+        } else if (isRegularEntity) {
+          const { client = {}, partner = {}, joint = {} } = values;
+
+          submissionData = {
+            ...submissionData,
+            client: client.currentBalanceArray || [],
+            partner: partner.currentBalanceArray || [],
+            joint: joint.currentBalanceArray || [],
+            clientCurrentBalance: client.currentBalance || "$0",
+            partnerCurrentBalance: partner.currentBalance || "$0",
+            jointCurrentBalance: joint.currentBalance || "$0",
+            ...(hasAttributes && {
+              clientCostBaseTemp: client.costBase || "",
+              partnerCostBaseTemp: partner.costBase || "",
+              jointCostBaseTemp: joint.costBase || "",
+            }),
+          };
+
+          // Calculate totals with joint split
+          const jointValue = toNumber(submissionData.jointCurrentBalance);
+          const clientBase = toNumber(submissionData.clientCurrentBalance);
+          const partnerBase = toNumber(submissionData.partnerCurrentBalance);
+
+          if (jointValue > 0) {
+            const halfJoint = jointValue / 2;
+            submissionData.clientTotal = formatMoney(clientBase + halfJoint);
+            submissionData.partnerTotal = formatMoney(partnerBase + halfJoint);
+          } else {
+            submissionData.clientTotal = submissionData.clientCurrentBalance;
+            submissionData.partnerTotal = submissionData.partnerCurrentBalance;
+          }
+
+          if (clientPartnerOnly) {
+            delete submissionData.jointCurrentBalance;
+            delete submissionData.joint;
+          }
+        }
+
+        const url = `${DefaultUrl}/api/${propModalObj.key}`;
+        const apiCall = alreadySaved
+          ? PatchAxios(`${url}/Update`, submissionData)
+          : PostAxios(`${url}/Add`, submissionData);
+
+        const response = await apiCall;
+
+        if (response) {
+          setQuestionDetail((prev) => ({
+            ...prev,
+            [propModalObj.key]: response,
+          }));
+
+          openNotificationSuccess(
+            "success",
+            "topRight",
+            "Success Notification",
+            `Data of "${propModalObj.title}" is Saved`
+          );
+
+          if (props.flagState) {
+            props.setFlagState(false);
+            props.setIsEditing((prev) => !prev);
+          }
+        }
+      } catch (error) {
+        console.error("onSubmit error:", error);
+        openNotificationSuccess(
+          "error",
+          "topRight",
+          "Error Notification",
+          `Data of "${propModalObj.title}" is not saved. Please try again!`
+        );
+      }
+    },
+    [
+      DefaultUrl,
+      propModalObj.key,
+      propModalObj.title,
+      bankAccountFinance,
+      hasAttributes,
+      isSMSF,
+      isFamilyTrust,
+      isRegularEntity,
+      clientPartnerOnly,
+      props.flagState,
+      props.setFlagState,
+      props.setIsEditing,
+      setQuestionDetail,
+    ]
+  );
+
+  const openInnerModal = useCallback(
+    (title, values, key, stakeHolder) => {
+      setModalObject({
+        title,
+        Input: key,
+        key: propModalObj.key,
+        values,
+        pageLimit: PAGE_LIMITS[propModalObj.key],
+        stakeHolder,
+        ShowError: showError,
+        setShowError,
+      });
+      setFlagState(true);
+    },
+    [propModalObj.key, showError]
+  );
+
+  const tableColumns = useMemo(() => {
+    const ownerColumn = {
       title: "Owner",
       dataIndex: "owner",
       key: "owner",
       type: "plainText",
     };
 
-    const currentBalanceCol = {
-      title: LabelPortfolio
+    const currentBalanceColumn = {
+      title: hasPortfolioLabel
         ? "Portfolio Value"
-        : props.modalObject.key == "BusinessAsCompanyStructure"
+        : propModalObj.key === "BusinessAsCompanyStructure"
         ? "Equity Value"
-        : props.modalObject.key == "BusinessAsTrusts"
+        : propModalObj.key === "BusinessAsTrusts"
         ? "Business Value"
         : "Current Balance",
       dataIndex: "currentBalance",
       key: "currentBalance",
       type: "number-toComma-Modal",
-      placeholder: LabelPortfolio ? "Portfolio Value" : "Current Balance",
+      placeholder: hasPortfolioLabel ? "Portfolio Value" : "Current Balance",
       callBackModal: true,
       callBack: true,
-      func: OpenInnerModal,
+      func: openInnerModal,
       inputChangeFunc: checkValuesLocal,
     };
 
-    const costBaseCol = {
+    const costBaseColumn = {
       title: "Cost Base",
       dataIndex: "costBase",
       key: "costBase",
@@ -564,15 +411,88 @@ const MiddleWare = (props) => {
       func: checkValuesLocal,
     };
 
-    // include cost base only when attribute set
-    return attrebuteSet
-      ? [ownerCol, currentBalanceCol, costBaseCol]
-      : [ownerCol, currentBalanceCol];
-  }, [attrebuteSet]);
+    return hasAttributes
+      ? [ownerColumn, currentBalanceColumn, costBaseColumn]
+      : [ownerColumn, currentBalanceColumn];
+  }, [
+    hasAttributes,
+    hasPortfolioLabel,
+    propModalObj.key,
+    openInnerModal,
+    checkValuesLocal,
+  ]);
+
+  const generateTableRows = useCallback(
+    (values) => {
+      const rows = [];
+
+      if (isSMSF) {
+        rows.push({
+          key: "SMSF",
+          stakeHolder: "SMSF",
+          owner: "SMSF",
+          innerModalTitle: `SMSF_${propModalObj.title}`,
+          currentBalance: values?.SMSF?.currentBalance || "",
+          costBase: values?.SMSF?.costBase || "",
+        });
+      } else if (isFamilyTrust) {
+        rows.push({
+          key: "Trust",
+          stakeHolder: "trust",
+          owner: "Trust",
+          innerModalTitle: `Trust_${propModalObj.title}`,
+          currentBalance: values?.trust?.currentBalance || "",
+          costBase: values?.trust?.costBase || "",
+        });
+      } else if (isRegularEntity) {
+        const userStatus = localStorage.getItem("UserStatus");
+
+        rows.push({
+          key: "client",
+          stakeHolder: "client",
+          owner: RenderName("client"),
+          innerModalTitle: `${RenderName("client")}_${propModalObj.title}`,
+          currentBalance: values?.client?.currentBalance || "",
+          costBase: values?.client?.costBase || "",
+        });
+
+        if (userStatus === "Married") {
+          rows.push({
+            key: "partner",
+            stakeHolder: "partner",
+            owner: RenderName("partner"),
+            innerModalTitle: `${RenderName("partner")}_${propModalObj.title}`,
+            currentBalance: values?.partner?.currentBalance || "",
+            costBase: values?.partner?.costBase || "",
+          });
+
+          if (!clientPartnerOnly) {
+            rows.push({
+              key: "joint",
+              stakeHolder: "joint",
+              owner: RenderName("joint"),
+              innerModalTitle: `${RenderName("joint")}_${propModalObj.title}`,
+              currentBalance: values?.joint?.currentBalance || "",
+              costBase: values?.joint?.costBase || "",
+            });
+          }
+        }
+      }
+
+      return rows;
+    },
+    [
+      isSMSF,
+      isFamilyTrust,
+      isRegularEntity,
+      propModalObj.title,
+      clientPartnerOnly,
+    ]
+  );
 
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={{}}
       onSubmit={onSubmit}
       enableReinitialize
       innerRef={props.formRef}
@@ -580,99 +500,10 @@ const MiddleWare = (props) => {
       {({ values, handleChange, setFieldValue, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
-        }, []);
+        }, [fillInitialValues]);
 
-        // Build three rows (client, partner, joint). Keep joint only when not clientPartnerOnly and when Married
-        const rows = [];
+        const tableRows = generateTableRows(values);
 
-        if (
-          [
-            "SMSFBank",
-            "SMSFTermDeposits",
-            "SMSFAustralianShares",
-            "SMSFManagedFunds",
-            "SMSFInvestmentLoan",
-          ].includes(props.modalObject.key)
-        ) {
-          rows.push({
-            key: "SMSF",
-            stakeHolder: "SMSF",
-            owner: "SMSF",
-            innerModalTitle: "SMSF_" + props.modalObject.title,
-            currentBalance: values?.SMSF?.currentBalance || "",
-            costBase: values?.SMSF?.costBase || "",
-          });
-        }
-
-        if (
-          [
-            "familyBank",
-            "familyTermDeposit",
-            "familyAustralianShare",
-            "familyMangedFunds",
-          ].includes(props.modalObject.key)
-        ) {
-          rows.push({
-            key: "Trust",
-            stakeHolder: "trust",
-            owner: "Trust",
-            innerModalTitle: "SMSF_" + props.modalObject.title ,
-            currentBalance: values?.trust?.currentBalance || "",
-            costBase: values?.trust?.costBase || "",
-          });
-        }
-
-        if (
-          [
-            "familyBank",
-            "familyTermDeposit",
-            "familyAustralianShare",
-            "familyMangedFunds",
-            "SMSFBank",
-            "SMSFTermDeposits",
-            "SMSFAustralianShares",
-            "SMSFManagedFunds",
-            "SMSFInvestmentLoan",
-          ].includes(props.modalObject.key) === false
-        ) {
-          rows.push({
-            key: "client",
-            stakeHolder: "client",
-            owner: RenderName("client"),
-            innerModalTitle:
-              RenderName("client") + "_" + props.modalObject.title ,
-            currentBalance: values?.client?.currentBalance || "",
-            costBase: values?.client?.costBase || "",
-          });
-
-          if (localStorage.getItem("UserStatus") === "Married") {
-            rows.push({
-              key: "partner",
-              stakeHolder: "partner",
-              owner: RenderName("partner"),
-              innerModalTitle:
-                RenderName("partner") +
-                "_" +
-                props.modalObject.title,
-              currentBalance: values?.partner?.currentBalance || "",
-              costBase: values?.partner?.costBase || "",
-            });
-
-            if (!clientPartnerOnly) {
-              rows.push({
-                key: "joint",
-                stakeHolder: "joint",
-                owner: RenderName("joint"),
-                innerModalTitle:
-                  RenderName("joint") +
-                  "_" +
-                  props.modalObject.title,
-                currentBalance: values?.joint?.currentBalance || "",
-                costBase: values?.joint?.costBase || "",
-              });
-            }
-          }
-        }
         return (
           <Form>
             <Row>
@@ -689,8 +520,8 @@ const MiddleWare = (props) => {
 
                 <div className="mt-4 All_Client reportSection">
                   <AntdTable
-                    columns={columns}
-                    data={rows}
+                    columns={tableColumns}
+                    data={tableRows}
                     values={values}
                     setFieldValue={setFieldValue}
                     handleChange={handleChange}
