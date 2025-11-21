@@ -64,10 +64,6 @@ const SmsfAccumulationDetails = (props) => {
   }, [existingMembers]);
 
   const fillInitialValues = (setFieldValue) => {
-    console.log(
-      "Filling initial values with existing members:",
-      SMSFAccumulationDetails
-    );
     if (existingMembers.length) {
       let smsfAccumulation = existingMembers.map((member, index) => {
         return {
@@ -89,8 +85,6 @@ const SmsfAccumulationDetails = (props) => {
               ?.nominatedBeneficiariesDetails || {},
         };
       });
-
-      console.log("smsfAccumulation--", smsfAccumulation);
 
       setFieldValue("smsfAccumulation", smsfAccumulation);
       setFieldValue("selectedMembers", existingMembers);
@@ -137,8 +131,6 @@ const SmsfAccumulationDetails = (props) => {
     );
     const data = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, ""));
 
-    console.log(ExpectedSum, data, currentInput.name, ShowError);
-
     if (ExpectedSum !== data) {
       setShowError((prevState) => ({
         ...prevState,
@@ -159,9 +151,9 @@ const SmsfAccumulationDetails = (props) => {
   const DefaultUrl = useRecoilValue(defaultUrl);
 
   const onSubmit = async (values) => {
-    console.log(values);
+    // console.log(values);
 
-    const fundData = values.smsfAccumulation || [];
+    const fundData = values.selectedMembers || [];
 
     // Prepare the object for API call
     const obj = {
@@ -172,22 +164,28 @@ const SmsfAccumulationDetails = (props) => {
     // Map data to client, partner, joint based on member type
     fundData.forEach((item, index) => {
       const newEntry = {
-        accumulationBenefits: item.accumulationBenefits || "",
-        accumulationBenefitsArray: item.accumulationBenefitsArray || "",
-        contributions: item.contributions || "",
-        contributionsArray: item.contributionsArray || "",
-        nominatedBeneficiaries: item.nominatedBeneficiaries || "",
-        nominatedBeneficiariesDetails: item.nominatedBeneficiariesDetails || "",
+        accumulationBenefits:
+          values.smsfAccumulation?.[index]?.accumulationBenefits || "",
+        accumulationBenefitsArray:
+          values.smsfAccumulation?.[index]?.accumulationBenefitsArray || "",
+        contributions: values.smsfAccumulation?.[index]?.contributions || "",
+        contributionsArray:
+          values.smsfAccumulation?.[index]?.contributionsArray || "",
+        nominatedBeneficiaries:
+          values.smsfAccumulation?.[index]?.nominatedBeneficiaries || "",
+        nominatedBeneficiariesDetails:
+          values.smsfAccumulation?.[index]?.nominatedBeneficiariesDetails || "",
       };
 
-      obj[item.member] = [newEntry];
-      obj[item.member + "Total"] = item.accumulationBenefits;
+      obj[item] = [newEntry];
+      obj[item + "Total"] =
+        values.smsfAccumulation?.[index]?.accumulationBenefits;
     });
 
-    console.log(obj, "Final Obj");
-
     const bankAccountArray = SMSFAccumulationDetails.clientFK || "";
-    return false;
+
+    console.log("Payload is :", obj);
+
     try {
       let res;
       if (!bankAccountArray) {
@@ -234,7 +232,7 @@ const SmsfAccumulationDetails = (props) => {
           { value: "client", label: RenderName("client") },
           { value: "partner", label: RenderName("partner") },
         ]
-      : [{ value: RenderName("client"), label: RenderName("client") }];
+      : [{ value: "client", label: RenderName("client") }];
 
   const columns = [
     {
@@ -340,16 +338,17 @@ const SmsfAccumulationDetails = (props) => {
               key: `smsfAccumulation.${index}`,
               owner: index + 1,
               stakeHolder: `smsfAccumulation[${index}]`,
-              member: item || "",
+              member: RenderName(item) || "",
               accumulationBenefits:
-                smsfAccumulation[index].accumulationBenefits || "",
-              contributions: smsfAccumulation[index].contributions || "",
+                values.smsfAccumulation[index]?.accumulationBenefits || "",
+              contributions:
+                values.smsfAccumulation[index]?.contributions || "",
               nominatedBeneficiaries:
-                smsfAccumulation[index].nominatedBeneficiaries || "",
+                values.smsfAccumulation[index]?.nominatedBeneficiaries || "",
             }));
           }
           return [];
-        }, [values.smsfAccumulation]);
+        }, [values]);
 
         return (
           <Form>

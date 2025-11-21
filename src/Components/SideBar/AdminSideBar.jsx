@@ -304,8 +304,6 @@ const AdminSideBar = (props) => {
               </Menu.Item>
             </SubMenu>
 
-         
-
             {selectedClientDetails?.client && (
               <>
                 <Menu.Item
@@ -443,7 +441,10 @@ const AdminSideBar = (props) => {
         <Button
           type="primary"
           icon={<RiMenuFill />}
-          onClick={() => setDrawerVisible(!drawerVisible)}
+          onClick={() => {
+            setDrawerVisible(!drawerVisible);
+            props.setCollapsed(true);
+          }}
           style={{ position: "fixed", top: 23, left: 10, zIndex: 2000 }}
         />
       )}

@@ -143,7 +143,7 @@ const GoalsForm = (props) => {
       setFieldValue("description", CurrentGoalData.description || "");
       setContent(CurrentGoalData.description);
     } else {
-      console.log("ma aya");
+      // console.log("ma aya");
       autoDescription(
         {
           value:

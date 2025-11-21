@@ -10,6 +10,7 @@ import {
   Progress,
 } from "../../../../Store/Store";
 import CustomLoadingBar from "../CustomLoadingBar";
+import { RenderName } from "../../../Assets/Api/Api";
 
 const InnerModal = (props) => {
   const { confirm } = AntDModal;
@@ -101,7 +102,7 @@ const InnerModal = (props) => {
     "Insurances Attached",
     "Pension Benefits",
     "Balance & Benefit Details",
-    "Australian Shares/ETFs Detail",
+    "Australian Shares/ETFs",
     "Managed Funds Detail",
     "Super Funds Detail",
     "Investment Bond Detail",
@@ -110,15 +111,21 @@ const InnerModal = (props) => {
     "Risk Goals",
     "Business as Company Structure Detail",
     "Business as Trusts",
-    "Pension Benefits Details",
-    "SMSF Australian Shares/ETFs Detail",
-    "Family Trust Platform Investments Detail",
-    "Family Trust Australian Shares/ETFs Detail",
+    "Pension Benefits",
+    "SMSF_Australian Shares/ETFs ",
+    "Family Trust Platform Investments",
+    "Trust_Australian Shares/ETFs ",
     "Reduced Salary Income",
     "Salary Packaging Car",
     "Accumulation Details",
+    "Accumulation Benefits",
+    "Beneficiaries",
+    "Bank Accounts",
+    "Term Deposits",
+    "Platform Investments",
     "Salary Detail",
     "Salary Packaging",
+    "Contributions",
   ]; // Add other titles that should use "xl" here
 
   const xlKeys = [

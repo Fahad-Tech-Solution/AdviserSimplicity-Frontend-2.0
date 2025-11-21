@@ -183,7 +183,14 @@ function AuthRouts() {
         collapsed={collapsed}
         onCollapse={setCollapsed}
         width={250}
-        style={{ background: "#fff", borderRight: "1px solid #f0f0f0" }}
+        // trigger={null}
+        // breakpoint="md"
+        // collapsedWidth="0"
+        style={{
+          background: "#fff",
+          
+          borderRight: "1px solid #f0f0f0",
+        }}
       >
         <AdminSideBar collapsed={collapsed} setCollapsed={setCollapsed} />
       </Sider>

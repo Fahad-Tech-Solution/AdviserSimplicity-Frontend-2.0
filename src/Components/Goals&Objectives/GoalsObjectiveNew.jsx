@@ -119,7 +119,7 @@ const GoalsObjectiveNew = () => {
         scopeOfAdvice: "Age Care",
         descriptionArray: [
           {
-            text: "<span>I/We</span> would like to know what to do with the leftover funds now sitting in <span>our/my</span> mum/dads bank account from the sale of their home, as they have now moved into aged care. They currently have around $X,000 in cash, and <span>we/I</span> are looking to invest approximately $X,000 to help generate a steady income stream. Ideally, <span>we/I</span> are seeking an option that offers a reliable or guaranteed return, if possible, to assist with funding Mum's/Dad's ongoing aged care fees. Given the purpose is to support care costs over the long term, <span>we/I</span> would prefer a low-risk investment that provides stability and certainty around both income and capital.",
+            text: "<span>I/We</span> would like to know what to do with the leftover funds now sitting in <span>our/my mum/dads</span> bank account from the sale of their home, as they have now moved into aged care. They currently have around <span>$X,000</span> in cash, and <span>we/I</span> are looking to invest approximately <span>$X,000</span> to help generate a steady income stream. Ideally, <span>we/I</span> are seeking an option that offers a reliable or guaranteed return, if possible, to assist with funding <span>Mum's/Dad's</span> ongoing aged care fees. Given the purpose is to support care costs over the long term, <span>we/I</span> would prefer a low-risk investment that provides stability and certainty around both income and capital.",
           },
         ],
       },

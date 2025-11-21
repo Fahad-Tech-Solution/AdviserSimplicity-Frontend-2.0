@@ -573,7 +573,7 @@ const questionConfig = {
         {
           label: "Property Portfolio",
           value: (questionDetail) =>
-            questionDetail?.SMSFInvestmentProperties?.totalMarketValue ?? "",
+            questionDetail?.SMSFInvestmentProperties?.propertyPortfolio ?? "",
           component: <InvestmentPropertyDetails />,
           key: "SMSFInvestmentProperties",
           maintitle: true,
@@ -581,7 +581,7 @@ const questionConfig = {
         {
           label: "Total Debt",
           value: (questionDetail) =>
-            questionDetail?.SMSFInvestmentProperties?.totalLoanAmount ?? "",
+            questionDetail?.SMSFInvestmentProperties?.totalDebt ?? "",
           component: <InvestmentPropertyDetails />,
           key: "SMSFInvestmentProperties",
           maintitle: true,
@@ -624,7 +624,7 @@ const questionConfig = {
         {
           label: "Trust",
           value: (questionDetail) =>
-            questionDetail?.familyBank?.clientTotal ?? "",
+            questionDetail?.familyBank?.trustTotal ?? "",
           component: <MiddleWare />,
           key: "familyBank",
           maintitle: true,
@@ -641,7 +641,7 @@ const questionConfig = {
         {
           label: "Trust",
           value: (questionDetail) =>
-            questionDetail?.familyTermDeposit?.clientTotal ?? "",
+            questionDetail?.familyTermDeposit?.trustTotal ?? "",
           component: <MiddleWare />,
           key: "familyTermDeposit",
           maintitle: true,
@@ -658,7 +658,7 @@ const questionConfig = {
         {
           label: "Trust",
           value: (questionDetail) =>
-            questionDetail?.familyAustralianShare?.clientTotal ?? "",
+            questionDetail?.familyAustralianShare?.trustTotal ?? "",
           component: <MiddleWare />,
           key: "familyAustralianShare",
           maintitle: true,
@@ -675,7 +675,7 @@ const questionConfig = {
         {
           label: "Trust",
           value: (questionDetail) =>
-            questionDetail?.familyMangedFunds?.clientTotal ?? "",
+            questionDetail?.familyMangedFunds?.trustTotal ?? "",
           component: <MiddleWare />,
           key: "familyMangedFunds",
           maintitle: true,
@@ -692,7 +692,7 @@ const questionConfig = {
         {
           label: "Trust",
           value: (questionDetail) =>
-            questionDetail?.familyInvestmentHomeLoan?.clientTotal ?? "",
+            questionDetail?.familyInvestmentHomeLoan?.trustTotal ?? "",
           component: <InvestmentLoan />,
           key: "familyInvestmentHomeLoan",
           maintitle: true,
@@ -703,8 +703,27 @@ const questionConfig = {
       title: "Investment Property",
       keyName: "familyInvestmentProperties",
       img: people,
+      variant: "case2",
       component: <InvestmentPropertyDetails />,
-      Labels: ["Property Portfolio", "Total Debt"],
+      Labels: [
+        {
+          label: "Property Portfolio",
+          value: (questionDetail) =>
+            questionDetail?.familyInvestmentProperties?.propertyPortfolio ?? "",
+          component: <InvestmentPropertyDetails />,
+          key: "familyInvestmentProperties",
+          maintitle: true,
+        },
+        {
+          label: "Total Debt",
+          value: (questionDetail) =>
+            questionDetail?.familyInvestmentProperties?.totalDebt ?? "",
+          component: <InvestmentPropertyDetails />,
+          key: "familyInvestmentProperties",
+          maintitle: true,
+          modalButton: false,
+        },
+      ],
     },
 
     {

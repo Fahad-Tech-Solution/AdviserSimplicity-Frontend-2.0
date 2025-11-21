@@ -12,11 +12,17 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <ConfigProvider
       notify={notification}
       theme={{
-      
         token: {
           /* here is your global tokens */
           colorPrimary: "#36b446",
         },
+
+        // components: {
+        //   Layout: {
+        //     siderBg: "#36b446",
+        //     triggerBg: "#36b446",
+        //   },
+        // },
       }}
     >
       <RecoilRoot>

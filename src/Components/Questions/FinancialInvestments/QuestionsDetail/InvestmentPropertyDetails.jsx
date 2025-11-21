@@ -216,8 +216,8 @@ const InvestmentPropertyDetails = (props) => {
       const payload = {
         clientFK: localStorage.getItem("UserID"),
         [client]: newEntries,
-        totalMarketValue: TotalMarketValue,
-        totalLoanAmount: TotalLoan,
+        propertyPortfolio: TotalMarketValue,
+        totalDebt: TotalLoan,
       };
 
       //!  just need to chnage above code

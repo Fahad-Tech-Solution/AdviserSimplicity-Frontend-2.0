@@ -80,12 +80,12 @@ const COMPONENT_MAPPING = {
   "SMSF Bank Accounts": BankTermForm,
   "SMSF Term Deposits": BankTermForm,
   "SMSF Australian Shares/ETFs": AustralianShares,
-  "SMSF Platform Investments": ManagedFunds,
+  "Platform Investment": ManagedFunds,
   "SMSF Investment Bond": ManagedFunds,
   "Family Trust Bank Accounts": BankTermForm,
   "Family Trust Term Deposits": BankTermForm,
   "Family Trust Australian Shares/ETFs": AustralianShares,
-  "Family Trust Platform Investments": ManagedFunds,
+  // "Platform Investments": ManagedFunds,
 };
 
 const PAGE_LIMITS = {
@@ -145,7 +145,13 @@ const MiddleWare = (props) => {
             costBase: bankAccountFinance.SMSFCostBaseTemp || "",
           });
         } else if (isFamilyTrust) {
+          console.log("trust Chala");
           // Family trust initialization can be added here if needed
+          setFieldValue("trust", {
+            currentBalanceArray: bankAccountFinance.trust || [],
+            currentBalance: bankAccountFinance.trustCurrentBalance || "",
+            costBase: bankAccountFinance.trustCostBaseTemp || "",
+          });
         } else if (isRegularEntity) {
           // Client section
           setFieldValue("client", {
@@ -255,7 +261,7 @@ const MiddleWare = (props) => {
         if (isSMSF) {
           submissionData = {
             ...submissionData,
-            SMSF: values?.SMSF?.currentBalanceArray || {},
+            SMSF: values?.SMSF?.currentBalanceArray || [],
             SMSFCurrentBalance: values?.SMSF?.currentBalance || "$0",
             SMSFTotal: values?.SMSF?.currentBalance || "$0",
             ...(hasAttributes && {
@@ -265,8 +271,12 @@ const MiddleWare = (props) => {
         } else if (isFamilyTrust) {
           submissionData = {
             ...submissionData,
-            trust: values?.trust || {},
+            trust: values?.trust?.currentBalanceArray || [],
             trustCurrentBalance: values?.trust?.currentBalance || "$0",
+            trustTotal: values?.trust?.currentBalance || "$0",
+            ...(hasAttributes && {
+              trustCostBaseTemp: values?.trust?.costBase || "",
+            }),
           };
         } else if (isRegularEntity) {
           const { client = {}, partner = {}, joint = {} } = values;
@@ -305,6 +315,8 @@ const MiddleWare = (props) => {
             delete submissionData.joint;
           }
         }
+
+        console.log("onSubmit submissionData:", submissionData);
 
         const url = `${DefaultUrl}/api/${propModalObj.key}`;
         const apiCall = alreadySaved
