@@ -285,7 +285,7 @@ const TradingCompany = (props) => {
 
             <div className="d-flex justify-content-center align-items-center gap-4">
               <p className="text-end mt-1 pt-2">
-                How many {title} does {nameSet} have:
+                Number of {title}
               </p>
               <div style={{ minWidth: "10%" }}>
                 <ConfigProvider

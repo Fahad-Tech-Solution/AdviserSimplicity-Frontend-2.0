@@ -278,7 +278,7 @@ const Beneficiaries = (props) => {
             <Row>
               <div className="col-md-12">
                 <div className="row justify-content-center">
-                  <div className="d-flex flex-row justify-content-start align-items-center gap-2  mb-2">
+                  <div className="d-flex flex-row justify-content-center align-items-center gap-2  mb-2">
                     <p className="text-end mb-0">Nomination Type</p>
                     <div style={{ minWidth: "10%" }}>
                       <ConfigProvider

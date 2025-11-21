@@ -347,7 +347,7 @@ const InvestedAnnuities = (props) => {
                   console.log(values);
                 }}
               >
-                How many Annuities does {nameSet} have:
+                Number of Annuities
               </p>
               <div style={{ minWidth: "10%" }}>
                 <ConfigProvider

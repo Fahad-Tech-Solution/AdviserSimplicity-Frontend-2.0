@@ -173,7 +173,7 @@ const BankTermForm = (props) => {
 
         return (
           <Form>
-            <div className="d-flex justify-content-start align-items-center gap-4">
+            <div className="d-flex justify-content-center align-items-center gap-4">
               <p
                 className="text-end mt-1 pt-2"
                 onClick={() => {

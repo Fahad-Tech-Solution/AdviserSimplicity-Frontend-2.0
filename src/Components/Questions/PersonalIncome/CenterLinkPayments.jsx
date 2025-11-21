@@ -287,7 +287,7 @@ const CenterLinkPayments = (props) => {
           <Form>
             <Row>
               <div className="col-md-12">
-                <div className="d-flex justify-content-start align-items-center gap-4">
+                <div className="d-flex justify-content-center align-items-center gap-4">
                   <label className="text-end">Owner</label>
                   <div style={{ minWidth: "200px" }}>
                     <Field

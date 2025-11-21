@@ -196,7 +196,7 @@ const Contributions = (props) => {
                 },
               }}
             >
-              <div className="d-flex flex-row justify-content-start align-items-center gap-3 mt-2 w-75">
+              <div className="d-flex flex-row justify-content-center align-items-center gap-3 mt-2 w-75">
                 <p className="mt-3">{props.modalObject.question}</p>
 
                 <Select

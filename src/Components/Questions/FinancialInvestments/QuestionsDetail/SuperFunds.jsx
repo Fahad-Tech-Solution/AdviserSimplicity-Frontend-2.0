@@ -355,7 +355,7 @@ const SuperFunds = (props) => {
                   console.log(values);
                 }}
               >
-                How many Super Funds does {nameSet} have:
+                Number of Super Funds
               </p>
               <div style={{ minWidth: "10%" }}>
                 <ConfigProvider

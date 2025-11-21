@@ -383,7 +383,7 @@ const AccountBasedPension = (props) => {
                   console.log(values);
                 }}
               >
-                How many Account Based Pension does {nameSet} have:
+                Number of Account Based Pension
               </p>
 
               <div style={{ minWidth: "10%" }}>

@@ -273,7 +273,7 @@ const AssetInfo = (props) => {
                 {/* Owner Selector */}
                 {(props.modalObject?.key === "car" ||
                   props.modalObject?.key === "otherAssets") && (
-                  <div className="d-flex flex-row justify-content-start align-items-center gap-2">
+                  <div className="d-flex flex-row justify-content-center align-items-center gap-2">
                     <label className="text-end mb-0">Owner</label>
                     <div style={{ minWidth: "200px" }}>
                       <Field
