@@ -465,6 +465,105 @@ const questionConfig = {
       keyName: "SMSFDetails",
       component: <SmsfDetails />,
       img: will,
+      variant: "case2",
+      Labels: [
+        {
+          label: "Details",
+          value: (questionDetail) => {
+            try {
+              const parseNum = (val) =>
+                val && typeof val === "string"
+                  ? parseFloat(val.replace(/[^0-9.-]+/g, "")) || 0
+                  : typeof val === "number"
+                  ? val
+                  : 0;
+
+              // Generic extractor: SMSFTotal → propertyPortfolio → totalDebt → client/partner/joint totals
+              const pickTotal = (
+                obj,
+                prefer = [
+                  "SMSFTotal",
+                  "propertyPortfolio",
+                  "totalDebt",
+                  "clientTotal",
+                  "partnerTotal",
+                  "jointTotal",
+                ]
+              ) => {
+                if (!obj) return 0;
+                for (const field of prefer) {
+                  if (obj[field] !== undefined && obj[field] !== null) {
+                    return parseNum(obj[field]);
+                  }
+                }
+                return 0;
+              };
+
+              // -----------------------------
+              // ✔ ASSET SECTIONS
+              // -----------------------------
+              const assetKeys = [
+                "SMSFAccumulationDetails",
+                "SMSFPensionPhase",
+                "SMSFBank",
+                "SMSFTermDeposits",
+                "SMSFAustralianShares",
+                "SMSFManagedFunds",
+                "SMSFInvestmentProperties", // propertyPortfolio (asset)
+                "SMSFOtherInvestment",
+              ];
+
+              // -----------------------------
+              // ✔ LIABILITY SECTIONS
+              // -----------------------------
+              const liabilityKeys = [
+                "SMSFInvestmentLoan",
+                "SMSFInvestmentProperties", // totalDebt (liability)
+              ];
+
+              // -----------------------------
+              // SUM ALL ASSETS
+              // -----------------------------
+              const assetsSum =
+                assetKeys.reduce((acc, key) => {
+                  return acc + pickTotal(questionDetail?.[key]);
+                }, 0) +
+                ["SMSFAccumulationDetails", "SMSFPensionPhase"].reduce(
+                  (acc, key) => {
+                    return (
+                      acc + pickTotal(questionDetail?.[key], ["partnerTotal"])
+                    );
+                  },
+                  0
+                );
+
+              // -----------------------------
+              // SUM ALL LIABILITIES
+              // -----------------------------
+              const liabilitiesSum = liabilityKeys.reduce((acc, key) => {
+                return (
+                  acc +
+                  pickTotal(questionDetail?.[key], [
+                    "totalDebt",
+                    "SMSFTotal",
+                    "propertyPortfolio",
+                  ])
+                );
+              }, 0);
+
+              const netTotal = assetsSum - liabilitiesSum;
+
+              return toCommaAndDollar(netTotal);
+            } catch (error) {
+              console.error("Error calculating SMSF totals:", error);
+              return "$0";
+            }
+          },
+          component: <SmsfDetails />,
+          key: "SMSFDetails",
+          maintitle: true,
+        },
+      ],
     },
     {
       title: "Accumulation Account",
@@ -555,7 +654,7 @@ const questionConfig = {
         {
           label: "SMSF",
           value: (questionDetail) =>
-            questionDetail?.SMSFInvestmentLoan?.clientTotal ?? "",
+            questionDetail?.SMSFInvestmentLoan?.SMSFTotal ?? "",
           component: <InvestmentLoan />,
           key: "SMSFInvestmentLoan",
           maintitle: true,
@@ -613,6 +712,87 @@ const questionConfig = {
       keyName: "familyDetails",
       img: familyInvestmentDetails,
       component: <FamilyDetails />,
+      variant: "case2",
+      Labels: [
+        {
+          label: "client",
+          value: (questionDetail) => {
+            {
+              try {
+                const parseNum = (val) =>
+                  val && typeof val === "string"
+                    ? parseFloat(val.replace(/[^0-9.-]+/g, "")) || 0
+                    : typeof val === "number"
+                    ? val
+                    : 0;
+
+                // helper: picks trustTotal → propertyPortfolio → totalDebt → clientTotal → partnerTotal → jointTotal
+                const pickTotal = (
+                  obj,
+                  prefer = [
+                    "trustTotal",
+                    "propertyPortfolio",
+                    "totalDebt",
+                    "clientTotal",
+                    "partnerTotal",
+                    "jointTotal",
+                  ]
+                ) => {
+                  if (!obj) return 0;
+                  for (const field of prefer) {
+                    if (obj[field] !== undefined && obj[field] !== null) {
+                      return parseNum(obj[field]);
+                    }
+                  }
+                  return 0;
+                };
+
+                // assets sections
+                const assetKeys = [
+                  "familyBank",
+                  "familyTermDeposit",
+                  "familyAustralianShare",
+                  "familyMangedFunds",
+                  "familyInvestmentProperties", // propertyPortfolio is asset
+                  "familyOtherInvestment",
+                ];
+
+                // liability sections
+                const liabilityKeys = [
+                  "familyInvestmentHomeLoan",
+                  "familyInvestmentProperties", // totalDebt is liability
+                ];
+
+                // sum assets
+                const assetsSum = assetKeys.reduce((acc, key) => {
+                  return acc + pickTotal(questionDetail?.[key]);
+                }, 0);
+
+                // sum liabilities
+                const liabilitiesSum = liabilityKeys.reduce((acc, key) => {
+                  return (
+                    acc +
+                    pickTotal(questionDetail?.[key], [
+                      "totalDebt",
+                      "trustTotal",
+                      "propertyPortfolio",
+                    ])
+                  );
+                }, 0);
+
+                const netTotal = assetsSum - liabilitiesSum;
+                return toCommaAndDollar(netTotal);
+              } catch (error) {
+                console.error("Error calculating Family total:", error);
+                return "$0";
+              }
+            }
+          },
+          component: <FamilyDetails />,
+          key: "familyDetails",
+          maintitle: true,
+        },
+      ],
     },
     {
       title: "Bank Accounts",
@@ -725,7 +905,6 @@ const questionConfig = {
         },
       ],
     },
-
     {
       title: "Other Investments",
       keyName: "familyOtherInvestment",

@@ -126,6 +126,7 @@ const InnerModal = (props) => {
     "Salary Detail",
     "Salary Packaging",
     "Contributions",
+    "Group Cover",
   ]; // Add other titles that should use "xl" here
 
   const xlKeys = [

@@ -1,11 +1,41 @@
-import React, { useState } from "react";
-import { RenderName } from "../../Assets/Api/Api";
+import React, { useEffect, useMemo, useState } from "react";
+import { Formik, Form } from "formik";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
+import { RenderName } from "../../Assets/Api/Api";
 
 const AntdTable = DynamicTableForInputsSection("antd");
 
 const GroupCoverDetails = (props) => {
   const [UserStatus] = useState(localStorage.getItem("UserStatus"));
+
+  let index = parseFloat(
+    props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
+  );
+  let BaseKey = props.modalObject.stakeHolder.split(".").map((item, idx) => {
+    return item.replace(/[^a-zA-Z]+/g, "");
+  });
+
+  const existingData =
+    props?.modalObject?.values?.[BaseKey[0]]?.[BaseKey[1]]?.[index]?.[
+      props.modalObject.key
+    ] || {};
+
+  const initialValues = {
+    lifeInsured:
+      RenderName(props?.modalObject?.stakeHolder.split(".")[0]) || "",
+  };
+
+  // Prefill initial values and ensure at least one row exists
+  const fillInitialValues = (setFieldValue) => {
+    // If no existing data, create one empty row
+    if (Object.keys(existingData).length) {
+      Object.keys(existingData).forEach((field) => {
+        setFieldValue(field, existingData[field] || "");
+      });
+    } else {
+      props.setIsEditing?.(true);
+    }
+  };
 
   const columns = [
     {
@@ -21,16 +51,8 @@ const GroupCoverDetails = (props) => {
       dataIndex: "lifeInsured",
       key: "lifeInsured",
       selectedOptionValue: true,
+      justText: true,
       type: "select-antd",
-      placeholder: "Select Life Insured",
-      options: [
-        { value: "Client", label: RenderName("client") },
-        ...(UserStatus !== "Single"
-          ? [{ value: "Partner", label: RenderName("partner") }]
-          : []),
-        { value: "Other", label: "Other" },
-      ],
-      width: 150,
     },
     {
       title: "Provider",
@@ -79,8 +101,8 @@ const GroupCoverDetails = (props) => {
       title: "Smoker",
       dataIndex: "smoker",
       key: "smoker",
-      type: "yesno", width: 100,
-     
+      type: "yesno",
+      width: 100,
     },
     {
       title: "Life",
@@ -104,7 +126,7 @@ const GroupCoverDetails = (props) => {
       key: "trauma",
       type: "number-toComma",
       placeholder: "Trauma",
-      disabled:true,
+      disabled: true,
       width: 120,
     },
     {
@@ -127,36 +149,100 @@ const GroupCoverDetails = (props) => {
       title: "Loading/Exclusion",
       dataIndex: "loadingExclusion",
       key: "loadingExclusion",
-      type: "yesno", width: 100,
-      
+      type: "yesno",
+      width: 100,
     },
     {
       title: "Beneficiary",
       dataIndex: "beneficiary",
       key: "beneficiary",
-      type: "yesno", width: 100,
-      
+      type: "yesno",
+      width: 100,
     },
   ];
 
+  const onSubmit = (values) => {
+    console.log(values);
+    props.setFieldValue(
+      props.modalObject.stakeHolder + props.modalObject.key,
+      values
+    );
+    if (props.flagState) {
+      props.setFlagState(false);
+      props.setIsEditing?.((prev) => !prev);
+    }
+  };
+
   return (
-    <>
-      <h4 className="mt-1 pt-2" onClick={() => console.log(props?.values)}>
-        {props.title || "Group Cover Details"}
-      </h4>
-      <div className="mt-4 All_Client reportSection">
-        <AntdTable
-          columns={columns}
-          data={props?.groupDataRows}
-          values={props?.values}
-          setFieldValue={props?.setFieldValue}
-          handleChange={props?.handleChange}
-          handleBlur={props?.handleBlur}
-          isEditing={props?.isEditing}
-          setIsEditing={props?.setIsEditing}
-        />
-      </div>
-    </>
+    <Formik
+      initialValues={initialValues}
+      enableReinitialize
+      innerRef={props.formRef}
+      onSubmit={onSubmit}
+    >
+      {({ values, setFieldValue, handleBlur, handleChange }) => {
+        useEffect(() => {
+          fillInitialValues(setFieldValue);
+        }, []);
+
+        const tableRows = useMemo(() => {
+          // If we have existing data, use it
+          if (Object.keys(existingData).length > 0) {
+            return [
+              {
+                key: index,
+                ...existingData,
+                lifeInsured:
+                  RenderName(props?.modalObject?.stakeHolder.split(".")[0]) ||
+                  "",
+              },
+            ];
+          }
+
+          // Otherwise, create one empty row
+          return [
+            {
+              key: 0,
+              lifeInsured:
+                RenderName(props?.modalObject?.stakeHolder.split(".")[0]) || "",
+              provider: "",
+              policyNo: "",
+              groupOwner: "",
+              startDate: "",
+              smoker: "No",
+              life: "",
+              tpd: "",
+              trauma: "",
+              ip: "",
+              premiumPA: "",
+              loadingExclusion: "No",
+              beneficiary: "No",
+            },
+          ];
+        }, [existingData]);
+
+        return (
+          <Form>
+            <div className="mt-4 All_Client reportSection">
+              <AntdTable
+                columns={columns}
+                data={tableRows}
+                values={values}
+                setFieldValue={setFieldValue}
+                handleChange={handleChange}
+                handleBlur={handleBlur}
+                isEditing={props.isEditing}
+                setIsEditing={props.setIsEditing}
+              />
+            </div>
+
+            <button type="submit" style={{ display: "none" }}>
+              Submit
+            </button>
+          </Form>
+        );
+      }}
+    </Formik>
   );
 };
 

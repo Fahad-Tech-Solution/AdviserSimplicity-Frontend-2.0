@@ -174,9 +174,7 @@ const InnerBareTrust = (props) => {
               <div className="col-md-12">
                 <div className="row justify-content-center">
                   <div className="d-flex flex-row justify-content-center align-items-center gap-2">
-                    <p className="text-end mt-3">
-                      How many directors does the bare trust have :
-                    </p>
+                    <p className="text-end mt-3">Number of directors :</p>
 
                     <div style={{ minWidth: "10%" }}>
                       <select

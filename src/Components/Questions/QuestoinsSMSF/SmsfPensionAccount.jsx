@@ -346,9 +346,9 @@ const SmsfPensionAccount = (props) => {
             <Row>
               <div className="col-md-12">
                 <div className="row">
-                  <div className="d-flex flex-row justify-content-start align-items-center gap-3 mt-2 w-100">
+                  <div className="d-flex flex-row justify-content-center align-items-center gap-3 mt-2 w-100">
                     <p className=" mt-1" onClick={() => console.log(values)}>
-                      {props?.modalObject?.question||"No question found"}
+                      {props?.modalObject?.question || "No question found"}
                     </p>
                     <div style={{ width: "10%" }}>
                       <select

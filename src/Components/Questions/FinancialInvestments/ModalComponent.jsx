@@ -225,7 +225,7 @@ const ModalComponent = (props) => {
     "SMSF Details",
     "SMSF Investment Properties",
     "SMSF Platform Investments Detail",
-    "Family Trust Investment Property",
+    "Investment Property",
     "SMSF Investment Loan",
     "Education Expenses",
     "Centrelink Payments/Benefits",

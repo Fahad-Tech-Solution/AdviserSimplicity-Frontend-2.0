@@ -41,6 +41,14 @@ const TradingTrust = (props) => {
     return "";
   });
 
+  const [title] = useState(() => {
+    let currentTitle = props.modalObject.title;
+    if (currentTitle.includes("_")) {
+      currentTitle = currentTitle.split("_").slice(1).join("_");
+    }
+    return currentTitle;
+  });
+
   // Load existing data if available
   const existingData =
     props.modalObject.values?.[
@@ -246,9 +254,7 @@ const TradingTrust = (props) => {
             </InnerModal>
 
             <div className="d-flex justify-content-center align-items-center gap-4">
-              <p className="text-end mt-1 pt-2">
-                How many {props.modalObject.title} does {nameSet} have:
-              </p>
+              <p className="text-end mt-1 pt-2">Number of {title}:</p>
               <div style={{ minWidth: "10%" }}>
                 <ConfigProvider
                   theme={{

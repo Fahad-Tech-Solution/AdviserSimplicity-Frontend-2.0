@@ -144,7 +144,7 @@ const InnerDirectors = (props) => {
                   {/* LABEL + SELECT */}
                   <div className="d-flex flex-row justify-content-center align-items-center gap-2">
                     <p className="text-end mt-3">
-                      How many {props.modalObject.title} does {nameSet} have:
+                      Number of {props.modalObject.title} 
                     </p>
 
                     <div style={{ minWidth: "10%" }}>

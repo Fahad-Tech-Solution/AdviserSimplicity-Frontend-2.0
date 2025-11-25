@@ -96,13 +96,7 @@ const EstatePlanningWill = (props) => {
     }
 
     let question =
-      key === "executor"
-        ? `How many Executors does ${RenderName(
-            stackHolder.replace(".", "")
-          )} have:`
-        : `How many Estate Plannes does ${RenderName(
-            stackHolder.replace(".", "")
-          )} have:`;
+      key === "executor" ? `Number of Executors:` : `Number of Estate Plannes:`;
 
     setModalObject({
       title,
@@ -218,8 +212,9 @@ const EstatePlanningWill = (props) => {
       title: "Are Your Wills Current",
       dataIndex: "willsCurrent",
       key: "willsCurrent",
-      type: "yesno", width: 100,
-      
+      type: "yesno",
+      width: 100,
+
       disabled: (values, stakeHolder) =>
         values.owner.includes("together") && stakeHolder === "partner",
     },
@@ -236,8 +231,9 @@ const EstatePlanningWill = (props) => {
       title: "Enduring Guardianship",
       dataIndex: "enduringGuardianship",
       key: "enduringGuardianship",
-      type: "yesno", width: 100,
-      
+      type: "yesno",
+      width: 100,
+
       disabled: (values, stakeHolder) =>
         values.owner.includes("together") && stakeHolder === "partner",
     },
@@ -245,8 +241,9 @@ const EstatePlanningWill = (props) => {
       title: "Testamentary Trust",
       dataIndex: "testamentaryTrust",
       key: "testamentaryTrust",
-      type: "yesno", width: 100,
-      
+      type: "yesno",
+      width: 100,
+
       disabled: (values, stakeHolder) =>
         values.owner.includes("together") && stakeHolder === "partner",
     },
@@ -336,7 +333,7 @@ const EstatePlanningWill = (props) => {
               </InnerModal>
 
               <div className="col-md-12">
-                <div className="d-flex flex-row justify-content-start align-items-center gap-4">
+                <div className="d-flex flex-row justify-content-center align-items-center gap-4">
                   <label
                     htmlFor=""
                     className="text-end"

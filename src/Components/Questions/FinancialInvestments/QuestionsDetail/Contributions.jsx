@@ -196,13 +196,13 @@ const Contributions = (props) => {
                 },
               }}
             >
-              <div className="d-flex flex-row justify-content-center align-items-center gap-3 mt-2 w-75">
+              <div className="d-flex flex-row justify-content-center align-items-center gap-3 mt-2">
                 <p className="mt-3">{props.modalObject.question}</p>
 
                 <Select
                   id="NumberOfMap"
                   name="NumberOfMap"
-                  className="w-25"
+                  style={{ width: "10%" }}
                   placeholder="Select Count"
                   size="large"
                   value={values.NumberOfMap || undefined}

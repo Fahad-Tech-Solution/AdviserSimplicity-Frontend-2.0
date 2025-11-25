@@ -188,14 +188,14 @@ const EstatePlanningProfessionalAdviser = (props) => {
         return (
           <Form>
             {/* Heading + Multiselect */}
-            <div className="d-flex justify-content-start align-items-center gap-4">
+            <div className="d-flex justify-content-center align-items-center gap-4">
               <p
                 className="text-end mt-1 pt-2"
                 onClick={() => {
                   console.log(values);
                 }}
               >
-                Select {props.modalObject.title} types for {nameSet}:
+                Select {props.modalObject.title} types for {nameSet}: 
               </p>
               <div style={{ minWidth: "35%" }}>
                 <ConfigProvider
