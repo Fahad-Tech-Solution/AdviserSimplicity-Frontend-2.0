@@ -123,58 +123,65 @@ export const content = {
   itemsQuestion: [
     {
       subTitle: "Desired Liquidity",
-      statusStep: 12,
+      statusStep: 10,
       icon: "FaMoneyBillWave",
       route: "/Q1",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
     {
       subTitle: "Rate of return",
-      statusStep: 24,
+      statusStep: 20,
       icon: "FaChartLine",
       route: "/Q2",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
     {
       subTitle: "Capital Risk",
-      statusStep: 36,
+      statusStep: 30,
       icon: "FaTriangleExclamation",
       route: "/Q3",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
     {
       subTitle: "Inflation",
-      statusStep: 48,
+      statusStep: 40,
       icon: "RiDiscountPercentFill",
       route: "/Q4",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
     {
       subTitle: "Legislative Risk",
-      statusStep: 62,
+      statusStep: 50,
       icon: "MdOutlineBalance",
       route: "/Q5",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
     {
       subTitle: "Investment knowledge",
-      statusStep: 74,
+      statusStep: 60,
       icon: "FaGraduationCap",
       route: "/Q6",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
     {
       subTitle: "Volatility",
-      statusStep: 86,
+      statusStep: 70,
       icon: "MdOutlineTimeline",
       route: "/Q7",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
     {
       subTitle: "Asset allocation",
-      statusStep: 98,
+      statusStep: 80,
       icon: "FaChartPie",
       route: "/Q8",
+      condition: (CRObject) => true, // Always true, as this step is always needed.
+    },
+    {
+      subTitle: "Detection Matrix",
+      statusStep: 90,
+      icon: "HiOutlineViewGridAdd",
+      route: "/detection-matrix",
       condition: (CRObject) => true, // Always true, as this step is always needed.
     },
   ],
@@ -1958,7 +1965,6 @@ export const content = {
       },
     },
   ],
-
   AdviserObject: [
     {
       AFSNumber: "218600",

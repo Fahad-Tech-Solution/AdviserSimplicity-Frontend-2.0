@@ -37,6 +37,7 @@ import "yup-phone";
 import * as Yup from "yup";
 import Notfound404 from "../Questions/svgs/Notfound404";
 import { ConfigProvider, notification, Spin } from "antd";
+import DetectionMatrix from "./DetectionMatrix";
 
 const RiskProfileNew = () => {
   let DefaultUrl = useRecoilValue(defaultUrl);
@@ -319,6 +320,20 @@ const RiskProfileNew = () => {
     {
       route: "/Q8",
       key: "question8",
+      question:
+        "<div className='d-inline-block text-green'>Question 8: Your investment preferences – Asset allocation.</div> What level of investment risk are you comfortable with?",
+      choices: [
+        "No risk and I don’t want my capital to go down at all even if I get a 0% return on my money.",
+        "I prefer low risk and am comfortable allocating a small portion (up to 40%) of my money to the share market aiming for better returns than the cash rate.",
+        "I am comfortable with a medium level of risk and have my money allocated with similar amounts between the share market and cash and fixed interest/term deposits.",
+        "I would prefer to have my money invested in a well diversified portfolio which includes more than 600% to Australian and international shares and property with the balance to cash and fixed interest/term deposits.",
+        "I would prefer to have a minimum of  80% of my money invested in   Australian and international shares, possibly up to 100% if needed, aiming for higher returns even if there are significant ups and downs and wild swings like recent market events such as  COVID (2020), or the Global Financial Crises (2008)  because I won't need the money for a long time (10 years minimum).",
+      ],
+      imgUrl: Risk8,
+    },
+    {
+      route: "/detection-matrix",
+      key: "detection-matrix",
       question:
         "<div className='d-inline-block text-green'>Question 8: Your investment preferences – Asset allocation.</div> What level of investment risk are you comfortable with?",
       choices: [
@@ -666,6 +681,14 @@ const RiskProfileNew = () => {
                                 QuestionProps={elem}
                               />
                             }
+                          />
+                        );
+                      } else if (elem.key === "detection-matrix") {
+                        return (
+                          <Route
+                            key={index}
+                            path={elem.route}
+                            element={<DetectionMatrix />}
                           />
                         );
                       } else {

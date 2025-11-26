@@ -64,6 +64,7 @@ import {
   IoShieldCheckmark,
 } from "react-icons/io5";
 import { AiOutlineFileProtect } from "react-icons/ai";
+import { HiOutlineViewGridAdd } from "react-icons/hi";
 
 const iconMap = {
   FaBriefcase,
@@ -93,6 +94,7 @@ const iconMap = {
   IoShieldCheckmark,
   FaPiggyBank,
   FaRegHandshake,
+  HiOutlineViewGridAdd,
 };
 
 function Options(props) {
@@ -143,14 +145,15 @@ function Options(props) {
       "/user/SMSF": 64,
       "/user/family-trust": 72,
       "Goals-And-Objectives": 80,
-      "/user/risk-profile/Q1": 12,
-      "/user/risk-profile/Q2": 24,
-      "/user/risk-profile/Q3": 36,
-      "/user/risk-profile/Q4": 48,
-      "/user/risk-profile/Q5": 62,
-      "/user/risk-profile/Q6": 74,
-      "/user/risk-profile/Q7": 86,
-      "/user/risk-profile/Q8": 98,
+      "/user/risk-profile/Q1": 10,
+      "/user/risk-profile/Q2": 20,
+      "/user/risk-profile/Q3": 30,
+      "/user/risk-profile/Q4": 40,
+      "/user/risk-profile/Q5": 50,
+      "/user/risk-profile/Q6": 60,
+      "/user/risk-profile/Q7": 70,
+      "/user/risk-profile/Q8": 80,
+      "/user/risk-profile/detection-matrix": 90,
     };
 
     stepComplete = stepMap[cLocation] || 0;
@@ -230,7 +233,7 @@ function Options(props) {
                 fontWeight: isCurrentStep ? "600" : "500",
               }}
             >
-              {(item.subTitle)}
+              {item.subTitle}
             </span>
           ),
         };
@@ -412,7 +415,6 @@ function Options(props) {
                     />
                   </ConfigProvider>
                 </div>
-                <FaRegHandshake />
               </div>
             </div>
           </div>

@@ -33,7 +33,7 @@ const GroupCoverDetails = (props) => {
         setFieldValue(field, existingData[field] || "");
       });
     } else {
-      props.setIsEditing?.(true);
+      // props.setIsEditing?.(true);
     }
   };
 

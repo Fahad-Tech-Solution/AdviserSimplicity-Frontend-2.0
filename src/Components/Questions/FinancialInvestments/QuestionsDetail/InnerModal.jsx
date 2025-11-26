@@ -98,18 +98,18 @@ const InnerModal = (props) => {
   let setQuestionChange = props.setQuestionChange;
 
   const xlTitles = [
-    "Member Number & Details",
+    "Member Number",
     "Insurances Attached",
     "Pension Benefits",
-    "Balance & Benefit Details",
+    "Balance & Benefit",
     "Australian Shares/ETFs",
-    "Managed Funds Detail",
-    "Super Funds Detail",
-    "Investment Bond Detail",
-    "Invested in Annuities Detail",
-    "Property Loan Details",
+    "Managed Funds",
+    "Super Funds",
+    "Investment Bond",
+    "Invested in Annuities",
+    "Property Loan",
     "Risk Goals",
-    "Business as Company Structure Detail",
+    "Business as Company Structure",
     "Business as Trusts",
     "Pension Benefits",
     "SMSF_Australian Shares/ETFs ",
@@ -127,6 +127,8 @@ const InnerModal = (props) => {
     "Salary Packaging",
     "Contributions",
     "Group Cover",
+    "Super Funds",
+    "Annuities",
   ]; // Add other titles that should use "xl" here
 
   const xlKeys = [

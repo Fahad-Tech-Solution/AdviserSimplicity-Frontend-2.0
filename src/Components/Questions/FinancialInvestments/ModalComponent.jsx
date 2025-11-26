@@ -278,6 +278,8 @@ const ModalComponent = (props) => {
     "Profile Pic " + RenderName(props.modalObject?.owner),
     "View Client Details",
     "CDF Details",
+    "Risk Goals",
+    "Terms and Conditions",
     // "Personal Insurance",
   ];
 

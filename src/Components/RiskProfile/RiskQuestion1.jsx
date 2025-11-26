@@ -6,6 +6,7 @@ import parse from "html-react-parser";
 import ClientPic from "../Svgs/single-2.svg";
 import PartnerPic from "../Svgs/couple-2.svg";
 import DynamicYesNo from "../Questions/FinancialInvestments/QuestionsDetail/DynamicYesNo";
+import { RenderName } from "../Assets/Api/Api";
 
 const RiskQuestion1 = (props) => {
   const { setFieldValue, values, handleChange } = props.Obj;
@@ -111,7 +112,10 @@ const RiskQuestion1 = (props) => {
                 <Image src={ClientPic} alt="Client" fluid />
               </div>
 
-              <b>Client</b>
+              <b>
+                {/* Client */}
+                {RenderName("client")}
+              </b>
             </h4>
             {choices.map((elem, index) => (
               <React.Fragment key={`client-${index}`}>
@@ -139,7 +143,11 @@ const RiskQuestion1 = (props) => {
               <div style={{ width: "2%" }}>
                 <Image src={PartnerPic} alt="partner" fluid />
               </div>
-              <b>Partner</b>
+              <b>
+                {/* Partner */}
+
+                {RenderName("partner")}
+              </b>
             </h4>
             {choices.map((elem, index) => (
               <React.Fragment key={`partner-${index}`}>

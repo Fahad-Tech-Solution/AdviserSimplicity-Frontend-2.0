@@ -238,6 +238,7 @@ input:checked + label {
 }
 
 .reportSection .ant-table-thead > tr > th {
+  /* background: #36b446 !important; */
   background: #36b446 !important;
   color: white;
   font-weight: 700;
