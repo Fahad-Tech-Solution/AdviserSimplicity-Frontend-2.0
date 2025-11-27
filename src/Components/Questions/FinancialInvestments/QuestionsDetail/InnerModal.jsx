@@ -187,6 +187,10 @@ const InnerModal = (props) => {
         modalSize = "md";
       }
 
+      if (currentTitle === "Risk Goals") {
+        setIsEditing(true);
+      }
+
       setSize(modalSize);
     }
   }, [props.modalObject]);
@@ -201,12 +205,16 @@ const InnerModal = (props) => {
         // centered
         show={props.flagState}
         onHide={() => {
-          if (!isEditing) {
+          const resetFlags = () => {
             props.setFlagState(false);
             setProgress(0);
             setCashFlowReCalculateLoading(false);
             setCashFlowDownloading(false);
             setIsEditing(false);
+          };
+
+          if (!isEditing || props.modalObject.title === "Risk Goals") {
+            resetFlags();
             return false;
           }
 

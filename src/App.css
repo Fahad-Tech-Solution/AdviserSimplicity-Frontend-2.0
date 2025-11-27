@@ -518,6 +518,10 @@ input:checked + label {
   background-color: #36b446;
 }
 
+.bgColorIncomeGray {
+  background-color: #d4380d;
+}
+
 .bgColorIncomeBlack {
   background-color: #1b1b1b;
 }

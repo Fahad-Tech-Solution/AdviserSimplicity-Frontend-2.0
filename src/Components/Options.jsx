@@ -54,6 +54,7 @@ import {
   CRState,
   StepsStatus,
   LoggedInUserData,
+  RiskGoalWarning,
 } from "../Store/Store";
 
 import "./options.css";
@@ -100,6 +101,8 @@ const iconMap = {
 function Options(props) {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const riskGoalWarning = useRecoilValue(RiskGoalWarning);
 
   const [optRender, setOptRender] = useRecoilState(OptionRender);
   let [loggedInUserData, setLoggedInUserData] =
@@ -200,7 +203,11 @@ function Options(props) {
           icon: (
             <span
               className={`rounded-circle text-light ${
-                isCurrentStep ? "bgColorIncomeBlack" : "bgColorIncome2"
+                isCurrentStep
+                  ? "bgColorIncomeBlack"
+                  : riskGoalWarning.includes(item.route)
+                  ? "bgColorIncomeGray"
+                  : "bgColorIncome2"
               }`}
               role="button"
               onClick={() => {
@@ -240,7 +247,7 @@ function Options(props) {
       });
 
     setItems(updatedItems);
-  }, [location, CRObject]);
+  }, [location, CRObject, riskGoalWarning]);
 
   const topMenuArray = [
     "/user/my-clients",

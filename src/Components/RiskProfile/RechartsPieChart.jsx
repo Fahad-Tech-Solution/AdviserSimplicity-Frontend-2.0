@@ -128,7 +128,7 @@ const RechartsPieChart = (props) => {
   const colors = ['#26863a', '#1e7034', '#24873f', '#289c48', '#7df691', '#67f57e', '#4af766'];
 
   return (
-    <div style={{ display: "flex", width: '100%', height: "18rem" }}> {/* Set explicit height */}
+    <div style={{ display: "flex", width: '100%', height: "20rem",  overflow: "visible" }}> {/* Set explicit height */}
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
@@ -137,8 +137,8 @@ const RechartsPieChart = (props) => {
             data={data}
             cx="50%"
             cy="50%"
-            innerRadius={40}
-            outerRadius={70}
+            innerRadius={60}
+            outerRadius={100}
             fill="#8884d8"
             dataKey="value"
             onMouseEnter={onPieEnter}

@@ -26,6 +26,7 @@ import {
 } from "../Assets/Api/Api";
 import {
   defaultUrl,
+  RiskGoalWarning,
   RiskQuestion,
   SelectedClientDetails,
 } from "../../Store/Store";
@@ -43,6 +44,7 @@ const RiskProfileNew = () => {
   let DefaultUrl = useRecoilValue(defaultUrl);
   let [riskQuestion, setRiskQuestion] = useRecoilState(RiskQuestion);
   let selectedClientDetails = useRecoilValue(SelectedClientDetails);
+  let [riskGoalWarning, setRiskGoalWarning] = useRecoilState(RiskGoalWarning);
 
   let [UserStatus] = useState(localStorage.getItem("UserStatus"));
 
@@ -83,7 +85,7 @@ const RiskProfileNew = () => {
 
       if (res && res._id) {
         setRiskQuestion(res);
-        Nav("/user/risk-profile/cards");
+        Nav("/user/risk-profile/detection-matrix");
       }
     } catch (error) {
       console.error("Error fetching risk data:", error);
@@ -419,6 +421,9 @@ const RiskProfileNew = () => {
 
     if (currentIndex < QuestionArray.length - 1) {
       setBackButton(true);
+      if (QuestionArray[currentIndex + 1].route == "/detection-matrix") {
+        setRiskGoalWarning([]);
+      }
       Nav("/user/risk-profile" + QuestionArray[currentIndex + 1].route);
     } else {
       console.log("Form submitted or navigate to the summary page");
@@ -688,7 +693,13 @@ const RiskProfileNew = () => {
                           <Route
                             key={index}
                             path={elem.route}
-                            element={<DetectionMatrix />}
+                            element={
+                              <DetectionMatrix
+                                QuestionArray={QuestionArray}
+                                values={values}
+                                setFieldValue={setFieldValue}
+                              />
+                            }
                           />
                         );
                       } else {

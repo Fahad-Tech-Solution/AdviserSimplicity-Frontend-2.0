@@ -729,7 +729,7 @@ const PersonalInsuranceLife = (props) => {
                       console.log(personalInsurance);
                     }}
                   >
-                    Number of {props.modalObject.title}:
+                    Number of Policies Client:
                   </p>
 
                   <div style={{ minWidth: "10%" }}>
@@ -797,7 +797,7 @@ const PersonalInsuranceLife = (props) => {
               {shouldShowPartner && (
                 <div className="d-flex flex-row justify-content-center align-items-center gap-4 my-4">
                   <p className="text-end mt-1 pt-2 mb-0">
-                    Number of {props.modalObject.title}:
+                    Number of Policies Partner:
                   </p>
 
                   <div style={{ minWidth: "10%" }}>

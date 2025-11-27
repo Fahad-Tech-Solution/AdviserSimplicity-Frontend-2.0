@@ -233,6 +233,7 @@ const ModalComponent = (props) => {
     "Investments Property",
     "Super Fund",
     "Details",
+    "Risk Goals",
     // "Account Based Pension",
     "Family Trust Investment Properties",
     RenderName("client") + "_Pension Benefits",

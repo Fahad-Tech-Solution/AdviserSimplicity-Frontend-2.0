@@ -488,3 +488,8 @@ export const Roles = atom({
   key: "Roles",
   default: [],
 });
+
+export const RiskGoalWarning = atom({
+  key: "RiskGoalWarning",
+  default: [],
+});

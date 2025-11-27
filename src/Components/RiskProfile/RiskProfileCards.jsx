@@ -23,6 +23,7 @@ import { FiPlus } from "react-icons/fi";
 import DynamicDescription from "../Questions/EstatePlanning/DynamicDescription";
 import RiskTermsAndConditions from "./RiskTermsAndConditions";
 import RechartsPieChart from "./RechartsPieChart";
+import ModalComponent from "../Questions/FinancialInvestments/ModalComponent";
 
 const RiskProfileCards = (props) => {
   let [riskQuestion, setRiskQuestion] = useRecoilState(RiskQuestion);
@@ -125,7 +126,7 @@ const RiskProfileCards = (props) => {
         {/*  modal */}
 
         <div className="row justify-content-center align-items-stretch">
-          <div className="col-md-6 my-3">
+          <div className="col-md-6 my-1">
             <Card
               className="py-4 shadow borderOverAll d-flex"
               style={{ borderRadius: "20px", height: "100%" }}
@@ -272,7 +273,7 @@ const RiskProfileCards = (props) => {
             </Card>
           </div>
           {values.joinedProfile === "No" && (
-            <div className="col-md-6 my-3">
+            <div className="col-md-6 my-1">
               <Card
                 className="py-4 shadow borderOverAll d-flex"
                 style={{ borderRadius: "20px", height: "100%" }}
