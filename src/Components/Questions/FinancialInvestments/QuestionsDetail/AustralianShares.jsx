@@ -10,7 +10,8 @@ import {
 } from "../../../Assets/Api/Api";
 import axios from "axios";
 import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
-import { ConfigProvider, Select } from "antd";
+import { ConfigProvider, Select, Tooltip } from "antd";
+import { FaInfoCircle } from "react-icons/fa";
 
 const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
@@ -224,7 +225,18 @@ const AustralianShares = (props) => {
       width: 60,
     },
     {
-      title: "ASX Code",
+      title: (
+        <>
+          ASX Code{" "}
+          <Tooltip
+            title={
+              "Correct format: Use the ASX code followed by “.AX” Example: QAN.AX (Qantas)"
+            }
+          >
+            <FaInfoCircle />
+          </Tooltip>
+        </>
+      ),
       dataIndex: "ASXCode",
       key: "ASXCode",
       type: "text",

@@ -67,10 +67,7 @@ const SoleTrader = (props) => {
             "client.businessAddress",
             data.client.businessAddress || ""
           );
-          setFieldValue(
-            "client.postCode",
-            data.client.postCode || ""
-          );
+          setFieldValue("client.postCode", data.client.postCode || "");
           setFieldValue(
             "client.netBusinessIncome",
             data.client.netBusinessIncome || ""
@@ -95,10 +92,7 @@ const SoleTrader = (props) => {
             "partner.businessAddress",
             data.partner.businessAddress || ""
           );
-          setFieldValue(
-            "partner.postCode",
-            data.partner.postCode || ""
-          );
+          setFieldValue("partner.postCode", data.partner.postCode || "");
           setFieldValue(
             "partner.netBusinessIncome",
             data.partner.netBusinessIncome || ""
@@ -197,7 +191,8 @@ const SoleTrader = (props) => {
       title: "Business Address",
       dataIndex: "businessAddress",
       key: "businessAddress",
-      type: "text",
+      type: "textarea",
+      width: 250,
       placeholder: "Business Address",
     },
     {
@@ -207,7 +202,6 @@ const SoleTrader = (props) => {
       type: "postcode-antd",
       placeholder: "Postcode/Suburb",
       CheckError: true,
-
     },
     {
       title: "Net Business Income",

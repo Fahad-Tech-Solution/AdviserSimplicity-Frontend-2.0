@@ -78,7 +78,7 @@ const ServiceFee = (props) => {
       width: 60,
     },
     {
-      title: "Service Fee",
+      title: "Ongoing Fee",
       dataIndex: "serviceFee",
       key: "serviceFee",
       type: "number-toComma",
@@ -98,7 +98,7 @@ const ServiceFee = (props) => {
       func: OnInvestmentOptionSelect,
     },
     {
-      title: "Annual Adviser Service Fee p.a",
+      title: "Annual Ongoing Fee",
       dataIndex: "annualAdviserServiceFee",
       key: "annualAdviserServiceFee",
       type: "number-toComma",

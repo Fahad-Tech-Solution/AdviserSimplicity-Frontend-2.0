@@ -14,7 +14,7 @@ import {
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 import { AntdCreatableMultiSelect } from "../FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
 
-  const AntdTable = DynamicTableForInputsSection("antd");
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const Partnership = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
@@ -67,10 +67,7 @@ const Partnership = (props) => {
           "client.businessAddress",
           data.client.businessAddress || ""
         );
-        setFieldValue(
-          "client.postCode",
-          data.client.postCode || ""
-        );
+        setFieldValue("client.postCode", data.client.postCode || "");
         setFieldValue(
           "client.totalNetPartnershipIncome",
           data.client.totalNetPartnershipIncome
@@ -94,10 +91,7 @@ const Partnership = (props) => {
           "partner.businessAddress",
           data.partner.businessAddress || ""
         );
-        setFieldValue(
-          "partner.postCode",
-          data.partner.postCode || ""
-        );
+        setFieldValue("partner.postCode", data.partner.postCode || "");
         setFieldValue(
           "partner.totalNetPartnershipIncome",
           data.partner.totalNetPartnershipIncome
@@ -250,10 +244,11 @@ const Partnership = (props) => {
       title: "Business Address",
       dataIndex: "businessAddress",
       key: "businessAddress",
-      type: "text",
+      type: "textarea",
       placeholder: "Business Address",
+      width: 250,
     },
-        {
+    {
       title: "Postcode/Suburb",
       dataIndex: "postCode",
       key: "postCode",
@@ -377,8 +372,8 @@ const Partnership = (props) => {
                         handleBlur={handleBlur}
                         handleInnerModal={handleInnerModal}
                         handleSubmit={props?.handleOk}
-                                   isEditing={props?.isEditing}
-                      setIsEditing={props?.setIsEditing}
+                        isEditing={props?.isEditing}
+                        setIsEditing={props?.setIsEditing}
                       />
                     </div>
                   )}

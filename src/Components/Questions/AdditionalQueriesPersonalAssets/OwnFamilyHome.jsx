@@ -40,10 +40,11 @@ const OwnFamilyHome = (props) => {
 
   const fillInitialValues = (setFieldValue) => {
     setFieldValue("address", PersonalData?.client?.clientHomeAddress || "");
+    setFieldValue("postCode", PersonalData?.client?.clientPostcode || "");
     if (familyHome && familyHome._id) {
       setFieldValue("currentValue", familyHome.currentValue || "");
       setFieldValue("costBase", familyHome.costBase || "");
-      setFieldValue("postCode", familyHome.postCode || "");
+      // setFieldValue("postCode", familyHome.postCode || "");
       setFieldValue("clientOwnership", familyHome.clientOwnership || "");
       setFieldValue("partnerOwnership", familyHome.partnerOwnership || "");
       // setFieldValue("loanAttached", familyHome.loanAttached || "");
@@ -74,10 +75,9 @@ const OwnFamilyHome = (props) => {
       //       : undefined
       //     : undefined,
       HomeLoanModal:
-  Object.keys(values.HomeLoanModal || {}).length > 0
-    ? values.HomeLoanModal
-    : undefined,
-
+        Object.keys(values.HomeLoanModal || {}).length > 0
+          ? values.HomeLoanModal
+          : undefined,
     };
 
     obj.clientFK = localStorage.getItem("UserID");
@@ -128,46 +128,53 @@ const OwnFamilyHome = (props) => {
     setFlagState(true);
   };
 
-const handleOwnershipChange = (values, setFieldValue, thisInput, stackHolder = "") => {
-  // Safely clean input
-  const cleanNumber = (val) => {
-    if (val === undefined || val === null) return 0;
-    const cleaned = String(val).replace(/[^0-9.]+/g, "");
-    const parsed = parseFloat(cleaned);
-    return isNaN(parsed) ? 0 : parsed;
+  const handleOwnershipChange = (
+    values,
+    setFieldValue,
+    thisInput,
+    stackHolder = ""
+  ) => {
+    // Safely clean input
+    const cleanNumber = (val) => {
+      if (val === undefined || val === null) return 0;
+      const cleaned = String(val).replace(/[^0-9.]+/g, "");
+      const parsed = parseFloat(cleaned);
+      return isNaN(parsed) ? 0 : parsed;
+    };
+
+    const holderKey =
+      typeof stackHolder === "string" ? stackHolder.replace(".", "") : "";
+
+    // Extract current values
+    let partnerOwnership = cleanNumber(values?.[holderKey]?.partnerOwnership);
+    let clientOwnership = cleanNumber(values?.[holderKey]?.clientOwnership);
+
+    // Detect which field was changed
+    if (thisInput.name === `${stackHolder}partnerOwnership`) {
+      partnerOwnership = cleanNumber(thisInput.value);
+      clientOwnership = 100 - partnerOwnership;
+    } else if (thisInput.name === `${stackHolder}clientOwnership`) {
+      clientOwnership = cleanNumber(thisInput.value);
+      partnerOwnership = 100 - clientOwnership;
+    }
+
+    // Clamp between 0–100
+    partnerOwnership = Math.max(0, Math.min(100, partnerOwnership));
+    clientOwnership = Math.max(0, Math.min(100, clientOwnership));
+
+    // Format both to two decimals with %
+    const formatPercent = (val) => `${val.toFixed(2)}%`;
+
+    // Update both fields live
+    setFieldValue(
+      `${stackHolder}partnerOwnership`,
+      formatPercent(partnerOwnership)
+    );
+    setFieldValue(
+      `${stackHolder}clientOwnership`,
+      formatPercent(clientOwnership)
+    );
   };
-
-  const holderKey = typeof stackHolder === "string" ? stackHolder.replace(".", "") : "";
-
-  // Extract current values
-  let partnerOwnership = cleanNumber(values?.[holderKey]?.partnerOwnership);
-  let clientOwnership = cleanNumber(values?.[holderKey]?.clientOwnership);
-
-  // Detect which field was changed
-  if (thisInput.name === `${stackHolder}partnerOwnership`) {
-    partnerOwnership = cleanNumber(thisInput.value);
-    clientOwnership = 100 - partnerOwnership;
-  } else if (thisInput.name === `${stackHolder}clientOwnership`) {
-    clientOwnership = cleanNumber(thisInput.value);
-    partnerOwnership = 100 - clientOwnership;
-  }
-
-  // Clamp between 0–100
-  partnerOwnership = Math.max(0, Math.min(100, partnerOwnership));
-  clientOwnership = Math.max(0, Math.min(100, clientOwnership));
-
-  // Format both to two decimals with %
-  const formatPercent = (val) => `${val.toFixed(2)}%`;
-
-  // Update both fields live
-  setFieldValue(`${stackHolder}partnerOwnership`, formatPercent(partnerOwnership));
-  setFieldValue(`${stackHolder}clientOwnership`, formatPercent(clientOwnership));
-};
-
-
-
-
-
 
   // ✅ AntD table column configuration
   const columns = [
@@ -266,7 +273,7 @@ const handleOwnershipChange = (values, setFieldValue, thisInput, stackHolder = "
             clientOwnership: values.clientOwnership,
             partnerOwnership: values.partnerOwnership,
             // loanAttached: values.loanAttached,
-            loanAttached: values?.HomeLoanModal?.loanBalance || "$0" ,
+            loanAttached: values?.HomeLoanModal?.loanBalance || "$0",
             loanAmount: values.loanAmount,
             annualRepayments: values.annualRepayments,
           },

@@ -10,18 +10,6 @@ import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInpu
 // ✅ Validation schema
 const validationSchema = Yup.object({
   employerFBTStatus: Yup.string().required("Employer FBT Status is required"),
-  creditCardMortgageRepayments: Yup.string()
-    .typeError("Credit Card/Mortgage Repayments must be a number")
-    .required("Credit Card/Mortgage Repayments is required"),
-  costBaseOfCar: Yup.string()
-    .typeError("Cost Base of Car must be a number")
-    .required("Cost Base of Car is required"),
-  FBTPaidByEmployer: Yup.string()
-    .oneOf(["Yes", "No"], "Invalid option")
-    .required("FBT Paid By Employer is required"),
-  runningCostsOfCar: Yup.string()
-    .typeError("Running Costs of Car must be a number")
-    .required("Running Costs of Car is required"),
 });
 
 const SalaryPackaging = (props) => {

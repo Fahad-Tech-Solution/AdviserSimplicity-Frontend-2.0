@@ -133,7 +133,7 @@ const ManagedFunds = (props) => {
 
     setModalObject({
       title: titlePrefix + innerModalTitle,
-      question: `How many Underlying Investments does ${titlePrefix} have :`,
+      question: `Number of Investments :`,
       key,
       stakeHolder,
       editArray: values?.[BaseKey]?.[index]?.[key + "Array"] || [],
@@ -304,7 +304,7 @@ const ManagedFunds = (props) => {
       key: "serviceFee",
       type: "number-toComma-Modal",
       placeholder: "Service Fee",
-      innerModalTitle: "_Service Fee",
+      innerModalTitle: "_CFS Investments_Annual Ongoing Fee",
       callBack: true,
       inputChangeFunc: CheckInputValue,
       func: handleInnerModal,

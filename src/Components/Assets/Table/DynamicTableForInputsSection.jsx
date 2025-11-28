@@ -45,7 +45,10 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
       // ✅ When global edit mode is ON
       if (isEditing) {
         // Check if this is partner's home address field
-        if (col.key === "homeAddress" && record.stakeHolder === "partner.contact") {
+        if (
+          col.key === "homeAddress" &&
+          record.stakeHolder === "partner.contact"
+        ) {
           return (
             <DynamicFormField
               fieldType="partner-home-address" // Use the new field type
@@ -69,21 +72,39 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
                 ...col,
                 checkCallBack: true,
                 checkfunc: (values, setFieldValue, thisInput, stakeHolder) => {
-                  const clientHomeAddress = getNestedValue(values, "client.contact.homeAddress");
-                  const clientPostcode = getNestedValue(values, "client.contact.postcodeSuburb");
-                  
+                  const clientHomeAddress = getNestedValue(
+                    values,
+                    "client.contact.homeAddress"
+                  );
+                  const clientPostcode = getNestedValue(
+                    values,
+                    "client.contact.postcodeSuburb"
+                  );
+
                   if (thisInput.checked) {
                     // Set partner address same as client
-                    setFieldValue("partner.contact.homeAddress", clientHomeAddress || "");
-                    setFieldValue("partner.contact.postcodeSuburb", clientPostcode || "");
-                    
+                    setFieldValue(
+                      "partner.contact.homeAddress",
+                      clientHomeAddress || ""
+                    );
+                    setFieldValue(
+                      "partner.contact.postcodeSuburb",
+                      clientPostcode || ""
+                    );
+
                     // Also trigger postal address if SameAsAbove is checked
                     if (getNestedValue(values, "partner.contact.SameAsAbove")) {
-                      setFieldValue("partner.contact.postalAddress", clientHomeAddress || "");
-                      setFieldValue("partner.contact.postalPostCode", clientPostcode || "");
+                      setFieldValue(
+                        "partner.contact.postalAddress",
+                        clientHomeAddress || ""
+                      );
+                      setFieldValue(
+                        "partner.contact.postalPostCode",
+                        clientPostcode || ""
+                      );
                     }
                   }
-                }
+                },
               }}
               {...(record?.stakeHolder
                 ? { stakeHolder: record.stakeHolder + "." }
@@ -124,42 +145,72 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
       if (col?.type === "antdate") return value ? ConvertDate(value) : "--";
       if (col?.type === "checkbox") return value ? "Checked" : "Un-Checked";
       if (col?.type === "select-multi-antd")
-      // ✅ When not editing → format value for display
-      if (col?.type === "antdate") return value ? ConvertDate(value) : "--";
+        if (col?.type === "antdate")
+          // ✅ When not editing → format value for display
+          return value ? ConvertDate(value) : "--";
       if (col?.type === "checkbox") return value ? "Checked" : "Un-Checked";
       if (col?.type === "select-multi-antd")
         return Array.isArray(value) ? value.join(", ") : value || "";
       if (
+        col?.type === "number-toComma-Modal" ||
         (col?.type === "yesnoModal" && value === "Yes") ||
         col?.type === "modal"
       ) {
         return (
           <div className="d-flex align-items-center justify-content-left gap-3">
+            {col?.type === "number-toComma-Modal" && (
+              <DynamicFormField
+                fieldType="modal"
+                name={col?.dataIndex || ""}
+                placeholder={col?.placeholder || ""}
+                options={col?.options || []}
+                values={values}
+                setFieldValue={setFieldValue}
+                handleChange={handleChange}
+                handleBlur={handleBlur}
+                handleInnerModal={
+                  col?.func ||
+                  col?.handleInnerModal ||
+                  (() => {
+                    console.log("No function defined");
+                  })
+                }
+                innerModalTitle={
+                  record?.innerModalTitle || col?.innerModalTitle || ""
+                }
+                all={col || {}}
+                {...(record?.stakeHolder
+                  ? { stakeHolder: record.stakeHolder + "." }
+                  : {})}
+              />
+            )}
             {value}
-            <DynamicFormField
-              fieldType="modal"
-              name={col?.dataIndex || ""}
-              placeholder={col?.placeholder || ""}
-              options={col?.options || []}
-              values={values}
-              setFieldValue={setFieldValue}
-              handleChange={handleChange}
-              handleBlur={handleBlur}
-              handleInnerModal={
-                col?.func ||
-                col?.handleInnerModal ||
-                (() => {
-                  console.log("No function defined");
-                })
-              }
-              innerModalTitle={
-                record?.innerModalTitle || col?.innerModalTitle || ""
-              }
-              all={col || {}}
-              {...(record?.stakeHolder
-                ? { stakeHolder: record.stakeHolder + "." }
-                : {})}
-            />
+            {col?.type !== "number-toComma-Modal" && (
+              <DynamicFormField
+                fieldType="modal"
+                name={col?.dataIndex || ""}
+                placeholder={col?.placeholder || ""}
+                options={col?.options || []}
+                values={values}
+                setFieldValue={setFieldValue}
+                handleChange={handleChange}
+                handleBlur={handleBlur}
+                handleInnerModal={
+                  col?.func ||
+                  col?.handleInnerModal ||
+                  (() => {
+                    console.log("No function defined");
+                  })
+                }
+                innerModalTitle={
+                  record?.innerModalTitle || col?.innerModalTitle || ""
+                }
+                all={col || {}}
+                {...(record?.stakeHolder
+                  ? { stakeHolder: record.stakeHolder + "." }
+                  : {})}
+              />
+            )}
           </div>
         );
       }
@@ -171,15 +222,21 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
       }
 
       // Special display for partner home address when same as client
-      if (col.key === "homeAddress" && record.stakeHolder === "partner.contact") {
-        const clientHomeAddress = getNestedValue(values, "client.contact.homeAddress");
+      if (
+        col.key === "homeAddress" &&
+        record.stakeHolder === "partner.contact"
+      ) {
+        const clientHomeAddress = getNestedValue(
+          values,
+          "client.contact.homeAddress"
+        );
         const isSameAsClient = value === clientHomeAddress;
-        
+
         return (
           <div>
             {value || "--"}
             {isSameAsClient && value && (
-              <div className="text-muted small">(Same as Client)</div>
+              <div className="text-muted small"> </div>
             )}
           </div>
         );
@@ -196,9 +253,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
             ...col,
             width: isEditing ? col.width || 150 : undefined,
             onCell: (_, index) =>
-              index === 0
-                ? { rowSpan: data.length }
-                : { rowSpan: 0 },
+              index === 0 ? { rowSpan: data.length } : { rowSpan: 0 },
           };
         } else if (col.key === "owner" || col?.justText) {
           return {
@@ -254,9 +309,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
                 ...col,
                 width: isEditing ? col.width || 150 : undefined,
                 onCell: (_, index) =>
-                  index === 0
-                    ? { rowSpan: data.length }
-                    : { rowSpan: 0 },
+                  index === 0 ? { rowSpan: data.length } : { rowSpan: 0 },
               };
             } else if (col.key === "owner" || col?.justText) {
               return {

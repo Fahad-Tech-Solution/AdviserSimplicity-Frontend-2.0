@@ -92,6 +92,14 @@ const LeaveEntitlementsModal = (props) => {
       CheckError: true,
     },
     {
+      key: "amount",
+      dataIndex: "amount",
+      type: "number",
+      title: "Amount",
+      placeholder: "Enter amount",
+      CheckError: true,
+    },
+    {
       key: "time",
       dataIndex: "time",
       type: "select",
@@ -102,14 +110,6 @@ const LeaveEntitlementsModal = (props) => {
         { value: "Weeks", label: "Weeks" },
         { value: "Hours", label: "Hours" },
       ],
-      CheckError: true,
-    },
-    {
-      key: "amount",
-      dataIndex: "amount",
-      type: "number",
-      title: "Amount",
-      placeholder: "Enter amount",
       CheckError: true,
     },
   ];

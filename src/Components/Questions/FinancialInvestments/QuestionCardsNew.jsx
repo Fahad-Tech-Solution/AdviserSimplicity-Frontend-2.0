@@ -24,6 +24,7 @@ import houseHoldSvg from "../svgs/warehouse-.svg";
 import boatSvg from "../svgs/boat.svg";
 import settingMoneySvg from "../svgs/settingMoney.svg";
 import moneyGivingPng from "../svgs/moneyGiving.png";
+import credit from "../svgs/credit-card-refund-svgrepo-com.svg";
 import businessmanSvg from "../svgs/businessman.svg";
 import businessIncomePng from "../svgs/business-income.png";
 import businessPartnershipPng from "../svgs/businessPartnership.png";
@@ -214,7 +215,27 @@ const questionConfig = {
       img: homeSvg,
       component: <OwnFamilyHome />,
       // clientOnly: true,
-      Labels: ["Property Portfolio", "Loan Amount"],
+      // Labels: ["Value", "Loan"],
+      variant: "case2",
+      Labels: [
+        {
+          label: "Value",
+          value: (questionDetail) =>
+            questionDetail?.familyHome?.clientTotal ?? "",
+          component: <OwnFamilyHome />,
+          key: "familyHome",
+          maintitle: true,
+        },
+        {
+          label: "Loan",
+          value: (questionDetail) =>
+            questionDetail?.familyHome?.partnerTotal ?? "",
+          component: <OwnFamilyHome />,
+          key: "familyHome",
+          maintitle: true,
+          modalButton: false,
+        },
+      ],
     },
     {
       title: "Car",
@@ -284,27 +305,41 @@ const questionConfig = {
     //     },
     //   ],
     // },
+    // {
+    //   title: "Personal Debt",
+    //   keyName: "personalLoans",
+    //   img: moneyGivingPng,
+    //   variant: "case2",
+    //   Labels: [
+    //     {
+    //       label: "Credit Card",
+    //       value: (questionDetail) =>
+    //         questionDetail?.creditCards?.clientTotal ?? "",
+    //       component: <CreditCard />,
+    //       key: "creditCards",
+    //     },
+    //     {
+    //       label: "Personal Loan",
+    //       value: (questionDetail) =>
+    //         questionDetail?.personalLoans?.clientTotal ?? "",
+    //       component: <PersonalLoan />,
+    //       key: "personalLoans",
+    //     },
+    //   ],
+    // },
     {
-      title: "Personal Debt",
+      title: "Credit Card",
+      keyName: "creditCards",
+      img: credit,
+      clientOnly: true,
+      component: <CreditCard />,
+    },
+    {
+      title: "Personal Loan",
       keyName: "personalLoans",
       img: moneyGivingPng,
-      variant: "case2",
-      Labels: [
-        {
-          label: "Credit Card",
-          value: (questionDetail) =>
-            questionDetail?.creditCards?.clientTotal ?? "",
-          component: <CreditCard />,
-          key: "creditCards",
-        },
-        {
-          label: "Personal Loan",
-          value: (questionDetail) =>
-            questionDetail?.personalLoans?.clientTotal ?? "",
-          component: <PersonalLoan />,
-          key: "personalLoans",
-        },
-      ],
+      clientOnly: true,
+      component: <PersonalLoan />,
     },
   ],
   "/user/financial-investments": [
