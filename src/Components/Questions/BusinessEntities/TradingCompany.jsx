@@ -8,7 +8,7 @@ import {
   handleInputChange,
   handleInputFocus,
   handleInputKeyDown,
-  handleInputBlur
+  handleInputBlur,
 } from "../../Assets/Api/Api";
 import DynamicYesNo from "../FinancialInvestments/QuestionsDetail/DynamicYesNo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -28,8 +28,8 @@ const TradingCompany = (props) => {
 
   const [title] = useState(() => {
     let currentTitle = props.modalObject.title;
-    if (currentTitle.includes('_')) {
-      currentTitle = currentTitle.split('_').slice(1)[0];
+    if (currentTitle.includes("_")) {
+      currentTitle = currentTitle.split("_").slice(1)[0];
     }
     return currentTitle;
   });
@@ -41,7 +41,11 @@ const TradingCompany = (props) => {
     } else if (input === "partner") {
       return localStorage.getItem("PartnerName");
     } else if (input === "joint") {
-      return localStorage.getItem("UserName") + " & " + localStorage.getItem("PartnerName");
+      return (
+        localStorage.getItem("UserName") +
+        " & " +
+        localStorage.getItem("PartnerName")
+      );
     }
     return "";
   });
@@ -49,7 +53,7 @@ const TradingCompany = (props) => {
   // Load existing data if available
   const existingData =
     props.modalObject.values?.[
-    props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "")
+      props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "")
     ]?.[props.modalObject.Input + "Array"] || [];
 
   const initialValues = {
@@ -92,7 +96,8 @@ const TradingCompany = (props) => {
 
     // Calculate total equity position
     const totalEquity = companyData.reduce(
-      (sum, entry) => sum + parseFloat(entry.equityPosition?.replace(/[^0-9.-]+/g, "") || 0),
+      (sum, entry) =>
+        sum + parseFloat(entry.equityPosition?.replace(/[^0-9.-]+/g, "") || 0),
       0
     );
 
@@ -128,9 +133,16 @@ const TradingCompany = (props) => {
       title: "Business Name",
       dataIndex: "businessName",
       key: "businessName",
-      type: "text",
+      type: "textarea",
       placeholder: "Business Name",
       width: 200,
+    },
+    {
+      title: "Postcode/Suburb",
+      dataIndex: "postcodeSuburb",
+      type: "postcode-antd",
+      key: "postcodeSuburb",
+      width: 230,
     },
     {
       title: "ABN/ACN",
@@ -178,7 +190,7 @@ const TradingCompany = (props) => {
       type: "number-toPercent",
       placeholder: "Shareholding",
       customOnChange: (e, setFieldValue, values, fieldName) => {
-        handleInputChange(e, setFieldValue, () => { }, values);
+        handleInputChange(e, setFieldValue, () => {}, values);
       },
       customOnFocus: (e, setFieldValue) => {
         handleInputFocus(e, setFieldValue);
@@ -187,7 +199,7 @@ const TradingCompany = (props) => {
         handleInputKeyDown(e);
       },
       customOnBlur: (e, setFieldValue, values, fieldName) => {
-        handleInputBlur(e, setFieldValue, toPercentage, () => { }, values);
+        handleInputBlur(e, setFieldValue, toPercentage, () => {}, values);
       },
     },
     {
@@ -198,7 +210,9 @@ const TradingCompany = (props) => {
       placeholder: "Dividend Received",
       width: 180,
       customOnChange: (e, setFieldValue, values, fieldName) => {
-        const value = toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, ""));
+        const value = toCommaAndDollar(
+          e.target.value.replace(/[^0-9.-]+/g, "")
+        );
         setFieldValue(fieldName, value);
       },
     },
@@ -211,7 +225,9 @@ const TradingCompany = (props) => {
       placeholder: "Equity Position",
       width: 160,
       customOnChange: (e, setFieldValue, values, fieldName) => {
-        const value = toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, ""));
+        const value = toCommaAndDollar(
+          e.target.value.replace(/[^0-9.-]+/g, "")
+        );
         setFieldValue(fieldName, value);
       },
       func: (innerModalTitle, values, key, stakeHolder) =>
@@ -258,14 +274,20 @@ const TradingCompany = (props) => {
               owner: i + 1,
               stakeHolder: `tradingCompanies[${i}]`,
               businessName: values.tradingCompanies?.[i]?.businessName || "",
+              postcodeSuburb: values.tradingCompanies?.[i]?.postcodeSuburb || "",
               aBNACN: values.tradingCompanies?.[i]?.aBNACN || "",
-              businessAddress: values.tradingCompanies?.[i]?.businessAddress || "",
-              numberOfDirectors: values.tradingCompanies?.[i]?.numberOfDirectors || "",
+              businessAddress:
+                values.tradingCompanies?.[i]?.businessAddress || "",
+              numberOfDirectors:
+                values.tradingCompanies?.[i]?.numberOfDirectors || "",
               directorship: values.tradingCompanies?.[i]?.directorship || "",
               shareholding: values.tradingCompanies?.[i]?.shareholding || "",
-              dividendReceived: values.tradingCompanies?.[i]?.dividendReceived || "",
-              equityPosition: values.tradingCompanies?.[i]?.equityPosition || "",
-              equityPositionArray: values.tradingCompanies?.[i]?.equityPositionArray || "",
+              dividendReceived:
+                values.tradingCompanies?.[i]?.dividendReceived || "",
+              equityPosition:
+                values.tradingCompanies?.[i]?.equityPosition || "",
+              equityPositionArray:
+                values.tradingCompanies?.[i]?.equityPositionArray || "",
             }));
           }
           return [];
@@ -284,9 +306,7 @@ const TradingCompany = (props) => {
             </InnerModal>
 
             <div className="d-flex justify-content-center align-items-center gap-4">
-              <p className="text-end mt-1 pt-2">
-                Number of {title}:
-              </p>
+              <p className="text-end mt-1 pt-2">Number of Companies:</p>
               <div style={{ minWidth: "10%" }}>
                 <ConfigProvider
                   theme={{

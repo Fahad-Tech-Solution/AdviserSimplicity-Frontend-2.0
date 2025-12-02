@@ -21,6 +21,7 @@ import {
   openNotificationSuccess,
   toCommaAndDollar,
   RenderName,
+  replacePlaceholderWithLabel,
 } from "../../../Assets/Api/Api";
 
 const AntdTable = DynamicTableForInputsSection("antd");
@@ -47,7 +48,7 @@ const InvestedAnnuities = (props) => {
       );
     return "";
   });
-  
+
   const existingData =
     props.modalObject.values?.[
       props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "")
@@ -103,10 +104,33 @@ const InvestedAnnuities = (props) => {
     const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
     const BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
 
+    const selectedPlatformId =
+      values?.[BaseKey]?.[index]?.productProvider ||
+      values?.[BaseKey]?.[index]?._id ||
+      "";
+
+    // for balanceBenefitDetailsArray we don't force selection; original did not require platform select here
+    if (!selectedPlatformId) {
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        "Please! Select Provider Name First"
+      );
+      return false;
+    }
+
     setModalObject({
       title: `${RenderName(
         props.modalObject.stakeHolder.replace(".", "")
-      )}${innerModalTitle}`,
+      )}${replacePlaceholderWithLabel(
+        bankDetailObj?.Annuities?.map((elem) => ({
+          value: elem._id,
+          label: elem.platformName,
+        })),
+        values?.[BaseKey]?.[index]?.productProvider,
+        innerModalTitle
+      )}`,
       question,
       key,
       stakeHolder,
@@ -213,7 +237,7 @@ const InvestedAnnuities = (props) => {
       dataIndex: "annualAnnuityPayment",
       key: "annualAnnuityPayment",
       type: "number-toComma-Modal",
-      innerModalTitle: "_Annual Pension Payment",
+      innerModalTitle: "_<CFE>_Annual Annuity Payment",
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
           innerModalTitle,
@@ -259,7 +283,7 @@ const InvestedAnnuities = (props) => {
       dataIndex: "nominatedBeneficiaries",
       key: "nominatedBeneficiaries",
       type: "yesnoModal",
-      innerModalTitle: "_Beneficiaries",
+      innerModalTitle: "_<CFE>_Beneficiaries",
       placeholder: "Beneficiaries",
       callBack: true,
       func: (innerModalTitle, values, key, stakeHolder) =>
@@ -269,7 +293,7 @@ const InvestedAnnuities = (props) => {
           stakeHolder,
           values,
           "Beneficiaries",
-          `How many beneficiaries do ${nameSet} have :`
+          `Number of Beneficiaries:`
         ),
     },
     {

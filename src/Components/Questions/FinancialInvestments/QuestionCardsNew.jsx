@@ -398,7 +398,27 @@ const questionConfig = {
       keyName: "investmentPropertyDetails",
       img: property,
       component: <InvestmentPropertyDetails />,
-      Labels: ["Property Portfolio", "Total Debt"],
+      // Labels: ["Property Portfolio", "Total Debt"],
+      variant: "case2",
+      Labels: [
+        {
+          label: "Property Portfolio",
+          value: (questionDetail) =>
+            questionDetail?.investmentPropertyDetails?.propertyPortfolio ?? "",
+          component: <InvestmentPropertyDetails />,
+          key: "investmentPropertyDetails",
+          maintitle: true,
+        },
+        {
+          label: "Total Debt",
+          value: (questionDetail) =>
+            questionDetail?.investmentPropertyDetails?.totalDebt ?? "",
+          component: <InvestmentPropertyDetails />,
+          key: "investmentPropertyDetails",
+          maintitle: true,
+          modalButton: false,
+        },
+      ],
     },
     {
       title: "Investment Loan",
@@ -918,8 +938,8 @@ const questionConfig = {
       title: "Investment Property",
       keyName: "familyInvestmentProperties",
       img: people,
-      variant: "case2",
       component: <InvestmentPropertyDetails />,
+      variant: "case2",
       Labels: [
         {
           label: "Property Portfolio",

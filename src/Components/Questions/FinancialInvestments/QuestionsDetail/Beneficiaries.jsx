@@ -19,7 +19,7 @@ const { Option } = Select;
 
 const Beneficiaries = (props) => {
   const [title, setTitle] = useState(() => {
-    let currentTitle = props.modalObject.ParentModal || "";
+    let currentTitle = props.modalObject.ParentModalObject.title || "";
     if (currentTitle.includes("_")) {
       currentTitle = currentTitle.split("_")[1];
     }
@@ -65,7 +65,7 @@ const Beneficiaries = (props) => {
 
   const getRelationshipOptions = (nominationType) => {
     if (nominationType === "Reversionary Beneficiary") {
-      return [{ value: "N/A", label: "N/A" }];
+      return [{ value: "Spouse/De-facto", label: "Spouse/De-facto" }];
     }
     return [
       {
@@ -107,141 +107,7 @@ const Beneficiaries = (props) => {
     }
   };
 
-  const extraValue = [
-    "Account Based Pension Detail",
-    "Annuities Detail",
-    "Pension Benefits Details",
-  ];
-
-  const columns = [
-    {
-      title: "No#",
-      dataIndex: "index",
-      key: "owner",
-      render: (_, __, i) => i + 1,
-      width: 60,
-    },
-    // {
-    //   title: "Nomination Type",
-    //   dataIndex: "nominationType",
-    //   key: "nominationType",
-    //   type: "select",
-    //   width: 250,
-    //   options: [
-    //     ...(extraValue.includes(title)
-    //       ? [
-    //           {
-    //             value: "Reversionary Beneficiary",
-    //             label: "Reversionary Beneficiary",
-    //           },
-    //         ]
-    //       : []),
-    //     { value: "Binding (Non-Lapsing)", label: "Binding (Non-Lapsing)" },
-    //     { value: "Binding (Lapsing)", label: "Binding (Lapsing)" },
-    //     { value: "Non-Binding", label: "Non-Binding" },
-    //     {
-    //       value: "Legal Personal Representative (Your Estate)",
-    //       label: "Legal Personal Representative (Your Estate)",
-    //     },
-    //   ],
-    //   callBack: true,
-    //   func: (values, setFieldValue, currentInput, stakeHolder, index) => {
-    //     handleNominationTypeChange(
-    //       currentInput.value,
-    //       index,
-    //       setFieldValue,
-    //       values
-    //     );
-    //   },
-    // },
-
-    {
-      title: "Relationship Status",
-      dataIndex: "relationshipStatus",
-      key: "relationshipStatus",
-      type: "select",
-      options: RelationshipOptions,
-      width: 200,
-      callBack: true,
-      func: (values, setFieldvalue, currentInput, stakeHolder) => {
-        const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
-        const BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
-
-        if (
-          currentInput.value === "Legal Personal Representive (Your Estate)"
-        ) {
-          setFieldvalue(`${BaseKey}[${index}].beneficiaryName`, "Your Estate");
-        }
-      },
-    },
-    {
-      title: "Beneficiary Name",
-      dataIndex: "beneficiaryName",
-      key: "beneficiaryName",
-      type: "text",
-      width: 200,
-    },
-    {
-      title: "DOB",
-      dataIndex: "DOB",
-      key: "DOB",
-      type: "antdate",
-      width: 150,
-      disabled: (values, stakeHolder) => {
-        const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
-        const BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
-
-        return (
-          values?.[BaseKey]?.[index]?.relationshipStatus ===
-          "Legal Personal Representive (Your Estate)"
-        );
-      },
-    },
-
-    {
-      title: "Share of Benefit",
-      dataIndex: "shareBenefit",
-      key: "shareBenefit",
-      type: "number-toPercent",
-      width: 150,
-      callBack: true,
-      func: (values, setFieldValue, currentInput, stakeHolder) => {
-        // stakeHolder expected like "BeneficiariesDetails[2]"
-        const idxMatch = (stakeHolder || "").match(/\[(\d+)\]/);
-        const index = idxMatch ? parseInt(idxMatch[1], 10) : 0;
-
-        // parse numeric value from input (handles "50%", "50.00%" or "50")
-        const rawEntered = (currentInput.value || "")
-          .toString()
-          .replace(/[^0-9.-]+/g, "");
-        const entered = Math.max(0, parseFloat(rawEntered) || 0);
-
-        const arr = values.BeneficiariesDetails || [];
-
-        // sum all other rows
-        let otherSum = 0;
-        arr.forEach((row, i) => {
-          if (i === index) return;
-          const r = (row?.shareBenefit || "")
-            .toString()
-            .replace(/[^0-9.-]+/g, "");
-          otherSum += parseFloat(r) || 0;
-        });
-
-        // allowed remaining percent for this row
-        const allowed = Math.max(0, 100 - otherSum);
-
-        // final value should not exceed allowed
-        const finalValue = Math.min(entered, allowed);
-
-        // set formatted value (e.g. "50.00%")
-        setFieldValue(
-          `BeneficiariesDetails[${index}].shareBenefit`,
-          `${finalValue.toFixed(2)}%`
-        );
-      },
-    },
-  ];
+  const extraValue = ["Account Based Pension", "Annuities", "Pension Benefits"];
 
   return (
     <Formik
@@ -255,11 +121,119 @@ const Beneficiaries = (props) => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        const column = useMemo(() => {
+          const tableColumns = [
+            {
+              title: "No#",
+              dataIndex: "index",
+              key: "owner",
+              render: (_, __, i) => i + 1,
+              width: 60,
+            },
+            {
+              title: "Relationship Status",
+              dataIndex: "relationshipStatus",
+              key: "relationshipStatus",
+              type: "select",
+              options: getRelationshipOptions(values?.nominationType),
+              width: 200,
+              callBack: true,
+              func: (values, setFieldvalue, currentInput, stakeHolder) => {
+                const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
+                const BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
+
+                if (
+                  currentInput.value ===
+                  "Legal Personal Representive (Your Estate)"
+                ) {
+                  setFieldvalue(
+                    `${BaseKey}[${index}].beneficiaryName`,
+                    "Your Estate"
+                  );
+                }
+              },
+            },
+            {
+              title: "Beneficiary Name",
+              dataIndex: "beneficiaryName",
+              key: "beneficiaryName",
+              type: "text",
+              width: 200,
+            },
+            {
+              title: "DOB",
+              dataIndex: "DOB",
+              key: "DOB",
+              type: "antdate",
+              width: 150,
+              disabled: (values, stakeHolder) => {
+                const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
+                const BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
+
+                return (
+                  values?.[BaseKey]?.[index]?.relationshipStatus ===
+                  "Legal Personal Representive (Your Estate)"
+                );
+              },
+            },
+            {
+              title: "Share of Benefit",
+              dataIndex: "shareBenefit",
+              key: "shareBenefit",
+              type: "number-toPercent",
+              width: 150,
+              callBack: true,
+              func: (values, setFieldValue, currentInput, stakeHolder) => {
+                // stakeHolder expected like "BeneficiariesDetails[2]"
+                const idxMatch = (stakeHolder || "").match(/\[(\d+)\]/);
+                const index = idxMatch ? parseInt(idxMatch[1], 10) : 0;
+
+                // parse numeric value from input (handles "50%", "50.00%" or "50")
+                const rawEntered = (currentInput.value || "")
+                  .toString()
+                  .replace(/[^0-9.-]+/g, "");
+                const entered = Math.max(0, parseFloat(rawEntered) || 0);
+
+                const arr = values.BeneficiariesDetails || [];
+
+                // sum all other rows
+                let otherSum = 0;
+                arr.forEach((row, i) => {
+                  if (i === index) return;
+                  const r = (row?.shareBenefit || "")
+                    .toString()
+                    .replace(/[^0-9.-]+/g, "");
+                  otherSum += parseFloat(r) || 0;
+                });
+
+                // allowed remaining percent for this row
+                const allowed = Math.max(0, 100 - otherSum);
+
+                // final value should not exceed allowed
+                const finalValue = Math.min(entered, allowed);
+
+                // set formatted value (e.g. "50.00%")
+                setFieldValue(
+                  `BeneficiariesDetails[${index}].shareBenefit`,
+                  `${finalValue.toFixed(2)}%`
+                );
+              },
+            },
+          ];
+
+          return tableColumns;
+        }, [values?.nominationType]);
+
         const dataRows = useMemo(() => {
           setRelationshipOptions(
             getRelationshipOptions(values?.nominationType)
           );
           const num = Number(values.NumberOfMap) || 0;
+
+          if (values?.nominationType === "Reversionary Beneficiary") {
+            setFieldValue("BeneficiariesDetails[0].shareBenefit", "100.00%");
+          }
+
           return Array.from({ length: num }, (_, i) => ({
             key: `BeneficiariesDetails.${i}`,
             stakeHolder: `BeneficiariesDetails[${i}]`,
@@ -269,9 +243,17 @@ const Beneficiaries = (props) => {
             beneficiaryName:
               values.BeneficiariesDetails?.[i]?.beneficiaryName || "",
             DOB: values.BeneficiariesDetails?.[i]?.DOB || "",
-            shareBenefit: values.BeneficiariesDetails?.[i]?.shareBenefit || "",
+            shareBenefit:
+              values.BeneficiariesDetails?.[i]?.shareBenefit ||
+              values?.nominationType === "Reversionary Beneficiary"
+                ? "100.00%"
+                : "",
           }));
-        }, [values.NumberOfMap, values.BeneficiariesDetails]);
+        }, [
+          values.NumberOfMap,
+          values.BeneficiariesDetails,
+          values.nominationType,
+        ]);
 
         return (
           <Form>
@@ -323,12 +305,21 @@ const Beneficiaries = (props) => {
                           <Option key={"Non Binding "} value={"Non Binding "}>
                             Non Binding{" "}
                           </Option>
+                          {extraValue.includes(
+                            props?.modalObject?.ParentModalObject?.title.split(
+                              "_"
+                            )[1]
+                          ) && (
+                            <Option key={"Reversionary Beneficiary"}>
+                              Reversionary Beneficiary
+                            </Option>
+                          )}
                         </Select>
                       </ConfigProvider>
                     </div>
 
                     <p className="text-end mb-0">
-                      {props.modalObject.question || "How many beneficiaries?"}
+                      {props.modalObject.question || "Number of Beneficiaries:"}
                     </p>
                     <div style={{ minWidth: "10%" }}>
                       <ConfigProvider
@@ -355,11 +346,20 @@ const Beneficiaries = (props) => {
                             triggerNode.parentNode
                           }
                         >
-                          {Array.from({ length: 10 }, (_, i) => (
-                            <Option key={i} value={i + 1}>
-                              {i + 1}
-                            </Option>
-                          ))}
+                          {Array.from(
+                            {
+                              length:
+                                values?.nominationType ==
+                                "Reversionary Beneficiary"
+                                  ? 1
+                                  : 10,
+                            },
+                            (_, i) => (
+                              <Option key={i} value={i + 1}>
+                                {i + 1}
+                              </Option>
+                            )
+                          )}
                         </Select>
                       </ConfigProvider>
                     </div>
@@ -368,7 +368,7 @@ const Beneficiaries = (props) => {
                   {values.NumberOfMap && (
                     <div className="mt-2 All_Client reportSection">
                       <AntdTable
-                        columns={columns}
+                        columns={column}
                         data={dataRows}
                         values={values}
                         setFieldValue={setFieldValue}

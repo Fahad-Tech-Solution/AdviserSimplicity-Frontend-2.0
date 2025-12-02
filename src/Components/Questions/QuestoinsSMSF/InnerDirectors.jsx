@@ -22,6 +22,12 @@ const InnerDirectors = (props) => {
     }
   });
 
+  let {
+    title,
+    question = "Number of Directors :",
+    columnHead = "Directors Names",
+  } = props.modalObject;
+
   const initialValues = {
     NumberOfMap: "",
     directors: [],
@@ -35,8 +41,6 @@ const InnerDirectors = (props) => {
     const key = modalObject?.key;
     const values = modalObject?.values;
 
-    console.log(props.modalObject.stakeHolder, "innerDirectors Form ");
-
     let savedDirectors = [];
 
     if (props.modalObject.stakeHolder) {
@@ -44,7 +48,8 @@ const InnerDirectors = (props) => {
         props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
       );
       let BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
-      if (index) {
+      console.log(index, BaseKey, "index, BaseKey");
+      if (index !== undefined && index !== null) {
         savedDirectors =
           values?.[BaseKey]?.[index]?.directorsOfCorporateTrustee;
       } else {
@@ -103,7 +108,7 @@ const InnerDirectors = (props) => {
       width: 60,
     },
     {
-      title: "Director Name",
+      title: columnHead,
       dataIndex: "directorName",
       key: "directorName",
       type: "text",
@@ -143,9 +148,7 @@ const InnerDirectors = (props) => {
                 <div className="row justify-content-center">
                   {/* LABEL + SELECT */}
                   <div className="d-flex flex-row justify-content-center align-items-center gap-2">
-                    <p className="text-end mt-3">
-                      Number of {props.modalObject.title} 
-                    </p>
+                    <p className="text-end mt-3">{question}</p>
 
                     <div style={{ minWidth: "10%" }}>
                       <ConfigProvider

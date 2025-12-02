@@ -251,7 +251,7 @@ const EstatePlanningWill = (props) => {
       title: "Estate Planning Requirements",
       dataIndex: "estatePlanningRadio",
       key: "estatePlanning",
-      type: "yesnoModal",
+      type: "text-Modal",
       width: 170,
       handleInnerModal,
       callBack: true,

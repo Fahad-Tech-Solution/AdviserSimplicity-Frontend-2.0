@@ -10,6 +10,7 @@ import {
   openNotificationSuccess,
   toCommaAndDollar,
   RenderName,
+  replacePlaceholderWithLabel,
 } from "../../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
 import InnerModal from "./InnerModal";
@@ -86,7 +87,7 @@ const SuperFunds = (props) => {
 
     const selectedPlatformId = values?.[BaseKey]?.[index]?.platformName || "";
 
-    if (!selectedPlatformId && key === "balanceBenefit") {
+    if (!selectedPlatformId) {
       openNotificationSuccess(
         "error",
         "topRight",
@@ -101,10 +102,19 @@ const SuperFunds = (props) => {
         (elem) => elem._id === selectedPlatformId
       ) || [];
 
+    let title = `${RenderName(
+      props.modalObject.stakeHolder.replace(".", "")
+    )}_${replacePlaceholderWithLabel(
+      bankDetailObj?.SuperannuationFunds?.map((elem) => ({
+        value: elem._id,
+        label: elem.platformName,
+      })),
+      values?.[BaseKey]?.[index].platformName,
+      innerModalTitle
+    )}`;
+
     setModalObject({
-      title: `${RenderName(
-        props.modalObject.stakeHolder.replace(".", "")
-      )}${innerModalTitle}`,
+      title,
       question,
       key,
       stakeHolder,
@@ -210,11 +220,11 @@ const SuperFunds = (props) => {
       placeholder: "Member Number",
     },
     {
-      title: "Balance & Benefit Details",
+      title: "Balance and Details ",
       dataIndex: "balanceBenefit",
       key: "balanceBenefit",
       type: "number-toComma-Modal",
-      innerModalTitle: "_Balance & Benefit Details",
+      innerModalTitle: "<CFE>_Balnace and Benefits",
       placeholder: "Balance Benefit",
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
@@ -231,7 +241,7 @@ const SuperFunds = (props) => {
       dataIndex: "groupInsurance",
       key: "groupInsurance",
       type: "yesnoModal",
-      innerModalTitle: "_Group Insurance",
+      innerModalTitle: "<CFE>_Group Insurance",
       placeholder: "Group Insurance",
       callBack: true,
       func: (innerModalTitle, values, key, stakeHolder) =>
@@ -249,7 +259,7 @@ const SuperFunds = (props) => {
       dataIndex: "contributions",
       key: "contributions",
       type: "yesnoModal",
-      innerModalTitle: "_Contributions",
+      innerModalTitle: "<CFE>_Contributions",
       placeholder: "Contributions",
       callBack: true,
       func: (innerModalTitle, values, key, stakeHolder) =>
@@ -258,8 +268,8 @@ const SuperFunds = (props) => {
           key,
           stakeHolder,
           values,
-          "Contributions",
-          `How many Contributions do ${nameSet} have ?`
+          "<CFE>_Contributions",
+          `Financial year Start Date:`
         ),
     },
     {
@@ -267,7 +277,7 @@ const SuperFunds = (props) => {
       dataIndex: "nominatedBeneficiaries",
       key: "nominatedBeneficiaries",
       type: "yesnoModal",
-      innerModalTitle: "_Beneficiaries",
+      innerModalTitle: "<CFE>_Beneficiaries",
       placeholder: "Beneficiaries",
       callBack: true,
       func: (innerModalTitle, values, key, stakeHolder) =>
@@ -277,7 +287,7 @@ const SuperFunds = (props) => {
           stakeHolder,
           values,
           "Beneficiaries",
-          `How many beneficiaries do ${nameSet} have :`
+          `Number of Beneficiaries:`
         ),
     },
     {

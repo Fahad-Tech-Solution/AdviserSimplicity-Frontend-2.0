@@ -648,7 +648,7 @@ const PersonalDetailNew = () => {
       type: "yesno",
       key: "depenantChild",
       CheckError: true,
-      width: 100,
+      width: 50,
     },
   ];
 
@@ -1168,6 +1168,7 @@ const PersonalDetailNew = () => {
                             name="numberOfChildren"
                             as="select"
                             className="form-select"
+                            disabled={!isEditing}
                           >
                             {[0, 1, 2, 3, 4, 5].map((num) => (
                               <option key={num} value={num}>

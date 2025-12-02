@@ -109,7 +109,6 @@ const InnerModal = (props) => {
     "Invested in Annuities",
     "Property Loan",
     "Risk Goals",
-    "Business as Company Structure",
     "Business as Trusts",
     "Pension Benefits",
     "SMSF_Australian Shares/ETFs ",
@@ -127,8 +126,8 @@ const InnerModal = (props) => {
     "Salary Packaging",
     "Contributions",
     "Group Cover",
-    "Super Funds",
-    "Annuities",
+    "Portfolio Value",
+    "Annual Pension Payment",
   ]; // Add other titles that should use "xl" here
 
   const xlKeys = [
@@ -161,9 +160,19 @@ const InnerModal = (props) => {
     "New Pension Rollover",
     "Home Loan",
     "Balance Rollover Amount",
+    "Group Insurance",
+    "Super Funds",
+    "Account Based Pension",
+    "Annuities",
+    "Business as Company Structure",
+    "Business as Trusts Structure",
   ];
 
-  let mdTitles = ["Other Percentage Amount", "Trustee Name"];
+  let mdTitles = [
+    "Other Percentage Amount",
+    "Trustee Name",
+    "Company Directors",
+  ];
 
   let [size, setSize] = useState("md");
 
@@ -172,7 +181,9 @@ const InnerModal = (props) => {
       let currentTitle = props.modalObject.title;
 
       if (currentTitle.includes("_")) {
-        currentTitle = currentTitle.split("_").slice(1)[0];
+        currentTitle = currentTitle.split("_").slice(1)[
+          currentTitle.split("_").slice(1).length - 1
+        ];
       }
 
       let modalSize = "lg"; // Default size

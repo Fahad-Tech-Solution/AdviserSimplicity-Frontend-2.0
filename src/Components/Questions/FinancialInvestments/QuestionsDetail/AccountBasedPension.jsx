@@ -19,6 +19,7 @@ import {
   openNotificationSuccess,
   toCommaAndDollar,
   RenderName,
+  replacePlaceholderWithLabel,
 } from "../../../Assets/Api/Api";
 
 const AntdTable = DynamicTableForInputsSection("antd");
@@ -115,7 +116,7 @@ const AccountBasedPension = (props) => {
       "";
 
     // for balanceBenefitDetailsArray we don't force selection; original did not require platform select here
-    if (!selectedPlatformId && key === "balanceBenefit") {
+    if (!selectedPlatformId) {
       openNotificationSuccess(
         "error",
         "topRight",
@@ -132,10 +133,19 @@ const AccountBasedPension = (props) => {
       Platform ||
       {};
 
+    let title = `${RenderName(
+      props.modalObject.stakeHolder.replace(".", "")
+    )}${replacePlaceholderWithLabel(
+      bankDetailObj?.AccountBasedPensions?.map((elem) => ({
+        value: elem._id,
+        label: elem.platformName,
+      })),
+      values?.[BaseKey]?.[index].platformName,
+      innerModalTitle
+    )}`;
+
     setModalObject({
-      title: `${RenderName(
-        props.modalObject.stakeHolder.replace(".", "")
-      )}${innerModalTitle}`,
+      title,
       question,
       key,
       stakeHolder,
@@ -254,11 +264,11 @@ const AccountBasedPension = (props) => {
       placeholder: "Member Number",
     },
     {
-      title: "Balance",
+      title: "Balance and Details",
       dataIndex: "balanceBenefit",
       key: "balanceBenefit",
       type: "number-toComma-Modal",
-      innerModalTitle: "_Balance & Benefit Details",
+      innerModalTitle: "_<CFE>_Balance & Benefit Details",
       placeholder: "Balance Benefit",
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
@@ -267,7 +277,7 @@ const AccountBasedPension = (props) => {
           stakeHolder,
           values,
           "Balance Benefit Details",
-          `How many Benefit Details and Components do ${nameSet} have ?`
+          `Number of Balance & Benefit Details:`
         ),
       errorHandler: ShowError,
     },
@@ -276,7 +286,7 @@ const AccountBasedPension = (props) => {
       dataIndex: "pensionPayment",
       key: "pensionPayment",
       type: "number-toComma-Modal",
-      innerModalTitle: "_Annual Pension Payment",
+      innerModalTitle: "_<CFE>_Annual Pension Payment",
       placeholder: "Pension Payment",
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
@@ -293,7 +303,7 @@ const AccountBasedPension = (props) => {
       dataIndex: "nominatedBeneficiaries",
       key: "nominatedBeneficiaries",
       type: "yesnoModal",
-      innerModalTitle: "_Beneficiaries",
+      innerModalTitle: "_<CFE>_Beneficiaries",
       placeholder: "Beneficiaries",
       callBack: true,
       func: (innerModalTitle, values, key, stakeHolder) =>
@@ -303,7 +313,7 @@ const AccountBasedPension = (props) => {
           stakeHolder,
           values,
           "Beneficiaries",
-          `How many beneficiaries do ${nameSet} have :`
+          `Number of Beneficiaries:`
         ),
     },
     {

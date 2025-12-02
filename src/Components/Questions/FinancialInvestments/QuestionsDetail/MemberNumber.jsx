@@ -2,7 +2,11 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Form, Formik } from "formik";
 import { useRecoilValue } from "recoil";
 import { BankDetail, defaultUrl } from "../../../../Store/Store";
-import { toCommaAndDollar, RenderName } from "../../../Assets/Api/Api";
+import {
+  toCommaAndDollar,
+  RenderName,
+  replacePlaceholderWithLabel,
+} from "../../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
 import InnerModal from "./InnerModal";
 import DatePicker from "react-datepicker";
@@ -45,29 +49,17 @@ const MemberNumber = (props) => {
   };
 
   const handleInnerModal = (innerModalTitle, values, key, stakeHolder) => {
-    console.log({
-      title:
-        RenderName(
-          props.modalObject.ParentModalObject.stakeHolder.replace(".", "")
-        ) + innerModalTitle,
-      question: `How many Underlying Investments does ${RenderName(
+    let title = `${
+      RenderName(
         props.modalObject.ParentModalObject.stakeHolder.replace(".", "")
-      )} have :`,
-      key,
-      editArray: values?.[key + "Array"] || [],
-      values,
-      Platform: props.modalObject.Platform,
-      modalObject: props.modalObject,
-    });
+      ) +
+      "_" +
+      props.modalObject.title.split("_").slice(1)[0] +
+      "_Portfolio Value"
+    }`;
 
     setModalObject({
-      title:
-        RenderName(
-          props.modalObject.ParentModalObject.stakeHolder.replace(".", "")
-        ) + innerModalTitle,
-      question: `How many Underlying Investments does ${RenderName(
-        props.modalObject.ParentModalObject.stakeHolder.replace(".", "")
-      )} have :`,
+      title,
       key,
       editArray: values?.[key + "Array"] || [],
       values,

@@ -3,6 +3,8 @@ import axios from "axios";
 import { Image } from "react-bootstrap";
 import { FaInfoCircle } from "react-icons/fa";
 
+import dayjs from "dayjs";
+
 import SVGCoin from "../../../CashFlow/CashFlowAssets/Cast_Flow/SVG/SVG-Doller-Coin.svg";
 import { getJwtToken, getUserDetail } from "../../../Store/recoilUtils";
 
@@ -883,6 +885,41 @@ const calculateExpectedTotal = (
   }
 };
 
+function replacePlaceholderWithLabel(options, value, titleTemplate) {
+  if (!options || !Array.isArray(options)) return titleTemplate;
+  if (!value) return titleTemplate;
+
+  const found = options.find((opt) => opt.value === value);
+  const label = found?.label || "";
+
+  return titleTemplate.replace("<CFE>", label);
+}
+
+const parseDateInput = (value) => {
+  if (!value) return null;
+
+  // Remove all non-digit characters
+  const digits = value.replace(/\D/g, "");
+
+  // If user entered 8 digits like 01012000 → DDMMYYYY
+  if (digits.length === 8) {
+    const day = digits.slice(0, 2);
+    const month = digits.slice(2, 4);
+    const year = digits.slice(4);
+    const dateStr = `${day}/${month}/${year}`;
+    const parsed = dayjs(dateStr, "DD/MM/YYYY", true);
+    if (parsed.isValid()) return parsed;
+  }
+
+  // Fallback: try normal dayjs parsing
+  const fallback = dayjs(
+    value,
+    ["DD/MM/YYYY", "D/M/YYYY", "DD-MM-YYYY", "D-M-YYYY"],
+    true
+  );
+  return fallback.isValid() ? fallback : null;
+};
+
 export {
   DeleteAxios,
   GetAxios,
@@ -924,4 +961,6 @@ export {
   getNestedValue,
   sumArrayValues,
   calculateExpectedTotal,
+  replacePlaceholderWithLabel,
+  parseDateInput,
 };

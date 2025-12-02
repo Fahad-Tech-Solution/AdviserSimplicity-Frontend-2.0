@@ -129,6 +129,7 @@ const AnnualPensionPaymentInnerModal = (props) => {
       placeholder: "Select Frequency",
       callBack: true,
       func: Calculate,
+      selectedOptionValue: true,
     },
     {
       title: "Total",

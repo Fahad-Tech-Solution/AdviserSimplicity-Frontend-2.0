@@ -3,6 +3,8 @@ import { Table as BootstrapTable, Button } from "react-bootstrap";
 import { Table as AntTable, Typography } from "antd";
 import DynamicFormField from "../Dynamic/DynamicFormField";
 import { ConvertDate } from "../Api/Api";
+import { Grid } from "antd";
+const { useBreakpoint } = Grid;
 
 // Move helper outside to prevent recreation
 const getNestedValue = (obj, path) => {
@@ -152,65 +154,38 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
       if (col?.type === "select-multi-antd")
         return Array.isArray(value) ? value.join(", ") : value || "";
       if (
+        col?.type === "text-Modal" ||
         col?.type === "number-toComma-Modal" ||
         (col?.type === "yesnoModal" && value === "Yes") ||
         col?.type === "modal"
       ) {
         return (
           <div className="d-flex align-items-center justify-content-left gap-3">
-            {col?.type === "number-toComma-Modal" && (
-              <DynamicFormField
-                fieldType="modal"
-                name={col?.dataIndex || ""}
-                placeholder={col?.placeholder || ""}
-                options={col?.options || []}
-                values={values}
-                setFieldValue={setFieldValue}
-                handleChange={handleChange}
-                handleBlur={handleBlur}
-                handleInnerModal={
-                  col?.func ||
-                  col?.handleInnerModal ||
-                  (() => {
-                    console.log("No function defined");
-                  })
-                }
-                innerModalTitle={
-                  record?.innerModalTitle || col?.innerModalTitle || ""
-                }
-                all={col || {}}
-                {...(record?.stakeHolder
-                  ? { stakeHolder: record.stakeHolder + "." }
-                  : {})}
-              />
-            )}
             {value}
-            {col?.type !== "number-toComma-Modal" && (
-              <DynamicFormField
-                fieldType="modal"
-                name={col?.dataIndex || ""}
-                placeholder={col?.placeholder || ""}
-                options={col?.options || []}
-                values={values}
-                setFieldValue={setFieldValue}
-                handleChange={handleChange}
-                handleBlur={handleBlur}
-                handleInnerModal={
-                  col?.func ||
-                  col?.handleInnerModal ||
-                  (() => {
-                    console.log("No function defined");
-                  })
-                }
-                innerModalTitle={
-                  record?.innerModalTitle || col?.innerModalTitle || ""
-                }
-                all={col || {}}
-                {...(record?.stakeHolder
-                  ? { stakeHolder: record.stakeHolder + "." }
-                  : {})}
-              />
-            )}
+            <DynamicFormField
+              fieldType="modal"
+              name={col?.dataIndex || ""}
+              placeholder={col?.placeholder || ""}
+              options={col?.options || []}
+              values={values}
+              setFieldValue={setFieldValue}
+              handleChange={handleChange}
+              handleBlur={handleBlur}
+              handleInnerModal={
+                col?.func ||
+                col?.handleInnerModal ||
+                (() => {
+                  console.log("No function defined");
+                })
+              }
+              innerModalTitle={
+                record?.innerModalTitle || col?.innerModalTitle || ""
+              }
+              all={col || {}}
+              {...(record?.stakeHolder
+                ? { stakeHolder: record.stakeHolder + "." }
+                : {})}
+            />
           </div>
         );
       }
@@ -299,10 +274,13 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
     // const allColumns = [...columns, actionColumn];
     const allColumns = [...columns];
 
+    const screens = useBreakpoint();
+
     // ✅ ANT DESIGN TABLE
     if (type === "antd") {
       return (
         <AntTable
+          tableLayout="fixed"
           columns={allColumns.map((col) => {
             if (col.key === "action") {
               return {
@@ -331,7 +309,14 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
             className: "custom-pagination",
           }}
           rowKey="key"
-          scroll={{ x: "max-content" }}
+          // scroll={{ x: "max-content" }} following code is to adjust table width
+          scroll={{
+            x: isEditing
+              ? screens.xxl
+                ? data.length * 500
+                : "max-content"
+              : "max-content",
+          }}
         />
       );
     }

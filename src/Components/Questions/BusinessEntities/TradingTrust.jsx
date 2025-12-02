@@ -100,23 +100,35 @@ const TradingTrust = (props) => {
   };
 
   let handleInnerModal = (innerModalTitle, values, key, stakeHolder) => {
-    console.log(
-      "handleInnerModal: ",
-      innerModalTitle,
-      values,
-      key,
-      stakeHolder
-    );
     let ParentModal = props.modalObject.title;
+    let title = innerModalTitle;
+    let question = "";
+    let columnHead = "";
+    const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
+    const BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
+
+    if (values?.[BaseKey]?.[index]?.trusteeType == "Corporate") {
+      title = "Company Directors";
+      question = "Number of Directors :";
+      columnHead = "Director Name";
+    } else {
+      title = "Trustee Name";
+      question = "Number of Trustees :";
+      columnHead = "Trustee Name";
+    }
+
     setModalObject({
-      title: innerModalTitle,
+      title,
       innerModalTitle,
       values,
       key,
       stakeHolder,
+      columnHead,
+      question,
       ParentModal,
       directorLimit: 4,
     });
+
     setFlagState(true);
   };
 
@@ -131,9 +143,16 @@ const TradingTrust = (props) => {
       title: "Business Name",
       dataIndex: "businessName",
       key: "businessName",
-      type: "text",
+      type: "textarea",
       width: 200,
       placeholder: "Business Name",
+    },
+    {
+      title: "Postcode/Suburb",
+      dataIndex: "postcodeSuburb",
+      type: "postcode-antd",
+      key: "postcodeSuburb",
+      width: 230,
     },
     {
       title: "ABN",
@@ -160,7 +179,7 @@ const TradingTrust = (props) => {
       width: 180,
       ModalOption: ["Corporate", "Individual"], // 👈 add this — triggers modal icon when selected
       func: handleInnerModal,
-      innerModalTitle: "Trustee Name", // optional but recommended
+      innerModalTitle: "Company Directors", // optional but recommended
     },
     {
       title: "Trustee Name",
@@ -222,6 +241,7 @@ const TradingTrust = (props) => {
               owner: i + 1,
               stakeHolder: `tradingTrusts[${i}]`,
               businessName: values.tradingTrusts?.[i]?.businessName || "",
+              postcodeSuburb: values.tradingTrusts?.[i]?.postcodeSuburb || "",
               aBN: values.tradingTrusts?.[i]?.aBN || "",
               businessAddress: values.tradingTrusts?.[i]?.businessAddress || "",
               trusteeType: values.tradingTrusts?.[i]?.trusteeType || "",
@@ -254,7 +274,14 @@ const TradingTrust = (props) => {
             </InnerModal>
 
             <div className="d-flex justify-content-center align-items-center gap-4">
-              <p className="text-end mt-1 pt-2">Number of {title}:</p>
+              <p
+                className="text-end mt-1 pt-2"
+                onClick={() => {
+                  console.log(values);
+                }}
+              >
+                Number of {title}:
+              </p>
               <div style={{ minWidth: "10%" }}>
                 <ConfigProvider
                   theme={{

@@ -75,7 +75,6 @@ const EstatePlanningPOA = (props) => {
   let DefaultUrl = useRecoilValue(defaultUrl);
 
   let onSubmit = async (values) => {
-    
     let obj = { ...values };
     obj.clientFK = localStorage.getItem("UserID");
 
@@ -157,7 +156,6 @@ const EstatePlanningPOA = (props) => {
           value: "partner",
           label: personalDetailObj.partner?.partnerPreferredName || "Partner",
         },
-        { value: "together", label: `${RenderName("joint")}` },
       ]
     : [
         {
@@ -172,13 +170,11 @@ const EstatePlanningPOA = (props) => {
       return;
     }
     setModalObject({
-      title,
+      title: title + " for " + RenderName(stackHolder.replace(".", "")),
       key,
       values, // ✅ correct property
       stackHolder, // ✅ correct key name expected by DynamicDescription
-      question: `Please provide the details for ${RenderName(
-        stackHolder.replace(".", "")
-      )}'s ${key === "POAName" ? "Power of Attorney" : ""}:`,
+      question: `Number of ${key === "POAName" ? "Power of Attorney's " : ""}:`,
     });
     setFlagState(true);
   };
@@ -260,17 +256,6 @@ const EstatePlanningPOA = (props) => {
               POAType: values?.partner?.POAType || "",
               yearSetUp: values?.partner?.yearSetUp || "",
               POAName: values?.partner?.POAName.length || "",
-            });
-          }
-
-          if (values.owner.includes("together") && UserStatus === "Married") {
-            rows.push({
-              key: "client",
-              stakeHolder: "client",
-              owner: RenderName("joint"),
-              POAType: values?.client?.POAType || "",
-              yearSetUp: values?.client?.yearSetUp || "",
-              POAName: values?.client?.POAName.length || "",
             });
           }
 

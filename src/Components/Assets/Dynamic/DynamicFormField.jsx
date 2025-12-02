@@ -12,6 +12,7 @@ import {
   handleInputKeyDown,
   handleInputBlur,
   toCommaAndDollar,
+  parseDateInput,
 } from "../Api/Api";
 import DynamicYesNo from "../../Questions/FinancialInvestments/QuestionsDetail/DynamicYesNo";
 import {
@@ -128,6 +129,57 @@ const DynamicFormField = ({
             />
           )}
         </>
+      );
+
+    case "text-Modal":
+      return (
+        <React.Fragment>
+          <InputGroup className={`${all.extraClass}`}>
+            <Field
+              type="text"
+              placeholder={placeholder}
+              name={stakeHolder ? stakeHolder + name : name}
+              id={name}
+              className={`form-control inputDesignDoubleInput ${all.extraClass}`}
+              onChange={(e) => {
+                const value = e.target.value;
+                setFieldValue(stakeHolder ? stakeHolder + name : name, value);
+
+                if (all.callBack) {
+                  all.inputChangeFunc(
+                    values,
+                    setFieldValue,
+                    e.target,
+                    stakeHolder
+                  );
+                }
+              }}
+              disabled={
+                typeof all?.disabled === "function"
+                  ? all.disabled(values, stakeHolder) // pass form values to compute disabled
+                  : all?.disabled || false
+              }
+            />
+
+            <Button
+              className="btn bgColor modalBtn border-0"
+              id="button-addon2"
+              onClick={() => {
+                all.func(innerModalTitle, values, all.key, stakeHolder);
+              }}
+            >
+              <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+            </Button>
+          </InputGroup>
+          <div className="invalid-feedback">{all.invalidMessage}</div>
+          {all?.CheckError && (
+            <ErrorMessage
+              name={stakeHolder ? stakeHolder + name : name}
+              component="div"
+              className="text-danger small mt-1"
+            />
+          )}
+        </React.Fragment>
       );
 
     case "partner-home-address":
@@ -635,6 +687,13 @@ const DynamicFormField = ({
             }}
             onBlur={() => {
               const fieldName = buildFieldName(stakeHolder, name);
+              const parsedDate = parseDateInput(e.target.value);
+              if (parsedDate) {
+                setFieldValue(fieldName, parsedDate.toISOString());
+              } else {
+                // Optional: clear invalid input
+                setFieldValue(fieldName, "");
+              }
               handleBlur({ target: { name: fieldName } });
             }}
             id={buildFieldName(stakeHolder, name)}
@@ -649,6 +708,29 @@ const DynamicFormField = ({
             getPopupContainer={(triggerNode) =>
               triggerNode.closest("table") || triggerNode
             }
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault(); // ⬅ Prevent form submission on Enter
+                const fieldName = buildFieldName(stakeHolder, name);
+                const parsedDate = parseDateInput(e.target.value);
+                if (parsedDate) {
+                  setFieldValue(fieldName, parsedDate.toISOString());
+                } else {
+                  // Optional: clear invalid input
+                  setFieldValue(fieldName, "");
+                }
+                handleBlur({ target: { name: fieldName } });
+
+                if (all.callBack) {
+                  all.func(
+                    values,
+                    setFieldValue,
+                    { name: fieldName, value: parsedDate.toISOString() },
+                    stakeHolder
+                  );
+                }
+              }
+            }}
           />
           {all?.CheckError && (
             <ErrorMessage
@@ -756,7 +838,6 @@ const DynamicFormField = ({
       const currentValue = stakeHolder
         ? getNestedValue(values, `${stakeHolder}${name}`)
         : values?.[name];
-
 
       const showModalButton = Array.isArray(all.ModalOption)
         ? all.ModalOption.includes(currentValue)

@@ -46,8 +46,12 @@ const AccountBasedBalance = (props) => {
 
   const handleInnerModal = (innerModalTitle, values, key, stakeHolder) => {
     setModalObject({
-      title: props.modalObject.title + innerModalTitle,
-      question: `How many underlying investments does this account have:`,
+      title:
+        props.modalObject.title.split("_")[0] +
+        "_" +
+        props.modalObject.title.split("_").slice(1)[0] +
+        innerModalTitle,
+      question: `Number of Investments:`,
       key,
       editArray: values?.[key + "Array"] || [],
       values,

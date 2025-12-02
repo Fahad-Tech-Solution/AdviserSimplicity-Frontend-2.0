@@ -12,6 +12,23 @@ import axios from "axios";
 import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
 import { ConfigProvider, Select, Tooltip } from "antd";
 import { FaInfoCircle } from "react-icons/fa";
+import * as Yup from "yup";
+
+const ShareSchema = Yup.object().shape({
+  NumberOfMap: Yup.number().required("Required"),
+  shares: Yup.array().of(
+    Yup.object().shape({
+      ASXCode: Yup.string()
+        .nullable()
+        .matches(/^[A-Za-z0-9]+\.AX$/, "Format must be NAME.AX"),
+      companyName: Yup.string().nullable(),
+      sharePrice: Yup.string().nullable(),
+      shares: Yup.string().nullable(),
+      costBase: Yup.string().nullable(),
+      currentBalance: Yup.string().nullable(),
+    })
+  ),
+});
 
 const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
@@ -242,6 +259,7 @@ const AustralianShares = (props) => {
       type: "text",
       placeholder: "ASX Code",
       callBack: true,
+      CheckError: true,
       func: handleASXCodeChange,
     },
     {
@@ -299,6 +317,7 @@ const AustralianShares = (props) => {
       initialValues={initialValues}
       enableReinitialize
       innerRef={props.formRef}
+      validationSchema={ShareSchema}
       onSubmit={onSubmit}
     >
       {({ values, setFieldValue, handleBlur, handleChange }) => {

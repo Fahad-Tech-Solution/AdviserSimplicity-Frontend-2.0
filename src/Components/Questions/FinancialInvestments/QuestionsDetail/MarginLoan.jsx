@@ -51,7 +51,7 @@ const MarginLoan = (props) => {
       interestRate: "",
       loanTerm: "",
       loanTermRemaining: "",
-      deductibleLoanAmount: "",
+      deductibleLoanAmount: "100.00%",
     },
     partner: {
       lender: "",
@@ -61,7 +61,7 @@ const MarginLoan = (props) => {
       interestRate: "",
       loanTerm: "",
       loanTermRemaining: "",
-      deductibleLoanAmount: "",
+      deductibleLoanAmount: "100.00%",
     },
     joint: {
       lender: "",
@@ -71,7 +71,7 @@ const MarginLoan = (props) => {
       interestRate: "",
       loanTerm: "",
       loanTermRemaining: "",
-      deductibleLoanAmount: "",
+      deductibleLoanAmount: "100.00%",
     },
   };
 

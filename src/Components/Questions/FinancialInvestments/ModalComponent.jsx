@@ -125,7 +125,6 @@ const ModalComponent = (props) => {
     "Family Home",
     "Holiday Home",
     "Holiday Home Loan",
-    "Investment Properties",
     "Investment Property Loan",
     "Wills",
     "Power of Attorneys",
@@ -235,6 +234,7 @@ const ModalComponent = (props) => {
     "Credit Card",
     "Personal Loan",
     // "Account Based Pension",
+    "Investment Properties",
     "Family Trust Investment Properties",
     RenderName("client") + "_Pension Benefits",
     RenderName("partner") + "_Pension Benefits",
@@ -322,6 +322,10 @@ const ModalComponent = (props) => {
           <Modal.Title>
             {props.modalObject?.title === "Regular Living Expenses"
               ? props.modalObject?.title2 || props.modalObject?.title
+              : props.modalObject?.title === "Professional Advisers"
+              ? props.modalObject?.title +
+                " for " +
+                RenderName(props.modalObject?.Input)
               : props.modalObject?.title}
           </Modal.Title>
         </Modal.Header>

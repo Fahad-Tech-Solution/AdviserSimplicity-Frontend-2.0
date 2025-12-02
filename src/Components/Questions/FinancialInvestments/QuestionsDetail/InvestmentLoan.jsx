@@ -101,7 +101,7 @@ const InvestmentLoan = (props) => {
           );
           setFieldValue(
             `SMSF.deductibleLoanAmount`,
-            managedFundsLOC.SMSF.deductibleLoanAmount || ""
+            managedFundsLOC.SMSF.deductibleLoanAmount || "100.00%"
           );
         }
       }
@@ -144,7 +144,7 @@ const InvestmentLoan = (props) => {
           );
           setFieldValue(
             `trust.deductibleLoanAmount`,
-            managedFundsLOC.trust.deductibleLoanAmount || ""
+            managedFundsLOC.trust.deductibleLoanAmount || "100.00%"
           );
         }
       }
@@ -198,7 +198,7 @@ const InvestmentLoan = (props) => {
             );
             setFieldValue(
               `client.deductibleLoanAmount`,
-              managedFundsLOC.client.deductibleLoanAmount || ""
+              managedFundsLOC.client.deductibleLoanAmount || "100.00%"
             );
           }
         }
@@ -254,7 +254,7 @@ const InvestmentLoan = (props) => {
             );
             setFieldValue(
               `partner.deductibleLoanAmount`,
-              managedFundsLOC.partner.deductibleLoanAmount || ""
+              managedFundsLOC.partner.deductibleLoanAmount || "100.00%"
             );
           }
         }
@@ -304,7 +304,7 @@ const InvestmentLoan = (props) => {
             );
             setFieldValue(
               `joint.deductibleLoanAmount`,
-              managedFundsLOC.joint.deductibleLoanAmount || ""
+              managedFundsLOC.joint.deductibleLoanAmount || "100.00%"
             );
           }
         }
@@ -523,8 +523,6 @@ const InvestmentLoan = (props) => {
     thisInput,
     stackHolder
   ) => {
-    console.log(stackHolder, "calculateAnnualRepayments");
-
     const cleanNumber = (val) => {
       if (val === undefined || val === null) return 0;
       if (typeof val === "number") return val;
@@ -551,8 +549,6 @@ const InvestmentLoan = (props) => {
       default:
         break;
     }
-
-    console.log(repaymentsAmount, frequency, "repaymentsAmount, frequency");
 
     const annualRepayments = repaymentsAmount * frequency;
 
@@ -713,7 +709,13 @@ const InvestmentLoan = (props) => {
                 stakeHolder: "client",
                 owner: RenderName("client"),
                 ...(values.client || {}),
+                deductibleLoanAmount:
+                  values.client?.deductibleLoanAmount || "100.00%",
               });
+              setFieldValue(
+                "client.deductibleLoanAmount",
+                values.client?.deductibleLoanAmount || "100.00%"
+              );
             }
 
             if (ownerArray.includes("partner")) {
@@ -722,7 +724,13 @@ const InvestmentLoan = (props) => {
                 stakeHolder: "partner",
                 owner: RenderName("partner"),
                 ...(values.partner || {}),
+                deductibleLoanAmount:
+                  values.partner?.deductibleLoanAmount || "100.00%",
               });
+              setFieldValue(
+                "partner.deductibleLoanAmount",
+                values.partner?.deductibleLoanAmount || "100.00%"
+              );
             }
 
             if (ownerArray.includes("joint")) {
@@ -731,7 +739,13 @@ const InvestmentLoan = (props) => {
                 stakeHolder: "joint",
                 owner: RenderName("joint"),
                 ...(values.joint || {}),
+                deductibleLoanAmount:
+                  values.joint?.deductibleLoanAmount || "100.00%",
               });
+              setFieldValue(
+                "joint.deductibleLoanAmount",
+                values.joint?.deductibleLoanAmount || "100.00%"
+              );
             }
           }
 

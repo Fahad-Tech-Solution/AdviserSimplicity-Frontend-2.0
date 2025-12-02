@@ -126,6 +126,10 @@ const InvestmentPropertyDetails = (props) => {
           data.PropertyAddress || ""
         );
         setFieldValue(
+          `investmentProperties[${i}].postcodeSuburb`,
+          data.postcodeSuburb || ""
+        );
+        setFieldValue(
           `investmentProperties[${i}].CurrentValue`,
           data.CurrentValue || ""
         );
@@ -184,6 +188,7 @@ const InvestmentPropertyDetails = (props) => {
         .slice(0, numberOfMaps)
         .map((item) => ({
           PropertyAddress: item.PropertyAddress || "",
+          postcodeSuburb: item.postcodeSuburb || "",
           CurrentValue: item.CurrentValue || "",
           CostBase: item.CostBase || "",
           ClientOwnership: SwitchFlag ? item.ClientOwnership || "" : "",
@@ -354,9 +359,16 @@ const InvestmentPropertyDetails = (props) => {
       title: "Property Address",
       dataIndex: "PropertyAddress",
       key: "PropertyAddress",
-      type: "text",
+      type: "textarea",
       placeholder: "PropertyAddress",
       width: 200,
+    },
+    {
+      title: "Postcode/Suburb",
+      dataIndex: "postcodeSuburb",
+      type: "postcode-antd",
+      key: "postcodeSuburb",
+      width: 230,
     },
     {
       title: "Current Value",
@@ -378,6 +390,7 @@ const InvestmentPropertyDetails = (props) => {
       title: "Loan Balance",
       dataIndex: "propertyLoanDetails",
       key: "propertyLoanDetails",
+      disabled: true,
       type: "number-toComma-Modal",
       placeholder: "Loan Balance",
       width: 200,
@@ -424,6 +437,8 @@ const InvestmentPropertyDetails = (props) => {
               stakeHolder: `investmentProperties[${i}]`,
               PropertyAddress:
                 values.investmentProperties?.[i]?.PropertyAddress || "",
+              postcodeSuburb:
+                values.investmentProperties?.[i]?.postcodeSuburb || "",
               CurrentValue:
                 values.investmentProperties?.[i]?.CurrentValue || "",
               CostBase: values.investmentProperties?.[i]?.CostBase || "",

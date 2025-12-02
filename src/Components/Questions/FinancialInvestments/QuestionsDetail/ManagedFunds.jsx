@@ -12,6 +12,7 @@ import {
   PostAxios,
   PatchAxios,
   RenderName,
+  replacePlaceholderWithLabel,
 } from "../../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
 import InnerModal from "./InnerModal";
@@ -132,7 +133,13 @@ const ManagedFunds = (props) => {
       : props.modalObject.stakeHolder.replace(".", "");
 
     setModalObject({
-      title: titlePrefix + innerModalTitle,
+      title:
+        titlePrefix +
+        replacePlaceholderWithLabel(
+          getPlatformOptions(),
+          values?.[BaseKey]?.[index]?.platformName,
+          innerModalTitle
+        ),
       question: `Number of Investments :`,
       key,
       stakeHolder,
@@ -217,12 +224,12 @@ const ManagedFunds = (props) => {
 
     props.setFieldValue(
       props.modalObject.stakeHolder + "currentBalance",
-      toCommaAndDollar(totalCostBase)
+      toCommaAndDollar(totalFee)
     );
 
     props.setFieldValue(
       props.modalObject.stakeHolder + "costBase",
-      toCommaAndDollar(totalFee)
+      toCommaAndDollar(totalCostBase)
     );
 
     // 🚫 Clear related validation errors (if any)
@@ -285,7 +292,7 @@ const ManagedFunds = (props) => {
       key: "portfolioValue",
       type: "number-toComma-Modal",
       placeholder: "Portfolio Value",
-      innerModalTitle: "_Portfolio Value",
+      innerModalTitle: "_<CFE>_Portfolio Value",
       callBack: true,
       inputChangeFunc: CheckInputValue,
       func: handleInnerModal,
@@ -304,7 +311,7 @@ const ManagedFunds = (props) => {
       key: "serviceFee",
       type: "number-toComma-Modal",
       placeholder: "Service Fee",
-      innerModalTitle: "_CFS Investments_Annual Ongoing Fee",
+      innerModalTitle: "_<CFE>_Annual Ongoing Fee",
       callBack: true,
       inputChangeFunc: CheckInputValue,
       func: handleInnerModal,
@@ -363,7 +370,7 @@ const ManagedFunds = (props) => {
             </InnerModal>
 
             <div className="d-flex justify-content-center align-items-center gap-4">
-              <p className="text-end mt-1 pt-2 ">Number of {title} :</p>
+              <p className="text-end mt-1 pt-2 "> Number of Investments:</p>
               <div style={{ minWidth: "10%" }}>
                 <ConfigProvider
                   theme={{
