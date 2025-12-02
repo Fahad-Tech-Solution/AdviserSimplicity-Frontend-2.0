@@ -1,36 +1,37 @@
-import React, { useEffect, useState } from "react";
-import {
-  Routes,
-  Route,
-  useLocation,
-  useNavigate,
-  Navigate,
-} from "react-router-dom";
-
-import LoginForm from "./Components/Auth/LoginForm";
-import Register from "./Components/Auth/Register";
-import ForgetPassword from "./Components/Auth/ForgetPassword";
-import VerifyEmail from "./Components/Auth/VerifyEmail";
-import PasswordChange from "./Components/Auth/PasswordChange";
-import PricingTable from "./Components/SuperAdminComponent/PricingTable";
-import StripeRedirect from "./Components/SuperAdminComponent/StripeRedirect";
-
-import AuthRouts from "./MultiRoutes/AuthRouts";
-import SuperAdminRouts from "./MultiRoutes/SuperAdminRouts";
-import CashFlow from "./CashFlow/CashFlowComponent/CashFlow";
-
+import React, { useEffect, lazy, Suspense } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { Loading, LoggedInUserData, LoggedInUserTokenJwt } from "./Store/Store";
-
 import Aos from "aos";
 import "aos/dist/aos.css";
 import { Spin } from "antd";
 
 import "./App.css";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
-import Unauthorized from "./Components/Auth/Unauthorized";
-import Warning from "./Components/SuperAdminComponent/Warning";
-import BuyAdviserlink from "./Components/SuperAdminComponent/BuyAdviserlink";
+
+/* 🔥 Lazy-loaded pages */
+const LoginForm = lazy(() => import("./Components/Auth/LoginForm"));
+const Register = lazy(() => import("./Components/Auth/Register"));
+const ForgetPassword = lazy(() => import("./Components/Auth/ForgetPassword"));
+const VerifyEmail = lazy(() => import("./Components/Auth/VerifyEmail"));
+const PasswordChange = lazy(() => import("./Components/Auth/PasswordChange"));
+
+const PricingTable = lazy(() =>
+  import("./Components/SuperAdminComponent/PricingTable")
+);
+const StripeRedirect = lazy(() =>
+  import("./Components/SuperAdminComponent/StripeRedirect")
+);
+
+const AuthRouts = lazy(() => import("./MultiRoutes/AuthRouts"));
+const SuperAdminRouts = lazy(() => import("./MultiRoutes/SuperAdminRouts"));
+const CashFlow = lazy(() => import("./CashFlow/CashFlowComponent/CashFlow"));
+
+const Unauthorized = lazy(() => import("./Components/Auth/Unauthorized"));
+const Warning = lazy(() => import("./Components/SuperAdminComponent/Warning"));
+const BuyAdviserlink = lazy(() =>
+  import("./Components/SuperAdminComponent/BuyAdviserlink")
+);
 
 function ProtectedRoute({ element: Element, requiredPermissions = [] }) {
   const user = useRecoilValue(LoggedInUserData);
@@ -79,52 +80,72 @@ function App() {
         </div>
       )}
 
-      <Routes>
-        {/*✅ Public Routes */}
-        <Route path="/user/login" element={<LoginForm />} />
-        <Route path="/user/warning" element={<Warning />} />
-        <Route path="/user/register" element={<Register />} />
-        <Route path="/user/verify-email" element={<VerifyEmail />} />
-        <Route path="/forget-password" element={<ForgetPassword />} />
-        <Route path="/change-password" element={<PasswordChange />} />
-        <Route path="/pricing-table" element={<PricingTable />} />
-        <Route path="/buy-adviser-link" element={<BuyAdviserlink />} />
-        <Route path="/admin/login" element={<LoginForm />} />
-        <Route path="/stripe-redirect" element={<StripeRedirect />} />
+      {/* 🔥 Suspense fallback for lazy components */}
+      <Suspense
+        fallback={
+          <div
+            style={{
+              width: "100%",
+              height: "100vh",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Spin size="large" />
+          </div>
+        }
+      >
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/user/login" element={<LoginForm />} />
+          <Route path="/user/warning" element={<Warning />} />
+          <Route path="/user/register" element={<Register />} />
+          <Route path="/user/verify-email" element={<VerifyEmail />} />
+          <Route path="/forget-password" element={<ForgetPassword />} />
+          <Route path="/change-password" element={<PasswordChange />} />
+          <Route path="/pricing-table" element={<PricingTable />} />
+          <Route path="/buy-adviser-link" element={<BuyAdviserlink />} />
+          <Route path="/admin/login" element={<LoginForm />} />
+          <Route path="/stripe-redirect" element={<StripeRedirect />} />
 
-        {/* ✅ Protected Routes */}
-        <Route
-          path="/super/admin/*"
-          element={
-            <ProtectedRoute
-              element={SuperAdminRouts}
-              requiredPermissions={["superAdmin"]}
-            />
-          }
-        />
-        <Route
-          path="/user/cashflow/*"
-          element={
-            <ProtectedRoute
-              element={CashFlow}
-              requiredPermissions={["cashflow"]}
-            />
-          }
-        />
-        <Route
-          path="/user/*"
-          element={
-            <ProtectedRoute
-              element={AuthRouts}
-              requiredPermissions={["fact find", "prospects"]}
-            />
-          }
-        />
-        <Route path="/unauthorized" element={<Unauthorized />} />
+          {/* Protected Routes */}
+          <Route
+            path="/super/admin/*"
+            element={
+              <ProtectedRoute
+                element={SuperAdminRouts}
+                requiredPermissions={["superAdmin"]}
+              />
+            }
+          />
 
-        {/* 🔁 Catch-All Route (optional) */}
-        <Route path="*" element={<Navigate to="/user/login" replace />} />
-      </Routes>
+          <Route
+            path="/user/cashflow/*"
+            element={
+              <ProtectedRoute
+                element={CashFlow}
+                requiredPermissions={["cashflow"]}
+              />
+            }
+          />
+
+          <Route
+            path="/user/*"
+            element={
+              <ProtectedRoute
+                element={AuthRouts}
+                requiredPermissions={["fact find", "prospects"]}
+              />
+            }
+          />
+
+          <Route path="/unauthorized" element={<Unauthorized />} />
+
+          {/* Catch All */}
+          <Route path="*" element={<Navigate to="/user/login" replace />} />
+        </Routes>
+      </Suspense>
     </div>
   );
 }
