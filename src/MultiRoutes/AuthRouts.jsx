@@ -1,84 +1,35 @@
-import React, { useEffect, useState, lazy, Suspense } from "react";
+import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
-import { Layout, Spin } from "antd";
-
+import { Layout } from "antd";
 import AdminSideBar from "../Components/SideBar/AdminSideBar";
 import Options from "../Components/Options";
-import { Header } from "antd/es/layout/layout";
+import AllClients from "../GetComponents/AllClients";
+import ViewClient from "../GetComponents/ViewClient";
+import Dashboard from "../Components/Dashboard/Dashboard";
+import PersonalDetailNew from "../Components/PersonalDetails/PersonalDetailNew";
+import QuestionsNew from "../Components/Questions_New/QuestionsNew";
+import FinancialInvestments from "../Components/Questions/FinancialInvestments/FinancialInvestments";
+import AdditionalQueriesPersonalAssets from "../Components/Questions/AdditionalQueriesPersonalAssets/AdditionalQueriesPersonalAssets";
+import LifestyleAssetsAndDebt from "../Components/Questions/LifestyleAssetsAndDebt/LifestyleAssetsAndDebt";
+import AdditionalQueriesInvestment from "../Components/Questions/AdditionalQueriesInvestment/AdditionalQueriesInvestment";
+import AdditionalQueriesProfessionalAdvisor from "../Components/Questions/AdditionalQueriesProfessionalAdvisor/AdditionalQueriesProfessionalAdvisor";
+import QuestionsSMSF from "../Components/Questions/QuestoinsSMSF/QuestoinsSMSF";
+import EstatePlanning from "../Components/Questions/EstatePlanning/EstatePlanning";
+import AdditionalQueriesSuperAndRetirement from "../Components/Questions/AdditionalQueriesSuperAndRetirement/AdditionalQueriesSuperAndRetirement";
+import PersonalIncome from "../Components/Questions/PersonalIncome/PersonalIncome";
+import BusinessEntities from "../Components/Questions/BusinessEntities/BusinessEntities";
+import QuestionsFamily from "../Components/Questions/QuestoinsFamilyTrust/QuestoinsFamily";
+import GoalsObjectiveNew from "../Components/Goals&Objectives/GoalsObjectiveNew";
+import RiskProfileNew from "../Components/RiskProfile/RiskProfileNew";
+import PersonalInsuranceLife from "../Components/Questions/PersonalInsurance/LifeInsurance";
+import CDFclients from "../Components/CDFclients/CDFclients";
+import ProfileTemp from "../Components/Assets/ProfileSection/ProfileTemp";
+import MyTeam from "../Components/SuperAdminComponent/MyTeam";
 
+import { Header } from "antd/es/layout/layout";
 import { BankDetail, defaultUrl, Employees, Roles } from "../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { GetAxios } from "../Components/Assets/Api/Api";
-
-// 🔥 Lazy Load All Heavy Pages
-const AllClients = lazy(() => import("../GetComponents/AllClients"));
-const ViewClient = lazy(() => import("../GetComponents/ViewClient"));
-const Dashboard = lazy(() => import("../Components/Dashboard/Dashboard"));
-const PersonalDetailNew = lazy(() =>
-  import("../Components/PersonalDetails/PersonalDetailNew")
-);
-
-const QuestionsNew = lazy(() =>
-  import("../Components/Questions_New/QuestionsNew")
-);
-const FinancialInvestments = lazy(() =>
-  import("../Components/Questions/FinancialInvestments/FinancialInvestments")
-);
-const AdditionalQueriesPersonalAssets = lazy(() =>
-  import(
-    "../Components/Questions/AdditionalQueriesPersonalAssets/AdditionalQueriesPersonalAssets"
-  )
-);
-const LifestyleAssetsAndDebt = lazy(() =>
-  import(
-    "../Components/Questions/LifestyleAssetsAndDebt/LifestyleAssetsAndDebt"
-  )
-);
-const AdditionalQueriesInvestment = lazy(() =>
-  import(
-    "../Components/Questions/AdditionalQueriesInvestment/AdditionalQueriesInvestment"
-  )
-);
-const AdditionalQueriesProfessionalAdvisor = lazy(() =>
-  import(
-    "../Components/Questions/AdditionalQueriesProfessionalAdvisor/AdditionalQueriesProfessionalAdvisor"
-  )
-);
-const QuestionsSMSF = lazy(() =>
-  import("../Components/Questions/QuestoinsSMSF/QuestoinsSMSF")
-);
-const EstatePlanning = lazy(() =>
-  import("../Components/Questions/EstatePlanning/EstatePlanning")
-);
-const AdditionalQueriesSuperAndRetirement = lazy(() =>
-  import(
-    "../Components/Questions/AdditionalQueriesSuperAndRetirement/AdditionalQueriesSuperAndRetirement"
-  )
-);
-const PersonalIncome = lazy(() =>
-  import("../Components/Questions/PersonalIncome/PersonalIncome")
-);
-const BusinessEntities = lazy(() =>
-  import("../Components/Questions/BusinessEntities/BusinessEntities")
-);
-const QuestionsFamily = lazy(() =>
-  import("../Components/Questions/QuestoinsFamilyTrust/QuestoinsFamily")
-);
-
-const GoalsObjectiveNew = lazy(() =>
-  import("../Components/Goals&Objectives/GoalsObjectiveNew")
-);
-const RiskProfileNew = lazy(() =>
-  import("../Components/RiskProfile/RiskProfileNew")
-);
-const PersonalInsuranceLife = lazy(() =>
-  import("../Components/Questions/PersonalInsurance/LifeInsurance")
-);
-const CDFclients = lazy(() => import("../Components/CDFclients/CDFclients"));
-const ProfileTemp = lazy(() =>
-  import("../Components/Assets/ProfileSection/ProfileTemp")
-);
-const MyTeam = lazy(() => import("../Components/SuperAdminComponent/MyTeam"));
 
 const { Sider, Content } = Layout;
 
@@ -232,14 +183,7 @@ function AuthRouts() {
         collapsed={collapsed}
         onCollapse={setCollapsed}
         width={250}
-        // trigger={null}
-        // breakpoint="md"
-        // collapsedWidth="0"
-        style={{
-          background: "#fff",
-
-          borderRight: "1px solid #f0f0f0",
-        }}
+        style={{ background: "#fff", borderRight: "1px solid #f0f0f0" }}
       >
         <AdminSideBar collapsed={collapsed} setCollapsed={setCollapsed} />
       </Sider>
@@ -265,28 +209,15 @@ function AuthRouts() {
             padding: "1rem 0rem",
           }}
         >
-          <Suspense
-            fallback={
-              <div
-                className="d-flex justify-content-center align-items-center"
-                style={{ minHeight: "50vh" }}
-              >
-                <Spin size="large" />
-              </div>
-            }
-          >
-            <Routes>
-              {routeConfigs.map(({ path, element }, idx) => (
-                <Route
-                  key={path}
-                  path={path}
-                  element={
-                    path === "/dashboard" ? element(collapsed) : element()
-                  }
-                />
-              ))}
-            </Routes>
-          </Suspense>
+          <Routes>
+            {routeConfigs.map(({ path, element }, idx) => (
+              <Route
+                key={path}
+                path={path}
+                element={path === "/dashboard" ? element(collapsed) : element()}
+              />
+            ))}
+          </Routes>
         </Content>
       </Layout>
     </Layout>

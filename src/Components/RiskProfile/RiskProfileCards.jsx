@@ -43,44 +43,55 @@ const RiskProfileCards = (props) => {
 
   let { RiskGoals } = content;
 
-  let initialValues = {
-    client: {
-      question1: 1,
-      question2: 1,
-      question3: 1,
-      question4: 1,
-      question5: 1,
-      question6: 1,
-      question7: 1,
-      question8: 1,
-      riskGoal: "Conservative",
-      riskDescription: "",
-      happyWithResult: false,
-      confirmRiskProfileCheck1: false,
-      confirmRiskProfileCheck2: false,
-      confirmRiskProfileCheck3: false,
-      addNoteDescription: "",
-    },
-    partner: {
-      question1: 1,
-      question2: 1,
-      question3: 1,
-      question4: 1,
-      question5: 1,
-      question6: 1,
-      question7: 1,
-      question8: 1,
-      riskGoal: "Conservative",
-      riskDescription: "",
-      happyWithResult: false,
-      confirmRiskProfileCheck1: false,
-      confirmRiskProfileCheck2: false,
-      confirmRiskProfileCheck3: false,
-      addNoteDescription: "",
-    },
-    joinedProfile: "No",
-    currentQuestion: "5",
-  };
+  useEffect(() => {
+    const clientScore = calculateScore(values.client);
+    const partnerScore = calculateScore(values.partner);
+
+    console.log(clientScore, partnerScore);
+
+    const clientRiskGoal = getRiskGoal(clientScore, RiskGoals);
+    const partnerRiskGoal = getRiskGoal(partnerScore, RiskGoals);
+
+    setFieldValue("client.riskGoal", clientRiskGoal?.value || "");
+    setFieldValue("partner.riskGoal", partnerRiskGoal?.value || "");
+  }, []);
+
+  function getRiskGoal(score, RiskGoals) {
+    return (
+      RiskGoals.find(
+        (goal) => score >= goal.range.lowest && score <= goal.range.highest
+      ) || null
+    );
+  }
+
+  function calculateScore(obj) {
+    const questionKeys = [
+      "question1",
+      "question2",
+      "question3",
+      "question4",
+      "question5",
+      "question6",
+      "question7",
+      "question8",
+    ];
+
+    let total = 0;
+
+    questionKeys.forEach((key, index) => {
+      const value = obj[key];
+
+      if (index === 7) {
+        // question8 → ((value+1) * 2)
+        total += (value + 1) * 2;
+      } else {
+        // question1 → question7 → (value+1)
+        total += value + 1;
+      }
+    });
+
+    return total;
+  }
 
   let OpenModal = (title, values, innerKey, stackHolder, key) => {
     // alert(title + " ++ " + Input);
@@ -96,11 +107,8 @@ const RiskProfileCards = (props) => {
 
   let SelectedDiscription = (selectedValue) => {
     const currentIndex = RiskGoals.findIndex((q) => q.value === selectedValue);
-    // console.log(currentIndex, selectedValue, RiskGoals[currentIndex].des)
-    // if (currentIndex) {
     let { des } = RiskGoals[currentIndex] || "";
     return parse(des || "");
-    // }
   };
 
   return (

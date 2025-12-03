@@ -224,12 +224,7 @@ const RiskProfileNew = () => {
       route: "/",
       key: "LandingPage",
       question: "",
-      choices: [
-        "Less than one year",
-        "1 – 3 years",
-        "3 – 5 years",
-        "More than 5 years",
-      ],
+      choices: [""],
       imgUrl: RiskReward,
     },
     {
@@ -338,22 +333,14 @@ const RiskProfileNew = () => {
       key: "detection-matrix",
       question:
         "<div className='d-inline-block text-green'>Question 8: Your investment preferences – Asset allocation.</div> What level of investment risk are you comfortable with?",
-      choices: [
-        "No risk and I don’t want my capital to go down at all even if I get a 0% return on my money.",
-        "I prefer low risk and am comfortable allocating a small portion (up to 40%) of my money to the share market aiming for better returns than the cash rate.",
-        "I am comfortable with a medium level of risk and have my money allocated with similar amounts between the share market and cash and fixed interest/term deposits.",
-        "I would prefer to have my money invested in a well diversified portfolio which includes more than 600% to Australian and international shares and property with the balance to cash and fixed interest/term deposits.",
-        "I would prefer to have a minimum of  80% of my money invested in   Australian and international shares, possibly up to 100% if needed, aiming for higher returns even if there are significant ups and downs and wild swings like recent market events such as  COVID (2020), or the Global Financial Crises (2008)  because I won't need the money for a long time (10 years minimum).",
-      ],
+      choices: [""],
       imgUrl: Risk8,
     },
     {
       route: "/cards",
       key: "cardSet",
       question: "",
-      choices: [
-        "No risk and I don’t want my capital to go down at all even if I get a 0% return on my money.",
-      ],
+      choices: [""],
       imgUrl: Risk8,
     },
   ];
