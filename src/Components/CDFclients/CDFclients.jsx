@@ -162,7 +162,7 @@ const CDFclients = () => {
     },
     {
       title: <div className="w-100">HouseHold</div>,
-      key: "preferredName",
+      key: "lastName",
       fixed: "left",
       width: 150,
       render: (text, row, index) => (
@@ -184,6 +184,13 @@ const CDFclients = () => {
           />
         </div>
       ),
+
+      sorter: (a, b) => {
+        const nameA = a?.client?.lastName?.toLowerCase() || "";
+        const nameB = b?.client?.lastName?.toLowerCase() || "";
+        console.log(nameA.localeCompare(nameB));
+        return nameA.localeCompare(nameB);
+      },
     },
     {
       title: <div className="w-100">Clients</div>,
@@ -206,6 +213,11 @@ const CDFclients = () => {
             `${row?.partner?.preferredName || "--"} (Partner)`}{" "}
         </div>
       ),
+      sorter: (a, b) => {
+        const nameA = a?.client?.preferredName?.toLowerCase() || "";
+        const nameB = b?.client?.preferredName?.toLowerCase() || "";
+        return nameA.localeCompare(nameB);
+      },
     },
     {
       title: "Age",
@@ -273,6 +285,8 @@ const CDFclients = () => {
       key: "updatedAt",
       render: (text, row) =>
         row?.updatedAt ? ConvertDate(row?.updatedAt) : "--",
+
+      sorter: (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt), // ✅ ascending/descending sort
     },
     {
       title: "Status",

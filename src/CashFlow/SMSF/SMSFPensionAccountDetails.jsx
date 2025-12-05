@@ -278,6 +278,7 @@ const SMSFPensionAccountDetails = (props) => {
         type: "number-toComma-Modal",
         placeholder: "Pension Payments",
         callBack: true,
+        disabled:true,
         innerModalTitle: "Pension Payments",
         key: "pensionPayments",
         func: handleInnerModal,

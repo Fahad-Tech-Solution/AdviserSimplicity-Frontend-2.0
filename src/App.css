@@ -86,6 +86,9 @@ input:checked + label {
     color: #949494 !important;
   }
 }
+.inputDesign.burgerCollapsed {
+  max-width: 70%;
+}
 
 .inputDesignDoubleInput {
   padding: 8px !important;
@@ -850,6 +853,10 @@ input:checked + label {
 
   .inputDesign {
     max-width: 28%;
+  }
+
+  .inputDesign.burgerCollapsed {
+    max-width: 40%;
   }
 }
 

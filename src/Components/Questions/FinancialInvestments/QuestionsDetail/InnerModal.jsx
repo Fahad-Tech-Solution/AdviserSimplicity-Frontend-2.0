@@ -124,7 +124,6 @@ const InnerModal = (props) => {
     "Platform Investments",
     "Salary Detail",
     "Salary Packaging",
-    "Contributions",
     "Group Cover",
     "Portfolio Value",
     "Annual Pension Payment",
@@ -166,6 +165,8 @@ const InnerModal = (props) => {
     "Annuities",
     "Business as Company Structure",
     "Business as Trusts Structure",
+    "Balnace and Benefits",
+    "Contributions",
   ];
 
   let mdTitles = [

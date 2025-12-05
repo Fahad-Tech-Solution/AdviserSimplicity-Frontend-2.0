@@ -173,8 +173,8 @@ const ImportantQuestion = (props) => {
         accountBasedPensionIssues: "No",
         annuitiesIssues: "No",
 
-        will: "No",
-        POA: "No",
+        will: "Yes",
+        POA: "Yes",
         professionalAdviser: "No",
 
         incomeFromOwnBusiness: "No",

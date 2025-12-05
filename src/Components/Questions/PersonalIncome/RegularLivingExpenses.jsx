@@ -325,7 +325,7 @@ const RegularLivingExpenses = (props) => {
         { value: 26, label: "Fortnightly" },
         { value: 12, label: "Monthly" },
         { value: 4, label: "Quarterly" },
-        { value: 2, label: "Six-Monthly" },
+        { value: 2, label: "Half Yearly" },
         { value: 1, label: "Annually" },
       ],
       callBack: true,

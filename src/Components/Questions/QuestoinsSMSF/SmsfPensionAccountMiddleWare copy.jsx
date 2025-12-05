@@ -266,6 +266,7 @@ const SmsfPensionAccountMiddleWare = (props) => {
       dataIndex: "pensionBenefitsTotal",
       key: "pensionBenefitsTotal",
       type: "number-toComma-Modal",
+      disabled:true,
       innerModalTitle: "_Pension Benefits",
       placeholder: "Pension Benefits",
       validate: true,

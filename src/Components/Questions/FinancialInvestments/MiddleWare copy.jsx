@@ -554,6 +554,7 @@ const MiddleWare = (props) => {
       placeholder: LabelPortfolio ? "Portfolio Value" : "Current Balance",
       callBackModal: true,
       callBack: true,
+      disabled:true,
       func: OpenInnerModal,
       inputChangeFunc: checkValuesLocal,
     };

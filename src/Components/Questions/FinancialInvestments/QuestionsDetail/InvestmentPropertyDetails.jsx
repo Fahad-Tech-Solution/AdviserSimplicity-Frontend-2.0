@@ -410,6 +410,7 @@ const InvestmentPropertyDetails = (props) => {
       dataIndex: "incomeExpenses",
       key: "incomeExpenses",
       type: "number-toComma-Modal",
+      disabled:true,
       placeholder: "Expenses",
       width: 200,
       func: handleInnerModal,

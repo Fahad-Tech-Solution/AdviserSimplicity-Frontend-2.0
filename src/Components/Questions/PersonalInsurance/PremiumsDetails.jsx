@@ -171,7 +171,7 @@ const PremiumsDetails = (props) => {
       options: [
         { value: "12", label: "Monthly" },
         { value: "4", label: "Quarterly" },
-        { value: "6", label: "6 Monthly" },
+        { value: "6", label: "Half Yearly" },
         { value: "1", label: "Yearly" },
       ],
     },

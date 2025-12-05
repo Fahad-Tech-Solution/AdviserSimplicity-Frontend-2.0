@@ -241,6 +241,7 @@ const SmsfPensionAccount = (props) => {
       placeholder: "Pension Benefits",
       width: 210,
       validate: true,
+      disabled:true,
       errorState: ShowError,
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(

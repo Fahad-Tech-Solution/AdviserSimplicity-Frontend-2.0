@@ -20,10 +20,16 @@ const ShareSchema = Yup.object().shape({
     Yup.object().shape({
       ASXCode: Yup.string()
         .nullable()
-        .matches(/^[A-Za-z0-9]+\.AX$/, "Format must be NAME.AX"),
+        .matches(/^[A-Za-z0-9]+\.AX$/, "Format must be ASX Stock Code.AX"),
       companyName: Yup.string().nullable(),
       sharePrice: Yup.string().nullable(),
-      shares: Yup.string().nullable(),
+      // shares: Yup.string().nullable(),
+      shares: Yup.string()
+        .nullable()
+        .when("companyName", {
+          is: (val) => val && val.trim() !== "",
+          then: (schema) => schema.required("Shares is required"),
+        }),
       costBase: Yup.string().nullable(),
       currentBalance: Yup.string().nullable(),
     })
@@ -145,6 +151,14 @@ const AustralianShares = (props) => {
           `shares[${index}].sharePrice`,
           "$" + (company.regularMarketPrice || 0)
         );
+        if (values.shares?.[index]?.shares) {
+          setFieldValue(
+            `shares[${index}].currentBalance`,
+            toCommaAndDollar(
+              company.regularMarketPrice * values.shares[index].shares
+            )
+          );
+        }
       } else {
         clearFields(setFieldValue, index);
         alert("This company does not exist");
@@ -283,6 +297,7 @@ const AustralianShares = (props) => {
       key: "shares",
       type: "number",
       placeholder: "Number of Shares",
+      CheckError: true,
       callBack: true,
       func: calculateBalance,
       disabled: (values, stakeHolder) => {
@@ -362,7 +377,7 @@ const AustralianShares = (props) => {
                     size="large"
                     value={values.NumberOfMap || undefined}
                     onChange={(value) => {
-                      handleInput({ target: { value } }, setFieldValue);
+                      setFieldValue("NumberOfMap", value);
                     }}
                     onBlur={handleBlur}
                     getPopupContainer={(triggerNode) => triggerNode.parentNode}

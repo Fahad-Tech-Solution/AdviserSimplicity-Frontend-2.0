@@ -21,6 +21,7 @@ import {
   RenderName,
   replacePlaceholderWithLabel,
 } from "../../../Assets/Api/Api";
+import ServiceFee from "./ServiceFee";
 
 const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
@@ -149,7 +150,10 @@ const AccountBasedPension = (props) => {
       question,
       key,
       stakeHolder,
-      editArray: values?.[BaseKey]?.[index]?.[key] || [],
+      editArray:
+        key === "annualAdvice"
+          ? values?.[BaseKey]?.[index]?.[key + "Array"] || []
+          : values?.[BaseKey]?.[index]?.[key] || [],
       values,
       Platform: PlatformObj,
       ParentModalObject: props.modalObject,
@@ -207,7 +211,7 @@ const AccountBasedPension = (props) => {
     const total = newEntries.reduce((totalAcc, entry) => {
       const val =
         parseFloat(
-          (entry?.pensionPayment || "0").toString().replace(/[^0-9.-]+/g, "")
+          (entry?.balanceBenefit || "0").toString().replace(/[^0-9.-]+/g, "")
         ) || 0;
       return totalAcc + val;
     }, 0);
@@ -267,6 +271,7 @@ const AccountBasedPension = (props) => {
       title: "Balance and Details",
       dataIndex: "balanceBenefit",
       key: "balanceBenefit",
+      disabled: true,
       type: "number-toComma-Modal",
       innerModalTitle: "_<CFE>_Balance & Benefit Details",
       placeholder: "Balance Benefit",
@@ -288,6 +293,7 @@ const AccountBasedPension = (props) => {
       type: "number-toComma-Modal",
       innerModalTitle: "_<CFE>_Annual Pension Payment",
       placeholder: "Pension Payment",
+      disabled:true,
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
           innerModalTitle,
@@ -316,12 +322,26 @@ const AccountBasedPension = (props) => {
           `Number of Beneficiaries:`
         ),
     },
+
     {
-      title: "Annual Advice Service Fee",
+      title: "Annual Service Fee",
       dataIndex: "annualAdvice",
       key: "annualAdvice",
-      type: "number-toComma",
-      placeholder: "Annual Fee",
+      type: "number-toComma-Modal",
+      placeholder: "Annual Service Fee",
+      innerModalTitle: "_<CFE>_Annual Ongoing Fee",
+      callBack: true,
+      func: (innerModalTitle, values, key, stakeHolder) =>
+        handleInnerModal(
+          innerModalTitle,
+          key,
+          stakeHolder,
+          values,
+          "Beneficiaries",
+          `Number of Beneficiaries:`
+        ),
+      errorHandler: ShowError,
+      disabled: true,
     },
   ];
 
@@ -330,6 +350,7 @@ const AccountBasedPension = (props) => {
     balanceBenefit: <AccountBasedBalance />,
     nominatedBeneficiaries: <Beneficiaries />,
     pensionPayment: <AnnualPensionPaymentInnerModal />,
+    annualAdvice: <ServiceFee />,
   };
 
   const ModalContent = (obj) => {
@@ -413,9 +434,9 @@ const AccountBasedPension = (props) => {
                     placeholder="Select"
                     size="large"
                     value={values.NumberOfMap || undefined}
-                    onChange={(value) =>
-                      handleInput({ target: { value } }, setFieldValue)
-                    }
+                     onChange={(value) => {
+                      setFieldValue("NumberOfMap", value);
+                    }}
                     onBlur={handleBlur}
                     getPopupContainer={(triggerNode) => triggerNode.parentNode}
                   >

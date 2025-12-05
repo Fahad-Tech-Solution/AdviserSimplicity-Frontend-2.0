@@ -32,10 +32,10 @@ const InnerBareTrust = (props) => {
   const handleInput = (e, setFieldValue) => {
     let value = 0;
     if (SwitchFlag) value = e.target.value > 10 ? 10 : e.target.value;
-    else value = e.target.value > 5 ? 5 : e.target.value;
+    else value = e.target.value > 6 ? 6 : e.target.value;
 
     setFieldValue(e.target.id, value);
-    setDynamicFields(Array.from({ length: value }, () => ""));
+   
   };
 
   // 🧠 Prefill from props

@@ -360,7 +360,7 @@ const DynamicFormField = ({
                           value={opt.value}
                           className="radio-custom-style"
                         >
-                          {opt.label || opt.lable || opt.value}
+                          {opt.label || opt.value}
                         </Radio>
                       ))}
                   </div>
@@ -685,16 +685,19 @@ const DynamicFormField = ({
                 );
               }
             }}
-            onBlur={() => {
-              const fieldName = buildFieldName(stakeHolder, name);
-              const parsedDate = parseDateInput(e.target.value);
-              if (parsedDate) {
-                setFieldValue(fieldName, parsedDate.toISOString());
-              } else {
-                // Optional: clear invalid input
-                setFieldValue(fieldName, "");
+            onBlur={(e) => {
+              if (e.target.value) {
+                const fieldName = buildFieldName(stakeHolder, name);
+                const parsedDate = parseDateInput(e.target.value);
+
+                if (parsedDate) {
+                  setFieldValue(fieldName, parsedDate.toISOString());
+                } else {
+                  setFieldValue(fieldName, "");
+                }
+
+                handleBlur({ target: { name: fieldName } });
               }
-              handleBlur({ target: { name: fieldName } });
             }}
             id={buildFieldName(stakeHolder, name)}
             name={buildFieldName(stakeHolder, name)}
@@ -710,24 +713,37 @@ const DynamicFormField = ({
             }
             onKeyDown={(e) => {
               if (e.key === "Enter") {
-                e.preventDefault(); // ⬅ Prevent form submission on Enter
+                e.preventDefault(); // Stop the default tab focus shift
+
                 const fieldName = buildFieldName(stakeHolder, name);
                 const parsedDate = parseDateInput(e.target.value);
+
                 if (parsedDate) {
                   setFieldValue(fieldName, parsedDate.toISOString());
                 } else {
-                  // Optional: clear invalid input
                   setFieldValue(fieldName, "");
                 }
+
                 handleBlur({ target: { name: fieldName } });
 
                 if (all.callBack) {
                   all.func(
                     values,
                     setFieldValue,
-                    { name: fieldName, value: parsedDate.toISOString() },
+                    {
+                      name: fieldName,
+                      value: parsedDate ? parsedDate.toISOString() : "",
+                    },
                     stakeHolder
                   );
+                }
+
+                // ✅ manually move to the next focusable input
+                const form = e.target.form;
+                if (form) {
+                  const index = Array.prototype.indexOf.call(form, e.target);
+                  const next = form.elements[index + 1];
+                  if (next) next.focus();
                 }
               }
             }}

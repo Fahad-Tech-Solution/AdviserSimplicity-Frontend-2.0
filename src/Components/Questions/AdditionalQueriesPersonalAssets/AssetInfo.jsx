@@ -210,7 +210,7 @@ const AssetInfo = (props) => {
     ...baseColumns,
   ];
 
-  const onlyJoint = ["Boat", "Caravan", "Contents"];
+  const onlyJoint = ["Boat", "Caravan", "Contents", "Other Assets"];
   // const onlyClient = ["Other Assets"];
   const onlyClient = [];
 
@@ -271,8 +271,7 @@ const AssetInfo = (props) => {
             <Row>
               <div className="col-md-12">
                 {/* Owner Selector */}
-                {(props.modalObject?.key === "car" ||
-                  props.modalObject?.key === "otherAssets") && (
+                {props.modalObject?.key === "car" && (
                   <div className="d-flex flex-row justify-content-center align-items-center gap-2">
                     <label className="text-end mb-0">Owner</label>
                     <div style={{ minWidth: "200px" }}>

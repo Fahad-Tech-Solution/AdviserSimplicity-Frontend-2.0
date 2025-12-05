@@ -174,9 +174,9 @@ const Executor = (props) => {
                     placeholder="Select"
                     size="large"
                     value={values.NumberOfMap || undefined}
-                    onChange={(value) =>
-                      handleInput({ target: { value } }, setFieldValue)
-                    }
+                    onChange={(value) => {
+                      setFieldValue("NumberOfMap", value);
+                    }}
                     onBlur={handleBlur}
                     getPopupContainer={(triggerNode) => triggerNode.parentNode}
                   >

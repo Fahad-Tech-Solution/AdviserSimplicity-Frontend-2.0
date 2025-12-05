@@ -237,6 +237,7 @@ const QuestionsNew = (props) => {
             <QuestionCardsNew
               questionKey={QuestionChange}
               CRObject={CRObject}
+              collapsed={props.collapsed}
             />
 
             <ModalComponent

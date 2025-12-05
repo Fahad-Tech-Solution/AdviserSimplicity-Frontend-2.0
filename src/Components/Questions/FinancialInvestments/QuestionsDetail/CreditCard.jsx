@@ -18,8 +18,10 @@ import {
   toPercentage,
 } from "../../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
+import { ConfigProvider, Select } from "antd";
 
 const AntdTable = DynamicTableForInputsSection("antd");
+const { Option } = Select;
 
 const CreditCard = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
@@ -65,29 +67,6 @@ const CreditCard = (props) => {
     if (creditCards["client"] && creditCards["client"].length) {
       setFieldValue("creditCards", creditCards["client"]);
     }
-  };
-
-  const handleInput = (e, setFieldValue) => {
-    const value = e.target.value > 2 ? 2 : e.target.value;
-    setFieldValue("NumberOfMap", value);
-    setDynamicFields(Array(Number(value)).fill(""));
-    setFieldValue(
-      "creditCards",
-      Array(Number(value))
-        .fill()
-        .map((_, i) => ({
-          LenderCurrent: "",
-          LoanBalance: "",
-          LoanType: "",
-          RepaymentsAmount: "",
-          Frequency: "",
-          AnnualRepayments: "",
-          InterestRate: "",
-          LoanTerm: "",
-          LoanTermRemaining: "",
-          ...(initialValues.creditCards[i] || {}),
-        }))
-    );
   };
 
   const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({
@@ -136,11 +115,15 @@ const CreditCard = (props) => {
     const creditCardData = values.creditCards;
     const DataOf = "client";
 
+    const numRecords = Number(values.NumberOfMap) || 0;
+    const filteredCreditCardData =
+      numRecords > 0 ? creditCardData.slice(0, numRecords) : [];
+
     const obj = {
       clientFK: localStorage.getItem("UserID"),
-      [DataOf]: creditCardData,
+      [DataOf]: filteredCreditCardData,
       [DataOf + "Total"]: toCommaAndDollar(
-        creditCardData.reduce(
+        filteredCreditCardData.reduce(
           (total, entry) =>
             total +
             parseFloat(entry.LoanBalance?.replace(/[^0-9.-]+/g, "") || 0),
@@ -153,7 +136,7 @@ const CreditCard = (props) => {
       ...prev,
       creditCards: {
         ...prev.creditCards,
-        ["client"]: creditCardData,
+        ["client"]: filteredCreditCardData,
       },
     }));
 
@@ -333,18 +316,41 @@ const CreditCard = (props) => {
               >
                 Number of {props.modalObject.title} :
               </p>
+
               <div style={{ minWidth: "10%" }}>
-                <select
-                  id="NumberOfMap"
-                  name="NumberOfMap"
-                  className="form-select inputDesignDoubleInput"
-                  onChange={(e) => handleInput(e, setFieldValue)}
-                  value={values.NumberOfMap}
+                <ConfigProvider
+                  theme={{
+                    components: {
+                      Select: {
+                        colorBorder: "#36b446",
+                      },
+                    },
+                  }}
                 >
-                  <option value="">Select</option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                </select>
+                  <Select
+                    id="NumberOfMap"
+                    name="NumberOfMap"
+                    className="w-100 h-100"
+                    placeholder="Select"
+                    size="large"
+                    value={values.NumberOfMap || undefined}
+                    onChange={(value) => {
+                      setFieldValue("NumberOfMap", value);
+                    }}
+                    onBlur={handleBlur}
+                    getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                  >
+                    <Option key={"Select"} value={""}>
+                      Select
+                    </Option>
+
+                    {Array.from({ length: 2 }, (_, i) => (
+                      <Option key={i} value={i + 1}>
+                        {i + 1}
+                      </Option>
+                    ))}
+                  </Select>
+                </ConfigProvider>
               </div>
             </div>
 

@@ -18,8 +18,10 @@ import {
   toPercentage,
 } from "../../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
+import { ConfigProvider, Select } from "antd";
 
 const AntdTable = DynamicTableForInputsSection("antd");
+const { Option } = Select;
 
 const PersonalLoan = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
@@ -133,19 +135,21 @@ const PersonalLoan = (props) => {
     );
   };
 
-  let FormulaSetting = () => {};
-
   let onSubmit = async (values) => {
     // Use the personalLoans array directly from values
     const personalLoanData = values.personalLoans;
+
+    const numRecords = Number(values.NumberOfMap) || 0;
+    const filteredCreditCardData =
+      numRecords > 0 ? personalLoanData.slice(0, numRecords) : [];
 
     // Create API payload
     let DataOf = "client";
     let obj = {
       clientFK: localStorage.getItem("UserID"),
-      [DataOf]: personalLoanData,
+      [DataOf]: filteredCreditCardData,
       [DataOf + "Total"]: toCommaAndDollar(
-        personalLoanData.reduce(
+        filteredCreditCardData.reduce(
           (total, entry) =>
             total +
             parseFloat(entry.LoanBalance.replace(/[^0-9.-]+/g, "") || 0),
@@ -159,7 +163,7 @@ const PersonalLoan = (props) => {
       ...prev,
       personalLoans: {
         ...prev.personalLoans,
-        ["client"]: personalLoanData,
+        ["client"]: filteredCreditCardData,
       },
     }));
 
@@ -340,18 +344,40 @@ const PersonalLoan = (props) => {
               <p className="text-end mt-1 pt-2">
                 Number of {props.modalObject.title} :
               </p>
+
               <div style={{ minWidth: "10%" }}>
-                <select
-                  id="NumberOfMap"
-                  name="NumberOfMap"
-                  className="form-select inputDesignDoubleInput"
-                  onChange={(e) => handleInput(e, setFieldValue)}
-                  value={values.NumberOfMap}
+                <ConfigProvider
+                  theme={{
+                    components: {
+                      Select: {
+                        colorBorder: "#36b446",
+                      },
+                    },
+                  }}
                 >
-                  <option value="">Select</option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                </select>
+                  <Select
+                    id="NumberOfMap"
+                    name="NumberOfMap"
+                    className="w-100 h-100"
+                    placeholder="Select"
+                    size="large"
+                    value={values.NumberOfMap || undefined}
+                    onChange={(value) => {
+                      setFieldValue("NumberOfMap", value);
+                    }}
+                    onBlur={handleBlur}
+                    getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                  >
+                    <Option key={"Select"} value={""}>
+                      Select
+                    </Option>
+                    {Array.from({ length: 2 }, (_, i) => (
+                      <Option key={i} value={i + 1}>
+                        {i + 1}
+                      </Option>
+                    ))}
+                  </Select>
+                </ConfigProvider>
               </div>
             </div>
 

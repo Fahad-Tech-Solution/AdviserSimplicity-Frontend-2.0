@@ -43,110 +43,110 @@ function AuthRouts() {
       path: "/my-clients",
       element: (collapsed) => <Dashboard collapsed={collapsed} />,
     },
-    { path: "/all-client", element: () => <AllClients /> },
-    { path: "/view-client", element: () => <ViewClient /> },
-    { path: "/personal-detail", element: () => <PersonalDetailNew /> },
+    { path: "/all-client", element: (collapsed) => <AllClients /> },
+    { path: "/view-client", element: (collapsed) => <ViewClient /> },
+    { path: "/personal-detail", element: (collapsed) => <PersonalDetailNew /> },
     {
       path: "/personal-income",
-      element: () => (
-        <QuestionsNew>
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed} >
           <PersonalIncome />
         </QuestionsNew>
       ),
     },
     {
       path: "/personal-assets",
-      element: () => (
-        <QuestionsNew>
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed}>
           <AdditionalQueriesPersonalAssets />
         </QuestionsNew>
       ),
     },
     {
       path: "/financial-investments",
-      element: () => (
-        <QuestionsNew>
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed}>
           <FinancialInvestments />
         </QuestionsNew>
       ),
     },
     {
       path: "/super-and-retirement",
-      element: () => (
-        <QuestionsNew>
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed}>
           <AdditionalQueriesSuperAndRetirement />
         </QuestionsNew>
       ),
     },
     {
       path: "/life-Style",
-      element: () => (
-        <QuestionsNew>
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed}>
           <LifestyleAssetsAndDebt />
         </QuestionsNew>
       ),
     },
     {
       path: "/investment",
-      element: () => (
-        <QuestionsNew>
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed}>
           <AdditionalQueriesInvestment />
         </QuestionsNew>
       ),
     },
     {
       path: "/estate-planning",
-      element: () => (
-        <QuestionsNew>
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed}>
           <EstatePlanning />
         </QuestionsNew>
       ),
     },
     {
       path: "/professional-advisor",
-      element: () => (
-        <QuestionsNew>
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed}>
           <AdditionalQueriesProfessionalAdvisor />
         </QuestionsNew>
       ),
     },
     {
       path: "/personal-insurance",
-      element: () => (
-        <QuestionsNew>
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed}>
           <PersonalInsuranceLife />
         </QuestionsNew>
       ),
     },
     {
       path: "/business-entities",
-      element: () => (
-        <QuestionsNew>
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed}>
           <BusinessEntities />
         </QuestionsNew>
       ),
     },
     {
       path: "/SMSF",
-      element: () => (
-        <QuestionsNew>
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed}>
           <QuestionsSMSF />
         </QuestionsNew>
       ),
     },
     {
       path: "/family-trust",
-      element: () => (
-        <QuestionsNew>
+      element: (collapsed) => (
+        <QuestionsNew collapsed={collapsed}>
           <QuestionsFamily />
         </QuestionsNew>
       ),
     },
-    { path: "/goals-and-objectives", element: () => <GoalsObjectiveNew /> },
-    { path: "/risk-profile/*", element: () => <RiskProfileNew /> },
-    { path: "/CDF-prospects", element: () => <CDFclients /> },
-    { path: "/profile", element: () => <ProfileTemp /> },
-    { path: "/my-team", element: () => <MyTeam /> },
+    { path: "/goals-and-objectives", element: (collapsed) => <GoalsObjectiveNew /> },
+    { path: "/risk-profile/*", element: (collapsed) => <RiskProfileNew /> },
+    { path: "/CDF-prospects", element: (collapsed) => <CDFclients /> },
+    { path: "/profile", element: (collapsed) => <ProfileTemp /> },
+    { path: "/my-team", element: (collapsed) => <MyTeam /> },
   ];
 
   const [role, setRoles] = useRecoilState(Roles);
@@ -211,11 +211,7 @@ function AuthRouts() {
         >
           <Routes>
             {routeConfigs.map(({ path, element }, idx) => (
-              <Route
-                key={path}
-                path={path}
-                element={path === "/dashboard" ? element(collapsed) : element()}
-              />
+              <Route key={path} path={path} element={element(collapsed)} />
             ))}
           </Routes>
         </Content>

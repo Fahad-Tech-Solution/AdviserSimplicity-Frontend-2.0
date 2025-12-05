@@ -256,6 +256,7 @@ const SmsfAccumulationDetails = (props) => {
       innerModalTitle: "_Accumulation Benefits",
       placeholder: "Accumulation Benefits",
       validate: true,
+      disabled:true,
       errorState: ShowError,
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(

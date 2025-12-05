@@ -284,8 +284,6 @@ const questionConfig = {
       variant: "case4",
       api: "/personalAssets",
       component: <AssetInfo />,
-      DrawerWidth: "60%",
-      Drawerheight: 200,
       Labels: ["Joint"],
     },
     // {
@@ -333,6 +331,11 @@ const questionConfig = {
       img: credit,
       clientOnly: true,
       component: <CreditCard />,
+      variant: "case4",
+      Labels: ["Joint"],
+      BaceKeys: {
+        joint: "clientTotal",
+      },
     },
     {
       title: "Personal Loan",
@@ -340,6 +343,11 @@ const questionConfig = {
       img: moneyGivingPng,
       clientOnly: true,
       component: <PersonalLoan />,
+      variant: "case4",
+      Labels: ["Joint"],
+      BaceKeys: {
+        joint: "clientTotal",
+      },
     },
   ],
   "/user/financial-investments": [
@@ -408,6 +416,7 @@ const questionConfig = {
           component: <InvestmentPropertyDetails />,
           key: "investmentPropertyDetails",
           maintitle: true,
+          onTop: true,
         },
         {
           label: "Total Debt",
@@ -731,6 +740,7 @@ const questionConfig = {
           component: <InvestmentPropertyDetails />,
           key: "SMSFInvestmentProperties",
           maintitle: true,
+          onTop: true,
         },
         {
           label: "Total Debt",
@@ -948,6 +958,7 @@ const questionConfig = {
           component: <InvestmentPropertyDetails />,
           key: "familyInvestmentProperties",
           maintitle: true,
+          onTop: true,
         },
         {
           label: "Total Debt",
@@ -1003,6 +1014,7 @@ const QuestionCard = (props) => {
     evenClass,
     BaceKeys = null,
     dataKey = null,
+    collapsed = false,
   } = props;
 
   const clientName =
@@ -1023,26 +1035,27 @@ const QuestionCard = (props) => {
   );
 
   const sourceKey = dataKey || keyName;
+  const DefaultYesNo = ["will", "POA", "professionalAdviser"];
 
   const clientValue =
     questionDetail?.[sourceKey]?.[
       BaceKeys && Object.keys(BaceKeys).length > 0
         ? BaceKeys.client
         : "clientTotal"
-    ] ?? "$0";
+    ] ?? (DefaultYesNo.includes(keyName) ? "No" : "$0");
 
   const partnerValue =
     questionDetail?.[sourceKey]?.[
       BaceKeys && Object.keys(BaceKeys).length > 0
         ? BaceKeys.partner
         : "partnerTotal"
-    ] ?? "$0";
+    ] ?? (DefaultYesNo.includes(keyName) ? "No" : "$0");
   const jointValue =
     questionDetail?.[sourceKey]?.[
       BaceKeys && Object.keys(BaceKeys).length > 0
         ? BaceKeys.joint
         : "jointTotal"
-    ] ?? "$0";
+    ] ?? (DefaultYesNo.includes(keyName) ? "No" : "$0");
 
   const initialValues = getInitialValues?.(questionDetail) || {};
 
@@ -1086,7 +1099,10 @@ const QuestionCard = (props) => {
             </div>
           )}
           <input
-            className="form-control inputDesign text-center"
+            className={
+              "form-control inputDesign text-center" +
+              (!collapsed && " burgerCollapsed")
+            }
             value={clientValue || "$0"}
             readOnly
             placeholder={title}
@@ -1113,7 +1129,10 @@ const QuestionCard = (props) => {
             </div>
 
             <input
-              className="form-control inputDesign text-center"
+              className={
+                "form-control inputDesign text-center" +
+                (!collapsed && " burgerCollapsed")
+              }
               value={partnerValue || "$0"}
               readOnly
               placeholder={title}
@@ -1132,7 +1151,7 @@ const QuestionCard = (props) => {
     DrawerWidth,
     onOpen, // Add this prop
   }) => {
-    const { modalButton = true } = lbl || {};
+    const { modalButton = true, onTop = false } = lbl || {};
     const handleOpen = () => {
       // Pass the specific label's data to the modal
       onOpen(lbl?.maintitle ? title : lbl.label, lbl.key, lbl.component);
@@ -1140,7 +1159,11 @@ const QuestionCard = (props) => {
 
     return (
       <div className="mb-3 text-center">
-        <div className="d-flex justify-content-center align-items-center gap-2 mb-2">
+        <div
+          className={`d-flex justify-content-center align-items-center gap-2 mb-2 ${
+            onTop && " flex-column-reverse "
+          }`}
+        >
           <span>
             {["client", "partner", "joint"].includes(lbl.label)
               ? RenderName(lbl.label)
@@ -1158,7 +1181,10 @@ const QuestionCard = (props) => {
         </div>
         <div className="d-flex align-item-center justify-content-center">
           <input
-            className="form-control inputDesign text-center"
+            className={
+              "form-control inputDesign text-center" +
+              (!collapsed && " burgerCollapsed")
+            }
             value={lbl.value?.(questionDetail) || "$0"}
             readOnly
             placeholder={title}
@@ -1207,7 +1233,10 @@ const QuestionCard = (props) => {
         </div>
         <div className="input-group justify-content-center">
           <input
-            className="form-control inputDesign text-center"
+            className={
+              "form-control inputDesign text-center" +
+              (!collapsed && " burgerCollapsed")
+            }
             placeholder={Labels[0]}
             value={clientValue || "$0"}
             readOnly
@@ -1231,7 +1260,12 @@ const QuestionCard = (props) => {
       >
         {({ setFieldValue }) => (
           <Form className="d-flex justify-content-center align-items-stretch">
-            <InputGroup className="inputDesign justify-content-center p-0 flex-nowrap">
+            <InputGroup
+              className={
+                "inputDesign justify-content-center p-0 flex-nowrap" +
+                (!collapsed && " burgerCollapsed")
+              }
+            >
               <Field
                 name="retirementLivingExpense"
                 className="form-control inputDesignDoubleInput text-center"
@@ -1254,7 +1288,14 @@ const QuestionCard = (props) => {
   );
 
   const renderCase4 = () => {
-    const jointOnlyTitles = ["Contents", "Boat", "Caravan", "Other Assets"];
+    const jointOnlyTitles = [
+      "Contents",
+      "Boat",
+      "Caravan",
+      "Other Assets",
+      "Credit Card",
+      "Personal Loan",
+    ];
     const isJointOnly = jointOnlyTitles.includes(title);
 
     return (
@@ -1283,12 +1324,19 @@ const QuestionCard = (props) => {
 
         {/* ✅ Show correct owner name */}
         <div className="text-center mb-2">
-          {isJointOnly ? "Joint" : `${clientName} & ${partnerName}`}
+          {isJointOnly
+            ? isSingle
+              ? personalDetailObj.client?.clientPreferredName
+              : "Joint"
+            : `${clientName} & ${partnerName}`}
         </div>
 
         <div className="d-flex align-item-center justify-content-center">
           <input
-            className="form-control inputDesign text-center"
+            className={
+              "form-control inputDesign text-center" +
+              (!collapsed && " burgerCollapsed")
+            }
             value={jointValue || clientValue || "$0"}
             readOnly
             placeholder={title}
@@ -1326,7 +1374,7 @@ const QuestionCard = (props) => {
 };
 
 /*------------------------------------ DEMO WRAPPER ------------------------------------*/
-const QuestionCardsDemo = ({ questionKey, CRObject }) => {
+const QuestionCardsDemo = ({ questionKey, CRObject, collapsed }) => {
   const personalDetailObj = useRecoilValue(PersonalDetailsData);
   const DefaultUrl = useRecoilValue(defaultUrl);
   const [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
@@ -1413,6 +1461,7 @@ const QuestionCardsDemo = ({ questionKey, CRObject }) => {
               DefaultUrl={DefaultUrl}
               PopoverContent={PopoverContent}
               evenClass={evenClass}
+              collapsed={collapsed}
             />
           );
         })}

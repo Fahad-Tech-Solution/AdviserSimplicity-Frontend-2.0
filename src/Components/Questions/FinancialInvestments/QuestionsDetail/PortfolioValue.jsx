@@ -184,7 +184,7 @@ const PortfolioValue = (props) => {
                           size="large"
                           value={values.NumberOfMap || undefined}
                           onChange={(value) => {
-                            handleInput({ target: { value } }, setFieldValue);
+                            setFieldValue("NumberOfMap", value);
                           }}
                           onBlur={handleBlur}
                           getPopupContainer={(triggerNode) =>

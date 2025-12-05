@@ -161,7 +161,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
       ) {
         return (
           <div className="d-flex align-items-center justify-content-left gap-3">
-            {value}
+            <div style={{ width: "100px" }}> {value} </div>
             <DynamicFormField
               fieldType="modal"
               name={col?.dataIndex || ""}
@@ -309,14 +309,14 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
             className: "custom-pagination",
           }}
           rowKey="key"
-          // scroll={{ x: "max-content" }} following code is to adjust table width
-          scroll={{
-            x: isEditing
-              ? screens.xxl
-                ? data.length * 500
-                : "max-content"
-              : "max-content",
-          }}
+          scroll={{ x: "max-content" }}
+          // scroll={{
+          //   x: isEditing
+          //     ? screens.xxl
+          //       ? data.length * 500
+          //       : "max-content"
+          //     : "max-content",
+          // }}
         />
       );
     }

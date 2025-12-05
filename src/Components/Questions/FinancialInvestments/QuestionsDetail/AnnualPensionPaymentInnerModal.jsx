@@ -105,7 +105,7 @@ const AnnualPensionPaymentInnerModal = (props) => {
     { label: "Fortnightly", value: 26 },
     { label: "Monthly", value: 12 },
     { label: "Quarterly", value: 4 },
-    { label: "6 Monthly", value: 2 },
+    { label: "Half Yearly", value: 2 },
     { label: "Annually", value: 1 },
   ];
 

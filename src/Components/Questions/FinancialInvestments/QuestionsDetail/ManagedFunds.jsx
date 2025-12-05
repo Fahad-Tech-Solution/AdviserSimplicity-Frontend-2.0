@@ -140,7 +140,7 @@ const ManagedFunds = (props) => {
           values?.[BaseKey]?.[index]?.platformName,
           innerModalTitle
         ),
-      question: `Number of Investments :`,
+      question: `Number of Platforms :`,
       key,
       stakeHolder,
       editArray: values?.[BaseKey]?.[index]?.[key + "Array"] || [],
@@ -203,9 +203,7 @@ const ManagedFunds = (props) => {
     // 🧮 Compute totals
     const totalFee = fundData.reduce(
       (sum, entry) =>
-        sum +
-        parseFloat(entry.serviceFee?.replace(/[^0-9.-]+/g, "") || 0) *
-          parseFloat(entry.serviceFeeType || 1),
+        sum + parseFloat(entry.portfolioValue?.replace(/[^0-9.-]+/g, "") || 0),
       0
     );
 
@@ -297,6 +295,7 @@ const ManagedFunds = (props) => {
       inputChangeFunc: CheckInputValue,
       func: handleInnerModal,
       errorHandler: ShowError,
+      disabled: true,
     },
     {
       title: "Total Costbase",
@@ -316,6 +315,7 @@ const ManagedFunds = (props) => {
       inputChangeFunc: CheckInputValue,
       func: handleInnerModal,
       errorHandler: ShowError,
+      disabled: true,
     },
   ];
 
@@ -370,7 +370,15 @@ const ManagedFunds = (props) => {
             </InnerModal>
 
             <div className="d-flex justify-content-center align-items-center gap-4">
-              <p className="text-end mt-1 pt-2 "> Number of Investments:</p>
+              <p
+                className="text-end mt-1 pt-2 "
+                onClick={() => {
+                  console.log(values);
+                }}
+              >
+                {" "}
+                Number of Investments:{" "}
+              </p>
               <div style={{ minWidth: "10%" }}>
                 <ConfigProvider
                   theme={{
@@ -389,7 +397,7 @@ const ManagedFunds = (props) => {
                     size="large"
                     value={values.NumberOfMap || undefined}
                     onChange={(value) => {
-                      handleInput({ target: { value } }, setFieldValue);
+                      setFieldValue("NumberOfMap", value);
                     }}
                     onBlur={handleBlur}
                     getPopupContainer={(triggerNode) => triggerNode.parentNode}

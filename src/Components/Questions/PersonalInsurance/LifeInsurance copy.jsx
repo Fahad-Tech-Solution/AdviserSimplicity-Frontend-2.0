@@ -693,6 +693,7 @@ const PersonalInsuranceLife = (props) => {
       innerModalTitle: "_Life",
       func: handleInnerModal,
       width: 140,
+      disabled: true,
     },
     {
       title: "TPD",
@@ -703,6 +704,7 @@ const PersonalInsuranceLife = (props) => {
       innerModalTitle: "_TPD",
       func: handleInnerModal,
       width: 140,
+      disabled: true,
     },
     {
       title: "Trauma",
@@ -713,6 +715,7 @@ const PersonalInsuranceLife = (props) => {
       innerModalTitle: "_Trauma",
       func: handleInnerModal,
       width: 140,
+      disabled: true,
     },
     {
       title: "IP",
@@ -723,6 +726,7 @@ const PersonalInsuranceLife = (props) => {
       innerModalTitle: "_IP",
       func: handleInnerModal,
       width: 140,
+      disabled: true,
     },
     {
       title: "Premiums p.a",
@@ -733,6 +737,7 @@ const PersonalInsuranceLife = (props) => {
       innerModalTitle: "_Premiums p.a",
       func: handleInnerModal,
       width: 160,
+      disabled: true,
     },
     {
       title: "Loading/Exclusion",

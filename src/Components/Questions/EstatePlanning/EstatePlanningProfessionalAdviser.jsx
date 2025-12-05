@@ -195,7 +195,8 @@ const EstatePlanningProfessionalAdviser = (props) => {
                   console.log(values);
                 }}
               >
-                Select {props.modalObject.title} types for {nameSet}: 
+                {/* Select {props.modalObject.title} types for {nameSet}:  */}
+                Adviser Type
               </p>
               <div style={{ minWidth: "35%" }}>
                 <ConfigProvider

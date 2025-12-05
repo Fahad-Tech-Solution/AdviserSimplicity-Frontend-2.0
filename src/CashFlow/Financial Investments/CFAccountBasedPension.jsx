@@ -407,6 +407,7 @@ const CFAccountBasedPension = (props) => {
         innerModalTitle: "Pension Payments",
         key: "pensionPaymentsObj",
         func: handleInnerModal,
+        disabled:true,
       },
       {
         name: "newPensionRollover",

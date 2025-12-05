@@ -358,6 +358,7 @@ const CashFlowFamilyHome = (props) => {
       callBack: true,
       key: "totalCostBaseObj",
       func: handleInnerModal,
+      disabled:true,
     },
 
     {

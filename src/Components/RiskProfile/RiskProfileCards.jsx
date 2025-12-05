@@ -140,6 +140,15 @@ const RiskProfileCards = (props) => {
               style={{ borderRadius: "20px", height: "100%" }}
             >
               <h5
+                className="text-center fw-bold"
+                onClick={() => {
+                  console.log(riskQuestion);
+                }}
+              >
+                Risk Profile
+              </h5>
+              {/* 
+              <h5
                 className="text-center"
                 onClick={() => {
                   console.log(riskQuestion);
@@ -149,7 +158,7 @@ const RiskProfileCards = (props) => {
                 <div className="iconContainerLg m-0 p-0">
                   <img src={single} alt="single svg" className="w-50" />
                 </div>
-              </h5>
+              </h5> */}
 
               <div
                 className="d-flex justify-content-center align-items-stretch w-100"
@@ -287,6 +296,14 @@ const RiskProfileCards = (props) => {
                 style={{ borderRadius: "20px", height: "100%" }}
               >
                 <h5
+                  className="text-center fw-bold"
+                  onClick={() => {
+                    console.log(riskQuestion);
+                  }}
+                >
+                  Risk Profile
+                </h5>
+                {/* <h5
                   className="text-center"
                   onClick={() => {
                     console.log(riskQuestion);
@@ -297,7 +314,7 @@ const RiskProfileCards = (props) => {
                     <img src={couple} alt="single svg" className="w-50 " />
                   </div>
                 </h5>
-                {/*
+            
                                                         <div className="d-flex justify-content-center align-items-stretch w-100" style={{ minHeight: "30vh" }}>
                                                         <ApexChart data={[30, 20, 60, 15, 15, 10]} title={values.riskGoal.partner} />
                                                         </div>

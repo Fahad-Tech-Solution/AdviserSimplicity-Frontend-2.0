@@ -23,6 +23,7 @@ import {
   RenderName,
   replacePlaceholderWithLabel,
 } from "../../../Assets/Api/Api";
+import ServiceFee from "./ServiceFee";
 
 const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
@@ -134,7 +135,10 @@ const InvestedAnnuities = (props) => {
       question,
       key,
       stakeHolder,
-      editArray: values?.[BaseKey]?.[index]?.[key] || [],
+      editArray:
+        key === "annualAdvice"
+          ? values?.[BaseKey]?.[index]?.[key + "Array"] || []
+          : values?.[BaseKey]?.[index]?.[key] || [],
       values,
       ParentModalObject: props.modalObject,
     });
@@ -237,6 +241,7 @@ const InvestedAnnuities = (props) => {
       dataIndex: "annualAnnuityPayment",
       key: "annualAnnuityPayment",
       type: "number-toComma-Modal",
+      disabled:true,
       innerModalTitle: "_<CFE>_Annual Annuity Payment",
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
@@ -297,17 +302,30 @@ const InvestedAnnuities = (props) => {
         ),
     },
     {
-      title: "Annual Advice Service Fee",
+      title: "Annual Advice Fee",
       dataIndex: "annualAdvice",
       key: "annualAdvice",
-      type: "number-toComma",
-      placeholder: "Annual Fee",
+      type: "number-toComma-Modal",
+      placeholder: "Annual Advice Fee",
+      innerModalTitle: "_<CFE>_Annual Ongoing Fee",
+      callBack: true,
+      func: (innerModalTitle, values, key, stakeHolder) =>
+        handleInnerModal(
+          innerModalTitle,
+          key,
+          stakeHolder,
+          values,
+          "Beneficiaries",
+          `Number of Beneficiaries:`
+        ),
+      disabled: true,
     },
   ];
 
   const componentMapping = {
     nominatedBeneficiaries: <Beneficiaries />,
     annualAnnuityPayment: <AnnualPensionPaymentInnerModal />,
+    annualAdvice: <ServiceFee />,
   };
 
   const ModalContent = (obj) => componentMapping[obj.key] || null;
@@ -390,9 +408,9 @@ const InvestedAnnuities = (props) => {
                     placeholder="Select"
                     size="large"
                     value={values.NumberOfMap || undefined}
-                    onChange={(value) =>
-                      handleInput({ target: { value } }, setFieldValue)
-                    }
+                       onChange={(value) => {
+                      setFieldValue("NumberOfMap", value);
+                    }}
                     onBlur={handleBlur}
                     getPopupContainer={(triggerNode) => triggerNode.parentNode}
                   >

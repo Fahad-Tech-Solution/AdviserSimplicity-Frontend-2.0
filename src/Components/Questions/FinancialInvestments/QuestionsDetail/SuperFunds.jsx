@@ -20,6 +20,7 @@ import GroupInsurance from "./GroupInsurance";
 import Contributions from "./Contributions";
 import Beneficiaries from "./Beneficiaries";
 import { ConfigProvider, Select } from "antd";
+import ServiceFee from "./ServiceFee";
 
 const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
@@ -118,7 +119,10 @@ const SuperFunds = (props) => {
       question,
       key,
       stakeHolder,
-      editArray: values?.[BaseKey]?.[index]?.[key] || [],
+      editArray:
+        key === "annualAdvice"
+          ? values?.[BaseKey]?.[index]?.[key + "Array"] || []
+          : values?.[BaseKey]?.[index]?.[key] || [],
       values,
       Platform,
       ParentModalObject: props.modalObject,
@@ -167,7 +171,7 @@ const SuperFunds = (props) => {
 
     const totalAdvice = fundData.reduce(
       (sum, entry) =>
-        sum + parseFloat(entry.annualAdvice?.replace(/[^0-9.-]+/g, "") || 0),
+        sum + parseFloat(entry.balanceBenefit?.replace(/[^0-9.-]+/g, "") || 0),
       0
     );
 
@@ -220,10 +224,11 @@ const SuperFunds = (props) => {
       placeholder: "Member Number",
     },
     {
-      title: "Balance and Details ",
+      title: "Balance and Details",
       dataIndex: "balanceBenefit",
       key: "balanceBenefit",
       type: "number-toComma-Modal",
+      disabled: true,
       innerModalTitle: "<CFE>_Balnace and Benefits",
       placeholder: "Balance Benefit",
       func: (innerModalTitle, values, key, stakeHolder) =>
@@ -291,11 +296,24 @@ const SuperFunds = (props) => {
         ),
     },
     {
-      title: "Annual Advice Fee",
+      title: "Annual Service Fee",
       dataIndex: "annualAdvice",
       key: "annualAdvice",
-      type: "number-toComma",
-      placeholder: "Annual Fee",
+      type: "number-toComma-Modal",
+      placeholder: "Annual Service Fee",
+      innerModalTitle: "_<CFE>_Annual Ongoing Fee",
+      callBack: true,
+      func: (innerModalTitle, values, key, stakeHolder) =>
+        handleInnerModal(
+          innerModalTitle,
+          key,
+          stakeHolder,
+          values,
+          "Beneficiaries",
+          `Number of Beneficiaries:`
+        ),
+      errorHandler: ShowError,
+      disabled: true,
     },
   ];
 
@@ -305,6 +323,7 @@ const SuperFunds = (props) => {
     groupInsurance: <GroupInsurance />,
     contributions: <Contributions />,
     nominatedBeneficiaries: <Beneficiaries />,
+    annualAdvice: <ServiceFee />,
   };
 
   const ModalContent = (obj) => {

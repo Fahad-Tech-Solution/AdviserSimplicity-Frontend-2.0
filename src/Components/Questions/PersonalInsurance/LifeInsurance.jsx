@@ -524,7 +524,7 @@ const PersonalInsuranceLife = (props) => {
       placeholder: "Life",
       innerModalTitle: "_Life",
       func: handleInnerModal,
-      width: 140,
+      width: 140,disabled:true,
     },
     {
       title: "TPD",
@@ -534,7 +534,7 @@ const PersonalInsuranceLife = (props) => {
       placeholder: "TPD",
       innerModalTitle: "_TPD",
       func: handleInnerModal,
-      width: 140,
+      width: 140,disabled:true,
     },
     {
       title: "Trauma",
@@ -544,14 +544,14 @@ const PersonalInsuranceLife = (props) => {
       placeholder: "Trauma",
       innerModalTitle: "_Trauma",
       func: handleInnerModal,
-      width: 140,
+      width: 140,disabled:true,
     },
     {
       title: "IP",
       dataIndex: "IP",
       key: "IP",
       type: "number-toComma-Modal",
-      placeholder: "IP",
+      placeholder: "IP",disabled:true,
       innerModalTitle: "_IP",
       func: handleInnerModal,
       width: 140,
@@ -564,7 +564,7 @@ const PersonalInsuranceLife = (props) => {
       placeholder: "Premiums p.a",
       innerModalTitle: "_Premiums p.a",
       func: handleInnerModal,
-      width: 160,
+      width: 160,disabled:true,
     },
     {
       title: "Loading/Exclusion",
