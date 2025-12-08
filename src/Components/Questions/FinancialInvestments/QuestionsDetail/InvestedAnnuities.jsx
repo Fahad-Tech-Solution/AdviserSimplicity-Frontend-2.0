@@ -64,6 +64,8 @@ const InvestedAnnuities = (props) => {
     if (existingData.length) {
       setFieldValue("investedAnnuities", existingData);
       setFieldValue("NumberOfMap", existingData.length);
+    } else {
+      props.setIsEditing(true);
     }
   };
 
@@ -241,7 +243,7 @@ const InvestedAnnuities = (props) => {
       dataIndex: "annualAnnuityPayment",
       key: "annualAnnuityPayment",
       type: "number-toComma-Modal",
-      disabled:true,
+      disabled: true,
       innerModalTitle: "_<CFE>_Annual Annuity Payment",
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
@@ -288,6 +290,7 @@ const InvestedAnnuities = (props) => {
       dataIndex: "nominatedBeneficiaries",
       key: "nominatedBeneficiaries",
       type: "yesnoModal",
+      width: 140,
       innerModalTitle: "_<CFE>_Beneficiaries",
       placeholder: "Beneficiaries",
       callBack: true,
@@ -408,7 +411,7 @@ const InvestedAnnuities = (props) => {
                     placeholder="Select"
                     size="large"
                     value={values.NumberOfMap || undefined}
-                       onChange={(value) => {
+                    onChange={(value) => {
                       setFieldValue("NumberOfMap", value);
                     }}
                     onBlur={handleBlur}

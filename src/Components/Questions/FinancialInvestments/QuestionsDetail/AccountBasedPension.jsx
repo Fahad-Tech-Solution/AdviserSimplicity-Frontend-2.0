@@ -22,6 +22,8 @@ import {
   replacePlaceholderWithLabel,
 } from "../../../Assets/Api/Api";
 import ServiceFee from "./ServiceFee";
+import { Grid } from "antd";
+const { useBreakpoint } = Grid;
 
 const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
@@ -34,6 +36,8 @@ const AccountBasedPension = (props) => {
   const [ShowError, setShowError] = useState({});
   const [flagState, setFlagState] = useState(false);
   const [modalObject, setModalObject] = useState({});
+
+  const screens = useBreakpoint();
 
   // determine display name
   const [nameSet] = useState(() => {
@@ -67,6 +71,8 @@ const AccountBasedPension = (props) => {
     if (existingData.length) {
       setFieldValue("accountBasedPensions", existingData);
       setFieldValue("NumberOfMap", existingData.length);
+    } else {
+      props.setIsEditing(true);
     }
   };
 
@@ -293,7 +299,7 @@ const AccountBasedPension = (props) => {
       type: "number-toComma-Modal",
       innerModalTitle: "_<CFE>_Annual Pension Payment",
       placeholder: "Pension Payment",
-      disabled:true,
+      disabled: true,
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
           innerModalTitle,
@@ -309,6 +315,7 @@ const AccountBasedPension = (props) => {
       dataIndex: "nominatedBeneficiaries",
       key: "nominatedBeneficiaries",
       type: "yesnoModal",
+      width: screens.xxl ? 80 : 100,
       innerModalTitle: "_<CFE>_Beneficiaries",
       placeholder: "Beneficiaries",
       callBack: true,
@@ -434,7 +441,7 @@ const AccountBasedPension = (props) => {
                     placeholder="Select"
                     size="large"
                     value={values.NumberOfMap || undefined}
-                     onChange={(value) => {
+                    onChange={(value) => {
                       setFieldValue("NumberOfMap", value);
                     }}
                     onBlur={handleBlur}

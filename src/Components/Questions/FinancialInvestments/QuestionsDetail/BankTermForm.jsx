@@ -70,6 +70,8 @@ const BankTermForm = (props) => {
     if (existingData.length) {
       setFieldValue("NumberOfMap", existingData.length);
       setFieldValue("bankAccounts", existingData);
+    } else {
+      props.setIsEditing(true);
     }
   };
 

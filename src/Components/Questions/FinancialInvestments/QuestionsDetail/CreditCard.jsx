@@ -66,6 +66,8 @@ const CreditCard = (props) => {
   const fillInitialValues = (setFieldValue) => {
     if (creditCards["client"] && creditCards["client"].length) {
       setFieldValue("creditCards", creditCards["client"]);
+    } else {
+      props.setIsEditing(!props.isEditing);
     }
   };
 

@@ -256,7 +256,7 @@ const SmsfAccumulationDetails = (props) => {
       innerModalTitle: "_Accumulation Benefits",
       placeholder: "Accumulation Benefits",
       validate: true,
-      disabled:true,
+      disabled: true,
       errorState: ShowError,
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
@@ -277,6 +277,7 @@ const SmsfAccumulationDetails = (props) => {
       innerModalTitle: "_Contributions",
       placeholder: "Contributions",
       callBack: true,
+      width: 110,
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
           innerModalTitle,
@@ -296,6 +297,7 @@ const SmsfAccumulationDetails = (props) => {
       innerModalTitle: "_Beneficiaries",
       placeholder: "Beneficiaries",
       callBack: true,
+      width: 110,
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
           innerModalTitle,

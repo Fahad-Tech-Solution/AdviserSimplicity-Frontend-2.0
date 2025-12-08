@@ -103,6 +103,8 @@ const Partnership = (props) => {
         setFieldValue("partner.share", data.partner.share || "");
         setFieldValue("partner.goodWill", data.partner.goodWill);
       }
+    } else {
+      props.setIsEditing(!props.isEditing);
     }
   };
 

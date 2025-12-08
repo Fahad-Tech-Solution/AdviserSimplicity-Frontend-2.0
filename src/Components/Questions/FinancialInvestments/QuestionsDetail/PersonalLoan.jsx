@@ -72,31 +72,9 @@ const PersonalLoan = (props) => {
   const fillInitialValues = (setFieldValue) => {
     if (personalLoans["client"] && personalLoans["client"].length) {
       setFieldValue("personalLoans", personalLoans["client"]);
+    } else {
+      props.setIsEditing(!props.isEditing);
     }
-  };
-
-  let handleInput = (e, setFieldValue) => {
-    const value = e.target.value > 2 ? 2 : e.target.value;
-    setFieldValue("NumberOfMap", value);
-    setDynamicFields(Array(Number(value)).fill(""));
-    // Initialize new personalLoans array with empty objects if needed
-    setFieldValue(
-      "personalLoans",
-      Array(Number(value))
-        .fill()
-        .map((_, i) => ({
-          LenderCurrent: "",
-          LoanBalance: "",
-          LoanType: "",
-          RepaymentsAmount: "",
-          Frequency: "",
-          AnnualRepayments: "",
-          InterestRate: "",
-          LoanTerm: "",
-          LoanTermRemaining: "",
-          ...(initialValues.personalLoans[i] || {}),
-        }))
-    );
   };
 
   const loanTermOptions = Array.from({ length: 30 }, (_, i) => ({

@@ -90,6 +90,8 @@ const AustralianShares = (props) => {
   const fillInitialValues = (setFieldValue) => {
     if (existingData.length) {
       setFieldValue("shares", existingData);
+    } else {
+      props.setIsEditing(true);
     }
   };
 

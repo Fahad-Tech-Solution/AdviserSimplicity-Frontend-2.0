@@ -93,6 +93,8 @@ const MarginLoan = (props) => {
         setLoanDetails("partner", data.partner);
       if (data.owner?.includes("joint"))
         setLoanDetails("joint", data.joint || {});
+    } else {
+      props.setIsEditing(true);
     }
   };
 

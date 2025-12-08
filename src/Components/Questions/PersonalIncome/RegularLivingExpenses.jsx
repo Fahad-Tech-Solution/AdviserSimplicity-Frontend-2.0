@@ -123,7 +123,10 @@ const RegularLivingExpenses = (props) => {
   const fillInitialValues = (setFieldValue, questionDetail) => {
     const data = regularLivingExpenses;
     // console.log(regularLivingExpenses);
-    if (!data || !data._id) return false;
+    if (!data || !data._id) {
+      props.setIsEditing(!props.isEditing);
+      return false;
+    }
 
     // console.log("🧩 Populating initial values from DB:", data);
 

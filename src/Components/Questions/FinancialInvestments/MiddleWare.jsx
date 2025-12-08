@@ -409,7 +409,7 @@ const MiddleWare = (props) => {
       placeholder: hasPortfolioLabel ? "Portfolio Value" : "Current Balance",
       callBackModal: true,
       callBack: true,
-      disabled:true,
+      disabled: true,
       func: openInnerModal,
       inputChangeFunc: checkValuesLocal,
     };

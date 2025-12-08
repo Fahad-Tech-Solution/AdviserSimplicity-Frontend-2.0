@@ -309,14 +309,14 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
             className: "custom-pagination",
           }}
           rowKey="key"
-          scroll={{ x: "max-content" }}
-          // scroll={{
-          //   x: isEditing
-          //     ? screens.xxl
-          //       ? data.length * 500
-          //       : "max-content"
-          //     : "max-content",
-          // }}
+          // scroll={{ x: "max-content" }}
+          scroll={{
+            x: isEditing
+              ? screens.xxl
+                ? "100%"
+                : "max-content"
+              : "max-content",
+          }}
         />
       );
     }

@@ -22,13 +22,10 @@ const HomeLoan = (props) => {
     return optionsArray;
   });
 
-    const AnnualFormula = (values, setFieldValue, currentInput, stakeHolder) => {
-        let repaymentsAmount =
-            parseFloat(
-                values?.repaymentsAmount?.replace(/[^0-9.-]+/g, "") || 0
-            ) || 0;
-        let frequency =
-            parseFloat(values?.frequency || 0) || 0;
+  const AnnualFormula = (values, setFieldValue, currentInput, stakeHolder) => {
+    let repaymentsAmount =
+      parseFloat(values?.repaymentsAmount?.replace(/[^0-9.-]+/g, "") || 0) || 0;
+    let frequency = parseFloat(values?.frequency || 0) || 0;
 
     // if the user is currently editing one of these, update it in memory
     const fieldName = currentInput.name.split(".").pop();
@@ -55,6 +52,8 @@ const HomeLoan = (props) => {
       Object.keys(data).forEach((key) => {
         setFieldValue(key, data[key]);
       });
+    } else {
+      props.setIsEditing(!props.isEditing);
     }
   };
 
@@ -198,8 +197,8 @@ const HomeLoan = (props) => {
                   handleChange={handleChange}
                   handleBlur={handleBlur}
                   handleSubmit={props?.handleOk}
-                             isEditing={props?.isEditing}
-                      setIsEditing={props?.setIsEditing}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
                 />
               </div>
             )}

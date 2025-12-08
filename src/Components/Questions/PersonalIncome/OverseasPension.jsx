@@ -89,6 +89,8 @@ const OverseasPension = (props) => {
           );
         }
       }
+    } else {
+      props.setIsEditing(!props.isEditing);
     }
   };
 

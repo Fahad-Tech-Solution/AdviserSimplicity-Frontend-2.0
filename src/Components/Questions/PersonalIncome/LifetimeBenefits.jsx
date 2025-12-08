@@ -89,6 +89,8 @@ const LifeTimeBeneFits = (props) => {
           );
         }
       }
+    } else {
+      props.setIsEditing(!props.isEditing);
     }
   };
 
@@ -217,7 +219,8 @@ const LifeTimeBeneFits = (props) => {
       title: "Is Pension Tax Fee",
       dataIndex: "isPension",
       key: "isPension",
-      type: "yesno", width: 100,
+      type: "yesno",
+      width: 100,
     },
   ];
 
@@ -304,8 +307,8 @@ const LifeTimeBeneFits = (props) => {
                         handleChange={handleChange}
                         handleBlur={handleBlur}
                         handleSubmit={props?.handleOk}
-                                   isEditing={props?.isEditing}
-                      setIsEditing={props?.setIsEditing}
+                        isEditing={props?.isEditing}
+                        setIsEditing={props?.setIsEditing}
                       />
                     </div>
                   )}

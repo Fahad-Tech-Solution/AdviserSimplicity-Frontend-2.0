@@ -24,6 +24,8 @@ import PersonalInsurance from "./PersonalInsurance";
 import DynamicDescription from "../EstatePlanning/DynamicDescription";
 import BeneficiariesPersonalInsurance from "./BeneficiariesPersonalInsurance";
 import GroupCoverDetails from "./GroupCoverDetails";
+import { Grid } from "antd";
+const { useBreakpoint } = Grid;
 
 const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
@@ -40,6 +42,8 @@ const PersonalInsuranceLife = (props) => {
   const [modalObject, setModalObject] = useState({});
 
   const prevClientRowsRef = useRef([]);
+
+  const screens = useBreakpoint();
 
   const personalInsurance =
     Object.keys(questionDetail.personalInsurance || {}).length > 0
@@ -514,7 +518,7 @@ const PersonalInsuranceLife = (props) => {
       dataIndex: "smoker",
       key: "smoker",
       type: "yesno",
-      width: 100,
+      width: screens.xxl ? 160 : 100,
     },
     {
       title: "Life",
@@ -524,7 +528,8 @@ const PersonalInsuranceLife = (props) => {
       placeholder: "Life",
       innerModalTitle: "_Life",
       func: handleInnerModal,
-      width: 140,disabled:true,
+      width: 140,
+      disabled: true,
     },
     {
       title: "TPD",
@@ -534,7 +539,8 @@ const PersonalInsuranceLife = (props) => {
       placeholder: "TPD",
       innerModalTitle: "_TPD",
       func: handleInnerModal,
-      width: 140,disabled:true,
+      width: 140,
+      disabled: true,
     },
     {
       title: "Trauma",
@@ -544,14 +550,16 @@ const PersonalInsuranceLife = (props) => {
       placeholder: "Trauma",
       innerModalTitle: "_Trauma",
       func: handleInnerModal,
-      width: 140,disabled:true,
+      width: 140,
+      disabled: true,
     },
     {
       title: "IP",
       dataIndex: "IP",
       key: "IP",
       type: "number-toComma-Modal",
-      placeholder: "IP",disabled:true,
+      placeholder: "IP",
+      disabled: true,
       innerModalTitle: "_IP",
       func: handleInnerModal,
       width: 140,
@@ -564,14 +572,15 @@ const PersonalInsuranceLife = (props) => {
       placeholder: "Premiums p.a",
       innerModalTitle: "_Premiums p.a",
       func: handleInnerModal,
-      width: 160,disabled:true,
+      width: 160,
+      disabled: true,
     },
     {
       title: "Loading/Exclusion",
       dataIndex: "loadingExclusion",
       key: "loadingExclusion",
       type: "yesnoModal",
-      width: 190,
+      width: screens.xxl ? 160 : 100,
       innerModalTitle: "_Loading/Exclusion",
       callBack: true,
       func: handleInnerModal,
@@ -581,7 +590,7 @@ const PersonalInsuranceLife = (props) => {
       dataIndex: "beneficiary",
       key: "beneficiary",
       type: "yesnoModal",
-      width: 200,
+      width: screens.xxl ? 160 : 100,
       innerModalTitle: "_Beneficiaries",
       func: handleInnerModal,
       callBack: true,

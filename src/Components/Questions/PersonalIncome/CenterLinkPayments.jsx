@@ -89,6 +89,8 @@ const CenterLinkPayments = (props) => {
           data.partner.centrelinkCardsHeld || []
         );
       }
+    } else {
+      props.setIsEditing(!props.isEditing);
     }
   };
 

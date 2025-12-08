@@ -55,6 +55,8 @@ const OwnFamilyHome = (props) => {
         "annualRepayments",
         familyHome?.HomeLoanModal?.annualRepayments || ""
       );
+    } else {
+      props.setIsEditing(!props.isEditing);
     }
   };
 

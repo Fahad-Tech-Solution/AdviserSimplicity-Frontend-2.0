@@ -71,32 +71,6 @@ const SmsfPensionAccountMiddleWare = (props) => {
     };
   }, [existingMembers, getMemberData]);
 
-  // Sync pensionData when selectedMembers changes
-  const syncPensionDataWithSelectedMembers = useCallback(
-    (selectedMembers, currentPensionData, setFieldValue) => {
-      const newPensionData = selectedMembers.map((member) => {
-        // Try to find existing data for this member
-        const existingData = currentPensionData.find(
-          (item) => item.member === member
-        );
-        if (existingData) {
-          return existingData;
-        }
-
-        // If no existing data, get from backend or create new
-        const memberData = getMemberData(member);
-        return {
-          member,
-          pensionBenefitsTotal: memberData.pensionBenefitsTotal || "",
-          pensionBenefitsTotalArray: memberData.pensionBenefitsTotalArray || [],
-        };
-      });
-
-      setFieldValue("pensionData", newPensionData);
-    },
-    [getMemberData]
-  );
-
   const fillInitialValues = useCallback(
     (setFieldValue) => {
       try {
@@ -296,7 +270,6 @@ const SmsfPensionAccountMiddleWare = (props) => {
         title: "Member",
         dataIndex: "member",
         key: "member",
-        width: 100,
         justText: true,
       },
       {
@@ -304,7 +277,7 @@ const SmsfPensionAccountMiddleWare = (props) => {
         dataIndex: "pensionBenefitsTotal",
         key: "pensionBenefitsTotal",
         type: "number-toComma-Modal",
-        disabled:true,
+        disabled: true,
         innerModalTitle: "_Pension Benefits",
         placeholder: "Pension Benefits",
         validate: true,

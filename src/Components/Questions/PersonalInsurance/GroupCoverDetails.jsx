@@ -3,10 +3,14 @@ import { Formik, Form } from "formik";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 import { RenderName } from "../../Assets/Api/Api";
 
+import { Grid } from "antd";
+const { useBreakpoint } = Grid;
 const AntdTable = DynamicTableForInputsSection("antd");
 
 const GroupCoverDetails = (props) => {
   const [UserStatus] = useState(localStorage.getItem("UserStatus"));
+
+  const screens = useBreakpoint();
 
   let index = parseFloat(
     props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
@@ -102,7 +106,7 @@ const GroupCoverDetails = (props) => {
       dataIndex: "smoker",
       key: "smoker",
       type: "yesno",
-      width: 100,
+      width: screens.xxl ? 160 : 100,
     },
     {
       title: "Life",
@@ -150,14 +154,14 @@ const GroupCoverDetails = (props) => {
       dataIndex: "loadingExclusion",
       key: "loadingExclusion",
       type: "yesno",
-      width: 100,
+      width: screens.xxl ? 160 : 120,
     },
     {
       title: "Beneficiary",
       dataIndex: "beneficiary",
       key: "beneficiary",
       type: "yesno",
-      width: 100,
+      width: screens.xxl ? 160 : 120,
     },
   ];
 

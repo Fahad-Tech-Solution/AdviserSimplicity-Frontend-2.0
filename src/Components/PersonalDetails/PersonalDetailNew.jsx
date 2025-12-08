@@ -27,6 +27,8 @@ import ProfileCard from "./ProfileCard";
 import ImportantQuestion from "../Questions/ImportantQuestion/ImportantQuestion";
 import ModalComponent from "../Questions/FinancialInvestments/ModalComponent";
 import { differenceInYears } from "date-fns";
+import { Grid } from "antd";
+const { useBreakpoint } = Grid;
 
 const childSchema = Yup.object({
   depenantChild: Yup.string()
@@ -308,6 +310,8 @@ const PersonalDetailNew = () => {
   const location = useLocation();
   const Nav = useNavigate();
 
+  const screens = useBreakpoint();
+
   const initialValues = {
     client: {},
     partner: {},
@@ -456,28 +460,28 @@ const PersonalDetailNew = () => {
       dataIndex: "smoker",
       type: "yesno",
       key: "smoker",
-      width: 100,
+      width: screens.xxl ? 150 : 100,
     },
     {
       title: "Tax Resident",
       dataIndex: "taxRes",
       type: "yesno",
       key: "taxRes",
-      width: 100,
+      width: screens.xxl ? 150 : 100,
     },
     {
       title: "Private Health Cover",
       dataIndex: "healthCover",
       type: "yesno",
       key: "healthCover",
-      width: 100,
+      width: screens.xxl ? 150 : 100,
     },
     {
       title: "Help Debt",
       dataIndex: "helpDebt",
       type: "yesno",
       key: "helpDebt",
-      width: 100,
+      width: screens.xxl ? 150 : 100,
     },
   ];
 
@@ -505,7 +509,7 @@ const PersonalDetailNew = () => {
       dataIndex: "postcodeSuburb",
       type: "postcode-antd",
       key: "postcodeSuburb",
-      width: 200,
+      width: screens.xxl ? 200 : 150,
       CheckError: true,
     },
     {
@@ -541,7 +545,7 @@ const PersonalDetailNew = () => {
       dataIndex: "postalPostCode",
       type: "postcode-antd",
       key: "postalPostCode",
-      width: 200,
+      width: screens.xxl ? 200 : 150,
 
       disabled: (values, stakeHolder) => {
         return getNestedValue(values, `${stakeHolder}SameAsAbove`) === true;
@@ -648,7 +652,7 @@ const PersonalDetailNew = () => {
       type: "yesno",
       key: "depenantChild",
       CheckError: true,
-      width: 50,
+      width: screens.xxl ? 80 : 50,
     },
   ];
 

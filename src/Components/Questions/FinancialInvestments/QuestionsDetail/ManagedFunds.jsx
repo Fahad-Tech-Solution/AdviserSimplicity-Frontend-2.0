@@ -75,6 +75,8 @@ const ManagedFunds = (props) => {
   const fillInitialValues = (setFieldValue) => {
     if (existingData.length) {
       setFieldValue("managedFunds", existingData);
+    } else {
+      props.setIsEditing(true);
     }
   };
 

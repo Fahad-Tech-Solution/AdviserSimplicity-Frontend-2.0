@@ -21,16 +21,18 @@ import Contributions from "./Contributions";
 import Beneficiaries from "./Beneficiaries";
 import { ConfigProvider, Select } from "antd";
 import ServiceFee from "./ServiceFee";
-
+import { Grid } from "antd";
+const { useBreakpoint } = Grid;
 const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
 
 const SuperFunds = (props) => {
   const bankDetailObj = useRecoilValue(BankDetail);
-  const questionDetail = useRecoilValue(QuestionDetail);
   const [ShowError, setShowError] = useState({});
   const [flagState, setFlagState] = useState(false);
   const [modalObject, setModalObject] = useState({});
+
+  const screens = useBreakpoint();
 
   // Determine name based on stakeholder
   const [nameSet] = useState(() => {
@@ -72,6 +74,8 @@ const SuperFunds = (props) => {
   const fillInitialValues = (setFieldValue) => {
     if (existingData.length) {
       setFieldValue("superFunds", existingData);
+    }else {
+      props.setIsEditing(true);
     }
   };
 
@@ -249,6 +253,7 @@ const SuperFunds = (props) => {
       innerModalTitle: "<CFE>_Group Insurance",
       placeholder: "Group Insurance",
       callBack: true,
+      width: screens.xxl ? 80 : 100,
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
           innerModalTitle,
@@ -264,6 +269,7 @@ const SuperFunds = (props) => {
       dataIndex: "contributions",
       key: "contributions",
       type: "yesnoModal",
+      width: screens.xxl ? 80 : 100,
       innerModalTitle: "<CFE>_Contributions",
       placeholder: "Contributions",
       callBack: true,
@@ -282,6 +288,7 @@ const SuperFunds = (props) => {
       dataIndex: "nominatedBeneficiaries",
       key: "nominatedBeneficiaries",
       type: "yesnoModal",
+      width: screens.xxl ? 80 : 100,
       innerModalTitle: "<CFE>_Beneficiaries",
       placeholder: "Beneficiaries",
       callBack: true,

@@ -911,7 +911,7 @@ const questionConfig = {
       ],
     },
     {
-      title: "Platform Investment",
+      title: "Platform Investments",
       keyName: "familyMangedFunds",
       img: funds,
       component: <MiddleWare />,

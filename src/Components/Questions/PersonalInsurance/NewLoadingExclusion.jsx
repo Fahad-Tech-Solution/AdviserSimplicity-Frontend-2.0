@@ -2,11 +2,14 @@ import { Form, Formik } from "formik";
 import React, { useEffect, useMemo, useState } from "react";
 import { toCommaAndDollar } from "../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
-
+import { Grid } from "antd";
+const { useBreakpoint } = Grid;
 const AntdTable = DynamicTableForInputsSection("antd");
 
 const NewLoadingExclusion = (props) => {
   const [UserStatus] = useState(localStorage.getItem("UserStatus"));
+
+  const screens = useBreakpoint();
 
   // ✅ Initial values
   const initialValues = {};
@@ -130,22 +133,22 @@ const NewLoadingExclusion = (props) => {
       title: "Trauma Plus",
       dataIndex: "traumaPlus",
       key: "traumaPlus",
-      type: "yesno", width: 100,
-      
+      type: "yesno",
+      width: screens.xxl ? 160 : 100,
     },
     {
       title: "CPI",
       dataIndex: "CPI",
       key: "CPI",
-      type: "yesno", width: 100,
-      
+      type: "yesno",
+      width: screens.xxl ? 160 : 100,
     },
     {
       title: "Superlinked",
       dataIndex: "superlinked",
       key: "superlinked",
-      type: "yesno", width: 100,
-      
+      type: "yesno",
+      width: screens.xxl ? 160 : 100,
     },
   ];
 

@@ -153,7 +153,7 @@ const EmploymentIncome = (props) => {
         );
       }
     } else {
-      // Optional: Handle the case where incomeFromOwnBusiness does not exist
+      props.setIsEditing(!props.isEditing);
     }
   };
 

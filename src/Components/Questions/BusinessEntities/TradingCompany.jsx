@@ -72,6 +72,8 @@ const TradingCompany = (props) => {
   const fillInitialValues = (setFieldValue) => {
     if (existingData.length) {
       setFieldValue("tradingCompanies", existingData);
+    } else {
+      props.setIsEditing(true);
     }
   };
 
@@ -155,7 +157,7 @@ const TradingCompany = (props) => {
       title: "Business Address",
       dataIndex: "businessAddress",
       key: "businessAddress",
-      type: "number",
+      type: "textarea",
       placeholder: "Business Address",
       width: 200,
     },
@@ -274,7 +276,8 @@ const TradingCompany = (props) => {
               owner: i + 1,
               stakeHolder: `tradingCompanies[${i}]`,
               businessName: values.tradingCompanies?.[i]?.businessName || "",
-              postcodeSuburb: values.tradingCompanies?.[i]?.postcodeSuburb || "",
+              postcodeSuburb:
+                values.tradingCompanies?.[i]?.postcodeSuburb || "",
               aBNACN: values.tradingCompanies?.[i]?.aBNACN || "",
               businessAddress:
                 values.tradingCompanies?.[i]?.businessAddress || "",

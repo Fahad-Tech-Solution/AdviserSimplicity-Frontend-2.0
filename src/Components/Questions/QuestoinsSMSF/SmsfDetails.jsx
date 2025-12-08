@@ -18,9 +18,13 @@ import DatePicker from "react-datepicker";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 import InnerDirectors from "./InnerDirectors";
 import InnerBareTrust from "./InnerBareTrust";
+import { Grid } from "antd";
+const { useBreakpoint } = Grid;
 
 const AntDTableHOC = DynamicTableForInputsSection("antd");
 const SmsfDetails = (props) => {
+  const screens = useBreakpoint();
+
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
@@ -153,7 +157,7 @@ const SmsfDetails = (props) => {
       dataIndex: "bareTrust",
       key: "bareTrust",
       type: "yesnoModal", // yes/no with modal
-      width: 170,
+      width: 160,
       callBack: true,
       func: handleInnerModal,
       handleInnerModal: handleInnerModal,

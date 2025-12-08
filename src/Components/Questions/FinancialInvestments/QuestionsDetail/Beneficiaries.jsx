@@ -57,6 +57,7 @@ const Beneficiaries = (props) => {
         data?.[`${props.modalObject.key}Array`] || []
       );
       setFieldValue("nominationType", data.nominationType || "");
+      
     } catch (err) {
       console.error("Error in fillInitialValues:", err);
       setFieldValue("NumberOfMap", 1);

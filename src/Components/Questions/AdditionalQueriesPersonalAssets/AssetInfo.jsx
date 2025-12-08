@@ -88,6 +88,8 @@ const AssetInfo = (props) => {
             }
           }
         }
+      } else {
+        props.setIsEditing(!props.isEditing);
       }
     }
   };

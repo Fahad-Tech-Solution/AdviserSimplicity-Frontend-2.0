@@ -63,6 +63,8 @@ const TradingTrust = (props) => {
   const fillInitialValues = (setFieldValue) => {
     if (existingData.length) {
       setFieldValue("tradingTrusts", existingData);
+    } else {
+      props.setIsEditing(true);
     }
   };
 

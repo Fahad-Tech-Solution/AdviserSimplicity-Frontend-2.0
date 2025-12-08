@@ -100,6 +100,8 @@ const SoleTrader = (props) => {
           setFieldValue("partner.goodWill", data.partner.goodWill || "");
         }
       }
+    } else {
+      props.setIsEditing(!props.isEditing);
     }
   };
 

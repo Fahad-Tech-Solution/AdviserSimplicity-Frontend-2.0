@@ -2,13 +2,15 @@ import { Form, Formik } from "formik";
 import React, { useEffect, useMemo, useState } from "react";
 import { toCommaAndDollar } from "../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
-
+import { Grid } from "antd";
+const { useBreakpoint } = Grid;
 const AntdTable = DynamicTableForInputsSection("antd");
 
 const PersonalInsurance = (props) => {
   const [UserStatus] = useState(localStorage.getItem("UserStatus"));
 
   const initialValues = {};
+  const screens = useBreakpoint();
 
   const fillInitialValues = (setFieldValue) => {
     try {
@@ -141,29 +143,29 @@ const PersonalInsurance = (props) => {
       title: "CPI",
       dataIndex: "CPI",
       key: "CPI",
-      type: "yesno", width: 100,
-     
+      type: "yesno",
+      width: screens.xxl ? 160 : 100,
     },
     {
       title: "Increasing Claims",
       dataIndex: "increasingClaims",
       key: "increasingClaims",
-      type: "yesno", width: 100,
-     
+      type: "yesno",
+      width: screens.xxl ? 160 : 100,
     },
     {
       title: "Accident Option",
       dataIndex: "accidentOption",
       key: "accidentOption",
-      type: "yesno", width: 100,
-    
+      type: "yesno",
+      width: screens.xxl ? 160 : 100,
     },
     {
       title: "Superlinked",
       dataIndex: "superlinked",
       key: "superlinked",
-      type: "yesno", width: 100,
-
+      type: "yesno",
+      width: screens.xxl ? 160 : 100,
     },
   ];
 

@@ -35,6 +35,8 @@ const AnnualPensionPaymentInnerModal = (props) => {
       Object.keys(data).forEach((field) => {
         setFieldValue(field, data[field] || "");
       });
+    } else {
+      props.setIsEditing(true);
     }
   };
 

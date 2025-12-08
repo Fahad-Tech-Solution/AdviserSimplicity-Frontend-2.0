@@ -169,6 +169,7 @@ const InvestmentPropertyDetails = (props) => {
     } else {
       // If no data found, clear NumberOfMap
       setFieldValue("NumberOfMap", "");
+      props.setIsEditing(true);
     }
   };
 
@@ -410,7 +411,7 @@ const InvestmentPropertyDetails = (props) => {
       dataIndex: "incomeExpenses",
       key: "incomeExpenses",
       type: "number-toComma-Modal",
-      disabled:true,
+      disabled: true,
       placeholder: "Expenses",
       width: 200,
       func: handleInnerModal,

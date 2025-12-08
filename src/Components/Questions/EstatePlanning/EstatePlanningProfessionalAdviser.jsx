@@ -142,8 +142,16 @@ const EstatePlanningProfessionalAdviser = (props) => {
       title: "Phone",
       dataIndex: "phone",
       key: "phone",
-      type: "number",
+      type: "text",
       placeholder: "Phone",
+      callBack: true,
+      func: (values, setFieldValue, thisInput, stakeHolder) => {
+        const raw = thisInput.value || "";
+        // Allow only digits and + sign
+        const filtered = raw.replace(/[^0-9+]+/g, "");
+
+        setFieldValue(thisInput.name, filtered);
+      },
       width: 150,
     },
     {
