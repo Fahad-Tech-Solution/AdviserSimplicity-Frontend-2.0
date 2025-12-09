@@ -35,12 +35,14 @@ const InvestmentPropertyLoan = (props) => {
 
     return optionsArray;
   });
+
   let optionsFrequency = [
     { value: 52, label: "Weekly" },
     { value: 26, label: "Fortnightly" },
     { value: 12, label: "Monthly" },
     { value: 1, label: "Annually" },
   ];
+
   let [nameSet] = useState(() => {
     if (props.modalObject.Input === "client") {
       return localStorage.getItem("UserName");
@@ -57,41 +59,12 @@ const InvestmentPropertyLoan = (props) => {
 
   let initialValues = { NumberOfMap: "1", DeductibleLoanAmount: "100%" };
 
-  // const fillInitialValues = (setFieldValue) => {
-  //   let arr = [];
-  //   // if (props.modalObject.editArray.length) {
-  //   //   props.modalObject.editArray.map((data, index) => {
-  //   //     setFieldValue(`LenderCurrent${index}`, data.LenderCurrent);
-  //   //     setFieldValue(`LoanBalance${index}`, data.LoanBalance);
-  //   //     setFieldValue(`LoanType${index}`, data.LoanType);
-  //   //     setFieldValue(`RepaymentsAmount${index}`, data.RepaymentsAmount);
-  //   //     setFieldValue(`Frequency${index}`, data.Frequency);
-  //   //     setFieldValue(`AnnualRepayments${index}`, data.AnnualRepayments);
-  //   //     setFieldValue(`InterestRate${index}`, data.InterestRate);
-  //   //     setFieldValue(`LoanTerm${index}`, data.LoanTerm);
-  //   //     setFieldValue(`LoanTermRemaining${index}`, data.LoanTermRemaining);
-  //   //     setFieldValue(
-  //   //       `DeductibleLoanAmount${index}`,
-  //   //       data.DeductibleLoanAmount
-  //   //     );
-  //   //   });
-  //   // }
-  // };
-
   const fillInitialValues = (setFieldValue) => {
-    console.log("props.modalObject Loan", props.modalObject);
-    // console.log(
-    //   "props.modalObject Loan",
-    //   props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
-    // );
-    // Extract index (the number part) from stakeHolder, e.g. "client1" -> 1
     let index = props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "");
-
     let propertyLoanData =
       props.modalObject.values?.[
         props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "")
       ]?.[index]?.[props.modalObject.key + "Array"];
-    console.log("fillInitialValues -> loan", propertyLoanData);
 
     // If we found data, populate form fields dynamically
     if (
@@ -111,6 +84,8 @@ const InvestmentPropertyLoan = (props) => {
         setFieldValue(`LoanTermRemaining`, data.LoanTermRemaining || "");
         setFieldValue(`DeductibleLoanAmount`, data.DeductibleLoanAmount || "");
       });
+    } else {
+      props.setIsEditing(true);
     }
   };
 

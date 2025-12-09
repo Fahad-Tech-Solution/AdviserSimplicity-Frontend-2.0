@@ -510,7 +510,7 @@ const NewAllClients = (props) => {
       res = await GetAxios(`${DefaultUrl}/api/CDF/`);
       // console.log(res,"cdf");
       if (res && res.length > 0) {
-        setProspectsCDF(res.reverse());
+        setProspectsCDF(res);
       }
     } catch (error) {
       console.log("Error message:", error);

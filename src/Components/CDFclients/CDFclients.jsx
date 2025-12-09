@@ -29,6 +29,7 @@ import { MdAddCircleOutline, MdOutlineWarningAmber } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineReload } from "react-icons/ai";
 import EditableTable from "../Assets/Table/EditableTable";
+import ReusableHeader from "../Assets/Dynamic/ReusableHeader";
 
 const CDFclients = () => {
   const DefaultUrl = useRecoilValue(defaultUrl);
@@ -41,6 +42,9 @@ const CDFclients = () => {
   const [CDFData2, setCDFData2] = useState([]);
   const [selectedSegment, setSelectedSegment] = useState("New Prospects");
   const [showFilters, setShowFilters] = useState(false);
+
+  const [expanded, setExpanded] = useState(false);
+  const [selectedValue, setSelectedValue] = useState(null);
 
   let nav = useNavigate();
 
@@ -408,9 +412,7 @@ const CDFclients = () => {
       if (res && res.length > 0) {
         // setProspectsCDF(res.reverse());
         setCDFData(
-          res
-            .reverse()
-            .filter((item) => item.status?.toLowerCase() === "pending")
+          res.filter((item) => item.status?.toLowerCase() === "pending")
         );
         setCDFData2(res);
         setSelectedSegment("New Prospects");
@@ -493,7 +495,7 @@ const CDFclients = () => {
       <div className="d-flex justify-content-center">
         <div className="col-md-11 mt-3">
           <Card className="custom_Shadow p-3 mt-3">
-            <Row className="justify-content-between align-items-center reportSection ">
+            <Row className="justify-content-between align-items-center All_Client reportSection ">
               <Col md={6}>
                 <Segmented
                   options={[
@@ -506,8 +508,40 @@ const CDFclients = () => {
                   onChange={getFilteredData}
                 />
               </Col>
+              <Col className="p-0">
+                <ReusableHeader
+                  title=""
+                  expanded={expanded}
+                  selectedValue={selectedValue}
+                  options={CDFData.map((item) => ({
+                    value: item.client.email, // or client ID if available
+                    label:
+                      item.client.lastName + " " + item.client.preferredName,
+                    email: item.client.email,
+                    phone: item.client.phoneNumber,
+                  }))}
+                  onSearchClick={() => setExpanded(true)}
+                  onCloseClick={() => {
+                    setExpanded(false);
+                    setSelectedValue(null);
+                  }}
+                  filterOption={(input, option) => {
+                    const searchText = input.toLowerCase();
+                    return (
+                      option?.label?.toLowerCase().includes(searchText) ||
+                      option?.email?.toLowerCase().includes(searchText) ||
+                      option?.phone?.toLowerCase().includes(searchText)
+                    );
+                  }}
+                  onChange={(val) => {
+                    console.log(val);
+                    setSelectedValue(val);
+                  }}
+                  noAddButton={true}
+                />
+              </Col>
 
-              <Col md={3} className="">
+              <div className="ps-0 ms-0" style={{ width: "70px" }}>
                 <div className="d-flex justify-content-end gap-3 align-items-center">
                   <Button
                     onClick={() => {
@@ -517,57 +551,20 @@ const CDFclients = () => {
                   >
                     <AiOutlineReload />
                   </Button>
-                  {showFilters && (
-                    <div className="w-75">
-                      <Formik
-                        initialValues={{}}
-                        onSubmit={() => {}}
-                        enableReinitialize
-                      >
-                        {({
-                          values,
-                          setFieldValue,
-                          handleChange,
-                          handleBlur,
-                        }) => (
-                          <Form className="w-100">
-                            <Field
-                              name={`Name`}
-                              component={SimpleSelectField}
-                              label="Multi Select Field"
-                              options={[
-                                ...CDFData2.map((item, index) => {
-                                  return {
-                                    value: item.client.preferredName,
-                                    label: item.client.preferredName,
-                                  };
-                                }),
-                              ]}
-                              onChange={(selected) => {
-                                if (selected?.value) {
-                                  const filtered = CDFData2.filter(
-                                    (item) =>
-                                      item.client.preferredName ===
-                                      selected.value
-                                  );
-                                  setCDFData(filtered);
-                                } else {
-                                  setCDFData(CDFData2);
-                                }
-                              }}
-                            />
-                          </Form>
-                        )}
-                      </Formik>
-                    </div>
-                  )}
                 </div>
-              </Col>
+              </div>
+
               <Col md={12}>
                 <div>
                   <AntTableDynamicReportTable
-                    title={`CDF Prospects - ${selectedSegment}`}
-                    dataSource={CDFData}
+                    // title={`CDF Prospects - ${selectedSegment}`}
+                    dataSource={
+                      selectedValue
+                        ? CDFData.filter(
+                            (item) => item.client.email === selectedValue
+                          )
+                        : CDFData
+                    }
                     columns={columns}
                     showFilters={showFilters}
                     setShowFilters={setShowFilters}
@@ -581,15 +578,6 @@ const CDFclients = () => {
                 </div>
               </Col>
             </Row>
-
-            {/* changes */}
-
-            {/* <div style={{ padding: 20, width: "100%" }}>
-  <h2>Editable Table</h2>
-  <EditableTable columns={col} dataSource={originData} />
-</div> */}
-
-            {/* changes */}
           </Card>
         </div>
       </div>

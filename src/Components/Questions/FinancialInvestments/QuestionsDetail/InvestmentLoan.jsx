@@ -64,7 +64,7 @@ const InvestmentLoan = (props) => {
       setFieldValue("owner", ["trust"]);
     }
 
-    if (managedFundsLOC && managedFundsLOC._id) {
+    if (managedFundsLOC && managedFundsLOC?._id) {
       // For SMSFInvestmentLoan, only set SMSF data
       if (props.modalObject.key === "SMSFInvestmentLoan") {
         if (
@@ -309,6 +309,8 @@ const InvestmentLoan = (props) => {
           }
         }
       }
+    } else {
+      props.setIsEditing(true);
     }
   };
 

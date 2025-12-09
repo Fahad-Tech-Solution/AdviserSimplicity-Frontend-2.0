@@ -39,6 +39,8 @@ const EstatePlanningProfessionalAdviser = (props) => {
         existingData.map((item) => item.POAType)
       );
       setFieldValue("NumberOfMap", existingData.length);
+    } else {
+      props.setIsEditing(true);
     }
   };
 

@@ -13,6 +13,7 @@ const ReusableHeader = ({
   onCloseClick, // fn
   onChange, // fn for Select
   onAddClick, // fn for "Add" button
+  noAddButton = false, // fn for "Add" button
   addButtonLabel = "Add", // optional label
   filterOption = (input, option) =>
     option?.label?.toLowerCase().includes(input.toLowerCase()),
@@ -59,9 +60,11 @@ const ReusableHeader = ({
         </div>
 
         {/* Add Button */}
-        <Button type="primary" className="float-end" onClick={onAddClick}>
-          <FaPlus /> {addButtonLabel}
-        </Button>
+        {!noAddButton && (
+          <Button type="primary" className="float-end" onClick={onAddClick}>
+            <FaPlus /> {addButtonLabel}
+          </Button>
+        )}
       </div>
     </div>
   );

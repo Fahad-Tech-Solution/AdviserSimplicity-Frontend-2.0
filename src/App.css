@@ -833,6 +833,9 @@ input:checked + label {
   all: unset;
   color: red;
 }
+.force-bottom {
+  padding-top: 400px !important;
+}
 
 @media only screen and (min-width: 1045px) {
   .mainBody {

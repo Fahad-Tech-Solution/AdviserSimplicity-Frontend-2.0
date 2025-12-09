@@ -35,7 +35,6 @@ const InnerBareTrust = (props) => {
     else value = e.target.value > 6 ? 6 : e.target.value;
 
     setFieldValue(e.target.id, value);
-   
   };
 
   // 🧠 Prefill from props
@@ -59,6 +58,8 @@ const InnerBareTrust = (props) => {
           setFieldValue(`director${index + 1}`, name);
         });
       }
+    } else {
+      props.setIsEditing(true);
     }
   };
 

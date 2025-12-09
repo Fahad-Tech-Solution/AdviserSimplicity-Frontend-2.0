@@ -50,9 +50,13 @@ const FamilyDetails = (props) => {
 
   const fillInitialValues = (setFieldValue) => {
     let data = familyDetails.familyTrustOwner || {};
-    Object.keys(data).forEach((key) => {
-      setFieldValue(key, data[key] || "");
-    });
+    if (data.length > 0) {
+      Object.keys(data).forEach((key) => {
+        setFieldValue(key, data[key] || "");
+      });
+    } else {
+      props.setIsEditing(true);
+    }
   };
 
   let DefaultUrl = useRecoilValue(defaultUrl);

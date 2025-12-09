@@ -63,6 +63,8 @@ const SmsfPensionAccount = (props) => {
     if (existingData.length) {
       setFieldValue("pensionAccounts", existingData);
       setFieldValue("NumberOfMap", existingData.length);
+    } else {
+      props.setIsEditing(true);
     }
   };
   const handleInnerModal = (

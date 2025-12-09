@@ -65,6 +65,8 @@ const InnerDirectors = (props) => {
       savedDirectors.forEach((dir, index) => {
         setFieldValue(`directors[${index}].directorName`, dir.directorName);
       });
+    } else {
+      props.setIsEditing(true);
     }
   };
 

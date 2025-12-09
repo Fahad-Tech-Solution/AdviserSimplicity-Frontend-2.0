@@ -41,6 +41,8 @@ const AccountBasedBalance = (props) => {
       Object.keys(existingData).forEach((field) => {
         setFieldValue(field, existingData[field] || "");
       });
+    } else {
+      props.setIsEditing(true);
     }
   };
 
@@ -51,7 +53,7 @@ const AccountBasedBalance = (props) => {
         "_" +
         props.modalObject.title.split("_").slice(1)[0] +
         innerModalTitle,
-      question: `Number of Investments:`,
+      question: `Number of Portfolio:`,
       key,
       editArray: values?.[key + "Array"] || [],
       values,

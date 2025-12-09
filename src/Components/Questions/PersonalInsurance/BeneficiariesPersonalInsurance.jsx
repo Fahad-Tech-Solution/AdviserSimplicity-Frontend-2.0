@@ -41,16 +41,20 @@ const BeneficiariesPersonalInsurance = (props) => {
           index
         ]?.[props.modalObject.key + "Details"] || [];
 
-      setFieldValue(
-        "NumberOfMap",
-        data?.[`${props.modalObject.key}Array`].length || 1
-      );
+      if (data?.[`${props.modalObject.key}Array`].length > 1) {
+        setFieldValue(
+          "NumberOfMap",
+          data?.[`${props.modalObject.key}Array`].length || 1
+        );
 
-      setFieldValue(
-        "BeneficiariesDetails",
-        data?.[`${props.modalObject.key}Array`] || []
-      );
-      setFieldValue("nominationType", data.nominationType || "");
+        setFieldValue(
+          "BeneficiariesDetails",
+          data?.[`${props.modalObject.key}Array`] || []
+        );
+        setFieldValue("nominationType", data.nominationType || "");
+      } else {
+        props.setIsEditing(true);
+      }
     } catch (err) {
       console.error("Error in fillInitialValues:", err);
       setFieldValue("NumberOfMap", 1);

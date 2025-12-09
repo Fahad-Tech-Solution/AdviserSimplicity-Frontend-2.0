@@ -16,6 +16,8 @@ import Beneficiaries from "../FinancialInvestments/QuestionsDetail/Beneficiaries
 import AccumulationBenefits from "./AccumulationBenefits";
 import Contributions from "../FinancialInvestments/QuestionsDetail/Contributions";
 import { ConfigProvider, Select, Tag } from "antd";
+import { Grid } from "antd";
+const { useBreakpoint } = Grid;
 
 const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
@@ -28,6 +30,8 @@ const SmsfAccumulationDetails = (props) => {
   const [modalObject, setModalObject] = useState({});
 
   const UserStatus = localStorage.getItem("UserStatus");
+
+  const screens = useBreakpoint();
 
   // Determine name based on stakeholder
   const [nameSet] = useState(() => {
@@ -88,6 +92,8 @@ const SmsfAccumulationDetails = (props) => {
 
       setFieldValue("smsfAccumulation", smsfAccumulation);
       setFieldValue("selectedMembers", existingMembers);
+    } else {
+      props.setIsEditing(true);
     }
   };
 
@@ -277,7 +283,7 @@ const SmsfAccumulationDetails = (props) => {
       innerModalTitle: "_Contributions",
       placeholder: "Contributions",
       callBack: true,
-      width: 110,
+      width: screens.xxl ? 90 : 110,
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
           innerModalTitle,
@@ -297,7 +303,7 @@ const SmsfAccumulationDetails = (props) => {
       innerModalTitle: "_Beneficiaries",
       placeholder: "Beneficiaries",
       callBack: true,
-      width: 110,
+      width: screens.xxl ? 90 : 110,
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
           innerModalTitle,

@@ -33,9 +33,12 @@ const AccumulationBenefits = (props) => {
       ] || [];
 
     console.log("Data", data);
-    
-    setFieldValue("NumberOfMap", data.length || 1);
-    setFieldValue("newEntries", data);
+    if (data.length > 0) {
+      setFieldValue("NumberOfMap", data.length || 1);
+      setFieldValue("newEntries", data);
+    } else {
+      props.setIsEditing(true);
+    }
   };
 
   // ---------------- HANDLE NUMBER CHANGE ----------------

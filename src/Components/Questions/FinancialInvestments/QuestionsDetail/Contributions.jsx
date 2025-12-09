@@ -43,17 +43,12 @@ const Contributions = (props) => {
       setFieldValue("startYear", savedStartYear);
     }
 
-    console.log(
-      "Existing data for Contributions:",
-      data,
-      props.modalObject.values?.[BaseKey]?.[index]?.[
-        props.modalObject.key + "StartYear"
-      ],
-      savedStartYear
-    );
-
-    // Populate rows data (entries)
-    setFieldValue("newEntries", data);
+    if (data.length > 0) {
+      // Populate rows data (entries)
+      setFieldValue("newEntries", data);
+    } else {
+      props.setIsEditing(true);
+    }
   };
 
   // ---------------- FORM SUBMIT ----------------

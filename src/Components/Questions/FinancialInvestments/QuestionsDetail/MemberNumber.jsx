@@ -45,6 +45,8 @@ const MemberNumber = (props) => {
       Object.keys(existingData).forEach((field) => {
         setFieldValue(field, existingData[field] || "");
       });
+    } else {
+      props.setIsEditing(true);
     }
   };
 

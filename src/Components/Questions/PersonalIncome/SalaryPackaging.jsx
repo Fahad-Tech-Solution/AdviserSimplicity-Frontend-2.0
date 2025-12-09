@@ -6,7 +6,8 @@ import * as Yup from "yup"; // ✅ Yup for validation
 import { defaultUrl } from "../../../Store/Store";
 import DynamicYesNo from "../FinancialInvestments/QuestionsDetail/DynamicYesNo";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
-
+import { Grid } from "antd";
+const { useBreakpoint } = Grid;
 // ✅ Validation schema
 const validationSchema = Yup.object({
   employerFBTStatus: Yup.string().required("Employer FBT Status is required"),
@@ -15,6 +16,8 @@ const validationSchema = Yup.object({
 const SalaryPackaging = (props) => {
   const { key, parentValues, parentKey } = props.modalObject;
   const DefaultUrl = useRecoilValue(defaultUrl);
+
+  const screens = useBreakpoint();
 
   // ✅ Fill initial values dynamically
   const fillInitialValues = (setFieldValue) => {
@@ -93,7 +96,7 @@ const SalaryPackaging = (props) => {
       dataIndex: "FBTPaidByEmployer",
       type: "yesno",
       title: "FBT Paid By Employer",
-      width: 100,
+      width: screens.xxl ? 84 : 100,
       CheckError: true,
       render: (_, record) => (
         <DynamicYesNo

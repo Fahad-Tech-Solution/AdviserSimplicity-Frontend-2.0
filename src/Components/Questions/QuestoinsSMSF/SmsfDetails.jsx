@@ -1,6 +1,6 @@
 import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState, useMemo } from "react";
-import { Button, InputGroup, Modal, Row, Table } from "react-bootstrap";
+import { Row } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { defaultUrl, QuestionDetail } from "../../../Store/Store";
 import {
@@ -8,13 +8,8 @@ import {
   PatchAxios,
   PostAxios,
   RenderName,
-  validateName,
 } from "../../Assets/Api/Api";
 import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
-import DynamicYesNo from "../FinancialInvestments/QuestionsDetail/DynamicYesNo";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
-import DatePicker from "react-datepicker";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 import InnerDirectors from "./InnerDirectors";
 import InnerBareTrust from "./InnerBareTrust";
@@ -29,9 +24,6 @@ const SmsfDetails = (props) => {
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
 
   let [flagState, setFlagState] = useState(false);
-
-  let [flagState1, setFlagState1] = useState(false);
-  let [flagState2, setFlagState2] = useState(false);
   let [modalObject, setModalObject] = useState({});
 
   let SMSFDetails =
@@ -49,19 +41,17 @@ const SmsfDetails = (props) => {
     let data = SMSFDetails.SMSFOwner || {};
     console.log(SMSFDetails, "data of SMSFDetails");
 
-    Object.keys(data).forEach((key) => {
-      setFieldValue(key, data[key] || ""); // Set each field value or an empty string if the value is null/undefined
-    });
+    if (Object.keys(data).length > 0) {
+      Object.keys(data).forEach((key) => {
+        setFieldValue(key, data[key] || ""); // Set each field value or an empty string if the value is null/undefined
+      });
+    } else {
+      props.setIsEditing(true);
+    }
   };
 
   let handleInnerModal = (innerModalTitle, values, key, stakeHolder) => {
-    console.log(
-      "handleInnerModal: ",
-      innerModalTitle,
-      values,
-      key,
-      stakeHolder
-    );
+
     let ParentModal = props.modalObject.title;
     setModalObject({
       title: innerModalTitle,
@@ -157,7 +147,7 @@ const SmsfDetails = (props) => {
       dataIndex: "bareTrust",
       key: "bareTrust",
       type: "yesnoModal", // yes/no with modal
-      width: 160,
+      width: screens.xxl ? 130 : 160,
       callBack: true,
       func: handleInnerModal,
       handleInnerModal: handleInnerModal,

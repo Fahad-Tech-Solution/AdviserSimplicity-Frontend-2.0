@@ -84,6 +84,10 @@ const PersonalInsuranceLife = (props) => {
 
   const fillInitialValues = (setFieldValue) => {
     try {
+      if (!personalInsurance?._id && !personalInsurance?.clientFK) {
+        props.setIsEditing(true);
+        return;
+      }
       // ----------------------------------------------------
       // SELECTED STAKEHOLDERS
       // ----------------------------------------------------

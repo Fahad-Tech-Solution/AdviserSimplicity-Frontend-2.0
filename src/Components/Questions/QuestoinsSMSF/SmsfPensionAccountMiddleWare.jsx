@@ -74,10 +74,15 @@ const SmsfPensionAccountMiddleWare = (props) => {
   const fillInitialValues = useCallback(
     (setFieldValue) => {
       try {
-        setFieldValue("selectedMembers", initialValues.selectedMembers);
-        setFieldValue("pensionData", initialValues.pensionData);
+        if (initialValues?._id) {
+          setFieldValue("selectedMembers", initialValues.selectedMembers);
+          setFieldValue("pensionData", initialValues.pensionData);
+        } else {
+          props.setIsEditing(true);
+        }
       } catch (error) {
         console.error("Error initializing values:", error);
+        props.setIsEditing(true);
       }
     },
     [initialValues]

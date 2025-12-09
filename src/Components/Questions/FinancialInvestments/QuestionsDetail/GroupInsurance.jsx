@@ -43,6 +43,8 @@ const GroupInsurance = (props) => {
       Object.keys(initialValues).forEach((key) => {
         if (data[key] !== undefined) setFieldValue(key, data[key]);
       });
+    } else {
+      props.setIsEditing(true);
     }
   };
 
@@ -197,8 +199,6 @@ const GroupInsurance = (props) => {
 
         return (
           <Form>
-       
-
             <div className="mt-4 All_Client reportSection">
               <AntdTable
                 columns={columns}

@@ -85,6 +85,8 @@ const EstatePlanningWill = (props) => {
           will.partner?.estatePlanning || []
         );
       }
+    } else {
+      props.setIsEditing(true);
     }
   };
 

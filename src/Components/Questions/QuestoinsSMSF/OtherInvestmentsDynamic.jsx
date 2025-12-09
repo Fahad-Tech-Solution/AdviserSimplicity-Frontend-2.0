@@ -54,6 +54,8 @@ const OtherInvestmentsDynamic = (props) => {
         setFieldValue(`currentValue`, managedFundsLOC.currentValue || "");
         setFieldValue(`costBase`, managedFundsLOC.costBase || "");
       }
+    } else {
+      props.setIsEditing(true);
     }
   };
 

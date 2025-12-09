@@ -18,10 +18,12 @@ const DynamicDescription = (props) => {
     let editDetails =
       props.modalObject.values?.[BaseKey[0]]?.[BaseKey[1].split("[")[0]]?.[
         index
-      ]?.[props.modalObject.key + "description"] || [];
+      ]?.[props.modalObject.key + "description"] || "";
 
     if (editDetails) {
       setFieldValue("description", editDetails || "");
+    } else {
+      props.setIsEditing(true);
     }
   };
 

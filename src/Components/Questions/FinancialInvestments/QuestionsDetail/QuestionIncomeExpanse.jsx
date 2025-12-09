@@ -58,6 +58,8 @@ const QuestionIncomeExpanse = (props) => {
         setFieldValue(`allOther`, data.allOther);
         setFieldValue(`totalExpance`, data.totalExpance);
       });
+    } else {
+      props.setIsEditing(true);
     }
   };
 

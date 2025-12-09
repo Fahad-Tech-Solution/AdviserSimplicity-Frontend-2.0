@@ -22,25 +22,10 @@ const PortfolioValue = (props) => {
   useEffect(() => {
     if (initialEditArray.length) {
       setDynamicFields(Array(initialEditArray.length).fill(""));
+    } else {
+      props.setIsEditing(true);
     }
   }, [initialEditArray]);
-
-  const handleInput = (e, setFieldValue) => {
-    const value = e.target.value > 50 ? 50 : e.target.value;
-    setFieldValue("NumberOfMap", value);
-    setDynamicFields(Array(Number(value)).fill(""));
-    setFieldValue(
-      "investments",
-      Array(Number(value))
-        .fill()
-        .map((_, i) => ({
-          investmentOption: "",
-          investmentCode: "",
-          investmentValue: "",
-          ...(initialValues.investments[i] || {}),
-        }))
-    );
-  };
 
   // Create dynamic options for a given platform
   const generateOptions = () => {

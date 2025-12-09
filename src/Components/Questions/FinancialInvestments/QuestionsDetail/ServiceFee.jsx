@@ -11,12 +11,22 @@ import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForI
 const AntdTable = DynamicTableForInputsSection("antd");
 
 const ServiceFee = (props) => {
-  const initialEditArray = props.modalObject.editArray || [];
+  const initialEditArray = props.modalObject.editArray || {};
 
   const initialValues = {
     NumberOfMap: initialEditArray.length || "",
     ...initialEditArray,
   };
+
+  useEffect(() => {
+    const isEmptyObject = Array.isArray(initialEditArray)
+      ? initialEditArray.length <= 1
+      : Object.keys(initialEditArray).length <= 1;
+
+    if (isEmptyObject) {
+      props.setIsEditing(true);
+    }
+  }, []);
 
   let OnInvestmentOptionSelect = (
     values,
@@ -80,6 +90,7 @@ const ServiceFee = (props) => {
     {
       title: "Ongoing Fee",
       dataIndex: "serviceFee",
+      placeholder: "Ongoing Fee",
       key: "serviceFee",
       type: "number-toComma",
       callBack: true,

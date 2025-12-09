@@ -69,6 +69,8 @@ const EstatePlanningPOA = (props) => {
         setFieldValue("partner.yearSetUp", POA.partner?.yearSetUp || "");
         setFieldValue("partner.POAName", POA.partner?.POAName || []);
       }
+    } else {
+      props.setIsEditing(true);
     }
   };
 

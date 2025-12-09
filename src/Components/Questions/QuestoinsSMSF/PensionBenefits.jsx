@@ -38,6 +38,8 @@ const PensionBenefits = (props) => {
     if (existingData.length > 0) {
       setFieldValue("NumberOfMap", existingData.length);
       setFieldValue("pensionBenefits", existingData);
+    } else {
+      props.setIsEditing(true);
     }
   };
 

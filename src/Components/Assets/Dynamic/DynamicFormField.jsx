@@ -662,7 +662,9 @@ const DynamicFormField = ({
       return (
         <>
           <AntDate
-            className="form-control inputDesignDoubleInput"
+            placement={"bottom"}
+            dropdownClassName="force-bottom"
+            className="form-control inputDesignDoubleInput date-wrapper"
             value={(() => {
               const fieldName = buildFieldName(stakeHolder, name);
               const rawValue = getValueByPath(values, fieldName);
