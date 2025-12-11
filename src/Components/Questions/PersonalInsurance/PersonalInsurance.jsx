@@ -1,6 +1,5 @@
 import { Form, Formik } from "formik";
 import React, { useEffect, useMemo, useState } from "react";
-import { toCommaAndDollar } from "../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 import { Grid } from "antd";
 const { useBreakpoint } = Grid;
@@ -147,28 +146,28 @@ const PersonalInsurance = (props) => {
       dataIndex: "CPI",
       key: "CPI",
       type: "yesno",
-      width: screens.xxl ? 160 : 100,
+      width: screens.xxl ? 90 : 100,
     },
     {
       title: "Increasing Claims",
       dataIndex: "increasingClaims",
       key: "increasingClaims",
       type: "yesno",
-      width: screens.xxl ? 160 : 100,
+      width: screens.xxl ? 90 : 100,
     },
     {
       title: "Accident Option",
       dataIndex: "accidentOption",
       key: "accidentOption",
       type: "yesno",
-      width: screens.xxl ? 160 : 100,
+      width: screens.xxl ? 90 : 100,
     },
     {
       title: "Superlinked",
       dataIndex: "superlinked",
       key: "superlinked",
       type: "yesno",
-      width: screens.xxl ? 160 : 100,
+      width: screens.xxl ? 90 : 100,
     },
   ];
 

@@ -100,7 +100,6 @@ const InnerModal = (props) => {
   const xlTitles = [
     "Member Number",
     "Insurances Attached",
-    "Pension Benefits",
     "Balance & Benefit",
     "Australian Shares/ETFs",
     "Managed Funds",
@@ -109,24 +108,22 @@ const InnerModal = (props) => {
     "Invested in Annuities",
     "Property Loan",
     "Risk Goals",
-    "Business as Trusts",
     "Pension Benefits",
+    "Business as Trusts",
     "SMSF_Australian Shares/ETFs ",
     "Family Trust Platform Investments",
     "Trust_Australian Shares/ETFs ",
     "Reduced Salary Income",
     "Salary Packaging Car",
     "Accumulation Details",
-    "Accumulation Benefits",
     "Beneficiaries",
-    "Bank Accounts",
-    "Term Deposits",
     "Platform Investments",
     "Salary Detail",
     "Salary Packaging",
     "Group Cover",
     "Portfolio Value",
-    "Annual Pension Payment",
+    "Directors Of Bare Trust",
+    "Life",
   ]; // Add other titles that should use "xl" here
 
   const xlKeys = [
@@ -139,6 +136,8 @@ const InnerModal = (props) => {
     "BusinessAsTrusts",
   ]; // Add other titles that should use "xl" here
 
+  const fullKeys = ["pensionBenefits"]; // Add other titles that should use "xl" here
+
   let fullTitles = [
     "Platform Investments Detail",
     "Balance & Benefit Details",
@@ -149,7 +148,6 @@ const InnerModal = (props) => {
     "Account Based Pension Detail",
     "SMSF Accumulation Details",
     "Accumulations Benefits",
-    "Pension Benefits",
     "SMSF Platform Investments Detail",
     "Loan Balance",
     "Concessional Contributions",
@@ -167,12 +165,19 @@ const InnerModal = (props) => {
     "Business as Trusts Structure",
     "Balnace and Benefits",
     "Contributions",
+    "Group Cover",
+    "TPD",
+    "Trauma",
+    "IP",
+    "Premiums p.a",
+    "Accumulation Benefits",
   ];
 
   let mdTitles = [
     "Other Percentage Amount",
     "Trustee Name",
     "Company Directors",
+    "Loading/Exclusion",
   ];
 
   let [size, setSize] = useState("md");
@@ -189,7 +194,10 @@ const InnerModal = (props) => {
 
       let modalSize = "lg"; // Default size
 
-      if (fullTitles.includes(currentTitle)) {
+      if (
+        fullTitles.includes(currentTitle) ||
+        fullKeys.includes(props.modalObject.key)
+      ) {
         modalSize = "xxl";
       } else if (xlTitles.includes(currentTitle)) {
         modalSize = "xl";

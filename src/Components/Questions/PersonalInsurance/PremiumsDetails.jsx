@@ -8,6 +8,7 @@ import {
 import { useRecoilValue } from "recoil";
 import { QuestionDetail } from "../../../Store/Store";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
+import { Placeholder } from "react-bootstrap";
 
 const AntdTable = DynamicTableForInputsSection("antd");
 
@@ -130,6 +131,7 @@ const PremiumsDetails = (props) => {
       title: "Life",
       dataIndex: "life",
       key: "life",
+      placeholder: "Life",
       type: "number-toComma",
       width: 120,
       callBack: true,
@@ -138,6 +140,7 @@ const PremiumsDetails = (props) => {
     {
       title: "TPD",
       dataIndex: "tpd",
+      placeholder: "TPD",
       key: "tpd",
       type: "number-toComma",
       width: 120,
@@ -149,6 +152,7 @@ const PremiumsDetails = (props) => {
       dataIndex: "trauma",
       key: "trauma",
       type: "number-toComma",
+      placeholder: "Trauma",
       width: 120,
       callBack: true,
       func: FormulaSetting,
@@ -158,6 +162,7 @@ const PremiumsDetails = (props) => {
       dataIndex: "ip",
       key: "ip",
       type: "number-toComma",
+      placeholder: "IP",
       width: 120,
       callBack: true,
       func: FormulaSetting,
@@ -183,6 +188,7 @@ const PremiumsDetails = (props) => {
       dataIndex: "totalCost",
       key: "totalCost",
       type: "text",
+      placeholder: "Total Cost p.a",
       disabled: true,
       width: 150,
     },
@@ -224,6 +230,7 @@ const PremiumsDetails = (props) => {
       dataIndex: "commissionRate",
       key: "commissionRate",
       type: "number-toPercent",
+      placeholder: "Commission Rate",
       width: 150,
       callBack: true,
       func: FormulaSetting,
@@ -235,6 +242,7 @@ const PremiumsDetails = (props) => {
       type: "text",
       disabled: true,
       width: 150,
+      placeholder: "Commission Payable",
     },
   ];
 

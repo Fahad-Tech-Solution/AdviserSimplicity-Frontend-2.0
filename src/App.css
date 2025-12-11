@@ -855,7 +855,7 @@ input:checked + label {
   }
 
   .inputDesign {
-    max-width: 28%;
+    max-width: 30%;
   }
 
   .inputDesign.burgerCollapsed {

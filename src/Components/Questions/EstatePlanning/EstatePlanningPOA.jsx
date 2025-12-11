@@ -16,10 +16,10 @@ import { AntdCreatableMultiSelect } from "../FinancialInvestments/QuestionsDetai
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 import { Tooltip } from "antd";
 import { FaCircleQuestion } from "react-icons/fa6";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
 import Executor from "./Executor";
+
 const AntDTableHOC = DynamicTableForInputsSection("antd");
 
 const EstatePlanningPOA = (props) => {
@@ -147,7 +147,7 @@ const EstatePlanningPOA = (props) => {
   };
 
   const options = !["Single", "Widowed"].includes(
-    personalDetailObj.client?.MaritalStatus
+    personalDetailObj?.client?.clientMaritalStatus
   )
     ? [
         {
@@ -283,7 +283,9 @@ const EstatePlanningPOA = (props) => {
                     htmlFor=""
                     className="text-end"
                     onClick={() => {
-                      console.log(values);
+                      console.log(
+                        personalDetailObj?.client?.clientMaritalStatus
+                      );
                     }}
                   >
                     Owner

@@ -18,6 +18,9 @@ import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 import { ConfigProvider, Select, Button, Input } from "antd";
 
+import { Grid } from "antd";
+const { useBreakpoint } = Grid;
+
 const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
 
@@ -25,6 +28,8 @@ const TradingCompany = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
   const [flagState, setFlagState] = useState(false);
   const [modalObject, setModalObject] = useState({});
+
+  const screens = useBreakpoint();
 
   const [title] = useState(() => {
     let currentTitle = props.modalObject.title;
@@ -174,16 +179,7 @@ const TradingCompany = (props) => {
       dataIndex: "directorship",
       key: "directorship",
       type: "yesno",
-      // render: (_, record, index) => (
-      //   <DynamicYesNo
-      //     name={`tradingCompanies[${index}].directorship`}
-      //     values={record}
-      //     handleChange={(e) => {
-      //       // Handle change for DynamicYesNo component
-      //       console.log("Directorship change:", e.target.value);
-      //     }}
-      //   />
-      // ),
+      width: screens.xxl ? 120 : 140,
     },
     {
       title: "Shareholding",

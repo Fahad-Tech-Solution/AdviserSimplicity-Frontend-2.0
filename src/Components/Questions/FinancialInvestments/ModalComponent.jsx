@@ -122,7 +122,6 @@ const ModalComponent = (props) => {
     "Family Trust",
     "Margin Loan",
     "Home Loan",
-    "Family Home",
     "Holiday Home",
     "Holiday Home Loan",
     "Investment Property Loan",
@@ -185,7 +184,6 @@ const ModalComponent = (props) => {
     "Personal Loans",
     "Australian Shares",
     // "Platform Investment",
-    "Other Investments",
     "Cash",
     "Investment Bonds",
     "Investment Loans (LOC)",
@@ -225,6 +223,7 @@ const ModalComponent = (props) => {
     "Centrelink Payments/Benefits",
     "Own a Family Home",
     "Investments Property",
+    "Family Home",
     "Super Fund",
     "Details",
     "Risk Goals",
@@ -233,6 +232,7 @@ const ModalComponent = (props) => {
     "Centerlink",
     "Credit Card",
     "Personal Loan",
+    "Wills",
     // "Account Based Pension",
     "Investment Properties",
     "Family Trust Investment Properties",
@@ -249,7 +249,6 @@ const ModalComponent = (props) => {
     "cashFlowLifetimeBenefit",
     "incomeFromPartnership",
     "incomeFromSoleTrader",
-    "car",
   ];
 
   let smallModal = props?.modalObject?.small || false;

@@ -37,6 +37,108 @@ const QuestionsFamily = (props) => {
       }
     } catch (error) {
       console.error("Error fetching questions:", error);
+      setCRObject({
+        //Financial Assets
+        QuestionsFlag: false,
+        clientFK: "",
+
+        bankAccountFinance: "No",
+        termDepositsFinance: "No",
+        australianShareMarket: "No",
+        managedFund: "No",
+        investmentBondFinance: "No",
+        managedFundsLOC: "No",
+        managedFundsMarginLoan: "No",
+
+        car: "No",
+        boat: "No",
+        caravan: "No",
+        houseHold: "No",
+        otherAssets: "No",
+
+        personalLoans: "No",
+
+        creditCards: "No",
+
+        familyHome: "No",
+        familyHomeLoan: "No",
+        numberOfHolidayHome: 0,
+
+        investmentPropertyDetails: "No",
+        investmentPropertyLoan: "No",
+        incomeExpenses: "No",
+
+        superAnnuationIssues: "No",
+        accountBasedPensionIssues: "No",
+        annuitiesIssues: "No",
+
+        will: "Yes",
+        POA: "Yes",
+        professionalAdviser: "No",
+
+        incomeFromOwnBusiness: "No",
+        incomeFromSoleTrader: "No",
+        incomeFromPartnership: "No",
+        incomeFromCentrelink: "No",
+        incomeFromSuperPayment: "No",
+        incomeFromOverseasPension: "No",
+        incomeFromInheritance: "No",
+        incomeFromLumpsumExpense: "No",
+        incomeFromRegularLivingExpenses: "Yes", // this one should be yes always
+
+        BusinessAsCompanyStructure: "No",
+        BusinessAsTrusts: "No",
+
+        //keys which just controls rendering
+        investmentPropertyTab: "No",
+        personalInsuranceTab: "No",
+
+        // companyStructureBusinessTab: "No",
+        // trustStructureBusinessTab: "No",
+
+        SMSFManagedFundsTab: "No",
+        businessAsInvestmentTab: "No",
+
+        SMSFBank: "Yes",
+        SMSFTermDeposits: "No",
+        SMSFAustralianShares: "No",
+        SMSFManagedFunds: "No",
+        SMSFInvestmentLoan: "No",
+        SMSFInvestmentProperties: "No",
+        numberOfSMSFInvestmentProperties: 0,
+        SMSFPensionPhase: "No",
+
+        //loop keys
+        // SMSFInvestmentPropertiesLoan
+        // SMSFInvestmentExpenses
+
+        SMSFDetails: "Yes", // this one should be yes always
+        SMSFAccumulationDetails: "Yes", // this one should be yes always
+
+        familyBank: "Yes", // this one should be yes always
+
+        familyTermDeposit: "No",
+        familyAustralianShare: "No",
+        familyMangedFunds: "No",
+        familyInvestmentHomeLoan: "No",
+        familyInvestmentProperties: "No",
+        numberOfFamilyInvestmentProperties: 0,
+        familyPensionPhase: "No",
+
+        SMSFOtherInvestment: "No",
+        familyOtherInvestment: "No",
+
+        //loop keys
+        // familyInvestmentPropertiesLoan
+        // familyInvestmentExpenses
+
+        familyDetails: "Yes", // this one should be yes always
+
+        life: "Yes",
+        TPD: "Yes",
+        trauma: "Yes",
+        incomeProtection: "Yes",
+      });
     }
   };
 

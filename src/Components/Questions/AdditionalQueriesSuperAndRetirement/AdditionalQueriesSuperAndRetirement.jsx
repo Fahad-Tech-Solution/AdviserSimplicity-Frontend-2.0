@@ -7,26 +7,134 @@ import calender from "../svgs/calendar.png";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { QuestionShift, CRState, defaultUrl } from "../../../Store/Store";
 import { Form, Formik } from "formik";
-import { GetAxios, openNotificationSuccess, PatchAxios, PostAxios } from "../../Assets/Api/Api";
+import {
+  GetAxios,
+  openNotificationSuccess,
+  PatchAxios,
+  PostAxios,
+} from "../../Assets/Api/Api";
 import { Image } from "react-bootstrap";
 import DynamicQuestionBlocks from "../../Assets/DynamicQuestionBlocks/DynamicQuestionBlocks";
 const AdditionalQueriesSuperAndRetirement = (props) => {
-
   let [CRObject, setCRObject] = useRecoilState(CRState);
 
   const [flagState, setFlagState] = useState(false);
 
-  let DefaultUrl = useRecoilValue(defaultUrl)
+  let DefaultUrl = useRecoilValue(defaultUrl);
 
   const FetchQuestions = async () => {
     try {
-      const res = await GetAxios(`${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`);
+      const res = await GetAxios(
+        `${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`
+      );
       if (res) {
         setCRObject(res);
         setFlagState(true);
       }
     } catch (error) {
       console.error("Error fetching questions:", error);
+      setCRObject({
+        //Financial Assets
+        QuestionsFlag: false,
+        clientFK: "",
+
+        bankAccountFinance: "No",
+        termDepositsFinance: "No",
+        australianShareMarket: "No",
+        managedFund: "No",
+        investmentBondFinance: "No",
+        managedFundsLOC: "No",
+        managedFundsMarginLoan: "No",
+
+        car: "No",
+        boat: "No",
+        caravan: "No",
+        houseHold: "No",
+        otherAssets: "No",
+
+        personalLoans: "No",
+
+        creditCards: "No",
+
+        familyHome: "No",
+        familyHomeLoan: "No",
+        numberOfHolidayHome: 0,
+
+        investmentPropertyDetails: "No",
+        investmentPropertyLoan: "No",
+        incomeExpenses: "No",
+
+        superAnnuationIssues: "No",
+        accountBasedPensionIssues: "No",
+        annuitiesIssues: "No",
+
+        will: "Yes",
+        POA: "Yes",
+        professionalAdviser: "No",
+
+        incomeFromOwnBusiness: "No",
+        incomeFromSoleTrader: "No",
+        incomeFromPartnership: "No",
+        incomeFromCentrelink: "No",
+        incomeFromSuperPayment: "No",
+        incomeFromOverseasPension: "No",
+        incomeFromInheritance: "No",
+        incomeFromLumpsumExpense: "No",
+        incomeFromRegularLivingExpenses: "Yes", // this one should be yes always
+
+        BusinessAsCompanyStructure: "No",
+        BusinessAsTrusts: "No",
+
+        //keys which just controls rendering
+        investmentPropertyTab: "No",
+        personalInsuranceTab: "No",
+
+        // companyStructureBusinessTab: "No",
+        // trustStructureBusinessTab: "No",
+
+        SMSFManagedFundsTab: "No",
+        businessAsInvestmentTab: "No",
+
+        SMSFBank: "Yes",
+        SMSFTermDeposits: "No",
+        SMSFAustralianShares: "No",
+        SMSFManagedFunds: "No",
+        SMSFInvestmentLoan: "No",
+        SMSFInvestmentProperties: "No",
+        numberOfSMSFInvestmentProperties: 0,
+        SMSFPensionPhase: "No",
+
+        //loop keys
+        // SMSFInvestmentPropertiesLoan
+        // SMSFInvestmentExpenses
+
+        SMSFDetails: "Yes", // this one should be yes always
+        SMSFAccumulationDetails: "Yes", // this one should be yes always
+
+        familyBank: "Yes", // this one should be yes always
+
+        familyTermDeposit: "No",
+        familyAustralianShare: "No",
+        familyMangedFunds: "No",
+        familyInvestmentHomeLoan: "No",
+        familyInvestmentProperties: "No",
+        numberOfFamilyInvestmentProperties: 0,
+        familyPensionPhase: "No",
+
+        SMSFOtherInvestment: "No",
+        familyOtherInvestment: "No",
+
+        //loop keys
+        // familyInvestmentPropertiesLoan
+        // familyInvestmentExpenses
+
+        familyDetails: "Yes", // this one should be yes always
+
+        life: "Yes",
+        TPD: "Yes",
+        trauma: "Yes",
+        incomeProtection: "Yes",
+      });
     }
   };
 
@@ -45,7 +153,10 @@ const AdditionalQueriesSuperAndRetirement = (props) => {
     values.clientFK = localStorage.getItem("UserID");
     try {
       if (!flagState) {
-        const PostRes = await PostAxios(`${DefaultUrl}/api/questions/Add`, values);
+        const PostRes = await PostAxios(
+          `${DefaultUrl}/api/questions/Add`,
+          values
+        );
         if (PostRes) {
           if (props.flagState) {
             props.setFlagState(false);
@@ -53,7 +164,12 @@ const AdditionalQueriesSuperAndRetirement = (props) => {
           handleResponse(values);
         }
       } else {
-        const PatchRes = await PatchAxios(`${DefaultUrl}/api/questions/Update/${localStorage.getItem("UserID")}`, values);
+        const PatchRes = await PatchAxios(
+          `${DefaultUrl}/api/questions/Update/${localStorage.getItem(
+            "UserID"
+          )}`,
+          values
+        );
         if (PatchRes) {
           if (props.flagState) {
             props.setFlagState(false);
@@ -61,13 +177,24 @@ const AdditionalQueriesSuperAndRetirement = (props) => {
           handleResponse(values);
         }
       }
-      openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
+      openNotificationSuccess(
+        "success",
+        "topRight",
+        "Success Notification",
+        'Data of "' + props.modalObject.title + '" is Saved'
+      );
     } catch (error) {
       console.error("Error submitting form:", error);
-      openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        'Data of "' +
+          props.modalObject.title +
+          '" is not Saved Please! try again'
+      );
     }
   };
-
 
   let QuestionArray = [
     {
@@ -84,8 +211,8 @@ const AdditionalQueriesSuperAndRetirement = (props) => {
       title: "Do you have any money invested in Annuities ?",
       img: calender,
       key: "annuitiesIssues",
-    }
-  ]
+    },
+  ];
   const QuestionClick = (index, elem, values, setFieldValue) => {
     // console.log("image clicked in goals", index, elem.key, values);
     if (values[elem.key] == "No") {
@@ -96,8 +223,6 @@ const AdditionalQueriesSuperAndRetirement = (props) => {
     }
   };
 
-
-
   return (
     <div className="container-fluid">
       <div className="row m-0">
@@ -107,185 +232,182 @@ const AdditionalQueriesSuperAndRetirement = (props) => {
           enableReinitialize
           innerRef={props.formRef}
         >
-          {({ values, handleChange, setFieldValue }) => <Form>
-            <div className="col-md-12 text-center">
-              <h4 className="heading d-none">Super and Retirement</h4>
+          {({ values, handleChange, setFieldValue }) => (
+            <Form>
+              <div className="col-md-12 text-center">
+                <h4 className="heading d-none">Super and Retirement</h4>
 
-              <div className="row my-3 justify-content-center">
-                <DynamicQuestionBlocks QuestionArray={QuestionArray} QuestionClick={QuestionClick} values={values} setFieldValue={setFieldValue} />
+                <div className="row my-3 justify-content-center">
+                  <DynamicQuestionBlocks
+                    QuestionArray={QuestionArray}
+                    QuestionClick={QuestionClick}
+                    values={values}
+                    setFieldValue={setFieldValue}
+                  />
 
-                <div className="col-md-12 d-none">
-                  <div className="mb-3">
-                    <label htmlFor="" className="form-label">
-                      Do you have any Money in Superannuation?
-                    </label>
-                    <div className="QuestionIcon">
-                      <img className="img-fluid" src={piggybank1} alt="" />
-                    </div>
-                    {/* health button style */}
-
-                    <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter">
-                      <div className="radiobutton">
-                        <input
-                          type="radio"
-                          name="superAnnuationIssues"
-                          id="superAnnuationIssues1"
-                          value="No"
-                          onChange={handleChange}
-                          checked={values.superAnnuationIssues === "No"}
-                        />
-                        <label
-                          htmlFor="superAnnuationIssues1"
-                          className="label1"
-                        >
-                          <span>No</span>
-                        </label>
-                        <input
-                          type="radio"
-                          name="superAnnuationIssues"
-                          id="superAnnuationIssues2"
-                          value="Yes"
-                          onChange={handleChange}
-                          checked={values.superAnnuationIssues === "Yes"}
-                        />
-                        <label
-                          htmlFor="superAnnuationIssues2"
-                          className="label2"
-                        >
-                          <span>Yes</span>
-                        </label>
+                  <div className="col-md-12 d-none">
+                    <div className="mb-3">
+                      <label htmlFor="" className="form-label">
+                        Do you have any Money in Superannuation?
+                      </label>
+                      <div className="QuestionIcon">
+                        <img className="img-fluid" src={piggybank1} alt="" />
                       </div>
-                    </div>
+                      {/* health button style */}
 
-                    {/* health switch button style */}
+                      <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter">
+                        <div className="radiobutton">
+                          <input
+                            type="radio"
+                            name="superAnnuationIssues"
+                            id="superAnnuationIssues1"
+                            value="No"
+                            onChange={handleChange}
+                            checked={values.superAnnuationIssues === "No"}
+                          />
+                          <label
+                            htmlFor="superAnnuationIssues1"
+                            className="label1"
+                          >
+                            <span>No</span>
+                          </label>
+                          <input
+                            type="radio"
+                            name="superAnnuationIssues"
+                            id="superAnnuationIssues2"
+                            value="Yes"
+                            onChange={handleChange}
+                            checked={values.superAnnuationIssues === "Yes"}
+                          />
+                          <label
+                            htmlFor="superAnnuationIssues2"
+                            className="label2"
+                          >
+                            <span>Yes</span>
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* health switch button style */}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row my-3 d-none">
+                  <div className="col-md-12">
+                    <div className="mb-3">
+                      <label htmlFor="" className="form-label">
+                        Do you have any Money in Account Based Pension ?
+                      </label>
+                      <div className="QuestionIcon">
+                        <img className="img-fluid" src={piggybank2} alt="" />
+                      </div>
+                      {/* health button style */}
+
+                      <div className="form-check form-switch m-0 p-0  col-md-12 QuestionYesNoCenter">
+                        <div className="radiobutton">
+                          <input
+                            type="radio"
+                            name="accountBasedPensionIssues"
+                            id="accountBasedPensionIssues1"
+                            value="No"
+                            onChange={handleChange}
+                            checked={values.accountBasedPensionIssues === "No"}
+                          />
+                          <label
+                            htmlFor="accountBasedPensionIssues1"
+                            className="label1"
+                          >
+                            <span>No</span>
+                          </label>
+                          <input
+                            type="radio"
+                            name="accountBasedPensionIssues"
+                            id="accountBasedPensionIssues2"
+                            value="Yes"
+                            onChange={handleChange}
+                            checked={values.accountBasedPensionIssues === "Yes"}
+                          />
+                          <label
+                            htmlFor="accountBasedPensionIssues2"
+                            className="label2"
+                          >
+                            <span>Yes</span>
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* health switch button style */}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row my-3 d-none">
+                  <div className="col-md-12">
+                    <div className="mb-3">
+                      <label htmlFor="" className="form-label">
+                        Do you have any money invested in Annuities ?
+                      </label>
+                      <div className="QuestionIcon">
+                        <img className="img-fluid" src={calender} alt="" />
+                      </div>
+                      {/* health button style */}
+
+                      <div className="form-check form-switch m-0 p-0  col-md-12 QuestionYesNoCenter">
+                        <div className="radiobutton">
+                          <input
+                            type="radio"
+                            name="annuitiesIssues"
+                            id="annuitiesIssues1"
+                            value="No"
+                            onChange={handleChange}
+                            checked={values.annuitiesIssues === "No"}
+                          />
+                          <label htmlFor="annuitiesIssues1" className="label1">
+                            <span>No</span>
+                          </label>
+                          <input
+                            type="radio"
+                            name="annuitiesIssues"
+                            id="annuitiesIssues2"
+                            value="Yes"
+                            onChange={handleChange}
+                            checked={values.annuitiesIssues === "Yes"}
+                          />
+                          <label htmlFor="annuitiesIssues2" className="label2">
+                            <span>Yes</span>
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* health switch button style */}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row mt-2 d-none">
+                  <div className="col-md-12">
+                    <button
+                      onClick={() => {}}
+                      type="submit"
+                      className="float-end btn w-25  bgColor modalBtn"
+                    >
+                      Next
+                    </button>
+                    <button
+                      type="button"
+                      className="float-end btn w-25  btn-outline  backBtn mx-3"
+                      onClick={() => {
+                        setQuestionChange("Investment");
+                      }}
+                    >
+                      Back
+                    </button>
                   </div>
                 </div>
               </div>
-
-              <div className="row my-3 d-none">
-                <div className="col-md-12">
-                  <div className="mb-3">
-                    <label htmlFor="" className="form-label">
-                      Do you have any Money in Account Based Pension ?
-                    </label>
-                    <div className="QuestionIcon">
-                      <img className="img-fluid" src={piggybank2} alt="" />
-                    </div>
-                    {/* health button style */}
-
-                    <div className="form-check form-switch m-0 p-0  col-md-12 QuestionYesNoCenter">
-                      <div className="radiobutton">
-                        <input
-                          type="radio"
-                          name="accountBasedPensionIssues"
-                          id="accountBasedPensionIssues1"
-                          value="No"
-                          onChange={handleChange}
-                          checked={values.accountBasedPensionIssues === "No"}
-                        />
-                        <label
-                          htmlFor="accountBasedPensionIssues1"
-                          className="label1"
-                        >
-                          <span>No</span>
-                        </label>
-                        <input
-                          type="radio"
-                          name="accountBasedPensionIssues"
-                          id="accountBasedPensionIssues2"
-                          value="Yes"
-                          onChange={handleChange}
-                          checked={values.accountBasedPensionIssues === "Yes"}
-                        />
-                        <label
-                          htmlFor="accountBasedPensionIssues2"
-                          className="label2"
-                        >
-                          <span>Yes</span>
-                        </label>
-                      </div>
-                    </div>
-
-                    {/* health switch button style */}
-                  </div>
-                </div>
-              </div>
-
-              <div className="row my-3 d-none">
-                <div className="col-md-12">
-                  <div className="mb-3">
-                    <label htmlFor="" className="form-label">
-                      Do you have any money invested in Annuities ?
-                    </label>
-                    <div className="QuestionIcon">
-                      <img className="img-fluid" src={calender} alt="" />
-                    </div>
-                    {/* health button style */}
-
-                    <div className="form-check form-switch m-0 p-0  col-md-12 QuestionYesNoCenter">
-                      <div className="radiobutton">
-                        <input
-                          type="radio"
-                          name="annuitiesIssues"
-                          id="annuitiesIssues1"
-                          value="No"
-                          onChange={handleChange}
-                          checked={values.annuitiesIssues === "No"}
-                        />
-                        <label
-                          htmlFor="annuitiesIssues1"
-                          className="label1"
-                        >
-                          <span>No</span>
-                        </label>
-                        <input
-                          type="radio"
-                          name="annuitiesIssues"
-                          id="annuitiesIssues2"
-                          value="Yes"
-                          onChange={handleChange}
-                          checked={values.annuitiesIssues === "Yes"}
-                        />
-                        <label
-                          htmlFor="annuitiesIssues2"
-                          className="label2"
-                        >
-                          <span>Yes</span>
-                        </label>
-                      </div>
-                    </div>
-
-                    {/* health switch button style */}
-                  </div>
-                </div>
-              </div>
-
-              <div className="row mt-2 d-none">
-                <div className="col-md-12">
-                  <button
-                    onClick={() => {
-
-                    }}
-                    type="submit"
-                    className="float-end btn w-25  bgColor modalBtn"
-                  >
-                    Next
-                  </button>
-                  <button type="button"
-                    className="float-end btn w-25  btn-outline  backBtn mx-3"
-                    onClick={() => {
-
-                      setQuestionChange("Investment")
-                    }}
-                  >
-                    Back
-                  </button>
-                </div>
-              </div>
-
-            </div>
-
-          </Form>}
+            </Form>
+          )}
         </Formik>
       </div>
     </div>

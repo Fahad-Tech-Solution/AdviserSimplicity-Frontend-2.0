@@ -19,7 +19,8 @@ import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInpu
 import { Tooltip } from "antd";
 import { FaCircleQuestion } from "react-icons/fa6";
 import Executor from "./Executor";
-
+import { Grid } from "antd";
+const { useBreakpoint } = Grid;
 const AntDTableHOC = DynamicTableForInputsSection("antd");
 
 const EstatePlanningWill = (props) => {
@@ -30,6 +31,8 @@ const EstatePlanningWill = (props) => {
   const [flagState, setFlagState] = useState(false);
   const [modalObject, setModalObject] = useState({});
   const DefaultUrl = useRecoilValue(defaultUrl);
+
+  const screens = useBreakpoint();
 
   const will =
     Object.keys(questionDetail.will || {}).length > 0
@@ -215,7 +218,7 @@ const EstatePlanningWill = (props) => {
       dataIndex: "willsCurrent",
       key: "willsCurrent",
       type: "yesno",
-      width: 100,
+      width: screens.xxl ? 50 : 100,
 
       disabled: (values, stakeHolder) =>
         values.owner.includes("together") && stakeHolder === "partner",
@@ -225,16 +228,16 @@ const EstatePlanningWill = (props) => {
       dataIndex: "executor",
       key: "executor",
       type: "modal",
-      width: 150,
       handleInnerModal,
       innerModalTitle: "Executor",
+      width: screens.xxl ? 50 : 100,
     },
     {
       title: "Enduring Guardianship",
       dataIndex: "enduringGuardianship",
       key: "enduringGuardianship",
       type: "yesno",
-      width: 100,
+      width: screens.xxl ? 50 : 100,
 
       disabled: (values, stakeHolder) =>
         values.owner.includes("together") && stakeHolder === "partner",
@@ -244,7 +247,7 @@ const EstatePlanningWill = (props) => {
       dataIndex: "testamentaryTrust",
       key: "testamentaryTrust",
       type: "yesno",
-      width: 100,
+      width: screens.xxl ? 50 : 100,
 
       disabled: (values, stakeHolder) =>
         values.owner.includes("together") && stakeHolder === "partner",

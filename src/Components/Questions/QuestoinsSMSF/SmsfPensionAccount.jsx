@@ -18,7 +18,8 @@ import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 import PensionBenefits from "./PensionBenefits";
 import Beneficiaries from "../FinancialInvestments/QuestionsDetail/Beneficiaries";
 import { ConfigProvider, Select, Input, InputNumber } from "antd";
-
+import { Grid } from "antd";
+const { useBreakpoint } = Grid;
 const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
 
@@ -38,6 +39,7 @@ const SmsfPensionAccount = (props) => {
     return "";
   });
 
+  const screens = useBreakpoint();
   const [flagState, setFlagState] = useState(false);
   const [modalObject, setModalObject] = useState({});
   const [ShowError, setShowError] = useState({});
@@ -232,7 +234,7 @@ const SmsfPensionAccount = (props) => {
       title: "No#",
       dataIndex: "owner",
       key: "owner",
-      width: 50,
+      width: 40,
     },
     {
       title: "Pension Benefits",
@@ -241,7 +243,7 @@ const SmsfPensionAccount = (props) => {
       type: "number-toComma-Modal",
       innerModalTitle: "_Pension Benefits",
       placeholder: "Pension Benefits",
-      width: 210,
+      width: screens.xxl ? 120 : 200,
       validate: true,
       disabled: true,
       errorState: ShowError,
@@ -261,7 +263,7 @@ const SmsfPensionAccount = (props) => {
       dataIndex: "pensionPayment",
       key: "pensionPayment",
       type: "number-toComma",
-      width: 180,
+      width: screens.xxl ? 120 : 180,
       placeholder: "Pension Payment",
     },
     {
@@ -270,7 +272,7 @@ const SmsfPensionAccount = (props) => {
       key: "pensionType",
       type: "select",
       placeholder: "Pension Type",
-      width: 230,
+      width: screens.xxl ? 120 : 230,
       options: [
         { value: "accountbasepension", label: "Account Base Pension" },
         { value: "TTR", label: "TTR" },

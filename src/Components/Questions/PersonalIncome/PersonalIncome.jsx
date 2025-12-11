@@ -9,8 +9,6 @@ import businessPartnership from "../svgs/businessPartnership.png";
 import Gears from "../svgs/gears-gear-svgrepo-com.svg";
 import money from "../svgs/money-3.svg";
 import overseas from "../svgs/overseas.svg";
-import inheritance from "../svgs/inheritance.png";
-import moneyBag from "../svgs/money-bag-svgrepo-com.svg";
 
 import { useRecoilState, useRecoilValue } from "recoil";
 import { QuestionShift, CRState, defaultUrl } from "../../../Store/Store";
@@ -20,7 +18,6 @@ import {
   PatchAxios,
   PostAxios,
 } from "../../Assets/Api/Api";
-import { Image } from "react-bootstrap";
 import DynamicQuestionBlocks from "../../Assets/DynamicQuestionBlocks/DynamicQuestionBlocks";
 
 const PersonalIncome = (props) => {
@@ -32,6 +29,7 @@ const PersonalIncome = (props) => {
 
   const FetchQuestions = async () => {
     try {
+      console.log("Usama Faheem");
       const res = await GetAxios(
         `${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`
       );
@@ -41,11 +39,113 @@ const PersonalIncome = (props) => {
       }
     } catch (error) {
       console.error("Error fetching questions:", error);
+      setCRObject({
+        //Financial Assets
+        QuestionsFlag: false,
+        clientFK: "",
+
+        bankAccountFinance: "No",
+        termDepositsFinance: "No",
+        australianShareMarket: "No",
+        managedFund: "No",
+        investmentBondFinance: "No",
+        managedFundsLOC: "No",
+        managedFundsMarginLoan: "No",
+
+        car: "No",
+        boat: "No",
+        caravan: "No",
+        houseHold: "No",
+        otherAssets: "No",
+
+        personalLoans: "No",
+
+        creditCards: "No",
+
+        familyHome: "No",
+        familyHomeLoan: "No",
+        numberOfHolidayHome: 0,
+
+        investmentPropertyDetails: "No",
+        investmentPropertyLoan: "No",
+        incomeExpenses: "No",
+
+        superAnnuationIssues: "No",
+        accountBasedPensionIssues: "No",
+        annuitiesIssues: "No",
+
+        will: "Yes",
+        POA: "Yes",
+        professionalAdviser: "No",
+
+        incomeFromOwnBusiness: "No",
+        incomeFromSoleTrader: "No",
+        incomeFromPartnership: "No",
+        incomeFromCentrelink: "No",
+        incomeFromSuperPayment: "No",
+        incomeFromOverseasPension: "No",
+        incomeFromInheritance: "No",
+        incomeFromLumpsumExpense: "No",
+        incomeFromRegularLivingExpenses: "Yes", // this one should be yes always
+
+        BusinessAsCompanyStructure: "No",
+        BusinessAsTrusts: "No",
+
+        //keys which just controls rendering
+        investmentPropertyTab: "No",
+        personalInsuranceTab: "No",
+
+        // companyStructureBusinessTab: "No",
+        // trustStructureBusinessTab: "No",
+
+        SMSFManagedFundsTab: "No",
+        businessAsInvestmentTab: "No",
+
+        SMSFBank: "Yes",
+        SMSFTermDeposits: "No",
+        SMSFAustralianShares: "No",
+        SMSFManagedFunds: "No",
+        SMSFInvestmentLoan: "No",
+        SMSFInvestmentProperties: "No",
+        numberOfSMSFInvestmentProperties: 0,
+        SMSFPensionPhase: "No",
+
+        //loop keys
+        // SMSFInvestmentPropertiesLoan
+        // SMSFInvestmentExpenses
+
+        SMSFDetails: "Yes", // this one should be yes always
+        SMSFAccumulationDetails: "Yes", // this one should be yes always
+
+        familyBank: "Yes", // this one should be yes always
+
+        familyTermDeposit: "No",
+        familyAustralianShare: "No",
+        familyMangedFunds: "No",
+        familyInvestmentHomeLoan: "No",
+        familyInvestmentProperties: "No",
+        numberOfFamilyInvestmentProperties: 0,
+        familyPensionPhase: "No",
+
+        SMSFOtherInvestment: "No",
+        familyOtherInvestment: "No",
+
+        //loop keys
+        // familyInvestmentPropertiesLoan
+        // familyInvestmentExpenses
+
+        familyDetails: "Yes", // this one should be yes always
+
+        life: "Yes",
+        TPD: "Yes",
+        trauma: "Yes",
+        incomeProtection: "Yes",
+      });
     }
   };
 
   useEffect(() => {
-    if (CRObject._id) {
+    if (CRObject?._id) {
       setFlagState(true);
     } else {
       FetchQuestions();
@@ -138,6 +238,7 @@ const PersonalIncome = (props) => {
       key: "incomeFromOverseasPension",
     },
   ];
+
   const QuestionClick = (index, elem, values, setFieldValue) => {
     // console.log("image clicked in goals", index, elem.key, values);
     if (values[elem.key] == "No") {

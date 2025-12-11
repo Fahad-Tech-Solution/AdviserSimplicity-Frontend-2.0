@@ -461,6 +461,27 @@ const questionConfig = {
       img: advisor,
       showPartnerButton: true,
       component: <EstatePlanningProfessionalAdviser />,
+      variant: "case2",
+      // Labels: ["Property Portfolio", "Total Debt"],
+      Labels: [
+        {
+          label: "client",
+          value: (questionDetail) =>
+            questionDetail?.professionalAdviser?.clientTotal ?? "",
+          component: <EstatePlanningProfessionalAdviser />,
+          key: "professionalAdviser",
+          maintitle: true,
+          onTop: true,
+        },
+        {
+          label: "partner",
+          value: (questionDetail) =>
+            questionDetail?.professionalAdviser?.clientTotal ?? "",
+          component: <EstatePlanningProfessionalAdviser />,
+          key: "professionalAdviser",
+          maintitle: true,
+        },
+      ],
     },
   ],
   "/user/personal-insurance": [
@@ -1383,7 +1404,9 @@ const QuestionCardsDemo = ({ questionKey, CRObject, collapsed }) => {
 
   const handleOpen = (title, keyName, component, Input) => {
     // console.log(title, keyName);
-    setModalInfo({ title, key: keyName, component, Input });
+    let small = ["Contents", "Boat", "Caravan"].includes(title);
+
+    setModalInfo({ title, key: keyName, component, Input, small });
     setFlagState(true);
   };
 
@@ -1413,6 +1436,7 @@ const QuestionCardsDemo = ({ questionKey, CRObject, collapsed }) => {
       title: title,
       key: keyName,
       Input,
+      small,
     };
     return (
       <div
