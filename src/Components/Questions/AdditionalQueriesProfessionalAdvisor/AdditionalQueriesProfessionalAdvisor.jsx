@@ -16,20 +16,25 @@ import {
 import { useRecoilState, useRecoilValue } from "recoil";
 import { QuestionShift, CRState, defaultUrl } from "../../../Store/Store";
 import { Form, Formik } from "formik";
-import { GetAxios, openNotificationSuccess, PatchAxios, PostAxios } from "../../Assets/Api/Api";
+import {
+  GetAxios,
+  openNotificationSuccess,
+  PatchAxios,
+  PostAxios,
+} from "../../Assets/Api/Api";
 import DynamicQuestionBlocks from "../../Assets/DynamicQuestionBlocks/DynamicQuestionBlocks";
 const AdditionalQueriesProfessionalAdvisor = (props) => {
-
-
   let [CRObject, setCRObject] = useRecoilState(CRState);
 
   const [flagState, setFlagState] = useState(false);
 
-  let DefaultUrl = useRecoilValue(defaultUrl)
+  let DefaultUrl = useRecoilValue(defaultUrl);
 
   const FetchQuestions = async () => {
     try {
-      const res = await GetAxios(`${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`);
+      const res = await GetAxios(
+        `${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`
+      );
       if (res) {
         setCRObject(res);
         setFlagState(true);
@@ -133,10 +138,10 @@ const AdditionalQueriesProfessionalAdvisor = (props) => {
 
         familyDetails: "Yes", // this one should be yes always
 
-        life: "Yes",
-        TPD: "Yes",
-        trauma: "Yes",
-        incomeProtection: "Yes",
+        life: "No",
+        TPD: "No",
+        trauma: "No",
+        incomeProtection: "No",
       });
     }
   };
@@ -153,9 +158,13 @@ const AdditionalQueriesProfessionalAdvisor = (props) => {
   };
 
   const onSubmit = async (values) => {
+    values.clientFK = localStorage.getItem("UserID");
     try {
       if (!flagState) {
-        const PostRes = await PostAxios(`${DefaultUrl}/api/questions/Add`, values);
+        const PostRes = await PostAxios(
+          `${DefaultUrl}/api/questions/Add`,
+          values
+        );
         if (PostRes) {
           if (props.flagState) {
             props.setFlagState(false);
@@ -163,7 +172,12 @@ const AdditionalQueriesProfessionalAdvisor = (props) => {
           handleResponse(values);
         }
       } else {
-        const PatchRes = await PatchAxios(`${DefaultUrl}/api/questions/Update/${localStorage.getItem("UserID")}`, values);
+        const PatchRes = await PatchAxios(
+          `${DefaultUrl}/api/questions/Update/${localStorage.getItem(
+            "UserID"
+          )}`,
+          values
+        );
         if (PatchRes) {
           if (props.flagState) {
             props.setFlagState(false);
@@ -171,16 +185,29 @@ const AdditionalQueriesProfessionalAdvisor = (props) => {
           handleResponse(values);
         }
       }
-      openNotificationSuccess("success", "topRight", "Success Notification", "Data of \"" + props.modalObject.title + "\" is Saved");
+      openNotificationSuccess(
+        "success",
+        "topRight",
+        "Success Notification",
+        'Data of "' + props.modalObject.title + '" is Saved'
+      );
     } catch (error) {
       console.error("Error submitting form:", error);
-      openNotificationSuccess("error", "topRight", "Error Notification", "Data of \"" + props.modalObject.title + "\" is not Saved Please! try again");
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        'Data of "' +
+          props.modalObject.title +
+          '" is not Saved Please! try again'
+      );
     }
   };
 
   let QuestionArray = [
     {
-      title: "Do you have any personal Insurance cover (Retail Cover Outside and Inside Super) ?",
+      title:
+        "Do you have any personal Insurance cover (Retail Cover Outside and Inside Super) ?",
       img: umbrela,
       key: "CoverOutsideIssuesradio",
     },
@@ -199,7 +226,7 @@ const AdditionalQueriesProfessionalAdvisor = (props) => {
       img: building,
       key: "RelatedEntitiesIssuesradio",
     },
-  ]
+  ];
   const QuestionClick = (index, elem, values, setFieldValue) => {
     // console.log("image clicked in goals", index, elem.key, values);
     if (values[elem.key] == "No") {
@@ -210,9 +237,6 @@ const AdditionalQueriesProfessionalAdvisor = (props) => {
     }
   };
 
-
-
-
   return (
     <div className="container-fluid">
       <div className="row m-0">
@@ -222,243 +246,256 @@ const AdditionalQueriesProfessionalAdvisor = (props) => {
           enableReinitialize
           innerRef={props.formRef}
         >
-          {({ values, handleChange }) => <Form>
-            <div className="col-md-12 text-center">
-              <h4 className="heading d-none">Professional Advisor</h4>
+          {({ values, handleChange }) => (
+            <Form>
+              <div className="col-md-12 text-center">
+                <h4 className="heading d-none">Professional Advisor</h4>
 
-              <div className="row my-3 justify-content-center">
-                <DynamicQuestionBlocks QuestionArray={QuestionArray} QuestionClick={QuestionClick} values={values} setFieldValue={setFieldValue} />
+                <div className="row my-3 justify-content-center">
+                  <DynamicQuestionBlocks
+                    QuestionArray={QuestionArray}
+                    QuestionClick={QuestionClick}
+                    values={values}
+                    setFieldValue={setFieldValue}
+                  />
 
-                <div className="col-md-12 d-none">
-                  <div className="mb-3">
-                    <label htmlFor="" className="form-label">
-                      Do you have any personal Insurance cover (Retail Cover
-                      Outside and Inside Super) ?
-                    </label>
-                    <div className="QuestionIcon">
-                      <img className="img-fluid" src={umbrela} alt="" />
-                    </div>
-                    {/* health button style */}
-
-                    <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter">
-                      <div className="radiobutton ">
-                        <input
-                          type="radio"
-                          name="CoverOutsideIssuesradio"
-                          id="CoverOutsideIssuesopt1"
-                          value="No"
-                          onChange={handleChange}
-                          checked={values.CoverOutsideIssuesradio === "No"}
-                        />
-                        <label
-                          htmlFor="CoverOutsideIssuesopt1"
-                          className="label1"
-                        >
-                          <span>No</span>
-                        </label>
-                        <input
-                          type="radio"
-                          name="CoverOutsideIssuesradio"
-                          id="CoverOutsideIssuesopt2"
-                          value="Yes"
-                          onChange={handleChange}
-                          checked={values.CoverOutsideIssuesradio === "Yes"}
-                        />
-                        <label
-                          htmlFor="CoverOutsideIssuesopt2"
-                          className="label2"
-                        >
-                          <span>Yes</span>
-                        </label>
+                  <div className="col-md-12 d-none">
+                    <div className="mb-3">
+                      <label htmlFor="" className="form-label">
+                        Do you have any personal Insurance cover (Retail Cover
+                        Outside and Inside Super) ?
+                      </label>
+                      <div className="QuestionIcon">
+                        <img className="img-fluid" src={umbrela} alt="" />
                       </div>
-                    </div>
+                      {/* health button style */}
 
-                    {/* health switch button style */}
+                      <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter">
+                        <div className="radiobutton ">
+                          <input
+                            type="radio"
+                            name="CoverOutsideIssuesradio"
+                            id="CoverOutsideIssuesopt1"
+                            value="No"
+                            onChange={handleChange}
+                            checked={values.CoverOutsideIssuesradio === "No"}
+                          />
+                          <label
+                            htmlFor="CoverOutsideIssuesopt1"
+                            className="label1"
+                          >
+                            <span>No</span>
+                          </label>
+                          <input
+                            type="radio"
+                            name="CoverOutsideIssuesradio"
+                            id="CoverOutsideIssuesopt2"
+                            value="Yes"
+                            onChange={handleChange}
+                            checked={values.CoverOutsideIssuesradio === "Yes"}
+                          />
+                          <label
+                            htmlFor="CoverOutsideIssuesopt2"
+                            className="label2"
+                          >
+                            <span>Yes</span>
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* health switch button style */}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row my-3 d-none">
+                  <div className="col-md-12">
+                    <div className="mb-3">
+                      <label htmlFor="" className="form-label">
+                        Do you have Wills or Power of Attornies?
+                      </label>
+                      <div className="QuestionIcon">
+                        <img className="img-fluid" src={will} alt="" />
+                      </div>
+                      {/* health button style */}
+
+                      <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter">
+                        <div className="radiobutton">
+                          <input
+                            type="radio"
+                            name="PowerofAttorniesIssuesradio"
+                            id="PowerofAttorniesIssuesopt1"
+                            value="No"
+                            onChange={handleChange}
+                            checked={
+                              values.PowerofAttorniesIssuesradio === "No"
+                            }
+                          />
+                          <label
+                            htmlFor="PowerofAttorniesIssuesopt1"
+                            className="label1"
+                          >
+                            <span>No</span>
+                          </label>
+                          <input
+                            type="radio"
+                            name="PowerofAttorniesIssuesradio"
+                            id="PowerofAttorniesIssuesopt2"
+                            value="Yes"
+                            onChange={handleChange}
+                            checked={
+                              values.PowerofAttorniesIssuesradio === "Yes"
+                            }
+                          />
+                          <label
+                            htmlFor="PowerofAttorniesIssuesopt2"
+                            className="label2"
+                          >
+                            <span>Yes</span>
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* health switch button style */}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row my-3 d-none">
+                  <div className="col-md-12">
+                    <div className="mb-3">
+                      <label htmlFor="" className="form-label">
+                        Do you have any Professional Advisers
+                      </label>
+                      <div className="QuestionIcon">
+                        <img className="img-fluid" src={advisor} alt="" />
+                      </div>
+                      {/* health button style */}
+
+                      <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter ">
+                        <div className="radiobutton">
+                          <input
+                            type="radio"
+                            name="ProfessionalAdvisersIssuesradio"
+                            id="ProfessionalAdvisersIssuesopt1"
+                            value="No"
+                            onChange={handleChange}
+                            checked={
+                              values.ProfessionalAdvisersIssuesradio === "No"
+                            }
+                          />
+                          <label
+                            htmlFor="ProfessionalAdvisersIssuesopt1"
+                            className="label1"
+                          >
+                            <span>No</span>
+                          </label>
+                          <input
+                            type="radio"
+                            name="ProfessionalAdvisersIssuesradio"
+                            id="ProfessionalAdvisersIssuesopt2"
+                            value="Yes"
+                            onChange={handleChange}
+                            checked={
+                              values.ProfessionalAdvisersIssuesradio === "Yes"
+                            }
+                          />
+                          <label
+                            htmlFor="ProfessionalAdvisersIssuesopt2"
+                            className="label2"
+                          >
+                            <span>Yes</span>
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* health switch button style */}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row my-3 d-none">
+                  <div className="col-md-12">
+                    <div className="mb-3">
+                      <label htmlFor="" className="form-label">
+                        Do you have any Business or Related Entities
+                        <div className="d-inline-block float-end mx-2">
+                          <FontAwesomeIcon
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="top"
+                            title="This includes any business you maybe involved in or other related Tax Structures like a Company , Business Trust  or Bucket Company."
+                            icon={faCircleQuestion}
+                          ></FontAwesomeIcon>
+                        </div>
+                      </label>
+                      <div className="QuestionIcon">
+                        <img className="img-fluid" src={building} alt="" />
+                      </div>
+                      {/* health button style */}
+
+                      <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter">
+                        <div className="radiobutton">
+                          <input
+                            type="radio"
+                            name="RelatedEntitiesIssuesradio"
+                            id="RelatedEntitiesIssuesopt1"
+                            value="No"
+                            onChange={handleChange}
+                            checked={values.RelatedEntitiesIssuesradio === "No"}
+                          />
+                          <label
+                            htmlFor="RelatedEntitiesIssuesopt1"
+                            className="label1"
+                          >
+                            <span>No</span>
+                          </label>
+                          <input
+                            type="radio"
+                            name="RelatedEntitiesIssuesradio"
+                            id="RelatedEntitiesIssuesopt2"
+                            value="Yes"
+                            onChange={handleChange}
+                            checked={
+                              values.RelatedEntitiesIssuesradio === "Yes"
+                            }
+                          />
+                          <label
+                            htmlFor="RelatedEntitiesIssuesopt2"
+                            className="label2"
+                          >
+                            <span>Yes</span>
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* health switch button style */}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row mt-2 d-none">
+                  <div className="col-md-12">
+                    <button
+                      onClick={() => {}}
+                      type="submit"
+                      className="float-end btn w-25  bgColor modalBtn"
+                    >
+                      Next
+                    </button>
+                    <button
+                      type="button"
+                      className="float-end btn w-25  btn-outline  backBtn mx-3"
+                      onClick={() => {
+                        setQuestionChange("SuperAndRetirement");
+                      }}
+                    >
+                      Back
+                    </button>
                   </div>
                 </div>
               </div>
-
-              <div className="row my-3 d-none">
-                <div className="col-md-12">
-                  <div className="mb-3">
-                    <label htmlFor="" className="form-label">
-                      Do you have Wills or Power of Attornies?
-                    </label>
-                    <div className="QuestionIcon">
-                      <img className="img-fluid" src={will} alt="" />
-                    </div>
-                    {/* health button style */}
-
-                    <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter">
-                      <div className="radiobutton">
-                        <input
-                          type="radio"
-                          name="PowerofAttorniesIssuesradio"
-                          id="PowerofAttorniesIssuesopt1"
-                          value="No"
-                          onChange={handleChange}
-                          checked={values.PowerofAttorniesIssuesradio === "No"}
-                        />
-                        <label
-                          htmlFor="PowerofAttorniesIssuesopt1"
-                          className="label1"
-                        >
-                          <span>No</span>
-                        </label>
-                        <input
-                          type="radio"
-                          name="PowerofAttorniesIssuesradio"
-                          id="PowerofAttorniesIssuesopt2"
-                          value="Yes"
-                          onChange={handleChange}
-                          checked={values.PowerofAttorniesIssuesradio === "Yes"}
-                        />
-                        <label
-                          htmlFor="PowerofAttorniesIssuesopt2"
-                          className="label2"
-                        >
-                          <span>Yes</span>
-                        </label>
-                      </div>
-                    </div>
-
-                    {/* health switch button style */}
-                  </div>
-                </div>
-              </div>
-
-              <div className="row my-3 d-none">
-                <div className="col-md-12">
-                  <div className="mb-3">
-                    <label htmlFor="" className="form-label">
-                      Do you have any Professional Advisers
-                    </label>
-                    <div className="QuestionIcon">
-                      <img className="img-fluid" src={advisor} alt="" />
-                    </div>
-                    {/* health button style */}
-
-                    <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter ">
-                      <div className="radiobutton">
-                        <input
-                          type="radio"
-                          name="ProfessionalAdvisersIssuesradio"
-                          id="ProfessionalAdvisersIssuesopt1"
-                          value="No"
-                          onChange={handleChange}
-                          checked={values.ProfessionalAdvisersIssuesradio === "No"}
-                        />
-                        <label
-                          htmlFor="ProfessionalAdvisersIssuesopt1"
-                          className="label1"
-                        >
-                          <span>No</span>
-                        </label>
-                        <input
-                          type="radio"
-                          name="ProfessionalAdvisersIssuesradio"
-                          id="ProfessionalAdvisersIssuesopt2"
-                          value="Yes"
-                          onChange={handleChange}
-                          checked={values.ProfessionalAdvisersIssuesradio === "Yes"}
-                        />
-                        <label
-                          htmlFor="ProfessionalAdvisersIssuesopt2"
-                          className="label2"
-                        >
-                          <span>Yes</span>
-                        </label>
-                      </div>
-                    </div>
-
-                    {/* health switch button style */}
-                  </div>
-                </div>
-              </div>
-
-              <div className="row my-3 d-none">
-                <div className="col-md-12">
-                  <div className="mb-3">
-                    <label htmlFor="" className="form-label">
-                      Do you have any Business or Related Entities
-                      <div className="d-inline-block float-end mx-2">
-                        <FontAwesomeIcon
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="top"
-                          title="This includes any business you maybe involved in or other related Tax Structures like a Company , Business Trust  or Bucket Company."
-                          icon={faCircleQuestion}
-                        ></FontAwesomeIcon>
-                      </div>
-                    </label>
-                    <div className="QuestionIcon">
-                      <img className="img-fluid" src={building} alt="" />
-                    </div>
-                    {/* health button style */}
-
-                    <div className="form-check form-switch m-0 p-0 col-md-12 QuestionYesNoCenter">
-                      <div className="radiobutton">
-                        <input
-                          type="radio"
-                          name="RelatedEntitiesIssuesradio"
-                          id="RelatedEntitiesIssuesopt1"
-                          value="No"
-                          onChange={handleChange}
-                          checked={values.RelatedEntitiesIssuesradio === "No"}
-                        />
-                        <label
-                          htmlFor="RelatedEntitiesIssuesopt1"
-                          className="label1"
-                        >
-                          <span>No</span>
-                        </label>
-                        <input
-                          type="radio"
-                          name="RelatedEntitiesIssuesradio"
-                          id="RelatedEntitiesIssuesopt2"
-                          value="Yes"
-                          onChange={handleChange}
-                          checked={values.RelatedEntitiesIssuesradio === "Yes"}
-                        />
-                        <label
-                          htmlFor="RelatedEntitiesIssuesopt2"
-                          className="label2"
-                        >
-                          <span>Yes</span>
-                        </label>
-                      </div>
-                    </div>
-
-                    {/* health switch button style */}
-                  </div>
-                </div>
-              </div>
-
-              <div className="row mt-2 d-none">
-                <div className="col-md-12">
-                  <button
-                    onClick={() => {
-
-                    }}
-                    type="submit"
-                    className="float-end btn w-25  bgColor modalBtn"
-                  >
-                    Next
-                  </button>
-                  <button
-                    type="button" className="float-end btn w-25  btn-outline  backBtn mx-3"
-                    onClick={() => {
-
-                      setQuestionChange("SuperAndRetirement")
-                    }}
-                  >
-                    Back
-                  </button>
-                </div>
-              </div>
-
-            </div>
-
-          </Form>}
+            </Form>
+          )}
         </Formik>
       </div>
     </div>

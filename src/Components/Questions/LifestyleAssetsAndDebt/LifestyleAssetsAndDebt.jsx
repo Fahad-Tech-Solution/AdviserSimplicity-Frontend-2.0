@@ -125,10 +125,10 @@ const LifestyleAssetsAndDebt = (props) => {
 
         familyDetails: "Yes", // this one should be yes always
 
-        life: "Yes",
-        TPD: "Yes",
-        trauma: "Yes",
-        incomeProtection: "Yes",
+        life: "No",
+        TPD: "No",
+        trauma: "No",
+        incomeProtection: "No",
       });
     }
   };

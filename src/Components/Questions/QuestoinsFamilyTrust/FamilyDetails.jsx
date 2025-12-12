@@ -50,7 +50,8 @@ const FamilyDetails = (props) => {
 
   const fillInitialValues = (setFieldValue) => {
     let data = familyDetails.familyTrustOwner || {};
-    if (data.length > 0) {
+    console.log(data);
+    if (Object.keys(data).length > 0) {
       Object.keys(data).forEach((key) => {
         setFieldValue(key, data[key] || "");
       });

@@ -1,15 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import will from "../svgs/page-with-curl-svgrepo-com.svg";
 import POA from "../svgs/conversation-person-svgrepo-com.svg";
 import advisor from "../svgs/online-interview-male-svgrepo-com.svg";
-
-import {
-  faCircleInfo,
-  faCircleQuestion,
-  faInfoCircle,
-} from "@fortawesome/free-solid-svg-icons";
 
 import { useRecoilState, useRecoilValue } from "recoil";
 import { QuestionShift, CRState, defaultUrl } from "../../../Store/Store";
@@ -20,9 +13,6 @@ import {
   PatchAxios,
   PostAxios,
 } from "../../Assets/Api/Api";
-import { FaCircleQuestion } from "react-icons/fa6";
-import { Tooltip } from "antd";
-import { Image } from "react-bootstrap";
 import DynamicQuestionBlocks from "../../Assets/DynamicQuestionBlocks/DynamicQuestionBlocks";
 
 const EstatePlanning = (props) => {
@@ -140,10 +130,10 @@ const EstatePlanning = (props) => {
 
         familyDetails: "Yes", // this one should be yes always
 
-        life: "Yes",
-        TPD: "Yes",
-        trauma: "Yes",
-        incomeProtection: "Yes",
+        life: "No",
+        TPD: "No",
+        trauma: "No",
+        incomeProtection: "No",
       });
     }
   };
@@ -160,6 +150,7 @@ const EstatePlanning = (props) => {
   };
 
   const onSubmit = async (values) => {
+   values.clientFK=localStorage.getItem("UserID")
     try {
       if (!flagState) {
         const PostRes = await PostAxios(

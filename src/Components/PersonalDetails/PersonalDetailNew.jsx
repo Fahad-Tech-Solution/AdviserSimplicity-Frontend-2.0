@@ -8,6 +8,7 @@ import {
   defaultUrl,
   PersonalDetailsData,
   QuestionDetail,
+  SelectedClientDetails,
   StepsStatus,
 } from "../../Store/Store";
 import {
@@ -306,6 +307,9 @@ const PersonalDetailNew = () => {
   let [CRObjectNoUse, setCRObject] = useRecoilState(CRState);
   let [stepsStatus, setStepsStatus] = useRecoilState(StepsStatus);
   let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
+  let [selectedClientDetails, setSelectedClientDetails] = useRecoilState(
+    SelectedClientDetails
+  );
   const defaultUrlValue = useRecoilValue(defaultUrl);
   const location = useLocation();
   const Nav = useNavigate();
@@ -780,7 +784,7 @@ const PersonalDetailNew = () => {
         setCRObject({
           //Financial Assets
           QuestionsFlag: false,
-          clientFK: "",
+          clientFK: res._id,
 
           bankAccountFinance: "No",
           termDepositsFinance: "No",
@@ -874,11 +878,13 @@ const PersonalDetailNew = () => {
 
           familyDetails: "Yes", // this one should be yes always
 
-          life: "Yes",
-          TPD: "Yes",
-          trauma: "Yes",
-          incomeProtection: "Yes",
+          life: "No",
+          TPD: "No",
+          trauma: "No",
+          incomeProtection: "No",
         });
+
+        setSelectedClientDetails(res);
 
         openNotificationSuccess(
           "success",
@@ -1013,10 +1019,10 @@ const PersonalDetailNew = () => {
 
         familyDetails: "Yes", // this one should be yes always
 
-        life: "Yes",
-        TPD: "Yes",
-        trauma: "Yes",
-        incomeProtection: "Yes",
+        life: "No",
+        TPD: "No",
+        trauma: "No",
+        incomeProtection: "No",
       });
       console.error("Error fetching questions:", error);
     }

@@ -134,10 +134,10 @@ const QuestionsFamily = (props) => {
 
         familyDetails: "Yes", // this one should be yes always
 
-        life: "Yes",
-        TPD: "Yes",
-        trauma: "Yes",
-        incomeProtection: "Yes",
+        life: "No",
+        TPD: "No",
+        trauma: "No",
+        incomeProtection: "No",
       });
     }
   };
@@ -154,6 +154,7 @@ const QuestionsFamily = (props) => {
   };
 
   const onSubmit = async (values) => {
+    values.clientFK = localStorage.getItem("UserID");
     try {
       if (!flagState) {
         const PostRes = await PostAxios(

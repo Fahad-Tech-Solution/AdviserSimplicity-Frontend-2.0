@@ -33,6 +33,7 @@ const { Option } = Select;
 const PersonalInsuranceLife = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
   const [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+  const [CRObject, setCRObject] = useRecoilState(CRState);
   const DefaultUrl = useRecoilValue(defaultUrl);
   const bankDetailObj = useRecoilValue(BankDetail);
 
@@ -411,6 +412,14 @@ const PersonalInsuranceLife = (props) => {
       if (res) {
         const updatedData = { ...questionDetail, personalInsurance: res };
         setQuestionDetail(updatedData);
+
+        setCRObject({
+          ...CRObject,
+          life: "Yes",
+          TPD: "Yes",
+          trauma: "Yes",
+          incomeProtection: "Yes",
+        }); // data
       }
 
       openNotificationSuccess(

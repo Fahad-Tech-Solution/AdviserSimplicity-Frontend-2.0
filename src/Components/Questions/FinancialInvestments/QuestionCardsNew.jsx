@@ -1178,6 +1178,10 @@ const QuestionCard = (props) => {
       onOpen(lbl?.maintitle ? title : lbl.label, lbl.key, lbl.component);
     };
 
+    if (["partner", "joint"].includes(lbl.label) && isSingle) {
+      return false;
+    }
+
     return (
       <div className="mb-3 text-center">
         <div
