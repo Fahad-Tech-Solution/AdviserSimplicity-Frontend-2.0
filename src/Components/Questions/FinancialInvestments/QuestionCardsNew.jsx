@@ -467,7 +467,7 @@ const questionConfig = {
         {
           label: "client",
           value: (questionDetail) =>
-            questionDetail?.professionalAdviser?.clientTotal ?? "",
+            questionDetail?.professionalAdviser?.clientTotal ?? "No",
           component: <EstatePlanningProfessionalAdviser />,
           key: "professionalAdviser",
           maintitle: true,
@@ -476,7 +476,7 @@ const questionConfig = {
         {
           label: "partner",
           value: (questionDetail) =>
-            questionDetail?.professionalAdviser?.clientTotal ?? "",
+            questionDetail?.professionalAdviser?.partnerTotal ?? "No",
           component: <EstatePlanningProfessionalAdviser />,
           key: "professionalAdviser",
           maintitle: true,
@@ -1175,7 +1175,7 @@ const QuestionCard = (props) => {
     const { modalButton = true, onTop = false } = lbl || {};
     const handleOpen = () => {
       // Pass the specific label's data to the modal
-      onOpen(lbl?.maintitle ? title : lbl.label, lbl.key, lbl.component);
+      onOpen(lbl?.maintitle ? title : lbl.label, lbl.key, lbl.component, lbl.label);
     };
 
     if (["partner", "joint"].includes(lbl.label) && isSingle) {

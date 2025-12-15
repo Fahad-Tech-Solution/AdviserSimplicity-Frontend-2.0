@@ -25,6 +25,7 @@ const { Option } = Select;
 const SmsfAccumulationDetails = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
   const [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+
   const [ShowError, setShowError] = useState({});
   const [flagState, setFlagState] = useState(false);
   const [modalObject, setModalObject] = useState({});
@@ -81,6 +82,9 @@ const SmsfAccumulationDetails = (props) => {
             SMSFAccumulationDetails?.[member]?.[0]?.contributions || "",
           contributionsArray:
             SMSFAccumulationDetails?.[member]?.[0]?.contributionsArray || [],
+          contributionsStartYear:
+            SMSFAccumulationDetails?.[member]?.[0]?.contributionsStartYear ||
+            [],
           nominatedBeneficiaries:
             SMSFAccumulationDetails?.[member]?.[0]?.nominatedBeneficiaries ||
             "",
@@ -177,6 +181,8 @@ const SmsfAccumulationDetails = (props) => {
         contributions: values.smsfAccumulation?.[index]?.contributions || "",
         contributionsArray:
           values.smsfAccumulation?.[index]?.contributionsArray || "",
+        contributionsStartYear:
+          values.smsfAccumulation?.[index]?.contributionsStartYear || "",
         nominatedBeneficiaries:
           values.smsfAccumulation?.[index]?.nominatedBeneficiaries || "",
         nominatedBeneficiariesDetails:
@@ -283,7 +289,7 @@ const SmsfAccumulationDetails = (props) => {
       innerModalTitle: "_Contributions",
       placeholder: "Contributions",
       callBack: true,
-      width: screens.xxl ? 90 : 110,
+      width: screens.xxl ? 90 : 90,
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
           innerModalTitle,
@@ -303,7 +309,7 @@ const SmsfAccumulationDetails = (props) => {
       innerModalTitle: "_Beneficiaries",
       placeholder: "Beneficiaries",
       callBack: true,
-      width: screens.xxl ? 90 : 110,
+      width: screens.xxl ? 90 : 90,
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
           innerModalTitle,

@@ -137,7 +137,7 @@ const Contributions = (props) => {
       callBack: true,
     },
     {
-      title: "Concessional (Include. Salary Sac)",
+      title: "Concessional (Inc. Salary Sac)",
       dataIndex: "concessional",
       key: "concessional",
       type: "number-toComma",

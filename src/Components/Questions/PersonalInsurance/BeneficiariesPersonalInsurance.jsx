@@ -34,14 +34,21 @@ const BeneficiariesPersonalInsurance = (props) => {
 
       const BaseKey = props.modalObject.stakeHolder.split(".");
 
-      console.log("BaseKey:", BaseKey, "Index:", index);
-
       let data =
         props.modalObject.values?.[BaseKey[0]]?.[BaseKey[1].split("[")[0]]?.[
           index
         ]?.[props.modalObject.key + "Details"] || [];
 
-      if (data?.[`${props.modalObject.key}Array`].length > 1) {
+      console.log(
+        "BaseKey:",
+        BaseKey,
+        "Index:",
+        index,
+        props.modalObject.key + "Details",
+        data
+      );
+
+      if (data?.[`${props.modalObject.key}Array`].length > 0) {
         setFieldValue(
           "NumberOfMap",
           data?.[`${props.modalObject.key}Array`].length || 1
