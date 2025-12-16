@@ -3,38 +3,58 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Formik, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import "react-datepicker/dist/react-datepicker.css";
-import DatePicker from "react-datepicker";
 import { differenceInYears } from "date-fns";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   CashFlowData,
   CashFlowDownloading,
+  CashFlowLastSyncAt,
   CashFlowScenarioData,
   defaultUrl,
   Loading,
   PersonalDetailsData,
   QuestionShift,
 } from "../../../Store/Store";
-import DynamicYesNo from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/DynamicYesNo";
 import {
   openNotificationSuccess,
   PatchAxios,
   PostAxios,
   PostAxiosBlob,
   RenderName,
-  validateName,
-  toCommaAndDollar,
 } from "../../../Components/Assets/Api/Api";
 import { useNavigate } from "react-router-dom";
-import { ConfigProvider, Divider, Spin, Alert, Button } from "antd";
+import { ConfigProvider, Divider, Spin, Alert, Button, Tooltip } from "antd";
 import { FaDownload } from "react-icons/fa";
 import DynamicTableForInputsSection from "../../../Components/Assets/Table/DynamicTableForInputsSection";
+import { IoReload } from "react-icons/io5";
 
 const AntdDynamicTable = DynamicTableForInputsSection("antd");
+
+const clientSchema = Yup.object({
+  maritalStatus: Yup.string().required("Marital Status is required"),
+
+  plannedRetirementAge: Yup.number()
+    .min(0, "Planned Retirement age cannot be negative.")
+    .required("Planned Retirement age is required"),
+});
+
+const partnerSchema = Yup.object({
+  maritalStatus: Yup.string().required("Partner Marital Status is required"),
+
+  plannedRetirementAge: Yup.number()
+    .min(0, "Planned Retirement age cannot be negative.")
+    .required("Planned Retirement age is required"),
+
+  name: Yup.string().required("Partner name is required"),
+
+  DOB: Yup.date().nullable(),
+});
 
 const PersonalDetails_cashFlow = (Props) => {
   const [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
   const [QuestionChange, setQuestionChange] = useRecoilState(QuestionShift);
+  const [cashFlowLastSyncAt, setCashFlowLastSyncAt] =
+    useRecoilState(CashFlowLastSyncAt);
   const [loadingState, setLoadingState] = useRecoilState(Loading);
   const [isEditing, setIsEditing] = useState(false);
   const DefaultUrl = useRecoilValue(defaultUrl);
@@ -73,29 +93,26 @@ const PersonalDetails_cashFlow = (Props) => {
 
   // Validation schema (guided by PersonalDetailNew)
   const validationSchema = Yup.object({
-    client: Yup.object({
-      maritalStatus: Yup.string().required("Marital Status is required"),
-      plannedRetirementAge: Yup.number()
-        .min(0, "Planned Retirement age cannot be negative.")
-        .required("Planned Retirement age is required"),
-    }),
+    /**
+     * CLIENT
+     * Always required
+     */
+    client: clientSchema.required(),
 
-    // partner validation only active when client.maritalStatus is NOT Single or Widowed
+    /**
+     * PARTNER
+     * Required only when client.maritalStatus
+     * is NOT Single or Widowed
+     */
     partner: Yup.object().when("client.maritalStatus", {
-      is: (val) => !singleArray.includes(val),
-      then: Yup.object({
-        maritalStatus: Yup.string().required(
-          "Partner Marital Status is required"
-        ),
-        plannedRetirementAge: Yup.number()
-          .min(0, "Planned Retirement age cannot be negative.")
-          .required("Planned Retirement age is required"),
-        name: Yup.string().required("Partner name is required"),
-        DOB: Yup.string().nullable(), // keep other partner fields optional or add rules as needed
-      }).required(),
-      otherwise: Yup.object().notRequired().nullable(),
+      is: (status) => !singleArray.includes(status),
+
+      then: partnerSchema.required(),
+
+      otherwise: Yup.object().nullable().notRequired(),
     }),
   });
+
   // ...existing code...
 
   // Table columns (simple text/select/antdate/yesno types)
@@ -330,6 +347,7 @@ const PersonalDetails_cashFlow = (Props) => {
   // Submit (kept largely as original, with same API endpoints)
   const onSubmit = async (values) => {
     try {
+      console.log("submit chala");
       const obj = { ...values };
       obj.scenarioFK = JSON.parse(localStorage.getItem("ScenarioObj"))._id;
 
@@ -428,10 +446,99 @@ const PersonalDetails_cashFlow = (Props) => {
     }
   };
 
+  // Calculate ages / preservation / planned retirement from API and set fields
+  const handleCalculateAges = async (values, setFieldValue) => {
+    setLoadingState(true);
+    try {
+      // Quick validation: at least client DOB and retirementYear should be present
+      const clientDOB = values?.client?.DOB;
+      const clientRetYear = parseInt(values?.client?.retirementYear, 10) || 0;
+      const partnerDOB = values?.partner?.DOB;
+      const partnerRetYear = parseInt(values?.partner?.retirementYear, 10) || 0;
+
+      if (
+        (!clientDOB ||
+          isNaN(new Date(clientDOB).getTime()) ||
+          clientRetYear <= 0) &&
+        (!partnerDOB ||
+          isNaN(new Date(partnerDOB).getTime()) ||
+          partnerRetYear <= 0)
+      ) {
+        setLoadingState(false);
+        let name =
+          values.client.name +
+          (!["Single", "Widowed", ""].includes(
+            values.client.maritalStatus || ""
+          )
+            ? " and " + values.partner.name
+            : "");
+
+        openNotificationSuccess(
+          "error",
+          "topRight",
+          "Error Notification",
+          `Please fill retirement year of ` + name
+        );
+        return;
+      }
+      let scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+
+      let data = JSON.parse(JSON.stringify(cashFlowData || {}));
+      data.cf_personalDetails = { ...values, scenarioFK: scenarioObj._id };
+
+      const res = await PostAxios(
+        `${DefaultUrl}/api/cal/cf_personalDetails`,
+        data
+      );
+
+      if (res && res.data) {
+        console.log(res, "Api Responce ya hai");
+        const clientObj = res.data.client || {};
+        const partnerObj = res.data.partner || {};
+
+        if (clientObj) {
+          if (typeof clientObj.preservationAge !== "undefined")
+            setFieldValue(
+              "client.preservationAge",
+              Math.round(clientObj.preservationAge || 0)
+            );
+          if (typeof clientObj.plannedRetirementAge !== "undefined")
+            setFieldValue(
+              "client.plannedRetirementAge",
+              Math.min(Math.round(clientObj.plannedRetirementAge || 0), 30)
+            );
+          if (typeof clientObj.age !== "undefined")
+            setFieldValue("client.age", Math.round(clientObj.age || 0));
+        }
+
+        if (partnerObj) {
+          if (typeof partnerObj.preservationAge !== "undefined")
+            setFieldValue(
+              "partner.preservationAge",
+              Math.round(partnerObj.preservationAge || 0)
+            );
+          if (typeof partnerObj.plannedRetirementAge !== "undefined")
+            setFieldValue(
+              "partner.plannedRetirementAge",
+              Math.min(Math.round(partnerObj.plannedRetirementAge || 0), 30)
+            );
+          if (typeof partnerObj.age !== "undefined")
+            setFieldValue("partner.age", Math.round(partnerObj.age || 0));
+        }
+
+        setCashFlowLastSyncAt(res.lastSyncAt);
+      }
+    } catch (err) {
+      console.error("handleCalculateAges failed:", err);
+    } finally {
+      setLoadingState(false);
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
-      validationSchema={validationSchema}
+      // validationSchema={validationSchema}
       onSubmit={onSubmit}
       enableReinitialize
     >
@@ -483,7 +590,33 @@ const PersonalDetails_cashFlow = (Props) => {
           <Form className="container-fluid mt-2 mt-md-0 p-0 px-md-5">
             <div className="row">
               <div className="col-md-12">
-                <h4 className="mt-4 fw-bold">Personal Details</h4>
+                <div className="d-flex justify-content-between align-item-center">
+                  <div>
+                    <h4 className=" fw-bold">Personal Details</h4>
+                  </div>
+                  <div>
+                    <Tooltip
+                      title={
+                        <p>
+                          Last syncronized at : <br />{" "}
+                          {new Date(cashFlowLastSyncAt).toLocaleString()}
+                        </p>
+                      }
+                      color={"#36b446"}
+                      key={"#36b446"}
+                    >
+                      <Button
+                        variant="secondary"
+                        onClick={() =>
+                          handleCalculateAges(values, setFieldValue)
+                        }
+                        disabled={loadingState}
+                      >
+                        <IoReload />
+                      </Button>
+                    </Tooltip>
+                  </div>
+                </div>
 
                 {errorShow && errors && Object.keys(errors).length > 0 && (
                   <SectionErrorAlert
@@ -521,8 +654,8 @@ const PersonalDetails_cashFlow = (Props) => {
               </div>
             </div>
 
-            <div className="row justify-content-end gap-2 my-4">
-              <div className={`col-md-2 cashFlowNextBtn`}>
+            <div className="d-flex flex-row justify-content-end gap-3 my-4">
+              <div className={` cashFlowNextBtn`}>
                 <Button
                   variant="secondary"
                   style={{ width: "100%", minWidth: "fit-content" }}
@@ -545,13 +678,12 @@ const PersonalDetails_cashFlow = (Props) => {
                   )}
                 </Button>
               </div>
-              <div className={`col-md-2 cashFlowNextBtn`}>
+              <div style={{ width: "15%" }} className={` cashFlowNextBtn`}>
                 <Button
                   type="primary"
                   htmlType="submit"
                   className="w-100"
                   onClick={() => {
-                    // setErrorShow(true);
                     setIsEditing(!isEditing);
                   }}
                 >

@@ -358,7 +358,7 @@ const CashFlowCarsCardsTowInOne = (props) => {
                         )}
                       </div>
                     </div>
-                    <div className="d-flex justify-content-center flex-column">
+                    <div className="d-flex justify-content-center">
                       <input
                         type="text"
                         className="form-control inputDesign "

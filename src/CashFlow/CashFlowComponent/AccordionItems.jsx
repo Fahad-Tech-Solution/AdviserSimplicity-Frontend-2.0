@@ -27,6 +27,7 @@ import { content } from "../../Content/Content";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   CashFlowData,
+  CashFlowLastSyncAt,
   CashFlowScenarioData,
   CashFlowScenarioType,
   CFQObject,
@@ -55,6 +56,8 @@ const AccordionItems = ({
   let [selectedSenario, setSelectedSenario] = useRecoilState(SelectedSenario); // eslint-disable-line no-unused-vars
   let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData); // eslint-disable-line no-unused-vars
   let [CFObject, setCFObject] = useRecoilState(CFQObject); // eslint-disable-line no-unused-vars
+  const [cashFlowLastSyncAt, setCashFlowLastSyncAt] =
+    useRecoilState(CashFlowLastSyncAt);
 
   let DefaultUrl = useRecoilValue(defaultUrl);
 
@@ -74,6 +77,7 @@ const AccordionItems = ({
     switch (operation) {
       case "Edit":
       case "Update":
+        setCashFlowLastSyncAt(row.lastSyncAt);
         if (row?.lastModuleEdited && row.lastModuleEdited !== "") {
           const route = cashFlow.find(
             (module) => module.subTitle === row.lastModuleEdited
@@ -297,6 +301,7 @@ const AccordionItems = ({
       dataIndex: "lastModuleEdited",
       render: (text) => text || "Not Available",
     },
+
     {
       title: "Date of Creation",
       key: "createdAt",
@@ -304,9 +309,9 @@ const AccordionItems = ({
       render: (text) => ConvertDate(text) || "--",
     },
     {
-      title: "Date of Update",
-      key: "updatedAt",
-      dataIndex: "updatedAt",
+      title: "Last Syncronized At",
+      key: "lastSyncAt",
+      dataIndex: "lastSyncAt",
       render: (text) => ConvertDate(text) || "--",
     },
     {
