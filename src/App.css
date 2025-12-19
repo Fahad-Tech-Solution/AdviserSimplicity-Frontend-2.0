@@ -441,7 +441,7 @@ input:checked + label {
 }
 
 .customScroll::-webkit-scrollbar-track {
-  background: #dcdcdc;
+  background: #bebebe;
   /* Track background */
 }
 

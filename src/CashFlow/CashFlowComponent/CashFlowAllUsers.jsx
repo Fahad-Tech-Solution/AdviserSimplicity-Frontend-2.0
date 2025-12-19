@@ -91,7 +91,10 @@ const CashFlowAllUsers = (props) => {
           padding: 0,
         }}
       >
-        <Options collapsed={props.collapsed} setCollapsed={props.setCollapsed} />
+        <Options
+          collapsed={props.collapsed}
+          setCollapsed={props.setCollapsed}
+        />
       </Header>
       <Content
         style={{
@@ -105,9 +108,7 @@ const CashFlowAllUsers = (props) => {
           <div className="col-md-12">
             <Card className="shadow cashFlowAllUsers mb-3">
               <Card.Body>
-                <h5 className="cashFlowCardHead">
-                  Users List
-                </h5>
+                <h5 className="cashFlowCardHead">Users List</h5>
                 <Accordion defaultActiveKey="0">
                   {PersonalDetail2.map((elem, index) => {
                     // Filter scenarios that have the same clientFK as the current client's ID

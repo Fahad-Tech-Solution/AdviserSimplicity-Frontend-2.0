@@ -138,8 +138,7 @@ const CashFlowCardSet = (props) => {
     console.log(QuestionChange);
 
     const currentIndex = cashFlow.findIndex(
-      (item) =>
-        item.route === `${location.pathname}`
+      (item) => item.route === `${location.pathname}`
     );
     let nextIndex = currentIndex + 1;
 
@@ -148,15 +147,14 @@ const CashFlowCardSet = (props) => {
     if (!nextItem) {
       Navigation(`/user/cashflow/reports/`);
     } else {
-      Navigation( nextItem.route);
+      Navigation(nextItem.route);
     }
   };
 
   const BackHandle = () => {
     // Find the current item index based on the QuestionChange state
     const currentIndex = cashFlow.findIndex(
-      (item) =>
-        item.route === `${location.pathname}`
+      (item) => item.route === `${location.pathname}`
     );
 
     let nextIndex = currentIndex - 1;

@@ -65,7 +65,7 @@ function App() {
   }, []);
 
   return (
-    <div className="position-relative">
+    <div className="position-relative customScroll">
       {loadingState && (
         <div
           className="position-absolute top-0 d-flex justify-content-center align-items-center bg-gray"

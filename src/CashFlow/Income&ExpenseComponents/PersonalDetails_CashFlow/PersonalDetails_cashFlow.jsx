@@ -57,6 +57,8 @@ const PersonalDetails_cashFlow = (Props) => {
     useRecoilState(CashFlowLastSyncAt);
   const [loadingState, setLoadingState] = useRecoilState(Loading);
   const [isEditing, setIsEditing] = useState(false);
+  const formRef = useRef(null);
+
   const DefaultUrl = useRecoilValue(defaultUrl);
   const PersonalDetailObj = useRecoilValue(PersonalDetailsData);
   const CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
@@ -541,6 +543,7 @@ const PersonalDetails_cashFlow = (Props) => {
       // validationSchema={validationSchema}
       onSubmit={onSubmit}
       enableReinitialize
+      innerRef={formRef}
     >
       {({
         values,
@@ -678,17 +681,24 @@ const PersonalDetails_cashFlow = (Props) => {
                   )}
                 </Button>
               </div>
-              <div style={{ width: "15%" }} className={` cashFlowNextBtn`}>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="w-100"
-                  onClick={() => {
-                    setIsEditing(!isEditing);
-                  }}
-                >
-                  {isEditing ? "Next" : "Edit"}
-                </Button>
+              <div style={{ width: "15%" }} className="cashFlowNextBtn">
+                {isEditing ? (
+                  <Button
+                    type="primary"
+                    className="w-100"
+                    onClick={() => formRef.current?.submitForm()}
+                  >
+                    Next
+                  </Button>
+                ) : (
+                  <Button
+                    type="primary"
+                    className="w-100"
+                    onClick={() => setIsEditing(true)}
+                  >
+                    Edit
+                  </Button>
+                )}
               </div>
             </div>
           </Form>

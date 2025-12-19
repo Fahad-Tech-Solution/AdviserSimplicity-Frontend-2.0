@@ -110,67 +110,130 @@ const InvestmentPropertyDetails = (props) => {
     // console.log(props.modalObject, data)
   }, [props.modalObject]);
 
+  // const fillInitialValues = (setFieldValue) => {
+  //   const dataSet = investmentPropertyDetails?.[client];
+  //   console.log(dataSet, "dataSet");
+
+  //   if (Array.isArray(dataSet) && dataSet.length > 0) {
+  //     // Set number of maps
+  //     console.log(dataSet.length, "dataSet.length");
+  //     setFieldValue("NumberOfMap", dataSet.length.toString());
+
+  //     // Loop through each entry and set form fields
+  //     dataSet.forEach((data, i) => {
+  //       setFieldValue(
+  //         `investmentProperties[${i}].PropertyAddress`,
+  //         data.PropertyAddress || ""
+  //       );
+  //       setFieldValue(
+  //         `investmentProperties[${i}].postcodeSuburb`,
+  //         data.postcodeSuburb || ""
+  //       );
+  //       setFieldValue(
+  //         `investmentProperties[${i}].CurrentValue`,
+  //         data.CurrentValue || ""
+  //       );
+  //       setFieldValue(
+  //         `investmentProperties[${i}].CostBase`,
+  //         data.CostBase || ""
+  //       );
+  //       setFieldValue(
+  //         `investmentProperties[${i}].ClientOwnership`,
+  //         data.ClientOwnership || ""
+  //       );
+  //       setFieldValue(
+  //         `investmentProperties[${i}].PartnerOwnership`,
+  //         data.PartnerOwnership || ""
+  //       );
+  //       setFieldValue(
+  //         `investmentProperties[${i}].propertyLoanDetails`,
+  //         data.propertyLoanDetails || ""
+  //       );
+  //       setFieldValue(
+  //         `investmentProperties[${i}].propertyLoanDetailsArray`,
+  //         data.propertyLoanDetailsArray || ""
+  //       );
+  //       setFieldValue(
+  //         `investmentProperties[${i}].weeklyRentalIncome`,
+  //         data.weeklyRentalIncome || ""
+  //       );
+  //       setFieldValue(
+  //         `investmentProperties[${i}].incomeExpenses`,
+  //         data.incomeExpenses || ""
+  //       );
+  //       setFieldValue(
+  //         `investmentProperties[${i}].incomeExpensesArray`,
+  //         data.expensesArray || ""
+  //       );
+  //     });
+  //   } else {
+  //     // If no data found, clear NumberOfMap
+  //     setFieldValue("NumberOfMap", "");
+  //     props.setIsEditing(true);
+  //   }
+  // };
+
   const fillInitialValues = (setFieldValue) => {
     const dataSet = investmentPropertyDetails?.[client];
     console.log(dataSet, "dataSet");
 
-    if (Array.isArray(dataSet) && dataSet.length > 0) {
-      // Set number of maps
-      console.log(dataSet.length, "dataSet.length");
-      setFieldValue("NumberOfMap", dataSet.length.toString());
+    const hasData = Array.isArray(dataSet) && dataSet.length > 0;
 
-      // Loop through each entry and set form fields
-      dataSet.forEach((data, i) => {
-        setFieldValue(
-          `investmentProperties[${i}].PropertyAddress`,
-          data.PropertyAddress || ""
-        );
-        setFieldValue(
-          `investmentProperties[${i}].postcodeSuburb`,
-          data.postcodeSuburb || ""
-        );
-        setFieldValue(
-          `investmentProperties[${i}].CurrentValue`,
-          data.CurrentValue || ""
-        );
-        setFieldValue(
-          `investmentProperties[${i}].CostBase`,
-          data.CostBase || ""
-        );
-        setFieldValue(
-          `investmentProperties[${i}].ClientOwnership`,
-          data.ClientOwnership || ""
-        );
-        setFieldValue(
-          `investmentProperties[${i}].PartnerOwnership`,
-          data.PartnerOwnership || ""
-        );
-        setFieldValue(
-          `investmentProperties[${i}].propertyLoanDetails`,
-          data.propertyLoanDetails || ""
-        );
-        setFieldValue(
-          `investmentProperties[${i}].propertyLoanDetailsArray`,
-          data.propertyLoanDetailsArray || ""
-        );
-        setFieldValue(
-          `investmentProperties[${i}].weeklyRentalIncome`,
-          data.weeklyRentalIncome || ""
-        );
-        setFieldValue(
-          `investmentProperties[${i}].incomeExpenses`,
-          data.incomeExpenses || ""
-        );
-        setFieldValue(
-          `investmentProperties[${i}].incomeExpensesArray`,
-          data.expensesArray || ""
-        );
-      });
-    } else {
-      // If no data found, clear NumberOfMap
+    // 🔹 Control editing mode explicitly
+    props.setIsEditing(!hasData);
+
+    if (!hasData) {
+      // No DB data → enable editing
       setFieldValue("NumberOfMap", "");
-      props.setIsEditing(true);
+      return;
     }
+
+    // DB data exists → disable editing
+    setFieldValue("NumberOfMap", dataSet.length.toString());
+
+    dataSet.forEach((data, i) => {
+      setFieldValue(
+        `investmentProperties[${i}].PropertyAddress`,
+        data.PropertyAddress || ""
+      );
+      setFieldValue(
+        `investmentProperties[${i}].postcodeSuburb`,
+        data.postcodeSuburb || ""
+      );
+      setFieldValue(
+        `investmentProperties[${i}].CurrentValue`,
+        data.CurrentValue || ""
+      );
+      setFieldValue(`investmentProperties[${i}].CostBase`, data.CostBase || "");
+      setFieldValue(
+        `investmentProperties[${i}].ClientOwnership`,
+        data.ClientOwnership || ""
+      );
+      setFieldValue(
+        `investmentProperties[${i}].PartnerOwnership`,
+        data.PartnerOwnership || ""
+      );
+      setFieldValue(
+        `investmentProperties[${i}].propertyLoanDetails`,
+        data.propertyLoanDetails || "$0"
+      );
+      setFieldValue(
+        `investmentProperties[${i}].propertyLoanDetailsArray`,
+        data.propertyLoanDetailsArray || ""
+      );
+      setFieldValue(
+        `investmentProperties[${i}].weeklyRentalIncome`,
+        data.weeklyRentalIncome || ""
+      );
+      setFieldValue(
+        `investmentProperties[${i}].incomeExpenses`,
+        data.incomeExpenses || ""
+      );
+      setFieldValue(
+        `investmentProperties[${i}].incomeExpensesArray`,
+        data.expensesArray || ""
+      );
+    });
   };
 
   let DefaultUrl = useRecoilValue(defaultUrl);
@@ -180,7 +243,10 @@ const InvestmentPropertyDetails = (props) => {
       console.log(values, "values on submit");
 
       // Extract investment properties from form
-      const investmentProperties = values?.investmentProperties || [];
+      const investmentProperties = (values.investmentProperties || []).slice(
+        0,
+        values.NumberOfMap
+      );
       const numberOfMaps =
         parseInt(values.NumberOfMap, 10) || investmentProperties.length || 0;
 
@@ -434,6 +500,12 @@ const InvestmentPropertyDetails = (props) => {
         const tableData = useMemo(() => {
           const num = Number(values.NumberOfMap) || 0;
           if (num > 0) {
+            Array.from({ length: num }, (_, i) => {
+              setFieldValue(
+                `investmentProperties[${i}].` + "propertyLoanDetails",
+                values.investmentProperties?.[i]?.propertyLoanDetails || "$0"
+              );
+            });
             return Array.from({ length: num }, (_, i) => ({
               key: `investmentProperties.${i}`,
               stakeHolder: `investmentProperties[${i}]`,
@@ -445,7 +517,7 @@ const InvestmentPropertyDetails = (props) => {
                 values.investmentProperties?.[i]?.CurrentValue || "",
               CostBase: values.investmentProperties?.[i]?.CostBase || "",
               propertyLoanDetails:
-                values.investmentProperties?.[i]?.propertyLoanDetails || "",
+                values.investmentProperties?.[i]?.propertyLoanDetails || "$0",
               weeklyRentalIncome:
                 values.investmentProperties?.[i]?.weeklyRentalIncome || "",
               incomeExpenses:

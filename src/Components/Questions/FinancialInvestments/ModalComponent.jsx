@@ -201,6 +201,10 @@ const ModalComponent = (props) => {
     "SMSF Pension Account Details",
     "CDF Details",
     "Push Client On Adviser link",
+    "Overseas Pensions",
+    "Sole Trader Income",
+    "Partnership Income",
+    "Lifetime Benefits",
   ]; // Add other  /ntitles that should use "xl" here
 
   let fullTitles = [
@@ -232,7 +236,7 @@ const ModalComponent = (props) => {
     "Centerlink",
     "Credit Card",
     "Personal Loan",
-    "Wills",
+    // "Wills",
     // "Account Based Pension",
     "Investment Properties",
     "Family Trust Investment Properties",

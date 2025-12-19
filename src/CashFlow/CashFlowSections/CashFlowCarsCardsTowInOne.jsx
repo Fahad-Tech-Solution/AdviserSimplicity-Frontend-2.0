@@ -369,7 +369,7 @@ const CashFlowCarsCardsTowInOne = (props) => {
                           (cashFlowData &&
                             cashFlowData[elem.key] &&
                             cashFlowData[elem.key][elem.attribute]) ||
-                          ""
+                          "$0"
                         }
                       />
                     </div>

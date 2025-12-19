@@ -74,7 +74,7 @@ const SuperFunds = (props) => {
   const fillInitialValues = (setFieldValue) => {
     if (existingData.length) {
       setFieldValue("superFunds", existingData);
-    }else {
+    } else {
       props.setIsEditing(true);
     }
   };
@@ -171,7 +171,7 @@ const SuperFunds = (props) => {
 
   const onSubmit = async (values) => {
     const DataOf = props.modalObject.Input;
-    const fundData = values.superFunds || [];
+    const fundData = (values.superFunds || []).slice(0, values.NumberOfMap);
 
     const totalAdvice = fundData.reduce(
       (sum, entry) =>
@@ -226,6 +226,7 @@ const SuperFunds = (props) => {
       key: "memberNumber",
       type: "text",
       placeholder: "Member Number",
+      width: screens.xxl ? 90 : 150,
     },
     {
       title: "Balance and Details",
@@ -303,11 +304,11 @@ const SuperFunds = (props) => {
         ),
     },
     {
-      title: "Annual Service Fee",
+      title: "Advice Ongoing Fee",
       dataIndex: "annualAdvice",
       key: "annualAdvice",
       type: "number-toComma-Modal",
-      placeholder: "Annual Service Fee",
+      placeholder: "Advice Ongoing Fee",
       innerModalTitle: "_<CFE>_Annual Ongoing Fee",
       callBack: true,
       func: (innerModalTitle, values, key, stakeHolder) =>
@@ -321,6 +322,7 @@ const SuperFunds = (props) => {
         ),
       errorHandler: ShowError,
       disabled: true,
+      width: screens.xxl ? 80 : 130,
     },
   ];
 
@@ -352,6 +354,12 @@ const SuperFunds = (props) => {
         const dataRows = useMemo(() => {
           const num = Number(values.NumberOfMap) || 0;
           if (num > 0) {
+            Array.from({ length: num }, (_, i) => {
+              setFieldValue(
+                `superFunds[${i}].` + "annualAdvice",
+                values.superFunds?.[i]?.annualAdvice || "$0"
+              );
+            });
             return Array.from({ length: num }, (_, i) => ({
               key: `superFunds.${i}`,
               owner: i + 1,
@@ -366,7 +374,7 @@ const SuperFunds = (props) => {
               contributions: values.superFunds?.[i]?.contributions || "",
               nominatedBeneficiaries:
                 values.superFunds?.[i]?.nominatedBeneficiaries || "",
-              annualAdvice: values.superFunds?.[i]?.annualAdvice || "",
+              annualAdvice: values.superFunds?.[i]?.annualAdvice || "$0",
             }));
           }
           return [];

@@ -1,240 +1,173 @@
 import { Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
-import { CreatableMultiSelectField } from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
-import DynamicTableRow from "../../../Components/Assets/Dynamic/DynamicTableRow";
-import {
-  openNotificationSuccess,
-  PatchAxios,
-  PostAxios,
-  RenderName,
-  toCommaAndDollar,
-} from "../../../Components/Assets/Api/Api";
-import { Row, Table } from "react-bootstrap";
+import React, { useEffect, useMemo, useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
+
 import {
   CashFlowData,
   CashFlowScenarioData,
   defaultUrl,
   QuestionDetail,
 } from "../../../Store/Store";
-import { useRecoilState, useRecoilValue } from "recoil";
+
+import {
+  openNotificationSuccess,
+  PatchAxios,
+  PostAxios,
+  RenderName,
+} from "../../../Components/Assets/Api/Api";
+
+import { AntdCreatableMultiSelect } from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import DynamicTableForInputsSection from "../../../Components/Assets/Table/DynamicTableForInputsSection";
+
+const AntDTableHOC = DynamicTableForInputsSection("antd");
 
 const CashFlowCenterLink = (props) => {
-  let questionDetail = useRecoilValue(QuestionDetail);
-  let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
-  let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const questionDetail = useRecoilValue(QuestionDetail);
+  const [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+  const CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const DefaultUrl = useRecoilValue(defaultUrl);
 
-  let [UserStatus] = useState(localStorage.getItem("UserStatus"));
-  let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
+  const [UserStatus] = useState(localStorage.getItem("UserStatus"));
+  const [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
 
-  let DefaultUrl = useRecoilValue(defaultUrl);
+  const incomeFromCentrelink = questionDetail?.incomeFromCentrelink?._id
+    ? questionDetail.incomeFromCentrelink
+    : {};
 
-  let incomeFromCentrelink =
-    Object.keys(questionDetail.incomeFromCentrelink || {}).length > 0
-      ? questionDetail.incomeFromCentrelink
-      : {
-          client: [],
-          partner: [],
-          joint: [],
-        };
-
-  let initialValues = {
+  const initialValues = {
     owner: [],
     client: {
       includeFromYear: 1,
-      allowCarerAllowance: ["No"],
-      isClientRenting: ["No"],
+      allowCarerAllowance: "No",
+      isClientRenting: "No",
       applySeparatedByIllness: "No",
     },
     partner: {
       includeFromYear: 1,
-      allowCarerAllowance: ["No"],
-      isClientRenting: ["No"],
+      allowCarerAllowance: "No",
+      isClientRenting: "No",
       applySeparatedByIllness: "No",
     },
   };
 
+  /* -------------------- PREFILL -------------------- */
   const fillInitialValues = (setFieldValue) => {
     try {
-      // Set the object and API key
-      setObjAndAPIKey(props.modalObject.key);
-
-      console.log(incomeFromCentrelink, "Discovery Form Data");
-      // console.log(cashFlowData, "cashFlowData Form Data");
-      // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
+      const key = props.modalObject.key;
+      setObjAndAPIKey(key);
 
       const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+      const savedData = cashFlowData?.[key];
 
-      // Helper function to update field values
-      const updateFields = (data, prefix) => {
-        if (!data || !Object.keys(data).length) return;
+      const mapFields = (data, prefix) => {
+        if (!data) return;
+
         const fields = {
-          includeFromYear: data.includeFromYear || 1,
+          includeFromYear: data.includeFromYear ?? 1,
           allowCarerAllowance:
-            data.allowCarerAllowance !== undefined
-              ? data.allowCarerAllowance
-              : data.paymentType.includes("Carer Allowance")
-              ? "Yes"
-              : "No",
-
+            data.allowCarerAllowance ??
+            (data.paymentType?.includes("Carer Allowance") ? "Yes" : "No"),
           isClientRenting:
-            data.isClientRenting !== undefined
-              ? data.isClientRenting
-              : data.paymentType.includes("Rent Assistance")
-              ? "Yes"
-              : "No",
-
+            data.isClientRenting ??
+            (data.paymentType?.includes("Rent Assistance") ? "Yes" : "No"),
           centrelinkPayment: data.centrelinkPayment || "",
-          applySeparatedByIllness: data.applySeparatedByIllness || "",
+          applySeparatedByIllness: data.applySeparatedByIllness || "No",
         };
 
-        Object.entries(fields).forEach(([key, value]) => {
-          setFieldValue(`${prefix}.${key}`, value);
-        });
+        Object.entries(fields).forEach(([key, value]) =>
+          setFieldValue(`${prefix}.${key}`, value)
+        );
       };
 
-      // Update owner field
+      // 1️⃣ Discovery Form
       if (
         scenarioObj?.selectedSource === "discoveryForm" &&
-        incomeFromCentrelink &&
-        incomeFromCentrelink._id
+        incomeFromCentrelink?._id &&
+        !savedData?._id
       ) {
-        setFieldValue(`owner`, incomeFromCentrelink.owner || "");
+        const owners = incomeFromCentrelink.owner || [];
+        setFieldValue("owner", owners);
+        console.log("discovrey Data", incomeFromCentrelink);
+        if (owners.includes("client"))
+          mapFields(incomeFromCentrelink.client, "client");
+        if (owners.includes("partner") && UserStatus === "Married")
+          mapFields(incomeFromCentrelink.partner, "partner");
 
-        // Update client-related fields
-        if (incomeFromCentrelink.owner.includes("client")) {
-          console.log(incomeFromCentrelink.client, "client data");
-          updateFields(incomeFromCentrelink.client, "client");
-        }
-
-        // Update partner-related fields
-        if (
-          UserStatus === "Married" &&
-          incomeFromCentrelink.owner.includes("partner")
-        ) {
-          updateFields(incomeFromCentrelink.partner, "partner");
-        }
-      } else {
-        // Handle cashFlowData scenario
-        const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-        console.log(cashFlowDetails, "cashFlowDetails");
-        if (cashFlowDetails) {
-          setFieldValue(`owner`, cashFlowDetails.owner || "");
-          if (cashFlowDetails.owner.includes("client")) {
-            // Update client details
-            updateFields(cashFlowDetails.client, "client");
-          }
-
-          if (
-            UserStatus === "Married" &&
-            cashFlowDetails.owner.includes("partner")
-          ) {
-            // Update partner details
-            updateFields(cashFlowDetails.partner, "partner");
-          }
-        }
+        return;
       }
 
-      // Additional data from cashFlowData
-      if (cashFlowData?.[objAndAPIKey]?._id) {
-        const cashFlowDataDetails = cashFlowData[objAndAPIKey];
-        setFieldValue(`owner`, cashFlowDataDetails.owner || "");
+      // 2️⃣ Scenario CashFlow
+      const scenarioData = CashFlowScenarioDataObj?.[key];
+      if (scenarioData) {
+        const owners = scenarioData.owner || [];
+        setFieldValue("owner", owners);
+        console.log("scenarioData Data", scenarioData);
+        if (owners.includes("client")) mapFields(scenarioData.client, "client");
+        if (owners.includes("partner") && UserStatus === "Married")
+          mapFields(scenarioData.partner, "partner");
+      }
 
-        if (cashFlowDataDetails.owner.includes("client")) {
-          // Update client details
-          updateFields(cashFlowDataDetails.client, "client");
-        }
+      // 3️⃣ Saved CashFlow
 
-        if (
-          UserStatus === "Married" &&
-          cashFlowDataDetails.owner.includes("partner")
-        ) {
-          // Update partner details
-          updateFields(cashFlowDataDetails.partner, "partner");
-        }
+      if (savedData?._id) {
+        const owners = savedData.owner || [];
+        setFieldValue("owner", owners);
+        console.log("savedData Data", savedData);
+
+        if (owners.includes("client")) mapFields(savedData.client, "client");
+        if (owners.includes("partner") && UserStatus === "Married")
+          mapFields(savedData.partner, "partner");
       }
     } catch (error) {
-      console.error("Error in fillInitialValues:", error);
+      console.error("fillInitialValues error:", error);
     }
   };
 
-  let onSubmit = async (values) => {
-    console.log(JSON.stringify(values));
-    // return (false);
-    let obj = values;
+  /* -------------------- SUBMIT -------------------- */
+  const onSubmit = async (values) => {
+    const obj = {
+      ...values,
+      scenarioFK: JSON.parse(localStorage.getItem("ScenarioObj"))._id,
+      clientTotal: values.owner.includes("client")
+        ? "Year " + values.client.includeFromYear
+        : "",
+      partnerTotal: values.owner.includes("partner")
+        ? "Year " + values.partner.includeFromYear
+        : "",
+    };
 
-    obj.scenarioFK = JSON.parse(localStorage.getItem("ScenarioObj"))._id;
-
-    if (values.owner.includes("client")) {
-      obj.clientTotal = "Year " + values.client.includeFromYear || "";
-    } else {
-      obj.clientTotal = "";
-      obj.client = {};
-    }
-
-    if (values.owner.includes("partner")) {
-      obj.partnerTotal = "Year " + values.partner.includeFromYear || "";
-    } else {
-      obj.partnerTotal = "";
-      obj.partner = {};
-    }
-
-    const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
-
-    console.log(obj, "final obj");
+    if (!values.owner.includes("client")) obj.client = {};
+    if (!values.owner.includes("partner")) obj.partner = {};
 
     try {
-      let res;
-      if (!bankAccountArray) {
-        res = await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
-      } else {
-        res = await PatchAxios(
-          `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
-          obj
-        );
-      }
+      const exists = cashFlowData?.[objAndAPIKey]?._id;
+      const res = exists
+        ? await PatchAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Update`, obj)
+        : await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
 
-      if (res) {
-        console.log(res);
-        const updatedData = {
-          ...cashFlowData,
-          [objAndAPIKey]: res,
-        };
-        setCashFlowData(updatedData);
-      }
+      if (res) setCashFlowData({ ...cashFlowData, [objAndAPIKey]: res });
 
       openNotificationSuccess(
         "success",
         "topRight",
-        "Success Notification",
-        'Data of "' + props.modalObject.title + '" is Saved'
+        "Success",
+        `"${props.modalObject.title}" saved`
       );
 
-      // Reset the flag state if necessary
-      if (props.flagState) {
-        props.setFlagState(false);
-      }
-    } catch (error) {
-      console.error("Error occurred while making API call:", error);
+      props.setFlagState?.(false);
+      props.setIsEditing?.(false);
+    } catch {
       openNotificationSuccess(
         "error",
         "topRight",
-        "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        "Error",
+        `"${props.modalObject.title}" not saved`
       );
     }
   };
 
-  const loanTermOptions = Array.from({ length: 31 }, (_, i) => {
-    // if (i === 0) return { value: "Existing", label: "Existing" };
-    return {
-      value: i.toString(),
-      label: ("Year " + i).toString(),
-    };
-  });
-
-  const options =
+  /* -------------------- OPTIONS -------------------- */
+  const ownerOptions =
     UserStatus !== "Single"
       ? [
           { value: "client", label: RenderName("client") },
@@ -242,38 +175,56 @@ const CashFlowCenterLink = (props) => {
         ]
       : [{ value: "client", label: RenderName("client") }];
 
-  let paymentType = [
+  const yearOptions = Array.from({ length: 31 }, (_, i) => ({
+    value: i.toString(),
+    label: `Year ${i}`,
+  }));
+
+  const paymentTypeOptions = [
     { value: "Not Eligible", label: "Not Eligible" },
     { value: "Disability Pension", label: "Disability Pension" },
     { value: "Carers Payment", label: "Carers Payment" },
     { value: "Job Seeker", label: "Job Seeker" },
   ];
 
-  const rowConfig = [
+  /* -------------------- COLUMNS -------------------- */
+  const columns = [
+    { title: "Owner", dataIndex: "owner", key: "owner", width: 150 },
     {
-      name: "centrelinkPayment",
+      title: "Centrelink Payment",
+      dataIndex: "centrelinkPayment",
+      key: "centrelinkPayment",
       type: "select",
-      options: paymentType,
+      options: paymentTypeOptions,
     },
     {
-      name: "includeFromYear",
+      title: "Include From Year",
+      dataIndex: "includeFromYear",
+      key: "includeFromYear",
       type: "select",
-      options: loanTermOptions,
+      options: yearOptions,
     },
     {
-      name: "allowCarerAllowance",
-      type: "yesno", width: 100,
+      title: "Allow Carer Allowance",
+      dataIndex: "allowCarerAllowance",
+      key: "allowCarerAllowance",
+      type: "yesno",
+      width: 100,
     },
     {
-      name: "isClientRenting",
-      type: "yesno", width: 100,
+      title: "Is Client Renting",
+      dataIndex: "isClientRenting",
+      key: "isClientRenting",
+      type: "yesno",
+      width: 100,
     },
     {
-      name: "applySeparatedByIllness",
-      type: "yesno", width: 100,
+      title: "Apply Separated By Illness",
+      dataIndex: "applySeparatedByIllness",
+      key: "applySeparatedByIllness",
+      type: "yesno",
+      width: 100,
     },
-
-    // { name: "businessAddress", type: "text", placeholder: "Business Address" },
   ];
 
   return (
@@ -284,78 +235,57 @@ const CashFlowCenterLink = (props) => {
       innerRef={props.formRef}
     >
       {({ values, setFieldValue, handleChange, handleBlur }) => {
-        useEffect(() => {
-          fillInitialValues(setFieldValue);
-        }, []);
+        useEffect(() => fillInitialValues(setFieldValue), []);
+
+        const tableData = useMemo(() => {
+          const rows = [];
+          if (values.owner.includes("client"))
+            rows.push({
+              key: "client",
+              stakeHolder: "client",
+              owner: RenderName("client"),
+              ...values.client,
+            });
+          if (values.owner.includes("partner") && UserStatus === "Married")
+            rows.push({
+              key: "partner",
+              stakeHolder: "partner",
+              owner: RenderName("partner"),
+              ...values.partner,
+            });
+          return rows;
+        }, [values, UserStatus]);
 
         return (
           <Form>
-            <Row>
-              <div className="col-md-12">
-                <div className="d-flex justify-content-center align-items-center gap-4">
-                  <label htmlFor="" className="text-end ">
-                    Owner
-                  </label>
-
-                  <div style={{ minWidth: "25%" }}>
-                    <Field
-                      name={`owner`}
-                      component={CreatableMultiSelectField}
-                      label="Multi Select Field"
-                      options={options}
-                    />
-                  </div>
+            <div className="row">
+              <div className="col-md-12 d-flex justify-content-center gap-4">
+                <label>Owner</label>
+                <div style={{ minWidth: "250px" }}>
+                  <Field
+                    name="owner"
+                    component={AntdCreatableMultiSelect}
+                    options={ownerOptions}
+                  />
                 </div>
               </div>
-              {values.owner.length > 0 && (
-                <div className="mt-4">
-                  <Table striped bordered responsive hover>
-                    <thead>
-                      <tr>
-                        <th
-                          onClick={() => {
-                            console.log(values);
-                          }}
-                        >
-                          Owner
-                        </th>
-                        <th>Centrelink Payment</th>
-                        <th>Include From Year</th>
-                        <th>Allow Carer Allowance</th>
-                        <th>Is Client Renting</th>
-                        <th>Apply Separated By illness</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {values.owner.includes("client") && (
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                          // handleInnerModal={handleInnerModal}
-                          stakeHolder="client."
-                        />
-                      )}
 
-                      {values.owner.includes("partner") &&
-                        UserStatus === "Married" && (
-                          <DynamicTableRow
-                            rowConfig={rowConfig}
-                            values={values}
-                            setFieldValue={setFieldValue}
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                            // handleInnerModal={handleInnerModal}
-                            stakeHolder="partner."
-                          />
-                        )}
-                    </tbody>
-                  </Table>
+              {values.owner.length > 0 && (
+                <div className="col-md-12 mt-4 All_Client reportSection">
+                  <AntDTableHOC
+                    columns={columns}
+                    data={tableData}
+                    values={values}
+                    setFieldValue={setFieldValue}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                    handleSubmit={props?.handleOk}
+                    isEditing={props?.isEditing}
+                    setIsEditing={props?.setIsEditing}
+                  />
                 </div>
               )}
-            </Row>
+            </div>
           </Form>
         );
       }}

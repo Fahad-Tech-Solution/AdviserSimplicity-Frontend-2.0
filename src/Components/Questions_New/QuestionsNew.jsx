@@ -23,8 +23,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { GetAxios } from "../Assets/Api/Api";
 import { content } from "../../Content/Content";
 import QuestionCardsNew from "../Questions/FinancialInvestments/QuestionCardsNew";
+import { Grid } from "antd";
+const { useBreakpoint } = Grid;
 
 const QuestionsNew = (props) => {
+  const screens = useBreakpoint();
   let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
   let [QuestionChange, setQuestionChange] = useRecoilState(QuestionShift);
   let CRObject = useRecoilValue(CRState);
@@ -214,7 +217,6 @@ const QuestionsNew = (props) => {
         <div className="col-md-12">
           <div className="pb-4 bg-white  borderOverAll  rounded text-center">
             <div>
-             
               <div
                 className="QuestionIcon p-3"
                 role="button"
@@ -231,7 +233,6 @@ const QuestionsNew = (props) => {
               >
                 <img className="img-fluid min-w-25" src={Add} alt="" />
               </div>
-
             </div>
 
             <QuestionCardsNew
@@ -256,13 +257,15 @@ const QuestionsNew = (props) => {
               <div className="col-md-12">
                 <button
                   onClick={BackHandle}
-                  className="float-center btn w-25 btn-outline backBtn mx-3"
+                  className="float-center btn  btn-outline backBtn mx-3"
+                  style={{ width: screens.xxl ? "15%" : "20%" }}
                 >
                   Back
                 </button>
                 <button
                   onClick={HandleSubmit}
-                  className="float-center btn w-25  bgColor modalBtn"
+                  className="float-center btn   bgColor modalBtn"
+                  style={{ width: screens.xxl ? "15%" : "20%" }}
                 >
                   Next
                 </button>

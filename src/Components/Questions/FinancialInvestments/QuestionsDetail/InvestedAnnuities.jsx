@@ -69,33 +69,6 @@ const InvestedAnnuities = (props) => {
     }
   };
 
-  const handleInput = (e, setFieldValue) => {
-    const raw = e?.target?.value ?? e;
-    const value = raw > 10 ? 10 : raw;
-    setFieldValue("NumberOfMap", value);
-
-    const arrLength = Number(value) || 0;
-    const newArray = Array(arrLength)
-      .fill()
-      .map((_, i) => ({
-        productProvider: "",
-        accountNumber: "",
-        sourceFunds: "",
-        originalInvestmentAmount: "",
-        returnCapitalValue: "",
-        annualAnnuityPayment: "",
-        annualPensionPaymentArray: [],
-        annuityType: "",
-        term: "",
-        yearsMaturity: "",
-        nominatedBeneficiaries: "",
-        beneficiariesArray: [],
-        annualAdvice: "",
-        ...(initialValues.investedAnnuities[i] || {}),
-      }));
-    setFieldValue("investedAnnuities", newArray);
-  };
-
   const handleInnerModal = (
     innerModalTitle,
     key,
@@ -149,7 +122,10 @@ const InvestedAnnuities = (props) => {
 
   const onSubmit = async (values) => {
     const DataOf = props.modalObject.Input;
-    const newEntries = values.investedAnnuities || [];
+    const newEntries = (values.investedAnnuities || []).slice(
+      0,
+      values.NumberOfMap
+    );
 
     const total = newEntries.reduce((sum, entry) => {
       const val = parseFloat(
@@ -348,6 +324,12 @@ const InvestedAnnuities = (props) => {
         const dataRows = useMemo(() => {
           const num = Number(values.NumberOfMap) || 0;
           if (num > 0) {
+            Array.from({ length: num }, (_, i) => {
+              setFieldValue(
+                `investedAnnuities[${i}].` + "annualAdvice",
+                values.investedAnnuities?.[i]?.annualAdvice || "$0"
+              );
+            });
             return Array.from({ length: num }, (_, i) => ({
               key: `investedAnnuities.${i}`,
               owner: i + 1,
@@ -367,7 +349,7 @@ const InvestedAnnuities = (props) => {
               yearsMaturity: values.investedAnnuities?.[i]?.yearsMaturity || "",
               nominatedBeneficiaries:
                 values.investedAnnuities?.[i]?.nominatedBeneficiaries || "",
-              annualAdvice: values.investedAnnuities?.[i]?.annualAdvice || "",
+              annualAdvice: values.investedAnnuities?.[i]?.annualAdvice || "$0",
             }));
           }
           return [];

@@ -67,13 +67,16 @@ const AccountBasedBalance = (props) => {
     try {
       const entry = values || {};
 
+      /* this code could revert back to calclation
       const taxableComponent =
         parseFloat(entry.taxableComponent?.replace(/[^0-9.-]+/g, "")) || 0;
+
       const unrestrictedNonPreserved =
         parseFloat(entry.unrestrictedNonPreserved?.replace(/[^0-9.-]+/g, "")) ||
         0;
 
       const total = taxableComponent + unrestrictedNonPreserved;
+*/
 
       props.setFieldValue(
         `${props.modalObject.stakeHolder}${props.modalObject.key}Details`,
@@ -82,7 +85,7 @@ const AccountBasedBalance = (props) => {
 
       props.setFieldValue(
         `${props.modalObject.stakeHolder}${props.modalObject.key}`,
-        toCommaAndDollar(total)
+        entry.portfolioValue
       );
 
       if (props.flagState) {

@@ -211,7 +211,10 @@ const AccountBasedPension = (props) => {
   // onSubmit: collect entries and set parent fields
   const onSubmit = async (values) => {
     const DataOf = props.modalObject.Input;
-    const newEntries = values.accountBasedPensions || [];
+    const newEntries = (values.accountBasedPensions || []).slice(
+      0,
+      values.NumberOfMap
+    );
 
     // compute total pensionPayment
     const total = newEntries.reduce((totalAcc, entry) => {
@@ -331,11 +334,11 @@ const AccountBasedPension = (props) => {
     },
 
     {
-      title: "Annual Service Fee",
+      title: "Advice Ongoing Fee ",
       dataIndex: "annualAdvice",
       key: "annualAdvice",
       type: "number-toComma-Modal",
-      placeholder: "Annual Service Fee",
+      placeholder: "Advice Ongoing Fee ",
       innerModalTitle: "_<CFE>_Annual Ongoing Fee",
       callBack: true,
       func: (innerModalTitle, values, key, stakeHolder) =>
@@ -379,6 +382,13 @@ const AccountBasedPension = (props) => {
         const dataRows = useMemo(() => {
           const num = Number(values.NumberOfMap) || 0;
           if (num > 0) {
+            Array.from({ length: num }, (_, i) => {
+              setFieldValue(
+                `accountBasedPensions[${i}].` + "annualAdvice",
+                values.accountBasedPensions?.[i]?.annualAdvice || "$0"
+              );
+            });
+
             return Array.from({ length: num }, (_, i) => ({
               key: `accountBasedPensions.${i}`,
               owner: i + 1,
@@ -395,7 +405,7 @@ const AccountBasedPension = (props) => {
               nominatedBeneficiaries:
                 values.accountBasedPensions?.[i]?.nominatedBeneficiaries || "",
               annualAdvice:
-                values.accountBasedPensions?.[i]?.annualAdvice || "",
+                values.accountBasedPensions?.[i]?.annualAdvice || "$0",
             }));
           }
           return [];

@@ -75,7 +75,7 @@ const CashFlowCarsCards = (props) => {
                   <h5
                     className="text-center"
                     onClick={() => {
-                      console.log(questionDetail[CashFlowElem.key]);
+                      console.log(cashFlowData[CashFlowElem.key]);
                     }}
                   >
                     {CashFlowElem.title}
@@ -127,7 +127,7 @@ const CashFlowCarsCards = (props) => {
                           (cashFlowData &&
                             cashFlowData[CashFlowElem.key] &&
                             cashFlowData[CashFlowElem.key].clientTotal) ||
-                          ""
+                          "$0"
                         }
                       />
                     </div>
@@ -159,7 +159,7 @@ const CashFlowCarsCards = (props) => {
                               (cashFlowData &&
                                 cashFlowData[CashFlowElem.key] &&
                                 cashFlowData[CashFlowElem.key].partnerTotal) ||
-                              ""
+                              "$0"
                             }
                           />
                         </div>

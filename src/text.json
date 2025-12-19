@@ -1,15 +1,73 @@
-{
-  "lifeInsured": "",
-  "provider": "",
-  "policyNo": "",
-  "groupOwner": "",
-  "startDate": "",
-  "smoker": "",
-  "life": "",
-  "tpd": "",
-  "trauma": "",
-  "ip": "",
-  "premiumPA": "",
-  "loadingExclusion": "",
-  "beneficiary": ""
-}
+[
+  {
+    "name": "hsdhvd",
+    "gender": "Boy",
+    "behavior": "Yes",
+    "food": [
+      "Home-Cooked",
+      "Wet",
+      "Raw"
+    ],
+    "behaviorFussy": "Foodie",
+    "importantFood": "ordering&Receiving",
+    "bodyType": "img2",
+    "weight": 13,
+    "activity": "img1",
+    "allergies": [
+      "Dairy",
+      "Beef",
+      "Chicken",
+      "Venison",
+      "barley",
+      "Pearl",
+      "Quinoa"
+    ],
+    "selectedHealthIssues": [
+      {
+        "value": "ibd",
+        "label": "IBD",
+        "description": "IBD and sensitive stomachs differ. If your dog has been diagnosed with IBD by a specialist vet, then we don’t recommend Butternut. Recommendation from our in-house vet: \"Your dog likely needs a hydrolysed diet. Talk to your vet about what will help best.\"",
+        "color": "red"
+      },
+      {
+        "value": "struvite_stones",
+        "label": "Struvite stones",
+        "description": "Unfortunately, we do not recommend Butternut whilst your dog has Struvite stones. Recommendation from our in-house vet: \"Talk to your vet about supplementing with DL-Methionine until the stones are gone.\"",
+        "color": "red"
+      },
+      {
+        "value": "arthritis",
+        "label": "Arthritis",
+        "description": "Even with arthritis, your dog can still enjoy Butternut",
+        "color": "green"
+      }
+    ],
+    "snacks": "img3",
+    "totalRecipePrice": 490,
+    "order": {
+      "recipes": [
+        {
+          "itemName": "beef",
+          "itemPrice": 245
+        },
+        {
+          "itemName": "chicken",
+          "itemPrice": 245
+        }
+      ],
+      "starterBox": {
+        "starterQuantity": "300g",
+        "price": 24
+      },
+      "extras": [
+        {
+          "itemName": "gift-duck",
+          "itemPrice": 245
+        }
+      ],
+      "CheckOutSection":{
+
+      }
+    }
+  }
+]

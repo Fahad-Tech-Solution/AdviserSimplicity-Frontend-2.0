@@ -198,7 +198,7 @@ const ManagedFunds = (props) => {
 
   const onSubmit = async (values) => {
     const DataOf = props.modalObject.Input;
-    const fundData = values.managedFunds || [];
+    const fundData = (values.managedFunds || []).slice(0, values.NumberOfMap);
 
     console.log("Managed Fund Submit:", props.modalObject, values);
 
@@ -307,7 +307,7 @@ const ManagedFunds = (props) => {
       placeholder: "Portfolio Cost Base",
     },
     {
-      title: "Annual Service Fee",
+      title: "Advice Ongoing Fee ",
       dataIndex: "serviceFee",
       key: "serviceFee",
       type: "number-toComma-Modal",
@@ -336,6 +336,12 @@ const ManagedFunds = (props) => {
         const dataRows = useMemo(() => {
           const num = Number(values.NumberOfMap) || 0;
           if (num > 0) {
+            Array.from({ length: num }, (_, i) => {
+              setFieldValue(
+                `managedFunds[${i}].` + "serviceFee",
+                values.managedFunds?.[i]?.serviceFee || "$0"
+              );
+            });
             return Array.from({ length: num }, (_, i) => ({
               key: `managedFund.${i}`,
               owner: i + 1,
@@ -346,7 +352,7 @@ const ManagedFunds = (props) => {
               portfolioArray: values.managedFunds?.[i]?.portfolioArray || "",
               totalPortfolioCost:
                 values.managedFunds?.[i]?.totalPortfolioCost || "",
-              serviceFee: values.managedFunds?.[i]?.serviceFee || "",
+              serviceFee: values.managedFunds?.[i]?.serviceFee || "$0",
               serviceFeeType: values.managedFunds?.[i]?.serviceFeeType || "",
             }));
           }
@@ -379,7 +385,7 @@ const ManagedFunds = (props) => {
                 }}
               >
                 {" "}
-                Number of Investments:{" "}
+                Number of Platforms :{" "}
               </p>
               <div style={{ minWidth: "10%" }}>
                 <ConfigProvider

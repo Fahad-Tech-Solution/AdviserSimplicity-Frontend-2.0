@@ -65,6 +65,10 @@ const EstatePlanningWill = (props) => {
           "client.estatePlanning",
           will.client?.estatePlanning || []
         );
+        setFieldValue(
+          "client.estatePlanningdescription",
+          will.client?.estatePlanningdescription || []
+        );
       }
 
       if (will.owner?.includes("partner")) {
@@ -108,6 +112,7 @@ const EstatePlanningWill = (props) => {
       key,
       values, // ✅ correct property
       stackHolder, // ✅ correct key name expected by DynamicDescription
+      stakeHolder: stackHolder,
       question,
     });
     setFlagState(true);
@@ -256,7 +261,7 @@ const EstatePlanningWill = (props) => {
       title: "Estate Planning Requirements",
       dataIndex: "estatePlanningRadio",
       key: "estatePlanning",
-      type: "text-Modal",
+      type: "yesnoModal",
       width: 170,
       handleInnerModal,
       callBack: true,
@@ -331,9 +336,10 @@ const EstatePlanningWill = (props) => {
                 flagState={flagState}
                 setIsEditing={props.setIsEditing}
               >
-                {modalObject.key === "executor" ||
-                modalObject.key === "estatePlanning" ? (
+                {modalObject.key === "executor" ? (
                   <Executor />
+                ) : modalObject.key === "estatePlanning" ? (
+                  <DynamicDescription />
                 ) : null}
               </InnerModal>
 

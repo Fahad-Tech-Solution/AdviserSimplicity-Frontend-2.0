@@ -149,7 +149,7 @@ const PortfolioValue = (props) => {
                   <div className="d-flex flex-row justify-content-center align-items-center gap-2">
                     <p className="text-end mt-3">
                       {props?.modalObject?.question ||
-                        "Number of Investments :"}
+                        "Number of Platforms :"}
                     </p>
                     <div style={{ minWidth: "10%" }}>
                       <ConfigProvider

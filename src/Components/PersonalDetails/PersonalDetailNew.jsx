@@ -662,12 +662,13 @@ const PersonalDetailNew = () => {
 
   const getApiFunction = async (id) => {
     setLeading(true);
+    setPersonalDetailObj({});
     try {
       const res = await GetAxios(
         `${defaultUrlValue}/api/personalDetails/getUserById/${id}`
       );
       if (res) {
-        // console.log(res);
+        console.log(res, "GET aPI rESPONCE");
         setPersonalDetailObj(res);
         setUserData(res);
         localStorage.setItem("UserID", res._id);
@@ -725,6 +726,9 @@ const PersonalDetailNew = () => {
         );
         setFieldValue("children", children);
         setFieldValue("numberOfChildren", children.length);
+      } else {
+        setFieldValue("children", []);
+        setFieldValue("numberOfChildren", 0);
       }
     } catch (error) {
       console.error("❌ Error in storeData:", error);
@@ -1352,7 +1356,7 @@ const PersonalDetailNew = () => {
                             // setIsEditing(!isEditing);
                           }}
                         >
-                          Edit
+                          View
                         </Button>
                       </div>
                       <div className="col-md-2 mt-4">

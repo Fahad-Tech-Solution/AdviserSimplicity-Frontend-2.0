@@ -699,6 +699,18 @@ const DynamicFormField = ({
                 }
 
                 handleBlur({ target: { name: fieldName } });
+
+                if (all.callBack) {
+                  all.func(
+                    values,
+                    setFieldValue,
+                    {
+                      name: fieldName,
+                      value: parsedDate ? parsedDate.toISOString() : "",
+                    },
+                    stakeHolder
+                  );
+                }
               }
             }}
             id={buildFieldName(stakeHolder, name)}
