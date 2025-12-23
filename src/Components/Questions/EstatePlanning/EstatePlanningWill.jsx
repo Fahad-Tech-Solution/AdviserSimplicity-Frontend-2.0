@@ -206,7 +206,7 @@ const EstatePlanningWill = (props) => {
       key: "owner",
       type: "text",
       placeholder: "Enter Owner Name",
-      width: 150,
+      width: 50,
     },
     {
       title: "Year Set Up",
@@ -214,7 +214,7 @@ const EstatePlanningWill = (props) => {
       key: "yearSetUp",
       type: "number",
       placeholder: "Enter Year Set Up",
-      width: 150,
+      // width: 150,
       disabled: (values, stakeHolder) =>
         values.owner.includes("together") && stakeHolder === "partner",
     },
@@ -223,7 +223,7 @@ const EstatePlanningWill = (props) => {
       dataIndex: "willsCurrent",
       key: "willsCurrent",
       type: "yesno",
-      width: screens.xxl ? 50 : 100,
+      width: screens.xxl ? 60 : 100,
 
       disabled: (values, stakeHolder) =>
         values.owner.includes("together") && stakeHolder === "partner",
@@ -242,7 +242,7 @@ const EstatePlanningWill = (props) => {
       dataIndex: "enduringGuardianship",
       key: "enduringGuardianship",
       type: "yesno",
-      width: screens.xxl ? 50 : 100,
+      width: screens.xxl ? 60 : 100,
 
       disabled: (values, stakeHolder) =>
         values.owner.includes("together") && stakeHolder === "partner",
@@ -252,13 +252,17 @@ const EstatePlanningWill = (props) => {
       dataIndex: "testamentaryTrust",
       key: "testamentaryTrust",
       type: "yesno",
-      width: screens.xxl ? 50 : 100,
+      width: screens.xxl ? 60 : 100,
 
       disabled: (values, stakeHolder) =>
         values.owner.includes("together") && stakeHolder === "partner",
     },
     {
-      title: "Estate Planning Requirements",
+      title: (
+        <>
+          Estate Planning <br /> Requirements
+        </>
+      ),
       dataIndex: "estatePlanningRadio",
       key: "estatePlanning",
       type: "yesnoModal",
@@ -267,6 +271,7 @@ const EstatePlanningWill = (props) => {
       callBack: true,
       func: handleInnerModal,
       innerModalTitle: "Estate Planning",
+      width: screens.xxl ? 60 : 100,
     },
   ];
 

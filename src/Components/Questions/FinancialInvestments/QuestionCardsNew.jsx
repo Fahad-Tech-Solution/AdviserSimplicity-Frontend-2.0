@@ -1175,7 +1175,12 @@ const QuestionCard = (props) => {
     const { modalButton = true, onTop = false } = lbl || {};
     const handleOpen = () => {
       // Pass the specific label's data to the modal
-      onOpen(lbl?.maintitle ? title : lbl.label, lbl.key, lbl.component, lbl.label);
+      onOpen(
+        lbl?.maintitle ? title : lbl.label,
+        lbl.key,
+        lbl.component,
+        lbl.label
+      );
     };
 
     if (["partner", "joint"].includes(lbl.label) && isSingle) {
@@ -1466,7 +1471,7 @@ const QuestionCardsDemo = ({ questionKey, CRObject, collapsed }) => {
   };
 
   return (
-    <div className="container-fluid my-4" style={{ minHeight: "100vh" }}>
+    <div className="container-fluid my-4">
       <ModalComponent
         modalObject={modalInfo}
         flagState={flagState}

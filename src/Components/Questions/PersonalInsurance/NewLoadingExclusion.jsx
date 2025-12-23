@@ -91,7 +91,6 @@ const NewLoadingExclusion = (props) => {
       key: "life",
       type: "number-toComma",
       placeholder: "Life ($)",
-      width: screens.xxl ? 100 : 123,
     },
     {
       title: "TPD",
@@ -99,7 +98,6 @@ const NewLoadingExclusion = (props) => {
       key: "TPD",
       type: "number-toComma",
       placeholder: "TPD ($)",
-      width: screens.xxl ? 100 : 123,
     },
     {
       title: "Trauma",
@@ -107,7 +105,6 @@ const NewLoadingExclusion = (props) => {
       key: "trauma",
       type: "number-toComma",
       placeholder: "Trauma ($)",
-      width: screens.xxl ? 100 : 123,
     },
     {
       title: "Premium Type",
@@ -118,7 +115,6 @@ const NewLoadingExclusion = (props) => {
         { value: "Stepped", label: "Stepped" },
         { value: "Level", label: "Level" },
       ],
-      width: screens.xxl ? 100 : 140,
     },
     {
       title: "TPD Definition",
@@ -130,28 +126,27 @@ const NewLoadingExclusion = (props) => {
         { value: "Own", label: "Own" },
         { value: "Split (Own)", label: "Split (Own)" },
       ],
-      width: screens.xxl ? 100 : 140,
     },
     {
       title: "Trauma Plus",
       dataIndex: "traumaPlus",
       key: "traumaPlus",
       type: "yesno",
-      width: screens.xxl ? 90 : 100,
+      width: screens.xxl ? 135 : 100,
     },
     {
       title: "CPI",
       dataIndex: "CPI",
       key: "CPI",
       type: "yesno",
-      width: screens.xxl ? 90 : 100,
+      width: screens.xxl ? 135 : 100,
     },
     {
       title: "Superlinked",
       dataIndex: "superlinked",
       key: "superlinked",
       type: "yesno",
-      width: screens.xxl ? 90 : 100,
+      width: screens.xxl ? 135 : 100,
     },
   ];
 

@@ -1,70 +1,154 @@
-import { Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
-import { Row, Table } from "react-bootstrap";
+import { Form, Formik } from "formik";
+import React, { useEffect, useMemo } from "react";
+import { Row } from "react-bootstrap";
 import {
   RenderName,
   toCommaAndDollar,
 } from "../../../Components/Assets/Api/Api";
 import DynamicYesNo from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/DynamicYesNo";
+import DynamicTableForInputsSection from "../../../Components/Assets/Table/DynamicTableForInputsSection";
+
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const SalaryPackagingCar = (props) => {
-  let initialValues = {
+  const initialValues = {
     employerFBTStatus: "",
     costBaseOfCar: "",
     FBTPaidByEmployer: "",
+    runningCostsOfCarPackaged: "",
     includeFromYear: "1",
     upUntilYear: "30",
     indexation: "2.50%",
   };
 
+  /** Prefill values */
   const fillInitialValues = (setFieldValue) => {
-    let SourceObj =
+    const sourceObj =
       props.modalObject.values[
         props.modalObject.stakeHolder.replace(".", "")
       ] || {};
-    if (Object.keys(SourceObj).length > 0) {
-      console.log(
-        props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")]
+
+    if (sourceObj?.[props.modalObject.key]) {
+      const data = sourceObj[props.modalObject.key];
+      setFieldValue("employerFBTStatus", data.employerFBTStatus || "");
+      setFieldValue("costBaseOfCar", data.costBaseOfCar || "");
+      setFieldValue("FBTPaidByEmployer", data.FBTPaidByEmployer || "");
+      setFieldValue(
+        "runningCostsOfCarPackaged",
+        data.runningCostsOfCarPackaged || ""
       );
-      if (SourceObj[props.modalObject.key]) {
-        let Data = SourceObj[props.modalObject.key];
-        setFieldValue("employerFBTStatus", Data.employerFBTStatus);
-        setFieldValue("costBaseOfCar", Data.costBaseOfCar); //costBaseOfCar Value From Discovery Form
-        setFieldValue("FBTPaidByEmployer", Data.FBTPaidByEmployer);
-        setFieldValue(
-          "runningCostsOfCarPackaged",
-          Data.runningCostsOfCarPackaged
-        ); //runningCostsOfCarPackaged Value From Discovery Form
-        setFieldValue("includeFromYear", Data.includeFromYear || "1");
-        setFieldValue("upUntilYear", Data.upUntilYear || "30");
-        setFieldValue("indexation", Data.indexation || "2.50%");
-      }
+      setFieldValue("includeFromYear", data.includeFromYear || "1");
+      setFieldValue("upUntilYear", data.upUntilYear || "30");
+      setFieldValue("indexation", data.indexation || "2.50%");
     }
   };
 
-  let onSubmit = async (values) => {
-    console.log(values);
-
+  const onSubmit = async (values) => {
     props.setFieldValue(
-      props.modalObject.stakeHolder + props.modalObject.key,
+      `${props.modalObject.stakeHolder}${props.modalObject.key}`,
       values
     );
 
-    // Reset the flag state if necessary
     if (props.flagState) {
       props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
     }
   };
 
-  const loanTermOptions = Array.from({ length: 31 }, (_, i) => ({
+  /** Year options */
+  const yearOptions = Array.from({ length: 31 }, (_, i) => ({
     value: i.toString(),
-    label: ("Year " + i).toString(),
+    label: `Year ${i}`,
   }));
 
-  const indexation = Array.from({ length: 21 }, (_, i) => ({
-    value: (i * 0.5).toFixed(2) + "%",
-    label: (i * 0.5).toFixed(2) + "%",
+  /** Indexation options */
+  const indexationOptions = Array.from({ length: 21 }, (_, i) => ({
+    value: `${(i * 0.5).toFixed(2)}%`,
+    label: `${(i * 0.5).toFixed(2)}%`,
   }));
+
+  /** AntD Table Columns */
+  const columns = [
+    {
+      title: "Owner",
+      dataIndex: "owner",
+      key: "owner",
+      width: 120,
+      render: () => RenderName(props.modalObject.stakeHolder.replace(".", "")),
+    },
+    {
+      title: "Employer FBT Status",
+      dataIndex: "employerFBTStatus",
+      key: "employerFBTStatus",
+      type: "select",
+      placeholder: "Select Status",
+      options: [
+        { value: "Full FBT", label: "Full FBT" },
+        { value: "Rebatable", label: "Rebatable" },
+        { value: "Exempt ($17K Cap)", label: "Exempt ($17K Cap)" },
+        { value: "Exempt ($30K Cap)", label: "Exempt ($30K Cap)" },
+      ],
+      selectedOptionValue: true,
+    },
+    {
+      title: "Cost Base Of Car",
+      dataIndex: "costBaseOfCar",
+      key: "costBaseOfCar",
+      type: "number-toComma",
+      placeholder: "Cost Base Of Car",
+      callBack: true,
+      func: (values, setFieldValue, currentInput) => {
+        setFieldValue(
+          currentInput.name,
+          toCommaAndDollar(currentInput.value.replace(/[^0-9.-]+/g, ""))
+        );
+      },
+    },
+    {
+      title: "FBT Paid By Employer",
+      dataIndex: "FBTPaidByEmployer",
+      key: "FBTPaidByEmployer",
+      type: "yesno",
+    },
+    {
+      title: "Running Costs of Car Packaged",
+      dataIndex: "runningCostsOfCarPackaged",
+      key: "runningCostsOfCarPackaged",
+      type: "number-toComma",
+      placeholder: "Running Costs",
+      callBack: true,
+      func: (values, setFieldValue, currentInput) => {
+        setFieldValue(
+          currentInput.name,
+          toCommaAndDollar(currentInput.value.replace(/[^0-9.-]+/g, ""))
+        );
+      },
+    },
+    {
+      title: "Include From Year",
+      dataIndex: "includeFromYear",
+      key: "includeFromYear",
+      type: "select",
+      options: yearOptions,
+      selectedOptionValue: true,
+    },
+    {
+      title: "Up Until Year",
+      dataIndex: "upUntilYear",
+      key: "upUntilYear",
+      type: "select",
+      options: yearOptions,
+      selectedOptionValue: true,
+    },
+    {
+      title: "Indexation",
+      dataIndex: "indexation",
+      key: "indexation",
+      type: "select",
+      options: indexationOptions,
+      selectedOptionValue: true,
+    },
+  ];
 
   return (
     <Formik
@@ -73,159 +157,39 @@ const SalaryPackagingCar = (props) => {
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, handleChange, setFieldValue }) => {
+      {({ values, setFieldValue, handleBlur, handleChange }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
+
+        const tableData = useMemo(
+          () => [
+            {
+              key: "SalaryPackagingCar",
+              owner: 1,
+              ...values,
+            },
+          ],
+          [values]
+        );
 
         return (
           <Form>
             <Row>
               <div className="col-md-12">
                 <div className="row justify-content-center">
-                  <div className="mt-4">
-                    <Table striped bordered responsive hover>
-                      <thead>
-                        <tr>
-                          <th>Owner</th>
-                          <th>Employer FBT Status</th>
-                          <th>Cost Base Of Car</th>
-                          <th>FBT Paid By Employer</th>
-                          <th style={{ color: "black" }}>
-                            Running Costs of Car Packaged
-                          </th>
-                          <th>Include From Year</th>
-                          <th>Up Until Year</th>
-                          <th>Indexation</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>
-                            {RenderName(
-                              props.modalObject.stakeHolder.replace(".", "")
-                            )}
-                          </td>
-                          <td>
-                            <Field
-                              as="select"
-                              placeholder="Employer FBT Status"
-                              id={`employerFBTStatus`}
-                              name={`employerFBTStatus`}
-                              className="form-select inputDesignDoubleInput"
-                            >
-                              <option value={""}>Please Select</option>
-
-                              <option value={"Full FBT"}>Full FBT</option>
-                              <option value={"Rebatable"}>Rebatable</option>
-                              <option value={"Exempt ($17K Cap)"}>
-                                Exempt ($17K Cap)
-                              </option>
-                              <option value={"Exempt ($30K Cap)"}>
-                                Exempt ($30K Cap)
-                              </option>
-                            </Field>
-                          </td>
-                          <td>
-                            <Field
-                              type="text"
-                              placeholder="Cost Base Of Car"
-                              id={`costBaseOfCar`}
-                              name={`costBaseOfCar`}
-                              className="form-control inputDesignDoubleInput"
-                              onChange={(e) => {
-                                setFieldValue(
-                                  e.target.name,
-                                  toCommaAndDollar(
-                                    e.target.value.replace(/[^0-9.-]+/g, "")
-                                  )
-                                );
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <div className="d-flex flex-column justify-content-center align-items-center gap-2 pt-1">
-                              <DynamicYesNo
-                                name={`FBTPaidByEmployer`}
-                                values={values}
-                                handleChange={handleChange}
-                              />
-                            </div>
-                          </td>
-                          <td>
-                            <Field
-                              type="text"
-                              placeholder="Running Costs of Car Packaged"
-                              id={`runningCostsOfCarPackaged`}
-                              name={`runningCostsOfCarPackaged`}
-                              className="form-control inputDesignDoubleInput"
-                              onChange={(e) => {
-                                setFieldValue(
-                                  e.target.name,
-                                  toCommaAndDollar(
-                                    e.target.value.replace(/[^0-9.-]+/g, "")
-                                  )
-                                );
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <Field
-                              as="select"
-                              placeholder="Include From Year"
-                              id={`includeFromYear`}
-                              name={`includeFromYear`}
-                              className="form-select inputDesignDoubleInput"
-                            >
-                              <option value={""}>Please Select</option>
-                              {loanTermOptions.map((elem, index) => {
-                                return (
-                                  <option key={index} value={elem.value}>
-                                    {elem.label}
-                                  </option>
-                                );
-                              })}
-                            </Field>
-                          </td>
-                          <td>
-                            <Field
-                              as="select"
-                              placeholder="Up Until Year"
-                              id={`upUntilYear`}
-                              name={`upUntilYear`}
-                              className="form-select inputDesignDoubleInput"
-                            >
-                              <option value={""}>Please Select</option>
-                              {loanTermOptions.map((elem, index) => {
-                                return (
-                                  <option key={index} value={elem.value}>
-                                    {elem.label}
-                                  </option>
-                                );
-                              })}
-                            </Field>
-                          </td>
-                          <td>
-                            <Field
-                              as="select"
-                              placeholder="indexation"
-                              id={`indexation`}
-                              name={`indexation`}
-                              className="form-select inputDesignDoubleInput"
-                            >
-                              <option value={""}>Please Select</option>
-                              {indexation.map((elem, index) => {
-                                return (
-                                  <option key={index} value={elem.value}>
-                                    {elem.label}
-                                  </option>
-                                );
-                              })}
-                            </Field>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </Table>
+                  <div className="mt-4 All_Client reportSection">
+                    <AntdTable
+                      columns={columns}
+                      data={tableData}
+                      values={values}
+                      setFieldValue={setFieldValue}
+                      handleSubmit={props?.handleOk}
+                      handleBlur={handleBlur}
+                      handleChange={handleChange}
+                      isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
+                    />
                   </div>
                 </div>
               </div>

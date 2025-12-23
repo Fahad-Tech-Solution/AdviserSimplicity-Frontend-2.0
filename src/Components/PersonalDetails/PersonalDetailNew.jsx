@@ -29,6 +29,7 @@ import ImportantQuestion from "../Questions/ImportantQuestion/ImportantQuestion"
 import ModalComponent from "../Questions/FinancialInvestments/ModalComponent";
 import { differenceInYears } from "date-fns";
 import { Grid } from "antd";
+import { FaCaretRight } from "react-icons/fa6";
 const { useBreakpoint } = Grid;
 
 const childSchema = Yup.object({
@@ -431,7 +432,6 @@ const PersonalDetailNew = () => {
       ],
       key: "employment",
       CheckError: true,
-      width: 220,
     },
     // {
     //   title: "Occupation",
@@ -464,28 +464,28 @@ const PersonalDetailNew = () => {
       dataIndex: "smoker",
       type: "yesno",
       key: "smoker",
-      width: screens.xxl ? 150 : 100,
+      width: screens.xxl ? 136 : 125,
     },
     {
       title: "Tax Resident",
       dataIndex: "taxRes",
       type: "yesno",
       key: "taxRes",
-      width: screens.xxl ? 150 : 100,
+      width: screens.xxl ? 136 : 125,
     },
     {
       title: "Private Health Cover",
       dataIndex: "healthCover",
       type: "yesno",
       key: "healthCover",
-      width: screens.xxl ? 150 : 100,
+      width: screens.xxl ? 136 : 125,
     },
     {
       title: "Help Debt",
       dataIndex: "helpDebt",
       type: "yesno",
       key: "helpDebt",
-      width: screens.xxl ? 150 : 100,
+      width: screens.xxl ? 136 : 125,
     },
   ];
 
@@ -624,6 +624,7 @@ const PersonalDetailNew = () => {
       key: "age",
       disabled: true,
       CheckError: true,
+      // width: 50,
     },
     {
       title: "Gender",
@@ -656,7 +657,7 @@ const PersonalDetailNew = () => {
       type: "yesno",
       key: "depenantChild",
       CheckError: true,
-      width: screens.xxl ? 80 : 50,
+      width: screens.xxl ? 68 : 30,
     },
   ];
 
@@ -1300,18 +1301,30 @@ const PersonalDetailNew = () => {
 
                     <div className="row justify-content-center align-items-center mb-3 mt-4">
                       {!isEditing && (
-                        <div className="col-md-2">
-                          <Button
-                            htmlType="button"
-                            className="w-100"
-                            onClick={() => {
-                              // setSwitchStep(1);
-                              setErrorShow(true);
-                              setIsEditing(!isEditing);
-                            }}
-                          >
-                            Edit
-                          </Button>
+                        <div className="col-md-3">
+                          <div className="d-flex gap-4">
+                            <Button
+                              htmlType="button"
+                              className="w-50"
+                              onClick={() => {
+                                // setSwitchStep(1);
+                                setErrorShow(true);
+                                setIsEditing(!isEditing);
+                              }}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              htmlType="button"
+                              type="primary"
+                              className="w-50"
+                              onClick={() => {
+                                Nav("/user/personal-income");
+                              }}
+                            >
+                              Next <FaCaretRight />
+                            </Button>
+                          </div>
                         </div>
                       )}
                       {isEditing && (
@@ -1384,7 +1397,7 @@ const PersonalDetailNew = () => {
                             Nav("/user/personal-income");
                           }}
                         >
-                          Next
+                          Next <FaCaretRight />
                         </Button>
                       </div>
                     </div>

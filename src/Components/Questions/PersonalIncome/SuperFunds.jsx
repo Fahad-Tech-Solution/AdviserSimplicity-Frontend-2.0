@@ -359,7 +359,7 @@ const SuperFunds = (props) => {
                             <th>Portfolio Value – Need to have another pop</th>
                             <th>Group Insurance Attached</th>
                             <th>Contributions</th>
-                            <th>Nominated Beneficiaries</th>
+                            <th>Beneficiaries</th>
                             <th>Annual Advice Service Fee</th>
                             <th>Login in Page </th>
                           </tr>

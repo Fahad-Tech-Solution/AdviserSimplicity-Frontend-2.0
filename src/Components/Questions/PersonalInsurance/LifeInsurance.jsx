@@ -413,12 +413,14 @@ const PersonalInsuranceLife = (props) => {
         const updatedData = { ...questionDetail, personalInsurance: res };
         setQuestionDetail(updatedData);
 
+        let hasStakeholders = res.selectedStakeholders.length > 0;
+
         setCRObject({
           ...CRObject,
-          life: "Yes",
-          TPD: "Yes",
-          trauma: "Yes",
-          incomeProtection: "Yes",
+          life: hasStakeholders ? "Yes" : "No",
+          TPD: hasStakeholders ? "Yes" : "No",
+          trauma: hasStakeholders ? "Yes" : "No",
+          incomeProtection: hasStakeholders ? "Yes" : "No",
         }); // data
       }
 
@@ -462,7 +464,7 @@ const PersonalInsuranceLife = (props) => {
       dataIndex: "groupCover",
       key: "groupCover",
       type: "modal",
-      width: 200,
+      width: 125,
       innerModalTitle: "_Group Cover",
       handleInnerModal: handleInnerModal,
       callBack: true,
@@ -531,7 +533,7 @@ const PersonalInsuranceLife = (props) => {
       dataIndex: "smoker",
       key: "smoker",
       type: "yesno",
-      width: screens.xxl ? 160 : 100,
+      width: screens.xxl ? 136 : 100,
     },
     {
       title: "Life",
@@ -589,11 +591,11 @@ const PersonalInsuranceLife = (props) => {
       disabled: true,
     },
     {
-      title: "Loading/Exclusion",
+      title: "Loading/ Exclusion",
       dataIndex: "loadingExclusion",
       key: "loadingExclusion",
       type: "yesnoModal",
-      width: screens.xxl ? 160 : 100,
+      width: screens.xxl ? 136 : 70,
       innerModalTitle: "_Loading/Exclusion",
       callBack: true,
       func: handleInnerModal,
@@ -603,7 +605,7 @@ const PersonalInsuranceLife = (props) => {
       dataIndex: "beneficiary",
       key: "beneficiary",
       type: "yesnoModal",
-      width: screens.xxl ? 160 : 100,
+      width: screens.xxl ? 136 : 80,
       innerModalTitle: "_Beneficiaries",
       func: handleInnerModal,
       callBack: true,
@@ -697,9 +699,9 @@ const PersonalInsuranceLife = (props) => {
                 {ModalContent(modalObject)}
               </InnerModal>
 
-              <div className="d-flex flex-row justify-content-center align-items-center gap-4 mb-4">
+              <div className="d-flex flex-row justify-content-center align-items-center gap-4 mb-3">
                 <p
-                  className="text-end mt-1 pt-2 mb-0"
+                  className="text-end mb-0"
                   onClick={() => {
                     console.log(values);
                   }}
@@ -744,9 +746,9 @@ const PersonalInsuranceLife = (props) => {
               </div>
 
               {shouldShowClient && (
-                <div className="d-flex flex-row justify-content-center align-items-center gap-4 mb-4">
+                <div className="d-flex flex-row justify-content-center align-items-center gap-4 mb-3">
                   <p
-                    className="text-end mt-1 pt-2 mb-0"
+                    className="text-end  mb-0"
                     onClick={() => {
                       console.log(personalInsurance);
                     }}

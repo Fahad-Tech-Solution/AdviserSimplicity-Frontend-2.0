@@ -262,11 +262,11 @@ const InvestedAnnuities = (props) => {
         values?.[record.baseKey]?.[record.index]?.annuityType === "Lifetime",
     },
     {
-      title: "Nominated Beneficiaries",
+      title: "Beneficiaries",
       dataIndex: "nominatedBeneficiaries",
       key: "nominatedBeneficiaries",
       type: "yesnoModal",
-      width: 140,
+      width: 120,
       innerModalTitle: "_<CFE>_Beneficiaries",
       placeholder: "Beneficiaries",
       callBack: true,

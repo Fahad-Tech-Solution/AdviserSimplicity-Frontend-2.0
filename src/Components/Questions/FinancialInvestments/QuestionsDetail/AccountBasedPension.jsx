@@ -314,11 +314,11 @@ const AccountBasedPension = (props) => {
         ),
     },
     {
-      title: "Nominated Beneficiaries",
+      title: "Beneficiaries",
       dataIndex: "nominatedBeneficiaries",
       key: "nominatedBeneficiaries",
       type: "yesnoModal",
-      width: screens.xxl ? 80 : 100,
+      width: screens.xxl ? 62 : 100,
       innerModalTitle: "_<CFE>_Beneficiaries",
       placeholder: "Beneficiaries",
       callBack: true,
@@ -334,12 +334,12 @@ const AccountBasedPension = (props) => {
     },
 
     {
-      title: "Advice Ongoing Fee ",
+      title: "Ongoing Advice Fee",
       dataIndex: "annualAdvice",
       key: "annualAdvice",
       type: "number-toComma-Modal",
-      placeholder: "Advice Ongoing Fee ",
-      innerModalTitle: "_<CFE>_Annual Ongoing Fee",
+      placeholder: "Ongoing Advice Fee",
+      innerModalTitle: "_<CFE>_Ongoing Annual Fee",
       callBack: true,
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(

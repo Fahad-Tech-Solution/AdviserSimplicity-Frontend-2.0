@@ -24,6 +24,8 @@ import { GetAxios } from "../Assets/Api/Api";
 import { content } from "../../Content/Content";
 import QuestionCardsNew from "../Questions/FinancialInvestments/QuestionCardsNew";
 import { Grid } from "antd";
+import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
+import { FaCaretRight } from "react-icons/fa";
 const { useBreakpoint } = Grid;
 
 const QuestionsNew = (props) => {
@@ -267,7 +269,7 @@ const QuestionsNew = (props) => {
                   className="float-center btn   bgColor modalBtn"
                   style={{ width: screens.xxl ? "15%" : "20%" }}
                 >
-                  Next
+                  Next <FaCaretRight  />
                 </button>
               </div>
             </div>

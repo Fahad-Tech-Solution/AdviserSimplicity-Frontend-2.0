@@ -242,6 +242,7 @@ const ModalComponent = (props) => {
     "Family Trust Investment Properties",
     RenderName("client") + "_Pension Benefits",
     RenderName("partner") + "_Pension Benefits",
+    "Employment Income",
   ];
 
   let xlKey = [

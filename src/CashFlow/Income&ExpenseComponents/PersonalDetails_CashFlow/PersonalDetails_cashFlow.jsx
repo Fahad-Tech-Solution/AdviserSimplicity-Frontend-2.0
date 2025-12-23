@@ -27,7 +27,11 @@ import { ConfigProvider, Divider, Spin, Alert, Button, Tooltip } from "antd";
 import { FaDownload } from "react-icons/fa";
 import DynamicTableForInputsSection from "../../../Components/Assets/Table/DynamicTableForInputsSection";
 import { IoReload } from "react-icons/io5";
-
+import ProfileCard from "../../../Components/PersonalDetails/ProfileCard";
+import { FaCaretRight } from "react-icons/fa6";
+import { Grid } from "antd";
+import ProfileCard_cashFlow from "./ProfileCard_cashFlow";
+const { useBreakpoint } = Grid;
 const AntdDynamicTable = DynamicTableForInputsSection("antd");
 
 const clientSchema = Yup.object({
@@ -55,7 +59,9 @@ const PersonalDetails_cashFlow = (Props) => {
   const [QuestionChange, setQuestionChange] = useRecoilState(QuestionShift);
   const [cashFlowLastSyncAt, setCashFlowLastSyncAt] =
     useRecoilState(CashFlowLastSyncAt);
+  const screens = useBreakpoint();
   const [loadingState, setLoadingState] = useRecoilState(Loading);
+  const [step, setStep] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const formRef = useRef(null);
 
@@ -64,6 +70,7 @@ const PersonalDetails_cashFlow = (Props) => {
   const CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
   const [cashFlowDownloading, setCashFlowDownloading] =
     useRecoilState(CashFlowDownloading);
+
   const Nev = useNavigate();
 
   const singleArray = ["Single", "Widowed"];
@@ -189,6 +196,7 @@ const PersonalDetails_cashFlow = (Props) => {
       dataIndex: "privateHealthCover",
       key: "privateHealthCover",
       type: "yesno",
+      width: screens.xxl ? 94 : 100,
     },
     {
       title: "Retirement Year",
@@ -336,10 +344,13 @@ const PersonalDetails_cashFlow = (Props) => {
         );
       }
 
+      setStep(0);
+
       // Finally override with any saved cashFlowData
       if (cashFlowData?.cf_personalDetails) {
         updateFields(cashFlowData.cf_personalDetails.client, "client");
         updateFields(cashFlowData.cf_personalDetails.partner, "partner");
+        setStep(1);
       }
     } catch (err) {
       console.error("Error in fillInitialValues:", err);
@@ -592,114 +603,178 @@ const PersonalDetails_cashFlow = (Props) => {
         return (
           <Form className="container-fluid mt-2 mt-md-0 p-0 px-md-5">
             <div className="row">
-              <div className="col-md-12">
-                <div className="d-flex justify-content-between align-item-center">
-                  <div>
-                    <h4 className=" fw-bold">Personal Details</h4>
-                  </div>
-                  <div>
-                    <Tooltip
-                      title={
-                        <p>
-                          Last syncronized at : <br />{" "}
-                          {new Date(cashFlowLastSyncAt).toLocaleString()}
-                        </p>
-                      }
-                      color={"#36b446"}
-                      key={"#36b446"}
-                    >
-                      <Button
-                        variant="secondary"
-                        onClick={() =>
-                          handleCalculateAges(values, setFieldValue)
+              {/* Data Table (antD) */}
+              {step === 0 ? (
+                <div className="col-md-12">
+                  <div className="d-flex justify-content-between align-item-center">
+                    <div>
+                      <h4 className=" fw-bold">Personal Details</h4>
+                    </div>
+                    <div>
+                      <Tooltip
+                        title={
+                          <p>
+                            Last syncronized at : <br />{" "}
+                            {new Date(cashFlowLastSyncAt).toLocaleString()}
+                          </p>
                         }
-                        disabled={loadingState}
+                        color={"#36b446"}
+                        key={"#36b446"}
                       >
-                        <IoReload />
-                      </Button>
-                    </Tooltip>
+                        <Button
+                          variant="secondary"
+                          onClick={() =>
+                            handleCalculateAges(values, setFieldValue)
+                          }
+                          disabled={loadingState}
+                        >
+                          <IoReload />
+                        </Button>
+                      </Tooltip>
+                    </div>
+                  </div>
+
+                  {errorShow && errors && Object.keys(errors).length > 0 && (
+                    <SectionErrorAlert
+                      title="Personal Details"
+                      columns={personalFields}
+                      errors={errors}
+                      errorShow={true}
+                      flattenErrors={flatten}
+                      BaseKey={["client", "partner"]}
+                    />
+                  )}
+
+                  <ConfigProvider
+                    theme={{
+                      components: {
+                        Table: {
+                          headerBg: "#36B446",
+                          headerColor: "#fff",
+                          fontWeight: "bold",
+                        },
+                      },
+                    }}
+                  >
+                    <AntdDynamicTable
+                      columns={personalFields}
+                      data={tableData}
+                      values={values}
+                      setFieldValue={setFieldValue}
+                      handleChange={handleChange}
+                      handleBlur={handleBlur}
+                      isEditing={isEditing}
+                      setIsEditing={setIsEditing}
+                    />
+                  </ConfigProvider>
+                </div>
+              ) : (
+                <div className="col-md-12">
+                  <div className="row justify-content-center align-item-center">
+                    <div className={screens.xxl ? "col-md-2" : "col-md-3"}>
+                      <ProfileCard_cashFlow
+                        owner="client"
+                        Data={{
+                          ...values.client,
+                          email:
+                            PersonalDetailObj.client.Email ||
+                            "example@maileator.com",
+                          // image: PersonalDetailObj.client?.image?.url || "",
+                        }}
+                      />
+                    </div>
+                    {values.client.maritalStatus !== "Single" &&
+                    values.client.maritalStatus !== "Widowed" ? (
+                      <div className={screens.xxl ? "col-md-2" : "col-md-3"}>
+                        <ProfileCard_cashFlow
+                          owner="partner"
+                          Data={{
+                            ...values.partner,
+                            email:
+                              PersonalDetailObj.partner.partnerEmail ||
+                              "example2@maileator.com",
+                            // image: PersonalDetailObj.partner?.image?.url || "",
+                          }}
+                        />
+                      </div>
+                    ) : null}
                   </div>
                 </div>
-
-                {errorShow && errors && Object.keys(errors).length > 0 && (
-                  <SectionErrorAlert
-                    title="Personal Details"
-                    columns={personalFields}
-                    errors={errors}
-                    errorShow={true}
-                    flattenErrors={flatten}
-                    BaseKey={["client", "partner"]}
-                  />
-                )}
-
-                <ConfigProvider
-                  theme={{
-                    components: {
-                      Table: {
-                        headerBg: "#36B446",
-                        headerColor: "#fff",
-                        fontWeight: "bold",
-                      },
-                    },
-                  }}
-                >
-                  <AntdDynamicTable
-                    columns={personalFields}
-                    data={tableData}
-                    values={values}
-                    setFieldValue={setFieldValue}
-                    handleChange={handleChange}
-                    handleBlur={handleBlur}
-                    isEditing={isEditing}
-                    setIsEditing={setIsEditing}
-                  />
-                </ConfigProvider>
-              </div>
+              )}
             </div>
 
-            <div className="d-flex flex-row justify-content-end gap-3 my-4">
-              <div className={` cashFlowNextBtn`}>
-                <Button
-                  variant="secondary"
-                  style={{ width: "100%", minWidth: "fit-content" }}
-                  onClick={() => DownloadExcelSheet(values)}
-                  disabled={cashFlowDownloading}
-                >
-                  Download Report &nbsp;
-                  {cashFlowDownloading ? (
-                    <ConfigProvider
-                      theme={{
-                        token: {
-                          colorPrimary: "#fff",
-                        },
-                      }}
-                    >
-                      <Spin size="small" />
-                    </ConfigProvider>
-                  ) : (
-                    <FaDownload size={14} style={{ marginBottom: "4px" }} />
-                  )}
-                </Button>
-              </div>
-              <div style={{ width: "15%" }} className="cashFlowNextBtn">
-                {isEditing ? (
+            {/* next buttons */}
+            <div
+              className={"d-flex flex-row justify-content-center gap-3 my-4"}
+            >
+              {!isEditing &&
+                (step == 1 ? (
                   <Button
-                    type="primary"
-                    className="w-100"
-                    onClick={() => formRef.current?.submitForm()}
+                    variant="secondary"
+                    style={{
+                      width: screens.xxl ? "10%" : "15%",
+                      minWidth: "fit-content",
+                    }}
+                    onClick={() => setStep(0)}
+                    disabled={cashFlowDownloading}
                   >
-                    Next
+                    View
                   </Button>
                 ) : (
                   <Button
-                    type="primary"
-                    className="w-100"
+                    variant="secondary"
+                    style={{
+                      width: screens.xxl ? "10%" : "15%",
+                      minWidth: "fit-content",
+                    }}
                     onClick={() => setIsEditing(true)}
                   >
                     Edit
                   </Button>
+                ))}
+
+              <Button
+                variant="secondary"
+                style={{
+                  width: screens.xxl ? "10%" : "15%",
+                  minWidth: "fit-content",
+                }}
+                onClick={() => DownloadExcelSheet(values)}
+                disabled={cashFlowDownloading}
+              >
+                Download Report &nbsp;
+                {cashFlowDownloading ? (
+                  <ConfigProvider
+                    theme={{
+                      token: {
+                        colorPrimary: "#fff",
+                      },
+                    }}
+                  >
+                    <Spin size="small" />
+                  </ConfigProvider>
+                ) : (
+                  <FaDownload size={14} style={{ marginBottom: "4px" }} />
                 )}
-              </div>
+              </Button>
+
+              {isEditing ? (
+                <Button
+                  type="primary"
+                  style={{ width: screens.xxl ? "10%" : "15%" }}
+                  onClick={() => formRef.current?.submitForm()}
+                >
+                  Submit
+                </Button>
+              ) : (
+                <Button
+                  type="primary"
+                  style={{ width: screens.xxl ? "10%" : "15%" }}
+                  onClick={() => Nev(`/user/cashflow/income-and-expenses`)}
+                >
+                  Next
+                </Button>
+              )}
             </div>
           </Form>
         );

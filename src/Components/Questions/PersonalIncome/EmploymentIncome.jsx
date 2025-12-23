@@ -330,7 +330,7 @@ const EmploymentIncome = (props) => {
       dataIndex: "salaryPackage",
       key: "SalaryPackageModal",
       type: "modal", // 🔥 handled by DynamicFormField as button modal
-      width: 100,
+      width: 70,
       handleInnerModal: handleInnerModal,
       innerModalTitle: "Salary Detail",
     },
@@ -339,7 +339,7 @@ const EmploymentIncome = (props) => {
       dataIndex: "salaryPackagingRadio",
       key: "SalaryPackaging",
       type: "yesnoModal", // yes/no with modal
-      width: 100,
+      width: 92,
       callBack: true,
       func: handleInnerModal,
       handleInnerModal: handleInnerModal,
@@ -350,7 +350,7 @@ const EmploymentIncome = (props) => {
       dataIndex: "leaveEntitlementsRadio",
       key: "LeaveEntitlementsModal",
       type: "yesnoModal",
-      width: 100,
+      width: 92,
       handleInnerModal: handleInnerModal,
       callBack: true,
       func: handleInnerModal,
@@ -361,7 +361,7 @@ const EmploymentIncome = (props) => {
       dataIndex: "choiceOfFund",
       key: "choiceOfFund",
       type: "yesno",
-      width: 100,
+      width: 92,
     },
   ];
 

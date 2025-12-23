@@ -307,15 +307,12 @@ const CashFlowCarsCardsTowInOne = (props) => {
 
   return (
     <React.Fragment key={index}>
-      <div className={`col-md-4 mb-4`}>
-        <Card
-          className="py-4 shadow borderOverAll GoalsobjectiveCard d-flex"
-          style={{ borderRadius: "20px", height: "100%" }}
-        >
+      <div className={`${props.evenClass ? "col-md-3" : "col-md-4"} mb-4`}>
+        <div className="card shadow px-4 py-4 borderOverAll GoalsobjectiveCard rounded-4 h-100">
           <h5
             className="text-center"
             onClick={() => {
-              console.log(questionDetail[CashFlowElem.key]);
+              console.log(cashFlowData[CashFlowElem.key]);
             }}
           >
             {CashFlowElem.title}
@@ -328,14 +325,24 @@ const CashFlowCarsCardsTowInOne = (props) => {
             }}
           >
             <div className="QuestionIcon CardImg">
-              <img className="img-fluid" src={CashFlowElem.img} alt="" />
+              <img
+                className="img-fluid"
+                src={CashFlowElem.img}
+                alt=""
+                width={70}
+                height={70}
+              />
             </div>
             <div className="row justify-content-center align-items-center my-2">
               {ObjTowInOneArray[CashFlowElem.key].map((elem, i) => {
                 return (
                   <React.Fragment key={i}>
                     <div className={"col-12 p-0 my-2"}>
-                      <div className="d-flex justify-content-center align-items-center gap-2">
+                      <div
+                        className={`d-flex ${
+                          elem?.ModalBtn && i == 1 ? "" : "flex-column-reverse"
+                        }  justify-content-center align-items-center gap-2`}
+                      >
                         <label
                           className="d-block"
                           htmlFor={"client" + elem.key}
@@ -378,7 +385,7 @@ const CashFlowCarsCardsTowInOne = (props) => {
               })}
             </div>
           </div>
-        </Card>
+        </div>
       </div>
     </React.Fragment>
   );

@@ -96,7 +96,7 @@ const SalaryPackaging = (props) => {
       dataIndex: "FBTPaidByEmployer",
       type: "yesno",
       title: "FBT Paid By Employer",
-      width: screens.xxl ? 84 : 100,
+      width: screens.xxl ? 80 : 50,
       CheckError: true,
       render: (_, record) => (
         <DynamicYesNo

@@ -1,54 +1,108 @@
-import { Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
-import { Row, Table } from "react-bootstrap";
+import { Form, Formik } from "formik";
+import React, { useEffect, useMemo } from "react";
+import { Row } from "react-bootstrap";
 import {
   RenderName,
   toCommaAndDollar,
 } from "../../../Components/Assets/Api/Api";
+import DynamicTableForInputsSection from "../../../Components/Assets/Table/DynamicTableForInputsSection";
+
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const SalaryPackagingOther = (props) => {
-  let initialValues = {
+  const initialValues = {
     salaryPackagingOther: "",
     GSTStatus: "Without GST",
     includeFromYear: "1",
     upUntilYear: "30",
   };
 
+  /** Prefill values */
   const fillInitialValues = (setFieldValue) => {
-    let SourceObj =
+    const sourceObj =
       props.modalObject.values[
         props.modalObject.stakeHolder.replace(".", "")
       ] || {};
-    if (Object.keys(SourceObj).length > 0) {
-      console.log(
-        props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")]
-      );
-      if (SourceObj[props.modalObject.key]) {
-        let Data = SourceObj[props.modalObject.key];
-        setFieldValue("salaryPackagingOther", Data.salaryPackagingOther);
-        setFieldValue("GSTStatus", Data.GSTStatus);
-        setFieldValue("includeFromYear", Data.includeFromYear || "1");
-        setFieldValue("upUntilYear", Data.upUntilYear || "30");
-      }
+
+    if (sourceObj?.[props.modalObject.key]) {
+      const data = sourceObj[props.modalObject.key];
+      setFieldValue("salaryPackagingOther", data.salaryPackagingOther || "");
+      setFieldValue("GSTStatus", data.GSTStatus || "Without GST");
+      setFieldValue("includeFromYear", data.includeFromYear || "1");
+      setFieldValue("upUntilYear", data.upUntilYear || "30");
     }
   };
 
-  let onSubmit = async (values) => {
-    console.log(values);
+  const onSubmit = async (values) => {
     props.setFieldValue(
-      props.modalObject.stakeHolder + props.modalObject.key,
+      `${props.modalObject.stakeHolder}${props.modalObject.key}`,
       values
     );
-    // Reset the flag state if necessary
+
     if (props.flagState) {
       props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
     }
   };
 
-  const loanTermOptions = Array.from({ length: 31 }, (_, i) => ({
+  /** Year options */
+  const yearOptions = Array.from({ length: 31 }, (_, i) => ({
     value: i.toString(),
-    label: ("Year " + i).toString(),
+    label: `Year ${i}`,
   }));
+
+  /** AntD Table Columns */
+  const columns = [
+    {
+      title: "Owner",
+      dataIndex: "owner",
+      key: "owner",
+      width: 120,
+      render: () => RenderName(props.modalObject.stakeHolder.replace(".", "")),
+    },
+    {
+      title: "Salary Packaging (Other)",
+      dataIndex: "salaryPackagingOther",
+      key: "salaryPackagingOther",
+      type: "number-toComma",
+      placeholder: "Salary Packaging (Other)",
+      callBack: true,
+      func: (values, setFieldValue, currentInput) => {
+        setFieldValue(
+          currentInput.name,
+          toCommaAndDollar(currentInput.value.replace(/[^0-9.-]+/g, ""))
+        );
+      },
+    },
+    {
+      title: "GST Status",
+      dataIndex: "GSTStatus",
+      key: "GSTStatus",
+      type: "select",
+      placeholder: "GST Status",
+      options: [
+        { value: "With GST", label: "With GST" },
+        { value: "Without GST", label: "Without GST" },
+      ],
+      selectedOptionValue: true,
+    },
+    {
+      title: "Include From Year",
+      dataIndex: "includeFromYear",
+      key: "includeFromYear",
+      type: "select",
+      options: yearOptions,
+      selectedOptionValue: true,
+    },
+    {
+      title: "Up Until Year",
+      dataIndex: "upUntilYear",
+      key: "upUntilYear",
+      type: "select",
+      options: yearOptions,
+      selectedOptionValue: true,
+    },
+  ];
 
   return (
     <Formik
@@ -57,104 +111,39 @@ const SalaryPackagingOther = (props) => {
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, handleChange, setFieldValue }) => {
+      {({ values, setFieldValue, handleBlur, handleChange }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
+
+        const tableData = useMemo(
+          () => [
+            {
+              key: "SalaryPackagingOther",
+              owner: 1,
+              ...values,
+            },
+          ],
+          [values]
+        );
 
         return (
           <Form>
             <Row>
               <div className="col-md-12">
                 <div className="row justify-content-center">
-                  <div className="mt-4">
-                    <Table striped bordered responsive hover>
-                      <thead>
-                        <tr>
-                          <th>Owner</th>
-                          <th>Salary Packaging (Other)</th>
-                          <th>GST Status</th>
-                          <th>Include From Year</th>
-                          <th>Up Until Year</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>
-                            {RenderName(
-                              props.modalObject.stakeHolder.replace(".", "")
-                            )}
-                          </td>
-                          <td>
-                            <Field
-                              type="text"
-                              placeholder="Salary Packaging (Other)"
-                              id={`salaryPackagingOther`}
-                              name={`salaryPackagingOther`}
-                              className="form-control inputDesignDoubleInput"
-                              onChange={(e) => {
-                                setFieldValue(
-                                  e.target.name,
-                                  toCommaAndDollar(
-                                    e.target.value.replace(/[^0-9.-]+/g, "")
-                                  )
-                                );
-                              }}
-                            />
-                          </td>
-                          <td>
-                            <Field
-                              as="select"
-                              placeholder="GST Status"
-                              id={`GSTStatus`}
-                              name={`GSTStatus`}
-                              className="form-select inputDesignDoubleInput"
-                            >
-                              <option value={""}>Please Select</option>
-                              <option value={"With GST"}>With GST</option>
-                              <option value={"Without GST"}>Without GST</option>
-                            </Field>
-                          </td>
-
-                          <td>
-                            <Field
-                              as="select"
-                              placeholder="Include From Year"
-                              id={`includeFromYear`}
-                              name={`includeFromYear`}
-                              className="form-select inputDesignDoubleInput"
-                            >
-                              <option value={""}>Please Select</option>
-                              {loanTermOptions.map((elem, index) => {
-                                return (
-                                  <option key={index} value={elem.value}>
-                                    {elem.label}
-                                  </option>
-                                );
-                              })}
-                            </Field>
-                          </td>
-                          <td>
-                            <Field
-                              as="select"
-                              placeholder="Up Until Year"
-                              id={`upUntilYear`}
-                              name={`upUntilYear`}
-                              className="form-select inputDesignDoubleInput"
-                            >
-                              <option value={""}>Please Select</option>
-                              {loanTermOptions.map((elem, index) => {
-                                return (
-                                  <option key={index} value={elem.value}>
-                                    {elem.label}
-                                  </option>
-                                );
-                              })}
-                            </Field>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </Table>
+                  <div className="mt-4 All_Client reportSection">
+                    <AntdTable
+                      columns={columns}
+                      data={tableData}
+                      values={values}
+                      setFieldValue={setFieldValue}
+                      handleSubmit={props?.handleOk}
+                      handleBlur={handleBlur}
+                      handleChange={handleChange}
+                      isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
+                    />
                   </div>
                 </div>
               </div>

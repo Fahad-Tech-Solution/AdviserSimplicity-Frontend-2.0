@@ -179,7 +179,7 @@ const TradingCompany = (props) => {
       dataIndex: "directorship",
       key: "directorship",
       type: "yesno",
-      width: screens.xxl ? 120 : 140,
+      width: screens.xxl ? 116 : 120,
     },
     {
       title: "Shareholding",

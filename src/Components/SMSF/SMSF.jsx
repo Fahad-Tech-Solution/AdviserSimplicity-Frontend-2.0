@@ -3322,7 +3322,7 @@ function SMSF() {
 
                                 <div className="">
                                   <label className="form-label">
-                                    Do you have any Nominated Beneficiaries on
+                                    Do you have any Beneficiaries on
                                     the Account?
                                   </label>
                                   {/* switch button style */}

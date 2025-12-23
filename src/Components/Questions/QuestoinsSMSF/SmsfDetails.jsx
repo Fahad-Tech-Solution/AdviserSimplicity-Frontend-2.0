@@ -51,7 +51,6 @@ const SmsfDetails = (props) => {
   };
 
   let handleInnerModal = (innerModalTitle, values, key, stakeHolder) => {
-
     let ParentModal = props.modalObject.title;
     setModalObject({
       title: innerModalTitle,
@@ -79,7 +78,6 @@ const SmsfDetails = (props) => {
       key: "fundName",
       type: "text",
       placeholder: "Fund Name",
-      width: 200,
     },
     {
       title: "ABN",
@@ -87,7 +85,6 @@ const SmsfDetails = (props) => {
       key: "ABN",
       type: "number",
       placeholder: "ABN",
-      width: 150,
     },
     {
       title: "Registered Office",
@@ -95,7 +92,6 @@ const SmsfDetails = (props) => {
       key: "registeredOffice",
       type: "text",
       placeholder: "Registered Office",
-      width: 250,
     },
     {
       title: "Place Of Business",
@@ -103,7 +99,6 @@ const SmsfDetails = (props) => {
       key: "placeOfBusiness",
       type: "text",
       placeholder: "Place Of Business",
-      width: 220,
     },
     {
       title: "Establishment Date",
@@ -111,7 +106,6 @@ const SmsfDetails = (props) => {
       key: "establishmentDate",
       type: "antdate",
       placeholder: "dd/mm/yyyy",
-      width: 170,
     },
     {
       title: "Trustee Type",
@@ -120,7 +114,6 @@ const SmsfDetails = (props) => {
       type: "selectModal",
       options: ["Corporate", "Individual"].map((v) => ({ label: v, value: v })),
       placeholder: "Trustee Type",
-      width: 180,
       ModalOption: ["Corporate", "Individual"], // 👈 add this — triggers modal icon when selected
       func: handleInnerModal,
       innerModalTitle: "Trustee Name", // optional but recommended
@@ -132,7 +125,6 @@ const SmsfDetails = (props) => {
       key: "trusteeName",
       type: "text",
       placeholder: "Trustee Name",
-      width: 220,
     },
     {
       title: "ACN",
@@ -140,14 +132,13 @@ const SmsfDetails = (props) => {
       key: "ACN",
       type: "number",
       placeholder: "ACN",
-      width: 150,
     },
     {
       title: "Bare Trust",
       dataIndex: "bareTrust",
       key: "bareTrust",
       type: "yesnoModal", // yes/no with modal
-      width: screens.xxl ? 130 : 160,
+      width: screens.xxl ? 96 : 120,
       callBack: true,
       func: handleInnerModal,
       handleInnerModal: handleInnerModal,
@@ -162,7 +153,6 @@ const SmsfDetails = (props) => {
       key: "nameOfAccountant",
       type: "text",
       placeholder: "Name of Accountant",
-      width: 220,
     },
   ];
 

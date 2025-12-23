@@ -146,28 +146,28 @@ const PersonalInsurance = (props) => {
       dataIndex: "CPI",
       key: "CPI",
       type: "yesno",
-      width: screens.xxl ? 90 : 100,
+      width: screens.xxl ? 98 : 100,
     },
     {
       title: "Increasing Claims",
       dataIndex: "increasingClaims",
       key: "increasingClaims",
       type: "yesno",
-      width: screens.xxl ? 90 : 100,
+      width: screens.xxl ? 98 : 100,
     },
     {
       title: "Accident Option",
       dataIndex: "accidentOption",
       key: "accidentOption",
       type: "yesno",
-      width: screens.xxl ? 90 : 100,
+      width: screens.xxl ? 98 : 100,
     },
     {
       title: "Superlinked",
       dataIndex: "superlinked",
       key: "superlinked",
       type: "yesno",
-      width: screens.xxl ? 90 : 100,
+      width: screens.xxl ? 98 : 100,
     },
   ];
 

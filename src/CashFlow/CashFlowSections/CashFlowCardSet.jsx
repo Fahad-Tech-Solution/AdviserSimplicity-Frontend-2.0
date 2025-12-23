@@ -45,11 +45,15 @@ import SMSFInvestmentLoan from "../SMSF/SMSFInvestmentLoan";
 import SMSFInvestmentProperties from "../SMSF/SMSFInvestmentProperties";
 import WestFamilyTrustInvestment from "../Family Trust/WestFamilyTrustInvestment";
 import FamilyTrustBankAccount from "../Family Trust/FamilyTrustBankAccount";
-
+import { FaCaretRight } from "react-icons/fa6";
+import { Button } from "antd";
+import { Grid } from "antd";
+const { useBreakpoint } = Grid;
 // ------------------------------------------------
 
 const CashFlowCardSet = ({ Data }) => {
   const navigate = useNavigate();
+  const screens = useBreakpoint();
   const location = useLocation();
   const { cashFlow } = content;
 
@@ -202,20 +206,25 @@ const CashFlowCardSet = ({ Data }) => {
 
             {/* Navigation */}
             <div className="row mt-2">
-              <div className="col-md-12">
-                <button
-                  className="btn w-25 btn-outline backBtn mx-3"
+              <div className="d-flex align-items-center justify-content-center gap-5">
+                <Button
+                  htmlType="button"
+                  style={{
+                    width: screens.xxl ? "15%" : "20%",
+                  }}
                   onClick={handleBack}
                 >
-                  Back
-                </button>
+                  Edit
+                </Button>
 
-                <button
-                  className="btn w-25 bgColor modalBtn"
+                <Button
+                  htmlType="button"
+                  type="primary"
+                  style={{ width: screens.xxl ? "15%" : "20%" }}
                   onClick={handleNext}
                 >
-                  Next
-                </button>
+                  Next <FaCaretRight />
+                </Button>
               </div>
             </div>
           </div>

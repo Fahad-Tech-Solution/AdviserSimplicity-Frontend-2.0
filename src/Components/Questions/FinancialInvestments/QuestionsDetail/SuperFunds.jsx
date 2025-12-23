@@ -234,6 +234,7 @@ const SuperFunds = (props) => {
       key: "balanceBenefit",
       type: "number-toComma-Modal",
       disabled: true,
+      width: screens.xxl ? 70 : 150,
       innerModalTitle: "<CFE>_Balnace and Benefits",
       placeholder: "Balance Benefit",
       func: (innerModalTitle, values, key, stakeHolder) =>
@@ -247,14 +248,14 @@ const SuperFunds = (props) => {
         ),
     },
     {
-      title: "Group Insurance Attached",
+      title: "Insurance",
       dataIndex: "groupInsurance",
       key: "groupInsurance",
       type: "yesnoModal",
       innerModalTitle: "<CFE>_Group Insurance",
       placeholder: "Group Insurance",
       callBack: true,
-      width: screens.xxl ? 80 : 100,
+      width: screens.xxl ? 40 : 100,
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
           innerModalTitle,
@@ -270,7 +271,7 @@ const SuperFunds = (props) => {
       dataIndex: "contributions",
       key: "contributions",
       type: "yesnoModal",
-      width: screens.xxl ? 80 : 100,
+      width: screens.xxl ? 40 : 100,
       innerModalTitle: "<CFE>_Contributions",
       placeholder: "Contributions",
       callBack: true,
@@ -285,11 +286,11 @@ const SuperFunds = (props) => {
         ),
     },
     {
-      title: "Nominated Beneficiaries",
+      title: "Beneficiaries",
       dataIndex: "nominatedBeneficiaries",
       key: "nominatedBeneficiaries",
       type: "yesnoModal",
-      width: screens.xxl ? 80 : 100,
+      width: screens.xxl ? 40 : 100,
       innerModalTitle: "<CFE>_Beneficiaries",
       placeholder: "Beneficiaries",
       callBack: true,
@@ -304,12 +305,12 @@ const SuperFunds = (props) => {
         ),
     },
     {
-      title: "Advice Ongoing Fee",
+      title: "Ongoing Advice Fee",
       dataIndex: "annualAdvice",
       key: "annualAdvice",
       type: "number-toComma-Modal",
-      placeholder: "Advice Ongoing Fee",
-      innerModalTitle: "_<CFE>_Annual Ongoing Fee",
+      placeholder: "Ongoing Advice Fee",
+      innerModalTitle: "_<CFE>_Ongoing Annual Fee",
       callBack: true,
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
@@ -322,7 +323,7 @@ const SuperFunds = (props) => {
         ),
       errorHandler: ShowError,
       disabled: true,
-      width: screens.xxl ? 80 : 130,
+      width: screens.xxl ? 70 : 150,
     },
   ];
 

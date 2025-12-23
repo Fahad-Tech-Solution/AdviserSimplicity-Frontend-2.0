@@ -48,8 +48,20 @@ const CashFlowCarsCards = (props) => {
   ];
 
   return (
-    <div className="row">
+    <div className="row justify-content-center align-items-stretch px-3s">
       {props.Data.QuestionsArray.map((CashFlowElem, index) => {
+        const visibleQuestions = props.Data.QuestionsArray.filter(
+          (q, index) => {
+            const baseVisible = !CFObject || CFObject[q.key] === "Yes";
+            return baseVisible;
+          }
+        );
+
+        const numberOfCards = visibleQuestions.length;
+
+        const evenClass =
+          numberOfCards <= 4 || numberOfCards === 7 || numberOfCards >= 8;
+
         if (CFObject[CashFlowElem.key] === "Yes") {
           let TowInOne = towInOneArray.includes(CashFlowElem.key)
             ? true
@@ -61,17 +73,15 @@ const CashFlowCarsCards = (props) => {
                 CashFlowElem={CashFlowElem}
                 index={index}
                 OpenModal={OpenModal}
+                evenClass={evenClass}
               />
             );
           }
 
           return (
             <React.Fragment key={index}>
-              <div className={`col-md-4 mb-4`}>
-                <Card
-                  className="py-4 shadow borderOverAll GoalsobjectiveCard d-flex"
-                  style={{ borderRadius: "20px", height: "100%" }}
-                >
+              <div className={`${evenClass ? "col-md-3" : "col-md-4"} mb-4`}>
+                <div className="card shadow px-4 py-4 borderOverAll GoalsobjectiveCard rounded-4 h-100">
                   <h5
                     className="text-center"
                     onClick={() => {
@@ -80,6 +90,7 @@ const CashFlowCarsCards = (props) => {
                   >
                     {CashFlowElem.title}
                   </h5>
+
                   <div
                     className="d-flex justify-content-center flex-column"
                     // style={{ marginTop: "auto" }}
@@ -89,11 +100,14 @@ const CashFlowCarsCards = (props) => {
                         className="img-fluid"
                         src={CashFlowElem.img}
                         alt=""
+                        width={70}
+                        height={70}
+                        onClick={() => console.log(numberOfCards)}
                       />
                     </div>
                     <div className="row justify-content-center align-items-center my-2">
                       <div className="col-12 p-0 ">
-                        <div className="d-flex justify-content-center align-items-center gap-2">
+                        <div className="d-flex flex-column  flex-column-reverse justify-content-center align-items-center gap-2">
                           <label
                             className=" d-block "
                             htmlFor={"client" + CashFlowElem.key}
@@ -166,7 +180,7 @@ const CashFlowCarsCards = (props) => {
                       </React.Fragment>
                     )}
                   </div>
-                </Card>
+                </div>
               </div>
             </React.Fragment>
           );

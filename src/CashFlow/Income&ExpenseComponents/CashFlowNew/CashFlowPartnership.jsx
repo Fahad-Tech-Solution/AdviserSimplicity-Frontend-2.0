@@ -260,7 +260,7 @@ const CashFlowPartnership = (props) => {
         return (
           <Form>
             <div className="row">
-              <div className="col-md-12 d-flex justify-content-center gap-4">
+              <div className="d-flex flex-row justify-content-center align-items-center gap-4">
                 <label>Owner</label>
                 <div style={{ minWidth: "250px" }}>
                   <Field

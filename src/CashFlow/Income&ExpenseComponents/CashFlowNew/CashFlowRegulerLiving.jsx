@@ -1,153 +1,111 @@
-import { Field, Form, Formik } from "formik";
+import { Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
-import { CreatableMultiSelectField } from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
-import DynamicTableRow from "../../../Components/Assets/Dynamic/DynamicTableRow";
-import {
-  openNotificationSuccess,
-  PatchAxios,
-  PostAxios,
-  RenderName,
-} from "../../../Components/Assets/Api/Api";
-import { Row, Table } from "react-bootstrap";
+import { Row } from "react-bootstrap";
+import { useRecoilState, useRecoilValue } from "recoil";
+
 import {
   CashFlowData,
   CashFlowScenarioData,
   defaultUrl,
   QuestionDetail,
 } from "../../../Store/Store";
-import { useRecoilState, useRecoilValue } from "recoil";
+
+import {
+  openNotificationSuccess,
+  PatchAxios,
+  PostAxios,
+  RenderName,
+} from "../../../Components/Assets/Api/Api";
+
+import DynamicTableForInputsSection from "../../../Components/Assets/Table/DynamicTableForInputsSection";
+
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const CashFlowRegularLiving = (props) => {
-  let questionDetail = useRecoilValue(QuestionDetail);
-  let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
-  let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const questionDetail = useRecoilValue(QuestionDetail);
+  const DefaultUrl = useRecoilValue(defaultUrl);
 
-  let [UserStatus] = useState(localStorage.getItem("UserStatus"));
-  let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
+  const [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+  const CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
 
-  let DefaultUrl = useRecoilValue(defaultUrl);
+  const [objAndAPIKey, setObjAndAPIKey] = useState(
+    props?.modalObject?.key || ""
+  );
 
-  let generalLivingExpenses =
-    Object.keys(questionDetail.generalLivingExpenses || {}).length > 0
+  const generalLivingExpenses =
+    questionDetail?.generalLivingExpenses &&
+    Object.keys(questionDetail.generalLivingExpenses).length > 0
       ? questionDetail.generalLivingExpenses
-      : {
-          client: [],
-        }; // Use an empty object as default if generalLivingExpenses is undefined
+      : {};
 
-  let initialValues = {
+  const initialValues = {
     client: {
+      expenses: "",
+      amount: "",
       includeFromYear: 1,
       upUntillYear: 30,
       indexation: "2.50%",
     },
   };
 
-  //   const fillInitialValues = (setFieldValue) => {
-  //     console.log(generalLivingExpenses.generalLivingExpensesTotal, "data");
-  //     if (generalLivingExpenses && generalLivingExpenses._id) {
-  //       setFieldValue(`client.amount`, generalLivingExpenses.generalLivingExpensesTotal || "");
-
-  //   };
-  // };
-
+  /* ===============================
+     Fill Initial Values
+  =============================== */
   const fillInitialValues = (setFieldValue) => {
-    try {
-      // Set the object and API key
-      setObjAndAPIKey(props.modalObject.key);
+    setObjAndAPIKey(props.modalObject.key);
 
-      console.log(generalLivingExpenses, "Discovery Form Data");
-      // console.log(cashFlowData, "cashFlowData Form Data");
-      // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
+    const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
 
-      const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+    const updateClientFields = (data) => {
+      if (!data) return;
 
-      // Helper function to update field values
-      const updateFields = (data, prefix) => {
-        if (!data || !Object.keys(data).length) return;
-        const fields = {
-          expenses: data.expenses || "",
-          amount: data.amount || data.generalLivingExpensesTotal || "",
-          includeFromYear: data.includeFromYear || 1,
-          upUntillYear: data.upUntillYear || 30,
-          indexation: data.indexation || "2.50%",
-        };
+      setFieldValue("client.expenses", data.expenses || "");
+      setFieldValue(
+        "client.amount",
+        data.amount || data.generalLivingExpensesTotal || ""
+      );
+      setFieldValue("client.includeFromYear", data.includeFromYear || 1);
+      setFieldValue("client.upUntillYear", data.upUntillYear || 30);
+      setFieldValue("client.indexation", data.indexation || "2.50%");
+    };
 
-        Object.entries(fields).forEach(([key, value]) => {
-          setFieldValue(`${prefix}.${key}`, value);
-        });
-      };
-
-      // Update owner field
-      if (
-        scenarioObj?.selectedSource === "discoveryForm" &&
-        generalLivingExpenses &&
-        generalLivingExpenses._id
-      ) {
-        // setFieldValue(`owner`, generalLivingExpenses.owner || "");
-
-        // Update client-related fields
-        // if (generalLivingExpenses.owner.includes("client")) {
-        updateFields(generalLivingExpenses, "client");
-        // }
-
-        // // Update partner-related fields
-        // if (UserStatus === "Married" && generalLivingExpenses.owner.includes("partner")) {
-        //   updateFields(generalLivingExpenses.partner, "partner");
-        // }
-      } else {
-        // Handle cashFlowData scenario
-        const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-        console.log(cashFlowDetails, "cashFlowDetails");
-        if (cashFlowDetails) {
-          // setFieldValue(`owner`, cashFlowDetails.owner || "");
-          if (cashFlowDetails.owner.includes("client")) {
-            // Update client details
-            updateFields(cashFlowDetails.client, "client");
-          }
-
-          // if (UserStatus === "Married" && cashFlowDetails.owner.includes("partner")) {
-          //   // Update partner details
-          //   updateFields(cashFlowDetails.partner, "partner");
-          // }
-        }
+    /* Discovery Form Source */
+    if (
+      scenarioObj?.selectedSource === "discoveryForm" &&
+      generalLivingExpenses?._id
+    ) {
+      updateClientFields(generalLivingExpenses);
+    } else {
+      /* Scenario Source */
+      const scenarioData = CashFlowScenarioDataObj?.[objAndAPIKey];
+      if (scenarioData?.client) {
+        updateClientFields(scenarioData.client);
       }
+    }
 
-      // Additional data from cashFlowData
-      if (cashFlowData?.[objAndAPIKey]?._id) {
-        const cashFlowDataDetails = cashFlowData[objAndAPIKey];
-        // setFieldValue(`owner`, cashFlowDataDetails.owner || "");
-
-        // if (cashFlowDataDetails.owner.includes("client")) {
-        // Update client details
-        updateFields(cashFlowDataDetails.client, "client");
-        // }
-
-        // if (UserStatus === "Married" && cashFlowDataDetails.owner.includes("partner")) {
-        //   // Update partner details
-        //   updateFields(cashFlowDataDetails.partner, "partner");
-        // }
-      }
-    } catch (error) {
-      console.error("Error in fillInitialValues:", error);
+    /* Saved CashFlow Data */
+    const savedCF = cashFlowData?.[objAndAPIKey];
+    if (savedCF?.client) {
+      updateClientFields(savedCF.client);
     }
   };
 
-  let onSubmit = async (values) => {
-    console.log(JSON.stringify(values));
-    // return (false);
-    let obj = values;
+  /* ===============================
+     Submit
+  =============================== */
+  const onSubmit = async (values) => {
+    const obj = {
+      ...values,
+      scenarioFK: JSON.parse(localStorage.getItem("ScenarioObj"))?._id,
+      clientTotal: values.client.amount || "$0",
+    };
 
-    obj.scenarioFK = JSON.parse(localStorage.getItem("ScenarioObj"))._id;
-
-    obj.clientTotal = values.client.amount || "$0";
-
-    const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
-
-    console.log(obj, "final obj");
+    const alreadySaved = cashFlowData?.[objAndAPIKey]?._id;
+    console.log(obj);
 
     try {
       let res;
-      if (!bankAccountArray) {
+      if (!alreadySaved) {
         res = await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
       } else {
         res = await PatchAxios(
@@ -157,114 +115,117 @@ const CashFlowRegularLiving = (props) => {
       }
 
       if (res) {
-        console.log(res);
-        const updatedData = {
+        setCashFlowData({
           ...cashFlowData,
           [objAndAPIKey]: res,
-        };
-        setCashFlowData(updatedData);
+        });
       }
 
       openNotificationSuccess(
         "success",
         "topRight",
         "Success Notification",
-        'Data of "' + props.modalObject.title + '" is Saved'
+        `Data of "${props.modalObject.title}" is Saved`
       );
 
-      // Reset the flag state if necessary
-      if (props.flagState) {
-        props.setFlagState(false);
-      }
+      props?.setFlagState?.(false);
+      props.setIsEditing?.(false);
     } catch (error) {
-      console.error("Error occurred while making API call:", error);
+      console.error(error);
       openNotificationSuccess(
         "error",
         "topRight",
         "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        `Data of "${props.modalObject.title}" is not Saved`
       );
     }
   };
 
-  const loanTermOptions = Array.from({ length: 31 }, (_, i) => ({
-    value: i,
-    label: ("Year " + i).toString(),
-  }));
-
-  const loanTermOptionsWithNo = [
-    { value: "No", label: "No" },
-    ...Array.from({ length: 30 }, (_, i) => ({
-      value: (i + 1).toString(),
-      label: ("Year " + (i + 1)).toString(),
-    })),
-  ];
-
-  const indexation = Array.from({ length: 21 }, (_, i) => ({
-    value: (i * 0.5).toFixed(2) + "%",
-    label: (i * 0.5).toFixed(2) + "%",
-  }));
-
-  const optionOfExpenses = [
+  /* ===============================
+     Options
+  =============================== */
+  const expenseOptions = [
     "Living Expenses",
     "Reduce Living Expenses",
     "ASFS Retirement Standards",
     "Holidays",
     "Other",
     "Personal Insurance",
-    // "Income Protection",
-    // "Other Deductible",
-  ];
+  ].map((v) => ({ value: v, label: v }));
 
-  const ArrayOfExpenses = optionOfExpenses.map((key) => ({
-    value: key,
-    label: key,
+  const yearOptions = Array.from({ length: 31 }, (_, i) => ({
+    value: i,
+    label: `Year ${i}`,
   }));
 
-  let arrayOfAmount = [
+  const yearOptionsWithNo = [
+    { value: "No", label: "No" },
+    ...Array.from({ length: 30 }, (_, i) => ({
+      value: `${i + 1}`,
+      label: `Year ${i + 1}`,
+    })),
+  ];
+
+  const indexationOptions = Array.from({ length: 21 }, (_, i) => ({
+    value: `${(i * 0.5).toFixed(2)}%`,
+    label: `${(i * 0.5).toFixed(2)}%`,
+  }));
+
+  const amountOptions = [
     { value: "Modest", label: "Modest" },
     { value: "Comfortable", label: "Comfortable" },
     { value: "No", label: "No" },
   ];
 
-  const rowConfig = [
+  /* ===============================
+     Table Columns (AntD)
+  =============================== */
+  const columns = [
     {
-      name: "expenses",
-      type: "select",
-      options: ArrayOfExpenses,
-      callBack: true,
-      func: (values, setFieldValue, currentInput, stakeHolder) => {
-        if (currentInput.value === "ASFS Retirement Standards") {
-          setFieldValue("client.upUntillYear", "");
-        }
-      },
+      title: "Owner",
+      dataIndex: "owner",
+      key: "owner",
+      justText: true,
     },
     {
-      name: "amount",
+      title: "Expenses",
+      dataIndex: "expenses",
+      key: "expenses",
+      type: "select",
+      options: expenseOptions,
+    },
+    {
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
       type: "number-toComma",
-      placeholder: "Other Taxable Income",
     },
     {
-      name: "includeFromYear",
+      title: "Include From Year",
+      dataIndex: "includeFromYear",
+      key: "includeFromYear",
       type: "select",
-      options: loanTermOptions,
+      options: yearOptions,
     },
     {
-      name: "upUntillYear",
+      title: "Up Until Year",
+      dataIndex: "upUntillYear",
+      key: "upUntillYear",
       type: "select",
-      options: loanTermOptions,
+      options: yearOptions,
     },
     {
-      name: "indexation",
+      title: "Indexation",
+      dataIndex: "indexation",
+      key: "indexation",
       type: "select",
-      options: indexation,
+      options: indexationOptions,
     },
-
-    // { name: "businessAddress", type: "text", placeholder: "Business Address" },
   ];
 
+  /* ===============================
+     Render
+  =============================== */
   return (
     <Formik
       initialValues={initialValues}
@@ -277,64 +238,45 @@ const CashFlowRegularLiving = (props) => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        const isASFS = values?.client?.expenses === "ASFS Retirement Standards";
+
+        const finalColumns = columns.map((col) => {
+          if (isASFS && col.dataIndex === "amount") {
+            return { ...col, type: "select", options: amountOptions };
+          }
+          if (isASFS && col.dataIndex === "includeFromYear") {
+            return { ...col, options: yearOptionsWithNo };
+          }
+          if (isASFS && col.dataIndex === "upUntillYear") {
+            return { ...col, disabled: true };
+          }
+          return col;
+        });
+
+        const dataRows = [
+          {
+            key: "client",
+            stakeHolder: "client",
+            owner: RenderName("client"),
+            ...values.client,
+          },
+        ];
+
         return (
           <Form>
             <Row>
-              <div className="mt-4">
-                <Table striped bordered responsive hover>
-                  <thead>
-                    <tr>
-                      <th
-                        onClick={() => {
-                          console.log(values);
-                        }}
-                      >
-                        Owner
-                      </th>
-                      <th>Expenses</th>
-                      <th>Amount</th>
-                      <th>Include From Year</th>
-                      <th>Up Until Year</th>
-                      <th>Indexation</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <DynamicTableRow
-                      rowConfig={
-                        values.client.expenses === "ASFS Retirement Standards"
-                          ? rowConfig.map((config) => {
-                              if (config.name === "amount") {
-                                return {
-                                  ...config,
-                                  type: "select",
-                                  options: arrayOfAmount,
-                                };
-                              }
-                              if (config.name === "includeFromYear") {
-                                return {
-                                  ...config,
-                                  options: loanTermOptionsWithNo,
-                                };
-                              }
-                              if (config.name === "upUntillYear") {
-                                return {
-                                  ...config,
-                                  disabled: true,
-                                };
-                              }
-
-                              return config;
-                            })
-                          : rowConfig
-                      } // Use the original rowConfig if condition is false
-                      values={values}
-                      setFieldValue={setFieldValue}
-                      handleChange={handleChange}
-                      handleBlur={handleBlur}
-                      stakeHolder="client."
-                    />
-                  </tbody>
-                </Table>
+              <div className="col-md-12 mt-4 reportSection">
+                <AntdTable
+                  columns={finalColumns}
+                  data={dataRows}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  handleSubmit={props?.handleOk}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
+                />
               </div>
             </Row>
           </Form>

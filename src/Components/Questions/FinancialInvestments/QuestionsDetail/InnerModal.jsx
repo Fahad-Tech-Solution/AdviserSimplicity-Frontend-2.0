@@ -171,6 +171,7 @@ const InnerModal = (props) => {
     "IP",
     "Premiums p.a",
     "Accumulation Benefits",
+    "Salary Packaging Car",
   ];
 
   let mdTitles = [

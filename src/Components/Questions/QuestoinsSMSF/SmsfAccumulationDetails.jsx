@@ -289,7 +289,7 @@ const SmsfAccumulationDetails = (props) => {
       innerModalTitle: "_Contributions",
       placeholder: "Contributions",
       callBack: true,
-      width: screens.xxl ? 90 : 90,
+      width: screens.xxl ? 82 : 40,
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
           innerModalTitle,
@@ -302,14 +302,14 @@ const SmsfAccumulationDetails = (props) => {
       customComponent: DynamicYesNo,
     },
     {
-      title: "Nominated Beneficiaries",
+      title: "Beneficiaries",
       dataIndex: "nominatedBeneficiaries",
       key: "nominatedBeneficiaries",
       type: "yesnoModal",
       innerModalTitle: "_Beneficiaries",
       placeholder: "Beneficiaries",
       callBack: true,
-      width: screens.xxl ? 90 : 90,
+      width: screens.xxl ? 82 : 40,
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
           innerModalTitle,

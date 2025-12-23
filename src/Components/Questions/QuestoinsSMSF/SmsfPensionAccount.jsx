@@ -279,14 +279,14 @@ const SmsfPensionAccount = (props) => {
       ],
     },
     {
-      title: "Nominated Beneficiaries",
+      title: "Beneficiaries",
       dataIndex: "nominatedBeneficiaries",
       key: "nominatedBeneficiaries",
       type: "yesnoModal",
       innerModalTitle: "_Beneficiaries",
       placeholder: "Beneficiaries",
       callBack: true,
-      width: 70,
+      width: screens.xxl ? 56 : 50,
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
           innerModalTitle,

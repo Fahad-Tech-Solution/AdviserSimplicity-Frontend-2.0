@@ -106,7 +106,7 @@ const GroupCoverDetails = (props) => {
       dataIndex: "smoker",
       key: "smoker",
       type: "yesno",
-      width: screens.xxl ? 160 : 100,
+      width: screens.xxl ? 132 : 100,
     },
     {
       title: "Life",
@@ -150,18 +150,18 @@ const GroupCoverDetails = (props) => {
       width: 150,
     },
     {
-      title: "Loading/Exclusion",
+      title: "Loading/ Exclusion",
       dataIndex: "loadingExclusion",
       key: "loadingExclusion",
       type: "yesno",
-      width: screens.xxl ? 160 : 120,
+      width: screens.xxl ? 132 : 120,
     },
     {
       title: "Beneficiary",
       dataIndex: "beneficiary",
       key: "beneficiary",
       type: "yesno",
-      width: screens.xxl ? 160 : 120,
+      width: screens.xxl ? 132 : 120,
     },
   ];
 
