@@ -579,6 +579,66 @@ const DynamicFormField = ({
         </React.Fragment>
       );
 
+    case "number-toComma-Modal-Separated":
+      return (
+        <React.Fragment>
+          <div
+            className={`d-flex align-items-center ${all.extraClass}`}
+            style={{ gap: "15px", minWidth: "160px" }}
+          >
+            {/* Input */}
+            <Field
+              type="text"
+              placeholder={placeholder}
+              name={stakeHolder ? stakeHolder + name : name}
+              id={name}
+              className="form-control inputDesignDoubleInput rounded"
+              onChange={(e) => {
+                const value = e.target.value.replace(/[^0-9.-]+/g, "");
+                setFieldValue(
+                  stakeHolder ? stakeHolder + name : name,
+                  toCommaAndDollar(value)
+                );
+
+                if (all.callBack) {
+                  all.inputChangeFunc(
+                    values,
+                    setFieldValue,
+                    e.target,
+                    stakeHolder
+                  );
+                }
+              }}
+              disabled={
+                typeof all?.disabled === "function"
+                  ? all.disabled(values, stakeHolder)
+                  : all?.disabled || false
+              }
+            />
+
+            {/* Button */}
+            <Button
+              className="btn bgColor modalBtn border-0 rounded"
+              onClick={() => {
+                all.func(innerModalTitle, values, all.key, stakeHolder);
+              }}
+            >
+              <FontAwesomeIcon icon={faArrowUpRightFromSquare} />
+            </Button>
+          </div>
+
+          <div className="invalid-feedback">{all.invalidMessage}</div>
+
+          {all?.CheckError && (
+            <ErrorMessage
+              name={stakeHolder ? stakeHolder + name : name}
+              component="div"
+              className="text-danger small mt-1"
+            />
+          )}
+        </React.Fragment>
+      );
+
     case "date":
       return (
         <>

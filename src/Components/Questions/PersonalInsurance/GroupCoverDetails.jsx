@@ -36,8 +36,6 @@ const GroupCoverDetails = (props) => {
       Object.keys(existingData).forEach((field) => {
         setFieldValue(field, existingData[field] || "");
       });
-    } else {
-      props.setIsEditing?.(true);
     }
   };
 
@@ -50,14 +48,14 @@ const GroupCoverDetails = (props) => {
       justText: true,
       width: 60,
     },
-    {
-      title: "Life Insured",
-      dataIndex: "lifeInsured",
-      key: "lifeInsured",
-      selectedOptionValue: true,
-      justText: true,
-      type: "select-antd",
-    },
+    // {
+    //   title: "Life Insured",
+    //   dataIndex: "lifeInsured",
+    //   key: "lifeInsured",
+    //   selectedOptionValue: true,
+    //   justText: true,
+    //   type: "select-antd",
+    // },
     {
       title: "Provider",
       dataIndex: "provider",
@@ -125,15 +123,6 @@ const GroupCoverDetails = (props) => {
       width: 120,
     },
     {
-      title: "Trauma",
-      dataIndex: "trauma",
-      key: "trauma",
-      type: "number-toComma",
-      placeholder: "Trauma",
-      disabled: true,
-      width: 120,
-    },
-    {
       title: "IP",
       dataIndex: "ip",
       key: "ip",
@@ -153,13 +142,6 @@ const GroupCoverDetails = (props) => {
       title: "Loading/ Exclusion",
       dataIndex: "loadingExclusion",
       key: "loadingExclusion",
-      type: "yesno",
-      width: screens.xxl ? 132 : 120,
-    },
-    {
-      title: "Beneficiary",
-      dataIndex: "beneficiary",
-      key: "beneficiary",
       type: "yesno",
       width: screens.xxl ? 132 : 120,
     },
@@ -196,9 +178,6 @@ const GroupCoverDetails = (props) => {
               {
                 key: index,
                 ...existingData,
-                lifeInsured:
-                  RenderName(props?.modalObject?.stakeHolder.split(".")[0]) ||
-                  "",
               },
             ];
           }
@@ -207,8 +186,6 @@ const GroupCoverDetails = (props) => {
           return [
             {
               key: 0,
-              lifeInsured:
-                RenderName(props?.modalObject?.stakeHolder.split(".")[0]) || "",
               provider: "",
               policyNo: "",
               groupOwner: "",

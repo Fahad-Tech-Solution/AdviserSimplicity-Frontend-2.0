@@ -679,7 +679,7 @@ const PersonalDetails_cashFlow = (Props) => {
                           email:
                             PersonalDetailObj.client.Email ||
                             "example@maileator.com",
-                          // image: PersonalDetailObj.client?.image?.url || "",
+                          image: PersonalDetailObj.client?.image?.url || "",
                         }}
                       />
                     </div>
@@ -693,7 +693,7 @@ const PersonalDetails_cashFlow = (Props) => {
                             email:
                               PersonalDetailObj.partner.partnerEmail ||
                               "example2@maileator.com",
-                            // image: PersonalDetailObj.partner?.image?.url || "",
+                            image: PersonalDetailObj.partner?.image?.url || "",
                           }}
                         />
                       </div>

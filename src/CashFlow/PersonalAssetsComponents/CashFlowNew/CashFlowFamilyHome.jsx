@@ -1,13 +1,11 @@
-import { Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
-import { Row, Table } from "react-bootstrap";
+import { Form, Formik } from "formik";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   CashFlowData,
   CashFlowScenarioData,
   defaultUrl,
   PersonalDetailsData,
-  QuestionDetail,
 } from "../../../Store/Store";
 
 import {
@@ -17,497 +15,300 @@ import {
   toCommaAndDollar,
 } from "../../../Components/Assets/Api/Api";
 
-import DynamicTableRow from "../../../Components/Assets/Dynamic/DynamicTableRow";
+import DynamicTableForInputsSection from "../../../Components/Assets/Table/DynamicTableForInputsSection";
 import InnerModal from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 import CashFlowHomeLoan from "./CashFlowHomeLoan";
 import CashFlowTotalCost from "./CashFlowTotalCost";
 
+import { ConfigProvider, Select } from "antd";
+import { Grid } from "antd";
+const { useBreakpoint } = Grid;
+const AntdTable = DynamicTableForInputsSection("antd");
+const { Option } = Select;
+
 const CashFlowFamilyHome = (props) => {
-  let questionDetail = useRecoilValue(QuestionDetail);
-  let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
-  let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+  const scenarioData = useRecoilValue(CashFlowScenarioData);
+  const personalData = useRecoilValue(PersonalDetailsData);
+  const DefaultUrl = useRecoilValue(defaultUrl);
+  const screens = useBreakpoint();
 
-  let [UserStatus] = useState(localStorage.getItem("UserStatus"));
-  let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
+  const [modalObject, setModalObject] = useState({});
+  const [flagState, setFlagState] = useState(false);
 
-  let DefaultUrl = useRecoilValue(defaultUrl);
-  let PersonalData = useRecoilValue(PersonalDetailsData);
+  const objKey = props.modalObject.key;
+  const existingData = cashFlowData?.[objKey];
 
-  let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
+  // ------------------------------------
+  // Initial Values
+  // ------------------------------------
+  const initialValues = {
+    numberOfProperties: existingData?.numberOfProperties || 0,
+    familyHomes: existingData?.client || [],
+  };
 
-  let familyHome =
-    Object.keys(questionDetail.familyHome || {}).length > 0
-      ? questionDetail.familyHome
-      : {
-          client: [],
-          partner: [],
-          joint: [],
-        }; // Use an empty object as default if familyHome is undefined
-
-  let initialValues = { numberOfProperties: "" };
-
+  // ------------------------------------
+  // Fill Initial Values
+  // ------------------------------------
   const fillInitialValues = (setFieldValue) => {
-    try {
-      // Set the object and API key
-      setObjAndAPIKey(props.modalObject.key);
+    const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
 
-      // console.log(familyHome, "Discovery Form Data");
-
-      const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
-
-      // Helper function to update field values dynamically based on index
-      const updateFields = (data, index) => {
-        if (!data || !Object.keys(data).length) return;
-
-        const fields = {
-          [`address_${index}`]:
-            data.address || PersonalData.client.clientHomeAddress || "",
-          [`currentValue_${index}`]: data.currentValue || "$0",
-          [`clientOwnership_${index}`]: data.clientOwnership || "0%",
-          [`partnerOwnership_${index}`]: data.partnerOwnership || "0%",
-          [`yearOfPurchase_${index}`]:
-            data.yearOfPurchase || (familyHome.currentValue ? "Existing" : ""),
-          [`totalCostBase_${index}`]:
-            data.totalCostBase || data.costBase || "$0",
-          [`totalCostBaseObj_${index}`]: data.totalCostBaseObj || {},
-          [`loanBalance_${index}`]: data.loanBalance || data.loanAttached || "", //
-          [`familyHomeLoanObj_${index}`]:
-            data.familyHomeLoanObj || data.HomeLoanModal || {},
-          [`expectedGrowthRate_${index}`]: data.expectedGrowthRate || "2.50%",
-          [`sellPropertyInYear_${index}`]: data.sellPropertyInYear || "No",
-          [`state_${index}`]: data.state || "",
-          [`estimatedFutureSellingCost_${index}`]:
-            data.estimatedFutureSellingCost || "",
-        };
-
-        Object.entries(fields).forEach(([key, value]) => {
-          setFieldValue(key, value);
-        });
-      };
-
-      // Update owner field based on selected source
-      if (
-        scenarioObj?.selectedSource === "discoveryForm" &&
-        familyHome &&
-        familyHome._id
-      ) {
-
-        updateFields(familyHome, 0);
-      } else {
-        // Handle cashFlowData scenario
-        const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-        // console.log(cashFlowDetails, "cashFlowDetails");
-
-        setFieldValue("numberOfProperties", cashFlowDetails.client.length);
-
-        if (cashFlowDetails?.client) {
-          cashFlowDetails.client.forEach((clientData, index) => {
-            updateFields(clientData, index);
-          });
-        }
-      }
-
-      // Additional data from cashFlowData
-      if (cashFlowData?.[objAndAPIKey]?._id) {
-        const cashFlowDataDetails = cashFlowData[objAndAPIKey];
-
-        setFieldValue("numberOfProperties", cashFlowDataDetails.client.length);
-
-        cashFlowDataDetails.client.forEach((clientData, index) => {
-          updateFields(clientData, index);
-        });
-      }
-    } catch (error) {
-      console.error("Error in fillInitialValues:", error);
+    if (
+      scenarioObj?.selectedSource === "discoveryForm" &&
+      personalData?.client?.clientHomeAddress &&
+      !existingData?._id
+    ) {
+      setFieldValue("familyHomes", [
+        {
+          address: personalData.client.clientHomeAddress,
+          clientOwnership: "100%",
+          partnerOwnership: "0%",
+          expectedGrowthRate: "2.50%",
+        },
+      ]);
+      setFieldValue("numberOfProperties", 1);
+    } else if (scenarioData?.[objKey]) {
+      setFieldValue("familyHomes", scenarioData[objKey].client || []);
+      setFieldValue(
+        "numberOfProperties",
+        scenarioData[objKey].client?.length || 0
+      );
+    } else if (existingData) {
+      setFieldValue("familyHomes", existingData.client || []);
+      setFieldValue("numberOfProperties", existingData.numberOfProperties || 0);
     }
   };
 
-  let onSubmit = async (values) => {
-    const numberOfProperties = parseInt(values.numberOfProperties, 10) || 1;
-    const newEntries = [];
+  // ------------------------------------
+  // Submit
+  // ------------------------------------
+  const onSubmit = async (values) => {
+    const homes = values.familyHomes || [];
 
-    // Iterate through properties and structure data
-    for (let i = 0; i < numberOfProperties; i++) {
-      const newEntry = {
-        address: values[`address_${i}`] || "",
-        currentValue: values[`currentValue_${i}`] || "",
-        state: values[`state_${i}`] || "",
-        clientOwnership: values[`clientOwnership_${i}`] || "$0",
-        partnerOwnership: values[`partnerOwnership_${i}`] || "",
-        yearOfPurchase: values[`yearOfPurchase_${i}`] || "Existing",
-        totalCostBase: values[`totalCostBase_${i}`] || "",
-        totalCostBaseObj: values[`totalCostBaseObj_${i}`] || "",
-        loanBalance: values[`loanBalance_${i}`] || "",
-        familyHomeLoanObj: values[`familyHomeLoanObj_${i}`] || {},
-        expectedGrowthRate: values[`expectedGrowthRate_${i}`] || "",
-        sellPropertyInYear: values[`sellPropertyInYear_${i}`] || "",
-        estimatedFutureSellingCost:
-          values[`estimatedFutureSellingCost_${i}`] || "",
-      };
-      newEntries.push(newEntry);
-    }
-
-    let obj = {
-      client: newEntries,
+    const obj = {
+      client: homes,
+      numberOfProperties: homes.length,
       scenarioFK: JSON.parse(localStorage.getItem("ScenarioObj"))._id,
-      numberOfProperties,
       clientTotal: toCommaAndDollar(
-        newEntries.reduce(
-          (total, entry) =>
-            total +
-            (parseFloat(entry.currentValue.replace(/[^0-9.-]+/g, "")) || 0),
+        homes.reduce(
+          (t, h) =>
+            t + parseFloat(h.currentValue?.replace(/[^0-9.-]+/g, "") || 0),
           0
         )
       ),
       partnerTotal: toCommaAndDollar(
-        newEntries.reduce(
-          (total, entry) =>
-            total +
-            (parseFloat(
-              entry?.familyHomeLoanObj?.loanBalance?.replace(/[^0-9.-]+/g, "")
-            ) || 0),
+        homes.reduce(
+          (t, h) =>
+            t +
+            parseFloat(
+              h?.familyHomeLoanObj?.loanBalance?.replace(/[^0-9.-]+/g, "") || 0
+            ),
           0
         )
       ),
     };
 
-    console.log(JSON.stringify(obj), "final obj");
-
-    const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
-
     try {
-      let res;
-      if (!bankAccountArray) {
-        res = await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
-      } else {
-        res = await PatchAxios(
-          `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
-          obj
-        );
-      }
+      const hasExisting = cashFlowData?.[objKey]?._id;
+
+      const res = hasExisting
+        ? await PatchAxios(`${DefaultUrl}/api/CF/${objKey}/Update`, obj)
+        : await PostAxios(`${DefaultUrl}/api/CF/${objKey}/Add`, obj);
 
       if (res) {
-        console.log("API Returns Data", res);
-        setCashFlowData({ ...cashFlowData, [objAndAPIKey]: res });
+        setCashFlowData((prev) => ({ ...prev, [objKey]: res }));
       }
 
       openNotificationSuccess(
         "success",
         "topRight",
-        "Success Notification",
-        `Data of "${props.modalObject.title}" is Saved`
+        "Success",
+        `Data of "${props.modalObject.title}" saved`
       );
 
-      if (props.flagState) props.setFlagState(false);
-    } catch (error) {
-      console.error("Error occurred while making API call:", error);
+      props.flagState && props.setFlagState(false);
+    } catch {
       openNotificationSuccess(
         "error",
         "topRight",
-        "Error Notification",
-        `Data of "${props.modalObject.title}" is not Saved. Please try again.`
+        "Error",
+        `Failed to save "${props.modalObject.title}"`
       );
     }
   };
 
-  const sellPropertyInYearNo = [
-    { value: "No", label: "No" },
-    ...Array.from({ length: 30 }, (_, i) => ({
-      value: (i + 1).toString(),
-      label: "Year " + (i + 1),
-    })),
-  ];
-
-  const indexation = Array.from({ length: 21 }, (_, i) => ({
-    value: (i * 0.5).toFixed(2) + "%",
-    label: (i * 0.5).toFixed(2) + "%",
-  }));
-
-  const yearOfPurchaseExisting = [
-    { value: "Existing", label: "Existing" },
-    ...Array.from({ length: 30 }, (_, i) => ({
-      value: (i + 1).toString(),
-      label: "Year " + (i + 1),
-    })),
-  ];
-
-  const yearOfPurchase = [
-    ...Array.from({ length: 30 }, (_, i) => ({
-      value: (i + 1).toString(),
-      label: "Year " + (i + 1),
-    })),
-  ];
-
-  const estimatedFutureSellingCostOptions = [
-    { value: "0.00%", label: "0.00%" },
-    { value: "1.00%", label: "1.00%" },
-    { value: "1.50%", label: "1.50%" },
-    { value: "2.00%", label: "2.00%" },
-    { value: "2.50%", label: "2.50%" },
-    { value: "3.00%", label: "3.00%" },
-    { value: "3.50%", label: "3.50%" },
-    { value: "4.00%", label: "4.00%" },
-    { value: "4.50%", label: "4.50%" },
-    { value: "5.00%", label: "5.00%" },
-  ];
-
-  let handleInnerModal = (title, values, key) => {
-    // console.log(values);
-
+  // ------------------------------------
+  // Inner Modal
+  // ------------------------------------
+  const handleInnerModal = (title, values, key, stakeHolder) => {
+    console.log("Inner Modal Called:", title, values, key);
     setModalObject({
       title,
       values,
       key,
       ParentObject: props.modalObject,
       cal: true,
+      stakeHolder,
     });
     setFlagState(true);
   };
 
-  let CalculatePercentage = (
-    values,
-    setFieldValue,
-    CurrentInput,
-    stakeHolder
-  ) => {
-    // Extract index from the field name
-    const match = CurrentInput.name.match(/_(\d+)$/);
-    const index = match ? match[1] : 0;
-
-    let clientOwnership =
-      values[`clientOwnership_${index}`]?.replace(/[^0-9.]+/g, "") || 0;
-    let partnerOwnership =
-      values[`partnerOwnership_${index}`]?.replace(/[^0-9.]+/g, "") || 0;
-
-    switch (CurrentInput.name) {
-      case `clientOwnership_${index}`:
-        clientOwnership = CurrentInput.value.replace(/[^0-9.]+/g, "");
-        setFieldValue(
-          `partnerOwnership_${index}`,
-          (100 - (clientOwnership > 100 ? 100 : clientOwnership)).toFixed(2) +
-            "%"
-        );
-        break;
-      case `partnerOwnership_${index}`:
-        partnerOwnership = CurrentInput.value.replace(/[^0-9.]+/g, "");
-        setFieldValue(
-          `clientOwnership_${index}`,
-          (100 - (partnerOwnership > 100 ? 100 : partnerOwnership)).toFixed(2) +
-            "%"
-        );
-        break;
-      default:
-        console.log("Unexpected input name");
-        break;
-    }
-  };
-
-  const rowConfig = [
+  // ------------------------------------
+  // Columns
+  // ------------------------------------
+  const columns = [
+    { title: "No#", render: (_, __, i) => i + 1, width: 60, justText: true },
+    { title: "Address", dataIndex: "address", type: "text", disabled: true },
     {
-      name: "address",
-      type: "text",
-      placeholder: "Address",
-      disabled: true,
-    },
-    {
-      name: "currentValue",
+      title: "Current Value",
+      dataIndex: "currentValue",
       type: "number-toComma",
-      placeholder: "Current Value",
     },
     {
-      name: "state",
+      title: "State",
+      dataIndex: "state",
       type: "select",
-      placeholder: "State",
-      options: [
-        { value: "ACT", label: "ACT" },
-        { value: "NSW", label: "NSW" },
-        { value: "NT", label: "NT" },
-        { value: "QLD", label: "QLD" },
-        { value: "SA", label: "SA" },
-        { value: "TAS", label: "TAS" },
-        { value: "VIC", label: "VIC" },
-        { value: "WA", label: "WA" },
-      ],
+      options: ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"].map(
+        (s) => ({
+          label: s,
+          value: s,
+        })
+      ),
     },
     {
-      name: "clientOwnership",
+      title: "Client %",
+      dataIndex: "clientOwnership",
       type: "number-toPercent",
-      callBack: true,
-      func: CalculatePercentage,
-      placeholder: "Client Ownership",
     },
     {
-      name: "partnerOwnership",
+      title: "Partner %",
+      dataIndex: "partnerOwnership",
       type: "number-toPercent",
-      callBack: true,
-      func: CalculatePercentage,
-      placeholder: "Partner Ownership",
     },
     {
-      name: "yearOfPurchase",
-      type: "select",
-      options: yearOfPurchaseExisting,
-    },
-
-    {
-      name: "totalCostBase",
-      innerModalTitle: "Total Cost Base",
+      title: "Total Cost Base",
+      dataIndex: "totalCostBase",
       type: "number-toComma-Modal",
-      placeholder: "Total Cost Base",
+      innerModalTitle: "Total Cost Base",
       callBack: true,
       key: "totalCostBaseObj",
       func: handleInnerModal,
-      disabled:true,
+      disabled: true,
     },
-
     {
-      name: "loanBalance",
-      innerModalTitle: "Home Loan",
+      title: "Loan",
+      dataIndex: "loanBalance",
       type: "yesnoModal",
+      innerModalTitle: "Home Loan",
       callBack: true,
       key: "familyHomeLoanObj",
+      width: screens.xxl ? 85 : 80,
       func: handleInnerModal,
     },
     {
-      name: "expectedGrowthRate",
+      title: "Growth %",
+      dataIndex: "expectedGrowthRate",
       type: "number-toPercent",
-      placeholder: "Expected Growth Rate",
-    },
-    {
-      name: "sellPropertyInYear",
-      type: "select",
-      options: sellPropertyInYearNo,
-    },
-    {
-      name: "estimatedFutureSellingCost",
-      type: "select",
-      options: estimatedFutureSellingCostOptions,
     },
   ];
-
-  let handleInput = (e, setFieldValue) => {
-    let value = e.target.value > 2 ? 2 : e.target.value;
-
-    setFieldValue(e.target.id, value);
-
-    Array.from({
-      length: value,
-    }).map((_, index) => {
-      setFieldValue(
-        "address_" + index,
-        PersonalData.client.clientHomeAddress || ""
-      );
-    });
-  };
 
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={onSubmit}
       enableReinitialize
       innerRef={props.formRef}
+      onSubmit={onSubmit}
     >
       {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        // ------------------------------------
+        // Rows
+        // ------------------------------------
+        const dataRows = useMemo(() => {
+          const num = Number(values?.numberOfProperties) || 0;
+          return Array.from({ length: num }, (_, i) => ({
+            key: `familyHomes.${i}`,
+            stakeHolder: `familyHomes[${i}]`,
+            ...values.familyHomes?.[i],
+          }));
+        }, [values?.numberOfProperties, values.familyHomes]);
+
         return (
           <Form>
-            <Row>
-              <div className="col-md-12 mb-3">
-                <div className="d-flex justify-content-center align-items-center gap-4">
-                  <label htmlFor="" className="text-end fw-bold">
-                    Number of Home :
-                  </label>
-
-                  <div style={{ minWidth: "5%", maxWidth: "10%" }}>
-                    <Field
-                      type="number"
-                      id="numberOfProperties"
-                      name="numberOfProperties"
-                      className="form-control inputDesignDoubleInput"
-                      onChange={(e) => handleInput(e, setFieldValue)}
-                    />
-                  </div>
-                </div>
+            <div className="d-flex justify-content-center gap-3">
+              <p
+                className="pt-2"
+                onClick={() => {
+                  console.log(values);
+                }}
+              >
+                Number of Homes :
+              </p>
+              <div style={{ minWidth: "10%" }}>
+                <ConfigProvider
+                  theme={{
+                    components: {
+                      Select: {
+                        colorBorder: "#36b446",
+                      },
+                    },
+                  }}
+                >
+                  <Select
+                    id="numberOfProperties"
+                    name="numberOfProperties"
+                    className="w-100 h-100"
+                    placeholder="Select"
+                    size="large"
+                    value={values.numberOfProperties || undefined}
+                    onChange={(value) => {
+                      setFieldValue("numberOfProperties", value);
+                    }}
+                    onBlur={handleBlur}
+                    getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                  >
+                    {[1, 2].map((n) => (
+                      <Option key={n} value={n}>
+                        {n}
+                      </Option>
+                    ))}
+                  </Select>
+                </ConfigProvider>
               </div>
-              {values.numberOfProperties && (
-                <div className="col-md-12">
-                  <div className="row justify-content-center">
-                    <InnerModal
-                      modalObject={modalObject}
-                      setFieldValue={setFieldValue}
-                      setFlagState={setFlagState}
-                      flagState={flagState}
-                    >
-                      {modalObject.key === "familyHomeLoanObj_0" ||
-                      modalObject.key === "familyHomeLoanObj_1" ? (
-                        <CashFlowHomeLoan />
-                      ) : modalObject.key === "totalCostBaseObj_0" ||
-                        modalObject.key == "totalCostBaseObj_1" ? (
-                        <CashFlowTotalCost />
-                      ) : (
-                        ""
-                      )}
-                    </InnerModal>
+            </div>
 
-                    <div className="mt-2">
-                      <Table striped bordered responsive hover>
-                        <thead>
-                          <tr>
-                            <th>Street Address</th>
-                            <th>Current Value/Purchase Price </th>
-                            <th style={{ color: "black" }}>State</th>
-                            <th>Client Ownership</th>
-                            <th>Partner Ownership</th>
-                            <th>Year Of Purchase</th>
-                            <th>Total Cost Base</th>
-                            <th>Loan Balance</th>
-                            <th>Expected Growth Rate</th>
-                            <th>Sell Property In Year</th>
-                            <th style={{ color: "black" }}>
-                              Estimated Future Selling Cost (%)
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {Array.from({
-                            length: values.numberOfProperties,
-                          }).map((_, index) => {
-                            // Ensure each rowConfig object has a name before concatenating the index
-                            const updatedRowConfig = rowConfig.map((row) => ({
-                              ...row,
-                              name: row.name
-                                ? `${row.name}_${index}`
-                                : row.name,
-                              key: row.key ? `${row.key}_${index}` : row.key,
-                              value: row.value ? index + 1 : row.value,
-                            }));
+            {values.numberOfProperties > 0 && (
+              <div className="mt-4 All_Client reportSection">
+                <InnerModal
+                  modalObject={modalObject}
+                  setFieldValue={setFieldValue}
+                  setFlagState={setFlagState}
+                  flagState={flagState}
+                >
+                  {modalObject.key?.includes("familyHomeLoanObj") ? (
+                    <CashFlowHomeLoan />
+                  ) : modalObject.key?.includes("totalCostBaseObj") ? (
+                    <CashFlowTotalCost />
+                  ) : null}
+                </InnerModal>
 
-                            if (index == 1) {
-                              updatedRowConfig[5].options = yearOfPurchase;
-                            }
+                <AntdTable
+                  columns={columns}
+                  data={dataRows}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
+                />
+              </div>
+            )}
 
-                            return (
-                              <DynamicTableRow
-                                rowConfig={updatedRowConfig}
-                                values={values}
-                                setFieldValue={setFieldValue}
-                                handleChange={handleChange}
-                                handleBlur={handleBlur}
-                                handleInnerModal={handleInnerModal}
-                              />
-                            );
-                          })}
-                        </tbody>
-                      </Table>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </Row>
+            <button type="submit" hidden />
           </Form>
         );
       }}

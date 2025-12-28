@@ -43,24 +43,32 @@ const CashFlowEducationExpenses = (props) => {
 
     if (
       scenarioObj?.selectedSource === "discoveryForm" &&
-      personalDetails?.children?.arrayOfChildren
+      personalDetails?.children?.arrayOfChildren &&
+      !existingData?._id
     ) {
       setFieldValue(
-        "children",
+        "child",
         personalDetails.children.arrayOfChildren.map((child) => ({
           ...child,
-          age: child.DOB
-            ? differenceInYears(new Date(), new Date(child.DOB))
-            : "",
+          Name: child.firstName + " " + child.lastName,
+          age: child.age,
+          DOB: child.dob,
           indexation: child.indexation || "2.50%",
         }))
       );
       setFieldValue(
         "numberOfChildren",
-        personalDetails.children.numberOfChildren || 0
+        personalDetails.children.arrayOfChildren.length || 0
       );
-    } else if (existingData?.arrayOfChildren) {
-      setFieldValue("children", existingData.arrayOfChildren);
+    } else if (scenarioData?.[objKey]) {
+      setFieldValue("child", scenarioData?.[objKey]?.arrayOfChildren);
+      setFieldValue(
+        "numberOfChildren",
+        scenarioData?.[objKey]?.numberOfChildren || 0
+      );
+    } else if (existingData) {
+
+      setFieldValue("child", existingData.arrayOfChildren);
       setFieldValue("numberOfChildren", existingData.numberOfChildren || 0);
     }
   };
@@ -69,7 +77,7 @@ const CashFlowEducationExpenses = (props) => {
   // Submit Handler
   // ------------------------------------
   const onSubmit = async (values) => {
-    const childrenArray = values.children || [];
+    const childrenArray = values.child || [];
 
     const obj = {
       numberOfChildren: childrenArray.length,
@@ -141,11 +149,16 @@ const CashFlowEducationExpenses = (props) => {
       dataIndex: "DOB",
       key: "DOB",
       type: "antdate",
-      
+      callBack: true,
+      func: (values, setFieldValue, thisInput, stakeHolder) => {
+        const age =
+          differenceInYears(new Date(), new Date(thisInput.value)) || 0;
+        setFieldValue(stakeHolder + "age", age);
+      },
     },
     { title: "Age", dataIndex: "age", type: "number", disabled: true },
     {
-      title: "Child Support ($)",
+      title: "Child Support",
       dataIndex: "childSupportReceived",
       type: "number-toComma",
     },
@@ -159,8 +172,8 @@ const CashFlowEducationExpenses = (props) => {
         { label: "No", value: "No" },
       ],
     },
-    { title: "Primary ($)", dataIndex: "primary", type: "number-toComma" },
-    { title: "Secondary ($)", dataIndex: "secondary", type: "number-toComma" },
+    { title: "Primary", dataIndex: "primary", type: "number-toComma" },
+    { title: "Secondary", dataIndex: "secondary", type: "number-toComma" },
     {
       title: "Education Until",
       dataIndex: "educationUntil",
@@ -171,7 +184,7 @@ const CashFlowEducationExpenses = (props) => {
         { label: "18", value: "18" },
       ],
     },
-    { title: "Uni ($)", dataIndex: "uni", type: "number-toComma" },
+    { title: "Uni", dataIndex: "uni", type: "number-toComma" },
     {
       title: "Course Years",
       dataIndex: "courseYears",
@@ -209,17 +222,18 @@ const CashFlowEducationExpenses = (props) => {
               owner: i + 1,
               stakeHolder: `child[${i}]`,
 
-              platformName: values.superFunds?.[i]?.platformName || "",
-              memberNumber: values.superFunds?.[i]?.memberNumber || "",
-              // portfolioValue: values.superFunds?.[i]?.portfolioValue || "",
-              balanceBenefitDetails:
-                values.superFunds?.[i]?.balanceBenefitDetails || "",
-              balanceBenefit: values.superFunds?.[i]?.balanceBenefit || "",
-              groupInsurance: values.superFunds?.[i]?.groupInsurance || "",
-              contributions: values.superFunds?.[i]?.contributions || "",
-              nominatedBeneficiaries:
-                values.superFunds?.[i]?.nominatedBeneficiaries || "",
-              annualAdvice: values.superFunds?.[i]?.annualAdvice || "$0",
+              Name: values.child?.[i]?.Name || "",
+              DOB: values.child?.[i]?.DOB || "",
+              age: values.child?.[i]?.age || "",
+              childSupportReceived:
+                values.child?.[i]?.childSupportReceived || "",
+              paidOrReceived: values.child?.[i]?.paidOrReceived || "",
+              primary: values.child?.[i]?.primary || "",
+              secondary: values.child?.[i]?.secondary || "",
+              educationUntil: values.child?.[i]?.educationUntil || "",
+              uni: values.child?.[i]?.uni || "",
+              courseYears: values.child?.[i]?.courseYears || "",
+              indexation: values.child?.[i]?.indexation || "2.50%",
             }));
           }
           return [];
@@ -234,7 +248,7 @@ const CashFlowEducationExpenses = (props) => {
                   console.log(values);
                 }}
               >
-                How many children do you have :
+                Number of Children :
               </p>
               <div style={{ minWidth: "10%" }}>
                 <ConfigProvider

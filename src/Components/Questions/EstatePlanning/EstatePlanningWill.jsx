@@ -266,7 +266,6 @@ const EstatePlanningWill = (props) => {
       dataIndex: "estatePlanningRadio",
       key: "estatePlanning",
       type: "yesnoModal",
-      width: 170,
       handleInnerModal,
       callBack: true,
       func: handleInnerModal,

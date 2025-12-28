@@ -486,15 +486,33 @@ const questionConfig = {
   ],
   "/user/personal-insurance": [
     {
-      title: "Life Insurance",
+      title: "Life",
       keyName: "life",
       dataKey: "personalInsurance",
       img: lifeImg,
       component: <PersonalInsuranceLife />,
-      BaceKeys: {
-        client: "clientLifeInsuranceTotal",
-        partner: "partnerLifeInsuranceTotal",
-      },
+      // BaceKeys: {
+      //   client: "clientLifeInsuranceTotal",
+      //   partner: "partnerLifeInsuranceTotal",
+      // },
+      variant: "case2",
+      Labels: [
+        {
+          label: "client",
+          value: (questionDetail) =>
+            questionDetail?.personalInsurance?.clientLifeInsuranceTotal ?? "",
+          component: <PersonalInsuranceLife />,
+          key: "personalInsurance",
+          onTop: true,
+        },
+        {
+          label: "partner",
+          value: (questionDetail) =>
+            questionDetail?.personalInsurance?.partnerLifeInsuranceTotal ?? "",
+          component: <PersonalInsuranceLife />,
+          key: "personalInsurance",
+        },
+      ],
     },
     {
       title: "TPD",
@@ -502,10 +520,28 @@ const questionConfig = {
       dataKey: "personalInsurance",
       img: TPDImg,
       component: <PersonalInsuranceLife />,
-      BaceKeys: {
-        client: "clientTPDTotal",
-        partner: "partnerTPDTotal",
-      },
+      // BaceKeys: {
+      //   client: "clientTPDTotal",
+      //   partner: "partnerTPDTotal",
+      // },
+      variant: "case2",
+      Labels: [
+        {
+          label: "client",
+          value: (questionDetail) =>
+            questionDetail?.personalInsurance?.clientTPDTotal ?? "",
+          component: <PersonalInsuranceLife />,
+          key: "personalInsurance",
+          onTop: true,
+        },
+        {
+          label: "partner",
+          value: (questionDetail) =>
+            questionDetail?.personalInsurance?.partnerTPDTotal ?? "",
+          component: <PersonalInsuranceLife />,
+          key: "personalInsurance",
+        },
+      ],
     },
     {
       title: "Trauma",
@@ -513,10 +549,28 @@ const questionConfig = {
       img: traumaImg,
       dataKey: "personalInsurance",
       component: <PersonalInsuranceLife />,
-      BaceKeys: {
-        client: "clientTraumaTotal",
-        partner: "partnerTraumaTotal",
-      },
+      // BaceKeys: {
+      //   client: "clientTraumaTotal",
+      //   partner: "partnerTraumaTotal",
+      // },
+      variant: "case2",
+      Labels: [
+        {
+          label: "client",
+          value: (questionDetail) =>
+            questionDetail?.personalInsurance?.clientTraumaTotal ?? "",
+          component: <PersonalInsuranceLife />,
+          key: "personalInsurance",
+          onTop: true,
+        },
+        {
+          label: "partner",
+          value: (questionDetail) =>
+            questionDetail?.personalInsurance?.partnerTraumaTotal ?? "",
+          component: <PersonalInsuranceLife />,
+          key: "personalInsurance",
+        },
+      ],
     },
     {
       title: "Income Protection",
@@ -524,10 +578,31 @@ const questionConfig = {
       img: incomeImg,
       dataKey: "personalInsurance",
       component: <PersonalInsuranceLife />,
-      BaceKeys: {
-        client: "clientIncomeProtectionTotal",
-        partner: "partnerIncomeProtectionTotal",
-      },
+      // BaceKeys: {
+      //   client: "clientIncomeProtectionTotal",
+      //   partner: "partnerIncomeProtectionTotal",
+      // },
+
+      variant: "case2",
+      Labels: [
+        {
+          label: "client",
+          value: (questionDetail) =>
+            questionDetail?.personalInsurance?.clientIncomeProtectionTotal ??
+            "",
+          component: <PersonalInsuranceLife />,
+          key: "personalInsurance",
+          onTop: true,
+        },
+        {
+          label: "partner",
+          value: (questionDetail) =>
+            questionDetail?.personalInsurance?.partnerIncomeProtectionTotal ??
+            "",
+          component: <PersonalInsuranceLife />,
+          key: "personalInsurance",
+        },
+      ],
     },
   ],
   "/user/business-entities": [

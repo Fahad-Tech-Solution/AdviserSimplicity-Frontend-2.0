@@ -161,6 +161,7 @@ const DynamicDescription = (props) => {
                       type="text"
                       as="textarea"
                       name="description"
+                      rows="5"
                       className="form-control mt-2 inputDesignDoubleInput"
                       disabled={!props.isEditing}
                     ></Field>

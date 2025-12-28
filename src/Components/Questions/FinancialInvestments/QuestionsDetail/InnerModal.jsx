@@ -20,6 +20,7 @@ const InnerModal = (props) => {
   const intervalRef = useRef(null); // Store the interval reference
   const [progress, setProgress] = useRecoilState(Progress);
   const [isEditing, setIsEditing] = useState(false);
+  const { noFooter = false } = props.modalObject;
 
   let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
     useRecoilState(CashFlowReCalculateLoading);
@@ -165,10 +166,11 @@ const InnerModal = (props) => {
     "Business as Trusts Structure",
     "Balnace and Benefits",
     "Contributions",
-    "Group Cover",
+    "Group Cover Details",
     "TPD",
     "Trauma",
-    "IP",
+    "Income Protection",
+    "Lumpsum Cover (Life/TPD/Trauma)",
     "Premiums p.a",
     "Accumulation Benefits",
     "Salary Packaging Car",
@@ -279,82 +281,83 @@ const InnerModal = (props) => {
               })
             : "no Child exist"}
         </Modal.Body>
+        {!noFooter && (
+          <Modal.Footer>
+            {!isEditing && (
+              <Button
+                variant="secondary"
+                style={{ width: "12.5%", minWidth: "fit-content" }}
+                className="heartbeat"
+                onClick={() => {
+                  if (!isEditing) {
+                    setIsEditing(!isEditing);
+                    return;
+                  }
+                }}
+              >
+                Edit
+              </Button>
+            )}
 
-        <Modal.Footer>
-          {!isEditing && (
-            <Button
-              variant="secondary"
-              style={{ width: "12.5%", minWidth: "fit-content" }}
-              className="heartbeat"
-              onClick={() => {
-                if (!isEditing) {
-                  setIsEditing(!isEditing);
-                  return;
-                }
-              }}
-            >
-              Edit
-            </Button>
-          )}
+            {props.modalObject?.cal && (
+              <Button
+                variant="secondary"
+                style={{ width: "12.5%", minWidth: "fit-content" }}
+                onClick={handleParentButtonClick}
+                disabled={cashFlowReCalculateLoading}
+              >
+                <FaInfoCircle size={14} style={{ marginBottom: "4px" }} />{" "}
+                Re-Calculate
+                {cashFlowReCalculateLoading && (
+                  <ConfigProvider
+                    theme={{
+                      token: {
+                        /* here is your global tokens */
+                        colorPrimary: "#fff",
+                      },
+                    }}
+                  >
+                    &nbsp; <Spin size="small" />
+                  </ConfigProvider>
+                )}
+              </Button>
+            )}
 
-          {props.modalObject?.cal && (
-            <Button
-              variant="secondary"
-              style={{ width: "12.5%", minWidth: "fit-content" }}
-              onClick={handleParentButtonClick}
-              disabled={cashFlowReCalculateLoading}
-            >
-              <FaInfoCircle size={14} style={{ marginBottom: "4px" }} />{" "}
-              Re-Calculate
-              {cashFlowReCalculateLoading && (
-                <ConfigProvider
-                  theme={{
-                    token: {
-                      /* here is your global tokens */
-                      colorPrimary: "#fff",
-                    },
-                  }}
-                >
-                  &nbsp; <Spin size="small" />
-                </ConfigProvider>
-              )}
-            </Button>
-          )}
-
-          {props.modalObject?.cal && (
-            <Button
-              variant="secondary"
-              style={{ width: "fit-content", minWidth: "fit-content" }}
-              onClick={handleParentButton2Click}
-              disabled={cashFlowDownloading}
-            >
-              {cashFlowDownloading ? (
-                <ConfigProvider
-                  theme={{
-                    token: {
-                      /* here is your global tokens */
-                      colorPrimary: "#fff",
-                    },
-                  }}
-                >
-                  <Spin size="small" />
-                </ConfigProvider>
-              ) : (
-                <FaDownload size={14} style={{ marginBottom: "4px" }} />
-              )}
-            </Button>
-          )}
-          {isEditing && (
-            <button
-              type="button"
-              className="btn bgColor modalBtn"
-              style={{ width: "12.5%", minWidth: "fit-content" }}
-              onClick={handleOk}
-            >
-              Confirm & Exit
-            </button>
-          )}
-        </Modal.Footer>
+            {props.modalObject?.cal && (
+              <Button
+                variant="secondary"
+                style={{ width: "fit-content", minWidth: "fit-content" }}
+                onClick={handleParentButton2Click}
+                disabled={cashFlowDownloading}
+              >
+                {cashFlowDownloading ? (
+                  <ConfigProvider
+                    theme={{
+                      token: {
+                        /* here is your global tokens */
+                        colorPrimary: "#fff",
+                      },
+                    }}
+                  >
+                    <Spin size="small" />
+                  </ConfigProvider>
+                ) : (
+                  <FaDownload size={14} style={{ marginBottom: "4px" }} />
+                )}
+              </Button>
+            )}
+            {isEditing && (
+              <button
+                type="button"
+                className="btn bgColor modalBtn"
+                style={{ width: "12.5%", minWidth: "fit-content" }}
+                onClick={handleOk}
+              >
+                Confirm & Exit
+              </button>
+            )}
+          </Modal.Footer>
+        )}
       </Modal>
     </div>
   );

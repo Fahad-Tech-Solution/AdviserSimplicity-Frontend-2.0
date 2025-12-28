@@ -242,6 +242,7 @@ const ModalComponent = (props) => {
     "Family Trust Investment Properties",
     RenderName("client") + "_Pension Benefits",
     RenderName("partner") + "_Pension Benefits",
+    "Jane_Insurance Cover (Retail)",
     "Employment Income",
   ];
 
@@ -256,11 +257,14 @@ const ModalComponent = (props) => {
     "incomeFromSoleTrader",
   ];
 
+  let fullkeys = ["personalInsurance"];
+
   let smallModal = props?.modalObject?.small || false;
 
   const size = smallModal
     ? ""
-    : fullTitles.includes(props.modalObject?.title)
+    : fullTitles.includes(props.modalObject?.title) ||
+      fullkeys.includes(props.modalObject?.key)
     ? "xxl"
     : xlTitles.includes(props.modalObject?.title)
     ? "xl"
@@ -336,6 +340,9 @@ const ModalComponent = (props) => {
               ? props.modalObject?.title +
                 " for " +
                 RenderName(props.modalObject?.Input)
+              : props.modalObject?.key === "personalInsurance"
+              ? RenderName(props.modalObject?.Input) +
+                "_Insurance Cover (Retail)"
               : props.modalObject?.title}
           </Modal.Title>
         </Modal.Header>

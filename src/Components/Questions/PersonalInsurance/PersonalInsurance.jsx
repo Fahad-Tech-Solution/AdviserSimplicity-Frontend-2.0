@@ -1,12 +1,13 @@
 import { Form, Formik } from "formik";
 import React, { useEffect, useMemo, useState } from "react";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
-import { Grid } from "antd";
+import { Grid, Modal } from "antd";
 const { useBreakpoint } = Grid;
 const AntdTable = DynamicTableForInputsSection("antd");
 
 const PersonalInsurance = (props) => {
   const [UserStatus] = useState(localStorage.getItem("UserStatus"));
+  const { confirm } = Modal;
 
   const initialValues = {};
   const screens = useBreakpoint();
@@ -190,6 +191,23 @@ const PersonalInsurance = (props) => {
             ...values,
           }));
         }, [values]);
+
+        useMemo(() => {
+          if (values.superlinked === "Yes") {
+            confirm({
+              title: "Discard changes?",
+              content:
+                "As you have selected YES, this applies only to the personally funded portion of the Income Protection policy; if this policy is owned or funded through superannuation, please select NO and enter another separate policy and select Super-linked for that",
+              okText: "continue",
+              okType: "danger",
+              cancelText: "revert Back",
+              centered: true,
+              onCancel: async () => {
+                setFieldValue(props.modalObject.Input + ".superlinked", "No");
+              },
+            });
+          }
+        }, [values.superlinked]);
 
         return (
           <Form>

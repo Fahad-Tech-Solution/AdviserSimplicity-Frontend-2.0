@@ -12,6 +12,7 @@ import {
   PatchAxios,
   PostAxios,
   RenderName,
+  replacePlaceholderWithLabel,
   toCommaAndDollar,
 } from "../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
@@ -25,6 +26,9 @@ import DynamicDescription from "../EstatePlanning/DynamicDescription";
 import BeneficiariesPersonalInsurance from "./BeneficiariesPersonalInsurance";
 import GroupCoverDetails from "./GroupCoverDetails";
 import { Grid } from "antd";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Button } from "react-bootstrap";
+import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 const { useBreakpoint } = Grid;
 
 const AntdTable = DynamicTableForInputsSection("antd");
@@ -89,18 +93,14 @@ const PersonalInsuranceLife = (props) => {
         props.setIsEditing(true);
         return;
       }
-      // ----------------------------------------------------
-      // SELECTED STAKEHOLDERS
-      // ----------------------------------------------------
+
+      // Selected stakeholders
       setFieldValue(
         "selectedStakeholders",
         personalInsurance?.selectedStakeholders || []
       );
 
-      // ----------------------------------------------------
-      // FIELD DEFINITIONS
-      // ----------------------------------------------------
-      const regularFields = [
+      const fields = [
         "lifeInsured",
         "provider",
         "policyNo",
@@ -121,185 +121,83 @@ const PersonalInsuranceLife = (props) => {
         "beneficiary",
         "beneficiariesArray",
         "beneficiaryDetails",
-        "groupCover",
       ];
 
-      const groupCoverFields = [
-        "lifeInsured",
-        "provider",
-        "policyNo",
-        "groupOwner",
-        "startDate",
-        "smoker",
-        "life",
-        "tpd",
-        "trauma",
-        "ip",
-        "premiumPA",
-        "loadingExclusion",
-        "beneficiary",
-      ];
-
-      const backendMap = {
-        life: "lifeCover",
-        tpd: "TPDCover",
-        ip: "monthlyIncome",
-        trauma: "trauma",
-        startDate: "commencementDate",
-        groupOwner: "fundType",
-        policyNo: "memberNumber",
-      };
-
-      // ----------------------------------------------------
-      // HELPERS
-      // ----------------------------------------------------
-
-      // Get fallback field from groupInsuranceDetailsAll
-      const getExternalValue = (type, index, subField) => {
-        const external = groupInsuranceDetailsAll?.[type]?.[index];
-
-        if (!external) return "";
-
-        if (["life", "tpd", "ip", "trauma"].includes(subField)) {
-          return external.groupInsuranceDetails?.[backendMap[subField]] || "$0";
-        }
-
-        if (["groupOwner", "startDate"].includes(subField)) {
-          return external.balanceBenefitDetails?.[backendMap[subField]] || "";
-        }
-
-        if (subField === "policyNo") {
-          return external?.[backendMap.policyNo] || "";
-        }
-
-        if (subField === "provider") {
-          const fundName =
-            bankDetailObj?.SuperannuationFunds?.map((elem) => ({
-              value: elem._id,
-              label: elem.platformName,
-            })).find((fund) => fund.value === external?.platformName)?.label ||
-            "";
-
-          return fundName;
-        }
-
-        if (subField === "premiumPA") {
-          const g = external.groupInsuranceDetails || {};
-          const sum =
-            (Number((g.lifeCover || "").replace(/[^0-9.-]+/g, "")) || 0) +
-            (Number((g.TPDCover || "").replace(/[^0-9.-]+/g, "")) || 0) +
-            (Number((g.monthlyIncome || "").replace(/[^0-9.-]+/g, "")) || 0);
-
-          return toCommaAndDollar(sum);
-        }
-
-        return "";
-      };
-
-      // Fills groupCover with fallback rules
-      const fillGroupCover = (type, entry, index) => {
-        groupCoverFields.forEach((subField) => {
-          const backendVal = entry?.groupCover?.[subField];
-          let finalVal = backendVal;
-
-          if (!finalVal) {
-            // backend missing? → fallback table
-            finalVal = getExternalValue(type, index, subField);
-          }
-
-          // default "No" for specific fields
-          if (
-            !finalVal &&
-            ["smoker", "loadingExclusion", "beneficiary"].includes(subField)
-          ) {
-            finalVal = "No";
-          }
-
-          setFieldValue(
-            `${type}.PersonalInsurance[${index}].groupCover.${subField}`,
-            finalVal || ""
-          );
-        });
-      };
-
-      // ----------------------------------------------------
-      // MAIN FILLER FUNCTION
-      // ----------------------------------------------------
       const fillInsurance = (type) => {
-        const data = personalInsurance?.[type]?.PersonalInsurance;
+        const data = personalInsurance?.[type]?.PersonalInsurance || [];
 
-        if (!Array.isArray(data) || !data.length) {
-          setFieldValue(`${type}.numberOfPolicies`, "");
-          setFieldValue(`${type}.PersonalInsurance`, []);
+        setFieldValue(`numberOfPolicies`, data.length || "");
 
-          groupInsuranceDetailsAll?.[type].map((item, index) => {
-            regularFields.forEach((field) => {
-              if (field === "groupCover") {
-                fillGroupCover(
-                  type,
-                  {
-                    groupCover: {},
-                  },
-                  index
-                );
-              }
+        setFieldValue(
+          `${type}`,
+          data.map((entry) => {
+            const obj = {};
+            fields.forEach((f) => {
+              obj[f] = entry?.[f] || "";
             });
-          });
-          return;
-        }
-
-        setFieldValue(`${type}.numberOfPolicies`, data.length);
-
-        console.log(data);
-
-        data.forEach((entry, index) => {
-          regularFields.forEach((field) => {
-            if (field === "groupCover") {
-              fillGroupCover(type, entry, index);
-            } else {
-              const value = Array.isArray(entry?.[field])
-                ? entry[field]
-                : entry?.[field] || "";
-
-              setFieldValue(
-                `${type}.PersonalInsurance[${index}].${field}`,
-                value
-              );
-            }
-          });
-        });
+            return obj;
+          })
+        );
       };
 
-      // ----------------------------------------------------
-      // APPLY FOR BOTH
-      // ----------------------------------------------------
-      fillInsurance("client");
-      fillInsurance("partner");
-    } catch (error) {
-      console.error("Error filling initial values:", error);
+      fillInsurance(props.modalObject.Input); // "client" or "partner"
+    } catch (err) {
+      console.error("fillInitialValues error:", err);
     }
   };
 
   const handleInnerModal = (innerModalTitle, values, key, stakeHolder) => {
-    const [stakeholderType, index] = stakeHolder
-      .split("[")[1]
-      .replace("]", "")
-      .split(".");
-    const baseKey = stakeHolder.split("[")[0].split(".");
+    console.log(stakeHolder);
+    let index = stakeHolder.replace(/[^0-9-]+/g, "");
+    let baseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
+    let selectedProviderId = values?.[baseKey]?.[index]?.provider || "";
 
-    console.log(baseKey);
+    if (!selectedProviderId) {
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error Notification",
+        `Please! select provider name first`
+      );
+      return false;
+    }
 
-    const title = RenderName(baseKey[0]) + innerModalTitle;
+    // Handle case: client[1]
+    const match = stakeHolder.match(/^(\w+)\[(\d+)\]$/);
+    if (match) {
+      baseKey = match[1]; // "client"
+      index = match[2]; // "1"
+    }
+
+    let Banks =
+      bankDetailObj?.PersonalInsurances?.length > 0
+        ? bankDetailObj.PersonalInsurances.map((elem) => ({
+            value: elem._id,
+            label: elem.platformName,
+          }))
+        : "";
+
+    const title =
+      RenderName(props.modalObject.Input) +
+      replacePlaceholderWithLabel(
+        Banks,
+        values?.[baseKey]?.[index]?.provider,
+        innerModalTitle
+      );
+
     let finalKey = key;
     if (["life", "TPD", "trauma"].includes(key)) {
       finalKey = "LifeTPDTrauma";
     }
+
     setModalObject({
       title,
       key: finalKey,
       values,
       stakeHolder,
+      index, // optional: null for "client", number for "client[1]"
     });
+
     setFlagState(true);
   };
 
@@ -456,27 +354,6 @@ const PersonalInsuranceLife = (props) => {
       width: 60,
     },
     {
-      title: (
-        <span className="w-100" style={{ color: "black" }}>
-          Group Cover
-        </span>
-      ),
-      dataIndex: "groupCover",
-      key: "groupCover",
-      type: "modal",
-      width: 125,
-      innerModalTitle: "_Group Cover",
-      handleInnerModal: handleInnerModal,
-      callBack: true,
-    },
-    {
-      title: "Life Insured",
-      dataIndex: "lifeInsured",
-      key: "lifeInsured",
-      type: "select-antd",
-      justText: true,
-    },
-    {
       title: "Provider",
       dataIndex: "provider",
       key: "provider",
@@ -513,6 +390,10 @@ const PersonalInsuranceLife = (props) => {
       type: "select-antd",
       placeholder: "Select Owner",
       options: [
+        {
+          value: props.modalObject.Input,
+          label: RenderName(props.modalObject.Input),
+        },
         { value: "SMSF", label: "SMSF" },
         { value: "Super Trustees", label: "Super Trustees" },
         { value: "Company (Pty Ltd)", label: "Company (Pty Ltd)" },
@@ -539,9 +420,9 @@ const PersonalInsuranceLife = (props) => {
       title: "Life",
       dataIndex: "life",
       key: "life",
-      type: "number-toComma-Modal",
+      type: "number-toComma",
       placeholder: "Life",
-      innerModalTitle: "_Life",
+      innerModalTitle: "_<CFE>_Lumpsum Cover (Life/TPD/Trauma)",
       func: handleInnerModal,
       width: 140,
       disabled: true,
@@ -550,9 +431,9 @@ const PersonalInsuranceLife = (props) => {
       title: "TPD",
       dataIndex: "TPD",
       key: "TPD",
-      type: "number-toComma-Modal",
+      type: "number-toComma",
       placeholder: "TPD",
-      innerModalTitle: "_TPD",
+      innerModalTitle: "_<CFE>_Lumpsum Cover (Life/TPD/Trauma)",
       func: handleInnerModal,
       width: 140,
       disabled: true,
@@ -561,9 +442,9 @@ const PersonalInsuranceLife = (props) => {
       title: "Trauma",
       dataIndex: "trauma",
       key: "trauma",
-      type: "number-toComma-Modal",
+      type: "number-toComma-Modal-Separated",
       placeholder: "Trauma",
-      innerModalTitle: "_Trauma",
+      innerModalTitle: "_<CFE>_Lumpsum Cover (Life/TPD/Trauma)",
       func: handleInnerModal,
       width: 140,
       disabled: true,
@@ -575,7 +456,7 @@ const PersonalInsuranceLife = (props) => {
       type: "number-toComma-Modal",
       placeholder: "IP",
       disabled: true,
-      innerModalTitle: "_IP",
+      innerModalTitle: "_<CFE>_Income Protection",
       func: handleInnerModal,
       width: 140,
     },
@@ -585,7 +466,7 @@ const PersonalInsuranceLife = (props) => {
       key: "premiums",
       type: "number-toComma-Modal",
       placeholder: "Premiums p.a",
-      innerModalTitle: "_Premiums p.a",
+      innerModalTitle: "_<CFE>_Premiums p.a",
       func: handleInnerModal,
       width: 160,
       disabled: true,
@@ -596,7 +477,7 @@ const PersonalInsuranceLife = (props) => {
       key: "loadingExclusion",
       type: "yesnoModal",
       width: screens.xxl ? 136 : 70,
-      innerModalTitle: "_Loading/Exclusion",
+      innerModalTitle: "_<CFE>_Loading/Exclusion",
       callBack: true,
       func: handleInnerModal,
     },
@@ -606,7 +487,7 @@ const PersonalInsuranceLife = (props) => {
       key: "beneficiary",
       type: "yesnoModal",
       width: screens.xxl ? 136 : 80,
-      innerModalTitle: "_Beneficiaries",
+      innerModalTitle: "_<CFE>_Beneficiaries",
       func: handleInnerModal,
       callBack: true,
     },
@@ -642,50 +523,20 @@ const PersonalInsuranceLife = (props) => {
           const clientDataRows = useMemo(() => {
             if (flagState) return prevClientRowsRef.current;
 
-            const num = Number(values.client.numberOfPolicies) || 0;
+            const num = Number(values.numberOfPolicies) || 0;
             const rows =
               num > 0
                 ? Array.from({ length: num }, (_, i) => ({
-                    key: `client.PersonalInsurance[${i}]`,
-                    stakeHolder: `client.PersonalInsurance[${i}]`,
-                    ...values.client.PersonalInsurance[i],
-                    lifeInsured: RenderName(`client`),
-                    groupCover: "",
-                    // groupCover: values.client.PersonalInsurance[i]?.groupCover.life || {},
+                    key: `client[${i}]`,
+                    stakeHolder: `client[${i}]`,
+                    ...values.client[i],
                   }))
                 : [];
 
             prevClientRowsRef.current = rows;
 
             return rows;
-          }, [
-            values.client.numberOfPolicies,
-            values.client.PersonalInsurance,
-            flagState,
-          ]);
-
-          const partnerDataRows = useMemo(() => {
-            const num = Number(values.partner.numberOfPolicies) || 0;
-            return num > 0
-              ? Array.from({ length: num }, (_, i) => ({
-                  key: `partner.PersonalInsurance[${i}]`,
-                  owner: i + 1,
-                  stakeHolder: `partner.PersonalInsurance[${i}]`,
-                  ...values.partner.PersonalInsurance[i],
-                  lifeInsured: RenderName(`partner`),
-                  // groupCover: values.client.PersonalInsurance[i]?.groupCover.life || {},
-                  groupCover: "",
-                }))
-              : [];
-          }, [
-            values.partner.numberOfPolicies,
-            values.partner.PersonalInsurance,
-          ]);
-
-          // Determine which stakeholders to display
-          const selectedStakeholders = values.selectedStakeholders || [];
-          const shouldShowClient = selectedStakeholders.includes("client");
-          const shouldShowPartner = selectedStakeholders.includes("partner");
+          }, [values.numberOfPolicies]);
 
           return (
             <Form>
@@ -701,15 +552,15 @@ const PersonalInsuranceLife = (props) => {
 
               <div className="d-flex flex-row justify-content-center align-items-center gap-4 mb-3">
                 <p
-                  className="text-end mb-0"
+                  className="text-end  mb-0"
                   onClick={() => {
-                    console.log(values);
+                    console.log(personalInsurance);
                   }}
                 >
-                  Owner:
+                  Number of Policies:
                 </p>
 
-                <div style={{ minWidth: "20%" }}>
+                <div style={{ minWidth: "10%" }}>
                   <ConfigProvider
                     theme={{
                       components: {
@@ -720,171 +571,75 @@ const PersonalInsuranceLife = (props) => {
                     }}
                   >
                     <Select
-                      id="selectedStakeholders"
-                      name="selectedStakeholders"
-                      mode="multiple"
+                      id="numberOfPolicies"
+                      name="numberOfPolicies"
                       className="w-100 h-100"
-                      placeholder="Select Client/Partner"
+                      placeholder="Select"
                       size="large"
-                      value={values.selectedStakeholders}
                       disabled={!props?.isEditing}
+                      value={values.numberOfPolicies || undefined}
                       onChange={(value) => {
-                        setFieldValue("selectedStakeholders", value);
+                        setFieldValue("numberOfPolicies", value);
                       }}
                       onBlur={handleBlur}
                       getPopupContainer={(triggerNode) =>
                         triggerNode.parentNode
                       }
                     >
-                      <Option value="client">{RenderName("client")}</Option>
-                      {UserStatus !== "Single" && (
-                        <Option value="partner">{RenderName("partner")}</Option>
-                      )}
+                      {Array.from({ length: 10 }, (_, i) => (
+                        <Option key={i} value={i + 1}>
+                          {i + 1}
+                        </Option>
+                      ))}
                     </Select>
                   </ConfigProvider>
                 </div>
               </div>
 
-              {shouldShowClient && (
-                <div className="d-flex flex-row justify-content-center align-items-center gap-4 mb-3">
-                  <p
-                    className="text-end  mb-0"
+              <div className="d-flex flex-row justify-content-center align-items-center gap-4 mb-3">
+                <p
+                  className="text-end  mb-0"
+                  onClick={() => {
+                    console.log(props.modalObject);
+                  }}
+                >
+                  Insurance Cover (Group) :
+                </p>
+
+                <div style={{ minWidth: "10%" }}>
+                  <Button
+                    className="btn bgColor modalBtn border-0"
                     onClick={() => {
-                      console.log(personalInsurance);
+                      setModalObject({
+                        title: "Group Cover Details",
+                        key: "groupCover",
+                        values,
+                        stakeHolder: props.modalObject.Input + ".",
+                        noFooter: true,
+                      });
+
+                      setFlagState(true);
                     }}
                   >
-                    Number of Policies Client:
-                  </p>
-
-                  <div style={{ minWidth: "10%" }}>
-                    <ConfigProvider
-                      theme={{
-                        components: {
-                          Select: {
-                            colorBorder: "#36b446",
-                          },
-                        },
-                      }}
-                    >
-                      <Select
-                        id="client.numberOfPolicies"
-                        name="client.numberOfPolicies"
-                        className="w-100 h-100"
-                        placeholder="Select"
-                        size="large"
-                        disabled={!props?.isEditing}
-                        value={values.client.numberOfPolicies || undefined}
-                        onChange={(value) => {
-                          setFieldValue("client.numberOfPolicies", value);
-                        }}
-                        onBlur={handleBlur}
-                        getPopupContainer={(triggerNode) =>
-                          triggerNode.parentNode
-                        }
-                      >
-                        {Array.from({ length: 10 }, (_, i) => (
-                          <Option key={i} value={i + 1}>
-                            {i + 1}
-                          </Option>
-                        ))}
-                      </Select>
-                    </ConfigProvider>
-                  </div>
+                    <FontAwesomeIcon icon={faArrowUpRightFromSquare} />{" "}
+                  </Button>
                 </div>
-              )}
+              </div>
 
-              {shouldShowClient && values.client.numberOfPolicies && (
-                <>
-                  <h4
-                    className="mt-4 pt-2"
-                    onClick={() => {
-                      console.log(values.client.PersonalInsurance);
-                    }}
-                  >
-                    {RenderName("client")}
-                  </h4>
-                  <div className="mt-2 All_Client reportSection">
-                    <AntdTable
-                      columns={columns}
-                      data={clientDataRows}
-                      values={values}
-                      setFieldValue={setFieldValue}
-                      handleChange={handleChange}
-                      handleBlur={handleBlur}
-                      isEditing={props?.isEditing}
-                      setIsEditing={props?.setIsEditing}
-                    />
-                  </div>
-                </>
-              )}
+              <h4>{RenderName(props.modalObject.Input)}</h4>
 
-              {shouldShowPartner && (
-                <div className="d-flex flex-row justify-content-center align-items-center gap-4 my-4">
-                  <p className="text-end mt-1 pt-2 mb-0">
-                    Number of Policies Partner:
-                  </p>
-
-                  <div style={{ minWidth: "10%" }}>
-                    <ConfigProvider
-                      theme={{
-                        components: {
-                          Select: {
-                            colorBorder: "#36b446",
-                          },
-                        },
-                      }}
-                    >
-                      <Select
-                        id="partner.numberOfPolicies"
-                        name="partner.numberOfPolicies"
-                        className="w-100 h-100"
-                        placeholder="Select"
-                        size="large"
-                        disabled={!props?.isEditing}
-                        value={values.partner.numberOfPolicies || undefined}
-                        onChange={(value) => {
-                          setFieldValue("partner.numberOfPolicies", value);
-                        }}
-                        onBlur={handleBlur}
-                        getPopupContainer={(triggerNode) =>
-                          triggerNode.parentNode
-                        }
-                      >
-                        {Array.from({ length: 10 }, (_, i) => (
-                          <Option key={i} value={i + 1}>
-                            {i + 1}
-                          </Option>
-                        ))}
-                      </Select>
-                    </ConfigProvider>
-                  </div>
-                </div>
-              )}
-
-              {shouldShowPartner && values.partner.numberOfPolicies && (
-                <>
-                  <h4
-                    className="mt-4 pt-2"
-                    onClick={() => {
-                      console.log(values.partner.PersonalInsurance);
-                    }}
-                  >
-                    {RenderName("partner")}
-                  </h4>
-                  <div className="mt-2 All_Client reportSection">
-                    <AntdTable
-                      columns={columns}
-                      data={partnerDataRows}
-                      values={values}
-                      setFieldValue={setFieldValue}
-                      handleChange={handleChange}
-                      handleBlur={handleBlur}
-                      isEditing={props?.isEditing}
-                      setIsEditing={props?.setIsEditing}
-                    />
-                  </div>
-                </>
-              )}
+              <div className="mt-2 All_Client reportSection">
+                <AntdTable
+                  columns={columns}
+                  data={clientDataRows}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
+                />
+              </div>
             </Form>
           );
         }}
