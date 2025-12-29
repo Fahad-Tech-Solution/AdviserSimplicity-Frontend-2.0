@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Formik, Form } from "formik";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
-import { RenderName } from "../../Assets/Api/Api";
+import { RenderName, toCommaAndDollar } from "../../Assets/Api/Api";
 
 import { Grid } from "antd";
 const { useBreakpoint } = Grid;
@@ -12,17 +12,14 @@ const GroupCoverDetails = (props) => {
 
   const screens = useBreakpoint();
 
-  let index = parseFloat(
-    props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
-  );
-  let BaseKey = props.modalObject.stakeHolder.split(".").map((item, idx) => {
-    return item.replace(/[^a-zA-Z]+/g, "");
-  });
+  // let index = parseFloat(
+  //   props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
+  // );
+  // let BaseKey = props.modalObject.stakeHolder.split(".").map((item, idx) => {
+  //   return item.replace(/[^a-zA-Z]+/g, "");
+  // });
 
-  const existingData =
-    props?.modalObject?.values?.[BaseKey[0]]?.[BaseKey[1]]?.[index]?.[
-      props.modalObject.key
-    ] || {};
+  const existingData = props?.modalObject?.groupCoverValues;
 
   const initialValues = {
     lifeInsured:
@@ -33,9 +30,21 @@ const GroupCoverDetails = (props) => {
   const fillInitialValues = (setFieldValue) => {
     // If no existing data, create one empty row
     if (Object.keys(existingData).length) {
-      Object.keys(existingData).forEach((field) => {
-        setFieldValue(field, existingData[field] || "");
-      });
+      // Object.keys(existingData).forEach((field) => {
+      //   setFieldValue(field, existingData[field] || "");
+      // });
+      setFieldValue("life", existingData.lifeCover || "$0");
+      setFieldValue("tpd", existingData.TPDCover || "$0");
+      setFieldValue("ip", existingData.monthlyIncome || "$0");
+      const toNumber = (val) =>
+        Number(String(val || "$0").replace(/[^0-9.-]+/g, "")) || 0;
+
+      const total =
+        toNumber(existingData.lifeCover) +
+        toNumber(existingData.TPDCover) +
+        toNumber(existingData.monthlyIncome);
+
+      setFieldValue("premiumPA", toCommaAndDollar(total));
     }
   };
 
@@ -173,11 +182,11 @@ const GroupCoverDetails = (props) => {
 
         const tableRows = useMemo(() => {
           // If we have existing data, use it
-          if (Object.keys(existingData).length > 0) {
+          if (Object.keys(values).length > 0) {
             return [
               {
-                key: index,
-                ...existingData,
+                key: "SuperFundGroupInsuranceDetails",
+                ...values,
               },
             ];
           }
@@ -200,7 +209,7 @@ const GroupCoverDetails = (props) => {
               beneficiary: "No",
             },
           ];
-        }, [existingData]);
+        }, [values]);
 
         return (
           <Form>

@@ -125,15 +125,20 @@ const PersonalInsuranceLife = (props) => {
 
       const fillInsurance = (type) => {
         const data = personalInsurance?.[type]?.PersonalInsurance || [];
+        console.log(data);
 
-        setFieldValue(`numberOfPolicies`, data.length || "");
+        setFieldValue("numberOfPolicies", data.length || "");
 
         setFieldValue(
-          `${type}`,
+          type,
           data.map((entry) => {
             const obj = {};
             fields.forEach((f) => {
-              obj[f] = entry?.[f] || "";
+              if (["life", "TPD", "trauma"].includes(f)) {
+                obj[f] = entry?.[f] ? entry[f] : "$0";
+              } else {
+                obj[f] = entry?.[f] || "";
+              }
             });
             return obj;
           })
@@ -202,104 +207,74 @@ const PersonalInsuranceLife = (props) => {
   };
 
   const onSubmit = async (values) => {
-    // Helper function to safely extract array entries
-    const mapEntries = (array, fields) =>
-      (array || []).map((item) => {
-        const obj = {};
-        fields.forEach((field) => {
-          obj[field] = item?.[field] || "";
-        });
-        return obj;
-      });
-
-    // Fields for Personal Insurance (Client + Partner)
-    const personalFields = [
-      "lifeInsured",
-      "provider",
-      "policyNo",
-      "Owner",
-      "startDate",
-      "smoker",
-      "life",
-      "LifeTPDTraumaDetails",
-      "TPD",
-      "trauma",
-      "IP",
-      "IPDetails",
-      "premiums",
-      "premiumsDetails",
-      "loadingExclusion",
-      "loadingExclusionValue",
-      "loadingExclusiondescription",
-      "beneficiary",
-      "beneficiariesArray",
-      "beneficiaryDetails",
-      "groupCover",
-    ];
-
-    // Generate arrays safely even if undefined
-    const clientEntries = mapEntries(
-      values?.client?.PersonalInsurance,
-      personalFields
-    );
-    const partnerEntries = mapEntries(
-      values?.partner?.PersonalInsurance,
-      personalFields
-    );
-
     // ✅ Helper to convert currency string to number
     const toNumber = (val) =>
-      Number(String(val || "0").replace(/[^0-9.-]+/g, "")) || 0;
+      Number(String(val || "$0").replace(/[^0-9.-]+/g, "")) || 0;
 
-    // ✅ Helper to calculate total of a specific field across multiple arrays
-    const calcTotal = (arrays, fieldNames) =>
-      arrays.reduce((sum, arr) => {
-        (arr || []).forEach((item) => {
-          fieldNames.forEach((field) => {
-            sum += toNumber(item?.[field]);
-          });
-        });
-        return sum;
-      }, 0);
+    let DataOf = props.modalObject.Input || "client";
+    let groupCoverDetails =
+      groupInsuranceDetailsAll[DataOf]?.[0]?.groupInsuranceDetails || {};
 
-    // ✅ Calculate all required totals
-    const clientLifeInsuranceTotal = calcTotal([clientEntries], ["life"]);
-    const partnerLifeInsuranceTotal = calcTotal([partnerEntries], ["life"]);
+    const LifeInsuranceTotal =
+      (Array.isArray(values?.[DataOf]) ? values[DataOf] : []).reduce(
+        (sum, item) =>
+          sum +
+          toNumber(item?.life || 0) +
+          toNumber(item?.premiumsDetails?.life || 0),
+        0
+      ) + toNumber(groupCoverDetails?.life || 0);
 
-    const clientTPDTotal = calcTotal([clientEntries], ["TPD"]);
-    const partnerTPDTotal = calcTotal([partnerEntries], ["TPD"]);
+    const TPDTotal =
+      (Array.isArray(values?.[DataOf]) ? values[DataOf] : []).reduce(
+        (sum, item) =>
+          sum +
+          toNumber(
+            item?.LifeTPDTraumaDetails?.TPDDefinition !== "Split (Own)"
+              ? item?.TPD
+              : 0
+          ) +
+          toNumber(item?.premiumsDetails?.tpd || 0),
+        0
+      ) + toNumber(groupCoverDetails?.tpd || 0);
 
-    const clientTraumaTotal = calcTotal([clientEntries], ["trauma"]);
-    const partnerTraumaTotal = calcTotal([partnerEntries], ["trauma"]);
+    const TraumaTotal = (
+      Array.isArray(values?.[DataOf]) ? values[DataOf] : []
+    ).reduce(
+      (sum, item) =>
+        sum +
+        toNumber(item?.trauma || 0) +
+        toNumber(item?.premiumsDetails?.trauma || 0),
+      0
+    );
 
-    const clientIncomeProtectionTotal = calcTotal([clientEntries], ["IP"]);
-    const partnerIncomeProtectionTotal = calcTotal([partnerEntries], ["IP"]);
+    const IncomeProtectionTotal =
+      (Array.isArray(values?.[DataOf]) ? values[DataOf] : []).reduce(
+        (sum, item) =>
+          sum +
+          toNumber(item?.IPDetails?.superlinked == "No" ? item?.IP : 0) +
+          toNumber(item?.premiumsDetails?.ip || 0),
+        0
+      ) + toNumber(groupCoverDetails?.monthlyIncome || 0);
 
     // Build the final payload
     const Obj = {
-      client: {
-        PersonalInsurance: clientEntries,
+      [DataOf]: {
+        PersonalInsurance: values?.[DataOf] || [],
       },
-      partner: {
-        PersonalInsurance: partnerEntries,
-      },
-      clientLifeInsuranceTotal: toCommaAndDollar(clientLifeInsuranceTotal),
-      partnerLifeInsuranceTotal: toCommaAndDollar(partnerLifeInsuranceTotal),
-      clientTPDTotal: toCommaAndDollar(clientTPDTotal),
-      partnerTPDTotal: toCommaAndDollar(partnerTPDTotal),
-      clientTraumaTotal: toCommaAndDollar(clientTraumaTotal),
-      partnerTraumaTotal: toCommaAndDollar(partnerTraumaTotal),
-      clientIncomeProtectionTotal: toCommaAndDollar(
-        clientIncomeProtectionTotal
+      [`${DataOf}LifeInsuranceTotal`]: toCommaAndDollar(LifeInsuranceTotal),
+      [`${DataOf}TPDTotal`]: toCommaAndDollar(TPDTotal),
+      [`${DataOf}TraumaTotal`]: toCommaAndDollar(TraumaTotal),
+      [`${DataOf}HasPersonalInsurance`]:
+        values?.[DataOf].length > 0 ? "Yes" : "No",
+      [`${DataOf}IncomeProtectionTotal`]: toCommaAndDollar(
+        IncomeProtectionTotal
       ),
-      partnerIncomeProtectionTotal: toCommaAndDollar(
-        partnerIncomeProtectionTotal
-      ),
+
       selectedStakeholders: values?.selectedStakeholders || [],
       clientFK: localStorage.getItem("UserID"),
     };
 
-    console.log(Obj);
+    // return false;
 
     try {
       const apiUrl = `${DefaultUrl}/api/personalInsurance`;
@@ -500,7 +475,7 @@ const PersonalInsuranceLife = (props) => {
     trauma: <NewLoadingExclusion />,
     IP: <PersonalInsurance />,
     premiums: <PremiumsDetails />,
-    beneficiary: <BeneficiariesPersonalInsurance />,
+    beneficiary: <Beneficiaries />,
     loadingExclusion: <DynamicDescription />,
     groupCover: <GroupCoverDetails />,
   };
@@ -524,17 +499,39 @@ const PersonalInsuranceLife = (props) => {
             if (flagState) return prevClientRowsRef.current;
 
             const num = Number(values.numberOfPolicies) || 0;
+
             const rows =
               num > 0
-                ? Array.from({ length: num }, (_, i) => ({
-                    key: `client[${i}]`,
-                    stakeHolder: `client[${i}]`,
-                    ...values.client[i],
-                  }))
+                ? Array.from({ length: num }, (_, i) => {
+                    const row =
+                      values?.[`${props.modalObject.Input}`]?.[i] || {};
+                    setFieldValue(
+                      `${props.modalObject.Input}[${i}].life`,
+                      row.life || "$0"
+                    ); // Ensure Formik state is updated
+
+                    setFieldValue(
+                      `${props.modalObject.Input}[${i}].TPD`,
+                      row.TPD || "$0"
+                    ); // Ensure Formik state is updated
+
+                    setFieldValue(
+                      `${props.modalObject.Input}[${i}].trauma`,
+                      row.trauma || "$0"
+                    ); // Ensure Formik state is updated
+
+                    return {
+                      key: `${props.modalObject.Input}[${i}]`,
+                      stakeHolder: `${props.modalObject.Input}[${i}]`,
+                      ...row,
+                      life: row.life || "$0",
+                      TPD: row.TPD || "$0",
+                      trauma: row.trauma || "$0",
+                    };
+                  })
                 : [];
 
             prevClientRowsRef.current = rows;
-
             return rows;
           }, [values.numberOfPolicies]);
 
@@ -610,12 +607,19 @@ const PersonalInsuranceLife = (props) => {
                   <Button
                     className="btn bgColor modalBtn border-0"
                     onClick={() => {
+                      console.log(
+                        groupInsuranceDetailsAll[props.modalObject.Input]?.[0]
+                          ?.groupInsuranceDetails
+                      );
                       setModalObject({
                         title: "Group Cover Details",
                         key: "groupCover",
                         values,
                         stakeHolder: props.modalObject.Input + ".",
                         noFooter: true,
+                        groupCoverValues:
+                          groupInsuranceDetailsAll[props.modalObject.Input]?.[0]
+                            ?.groupInsuranceDetails || {},
                       });
 
                       setFlagState(true);
@@ -626,7 +630,9 @@ const PersonalInsuranceLife = (props) => {
                 </div>
               </div>
 
-              <h4>{RenderName(props.modalObject.Input)}</h4>
+              <h4 onClick={() => console.log(values)}>
+                {RenderName(props.modalObject.Input)}
+              </h4>
 
               <div className="mt-2 All_Client reportSection">
                 <AntdTable

@@ -1,5 +1,5 @@
 import { Form, Formik } from "formik";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 import { Grid, Modal } from "antd";
 const { useBreakpoint } = Grid;
@@ -8,28 +8,30 @@ const AntdTable = DynamicTableForInputsSection("antd");
 const PersonalInsurance = (props) => {
   const [UserStatus] = useState(localStorage.getItem("UserStatus"));
   const { confirm } = Modal;
+  const confirmShownRef = useRef(false);
 
   const initialValues = {};
   const screens = useBreakpoint();
 
+  const index = parseFloat(
+    props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
+  );
+  const BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
+
+  let editDetails =
+    props.modalObject.values?.[BaseKey]?.[index]?.[
+      props.modalObject.key + "Details"
+    ] || [];
+
   const fillInitialValues = (setFieldValue) => {
     try {
-      const index = parseFloat(
-        props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
-      );
-      const BaseKey = props.modalObject.stakeHolder.split(".");
-
       console.log("BaseKey:", BaseKey, "Index:", index);
-
-      let editDetails =
-        props.modalObject.values?.[BaseKey[0]]?.[BaseKey[1].split("[")[0]]?.[
-          index
-        ]?.[props.modalObject.key + "Details"] || [];
 
       if (editDetails && Object.keys(editDetails).length > 0) {
         Object.keys(editDetails).forEach((field) => {
           setFieldValue(field, editDetails[field] || "");
         });
+        confirmShownRef.current = true;
       } else {
         props.setIsEditing(true);
       }
@@ -192,20 +194,28 @@ const PersonalInsurance = (props) => {
           }));
         }, [values]);
 
-        useMemo(() => {
-          if (values.superlinked === "Yes") {
+        useEffect(() => {
+          if (values.superlinked === "Yes" && !confirmShownRef.current && props.isEditing) {
+            confirmShownRef.current = true;
+         
             confirm({
               title: "Discard changes?",
               content:
                 "As you have selected YES, this applies only to the personally funded portion of the Income Protection policy; if this policy is owned or funded through superannuation, please select NO and enter another separate policy and select Super-linked for that",
-              okText: "continue",
+              okText: "Continue",
               okType: "danger",
-              cancelText: "revert Back",
+              cancelText: "Revert Back",
               centered: true,
-              onCancel: async () => {
-                setFieldValue(props.modalObject.Input + ".superlinked", "No");
+              onCancel: () => {
+                setFieldValue("superlinked", "No");
+                confirmShownRef.current = false; // allow future confirms
               },
             });
+          }
+
+          if (values.superlinked !== "Yes") {
+            confirmShownRef.current = false;
+            // setFlagState(false);
           }
         }, [values.superlinked]);
 

@@ -30,6 +30,7 @@ import { Header } from "antd/es/layout/layout";
 import { BankDetail, defaultUrl, Employees, Roles } from "../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { GetAxios } from "../Components/Assets/Api/Api";
+import PersonalInsuranceQuestions from "../Components/Questions/PersonalInsurance/PersonalInsuranceQuestions";
 
 const { Sider, Content } = Layout;
 
@@ -49,7 +50,7 @@ function AuthRouts() {
     {
       path: "/personal-income",
       element: (collapsed) => (
-        <QuestionsNew collapsed={collapsed} >
+        <QuestionsNew collapsed={collapsed}>
           <PersonalIncome />
         </QuestionsNew>
       ),
@@ -114,7 +115,7 @@ function AuthRouts() {
       path: "/personal-insurance",
       element: (collapsed) => (
         <QuestionsNew collapsed={collapsed}>
-          <PersonalInsuranceLife />
+          <PersonalInsuranceQuestions />
         </QuestionsNew>
       ),
     },
@@ -142,7 +143,10 @@ function AuthRouts() {
         </QuestionsNew>
       ),
     },
-    { path: "/goals-and-objectives", element: (collapsed) => <GoalsObjectiveNew /> },
+    {
+      path: "/goals-and-objectives",
+      element: (collapsed) => <GoalsObjectiveNew />,
+    },
     { path: "/risk-profile/*", element: (collapsed) => <RiskProfileNew /> },
     { path: "/CDF-prospects", element: (collapsed) => <CDFclients /> },
     { path: "/profile", element: (collapsed) => <ProfileTemp /> },

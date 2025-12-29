@@ -20,12 +20,12 @@ const NewLoadingExclusion = (props) => {
       const index = parseFloat(
         props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
       );
-      const BaseKey = props.modalObject.stakeHolder.split(".");
+      const BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
 
       console.log("BaseKey:", BaseKey, "Index:", index);
 
       let editDetails =
-        props.modalObject.values?.[BaseKey[0]]?.[BaseKey[1].split("[")[0]]?.[
+        props.modalObject.values?.[BaseKey]?.[
           index
         ]?.[props.modalObject.key + "Details"] || [];
 
@@ -132,21 +132,21 @@ const NewLoadingExclusion = (props) => {
       dataIndex: "traumaPlus",
       key: "traumaPlus",
       type: "yesno",
-      width: screens.xxl ? 135 : 100,
+      width: screens.xxl ? 68 : 100,
     },
     {
       title: "CPI",
       dataIndex: "CPI",
       key: "CPI",
       type: "yesno",
-      width: screens.xxl ? 135 : 100,
+      width: screens.xxl ? 68 : 100,
     },
     {
       title: "Superlinked",
       dataIndex: "superlinked",
       key: "superlinked",
       type: "yesno",
-      width: screens.xxl ? 135 : 100,
+      width: screens.xxl ? 68 : 100,
     },
   ];
 

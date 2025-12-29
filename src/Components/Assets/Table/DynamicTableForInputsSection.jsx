@@ -155,6 +155,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
         return Array.isArray(value) ? value.join(", ") : value || "";
       if (
         col?.type === "text-Modal" ||
+        col?.type === "number-toComma-Modal-Separated" ||
         col?.type === "number-toComma-Modal" ||
         (col?.type === "yesnoModal" && value === "Yes") ||
         col?.type === "modal"

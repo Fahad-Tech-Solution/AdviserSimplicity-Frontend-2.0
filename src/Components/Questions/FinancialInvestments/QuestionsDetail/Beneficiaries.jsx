@@ -19,7 +19,7 @@ const { Option } = Select;
 
 const Beneficiaries = (props) => {
   const [title, setTitle] = useState(() => {
-    let currentTitle = props.modalObject.ParentModalObject.title || "";
+    let currentTitle = props.modalObject?.ParentModalObject?.title || "";
     if (currentTitle.includes("_")) {
       currentTitle = currentTitle.split("_")[1];
     }

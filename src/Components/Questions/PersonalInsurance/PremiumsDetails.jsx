@@ -24,12 +24,12 @@ const PremiumsDetails = (props) => {
       const index = parseFloat(
         props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
       );
-      const BaseKey = props.modalObject.stakeHolder.split(".");
+      const BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
 
       console.log("BaseKey:", BaseKey, "Index:", index);
 
       let editDetails =
-        props.modalObject.values?.[BaseKey[0]]?.[BaseKey[1].split("[")[0]]?.[
+        props.modalObject.values?.[BaseKey]?.[
           index
         ]?.[props.modalObject.key + "Details"] || [];
 
@@ -87,6 +87,8 @@ const PremiumsDetails = (props) => {
           (row.commissionRate || "").toString().replace(/[^0-9.-]+/g, "")
         ) || 0;
 
+      let payeeOfPremiums = row.payeeOfPremiums || "";
+
       // Update values if field changed
       if (fieldName === "life") {
         life = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
@@ -101,6 +103,8 @@ const PremiumsDetails = (props) => {
       } else if (fieldName === "commissionRate") {
         commissionRate =
           parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "")) || 0;
+      } else if (fieldName === "payeeOfPremiums") {
+        payeeOfPremiums = currentInput.value;
       }
 
       // Calculate total cost: (Life + TPD + Trauma + IP) * Frequency
@@ -108,7 +112,13 @@ const PremiumsDetails = (props) => {
       const totalCost = totalPremiums * frequency;
 
       // Calculate commission payable: Total Cost * Commission Rate / 100
-      const commissionPayable = totalCost * commissionRate;
+      let commissionPayable = 0;
+
+      if (payeeOfPremiums == "Super Rollover") {
+        commissionPayable = totalCost * (85 / 100);
+      } else {
+        commissionPayable = totalCost * (commissionRate / 100);
+      }
 
       // Update field values
       setFieldValue(`totalCost`, toCommaAndDollar(totalCost));
@@ -199,10 +209,17 @@ const PremiumsDetails = (props) => {
       type: "select",
       selectedOptionValue: true,
       options: [
-        { value: "Client", label: RenderName("client") },
-        ...(UserStatus !== "Single"
-          ? [{ value: "Partner", label: RenderName("partner") }]
-          : []),
+        // { value: "Client", label: RenderName("client") },
+        // ...(UserStatus !== "Single"
+        //   ? [{ value: "Partner", label: RenderName("partner") }]
+        //   : []),
+
+        {
+          value: props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, ""),
+          label: RenderName(
+            props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "")
+          ),
+        },
         { value: "Super Rollover", label: "Super Rollover" },
         { value: "SMSF", label: "SMSF" },
         { value: "Business", label: "Business" },
@@ -210,6 +227,8 @@ const PremiumsDetails = (props) => {
         { value: "Family Trust", label: "Family Trust" },
         { value: "Other", label: "Other" },
       ],
+      func: FormulaSetting,
+      callBack: true,
       width: 200,
     },
     {
