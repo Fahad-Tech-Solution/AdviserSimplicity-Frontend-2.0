@@ -90,58 +90,6 @@ const AdminSideBar = (props) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleAddClientClick = () => {
-    localStorage.removeItem("Email");
-    localStorage.removeItem("PartnerName");
-    localStorage.removeItem("UserID");
-    localStorage.removeItem("UserName");
-    localStorage.removeItem("UserStatus");
-    setCRState();
-    setStepsStatus(true);
-    setOptRender("Opt1");
-    localStorage.setItem("OptionRender", "Opt1");
-
-    setPersonalDetailObj({
-      client: {
-        clientTitle: "Mr.",
-        clientGivenName: "John",
-        clientSurname: "Doe",
-        clientPreferredName: "Johnny",
-        clientGender: "Male",
-        clientDOB: "1990-01-01",
-        clientAge: 34,
-        clientMaritalStatus: "Single",
-        clientEmploymentStatus: "Employed",
-        clientHealth: "Good",
-        clientSmoker: "No",
-        clientPlannedRetirementAge: 65,
-        clientHomeAddress: "123 Main St",
-        clientPostcode: 12345,
-        clientHomePhone: "555-555-5555",
-        clientWorkPhone: "555-555-5556",
-        clientMobile: "555-555-5557",
-        Email: "john.doe@example.com",
-        clientPostalAddress: "123 Main St",
-        clientPostalPostCode: 12345,
-        clientMiddleName: "Michael",
-        clientOccupationID: "OCC123",
-        clientTaxResidentRadio: "Yes",
-        clientPrivateHealthCoverRadio: "Yes",
-        clientHELPSDebtRadio: "No",
-        clientSameAsAbove: true,
-        clientRetirement: "Comfortable",
-      },
-      partner: {},
-      children: {
-        numberOfChildren: 0,
-      },
-      haveAnyChildren: "No",
-    });
-
-    setQuestionDetail({});
-    nav("/user/personal-detail");
-    if (isMobile) setDrawerVisible(false);
-  };
 
   const menuItems = (
     <Menu

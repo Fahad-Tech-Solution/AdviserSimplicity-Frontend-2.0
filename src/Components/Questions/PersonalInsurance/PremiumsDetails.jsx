@@ -15,6 +15,7 @@ const AntdTable = DynamicTableForInputsSection("antd");
 const PremiumsDetails = (props) => {
   const [UserStatus] = useState(localStorage.getItem("UserStatus"));
   const questionDetail = useRecoilValue(QuestionDetail);
+  const [flag, setFlag] = useState(false);
 
   const initialValues = {};
 
@@ -29,9 +30,9 @@ const PremiumsDetails = (props) => {
       console.log("BaseKey:", BaseKey, "Index:", index);
 
       let editDetails =
-        props.modalObject.values?.[BaseKey]?.[
-          index
-        ]?.[props.modalObject.key + "Details"] || [];
+        props.modalObject.values?.[BaseKey]?.[index]?.[
+          props.modalObject.key + "Details"
+        ] || [];
 
       if (editDetails && Object.keys(editDetails).length > 0) {
         Object.keys(editDetails).forEach((field) => {
@@ -54,7 +55,7 @@ const PremiumsDetails = (props) => {
     );
     props.setFieldValue(
       `${props.modalObject.stakeHolder}${props.modalObject.key}`,
-      values.commissionPayable
+      values.totalCost
     );
 
     // Reset the flag state if necessary
@@ -109,16 +110,18 @@ const PremiumsDetails = (props) => {
 
       // Calculate total cost: (Life + TPD + Trauma + IP) * Frequency
       const totalPremiums = life + tpd + trauma + ip;
-      const totalCost = totalPremiums * frequency;
+      let totalCost = 0;
+      if (payeeOfPremiums == "Super Rollover") {
+        totalCost = totalPremiums * frequency * 0.85;
+        setFieldValue(`paymentMethod`, "Rollover");
+        setFlag(true);
+      } else {
+        totalCost = totalPremiums * frequency;
+        setFlag(false);
+      }
 
       // Calculate commission payable: Total Cost * Commission Rate / 100
-      let commissionPayable = 0;
-
-      if (payeeOfPremiums == "Super Rollover") {
-        commissionPayable = totalCost * (85 / 100);
-      } else {
-        commissionPayable = totalCost * (commissionRate / 100);
-      }
+      let commissionPayable = totalCost * (commissionRate / 100);
 
       // Update field values
       setFieldValue(`totalCost`, toCommaAndDollar(totalCost));
@@ -208,6 +211,7 @@ const PremiumsDetails = (props) => {
       key: "payeeOfPremiums",
       type: "select",
       selectedOptionValue: true,
+
       options: [
         // { value: "Client", label: RenderName("client") },
         // ...(UserStatus !== "Single"
@@ -236,6 +240,7 @@ const PremiumsDetails = (props) => {
       dataIndex: "paymentMethod",
       key: "paymentMethod",
       type: "select",
+      disabled: flag,
       options: [
         { value: "Credit Card", label: "Credit Card" },
         { value: "Direct Debit", label: "Direct Debit" },

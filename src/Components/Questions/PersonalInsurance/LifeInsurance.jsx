@@ -222,7 +222,7 @@ const PersonalInsuranceLife = (props) => {
           toNumber(item?.life || 0) +
           toNumber(item?.premiumsDetails?.life || 0),
         0
-      ) + toNumber(groupCoverDetails?.life || 0);
+      ) + toNumber(groupCoverDetails?.lifeCover || 0);
 
     const TPDTotal =
       (Array.isArray(values?.[DataOf]) ? values[DataOf] : []).reduce(
@@ -235,7 +235,7 @@ const PersonalInsuranceLife = (props) => {
           ) +
           toNumber(item?.premiumsDetails?.tpd || 0),
         0
-      ) + toNumber(groupCoverDetails?.tpd || 0);
+      ) + toNumber(groupCoverDetails?.TPDCover || 0);
 
     const TraumaTotal = (
       Array.isArray(values?.[DataOf]) ? values[DataOf] : []
@@ -410,7 +410,7 @@ const PersonalInsuranceLife = (props) => {
       placeholder: "TPD",
       innerModalTitle: "_<CFE>_Lumpsum Cover (Life/TPD/Trauma)",
       func: handleInnerModal,
-      width: 140,
+      width: screens.xxl ? 180 : 140,
       disabled: true,
     },
     {
@@ -618,8 +618,9 @@ const PersonalInsuranceLife = (props) => {
                         stakeHolder: props.modalObject.Input + ".",
                         noFooter: true,
                         groupCoverValues:
-                          groupInsuranceDetailsAll[props.modalObject.Input]?.[0]
-                            ?.groupInsuranceDetails || {},
+                          groupInsuranceDetailsAll[
+                            props.modalObject.Input
+                          ]?.[0] || {},
                       });
 
                       setFlagState(true);

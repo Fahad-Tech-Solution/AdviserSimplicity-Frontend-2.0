@@ -25,9 +25,9 @@ const NewLoadingExclusion = (props) => {
       console.log("BaseKey:", BaseKey, "Index:", index);
 
       let editDetails =
-        props.modalObject.values?.[BaseKey]?.[
-          index
-        ]?.[props.modalObject.key + "Details"] || [];
+        props.modalObject.values?.[BaseKey]?.[index]?.[
+          props.modalObject.key + "Details"
+        ] || [];
 
       if (editDetails && Object.keys(editDetails).length > 0) {
         Object.keys(editDetails).forEach((field) => {
@@ -132,21 +132,21 @@ const NewLoadingExclusion = (props) => {
       dataIndex: "traumaPlus",
       key: "traumaPlus",
       type: "yesno",
-      width: screens.xxl ? 68 : 100,
+      width: screens.xxl ? 68 : 80,
     },
     {
       title: "CPI",
       dataIndex: "CPI",
       key: "CPI",
       type: "yesno",
-      width: screens.xxl ? 68 : 100,
+      width: screens.xxl ? 68 : 80,
     },
     {
       title: "Superlinked",
       dataIndex: "superlinked",
       key: "superlinked",
       type: "yesno",
-      width: screens.xxl ? 68 : 100,
+      width: screens.xxl ? 68 : 80,
     },
   ];
 

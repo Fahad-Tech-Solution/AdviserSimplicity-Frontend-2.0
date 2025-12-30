@@ -4,6 +4,8 @@ import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInpu
 import { RenderName, toCommaAndDollar } from "../../Assets/Api/Api";
 
 import { Grid } from "antd";
+import { BankDetail } from "../../../Store/Store";
+import { useRecoilValue } from "recoil";
 const { useBreakpoint } = Grid;
 const AntdTable = DynamicTableForInputsSection("antd");
 
@@ -11,7 +13,7 @@ const GroupCoverDetails = (props) => {
   const [UserStatus] = useState(localStorage.getItem("UserStatus"));
 
   const screens = useBreakpoint();
-
+  const BankDetailObj = useRecoilValue(BankDetail);
   // let index = parseFloat(
   //   props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
   // );
@@ -19,7 +21,7 @@ const GroupCoverDetails = (props) => {
   //   return item.replace(/[^a-zA-Z]+/g, "");
   // });
 
-  const existingData = props?.modalObject?.groupCoverValues;
+  const existingData = props?.modalObject?.groupCoverValues || {};
 
   const initialValues = {
     lifeInsured:
@@ -33,16 +35,33 @@ const GroupCoverDetails = (props) => {
       // Object.keys(existingData).forEach((field) => {
       //   setFieldValue(field, existingData[field] || "");
       // });
-      setFieldValue("life", existingData.lifeCover || "$0");
-      setFieldValue("tpd", existingData.TPDCover || "$0");
-      setFieldValue("ip", existingData.monthlyIncome || "$0");
+      setFieldValue("provider", existingData?.platformName || "");
+      setFieldValue("policyNo", existingData?.memberNumber || "");
+      setFieldValue(
+        "life",
+        existingData?.groupInsuranceDetails?.lifeCover || "$0"
+      );
+      setFieldValue(
+        "tpd",
+        existingData?.groupInsuranceDetails?.TPDCover || "$0"
+      );
+      setFieldValue(
+        "ip",
+        (existingData?.groupInsuranceDetails?.monthlyIncome || "$0") +
+          "/" +
+          (existingData?.groupInsuranceDetails?.waitingPeriod || "30") +
+          " Days/" +
+          (existingData?.groupInsuranceDetails?.BenefitPeriod || "2 Years")
+      );
+      setFieldValue("groupOwner", "Super Trustee");
+      setFieldValue("loadingExclusion", "No");
+
       const toNumber = (val) =>
         Number(String(val || "$0").replace(/[^0-9.-]+/g, "")) || 0;
 
       const total =
-        toNumber(existingData.lifeCover) +
-        toNumber(existingData.TPDCover) +
-        toNumber(existingData.monthlyIncome);
+        toNumber(existingData?.groupInsuranceDetails?.cost) +
+        toNumber(existingData?.groupInsuranceDetails?.cost2);
 
       setFieldValue("premiumPA", toCommaAndDollar(total));
     }
@@ -69,9 +88,15 @@ const GroupCoverDetails = (props) => {
       title: "Provider",
       dataIndex: "provider",
       key: "provider",
-      type: "text",
+      type: "select",
       placeholder: "Provider",
       width: 150,
+      selectedOptionValue: true,
+      options:
+        BankDetailObj?.SuperannuationFunds?.map((elem) => ({
+          value: elem._id,
+          label: elem.platformName,
+        })) || [],
     },
     {
       title: "Policy no",
@@ -101,21 +126,6 @@ const GroupCoverDetails = (props) => {
       width: 180,
     },
     {
-      title: "Start Date",
-      dataIndex: "startDate",
-      key: "startDate",
-      type: "antdate",
-      placeholder: "dd/mm/yyyy",
-      width: 150,
-    },
-    {
-      title: "Smoker",
-      dataIndex: "smoker",
-      key: "smoker",
-      type: "yesno",
-      width: screens.xxl ? 132 : 100,
-    },
-    {
       title: "Life",
       dataIndex: "life",
       key: "life",
@@ -135,7 +145,7 @@ const GroupCoverDetails = (props) => {
       title: "IP",
       dataIndex: "ip",
       key: "ip",
-      type: "number-toComma",
+      type: "text",
       placeholder: "IP",
       width: 120,
     },

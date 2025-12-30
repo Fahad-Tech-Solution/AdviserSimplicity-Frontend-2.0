@@ -1,20 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { Form, Formik } from "formik";
-import { useRecoilValue } from "recoil";
-import { defaultUrl } from "../../../../Store/Store";
 import { toCommaAndDollar } from "../../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
-import InnerModal from "./InnerModal";
-import { Select } from "antd";
 
 const AntdTable = DynamicTableForInputsSection("antd");
-const { Option } = Select;
 
 const GroupInsurance = (props) => {
-  const [flagState, setFlagState] = useState(false);
-  const [modalObject, setModalObject] = useState({});
-  const DefaultUrl = useRecoilValue(defaultUrl);
-
   const initialValues = {
     lifeCover: "",
     TPDCover: "",
@@ -131,6 +122,7 @@ const GroupInsurance = (props) => {
       dataIndex: "waitingPeriod",
       key: "waitingPeriod",
       type: "select",
+      selectedOptionValue: true,
       options: [
         { value: 30, label: "30 Days" },
         { value: 60, label: "60 Days" },

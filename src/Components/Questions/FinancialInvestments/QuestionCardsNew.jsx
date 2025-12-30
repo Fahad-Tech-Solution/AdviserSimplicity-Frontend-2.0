@@ -486,35 +486,6 @@ const questionConfig = {
   ],
   "/user/personal-insurance": [
     {
-      title: "Personal Insurance",
-      keyName: "personalInsuranceTab",
-      dataKey: "personalInsuranceTab",
-      img: lifeImg,
-      component: <PersonalInsuranceLife />,
-      // BaceKeys: {
-      //   client: "clientLifeInsuranceTotal",
-      //   partner: "partnerLifeInsuranceTotal",
-      // },
-      variant: "case2",
-      Labels: [
-        {
-          label: "client",
-          value: (questionDetail) =>
-            questionDetail?.personalInsurance?.clientHasPersonalInsurance ?? "No",
-          component: <PersonalInsuranceLife />,
-          key: "personalInsurance",
-          onTop: true,
-        },
-        {
-          label: "partner",
-          value: (questionDetail) =>
-            questionDetail?.personalInsurance?.partnerHasPersonalInsurance ?? "No",
-          component: <PersonalInsuranceLife />,
-          key: "personalInsurance",
-        },
-      ],
-    },
-    {
       title: "Life",
       keyName: "life",
       dataKey: "personalInsurance",

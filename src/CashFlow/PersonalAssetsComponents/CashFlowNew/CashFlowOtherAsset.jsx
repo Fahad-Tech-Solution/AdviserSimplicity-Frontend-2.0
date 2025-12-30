@@ -1,14 +1,8 @@
 import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
-import { CreatableMultiSelectField } from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
-import DynamicTableRow from "../../../Components/Assets/Dynamic/DynamicTableRow";
-import {
-  openNotificationSuccess,
-  PatchAxios,
-  PostAxios,
-  RenderName,
-} from "../../../Components/Assets/Api/Api";
-import { Card, Row, Table } from "react-bootstrap";
+import { Row } from "react-bootstrap";
+import { useRecoilState, useRecoilValue } from "recoil";
+
 import {
   CashFlowData,
   CashFlowScenarioData,
@@ -16,30 +10,33 @@ import {
   GoalsDetail,
   QuestionDetail,
 } from "../../../Store/Store";
-import { useRecoilState, useRecoilValue } from "recoil";
+
+import {
+  openNotificationSuccess,
+  PatchAxios,
+  PostAxios,
+  RenderName,
+} from "../../../Components/Assets/Api/Api";
+
+import { AntdCreatableMultiSelect } from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import DynamicTableForInputsSection from "../../../Components/Assets/Table/DynamicTableForInputsSection";
+
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const CashFlowOtherAsset = (props) => {
-  let questionDetail = useRecoilValue(QuestionDetail);
-  let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
-  let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const questionDetail = useRecoilValue(QuestionDetail);
+  const goalsDetail = useRecoilValue(GoalsDetail);
 
-  let [UserStatus] = useState(localStorage.getItem("UserStatus"));
-  let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
+  const [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+  const CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
 
-  let goalsDetail = useRecoilValue(GoalsDetail);
-  let DefaultUrl = useRecoilValue(defaultUrl);
+  const DefaultUrl = useRecoilValue(defaultUrl);
+  const [UserStatus] = useState(localStorage.getItem("UserStatus"));
 
-  let other =
-    Object.keys(questionDetail[props.modalObject.key.replace("cf_", "")] || {})
-      .length > 0
-      ? questionDetail[props.modalObject.key.replace("cf_", "")]
-      : {
-          client: [],
-          partner: [],
-          joint: [],
-        };
+  const objKey = props.modalObject.key;
 
-  let initialValues = {
+  /* ---------------- Initial Values ---------------- */
+  const initialValues = {
     owner: [],
     client: {
       currentValue: "",
@@ -55,202 +52,108 @@ const CashFlowOtherAsset = (props) => {
       purchaseInYear: 30,
       indexation: "2.50%",
     },
+    joint: {
+      currentValue: "",
+      sellInYear: "No",
+      newPurchase: "",
+      purchaseInYear: 30,
+      indexation: "2.50%",
+    },
   };
 
-  let onlyJoint = ["Boat", "Caravan", "House hold"];
-  let onlyClient = ["Contents", "Other Assets"];
-
+  /* ---------------- Fill Initial Values ---------------- */
   const fillInitialValues = (setFieldValue) => {
-    try {
-      // Set the object and API key
-      setObjAndAPIKey(props.modalObject.key);
+    const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+    const cfData = CashFlowScenarioDataObj?.[objKey] || cashFlowData?.[objKey];
 
-      // console.log(other, "Discovery Form Data");
-      // console.log(cashFlowData, "cashFlowData Form Data");
-      // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
+    if (!cfData) return;
 
-      const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+    setFieldValue("owner", cfData.owner || []);
 
-      // Helper function to update field values
-      const updateFields = (data, prefix) => {
-        if (!data || !Object.keys(data).length) return;
-        const fields = {
-          currentValue: data.currentValue || "",
-          sellInYear: data.sellInYear || "No",
-          newPurchase: data.newPurchase || "$0",
-          purchaseInYear: data.purchaseInYear || 30,
-          indexation: data.indexation || "2.50%",
-        };
-
-        if (
-          props.modalObject.title === "Car" &&
-          goalsDetail.carGoal &&
-          goalsDetail.carGoal.estimatedValue
-        ) {
-          fields.newPurchase = goalsDetail.carGoal.estimatedValue || "";
-          fields.purchaseInYear =
-            parseFloat(goalsDetail.carGoal.when.match(/\d+/g).join("")) || 30;
-        }
-
-        Object.entries(fields).forEach(([key, value]) => {
-          setFieldValue(`${prefix}.${key}`, value);
+    ["client", "partner", "joint"].forEach((stake) => {
+      if (cfData.owner?.includes(stake) && cfData[stake]) {
+        Object.entries(cfData[stake]).forEach(([k, v]) => {
+          setFieldValue(`${stake}.${k}`, v ?? "");
         });
-      };
-
-      // Update owner field
-      if (
-        scenarioObj?.selectedSource === "discoveryForm" &&
-        other &&
-        other._id
-      ) {
-        setFieldValue(`owner`, other.owner || "");
-
-        if (onlyJoint.includes(props.modalObject.title)) {
-          if (other.owner.includes("joint")) {
-            if (other?.joint && Object.keys(other.joint).length) {
-              updateFields(other.joint, "joint");
-            }
-          }
-        }
-
-        // Update client-related fields
-        if (other.owner.includes("client")) {
-          updateFields(other.client, "client");
-        }
-
-        // Update partner-related fields
-        if (UserStatus === "Married" && other.owner.includes("partner")) {
-          updateFields(other.partner, "partner");
-        }
-      } else {
-        // Handle cashFlowData scenario
-        const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-        console.log(cashFlowDetails, "cashFlowDetails");
-        if (cashFlowDetails) {
-          setFieldValue(`owner`, cashFlowDetails.owner || "");
-          if (cashFlowDetails.owner.includes("client")) {
-            // Update client details
-            updateFields(cashFlowDetails.client, "client");
-          }
-
-          if (
-            UserStatus === "Married" &&
-            cashFlowDetails.owner.includes("partner")
-          ) {
-            // Update partner details
-            updateFields(cashFlowDetails.partner, "partner");
-          }
-
-          if (cashFlowDataDetails.owner.includes("joint")) {
-            // Update joint details
-            updateFields(cashFlowDataDetails.joint, "joint");
-          }
-        }
       }
+    });
 
-      // Additional data from cashFlowData
-      if (cashFlowData?.[objAndAPIKey]?._id) {
-        const cashFlowDataDetails = cashFlowData[objAndAPIKey];
-        setFieldValue(`owner`, cashFlowDataDetails.owner || "");
-
-        if (cashFlowDataDetails.owner.includes("client")) {
-          // Update client details
-          updateFields(cashFlowDataDetails.client, "client");
-        }
-
-        if (
-          UserStatus === "Married" &&
-          cashFlowDataDetails.owner.includes("partner")
-        ) {
-          // Update partner details
-          updateFields(cashFlowDataDetails.partner, "partner");
-        }
-
-        if (cashFlowDataDetails.owner.includes("joint")) {
-          // Update joint details
-          updateFields(cashFlowDataDetails.joint, "joint");
-        }
-      }
-    } catch (error) {
-      console.error("Error in fillInitialValues:", error);
+    /* ---- Auto-fill Car Goal ---- */
+    if (
+      props.modalObject.title === "Car" &&
+      goalsDetail?.carGoal?.estimatedValue
+    ) {
+      setFieldValue("client.newPurchase", goalsDetail.carGoal.estimatedValue);
+      setFieldValue(
+        "client.purchaseInYear",
+        parseFloat(goalsDetail.carGoal.when.match(/\d+/)?.[0]) || 30
+      );
     }
   };
 
-  let onSubmit = async (values) => {
-    console.log(JSON.stringify(values));
-    // return (false);
-    let obj = values;
+  /* ---------------- Submit ---------------- */
+  const onSubmit = async (values) => {
+    const obj = {
+      ...values,
+      scenarioFK: JSON.parse(localStorage.getItem("ScenarioObj"))._id,
+    };
 
-    obj.scenarioFK = JSON.parse(localStorage.getItem("ScenarioObj"))._id;
+    obj.clientTotal = values.owner.includes("client")
+      ? values.client.currentValue
+      : values.owner.includes("joint")
+      ? values.joint.currentValue
+      : "";
 
-    if (values.owner.includes("client")) {
-      obj.clientTotal = values.client.currentValue || "$0";
-    } else if (values.owner.includes("joint")) {
-      obj.clientTotal = values.joint.currentValue || "$0";
-    } else {
-      obj.clientTotal = "";
-    }
-
-    if (values.owner.includes("partner")) {
-      obj.partnerTotal = values.partner.currentValue || "$0";
-    } else {
-      obj.partnerTotal = "";
-    }
-
-    const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
-
-    console.log(obj, "final obj");
+    obj.partnerTotal = values.owner.includes("partner")
+      ? values.partner.currentValue
+      : "";
 
     try {
-      let res;
-      if (!bankAccountArray) {
-        res = await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
-      } else {
-        res = await PatchAxios(
-          `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
-          obj
-        );
-      }
+      const existingId = cashFlowData?.[objKey]?._id;
+      const res = existingId
+        ? await PatchAxios(`${DefaultUrl}/api/CF/${objKey}/Update`, obj)
+        : await PostAxios(`${DefaultUrl}/api/CF/${objKey}/Add`, obj);
 
       if (res) {
-        console.log(res);
-        const updatedData = {
+        setCashFlowData({
           ...cashFlowData,
-          [objAndAPIKey]: res,
-        };
-        setCashFlowData(updatedData);
+          [objKey]: res,
+        });
       }
 
       openNotificationSuccess(
         "success",
         "topRight",
-        "Success Notification",
-        'Data of "' + props.modalObject.title + '" is Saved'
+        "Success",
+        `Data of "${props.modalObject.title}" is saved`
       );
 
-      // Reset the flag state if necessary
-      if (props.flagState) {
-        props.setFlagState(false);
-      }
+      props.setFlagState?.(false);
     } catch (error) {
-      console.error("Error occurred while making API call:", error);
+      console.error(error);
       openNotificationSuccess(
         "error",
         "topRight",
-        "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        "Error",
+        `Data of "${props.modalObject.title}" not saved`
       );
     }
   };
 
-  const loanTermOptions = Array.from({ length: 31 }, (_, i) => {
-    return {
-      value: i.toString(),
-      label: `Year ${i}`,
-    };
-  });
+  /* ---------------- Owner Options ---------------- */
+  const onlyJoint = ["Boat", "Caravan", "House hold"];
+  const onlyClient = ["Contents", "Other Assets"];
+
+  const ownerOptions = onlyJoint.includes(props.modalObject.title)
+    ? [{ value: "joint", label: RenderName("joint") }]
+    : onlyClient.includes(props.modalObject.title)
+    ? [{ value: "client", label: RenderName("client") }]
+    : UserStatus === "Married"
+    ? [
+        { value: "client", label: RenderName("client") },
+        { value: "partner", label: RenderName("partner") },
+      ]
+    : [{ value: "client", label: RenderName("client") }];
 
   const loanTermOptionsWithNo = Array.from({ length: 32 }, (_, i) => {
     if (i === 0) {
@@ -263,6 +166,13 @@ const CashFlowOtherAsset = (props) => {
     return {
       value: (i - 1).toString(),
       label: `Year ${i - 1}`,
+    };
+  });
+
+  const loanTermOptions = Array.from({ length: 31 }, (_, i) => {
+    return {
+      value: i.toString(),
+      label: `Year ${i}`,
     };
   });
 
@@ -280,47 +190,40 @@ const CashFlowOtherAsset = (props) => {
     })),
   ];
 
-  const options = onlyJoint.includes(props.modalObject.title)
-    ? [{ value: "joint", label: RenderName("joint") }]
-    : onlyClient.includes(props.modalObject.title)
-    ? [{ value: "client", label: RenderName("client") }]
-    : UserStatus === "Married"
-    ? [
-        { value: "client", label: RenderName("client") },
-        { value: "partner", label: RenderName("partner") },
-      ]
-    : [{ value: "client", label: RenderName("client") }];
-
-  const rowConfig = [
+  /* ---------------- Table Columns ---------------- */
+  const columns = [
+    { title: "Owner", dataIndex: "owner", key: "owner", type: "label" },
     {
-      name: "currentValue",
+      title: "Current Value",
+      dataIndex: "currentValue",
       type: "number-toComma",
-      placeholder: "Current Value",
     },
     {
-      name: "sellInYear",
+      title: "Sell In Year",
+      dataIndex: "sellInYear",
       type: "select",
       options: loanTermOptionsWithNo,
     },
     {
-      name: "newPurchase",
+      title: "New Purchase",
+      dataIndex: "newPurchase",
       type: "number-toComma",
-      placeholder: "New Purchase",
     },
     {
-      name: "purchaseInYear",
+      title: "Purchase In Year",
+      dataIndex: "purchaseInYear",
       type: "select",
       options: loanTermOptions,
     },
     {
-      name: "indexation",
+      title: "Indexation",
+      dataIndex: "indexation",
       type: "select",
       options: indexation,
     },
-
-    // { name: "businessAddress", type: "text", placeholder: "Business Address" },
   ];
 
+  /* ---------------- Render ---------------- */
   return (
     <Formik
       initialValues={initialValues}
@@ -333,82 +236,64 @@ const CashFlowOtherAsset = (props) => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        const rows = [];
+
+        if (values.owner.includes("client"))
+          rows.push({
+            key: "client",
+            owner: RenderName("client"),
+            stakeHolder: "client",
+            ...values.client,
+          });
+
+        if (values.owner.includes("partner") && UserStatus === "Married")
+          rows.push({
+            key: "partner",
+            owner: RenderName("partner"),
+            stakeHolder: "partner",
+            ...values.partner,
+          });
+
+        if (values.owner.includes("joint"))
+          rows.push({
+            key: "joint",
+            owner: RenderName("joint"),
+            stakeHolder: "joint",
+            ...values.joint,
+          });
+
         return (
           <Form>
             <Row>
               <div className="col-md-12">
-                <div className="d-flex justify-content-center align-items-center gap-4">
-                  <label htmlFor="" className="text-end ">
-                    Owner
-                  </label>
-
-                  <div style={{ minWidth: "25%" }}>
+                {/* Owner Selector */}
+                <div className="d-flex justify-content-center align-items-center gap-2">
+                  <label className="mb-0">Owner</label>
+                  <div style={{ minWidth: 220 }}>
                     <Field
-                      name={`owner`}
-                      component={CreatableMultiSelectField}
-                      label="Multi Select Field"
-                      options={options}
+                      name="owner"
+                      component={AntdCreatableMultiSelect}
+                      options={ownerOptions}
                     />
                   </div>
                 </div>
+
+                {values.owner.length > 0 && (
+                  <div className="mt-4 reportSection">
+                    <AntdTable
+                      columns={columns}
+                      data={rows}
+                      values={values}
+                      setFieldValue={setFieldValue}
+                      handleChange={handleChange}
+                      handleBlur={handleBlur}
+                      handleSubmit={props?.handleOk}
+                      isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
+                    />
+                  </div>
+                )}
               </div>
-              {values.owner.length > 0 && (
-                <div className="mt-4">
-                  <Table striped bordered responsive hover>
-                    <thead>
-                      <tr>
-                        <th
-                          onClick={() => {
-                            console.log(values);
-                          }}
-                        >
-                          Owner
-                        </th>
-                        <th>Current Value</th>
-                        <th>Sell In Year</th>
-                        <th>New Purchase</th>
-                        <th>Purchase In Year</th>
-                        <th>Indexation</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {values.owner.includes("client") && (
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                          stakeHolder="client."
-                        />
-                      )}
-
-                      {values.owner.includes("partner") &&
-                        UserStatus === "Married" && (
-                          <DynamicTableRow
-                            rowConfig={rowConfig}
-                            values={values}
-                            setFieldValue={setFieldValue}
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                            stakeHolder="partner."
-                          />
-                        )}
-
-                      {values.owner.includes("joint") && (
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                          stakeHolder="joint."
-                        />
-                      )}
-                    </tbody>
-                  </Table>
-                </div>
-              )}
             </Row>
           </Form>
         );

@@ -64,12 +64,25 @@ const ImportantQuestion = (props) => {
       key: "businessAsInvestmentTab",
     },
   ];
+
   const QuestionClick = (index, elem, values, setFieldValue) => {
     if (values[elem.key] == "No") {
       setFieldValue(elem.key, "Yes");
+      if (elem.key === "personalInsuranceTab") {
+        setFieldValue("life", "Yes");
+        setFieldValue("TPD", "Yes");
+        setFieldValue("trauma", "Yes");
+        setFieldValue("incomeProtection", "Yes");
+      }
     }
     if (values[elem.key] == "Yes") {
       setFieldValue(elem.key, "No");
+      if (elem.key === "personalInsuranceTab") {
+        setFieldValue("life", "No");
+        setFieldValue("TPD", "No");
+        setFieldValue("trauma", "No");
+        setFieldValue("incomeProtection", "No");
+      }
     }
   };
 
@@ -123,7 +136,7 @@ const ImportantQuestion = (props) => {
     console.log("CRObject", CRObject);
     if (
       (!CRObject?._id && selectedClientDetails?._id) ||
-      (selectedClientDetails._id !== CRObject.clientFK)
+      selectedClientDetails._id !== CRObject.clientFK
     ) {
       getQuestions(selectedClientDetails._id);
     }

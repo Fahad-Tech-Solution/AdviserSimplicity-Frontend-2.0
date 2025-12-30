@@ -229,6 +229,14 @@ const CashFlowFamilyHome = (props) => {
         // ------------------------------------
         const dataRows = useMemo(() => {
           const num = Number(values?.numberOfProperties) || 0;
+          Array.from({ length: num }, (_, i) => {
+            setFieldValue(
+              `familyHomes[${i}].address`,
+              values.familyHomes?.[i]?.address ||
+                personalData.client.clientHomeAddress
+            );
+          });
+
           return Array.from({ length: num }, (_, i) => ({
             key: `familyHomes.${i}`,
             stakeHolder: `familyHomes[${i}]`,

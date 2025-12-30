@@ -57,8 +57,9 @@ const CashFlowTotalCost = (props) => {
     console.log(props.modalObject.stakeHolder);
 
     const data =
-      props.modalObject.values?.[BaseKey]?.[index]?.[props.modalObject.key] ||
-      {};
+      props.modalObject.values?.[BaseKey[0]]?.[index]?.[
+        props.modalObject.key
+      ] || {};
 
     if (typeof data == "object" && Object.keys(data).length === 0) return;
 
@@ -76,13 +77,11 @@ const CashFlowTotalCost = (props) => {
      Save Child Modal
   =============================== */
   const onSubmit = async (values) => {
-    console.log(
-      props.modalObject.stakeHolder + props.modalObject.key.replace(/Obj/, "")
-    );
     props.setFieldValue(
       props.modalObject.stakeHolder + props.modalObject.key,
       values
     );
+
     props.setFieldValue(
       props.modalObject.stakeHolder + props.modalObject.key.replace(/Obj/, ""),
       values.costBaseExisting

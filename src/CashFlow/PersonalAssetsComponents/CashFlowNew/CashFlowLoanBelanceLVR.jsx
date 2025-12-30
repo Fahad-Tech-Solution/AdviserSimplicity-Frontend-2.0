@@ -1,365 +1,243 @@
-import { Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
-import { Row, Table } from "react-bootstrap";
+import { Form, Formik } from "formik";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
+
+import InnerModal from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
+import DynamicTableForInputsSection from "../../../Components/Assets/Table/DynamicTableForInputsSection";
+
 import {
-  BankDetail,
   CashFlowData,
   CashFlowDownloading,
   CashFlowReCalculateLoading,
   defaultUrl,
-  QuestionDetail,
 } from "../../../Store/Store";
-import DynamicTableRow from "../../../Components/Assets/Dynamic/DynamicTableRow";
-import InnerModal from "../../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
+
 import {
   createStructuredEntries,
   openNotificationSuccess,
   PostAxios,
   PostAxiosBlob,
   RenderName,
-  toCommaAndDollar,
 } from "../../../Components/Assets/Api/Api";
 
+const AntDTableHOC = DynamicTableForInputsSection("antd");
+
 const CashFlowLoanBelanceLVR = (props) => {
-  let DefaultUrl = useRecoilValue(defaultUrl);
-  let cashFlowData = useRecoilValue(CashFlowData);
-  let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
-    useRecoilState(CashFlowReCalculateLoading);
+  const DefaultUrl = useRecoilValue(defaultUrl);
+  const cashFlowData = useRecoilValue(CashFlowData);
 
-  let [cashFlowDownloading, setCashFlowDownloading] =
-    useRecoilState(CashFlowDownloading);
+  const [, setCashFlowReCalculateLoading] = useRecoilState(
+    CashFlowReCalculateLoading
+  );
+  const [, setCashFlowDownloading] = useRecoilState(CashFlowDownloading);
 
-  let initialValues = {};
+  const [flagState, setFlagState] = useState(false);
+  const [modalObject, setModalObject] = useState({});
 
-  let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
+  /* -------------------- INITIAL VALUES -------------------- */
+  const initialValues = {
+    LVR: "",
+    loanAmount: "",
+    loanBalance: "",
+    clientOwnership: "",
+    partnerOwnership: "",
+  };
 
+  /* -------------------- PREFILL -------------------- */
   const fillInitialValues = (setFieldValue) => {
     try {
-      if (
-        Object.keys(
-          props.modalObject.values[
-            props.modalObject.key + "CashFlowLoanBelanceLVR"
-          ] || {}
-        ).length > 0
-      ) {
-        let Data =
-          props.modalObject.values[
-            props.modalObject.key + "CashFlowLoanBelanceLVR"
-          ];
-        setFieldValue("LVR", Data.LVR);
-        setFieldValue("loanAmount", Data.loanAmount || "");
-        setFieldValue("loanBalance", Data.loanBalance || "");
-        setFieldValue("clientOwnership", Data.clientOwnership);
-        setFieldValue("partnerOwnership", Data.partnerOwnership);
-      } else if (
-        props.modalObject &&
-        props.modalObject.ParentObject &&
-        props.modalObject.ParentObject.values
-      ) {
-        let dataParent =
-          props.modalObject.ParentObject.values[
-            props.modalObject.ParentObject.key
-          ] || {};
-        console.log(dataParent.loanBalance, "dataParent.loanBalance");
+      const lvrKey = props.modalObject.key + "CashFlowLoanBelanceLVR";
 
-        setFieldValue("loanAmount", dataParent.loanBalance || "");
+      const existing = props.modalObject.values?.[lvrKey];
+
+      if (existing && Object.keys(existing).length) {
+        setFieldValue("LVR", existing.LVR || "");
+        setFieldValue("loanAmount", existing.loanAmount || "");
+        setFieldValue("loanBalance", existing.loanBalance || "");
+        setFieldValue("clientOwnership", existing.clientOwnership || "");
+        setFieldValue("partnerOwnership", existing.partnerOwnership || "");
+        return;
       }
-    } catch (error) {
-      console.error("Error filling initial values:", error);
+
+      const parentValues =
+        props.modalObject?.ParentObject?.values?.[
+          props.modalObject.ParentObject.key
+        ];
+
+      if (parentValues?.loanBalance) {
+        setFieldValue("loanAmount", parentValues.loanBalance);
+      }
+    } catch (err) {
+      console.error("LVR fill error:", err);
     }
   };
 
-  let onSubmit = async (values) => {
-    console.log(
-      "values",
-      values,
-      props.modalObject.key,
-      props.modalObject.ParentObject
-    );
+  /* -------------------- OWNERSHIP AUTO % -------------------- */
+  const calculatePercentage = (values, setFieldValue, currentInput) => {
+    let client =
+      parseFloat(values.clientOwnership?.replace(/[^0-9.]/g, "")) || 0;
+    let partner =
+      parseFloat(values.partnerOwnership?.replace(/[^0-9.]/g, "")) || 0;
 
-    props.setFieldValue(
-      props.modalObject.key + "CashFlowLoanBelanceLVR",
-      values
-    );
+    if (currentInput.name === "clientOwnership") {
+      client = Math.min(100, parseFloat(currentInput.value) || 0);
+      setFieldValue("partnerOwnership", (100 - client).toFixed(2) + "%");
+    }
 
+    if (currentInput.name === "partnerOwnership") {
+      partner = Math.min(100, parseFloat(currentInput.value) || 0);
+      setFieldValue("clientOwnership", (100 - partner).toFixed(2) + "%");
+    }
+  };
+
+  /* -------------------- TABLE COLUMNS -------------------- */
+  const columns = useMemo(() => {
+    const base = [
+      {
+        title: "Loan to Value Ratio (LVR)",
+        dataIndex: "LVR",
+        type: "number-toPercent",
+        placeholder: "Loan to Value Ratio (LVR)",
+      },
+      {
+        title: "Loan Amount",
+        placeholder: "Loan Amount",
+        dataIndex: "loanAmount",
+        type: "number-toComma",
+      },
+      {
+        title: "Loan Balance",
+        placeholder: "Loan Balance",
+        dataIndex: "loanBalance",
+        type: "number-toComma",
+        disabled: true,
+      },
+    ];
+
+    if (!props.modalObject.clientPartnerPer) {
+      base.push(
+        {
+          title: "Client % Ownership",
+          placeholder: "Client % Ownership",
+          dataIndex: "clientOwnership",
+          type: "number-toPercent",
+          callBack: true,
+          func: calculatePercentage,
+          disabled: true,
+        },
+        {
+          title: "Partner % Ownership",
+          placeholder: "Partner % Ownership",
+          dataIndex: "partnerOwnership",
+          type: "number-toPercent",
+          callBack: true,
+          func: calculatePercentage,
+          disabled: true,
+        }
+      );
+    }
+
+    return base;
+  }, [props.modalObject.clientPartnerPer]);
+
+  /* -------------------- SUBMIT (LOCAL) -------------------- */
+  const onSubmit = (values) => {
+    const lvrKey = props.modalObject.key + "CashFlowLoanBelanceLVR";
+
+    props.setFieldValue(lvrKey, values);
     props.setFieldValue(props.modalObject.key, values.loanAmount);
 
-    // Reset the flag state if necessary
-    if (props.flagState) {
-      props.setFlagState(false);
-    }
+    props.setFlagState?.(false);
+    props.setIsEditing(!props.isEditing);
   };
 
-  let CalculatePercentage = (
-    values,
-    setFieldValue,
-    CurrentInput,
-    stakeHolder
-  ) => {
-    // console.log(values, setFieldValue, CurrentInput, stakeHolder);
-
-    let clientOwnership = values.clientOwnership.replace(/[^0-9.]+/g, "") || 0;
-    let partnerOwnership =
-      values.partnerOwnership.replace(/[^0-9.]+/g, "") || 0;
-
-    switch (CurrentInput.name) {
-      case "clientOwnership":
-        clientOwnership = CurrentInput.value.replace(/[^0-9.]+/g, "");
-        setFieldValue(
-          "partnerOwnership",
-          (100 - (clientOwnership > 100 ? 100 : clientOwnership)).toFixed(2) +
-            "%"
-        );
-        break;
-      case "partnerOwnership":
-        partnerOwnership = CurrentInput.value.replace(/[^0-9.]+/g, "");
-        setFieldValue(
-          "clientOwnership",
-          (100 - (partnerOwnership > 100 ? 100 : partnerOwnership)).toFixed(2) +
-            "%"
-        );
-        break;
-      default:
-        console.log("Ma nahi Btao gha");
-        break;
-    }
-  };
-
-  const rowConfig = [
-    {
-      name: "LVR",
-      type: "number-toPercent",
-      placeholder: "LVR",
-    },
-    {
-      name: "loanAmount",
-      type: "number-toComma",
-      placeholder: "Loan Amount",
-    },
-    {
-      name: "loanBalance",
-      type: "number-toComma",
-      placeholder: "Loan Balance",
-      disabled: true,
-    },
-    {
-      name: "clientOwnership",
-      type: "number-toPercent",
-      callBack: true,
-      func: CalculatePercentage,
-      disabled: true,
-      placeholder: "Client Ownership",
-    },
-    {
-      name: "partnerOwnership",
-      type: "number-toPercent",
-      callBack: true,
-      func: CalculatePercentage,
-      placeholder: "Partner Ownership",
-      disabled: true,
-    },
-  ];
-
-  const handleChildButtonClick = async (values, setFieldValue) => {
+  /* -------------------- RECALCULATE -------------------- */
+  const handleRecalculate = async (values, setFieldValue) => {
     try {
+      setCashFlowReCalculateLoading(true);
+
       let updatedData = JSON.parse(JSON.stringify(cashFlowData));
 
-      const {
-        values: parentValues,
-        key,
-        title,
-        ParentObject,
-      } = props.modalObject;
+      const { ParentObject, key } = props.modalObject;
+      const { ParentObject: GrandParent, values: parentValues } = ParentObject;
 
-      const {
-        values: grandValues,
-        key: parentKey,
-        title: parentTitle,
-        ParentObject: GrandParentObject,
-      } = ParentObject;
+      const count = parseInt(GrandParent.values.numberOfProperties, 10) || 1;
 
-      const numberOfProperties =
-        parseInt(grandValues.numberOfProperties, 10) || 1;
-      const currentIndex = parentKey.match(/\d+/)?.[0] || 0; // Extract numeric index from key
+      const index = ParentObject.key.match(/\d+/)?.[0] || 0;
 
-      let structuredEntries = createStructuredEntries(
-        grandValues,
-        GrandParentObject.key,
-        numberOfProperties
+      let structured = createStructuredEntries(
+        GrandParent.values,
+        GrandParent.key,
+        count
       );
 
-      // Update the correct entry with new child modal values
-      structuredEntries[currentIndex][ParentObject.key.replace(/_\d+/, "")] =
-        parentValues;
+      structured[index][ParentObject.key.replace(/_\d+/, "")] = parentValues;
 
-      structuredEntries[currentIndex][ParentObject.key.replace(/_\d+/, "")][
+      structured[index][ParentObject.key.replace(/_\d+/, "")][
         key + "CashFlowLoanBelanceLVR"
       ] = values;
 
-      for (let i = 0; i < numberOfProperties; i++) {
-        if (i != currentIndex) {
-          structuredEntries[i].totalCostBaseObj = {};
-          structuredEntries[i].familyHomeLoanObj = {};
-        }
-      }
+      updatedData[GrandParent.key].client = structured;
+      updatedData[GrandParent.key].numberOfProperties = count;
 
-      updatedData[GrandParentObject.key].client = structuredEntries;
-      updatedData[GrandParentObject.key].numberOfProperties =
-        numberOfProperties;
-
-      // API Key Mapping
-      let apiKey = {
-        cf_familyHome: {
-          key: "cf_familyHome",
-          param: "INPUTS_Lifestyle_Assets_Debt",
-        },
-        cf_investmentsProperty: {
-          key: "financialInvestment",
-          param: "INPUTS_Property",
-        },
-        cf_FamilyTrustInvestmentProperties: {
-          key: "investmentsTrust",
-          param: "INPUTS_TRUST_Property",
-        },
-        cf_SMSFInvestmentProperties: {
-          key: "SMSF",
-          param: "INPUTS_SMSF_Property",
-        },
+      const apiMap = {
+        cf_familyHome: ["cf_familyHome", "INPUTS_Lifestyle_Assets_Debt"],
+        cf_investmentsProperty: ["financialInvestment", "INPUTS_Property"],
+        cf_FamilyTrustInvestmentProperties: [
+          "investmentsTrust",
+          "INPUTS_TRUST_Property",
+        ],
+        cf_SMSFInvestmentProperties: ["SMSF", "INPUTS_SMSF_Property"],
       };
 
-      let apiEndpoint = apiKey[ParentObject.ParentObject.key];
-      console.log(updatedData[GrandParentObject.key]);
+      const [apiKey, param] = apiMap[GrandParent.key];
 
-      // API Call
       const res = await PostAxios(
-        `${DefaultUrl}/api/cal/${apiEndpoint.key}/${apiEndpoint.param}`,
+        `${DefaultUrl}/api/cal/${apiKey}/${param}`,
         updatedData
       );
 
-      if (res) {
-        let loanData =
-          res.data[ParentObject.ParentObject.key][currentIndex]?.loan || {};
+      const loan = res.data[GrandParent.key][index]?.loan?.LVR || {};
 
-        setFieldValue("loanBalance", loanData.LVR?.loanBalance || 0);
+      setFieldValue("loanBalance", loan.loanBalance || 0);
 
-        if (!props.modalObject.clientPartnerPer) {
-          setFieldValue(
-            "clientOwnership",
-            structuredEntries[currentIndex].clientOwnership
-          );
-          setFieldValue(
-            "partnerOwnership",
-            structuredEntries[currentIndex].partnerOwnership
-          );
-        }
-
-        setCashFlowReCalculateLoading(false);
-        openNotificationSuccess(
-          "success",
-          "topRight",
-          "Success Notification",
-          `Data of "${title}" is Saved`
-        );
+      if (!props.modalObject.clientPartnerPer) {
+        setFieldValue("clientOwnership", structured[index].clientOwnership);
+        setFieldValue("partnerOwnership", structured[index].partnerOwnership);
       }
-    } catch (error) {
-      console.error("API Error:", error);
+
       openNotificationSuccess(
-        "error",
+        "success",
         "topRight",
-        "Error Notification",
-        `Data of "${props.modalObject.title}" was not saved. Please try again.`
+        "Success",
+        "LVR recalculated"
       );
+    } finally {
       setCashFlowReCalculateLoading(false);
     }
   };
 
-  const handleChildButtonDownloadClick = async (values, setFieldValue) => {
+  /* -------------------- DOWNLOAD -------------------- */
+  const handleDownload = async () => {
     try {
-      let updatedData = JSON.parse(JSON.stringify(cashFlowData));
+      setCashFlowDownloading(true);
 
-      const {
-        values: parentValues,
-        key,
-        title,
-        ParentObject,
-      } = props.modalObject;
-
-      const {
-        values: grandValues,
-        key: parentKey,
-        title: parentTitle,
-        ParentObject: GrandParentObject,
-      } = ParentObject;
-
-      const numberOfProperties =
-        parseInt(grandValues.numberOfProperties, 10) || 1;
-      const currentIndex = parentKey.match(/\d+/)?.[0] || 0; // Extract numeric index from key
-
-      let structuredEntries = createStructuredEntries(
-        grandValues,
-        GrandParentObject.key,
-        numberOfProperties
+      const res = await PostAxiosBlob(
+        `${DefaultUrl}/api/cal/workBookDownload`,
+        cashFlowData
       );
 
-      // Update the correct entry with new child modal values
-      structuredEntries[currentIndex][ParentObject.key.replace(/_\d+/, "")] =
-        parentValues;
+      const fileName = `UpdatedWorkbook_of_${RenderName("client")}.xlsx`;
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      a.click();
+      window.URL.revokeObjectURL(url);
 
-      structuredEntries[currentIndex][ParentObject.key.replace(/_\d+/, "")][
-        key + "CashFlowLoanBelanceLVR"
-      ] = values;
-
-      updatedData[GrandParentObject.key].client = structuredEntries;
-      updatedData[GrandParentObject.key].numberOfProperties =
-        numberOfProperties;
-
-      try {
-        const response = await PostAxiosBlob(
-          `${DefaultUrl}/api/cal/workBookDownload`,
-          updatedData
-        );
-
-        console.log(response, "response");
-
-        const fileName = `UpdatedWorkbook_of_${RenderName("client")}.xlsx`;
-
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
-
-        openNotificationSuccess(
-          "success",
-          "topRight",
-          "Success Notification",
-          `Excel file "${fileName}" is downloaded.`
-        );
-      } catch (error) {
-        console.error("Download Error:", error);
-        openNotificationSuccess(
-          "error",
-          "topRight",
-          "Download Failed",
-          "Something went wrong while downloading the Excel file."
-        );
-      } finally {
-        setCashFlowDownloading(false); // Always hide loading spinner
-      }
-    } catch (error) {
-      console.error("API Error:", error);
-      openNotificationSuccess(
-        "error",
-        "topRight",
-        "Error Notification",
-        `Data of "${props.modalObject.title}" was not saved. Please try again.`
-      );
-      setCashFlowReCalculateLoading(false);
+      openNotificationSuccess("success", "topRight", "Downloaded", fileName);
+    } finally {
+      setCashFlowDownloading(false);
     }
   };
 
@@ -370,80 +248,62 @@ const CashFlowLoanBelanceLVR = (props) => {
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, handleChange, setFieldValue, handleBlur }) => {
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
-        }, [values.NumberOfMap]);
+        }, []);
+
+        const dataRows = useMemo(() => {
+          return [
+            {
+              key: `CashFlowLoanBelanceLVR`,
+              LVR: values.LVR,
+              loanAmount: values.loanAmount,
+              loanBalance: values.loanBalance,
+              clientOwnership: values.clientOwnership,
+              partnerOwnership: values.partnerOwnership,
+            },
+          ];
+        }, [values]);
 
         return (
-          <Form>
+          <Form className="mt-4 All_Client reportSection">
             <InnerModal
               modalObject={modalObject}
               setFieldValue={setFieldValue}
               setFlagState={setFlagState}
               flagState={flagState}
-            ></InnerModal>
-            <Row>
-              <div className="col-md-12">
-                <div className="row justify-content-center">
-                  <div className="mt-4">
-                    <Table striped bordered responsive hover>
-                      <thead>
-                        <tr>
-                          <th>Loan to Value Ratio (LVR) </th>
-                          <th>Loan Amount</th>
-                          <th>Loan Balance</th>
-                          {!props.modalObject.clientPartnerPer && (
-                            <React.Fragment>
-                              <th>Client %Ownership</th>
-                              <th>Partner %Ownership</th>
-                            </React.Fragment>
-                          )}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <DynamicTableRow
-                          rowConfig={rowConfig.filter(
-                            (row) =>
-                              !props.modalObject.clientPartnerPer ||
-                              (row.name !== "clientOwnership" &&
-                                row.name !== "partnerOwnership")
-                          )}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                        />
-                      </tbody>
-                    </Table>
-                    <button
-                      ref={props.childButtonRef}
-                      onClick={() => {
-                        handleChildButtonClick(values, setFieldValue);
-                      }}
-                      style={{ display: "none" }} // Hidden button
-                      type="button"
-                    >
-                      Hidden Child Button
-                    </button>
-                    <button
-                      ref={props.childButtonDownloadRef}
-                      onClick={() => {
-                        handleChildButtonDownloadClick(values, setFieldValue);
-                      }}
-                      style={{ display: "none" }} // Hidden button
-                      type="button"
-                    >
-                      Hidden Child Button Download
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </Row>
+            />
+
+            <AntDTableHOC
+              columns={columns}
+              data={dataRows}
+              values={values}
+              setFieldValue={setFieldValue}
+              handleChange={handleChange}
+              handleBlur={handleBlur}
+              isEditing={props.isEditing}
+              setIsEditing={props.setIsEditing}
+            />
+
+            {/* Hidden triggers */}
+            <button
+              ref={props.childButtonRef}
+              type="button"
+              onClick={() => handleRecalculate(values, setFieldValue)}
+              hidden
+            />
+            <button
+              ref={props.childButtonDownloadRef}
+              type="button"
+              onClick={handleDownload}
+              hidden
+            />
           </Form>
         );
       }}
     </Formik>
   );
 };
+
 export default CashFlowLoanBelanceLVR;

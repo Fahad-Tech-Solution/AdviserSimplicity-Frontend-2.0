@@ -4,7 +4,7 @@ import { Layout } from "antd";
 import { content } from "../../Content/Content";
 import CashFlowLayout from "./CashFlowLayout";
 import CashFlowAllUsers from "./CashFlowAllUsers";
-import FunnalComp from "../Reports/FunnalComp";
+
 import Reports from "../Reports/Reports";
 import AdminSideBar from "../../Components/SideBar/AdminSideBar";
 import CashFlowOneClient from "./CashFlowOneClient";

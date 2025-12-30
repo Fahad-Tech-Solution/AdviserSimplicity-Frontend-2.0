@@ -295,6 +295,7 @@ const ModalComponent = (props) => {
     "SMSF Questions",
     "Investment Trust Questions",
     "Lifestyle Assets & Debt Questions",
+    "Personal Insurance",
     // "Personal Insurance",
   ];
 
