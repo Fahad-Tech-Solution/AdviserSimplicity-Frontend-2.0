@@ -119,6 +119,7 @@ const CashFlowOtherAsset = (props) => {
           ...cashFlowData,
           [objKey]: res,
         });
+
       }
 
       openNotificationSuccess(
@@ -129,6 +130,7 @@ const CashFlowOtherAsset = (props) => {
       );
 
       props.setFlagState?.(false);
+      props?.setIsEditing?.(false);
     } catch (error) {
       console.error(error);
       openNotificationSuccess(
@@ -279,7 +281,7 @@ const CashFlowOtherAsset = (props) => {
                 </div>
 
                 {values.owner.length > 0 && (
-                  <div className="mt-4 reportSection">
+                  <div className="mt-4 All_Client reportSection">
                     <AntdTable
                       columns={columns}
                       data={rows}

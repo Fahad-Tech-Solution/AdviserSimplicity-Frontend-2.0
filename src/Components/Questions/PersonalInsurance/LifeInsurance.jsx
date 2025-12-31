@@ -410,7 +410,7 @@ const PersonalInsuranceLife = (props) => {
       placeholder: "TPD",
       innerModalTitle: "_<CFE>_Lumpsum Cover (Life/TPD/Trauma)",
       func: handleInnerModal,
-      width: screens.xxl ? 180 : 140,
+      width: 140,
       disabled: true,
     },
     {
@@ -421,7 +421,7 @@ const PersonalInsuranceLife = (props) => {
       placeholder: "Trauma",
       innerModalTitle: "_<CFE>_Lumpsum Cover (Life/TPD/Trauma)",
       func: handleInnerModal,
-      width: 140,
+      width: screens.xxl ? 180 : 140,
       disabled: true,
     },
     {

@@ -355,6 +355,7 @@ const CashFlowCarsCardsTowInOne = (props) => {
                             onClick={() => {
                               OpenModal(elem);
                             }}
+                            role="button"
                           >
                             <div>
                               <FontAwesomeIcon

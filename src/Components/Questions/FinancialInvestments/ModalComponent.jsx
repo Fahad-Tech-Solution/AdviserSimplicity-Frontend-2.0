@@ -182,7 +182,6 @@ const ModalComponent = (props) => {
     "Family Investment Home Loan",
     "Family Investment Home Expanse",
     "Personal Loans",
-    "Australian Shares",
     // "Platform Investment",
     "Cash",
     "Investment Bonds",
@@ -244,6 +243,7 @@ const ModalComponent = (props) => {
     RenderName("partner") + "_Pension Benefits",
     "Jane_Insurance Cover (Retail)",
     "Employment Income",
+    "Australian Shares",
   ];
 
   let xlKey = [

@@ -232,7 +232,7 @@ const CashFlowOtherNoneTaxable = (props) => {
               </div>
 
               {values.owner.length > 0 && (
-                <div className="col-md-12 mt-4 reportSection">
+                <div className="col-md-12 mt-4 All_Client reportSection">
                   <AntDTableHOC
                     columns={columns}
                     data={tableData}

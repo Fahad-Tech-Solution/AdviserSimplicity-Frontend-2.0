@@ -1,100 +1,105 @@
-import React, { useEffect, useState } from 'react'
-import DynamicTableRow from '../../Components/Assets/Dynamic/DynamicTableRow';
-import { Form, Formik } from 'formik';
-import { Row, Table } from 'react-bootstrap';
+import React, { useEffect, useMemo } from "react";
+import { Form, Formik } from "formik";
+
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
+
+const AntDTableHOC = DynamicTableForInputsSection("antd");
 
 const InputOverride = (props) => {
+  /* -------------------- INITIAL VALUES -------------------- */
+  const initialValues = {
+    incomeYield: "",
+    growthRate: "",
+    franking: "",
+  };
 
-    let initialValues = {
-        incomeYield: "",
-        growthRate: "",
-        franking: "",
+  /* -------------------- PREFILL -------------------- */
+  const fillInitialValues = (setFieldValue) => {
+    const holderKey = props.modalObject.stakeHolder.replace(".", "");
+    const subObj = props.modalObject.values?.[holderKey];
+
+    if (subObj?.[props.modalObject.key + "Obj"]) {
+      const data = subObj[props.modalObject.key + "Obj"];
+      setFieldValue("incomeYield", data.incomeYield || "");
+      setFieldValue("growthRate", data.growthRate || "");
+      setFieldValue("franking", data.franking || "");
     }
+  };
 
-    let fillInitialValues = (setFieldValue) => {
-        if (props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")]) {
-            let SubObj = props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")]
-            if (SubObj[props.modalObject.key + "Obj"]) {
-                let Data = SubObj[props.modalObject.key + "Obj"];
-                setFieldValue("incomeYield", Data.incomeYield)
-                setFieldValue("growthRate", Data.growthRate)
-                setFieldValue("franking", Data.franking)
-            }
-        }
+  /* -------------------- SUBMIT -------------------- */
+  const onSubmit = (values) => {
+    props.setFieldValue(
+      props.modalObject.stakeHolder + props.modalObject.key + "Obj",
+      values
+    );
+
+    if (props.flagState) {
+      props.setFlagState(false);
+      props?.setIsEditing?.(false);
     }
+  };
 
-    let onSubmit = (values) => {
-        props.setFieldValue(props.modalObject.stakeHolder + props.modalObject.key + "Obj", values)
+  /* -------------------- TABLE COLUMNS -------------------- */
+  const columns = useMemo(
+    () => [
+      {
+        title: "Income Yield",
+        dataIndex: "incomeYield",
+        type: "number-toPercent",
+        placeholder: "Income Yield",
+      },
+      {
+        title: "Growth Rate",
+        dataIndex: "growthRate",
+        type: "number-toPercent",
+        placeholder: "Growth Rate",
+      },
+      {
+        title: "Franking",
+        dataIndex: "franking",
+        type: "number-toPercent",
+        placeholder: "Franking",
+      },
+    ],
+    []
+  );
 
-        // Reset the flag state if necessary
-        if (props.flagState) {
-            props.setFlagState(false);
-        }
-    }
+  return (
+    <Formik
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      enableReinitialize
+      innerRef={props.formRef}
+    >
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
+        useEffect(() => {
+          fillInitialValues(setFieldValue);
+        }, []);
 
-    let rowConfig = [
-        {
-            name: "incomeYield",
-            type: "number-toPercent",
-            placeholder: "Income Yield",
-        },
-        {
-            name: "growthRate",
-            type: "number-toPercent",
-            placeholder: "Growth Rate",
-        },
-        {
-            name: "franking",
-            type: "number-toPercent",
-            placeholder: "Franking",
-        },
-    ]
+        /* -------------------- TABLE DATA -------------------- */
 
-    return (
-        <Formik
-            initialValues={initialValues}
-            onSubmit={onSubmit}
-            enableReinitialize
-            innerRef={props.formRef}
-        >
-            {({ values, handleChange, setFieldValue, handleBlur }) => {
-                useEffect(() => {
-                    fillInitialValues(setFieldValue);
-                }, []);
+        const tableData = useMemo(() => {
+          return [{ key: "inputOverride", ...values }];
+        }, [values]);
 
-                return (
-                    <Form>
-                        <Row>
-                            <div className="col-md-12">
-                                <div className="row justify-content-center">
-                                    <div className="mt-4">
-                                        <Table striped bordered responsive hover>
-                                            <thead>
-                                                <tr>
-                                                    <th>Income Yield</th>
-                                                    <th>Growth Rate</th>
-                                                    <th>Franking</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <DynamicTableRow
-                                                    rowConfig={rowConfig}
-                                                    values={values}
-                                                    setFieldValue={setFieldValue}
-                                                    handleChange={handleChange}
-                                                    handleBlur={handleBlur}
-                                                />
-                                            </tbody>
-                                        </Table>
-                                    </div>
-                                </div>
-                            </div>
-                        </Row>
-                    </Form>
-                );
-            }}
-        </Formik>
-    )
-}
+        return (
+          <Form className="mt-4 All_Client reportSection">
+            <AntDTableHOC
+              columns={columns}
+              data={tableData}
+              values={values}
+              setFieldValue={setFieldValue}
+              handleChange={handleChange}
+              handleBlur={handleBlur}
+              handleSubmit={props.handleOk}
+              isEditing={props.isEditing}
+              setIsEditing={props.setIsEditing}
+            />
+          </Form>
+        );
+      }}
+    </Formik>
+  );
+};
 
-export default InputOverride
+export default InputOverride;

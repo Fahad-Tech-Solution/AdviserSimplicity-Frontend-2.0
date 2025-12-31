@@ -1,7 +1,15 @@
 import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
-import { CreatableMultiSelectField } from "../../Components/Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
-import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
+import { Row } from "react-bootstrap";
+import { useRecoilState, useRecoilValue } from "recoil";
+
+import {
+  CashFlowData,
+  CashFlowScenarioData,
+  defaultUrl,
+  QuestionDetail,
+} from "../../Store/Store";
+
 import {
   openNotificationSuccess,
   PatchAxios,
@@ -9,46 +17,41 @@ import {
   RenderName,
   toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
-import { Row, Table } from "react-bootstrap";
-import {
-  CashFlowData,
-  CashFlowScenarioData,
-  defaultUrl,
-  QuestionDetail,
-} from "../../Store/Store";
-import { useRecoilState, useRecoilValue } from "recoil";
+
+import { AntdCreatableMultiSelect } from "../../Components/Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
+
 import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 import InputOverride from "./InputOverride";
 import RegularContributions from "./RegularContributions";
 
+const AntdTable = DynamicTableForInputsSection("antd");
+
 const CashFlowAustralianShares = (props) => {
   /*
-       This component is a dynamic and reusable modal component designed to handle the following modal types:
-       1. "Australian Shares"
-       2. "Platform Investment"
-       3. "Other Investments"
-       4. "SMSF Australian Shares"
-       s. "SMSF Platform Investment"
-   
-       TODO-IMPORTANT:
-       - Ensure any changes to this component are planned carefully to avoid unintended effects on all supported modals.
-       - If specific modifications are required for one modal type, consider implementing targeted logic or extensions 
-         to maintain the integrity of the shared functionality.
-   */
+         This component is a dynamic and reusable modal component designed to handle the following modal types:
+         1. "Australian Shares"
+         2. "Platform Investment"
+         3. "Other Investments"
+         4. "SMSF Australian Shares"
+         s. "SMSF Platform Investment"
+     
+         TODO-IMPORTANT:
+         - Ensure any changes to this component are planned carefully to avoid unintended effects on all supported modals.
+         - If specific modifications are required for one modal type, consider implementing targeted logic or extensions 
+           to maintain the integrity of the shared functionality.
+     */
 
-  let questionDetail = useRecoilValue(QuestionDetail);
-  let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
-  let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const questionDetail = useRecoilValue(QuestionDetail);
+  const [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+  const CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const DefaultUrl = useRecoilValue(defaultUrl);
 
-  let [UserStatus] = useState(localStorage.getItem("UserStatus"));
-  let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
+  const [UserStatus] = useState(localStorage.getItem("UserStatus"));
+  const objKey = props.modalObject.key;
 
-  let DefaultUrl = useRecoilValue(defaultUrl);
-
-  let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
-
-  let layoutSwitchArray = [
+  /* ---------------- Layout Switches ---------------- */
+  const layoutSwitchArray = [
     "Platform Investment",
     "Other Investments",
     "SMSF Platform Investment",
@@ -59,14 +62,7 @@ const CashFlowAustralianShares = (props) => {
     "Family Trust",
   ];
 
-  let [layoutSwitchFlag, setLayoutSwitchFlag] = useState(() => {
-    if (layoutSwitchArray.includes(props.modalObject.title)) {
-      return true;
-    }
-    return false;
-  });
-
-  let layoutSwitchSMSFArray = [
+  const layoutSwitchSMSFArray = [
     "SMSF Platform Investment",
     "SMSF Australian Shares",
     "SMSF",
@@ -75,310 +71,133 @@ const CashFlowAustralianShares = (props) => {
     "Family Trust",
   ];
 
-  let [layoutSwitchSMSFFlag, setLayoutSwitchSMSFFlag] = useState(() => {
-    if (layoutSwitchSMSFArray.includes(props.modalObject.title)) {
-      return true;
-    }
-    return false;
-  });
+  const layoutSwitchFlag = layoutSwitchArray.includes(props.modalObject.title);
+  const layoutSwitchSMSFFlag = layoutSwitchSMSFArray.includes(
+    props.modalObject.title
+  );
 
-  let BankAccountFinance =
-    Object.keys(questionDetail[props.modalObject.sourceKey] || {}).length > 0
-      ? questionDetail[props.modalObject.sourceKey]
-      : {
-          client: [],
-          joint: [],
-          partner: [],
-        }; // Use an empty object as default if BankAccountFinance is undefined
+  /* ---------------- Modal State ---------------- */
+  const [flagState, setFlagState] = useState(false);
+  const [modalObject, setModalObject] = useState({});
 
-  let initialValues = {
+  /* ---------------- Initial Values ---------------- */
+  const initialValues = {
     owner: layoutSwitchSMSFFlag ? ["client"] : [],
-    client: {
-      // riskProfile: layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
-      cashOutFunds: "No",
-    },
-    partner: {
-      // riskProfile: layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
-      cashOutFunds: "No",
-    },
-    joint: {
-      // riskProfile: layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
-      cashOutFunds: "No",
-    },
+    client: { cashOutFunds: "No" },
+    partner: { cashOutFunds: "No" },
+    joint: { cashOutFunds: "No" },
   };
 
+  /* ---------------- Fill Initial Values ---------------- */
   const fillInitialValues = (setFieldValue) => {
-    try {
-      // Set the object and API key
-      setObjAndAPIKey(props.modalObject.key);
+    const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+    const data = CashFlowScenarioDataObj?.[objKey] || cashFlowData?.[objKey];
 
-      // console.log(BankAccountFinance, "Discovery Form Data " + props.modalObject.key + " and SourceKey " + props.modalObject.sourceKey, BankAccountFinance.client);
-      console.log(
-        cashFlowData?.[objAndAPIKey].client.investmentFees,
-        "cashFlowData Form Data"
-      );
-      // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
+    if (!data) return;
 
-      const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+    setFieldValue(
+      "owner",
+      layoutSwitchSMSFFlag
+        ? data.owner?.filter((o) => o === "client")
+        : data.owner || []
+    );
 
-      // Helper function to update field values
-      const updateFields = (data, prefix) => {
-        if (!data || !Object.keys(data).length) return;
-
-        const fields = {
-          currentBalance: data.currentBalance || "$0",
-          costBase: data.costBase || "$0",
-          investmentReturns: data.investmentReturns || "",
-          investmentReturnsObj: data.investmentReturnsObj || {},
-          reinvestIncome: data.reinvestIncome || "No",
-          reinvestUpUntil: data.reinvestUpUntil || "",
-          regularContributions: data.regularContributions || "No",
-          regularContributionsObj: data.regularContributionsObj || {},
-          // riskProfile: data.riskProfile || layoutSwitchArray.includes(props.modalObject.title) ? "" : "Australian Shares",
-          riskProfile: data.riskProfile
-            ? data.riskProfile
-            : layoutSwitchArray.includes(props.modalObject.title)
-            ? ""
-            : "Australian Shares",
-
-          cashOutFunds: data.cashOutFunds || "No",
-        };
-
-        if (layoutSwitchArray.includes(props.modalObject.title)) {
-          fields.investmentFees = data.investmentFees || "2.50%";
-        }
-
-        Object.entries(fields).forEach(([key, value]) => {
-          setFieldValue(`${prefix}.${key}`, value);
-        });
-      };
-
-      // Update owner field
+    ["client", "partner", "joint"].forEach((stake) => {
       if (
-        scenarioObj?.selectedSource === "discoveryForm" &&
-        BankAccountFinance &&
-        BankAccountFinance._id
+        data.owner?.includes(stake) &&
+        data[stake] &&
+        (!layoutSwitchSMSFFlag || stake === "client")
       ) {
-        // setFieldValue(`owner`, BankAccountFinance.owner || "");
-
-        // Update client-related fields
-        if (BankAccountFinance?.client.length > 0) {
-          let Obj = {
-            currentBalance: BankAccountFinance.clientCurrentBalance,
-            costBase: BankAccountFinance.clientCostBaseTemp,
-          };
-          updateFields(Obj, "client");
-        }
-
-        if (
-          UserStatus === "Married" &&
-          BankAccountFinance?.partner?.length > 0
-        ) {
-          // Update partner-related fields
-          const Obj = {
-            currentBalance: BankAccountFinance.partnerCurrentBalance || 0, // Fallback to 0 if undefined
-            costBase: BankAccountFinance.partnerCostBaseTemp || 0, // Fallback to 0 if undefined
-          };
-          updateFields(Obj, "partner");
-        } else {
-          console.warn(
-            "No partner data available or UserStatus is not 'Married'"
-          );
-        }
-
-        // Update joint-related fields
-        if (UserStatus === "Married" && BankAccountFinance?.joint?.length > 0) {
-          const Obj = {
-            currentBalance: BankAccountFinance.jointCurrentBalance || 0, // Fallback to 0 if undefined
-            costBase: BankAccountFinance.jointCostBaseTemp || 0, // Fallback to 0 if undefined
-          };
-          updateFields(Obj, "joint");
-        } else {
-          console.warn(
-            "No joint data available or UserStatus is not 'Married'"
-          );
-        }
-      } else {
-        // Handle cashFlowData scenario
-        const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-        console.log(cashFlowDetails, "cashFlowDetails");
-
-        if (cashFlowDetails) {
-          setFieldValue(
-            "owner",
-            layoutSwitchSMSFFlag
-              ? cashFlowDetails.owner?.filter((item) => item === "client")
-              : cashFlowDetails.owner || ""
-          );
-          if (cashFlowDetails.owner.includes("client")) {
-            // Update client details
-            updateFields(cashFlowDetails.client, "client");
-          }
-          if (!layoutSwitchSMSFFlag) {
-            if (
-              UserStatus === "Married" &&
-              cashFlowDetails.owner.includes("partner")
-            ) {
-              // Update partner details
-              updateFields(cashFlowDetails.partner, "partner");
-            }
-
-            if (
-              UserStatus === "Married" &&
-              cashFlowDetails.owner.includes("joint")
-            ) {
-              // Update partner details
-              updateFields(cashFlowDetails.joint, "joint");
-            }
-          }
-        }
+        Object.entries(data[stake]).forEach(([k, v]) => {
+          setFieldValue(`${stake}.${k}`, v ?? "");
+        });
       }
-
-      // Additional data from cashFlowData
-      if (cashFlowData?.[objAndAPIKey]?._id) {
-        const cashFlowDataDetails = cashFlowData[objAndAPIKey];
-        setFieldValue(
-          "owner",
-          layoutSwitchSMSFFlag
-            ? cashFlowDataDetails.owner?.filter((item) => item === "client")
-            : cashFlowDataDetails.owner || ""
-        );
-
-        if (cashFlowDataDetails.owner.includes("client")) {
-          // Update client details
-          updateFields(cashFlowDataDetails.client, "client");
-        }
-
-        if (!layoutSwitchSMSFFlag) {
-          if (
-            UserStatus === "Married" &&
-            cashFlowDataDetails.owner.includes("partner")
-          ) {
-            // Update partner details
-            updateFields(cashFlowDataDetails.partner, "partner");
-          }
-
-          if (
-            UserStatus === "Married" &&
-            cashFlowDataDetails.owner.includes("joint")
-          ) {
-            // Update partner details
-            updateFields(cashFlowDataDetails.joint, "joint");
-          }
-        }
-      }
-    } catch (error) {
-      console.error("Error in fillInitialValues:", error);
-    }
+    });
   };
 
-  let onSubmit = async (values) => {
-    console.log(JSON.stringify(values));
-    // return (false);
-    let obj = values;
+  /* ---------------- Submit ---------------- */
+  const onSubmit = async (values) => {
+    const obj = {
+      ...values,
+      scenarioFK: JSON.parse(localStorage.getItem("ScenarioObj"))._id,
+    };
 
-    obj.scenarioFK = JSON.parse(localStorage.getItem("ScenarioObj"))._id;
+    let jointBalance = 0;
 
-    let JointCurrentBalance = 0;
-
-    if (values.owner.includes("joint") && layoutSwitchSMSFFlag === false) {
-      JointCurrentBalance = parseFloat(
-        values.joint.currentBalance.replace(/[^0-9.-]+/g, "")
+    if (values.owner.includes("joint") && !layoutSwitchSMSFFlag) {
+      jointBalance = parseFloat(
+        values.joint.currentBalance?.replace(/[^0-9.-]+/g, "") || 0
       );
     }
 
-    if (values.owner.includes("client")) {
-      obj.clientTotal =
-        toCommaAndDollar(
-          parseFloat(values.client.currentBalance.replace(/[^0-9.-]+/g, "")) +
-            JointCurrentBalance / 2
-        ) || "$0";
-    } else {
-      obj.clientTotal = "";
-    }
+    obj.clientTotal = values.owner.includes("client")
+      ? toCommaAndDollar(
+          parseFloat(
+            values.client.currentBalance?.replace(/[^0-9.-]+/g, "") || 0
+          ) +
+            jointBalance / 2
+        )
+      : "";
 
-    if (values.owner.includes("partner")) {
-      obj.partnerTotal =
-        toCommaAndDollar(
-          parseFloat(values.partner.currentBalance.replace(/[^0-9.-]+/g, "")) +
-            JointCurrentBalance / 2
-        ) || "$0";
-    } else {
-      obj.partnerTotal = "";
-    }
+    obj.partnerTotal = values.owner.includes("partner")
+      ? toCommaAndDollar(
+          parseFloat(
+            values.partner.currentBalance?.replace(/[^0-9.-]+/g, "") || 0
+          ) +
+            jointBalance / 2
+        )
+      : "";
 
     if (layoutSwitchSMSFFlag) {
-      obj.jointTotal = undefined;
-      obj.joint = undefined;
       obj.partner = undefined;
       obj.partnerTotal = undefined;
+      obj.joint = undefined;
+      obj.jointTotal = undefined;
     }
 
-    const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
-
-    console.log(obj, "final obj");
-
     try {
-      let res;
-      if (!bankAccountArray) {
-        res = await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
-      } else {
-        res = await PatchAxios(
-          `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
-          obj
-        );
-      }
+      const exists = cashFlowData?.[objKey]?._id;
+      const res = exists
+        ? await PatchAxios(`${DefaultUrl}/api/CF/${objKey}/Update`, obj)
+        : await PostAxios(`${DefaultUrl}/api/CF/${objKey}/Add`, obj);
 
       if (res) {
-        console.log(res);
-        const updatedData = {
+        setCashFlowData({
           ...cashFlowData,
-          [objAndAPIKey]: res,
-        };
-        setCashFlowData(updatedData);
+          [objKey]: res,
+        });
       }
 
       openNotificationSuccess(
         "success",
         "topRight",
-        "Success Notification",
-        'Data of "' + props.modalObject.title + '" is Saved'
+        "Success",
+        `Data of "${props.modalObject.title}" is saved`
       );
 
-      // Reset the flag state if necessary
-      if (props.flagState) {
-        props.setFlagState(false);
-      }
-    } catch (error) {
-      console.error("Error occurred while making API call:", error);
+      props.setFlagState?.(false);
+      props?.setIsEditing?.(false);
+    } catch (err) {
+      console.error(err);
       openNotificationSuccess(
         "error",
         "topRight",
-        "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        "Error",
+        `Data of "${props.modalObject.title}" not saved`
       );
     }
   };
 
-  let handleInnerModal = (title, values, key, stakeHolder) => {
-    // console.log(title, values, key);
-    setModalObject({
-      title,
-      values,
-      key,
-      stakeHolder,
-    });
+  /* ---------------- Inner Modal ---------------- */
+  const handleInnerModal = (title, values, key, stakeHolder) => {
+    setModalObject({ title, values, key, stakeHolder });
     setFlagState(true);
   };
 
-  const loanTermOptions = Array.from({ length: 31 }, (_, i) => {
-    return {
-      value: i.toString(),
-      label: ("Year " + i).toString(),
-    };
-  });
+  const componentMapping = {
+    "Input Override": <InputOverride />,
+    "Regular Contributions": <RegularContributions />,
+  };
 
   const reinvestUpUntilOptions = Array.from({ length: 31 }, (_, i) => {
     return {
@@ -387,24 +206,22 @@ const CashFlowAustralianShares = (props) => {
     };
   });
 
-  const options =
-    UserStatus !== "Single"
-      ? layoutSwitchSMSFFlag
-        ? [
-            { value: "client", label: RenderName("client") },
-            // { value: "partner", label: RenderName("partner") },
-          ]
-        : [
-            { value: "client", label: RenderName("client") },
-            { value: "partner", label: RenderName("partner") },
-            { value: "joint", label: RenderName("joint") },
-          ]
-      : [{ value: "client", label: RenderName("client") }];
-
   let investmentReturnsOptions = [
     { value: "system", label: "System" },
     { value: "input Override", label: "Input Override" },
   ];
+
+  let RiskProfileOnlyAustralianOptionArray = [
+    "Family Trust Australian Shares",
+    "SMSF Australian Shares",
+    "Australian Shares",
+  ];
+  const loanTermOptions = Array.from({ length: 31 }, (_, i) => {
+    return {
+      value: i.toString(),
+      label: ("Year " + i).toString(),
+    };
+  });
 
   let riskProfileOptions = [
     { value: "Conservative", label: "Conservative" },
@@ -424,107 +241,83 @@ const CashFlowAustralianShares = (props) => {
     { value: "Australian Shares", label: "Australian Shares" },
   ];
 
-  let RiskProfileOnlyAustralianOptionArray = [
-    "Family Trust Australian Shares",
-    "SMSF Australian Shares",
-    "Australian Shares",
+  /* ---------------- Table Columns ---------------- */
+  const columns = [
+    { title: "Owner", dataIndex: "owner", type: "label", justText: true },
+    {
+      title: layoutSwitchSMSFFlag ? "Opening Balance" : "Current Balance",
+      dataIndex: "currentBalance",
+      type: "number-toComma",
+    },
+    { title: "Cost Base", dataIndex: "costBase", type: "number-toComma" },
+    {
+      title: "Investment Returns",
+      dataIndex: "investmentReturns",
+      key: "investmentReturns",
+      type: "selectModal",
+      ModalOption: "input Override",
+      selectedOptionValue: true,
+      innerModalTitle: "Input Override",
+      options: investmentReturnsOptions,
+      func: handleInnerModal,
+    },
+    { title: "Reinvest Income", dataIndex: "reinvestIncome", type: "yesno" },
+    {
+      title: "Reinvest Up Until",
+      dataIndex: "reinvestUpUntil",
+      type: "select",
+      selectedOptionValue: true,
+      options: reinvestUpUntilOptions,
+    },
+    {
+      title: "Regular Contributions",
+      dataIndex: "regularContributions",
+      type: "yesnoModal",
+      innerModalTitle: "Regular Contributions",
+      key: "regularContributions",
+      callBack: true,
+      func: handleInnerModal,
+    },
+    {
+      title: "Risk Profile / SAA",
+      dataIndex: "riskProfile",
+      type: "select",
+      options: RiskProfileOnlyAustralianOptionArray.includes(
+        props.modalObject.title
+      )
+        ? [{ value: "Australian Shares", label: "Australian Shares" }]
+        : riskProfileOptions,
+    },
+    ...(layoutSwitchFlag
+      ? [
+          {
+            title: "Investment Fees",
+            dataIndex: "investmentFees",
+            type: "number-toPercent",
+          },
+        ]
+      : []),
+    {
+      title: "Cashout Funds",
+      dataIndex: "cashOutFunds",
+      type: "select",
+      options: loanTermOptions,
+    },
   ];
 
-  const [rowConfig, setRowConfig] = useState(() => {
-    let OriginalArray = [
-      {
-        name: "currentBalance",
-        type: "number-toComma",
-        placeholder: layoutSwitchSMSFFlag
-          ? props.modalObject.title === "SMSF" ||
-            props.modalObject.title === "Family Trust"
-            ? "Current Balance"
-            : "Opening Balance"
-          : "Current Balance",
-      },
-      {
-        name: "costBase",
-        type: "number-toComma",
-        placeholder: "Cost Base",
-      },
-      {
-        name: "investmentReturns",
-        type: "selectModal",
-        placeholder: "Investment Returns",
-        options: investmentReturnsOptions,
-        ModalOption: "input Override",
-        innerModalTitle: "Input Override",
-        key: "investmentReturns",
-      },
-      {
-        name: "reinvestIncome",
-        type: "yesno", width: 100,
-        placeholder: "Reinvest income",
-      },
-      {
-        name: "reinvestUpUntil",
-        type: "select",
-        options: reinvestUpUntilOptions,
-        placeholder: "Reinvest Up Until",
-      },
-      {
-        name: "regularContributions",
-        type: "yesnoModal",
-        placeholder: "Regular Contributions",
-        callBack: true,
-        key: "regularContributions",
-        innerModalTitle: "Regular Contributions",
-        func: handleInnerModal,
-      },
-      {
-        name: "riskProfile",
-        type: "select",
-        placeholder: "Risk Profile",
-        options: RiskProfileOnlyAustralianOptionArray.includes(
-          props.modalObject.title
-        )
-          ? [{ value: "Australian Shares", label: "Australian Shares" }]
-          : riskProfileOptions,
-      },
-      {
-        name: "cashOutFunds",
-        type: "select",
-        placeholder: "Cashout Funds",
-        options: loanTermOptions,
-      },
-    ];
+  /* ---------------- Owner Options ---------------- */
+  const options =
+    UserStatus !== "Single"
+      ? layoutSwitchSMSFFlag
+        ? [{ value: "client", label: RenderName("client") }]
+        : [
+            { value: "client", label: RenderName("client") },
+            { value: "partner", label: RenderName("partner") },
+            { value: "joint", label: RenderName("joint") },
+          ]
+      : [{ value: "client", label: RenderName("client") }];
 
-    if (layoutSwitchArray.includes(props.modalObject.title)) {
-      // Create the new object
-      const newObject = {
-        name: "investmentFees",
-        type: "number-toPercent",
-        placeholder: "Investment Fees",
-      };
-
-      // Find the index of the "cashOutFunds" object
-      const cashOutFundsIndex = OriginalArray.findIndex(
-        (item) => item.name === "cashOutFunds"
-      );
-
-      // Insert the new object before "cashOutFunds"
-      if (cashOutFundsIndex !== -1) {
-        OriginalArray.splice(cashOutFundsIndex, 0, newObject);
-      }
-    }
-
-    return OriginalArray;
-  });
-
-  const componentMapping = {
-    "Input Override": <InputOverride />,
-    "Regular Contributions": <RegularContributions />,
-  };
-
-  const ModalContent = (obj) => {
-    return componentMapping[obj.title] || null;
-  };
-
+  /* ---------------- Render ---------------- */
   return (
     <Formik
       initialValues={initialValues}
@@ -537,6 +330,32 @@ const CashFlowAustralianShares = (props) => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        const rows = [];
+
+        if (values.owner.includes("client"))
+          rows.push({
+            key: "client",
+            owner: RenderName("client"),
+            stakeHolder: "client",
+            ...values.client,
+          });
+
+        if (values.owner.includes("partner") && UserStatus === "Married")
+          rows.push({
+            key: "partner",
+            owner: RenderName("partner"),
+            stakeHolder: "partner",
+            ...values.partner,
+          });
+
+        if (values.owner.includes("joint") && UserStatus === "Married")
+          rows.push({
+            key: "joint",
+            owner: RenderName("joint"),
+            stakeHolder: "joint",
+            ...values.joint,
+          });
+
         return (
           <Form>
             <Row>
@@ -546,96 +365,39 @@ const CashFlowAustralianShares = (props) => {
                 setFlagState={setFlagState}
                 flagState={flagState}
               >
-                {ModalContent(modalObject)}
+                {componentMapping[modalObject.title]}
               </InnerModal>
+
               {!layoutSwitchSMSFFlag && (
                 <div className="col-md-12">
-                  <div className="d-flex justify-content-center align-items-center gap-4">
-                    <label htmlFor="" className="text-end ">
+                  <div className="d-flex justify-content-center align-items-center gap-2">
+                    <label className="mb-0" onClick={() => console.log(values)}>
                       Owner
                     </label>
-
-                    <div style={{ minWidth: "25%" }}>
+                    <div style={{ minWidth: 220 }}>
                       <Field
-                        name={`owner`}
-                        component={CreatableMultiSelectField}
-                        label="Multi Select Field"
+                        name="owner"
+                        component={AntdCreatableMultiSelect}
                         options={options}
                       />
                     </div>
                   </div>
                 </div>
               )}
+
               {values.owner.length > 0 && (
-                <div className="mt-4">
-                  <Table striped bordered responsive hover>
-                    <thead>
-                      <tr>
-                        <th
-                          onClick={() => {
-                            console.log(values);
-                          }}
-                        >
-                          Owner
-                        </th>
-                        <th>
-                          {layoutSwitchSMSFFlag
-                            ? props.modalObject.title === "SMSF" ||
-                              props.modalObject.title === "Family Trust"
-                              ? "Current Balance"
-                              : "Opening Balance"
-                            : "Current Balance"}
-                        </th>
-                        <th>Cost Base</th>
-                        <th>Investment Returns</th>
-                        <th>Reinvest income</th>
-                        <th style={{ color: "black" }}>Reinvest Up Until</th>
-                        <th>Regular Contributions</th>
-                        <th>Risk Profile/SAA</th>
-                        {layoutSwitchFlag && <th>Investment Fees</th>}
-                        <th>Cashout Funds</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {values.owner.includes("client") && (
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                          handleInnerModal={handleInnerModal}
-                          stakeHolder="client."
-                        />
-                      )}
-
-                      {values.owner.includes("partner") &&
-                        UserStatus === "Married" && (
-                          <DynamicTableRow
-                            rowConfig={rowConfig}
-                            values={values}
-                            setFieldValue={setFieldValue}
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                            handleInnerModal={handleInnerModal}
-                            stakeHolder="partner."
-                          />
-                        )}
-
-                      {values.owner.includes("joint") &&
-                        UserStatus === "Married" && (
-                          <DynamicTableRow
-                            rowConfig={rowConfig}
-                            values={values}
-                            setFieldValue={setFieldValue}
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                            handleInnerModal={handleInnerModal}
-                            stakeHolder="joint."
-                          />
-                        )}
-                    </tbody>
-                  </Table>
+                <div className="mt-4 All_Client reportSection">
+                  <AntdTable
+                    columns={columns}
+                    data={rows}
+                    values={values}
+                    setFieldValue={setFieldValue}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                    handleSubmit={props?.handleOk}
+                    isEditing={props?.isEditing}
+                    setIsEditing={props?.setIsEditing}
+                  />
                 </div>
               )}
             </Row>

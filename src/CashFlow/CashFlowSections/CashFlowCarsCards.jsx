@@ -120,6 +120,7 @@ const CashFlowCarsCards = (props) => {
                             onClick={() => {
                               OpenModal(CashFlowElem);
                             }}
+                            role="button"
                           >
                             <div>
                               <FontAwesomeIcon

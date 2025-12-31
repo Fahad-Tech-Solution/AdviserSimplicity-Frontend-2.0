@@ -32,15 +32,13 @@ const CashFlowBusinessIncome = (props) => {
   const [UserStatus] = useState(localStorage.getItem("UserStatus"));
 
   /* -------------------- DISCOVERY DATA -------------------- */
-  const incomeFromSoleTrader =
-    questionDetail?.incomeFromSoleTrader?._id
-      ? questionDetail.incomeFromSoleTrader
-      : {};
+  const incomeFromSoleTrader = questionDetail?.incomeFromSoleTrader?._id
+    ? questionDetail.incomeFromSoleTrader
+    : {};
 
-  const incomeFromPartnership =
-    questionDetail?.incomeFromPartnership?._id
-      ? questionDetail.incomeFromPartnership
-      : {};
+  const incomeFromPartnership = questionDetail?.incomeFromPartnership?._id
+    ? questionDetail.incomeFromPartnership
+    : {};
 
   /* -------------------- INITIAL VALUES -------------------- */
   const initialValues = {
@@ -87,8 +85,7 @@ const CashFlowBusinessIncome = (props) => {
         setFieldValue("owner", incomeFromSoleTrader.owner || []);
 
         if (incomeFromSoleTrader.owner.includes("client")) {
-          const sole =
-            incomeFromSoleTrader.client?.netBusinessIncome || "$0";
+          const sole = incomeFromSoleTrader.client?.netBusinessIncome || "$0";
           const partner =
             incomeFromPartnership.client?.totalNetPartnershipIncome || "$0";
 
@@ -107,8 +104,7 @@ const CashFlowBusinessIncome = (props) => {
           incomeFromSoleTrader.owner.includes("partner") &&
           UserStatus === "Married"
         ) {
-          const sole =
-            incomeFromSoleTrader.partner?.netBusinessIncome || "$0";
+          const sole = incomeFromSoleTrader.partner?.netBusinessIncome || "$0";
           const partner =
             incomeFromPartnership.partner?.totalNetPartnershipIncome || "$0";
 
@@ -147,10 +143,7 @@ const CashFlowBusinessIncome = (props) => {
         if (savedData.owner.includes("client")) {
           mapFields(savedData.client, "client");
         }
-        if (
-          savedData.owner.includes("partner") &&
-          UserStatus === "Married"
-        ) {
+        if (savedData.owner.includes("partner") && UserStatus === "Married") {
           mapFields(savedData.partner, "partner");
         }
       }
@@ -297,7 +290,7 @@ const CashFlowBusinessIncome = (props) => {
               </div>
 
               {values.owner.length > 0 && (
-                <div className="col-md-12 mt-4 reportSection">
+                <div className="col-md-12 mt-4 All_Client reportSection">
                   <AntDTableHOC
                     columns={columns}
                     data={tableData}

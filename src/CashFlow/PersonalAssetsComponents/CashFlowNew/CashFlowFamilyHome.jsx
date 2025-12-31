@@ -127,6 +127,7 @@ const CashFlowFamilyHome = (props) => {
       );
 
       props.flagState && props.setFlagState(false);
+      props?.setIsEditing?.(false);
     } catch {
       openNotificationSuccess(
         "error",

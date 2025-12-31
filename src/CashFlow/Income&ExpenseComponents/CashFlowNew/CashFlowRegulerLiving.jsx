@@ -265,7 +265,7 @@ const CashFlowRegularLiving = (props) => {
         return (
           <Form>
             <Row>
-              <div className="col-md-12 mt-4 reportSection">
+              <div className="col-md-12 mt-4 All_Client reportSection">
                 <AntdTable
                   columns={finalColumns}
                   data={dataRows}

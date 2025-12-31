@@ -118,8 +118,7 @@ const InvestmentPropertyLoan = (props) => {
 
     let total = newEntries.reduce(
       (total, entry) =>
-        total +
-        (parseFloat(entry.AnnualRepayments.replace(/[^0-9.-]+/g, "")) || 0),
+        total + (parseFloat(entry.LoanBalance.replace(/[^0-9.-]+/g, "")) || 0),
       0
     );
 

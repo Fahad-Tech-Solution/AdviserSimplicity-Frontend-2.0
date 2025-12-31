@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
-import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
+import React, { useEffect, useMemo } from "react";
 import { Form, Formik } from "formik";
-import { Row, Table } from "react-bootstrap";
+
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
+
+const AntDTableHOC = DynamicTableForInputsSection("antd");
 
 const RegularContributions = (props) => {
-  let initialValues = {
+  /* -------------------- INITIAL VALUES -------------------- */
+  const initialValues = {
     contribution: "",
     regularContributions: "",
     contributeFromYear: "",
@@ -12,78 +15,90 @@ const RegularContributions = (props) => {
     indexation: "",
   };
 
-  let fillInitialValues = (setFieldValue) => {
-    console.log(props.modalObject);
-    if (
-      props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")]
-    ) {
-      let SubObj =
-        props.modalObject.values[
-          props.modalObject.stakeHolder.replace(".", "")
-        ];
-      if (SubObj[props.modalObject.key + "Obj"]) {
-        let Data = SubObj[props.modalObject.key + "Obj"];
-        setFieldValue("contribution", Data.contribution);
-        setFieldValue("regularContributions", Data.regularContributions);
-        setFieldValue("contributeFromYear", Data.contributeFromYear);
-        setFieldValue("contributeUpUntil", Data.contributeUpUntil);
-        setFieldValue("indexation", Data.indexation);
-      }
+  /* -------------------- PREFILL -------------------- */
+  const fillInitialValues = (setFieldValue) => {
+    const holderKey = props.modalObject.stakeHolder.replace(".", "");
+    const subObj = props.modalObject.values?.[holderKey];
+
+    if (subObj?.[props.modalObject.key + "Obj"]) {
+      const data = subObj[props.modalObject.key + "Obj"];
+      setFieldValue("contribution", data.contribution || "");
+      setFieldValue("regularContributions", data.regularContributions || "");
+      setFieldValue("contributeFromYear", data.contributeFromYear || "");
+      setFieldValue("contributeUpUntil", data.contributeUpUntil || "");
+      setFieldValue("indexation", data.indexation || "");
     }
   };
 
-  let onSubmit = (values) => {
+  /* -------------------- SUBMIT -------------------- */
+  const onSubmit = (values) => {
     props.setFieldValue(
       props.modalObject.stakeHolder + props.modalObject.key + "Obj",
       values
     );
 
-    // Reset the flag state if necessary
     if (props.flagState) {
       props.setFlagState(false);
+      props?.setIsEditing?.(false);
     }
   };
 
-  const loanTermOptions = Array.from({ length: 31 }, (_, i) => ({
-    value: i,
-    label: ("Year " + i).toString(),
-  }));
+  /* -------------------- OPTIONS -------------------- */
+  const loanTermOptions = useMemo(
+    () =>
+      Array.from({ length: 31 }, (_, i) => ({
+        value: i,
+        label: `Year ${i}`,
+      })),
+    []
+  );
 
-  const indexation = Array.from({ length: 21 }, (_, i) => ({
-    value: (i * 0.5).toFixed(2) + "%",
-    label: (i * 0.5).toFixed(2) + "%",
-  }));
+  const indexationOptions = useMemo(
+    () =>
+      Array.from({ length: 21 }, (_, i) => ({
+        value: (i * 0.5).toFixed(2) + "%",
+        label: (i * 0.5).toFixed(2) + "%",
+      })),
+    []
+  );
 
-  let rowConfig = [
-    {
-      name: "contribution",
-      type: "number-toComma",
-      placeholder: "Contribution",
-    },
-    {
-      name: "regularContributions",
-      type: "number-toComma",
-      placeholder: props.modalObject.title + " p.a",
-    },
-    {
-      name: "contributeFromYear",
-      type: "select",
-      placeholder: "Contribute from Year",
-      options: loanTermOptions,
-    },
-    {
-      name: "contributeUpUntil",
-      type: "select",
-      placeholder: "Contribute Up Until",
-      options: loanTermOptions,
-    },
-    {
-      name: "indexation",
-      type: "select",
-      placeholder: "Indexation",
-      options: indexation,
-    },
-  ];
+  /* -------------------- TABLE COLUMNS -------------------- */
+  const columns = useMemo(
+    () => [
+      {
+        title: "Contribution",
+        dataIndex: "contribution",
+        type: "number-toComma",
+      },
+      {
+        title: `${props.modalObject.title} p.a`,
+        dataIndex: "regularContributions",
+        type: "number-toComma",
+      },
+      {
+        title: "Contribute From Year",
+        dataIndex: "contributeFromYear",
+        type: "select",
+        selectedOptionValue: true,
+        options: loanTermOptions,
+      },
+      {
+        title: "Contribute Up Until",
+        dataIndex: "contributeUpUntil",
+        type: "select",
+        selectedOptionValue: true,
+        options: loanTermOptions,
+      },
+      {
+        title: "Indexation",
+        dataIndex: "indexation",
+        type: "select",
+        selectedOptionValue: true,
+        options: indexationOptions,
+      },
+    ],
+    [loanTermOptions, indexationOptions, props.modalObject.title]
+  );
 
   return (
     <Formik
@@ -92,41 +107,29 @@ const RegularContributions = (props) => {
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, handleChange, setFieldValue, handleBlur }) => {
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        /* -------------------- TABLE DATA -------------------- */
+        const tableData = useMemo(() => {
+          return [{ key: "regularContributions", ...values }];
+        }, [values]);
+
         return (
-          <Form>
-            <Row>
-              <div className="col-md-12">
-                <div className="row justify-content-center">
-                  <div className="mt-4">
-                    <Table striped bordered responsive hover>
-                      <thead>
-                        <tr>
-                          <th>Contribution</th>
-                          <th>{props.modalObject.title} p.a</th>
-                          <th>Contribute from Year</th>
-                          <th>Contribute Up Until</th>
-                          <th>Indexation</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                        />
-                      </tbody>
-                    </Table>
-                  </div>
-                </div>
-              </div>
-            </Row>
+          <Form className="mt-4 All_Client reportSection">
+            <AntDTableHOC
+              columns={columns}
+              data={tableData}
+              values={values}
+              setFieldValue={setFieldValue}
+              handleChange={handleChange}
+              handleBlur={handleBlur}
+              handleSubmit={props.handleOk}
+              isEditing={props.isEditing}
+              setIsEditing={props.setIsEditing}
+            />
           </Form>
         );
       }}
