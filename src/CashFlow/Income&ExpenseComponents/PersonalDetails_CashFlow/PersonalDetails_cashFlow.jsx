@@ -1,5 +1,5 @@
 // ...existing code...
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Formik, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import "react-datepicker/dist/react-datepicker.css";
@@ -602,106 +602,123 @@ const PersonalDetails_cashFlow = (Props) => {
 
         return (
           <Form className="container-fluid mt-2 mt-md-0 p-0 px-md-5">
-            <div className="row">
-              {/* Data Table (antD) */}
-              {step === 0 ? (
-                <div className="col-md-12">
-                  <div className="d-flex justify-content-between align-item-center">
-                    <div>
-                      <h4 className=" fw-bold">Personal Details</h4>
-                    </div>
-                    <div>
-                      <Tooltip
-                        title={
-                          <p>
-                            Last syncronized at : <br />{" "}
-                            {new Date(cashFlowLastSyncAt).toLocaleString()}
-                          </p>
-                        }
-                        color={"#36b446"}
-                        key={"#36b446"}
-                      >
-                        <Button
-                          variant="secondary"
-                          onClick={() =>
-                            handleCalculateAges(values, setFieldValue)
-                          }
-                          disabled={loadingState}
-                        >
-                          <IoReload />
-                        </Button>
-                      </Tooltip>
-                    </div>
-                  </div>
-
-                  {errorShow && errors && Object.keys(errors).length > 0 && (
-                    <SectionErrorAlert
-                      title="Personal Details"
-                      columns={personalFields}
-                      errors={errors}
-                      errorShow={true}
-                      flattenErrors={flatten}
-                      BaseKey={["client", "partner"]}
-                    />
-                  )}
-
-                  <ConfigProvider
-                    theme={{
-                      components: {
-                        Table: {
-                          headerBg: "#36B446",
-                          headerColor: "#fff",
-                          fontWeight: "bold",
-                        },
-                      },
-                    }}
-                  >
-                    <AntdDynamicTable
-                      columns={personalFields}
-                      data={tableData}
-                      values={values}
-                      setFieldValue={setFieldValue}
-                      handleChange={handleChange}
-                      handleBlur={handleBlur}
-                      isEditing={isEditing}
-                      setIsEditing={setIsEditing}
-                    />
-                  </ConfigProvider>
+            <Suspense
+              fallback={
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100vh",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Spin size="large" />
                 </div>
-              ) : (
-                <div className="col-md-12">
-                  <div className="row justify-content-center align-item-center">
-                    <div className={screens.xxl ? "col-md-2" : "col-md-3"}>
-                      <ProfileCard_cashFlow
-                        owner="client"
-                        Data={{
-                          ...values.client,
-                          email:
-                            PersonalDetailObj.client.Email ||
-                            "example@maileator.com",
-                          image: PersonalDetailObj.client?.image?.url || "",
-                        }}
-                      />
+              }
+            >
+              <div className="row">
+                {/* Data Table (antD) */}
+                {step === 0 ? (
+                  <div className="col-md-12">
+                    <div className="d-flex justify-content-between align-item-center">
+                      <div>
+                        <h4 className=" fw-bold">Personal Details</h4>
+                      </div>
+                      <div>
+                        <Tooltip
+                          title={
+                            <p>
+                              Last syncronized at : <br />{" "}
+                              {new Date(cashFlowLastSyncAt).toLocaleString()}
+                            </p>
+                          }
+                          color={"#36b446"}
+                          key={"#36b446"}
+                        >
+                          <Button
+                            variant="secondary"
+                            onClick={() =>
+                              handleCalculateAges(values, setFieldValue)
+                            }
+                            disabled={loadingState}
+                          >
+                            <IoReload />
+                          </Button>
+                        </Tooltip>
+                      </div>
                     </div>
-                    {values.client.maritalStatus !== "Single" &&
-                    values.client.maritalStatus !== "Widowed" ? (
+
+                    {errorShow && errors && Object.keys(errors).length > 0 && (
+                      <SectionErrorAlert
+                        title="Personal Details"
+                        columns={personalFields}
+                        errors={errors}
+                        errorShow={true}
+                        flattenErrors={flatten}
+                        BaseKey={["client", "partner"]}
+                      />
+                    )}
+
+                    <ConfigProvider
+                      theme={{
+                        components: {
+                          Table: {
+                            headerBg: "#36B446",
+                            headerColor: "#fff",
+                            fontWeight: "bold",
+                          },
+                        },
+                      }}
+                    >
+                      <AntdDynamicTable
+                        columns={personalFields}
+                        data={tableData}
+                        values={values}
+                        setFieldValue={setFieldValue}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                        isEditing={isEditing}
+                        setIsEditing={setIsEditing}
+                      />
+                    </ConfigProvider>
+                  </div>
+                ) : (
+                  <div className="col-md-12">
+                    <div className="row justify-content-center align-item-center">
                       <div className={screens.xxl ? "col-md-2" : "col-md-3"}>
                         <ProfileCard_cashFlow
-                          owner="partner"
+                          owner="client"
                           Data={{
-                            ...values.partner,
+                            ...values?.client,
                             email:
-                              PersonalDetailObj.partner.partnerEmail ||
-                              "example2@maileator.com",
-                            image: PersonalDetailObj.partner?.image?.url || "",
+                              PersonalDetailObj?.client?.Email ||
+                              "example@maileator.com",
+                            image: PersonalDetailObj?.client?.image?.url || "",
                           }}
                         />
                       </div>
-                    ) : null}
+                      {values.client.maritalStatus !== "Single" &&
+                      values.client.maritalStatus !== "Widowed" ? (
+                        <div className={screens.xxl ? "col-md-2" : "col-md-3"}>
+                          <ProfileCard_cashFlow
+                            owner="partner"
+                            Data={{
+                              ...values?.partner,
+                              email:
+                                PersonalDetailObj?.partner?.partnerEmail ||
+                                "example2@maileator.com",
+                              image:
+                                PersonalDetailObj?.partner?.image?.url || "",
+                            }}
+                          />
+                        </div>
+                      ) : null}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            </Suspense>
 
             {/* next buttons */}
             <div

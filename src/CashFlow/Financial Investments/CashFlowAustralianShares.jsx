@@ -1,5 +1,5 @@
 import { Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Row } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
 
@@ -34,7 +34,9 @@ const CashFlowAustralianShares = (props) => {
          2. "Platform Investment"
          3. "Other Investments"
          4. "SMSF Australian Shares"
-         s. "SMSF Platform Investment"
+         5. "SMSF Platform Investment"
+         6. "Family Trust Australian Shares"
+         7. "Family Trust Platform Investment"
      
          TODO-IMPORTANT:
          - Ensure any changes to this component are planned carefully to avoid unintended effects on all supported modals.
@@ -91,9 +93,15 @@ const CashFlowAustralianShares = (props) => {
   /* ---------------- Fill Initial Values ---------------- */
   const fillInitialValues = (setFieldValue) => {
     const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+
     const data = CashFlowScenarioDataObj?.[objKey] || cashFlowData?.[objKey];
 
-    if (!data) return;
+    console.log("ma chala:", data);
+
+    if (Object.keys(data).length <= 0) {
+      setFieldValue("owner", ["client"]);
+      return false;
+    }
 
     setFieldValue(
       "owner",
@@ -302,6 +310,7 @@ const CashFlowAustralianShares = (props) => {
       dataIndex: "cashOutFunds",
       type: "select",
       options: loanTermOptions,
+      selectedOptionValue: true,
     },
   ];
 
@@ -330,31 +339,43 @@ const CashFlowAustralianShares = (props) => {
           fillInitialValues(setFieldValue);
         }, []);
 
-        const rows = [];
+        const rows = useMemo(() => {
+          const rowsArray = [];
 
-        if (values.owner.includes("client"))
-          rows.push({
-            key: "client",
-            owner: RenderName("client"),
-            stakeHolder: "client",
-            ...values.client,
-          });
+          if (values.owner?.includes("client") && values.client)
+            rowsArray.push({
+              key: "client",
+              owner: RenderName("client"),
+              stakeHolder: "client",
+              ...values.client,
+            });
 
-        if (values.owner.includes("partner") && UserStatus === "Married")
-          rows.push({
-            key: "partner",
-            owner: RenderName("partner"),
-            stakeHolder: "partner",
-            ...values.partner,
-          });
+          if (
+            values.owner?.includes("partner") &&
+            UserStatus === "Married" &&
+            values.partner
+          )
+            rowsArray.push({
+              key: "partner",
+              owner: RenderName("partner"),
+              stakeHolder: "partner",
+              ...values.partner,
+            });
 
-        if (values.owner.includes("joint") && UserStatus === "Married")
-          rows.push({
-            key: "joint",
-            owner: RenderName("joint"),
-            stakeHolder: "joint",
-            ...values.joint,
-          });
+          if (
+            values.owner?.includes("joint") &&
+            UserStatus === "Married" &&
+            values.joint
+          )
+            rowsArray.push({
+              key: "joint",
+              owner: RenderName("joint"),
+              stakeHolder: "joint",
+              ...values.joint,
+            });
+
+          return rowsArray;
+        }, [values, UserStatus]);
 
         return (
           <Form>
@@ -385,7 +406,7 @@ const CashFlowAustralianShares = (props) => {
                 </div>
               )}
 
-              {values.owner.length > 0 && (
+              {values?.owner?.length > 0 && (
                 <div className="mt-4 All_Client reportSection">
                   <AntdTable
                     columns={columns}

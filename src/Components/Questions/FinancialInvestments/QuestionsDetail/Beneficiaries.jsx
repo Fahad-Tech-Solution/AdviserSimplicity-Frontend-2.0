@@ -3,16 +3,8 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Row } from "react-bootstrap";
 import { useRecoilValue } from "recoil";
 import { defaultUrl } from "../../../../Store/Store";
-import {
-  handleInputBlur,
-  handleInputChange,
-  handleInputFocus,
-  handleInputKeyDown,
-  toPercentage,
-} from "../../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
 import { ConfigProvider, Select } from "antd";
-import { number } from "yup";
 
 const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
@@ -26,7 +18,6 @@ const Beneficiaries = (props) => {
     return currentTitle;
   });
 
-  const [autoClearValue, setAutoClearValue] = useState(false);
   const [RelationshipOptions, setRelationshipOptions] = useState([]);
   const DefaultUrl = useRecoilValue(defaultUrl);
 

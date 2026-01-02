@@ -145,7 +145,6 @@ const CashFlowCardSet = ({ Data }) => {
   );
 
   const openModal = useCallback((obj) => {
-    console.log(obj, "new");
     setModalObject(obj);
     setIsModalOpen(true);
   }, []);

@@ -9,7 +9,6 @@ import {
 } from "../../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
 import InnerModal from "./InnerModal";
-import DatePicker from "react-datepicker";
 import { ConfigProvider, Select } from "antd";
 import PortfolioValue from "./PortfolioValue";
 
@@ -17,7 +16,6 @@ const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
 
 const MemberNumber = (props) => {
-  const bankDetailObj = useRecoilValue(BankDetail);
   const [flagState, setFlagState] = useState(false);
   const [modalObject, setModalObject] = useState({});
   const [dynamicFields, setDynamicFields] = useState([]);
@@ -75,14 +73,17 @@ const MemberNumber = (props) => {
     try {
       const entry = values || {};
 
-      // Extract numeric values safely
-      const taxableComponent =
-        parseFloat(entry.taxableComponent?.replace(/[^0-9.-]+/g, "")) || 0;
-      const preservedAmount =
-        parseFloat(entry.preservedAmount?.replace(/[^0-9.-]+/g, "")) || 0;
+      // // Extract numeric values safely
+      // const taxableComponent =
+      //   parseFloat(entry.taxableComponent?.replace(/[^0-9.-]+/g, "")) || 0;
 
-      // Calculate total
-      const total = taxableComponent + preservedAmount;
+      // const preservedAmount =
+      //   parseFloat(entry.preservedAmount?.replace(/[^0-9.-]+/g, "")) || 0;
+
+      // // Calculate total
+      // const total = taxableComponent + preservedAmount;
+      const total =
+        parseFloat(entry.portfolioValue?.replace(/[^0-9.-]+/g, "")) || 0;
 
       // 🧾 Update Formik fields in parent
       props.setFieldValue(

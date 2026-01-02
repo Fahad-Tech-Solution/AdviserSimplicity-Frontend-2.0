@@ -56,7 +56,6 @@ const PersonalInsuranceLife = (props) => {
       : {
           client: { PersonalInsurance: [] },
           partner: { PersonalInsurance: [] },
-          selectedStakeholders: [],
         };
 
   const superAnnuationIssues =
@@ -76,15 +75,8 @@ const PersonalInsuranceLife = (props) => {
   );
 
   const initialValues = {
-    client: {
-      numberOfPolicies: "",
-      PersonalInsurance: [],
-    },
-    partner: {
-      numberOfPolicies: "",
-      PersonalInsurance: [],
-    },
-    selectedStakeholders: [],
+    numberOfPolicies: "",
+    [props.modalObject.Input]: [],
   };
 
   const fillInitialValues = (setFieldValue) => {
@@ -93,12 +85,6 @@ const PersonalInsuranceLife = (props) => {
         props.setIsEditing(true);
         return;
       }
-
-      // Selected stakeholders
-      setFieldValue(
-        "selectedStakeholders",
-        personalInsurance?.selectedStakeholders || []
-      );
 
       const fields = [
         "lifeInsured",
@@ -207,16 +193,25 @@ const PersonalInsuranceLife = (props) => {
   };
 
   const onSubmit = async (values) => {
+    console.log("values :", values);
     // ✅ Helper to convert currency string to number
     const toNumber = (val) =>
       Number(String(val || "$0").replace(/[^0-9.-]+/g, "")) || 0;
 
     let DataOf = props.modalObject.Input || "client";
+
+    let Data = values?.[props.modalObject.Input || "client"]?.slice(
+      0,
+      Number(values.numberOfPolicies)
+    );
+
+    console.log("Data :", Data);
+
     let groupCoverDetails =
       groupInsuranceDetailsAll[DataOf]?.[0]?.groupInsuranceDetails || {};
 
     const LifeInsuranceTotal =
-      (Array.isArray(values?.[DataOf]) ? values[DataOf] : []).reduce(
+      (Array.isArray(Data) ? Data : []).reduce(
         (sum, item) =>
           sum +
           toNumber(item?.life || 0) +
@@ -225,7 +220,7 @@ const PersonalInsuranceLife = (props) => {
       ) + toNumber(groupCoverDetails?.lifeCover || 0);
 
     const TPDTotal =
-      (Array.isArray(values?.[DataOf]) ? values[DataOf] : []).reduce(
+      (Array.isArray(Data) ? Data : []).reduce(
         (sum, item) =>
           sum +
           toNumber(
@@ -237,9 +232,7 @@ const PersonalInsuranceLife = (props) => {
         0
       ) + toNumber(groupCoverDetails?.TPDCover || 0);
 
-    const TraumaTotal = (
-      Array.isArray(values?.[DataOf]) ? values[DataOf] : []
-    ).reduce(
+    const TraumaTotal = (Array.isArray(Data) ? Data : []).reduce(
       (sum, item) =>
         sum +
         toNumber(item?.trauma || 0) +
@@ -248,7 +241,7 @@ const PersonalInsuranceLife = (props) => {
     );
 
     const IncomeProtectionTotal =
-      (Array.isArray(values?.[DataOf]) ? values[DataOf] : []).reduce(
+      (Array.isArray(Data) ? Data : []).reduce(
         (sum, item) =>
           sum +
           toNumber(item?.IPDetails?.superlinked == "No" ? item?.IP : 0) +
@@ -259,13 +252,12 @@ const PersonalInsuranceLife = (props) => {
     // Build the final payload
     const Obj = {
       [DataOf]: {
-        PersonalInsurance: values?.[DataOf] || [],
+        PersonalInsurance: Data || [],
       },
       [`${DataOf}LifeInsuranceTotal`]: toCommaAndDollar(LifeInsuranceTotal),
       [`${DataOf}TPDTotal`]: toCommaAndDollar(TPDTotal),
       [`${DataOf}TraumaTotal`]: toCommaAndDollar(TraumaTotal),
-      [`${DataOf}HasPersonalInsurance`]:
-        values?.[DataOf].length > 0 ? "Yes" : "No",
+      [`${DataOf}HasPersonalInsurance`]: Data.length > 0 ? "Yes" : "No",
       [`${DataOf}IncomeProtectionTotal`]: toCommaAndDollar(
         IncomeProtectionTotal
       ),
@@ -273,7 +265,7 @@ const PersonalInsuranceLife = (props) => {
       selectedStakeholders: values?.selectedStakeholders || [],
       clientFK: localStorage.getItem("UserID"),
     };
-
+    console.log("Payload :", Obj);
     // return false;
 
     try {
@@ -283,18 +275,14 @@ const PersonalInsuranceLife = (props) => {
         : await PostAxios(`${apiUrl}/Add`, Obj);
 
       if (res) {
-        const updatedData = { ...questionDetail, personalInsurance: res };
+        console.log(res);
+        const updatedData = {
+          ...questionDetail,
+          personalInsurance: res?.personalInsurance,
+        };
         setQuestionDetail(updatedData);
 
-        let hasStakeholders = res.selectedStakeholders.length > 0;
-
-        setCRObject({
-          ...CRObject,
-          life: hasStakeholders ? "Yes" : "No",
-          TPD: hasStakeholders ? "Yes" : "No",
-          trauma: hasStakeholders ? "Yes" : "No",
-          incomeProtection: hasStakeholders ? "Yes" : "No",
-        }); // data
+        setCRObject(res?.questionDetails);
       }
 
       openNotificationSuccess(
@@ -505,6 +493,7 @@ const PersonalInsuranceLife = (props) => {
                 ? Array.from({ length: num }, (_, i) => {
                     const row =
                       values?.[`${props.modalObject.Input}`]?.[i] || {};
+
                     setFieldValue(
                       `${props.modalObject.Input}[${i}].life`,
                       row.life || "$0"
@@ -597,7 +586,7 @@ const PersonalInsuranceLife = (props) => {
                 <p
                   className="text-end  mb-0"
                   onClick={() => {
-                    console.log(props.modalObject);
+                    console.log(values);
                   }}
                 >
                   Insurance Cover (Group) :

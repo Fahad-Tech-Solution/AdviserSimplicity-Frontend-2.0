@@ -240,6 +240,7 @@ const QuestionsNew = (props) => {
             <QuestionCardsNew
               questionKey={QuestionChange}
               CRObject={CRObject}
+              setCRObject={setCRObject}
               collapsed={props.collapsed}
             />
 
@@ -269,7 +270,7 @@ const QuestionsNew = (props) => {
                   className="float-center btn   bgColor modalBtn"
                   style={{ width: screens.xxl ? "15%" : "20%" }}
                 >
-                  Next <FaCaretRight  />
+                  Next <FaCaretRight />
                 </button>
               </div>
             </div>

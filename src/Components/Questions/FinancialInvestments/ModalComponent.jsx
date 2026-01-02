@@ -190,11 +190,9 @@ const ModalComponent = (props) => {
     "SMSF Accumulation Details",
     "SMSF Bank",
     "SMSF Term Deposit",
-    "SMSF Australian Shares",
     "SMSF Platform Investment",
     "SMSF",
     "Family Trust Term Deposits",
-    "Family Trust Australian Shares",
     "Family Trust Platform Investment",
     "Family Trust",
     "SMSF Pension Account Details",
@@ -244,6 +242,10 @@ const ModalComponent = (props) => {
     "Jane_Insurance Cover (Retail)",
     "Employment Income",
     "Australian Shares",
+    "Family Trust Australian Shares",
+    "SMSF Australian Shares",
+    "Platform Investment",
+    "Other Investments",
   ];
 
   let xlKey = [

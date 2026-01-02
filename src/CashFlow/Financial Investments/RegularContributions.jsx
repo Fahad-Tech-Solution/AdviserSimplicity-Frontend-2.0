@@ -67,6 +67,7 @@ const RegularContributions = (props) => {
     () => [
       {
         title: "Contribution",
+        placeholder: "Contribution",
         dataIndex: "contribution",
         type: "number-toComma",
       },
@@ -74,6 +75,7 @@ const RegularContributions = (props) => {
         title: `${props.modalObject.title} p.a`,
         dataIndex: "regularContributions",
         type: "number-toComma",
+        placeholder: `${props.modalObject.title} p.a`,
       },
       {
         title: "Contribute From Year",

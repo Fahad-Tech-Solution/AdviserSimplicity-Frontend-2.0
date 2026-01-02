@@ -326,10 +326,19 @@ const MiddleWare = (props) => {
         const response = await apiCall;
 
         if (response) {
-          setQuestionDetail((prev) => ({
-            ...prev,
-            [propModalObj.key]: response,
-          }));
+          if (propModalObj.key == "superAnnuationIssues") {
+            console.log(response);
+            setQuestionDetail((prev) => ({
+              ...prev,
+              [propModalObj.key]: response.superFund,
+              personalInsurance: response.personalInsurance,
+            }));
+          } else {
+            setQuestionDetail((prev) => ({
+              ...prev,
+              [propModalObj.key]: response,
+            }));
+          }
 
           openNotificationSuccess(
             "success",

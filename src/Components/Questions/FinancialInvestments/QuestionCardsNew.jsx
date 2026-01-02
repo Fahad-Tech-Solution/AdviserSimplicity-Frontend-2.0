@@ -516,7 +516,7 @@ const questionConfig = {
     },
     {
       title: "TPD",
-      keyName: "life",
+      keyName: "TPD",
       dataKey: "personalInsurance",
       img: TPDImg,
       component: <PersonalInsuranceLife />,
@@ -545,7 +545,7 @@ const questionConfig = {
     },
     {
       title: "Trauma",
-      keyName: "life",
+      keyName: "trauma",
       img: traumaImg,
       dataKey: "personalInsurance",
       component: <PersonalInsuranceLife />,
@@ -574,7 +574,7 @@ const questionConfig = {
     },
     {
       title: "Income Protection",
-      keyName: "life",
+      keyName: "incomeProtection",
       img: incomeImg,
       dataKey: "personalInsurance",
       component: <PersonalInsuranceLife />,
@@ -1479,7 +1479,12 @@ const QuestionCard = (props) => {
 };
 
 /*------------------------------------ DEMO WRAPPER ------------------------------------*/
-const QuestionCardsDemo = ({ questionKey, CRObject, collapsed }) => {
+const QuestionCardsDemo = ({
+  questionKey,
+  CRObject,
+  setCRObject,
+  collapsed,
+}) => {
   const personalDetailObj = useRecoilValue(PersonalDetailsData);
   const DefaultUrl = useRecoilValue(defaultUrl);
   const [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
@@ -1504,11 +1509,13 @@ const QuestionCardsDemo = ({ questionKey, CRObject, collapsed }) => {
     // add more keys here later if needed
   };
 
-  const visibleQuestions = questions.filter((q, index) => {
-    const baseVisible = !CRObject || CRObject[q.keyName] === "Yes";
-    const rule = specialVisibilityRules[questionKey];
-    return rule ? baseVisible && rule(q, index, questionDetail) : baseVisible;
-  });
+  const visibleQuestions = React.useMemo(() => {
+    return questions.filter((q, index) => {
+      const baseVisible = !CRObject || CRObject[q.keyName] === "Yes";
+      const rule = specialVisibilityRules[questionKey];
+      return rule ? baseVisible && rule(q, index, questionDetail) : baseVisible;
+    });
+  }, [CRObject, setCRObject, questions]);
 
   const numberOfCards = visibleQuestions.length;
 
