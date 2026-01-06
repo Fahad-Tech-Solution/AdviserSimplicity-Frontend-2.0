@@ -255,7 +255,7 @@ const CashFlowCashBankDetails = (props) => {
             dataIndex: "reinvestUpUntil",
             type: "select",
             options: reinvestUpUntilOptions,
-            selectOptionValue: true,
+            selectedOptionValue: true,
           },
         ]
       : []),
@@ -271,7 +271,7 @@ const CashFlowCashBankDetails = (props) => {
     {
       title: "Risk Profile / SAA",
       dataIndex: "riskProfile",
-      selectOptionValue: true,
+      selectedOptionValue: true,
       type: "select",
       options:
         props.modalObject.title === "Cash"
@@ -303,7 +303,7 @@ const CashFlowCashBankDetails = (props) => {
             title: `Cashout in ${layoutSwitchFlag2 ? "Funds" : "Year"}`,
             placeholder: `Cashout in ${layoutSwitchFlag2 ? "Funds" : "Year"}`,
             dataIndex: "cashOutYear",
-            selectOptionValue: true,
+            selectedOptionValue: true,
             type: "select",
             options: reinvestUpUntilOptions,
           },
@@ -314,7 +314,7 @@ const CashFlowCashBankDetails = (props) => {
           {
             title: "Surplus / Deficit",
             dataIndex: "surplusDeficit",
-            selectOptionValue: true,
+            selectedOptionValue: true,
             type: "select",
             options: surplusDeficitOptions,
           },

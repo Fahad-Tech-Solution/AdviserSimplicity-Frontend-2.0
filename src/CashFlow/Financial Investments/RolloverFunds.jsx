@@ -1,94 +1,94 @@
-import React, { useEffect, useState } from "react";
-import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
 import { Form, Formik } from "formik";
-import { Row, Table } from "react-bootstrap";
+import React, { useEffect } from "react";
+import { Row } from "react-bootstrap";
+
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
+
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const RolloverFunds = (props) => {
-  let initialValues = {
+  /* ===============================
+     Initial Values
+  =============================== */
+  const initialValues = {
     rolloverBenefitFund: "",
     rolloverBenefitsYear: "",
+    rolloverBenefitFund1: "",
+    rolloverBenefitsYear1: "",
   };
 
-  let fillInitialValues = (setFieldValue) => {
-    if (
-      props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")]
-    ) {
-      let SubObj =
-        props.modalObject.values[
-          props.modalObject.stakeHolder.replace(".", "")
-        ];
-      if (SubObj[props.modalObject.key + "Obj"]) {
-        let Data = SubObj[props.modalObject.key + "Obj"];
-        setFieldValue("rolloverBenefitFund", Data.rolloverBenefitFund);
-        setFieldValue("rolloverBenefitsYear", Data.rolloverBenefitsYear);
-        setFieldValue("rolloverBenefitFund1", Data.rolloverBenefitFund1);
-        setFieldValue("rolloverBenefitsYear1", Data.rolloverBenefitsYear1);
-      }
-    }
+  /* ===============================
+     Fill Initial Values
+  =============================== */
+  const fillInitialValues = (setFieldValue) => {
+    const stakeKey = props.modalObject.stakeHolder.replace(".", "");
+    const stored =
+      props.modalObject.values?.[stakeKey]?.[props.modalObject.key + "Obj"];
+
+    if (!stored) return;
+
+    Object.entries(stored).forEach(([key, value]) => {
+      setFieldValue(key, value);
+    });
   };
 
-  let onSubmit = (values) => {
+  /* ===============================
+     Submit
+  =============================== */
+  const onSubmit = (values) => {
     props.setFieldValue(
       props.modalObject.stakeHolder + props.modalObject.key + "Obj",
       values
     );
 
-    // Reset the flag state if necessary
-    if (props.flagState) {
-      props.setFlagState(false);
-    }
+    props?.setFlagState?.(false);
   };
 
-  const yearsIncludedArray = Array.from({ length: 30 }, (_, i) => {
-    return {
-      value: i.toString(),
-      label: ("Year " + i).toString(),
-    };
-  });
+  /* ===============================
+     Options
+  =============================== */
+  const yearsIncludedOptions = Array.from({ length: 30 }, (_, i) => ({
+    value: i.toString(),
+    label: `Year ${i}`,
+  }));
 
-  const rolloverBenefitFundArray = [
+  const rolloverFundOptions = [
     { value: "N/A", label: "N/A" },
     { value: "SMSF", label: "SMSF" },
   ];
 
-  let rowConfig = [
+  /* ===============================
+     AntD Columns
+  =============================== */
+  const columns = [
     {
-      name: "index",
+      title: "Fund",
+      dataIndex: "index",
+      key: "index",
       type: "plainText2.0",
-      value: "Fund 1",
-      styleSet: { fontWeight: "800", fontSize: "16px" },
+      justText: true,
     },
     {
-      name: "rolloverBenefitFund",
+      title: "Rollover Benefit to Fund",
+      dataIndex: "rolloverBenefitFund",
+      key: "rolloverBenefitFund",
       type: "select",
-      options: rolloverBenefitFundArray,
+      options: rolloverFundOptions,
+      selectedOptionsValues: true,
     },
     {
-      name: "rolloverBenefitsYear",
+      title: "Rollover Benefits in Year",
+      dataIndex: "rolloverBenefitsYear",
+      key: "rolloverBenefitsYear",
       type: "select",
-      options: yearsIncludedArray,
+      selectedOptionsValues: true,
+      options: yearsIncludedOptions,
     },
   ];
 
-  let rowConfig1 = [
-    {
-      name: "index",
-      type: "plainText2.0",
-      value: "Fund 2",
-      styleSet: { fontWeight: "800", fontSize: "16px" },
-    },
-    {
-      name: "rolloverBenefitFund1",
-      type: "select",
-      options: rolloverBenefitFundArray,
-    },
-    {
-      name: "rolloverBenefitsYear1",
-      type: "select",
-      options: yearsIncludedArray,
-    },
-  ];
-
+  /* ===============================
+     Render
+  =============================== */
   return (
     <Formik
       initialValues={initialValues}
@@ -96,44 +96,42 @@ const RolloverFunds = (props) => {
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, handleChange, setFieldValue, handleBlur }) => {
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        const tableData = [
+          {
+            key: "fund1",
+            index: "Fund 1",
+            stackHolder: "fund1",
+            rolloverBenefitFund: values.rolloverBenefitFund,
+            rolloverBenefitsYear: values.rolloverBenefitsYear,
+          },
+          {
+            key: "fund2",
+            index: "Fund 2",
+            stackHolder: "fund2",
+            rolloverBenefitFund: values.rolloverBenefitFund1,
+            rolloverBenefitsYear: values.rolloverBenefitsYear1,
+          },
+        ];
+
         return (
           <Form>
             <Row>
-              <div className="col-md-12">
-                <div className="row justify-content-center">
-                  <div className="mt-4">
-                    <Table striped bordered responsive hover>
-                      <thead>
-                        <tr>
-                          <th>Fund</th>
-                          <th>Rollover Benefit to fund</th>
-                          <th>Rollover benefits in Year</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                        />
-                        <DynamicTableRow
-                          rowConfig={rowConfig1}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                        />
-                      </tbody>
-                    </Table>
-                  </div>
-                </div>
+              <div className="col-md-12 mt-4 All_Client reportSection">
+                <AntdTable
+                  columns={columns}
+                  data={tableData}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
+                />
               </div>
             </Row>
           </Form>

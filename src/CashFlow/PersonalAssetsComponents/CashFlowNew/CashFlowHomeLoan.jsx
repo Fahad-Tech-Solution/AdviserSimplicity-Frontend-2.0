@@ -187,6 +187,7 @@ const CashFlowHomeLoan = (props) => {
         placeholder: "Loan Term",
         dataIndex: "loanTerm",
         type: "select",
+        selectedOptionValue: true,
         options: yearOptions,
       },
       {
@@ -194,6 +195,7 @@ const CashFlowHomeLoan = (props) => {
         placeholder: "Interest Only Period",
         dataIndex: "interestOnlyPeriod",
         type: "select",
+        selectedOptionValue: true,
         options: yearOptions,
       },
       {
@@ -239,6 +241,7 @@ const CashFlowHomeLoan = (props) => {
         type: "select",
         placeholder: "Repay Loan In Year",
         options: repayYearOptions,
+        selectedOptionValue: true,
       }
     );
 
@@ -381,6 +384,7 @@ const CashFlowHomeLoan = (props) => {
             </InnerModal>
 
             <h3
+              className="d-none"
               onClick={() => {
                 console.log(values);
               }}

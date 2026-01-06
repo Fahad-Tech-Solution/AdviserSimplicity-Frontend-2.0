@@ -391,7 +391,8 @@ const ModalComponent = (props) => {
                 variant="secondary"
                 style={{ width: "12.5%", minWidth: "fit-content" }}
                 onClick={handleParentButtonClick}
-                disabled={cashFlowReCalculateLoading}
+                // disabled={cashFlowReCalculateLoading}
+                disabled={true}
               >
                 <FaInfoCircle size={14} style={{ marginBottom: "4px" }} />{" "}
                 Re-Calculate
@@ -415,7 +416,8 @@ const ModalComponent = (props) => {
                 variant="secondary"
                 style={{ width: "fit-content", minWidth: "fit-content" }}
                 onClick={handleParentButton2Click}
-                disabled={cashFlowDownloading}
+                // disabled={cashFlowDownloading}
+                disabled={true}
               >
                 {cashFlowDownloading ? (
                   <ConfigProvider

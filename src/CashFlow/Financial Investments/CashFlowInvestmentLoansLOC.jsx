@@ -59,41 +59,52 @@ const CashFlowInvestmentLoansLOC = (props) => {
 
     const updateFields = (data, prefix) => {
       if (!data) return;
-      Object.entries(data).forEach(([k, v]) => {
-        setFieldValue(`${prefix}.${k}`, v || "");
+
+      Object.entries({
+        yearOfLoan: data.yearOfLoan,
+        currentLoanBalance: data.currentLoanBalance || data.loanBalance,
+        loanType: data.loanType,
+        loanTerm: data.loanTerm,
+        interestOnlyPeriod: data.interestOnlyPeriod,
+        initialInterestRate: data.initialInterestRate || data.interestRate,
+        deductibleInterest: data.deductibleInterest,
+        minimumRepayments: data.minimumRepayments,
+        applyMinimumRepaymentsOR: data.applyMinimumRepaymentsOR,
+        actualAnnualRepayments: data.actualAnnualRepayments,
+        repayLoanYear: data.repayLoanYear || "No",
+      }).forEach(([key, value]) => {
+        setFieldValue(`${prefix}.${key}`, value ?? "");
       });
+    };
+
+    const hydrate = (src) => {
+      if (!src) return;
+
+      setFieldValue("owner", src.owner || []);
+
+      if (src.owner?.includes("client")) {
+        updateFields(src.client, "client");
+      }
+
+      if (userStatus === "Married" && src.owner?.includes("partner")) {
+        updateFields(src.partner, "partner");
+      }
+
+      if (userStatus === "Married" && src.owner?.includes("joint")) {
+        updateFields(src.joint, "joint");
+      }
     };
 
     if (
       scenarioObj?.selectedSource === "discoveryForm" &&
-      managedFundsLOC?._id
+      managedFundsLOC?._id &&
+      !cashFlowData?.[objAndAPIKey]?._id
     ) {
-      setFieldValue("owner", managedFundsLOC.owner || []);
-
-      if (managedFundsLOC.owner?.includes("client"))
-        updateFields(managedFundsLOC.client, "client");
-
-      if (
-        userStatus === "Married" &&
-        managedFundsLOC.owner?.includes("partner")
-      )
-        updateFields(managedFundsLOC.partner, "partner");
+      hydrate(managedFundsLOC);
+    } else if (cashFlowScenarioData?.[objAndAPIKey]?._id) {
+      hydrate(cashFlowScenarioData?.[objAndAPIKey]);
     } else {
-      const cfData =
-        cashFlowScenarioData?.[objAndAPIKey] || cashFlowData?.[objAndAPIKey];
-
-      if (cfData) {
-        setFieldValue("owner", cfData.owner || []);
-
-        if (cfData.owner.includes("client"))
-          updateFields(cfData.client, "client");
-
-        if (userStatus === "Married" && cfData.owner.includes("partner"))
-          updateFields(cfData.partner, "partner");
-
-        if (userStatus === "Married" && cfData.owner.includes("joint"))
-          updateFields(cfData.joint, "joint");
-      }
+      hydrate(cashFlowData?.[objAndAPIKey]);
     }
   };
 
@@ -145,6 +156,7 @@ const CashFlowInvestmentLoansLOC = (props) => {
       );
 
       props.flagState && props.setFlagState(false);
+      props?.setIsEditing?.(false);
     } catch {
       openNotificationSuccess(
         "error",
@@ -184,10 +196,15 @@ const CashFlowInvestmentLoansLOC = (props) => {
   const columns = useMemo(
     () => [
       {
+        title: "Owner",
+        dataIndex: "owner",
+        key: "owner",
+      },
+      {
         title: "Year of Loan",
         dataIndex: "yearOfLoan",
         type: "select",
-        selectOptionValue: true,
+        selectedOptionValue: true,
         options: loanYearsWithExisting,
       },
       {
@@ -200,7 +217,7 @@ const CashFlowInvestmentLoansLOC = (props) => {
         title: "Loan Type",
         dataIndex: "loanType",
         type: "select",
-        selectOptionValue: true,
+        selectedOptionValue: true,
         options: [
           { value: "I/Only", label: "I/Only" },
           { value: "P & I", label: "P & I" },
@@ -210,7 +227,7 @@ const CashFlowInvestmentLoansLOC = (props) => {
         title: "Loan Term",
         dataIndex: "loanTerm",
         type: "select",
-        selectOptionValue: true,
+        selectedOptionValue: true,
         options: loanYears,
       },
       {
@@ -218,7 +235,7 @@ const CashFlowInvestmentLoansLOC = (props) => {
         dataIndex: "interestOnlyPeriod",
         type: "select",
         options: loanYears,
-        selectOptionValue: true,
+        selectedOptionValue: true,
       },
       {
         title: "Initial Interest Rate (p.a.)",
@@ -255,7 +272,7 @@ const CashFlowInvestmentLoansLOC = (props) => {
         dataIndex: "repayLoanYear",
         type: "select",
         options: loanYearsWithNo,
-        selectOptionValue: true,
+        selectedOptionValue: true,
       },
     ],
     [loanYears, loanYearsWithNo, loanYearsWithExisting]
@@ -279,9 +296,9 @@ const CashFlowInvestmentLoansLOC = (props) => {
 
           values.owner.map((item, index) => {
             result.push({
-              key: "item",
-              owner: RenderName("item"),
-              stakeHolder: "item",
+              key: item,
+              owner: RenderName(item),
+              stakeHolder: item,
               ...values?.[item],
             });
           });

@@ -1,31 +1,39 @@
-import React, { useEffect, useState } from "react";
-import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
 import { Form, Formik } from "formik";
-import { Row, Table } from "react-bootstrap";
-import {
-  openNotificationSuccess,
-  PostAxios,
-  PostAxiosBlob,
-  RenderName,
-  toCommaAndDollar,
-} from "../../Components/Assets/Api/Api";
+import React, { useEffect } from "react";
+import { Row } from "react-bootstrap";
+import { useRecoilState, useRecoilValue } from "recoil";
+import axios from "axios";
+
 import {
   CashFlowData,
   CashFlowDownloading,
   CashFlowReCalculateLoading,
   defaultUrl,
 } from "../../Store/Store";
-import { useRecoilState, useRecoilValue } from "recoil";
+
+import {
+  openNotificationSuccess,
+  PostAxios,
+  RenderName,
+} from "../../Components/Assets/Api/Api";
+
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
+
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const TotalCostBase = (props) => {
-  let DefaultUrl = useRecoilValue(defaultUrl);
-  let cashFlowData = useRecoilValue(CashFlowData);
-  let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
-    useRecoilState(CashFlowReCalculateLoading);
-  let [cashFlowDownloading, setCashFlowDownloading] =
-    useRecoilState(CashFlowDownloading);
+  const DefaultUrl = useRecoilValue(defaultUrl);
+  const cashFlowData = useRecoilValue(CashFlowData);
 
-  let initialValues = {
+  const [, setCashFlowReCalculateLoading] = useRecoilState(
+    CashFlowReCalculateLoading
+  );
+  const [, setCashFlowDownloading] = useRecoilState(CashFlowDownloading);
+
+  /* ===============================
+     Initial Values
+  =============================== */
+  const initialValues = {
     stampDutyType: "",
     stampDutyValue: "",
     otherPurchaseCosts: "",
@@ -33,144 +41,49 @@ const TotalCostBase = (props) => {
     totalCostBase: "",
   };
 
-  let fillInitialValues = (setFieldValue) => {
-    let SubObj = props.modalObject.values;
-    if (SubObj[props.modalObject.key]) {
-      let Data = SubObj[props.modalObject.key];
-      setFieldValue("stampDutyType", Data.stampDutyType);
-      setFieldValue("stampDutyValue", Data.stampDutyValue);
-      setFieldValue("otherPurchaseCosts", Data.otherPurchaseCosts);
-      setFieldValue("costBaseExisting", Data.costBaseExisting);
-      setFieldValue("totalCostBase", Data.totalCostBase);
-    }
+  /* ===============================
+     Fill Initial Values
+  =============================== */
+  const fillInitialValues = (setFieldValue) => {
+    const data = props.modalObject.values?.[props.modalObject.key];
+    if (!data) return;
+
+    setFieldValue("stampDutyType", data.stampDutyType || "");
+    setFieldValue("stampDutyValue", data.stampDutyValue || "");
+    setFieldValue("otherPurchaseCosts", data.otherPurchaseCosts || "");
+    setFieldValue("costBaseExisting", data.costBaseExisting || "");
+    setFieldValue("totalCostBase", data.totalCostBase || "");
   };
 
-  let onSubmit = (values) => {
+  /* ===============================
+     Save Child Modal
+  =============================== */
+  const onSubmit = (values) => {
     props.setFieldValue(props.modalObject.key, values);
-
-    // Reset the flag state if necessary
-    if (props.flagState) {
-      props.setFlagState(false);
-    }
+    props?.setFlagState?.(false);
+    props.setIsEditing(!props.isEditing);
   };
 
-  //   let StampDutyOptions =
-  //     props.modalObject.ParentObject.title === "Investments Property"
-  //       ? [
-  //           { value: "Standard Rates", label: "Standard Rates" },
-  //           { value: "FH Buyer", label: "FH Buyer" },
-  //           { value: "Manual", label: "Manual" },
-  //         ]
-  //       : [
-  //           { value: "Standard Rates", label: "Standard Rates" },
-  //           { value: "Manual", label: "Manual" },
-  //         ];
-
-  let StampDutyOptions = [
-    { value: "Standard Rates", label: "Standard Rates" },
-    { value: "Manual", label: "Manual" },
-  ];
-
-  let CalculateTotal = (values, setFieldValue, currentInput, stakeHolder) => {
-    let stampDutyType = values.stampDutyType;
-    let stampDutyValue = values.stampDutyValue.replace(/[^0-9.-]+/g, "");
-    let otherPurchaseCosts = values.otherPurchaseCosts.replace(
-      /[^0-9.-]+/g,
-      ""
-    );
-
-    switch (currentInput.name) {
-      case "stampDutyType":
-        stampDutyType = currentInput.value;
-        break;
-      case "stampDutyValue":
-        stampDutyValue = currentInput.value.replace(/[^0-9.-]+/g, "");
-        break;
-      case "otherPurchaseCosts":
-        otherPurchaseCosts = currentInput.value.replace(/[^0-9.-]+/g, "");
-        break;
-      default:
-        console.warn("No valid input selected"); // Use warn for non-critical issues
-        break;
-    }
-
-    // console.log(StampDutyType, StampDutyValue, OtherPurchaseCosts, props.modalObject.values);
-
-    if (stampDutyType === "Manual") {
-      // Try-catch block for parsing and calculation
-      try {
-        const parsedValueOfProperty =
-          parseFloat(
-            props.modalObject.values.valueOfProperty.replace(/[^0-9.-]+/g, "")
-          ) || 0;
-
-        const totalCostBase =
-          parseFloat(stampDutyValue) +
-          parseFloat(otherPurchaseCosts) +
-          parsedValueOfProperty;
-        console.log(totalCostBase);
-        setFieldValue("totalCostBase", toCommaAndDollar(totalCostBase));
-      } catch (error) {
-        console.error("Error calculating total cost base:", error);
-        // Handle the error here (e.g., display an error message to the user)
-      }
-    }
-  };
-
-  let rowConfig = [
-    {
-      name: "stampDutyType",
-      type: "select",
-      placeholder: "Stamp Duty",
-      options: StampDutyOptions,
-      callBack: true,
-      func: CalculateTotal,
-    },
-    {
-      name: "stampDutyValue",
-      type: "number-toComma",
-      placeholder: "Stamp Duty Value",
-      disabled: true,
-      callBack: true,
-      func: CalculateTotal,
-    },
-    {
-      name: "otherPurchaseCosts",
-      type: "number-toComma",
-      placeholder: "Other Purchase Costs",
-      callBack: true,
-      func: CalculateTotal,
-    },
-    {
-      name: "costBaseExisting",
-      type: "number-toComma",
-      placeholder: "Cost Base Existing",
-    },
-    {
-      name: "totalCostBase",
-      type: "number-toComma",
-      placeholder: "Total Cost Base",
-      disabled: true,
-    },
-  ];
-
-  const handleChildButtonClick = async (values, setFieldValue) => {
+  /* ===============================
+     API – Recalculate
+  =============================== */
+  const handleRecalculate = async (values, setFieldValue) => {
     try {
-      let updatedData = JSON.parse(JSON.stringify(cashFlowData));
+      setCashFlowReCalculateLoading(true);
 
       const {
         values: parentValues,
         key,
-        title,
         ParentObject,
+        title,
       } = props.modalObject;
 
       const numberOfProperties =
         parseInt(parentValues.numberOfProperties, 10) || 1;
 
-      const currentIndex = key.match(/\d+/)?.[0] || 0; // Extract numeric index from key
+      const currentIndex = key.match(/\d+/)?.[0] || 0;
 
-      let structuredEntries = Array.from(
+      const structuredEntries = Array.from(
         { length: numberOfProperties },
         (_, i) => ({
           streetAddress: parentValues[`streetAddress_${i}`] || "",
@@ -192,18 +105,17 @@ const TotalCostBase = (props) => {
         })
       );
 
-      // Update the correct entry with new child modal values
       structuredEntries[currentIndex][key.replace(/_\d+/, "")] = values;
 
-      updatedData[ParentObject.key].client = structuredEntries;
-      updatedData[ParentObject.key].numberOfProperties = numberOfProperties;
+      const payload = {
+        ...cashFlowData,
+        [ParentObject.key]: {
+          client: structuredEntries,
+          numberOfProperties,
+        },
+      };
 
-      // console.log(
-      //   JSON.stringify(updatedData[ParentObject.key], null, 2),
-      //   ParentObject.key
-      // );
-
-      let apiKey = {
+      const apiMap = {
         cf_familyHome: {
           key: "cf_familyHome",
           param: "INPUTS_Lifestyle_Assets_Debt",
@@ -222,136 +134,130 @@ const TotalCostBase = (props) => {
         },
       };
 
-      let api = `${DefaultUrl}/api/cal/${apiKey[ParentObject.key].key}/${
-        apiKey[ParentObject.key].param
+      const api = `${DefaultUrl}/api/cal/${apiMap[ParentObject.key].key}/${
+        apiMap[ParentObject.key].param
       }`;
-      console.log(api);
 
-      // throw new Error("An error occurred while processing the data.");
+      const res = await PostAxios(api, payload);
 
-      // Send API request
-      const res = await PostAxios(api, updatedData);
+      const resultObj =
+        res?.data?.[ParentObject.key]?.[currentIndex]?.totalCostBaseObj;
 
-      if (res) {
-        console.log(res.data, ParentObject.key, currentIndex);
-        const { totalCostBaseObj } = res.data[ParentObject.key][currentIndex];
-
-        if (values.stampDutyType !== "Manual") {
-          setFieldValue("stampDutyValue", totalCostBaseObj.stampDutyValue);
-        }
-
-        setFieldValue("totalCostBase", totalCostBaseObj.totalCostBase);
-
-        setCashFlowReCalculateLoading(false);
-        openNotificationSuccess(
-          "success",
-          "topRight",
-          "Success Notification",
-          `Data of "${title}" is Saved`
-        );
+      if (values.stampDutyType !== "Manual") {
+        setFieldValue("stampDutyValue", resultObj?.stampDutyValue);
       }
+
+      setFieldValue("totalCostBase", resultObj?.totalCostBase);
+
+      openNotificationSuccess(
+        "success",
+        "topRight",
+        "Success Notification",
+        `Data of "${title}" is Saved`
+      );
     } catch (error) {
-      console.error("API Error:", error);
+      console.error(error);
       openNotificationSuccess(
         "error",
         "topRight",
         "Error Notification",
-        `Data of "${props.modalObject.title}" was not saved. Please try again.`
+        `Data of "${props.modalObject.title}" was not saved`
       );
+    } finally {
       setCashFlowReCalculateLoading(false);
     }
   };
 
-  const handleChildButtonDownloadClick = async (values, setFieldValue) => {
+  /* ===============================
+     API – Download Excel
+  =============================== */
+  const handleDownload = async () => {
     try {
-      let updatedData = JSON.parse(JSON.stringify(cashFlowData));
+      setCashFlowDownloading(true);
 
-      const {
-        values: parentValues,
-        key,
-        title,
-        ParentObject,
-      } = props.modalObject;
-
-      const numberOfProperties =
-        parseInt(parentValues.numberOfProperties, 10) || 1;
-
-      const currentIndex = key.match(/\d+/)?.[0] || 0; // Extract numeric index from key
-
-      let structuredEntries = Array.from(
-        { length: numberOfProperties },
-        (_, i) => ({
-          streetAddress: parentValues[`streetAddress_${i}`] || "",
-          valueOfProperty: parentValues[`valueOfProperty_${i}`] || "",
-          clientOwnership: parentValues[`clientOwnership_${i}`] || "0%",
-          partnerOwnership: parentValues[`partnerOwnership_${i}`] || "0%",
-          state: parentValues[`state_${i}`] || "",
-          yearOfPurchase: parentValues[`yearOfPurchase_${i}`] || "",
-          totalCostBase: parentValues[`totalCostBase_${i}`] || "",
-          totalCostBaseObj: parentValues[`totalCostBaseObj_${i}`] || {},
-          expectedGrowthRate: parentValues[`expectedGrowthRate_${i}`] || "",
-          loanBalance: parentValues[`loanBalance_${i}`] || "",
-          loanBalanceObj: parentValues[`loanBalanceObj_${i}`] || {},
-          rentalIncome: parentValues[`rentalIncome_${i}`] || "",
-          sellPropertyInYear: parentValues[`sellPropertyInYear_${i}`] || "",
-          convertToPPRYear: parentValues[`convertToPPRYear_${i}`] || "",
-          estimatedFutureSellingCost:
-            parentValues[`estimatedFutureSellingCost_${i}`] || "",
-        })
+      const response = await axios.post(
+        `${DefaultUrl}/api/cal/workBookDownload`,
+        cashFlowData,
+        { responseType: "blob" }
       );
 
-      // Update the correct entry with new child modal values
-      structuredEntries[currentIndex][key.replace(/_\d+/, "")] = values;
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `UpdatedWorkbook_of_${RenderName("client")}.xlsx`;
+      a.click();
+      window.URL.revokeObjectURL(url);
 
-      updatedData[ParentObject.key].client = structuredEntries;
-      updatedData[ParentObject.key].numberOfProperties = numberOfProperties;
-
-      try {
-        const response = await PostAxiosBlob(
-          `${DefaultUrl}/api/cal/workBookDownload`,
-          updatedData
-        );
-
-        const fileName = `UpdatedWorkbook_of_${RenderName("client")}.xlsx`;
-
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
-
-        openNotificationSuccess(
-          "success",
-          "topRight",
-          "Success Notification",
-          `Excel file "${fileName}" is downloaded.`
-        );
-      } catch (error) {
-        console.error("Download Error:", error);
-        openNotificationSuccess(
-          "error",
-          "topRight",
-          "Download Failed",
-          "Something went wrong while downloading the Excel file."
-        );
-      } finally {
-        setCashFlowDownloading(false); // Always hide loading spinner
-      }
+      openNotificationSuccess(
+        "success",
+        "topRight",
+        "Success Notification",
+        "Excel file downloaded successfully"
+      );
     } catch (error) {
-      console.error("API Error:", error);
+      console.error(error);
       openNotificationSuccess(
         "error",
         "topRight",
         "Error Notification",
-        `Data of "${props.modalObject.title}" was not saved. Please try again.`
+        "File download failed"
       );
-      setCashFlowReCalculateLoading(false);
+    } finally {
+      setCashFlowDownloading(false);
     }
   };
 
+  /* ===============================
+     AntD Columns
+  =============================== */
+  const columns = [
+    {
+      title: "Stamp Duty",
+      dataIndex: "stampDutyType",
+      key: "stampDutyType",
+      type: "select",
+      onHeaderCell: () => ({ colSpan: 2 }),
+      options: [
+        { value: "Standard Rates", label: "Standard Rates" },
+        { value: "Manual", label: "Manual" },
+      ],
+    },
+    {
+      title: "Stamp Duty Value",
+      placeholder: "Stamp Duty Value",
+      dataIndex: "stampDutyValue",
+      key: "stampDutyValue",
+      type: "number-toComma",
+      disabled: true,
+      onHeaderCell: () => ({ colSpan: 0 }),
+    },
+    {
+      title: "Other Purchase Costs",
+      placeholder: "Other Purchase Costs",
+      dataIndex: "otherPurchaseCosts",
+      key: "otherPurchaseCosts",
+      type: "number-toComma",
+    },
+    {
+      title: "Cost Base (Existing)",
+      placeholder: "Cost Base (Existing)",
+      dataIndex: "costBaseExisting",
+      key: "costBaseExisting",
+      type: "number-toComma",
+    },
+    {
+      title: "Total Cost Base",
+      placeholder: "Total Cost Base",
+      dataIndex: "totalCostBase",
+      key: "totalCostBase",
+      type: "number-toComma",
+      disabled: true,
+    },
+  ];
+
+  /* ===============================
+     Render
+  =============================== */
   return (
     <Formik
       initialValues={initialValues}
@@ -359,65 +265,48 @@ const TotalCostBase = (props) => {
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, handleChange, setFieldValue, handleBlur }) => {
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        const finalColumns = columns.map((col) => ({
+          ...col,
+          disabled:
+            col.dataIndex === "stampDutyValue"
+              ? values.stampDutyType !== "Manual"
+              : col.disabled,
+        }));
+
         return (
           <Form>
             <Row>
-              <div className="col-md-12">
-                <div className="row justify-content-center">
-                  <div className="mt-4">
-                    <Table striped bordered responsive hover>
-                      <thead>
-                        <tr>
-                          <th colSpan={2}>Stamp Duty</th>
-                          <th>Other Purchase Costs</th>
-                          <th>Cost Base (Existing)</th>
-                          <th>Total Cost Base</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <DynamicTableRow
-                          // rowConfig={rowConfig}
-                          rowConfig={rowConfig.map((item) => ({
-                            ...item,
-                            disabled:
-                              item.name === "stampDutyValue"
-                                ? values.stampDutyType !== "Manual"
-                                : item.disabled,
-                          }))}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                        />
-                      </tbody>
-                    </Table>
-                    <button
-                      ref={props.childButtonRef}
-                      onClick={() => {
-                        handleChildButtonClick(values, setFieldValue);
-                      }}
-                      style={{ display: "none" }} // Hidden button
-                      type="button"
-                    >
-                      Hidden Child Button
-                    </button>
-                    <button
-                      ref={props.childButtonDownloadRef}
-                      onClick={() => {
-                        handleChildButtonDownloadClick(values, setFieldValue);
-                      }}
-                      style={{ display: "none" }} // Hidden button
-                      type="button"
-                    >
-                      Hidden Child Button Download
-                    </button>
-                  </div>
-                </div>
+              <div className="col-md-12 mt-4 All_Client reportSection">
+                <AntdTable
+                  columns={finalColumns}
+                  data={[{ key: "totalCostBase", ...values }]}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
+                />
+
+                {/* Hidden Buttons */}
+                <button
+                  ref={props.childButtonRef}
+                  type="button"
+                  hidden
+                  onClick={() => handleRecalculate(values, setFieldValue)}
+                />
+
+                <button
+                  ref={props.childButtonDownloadRef}
+                  type="button"
+                  hidden
+                  onClick={handleDownload}
+                />
               </div>
             </Row>
           </Form>
