@@ -1,7 +1,13 @@
 import { Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
-import { CreatableMultiSelectField } from "../../Components/Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
-import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
+import React, { useEffect, useMemo, useState } from "react";
+import { Row } from "react-bootstrap";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  CashFlowData,
+  CashFlowScenarioData,
+  defaultUrl,
+  QuestionDetail,
+} from "../../Store/Store";
 import {
   openNotificationSuccess,
   PatchAxios,
@@ -9,17 +15,13 @@ import {
   RenderName,
   toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
-import { Row, Table } from "react-bootstrap";
-import {
-  CashFlowData,
-  CashFlowScenarioData,
-  defaultUrl,
-  QuestionDetail,
-} from "../../Store/Store";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { AntdCreatableMultiSelect } from "../../Components/Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
 import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 import DividendIncome from "./DividendIncome";
 import AssetValueOfCompany from "./AssetValueOfCompany";
+
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const BusinessInvestmentsMiddleware = (props) => {
   /*
@@ -34,50 +36,39 @@ const BusinessInvestmentsMiddleware = (props) => {
          to maintain the integrity of the shared functionality.
    */
 
-  let questionDetail = useRecoilValue(QuestionDetail);
-  let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
-  let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const questionDetail = useRecoilValue(QuestionDetail);
+  const [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+  const CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const DefaultUrl = useRecoilValue(defaultUrl);
 
-  let [UserStatus] = useState(localStorage.getItem("UserStatus"));
-  let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
+  const [UserStatus] = useState(localStorage.getItem("UserStatus"));
+  const [objKey, setObjKey] = useState(props.modalObject.key || "");
 
-  let DefaultUrl = useRecoilValue(defaultUrl);
+  /* ---------------- Modal State ---------------- */
+  const [flagState, setFlagState] = useState(false);
+  const [modalObject, setModalObject] = useState({});
 
-  let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
+  /* ---------------- Layout Configuration ---------------- */
+  const layoutSwitchFlag = props.modalObject.title;
 
-  let [layoutSwitchFlag, setLayoutSwitchFlag] = useState(
-    props.modalObject.title
-  );
-
-  let BankAccountFinance =
-    Object.keys(questionDetail.BusinessAsCompanyStructure || {}).length > 0
-      ? questionDetail.BusinessAsCompanyStructure
-      : {
-          client: [],
-          partner: [],
-          joint: [],
-        }; // Use an empty object as default if incomeFromOverseasPension is undefined
-
-  let initialValues = {
+  /* ---------------- Initial Values ---------------- */
+  const initialValues = {
     owner: [],
+    client: {},
+    partner: {},
   };
 
+  /* ---------------- Bank Account Finance Data ---------------- */
+  const BankAccountFinance = useMemo(() => {
+    return Object.keys(questionDetail.BusinessAsCompanyStructure || {}).length > 0
+      ? questionDetail.BusinessAsCompanyStructure
+      : { client: [], partner: [], joint: [] };
+  }, [questionDetail.BusinessAsCompanyStructure]);
+
+  /* ---------------- Fill Initial Values ---------------- */
   const fillInitialValues = (setFieldValue) => {
     try {
-      // Set the object and API key
-      setObjAndAPIKey(props.modalObject.key);
-
-      console.log(
-        BankAccountFinance,
-        "Discovery Form Data " +
-          props.modalObject.key +
-          " and SourceKey " +
-          props.modalObject.sourceKey,
-        BankAccountFinance.client
-      );
-      // console.log(cashFlowData?.[objAndAPIKey].client.investmentFees, "cashFlowData Form Data");
-      // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
+      setObjKey(props.modalObject.key);
 
       const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
 
@@ -87,7 +78,7 @@ const BusinessInvestmentsMiddleware = (props) => {
 
         let fields = {};
 
-        if (props.modalObject.title === "Dividend Income") {
+        if (layoutSwitchFlag === "Dividend Income") {
           fields = {
             dividendIncome: data.dividendIncome || "$0",
             dividendIncomeObj: data.dividendIncomeObj || {},
@@ -96,17 +87,17 @@ const BusinessInvestmentsMiddleware = (props) => {
           };
         }
 
-        if (props.modalObject.title === "Business as Trusts") {
+        if (layoutSwitchFlag === "Business as Trusts") {
           fields = {
             netTrustDistribution: data.netTrustDistribution || "$0",
-            netTrustDistributionObj: data.netTrustDistributionObj || {},
+             netTrustDistributionObj: data.netTrustDistributionObj || {},
             assetValueOfBusinessTrust: data.assetValueOfBusinessTrust || "$0",
-            assetValueOfBusinessTrustObj:
-              data.assetValueOfBusinessTrustObj || {},
+            assetValueOfBusinessTrustObj: data.assetValueOfBusinessTrustObj || {},
+
           };
         }
 
-        if (props.modalObject.title === "Bucket Company") {
+        if (layoutSwitchFlag === "Bucket Company") {
           fields = {
             netTrustDistribution: data.netTrustDistribution || "$0",
             netTrustDistributionObj: data.netTrustDistributionObj || {},
@@ -120,120 +111,62 @@ const BusinessInvestmentsMiddleware = (props) => {
         });
       };
 
-      // Update owner field
-      if (
-        scenarioObj?.selectedSource === "discoveryForm" &&
-        BankAccountFinance &&
-        BankAccountFinance._id
-      ) {
-        // setFieldValue(`owner`, BankAccountFinance.owner || "");
-
-        // Update client-related fields
-        if (BankAccountFinance?.client.length > 0) {
-          let Obj = {
+      // Check for discovery form data
+      if (scenarioObj?.selectedSource === "discoveryForm" && BankAccountFinance && BankAccountFinance._id && !cashFlowData?.[objKey]?._id) {
+        if (BankAccountFinance?.client?.length > 0) {
+          const Obj = {
             dividendIncome: BankAccountFinance.client[0].dividendReceived,
-            dividendIncomeObj: {
-              dividendIncome: BankAccountFinance.client[0].dividendReceived,
-            },
             assetValueOfCompany: BankAccountFinance.client[0].equityPosition,
-            assetValueOfCompanyObj: {
-              assetValue: BankAccountFinance.client[0].equityPosition,
-            },
             netTrustDistribution: toCommaAndDollar(
-              BankAccountFinance.client[0].equityPositionArray[0]
-                .distributionReceived
+              BankAccountFinance.client[0].equityPositionArray?.[0]?.distributionReceived || 0
             ),
-            netTrustDistributionObj: {
-              assetValue: toCommaAndDollar(
-                BankAccountFinance.client[0].equityPositionArray[0]
-                  .distributionReceived
-              ),
-            },
             assetValueOfBusinessTrust:
-              BankAccountFinance.client[0].equityPositionArray[0]
-                .businessValuation,
-            assetValueOfBusinessTrustObj: {
-              assetValue:
-                BankAccountFinance.client[0].equityPositionArray[0]
-                  .businessValuation,
-            },
+              BankAccountFinance.client[0].equityPositionArray?.[0]?.businessValuation || "$0",
           };
           updateFields(Obj, "client");
+          setFieldValue("owner", ["client"]);
         }
 
-        // Update partner-related fields
-        if (
-          UserStatus === "Married" &&
-          BankAccountFinance?.partner?.length > 0
-        ) {
-          const partnerData = BankAccountFinance.partner?.[0] || {}; // Ensure safe access with a fallback
-          const partnerEquityPosition =
-            partnerData.equityPositionArray?.[0] || {}; // Safe access for nested property
+        if (UserStatus === "Married" && BankAccountFinance?.partner?.length > 0) {
+          const partnerData = BankAccountFinance.partner[0];
+          const partnerEquityPosition = partnerData.equityPositionArray?.[0] || {};
 
           const Obj = {
             dividendIncome: partnerData.dividendReceived || "$0",
-            dividendIncomeObj: {
-              dividendIncome: partnerData.dividendReceived || "$0",
-            },
             assetValueOfCompany: partnerData.equityPosition || "$0",
-            assetValueOfCompanyObj: {
-              assetValue: partnerData.equityPosition || "$0",
-            },
             netTrustDistribution: toCommaAndDollar(
               partnerEquityPosition.distributionReceived || 0
             ),
-            netTrustDistributionObj: {
-              assetValue: toCommaAndDollar(
-                partnerEquityPosition.distributionReceived || 0
-              ),
-            },
-            assetValueOfBusinessTrust:
-              partnerEquityPosition.businessValuation || "$0",
-            assetValueOfBusinessTrustObj: {
-              assetValue: partnerEquityPosition.businessValuation || "$0",
-            },
+            assetValueOfBusinessTrust: partnerEquityPosition.businessValuation || "$0",
           };
           updateFields(Obj, "partner");
-        } else {
-          console.warn("No partner data available or user is not married");
+          setFieldValue("owner", ["client", "partner"]);
         }
       } else {
-        // Handle cashFlowData scenario
-        const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-        // console.log(cashFlowDetails, "cashFlowDetails")
+        // Handle cash flow scenario data
+        const cashFlowDetails = CashFlowScenarioDataObj?.[objKey];
         if (cashFlowDetails) {
-          setFieldValue(`owner`, cashFlowDetails.owner || "");
-          if (cashFlowDetails.owner.includes("client")) {
-            // Update client details
+          setFieldValue("owner", cashFlowDetails.owner || []);
+          if (cashFlowDetails.owner?.includes("client") && cashFlowDetails.client) {
             updateFields(cashFlowDetails.client, "client");
           }
-
-          if (
-            UserStatus === "Married" &&
-            cashFlowDetails.owner.includes("partner")
-          ) {
-            // Update partner details
+          if (UserStatus === "Married" && cashFlowDetails.owner?.includes("partner") && cashFlowDetails.partner) {
             updateFields(cashFlowDetails.partner, "partner");
           }
         }
-      }
 
-      // Additional data from cashFlowData
-      if (cashFlowData?.[objAndAPIKey]?._id) {
-        const cashFlowDataDetails = cashFlowData[objAndAPIKey];
-        setFieldValue(`owner`, cashFlowDataDetails.owner || "");
+        // Handle cash flow data
+        if (cashFlowData?.[objKey]?._id) {
+          const cashFlowDataDetails = cashFlowData[objKey];
+          setFieldValue("owner", cashFlowDataDetails.owner || []);
 
-        if (cashFlowDataDetails.owner.includes("client")) {
-          // Update client details
-          updateFields(cashFlowDataDetails.client, "client");
-        }
+          if (cashFlowDataDetails.owner?.includes("client") && cashFlowDataDetails.client) {
+            updateFields(cashFlowDataDetails.client, "client");
+          }
 
-        if (
-          UserStatus === "Married" &&
-          cashFlowDataDetails.owner.includes("partner")
-        ) {
-          // Update partner details
-          updateFields(cashFlowDataDetails.partner, "partner");
+          if (UserStatus === "Married" && cashFlowDataDetails.owner?.includes("partner") && cashFlowDataDetails.partner) {
+            updateFields(cashFlowDataDetails.partner, "partner");
+          }
         }
       }
     } catch (error) {
@@ -241,175 +174,72 @@ const BusinessInvestmentsMiddleware = (props) => {
     }
   };
 
-  let onSubmit = async (values) => {
-    console.log(JSON.stringify(values));
-    // return (false);
-    let obj = values;
+  /* ---------------- Submit ---------------- */
+  const onSubmit = async (values) => {
+    const obj = {
+      ...values,
+      scenarioFK: JSON.parse(localStorage.getItem("ScenarioObj"))._id,
+    };
 
-    obj.scenarioFK = JSON.parse(localStorage.getItem("ScenarioObj"))._id;
-
-    if (values.owner.includes("client")) {
-      obj.clientTotal = Object.values(values.client || {})[0] || "$0";
+    // Calculate totals
+    if (values.owner.includes("client") && values.client) {
+      const clientValue = Object.values(values.client)[0] || "$0";
+      obj.clientTotal = typeof clientValue === 'string' ? clientValue : toCommaAndDollar(clientValue);
     } else {
       obj.clientTotal = "";
     }
 
-    if (values.owner.includes("partner")) {
-      obj.partnerTotal = Object.values(values.partner || {})[0] || "$0";
+    if (values.owner.includes("partner") && values.partner) {
+      const partnerValue = Object.values(values.partner)[0] || "$0";
+      obj.partnerTotal = typeof partnerValue === 'string' ? partnerValue : toCommaAndDollar(partnerValue);
     } else {
       obj.partnerTotal = "";
     }
 
-    const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
-
-    console.log(obj, "final obj");
-
     try {
-      let res;
-      if (!bankAccountArray) {
-        res = await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
-      } else {
-        res = await PatchAxios(
-          `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
-          obj
-        );
-      }
+      const exists = cashFlowData?.[objKey]?._id;
+      const res = exists
+        ? await PatchAxios(`${DefaultUrl}/api/CF/${objKey}/Update`, obj)
+        : await PostAxios(`${DefaultUrl}/api/CF/${objKey}/Add`, obj);
 
       if (res) {
-        console.log(res);
-        const updatedData = {
+        setCashFlowData({
           ...cashFlowData,
-          [objAndAPIKey]: res,
-        };
-        setCashFlowData(updatedData);
+          [objKey]: res,
+        });
       }
 
       openNotificationSuccess(
         "success",
         "topRight",
-        "Success Notification",
-        'Data of "' + props.modalObject.title + '" is Saved'
+        "Success",
+        `Data of "${props.modalObject.title}" is saved`
       );
 
-      // Reset the flag state if necessary
-      if (props.flagState) {
-        props.setFlagState(false);
-      }
-    } catch (error) {
-      console.error("Error occurred while making API call:", error);
+      props.setFlagState?.(false);
+      props?.setIsEditing?.(false);
+    } catch (err) {
+      console.error(err);
       openNotificationSuccess(
         "error",
         "topRight",
-        "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        "Error",
+        `Data of "${props.modalObject.title}" not saved`
       );
     }
   };
 
-  let handleInnerModal = (title, values, key, stakeHolder) => {
-    // console.log(title, values, key);
+  /* ---------------- Inner Modal ---------------- */
+  const handleInnerModal = (title, values, key, stakeHolder) => {
     setModalObject({
       title,
       values,
       key,
       stakeHolder,
-      sourceObj: props.modalObject,
+      sourceObj: props.modalObject
     });
     setFlagState(true);
   };
-
-  const options =
-    UserStatus !== "Single"
-      ? [
-          { value: "client", label: RenderName("client") },
-          { value: "partner", label: RenderName("partner") },
-        ]
-      : [{ value: "client", label: RenderName("client") }];
-
-  const [rowConfig, setRowConfig] = useState(() => {
-    let OriginalArray = [
-      {
-        name: "dividendIncome",
-        type: "number-toComma-Modal",
-        placeholder: "Dividend Income",
-        callBack: true,
-        disabled:true,
-        innerModalTitle: "Dividend Income",
-        key: "dividendIncome",
-        func: handleInnerModal,
-        inputChangeFunc: () => {},
-      },
-      {
-        name: "assetValueOfCompany",
-        type: "number-toComma-Modal",
-        placeholder: "Asset Value of Company",
-        callBack: true,
-        disabled:true,
-        innerModalTitle: "Asset Value of Company",
-        key: "assetValueOfCompany",
-        func: handleInnerModal,
-        inputChangeFunc: () => {},
-      },
-    ];
-
-    if (layoutSwitchFlag === "Business as Trusts") {
-      OriginalArray = [
-        {
-          name: "netTrustDistribution",
-          type: "number-toComma-Modal",
-          placeholder: "Net Trust Distribution",
-          callBack: true,
-          disabled:true,
-          innerModalTitle: "Net Trust Distribution",
-          key: "netTrustDistribution",
-          func: handleInnerModal,
-          inputChangeFunc: () => {},
-        },
-        {
-          name: "assetValueOfBusinessTrust",
-          type: "number-toComma-Modal",
-          placeholder: "Asset Value of Business Trust",
-          callBack: true,
-          disabled:true,
-          innerModalTitle: "Asset Value of Business Trust",
-          key: "assetValueOfBusinessTrust",
-          func: handleInnerModal,
-          inputChangeFunc: () => {},
-        },
-      ];
-    }
-
-    if (layoutSwitchFlag === "Bucket Company") {
-      OriginalArray = [
-        {
-          name: "netTrustDistribution",
-          type: "number-toComma-Modal",
-          placeholder: "Net Trust Distribution",
-          callBack: true,
-          disabled:true,
-          innerModalTitle: "Net Trust Distribution",
-          key: "netTrustDistribution",
-          func: handleInnerModal,
-          inputChangeFunc: () => {},
-        },
-        {
-          name: "dividendIncome",
-          type: "number-toComma-Modal",
-          placeholder: "Dividend Income",
-          callBack: true,
-          disabled:true,
-          innerModalTitle: "Dividend Income",
-          key: "dividendIncome",
-          func: handleInnerModal,
-          inputChangeFunc: () => {},
-        },
-      ];
-    }
-
-    return OriginalArray;
-  });
 
   const componentMapping = {
     "Dividend Income": <DividendIncome />,
@@ -418,10 +248,92 @@ const BusinessInvestmentsMiddleware = (props) => {
     "Asset Value of Business Trust": <AssetValueOfCompany />,
   };
 
-  const ModalContent = (obj) => {
-    return componentMapping[obj.title] || null;
+  /* ---------------- Table Columns ---------------- */
+  const getColumns = () => {
+    const baseColumns = [
+      { title: "Owner", dataIndex: "owner", type: "label", justText: true },
+    ];
+
+    if (layoutSwitchFlag === "Dividend Income") {
+      baseColumns.push(
+        {
+          title: "Dividend Income",
+          dataIndex: "dividendIncome",
+          type: "number-toComma-Modal",
+          innerModalTitle: "Dividend Income",
+          key: "dividendIncome",
+          func: handleInnerModal,
+        },
+        {
+          title: "Asset Value of Company",
+          dataIndex: "assetValueOfCompany",
+          type: "number-toComma-Modal",
+          innerModalTitle: "Asset Value of Company",
+          key: "assetValueOfCompany",
+          func: handleInnerModal,
+        }
+      );
+    }
+
+    if (layoutSwitchFlag === "Business as Trusts") {
+      baseColumns.push(
+        {
+          title: "Net Trust Distribution",
+          dataIndex: "netTrustDistribution",
+          type: "number-toComma-Modal",
+          innerModalTitle: "Net Trust Distribution",
+          key: "netTrustDistribution",
+          func: handleInnerModal,
+        },
+        {
+          title: "Asset Value of Business Trust",
+          dataIndex: "assetValueOfBusinessTrust",
+          type: "number-toComma-Modal",
+          innerModalTitle: "Asset Value of Business Trust",
+          key: "assetValueOfBusinessTrust",
+          func: handleInnerModal,
+        }
+      );
+    }
+
+    if (layoutSwitchFlag === "Bucket Company") {
+      baseColumns.push(
+        {
+          title: "Net Trust Distribution",
+          dataIndex: "netTrustDistribution",
+          type: "number-toComma-Modal",
+          innerModalTitle: "Net Trust Distribution",
+          key: "netTrustDistribution",
+          func: handleInnerModal,
+        },
+        {
+          title: "Dividend Income",
+          dataIndex: "dividendIncome",
+          type: "number-toComma-Modal",
+          innerModalTitle: "Dividend Income",
+          key: "dividendIncome",
+          func: handleInnerModal,
+        }
+      );
+    }
+
+    return baseColumns;
   };
 
+  const columns = getColumns();
+
+  /* ---------------- Owner Options ---------------- */
+  const options = useMemo(() => {
+    if (UserStatus !== "Single") {
+      return [
+        { value: "client", label: RenderName("client") },
+        { value: "partner", label: RenderName("partner") },
+      ];
+    }
+    return [{ value: "client", label: RenderName("client") }];
+  }, [UserStatus]);
+
+  /* ---------------- Render ---------------- */
   return (
     <Formik
       initialValues={initialValues}
@@ -434,6 +346,30 @@ const BusinessInvestmentsMiddleware = (props) => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        const rows = useMemo(() => {
+          const rowsArray = [];
+
+          if (values.owner?.includes("client") && values.client) {
+            rowsArray.push({
+              key: "client",
+              owner: RenderName("client"),
+              stakeHolder: "client",
+              ...values.client,
+            });
+          }
+
+          if (values.owner?.includes("partner") && UserStatus === "Married" && values.partner) {
+            rowsArray.push({
+              key: "partner",
+              owner: RenderName("partner"),
+              stakeHolder: "partner",
+              ...values.partner,
+            });
+          }
+
+          return rowsArray;
+        }, [values, UserStatus]);
+
         return (
           <Form>
             <Row>
@@ -443,85 +379,35 @@ const BusinessInvestmentsMiddleware = (props) => {
                 setFlagState={setFlagState}
                 flagState={flagState}
               >
-                {ModalContent(modalObject)}
+                {componentMapping[modalObject.title]}
               </InnerModal>
 
               <div className="col-md-12">
-                <div className="d-flex justify-content-center align-items-center gap-4">
-                  <label htmlFor="" className="text-end ">
-                    Owner
-                  </label>
-
-                  <div style={{ minWidth: "25%" }}>
+                <div className="d-flex justify-content-center align-items-center gap-2">
+                  <label className="mb-0" onClick={() => console.log(values)}>Owner</label>
+                  <div style={{ minWidth: 220 }}>
                     <Field
-                      name={`owner`}
-                      component={CreatableMultiSelectField}
-                      label="Multi Select Field"
+                      name="owner"
+                      component={AntdCreatableMultiSelect}
                       options={options}
                     />
                   </div>
                 </div>
               </div>
 
-              {values.owner.length > 0 && (
-                <div className="mt-4">
-                  <Table striped bordered responsive hover>
-                    <thead>
-                      <tr>
-                        <th
-                          onClick={() => {
-                            console.log(values);
-                          }}
-                        >
-                          Owner
-                        </th>
-                        {layoutSwitchFlag === "Dividend Income" && (
-                          <React.Fragment>
-                            <th>Dividend Income</th>
-                            <th>Asset Value of Company</th>
-                          </React.Fragment>
-                        )}
-                        {layoutSwitchFlag === "Business as Trusts" && (
-                          <React.Fragment>
-                            <th>Net Trust Distribution</th>
-                            <th>Asset Value of Business Trust</th>
-                          </React.Fragment>
-                        )}
-                        {layoutSwitchFlag === "Bucket Company" && (
-                          <React.Fragment>
-                            <th>Net Trust Distribution</th>
-                            <th>Dividend Income</th>
-                          </React.Fragment>
-                        )}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {values.owner.includes("client") && (
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                          handleInnerModal={handleInnerModal}
-                          stakeHolder="client."
-                        />
-                      )}
-
-                      {values.owner.includes("partner") &&
-                        UserStatus === "Married" && (
-                          <DynamicTableRow
-                            rowConfig={rowConfig}
-                            values={values}
-                            setFieldValue={setFieldValue}
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                            handleInnerModal={handleInnerModal}
-                            stakeHolder="partner."
-                          />
-                        )}
-                    </tbody>
-                  </Table>
+              {values?.owner?.length > 0 && (
+                <div className="mt-4 All_Client reportSection">
+                  <AntdTable
+                    columns={columns}
+                    data={rows}
+                    values={values}
+                    setFieldValue={setFieldValue}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                    handleSubmit={props?.handleOk}
+                    isEditing={props?.isEditing}
+                    setIsEditing={props?.setIsEditing}
+                  />
                 </div>
               )}
             </Row>
