@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Form, Formik } from "formik";
-import { Row } from "react-bootstrap";
+import { Placeholder, Row } from "react-bootstrap";
 import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
 
 const AntdTable = DynamicTableForInputsSection("antd");
@@ -95,6 +95,7 @@ const AssetValueOfCompany = (props) => {
         title: "Opening Value",
         dataIndex: "openingValue",
         type: "number-toComma",
+        packagelaceholder:"Opening Value",
       });
     }
     
@@ -103,6 +104,7 @@ const AssetValueOfCompany = (props) => {
       title: props.modalObject.title,
       dataIndex: "assetValue",
       type: "number-toComma",
+      placeholder:"Asset Value",
     });
     
     // Include from year column

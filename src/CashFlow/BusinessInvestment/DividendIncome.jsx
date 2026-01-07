@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { Form, Formik } from "formik";
-import { Row } from "react-bootstrap";
+import { Placeholder, Row } from "react-bootstrap";
 import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
 
 const AntdTable = DynamicTableForInputsSection("antd");
@@ -78,12 +78,14 @@ const DividendIncome = (props) => {
         dataIndex: "dividendIncome",
         type: "number-toComma",
         key: "dividendIncome",
+        placeholder:"Dividend Income",
       },
       {
         title: "Franking",
         dataIndex: "franking",
         type: "number-toPercent",
         key: "franking",
+        placeholder:"Franking",
       },
       {
         title: "Include From Year",
@@ -130,12 +132,14 @@ const DividendIncome = (props) => {
           dataIndex: "clientOfDividend",
           type: "number-toPercent",
           key: "clientOfDividend",
+          placeholder:"Client % of Dividend",
         },
         {
           title: "Partner % of Dividend",
           dataIndex: "partnerOfDividend",
           type: "number-toPercent",
           key: "partnerOfDividend",
+          placeholder:"Partner % of Dividend",
         }
       );
     }
