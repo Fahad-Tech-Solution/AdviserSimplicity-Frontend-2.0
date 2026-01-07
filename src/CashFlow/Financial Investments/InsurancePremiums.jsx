@@ -1,28 +1,38 @@
-import React, { useEffect, useState } from "react";
-import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
 import { Form, Formik } from "formik";
-import { Row, Table } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Row } from "react-bootstrap";
 import { toCommaAndDollar } from "../../Components/Assets/Api/Api";
 
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
+
+const AntdTable = DynamicTableForInputsSection("antd");
+
 const InsurancePremiums = (props) => {
-  let initialValues = {
+  const [doubleRowFlag, setDoubleRowFlag] = useState(false);
+
+  /* ===============================
+     Initial Values
+  =============================== */
+  const initialValues = {
     insurancePremiums: "",
     yearsInclude: "",
     indexationPremiums: "",
   };
 
-  let [doubleRowFLag, setDoubleRowFlag] = useState(false);
-
-  let fillInitialValues = (setFieldValue) => {
+  /* ===============================
+     Fill Initial Values
+  =============================== */
+  const fillInitialValues = (setFieldValue) => {
     let Double = false;
-    let DiscoveryObj = props.modalObject.DiscoveryObj;
-    let totalOfInsurancePremiums = "";
+    const stakeKey = props.modalObject.stakeHolder.replace(".", "");
+    const DiscoveryObj = props.modalObject.DiscoveryObj;
 
-    if (DiscoveryObj[props.modalObject.stakeHolder.replace(".", "")]) {
-      let DiscoveryObjArray =
-        DiscoveryObj[props.modalObject.stakeHolder.replace(".", "")];
+    let totalPremiums = 0;
 
-      totalOfInsurancePremiums = DiscoveryObjArray.reduce(
+    if (DiscoveryObj?.[stakeKey]) {
+      const arr = DiscoveryObj[stakeKey];
+
+      totalPremiums = arr.reduce(
         (total, entry) =>
           total +
           parseFloat(
@@ -36,125 +46,95 @@ const InsurancePremiums = (props) => {
         0
       );
 
-      console.log(totalOfInsurancePremiums, "Fataksa ");
+      setFieldValue("insurancePremiums", toCommaAndDollar(totalPremiums));
 
-      setFieldValue(
-        "insurancePremiums",
-        toCommaAndDollar(totalOfInsurancePremiums)
-      );
-      // alert(DiscoveryObjArray.length)
-      if (DiscoveryObjArray.length > 1) {
+      if (arr.length > 1) {
         Double = true;
-        setFieldValue(
-          "insurancePremiums1",
-          toCommaAndDollar(totalOfInsurancePremiums)
-        );
-        setDoubleRowFlag(Double);
+        setDoubleRowFlag(true);
+
+        setFieldValue("insurancePremiums1", toCommaAndDollar(totalPremiums));
       }
     }
 
-    if (
-      props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")]
-    ) {
-      let SubObj =
-        props.modalObject.values[
-          props.modalObject.stakeHolder.replace(".", "")
-        ];
-      if (SubObj[props.modalObject.key + "Obj"]) {
-        let Data = SubObj[props.modalObject.key + "Obj"];
-        setFieldValue(
-          "insurancePremiums",
-          Data.insurancePremiums || toCommaAndDollar(totalOfInsurancePremiums)
-        );
-        setFieldValue("yearsInclude", Data.yearsInclude);
-        setFieldValue("indexationPremiums", Data.indexationPremiums);
+    const stored =
+      props.modalObject.values?.[stakeKey]?.[props.modalObject.key + "Obj"];
 
-        if (Double) {
-          setFieldValue(
-            "insurancePremiums1",
-            Data.insurancePremiums1 ||
-              toCommaAndDollar(totalOfInsurancePremiums)
-          );
-          setFieldValue("yearsInclude1", Data.yearsInclude1);
-          setFieldValue("indexationPremiums1", Data.indexationPremiums1);
-        }
-      }
-    }
+    if (!stored) return;
+
+    Object.entries(stored).forEach(([key, val]) => {
+      setFieldValue(
+        key,
+        val ||
+          (key.includes("insurancePremiums")
+            ? toCommaAndDollar(totalPremiums)
+            : "")
+      );
+    });
   };
 
-  let onSubmit = (values) => {
+  /* ===============================
+     Save Child Modal
+  =============================== */
+  const onSubmit = (values) => {
     props.setFieldValue(
       props.modalObject.stakeHolder + props.modalObject.key + "Obj",
       values
     );
 
-    // Reset the flag state if necessary
-    if (props.flagState) {
-      props.setFlagState(false);
-    }
+    props?.setFlagState?.(false);
   };
 
-  const yearsIncludedArray = Array.from({ length: 31 }, (_, i) => {
-    return {
-      value: i.toString(),
-      label: ("Year " + i).toString(),
-    };
-  });
-
-  const indexation = Array.from({ length: 31 }, (_, i) => ({
-    value: (i * 0.5).toFixed(2) + "%",
-    label: (i * 0.5).toFixed(2) + "%",
+  /* ===============================
+     Select Options
+  =============================== */
+  const yearsIncludedOptions = Array.from({ length: 31 }, (_, i) => ({
+    value: i.toString(),
+    label: `Year ${i}`,
   }));
 
-  let rowConfig = [
+  const indexationOptions = Array.from({ length: 31 }, (_, i) => ({
+    value: `${(i * 0.5).toFixed(2)}%`,
+    label: `${(i * 0.5).toFixed(2)}%`,
+  }));
+
+  /* ===============================
+     AntD Columns
+  =============================== */
+  const columns = [
     {
-      name: "index",
+      title: "Fund",
+      dataIndex: "index",
+      key: "index",
       type: "plainText2.0",
-      value: "Fund 1",
-      styleSet: { fontWeight: "800", fontSize: "16px" },
+      justText: true,
     },
     {
-      name: "insurancePremiums",
+      title: "Insurance Premiums",
+      dataIndex: "insurancePremiums",
+      key: "insurancePremiums",
       type: "number-toComma",
-      placeholder: "Insurance Premiums",
-      styleSet: { width: "11vw" },
     },
     {
-      name: "yearsInclude",
+      title: "Years to Include",
+      dataIndex: "yearsInclude",
+      key: "yearsInclude",
+      selectedOptionValue: true,
       type: "select",
-      options: yearsIncludedArray,
+      options: yearsIncludedOptions,
     },
     {
-      name: "indexationPremiums",
+      title: "Indexation of Premiums",
+      dataIndex: "indexationPremiums",
+      key: "indexationPremiums",
+      selectedOptionValue: true,
       type: "select",
-      options: indexation,
+      options: indexationOptions,
     },
   ];
 
-  let rowConfig1 = [
-    {
-      name: "index",
-      type: "plainText2.0",
-      value: "Fund 2",
-      styleSet: { fontWeight: "800", fontSize: "16px" },
-    },
-    {
-      name: "insurancePremiums1",
-      type: "number-toComma",
-      placeholder: "Insurance Premiums",
-    },
-    {
-      name: "yearsInclude1",
-      type: "select",
-      options: yearsIncludedArray,
-    },
-    {
-      name: "indexationPremiums1",
-      type: "select",
-      options: indexation,
-    },
-  ];
-
+  /* ===============================
+     Render
+  =============================== */
   return (
     <Formik
       initialValues={initialValues}
@@ -162,47 +142,44 @@ const InsurancePremiums = (props) => {
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, handleChange, setFieldValue, handleBlur }) => {
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        const tableData = [
+          {
+            key: "fund1",
+            index: "Fund 1",
+            ...values,
+          },
+          ...(doubleRowFlag
+            ? [
+                {
+                  key: "fund2",
+                  index: "Fund 2",
+                  insurancePremiums: values.insurancePremiums1,
+                  yearsInclude: values.yearsInclude1,
+                  indexationPremiums: values.indexationPremiums1,
+                },
+              ]
+            : []),
+        ];
+
         return (
           <Form>
             <Row>
-              <div className="col-md-12">
-                <div className="row justify-content-center">
-                  <div className="mt-4">
-                    <Table striped bordered responsive hover>
-                      <thead>
-                        <tr>
-                          <th>Fund</th>
-                          <th>Insurance Premiums</th>
-                          <th>Years to Include</th>
-                          <th>Indexation of Premiums</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                        />
-                        {doubleRowFLag && (
-                          <DynamicTableRow
-                            rowConfig={rowConfig1}
-                            values={values}
-                            setFieldValue={setFieldValue}
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                          />
-                        )}
-                      </tbody>
-                    </Table>
-                  </div>
-                </div>
+              <div className="col-md-12 mt-4 All_Client reportSection">
+                <AntdTable
+                  columns={columns}
+                  data={tableData}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
+                />
               </div>
             </Row>
           </Form>

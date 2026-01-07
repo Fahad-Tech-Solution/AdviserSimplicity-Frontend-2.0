@@ -1,7 +1,13 @@
+import React, { useEffect, useMemo, useState } from "react";
 import { Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
-import { CreatableMultiSelectField } from "../../Components/Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
-import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
+import { useRecoilState, useRecoilValue } from "recoil";
+
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
+import {
+  AntdCreatableMultiSelect,
+  CreatableMultiSelectField,
+} from "../../Components/Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+
 import {
   openNotificationSuccess,
   PatchAxios,
@@ -9,14 +15,14 @@ import {
   RenderName,
   toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
-import { Row, Table } from "react-bootstrap";
+
 import {
   CashFlowData,
   CashFlowScenarioData,
   defaultUrl,
   QuestionDetail,
 } from "../../Store/Store";
-import { useRecoilState, useRecoilValue } from "recoil";
+
 import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 
 import InputOverride from "./InputOverride";
@@ -27,287 +33,116 @@ import ConcessionalContributions from "./ConcessionalContributions";
 import NonConcessionalContributions from "./NonConcessionalContributions";
 import Withdrawals from "./Withdrawals";
 
+const AntDTableHOC = DynamicTableForInputsSection("antd");
+
 const CFSuperFund = (props) => {
-  let questionDetail = useRecoilValue(QuestionDetail);
-  let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
-  let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const questionDetail = useRecoilValue(QuestionDetail);
+  const [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+  const CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const DefaultUrl = useRecoilValue(defaultUrl);
 
-  let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
+  const [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
+  const [flagState, setFlagState] = useState(false);
+  const [modalObject, setModalObject] = useState({});
+  const UserStatus = localStorage.getItem("UserStatus");
 
-  let [UserStatus] = useState(localStorage.getItem("UserStatus"));
-  let DefaultUrl = useRecoilValue(defaultUrl);
+  const superAnnuationIssues = questionDetail.superAnnuationIssues || {
+    client: [],
+    partner: [],
+    joint: [],
+  };
 
-  let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
-
-  let superAnnuationIssues =
-    Object.keys(questionDetail.superAnnuationIssues || {}).length > 0
-      ? questionDetail.superAnnuationIssues
-      : {
-          client: [],
-          partner: [],
-          joint: [],
-        }; // Use an empty object as default if superAnnuationIssues is undefined
-
-  let initialValues = {
+  /* -------------------- INITIAL VALUES -------------------- */
+  const initialValues = {
     owner: [],
   };
 
+  /* -------------------- PREFILL -------------------- */
   const fillInitialValues = (setFieldValue) => {
     try {
-      // Set the object and API key
       setObjAndAPIKey(props.modalObject.key);
-
-      console.log(
-        superAnnuationIssues,
-        "Discovery Form Data " +
-          props.modalObject.key +
-          " and SourceKey " +
-          props.modalObject.sourceKey,
-        superAnnuationIssues.client
-      );
-      // console.log(cashFlowData?.[objAndAPIKey].client.investmentFees, "cashFlowData Form Data");
-      // console.log(CashFlowScenarioDataObj, "CashFlowScenarioDataObj Form Data");
-
       const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
 
-      // Helper function to update field values
       const updateFields = (data, prefix) => {
-        if (!data || !Object.keys(data).length) return;
+        if (!data) return;
 
-        const fields = {
-          balanceComponents: data.balanceComponents || "",
-          balanceComponentsObj: data.balanceComponentsObj || {},
-          riskProfile: data.riskProfile || "",
-          investmentReturns: data.investmentReturns || "",
-          investmentReturnsObj: data.investmentReturnsObj || {},
-          investmentFees: data.investmentFees || "0%",
-          adviserServiceFee: data.adviserServiceFee || "",
-          insurancePremiums: data.insurancePremiums || "No",
-          insurancePremiumsObj: data.insurancePremiumsObj || {},
-          rolloverFunds: data.rolloverFunds || "No",
-          rolloverFundsObj: data.rolloverFundsObj || {},
-          concessionalContributions: data.concessionalContributions || "No",
-          concessionalContributionsObj: data.concessionalContributionsObj || {},
-          nonConcessionalContributions:
-            data.nonConcessionalContributions || "No",
-          nonConcessionalContributionsObj:
-            data.nonConcessionalContributionsObj || {},
-          withdrawals: data.withdrawals || "No",
-          withdrawalsObj: data.withdrawalsObj || {},
-        };
-
-        Object.entries(fields).forEach(([key, value]) => {
-          setFieldValue(`${prefix}.${key}`, value);
+        Object.entries(data).forEach(([key, value]) => {
+          setFieldValue(`${prefix}.${key}`, value ?? "");
         });
       };
 
-      // Update owner field
-      if (
-        scenarioObj?.selectedSource === "discoveryForm" &&
-        superAnnuationIssues &&
-        superAnnuationIssues._id
-      ) {
-        // Update client-related fields
-        if (superAnnuationIssues?.client.length > 0) {
-          let totalOfAnnualAdvice = superAnnuationIssues.client.reduce(
-            (total, entry) =>
-              total + parseFloat(entry.annualAdvice.replace(/[^0-9.-]+/g, "")),
-            0
-          );
-          let taxFreeComponentTotal = superAnnuationIssues.client.reduce(
-            (total, entry) =>
-              total +
-              parseFloat(
-                entry.balanceBenefitDetailsArray[0].taxFreeComponent.replace(
-                  /[^0-9.-]+/g,
-                  ""
-                )
-              ),
-            0
-          );
+      const cashFlowDetails =
+        CashFlowScenarioDataObj?.[objAndAPIKey] || cashFlowData?.[objAndAPIKey];
 
-          let Obj = {
-            balanceComponentsObj: {
-              currentBalance: toCommaAndDollar(totalOfAnnualAdvice),
-              taxFreeComponent: toCommaAndDollar(taxFreeComponentTotal),
-            },
-          };
+      if (cashFlowDetails) {
+        setFieldValue("owner", cashFlowDetails.owner || []);
 
-          if (superAnnuationIssues.client.length > 1) {
-            Obj.balanceComponentsObj.currentBalance1 =
-              toCommaAndDollar(totalOfAnnualAdvice);
-            Obj.balanceComponentsObj.taxFreeComponent1 = toCommaAndDollar(
-              taxFreeComponentTotal
-            );
-          }
-          updateFields(Obj, "client");
-        }
-
-        // Update partner-related fields
-        if (
-          UserStatus === "Married" &&
-          superAnnuationIssues?.partner &&
-          superAnnuationIssues.partner.length > 0
-        ) {
-          let totalOfAnnualAdvice = superAnnuationIssues?.partner.reduce(
-            (total, entry) =>
-              total + parseFloat(entry.annualAdvice.replace(/[^0-9.-]+/g, "")),
-            0
-          );
-          let taxFreeComponentTotal = superAnnuationIssues?.partner.reduce(
-            (total, entry) =>
-              total +
-              parseFloat(
-                entry.balanceBenefitDetailsArray[0].taxFreeComponent.replace(
-                  /[^0-9.-]+/g,
-                  ""
-                )
-              ),
-            0
-          );
-
-          let Obj = {
-            balanceComponentsObj: {
-              currentBalance: toCommaAndDollar(totalOfAnnualAdvice),
-              taxFreeComponent: toCommaAndDollar(taxFreeComponentTotal),
-            },
-          };
-
-          if (superAnnuationIssues.partner.length > 1) {
-            Obj.balanceComponentsObj.currentBalance1 =
-              toCommaAndDollar(totalOfAnnualAdvice);
-            Obj.balanceComponentsObj.taxFreeComponent1 = toCommaAndDollar(
-              taxFreeComponentTotal
-            );
-          }
-          updateFields(Obj, "partner");
-        }
-      } else {
-        // Handle cashFlowData scenario
-        const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-        console.log(cashFlowDetails, "cashFlowDetails");
-        if (cashFlowDetails) {
-          setFieldValue(`owner`, cashFlowDetails.owner || "");
-          if (cashFlowDetails.owner.includes("client")) {
-            // Update client details
-            updateFields(cashFlowDetails.client, "client");
-          }
-
-          if (
-            UserStatus === "Married" &&
-            cashFlowDetails.owner.includes("partner")
-          ) {
-            // Update partner details
-            updateFields(cashFlowDetails.partner, "partner");
-          }
-        }
-      }
-
-      // Additional data from cashFlowData
-      if (cashFlowData?.[objAndAPIKey]?._id) {
-        const cashFlowDataDetails = cashFlowData[objAndAPIKey];
-        setFieldValue(`owner`, cashFlowDataDetails.owner || "");
-
-        if (cashFlowDataDetails.owner.includes("client")) {
-          // Update client details
-          updateFields(cashFlowDataDetails.client, "client");
+        if (cashFlowDetails.owner?.includes("client")) {
+          updateFields(cashFlowDetails.client, "client");
         }
 
         if (
           UserStatus === "Married" &&
-          cashFlowDataDetails.owner.includes("partner")
+          cashFlowDetails.owner?.includes("partner")
         ) {
-          // Update partner details
-          updateFields(cashFlowDataDetails.partner, "partner");
+          updateFields(cashFlowDetails.partner, "partner");
         }
       }
-    } catch (error) {
-      console.error("Error in fillInitialValues:", error);
+    } catch (err) {
+      console.error("fillInitialValues error:", err);
     }
   };
 
-  let onSubmit = async (values) => {
-    console.log(JSON.stringify(values));
-    // return (false);
-    let obj = values;
-
-    obj.scenarioFK = JSON.parse(localStorage.getItem("ScenarioObj"))._id;
-
-    if (values.owner.includes("client")) {
-      obj.clientTotal = values.client.adviserServiceFee || "$0";
-    } else {
-      obj.clientTotal = "";
-    }
-
-    if (values.owner.includes("partner")) {
-      obj.partnerTotal = values.partner.adviserServiceFee || "$0";
-    } else {
-      obj.partnerTotal = "";
-    }
-
-    const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
-
-    console.log(obj, "final obj");
+  /* -------------------- SUBMIT -------------------- */
+  const onSubmit = async (values) => {
+    const obj = {
+      ...values,
+      scenarioFK: JSON.parse(localStorage.getItem("ScenarioObj"))._id,
+      clientTotal: values.owner.includes("client")
+        ? values.client?.adviserServiceFee || "$0"
+        : "",
+      partnerTotal: values.owner.includes("partner")
+        ? values.partner?.adviserServiceFee || "$0"
+        : "",
+    };
 
     try {
-      let res;
-      if (!bankAccountArray) {
-        res = await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
-      } else {
-        res = await PatchAxios(
-          `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
-          obj
-        );
-      }
+      const exists = cashFlowData?.[objAndAPIKey]?._id;
+
+      const res = exists
+        ? await PatchAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Update`, obj)
+        : await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
 
       if (res) {
-        console.log(res);
-        const updatedData = {
-          ...cashFlowData,
-          [objAndAPIKey]: res,
-        };
-        setCashFlowData(updatedData);
+        setCashFlowData({ ...cashFlowData, [objAndAPIKey]: res });
       }
 
       openNotificationSuccess(
         "success",
         "topRight",
-        "Success Notification",
-        'Data of "' + props.modalObject.title + '" is Saved'
+        "Success",
+        `"${props.modalObject.title}" saved successfully`
       );
 
-      // Reset the flag state if necessary
-      if (props.flagState) {
-        props.setFlagState(false);
-      }
-    } catch (error) {
-      console.error("Error occurred while making API call:", error);
+      props.flagState && props.setFlagState(false);
+    } catch (err) {
       openNotificationSuccess(
         "error",
         "topRight",
-        "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        "Error",
+        `"${props.modalObject.title}" could not be saved`
       );
     }
   };
 
-  let handleInnerModal = (title, values, key, stakeHolder) => {
-    console.log(title, values, key, stakeHolder);
-    setModalObject({
-      title,
-      values,
-      key,
-      stakeHolder,
-      DiscoveryObj: superAnnuationIssues,
-      cal: title === "Balance & Components",
-    });
+  /* -------------------- INNER MODAL -------------------- */
+  const handleInnerModal = (title, values, key, stakeHolder) => {
+    setModalObject({ title, values, key, stakeHolder });
     setFlagState(true);
   };
 
-  const options =
+  /* -------------------- OPTIONS -------------------- */
+  const ownerOptions =
     UserStatus !== "Single"
       ? [
           { value: "client", label: RenderName("client") },
@@ -315,114 +150,111 @@ const CFSuperFund = (props) => {
         ]
       : [{ value: "client", label: RenderName("client") }];
 
-  let riskProfileOptions = [
-    { value: "Conservative", label: "Conservative" },
-    { value: "Moderately Conservative", label: "Moderately Conservative" },
-    { value: "Balanced", label: "Balanced" },
-    { value: "Growth", label: "Growth" },
-    { value: "High Growth", label: "High Growth" },
-    { value: "Cash", label: "Cash" },
-    { value: "International Shares", label: "International Shares" },
-    { value: "Property", label: "Property" },
-    { value: "Australian Fixed Interest", label: "Australian Fixed Interest" },
-    {
-      value: "International Fixed Interest",
-      label: "International Fixed Interest",
-    },
-    { value: "Other", label: "Other" },
-    { value: "Australian Shares", label: "Australian Shares" },
-  ];
-
   let InvestmentReturnsOptions = [
     { value: "system", label: "System" },
     { value: "input Override", label: "Input Override" },
   ];
 
-  const [rowConfig, setRowConfig] = useState(() => {
-    let OriginalArray = [
+  /* -------------------- TABLE COLUMNS -------------------- */
+  const columns = useMemo(
+    () => [
       {
-        name: "balanceComponents",
-        type: "number-toComma-Modal",
+        title: "Owner",
+        dataIndex: "owner",
+        type: "text",
+        key: "owner",
+        justText: true,
+      },
+      {
+        title: "Balance & Components",
         placeholder: "Balance & Components",
-        callBack: true,
+        dataIndex: "balanceComponents",
+        type: "number-toComma-Modal",
         innerModalTitle: "Balance & Components",
         key: "balanceComponents",
         func: handleInnerModal,
         disabled: true,
       },
       {
-        name: "riskProfile",
+        title: "Risk Profile",
+        placeholder: "Risk Profile",
+        dataIndex: "riskProfile",
         type: "select",
-        options: riskProfileOptions,
+        options: ["Conservative", "Balanced", "Growth", "High Growth"].map(
+          (v) => ({ value: v, label: v })
+        ),
       },
       {
-        name: "investmentReturns",
-        type: "selectModal",
+        title: "Investment Returns",
         placeholder: "Investment Returns",
+        dataIndex: "investmentReturns",
+        type: "selectModal",
         options: InvestmentReturnsOptions,
         ModalOption: "input Override",
         innerModalTitle: "Input Override",
         key: "investmentReturns",
+        func: handleInnerModal,
       },
       {
-        name: "investmentFees",
-        type: "number-toPercent",
+        title: "Investment Fees %",
         placeholder: "Investment Fees %",
+        dataIndex: "investmentFees",
+        type: "number-toPercent",
       },
       {
-        name: "adviserServiceFee",
+        title: "Adviser Service Fee ($)",
+        placeholder: "Adviser Service Fee ($)",
+        dataIndex: "adviserServiceFee",
         type: "number-toComma",
-        placeholder: "Adviser Service Fee",
       },
       {
-        name: "insurancePremiums",
+        title: "Insurance Premiums",
+        dataIndex: "insurancePremiums",
         type: "yesnoModal",
-        placeholder: "Insurance Premiums",
         callBack: true,
         key: "insurancePremiums",
         innerModalTitle: "Insurance Premiums",
         func: handleInnerModal,
       },
       {
-        name: "rolloverFunds",
+        title: "Rollover Funds",
+        dataIndex: "rolloverFunds",
         type: "yesnoModal",
-        placeholder: "Rollover Funds",
         callBack: true,
         key: "rolloverFunds",
         innerModalTitle: "Rollover Funds",
         func: handleInnerModal,
       },
       {
-        name: "concessionalContributions",
+        title: "Concessional Contributions",
+        dataIndex: "concessionalContributions",
         type: "yesnoModal",
-        placeholder: "Concessional Contributions",
         callBack: true,
         key: "concessionalContributions",
         innerModalTitle: "Concessional Contributions",
         func: handleInnerModal,
       },
       {
-        name: "nonConcessionalContributions",
+        title: "Non Concessional Contributions",
+        dataIndex: "nonConcessionalContributions",
         type: "yesnoModal",
-        placeholder: "Non Concessional Contributions",
         callBack: true,
         key: "nonConcessionalContributions",
         innerModalTitle: "Non Concessional Contributions",
         func: handleInnerModal,
       },
       {
-        name: "withdrawals",
+        title: "Withdrawals",
+        dataIndex: "withdrawals",
         type: "yesnoModal",
-        placeholder: "Withdrawals",
         callBack: true,
         key: "withdrawals",
         innerModalTitle: "Withdrawals",
         func: handleInnerModal,
       },
-    ];
-
-    return OriginalArray;
-  });
+    ],
+    []
+  );
 
   const componentMapping = {
     "Balance & Components": <BalanceComponents />,
@@ -432,10 +264,6 @@ const CFSuperFund = (props) => {
     "Concessional Contributions": <ConcessionalContributions />,
     "Non Concessional Contributions": <NonConcessionalContributions />,
     Withdrawals: <Withdrawals />,
-  };
-
-  const ModalContent = (obj) => {
-    return componentMapping[obj.title] || null;
   };
 
   return (
@@ -450,88 +278,72 @@ const CFSuperFund = (props) => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        const tableData = useMemo(() => {
+          const result = [];
+
+          if (values.owner.includes("client"))
+            result.push({
+              key: "client",
+              owner: RenderName("client"),
+              stakeHolder: "client",
+              ...values.client,
+            });
+
+          if (values.owner.includes("partner") && UserStatus === "Married")
+            result.push({
+              key: "partner",
+              owner: RenderName("partner"),
+              stakeHolder: "partner",
+              ...values.partner,
+            });
+
+          return result;
+        }, [values.owner]);
+
         return (
           <Form>
-            <Row>
-              <InnerModal
-                modalObject={modalObject}
-                setFieldValue={setFieldValue}
-                setFlagState={setFlagState}
-                flagState={flagState}
+            <InnerModal
+              modalObject={modalObject}
+              setFieldValue={setFieldValue}
+              setFlagState={setFlagState}
+              flagState={flagState}
+            >
+              {componentMapping[modalObject.title]}
+            </InnerModal>
+
+            <div className="d-flex justify-content-center align-items-center gap-2">
+              <label
+                className="mb-0"
+                onClick={() => {
+                  console.log(values);
+                }}
               >
-                {ModalContent(modalObject)}
-              </InnerModal>
-
-              <div className="col-md-12">
-                <div className="d-flex justify-content-center align-items-center gap-4">
-                  <label htmlFor="" className="text-end ">
-                    Owner
-                  </label>
-
-                  <div style={{ minWidth: "25%" }}>
-                    <Field
-                      name={`owner`}
-                      component={CreatableMultiSelectField}
-                      label="Multi Select Field"
-                      options={options}
-                    />
-                  </div>
-                </div>
+                Owner
+              </label>
+              <div style={{ minWidth: 220 }}>
+                <Field
+                  name="owner"
+                  component={AntdCreatableMultiSelect}
+                  options={ownerOptions}
+                />
               </div>
-              {values.owner.length > 0 && (
-                <div className="mt-4">
-                  <Table striped bordered responsive hover>
-                    <thead>
-                      <tr>
-                        <th
-                          onClick={() => {
-                            console.log(values);
-                          }}
-                        >
-                          Owner
-                        </th>
-                        <th>Balance & Components</th>
-                        <th>Risk Profile</th>
-                        <th>Investment Returns</th>
-                        <th>Investment Fees %</th>
-                        <th>Adviser Service Fee ($)</th>
-                        <th>Insurance Premiums</th>
-                        <th>Rollover Funds</th>
-                        <th>Concessional Contributions</th>
-                        <th>Non Concessional Contributions</th>
-                        <th>Withdrawals</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {values.owner.includes("client") && (
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                          handleInnerModal={handleInnerModal}
-                          stakeHolder="client."
-                        />
-                      )}
+            </div>
 
-                      {values.owner.includes("partner") &&
-                        UserStatus === "Married" && (
-                          <DynamicTableRow
-                            rowConfig={rowConfig}
-                            values={values}
-                            setFieldValue={setFieldValue}
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                            handleInnerModal={handleInnerModal}
-                            stakeHolder="partner."
-                          />
-                        )}
-                    </tbody>
-                  </Table>
-                </div>
-              )}
-            </Row>
+            {values.owner?.length > 0 && (
+              <div className="mt-4 All_Client reportSection">
+                <AntDTableHOC
+                  columns={columns}
+                  data={tableData.filter((r) => values.owner.includes(r.key))}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  handleSubmit={props.handleOk}
+                  isEditing={props.isEditing}
+                  setIsEditing={props.setIsEditing}
+                />
+              </div>
+            )}
           </Form>
         );
       }}

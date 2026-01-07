@@ -1,46 +1,53 @@
-import React, { useEffect, useState } from "react";
-import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
+import React, { useEffect } from "react";
 import { Form, Formik } from "formik";
-import { Row, Table } from "react-bootstrap";
+import { Row } from "react-bootstrap";
+
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
+import { RenderName } from "../../Components/Assets/Api/Api";
+
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const ContributionSplittingInner = (props) => {
-  let initialValues = {
+  /* ===============================
+     Initial Values
+  =============================== */
+  const initialValues = {
     contributionSplitting: "",
     yearToCommence: "",
     yearsToInclude: "",
     contributionsToFund: "",
+    previousLumpsumWithdrawals: "",
   };
 
-  let fillInitialValues = (setFieldValue) => {
-    console.log(props.modalObject);
-    if (props.modalObject.values[props.modalObject.key + "Obj"]) {
-      let Data = props.modalObject.values[props.modalObject.key + "Obj"];
-      setFieldValue("contributionSplitting", Data.contributionSplitting);
-      setFieldValue("yearToCommence", Data.yearToCommence);
-      setFieldValue("yearsToInclude", Data.yearsToInclude);
-      setFieldValue("contributionsToFund", Data.contributionsToFund);
-      setFieldValue(
-        "previousLumpsumWithdrawals",
-        Data.previousLumpsumWithdrawals
-      );
-    }
+  /* ===============================
+     Fill Initial Values
+  =============================== */
+  const fillInitialValues = (setFieldValue) => {
+    const stored = props.modalObject.values?.[props.modalObject.key + "Obj"];
+
+    if (!stored) return;
+
+    Object.entries(stored).forEach(([key, value]) => {
+      setFieldValue(key, value);
+    });
   };
 
-  let onSubmit = (values) => {
+  /* ===============================
+     Submit
+  =============================== */
+  const onSubmit = (values) => {
     props.setFieldValue(props.modalObject.key + "Obj", values);
 
-    // Reset the flag state if necessary
-    if (props.flagState) {
-      props.setFlagState(false);
-    }
+    props?.setFlagState?.(false);
   };
 
-  const yearsIncludedArray = Array.from({ length: 31 }, (_, i) => {
-    return {
-      value: i.toString(),
-      label: ("Year " + i).toString(),
-    };
-  });
+  /* ===============================
+     Options
+  =============================== */
+  const yearsIncludedOptions = Array.from({ length: 31 }, (_, i) => ({
+    value: i.toString(),
+    label: `Year ${i}`,
+  }));
 
   const contributionsFundOptions = [
     { value: "1", label: "1" },
@@ -48,42 +55,59 @@ const ContributionSplittingInner = (props) => {
     { value: "SMSF", label: "SMSF" },
   ];
 
-  let rowConfig = [
+  /* ===============================
+     AntD Columns
+  =============================== */
+  const columns = [
     {
-      type: "plainText",
-      text: props.modalObject.stakeHolder.replace(".", ""),
-      styleSet: { fontWeight: "800", fontSize: "16px" },
+      title: "Owner",
+      dataIndex: "owner",
+      key: "owner",
+      type: "plainText2.0",
     },
     {
-      name: "contributionSplitting",
+      title: "Contribution Splitting",
+      dataIndex: "contributionSplitting",
+      key: "contributionSplitting",
       type: "number-toPercent",
       placeholder: "Contribution Splitting",
     },
     {
-      name: "yearToCommence",
-      placeholder: "Year to Commence",
+      title: "Year to Commence",
+      dataIndex: "yearToCommence",
+      key: "yearToCommence",
+      selectedOptionValue:true, 
       type: "select",
-      options: yearsIncludedArray,
+      options: yearsIncludedOptions,
     },
     {
-      name: "yearsToInclude",
-      placeholder: "Years to Include",
+      title: "Years to Include",
+      dataIndex: "yearsToInclude",
+      key: "yearsToInclude",
+      selectedOptionValue:true, 
       type: "select",
-      options: yearsIncludedArray,
+      options: yearsIncludedOptions,
     },
     {
-      name: "contributionsToFund",
-      placeholder: "Contributions To Fund",
+      title: "Contributions To Fund",
+      dataIndex: "contributionsToFund",
+      key: "contributionsToFund",
+      selectedOptionValue:true, 
       type: "select",
       options: contributionsFundOptions,
     },
     {
-      name: "previousLumpsumWithdrawals",
+      title: "Previous Lumpsum Withdrawals",
       placeholder: "Previous Lumpsum Withdrawals",
+      dataIndex: "previousLumpsumWithdrawals",
+      key: "previousLumpsumWithdrawals",
       type: "number-toComma",
     },
   ];
 
+  /* ===============================
+     Render
+  =============================== */
   return (
     <Formik
       initialValues={initialValues}
@@ -91,42 +115,33 @@ const ContributionSplittingInner = (props) => {
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, handleChange, setFieldValue, handleBlur }) => {
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        const tableData = [
+          {
+            key: "contributionSplittingRow",
+            owner: RenderName(props.modalObject.stakeHolder.replace(".", "")),
+            ...values,
+          },
+        ];
+
         return (
           <Form>
             <Row>
-              <div className="col-md-12">
-                <div className="row justify-content-center">
-                  <div className="mt-4">
-                    <Table striped bordered responsive hover>
-                      <thead>
-                        <tr>
-                          <th>Owner</th>
-                          <th>Contribution Splitting</th>
-                          <th>Year to Commence</th>
-                          <th>Years to Include</th>
-                          <th>Contributions To Fund</th>
-                          <th style={{ color: "black" }}>
-                            Previous Lumpsum Withdrawals
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                        />
-                      </tbody>
-                    </Table>
-                  </div>
-                </div>
+              <div className="col-md-12 mt-4 All_Client reportSection">
+                <AntdTable
+                  columns={columns}
+                  data={tableData}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
+                />
               </div>
             </Row>
           </Form>

@@ -1,19 +1,25 @@
 import React, { useEffect, useState } from "react";
-import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
 import { Form, Formik } from "formik";
-import { Row, Table } from "react-bootstrap";
+import { Row } from "react-bootstrap";
+
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
 import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
-import ContributionSplittingInner from "./ContributionSplittingInner";
-import OtherPercentageAmount from "./OtherPercentageAmount";
+
 import LumpsumNonConcessionalNonConcessional from "./LumpsumNonConcessionalNonConcessional";
 import DownSizerContributionNonConcessional from "./DownSizerContributionNonConcessional";
 import ApplySpouseContribution from "./ApplySpouseContribution";
+import { RenderName } from "../../Components/Assets/Api/Api";
+
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const NonConcessionalContributions = (props) => {
-  let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
+  const [flagState, setFlagState] = useState(false);
+  const [modalObject, setModalObject] = useState({});
 
-  let initialValues = {
+  /* ===============================
+     Initial Values
+  =============================== */
+  const initialValues = {
     lumpsumNonConcessionalYearOne: "",
     contributionsToFund: "",
     lumpsumNonConcessional: "",
@@ -29,69 +35,40 @@ const NonConcessionalContributions = (props) => {
     applySpouseContributionObj: {},
   };
 
-  let fillInitialValues = (setFieldValue) => {
-    console.log(props.modalObject);
-    if (
-      props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")]
-    ) {
-      let SubObj =
-        props.modalObject.values[
-          props.modalObject.stakeHolder.replace(".", "")
-        ];
-      if (SubObj[props.modalObject.key + "Obj"]) {
-        let Data = SubObj[props.modalObject.key + "Obj"];
-        setFieldValue(
-          "lumpsumNonConcessionalYearOne",
-          Data.lumpsumNonConcessionalYearOne
-        );
-        setFieldValue("contributionsToFund", Data.contributionsToFund);
-        setFieldValue("lumpsumNonConcessional", Data.lumpsumNonConcessional);
-        setFieldValue(
-          "lumpsumNonConcessionalObj",
-          Data.lumpsumNonConcessionalObj
-        );
-        setFieldValue("regularNonConcessional", Data.regularNonConcessional);
-        setFieldValue("yearCommence", Data.yearCommence);
-        setFieldValue("yearsInclude", Data.yearsInclude);
-        setFieldValue("contributionsFund", Data.contributionsFund);
-        setFieldValue(
-          "governmentCoContribution",
-          Data.governmentCoContribution
-        );
-        setFieldValue("downSizerContribution", Data.downSizerContribution);
-        setFieldValue(
-          "downSizerContributionObj",
-          Data.downSizerContributionObj
-        );
-        setFieldValue("applySpouseContribution", Data.applySpouseContribution);
-        setFieldValue(
-          "applySpouseContributionObj",
-          Data.applySpouseContributionObj
-        );
-      }
-    }
+  /* ===============================
+     Fill Initial Values
+  =============================== */
+  const fillInitialValues = (setFieldValue) => {
+    const stakeKey = props.modalObject.stakeHolder.replace(".", "");
+    const stored =
+      props.modalObject.values?.[stakeKey]?.[props.modalObject.key + "Obj"];
+
+    if (!stored) return;
+
+    Object.entries(stored).forEach(([key, value]) => {
+      setFieldValue(key, value);
+    });
   };
 
-  let onSubmit = (values) => {
-    console.log(JSON.stringify(values));
-
+  /* ===============================
+     Submit
+  =============================== */
+  const onSubmit = (values) => {
     props.setFieldValue(
       props.modalObject.stakeHolder + props.modalObject.key + "Obj",
       values
     );
 
-    // Reset the flag state if necessary
-    if (props.flagState) {
-      props.setFlagState(false);
-    }
+    props?.setFlagState?.(false);
   };
 
-  const yearsIncludedArray = Array.from({ length: 31 }, (_, i) => {
-    return {
-      value: i.toString(),
-      label: ("Year " + i).toString(),
-    };
-  });
+  /* ===============================
+     Options
+  =============================== */
+  const yearsIncludedOptions = Array.from({ length: 31 }, (_, i) => ({
+    value: i.toString(),
+    label: `Year ${i}`,
+  }));
 
   const contributionsFundOptions = [
     { value: "1", label: "1" },
@@ -105,8 +82,10 @@ const NonConcessionalContributions = (props) => {
     { value: "SMSF", label: "SMSF" },
   ];
 
-  let handleInnerModal = (title, values, key, stakeHolder) => {
-    console.log(title, values, key, stakeHolder);
+  /* ===============================
+     Inner Modal Handler
+  =============================== */
+  const handleInnerModal = (title, values, key) => {
     setModalObject({
       title,
       values,
@@ -116,91 +95,113 @@ const NonConcessionalContributions = (props) => {
     setFlagState(true);
   };
 
-  let rowConfig = [
+  /* ===============================
+     AntD Columns
+  =============================== */
+  const columns = [
     {
-      type: "plainText",
-      text: props.modalObject.stakeHolder.replace(".", ""),
-      styleSet: { fontWeight: "800", fontSize: "16px" },
+      title: "Owner",
+      dataIndex: "owner",
+      key: "owner",
+      type: "plainText2.0",
     },
     {
-      name: "lumpsumNonConcessionalYearOne",
+      title: "Lumpsum Non-Concessional (Year 1 only)",
+      placeholder: "Lumpsum Non-Concessional (Year 1 only)",
+      dataIndex: "lumpsumNonConcessionalYearOne",
+      key: "lumpsumNonConcessionalYearOne",
       type: "number-toComma",
-      placeholder: "Lumpsum Non - Concessional(Year 1 only)",
     },
     {
-      name: "contributionsToFund",
+      title: "Contributions To Fund",
+      dataIndex: "contributionsToFund",
+      key: "contributionsToFund",
       type: "select",
       options: contributionsToFundOptions,
-      placeholder: "Contributions To Fund",
+      selectedOptionValue: true,
     },
     {
-      name: "lumpsumNonConcessional",
-      type: "yesnoModal",
-      placeholder: "Lumpsum Non - Concessional",
-      callBack: true,
+      title: "Lumpsum Non-Concessional",
+      dataIndex: "lumpsumNonConcessional",
       key: "lumpsumNonConcessional",
+      type: "yesnoModal",
       innerModalTitle: "Lumpsum Non - Concessional",
+      callBack: true,
       func: handleInnerModal,
     },
     {
-      name: "regularNonConcessional",
+      title: "Regular Non-Concessional",
+      placeholder: "Regular Non-Concessional",
+      dataIndex: "regularNonConcessional",
+      key: "regularNonConcessional",
       type: "number-toComma",
-      placeholder: "Regular Non - Concessional",
     },
     {
-      name: "yearCommence",
+      title: "Year to Commence",
+      dataIndex: "yearCommence",
+      key: "yearCommence",
       type: "select",
-      options: yearsIncludedArray,
-      placeholder: "Year to Commence",
+      selectedOptionValue: true,
+      options: yearsIncludedOptions,
     },
     {
-      name: "yearsInclude",
+      title: "Years to Include",
+      dataIndex: "yearsInclude",
+      key: "yearsInclude",
       type: "select",
-      options: yearsIncludedArray,
-      placeholder: "Years to Include",
+      selectedOptionValue: true,
+      options: yearsIncludedOptions,
     },
     {
-      name: "contributionsFund",
+      title: "Contributions Fund",
+      dataIndex: "contributionsFund",
+      key: "contributionsFund",
       type: "select",
+      selectedOptionValue: true,
       options: contributionsFundOptions,
-      placeholder: "Contributions To Fund",
     },
     {
-      name: "governmentCoContribution",
+      title: "Government Co-contribution to",
+      dataIndex: "governmentCoContribution",
+      key: "governmentCoContribution",
       type: "select",
+      selectedOptionValue: true,
       options: contributionsToFundOptions,
-      placeholder: "Government Co - contribution to",
     },
     {
-      name: "downSizerContribution",
-      type: "yesnoModal",
-      placeholder: "Downsizer contribution",
-      callBack: true,
+      title: "Downsizer Contribution",
+      dataIndex: "downSizerContribution",
       key: "downSizerContribution",
+      type: "yesnoModal",
       innerModalTitle: "Downsizer contribution",
+      callBack: true,
       func: handleInnerModal,
     },
     {
-      name: "applySpouseContribution",
-      type: "yesnoModal",
-      placeholder: "Apply Spouse Contribution",
-      callBack: true,
+      title: "Apply Spouse Contribution",
+      dataIndex: "applySpouseContribution",
       key: "applySpouseContribution",
+      type: "yesnoModal",
       innerModalTitle: "Apply Spouse Contribution",
+      callBack: true,
       func: handleInnerModal,
     },
   ];
 
+  /* ===============================
+     Modal Content Mapping
+  =============================== */
   const componentMapping = {
     "Lumpsum Non - Concessional": <LumpsumNonConcessionalNonConcessional />,
     "Downsizer contribution": <DownSizerContributionNonConcessional />,
     "Apply Spouse Contribution": <ApplySpouseContribution />,
   };
 
-  const ModalContent = (obj) => {
-    return componentMapping[obj.title] || null;
-  };
+  const ModalContent = (obj) => componentMapping[obj.title] || null;
 
+  /* ===============================
+     Render
+  =============================== */
   return (
     <Formik
       initialValues={initialValues}
@@ -208,10 +209,18 @@ const NonConcessionalContributions = (props) => {
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, handleChange, setFieldValue, handleBlur }) => {
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
+
+        const tableData = [
+          {
+            key: "nonConcessionalRow",
+            owner: RenderName(props.modalObject.stakeHolder.replace(".", "")),
+            ...values,
+          },
+        ];
 
         return (
           <Form>
@@ -225,38 +234,18 @@ const NonConcessionalContributions = (props) => {
                 {ModalContent(modalObject)}
               </InnerModal>
 
-              <div className="col-md-12">
-                <div className="row justify-content-center">
-                  <div className="mt-4">
-                    <Table striped bordered responsive hover>
-                      <thead>
-                        <tr>
-                          <th>Owner</th>
-                          <th>Lumpsum Non-Concessional (Year 1 only)</th>
-                          <th>Contributions To Fund</th>
-                          <th>Lumpsum Non-Concessional</th>
-                          <th>Regular Non-Concessional</th>
-                          <th>Year to Commence</th>
-                          <th>Years to Include</th>
-                          <th>Contributions To Fund</th>
-                          <th>Government Co-contribution to</th>
-                          <th>Downsizer contribution</th>
-                          <th>Apply Spouse Contribution</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                          handleInnerModal={handleInnerModal}
-                        />
-                      </tbody>
-                    </Table>
-                  </div>
-                </div>
+              <div className="col-md-12 mt-4 All_Client reportSection">
+                <AntdTable
+                  columns={columns}
+                  data={tableData}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  handleInnerModal={handleInnerModal}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
+                />
               </div>
             </Row>
           </Form>

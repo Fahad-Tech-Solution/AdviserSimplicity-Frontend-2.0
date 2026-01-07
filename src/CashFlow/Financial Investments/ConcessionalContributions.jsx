@@ -1,16 +1,23 @@
-import React, { useEffect, useState } from "react";
-import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
 import { Form, Formik } from "formik";
-import { Row, Table } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Row } from "react-bootstrap";
+
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
 import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 import ContributionSplittingInner from "./ContributionSplittingInner";
 import OtherPercentageAmount from "./OtherPercentageAmount";
+import { RenderName } from "../../Components/Assets/Api/Api";
+
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const ConcessionalContributions = (props) => {
-  let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
+  const [flagState, setFlagState] = useState(false);
+  const [modalObject, setModalObject] = useState({});
 
-  let initialValues = {
+  /* ===============================
+     Initial Values
+  =============================== */
+  const initialValues = {
     employerSGContributions: "",
     personalSalarySacrifice: "",
     personalSalarySacrificeObj: {},
@@ -25,80 +32,57 @@ const ConcessionalContributions = (props) => {
     contributionSplittingObj: {},
   };
 
-  let fillInitialValues = (setFieldValue) => {
-    console.log(props.modalObject);
+  /* ===============================
+     Fill Initial Values
+  =============================== */
+  const fillInitialValues = (setFieldValue) => {
+    const stakeKey = props.modalObject.stakeHolder.replace(".", "");
+    const stored =
+      props.modalObject.values?.[stakeKey]?.[props.modalObject.key + "Obj"];
 
-    if (
-      props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")]
-    ) {
-      let SubObj =
-        props.modalObject.values[
-          props.modalObject.stakeHolder.replace(".", "")
-        ];
-      if (SubObj[props.modalObject.key + "Obj"]) {
-        let Data = SubObj[props.modalObject.key + "Obj"];
-        setFieldValue("employerSGContributions", Data.employerSGContributions);
-        setFieldValue("personalSalarySacrifice", Data.personalSalarySacrifice);
-        setFieldValue(
-          "personalSalarySacrificeObj",
-          Data.personalSalarySacrificeObj
-        );
-        setFieldValue(
-          "affordabilityOtherAmount",
-          Data.affordabilityOtherAmount
-        );
-        setFieldValue("indexationOfOtherAmount", Data.indexationOfOtherAmount);
-        setFieldValue("contributionsFund", Data.contributionsFund);
-        setFieldValue("yearCommence", Data.yearCommence);
-        setFieldValue("yearsInclude", Data.yearsInclude);
-        setFieldValue("catchUpContribution", Data.catchUpContribution);
-        setFieldValue("contributionsToFund", Data.contributionsToFund);
-        setFieldValue("contributionSplitting", Data.contributionSplitting);
-        setFieldValue(
-          "contributionSplittingObj",
-          Data.contributionSplittingObj
-        );
-      }
-    }
+    if (!stored) return;
+
+    Object.entries(stored).forEach(([key, value]) => {
+      setFieldValue(key, value);
+    });
   };
 
-  let onSubmit = (values) => {
-    console.log(JSON.stringify(values));
-
+  /* ===============================
+     Submit
+  =============================== */
+  const onSubmit = (values) => {
     props.setFieldValue(
       props.modalObject.stakeHolder + props.modalObject.key + "Obj",
       values
     );
 
-    // Reset the flag state if necessary
-    if (props.flagState) {
-      props.setFlagState(false);
-    }
+    props?.setFlagState?.(false);
   };
 
-  const yearsIncludedArray = Array.from({ length: 31 }, (_, i) => {
-    return {
-      value: i.toString(),
-      label: ("Year " + i).toString(),
-    };
-  });
+  /* ===============================
+     Options
+  =============================== */
+  const yearsIncludedOptions = Array.from({ length: 31 }, (_, i) => ({
+    value: i.toString(),
+    label: `Year ${i}`,
+  }));
 
-  const employerSGContributionsOptions = [
+  const employerSGOptions = [
     { value: "SGC", label: "SGC" },
     { value: "Capped at Max", label: "Capped at Max" },
     { value: "Other", label: "Other" },
     { value: "Self-Employed", label: "Self-Employed" },
   ];
 
-  const personalSalarySacrificeOptions = [
+  const personalSalaryOptions = [
     { value: "Up Until CC Cap", label: "Up Until CC Cap" },
     { value: "Other", label: "Other" },
     { value: "Match Net Income", label: "Match Net Income" },
   ];
 
-  const indexation = Array.from({ length: 11 }, (_, i) => ({
-    value: (i * 0.5).toFixed(2) + "%",
-    label: (i * 0.5).toFixed(2) + "%",
+  const indexationOptions = Array.from({ length: 11 }, (_, i) => ({
+    value: `${(i * 0.5).toFixed(2)}%`,
+    label: `${(i * 0.5).toFixed(2)}%`,
   }));
 
   const contributionsFundOptions = [
@@ -112,8 +96,10 @@ const ConcessionalContributions = (props) => {
     { value: "SMSF", label: "SMSF" },
   ];
 
-  let handleInnerModal = (title, values, key, stakeHolder) => {
-    console.log(title, values, key, stakeHolder);
+  /* ===============================
+     Inner Modal Handler
+  =============================== */
+  const handleInnerModal = (title, values, key) => {
     setModalObject({
       title,
       values,
@@ -123,88 +109,113 @@ const ConcessionalContributions = (props) => {
     setFlagState(true);
   };
 
-  let rowConfig = [
+  /* ===============================
+     AntD Columns
+  =============================== */
+  const columns = [
     {
-      type: "plainText",
-      text: props.modalObject.stakeHolder.replace(".", ""),
-      styleSet: { fontWeight: "800", fontSize: "16px" },
+      title: "Owner",
+      dataIndex: "owner",
+      key: "owner",
+      type: "plainText2.0",
     },
     {
-      name: "employerSGContributions",
+      title: "Employer SG Contributions",
+      dataIndex: "employerSGContributions",
+      key: "employerSGContributions",
+      selectedOptionValue: true,
       type: "select",
-      options: employerSGContributionsOptions,
-      placeholder: "Employer SG Contributions",
+      options: employerSGOptions,
     },
     {
-      name: "personalSalarySacrifice",
+      title: "Personal / Salary Sacrifice",
+      dataIndex: "personalSalarySacrifice",
+      key: "personalSalarySacrifice",
       type: "selectModal",
-      options: personalSalarySacrificeOptions,
-      placeholder: "Personal/Salary Sacrifice",
+      options: personalSalaryOptions,
       ModalOption: "Other",
       innerModalTitle: "Other Percentage Amount",
-      key: "personalSalarySacrifice",
-      styleSet: { minWidth: "10vw" },
+      callBack: true,
+      func: handleInnerModal,
     },
     {
-      name: "affordabilityOtherAmount",
+      title: "Affordability / Other Amount",
+      placholder: "Affordability / Other Amount",
+      dataIndex: "affordabilityOtherAmount",
+      key: "affordabilityOtherAmount",
       type: "number-toComma",
-      placeholder: "Affordability amount (net p.a.) / Other Amount",
     },
     {
-      name: "indexationOfOtherAmount",
+      title: "Indexation of Other Amount",
+      dataIndex: "indexationOfOtherAmount",
+      key: "indexationOfOtherAmount",
+      selectedOptionValue: true,
       type: "select",
-      options: indexation,
-      placeholder: "Indexation of Other Amount",
+      options: indexationOptions,
     },
     {
-      name: "contributionsFund",
+      title: "Contributions Fund",
+      dataIndex: "contributionsFund",
+      key: "contributionsFund",
+      selectedOptionValue: true,
       type: "select",
       options: contributionsFundOptions,
-      placeholder: "Contributions To Fund",
     },
     {
-      name: "yearCommence",
+      title: "Year to Commence",
+      dataIndex: "yearCommence",
+      key: "yearCommence",
+      selectedOptionValue: true,
       type: "select",
-      options: yearsIncludedArray,
-      placeholder: "Year to Commence",
+      options: yearsIncludedOptions,
     },
     {
-      name: "yearsInclude",
+      title: "Years to Include",
+      dataIndex: "yearsInclude",
+      key: "yearsInclude",
+      selectedOptionValue: true,
       type: "select",
-      options: yearsIncludedArray,
-      placeholder: "Years to Include",
+      options: yearsIncludedOptions,
     },
     {
-      name: "catchUpContribution",
+      title: "Catch Up Contribution",
+      placeholder: "Catch Up Contribution",
+      dataIndex: "catchUpContribution",
+      key: "catchUpContribution",
       type: "number-toComma",
-      placeholder: "Catch Up contribution (Year 1 only)",
     },
     {
-      name: "contributionsToFund",
+      title: "Contributions To Fund",
+      dataIndex: "contributionsToFund",
+      key: "contributionsToFund",
       type: "select",
       options: contributionsToFundOptions,
-      placeholder: "Contributions To Fund",
+      selectedOptionValue: true,
     },
     {
-      name: "contributionSplitting",
-      type: "yesnoModal",
-      placeholder: "Contribution Splitting",
-      callBack: true,
+      title: "Contribution Splitting",
+      dataIndex: "contributionSplitting",
       key: "contributionSplitting",
+      type: "yesnoModal",
       innerModalTitle: "Contribution Splitting",
+      callBack: true,
       func: handleInnerModal,
     },
   ];
 
+  /* ===============================
+     Modal Content Map
+  =============================== */
   const componentMapping = {
     "Other Percentage Amount": <OtherPercentageAmount />,
     "Contribution Splitting": <ContributionSplittingInner />,
   };
 
-  const ModalContent = (obj) => {
-    return componentMapping[obj.title] || null;
-  };
+  const ModalContent = (obj) => componentMapping[obj.title] || null;
 
+  /* ===============================
+     Render
+  =============================== */
   return (
     <Formik
       initialValues={initialValues}
@@ -212,10 +223,18 @@ const ConcessionalContributions = (props) => {
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, handleChange, setFieldValue, handleBlur }) => {
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
+
+        const tableData = [
+          {
+            key: "ownerRow",
+            owner: RenderName(props.modalObject.stakeHolder.replace(".", "")),
+            ...values,
+          },
+        ];
 
         return (
           <Form>
@@ -229,40 +248,18 @@ const ConcessionalContributions = (props) => {
                 {ModalContent(modalObject)}
               </InnerModal>
 
-              <div className="col-md-12">
-                <div className="row justify-content-center">
-                  <div className="mt-4">
-                    <Table striped bordered responsive hover>
-                      <thead>
-                        <tr>
-                          <th>Owner</th>
-                          <th>Employer SG Contributions</th>
-                          <th>Personal/Salary Sacrifice</th>
-                          <th>
-                            Affordability amount (net p.a.) / Other Amount
-                          </th>
-                          <th>Indexation of Other Amount</th>
-                          <th>Contributions To Fund</th>
-                          <th>Year to Commence</th>
-                          <th>Years to Include</th>
-                          <th>Catch Up contribution (Year 1 only)</th>
-                          <th>Contributions To Fund</th>
-                          <th>Contribution Splitting</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                          handleInnerModal={handleInnerModal}
-                        />
-                      </tbody>
-                    </Table>
-                  </div>
-                </div>
+              <div className="col-md-12 mt-4 All_Client reportSection">
+                <AntdTable
+                  columns={columns}
+                  data={tableData}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  handleInnerModal={handleInnerModal}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
+                />
               </div>
             </Row>
           </Form>

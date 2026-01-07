@@ -212,10 +212,7 @@ const PersonalInsuranceLife = (props) => {
 
     const LifeInsuranceTotal =
       (Array.isArray(Data) ? Data : []).reduce(
-        (sum, item) =>
-          sum +
-          toNumber(item?.life || 0) +
-          toNumber(item?.premiumsDetails?.life || 0),
+        (sum, item) => sum + toNumber(item?.life || 0),
         0
       ) + toNumber(groupCoverDetails?.lifeCover || 0);
 
@@ -227,25 +224,19 @@ const PersonalInsuranceLife = (props) => {
             item?.LifeTPDTraumaDetails?.TPDDefinition !== "Split (Own)"
               ? item?.TPD
               : 0
-          ) +
-          toNumber(item?.premiumsDetails?.tpd || 0),
+          ),
         0
       ) + toNumber(groupCoverDetails?.TPDCover || 0);
 
     const TraumaTotal = (Array.isArray(Data) ? Data : []).reduce(
-      (sum, item) =>
-        sum +
-        toNumber(item?.trauma || 0) +
-        toNumber(item?.premiumsDetails?.trauma || 0),
+      (sum, item) => sum + toNumber(item?.trauma || 0),
       0
     );
 
     const IncomeProtectionTotal =
       (Array.isArray(Data) ? Data : []).reduce(
         (sum, item) =>
-          sum +
-          toNumber(item?.IPDetails?.superlinked == "No" ? item?.IP : 0) +
-          toNumber(item?.premiumsDetails?.ip || 0),
+          sum + toNumber(item?.IPDetails?.superlinked == "No" ? item?.IP : 0),
         0
       ) + toNumber(groupCoverDetails?.monthlyIncome || 0);
 

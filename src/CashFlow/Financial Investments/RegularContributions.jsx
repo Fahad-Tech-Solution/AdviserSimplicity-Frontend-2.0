@@ -17,6 +17,7 @@ const RegularContributions = (props) => {
 
   /* -------------------- PREFILL -------------------- */
   const fillInitialValues = (setFieldValue) => {
+    console.log(props.modalObject);
     const holderKey = props.modalObject.stakeHolder.replace(".", "");
     const subObj = props.modalObject.values?.[holderKey];
 

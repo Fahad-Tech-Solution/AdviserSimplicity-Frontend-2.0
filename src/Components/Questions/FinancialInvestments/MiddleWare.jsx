@@ -3,7 +3,7 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { Form, Formik } from "formik";
 import { Row } from "react-bootstrap";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { defaultUrl, QuestionDetail } from "../../../Store/Store";
+import { CRState, defaultUrl, QuestionDetail } from "../../../Store/Store";
 import {
   calculateExpectedTotal,
   openNotificationSuccess,
@@ -98,6 +98,7 @@ const MiddleWare = (props) => {
   const questionDetail = useRecoilValue(QuestionDetail);
   const [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
   const DefaultUrl = useRecoilValue(defaultUrl);
+  const [CRObject, setCRObject] = useRecoilState(CRState);
 
   const [flagState, setFlagState] = useState(false);
   const [modalObject, setModalObject] = useState({});
@@ -333,6 +334,9 @@ const MiddleWare = (props) => {
               [propModalObj.key]: response.superFund,
               personalInsurance: response.personalInsurance,
             }));
+
+            setCRObject(response.questionDetails);
+            
           } else {
             setQuestionDetail((prev) => ({
               ...prev,
