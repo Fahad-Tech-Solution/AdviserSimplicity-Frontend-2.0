@@ -82,6 +82,7 @@ const InsurancePremiums = (props) => {
     );
 
     props?.setFlagState?.(false);
+     props?.setIsEditing?.(false);
   };
 
   /* ===============================

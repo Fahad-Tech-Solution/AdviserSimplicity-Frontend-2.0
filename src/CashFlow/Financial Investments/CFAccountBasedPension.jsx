@@ -1,7 +1,23 @@
-import { Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
-import { CreatableMultiSelectField } from "../../Components/Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
-import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
+import React, { useEffect, useMemo, useState } from "react";
+import { Formik, Form } from "formik";
+import { ConfigProvider, Select, Table } from "antd";
+import { useRecoilState, useRecoilValue } from "recoil";
+
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
+import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
+import BalanceRolloverAmount from "./BalanceRolloverAmount";
+import AccountBasedInputOverride from "./accountBasedPension/AccountBasedInputOverride";
+import AccounntBasedWithdrawals from "./accountBasedPension/AccounntBasedWithdrawals";
+import AccountBasedNewPensionRollover from "./accountBasedPension/AccountBasedNewPensionRollover";
+import AccountBasedPensionPayments from "./accountBasedPension/AccountBasedPensionPayments";
+
+import {
+  CashFlowData,
+  CashFlowScenarioData,
+  defaultUrl,
+  QuestionDetail,
+} from "../../Store/Store";
+
 import {
   openNotificationSuccess,
   PatchAxios,
@@ -9,34 +25,20 @@ import {
   RenderName,
   toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
-import { Row, Table } from "react-bootstrap";
-import {
-  CashFlowData,
-  CashFlowScenarioData,
-  defaultUrl,
-  QuestionDetail,
-} from "../../Store/Store";
-import { useRecoilState, useRecoilValue } from "recoil";
-import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 
-import BalanceRolloverAmount from "./BalanceRolloverAmount";
-import AccountBasedInputOverride from "./accountBasedPension/AccountBasedInputOverride";
-import AccounntBasedWithdrawals from "./accountBasedPension/AccounntBasedWithdrawals";
-import AccountBasedNewPensionRollover from "./accountBasedPension/AccountBasedNewPensionRollover";
-import AccountBasedPensionPayments from "./accountBasedPension/AccountBasedPensionPayments";
+const AntdTable = DynamicTableForInputsSection("antd");
+const { Option } = Select;
 
 const CFAccountBasedPension = (props) => {
-  let questionDetail = useRecoilValue(QuestionDetail);
-  let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
-  let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const questionDetail = useRecoilValue(QuestionDetail);
+  const CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const DefaultUrl = useRecoilValue(defaultUrl);
+  const [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
 
-  let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
-
-  let [UserStatus] = useState(localStorage.getItem("UserStatus"));
-  let DefaultUrl = useRecoilValue(defaultUrl);
-
-  let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
+  const [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
+  const [flagState, setFlagState] = useState(false);
+  const [modalObject, setModalObject] = useState({});
+  const [UserStatus] = useState(localStorage.getItem("UserStatus") || "Single");
 
   let accountBasedPensionIssues =
     Object.keys(questionDetail.accountBasedPensionIssues || {}).length > 0
@@ -45,218 +47,164 @@ const CFAccountBasedPension = (props) => {
           client: [],
           partner: [],
           joint: [],
-        }; // Use an empty object as default if accountBasedPensionIssues is undefined
+        };
 
-  let initialValues = {numberOfProperties:""};
+  const initialValues = {
+    numberOfProperties: "",
+    client: [],
+  };
 
+  /* ------------------ Fill Initial Values ------------------ */
   const fillInitialValues = (setFieldValue) => {
     try {
-      // Set the object and API key
       setObjAndAPIKey(props.modalObject.key);
 
       const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
 
-      // Helper function to update field values
-      const updateFields = (data, prefix) => {
-        if (!data || Object.keys(data).length === 0) return;
+      const updateFields = (data, index) => {
+        if (!data) return;
 
-        const fields = {
-          [`balanceRolloverAmount_${prefix}`]: data.balanceRolloverAmount || "",
-          [`balanceRolloverAmountObj_${prefix}`]:
-            data.balanceRolloverAmountObj || {},
-          [`yearToCommence_${prefix}`]: data.yearToCommence || "",
-          [`riskProfile_${prefix}`]: data.riskProfile || "",
-          [`investmentReturns_${prefix}`]: data.investmentReturns || "",
-          [`investmentReturnsObj_${prefix}`]: data.investmentReturnsObj || {},
-          [`investmentFees_${prefix}`]: data.investmentFees || "",
-          [`adviserServiceFee_${prefix}`]: data.adviserServiceFee || "",
-          [`pensionPayments_${prefix}`]: data.pensionPayments || "",
-          [`pensionPaymentsObj_${prefix}`]: data.pensionPaymentsObj || {},
-          [`newPensionRollover_${prefix}`]: data.newPensionRollover || "",
-          [`newPensionRolloverObj_${prefix}`]: data.newPensionRolloverObj || {},
-          [`withdrawals_${prefix}`]: data.withdrawals || "",
-          [`withdrawalsObj_${prefix}`]: data.withdrawalsObj || {},
-        };
-
-        Object.entries(fields).forEach(([key, value]) => {
-          setFieldValue(key, value);
+        Object.entries({
+          [`balanceRolloverAmount`]: data.balanceRolloverAmount || "",
+          [`balanceRolloverAmountObj`]: data.balanceRolloverAmountObj || {},
+          [`yearToCommence`]: data.yearToCommence || "",
+          [`riskProfile`]: data.riskProfile || "",
+          [`investmentReturns`]: data.investmentReturns || "",
+          [`investmentReturnsObj`]: data.investmentReturnsObj || {},
+          [`investmentFees`]: data.investmentFees || "",
+          [`adviserServiceFee`]: data.adviserServiceFee || "",
+          [`pensionPayments`]: data.pensionPayments || "",
+          [`pensionPaymentsObj`]: data.pensionPaymentsObj || {},
+          [`newPensionRollover`]: data.newPensionRollover || "",
+          [`newPensionRolloverObj`]: data.newPensionRolloverObj || {},
+          [`withdrawals`]: data.withdrawals || "",
+          [`withdrawalsObj`]: data.withdrawalsObj || {},
+        }).forEach(([key, value]) => {
+          setFieldValue(`client[${index}].` + key, value);
         });
       };
 
-      // Handle discoveryForm scenario
+      const hydrate = (src, inputType) => {
+        if (!src?.[inputType]?.length) return;
+
+        setFieldValue("numberOfProperties", src[inputType].length);
+
+        src[inputType].forEach((data, index) => {
+          updateFields(data, index);
+        });
+      };
+
+      const inputType = props.modalObject.Input || "client";
+
+      // 1️⃣ Discovery Form (only if CF not already saved)
       if (
         scenarioObj?.selectedSource === "discoveryForm" &&
-        accountBasedPensionIssues &&
-        accountBasedPensionIssues._id
+        accountBasedPensionIssues?._id &&
+        !cashFlowData?.[objAndAPIKey]?._id
       ) {
-        if (accountBasedPensionIssues.client.length > 0) {
-          accountBasedPensionIssues.client.forEach((clientData, index) => {
-            let Obj = {
-              balanceRolloverAmount:
-                accountBasedPensionIssues.clientCurrentBalance,
-              balanceBenefitDetails: toCommaAndDollar(
-                accountBasedPensionIssues.client.reduce(
-                  (total, entry) =>
-                    total +
-                    parseFloat(
-                      entry.balanceBenefitDetails.replace(/[^0-9.-]+/g, "")
-                    ),
-                  0
-                )
-              ),
-              annuityType: clientData.annuityType,
-              includeFromYear: clientData.yearsMaturity,
-              term: clientData.term,
-            };
-
-            updateFields(Obj, index);
-          });
-        }
-
+        // Transform discovery form data to match table structure
         if (
-          UserStatus === "Married" &&
-          accountBasedPensionIssues?.partner?.length > 0
+          inputType === "client" &&
+          accountBasedPensionIssues.client.length > 0
         ) {
-          accountBasedPensionIssues.partner.forEach((partnerData, index) => {
-            let Obj = {
-              balanceRolloverAmount:
-                accountBasedPensionIssues.partnerCurrentBalance,
-              balanceBenefitDetails: toCommaAndDollar(
-                accountBasedPensionIssues.partner.reduce(
-                  (total, entry) =>
-                    total +
-                    parseFloat(
-                      entry.balanceBenefitDetails.replace(/[^0-9.-]+/g, "")
-                    ),
-                  0
-                )
-              ),
-              annuityType: partnerData.annuityType,
-              includeFromYear: partnerData.yearsMaturity,
-              term: partnerData.term,
-            };
-
-            updateFields(Obj, index);
-          });
-        }
-      } else {
-        // Handle cashFlowData scenario
-        const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-
-        if (cashFlowDetails) {
-          setFieldValue(
-            "numberOfProperties",
-            cashFlowDetails[props.modalObject.Input].length || ""
-          );
-
-          if (
-            props.modalObject.Input == "client" &&
-            cashFlowDetails.client.length > 0
-          ) {
-            cashFlowDetails.client.forEach((clientData, index) => {
-              updateFields(clientData, index);
-            });
-          }
-
-          if (
-            UserStatus === "Married" &&
-            props.modalObject.Input == "partner" &&
-            cashFlowDetails?.partner?.length > 0
-          ) {
-            cashFlowDetails.partner.forEach((partnerData, index) => {
-              updateFields(partnerData, index);
-            });
-          }
+          const transformedData = {
+            [inputType]: accountBasedPensionIssues.client.map(
+              (clientData, index) => ({
+                balanceRolloverAmount:
+                  accountBasedPensionIssues.clientCurrentBalance,
+                balanceRolloverAmountObj: {
+                  costBaseExisting:
+                    accountBasedPensionIssues.clientCurrentBalance,
+                },
+                yearToCommence: clientData.yearsMaturity || "",
+                riskProfile: "",
+                investmentReturns: "",
+                investmentFees: "",
+                adviserServiceFee: "",
+                pensionPayments: "",
+                newPensionRollover: "No",
+                withdrawals: "No",
+              })
+            ),
+          };
+          hydrate(transformedData, inputType);
         }
       }
-
-      // Additional data from cashFlowData
-      if (cashFlowData?.[objAndAPIKey]?._id) {
-        const cashFlowDataDetails = cashFlowData[objAndAPIKey];
-
-        setFieldValue(
-          "numberOfProperties",
-          cashFlowDataDetails[props.modalObject.Input].length || ""
-        );
-
-        if (
-          props.modalObject.Input == "client" &&
-          cashFlowDataDetails.client.length > 0
-        ) {
-          cashFlowDataDetails.client.forEach((clientData, index) => {
-            updateFields(clientData, index);
-          });
-        }
-
-        if (
-          UserStatus === "Married" &&
-          props.modalObject.Input == "partner" &&
-          cashFlowDataDetails?.partner?.length > 0
-        ) {
-          cashFlowDataDetails.partner.forEach((partnerData, index) => {
-            updateFields(partnerData, index);
-          });
-        }
+      // 2️⃣ Cash Flow Scenario
+      else if (CashFlowScenarioDataObj?.[objAndAPIKey]?._id) {
+        hydrate(CashFlowScenarioDataObj[objAndAPIKey], inputType);
+      }
+      // 3️⃣ Cash Flow Data (final fallback)
+      else {
+        hydrate(cashFlowData?.[objAndAPIKey], inputType);
       }
     } catch (error) {
       console.error("Error in fillInitialValues:", error);
     }
   };
 
-  let onSubmit = async (values) => {
-    const numberOfEntries = parseInt(values.numberOfProperties, 10);
-    const newEntries = [];
+  /* ------------------ Inner Modal ------------------ */
+  const handleInnerModal = (title, values, key, stakeHolder) => {
+    setModalObject({
+      title,
+      values,
+      key,
+      stakeHolder,
+      ParentObject: props.modalObject,
+      cal: title !== "Withdrawals" && title !== "Input Override",
+    });
+    setFlagState(true);
+  };
 
-    for (let i = 0; i < numberOfEntries; i++) {
-      const newEntry = {};
+  /* ------------------ Submit ------------------ */
+  const onSubmit = async (values) => {
+    const entries = values.client || [];
+    const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
 
-      rowConfig.forEach((config) => {
-        if (config.name) {
-          newEntry[config.name] = values[`${config.name}_${i}`] || "";
-        }
-        if (config?.key) {
-          newEntry[config.key] = values[`${config.key}_${i}`] || "";
-        }
-      });
+    const sanitizeNumber = (val) =>
+      parseFloat(String(val || "").replace(/[^0-9.-]+/g, "")) || 0;
 
-      newEntries.push(newEntry);
-    }
+    const inputType = props.modalObject.Input || "client";
+    const otherType = inputType === "client" ? "partner" : "client";
 
-    let obj = {
-      [props.modalObject.Input]: newEntries,
-      scenarioFK: JSON.parse(localStorage.getItem("ScenarioObj"))._id,
-      numberOfProperties: numberOfEntries,
+    const obj = {
+      [inputType]: entries.map((e) => ({
+        ...e,
+        // Ensure modal objects are normalized
+        balanceRolloverAmountObj: e.balanceRolloverAmountObj || {
+          costBaseExisting: e.balanceRolloverAmount || "",
+        },
+        investmentReturnsObj:
+          e.investmentReturns === "Input Override"
+            ? e.investmentReturnsObj || {}
+            : {},
+        pensionPaymentsObj: e.pensionPayments ? e.pensionPaymentsObj || {} : {},
+        newPensionRolloverObj:
+          e.newPensionRollover === "Yes" ? e.newPensionRolloverObj || {} : {},
+        withdrawalsObj: e.withdrawals === "Yes" ? e.withdrawalsObj || {} : {},
+      })),
+
+      numberOfProperties: entries.length,
+      scenarioFK: scenarioObj?._id,
+
+      // Sum of adviser service fees
+      [`${inputType}Total`]: toCommaAndDollar(
+        entries.reduce((t, e) => t + sanitizeNumber(e.adviserServiceFee), 0)
+      ),
     };
 
-    obj[props.modalObject.Input + "Total"] = toCommaAndDollar(
-      newEntries.reduce(
-        (total, entry) =>
-          total +
-            parseFloat(entry.adviserServiceFee?.replace(/[^0-9.-]+/g, "")) || 0,
-        0
-      )
-    );
-
+    // Preserve other stakeholder's data if it exists
     if (cashFlowData?.[objAndAPIKey]?._id) {
-      const cashFlowDataDetails = cashFlowData[objAndAPIKey];
-
-      if (props.modalObject.Input === "partner") {
-        obj.client = cashFlowDataDetails?.client || [];
-        obj.clientTotal = cashFlowDataDetails?.clientTotal || "$0";
-      } else {
-        obj.partner = cashFlowDataDetails?.partner || [];
-        obj.partnerTotal = cashFlowDataDetails?.partnerTotal || "$0";
+      const existingData = cashFlowData[objAndAPIKey];
+      if (existingData[otherType]) {
+        obj[otherType] = existingData[otherType];
+        obj[`${otherType}Total`] = existingData[`${otherType}Total`] || "$0";
       }
     }
 
-    console.log(JSON.stringify(obj), "Final Object");
-    // return false;
-
-    const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
-
     try {
       let res;
-      if (!bankAccountArray) {
+      if (!cashFlowData?.[objAndAPIKey]?._id) {
         res = await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
       } else {
         res = await PatchAxios(
@@ -266,57 +214,37 @@ const CFAccountBasedPension = (props) => {
       }
 
       if (res) {
-        const updatedData = {
-          ...cashFlowData,
-          [objAndAPIKey]: res,
-        };
-
-        setCashFlowData(updatedData);
+        setCashFlowData({ ...cashFlowData, [objAndAPIKey]: res });
       }
 
       openNotificationSuccess(
         "success",
         "topRight",
-        "Success Notification",
+        "Success",
         `Data of "${props.modalObject.title}" is Saved`
       );
 
-      if (props.flagState) {
-        props.setFlagState(false);
-      }
+      props.setFlagState?.(false);
+      props.setIsEditing?.(!props.isEditing);
     } catch (error) {
       console.error("Error occurred while making API call:", error);
       openNotificationSuccess(
         "error",
         "topRight",
-        "Error Notification",
+        "Error",
         `Data of "${props.modalObject.title}" is not Saved. Please try again.`
       );
     }
   };
 
-  let handleInnerModal = (title, values, key, stakeHolder) => {
-    // console.log(title, values, key);
-    setModalObject({
-      title,
-      values,
-      key,
-      stakeHolder,
-      sourceObj: props.modalObject,
-      cal: title !== "Withdrawals" && title !== "Input Override",
-    });
-    setFlagState(true);
-  };
+  /* ------------------ Columns ------------------ */
+  const yearOptionsWithExisting = Array.from({ length: 31 }, (_, i) =>
+    i === 0
+      ? { value: "Existing", label: "Existing" }
+      : { value: i, label: `Year ${i}` }
+  );
 
-  const options =
-    UserStatus !== "Single"
-      ? [
-          { value: "client", label: RenderName("client") },
-          { value: "partner", label: RenderName("partner") },
-        ]
-      : [{ value: "client", label: RenderName("client") }];
-
-  let riskProfileOptions = [
+  const riskProfileOptions = [
     { value: "Conservative", label: "Conservative" },
     { value: "Moderately Conservative", label: "Moderately Conservative" },
     { value: "Balanced", label: "Balanced" },
@@ -334,126 +262,110 @@ const CFAccountBasedPension = (props) => {
     { value: "Australian Shares", label: "Australian Shares" },
   ];
 
-  let InvestmentReturnsOptions = [
-    { value: "system", label: "System" },
-    { value: "input Override", label: "Input Override" },
+  const InvestmentReturnsOptions = [
+    { value: "System", label: "System" },
+    { value: "Input Override", label: "Input Override" },
   ];
-  const yearOptionsWithExisting = Array.from({ length: 31 }, (_, i) => {
-    if (i == 0) {
-      return {
-        value: "Existing",
-        label: "Existing",
-      };
-    } else {
-      return {
-        value: i.toString(),
-        label: ("Year " + i).toString(),
-      };
-    }
-  });
 
-  const [rowConfig, setRowConfig] = useState(() => {
-    let OriginalArray = [
-      {
-        value: "1",
-        type: "plainText2.0",
-      },
-      {
-        name: "balanceRolloverAmount",
-        type: "number-toComma-Modal",
-        placeholder: "Balance & Rollover Amount",
-        callBack: true,
-        innerModalTitle: "Balance & Rollover Amount",
-        key: "balanceRolloverAmountObj",
-        func: handleInnerModal,
-        disabled: true,
-      },
-      {
-        name: "yearToCommence",
-        type: "select",
-        options: yearOptionsWithExisting,
-        placeholder: "Year To Commence",
-      },
-      {
-        name: "riskProfile",
-        type: "select",
-        options: riskProfileOptions,
-        placeholder: "Year to Commence",
-      },
-      {
-        name: "investmentReturns",
-        type: "selectModal",
-        placeholder: "Investment Returns",
-        options: InvestmentReturnsOptions,
-        ModalOption: "input Override",
-        innerModalTitle: "Input Override",
-        key: "investmentReturnsObj",
-      },
-      {
-        name: "investmentFees",
-        type: "number-toPercent",
-        placeholder: "Investment Fees %",
-      },
-      {
-        name: "adviserServiceFee",
-        type: "number-toComma",
-        placeholder: "Adviser Service Fee ($)",
-      },
-      {
-        name: "pensionPayments",
-        type: "number-toComma-Modal",
-        placeholder: "Pension Payments",
-        callBack: true,
-        innerModalTitle: "Pension Payments",
-        key: "pensionPaymentsObj",
-        func: handleInnerModal,
-        disabled:true,
-      },
-      {
-        name: "newPensionRollover",
-        type: "yesnoModal",
-        placeholder: "New Pension Rollover",
-        callBack: true,
-        key: "newPensionRolloverObj",
-        innerModalTitle: "New Pension Rollover",
-        func: handleInnerModal,
-      },
-      {
-        name: "withdrawals",
-        type: "yesnoModal",
-        placeholder: "Withdrawals",
-        callBack: true,
-        key: "withdrawalsObj",
-        innerModalTitle: "Withdrawals",
-        func: handleInnerModal,
-      },
-    ];
-
-    return OriginalArray;
-  });
+  const columns = [
+    { title: "No#", dataIndex: "owner", key: "owner", width: 60 },
+    {
+      title: "Balance & Rollover Amount",
+      dataIndex: "balanceRolloverAmount",
+      placeholder: "Balance & Rollover Amount",
+      type: "number-toComma-Modal",
+      key: "balanceRolloverAmount",
+      innerModalTitle: "Balance & Rollover Amount",
+      callBack: true,
+      func: handleInnerModal,
+      disabled: true,
+    },
+    {
+      title: "Year to Commence",
+      dataIndex: "yearToCommence",
+      placeholder: "Year to Commence",
+      type: "select",
+      selectedOptionValue: true,
+      options: yearOptionsWithExisting,
+    },
+    {
+      title: "Risk Profile",
+      dataIndex: "riskProfile",
+      placeholder: "Risk Profile",
+      type: "select",
+      selectedOptionValue: true,
+      options: riskProfileOptions,
+    },
+    {
+      title: "Investment Returns",
+      dataIndex: "investmentReturns",
+      placeholder: "Investment Returns",
+      type: "selectModal",
+      options: InvestmentReturnsOptions,
+      ModalOption: "Input Override",
+      callBack: true,
+      func: handleInnerModal,
+      innerModalTitle: "Input Override",
+      key: "investmentReturns",
+    },
+    {
+      title: "Investment Fees %",
+      dataIndex: "investmentFees",
+      placeholder: "Investment Fees %",
+      type: "number-toPercent",
+    },
+    {
+      title: "Adviser Service Fee ($)",
+      dataIndex: "adviserServiceFee",
+      placeholder: "Adviser Service Fee ($)",
+      type: "number-toComma",
+    },
+    {
+      title: "Pension Payments",
+      dataIndex: "pensionPayments",
+      placeholder: "Pension Payments",
+      type: "number-toComma-Modal",
+      key: "pensionPayments",
+      innerModalTitle: "Pension Payments",
+      func: handleInnerModal,
+      callBack: true,
+      disabled: true,
+    },
+    {
+      title: "New Pension Rollover",
+      dataIndex: "newPensionRollover",
+      placeholder: "New Pension Rollover",
+      type: "yesnoModal",
+      key: "newPensionRollover",
+      innerModalTitle: "New Pension Rollover",
+      callBack: true,
+      func: handleInnerModal,
+    },
+    {
+      title: "Withdrawals",
+      dataIndex: "withdrawals",
+      placeholder: "Withdrawals",
+      type: "yesnoModal",
+      key: "withdrawals",
+      innerModalTitle: "Withdrawals",
+      callBack: true,
+      func: handleInnerModal,
+    },
+  ];
 
   const componentMapping = {
     "Input Override": <AccountBasedInputOverride />,
     "Balance & Rollover Amount": <BalanceRolloverAmount />,
-    "Withdrawals": <AccounntBasedWithdrawals />,
+    Withdrawals: <AccounntBasedWithdrawals />,
     "New Pension Rollover": <AccountBasedNewPensionRollover />,
     "Pension Payments": <AccountBasedPensionPayments />,
-  };
-
-  const ModalContent = (obj) => {
-    return componentMapping[obj.title] || null;
-  };
-
-  let handleInput = (e, setFieldValue) => {
-    let value = e.target.value > 2 ? 2 : e.target.value;
-    setFieldValue(e.target.id, value);
   };
 
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={onSubmit}
       enableReinitialize
+      onSubmit={onSubmit}
       innerRef={props.formRef}
     >
       {({ values, setFieldValue, handleChange, handleBlur }) => {
@@ -461,87 +373,80 @@ const CFAccountBasedPension = (props) => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        const rows = useMemo(() => {
+          const count = Number(values.numberOfProperties) || 0;
+          return Array.from({ length: count }, (_, i) => ({
+            key: `client.${i}`,
+            owner: i + 1,
+            stakeHolder: `client[${i}]`,
+            ...values.client?.[i],
+            balanceRolloverAmountObj:
+              values.client?.[i]?.balanceRolloverAmountObj?.costBaseExisting ||
+              "no data Found",
+          }));
+        }, [values.numberOfProperties, values.client]);
+
         return (
           <Form>
-            <Row>
-              <InnerModal
-                modalObject={modalObject}
-                setFieldValue={setFieldValue}
-                setFlagState={setFlagState}
-                flagState={flagState}
+            <InnerModal
+              modalObject={modalObject}
+              setFieldValue={setFieldValue}
+              setFlagState={setFlagState}
+              flagState={flagState}
+            >
+              {componentMapping[modalObject.title]}
+            </InnerModal>
+
+            <div className="d-flex justify-content-center align-items-center gap-4">
+              <label
+                onClick={() => {
+                  console.log(values);
+                }}
               >
-                {ModalContent(modalObject)}
-              </InnerModal>
+                Number of Account Based Pension does{" "}
+                {RenderName(props.modalObject.Input)} have:
+              </label>
+              <ConfigProvider>
+                <Select
+                  size="large"
+                  style={{ minWidth: 80 }}
+                  value={values.numberOfProperties || undefined}
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                  onChange={(v) => {
+                    const capped = v > 10 ? 10 : v;
+                    setFieldValue("numberOfProperties", capped);
+                  }}
+                >
+                  {Array.from({ length: 10 }, (_, i) => i + 1).map((v) => (
+                    <Option key={v} value={v}>
+                      {v}
+                    </Option>
+                  ))}
+                </Select>
+              </ConfigProvider>
+            </div>
 
-              <div className="col-md-12">
-                <div className="d-flex justify-content-center align-items-center gap-4">
-                  <label htmlFor="" className="text-end ">
-                    Number of Account Based Pension does{" "}
-                    {RenderName(props.modalObject.Input)} have :
-                  </label>
-
-                  <div style={{ minWidth: "5%", maxWidth: "10%" }}>
-                    <Field
-                      type="number"
-                      id="numberOfProperties"
-                      name="numberOfProperties"
-                      className="form-control inputDesignDoubleInput"
-                      onChange={(e) => handleInput(e, setFieldValue)}
-                    />
-                  </div>
-                </div>
+            {values.numberOfProperties > 0 && (
+              <div className="mt-4 All_Client reportSection">
+                <AntdTable
+                  columns={columns}
+                  data={rows}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  handleSubmit={props.handleOk}
+                  isEditing={props.isEditing}
+                  setIsEditing={props.setIsEditing}
+                />
               </div>
-              {values.numberOfProperties > 0 && (
-                <div className="mt-4">
-                  <Table striped bordered responsive hover>
-                    <thead>
-                      <tr>
-                        <th
-                          onClick={() => {
-                            console.log(values);
-                          }}
-                        >
-                          No#
-                        </th>
-                        <th>Balance & Rollover Amount</th>
-                        <th>Year to Commence</th>
-                        <th>Risk Profile</th>
-                        <th>Investment Returns</th>
-                        <th>Investment Fees %</th>
-                        <th>Adviser Service Fee ($)</th>
-                        <th>Pension Payments</th>
-                        <th>New Pension Rollover</th>
-                        <th>Withdrawals</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Array.from({
-                        length: values.numberOfProperties,
-                      }).map((_, index) => {
-                        // Ensure each rowConfig object has a name before concatenating the index
-                        const updatedRowConfig = rowConfig.map((row) => ({
-                          ...row,
-                          name: row.name ? `${row.name}_${index}` : row.name,
-                          key: row.key ? `${row.key}_${index}` : row.key,
-                          value: row.value ? index + 1 : row.value,
-                        }));
+            )}
 
-                        return (
-                          <DynamicTableRow
-                            rowConfig={updatedRowConfig}
-                            values={values}
-                            setFieldValue={setFieldValue}
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                            handleInnerModal={handleInnerModal}
-                          />
-                        );
-                      })}
-                    </tbody>
-                  </Table>
-                </div>
-              )}
-            </Row>
+            <button
+              ref={props.childButtonRef}
+              type="button"
+              style={{ display: "none" }}
+            />
           </Form>
         );
       }}

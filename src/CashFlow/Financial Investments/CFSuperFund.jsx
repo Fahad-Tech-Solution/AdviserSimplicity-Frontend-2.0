@@ -125,6 +125,7 @@ const CFSuperFund = (props) => {
       );
 
       props.flagState && props.setFlagState(false);
+      props?.setIsEditing?.(false);
     } catch (err) {
       openNotificationSuccess(
         "error",

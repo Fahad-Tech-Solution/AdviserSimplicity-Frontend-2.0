@@ -60,6 +60,7 @@ const NonConcessionalContributions = (props) => {
     );
 
     props?.setFlagState?.(false);
+    props?.setIsEditing?.(false);
   };
 
   /* ===============================

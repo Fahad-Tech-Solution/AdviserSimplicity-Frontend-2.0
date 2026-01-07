@@ -110,6 +110,8 @@ const BalanceComponents = (props) => {
     );
 
     props?.setFlagState?.(false);
+    props?.setIsEditing?.(false);
+
   };
 
   /* ===============================

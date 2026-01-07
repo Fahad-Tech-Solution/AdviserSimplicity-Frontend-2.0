@@ -404,7 +404,9 @@ const CashFlowInvestmentsProperty = (props) => {
             </InnerModal>
 
             <div className="d-flex justify-content-center align-items-center gap-4">
-              <label>Number of properties</label>
+              <label onClick={() => console.log(values)}>
+                Number of properties
+              </label>
               <ConfigProvider>
                 <Select
                   size="large"

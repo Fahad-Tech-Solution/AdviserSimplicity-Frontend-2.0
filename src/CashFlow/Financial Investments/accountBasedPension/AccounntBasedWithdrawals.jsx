@@ -1,45 +1,53 @@
-import React, { useEffect, useState } from "react";
-import DynamicTableRow from "../../../Components/Assets/Dynamic/DynamicTableRow";
-import { Form, Formik } from "formik";
-import { Row, Table } from "react-bootstrap";
+import React, { useEffect } from "react";
+import { Formik, Form } from "formik";
+import DynamicTableForInputsSection from "../../../Components/Assets/Table/DynamicTableForInputsSection";
+
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const AccounntBasedWithdrawals = (props) => {
-  let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
-
-  let initialValues = {
+  const initialValues = {
     contributionsToFund: "",
     year: "",
     amount: "",
   };
 
-  let fillInitialValues = (setFieldValue) => {
-    console.log(props.modalObject);
-    if (props.modalObject.values[props.modalObject.key]) {
-      let Data = props.modalObject.values[props.modalObject.key];
-      setFieldValue("contributionsToFund", Data.contributionsToFund);
-      setFieldValue("year", Data.year);
-      setFieldValue("amount", Data.amount);
+  let BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
+  let index = parseFloat(
+    props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
+  );
+
+  const fillInitialValues = (setFieldValue) => {
+    if (
+      props.modalObject.values?.[BaseKey]?.[index]?.[
+        props.modalObject.key + "Obj"
+      ]
+    ) {
+      const data =
+        props.modalObject.values?.[BaseKey]?.[index]?.[
+          props.modalObject.key + "Obj"
+        ];
+      setFieldValue("contributionsToFund", data.contributionsToFund || "");
+      setFieldValue("year", data.year || "");
+      setFieldValue("amount", data.amount || "");
     }
   };
 
-  let onSubmit = (values) => {
-    console.log(JSON.stringify(values));
+  const onSubmit = (values) => {
+    props.setFieldValue(
+      props.modalObject.stakeHolder + props.modalObject.key + "Obj",
+      values
+    );
 
-    props.setFieldValue(props.modalObject.key, values);
-
-    // Reset the flag state if necessary
     if (props.flagState) {
       props.setFlagState(false);
+      props?.setIsEditing?.(false);
     }
   };
 
-  const yearsIncludedArray = Array.from({ length: 30 }, (_, i) => {
-    return {
-      value: (i + 1).toString(),
-      label: ("Year " + (i + 1)).toString(),
-    };
-  });
+  const yearsIncludedArray = Array.from({ length: 30 }, (_, i) => ({
+    value: (i + 1).toString(),
+    label: `Year ${i + 1}`,
+  }));
 
   const contributionsFundOptions = [
     { value: "1", label: "1" },
@@ -47,39 +55,36 @@ const AccounntBasedWithdrawals = (props) => {
     { value: "SMSF", label: "SMSF" },
   ];
 
-  let handleInnerModal = (title, values, key, stakeHolder) => {
-    console.log(title, values, key, stakeHolder);
-    setModalObject({
-      title,
-      values,
-      key,
-      stakeHolder: props.modalObject.stakeHolder,
-    });
-    setFlagState(true);
-  };
-
-  let rowConfig = [
+  // Create a single row for the table
+  const columns = [
     {
-      type: "plainText2.0",
-      value: parseFloat(props.modalObject.key.match(/\d+/)?.[0] || 0) + 1,
-      // styleSet: { fontWeight: "800", fontSize: "16px" },
+      title: "No#",
+      dataIndex: "index",
+      key: "index",
+      width: 60,
+      justText: true,
     },
     {
-      name: "contributionsToFund",
+      title: "Contributions To Fund",
+      dataIndex: "contributionsToFund",
+      placeholder: "Contributions To Fund",
       type: "select",
       options: contributionsFundOptions,
-      placeholder: "Contributions To Fund",
+      selectedOptionValue: true,
     },
     {
-      name: "year",
-      type: "select",
-      options: yearsIncludedArray,
+      title: "Year",
+      dataIndex: "year",
       placeholder: "Year",
+      type: "select",
+      selectedOptionValue: true,
+      options: yearsIncludedArray,
     },
     {
-      name: "amount",
-      type: "number-toComma",
+      title: "Amount",
+      dataIndex: "amount",
       placeholder: "Amount",
+      type: "number-toComma",
     },
   ];
 
@@ -90,41 +95,37 @@ const AccounntBasedWithdrawals = (props) => {
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, handleChange, setFieldValue, handleBlur }) => {
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        // Create a single row for the table
+        const rows = [
+          {
+            key: "singleRow",
+            index: 1,
+            contributionsToFund: values.contributionsToFund,
+            year: values.year,
+            amount: values.amount,
+          },
+        ];
+
         return (
           <Form>
-            <Row>
-              <div className="col-md-12">
-                <div className="row justify-content-center">
-                  <div className="mt-4">
-                    <Table striped bordered responsive hover>
-                      <thead>
-                        <tr>
-                          <th>No#</th>
-                          <th>Contributions To Fund</th>
-                          <th>Year</th>
-                          <th>Amount</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                          handleInnerModal={handleInnerModal}
-                        />
-                      </tbody>
-                    </Table>
-                  </div>
-                </div>
-              </div>
-            </Row>
+            <div className="mt-4 All_Client reportSection">
+              <AntdTable
+                columns={columns}
+                data={rows}
+                values={values}
+                setFieldValue={setFieldValue}
+                handleChange={handleChange}
+                handleBlur={handleBlur}
+                handleSubmit={props.handleOk}
+                isEditing={props.isEditing}
+                setIsEditing={props.setIsEditing}
+              />
+            </div>
           </Form>
         );
       }}

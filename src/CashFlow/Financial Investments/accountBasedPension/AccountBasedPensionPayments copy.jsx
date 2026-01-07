@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from "react";
+import DynamicTableRow from "../../../Components/Assets/Dynamic/DynamicTableRow";
 import { Form, Formik } from "formik";
-import { Row } from "react-bootstrap";
-
-import DynamicTableForInputsSection from "../../../Components/Assets/Table/DynamicTableForInputsSection";
-import {
-  openNotificationSuccess,
-  PostAxios,
-  PostAxiosBlob,
-  RenderName,
-} from "../../../Components/Assets/Api/Api";
+import { Row, Table } from "react-bootstrap";
 import {
   CashFlowData,
   CashFlowDownloading,
@@ -16,24 +9,27 @@ import {
   defaultUrl,
 } from "../../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
-
-const AntdTable = DynamicTableForInputsSection("antd");
+import {
+  openNotificationSuccess,
+  PostAxios,
+  PostAxiosBlob,
+  RenderName,
+  toCommaAndDollar,
+} from "../../../Components/Assets/Api/Api";
 
 const AccountBasedPensionPayments = (props) => {
-  const [flagState, setFlagState] = useState(false);
-  const [modalObject, setModalObject] = useState({});
+  let [flagState, setFlagState] = useState(false);
+  let [modalObject, setModalObject] = useState({});
 
-  const DefaultUrl = useRecoilValue(defaultUrl);
-  const cashFlowData = useRecoilValue(CashFlowData);
-  const [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
+  let DefaultUrl = useRecoilValue(defaultUrl);
+  let cashFlowData = useRecoilValue(CashFlowData);
+  let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
     useRecoilState(CashFlowReCalculateLoading);
-  const [cashFlowDownloading, setCashFlowDownloading] =
+
+  let [cashFlowDownloading, setCashFlowDownloading] =
     useRecoilState(CashFlowDownloading);
 
-  /* ===============================
-     Initial Values
-  =============================== */
-  const initialValues = {
+  let initialValues = {
     nominatedPensionAmount: "Other",
     reversionaryPensionOption: "",
     otherAmount: "",
@@ -44,26 +40,10 @@ const AccountBasedPensionPayments = (props) => {
     maximumTTRPension: "",
   };
 
-  /* ===============================
-     Fill Initial Values
-  =============================== */
-  let BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
-  let index = parseFloat(
-    props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
-  );
-  const fillInitialValues = (setFieldValue) => {
+  let fillInitialValues = (setFieldValue) => {
     console.log(props.modalObject);
-
-    if (
-      props.modalObject.values?.[BaseKey]?.[index]?.[
-        props.modalObject.key + "Obj"
-      ]
-    ) {
-      const Data =
-        props.modalObject.values?.[BaseKey]?.[index]?.[
-          props.modalObject.key + "Obj"
-        ];
-
+    if (props.modalObject.values[props.modalObject.key]) {
+      let Data = props.modalObject.values[props.modalObject.key];
       setFieldValue("nominatedPensionAmount", Data.nominatedPensionAmount);
       setFieldValue(
         "reversionaryPensionOption",
@@ -78,33 +58,29 @@ const AccountBasedPensionPayments = (props) => {
     }
   };
 
-  /* ===============================
-     Submit
-  =============================== */
-  const onSubmit = (values) => {
+  let onSubmit = (values) => {
     console.log(JSON.stringify(values), props.modalObject.key);
 
     props.setFieldValue(
-      props.modalObject.stakeHolder + props.modalObject.key,
+      props.modalObject.key.replace("Obj", ""),
       values.otherAmount
     );
 
-    props.setFieldValue(
-      props.modalObject.stakeHolder + props.modalObject.key + "Obj",
-      values
-    );
+    props.setFieldValue(props.modalObject.key, values);
 
     // Reset the flag state if necessary
     if (props.flagState) {
       props.setFlagState(false);
-      props?.setIsEditing?.(false);
     }
   };
 
-  /* ===============================
-     Handle Inner Modal
-  =============================== */
-  const handleInnerModal = (title, values, key, stakeHolder) => {
+  const nominatedPensionAmountOptions = [
+    { value: "Minimum", label: "Minimum" },
+    { value: "Maximum", label: "Maximum" },
+    { value: "Other", label: "Other" },
+  ];
+
+  let handleInnerModal = (title, values, key, stakeHolder) => {
     console.log(title, values, key, stakeHolder);
     setModalObject({
       title,
@@ -115,33 +91,77 @@ const AccountBasedPensionPayments = (props) => {
     setFlagState(true);
   };
 
-  /* ===============================
-     Options
-  =============================== */
-  const nominatedPensionAmountOptions = [
-    { value: "Minimum", label: "Minimum" },
-    { value: "Maximum", label: "Maximum" },
-    { value: "Other", label: "Other" },
-  ];
-
-  const indexationPensionOptions = Array.from({ length: 11 }, (_, i) => ({
+  const indexation = Array.from({ length: 11 }, (_, i) => ({
     value: (i * 0.5).toFixed(2) + "%",
     label: (i * 0.5).toFixed(2) + "%",
   }));
 
-  /* ===============================
-     API Handling Functions
-  =============================== */
-  const handleChildButtonClick = async (values, setFieldValue) => {
+  let rowConfig = [
+    {
+      type: "plainText2.0",
+      value: parseFloat(props.modalObject.key.match(/\d+/)?.[0] || 0) + 1,
+      // styleSet: { fontWeight: "800", fontSize: "16px" },
+    },
+    {
+      name: "nominatedPensionAmount",
+      type: "select",
+      options: nominatedPensionAmountOptions,
+      placeholder: "Nominated Pension Amount",
+    },
+    {
+      name: "reversionaryPensionOption",
+      type: "yesno", width: 100,
+      placeholder: "Reversionary Pension Option",
+    },
+    {
+      name: "otherAmount",
+      type: "number-toComma",
+      placeholder: "Other Amount",
+    },
+    {
+      name: "indexationPension",
+      type: "select",
+      options: indexation,
+      placeholder: "Indexation of Pension",
+    },
+    {
+      name: "preservationAge",
+      type: "number-toComma",
+      placeholder: "Preservation Age",
+      disabled: true,
+    },
+    {
+      name: "preservationAgeYear",
+      type: "number-toComma",
+      placeholder: "Preservation Age in Year",
+      disabled: true,
+    },
+    {
+      name: "minimumPension",
+      type: "number-toComma",
+      placeholder: "Minimum Pension",
+      disabled: true,
+    },
+    {
+      name: "maximumTTRPension",
+      type: "number-toComma",
+      placeholder: "Maximum TTR Pension",
+      disabled: true,
+    },
+  ];
+
+  let handleChildButtonClick = async (values, setFieldValue) => {
     try {
-      const updatedData = JSON.parse(JSON.stringify(cashFlowData));
+      let updatedData = JSON.parse(JSON.stringify(cashFlowData));
 
       const { values: parentValues, key, title, sourceObj } = props.modalObject;
+
       const numberOfProperties =
         parseInt(parentValues.numberOfProperties, 10) || 1;
-      const currentIndex = key.match(/\d+/)?.[0] || 0;
 
-      const structuredEntries = Array.from(
+      const currentIndex = key.match(/\d+/)?.[0] || 0; // Extract numeric index from key
+
+      let structuredEntries = Array.from(
         { length: numberOfProperties },
         (_, i) => ({
           balanceRolloverAmount:
@@ -164,14 +184,17 @@ const AccountBasedPensionPayments = (props) => {
         })
       );
 
+      // Update the correct entry with new child modal values
       structuredEntries[currentIndex][key.replace(/_\d+/, "")] = values;
 
-      console.log(sourceObj, key, JSON.stringify(structuredEntries));
+      // console.log(sourceObj, key, JSON.stringify(structuredEntries));
 
       updatedData[sourceObj.key][sourceObj.Input] = structuredEntries;
       updatedData[sourceObj.key].numberOfProperties = numberOfProperties;
 
-      const apiKey = {
+      // console.log(JSON.stringify(updatedData[sourceObj.key]));
+
+      let apiKey = {
         cf_accountBasedPension: {
           key: "financialInvestment",
           param: "INPUTS_Super_Pension",
@@ -182,7 +205,9 @@ const AccountBasedPensionPayments = (props) => {
         },
       };
 
-      const res = await PostAxios(
+      // throw new Error("API call not implemented yet");
+
+      let res = await PostAxios(
         `${DefaultUrl}/api/cal/${apiKey[props.modalObject.sourceObj.key].key}/${
           apiKey[props.modalObject.sourceObj.key].param
         }`,
@@ -192,7 +217,7 @@ const AccountBasedPensionPayments = (props) => {
       if (res) {
         console.log(res);
 
-        const DataObj =
+        let DataObj =
           res.data[props.modalObject.sourceObj.key][
             props.modalObject.sourceObj.Input
           ][currentIndex];
@@ -226,16 +251,18 @@ const AccountBasedPensionPayments = (props) => {
     }
   };
 
-  const handleChildButtonDownloadClick = async (values, setFieldValue) => {
+  let handleChildButtonDownloadClick = async (values, setFieldValue) => {
     try {
-      const updatedData = JSON.parse(JSON.stringify(cashFlowData));
+      let updatedData = JSON.parse(JSON.stringify(cashFlowData));
 
       const { values: parentValues, key, title, sourceObj } = props.modalObject;
+
       const numberOfProperties =
         parseInt(parentValues.numberOfProperties, 10) || 1;
-      const currentIndex = key.match(/\d+/)?.[0] || 0;
 
-      const structuredEntries = Array.from(
+      const currentIndex = key.match(/\d+/)?.[0] || 0; // Extract numeric index from key
+
+      let structuredEntries = Array.from(
         { length: numberOfProperties },
         (_, i) => ({
           balanceRolloverAmount:
@@ -258,12 +285,26 @@ const AccountBasedPensionPayments = (props) => {
         })
       );
 
+      // Update the correct entry with new child modal values
       structuredEntries[currentIndex][key.replace(/_\d+/, "")] = values;
 
-      console.log(sourceObj, key, JSON.stringify(structuredEntries));
+      // console.log(sourceObj, key, JSON.stringify(structuredEntries));
 
       updatedData[sourceObj.key][sourceObj.Input] = structuredEntries;
       updatedData[sourceObj.key].numberOfProperties = numberOfProperties;
+
+      // console.log(JSON.stringify(updatedData[sourceObj.key]));
+
+      let apiKey = {
+        cf_accountBasedPension: {
+          key: "financialInvestment",
+          param: "INPUTS_Super_Pension",
+        },
+        cf_SMSFPensionAccountDetails: {
+          key: "SMSF",
+          param: "INPUTS_SMSF_Member_Balances",
+        },
+      };
 
       try {
         const response = await PostAxiosBlob(
@@ -297,7 +338,7 @@ const AccountBasedPensionPayments = (props) => {
           "Something went wrong while downloading the Excel file."
         );
       } finally {
-        setCashFlowDownloading(false);
+        setCashFlowDownloading(false); // Always hide loading spinner
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
@@ -313,86 +354,6 @@ const AccountBasedPensionPayments = (props) => {
     }
   };
 
-  /* ===============================
-     AntD Columns
-  =============================== */
-  const columns = [
-    {
-      title: "Owner",
-      dataIndex: "index",
-      key: "index",
-      justText: true,
-    },
-    {
-      title: "Nominated Pension Amount",
-      dataIndex: "nominatedPensionAmount",
-      key: "nominatedPensionAmount",
-      type: "select",
-      placeholder: "Nominated Pension Amount",
-      options: nominatedPensionAmountOptions,
-      selectedOptionValue: true,
-    },
-    {
-      title: "Reversionary Pension Option",
-      dataIndex: "reversionaryPensionOption",
-      key: "reversionaryPensionOption",
-      type: "yesno",
-      width: 100,
-      placeholder: "Reversionary Pension Option",
-    },
-    {
-      title: "Other Amount",
-      dataIndex: "otherAmount",
-      key: "otherAmount",
-      type: "number-toComma",
-      placeholder: "Other Amount",
-    },
-    {
-      title: "Indexation of Pension",
-      dataIndex: "indexationPension",
-      key: "indexationPension",
-      type: "select",
-      placeholder: "Indexation of Pension",
-      options: indexationPensionOptions,
-      selectedOptionValue: true,
-    },
-    {
-      title: "Preservation Age",
-      dataIndex: "preservationAge",
-      key: "preservationAge",
-      type: "number-toComma",
-      placeholder: "Preservation Age",
-      disabled: true,
-    },
-    {
-      title: "Preservation Age in Year",
-      dataIndex: "preservationAgeYear",
-      key: "preservationAgeYear",
-      type: "number-toComma",
-      placeholder: "Preservation Age in Year",
-      disabled: true,
-    },
-    {
-      title: "Minimum Pension",
-      dataIndex: "minimumPension",
-      key: "minimumPension",
-      type: "number-toComma",
-      placeholder: "Minimum Pension",
-      disabled: true,
-    },
-    {
-      title: "Maximum TTR Pension",
-      dataIndex: "maximumTTRPension",
-      key: "maximumTTRPension",
-      type: "number-toComma",
-      placeholder: "Maximum TTR Pension",
-      disabled: true,
-    },
-  ];
-
-  /* ===============================
-     Render
-  =============================== */
   return (
     <Formik
       initialValues={initialValues}
@@ -400,56 +361,65 @@ const AccountBasedPensionPayments = (props) => {
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, setFieldValue, handleChange, handleBlur }) => {
+      {({ values, handleChange, setFieldValue, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
 
-        const tableData = [
-          {
-            key: "pensionPaymentsRow",
-            index: 1,
-            ...values,
-          },
-        ];
-
         return (
           <Form>
             <Row>
-              <div className="col-md-12 mt-4 All_Client reportSection">
-                <AntdTable
-                  columns={columns}
-                  data={tableData}
-                  values={values}
-                  setFieldValue={setFieldValue}
-                  handleChange={handleChange}
-                  handleBlur={handleBlur}
-                  handleInnerModal={handleInnerModal}
-                  isEditing={props?.isEditing}
-                  setIsEditing={props?.setIsEditing}
-                />
+              <div className="col-md-12">
+                <div className="row justify-content-center">
+                  <div className="mt-4">
+                    <Table striped bordered responsive hover>
+                      <thead>
+                        <tr>
+                          <th>Owner</th>
+                          <th>Nominated Pension Amount</th>
+                          <th>Reversionary Pension Option</th>
+                          <th>Other Amount</th>
+                          <th>Indexation of Pension</th>
+                          <th>Preservation Age</th>
+                          <th>Preservation Age in Year</th>
+                          <th>Minimum Pension</th>
+                          <th>Maximum TTR Pension</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <DynamicTableRow
+                          rowConfig={rowConfig}
+                          values={values}
+                          setFieldValue={setFieldValue}
+                          handleChange={handleChange}
+                          handleBlur={handleBlur}
+                          handleInnerModal={handleInnerModal}
+                        />
+                      </tbody>
+                    </Table>
+                    <button
+                      ref={props.childButtonRef}
+                      onClick={() => {
+                        handleChildButtonClick(values, setFieldValue);
+                      }}
+                      style={{ display: "none" }} // Hidden button
+                      type="button"
+                    >
+                      Hidden Child Button
+                    </button>
+                    <button
+                      ref={props.childButtonDownloadRef}
+                      onClick={() => {
+                        handleChildButtonDownloadClick(values, setFieldValue);
+                      }}
+                      style={{ display: "none" }} // Hidden button
+                      type="button"
+                    >
+                      Hidden Child Button Download
+                    </button>
+                  </div>
+                </div>
               </div>
-
-              <button
-                ref={props.childButtonRef}
-                onClick={() => {
-                  handleChildButtonClick(values, setFieldValue);
-                }}
-                style={{ display: "none" }}
-                type="button"
-              >
-                Hidden Child Button
-              </button>
-              <button
-                ref={props.childButtonDownloadRef}
-                onClick={() => {
-                  handleChildButtonDownloadClick(values, setFieldValue);
-                }}
-                style={{ display: "none" }}
-                type="button"
-              >
-                Hidden Child Button Download
-              </button>
             </Row>
           </Form>
         );

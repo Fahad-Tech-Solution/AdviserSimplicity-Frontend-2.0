@@ -1,104 +1,125 @@
-import React, { useEffect, useState } from 'react'
-import DynamicTableRow from '../../Components/Assets/Dynamic/DynamicTableRow';
-import { Form, Formik } from 'formik';
-import { Row, Table } from 'react-bootstrap';
+import React, { useEffect, useState } from "react";
+import { Form, Formik } from "formik";
+import { Row } from "react-bootstrap";
+
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
+import { RenderName } from "../../Components/Assets/Api/Api";
+
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const DownSizerContributionNonConcessional = (props) => {
+  const [flagState, setFlagState] = useState(false); // optional if modal is used later
 
-    let initialValues = {
-        downSizerContribution: "",
-        contributionsToFund: "",
-    }
+  /* ===============================
+     Initial Values
+  =============================== */
+  const initialValues = {
+    downSizerContribution: "",
+    contributionsToFund: "",
+  };
 
-    let fillInitialValues = (setFieldValue) => {
-        console.log(props.modalObject);
-        if (props.modalObject.values[props.modalObject.key + "Obj"]) {
-            let Data = props.modalObject.values[props.modalObject.key + "Obj"]
-            setFieldValue("downSizerContribution", Data.downSizerContribution)
-            setFieldValue("contributionsToFund", Data.contributionsToFund)
-        }
-    }
+  /* ===============================
+     Fill Initial Values
+  =============================== */
+  const fillInitialValues = (setFieldValue) => {
+    const stored = props.modalObject?.values?.[props.modalObject.key + "Obj"];
+    if (!stored) return;
 
-    let onSubmit = (values) => {
-        props.setFieldValue(props.modalObject.key + "Obj", values)
+    Object.entries(stored).forEach(([key, value]) => {
+      setFieldValue(key, value);
+    });
+  };
 
-        // Reset the flag state if necessary
-        if (props.flagState) {
-            props.setFlagState(false);
-        }
-    }
+  /* ===============================
+     Submit
+  =============================== */
+  const onSubmit = (values) => {
+    props.setFieldValue(props.modalObject.key + "Obj", values);
+    props?.setFlagState?.(false);
+    props?.setIsEditing?.(false);
+  };
 
-    const contributionsFundOptions = [
-        { value: "1", label: "1", },
-        { value: "2", label: "2", },
-        { value: "SMSF", label: "SMSF", }
-    ]
+  /* ===============================
+     Options
+  =============================== */
+  const contributionsFundOptions = [
+    { value: "1", label: "1" },
+    { value: "2", label: "2" },
+    { value: "SMSF", label: "SMSF" },
+  ];
 
-    let rowConfig = [
-        {
-            type: "plainText",
-            text: props.modalObject.stakeHolder.replace(".", ""),
-            styleSet: { fontWeight: "800", fontSize: "16px" }
-        },
-        {
-            name: "downSizerContribution",
-            type: "number-toComma",
-            placeholder: "Downsizer contribution (Year 1 only)"
-        },
-        {
-            name: "contributionsToFund",
-            type: "select",
-            options: contributionsFundOptions,
-            placeholder: "Contributions To Fund"
-        },
-    ]
+  /* ===============================
+     Columns
+  =============================== */
+  const columns = [
+    {
+      title: "Owner",
+      dataIndex: "owner",
+      key: "owner",
+      type: "plainText2.0",
+    },
+    {
+      title: "Downsizer contribution (Year 1 only)",
+      placeholder: "Downsizer contribution (Year 1 only)",
+      dataIndex: "downSizerContribution",
+      key: "downSizerContribution",
+      type: "number-toComma",
+    },
+    {
+      title: "Contributions To Fund",
+      dataIndex: "contributionsToFund",
+      key: "contributionsToFund",
+      type: "select",
+      selectedOptionValue: true,
+      options: contributionsFundOptions,
+    },
+  ];
 
+  /* ===============================
+     Render
+  =============================== */
+  return (
+    <Formik
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      enableReinitialize
+      innerRef={props.formRef}
+    >
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
+        useEffect(() => {
+          fillInitialValues(setFieldValue);
+        }, []);
 
-    return (
-        <Formik
-            initialValues={initialValues}
-            onSubmit={onSubmit}
-            enableReinitialize
-            innerRef={props.formRef}
-        >
-            {({ values, handleChange, setFieldValue, handleBlur }) => {
-                useEffect(() => {
-                    fillInitialValues(setFieldValue);
-                }, []);
+        const tableData = [
+          {
+            key: "downSizerRow",
+            owner: RenderName(props.modalObject.stakeHolder.replace(".", "")),
+            ...values,
+          },
+        ];
 
-                return (
-                    <Form>
-                        <Row>
-                            <div className="col-md-12" >
-                                <div className="row justify-content-center">
-                                    <div className="mt-4">
-                                        <Table striped bordered responsive hover>
-                                            <thead>
-                                                <tr>
-                                                    <th>Owner</th>
-                                                    <th>Downsizer contribution (Year 1 only)</th>
-                                                    <th>Contributions To Fund</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <DynamicTableRow
-                                                    rowConfig={rowConfig}
-                                                    values={values}
-                                                    setFieldValue={setFieldValue}
-                                                    handleChange={handleChange}
-                                                    handleBlur={handleBlur}
-                                                />
-                                            </tbody>
-                                        </Table>
-                                    </div>
-                                </div>
-                            </div>
-                        </Row>
-                    </Form>
-                );
-            }}
-        </Formik>
-    )
-}
+        return (
+          <Form>
+            <Row>
+              <div className="col-md-12 mt-4 All_Client reportSection">
+                <AntdTable
+                  columns={columns}
+                  data={tableData}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  handleInnerModal={() => {}} // no inner modal here
+                   isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
+                />
+              </div>
+            </Row>
+          </Form>
+        );
+      }}
+    </Formik>
+  );
+};
 
-export default DownSizerContributionNonConcessional
+export default DownSizerContributionNonConcessional;

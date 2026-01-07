@@ -39,6 +39,7 @@ const ContributionSplittingInner = (props) => {
     props.setFieldValue(props.modalObject.key + "Obj", values);
 
     props?.setFlagState?.(false);
+     props?.setIsEditing?.(false);
   };
 
   /* ===============================
@@ -76,7 +77,7 @@ const ContributionSplittingInner = (props) => {
       title: "Year to Commence",
       dataIndex: "yearToCommence",
       key: "yearToCommence",
-      selectedOptionValue:true, 
+      selectedOptionValue: true,
       type: "select",
       options: yearsIncludedOptions,
     },
@@ -84,7 +85,7 @@ const ContributionSplittingInner = (props) => {
       title: "Years to Include",
       dataIndex: "yearsToInclude",
       key: "yearsToInclude",
-      selectedOptionValue:true, 
+      selectedOptionValue: true,
       type: "select",
       options: yearsIncludedOptions,
     },
@@ -92,7 +93,7 @@ const ContributionSplittingInner = (props) => {
       title: "Contributions To Fund",
       dataIndex: "contributionsToFund",
       key: "contributionsToFund",
-      selectedOptionValue:true, 
+      selectedOptionValue: true,
       type: "select",
       options: contributionsFundOptions,
     },

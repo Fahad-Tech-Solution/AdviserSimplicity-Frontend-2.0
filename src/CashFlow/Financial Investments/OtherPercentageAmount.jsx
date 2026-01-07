@@ -32,6 +32,7 @@ const OtherPercentageAmount = (props) => {
     props.setFieldValue(props.modalObject.key + "Obj", values);
 
     props?.setFlagState?.(false);
+     props?.setIsEditing?.(false);
   };
 
   /* ===============================
