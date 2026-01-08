@@ -1,140 +1,162 @@
-import React, { useEffect, useState } from "react";
-import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
+import React, { useEffect, useMemo } from "react";
 import { Form, Formik } from "formik";
-import { Row, Table } from "react-bootstrap";
+import { Placeholder, Row } from "react-bootstrap";
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
+
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const DividendIncome = (props) => {
-  let [layoutSwitchFlag, setLayoutSwitchFlag] = useState(
-    props.modalObject.title
-  );
-
-  let initialValues = {
+  const initialValues = {
     dividendIncome: "",
     franking: "",
     includeFromYear: "1",
     upUntilYear: "30",
     takeAsCashFromUntilYear: "1",
     indexation: "2.50%",
+    // clientOfDividend: "",
+    // partnerOfDividend: "",
   };
 
-  let fillInitialValues = (setFieldValue) => {
-    // console.log(props.modalObject);
-    if (
-      props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")]
-    ) {
-      let SubObj =
-        props.modalObject.values[
-          props.modalObject.stakeHolder.replace(".", "")
-        ];
+  const fillInitialValues = (setFieldValue) => {
+    if (props.modalObject?.values?.[props.modalObject.stakeHolder.replace(".", "")]) {
+      let SubObj = props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")];
       if (SubObj[props.modalObject.key + "Obj"]) {
         let Data = SubObj[props.modalObject.key + "Obj"];
-        setFieldValue("dividendIncome", Data.dividendIncome);
-        setFieldValue("franking", Data.franking);
-        setFieldValue("includeFromYear", Data.includeFromYear);
-        setFieldValue("upUntilYear", Data.upUntilYear);
-        if (props.modalObject.sourceObj.title !== "Bucket Company") {
-          setFieldValue(
-            "takeAsCashFromUntilYear",
-            Data.takeAsCashFromUntilYear
-          );
-        }
-        setFieldValue("indexation", Data.indexation);
 
-        if (props.modalObject.sourceObj.title === "Bucket Company") {
-          setFieldValue("clientOfDividend", Data.clientOfDividend);
-          setFieldValue("partnerOfDividend", Data.partnerOfDividend);
+        setFieldValue("dividendIncome", Data.dividendIncome || "");
+        setFieldValue("franking", Data.franking || "");
+        setFieldValue("includeFromYear", Data.includeFromYear || "1");
+        setFieldValue("upUntilYear", Data.upUntilYear || "30");
+
+        if (props.modalObject.sourceObj?.title !== "Bucket Company") {
+          setFieldValue("takeAsCashFromUntilYear", Data.takeAsCashFromUntilYear || "1");
+        }
+
+        setFieldValue("indexation", Data.indexation || "2.50%");
+
+        if (props.modalObject.sourceObj?.title === "Bucket Company") {
+          setFieldValue("clientOfDividend", Data.clientOfDividend || "");
+          setFieldValue("partnerOfDividend", Data.partnerOfDividend || "");
         }
       }
     }
   };
 
-  let onSubmit = (values) => {
+  const onSubmit = (values) => {
     props.setFieldValue(
-      props.modalObject.stakeHolder + props.modalObject.key,
+      `${props.modalObject.stakeHolder}${props.modalObject.key}`,
       values.dividendIncome
     );
+
     props.setFieldValue(
-      props.modalObject.stakeHolder + props.modalObject.key + "Obj",
+      `${props.modalObject.stakeHolder}${props.modalObject.key}Obj`,
       values
     );
 
-    // Reset the flag state if necessary
     if (props.flagState) {
       props.setFlagState(false);
+      props.setIsEditing(!props.isEditing);
     }
   };
 
-  const yearsArray = Array.from({ length: 31 }, (_, i) => {
-    return {
-      value: i.toString(),
-      label: ("Year " + i).toString(),
-    };
-  });
-
-  const indexation = Array.from({ length: 21 }, (_, i) => ({
-    value: (i * 0.5).toFixed(2) + "%",
-    label: (i * 0.5).toFixed(2) + "%",
+  // Options for dropdowns
+  const yearsArray = Array.from({ length: 31 }, (_, i) => ({
+    value: i.toString(),
+    label: `Year ${i}`,
   }));
 
-  const [rowConfig, setRowConfig] = useState(() => {
-    let OriginalArray = [
+  const indexationOptions = Array.from({ length: 21 }, (_, i) => ({
+    value: `${(i * 0.5).toFixed(2)}%`,
+    label: `${(i * 0.5).toFixed(2)}%`,
+  }));
+
+  // Create columns configuration for Antd Table
+  const columns = useMemo(() => {
+    const baseColumns = [
       {
-        name: "dividendIncome",
+        title: "Dividend Income",
+        dataIndex: "dividendIncome",
         type: "number-toComma",
-        placeholder: "Dividend Income",
+        key: "dividendIncome",
+        placeholder:"Dividend Income",
       },
       {
-        name: "franking",
+        title: "Franking",
+        dataIndex: "franking",
         type: "number-toPercent",
-        placeholder: "Franking",
+        key: "franking",
+        placeholder:"Franking",
       },
       {
-        name: "includeFromYear",
-        placeholder: "Include From Year",
+        title: "Include From Year",
+        dataIndex: "includeFromYear",
         type: "select",
+        key: "includeFromYear",
+        selectedOptionValue: true,
         options: yearsArray,
       },
       {
-        name: "upUntilYear",
-        placeholder: "Up Until Year",
+        title: "Up Until Year",
+        dataIndex: "upUntilYear",
         type: "select",
+        key: "upUntilYear",
         options: yearsArray,
-      },
-      {
-        name: "takeAsCashFromUntilYear",
-        placeholder: "Take As Cash From Until Year",
-        type: "select",
-        options: yearsArray,
-      },
-      {
-        name: "indexation",
-        type: "select",
-        placeholder: "Indexation",
-        options: indexation,
       },
     ];
 
-    if (props.modalObject.sourceObj.title === "Bucket Company") {
-      OriginalArray = OriginalArray.filter(
-        (item) => item.name !== "takeAsCashFromUntilYear"
-      );
+    // Add "Take As Cash" column only if not Bucket Company
+    if (props.modalObject?.sourceObj?.title !== "Bucket Company") {
+      baseColumns.push({
+        title: "Take As Cash From Until Year",
+        dataIndex: "takeAsCashFromUntilYear",
+        type: "select",
+        key: "takeAsCashFromUntilYear",
+        options: yearsArray,
+      });
+    }
 
-      OriginalArray.push(
+    // Add remaining common columns
+    baseColumns.push({
+      title: "Indexation",
+      dataIndex: "indexation",
+      type: "select",
+      key: "indexation",
+      options: indexationOptions,
+    });
+
+    // Add Bucket Company specific columns
+    if (props.modalObject?.sourceObj?.title === "Bucket Company") {
+      baseColumns.push(
         {
-          name: "clientOfDividend",
-          placeholder: "Client % of Dividend",
+          title: "Client % of Dividend",
+          dataIndex: "clientOfDividend",
           type: "number-toPercent",
+          key: "clientOfDividend",
+          placeholder:"Client % of Dividend",
         },
         {
-          name: "partnerOfDividend",
-          placeholder: "Partner % of Dividend",
+          title: "Partner % of Dividend",
+          dataIndex: "partnerOfDividend",
           type: "number-toPercent",
+          key: "partnerOfDividend",
+          placeholder:"Partner % of Dividend",
         }
       );
     }
 
-    return OriginalArray;
-  });
+    return baseColumns;
+  }, [props.modalObject]);
+
+  // Prepare data for the table
+  const tableData = useMemo(() => {
+    // Create a single row with all the values
+    return [
+      {
+        key: "dividendIncomeRow",
+        ...initialValues,
+      },
+    ];
+  }, []);
 
   return (
     <Formik
@@ -148,45 +170,44 @@ const DividendIncome = (props) => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        // Update table data with current values
+        const updatedData = [
+          {
+            key: "dividendIncomeRow",
+            dividendIncome: values.dividendIncome,
+            franking: values.franking,
+            includeFromYear: values.includeFromYear,
+            upUntilYear: values.upUntilYear,
+            takeAsCashFromUntilYear: props.modalObject?.sourceObj?.title !== "Bucket Company"
+              ? values.takeAsCashFromUntilYear
+              : undefined,
+            indexation: values.indexation,
+            clientOfDividend: props.modalObject?.sourceObj?.title === "Bucket Company"
+              ? values.clientOfDividend
+              : undefined,
+            partnerOfDividend: props.modalObject?.sourceObj?.title === "Bucket Company"
+              ? values.partnerOfDividend
+              : undefined,
+          },
+        ];
+
         return (
           <Form>
             <Row>
-              <div className="col-md-12">
-                <div className="row justify-content-center">
-                  <div className="mt-4">
-                    <Table striped bordered responsive hover>
-                      <thead>
-                        <tr>
-                          <th>Dividend Income</th>
-                          <th>Franking</th>
-                          <th>Include From Year</th>
-                          <th>Up Until Year</th>
-                          {props.modalObject.sourceObj.title !==
-                            "Bucket Company" && (
-                            <th> Take As Cash From Until Year</th>
-                          )}
-                          <th>Indexation</th>
-                          {props.modalObject.sourceObj.title ===
-                            "Bucket Company" && (
-                            <React.Fragment>
-                              <th>Client % of Dividend</th>
-                              <th>Partner % of Dividend</th>
-                            </React.Fragment>
-                          )}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                        />
-                      </tbody>
-                    </Table>
-                  </div>
-                </div>
+              <div className="mt-4 All_Client reportSection">
+                <AntdTable
+                  columns={columns}
+                  data={updatedData}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  handleSubmit={() => onSubmit(values)}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
+                  showHeader={true}
+                  onFormSubmit={() => onSubmit(values)}
+                />
               </div>
             </Row>
           </Form>

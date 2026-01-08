@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
 import { Form, Formik } from "formik";
-import { Row, Table } from "react-bootstrap";
+import { Placeholder, Row } from "react-bootstrap";
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
+
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const AssetValueOfCompany = (props) => {
-  let [layoutSwitchFlag, setLayoutSwitchFlag] = useState(
-    props.modalObject.title
-  );
+  let [layoutSwitchFlag] = useState(props.modalObject.title);
 
   let initialValues = {
     assetValue: "",
@@ -16,7 +16,6 @@ const AssetValueOfCompany = (props) => {
   };
 
   let fillInitialValues = (setFieldValue) => {
-    // console.log(props.modalObject);
     if (
       props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")]
     ) {
@@ -71,19 +70,6 @@ const AssetValueOfCompany = (props) => {
     }
   };
 
-  const yearsIncludedArrayWithExisting = Array.from({ length: 31 }, (_, i) => {
-    if (i === 0) {
-      return {
-        value: "Existing",
-        label: "Existing",
-      };
-    }
-    return {
-      value: i.toString(),
-      label: ("Year " + i).toString(),
-    };
-  });
-
   const yearsIncludedArray = Array.from({ length: 31 }, (_, i) => {
     return {
       value: i.toString(),
@@ -96,86 +82,99 @@ const AssetValueOfCompany = (props) => {
     label: (i * 0.5).toFixed(2) + "%",
   }));
 
-  const [rowConfig, setRowConfig] = useState(() => {
-    let OriginalArray = [
-      {
-        name: "assetValue",
-        type: "number-toComma",
-        placeholder: "Asset Value of Company",
-      },
-      {
-        name: "includeFromYear",
-        placeholder: "Include From Year",
-        type: "select",
-        options: yearsIncludedArray,
-      },
-      {
-        name: "upUntilYear",
-        placeholder: "Up Until Year",
-        type: "select",
-        options: yearsIncludedArray,
-      },
-      {
-        name: "expectedGrowthRate",
-        type: "select",
-        options: indexation,
-        placeholder: "Expected Growth Rate",
-      },
-    ];
-
+  /* ---------------- Table Columns ---------------- */
+  const getColumns = () => {
+    const baseColumns = [];
+    
+    // Add opening value column if needed
     if (
       layoutSwitchFlag === "Net Trust Distribution" &&
-      props.modalObject.sourceObj.title === "Business as Trusts"
+      props.modalObject?.sourceObj?.title === "Bucket Company"
     ) {
-      // Pop expectedGrowthRate from the array
-      OriginalArray.pop();
-
-      // Add the following two fields
-      OriginalArray.push(
+      baseColumns.push({
+        title: "Opening Value",
+        dataIndex: "openingValue",
+        type: "number-toComma",
+        packagelaceholder:"Opening Value",
+      });
+    }
+    
+    // Main asset value column
+    baseColumns.push({
+      title: props.modalObject.title,
+      dataIndex: "assetValue",
+      type: "number-toComma",
+      placeholder:"Asset Value",
+    });
+    
+    // Include from year column
+    baseColumns.push({
+      title: "Include From Year",
+      dataIndex: "includeFromYear",
+      type: "select",
+      options: yearsIncludedArray,
+    });
+    
+    // Up until year column
+    baseColumns.push({
+      title: "Up Until Year",
+      dataIndex: "upUntilYear",
+      type: "select",
+      options: yearsIncludedArray,
+    });
+    
+    // Additional columns based on conditions
+    if (
+      layoutSwitchFlag === "Net Trust Distribution" &&
+      props.modalObject?.sourceObj?.title === "Bucket Company"
+    ) {
+      baseColumns.push({
+        title: "Indexation",
+        dataIndex: "indexation",
+        type: "select",
+        options: indexation,
+      });
+    } else if (
+      layoutSwitchFlag === "Net Trust Distribution" &&
+      props.modalObject?.sourceObj?.title === "Business as Trusts"
+    ) {
+      baseColumns.push(
         {
-          name: "takeAsCashFromUntilYear",
-          placeholder: "Take As Cash From Until Year",
+          title: "Take As Cash From Until Year",
+          dataIndex: "takeAsCashFromUntilYear",
           type: "select",
           options: yearsIncludedArray,
         },
         {
-          name: "indexation",
+          title: "Indexation",
+          dataIndex: "indexation",
           type: "select",
-          placeholder: "Indexation",
           options: indexation,
         }
       );
+    } else {
+      baseColumns.push({
+        title: "Expected Growth Rate",
+        dataIndex: "expectedGrowthRate",
+        type: "select",
+        options: indexation,
+      });
     }
+    
+    return baseColumns;
+  };
 
-    if (props.modalObject.sourceObj.title === "Bucket Company") {
-      // Find the index of the "upUntilYear" object
-      const upUntilYearIndex = OriginalArray.findIndex(
-        (item) => item.name === "upUntilYear"
-      );
+  const columns = getColumns();
 
-      // Add the "indexation" object after the "upUntilYear" object
-      if (upUntilYearIndex !== -1) {
-        OriginalArray.splice(upUntilYearIndex + 1, 0, {
-          name: "indexation",
-          type: "select",
-          placeholder: "Indexation",
-          options: indexation,
-        });
-      }
-
-      if (layoutSwitchFlag === "Net Trust Distribution") {
-        // alert(2323);
-
-        OriginalArray.splice(0, 0, {
-          name: "openingValue", 
-          type: "number-toComma",
-          placeholder: "Opening  Value",
-        });
-      }
-    }
-
-    return OriginalArray;
-  });
+  /* ---------------- Table Data ---------------- */
+  const getTableData = (values) => {
+    return [
+      {
+        key: "assetValueRow",
+        ...values,
+      },
+    ];
+  };
 
   return (
     <Formik
@@ -189,48 +188,25 @@ const AssetValueOfCompany = (props) => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        const tableData = getTableData(values);
+
         return (
           <Form>
             <Row>
               <div className="col-md-12">
                 <div className="row justify-content-center">
-                  <div className="mt-4">
-                    <Table striped bordered responsive hover>
-                      <thead>
-                        <tr>
-                          {layoutSwitchFlag === "Net Trust Distribution" &&
-                            props.modalObject.sourceObj.title ===
-                              "Bucket Company" && (
-                              <th style={{ color: "black" }}>Opening Value</th>
-                            )}
-                          <th>{props.modalObject.title}</th>
-                          <th>Include From Year</th>
-                          <th>Up Until Year</th>
-                          {layoutSwitchFlag === "Net Trust Distribution" &&
-                            props.modalObject.sourceObj.title ===
-                              "Bucket Company" && <th>Indexation</th>}
-                          {layoutSwitchFlag === "Net Trust Distribution" &&
-                          props.modalObject.sourceObj.title ===
-                            "Business as Trusts" ? (
-                            <React.Fragment>
-                              <th>Take As Cash From Until Year</th>
-                              <th>Indexation</th>
-                            </React.Fragment>
-                          ) : (
-                            <th>Expected Growth Rate</th>
-                          )}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                        />
-                      </tbody>
-                    </Table>
+                  <div className="mt-4 All_Client reportSection">
+                    <AntdTable
+                      columns={columns}
+                      data={tableData}
+                      values={values}
+                      setFieldValue={setFieldValue}
+                      handleChange={handleChange}
+                      handleBlur={handleBlur}
+                      handleSubmit={props?.handleOk}
+                      isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
+                    />
                   </div>
                 </div>
               </div>
