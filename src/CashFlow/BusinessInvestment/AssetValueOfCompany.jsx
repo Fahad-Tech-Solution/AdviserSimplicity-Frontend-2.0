@@ -67,6 +67,7 @@ const AssetValueOfCompany = (props) => {
     // Reset the flag state if necessary
     if (props.flagState) {
       props.setFlagState(false);
+      props?.setIsEditing?.(false);
     }
   };
 
@@ -112,7 +113,7 @@ const AssetValueOfCompany = (props) => {
       title: "Include From Year",
       dataIndex: "includeFromYear",
       type: "select",
-      options: yearsIncludedArray,
+      options: yearsIncludedArray,selectedOptionValue: true,
     });
     
     // Up until year column
@@ -120,7 +121,7 @@ const AssetValueOfCompany = (props) => {
       title: "Up Until Year",
       dataIndex: "upUntilYear",
       type: "select",
-      options: yearsIncludedArray,
+      options: yearsIncludedArray,selectedOptionValue: true,
     });
     
     // Additional columns based on conditions
@@ -132,7 +133,7 @@ const AssetValueOfCompany = (props) => {
         title: "Indexation",
         dataIndex: "indexation",
         type: "select",
-        options: indexation,
+        options: indexation,selectedOptionValue: true,
       });
     } else if (
       layoutSwitchFlag === "Net Trust Distribution" &&
@@ -143,13 +144,13 @@ const AssetValueOfCompany = (props) => {
           title: "Take As Cash From Until Year",
           dataIndex: "takeAsCashFromUntilYear",
           type: "select",
-          options: yearsIncludedArray,
+          options: yearsIncludedArray,selectedOptionValue: true,
         },
         {
           title: "Indexation",
           dataIndex: "indexation",
           type: "select",
-          options: indexation,
+          options: indexation,selectedOptionValue: true,
         }
       );
     } else {
@@ -157,7 +158,7 @@ const AssetValueOfCompany = (props) => {
         title: "Expected Growth Rate",
         dataIndex: "expectedGrowthRate",
         type: "select",
-        options: indexation,
+        options: indexation,selectedOptionValue: true,
       });
     }
     
