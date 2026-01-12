@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
-import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
+import React, { useEffect, useState } from "react";
 import { Form, Formik } from "formik";
-import { Row, Table } from "react-bootstrap";
+import { Placeholder, Row } from "react-bootstrap";
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
 import {
   CashFlowData,
   CashFlowDownloading,
@@ -17,24 +17,38 @@ import {
   toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
 
+const AntdTable = DynamicTableForInputsSection("antd");
+
 const RCV = (props) => {
-  let DefaultUrl = useRecoilValue(defaultUrl);
-  let cashFlowData = useRecoilValue(CashFlowData);
-  let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
+  const DefaultUrl = useRecoilValue(defaultUrl);
+  const cashFlowData = useRecoilValue(CashFlowData);
+  const [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
     useRecoilState(CashFlowReCalculateLoading);
-
-  let [cashFlowDownloading, setCashFlowDownloading] =
+  const [cashFlowDownloading, setCashFlowDownloading] =
     useRecoilState(CashFlowDownloading);
+  let BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
+  let index = parseFloat(
+    props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
+  );
 
-  let initialValues = {
+  const [layoutSwitchFlag] = useState(props.modalObject.title);
+
+  const initialValues = {
     RCV: "",
     RCVOther: "",
     communicationEndTerm: "",
   };
 
-  let fillInitialValues = (setFieldValue) => {
-    if (props.modalObject.values[props.modalObject.key]) {
-      let SubObj = props.modalObject.values[props.modalObject.key];
+  const fillInitialValues = (setFieldValue) => {
+    if (
+      props.modalObject.values?.[BaseKey]?.[index]?.[
+        props.modalObject.key + "Obj"
+      ]
+    ) {
+      const SubObj =
+        props.modalObject.values?.[BaseKey]?.[index]?.[
+          props.modalObject.key + "Obj"
+        ];
       if (SubObj) {
         setFieldValue("RCV", SubObj.RCV);
         setFieldValue("RCVOther", SubObj.RCVOther);
@@ -43,44 +57,24 @@ const RCV = (props) => {
     }
   };
 
-  let onSubmit = (values) => {
+  const onSubmit = (values) => {
     console.log(JSON.stringify(values));
 
-    props.setFieldValue(props.modalObject.key, values);
+    props.setFieldValue(
+      props.modalObject.stakeHolder + props.modalObject.key + "Obj",
+      values
+    );
 
     // Reset the flag state if necessary
     if (props.flagState) {
       props.setFlagState(false);
+      props?.setIsEditing?.(false);
     }
   };
 
-  let rowConfig = [
-    {
-      type: "plainText",
-      text: props.modalObject.stakeHolder.replace(".", ""),
-      styleSet: { fontWeight: "800", fontSize: "16px" },
-    },
-    {
-      name: "RCV",
-      type: "number-toPercent",
-      placeholder: "RCV",
-    },
-    {
-      name: "RCVOther",
-      type: "number-toComma",
-      placeholder: "RCV Other",
-      disabled: true,
-    },
-    {
-      name: "communicationEndTerm",
-      type: "number-toComma",
-      placeholder: "Communication at End of Term",
-    },
-  ];
-
-  let handleChildButtonClick = async (values, setFieldValue) => {
+  const handleChildButtonClick = async (values, setFieldValue) => {
     try {
-      let updatedData = JSON.parse(JSON.stringify(cashFlowData));
+      const updatedData = JSON.parse(JSON.stringify(cashFlowData));
 
       const { values: parentValues, key, title, sourceObj } = props.modalObject;
 
@@ -89,48 +83,76 @@ const RCV = (props) => {
 
       const currentIndex = key.match(/\d+/)?.[0] || 0; // Extract numeric index from key
 
-      let structuredEntries = Array.from(
+      // Convert old format (field_0, field_1) to new format (client[0].field, client[1].field)
+      const structuredEntries = Array.from(
         { length: numberOfProperties },
         (_, i) => ({
           originalInvestmentAmount:
-            parentValues[`originalInvestmentAmount_${i}`] || "",
-          sourceOfFunds: parentValues[`sourceOfFunds_${i}`] || "",
-          annuityType: parentValues[`annuityType_${i}`] || "",
+            parentValues[`client[${i}].originalInvestmentAmount`] ||
+            parentValues[`originalInvestmentAmount_${i}`] ||
+            "",
+          sourceOfFunds:
+            parentValues[`client[${i}].sourceOfFunds`] ||
+            parentValues[`sourceOfFunds_${i}`] ||
+            "",
+          annuityType:
+            parentValues[`client[${i}].annuityType`] ||
+            parentValues[`annuityType_${i}`] ||
+            "",
           IsThisReversionaryAnnuity:
-            parentValues[`IsThisReversionaryAnnuity_${i}`] || "",
-          RCV: parentValues[`RCV_${i}`] || "",
-          RCVObj: parentValues[`RCVObj_${i}`] || {},
-          includeFromYear: parentValues[`includeFromYear_${i}`] || "",
-          term: parentValues[`term_${i}`] || "",
-          yearsUntilMaturity: parentValues[`yearsUntilMaturity_${i}`] || "",
-          annualInflationRate: parentValues[`annualInflationRate_${i}`] || "",
-          annualPayment: parentValues[`annualPayment_${i}`] || "",
-          deductibleAmount: parentValues[`deductibleAmount_${i}`] || "",
-          deductibleAmountObj: parentValues[`deductibleAmountObj_${i}`] || {},
+            parentValues[`client[${i}].IsThisReversionaryAnnuity`] ||
+            parentValues[`IsThisReversionaryAnnuity_${i}`] ||
+            "",
+          RCV:
+            parentValues[`client[${i}].RCV`] || parentValues[`RCV_${i}`] || "",
+          RCVObj:
+            parentValues[`client[${i}].RCVObj`] ||
+            parentValues[`RCVObj_${i}`] ||
+            {},
+          includeFromYear:
+            parentValues[`client[${i}].includeFromYear`] ||
+            parentValues[`includeFromYear_${i}`] ||
+            "",
+          term:
+            parentValues[`client[${i}].term`] ||
+            parentValues[`term_${i}`] ||
+            "",
+          yearsUntilMaturity:
+            parentValues[`client[${i}].yearsUntilMaturity`] ||
+            parentValues[`yearsUntilMaturity_${i}`] ||
+            "",
+          annualInflationRate:
+            parentValues[`client[${i}].annualInflationRate`] ||
+            parentValues[`annualInflationRate_${i}`] ||
+            "",
+          annualPayment:
+            parentValues[`client[${i}].annualPayment`] ||
+            parentValues[`annualPayment_${i}`] ||
+            "",
+          deductibleAmount:
+            parentValues[`client[${i}].deductibleAmount`] ||
+            parentValues[`deductibleAmount_${i}`] ||
+            "",
+          deductibleAmountObj:
+            parentValues[`client[${i}].deductibleAmountObj`] ||
+            parentValues[`deductibleAmountObj_${i}`] ||
+            {},
         })
       );
 
       // Update the correct entry with new child modal values
       structuredEntries[currentIndex][key.replace(/_\d+/, "")] = values;
 
-      // console.log(sourceObj, key, JSON.stringify(structuredEntries));
-
       updatedData[sourceObj.key][sourceObj.Input] = structuredEntries;
       updatedData[sourceObj.key].numberOfProperties = numberOfProperties;
 
-      // console.log(JSON.stringify(updatedData[sourceObj.key]));
-
-      // throw new Error("API call not implemented yet");
-
-      let res = await PostAxios(
+      const res = await PostAxios(
         `${DefaultUrl}/api/cal/financialInvestment/INPUTS_Annuities`,
         updatedData
       );
 
       if (res) {
-        // console.log(res);
-
-        let DataObj =
+        const DataObj =
           res.data[props.modalObject.sourceObj.key][
             props.modalObject.sourceObj.Input
           ][currentIndex];
@@ -145,8 +167,8 @@ const RCV = (props) => {
         openNotificationSuccess(
           "success",
           "topRight",
-          "Success Notification",
-          'Data of "' + props.modalObject.title + '" is Saved'
+          "Success",
+          `Data of "${props.modalObject.title}" is Saved`
         );
       }
     } catch (error) {
@@ -154,18 +176,16 @@ const RCV = (props) => {
       openNotificationSuccess(
         "error",
         "topRight",
-        "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        "Error",
+        `Data of "${props.modalObject.title}" is not Saved. Please try again.`
       );
       setCashFlowReCalculateLoading(false);
     }
   };
 
-  let handleChildButtonDownloadClick = async (values, setFieldValue) => {
+  const handleChildButtonDownloadClick = async (values, setFieldValue) => {
     try {
-      let updatedData = JSON.parse(JSON.stringify(cashFlowData));
+      const updatedData = JSON.parse(JSON.stringify(cashFlowData));
 
       const { values: parentValues, key, title, sourceObj } = props.modalObject;
 
@@ -174,36 +194,69 @@ const RCV = (props) => {
 
       const currentIndex = key.match(/\d+/)?.[0] || 0; // Extract numeric index from key
 
-      let structuredEntries = Array.from(
+      // Convert old format (field_0, field_1) to new format (client[0].field, client[1].field)
+      const structuredEntries = Array.from(
         { length: numberOfProperties },
         (_, i) => ({
           originalInvestmentAmount:
-            parentValues[`originalInvestmentAmount_${i}`] || "",
-          sourceOfFunds: parentValues[`sourceOfFunds_${i}`] || "",
-          annuityType: parentValues[`annuityType_${i}`] || "",
+            parentValues[`client[${i}].originalInvestmentAmount`] ||
+            parentValues[`originalInvestmentAmount_${i}`] ||
+            "",
+          sourceOfFunds:
+            parentValues[`client[${i}].sourceOfFunds`] ||
+            parentValues[`sourceOfFunds_${i}`] ||
+            "",
+          annuityType:
+            parentValues[`client[${i}].annuityType`] ||
+            parentValues[`annuityType_${i}`] ||
+            "",
           IsThisReversionaryAnnuity:
-            parentValues[`IsThisReversionaryAnnuity_${i}`] || "",
-          RCV: parentValues[`RCV_${i}`] || "",
-          RCVObj: parentValues[`RCVObj_${i}`] || {},
-          includeFromYear: parentValues[`includeFromYear_${i}`] || "",
-          term: parentValues[`term_${i}`] || "",
-          yearsUntilMaturity: parentValues[`yearsUntilMaturity_${i}`] || "",
-          annualInflationRate: parentValues[`annualInflationRate_${i}`] || "",
-          annualPayment: parentValues[`annualPayment_${i}`] || "",
-          deductibleAmount: parentValues[`deductibleAmount_${i}`] || "",
-          deductibleAmountObj: parentValues[`deductibleAmountObj_${i}`] || {},
+            parentValues[`client[${i}].IsThisReversionaryAnnuity`] ||
+            parentValues[`IsThisReversionaryAnnuity_${i}`] ||
+            "",
+          RCV:
+            parentValues[`client[${i}].RCV`] || parentValues[`RCV_${i}`] || "",
+          RCVObj:
+            parentValues[`client[${i}].RCVObj`] ||
+            parentValues[`RCVObj_${i}`] ||
+            {},
+          includeFromYear:
+            parentValues[`client[${i}].includeFromYear`] ||
+            parentValues[`includeFromYear_${i}`] ||
+            "",
+          term:
+            parentValues[`client[${i}].term`] ||
+            parentValues[`term_${i}`] ||
+            "",
+          yearsUntilMaturity:
+            parentValues[`client[${i}].yearsUntilMaturity`] ||
+            parentValues[`yearsUntilMaturity_${i}`] ||
+            "",
+          annualInflationRate:
+            parentValues[`client[${i}].annualInflationRate`] ||
+            parentValues[`annualInflationRate_${i}`] ||
+            "",
+          annualPayment:
+            parentValues[`client[${i}].annualPayment`] ||
+            parentValues[`annualPayment_${i}`] ||
+            "",
+          deductibleAmount:
+            parentValues[`client[${i}].deductibleAmount`] ||
+            parentValues[`deductibleAmount_${i}`] ||
+            "",
+          deductibleAmountObj:
+            parentValues[`client[${i}].deductibleAmountObj`] ||
+            parentValues[`deductibleAmountObj_${i}`] ||
+            {},
         })
       );
 
       // Update the correct entry with new child modal values
       structuredEntries[currentIndex][key.replace(/_\d+/, "")] = values;
 
-      // console.log(sourceObj, key, JSON.stringify(structuredEntries));
-
       updatedData[sourceObj.key][sourceObj.Input] = structuredEntries;
       updatedData[sourceObj.key].numberOfProperties = numberOfProperties;
 
-      // console.log(JSON.stringify(updatedData[sourceObj.key]));
       try {
         const response = await PostAxiosBlob(
           `${DefaultUrl}/api/cal/workBookDownload`,
@@ -224,7 +277,7 @@ const RCV = (props) => {
         openNotificationSuccess(
           "success",
           "topRight",
-          "Success Notification",
+          "Success",
           `Excel file "${fileName}" is downloaded.`
         );
       } catch (error) {
@@ -243,13 +296,53 @@ const RCV = (props) => {
       openNotificationSuccess(
         "error",
         "topRight",
-        "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        "Error",
+        `Data of "${props.modalObject.title}" is not Saved. Please try again.`
       );
       setCashFlowReCalculateLoading(false);
     }
+  };
+
+  /* ---------------- Table Columns ---------------- */
+  const getColumns = () => {
+    return [
+      {
+        title: "Owner",
+        dataIndex: "owner",
+        justText: true,
+      },
+      {
+        title: "RCV",
+        dataIndex: "RCV",
+        type: "number-toPercent",
+        placeholder: "RCV",
+      },
+      {
+        title: "RCV Other",
+        dataIndex: "RCVOther",
+        type: "number-toComma",
+        placeholder: "RCV Other",
+        disabled: true,
+      },
+      {
+        title: "Communication at End of Term",
+        dataIndex: "communicationEndTerm",
+        type: "number-toComma",
+        placeholder: "Communication at End of Term",
+      },
+    ];
+  };
+
+  const columns = getColumns();
+  /* ---------------- Table Data ---------------- */
+  const getTableData = (values) => {
+    return [
+      {
+        key: "rcvRow",
+        owner: RenderName(BaseKey),
+        ...values,
+      },
+    ];
   };
 
   return (
@@ -264,53 +357,47 @@ const RCV = (props) => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        const tableData = getTableData(values);
+
         return (
           <Form>
             <Row>
               <div className="col-md-12">
                 <div className="row justify-content-center">
-                  <div className="mt-4">
-                    <Table striped bordered responsive hover>
-                      <thead>
-                        <tr>
-                          <th>Owner</th>
-                          <th>RCV</th>
-                          <th>RCV Other</th>
-                          <th>Communication at End of Term</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                        />
-                      </tbody>
-                    </Table>
-                    <button
-                      ref={props.childButtonRef}
-                      onClick={() => {
-                        handleChildButtonClick(values, setFieldValue);
-                      }}
-                      style={{ display: "none" }} // Hidden button
-                      type="button"
-                    >
-                      Hidden
-                    </button>
-                    <button
-                      ref={props.childButtonDownloadRef}
-                      onClick={() => {
-                        handleChildButtonDownloadClick(values, setFieldValue);
-                      }}
-                      style={{ display: "none" }} // Hidden button
-                      type="button"
-                    >
-                      Hidden Child Button Download
-                    </button>
+                  <div className="mt-4 All_Client reportSection">
+                    <AntdTable
+                      columns={columns}
+                      data={tableData}
+                      values={values}
+                      setFieldValue={setFieldValue}
+                      handleChange={handleChange}
+                      handleBlur={handleBlur}
+                      handleSubmit={props?.handleOk}
+                      isEditing={props?.isEditing}
+                      setIsEditing={props?.setIsEditing}
+                    />
                   </div>
                 </div>
+                <button
+                  ref={props.childButtonRef}
+                  onClick={() => {
+                    handleChildButtonClick(values, setFieldValue);
+                  }}
+                  style={{ display: "none" }}
+                  type="button"
+                >
+                  Hidden
+                </button>
+                <button
+                  ref={props.childButtonDownloadRef}
+                  onClick={() => {
+                    handleChildButtonDownloadClick(values, setFieldValue);
+                  }}
+                  style={{ display: "none" }}
+                  type="button"
+                >
+                  Hidden Child Button Download
+                </button>
               </div>
             </Row>
           </Form>

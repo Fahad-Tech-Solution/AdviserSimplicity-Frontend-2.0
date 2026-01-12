@@ -308,7 +308,10 @@ const CashFlowCarsCardsTowInOne = (props) => {
   return (
     <React.Fragment key={index}>
       <div className={`${props.evenClass ? "col-md-3" : "col-md-4"} mb-4`}>
-        <div className="card shadow px-4 py-4 borderOverAll GoalsobjectiveCard rounded-4 h-100">
+        <div
+          className="card shadow px-4 py-4 borderOverAll GoalsobjectiveCard rounded-4"
+          style={{ height: "400px" }}
+        >
           <h5
             className="text-center"
             onClick={() => {

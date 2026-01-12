@@ -1,65 +1,61 @@
-import { Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
-import { CreatableMultiSelectField } from "../../Components/Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
-import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
-import { Row, Table } from "react-bootstrap";
+import React, { useEffect, useMemo, useState } from "react";
+import { Form, Formik } from "formik";
+import { Row } from "react-bootstrap";
+import { useRecoilState, useRecoilValue } from "recoil";
+
 import {
   CashFlowData,
   CashFlowScenarioData,
   defaultUrl,
   QuestionDetail,
 } from "../../Store/Store";
-import { useRecoilState, useRecoilValue } from "recoil";
-import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
+
 import {
   openNotificationSuccess,
   PatchAxios,
   PostAxios,
   RenderName,
+  toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
 
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
+
+const AntdTable = DynamicTableForInputsSection("antd");
+
 const SMSFBank = (props) => {
-  let questionDetail = useRecoilValue(QuestionDetail);
-  let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
-  let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+  const CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const questionDetail = useRecoilValue(QuestionDetail);
+  const DefaultUrl = useRecoilValue(defaultUrl);
 
-  let [UserStatus] = useState(localStorage.getItem("UserStatus"));
-  let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
+  const [UserStatus] = useState(localStorage.getItem("UserStatus") || "Single");
+  const [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
 
-  let DefaultUrl = useRecoilValue(defaultUrl);
+  const [layoutSwitchFlag] = useState(props.modalObject.title);
 
-  let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
-
-  let [layoutSwitchFlag, setLayoutSwitchFlag] = useState(
-    props.modalObject.title
-  );
-
-  let initialValues = {
-    owner: ["client"],
-  };
-
-  let SMSFBank =
+  const SMSFBankData =
     Object.keys(questionDetail[props.modalObject.sourceKey] || {}).length > 0
       ? questionDetail[props.modalObject.sourceKey]
       : {
           client: [],
           partner: [],
           joint: [],
-        }; // Use an empty object as default if SMSFBank is undefined
+        };
+
+  const initialValues = {
+    client: {},
+  };
 
   const fillInitialValues = (setFieldValue) => {
     try {
       setObjAndAPIKey(props.modalObject.key);
-
-      console.log(SMSFBank);
 
       const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
 
       const updateFields = (data, prefix) => {
         if (!data || !Object.keys(data).length) return;
 
-        const fields = {
+        Object.entries({
           openingBalance: data.openingBalance || "$0",
           investmentReturns: data.investmentReturns || "System",
           incomeYield: data.incomeYield || "",
@@ -68,146 +64,93 @@ const SMSFBank = (props) => {
           adviserFees: data.adviserFees || "",
           indexationFundFees: data.indexationFundFees || "2.50%",
           windupFundYear: data.windupFundYear || "No",
-        };
-
-        Object.entries(fields).forEach(([key, value]) => {
+        }).forEach(([key, value]) => {
           setFieldValue(`${prefix}.${key}`, value);
         });
       };
 
-      if (scenarioObj?.selectedSource === "discoveryForm") {
-        // setFieldValue(`owner`, SMSFBank.owner || "");
+      const hydrate = (src) => {
+        if (!src?.client) return;
 
-        // Update client-related fields
-        if (SMSFBank?.client.length > 0) {
-          let Obj = {
-            openingBalance: SMSFBank.clientCurrentBalance || "",
-          };
+        updateFields(src.client, "client");
+      };
 
-          updateFields(Obj, "client");
-        }
-
-        // // Update partner-related fields
-        // if (
-        //   UserStatus === "Married" &&
-        //   Object.keys(SMSFBank.partner || {}).length > 0 &&
-        //   SMSFBank?.partner.length > 0
-        // ) {
-        //   let Obj = {
-        //     openingBalance: SMSFBank.partnerCurrentBalance || "",
-        //   };
-        //   updateFields(Obj, "partner");
-        // }
-      } else {
-        const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-        if (cashFlowDetails) {
-          setFieldValue(`owner`, cashFlowDetails.owner || "");
-          if (cashFlowDetails.owner.includes("client")) {
-            updateFields(cashFlowDetails.client, "client");
-          }
-          // if (
-          //   UserStatus === "Married" &&
-          //   cashFlowDetails.owner.includes("partner")
-          // ) {
-          //   updateFields(cashFlowDetails.partner, "partner");
-          // }
-        }
+      // 1️⃣ Discovery Form (only if CF not already saved)
+      if (
+        scenarioObj?.selectedSource === "discoveryForm" &&
+        SMSFBankData?.client?.length > 0 &&
+        !cashFlowData?.[objAndAPIKey]?._id
+      ) {
+        const transformedData = {
+          client: {
+            openingBalance: SMSFBankData.clientCurrentBalance || "",
+            investmentReturns: "System",
+            incomeYield: "",
+            accountingFees: "",
+            atoLevy: "",
+            adviserFees: "",
+            indexationFundFees: "2.50%",
+            windupFundYear: "No",
+          },
+        };
+        hydrate(transformedData);
       }
-
-      if (cashFlowData?.[objAndAPIKey]?._id) {
-        const cashFlowDataDetails = cashFlowData[objAndAPIKey];
-        setFieldValue(`owner`, cashFlowDataDetails.owner || "");
-
-        if (cashFlowDataDetails.owner.includes("client")) {
-          updateFields(cashFlowDataDetails.client, "client");
-        }
-
-        // if (
-        //   UserStatus === "Married" &&
-        //   cashFlowDataDetails.owner.includes("partner")
-        // ) {
-        //   updateFields(cashFlowDataDetails.partner, "partner");
-        // }
+      // 2️⃣ Cash Flow Scenario
+      else if (CashFlowScenarioDataObj?.[objAndAPIKey]?._id) {
+        hydrate(CashFlowScenarioDataObj[objAndAPIKey]);
+      }
+      // 3️⃣ Cash Flow Data (final fallback)
+      else {
+        hydrate(cashFlowData?.[objAndAPIKey]);
       }
     } catch (error) {
       console.error("Error in fillInitialValues:", error);
     }
   };
 
-  let onSubmit = async (values) => {
+  const onSubmit = async (values) => {
     console.log(JSON.stringify(values));
 
-    let obj = values;
-    obj.scenarioFK = JSON.parse(localStorage.getItem("ScenarioObj"))._id;
-
-    if (values.owner.includes("client")) {
-      obj.clientTotal = values.client.openingBalance || "$0";
-    } else {
-      obj.clientTotal = "";
-    }
-
-    // if (values.owner.includes("partner")) {
-    //   obj.partnerTotal = values.partner.openingBalance || "$0";
-    // } else {
-    //   obj.partnerTotal = "";
-    // }
-
-    const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
+    const obj = {
+      ...values,
+      scenarioFK: JSON.parse(localStorage.getItem("ScenarioObj"))._id,
+      clientTotal: toCommaAndDollar(
+        parseFloat(values.client.openingBalance?.replace(/[^0-9.-]+/g, "") || 0)
+      ),
+    };
 
     try {
-      let res;
-      if (!bankAccountArray) {
-        res = await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
-      } else {
-        res = await PatchAxios(
-          `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
-          obj
-        );
-      }
+      const exists = cashFlowData?.[objAndAPIKey]?._id;
+      const res = exists
+        ? await PatchAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Update`, obj)
+        : await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
 
       if (res) {
-        const updatedData = {
+        setCashFlowData({
           ...cashFlowData,
           [objAndAPIKey]: res,
-        };
-        setCashFlowData(updatedData);
+        });
       }
 
       openNotificationSuccess(
         "success",
         "topRight",
-        "Success Notification",
-        'Data of "' + props.modalObject.title + '" is Saved'
+        "Success",
+        `Data of "${props.modalObject.title}" is Saved`
       );
 
-      if (props.flagState) {
-        props.setFlagState(false);
-      }
+      props.setFlagState?.(false);
+      props?.setIsEditing?.(false);
     } catch (error) {
       console.error("Error occurred while making API call:", error);
       openNotificationSuccess(
         "error",
         "topRight",
-        "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        "Error",
+        `Data of "${props.modalObject.title}" is not Saved. Please try again.`
       );
     }
   };
-
-  let handleInnerModal = (title, values, key, stakeHolder) => {
-    setModalObject({
-      title,
-      values,
-      key,
-      stakeHolder,
-      sourceObj: props.modalObject,
-    });
-    setFlagState(true);
-  };
-
-  const options = [{ value: "client", label: RenderName("client") }];
 
   const indexation = Array.from({ length: 11 }, (_, i) => ({
     value: (i * 0.5).toFixed(2) + "%",
@@ -226,60 +169,81 @@ const SMSFBank = (props) => {
         label: "No",
       };
     }
-    if (i === 1) return; // skip Year 1
+    if (i === 1) return null;
     return {
       value: i,
       label: `Year ${i}`,
     };
   }).filter(Boolean);
 
-  const [rowConfig, setRowConfig] = useState(() => {
-    return [
-      {
-        name: "openingBalance",
-        type: "number-toComma",
-        placeholder: "Opening Balance",
+  const columns = [
+    {
+      title: "Owner",
+      dataIndex: "owner",
+      type: "label",
+      justText: true,
+    },
+    {
+      title: "Opening Balance",
+      dataIndex: "openingBalance",
+      type: "number-toComma",
+      placeholder: "Opening Balance",
+    },
+    {
+      title: "Investment Returns",
+      dataIndex: "investmentReturns",
+      type: "select",
+      placeholder: "Investment Returns",
+      selectedOptionValue: true,
+      options: InvestmentReturnsOptions,
+    },
+    {
+      title: "Income Yield",
+      dataIndex: "incomeYield",
+      type: "number-toPercent",
+      placeholder: "Income Yield",
+      disabled: (values, stakeHolder) => {
+        if (values.client?.investmentReturns !== "Input Override") {
+          return true;
+        }
+        return false;
       },
-      {
-        name: "investmentReturns",
-        type: "select",
-        placeholder: "Investment Returns",
-        options: InvestmentReturnsOptions,
-      },
-      {
-        name: "incomeYield",
-        type: "number-toPercent",
-        placeholder: "Income Yield",
-      },
-      {
-        name: "accountingFees",
-        type: "number-toComma",
-        placeholder: "Accounting & Auditing Fees",
-      },
-      {
-        name: "atoLevy",
-        type: "number-toComma",
-        placeholder: "ATO LEVY",
-      },
-      {
-        name: "adviserFees",
-        type: "number-toComma",
-        placeholder: "Adviser Service Fees",
-      },
-      {
-        name: "indexationFundFees",
-        type: "select",
-        placeholder: "Indexation of Fund Fees",
-        options: indexation,
-      },
-      {
-        name: "windupFundYear",
-        type: "select",
-        placeholder: "Windup Fund in Year",
-        options: loanTermOptionsWithNo,
-      },
-    ];
-  });
+    },
+    {
+      title: "Accounting & Auditing Fees",
+      dataIndex: "accountingFees",
+      type: "number-toComma",
+      placeholder: "Accounting & Auditing Fees",
+    },
+    {
+      title: "ATO LEVY",
+      dataIndex: "atoLevy",
+      type: "number-toComma",
+      placeholder: "ATO LEVY",
+    },
+    {
+      title: "Adviser Service Fees",
+      dataIndex: "adviserFees",
+      type: "number-toComma",
+      placeholder: "Adviser Service Fees",
+    },
+    {
+      title: "Indexation of Fund Fees",
+      dataIndex: "indexationFundFees",
+      type: "select",
+      placeholder: "Indexation of Fund Fees",
+      selectedOptionValue: true,
+      options: indexation,
+    },
+    {
+      title: "Windup Fund in Year",
+      dataIndex: "windupFundYear",
+      type: "select",
+      placeholder: "Windup Fund in Year",
+      selectedOptionValue: true,
+      options: loanTermOptionsWithNo,
+    },
+  ];
 
   return (
     <Formik
@@ -293,103 +257,36 @@ const SMSFBank = (props) => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        const rows = useMemo(() => {
+          const result = [];
+
+          // Always include client row
+          result.push({
+            key: "client",
+            owner: RenderName("client"),
+            stakeHolder: "client",
+            ...values.client,
+          });
+
+          return result;
+        }, [values.client]);
+
         return (
           <Form>
             <Row>
-              <InnerModal
-                modalObject={modalObject}
-                setFieldValue={setFieldValue}
-                setFlagState={setFlagState}
-                flagState={flagState}
-              >
-                {/* Modal content can be added here */}
-              </InnerModal>
-
-              {/*
-              <div className="col-md-12">
-                <div className="d-flex justify-content-center align-items-center gap-4">
-                  <label htmlFor="" className="text-end ">
-                    Owner
-                  </label>
-
-                  <div style={{ minWidth: "25%" }}>
-                    <Field
-                      name={`owner`}
-                      component={CreatableMultiSelectField}
-                      label="Multi Select Field"
-                      options={options}
-                    />
-                  </div>
-                </div>
+              <div className="mt-4 All_Client reportSection">
+                <AntdTable
+                  columns={columns}
+                  data={rows}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  handleSubmit={props?.handleOk}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
+                />
               </div>
-                    */}
-
-              {values.owner.length > 0 && (
-                <div className="mt-4">
-                  <Table striped bordered responsive hover>
-                    <thead>
-                      <tr>
-                        <th>Owner</th>
-                        <th>Opening Balance</th>
-                        <th>Investment Returns</th>
-                        <th>Income Yield</th>
-                        <th>Accounting & Auditing Fees</th>
-                        <th>ATO LEVY</th>
-                        <th>Adviser Service Fees</th>
-                        <th>Indexation of Fund Fees</th>
-                        <th>Windup Fund in Year</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {values.owner.includes("client") && (
-                        <DynamicTableRow
-                          rowConfig={rowConfig.map((config) => {
-                            if (config.name === "incomeYield") {
-                              return {
-                                ...config,
-                                disabled:
-                                  values.client?.investmentReturns !==
-                                  "Input Override",
-                              };
-                            }
-                            return config;
-                          })}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                          handleInnerModal={handleInnerModal}
-                          stakeHolder="client."
-                        />
-                      )}
-                      {/*
-                      {values.owner.includes("partner") &&
-                        UserStatus === "Married" && (
-                          <DynamicTableRow
-                            rowConfig={rowConfig.map((config) => {
-                              if (config.name === "incomeYield") {
-                                return {
-                                  ...config,
-                                  disabled:
-                                    values.partner?.investmentReturns !==
-                                    "Input Override",
-                                };
-                              }
-                              return config;
-                            })}
-                            values={values}
-                            setFieldValue={setFieldValue}
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                            handleInnerModal={handleInnerModal}
-                            stakeHolder="partner."
-                          />
-                        )}
-                          */}
-                    </tbody>
-                  </Table>
-                </div>
-              )}
             </Row>
           </Form>
         );

@@ -1,233 +1,214 @@
 import { Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
-import { CreatableMultiSelectField } from "../../Components/Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
-import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
-import { Row, Table } from "react-bootstrap";
+import React, { useEffect, useMemo, useState } from "react";
+import { Row } from "react-bootstrap";
+import { useRecoilState, useRecoilValue } from "recoil";
+
 import {
   CashFlowData,
   CashFlowScenarioData,
   defaultUrl,
   QuestionDetail,
 } from "../../Store/Store";
-import { useRecoilState, useRecoilValue } from "recoil";
-import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 
 import {
   openNotificationSuccess,
   PatchAxios,
   PostAxios,
   RenderName,
+  toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
+
+import { AntdCreatableMultiSelect } from "../../Components/Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
+import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 
 import Withdrawals from "../Financial Investments/Withdrawals";
 import CFSMSFBalance from "./CFSMSFBalance";
 import PensionPayments from "../Financial Investments/PensionPayments";
 import NewPensionRollover from "../Financial Investments/NewPensionRollover";
 
+const AntdTable = DynamicTableForInputsSection("antd");
+
 const SMSFPensionAccountDetails = (props) => {
-  let questionDetail = useRecoilValue(QuestionDetail);
-  let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
-  let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const questionDetail = useRecoilValue(QuestionDetail);
+  const [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+  const CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const DefaultUrl = useRecoilValue(defaultUrl);
 
-  let [UserStatus] = useState(localStorage.getItem("UserStatus"));
-  let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
+  const [UserStatus] = useState(localStorage.getItem("UserStatus"));
+  const objKey = props.modalObject.key;
 
-  let DefaultUrl = useRecoilValue(defaultUrl);
+  /* ---------------- Modal State ---------------- */
+  const [flagState, setFlagState] = useState(false);
+  const [modalObject, setModalObject] = useState({});
 
-  let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
-
-  let initialValues = {
+  /* ---------------- Initial Values ---------------- */
+  const initialValues = {
     owner: [],
   };
 
-  let SMSFPensionPhase =
-    Object.keys(questionDetail.SMSFPensionPhase || {}).length > 0
-      ? questionDetail.SMSFPensionPhase
-      : {
-          client: [],
-          partner: [],
-          joint: [],
-        }; // Use an empty object as default if incomeFromOverseasPension is undefined
-
+  /* ---------------- Fill Initial Values ---------------- */
   const fillInitialValues = (setFieldValue) => {
-    try {
-      setObjAndAPIKey(props.modalObject.key);
+    const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+    const SMSFPensionPhase =
+      Object.keys(questionDetail.SMSFPensionPhase || {}).length > 0
+        ? questionDetail.SMSFPensionPhase
+        : { client: [], partner: [], joint: [] };
 
-      const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+    const data = CashFlowScenarioDataObj?.[objKey] || cashFlowData?.[objKey];
 
-      const updateFields = (data, prefix) => {
-        if (!data || !Object.keys(data).length) return;
+    const updateFields = (dataObj, stake) => {
+      if (!dataObj || Object.keys(dataObj).length === 0) return;
 
-        const fields = {
-          balanceRolloverAmount: data.balanceRolloverAmount || "",
-          balanceRolloverAmountObj: data.balanceRolloverAmountObj || {},
-          yearToCommence: data.yearToCommence || "",
-          pensionPayments: data.pensionPayments || "",
-          pensionPaymentsObj: data.pensionPaymentsObj || {},
-          newPensionRollover: data.newPensionRollover || "No",
-          newPensionRolloverObj: data.newPensionRolloverObj || {},
-          withdrawals: data.withdrawals || "No",
-          withdrawalsObj: data.withdrawalsObj || {},
-        };
-
-        Object.entries(fields).forEach(([key, value]) => {
-          setFieldValue(`${prefix}.${key}`, value);
-        });
+      const fields = {
+        balanceRolloverAmount: dataObj.balanceRolloverAmount || "",
+        balanceRolloverAmountObj: dataObj.balanceRolloverAmountObj || {},
+        yearToCommence: dataObj.yearToCommence || "",
+        pensionPayments: dataObj.pensionPayments || "",
+        pensionPaymentsObj: dataObj.pensionPaymentsObj || {},
+        newPensionRollover: dataObj.newPensionRollover || "No",
+        newPensionRolloverObj: dataObj.newPensionRolloverObj || {},
+        withdrawals: dataObj.withdrawals || "No",
+        withdrawalsObj: dataObj.withdrawalsObj || {},
       };
 
-      if (scenarioObj?.selectedSource === "discoveryForm") {
-        // questionDetail
+      Object.entries(fields).forEach(([key, value]) => {
+        setFieldValue(`${stake}.${key}`, value);
+      });
+    };
 
-        // Update client-related fields
-        if (SMSFPensionPhase?.client?.length > 0) {
-          const clientData = SMSFPensionPhase.client[0];
-          const pensionBenefits =
-            clientData?.pensionBenefitsTotalArray?.[0] || {};
-          const pensionBenefitsArray =
-            pensionBenefits?.pensionBenefitsarray?.[0] || {};
+    if (scenarioObj?.selectedSource === "discoveryForm") {
+      // Set owner based on data availability
+      const owners = [];
+      if (SMSFPensionPhase?.client?.length > 0) owners.push("client");
+      if (SMSFPensionPhase?.partner?.length > 0 && UserStatus === "Married") {
+        owners.push("partner");
+      }
+      setFieldValue("owner", owners);
 
-          const Obj = {
-            balanceRolloverAmountObj: {
-              pensionType: pensionBenefits?.pensionType?.trim() || "",
-              commencePensionYear: cashFlowData?.cf_personalDetails?.client
-                ?.retirementYear
-                ? String(
-                    parseFloat(
-                      cashFlowData.cf_personalDetails.client.retirementYear
-                    )
+      // Update client fields
+      if (SMSFPensionPhase?.client?.length > 0) {
+        const clientData = SMSFPensionPhase.client[0];
+        const pensionBenefits =
+          clientData?.pensionBenefitsTotalArray?.[0] || {};
+        const pensionBenefitsArray =
+          pensionBenefits?.pensionBenefitsarray?.[0] || {};
+
+        const clientObj = {
+          balanceRolloverAmountObj: {
+            pensionType: pensionBenefits?.pensionType?.trim() || "",
+            commencePensionYear: cashFlowData?.cf_personalDetails?.client
+              ?.retirementYear
+              ? String(
+                  parseFloat(
+                    cashFlowData.cf_personalDetails.client.retirementYear
                   )
-                : "30",
-              taxFreeComponent: pensionBenefitsArray?.taxFreeComponent || "",
-            },
-          };
+                )
+              : "30",
+            taxFreeComponent: pensionBenefitsArray?.taxFreeComponent || "",
+          },
+        };
 
-          updateFields(Obj, "client");
-        }
-
-        // Update partner-related fields
-        if (SMSFPensionPhase?.partner?.length > 0) {
-          const partnerData = SMSFPensionPhase.partner[0];
-          const pensionBenefits =
-            partnerData?.pensionBenefitsTotalArray?.[0] || {};
-          const pensionBenefitsArray =
-            pensionBenefits?.pensionBenefitsarray?.[0] || {};
-
-          const Obj = {
-            balanceRolloverAmountObj: {
-              pensionType: pensionBenefits?.pensionType?.trim() || "",
-              commencePensionYear: cashFlowData?.cf_personalDetails?.partner
-                ?.retirementYear
-                ? String(
-                    parseFloat(
-                      cashFlowData.cf_personalDetails.partner.retirementYear
-                    )
-                  )
-                : "30",
-              taxFreeComponent: pensionBenefitsArray?.taxFreeComponent || "",
-            },
-          };
-
-          updateFields(Obj, "partner");
-        }
-      } else {
-        const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-        if (cashFlowDetails) {
-          setFieldValue(`owner`, cashFlowDetails.owner || "");
-          if (cashFlowDetails.owner.includes("client")) {
-            updateFields(cashFlowDetails.client, "client");
-          }
-          if (
-            UserStatus === "Married" &&
-            cashFlowDetails.owner.includes("partner")
-          ) {
-            updateFields(cashFlowDetails.partner, "partner");
-          }
-        }
+        updateFields(clientObj, "client");
       }
 
-      if (cashFlowData?.[objAndAPIKey]?._id) {
-        const cashFlowDataDetails = cashFlowData[objAndAPIKey];
-        setFieldValue(`owner`, cashFlowDataDetails.owner || "");
+      // Update partner fields
+      if (SMSFPensionPhase?.partner?.length > 0 && UserStatus === "Married") {
+        const partnerData = SMSFPensionPhase.partner[0];
+        const pensionBenefits =
+          partnerData?.pensionBenefitsTotalArray?.[0] || {};
+        const pensionBenefitsArray =
+          pensionBenefits?.pensionBenefitsarray?.[0] || {};
 
-        if (cashFlowDataDetails.owner.includes("client")) {
-          updateFields(cashFlowDataDetails.client, "client");
-        }
+        const partnerObj = {
+          balanceRolloverAmountObj: {
+            pensionType: pensionBenefits?.pensionType?.trim() || "",
+            commencePensionYear: cashFlowData?.cf_personalDetails?.partner
+              ?.retirementYear
+              ? String(
+                  parseFloat(
+                    cashFlowData.cf_personalDetails.partner.retirementYear
+                  )
+                )
+              : "30",
+            taxFreeComponent: pensionBenefitsArray?.taxFreeComponent || "",
+          },
+        };
 
-        if (
-          UserStatus === "Married" &&
-          cashFlowDataDetails.owner.includes("partner")
-        ) {
-          updateFields(cashFlowDataDetails.partner, "partner");
-        }
+        updateFields(partnerObj, "partner");
       }
-    } catch (error) {
-      console.error("Error in fillInitialValues:", error);
+    } else if (data && Object.keys(data).length > 0) {
+      // Handle cash flow data scenario
+      setFieldValue("owner", data.owner || []);
+
+      if (data.owner?.includes("client") && data.client) {
+        updateFields(data.client, "client");
+      }
+
+      if (
+        UserStatus === "Married" &&
+        data.owner?.includes("partner") &&
+        data.partner
+      ) {
+        updateFields(data.partner, "partner");
+      }
     }
   };
 
-  let onSubmit = async (values) => {
-    console.log(JSON.stringify(values));
-    let obj = values;
-    obj.scenarioFK = JSON.parse(localStorage.getItem("ScenarioObj"))._id;
+  /* ---------------- Submit ---------------- */
+  const onSubmit = async (values) => {
+    const obj = {
+      ...values,
+      scenarioFK: JSON.parse(localStorage.getItem("ScenarioObj"))._id,
+    };
 
     if (values.owner.includes("client")) {
-      obj.clientTotal = values.client.balanceRolloverAmount || "$0";
+      obj.clientTotal = values.client?.balanceRolloverAmount || "";
     } else {
       obj.clientTotal = "";
     }
 
     if (values.owner.includes("partner")) {
-      obj.partnerTotal = values.partner.balanceRolloverAmount || "$0";
+      obj.partnerTotal = values.partner?.balanceRolloverAmount || "";
     } else {
       obj.partnerTotal = "";
     }
 
-    const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
-
     try {
-      let res;
-      if (!bankAccountArray) {
-        res = await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
-      } else {
-        res = await PatchAxios(
-          `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
-          obj
-        );
-      }
+      const exists = cashFlowData?.[objKey]?._id;
+      const res = exists
+        ? await PatchAxios(`${DefaultUrl}/api/CF/${objKey}/Update`, obj)
+        : await PostAxios(`${DefaultUrl}/api/CF/${objKey}/Add`, obj);
 
       if (res) {
-        const updatedData = {
+        setCashFlowData({
           ...cashFlowData,
-          [objAndAPIKey]: res,
-        };
-        setCashFlowData(updatedData);
+          [objKey]: res,
+        });
       }
 
       openNotificationSuccess(
         "success",
         "topRight",
-        "Success Notification",
-        'Data of "' + props.modalObject.title + '" is Saved'
+        "Success",
+        `Data of "${props.modalObject.title}" is saved`
       );
 
-      if (props.flagState) {
-        props.setFlagState(false);
-      }
-    } catch (error) {
-      console.error("Error occurred while making API call:", error);
+      props.setFlagState?.(false);
+      props?.setIsEditing?.(false);
+    } catch (err) {
+      console.error(err);
       openNotificationSuccess(
         "error",
         "topRight",
-        "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        "Error",
+        `Data of "${props.modalObject.title}" not saved`
       );
     }
   };
 
-  let handleInnerModal = (title, values, key, stakeHolder) => {
+  /* ---------------- Inner Modal ---------------- */
+  const handleInnerModal = (title, values, key, stakeHolder) => {
     setModalObject({
       title,
       values,
@@ -239,6 +220,73 @@ const SMSFPensionAccountDetails = (props) => {
     setFlagState(true);
   };
 
+  /* ---------------- Component Mapping ---------------- */
+  const componentMapping = {
+    "Balance Rollover Amount": <CFSMSFBalance />,
+    "Pension Payments": <PensionPayments />,
+    "New Pension Rollover": <NewPensionRollover />,
+    Withdrawals: <Withdrawals />,
+  };
+
+  /* ---------------- Year Options ---------------- */
+  const yearsOptions = Array.from({ length: 30 }, (_, i) => ({
+    value: (i + 1).toString(),
+    label: ("Year " + (i + 1)).toString(),
+  }));
+
+  /* ---------------- Table Columns ---------------- */
+  const columns = [
+    { title: "Owner", dataIndex: "owner", type: "label", justText: true },
+    {
+      title: "Balance Rollover Amount",
+      placeholder: "Balance Rollover Amount",
+      dataIndex: "balanceRolloverAmount",
+      type: "number-toComma-Modal",
+      innerModalTitle: "Balance Rollover Amount",
+      key: "balanceRolloverAmount",
+      callBack: true,
+      disabled: true,
+      func: handleInnerModal,
+    },
+    {
+      title: "Year to Commence",
+      dataIndex: "yearToCommence",
+      type: "select",
+      options: yearsOptions,
+      disabled: true,
+    },
+    {
+      title: "Pension Payments",
+      placeholder: "Pension Payments",
+      dataIndex: "pensionPayments",
+      type: "number-toComma-Modal",
+      innerModalTitle: "Pension Payments",
+      key: "pensionPayments",
+      callBack: true,
+      disabled: true,
+      func: handleInnerModal,
+    },
+    {
+      title: "New Pension Rollover",
+      dataIndex: "newPensionRollover",
+      type: "yesnoModal",
+      innerModalTitle: "New Pension Rollover",
+      key: "newPensionRollover",
+      callBack: true,
+      func: handleInnerModal,
+    },
+    {
+      title: "Withdrawals",
+      dataIndex: "withdrawals",
+      type: "yesnoModal",
+      innerModalTitle: "Withdrawals",
+      key: "withdrawals",
+      callBack: true,
+      func: handleInnerModal,
+    },
+  ];
+
+  /* ---------------- Owner Options ---------------- */
   const options =
     UserStatus !== "Single"
       ? [
@@ -247,75 +295,7 @@ const SMSFPensionAccountDetails = (props) => {
         ]
       : [{ value: "client", label: RenderName("client") }];
 
-  const yearsArray = Array.from({ length: 30 }, (_, i) => {
-    return {
-      value: (i + 1).toString(),
-      label: ("Year " + (i + 1)).toString(),
-    };
-  });
-
-  const [rowConfig, setRowConfig] = useState(() => {
-    return [
-      {
-        name: "balanceRolloverAmount",
-        type: "number-toComma-Modal",
-        placeholder: "Balance Rollover Amount",
-        callBack: true,
-        innerModalTitle: "Balance Rollover Amount",
-        key: "balanceRolloverAmount",
-        func: handleInnerModal,
-        disabled: true,
-      },
-      {
-        name: "yearToCommence",
-        type: "select",
-        placeholder: "Year to Commence",
-        options: yearsArray,
-        disabled: true,
-      },
-      {
-        name: "pensionPayments",
-        type: "number-toComma-Modal",
-        placeholder: "Pension Payments",
-        callBack: true,
-        disabled:true,
-        innerModalTitle: "Pension Payments",
-        key: "pensionPayments",
-        func: handleInnerModal,
-      },
-      {
-        name: "newPensionRollover",
-        type: "yesnoModal",
-        placeholder: "New Pension Rollover",
-        callBack: true,
-        innerModalTitle: "New Pension Rollover",
-        key: "newPensionRollover",
-        func: handleInnerModal,
-      },
-      {
-        name: "withdrawals",
-        type: "yesnoModal",
-        placeholder: "Withdrawals",
-        callBack: true,
-        innerModalTitle: "Withdrawals",
-        key: "withdrawals",
-        func: handleInnerModal,
-      },
-    ];
-  });
-
-  const componentMapping = {
-    "Balance Rollover Amount": <CFSMSFBalance />,
-    // "Year to Commence": <YearToCommence />,
-    "Pension Payments": <PensionPayments />,
-    "New Pension Rollover": <NewPensionRollover />,
-    Withdrawals: <Withdrawals />,
-  };
-
-  const ModalContent = (obj) => {
-    return componentMapping[obj.title] || null;
-  };
-
+  /* ---------------- Render ---------------- */
   return (
     <Formik
       initialValues={initialValues}
@@ -328,6 +308,32 @@ const SMSFPensionAccountDetails = (props) => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        const rows = useMemo(() => {
+          const rowsArray = [];
+
+          if (values.owner?.includes("client") && values.client)
+            rowsArray.push({
+              key: "client",
+              owner: RenderName("client"),
+              stakeHolder: "client",
+              ...values.client,
+            });
+
+          if (
+            values.owner?.includes("partner") &&
+            UserStatus === "Married" &&
+            values.partner
+          )
+            rowsArray.push({
+              key: "partner",
+              owner: RenderName("partner"),
+              stakeHolder: "partner",
+              ...values.partner,
+            });
+
+          return rowsArray;
+        }, [values, UserStatus]);
+
         return (
           <Form>
             <Row>
@@ -337,66 +343,35 @@ const SMSFPensionAccountDetails = (props) => {
                 setFlagState={setFlagState}
                 flagState={flagState}
               >
-                {ModalContent(modalObject)}
+                {componentMapping[modalObject.title]}
               </InnerModal>
 
               <div className="col-md-12">
-                <div className="d-flex justify-content-center align-items-center gap-4">
-                  <label htmlFor="" className="text-end ">
-                    Owner
-                  </label>
-
-                  <div style={{ minWidth: "25%" }}>
+                <div className="d-flex justify-content-center align-items-center gap-2">
+                  <label className="mb-0">Owner</label>
+                  <div style={{ minWidth: 220 }}>
                     <Field
-                      name={`owner`}
-                      component={CreatableMultiSelectField}
-                      label="Multi Select Field"
+                      name="owner"
+                      component={AntdCreatableMultiSelect}
                       options={options}
                     />
                   </div>
                 </div>
               </div>
 
-              {values.owner.length > 0 && (
-                <div className="mt-4">
-                  <Table striped bordered responsive hover>
-                    <thead>
-                      <tr>
-                        <th>Owner</th>
-                        <th>Balance Rollover Amount</th>
-                        <th>Year to Commence</th>
-                        <th>Pension Payments</th>
-                        <th>New Pension Rollover</th>
-                        <th>Withdrawals</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {values.owner.includes("client") && (
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                          handleInnerModal={handleInnerModal}
-                          stakeHolder="client."
-                        />
-                      )}
-
-                      {values.owner.includes("partner") &&
-                        UserStatus === "Married" && (
-                          <DynamicTableRow
-                            rowConfig={rowConfig}
-                            values={values}
-                            setFieldValue={setFieldValue}
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                            handleInnerModal={handleInnerModal}
-                            stakeHolder="partner."
-                          />
-                        )}
-                    </tbody>
-                  </Table>
+              {values?.owner?.length > 0 && (
+                <div className="mt-4 All_Client reportSection">
+                  <AntdTable
+                    columns={columns}
+                    data={rows}
+                    values={values}
+                    setFieldValue={setFieldValue}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                    handleSubmit={props?.handleOk}
+                    isEditing={props?.isEditing}
+                    setIsEditing={props?.setIsEditing}
+                  />
                 </div>
               )}
             </Row>

@@ -1,81 +1,127 @@
 import React, { useEffect, useState } from "react";
-import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
 import { Form, Formik } from "formik";
-import { Row, Table } from "react-bootstrap";
+import { Row } from "react-bootstrap";
+
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
+import { RenderName } from "../../Components/Assets/Api/Api";
+
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const CFSMSFInsurancePremiums = (props) => {
-  let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
+  const [flagState, setFlagState] = useState(false);
+  const [modalObject, setModalObject] = useState({});
 
-  let initialValues = {
+  /* ===============================
+     Initial Values
+  =============================== */
+  const initialValues = {
     insurancePremiums: "",
     yearsInclude: "",
     indexationOfPremiums: "2.50%",
   };
 
-  let fillInitialValues = (setFieldValue) => {
-    if (
-      props.modalObject.values[props.modalObject.stakeHolder.replace(".", "")]
-    ) {
-      let SubObj =
-        props.modalObject.values[
-          props.modalObject.stakeHolder.replace(".", "")
-        ];
-      if (SubObj[props.modalObject.key + "Obj"]) {
-        let Data = SubObj[props.modalObject.key + "Obj"];
-        setFieldValue("insurancePremiums", Data.insurancePremiums);
-        setFieldValue("yearsInclude", Data.yearsInclude);
-        setFieldValue("indexationOfPremiums", Data.indexationOfPremiums);
-      }
+  /* ===============================
+     Fill Initial Values
+  =============================== */
+  let BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
+  let index = parseFloat(
+    props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
+  );
+  
+  const fillInitialValues = (setFieldValue) => {
+    if (props.modalObject.values?.[BaseKey]?.[props.modalObject.key + "Obj"]) {
+      const Data =
+        props.modalObject.values?.[BaseKey]?.[props.modalObject.key + "Obj"];
+
+      setFieldValue("insurancePremiums", Data.insurancePremiums);
+      setFieldValue("yearsInclude", Data.yearsInclude);
+      setFieldValue("indexationOfPremiums", Data.indexationOfPremiums);
     }
   };
 
-  let onSubmit = (values) => {
+  /* ===============================
+     Submit
+  =============================== */
+  const onSubmit = (values) => {
     props.setFieldValue(
       props.modalObject.stakeHolder + props.modalObject.key + "Obj",
       values
     );
 
+    // Reset the flag state if necessary
     if (props.flagState) {
       props.setFlagState(false);
+      props?.setIsEditing?.(false);
     }
   };
 
-  const yearsIncludedArray = Array.from({ length: 31 }, (_, i) => ({
+  /* ===============================
+     Handle Inner Modal
+  =============================== */
+  const handleInnerModal = (title, values, key, stakeHolder) => {
+    console.log(title, values, key, stakeHolder);
+    setModalObject({
+      title,
+      values,
+      key,
+      stakeHolder: props.modalObject.stakeHolder,
+    });
+    setFlagState(true);
+  };
+
+  /* ===============================
+     Options
+  =============================== */
+  const yearsIncludedOptions = Array.from({ length: 31 }, (_, i) => ({
     value: i.toString(),
-    label: ("Year " + i).toString(),
+    label: `Year ${i}`,
   }));
 
-  const indexation = Array.from({ length: 31 }, (_, i) => ({
+  const indexationOptions = Array.from({ length: 31 }, (_, i) => ({
     value: (i * 0.5).toFixed(2) + "%",
     label: (i * 0.5).toFixed(2) + "%",
   }));
 
-  let rowConfig = [
+  /* ===============================
+     AntD Columns
+  =============================== */
+  const columns = [
     {
-      type: "plainText",
-      text: props.modalObject.stakeHolder.replace(".", ""),
-      styleSet: { fontWeight: "800", fontSize: "16px" },
+      title: "Member",
+      dataIndex: "member",
+      key: "member",
+      justText: true,
     },
     {
-      name: "insurancePremiums",
+      title: "Insurance Premiums",
+      dataIndex: "insurancePremiums",
+      key: "insurancePremiums",
       type: "number-toComma",
       placeholder: "Insurance Premiums",
     },
     {
-      name: "yearsInclude",
+      title: "Years to Include",
+      dataIndex: "yearsInclude",
+      key: "yearsInclude",
       type: "select",
-      options: yearsIncludedArray,
       placeholder: "Years to Include",
+      options: yearsIncludedOptions,
+      selectedOptionValue: true,
     },
     {
-      name: "indexationOfPremiums",
+      title: "Indexation of Premiums",
+      dataIndex: "indexationOfPremiums",
+      key: "indexationOfPremiums",
       type: "select",
-      options: indexation,
       placeholder: "Indexation of Premiums",
+      options: indexationOptions,
+      selectedOptionValue: true,
     },
   ];
 
+  /* ===============================
+     Render
+  =============================== */
   return (
     <Formik
       initialValues={initialValues}
@@ -83,38 +129,35 @@ const CFSMSFInsurancePremiums = (props) => {
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, handleChange, setFieldValue, handleBlur }) => {
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        const tableData = [
+          {
+            key: "smsfInsurancePremiumsRow",
+            member: RenderName(props.modalObject.stakeHolder.replace(".", "")),
+            index: parseFloat(props.modalObject.key.match(/\d+/)?.[0] || 0) + 1,
+            ...values,
+          },
+        ];
+
         return (
           <Form>
             <Row>
-              <div className="col-md-12">
-                <div className="row justify-content-center">
-                  <div className="mt-4">
-                    <Table striped bordered responsive hover>
-                      <thead>
-                        <tr>
-                          <th>Member</th>
-                          <th>Insurance Premiums</th>
-                          <th>Years to Include</th>
-                          <th>Indexation of Premiums</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                        />
-                      </tbody>
-                    </Table>
-                  </div>
-                </div>
+              <div className="col-md-12 mt-4 All_Client reportSection">
+                <AntdTable
+                  columns={columns}
+                  data={tableData}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  handleInnerModal={handleInnerModal}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
+                />
               </div>
             </Row>
           </Form>

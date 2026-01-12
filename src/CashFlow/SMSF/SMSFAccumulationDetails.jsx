@@ -1,18 +1,14 @@
 import { Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
-import { CreatableMultiSelectField } from "../../Components/Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
-import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
-import { Row, Table } from "react-bootstrap";
+import React, { useEffect, useMemo, useState } from "react";
+import { Row } from "react-bootstrap";
+import { useRecoilState, useRecoilValue } from "recoil";
+
 import {
   CashFlowData,
   CashFlowScenarioData,
   defaultUrl,
   QuestionDetail,
 } from "../../Store/Store";
-import { useRecoilState, useRecoilValue } from "recoil";
-import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
-// import AccumulationDetails from "./AccumulationDetails";
-// import InsurancePremiums from "./InsurancePremiums";
 
 import {
   openNotificationSuccess,
@@ -22,45 +18,40 @@ import {
   toCommaAndDollar,
   toPercentage,
 } from "../../Components/Assets/Api/Api";
+
+import { AntdCreatableMultiSelect } from "../../Components/Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
+import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
+
 import ConcessionalContributions from "../Financial Investments/ConcessionalContributions";
 import NonConcessionalContributions from "../Financial Investments/NonConcessionalContributions";
 import Withdrawals from "../Financial Investments/Withdrawals";
 import CFSMSFAccumulationDetails from "./CFSMSFAccumulationDetails";
 import CFSMSFInsurancePremiums from "./CFSMSFInsurancePremiums";
 
+const AntdTable = DynamicTableForInputsSection("antd");
+
 const SMSFAccumulationDetails = (props) => {
-  let questionDetail = useRecoilValue(QuestionDetail);
-  let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
-  let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const questionDetail = useRecoilValue(QuestionDetail);
+  const [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+  const CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const DefaultUrl = useRecoilValue(defaultUrl);
 
-  let [UserStatus] = useState(localStorage.getItem("UserStatus"));
-  let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
+  const [UserStatus] = useState(localStorage.getItem("UserStatus"));
+  const objKey = props.modalObject.key;
 
-  let DefaultUrl = useRecoilValue(defaultUrl);
+  /* ---------------- Modal State ---------------- */
+  const [flagState, setFlagState] = useState(false);
+  const [modalObject, setModalObject] = useState({});
 
-  let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
-
-  let [layoutSwitchFlag, setLayoutSwitchFlag] = useState(
-    props.modalObject.title
-  );
-
-  let initialValues = {
+  /* ---------------- Initial Values ---------------- */
+  const initialValues = {
     owner: [],
   };
 
-  let SMSFAccumulationDetails =
-    Object.keys(questionDetail.SMSFAccumulationDetails || {}).length > 0
-      ? questionDetail.SMSFAccumulationDetails
-      : {
-          client: [],
-          partner: [],
-          joint: [],
-        }; // Use an empty object as default if incomeFromOverseasPension is undefined
-
-  let GetValue = (valueOf) => {
+  /* ---------------- Helper Functions ---------------- */
+  const GetValue = (valueOf) => {
     try {
-      // Check if SMSFAccumulationDetails.SMSFTotal exists and parse it to a number
       const SMSFAccumulationDetailsClientTotal = questionDetail
         ?.SMSFAccumulationDetails?.clientTotal
         ? parseFloat(
@@ -70,7 +61,7 @@ const SMSFAccumulationDetails = (props) => {
             )
           )
         : 0;
-      // Check if SMSFAccumulationDetails.SMSFTotal exists and parse it to a number
+
       const SMSFAccumulationDetailsPartnerTotal = questionDetail
         ?.SMSFAccumulationDetails?.partnerTotal
         ? parseFloat(
@@ -80,7 +71,7 @@ const SMSFAccumulationDetails = (props) => {
             )
           )
         : 0;
-      // Check if SMSFAccumulationDetails.SMSFTotal exists and parse it to a number
+
       const SMSFAccumulationDetailsJointTotal = questionDetail
         ?.SMSFAccumulationDetails?.jointTotal
         ? parseFloat(
@@ -91,7 +82,6 @@ const SMSFAccumulationDetails = (props) => {
           )
         : 0;
 
-      // Check if SMSFAccumulationDetails.SMSFTotal exists and parse it to a number
       const SMSFPensionPhaseClientTotal = questionDetail?.SMSFPensionPhase
         ?.clientTotal
         ? parseFloat(
@@ -101,7 +91,7 @@ const SMSFAccumulationDetails = (props) => {
             )
           )
         : 0;
-      // Check if SMSFPensionPhase.SMSFTotal exists and parse it to a number
+
       const SMSFPensionPhasePartnerTotal = questionDetail?.SMSFPensionPhase
         ?.partnerTotal
         ? parseFloat(
@@ -111,7 +101,7 @@ const SMSFAccumulationDetails = (props) => {
             )
           )
         : 0;
-      // Check if SMSFPensionPhase.SMSFTotal exists and parse it to a number
+
       const SMSFPensionPhaseJointTotal = questionDetail?.SMSFPensionPhase
         ?.jointTotal
         ? parseFloat(
@@ -120,35 +110,38 @@ const SMSFAccumulationDetails = (props) => {
         : 0;
 
       if (valueOf === "client") {
-        return toPercentage(
+        const total =
           (SMSFAccumulationDetailsClientTotal + SMSFPensionPhaseClientTotal) /
-            (SMSFAccumulationDetailsClientTotal +
-              SMSFAccumulationDetailsPartnerTotal +
-              SMSFAccumulationDetailsJointTotal +
-              SMSFPensionPhaseClientTotal +
-              SMSFPensionPhasePartnerTotal +
-              SMSFPensionPhaseJointTotal)
-        );
+          (SMSFAccumulationDetailsClientTotal +
+            SMSFAccumulationDetailsPartnerTotal +
+            SMSFAccumulationDetailsJointTotal +
+            SMSFPensionPhaseClientTotal +
+            SMSFPensionPhasePartnerTotal +
+            SMSFPensionPhaseJointTotal);
+
+        return toPercentage(isNaN(total) ? 0 : total);
       } else if (valueOf === "partner") {
-        return toPercentage(
+        const total =
           (SMSFAccumulationDetailsPartnerTotal + SMSFPensionPhasePartnerTotal) /
-            (SMSFAccumulationDetailsClientTotal +
-              SMSFAccumulationDetailsPartnerTotal +
-              SMSFAccumulationDetailsJointTotal +
-              SMSFPensionPhaseClientTotal +
-              SMSFPensionPhasePartnerTotal +
-              SMSFPensionPhaseJointTotal)
-        );
+          (SMSFAccumulationDetailsClientTotal +
+            SMSFAccumulationDetailsPartnerTotal +
+            SMSFAccumulationDetailsJointTotal +
+            SMSFPensionPhaseClientTotal +
+            SMSFPensionPhasePartnerTotal +
+            SMSFPensionPhaseJointTotal);
+
+        return toPercentage(isNaN(total) ? 0 : total);
       } else if (valueOf === "joint") {
-        return toPercentage(
+        const total =
           (SMSFAccumulationDetailsJointTotal + SMSFPensionPhaseJointTotal) /
-            (SMSFAccumulationDetailsClientTotal +
-              SMSFAccumulationDetailsPartnerTotal +
-              SMSFAccumulationDetailsJointTotal +
-              SMSFPensionPhaseClientTotal +
-              SMSFPensionPhasePartnerTotal +
-              SMSFPensionPhaseJointTotal)
-        );
+          (SMSFAccumulationDetailsClientTotal +
+            SMSFAccumulationDetailsPartnerTotal +
+            SMSFAccumulationDetailsJointTotal +
+            SMSFPensionPhaseClientTotal +
+            SMSFPensionPhasePartnerTotal +
+            SMSFPensionPhaseJointTotal);
+
+        return toPercentage(isNaN(total) ? 0 : total);
       }
     } catch (error) {
       console.error("Error calculating SMSF totals:", error);
@@ -156,169 +149,131 @@ const SMSFAccumulationDetails = (props) => {
     }
   };
 
+  /* ---------------- Fill Initial Values ---------------- */
   const fillInitialValues = (setFieldValue) => {
-    try {
-      setObjAndAPIKey(props.modalObject.key);
+    const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+    const SMSFAccumulationDetails =
+      Object.keys(questionDetail.SMSFAccumulationDetails || {}).length > 0
+        ? questionDetail.SMSFAccumulationDetails
+        : { client: [], partner: [], joint: [] };
 
-      const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+    const data = CashFlowScenarioDataObj?.[objKey] || cashFlowData?.[objKey];
 
-      const updateFields = (data, prefix) => {
-        if (!data || !Object.keys(data).length) return;
+    if (scenarioObj?.selectedSource === "discoveryForm") {
+      setFieldValue("owner", SMSFAccumulationDetails.member || []);
 
-        const fields = {
-          accumulationDetails: data.accumulationDetails || "No",
-          accumulationDetailsObj: data.accumulationDetailsObj || {},
-          insurancePremiums: data.insurancePremiums || "No",
-          insurancePremiumsObj: data.insurancePremiumsObj || {},
-          concessionalContributions: data.concessionalContributions || "No",
-          concessionalContributionsObj: data.concessionalContributionsObj || {},
-          nonConcessionalContributions:
-            data.nonConcessionalContributions || "No",
-          nonConcessionalContributionsObj:
-            data.nonConcessionalContributionsObj || {},
-          withdrawals: data.withdrawals || "No",
-          withdrawalsObj: data.withdrawalsObj || {},
-        };
-
-        Object.entries(fields).forEach(([key, value]) => {
-          setFieldValue(`${prefix}.${key}`, value);
-        });
+      const updateFieldsFromDiscovery = (stake, totalField) => {
+        if (SMSFAccumulationDetails?.[stake]?.length > 0) {
+          setFieldValue(
+            `${stake}.accumulationDetailsObj.percentageOfFundForMember`,
+            GetValue(stake) || ""
+          );
+          setFieldValue(
+            `${stake}.accumulationDetailsObj.taxFreeComponent`,
+            SMSFAccumulationDetails[totalField] || ""
+          );
+          setFieldValue(`${stake}.accumulationDetails`, "No");
+          setFieldValue(`${stake}.insurancePremiums`, "No");
+          setFieldValue(`${stake}.concessionalContributions`, "No");
+          setFieldValue(`${stake}.nonConcessionalContributions`, "No");
+          setFieldValue(`${stake}.withdrawals`, "No");
+        }
       };
 
-      if (scenarioObj?.selectedSource === "discoveryForm") {
-        setFieldValue(`owner`, SMSFAccumulationDetails.member || "");
+      updateFieldsFromDiscovery("client", "clientTotal");
 
-        // Update client-related fields
-        if (SMSFAccumulationDetails?.client.length > 0) {
-          let Obj = {
-            accumulationDetailsObj: {
-              percentageOfFundForMember: GetValue("client") || "",
-              taxFreeComponent: SMSFAccumulationDetails.clientTotal || "",
-            },
-          };
-          updateFields(Obj, "client");
-        }
-
-        // Update partner-related fields
-        if (
-          UserStatus === "Married" &&
-          Array.isArray(SMSFAccumulationDetails?.partner) &&
-          SMSFAccumulationDetails?.partner.length > 0
-        ) {
-          let Obj = {
-            accumulationDetailsObj: {
-              percentageOfFundForMember: GetValue("partner") || "",
-              taxFreeComponent: SMSFAccumulationDetails.partnerTotal || "",
-            },
-          };
-          updateFields(Obj, "partner");
-        }
-      } else {
-        // Handle cashFlowData scenario
-        const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-        // console.log(cashFlowDetails, "cashFlowDetails")
-        if (cashFlowDetails) {
-          setFieldValue(`owner`, cashFlowDetails.owner || "");
-          if (cashFlowDetails.owner.includes("client")) {
-            // Update client details
-            updateFields(cashFlowDetails.client, "client");
-          }
-
-          if (
-            UserStatus === "Married" &&
-            cashFlowDetails.owner.includes("partner")
-          ) {
-            // Update partner details
-            updateFields(cashFlowDetails.partner, "partner");
-          }
-        }
+      if (UserStatus === "Married") {
+        updateFieldsFromDiscovery("partner", "partnerTotal");
       }
+    } else if (data && Object.keys(data).length > 0) {
+      setFieldValue("owner", data.owner || []);
 
-      if (cashFlowData?.[objAndAPIKey]?._id) {
-        const cashFlowDataDetails = cashFlowData[objAndAPIKey];
-        setFieldValue(`owner`, cashFlowDataDetails.owner || "");
+      const updateFieldsFromCashFlow = (stake) => {
+        if (data.owner?.includes(stake) && data[stake]) {
+          const fields = [
+            "accumulationDetails",
+            "accumulationDetailsObj",
+            "insurancePremiums",
+            "insurancePremiumsObj",
+            "concessionalContributions",
+            "concessionalContributionsObj",
+            "nonConcessionalContributions",
+            "nonConcessionalContributionsObj",
+            "withdrawals",
+            "withdrawalsObj",
+          ];
 
-        if (cashFlowDataDetails.owner.includes("client")) {
-          updateFields(cashFlowDataDetails.client, "client");
+          fields.forEach((field) => {
+            if (data[stake][field] !== undefined) {
+              setFieldValue(`${stake}.${field}`, data[stake][field]);
+            }
+          });
         }
+      };
 
-        if (
-          UserStatus === "Married" &&
-          cashFlowDataDetails.owner.includes("partner")
-        ) {
-          updateFields(cashFlowDataDetails.partner, "partner");
-        }
+      updateFieldsFromCashFlow("client");
+      if (UserStatus === "Married") {
+        updateFieldsFromCashFlow("partner");
       }
-    } catch (error) {
-      console.error("Error in fillInitialValues:", error);
     }
   };
 
-  let onSubmit = async (values) => {
-    console.log(JSON.stringify(values));
-
-    let obj = values;
-    obj.scenarioFK = JSON.parse(localStorage.getItem("ScenarioObj"))._id;
+  /* ---------------- Submit ---------------- */
+  const onSubmit = async (values) => {
+    const obj = {
+      ...values,
+      scenarioFK: JSON.parse(localStorage.getItem("ScenarioObj"))._id,
+    };
 
     if (values.owner.includes("client")) {
       obj.clientTotal =
-        values.client.accumulationDetailsObj.taxFreeComponent || "$0";
+        values.client?.accumulationDetailsObj?.taxFreeComponent || "";
     } else {
       obj.clientTotal = "";
     }
 
     if (values.owner.includes("partner")) {
       obj.partnerTotal =
-        values.partner.accumulationDetailsObj.taxFreeComponent || "$0";
+        values.partner?.accumulationDetailsObj?.taxFreeComponent || "";
     } else {
       obj.partnerTotal = "";
     }
 
-    const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
-
     try {
-      let res;
-      if (!bankAccountArray) {
-        res = await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
-      } else {
-        res = await PatchAxios(
-          `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
-          obj
-        );
-      }
+      const exists = cashFlowData?.[objKey]?._id;
+      const res = exists
+        ? await PatchAxios(`${DefaultUrl}/api/CF/${objKey}/Update`, obj)
+        : await PostAxios(`${DefaultUrl}/api/CF/${objKey}/Add`, obj);
 
       if (res) {
-        const updatedData = {
+        setCashFlowData({
           ...cashFlowData,
-          [objAndAPIKey]: res,
-        };
-        setCashFlowData(updatedData);
+          [objKey]: res,
+        });
       }
 
       openNotificationSuccess(
         "success",
         "topRight",
-        "Success Notification",
-        'Data of "' + props.modalObject.title + '" is Saved'
+        "Success",
+        `Data of "${props.modalObject.title}" is saved`
       );
 
-      if (props.flagState) {
-        props.setFlagState(false);
-      }
-    } catch (error) {
-      console.error("Error occurred while making API call:", error);
+      props.setFlagState?.(false);
+      props?.setIsEditing?.(false);
+    } catch (err) {
+      console.error(err);
       openNotificationSuccess(
         "error",
         "topRight",
-        "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        "Error",
+        `Data of "${props.modalObject.title}" not saved`
       );
     }
   };
 
-  let handleInnerModal = (title, values, key, stakeHolder) => {
+  /* ---------------- Inner Modal ---------------- */
+  const handleInnerModal = (title, values, key, stakeHolder) => {
     setModalObject({
       title,
       values,
@@ -330,64 +285,7 @@ const SMSFAccumulationDetails = (props) => {
     setFlagState(true);
   };
 
-  const options =
-    UserStatus !== "Single"
-      ? [
-          { value: "client", label: RenderName("client") },
-          { value: "partner", label: RenderName("partner") },
-        ]
-      : [{ value: "client", label: RenderName("client") }];
-
-  const [rowConfig, setRowConfig] = useState(() => {
-    return [
-      {
-        name: "accumulationDetails",
-        type: "yesnoModal",
-        placeholder: "Accumulation Details and Components",
-        callBack: true,
-        innerModalTitle: "Accumulation Details",
-        key: "accumulationDetails",
-        func: handleInnerModal,
-      },
-      {
-        name: "insurancePremiums",
-        type: "yesnoModal",
-        placeholder: "Insurance Premiums",
-        callBack: true,
-        innerModalTitle: "Insurance Premiums",
-        key: "insurancePremiums",
-        func: handleInnerModal,
-      },
-      {
-        name: "concessionalContributions",
-        type: "yesnoModal",
-        placeholder: "Concessional Contributions",
-        callBack: true,
-        innerModalTitle: "Concessional Contributions",
-        key: "concessionalContributions",
-        func: handleInnerModal,
-      },
-      {
-        name: "nonConcessionalContributions",
-        type: "yesnoModal",
-        placeholder: "Non Concessional Contributions",
-        callBack: true,
-        innerModalTitle: "Non Concessional Contributions",
-        key: "nonConcessionalContributions",
-        func: handleInnerModal,
-      },
-      {
-        name: "withdrawals",
-        type: "yesnoModal",
-        placeholder: "Withdrawals",
-        callBack: true,
-        innerModalTitle: "Withdrawals",
-        key: "withdrawals",
-        func: handleInnerModal,
-      },
-    ];
-  });
-
+  /* ---------------- Component Mapping ---------------- */
   const componentMapping = {
     "Accumulation Details": <CFSMSFAccumulationDetails />,
     "Insurance Premiums": <CFSMSFInsurancePremiums />,
@@ -396,10 +294,66 @@ const SMSFAccumulationDetails = (props) => {
     Withdrawals: <Withdrawals />,
   };
 
-  const ModalContent = (obj) => {
-    return componentMapping[obj.title] || null;
-  };
+  /* ---------------- Table Columns ---------------- */
+  const columns = [
+    { title: "Owner", dataIndex: "owner", type: "label", justText: true },
+    {
+      title: "Accumulation Details and Components",
+      dataIndex: "accumulationDetails",
+      type: "yesnoModal",
+      innerModalTitle: "Accumulation Details",
+      key: "accumulationDetails",
+      callBack: true,
+      func: handleInnerModal,
+    },
+    {
+      title: "Insurance Premiums",
+      dataIndex: "insurancePremiums",
+      type: "yesnoModal",
+      innerModalTitle: "Insurance Premiums",
+      key: "insurancePremiums",
+      callBack: true,
+      func: handleInnerModal,
+    },
+    {
+      title: "Concessional Contributions",
+      dataIndex: "concessionalContributions",
+      type: "yesnoModal",
+      innerModalTitle: "Concessional Contributions",
+      key: "concessionalContributions",
+      callBack: true,
+      func: handleInnerModal,
+    },
+    {
+      title: "Non Concessional Contributions",
+      dataIndex: "nonConcessionalContributions",
+      type: "yesnoModal",
+      innerModalTitle: "Non Concessional Contributions",
+      key: "nonConcessionalContributions",
+      callBack: true,
+      func: handleInnerModal,
+    },
+    {
+      title: "Withdrawals",
+      dataIndex: "withdrawals",
+      type: "yesnoModal",
+      innerModalTitle: "Withdrawals",
+      key: "withdrawals",
+      callBack: true,
+      func: handleInnerModal,
+    },
+  ];
 
+  /* ---------------- Owner Options ---------------- */
+  const options =
+    UserStatus !== "Single"
+      ? [
+          { value: "client", label: RenderName("client") },
+          { value: "partner", label: RenderName("partner") },
+        ]
+      : [{ value: "client", label: RenderName("client") }];
+
+  /* ---------------- Render ---------------- */
   return (
     <Formik
       initialValues={initialValues}
@@ -412,6 +366,32 @@ const SMSFAccumulationDetails = (props) => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        const rows = useMemo(() => {
+          const rowsArray = [];
+
+          if (values.owner?.includes("client") && values.client)
+            rowsArray.push({
+              key: "client",
+              owner: RenderName("client"),
+              stakeHolder: "client",
+              ...values.client,
+            });
+
+          if (
+            values.owner?.includes("partner") &&
+            UserStatus === "Married" &&
+            values.partner
+          )
+            rowsArray.push({
+              key: "partner",
+              owner: RenderName("partner"),
+              stakeHolder: "partner",
+              ...values.partner,
+            });
+
+          return rowsArray;
+        }, [values, UserStatus]);
+
         return (
           <Form>
             <Row>
@@ -421,66 +401,42 @@ const SMSFAccumulationDetails = (props) => {
                 setFlagState={setFlagState}
                 flagState={flagState}
               >
-                {ModalContent(modalObject)}
+                {componentMapping[modalObject.title]}
               </InnerModal>
 
               <div className="col-md-12">
-                <div className="d-flex justify-content-center align-items-center gap-4">
-                  <label htmlFor="" className="text-end ">
+                <div className="d-flex justify-content-center align-items-center gap-2">
+                  <label
+                    className="mb-0"
+                    onClick={() => {
+                      console.log(values);
+                    }}
+                  >
                     Owner
                   </label>
-
-                  <div style={{ minWidth: "25%" }}>
+                  <div style={{ minWidth: 220 }}>
                     <Field
-                      name={`owner`}
-                      component={CreatableMultiSelectField}
-                      label="Multi Select Field"
+                      name="owner"
+                      component={AntdCreatableMultiSelect}
                       options={options}
                     />
                   </div>
                 </div>
               </div>
 
-              {values.owner.length > 0 && (
-                <div className="mt-4">
-                  <Table striped bordered responsive hover>
-                    <thead>
-                      <tr>
-                        <th>Owner</th>
-                        <th>Accumulation Details and Components</th>
-                        <th>Insurance Premiums</th>
-                        <th>Concessional Contributions</th>
-                        <th>Non Concessional Contributions</th>
-                        <th>Withdrawals</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {values.owner.includes("client") && (
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                          handleInnerModal={handleInnerModal}
-                          stakeHolder="client."
-                        />
-                      )}
-
-                      {values.owner.includes("partner") &&
-                        UserStatus === "Married" && (
-                          <DynamicTableRow
-                            rowConfig={rowConfig}
-                            values={values}
-                            setFieldValue={setFieldValue}
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                            handleInnerModal={handleInnerModal}
-                            stakeHolder="partner."
-                          />
-                        )}
-                    </tbody>
-                  </Table>
+              {values?.owner?.length > 0 && (
+                <div className="mt-4 All_Client reportSection">
+                  <AntdTable
+                    columns={columns}
+                    data={rows}
+                    values={values}
+                    setFieldValue={setFieldValue}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                    handleSubmit={props?.handleOk}
+                    isEditing={props?.isEditing}
+                    setIsEditing={props?.setIsEditing}
+                  />
                 </div>
               )}
             </Row>

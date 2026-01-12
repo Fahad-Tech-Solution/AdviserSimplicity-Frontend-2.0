@@ -1,7 +1,8 @@
-import React, { useEffect, useState, useCallback } from "react";
-import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
+import React, { useEffect, useState } from "react";
 import { Form, Formik } from "formik";
-import { Row, Table } from "react-bootstrap";
+import { Row } from "react-bootstrap";
+
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
 import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 import ApplyDeeming from "../Financial Investments/ApplyDeeming";
 import {
@@ -9,7 +10,6 @@ import {
   PostAxios,
   PostAxiosBlob,
   RenderName,
-  toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
 import {
   CashFlowData,
@@ -19,18 +19,23 @@ import {
 } from "../../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 
+const AntdTable = DynamicTableForInputsSection("antd");
+
 const CFSMSFBalance = (props) => {
   const [disabledFlag, setDisabledFlag] = useState(true);
   const [flagState, setFlagState] = useState(false);
   const [modalObject, setModalObject] = useState({});
 
-  let DefaultUrl = useRecoilValue(defaultUrl);
-  let cashFlowData = useRecoilValue(CashFlowData);
-  let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
+  const DefaultUrl = useRecoilValue(defaultUrl);
+  const cashFlowData = useRecoilValue(CashFlowData);
+  const [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
     useRecoilState(CashFlowReCalculateLoading);
-  let [cashFlowDownloading, setCashFlowDownloading] =
+  const [cashFlowDownloading, setCashFlowDownloading] =
     useRecoilState(CashFlowDownloading);
 
+  /* ===============================
+     Initial Values
+  =============================== */
   const initialValues = {
     pensionType: "",
     commencePensionYear: "",
@@ -42,58 +47,96 @@ const CFSMSFBalance = (props) => {
     taxFreeComponent: "",
   };
 
-  const fillInitialValues = useCallback(
-    (setFieldValue) => {
-      if (
-        props.modalObject?.values?.[
-          props.modalObject.stakeHolder?.replace(".", "")
-        ]
-      ) {
-        const SubObj =
-          props.modalObject.values[
-            props.modalObject.stakeHolder.replace(".", "")
-          ];
-        if (SubObj?.[`${props.modalObject.key}Obj`]) {
-          const Data = SubObj[`${props.modalObject.key}Obj`];
-          setFieldValue("pensionType", Data.pensionType || "");
-          setFieldValue(
-            "commencePensionYear",
-            Data.commencePensionYear ? String(Data.commencePensionYear) : ""
-          );
-          setFieldValue("applyDeeming", Data.applyDeeming || "");
-          setFieldValue("applyDeemingObj", Data.applyDeemingObj || {});
-          setFieldValue(
-            "totalSuperannuationBenefits",
-            Data.totalSuperannuationBenefits || ""
-          );
-          setFieldValue(
-            "nominatedRolloverAmount",
-            Data.nominatedRolloverAmount || "No"
-          );
-          setFieldValue(
-            "nominatedRolloverAmountValue",
-            Data.nominatedRolloverAmountValue || ""
-          );
-          setFieldValue("taxFreeComponent", Data.taxFreeComponent || "");
-        }
-      }
-    },
-    [props.modalObject]
+  /* ===============================
+     Fill Initial Values
+  =============================== */
+  let BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
+  let index = parseFloat(
+    props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
   );
+  const fillInitialValues = (setFieldValue) => {
+    if (props.modalObject.values?.[BaseKey]?.[props.modalObject.key + "Obj"]) {
+      const Data =
+        props.modalObject.values?.[BaseKey]?.[props.modalObject.key + "Obj"];
 
-  const onSubmit = (values) => {
-    const { stakeHolder, key } = props.modalObject || {};
-    if (stakeHolder && key) {
-      props.setFieldValue(`${stakeHolder}${key}`, values.taxFreeComponent);
-      props.setFieldValue(`${stakeHolder}${key}Obj`, values);
-    }
-
-    if (props.flagState) {
-      props.setFlagState(false);
+      setFieldValue("pensionType", Data.pensionType || "");
+      setFieldValue(
+        "commencePensionYear",
+        Data.commencePensionYear ? String(Data.commencePensionYear) : ""
+      );
+      setFieldValue("applyDeeming", Data.applyDeeming || "");
+      setFieldValue("applyDeemingObj", Data.applyDeemingObj || {});
+      setFieldValue(
+        "totalSuperannuationBenefits",
+        Data.totalSuperannuationBenefits || ""
+      );
+      setFieldValue(
+        "nominatedRolloverAmount",
+        Data.nominatedRolloverAmount || "No"
+      );
+      setFieldValue(
+        "nominatedRolloverAmountValue",
+        Data.nominatedRolloverAmountValue || ""
+      );
+      setFieldValue("taxFreeComponent", Data.taxFreeComponent || "");
     }
   };
 
-  const yearsIncludedArray = Array.from({ length: 32 }, (_, i) => {
+  /* ===============================
+     Submit
+  =============================== */
+  const onSubmit = (values) => {
+    props.setFieldValue(
+      props.modalObject.stakeHolder + props.modalObject.key,
+      values.taxFreeComponent
+    );
+    props.setFieldValue(
+      props.modalObject.stakeHolder + props.modalObject.key + "Obj",
+      values
+    );
+
+    // Reset the flag state if necessary
+    if (props.flagState) {
+      props.setFlagState(false);
+      props?.setIsEditing?.(false);
+    }
+  };
+
+  /* ===============================
+     Handle Inner Modal
+  =============================== */
+  const handleInnerModal = (title, values, key, stakeHolder) => {
+    setModalObject({
+      title,
+      values,
+      key,
+      stakeHolder,
+      sourceObj: props.modalObject,
+    });
+    setFlagState(true);
+  };
+
+  /* ===============================
+     Callback Functions
+  =============================== */
+  const nominatedRolloverAmountDisableHandle = (
+    values,
+    setFieldValue,
+    CurrentInput,
+    stakeHolder
+  ) => {
+    if (CurrentInput.value === "Partial") {
+      setDisabledFlag(false);
+    } else {
+      setDisabledFlag(true);
+      setFieldValue("nominatedRolloverAmountValue", "");
+    }
+  };
+
+  /* ===============================
+     Options
+  =============================== */
+  const yearsIncludedOptions = Array.from({ length: 32 }, (_, i) => {
     if (i === 0) {
       return {
         value: "Existing",
@@ -109,7 +152,6 @@ const CFSMSFBalance = (props) => {
   const pensionTypeOptions = [
     { value: "Account-Based", label: "Account-Based" },
     { value: "Transition to Retirement", label: "Transition to Retirement" },
-    // { value: "Defined Benefit", label: "Defined Benefit" },
   ];
 
   const nominatedRolloverAmountOptions = [
@@ -118,127 +160,64 @@ const CFSMSFBalance = (props) => {
     { value: "Full", label: "Full" },
   ];
 
-  const handleInnerModal = (title, values, key, stakeHolder) => {
-    setModalObject({
-      title,
-      values,
-      key,
-      stakeHolder,
-      sourceObj: props.modalObject,
-    });
-    setFlagState(true);
-  };
-
-  const handleSelectInput = (values, setFieldValue, CurrentInput) => {
-    if (CurrentInput?.value === "Partial") {
-      setDisabledFlag(false);
-    } else {
-      setDisabledFlag(true);
-      setFieldValue("nominatedRolloverAmountValue", "");
-    }
-  };
-
-  const rowConfig = [
-    {
-      type: "plainText",
-      text: props.modalObject?.stakeHolder?.replace(".", "") || "",
-      styleSet: { fontWeight: "800", fontSize: "16px" },
-    },
-    {
-      name: "pensionType",
-      type: "select",
-      options: pensionTypeOptions,
-      placeholder: "Pension Type",
-    },
-    {
-      name: "commencePensionYear",
-      type: "select",
-      options: yearsIncludedArray,
-      placeholder: "Commence Pension in Year",
-    },
-    {
-      name: "applyDeeming",
-      type: "yesnoModal",
-      placeholder: "Apply Deeming",
-      callBack: true,
-      innerModalTitle: "Apply Deeming",
-      key: "applyDeeming",
-      func: handleInnerModal,
-    },
-    {
-      name: "totalSuperannuationBenefits",
-      type: "number-toComma",
-      placeholder: "Total Superannuation Benefits",
-      disabled: true,
-    },
-    {
-      name: "nominatedRolloverAmount",
-      type: "select",
-      placeholder: "Nominated Rollover amount",
-      options: nominatedRolloverAmountOptions,
-      callBack: true,
-      func: handleSelectInput,
-    },
-    {
-      name: "nominatedRolloverAmountValue",
-      type: "number-toComma",
-      placeholder: "Nominated Rollover amount",
-      disabled: disabledFlag,
-    },
-    {
-      name: "taxFreeComponent",
-      type: "number-toComma",
-      placeholder: "Tax-free Component",
-    },
-  ];
-
-  const componentMapping = {
-    "Apply Deeming": <ApplyDeeming />,
-  };
-
-  const ModalContent = (obj) => {
-    return componentMapping[obj.title] || <div>No content available</div>;
-  };
-
-  let handleChildButtonClick = async (values, setFieldValue) => {
+  /* ===============================
+     API Handling Functions
+  =============================== */
+  const handleChildButtonClick = async (values, setFieldValue) => {
     try {
-      let obj = JSON.parse(JSON.stringify(cashFlowData));
+      const updatedData = JSON.parse(JSON.stringify(cashFlowData));
 
-      obj.cf_SMSFPensionAccountDetails = props.modalObject.values;
-      obj.cf_SMSFPensionAccountDetails[
-        props.modalObject.stakeHolder.replace(".", "")
-      ][props.modalObject.key + "Obj"] = values;
+      const { values: parentValues, key, title, sourceObj } = props.modalObject;
+      const numberOfProperties =
+        parseInt(parentValues.numberOfProperties, 10) || 1;
+      const currentIndex = key.match(/\d+/)?.[0] || 0;
 
-      console.log(
-        JSON.stringify(
-          obj.cf_SMSFPensionAccountDetails[
-            props.modalObject.stakeHolder.replace(".", "")
-          ][props.modalObject.key + "Obj"]
-        )
+      const structuredEntries = Array.from(
+        { length: numberOfProperties },
+        (_, i) => ({
+          balanceRolloverAmount:
+            parentValues[`balanceRolloverAmount_${i}`] || "",
+          balanceRolloverAmountObj:
+            parentValues[`balanceRolloverAmountObj_${i}`] || {},
+          yearToCommence: parentValues[`yearToCommence_${i}`] || "",
+          riskProfile: parentValues[`riskProfile_${i}`] || "",
+          investmentReturns: parentValues[`investmentReturns_${i}`] || "",
+          investmentReturnsObj: parentValues[`investmentReturnsObj_${i}`] || {},
+          investmentFees: parentValues[`investmentFees_${i}`] || "",
+          adviserServiceFee: parentValues[`adviserServiceFee_${i}`] || "",
+          pensionPayments: parentValues[`pensionPayments_${i}`] || "",
+          pensionPaymentsObj: parentValues[`pensionPaymentsObj_${i}`] || {},
+          newPensionRollover: parentValues[`newPensionRollover_${i}`] || "",
+          newPensionRolloverObj:
+            parentValues[`newPensionRolloverObj_${i}`] || {},
+          withdrawals: parentValues[`withdrawals_${i}`] || "",
+          withdrawalsObj: parentValues[`withdrawalsObj_${i}`] || {},
+        })
       );
 
-      // throw new Error("API call not implemented yet");
+      structuredEntries[currentIndex][key.replace(/_\d+/, "")] = values;
 
-      let res = await PostAxios(
+      console.log(sourceObj, key, JSON.stringify(structuredEntries));
+
+      updatedData[sourceObj.key][sourceObj.Input] = structuredEntries;
+      updatedData[sourceObj.key].numberOfProperties = numberOfProperties;
+
+      const res = await PostAxios(
         `${DefaultUrl}/api/cal/SMSF/INPUTS_SMSF_Member_Balances`,
-        obj
+        updatedData
       );
 
       if (res) {
         console.log(res);
 
-        let { cf_SMSFPensionAccountDetails } = res.data;
-
-        let Data =
-          cf_SMSFPensionAccountDetails?.[
-            props.modalObject.stakeHolder.replace(".", "")
-          ];
-
-        console.log(Data);
+        const DataObj =
+          res.data[props.modalObject.sourceObj.key][
+            props.modalObject.sourceObj.Input
+          ][currentIndex];
 
         setFieldValue(
           "totalSuperannuationBenefits",
-          Data.totalSuperannuationBenefits
+          DataObj.totalSuperannuationBenefits
         );
 
         setCashFlowReCalculateLoading(false);
@@ -263,27 +242,49 @@ const CFSMSFBalance = (props) => {
     }
   };
 
-  let handleChildButtonDownloadClick = async (values, setFieldValue) => {
+  const handleChildButtonDownloadClick = async (values, setFieldValue) => {
     try {
-      let obj = JSON.parse(JSON.stringify(cashFlowData));
+      const updatedData = JSON.parse(JSON.stringify(cashFlowData));
 
-      obj.cf_SMSFPensionAccountDetails = props.modalObject.values;
-      obj.cf_SMSFPensionAccountDetails[
-        props.modalObject.stakeHolder.replace(".", "")
-      ][props.modalObject.key + "Obj"] = values;
+      const { values: parentValues, key, title, sourceObj } = props.modalObject;
+      const numberOfProperties =
+        parseInt(parentValues.numberOfProperties, 10) || 1;
+      const currentIndex = key.match(/\d+/)?.[0] || 0;
 
-      console.log(
-        JSON.stringify(
-          obj.cf_SMSFPensionAccountDetails[
-            props.modalObject.stakeHolder.replace(".", "")
-          ][props.modalObject.key + "Obj"]
-        )
+      const structuredEntries = Array.from(
+        { length: numberOfProperties },
+        (_, i) => ({
+          balanceRolloverAmount:
+            parentValues[`balanceRolloverAmount_${i}`] || "",
+          balanceRolloverAmountObj:
+            parentValues[`balanceRolloverAmountObj_${i}`] || {},
+          yearToCommence: parentValues[`yearToCommence_${i}`] || "",
+          riskProfile: parentValues[`riskProfile_${i}`] || "",
+          investmentReturns: parentValues[`investmentReturns_${i}`] || "",
+          investmentReturnsObj: parentValues[`investmentReturnsObj_${i}`] || {},
+          investmentFees: parentValues[`investmentFees_${i}`] || "",
+          adviserServiceFee: parentValues[`adviserServiceFee_${i}`] || "",
+          pensionPayments: parentValues[`pensionPayments_${i}`] || "",
+          pensionPaymentsObj: parentValues[`pensionPaymentsObj_${i}`] || {},
+          newPensionRollover: parentValues[`newPensionRollover_${i}`] || "",
+          newPensionRolloverObj:
+            parentValues[`newPensionRolloverObj_${i}`] || {},
+          withdrawals: parentValues[`withdrawals_${i}`] || "",
+          withdrawalsObj: parentValues[`withdrawalsObj_${i}`] || {},
+        })
       );
+
+      structuredEntries[currentIndex][key.replace(/_\d+/, "")] = values;
+
+      console.log(sourceObj, key, JSON.stringify(structuredEntries));
+
+      updatedData[sourceObj.key][sourceObj.Input] = structuredEntries;
+      updatedData[sourceObj.key].numberOfProperties = numberOfProperties;
 
       try {
         const response = await PostAxiosBlob(
           `${DefaultUrl}/api/cal/workBookDownload`,
-          obj
+          updatedData
         );
 
         const fileName = `UpdatedWorkbook_of_${RenderName("client")}.xlsx`;
@@ -312,7 +313,7 @@ const CFSMSFBalance = (props) => {
           "Something went wrong while downloading the Excel file."
         );
       } finally {
-        setCashFlowDownloading(false); // Always hide loading spinner
+        setCashFlowDownloading(false);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
@@ -328,6 +329,92 @@ const CFSMSFBalance = (props) => {
     }
   };
 
+  /* ===============================
+     Component Mapping for Inner Modal
+  =============================== */
+  const componentMapping = {
+    "Apply Deeming": <ApplyDeeming />,
+  };
+
+  const ModalContent = (obj) => {
+    return componentMapping[obj.title] || <div>No content available</div>;
+  };
+
+  /* ===============================
+     AntD Columns
+  =============================== */
+  const columns = [
+    {
+      title: "Owner",
+      dataIndex: "owner",
+      key: "owner",
+      justText: true,
+    },
+    {
+      title: "Pension Type",
+      dataIndex: "pensionType",
+      key: "pensionType",
+      type: "select",
+      placeholder: "Pension Type",
+      options: pensionTypeOptions,
+      selectedOptionValue: true,
+    },
+    {
+      title: "Commence Pension in Year",
+      dataIndex: "commencePensionYear",
+      key: "commencePensionYear",
+      type: "select",
+      placeholder: "Commence Pension in Year",
+      options: yearsIncludedOptions,
+      selectedOptionValue: true,
+    },
+    {
+      title: "Apply Deeming",
+      dataIndex: "applyDeeming",
+      key: "applyDeeming",
+      type: "yesnoModal",
+      placeholder: "Apply Deeming",
+      callBack: true,
+      innerModalTitle: "Apply Deeming",
+      func: handleInnerModal,
+    },
+    {
+      title: "Total Superannuation Benefits",
+      dataIndex: "totalSuperannuationBenefits",
+      key: "totalSuperannuationBenefits",
+      type: "number-toComma",
+      placeholder: "Total Superannuation Benefits",
+      disabled: true,
+    },
+    {
+      title: "Nominated Rollover amount",
+      dataIndex: "nominatedRolloverAmount",
+      key: "nominatedRolloverAmount",
+      type: "select",
+      selectedOptionValue: true,
+      placeholder: "Nominated Rollover amount",
+      options: nominatedRolloverAmountOptions,
+    },
+    {
+      title: "Nominated Rollover amount",
+      dataIndex: "nominatedRolloverAmountValue",
+      key: "nominatedRolloverAmountValue",
+      type: "number-toComma",
+      placeholder: "Nominated Rollover amount",
+      disabled: disabledFlag,
+    },
+    {
+      title: "Tax-free Component",
+      dataIndex: "taxFreeComponent",
+      key: "taxFreeComponent",
+      type: "number-toComma",
+      placeholder: "Tax-free Component",
+    },
+  ];
+
+  /* ===============================
+     Render
+  =============================== */
   return (
     <Formik
       initialValues={initialValues}
@@ -335,10 +422,19 @@ const CFSMSFBalance = (props) => {
       enableReinitialize
       innerRef={props.formRef}
     >
-      {({ values, handleChange, setFieldValue, handleBlur }) => {
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
-        }, [fillInitialValues]);
+        }, []);
+
+        const tableData = [
+          {
+            key: "smsfBalanceRow",
+            owner: RenderName(props.modalObject.stakeHolder.replace(".", "")),
+            index: parseFloat(props.modalObject.key.match(/\d+/)?.[0] || 0) + 1,
+            ...values,
+          },
+        ];
 
         return (
           <Form>
@@ -352,54 +448,43 @@ const CFSMSFBalance = (props) => {
                 {ModalContent(modalObject)}
               </InnerModal>
 
-              <div className="col-md-12">
-                <div className="row justify-content-center">
-                  <div className="mt-4">
-                    <Table striped bordered responsive hover>
-                      <thead>
-                        <tr>
-                          <th>Owner</th>
-                          <th>Pension Type</th>
-                          <th>Commence Pension in Year</th>
-                          <th>Apply Deeming</th>
-                          <th>Total Superannuation Benefits</th>
-                          <th colSpan={2}>Nominated Rollover amount</th>
-                          <th>Tax-free Component</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                        />
-                      </tbody>
-                    </Table>
-                    <button
-                      ref={props.childButtonRef}
-                      onClick={() => {
-                        handleChildButtonClick(values, setFieldValue);
-                      }}
-                      style={{ display: "none" }} // Hidden button
-                      type="button"
-                    >
-                      Hidden Child Button
-                    </button>
-                    <button
-                      ref={props.childButtonDownloadRef}
-                      onClick={() => {
-                        handleChildButtonDownloadClick(values, setFieldValue);
-                      }}
-                      style={{ display: "none" }} // Hidden button
-                      type="button"
-                    >
-                      Hidden Child Button Download
-                    </button>
-                  </div>
-                </div>
+              <div className="col-md-12 mt-4 All_Client reportSection">
+                <AntdTable
+                  columns={columns}
+                  data={tableData}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  handleInnerModal={handleInnerModal}
+                  nominatedRolloverAmountDisableHandle={
+                    nominatedRolloverAmountDisableHandle
+                  }
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
+                />
               </div>
+
+              <button
+                ref={props.childButtonRef}
+                onClick={() => {
+                  handleChildButtonClick(values, setFieldValue);
+                }}
+                style={{ display: "none" }}
+                type="button"
+              >
+                Hidden Child Button
+              </button>
+              <button
+                ref={props.childButtonDownloadRef}
+                onClick={() => {
+                  handleChildButtonDownloadClick(values, setFieldValue);
+                }}
+                style={{ display: "none" }}
+                type="button"
+              >
+                Hidden Child Button Download
+              </button>
             </Row>
           </Form>
         );

@@ -1,7 +1,22 @@
-import { Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
-import { CreatableMultiSelectField } from "../../Components/Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
-import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
+import React, { useEffect, useMemo, useState } from "react";
+import { Formik, Form } from "formik";
+import { ConfigProvider, Select, Table } from "antd";
+import { useRecoilState, useRecoilValue } from "recoil";
+
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
+import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
+import InputOverride from "./InputOverride";
+import RegularContributions from "./RegularContributions";
+import RCV from "./RCV";
+import DeductibleAmount from "./DeductibleAmount";
+
+import {
+  CashFlowData,
+  CashFlowScenarioData,
+  defaultUrl,
+  QuestionDetail,
+} from "../../Store/Store";
+
 import {
   openNotificationSuccess,
   PatchAxios,
@@ -9,32 +24,20 @@ import {
   RenderName,
   toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
-import { Row, Table } from "react-bootstrap";
-import {
-  CashFlowData,
-  CashFlowScenarioData,
-  defaultUrl,
-  QuestionDetail,
-} from "../../Store/Store";
-import { useRecoilState, useRecoilValue } from "recoil";
-import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
-import InputOverride from "./InputOverride";
-import RegularContributions from "./RegularContributions";
-import RCV from "./RCV";
-import DeductibleAmount from "./DeductibleAmount";
+
+const AntdTable = DynamicTableForInputsSection("antd");
+const { Option } = Select;
 
 const CFAnnuities = (props) => {
-  let questionDetail = useRecoilValue(QuestionDetail);
-  let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
-  let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const questionDetail = useRecoilValue(QuestionDetail);
+  const CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const DefaultUrl = useRecoilValue(defaultUrl);
+  const [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
 
-  let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
-
-  let [UserStatus] = useState(localStorage.getItem("UserStatus"));
-  let DefaultUrl = useRecoilValue(defaultUrl);
-
-  let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
+  const [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
+  const [flagState, setFlagState] = useState(false);
+  const [modalObject, setModalObject] = useState({});
+  const [UserStatus] = useState(localStorage.getItem("UserStatus") || "Single");
 
   let annuitiesIssues =
     Object.keys(questionDetail.annuitiesIssues || {}).length > 0
@@ -43,189 +46,150 @@ const CFAnnuities = (props) => {
           client: [],
           partner: [],
           joint: [],
-        }; // Use an empty object as default if incomeFromOverseasPension is undefined
+        };
 
-  let initialValues = {};
+  const initialValues = {
+    numberOfProperties: "",
+    client: [],
+  };
 
+  /* ------------------ Fill Initial Values ------------------ */
   const fillInitialValues = (setFieldValue) => {
     try {
-      // Set the object and API key
       setObjAndAPIKey(props.modalObject.key);
 
       const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
 
-      // Helper function to update field values
-      const updateFields = (data, prefix) => {
-        if (!data || Object.keys(data).length === 0) return;
+      const updateFields = (data, index) => {
+        if (!data) return;
 
-        const fields = {
-          [`originalInvestmentAmount_${prefix}`]:
-            data.originalInvestmentAmount || "",
-          [`sourceOfFunds_${prefix}`]:
-            data.sourceOfFunds || data.sourceFunds || "",
-          [`annuityType_${prefix}`]: data.annuityType || "",
-          [`IsThisReversionaryAnnuity_${prefix}`]:
-            data.IsThisReversionaryAnnuity || "No",
-          [`RCV_${prefix}`]: data.RCV || "No",
-          [`RCVObj_${prefix}`]: data.RCVObj || {},
-          [`includeFromYear_${prefix}`]: data.includeFromYear || "1",
-          [`term_${prefix}`]: data.term || 30,
-          [`yearsUntilMaturity_${prefix}`]: data.yearsUntilMaturity || "30",
-          [`annualInflationRate_${prefix}`]: data.annualInflationRate || "",
-          [`annualPayment_${prefix}`]: data.annualPayment || "",
-          [`deductibleAmount_${prefix}`]: data.deductibleAmount || "No",
-          [`deductibleAmountObj_${prefix}`]: data.deductibleAmountObj || {},
-        };
-
-        Object.entries(fields).forEach(([key, value]) => {
-          setFieldValue(key, value);
+        Object.entries({
+          [`originalInvestmentAmount`]: data.originalInvestmentAmount || "",
+          [`sourceOfFunds`]: data.sourceOfFunds || data.sourceFunds || "",
+          [`annuityType`]: data.annuityType || "",
+          [`IsThisReversionaryAnnuity`]: data.IsThisReversionaryAnnuity || "No",
+          [`RCV`]: data.RCV || "No",
+          [`RCVObj`]: data.RCVObj || {},
+          [`includeFromYear`]: data.includeFromYear || "1",
+          [`term`]: data.term || 30,
+          [`yearsUntilMaturity`]: data.yearsUntilMaturity || "30",
+          [`annualInflationRate`]: data.annualInflationRate || "",
+          [`annualPayment`]: data.annualPayment || "",
+          [`deductibleAmount`]: data.deductibleAmount || "No",
+          [`deductibleAmountObj`]: data.deductibleAmountObj || {},
+        }).forEach(([key, value]) => {
+          setFieldValue(`client[${index}].` + key, value);
         });
       };
 
-      // Handle discoveryForm scenario
+      const hydrate = (src, inputType) => {
+        if (!src?.[inputType]?.length) return;
+
+        setFieldValue("numberOfProperties", src[inputType].length);
+
+        src[inputType].forEach((data, index) => {
+          updateFields(data, index);
+        });
+      };
+
+      const inputType = props.modalObject.Input || "client";
+
+      // 1️⃣ Discovery Form (only if CF not already saved)
       if (
         scenarioObj?.selectedSource === "discoveryForm" &&
-        annuitiesIssues &&
-        annuitiesIssues._id
+        annuitiesIssues?._id &&
+        !cashFlowData?.[objAndAPIKey]?._id
       ) {
-        if (annuitiesIssues.client.length > 0) {
-          annuitiesIssues.client.forEach((clientData, index) => {
-            updateFields(clientData, index);
-          });
-        }
-
-        if (UserStatus === "Married" && annuitiesIssues?.partner?.length > 0) {
-          annuitiesIssues.partner.forEach((partnerData, index) => {
-            updateFields(partnerData, index);
-          });
-        }
-      } else {
-        // Handle cashFlowData scenario
-        const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-
-        if (cashFlowDetails) {
-          setFieldValue(
-            "numberOfProperties",
-            cashFlowDetails[props.modalObject.Input].length || ""
-          );
-
-          if (
-            props.modalObject.Input == "client" &&
-            cashFlowDetails.client.length > 0
-          ) {
-            cashFlowDetails.client.forEach((clientData, index) => {
-              updateFields(clientData, index);
-            });
-          }
-
-          if (
-            UserStatus === "Married" &&
-            props.modalObject.Input == "partner" &&
-            cashFlowDetails?.partner?.length > 0
-          ) {
-            cashFlowDetails.partner.forEach((partnerData, index) => {
-              updateFields(partnerData, index);
-            });
-          }
+        if (inputType === "client" && annuitiesIssues.client.length > 0) {
+          const transformedData = {
+            [inputType]: annuitiesIssues.client.map((clientData, index) => ({
+              originalInvestmentAmount:
+                clientData.originalInvestmentAmount || "",
+              sourceOfFunds: clientData.sourceOfFunds || "",
+              annuityType: clientData.annuityType || "",
+              IsThisReversionaryAnnuity:
+                clientData.IsThisReversionaryAnnuity || "No",
+              RCV: "No",
+              RCVObj: {},
+              includeFromYear: clientData.includeFromYear || "1",
+              term: clientData.term || 30,
+              yearsUntilMaturity: clientData.yearsUntilMaturity || "30",
+              annualInflationRate: clientData.annualInflationRate || "",
+              annualPayment: clientData.annualPayment || "",
+              deductibleAmount: "No",
+              deductibleAmountObj: {},
+            })),
+          };
+          hydrate(transformedData, inputType);
         }
       }
-
-      // Additional data from cashFlowData
-      if (cashFlowData?.[objAndAPIKey]?._id) {
-        const cashFlowDataDetails = cashFlowData[objAndAPIKey];
-
-        setFieldValue(
-          "numberOfProperties",
-          cashFlowDataDetails[props.modalObject.Input].length || ""
-        );
-
-        if (
-          props.modalObject.Input == "client" &&
-          cashFlowDataDetails.client.length > 0
-        ) {
-          cashFlowDataDetails.client.forEach((clientData, index) => {
-            updateFields(clientData, index);
-          });
-        }
-
-        if (
-          UserStatus === "Married" &&
-          props.modalObject.Input == "partner" &&
-          cashFlowDataDetails?.partner?.length > 0
-        ) {
-          cashFlowDataDetails.partner.forEach((partnerData, index) => {
-            updateFields(partnerData, index);
-          });
-        }
+      // 2️⃣ Cash Flow Scenario
+      else if (CashFlowScenarioDataObj?.[objAndAPIKey]?._id) {
+        hydrate(CashFlowScenarioDataObj[objAndAPIKey], inputType);
+      }
+      // 3️⃣ Cash Flow Data (final fallback)
+      else {
+        hydrate(cashFlowData?.[objAndAPIKey], inputType);
       }
     } catch (error) {
       console.error("Error in fillInitialValues:", error);
     }
   };
 
-  let onSubmit = async (values) => {
-    const numberOfEntries = parseInt(values.numberOfProperties, 10);
-    const newEntries = [];
+  /* ------------------ Inner Modal ------------------ */
+  const handleInnerModal = (title, values, key, stakeHolder) => {
+    setModalObject({
+      title,
+      values,
+      key,
+      stakeHolder,
+      ParentObject: props.modalObject,
+      cal: true,
+    });
+    setFlagState(true);
+  };
 
-    for (let i = 0; i < numberOfEntries; i++) {
-      const newEntry = {};
+  /* ------------------ Submit ------------------ */
+  const onSubmit = async (values) => {
+    const entries = values.client || [];
+    const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
 
-      rowConfig.forEach((config) => {
-        if (config.name) {
-          newEntry[config.name] = values[`${config.name}_${i}`] || "";
-        }
-        if (config?.key) {
-          newEntry[config.key] = values[`${config.key}_${i}`] || "";
-        }
-      });
+    const sanitizeNumber = (val) =>
+      parseFloat(String(val || "").replace(/[^0-9.-]+/g, "")) || 0;
 
-      newEntries.push(newEntry);
-    }
+    const inputType = props.modalObject.Input || "client";
+    const otherType = inputType === "client" ? "partner" : "client";
 
-    let obj = {
-      [props.modalObject.Input]: newEntries, // Correct way to dynamically set key
-      scenarioFK: JSON.parse(localStorage.getItem("ScenarioObj"))._id,
-      numberOfProperties: numberOfEntries,
+    const obj = {
+      [inputType]: entries.map((e) => ({
+        ...e,
+        // Ensure modal objects are normalized
+        RCVObj: e.RCV === "Yes" ? e.RCVObj || {} : {},
+        deductibleAmountObj:
+          e.deductibleAmount === "Yes" ? e.deductibleAmountObj || {} : {},
+      })),
+
+      numberOfProperties: entries.length,
+      scenarioFK: scenarioObj?._id,
+
+      // Sum of annual payments
+      [`${inputType}Total`]: toCommaAndDollar(
+        entries.reduce((t, e) => t + sanitizeNumber(e.annualPayment), 0)
+      ),
     };
 
-    // Calculate clientTotal based on `annualPayment`
-    obj[props.modalObject.Input + "Total"] = toCommaAndDollar(
-      newEntries.reduce(
-        (total, entry) =>
-          total + parseFloat(entry.annualPayment?.replace(/[^0-9.-]+/g, "")) ||
-          0,
-        0
-      )
-    );
-
+    // Preserve other stakeholder's data if it exists
     if (cashFlowData?.[objAndAPIKey]?._id) {
-      const cashFlowDataDetails = cashFlowData[objAndAPIKey];
-
-      console.log(
-        cashFlowDataDetails,
-        cashFlowDataDetails[props.modalObject.Input],
-        props.modalObject.Input
-      );
-
-      // Determine the input type and set values accordingly
-      if (props.modalObject.Input === "partner") {
-        obj.client = cashFlowDataDetails?.client || []; // Ensure client is empty
-        obj.clientTotal = cashFlowDataDetails?.clientTotal || "0$"; // Ensure clientTotal is empty
-      } else {
-        obj.partner = cashFlowDataDetails?.partner || []; // Ensure partner is empty
-        obj.partnerTotal = cashFlowDataDetails?.partnerTotal || "0$"; // Ensure partnerTotal is empty
+      const existingData = cashFlowData[objAndAPIKey];
+      if (existingData[otherType]) {
+        obj[otherType] = existingData[otherType];
+        obj[`${otherType}Total`] = existingData[`${otherType}Total`] || "$0";
       }
     }
 
-    console.log("Final Object:", JSON.stringify(obj));
-
-    // return false;
-
-    const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
-
     try {
       let res;
-      if (!bankAccountArray) {
+      if (!cashFlowData?.[objAndAPIKey]?._id) {
         res = await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
       } else {
         res = await PatchAxios(
@@ -235,55 +199,36 @@ const CFAnnuities = (props) => {
       }
 
       if (res) {
-        console.log("API Returns Data", res);
-
-        const updatedData = {
-          ...cashFlowData,
-          [objAndAPIKey]: res,
-        };
-
-        setCashFlowData(updatedData);
+        setCashFlowData({ ...cashFlowData, [objAndAPIKey]: res });
       }
 
       openNotificationSuccess(
         "success",
         "topRight",
-        "Success Notification",
+        "Success",
         `Data of "${props.modalObject.title}" is Saved`
       );
 
-      if (props.flagState) {
-        props.setFlagState(false);
-      }
+      props.setFlagState?.(false);
+      props.setIsEditing?.(!props.isEditing);
     } catch (error) {
       console.error("Error occurred while making API call:", error);
       openNotificationSuccess(
         "error",
         "topRight",
-        "Error Notification",
+        "Error",
         `Data of "${props.modalObject.title}" is not Saved. Please try again.`
       );
     }
   };
 
-  let handleInnerModal = (title, values, key) => {
-    // console.log(title, values, key);
-    setModalObject({
-      title,
-      values,
-      key,
-      stakeHolder: props.modalObject.Input,
-      sourceObj: props.modalObject,
-      cal: true,
-    });
-    setFlagState(true);
-  };
-
-  let sourceOfFundsOptions = [
+  /* ------------------ Columns ------------------ */
+  const sourceOfFundsOptions = [
     { value: "Ordinary", label: "Ordinary" },
     { value: "Super", label: "Super" },
   ];
-  let annuityTypeOptions = [
+
+  const annuityTypeOptions = [
     { value: "Short-Term", label: "Short-Term" },
     { value: "Long-Term", label: "Long-Term" },
     { value: "Life-Time", label: "Life-Time" },
@@ -294,12 +239,10 @@ const CFAnnuities = (props) => {
     label: (i * 0.5).toFixed(2) + "%",
   }));
 
-  const yearsIncludedArray = Array.from({ length: 31 }, (_, i) => {
-    return {
-      value: i.toString(),
-      label: ("Year " + i).toString(),
-    };
-  });
+  const yearsIncludedArray = Array.from({ length: 31 }, (_, i) => ({
+    value: i.toString(),
+    label: ("Year " + i).toString(),
+  }));
 
   const yearsIncludedArrayWithExisting = Array.from({ length: 32 }, (_, i) => {
     if (i === 0) {
@@ -314,105 +257,109 @@ const CFAnnuities = (props) => {
     };
   });
 
-  const [rowConfig, setRowConfig] = useState(() => {
-    let OriginalArray = [
-      {
-        value: "1",
-        type: "plainText2.0",
-      },
-      {
-        name: "originalInvestmentAmount",
-        type: "number-toComma",
-        placeholder: "Original Investment Amount",
-      },
-      {
-        name: "sourceOfFunds",
-        type: "select",
-        options: sourceOfFundsOptions,
-      },
-      {
-        name: "annuityType",
-        type: "select",
-        options: annuityTypeOptions,
-      },
-      {
-        name: "IsThisReversionaryAnnuity",
-        type: "yesno", width: 100,
-        placeholder: "Is this a Reversionary Annuity",
-      },
-      {
-        name: "RCV",
-        type: "yesnoModal",
-        placeholder: "RCV",
-        callBack: true,
-        key: "RCVObj",
-        innerModalTitle: "RCV",
-        func: handleInnerModal,
-      },
-      {
-        name: "includeFromYear",
-        type: "select",
-        options: yearsIncludedArrayWithExisting,
-        placeholder: "Include From Year",
-      },
-      {
-        name: "term",
-        type: "select",
-        options: yearsIncludedArray,
-        placeholder: "Term",
-      },
-      {
-        name: "yearsUntilMaturity",
-        type: "select",
-        options: yearsIncludedArray,
-        placeholder: "Years Until Maturity",
-      },
-      {
-        name: "annualInflationRate",
-        type: "select",
-        options: indexation,
-        placeholder: "Annual Inflation Rate",
-      },
-      {
-        name: "annualPayment",
-        type: "number-toComma",
-        placeholder: "Annual Payment",
-      },
-      {
-        name: "deductibleAmount",
-        type: "yesnoModal",
-        placeholder: "Deductible Amount",
-        callBack: true,
-        key: "deductibleAmountObj",
-        innerModalTitle: "Deductible Amount",
-        func: handleInnerModal,
-      },
-    ];
-
-    return OriginalArray;
-  });
+  const columns = [
+    { title: "No#", dataIndex: "owner", key: "owner", width: 60 },
+    {
+      title: "Original Investment Amount",
+      dataIndex: "originalInvestmentAmount",
+      placeholder: "Original Investment Amount",
+      type: "number-toComma",
+    },
+    {
+      title: "Source of Funds",
+      dataIndex: "sourceOfFunds",
+      placeholder: "Source of Funds",
+      type: "select",
+      selectedOptionValue: true,
+      options: sourceOfFundsOptions,
+    },
+    {
+      title: "Annuity Type",
+      dataIndex: "annuityType",
+      placeholder: "Annuity Type",
+      type: "select",
+      selectedOptionValue: true,
+      options: annuityTypeOptions,
+    },
+    {
+      title: "Is this a Reversionary Annuity",
+      dataIndex: "IsThisReversionaryAnnuity",
+      placeholder: "Is this a Reversionary Annuity",
+      type: "yesno",
+      width: 100,
+    },
+    {
+      title: "RCV",
+      dataIndex: "RCV",
+      placeholder: "RCV",
+      type: "yesnoModal",
+      key: "RCV",
+      innerModalTitle: "RCV",
+      callBack: true,
+      func: handleInnerModal,
+    },
+    {
+      title: "Include From Year",
+      dataIndex: "includeFromYear",
+      placeholder: "Include From Year",
+      type: "select",
+      selectedOptionValue: true,
+      options: yearsIncludedArrayWithExisting,
+    },
+    {
+      title: "Term",
+      dataIndex: "term",
+      placeholder: "Term",
+      type: "select",
+      selectedOptionValue: true,
+      options: yearsIncludedArray,
+    },
+    {
+      title: "Years Until Maturity",
+      dataIndex: "yearsUntilMaturity",
+      placeholder: "Years Until Maturity",
+      type: "select",
+      selectedOptionValue: true,
+      options: yearsIncludedArray,
+    },
+    {
+      title: "Annual Inflation Rate",
+      dataIndex: "annualInflationRate",
+      placeholder: "Annual Inflation Rate",
+      type: "select",
+      selectedOptionValue: true,
+      options: indexation,
+    },
+    {
+      title: "Annual Payment",
+      dataIndex: "annualPayment",
+      placeholder: "Annual Payment",
+      type: "number-toComma",
+    },
+    {
+      title: "Deductible Amount",
+      dataIndex: "deductibleAmount",
+      placeholder: "Deductible Amount",
+      type: "yesnoModal",
+      key: "deductibleAmount",
+      innerModalTitle: "Deductible Amount",
+      callBack: true,
+      func: handleInnerModal,
+    },
+  ];
 
   const componentMapping = {
-    "Input Override": <InputOverride />,
-    "Regular Contributions": <RegularContributions />,
+    // "Input Override": <InputOverride />,
+    // "Regular Contributions": <RegularContributions />,
     RCV: <RCV />,
     "Deductible Amount": <DeductibleAmount />,
-  };
-
-  const ModalContent = (obj) => {
-    return componentMapping[obj.title] || null;
-  };
-
-  let handleInput = (e, setFieldValue) => {
-    let value = e.target.value > 3 ? 3 : e.target.value;
-    setFieldValue(e.target.id, value);
   };
 
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={onSubmit}
       enableReinitialize
+      onSubmit={onSubmit}
       innerRef={props.formRef}
     >
       {({ values, setFieldValue, handleChange, handleBlur }) => {
@@ -420,90 +367,77 @@ const CFAnnuities = (props) => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        const rows = useMemo(() => {
+          const count = Number(values.numberOfProperties) || 0;
+          return Array.from({ length: count }, (_, i) => ({
+            key: `client.${i}`,
+            owner: i + 1,
+            stakeHolder: `client[${i}]`,
+            ...values.client?.[i],
+          }));
+        }, [values.numberOfProperties, values.client]);
+
         return (
           <Form>
-            <Row>
-              <InnerModal
-                modalObject={modalObject}
-                setFieldValue={setFieldValue}
-                setFlagState={setFlagState}
-                flagState={flagState}
+            <InnerModal
+              modalObject={modalObject}
+              setFieldValue={setFieldValue}
+              setFlagState={setFlagState}
+              flagState={flagState}
+            >
+              {componentMapping[modalObject.title]}
+            </InnerModal>
+
+            <div className="d-flex justify-content-center align-items-center gap-4">
+              <label
+                onClick={() => {
+                  console.log(values);
+                }}
               >
-                {ModalContent(modalObject)}
-              </InnerModal>
+                Number of Annuities does {RenderName(props.modalObject.Input)}{" "}
+                have:
+              </label>
+              <ConfigProvider>
+                <Select
+                  size="large"
+                  style={{ minWidth: 80 }}
+                  value={values.numberOfProperties || undefined}
+                  getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                  onChange={(v) => {
+                    const capped = v > 10 ? 10 : v;
+                    setFieldValue("numberOfProperties", capped);
+                  }}
+                >
+                  {Array.from({ length: 10 }, (_, i) => i + 1).map((v) => (
+                    <Option key={v} value={v}>
+                      {v}
+                    </Option>
+                  ))}
+                </Select>
+              </ConfigProvider>
+            </div>
 
-              <div className="col-md-12">
-                <div className="d-flex justify-content-center align-items-center gap-4">
-                  <label htmlFor="" className="text-end ">
-                    Number of Annuities does{" "}
-                    {RenderName(props.modalObject.Input)} have :
-                  </label>
-
-                  <div style={{ minWidth: "5%", maxWidth: "10%" }}>
-                    <Field
-                      type="number"
-                      id="numberOfProperties"
-                      name="numberOfProperties"
-                      className="form-control inputDesignDoubleInput"
-                      onChange={(e) => handleInput(e, setFieldValue)}
-                    />
-                  </div>
-                </div>
+            {values.numberOfProperties > 0 && (
+              <div className="mt-4 All_Client reportSection">
+                <AntdTable
+                  columns={columns}
+                  data={rows}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  handleSubmit={props.handleOk}
+                  isEditing={props.isEditing}
+                  setIsEditing={props.setIsEditing}
+                />
               </div>
+            )}
 
-              {values.numberOfProperties > 0 && (
-                <div className="mt-4">
-                  <Table striped bordered responsive hover>
-                    <thead>
-                      <tr>
-                        <th
-                          onClick={() => {
-                            console.log(values);
-                          }}
-                        >
-                          No#
-                        </th>
-                        <th>Original Investment Amount</th>
-                        <th>Source of Funds</th>
-                        <th>Annuity Type</th>
-                        <th>Is this a Reversionary Annuity</th>
-                        <th>RCV</th>
-                        <th>Include From Year</th>
-                        <th>Term</th>
-                        <th>Years Until Maturity</th>
-                        <th>Annual Inflation Rate</th>
-                        <th>Annual Payment</th>
-                        <th>Deductible Amount</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Array.from({
-                        length: values.numberOfProperties,
-                      }).map((_, index) => {
-                        // Ensure each rowConfig object has a name before concatenating the index
-                        const updatedRowConfig = rowConfig.map((row) => ({
-                          ...row,
-                          name: row.name ? `${row.name}_${index}` : row.name,
-                          key: row.key ? `${row.key}_${index}` : row.key,
-                          value: row.value ? index + 1 : row.value,
-                        }));
-
-                        return (
-                          <DynamicTableRow
-                            rowConfig={updatedRowConfig}
-                            values={values}
-                            setFieldValue={setFieldValue}
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                            handleInnerModal={handleInnerModal}
-                          />
-                        );
-                      })}
-                    </tbody>
-                  </Table>
-                </div>
-              )}
-            </Row>
+            <button
+              ref={props.childButtonRef}
+              type="button"
+              style={{ display: "none" }}
+            />
           </Form>
         );
       }}

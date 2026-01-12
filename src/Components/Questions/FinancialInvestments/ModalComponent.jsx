@@ -234,7 +234,7 @@ const ModalComponent = (props) => {
     "Credit Card",
     "Personal Loan",
     // "Wills",
-    // "Account Based Pension",
+    "Account Based Pension",
     "Investment Properties",
     "Family Trust Investment Properties",
     RenderName("client") + "_Pension Benefits",
@@ -246,6 +246,7 @@ const ModalComponent = (props) => {
     "SMSF Australian Shares",
     "Platform Investment",
     "Other Investments",
+    "Annuities",
   ];
 
   let xlKey = [

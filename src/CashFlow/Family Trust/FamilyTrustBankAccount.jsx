@@ -1,47 +1,47 @@
-import { Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
-import { CreatableMultiSelectField } from "../../Components/Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
-import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
-import { Row, Table } from "react-bootstrap";
+import React, { useEffect, useMemo, useState } from "react";
+import { Form, Formik } from "formik";
+import { Row } from "react-bootstrap";
+import { useRecoilState, useRecoilValue } from "recoil";
+
 import {
   CashFlowData,
   CashFlowScenarioData,
   defaultUrl,
   QuestionDetail,
 } from "../../Store/Store";
-import { useRecoilState, useRecoilValue } from "recoil";
-import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
+
 import {
   openNotificationSuccess,
   PatchAxios,
   PostAxios,
   RenderName,
+  toCommaAndDollar,
 } from "../../Components/Assets/Api/Api";
 
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
+
+const AntdTable = DynamicTableForInputsSection("antd");
+
 const FamilyTrustBankAccount = (props) => {
-  let questionDetail = useRecoilValue(QuestionDetail);
-  let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
-  let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+  const CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const questionDetail = useRecoilValue(QuestionDetail);
+  const DefaultUrl = useRecoilValue(defaultUrl);
 
-  let [UserStatus] = useState(localStorage.getItem("UserStatus"));
-  let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
+  const [UserStatus] = useState(localStorage.getItem("UserStatus") || "Single");
+  const [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
 
-  let DefaultUrl = useRecoilValue(defaultUrl);
-
-  let [flagState, setFlagState] = useState(false);
-  let [modalObject, setModalObject] = useState({});
-
-  let familyBank =
+  const familyBankData =
     Object.keys(questionDetail[props.modalObject.sourceKey] || {}).length > 0
       ? questionDetail[props.modalObject.sourceKey]
       : {
           client: [],
           joint: [],
           partner: [],
-        }; // Use an empty object as default if familyBank is undefined
+        };
 
-  let initialValues = {
-    owner: ["client"],
+  const initialValues = {
+    client: {},
   };
 
   const fillInitialValues = (setFieldValue) => {
@@ -53,138 +53,100 @@ const FamilyTrustBankAccount = (props) => {
       const updateFields = (data, prefix) => {
         if (!data || !Object.keys(data).length) return;
 
-        const fields = {
+        Object.entries({
           openingCashAtBank: data.openingCashAtBank || "",
           investmentReturns: data.investmentReturns || "System",
           incomeYield: data.incomeYield || "",
           accountingFees: data.accountingFees || "",
           adviserFees: data.adviserFees || "",
           indexationFundFees: data.indexationFundFees || "2.50%",
-        };
-
-        Object.entries(fields).forEach(([key, value]) => {
+        }).forEach(([key, value]) => {
           setFieldValue(`${prefix}.${key}`, value);
         });
       };
-      if (scenarioObj?.selectedSource === "discoveryForm") {
-        // Update client-related fields
-        if (familyBank?.client?.length > 0) {
-          const Obj = {
-            openingCashAtBank: familyBank.clientCurrentBalance || "", // Fallback to an empty string if undefined
-          };
-          updateFields(Obj, "client");
-        } else {
-          console.warn("No client data available in familyBank.");
-        }
-      } else {
-        const cashFlowScenarioDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
 
-        if (cashFlowScenarioDetails) {
-          // Update owner field
-          setFieldValue("owner", cashFlowScenarioDetails.owner || "");
+      const hydrate = (src) => {
+        if (!src?.client) return;
 
-          // Update client-related fields
-          if (cashFlowScenarioDetails.owner?.includes("client")) {
-            updateFields(cashFlowScenarioDetails.client || {}, "client");
-          }
-        } else {
-          console.warn(
-            "No cash flow scenario details found for the provided key."
-          );
-        }
+        updateFields(src.client, "client");
+      };
+
+      // 1️⃣ Discovery Form (only if CF not already saved)
+      if (
+        scenarioObj?.selectedSource === "discoveryForm" &&
+        familyBankData?.client?.length > 0 &&
+        !cashFlowData?.[objAndAPIKey]?._id
+      ) {
+        const transformedData = {
+          client: {
+            openingCashAtBank: familyBankData.clientCurrentBalance || "",
+            investmentReturns: "System",
+            incomeYield: "",
+            accountingFees: "",
+            adviserFees: "",
+            indexationFundFees: "2.50%",
+          },
+        };
+        hydrate(transformedData);
       }
-
-      if (cashFlowData?.[objAndAPIKey]?._id) {
-        const cashFlowDataDetails = cashFlowData[objAndAPIKey];
-        setFieldValue(`owner`, cashFlowDataDetails.owner || "");
-
-        if (cashFlowDataDetails.owner.includes("client")) {
-          updateFields(cashFlowDataDetails.client, "client");
-        }
-
-        // if (
-        //   UserStatus === "Married" &&
-        //   cashFlowDataDetails.owner.includes("partner")
-        // ) {
-        //   updateFields(cashFlowDataDetails.partner, "partner");
-        // }
+      // 2️⃣ Cash Flow Scenario
+      else if (CashFlowScenarioDataObj?.[objAndAPIKey]?._id) {
+        hydrate(CashFlowScenarioDataObj[objAndAPIKey]);
+      }
+      // 3️⃣ Cash Flow Data (final fallback)
+      else {
+        hydrate(cashFlowData?.[objAndAPIKey]);
       }
     } catch (error) {
       console.error("Error in fillInitialValues:", error);
     }
   };
 
-  let onSubmit = async (values) => {
+  const onSubmit = async (values) => {
     console.log(JSON.stringify(values));
 
-    let obj = values;
-    obj.scenarioFK = JSON.parse(localStorage.getItem("ScenarioObj"))._id;
-
-    if (values.owner.includes("client")) {
-      obj.clientTotal = values.client.openingCashAtBank || "$0";
-    } else {
-      obj.clientTotal = "";
-    }
-
-    obj.partner = undefined;
-    obj.partnerTotal = undefined;
-
-    const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
+    const obj = {
+      ...values,
+      scenarioFK: JSON.parse(localStorage.getItem("ScenarioObj"))._id,
+      clientTotal: toCommaAndDollar(
+        parseFloat(
+          values.client.openingCashAtBank?.replace(/[^0-9.-]+/g, "") || 0
+        )
+      ),
+    };
 
     try {
-      let res;
-      if (!bankAccountArray) {
-        res = await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
-      } else {
-        res = await PatchAxios(
-          `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
-          obj
-        );
-      }
+      const exists = cashFlowData?.[objAndAPIKey]?._id;
+      const res = exists
+        ? await PatchAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Update`, obj)
+        : await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
 
       if (res) {
-        const updatedData = {
+        setCashFlowData({
           ...cashFlowData,
           [objAndAPIKey]: res,
-        };
-        setCashFlowData(updatedData);
+        });
       }
 
       openNotificationSuccess(
         "success",
         "topRight",
-        "Success Notification",
-        'Data of "' + props.modalObject.title + '" is Saved'
+        "Success",
+        `Data of "${props.modalObject.title}" is Saved`
       );
 
-      if (props.flagState) {
-        props.setFlagState(false);
-      }
+      props.setFlagState?.(false);
+      props?.setIsEditing?.(false);
     } catch (error) {
       console.error("Error occurred while making API call:", error);
       openNotificationSuccess(
         "error",
         "topRight",
-        "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        "Error",
+        `Data of "${props.modalObject.title}" is not Saved. Please try again.`
       );
     }
   };
-
-  let handleInnerModal = (title, values, key, stakeHolder) => {
-    setModalObject({
-      title,
-      values,
-      key,
-      stakeHolder,
-      sourceObj: props.modalObject,
-    });
-    setFlagState(true);
-  };
-
-  const options = [{ value: "client", label: RenderName("client") }];
 
   const indexation = Array.from({ length: 11 }, (_, i) => ({
     value: (i * 0.5).toFixed(2) + "%",
@@ -196,43 +158,74 @@ const FamilyTrustBankAccount = (props) => {
     { value: "Input Override", label: "Input Override" },
   ];
 
-  const [rowConfig, setRowConfig] = useState(() => {
-    return [
-      {
-        name: "openingCashAtBank",
-        type: "number-toComma",
-        placeholder: "Opening Cash at Bank",
+  const handleInvestmentReturnsChange = (
+    values,
+    setFieldValue,
+    thisInput,
+    stakeHolder
+  ) => {
+    const isDisabled = thisInput.value === "" || thisInput.value === "System";
+    if (isDisabled) {
+      setFieldValue(`${stakeHolder}incomeYield`, "");
+    }
+  };
+
+  const columns = [
+    {
+      title: "Owner",
+      dataIndex: "owner",
+      type: "label",
+      justText: true,
+    },
+    {
+      title: "Opening Cash at Bank",
+      dataIndex: "openingCashAtBank",
+      type: "number-toComma",
+      placeholder: "Opening Cash at Bank",
+    },
+    {
+      title: "Investment Returns",
+      dataIndex: "investmentReturns",
+      type: "select",
+      placeholder: "Investment Returns",
+      selectedOptionValue: true,
+      options: InvestmentReturnsOptions,
+      callBack: true,
+      func: handleInvestmentReturnsChange,
+    },
+    {
+      title: "Income Yield",
+      dataIndex: "incomeYield",
+      type: "number-toPercent",
+      placeholder: "Income Yield",
+      disabled: (values, stakeHolder) => {
+        if (values.client?.investmentReturns !== "Input Override") {
+          return true;
+        }
+        return false;
       },
-      {
-        name: "investmentReturns",
-        type: "select",
-        placeholder: "Investment Returns",
-        options: InvestmentReturnsOptions,
-      },
-      {
-        name: "incomeYield",
-        type: "number-toPercent",
-        placeholder: "Income Yield",
-        disabled: true,
-      },
-      {
-        name: "accountingFees",
-        type: "number-toComma",
-        placeholder: "Accounting & Auditing Fees",
-      },
-      {
-        name: "adviserFees",
-        type: "number-toComma",
-        placeholder: "Adviser Service Fees",
-      },
-      {
-        name: "indexationFundFees",
-        type: "select",
-        placeholder: "Indexation of Fund Fees",
-        options: indexation,
-      },
-    ];
-  });
+    },
+    {
+      title: "Accounting & Auditing Fees",
+      dataIndex: "accountingFees",
+      type: "number-toComma",
+      placeholder: "Accounting & Auditing Fees",
+    },
+    {
+      title: "Adviser Service Fees",
+      dataIndex: "adviserFees",
+      type: "number-toComma",
+      placeholder: "Adviser Service Fees",
+    },
+    {
+      title: "Indexation of Fund Fees",
+      dataIndex: "indexationFundFees",
+      type: "select",
+      placeholder: "Indexation of Fund Fees",
+      selectedOptionValue: true,
+      options: indexation,
+    },
+  ];
 
   return (
     <Formik
@@ -246,83 +239,36 @@ const FamilyTrustBankAccount = (props) => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        const rows = useMemo(() => {
+          const result = [];
+
+          // Always include client row
+          result.push({
+            key: "client",
+            owner: RenderName("client"),
+            stakeHolder: "client",
+            ...values.client,
+          });
+
+          return result;
+        }, [values.client]);
+
         return (
           <Form>
             <Row>
-              <InnerModal
-                modalObject={modalObject}
-                setFieldValue={setFieldValue}
-                setFlagState={setFlagState}
-                flagState={flagState}
-              >
-                {/* Modal content can be added here */}
-              </InnerModal>
-             
-
-              {values.owner.length > 0 && (
-                <div className="mt-4">
-                  <Table striped bordered responsive hover>
-                    <thead>
-                      <tr>
-                        <th>Owner</th>
-                        <th>Opening Cash at Bank</th>
-                        <th>Investment Returns</th>
-                        <th>Income Yield</th>
-                        <th>Accounting & Auditing Fees</th>
-                        <th>Adviser Service Fees</th>
-                        <th>Indexation of Fund Fees</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {values.owner.includes("client") && (
-                        <DynamicTableRow
-                          rowConfig={rowConfig.map((row) => {
-                            if (row.name === "incomeYield") {
-                              return {
-                                ...row,
-                                disabled:
-                                  values?.client?.investmentReturns !==
-                                  "Input Override",
-                              };
-                            }
-                            return row;
-                          })}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                          handleInnerModal={handleInnerModal}
-                          stakeHolder="client."
-                        />
-                      )}
-                      {/*
-                      {values.owner.includes("partner") &&
-                        UserStatus === "Married" && (
-                          <DynamicTableRow
-                            rowConfig={rowConfig.map((row) => {
-                              if (row.name === "incomeYield") {
-                                return {
-                                  ...row,
-                                  disabled:
-                                    values?.partner?.investmentReturns !==
-                                    "Input Override",
-                                };
-                              }
-                              return row;
-                            })}
-                            values={values}
-                            setFieldValue={setFieldValue}
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                            handleInnerModal={handleInnerModal}
-                            stakeHolder="partner."
-                          />
-                        )}
-                     */}
-                    </tbody>
-                  </Table>
-                </div>
-              )}
+              <div className="mt-4 All_Client reportSection">
+                <AntdTable
+                  columns={columns}
+                  data={rows}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  handleSubmit={props?.handleOk}
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
+                />
+              </div>
             </Row>
           </Form>
         );

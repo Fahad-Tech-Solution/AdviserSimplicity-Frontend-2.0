@@ -177,6 +177,7 @@ const InnerModal = (props) => {
     "Balance & Components",
     "Insurance Premiums",
     "Contribution Splitting",
+    "Family Trust Bank Account",
   ];
 
   let mdTitles = [
