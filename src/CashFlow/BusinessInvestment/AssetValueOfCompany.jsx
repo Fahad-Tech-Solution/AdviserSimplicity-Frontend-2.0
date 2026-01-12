@@ -51,7 +51,6 @@ const AssetValueOfCompany = (props) => {
       }
     }
   };
-
   let onSubmit = (values) => {
     console.log(values, props.modalObject.key, "values");
 
@@ -63,25 +62,21 @@ const AssetValueOfCompany = (props) => {
       props.modalObject.stakeHolder + props.modalObject.key + "Obj",
       values
     );
-
     // Reset the flag state if necessary
     if (props.flagState) {
       props.setFlagState(false);
     }
   };
-
   const yearsIncludedArray = Array.from({ length: 31 }, (_, i) => {
     return {
       value: i.toString(),
       label: ("Year " + i).toString(),
     };
   });
-
   const indexation = Array.from({ length: 21 }, (_, i) => ({
     value: (i * 0.5).toFixed(2) + "%",
     label: (i * 0.5).toFixed(2) + "%",
   }));
-
   /* ---------------- Table Columns ---------------- */
   const getColumns = () => {
     const baseColumns = [];
