@@ -1,100 +1,97 @@
-import React, { useEffect, useState } from 'react'
-import DynamicTableRow from '../../Components/Assets/Dynamic/DynamicTableRow';
-import { Form, Formik } from 'formik';
-import { Row, Table } from 'react-bootstrap';
+import React, { useEffect, useMemo } from "react";
+import { Formik, Form } from "formik";
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
+
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const ApplyDeeming = (props) => {
+  const initialValues = {
+    purchasePrice: "",
+    centreLinkRelevantNumber: "",
+  };
 
-    let initialValues = {
-        purchasePrice: "",
-        centreLinkRelevantNumber: "",
+  const fillInitialValues = (setFieldValue) => {
+    if (props.modalObject.values[props.modalObject.key + "Obj"]) {
+      const data = props.modalObject.values[props.modalObject.key + "Obj"];
+
+      setFieldValue("purchasePrice", data.purchasePrice || "");
+      setFieldValue(
+        "centreLinkRelevantNumber",
+        data.centreLinkRelevantNumber || ""
+      );
     }
+  };
 
-    let fillInitialValues = (setFieldValue) => {
-        console.log(props.modalObject);
-        if (props.modalObject.values[props.modalObject.key + "Obj"]) {
-            let Data = props.modalObject.values[props.modalObject.key + "Obj"]
-            setFieldValue("purchasePrice", Data.purchasePrice)
-            setFieldValue("centreLinkRelevantNumber", Data.centreLinkRelevantNumber)
-        }
+  const onSubmit = (values) => {
+    props.setFieldValue(props.modalObject.key + "Obj", values);
+
+    // Reset the flag state if necessary
+    if (props.flagState) {
+      props.setFlagState(false);
+      props?.setIsEditing?.(false);
     }
+  };
 
-    let onSubmit = (values) => {
-        props.setFieldValue(props.modalObject.key + "Obj", values)
+  const columns = [
+    {
+      title: "Purchase Price (Less Commut)",
+      dataIndex: "purchasePrice",
+      placeholder: "Purchase Price (Less Commut)",
+      type: "number-toComma",
+    },
+    {
+      title: "Centrelink Relevant Number",
+      dataIndex: "centreLinkRelevantNumber",
+      placeholder: "Centrelink Relevant Number",
+      type: "number",
+      BlurHandler: (values, setFieldValue, thisInput, stakeholder) => {
+        setFieldValue(thisInput.name, parseFloat(thisInput.value).toFixed(2));
+      },
+    },
+  ];
 
-        // Reset the flag state if necessary
-        if (props.flagState) {
-            props.setFlagState(false);
-        }
-    }
+  return (
+    <Formik
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      enableReinitialize
+      innerRef={props.formRef}
+    >
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
+        useEffect(() => {
+          fillInitialValues(setFieldValue);
+        }, []);
 
-    let number2DecimalHandler = (values, setFieldValue, CurrentInput, stackHolder) => {
-        if (CurrentInput.value) {
-            setFieldValue(CurrentInput.name, parseFloat(CurrentInput.value).toFixed(2));
-        }
-    }
+        const rows = useMemo(() => {
+          return [
+            {
+              key: 1,
+              owner: 1,
+              ...values,
+            },
+          ];
+        }, [values]);
 
+        return (
+          <Form>
+            <div className="mt-4 All_Client reportSection">
+              <AntdTable
+                columns={columns}
+                data={rows}
+                values={values}
+                setFieldValue={setFieldValue}
+                handleChange={handleChange}
+                handleBlur={handleBlur}
+                handleSubmit={props.handleOk}
+                isEditing={props.isEditing}
+                setIsEditing={props.setIsEditing}
+              />
+            </div>
+          </Form>
+        );
+      }}
+    </Formik>
+  );
+};
 
-
-    let rowConfig = [
-        {
-            name: "purchasePrice",
-            type: "number-toComma",
-            placeholder: "Purchase Price (Less Commut)"
-        },
-        {
-            name: "centreLinkRelevantNumber",
-            placeholder: "Centrelink Relevant Number",
-            type: "number",
-            BlurHandler: number2DecimalHandler
-        },
-    ]
-
-
-    return (
-        <Formik
-            initialValues={initialValues}
-            onSubmit={onSubmit}
-            enableReinitialize
-            innerRef={props.formRef}
-        >
-            {({ values, handleChange, setFieldValue, handleBlur }) => {
-                useEffect(() => {
-                    fillInitialValues(setFieldValue);
-                }, []);
-
-                return (
-                    <Form>
-                        <Row>
-                            <div className="col-md-12" >
-                                <div className="row justify-content-center">
-                                    <div className="mt-4">
-                                        <Table striped bordered responsive hover>
-                                            <thead>
-                                                <tr>
-                                                    <th>Purchase Price (Less Commut)</th>
-                                                    <th>Centrelink Relevant Number</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <DynamicTableRow
-                                                    rowConfig={rowConfig}
-                                                    values={values}
-                                                    setFieldValue={setFieldValue}
-                                                    handleChange={handleChange}
-                                                    handleBlur={handleBlur}
-                                                />
-                                            </tbody>
-                                        </Table>
-                                    </div>
-                                </div>
-                            </div>
-                        </Row>
-                    </Form>
-                );
-            }}
-        </Formik>
-    )
-}
-
-export default ApplyDeeming
+export default ApplyDeeming;

@@ -1,73 +1,91 @@
-[
-  {
-    "name": "hsdhvd",
-    "gender": "Boy",
-    "behavior": "Yes",
-    "food": [
-      "Home-Cooked",
-      "Wet",
-      "Raw"
-    ],
-    "behaviorFussy": "Foodie",
-    "importantFood": "ordering&Receiving",
-    "bodyType": "img2",
-    "weight": 13,
-    "activity": "img1",
-    "allergies": [
-      "Dairy",
-      "Beef",
-      "Chicken",
-      "Venison",
-      "barley",
-      "Pearl",
-      "Quinoa"
-    ],
-    "selectedHealthIssues": [
-      {
-        "value": "ibd",
-        "label": "IBD",
-        "description": "IBD and sensitive stomachs differ. If your dog has been diagnosed with IBD by a specialist vet, then we don’t recommend Butternut. Recommendation from our in-house vet: \"Your dog likely needs a hydrolysed diet. Talk to your vet about what will help best.\"",
-        "color": "red"
+{
+  "owner": [
+    "client"
+  ],
+  "client": {
+    "insurancePremiums": "Yes",
+    "rolloverFunds": "Yes",
+    "concessionalContributions": "Yes",
+    "nonConcessionalContributions": "Yes",
+    "withdrawals": "Yes",
+    "rolloverFundsObj": {
+      "rolloverBenefitFund": "SMSF",
+      "rolloverBenefitsYear": "1",
+      "rolloverBenefitFund1": "N/A",
+      "rolloverBenefitsYear1": "9"
+    },
+    "insurancePremiumsObj": {
+      "insurancePremiums": "$123",
+      "yearsInclude": "3",
+      "indexationPremiums": "1.00%"
+    },
+    "balanceComponents": "$123",
+    "balanceComponentsObj": {
+      "currentBalance": "$123",
+      "taxFreeComponent": "$123",
+      "pensionRollback": "$123",
+      "taxFreeComponentPension": "$123"
+    },
+    "riskProfile": "Balanced",
+    "investmentReturns": "input Override",
+    "investmentReturnsObj": {
+      "incomeYield": "22.00%",
+      "growthRate": "33.00%",
+      "franking": "44.00%"
+    },
+    "investmentFees": "12.00%",
+    "adviserServiceFee": "$23",
+    "concessionalContributionsObj": {
+      "employerSGContributions": "Capped at Max",
+      "personalSalarySacrifice": "Other",
+      "personalSalarySacrificeObj": {
+        "otherPercentageAmount": "100.00%"
       },
-      {
-        "value": "struvite_stones",
-        "label": "Struvite stones",
-        "description": "Unfortunately, we do not recommend Butternut whilst your dog has Struvite stones. Recommendation from our in-house vet: \"Talk to your vet about supplementing with DL-Methionine until the stones are gone.\"",
-        "color": "red"
-      },
-      {
-        "value": "arthritis",
-        "label": "Arthritis",
-        "description": "Even with arthritis, your dog can still enjoy Butternut",
-        "color": "green"
+      "affordabilityOtherAmount": "$24",
+      "indexationOfOtherAmount": "4.50%",
+      "contributionsFund": "1",
+      "yearCommence": "8",
+      "yearsInclude": "11",
+      "catchUpContribution": "$23",
+      "contributionsToFund": "SMSF",
+      "contributionSplitting": "Yes",
+      "contributionSplittingObj": {
+        "contributionSplitting": "100.00%",
+        "yearToCommence": "9",
+        "yearsToInclude": "9",
+        "contributionsToFund": "2",
+        "previousLumpsumWithdrawals": "$213"
       }
-    ],
-    "snacks": "img3",
-    "totalRecipePrice": 490,
-    "order": {
-      "recipes": [
-        {
-          "itemName": "beef",
-          "itemPrice": 245
-        },
-        {
-          "itemName": "chicken",
-          "itemPrice": 245
-        }
-      ],
-      "starterBox": {
-        "starterQuantity": "300g",
-        "price": 24
+    },
+    "nonConcessionalContributionsObj": {
+      "lumpsumNonConcessionalYearOne": "$12",
+      "contributionsToFund": "1",
+      "lumpsumNonConcessional": "Yes",
+      "lumpsumNonConcessionalObj": {
+        "contributionsToFund": "2",
+        "year": "3",
+        "amount": "$123"
       },
-      "extras": [
-        {
-          "itemName": "gift-duck",
-          "itemPrice": 245
-        }
-      ],
-      "CheckOutSection":{
-
+      "regularNonConcessional": "$12",
+      "yearCommence": "9",
+      "yearsInclude": "10",
+      "contributionsFund": "1",
+      "governmentCoContribution": "2",
+      "downSizerContribution": "Yes",
+      "downSizerContributionObj": {
+        "downSizerContribution": "$12",
+        "contributionsToFund": "2"
+      },
+      "applySpouseContribution": "Yes",
+      "applySpouseContributionObj": {
+        "yearToCommence": "3",
+        "yearsToInclude": "0"
       }
+    },
+    "withdrawalsObj": {
+      "contributionsToFund": "2",
+      "year": "5",
+      "amount": "$122"
     }
   }
-]
+}

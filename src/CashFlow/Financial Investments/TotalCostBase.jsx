@@ -45,7 +45,13 @@ const TotalCostBase = (props) => {
      Fill Initial Values
   =============================== */
   const fillInitialValues = (setFieldValue) => {
-    const data = props.modalObject.values?.[props.modalObject.key];
+    let index = parseFloat(
+      props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
+    );
+    let BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
+
+    const data =
+      props.modalObject.values?.[BaseKey]?.[index]?.[props.modalObject.key];
     if (!data) return;
 
     setFieldValue("stampDutyType", data.stampDutyType || "");
@@ -59,7 +65,10 @@ const TotalCostBase = (props) => {
      Save Child Modal
   =============================== */
   const onSubmit = (values) => {
-    props.setFieldValue(props.modalObject.key, values);
+    props.setFieldValue(
+      props.modalObject.stakeHolder + props.modalObject.key,
+      values
+    );
     props?.setFlagState?.(false);
     props.setIsEditing(!props.isEditing);
   };

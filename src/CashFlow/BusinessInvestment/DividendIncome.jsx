@@ -100,7 +100,7 @@ const DividendIncome = (props) => {
         dataIndex: "upUntilYear",
         type: "select",
         key: "upUntilYear",
-        options: yearsArray,
+        options: yearsArray,selectedOptionValue: true,
       },
     ];
 
@@ -111,7 +111,7 @@ const DividendIncome = (props) => {
         dataIndex: "takeAsCashFromUntilYear",
         type: "select",
         key: "takeAsCashFromUntilYear",
-        options: yearsArray,
+        options: yearsArray,selectedOptionValue: true,
       });
     }
 
@@ -121,7 +121,7 @@ const DividendIncome = (props) => {
       dataIndex: "indexation",
       type: "select",
       key: "indexation",
-      options: indexationOptions,
+      options: indexationOptions,selectedOptionValue: true,
     });
 
     // Add Bucket Company specific columns
@@ -147,16 +147,7 @@ const DividendIncome = (props) => {
     return baseColumns;
   }, [props.modalObject]);
 
-  // Prepare data for the table
-  const tableData = useMemo(() => {
-    // Create a single row with all the values
-    return [
-      {
-        key: "dividendIncomeRow",
-        ...initialValues,
-      },
-    ];
-  }, []);
+
 
   return (
     <Formik

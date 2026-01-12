@@ -57,6 +57,7 @@ const ConcessionalContributions = (props) => {
     );
 
     props?.setFlagState?.(false);
+     props?.setIsEditing?.(false);
   };
 
   /* ===============================
@@ -140,7 +141,7 @@ const ConcessionalContributions = (props) => {
     },
     {
       title: "Affordability / Other Amount",
-      placholder: "Affordability / Other Amount",
+      placeholder: "Affordability / Other Amount",
       dataIndex: "affordabilityOtherAmount",
       key: "affordabilityOtherAmount",
       type: "number-toComma",
@@ -149,7 +150,8 @@ const ConcessionalContributions = (props) => {
       title: "Indexation of Other Amount",
       dataIndex: "indexationOfOtherAmount",
       key: "indexationOfOtherAmount",
-      selectedOptionValue: true,
+     selectedOptionValue: true,
+      
       type: "select",
       options: indexationOptions,
     },

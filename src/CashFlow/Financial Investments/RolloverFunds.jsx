@@ -22,13 +22,22 @@ const RolloverFunds = (props) => {
   =============================== */
   const fillInitialValues = (setFieldValue) => {
     const stakeKey = props.modalObject.stakeHolder.replace(".", "");
+    console.log(props.modalObject.values?.[stakeKey]);
     const stored =
       props.modalObject.values?.[stakeKey]?.[props.modalObject.key + "Obj"];
 
     if (!stored) return;
 
-    Object.entries(stored).forEach(([key, value]) => {
-      setFieldValue(key, value);
+    // Object.entries(stored).forEach(([key, value]) => {
+    //   setFieldValue(key, value);
+    // });
+    setFieldValue("fund1", {
+      rolloverBenefitFund: stored.rolloverBenefitFund,
+      rolloverBenefitsYear: stored.rolloverBenefitsYear,
+    });
+    setFieldValue("fund2", {
+      rolloverBenefitFund: stored.rolloverBenefitFund1,
+      rolloverBenefitsYear: stored.rolloverBenefitsYear1,
     });
   };
 
@@ -36,12 +45,20 @@ const RolloverFunds = (props) => {
      Submit
   =============================== */
   const onSubmit = (values) => {
+    let payload = {
+      rolloverBenefitFund: values?.fund1?.rolloverBenefitFund || "",
+      rolloverBenefitsYear: values?.fund1?.rolloverBenefitsYear || "",
+      rolloverBenefitFund1: values?.fund2?.rolloverBenefitFund || "",
+      rolloverBenefitsYear1: values?.fund2?.rolloverBenefitsYear || "",
+    };
+
     props.setFieldValue(
       props.modalObject.stakeHolder + props.modalObject.key + "Obj",
-      values
+      payload
     );
 
     props?.setFlagState?.(false);
+    props?.setIsEditing?.(false);
   };
 
   /* ===============================
@@ -74,14 +91,14 @@ const RolloverFunds = (props) => {
       key: "rolloverBenefitFund",
       type: "select",
       options: rolloverFundOptions,
-      selectedOptionsValues: true,
+      selectedOptionValue: true,
     },
     {
       title: "Rollover Benefits in Year",
       dataIndex: "rolloverBenefitsYear",
       key: "rolloverBenefitsYear",
       type: "select",
-      selectedOptionsValues: true,
+      selectedOptionValue: true,
       options: yearsIncludedOptions,
     },
   ];
@@ -105,16 +122,14 @@ const RolloverFunds = (props) => {
           {
             key: "fund1",
             index: "Fund 1",
-            stackHolder: "fund1",
-            rolloverBenefitFund: values.rolloverBenefitFund,
-            rolloverBenefitsYear: values.rolloverBenefitsYear,
+            stakeHolder: "fund1",
+            ...values.fund1,
           },
           {
             key: "fund2",
             index: "Fund 2",
-            stackHolder: "fund2",
-            rolloverBenefitFund: values.rolloverBenefitFund1,
-            rolloverBenefitsYear: values.rolloverBenefitsYear1,
+            stakeHolder: "fund2",
+            ...values.fund2,
           },
         ];
 

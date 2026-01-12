@@ -1,125 +1,139 @@
-import React, { useEffect, useState } from 'react'
-import DynamicTableRow from '../../Components/Assets/Dynamic/DynamicTableRow';
-import { Form, Formik } from 'formik';
-import { Row, Table } from 'react-bootstrap';
+import React, { useEffect, useState } from "react";
+import { Form, Formik } from "formik";
+import { Row } from "react-bootstrap";
+
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
+import { RenderName } from "../../Components/Assets/Api/Api";
+
+const AntdTable = DynamicTableForInputsSection("antd");
 
 const LumpsumNonConcessionalNonConcessional = (props) => {
+  const [flagState, setFlagState] = useState(false); // optional if you plan to use modal in future
 
-    let initialValues = {
-        contributionsToFund: "",
-        year: "",
-        amount: "",
-    }
+  /* ===============================
+     Initial Values
+  =============================== */
+  const initialValues = {
+    contributionsToFund: "",
+    year: "",
+    amount: "",
+  };
 
-    let fillInitialValues = (setFieldValue) => {
-        console.log(props.modalObject);
-        if (props.modalObject.values[props.modalObject.key + "Obj"]) {
-            let Data = props.modalObject.values[props.modalObject.key + "Obj"]
-            setFieldValue("contributionsToFund", Data.contributionsToFund)
-            setFieldValue("year", Data.year)
-            setFieldValue("amount", Data.amount)
-        }
-    }
+  /* ===============================
+     Fill Initial Values
+  =============================== */
+  const fillInitialValues = (setFieldValue) => {
+    const stored = props.modalObject?.values?.[props.modalObject.key + "Obj"];
+    if (!stored) return;
 
-    let onSubmit = (values) => {
-        props.setFieldValue(props.modalObject.key + "Obj", values)
-
-        // Reset the flag state if necessary
-        if (props.flagState) {
-            props.setFlagState(false);
-        }
-    }
-
-    const yearsIncludedArray = Array.from({ length: 30 }, (_, i) => {
-        return ({
-            value: (i + 1).toString(),
-            label: ("Year " + (i + 1)).toString(),
-        })
+    Object.entries(stored).forEach(([key, value]) => {
+      setFieldValue(key, value);
     });
+  };
 
+  /* ===============================
+     Submit
+  =============================== */
+  const onSubmit = (values) => {
+    props.setFieldValue(props.modalObject.key + "Obj", values);
+    props?.setFlagState?.(false);
+    props?.setIsEditing?.(false);
+  };
 
-    const contributionsFundOptions = [
-        { value: "1", label: "1", },
-        { value: "2", label: "2", },
-        { value: "SMSF", label: "SMSF", }
-    ]
+  /* ===============================
+     Options
+  =============================== */
+  const yearsIncludedArray = Array.from({ length: 30 }, (_, i) => ({
+    value: (i + 1).toString(),
+    label: `Year ${i + 1}`,
+  }));
 
-    let rowConfig = [
-        {
-            type: "plainText",
-            text: props.modalObject.stakeHolder.replace(".", ""),
-            styleSet: { fontWeight: "800", fontSize: "16px" }
-        },
-        {
-            name: "contributionsToFund",
-            type: "select",
-            options: contributionsFundOptions,
-            placeholder: "Contributions To Fund"
-        },
-        {
-            name: "year",
-            type: "select",
-            options: yearsIncludedArray,
-            placeholder: "Year"
-        },
-        {
-            name: "amount",
-            type: "number-toComma",
-            placeholder: "Amount"
-        },
-        //         Owner
-        // Contributions To Fund
-        // Year
-        // Amount
-    ]
+  const contributionsFundOptions = [
+    { value: "1", label: "1" },
+    { value: "2", label: "2" },
+    { value: "SMSF", label: "SMSF" },
+  ];
 
+  /* ===============================
+     Columns
+  =============================== */
+  const columns = [
+    {
+      title: "Owner",
+      dataIndex: "owner",
+      key: "owner",
+      type: "plainText2.0",
+    },
+    {
+      title: "Contributions To Fund",
+      dataIndex: "contributionsToFund",
+      key: "contributionsToFund",
+      type: "select",
+      selectedOptionValue: true,
+      options: contributionsFundOptions,
+    },
+    {
+      title: "Year",
+      dataIndex: "year",
+      key: "year",
+      selectedOptionValue: true,
+      type: "select",
+      options: yearsIncludedArray,
+    },
+    {
+      title: "Amount",
+      placeholder: "Amount",
+      dataIndex: "amount",
+      key: "amount",
+      type: "number-toComma",
+    },
+  ];
 
-    return (
-        <Formik
-            initialValues={initialValues}
-            onSubmit={onSubmit}
-            enableReinitialize
-            innerRef={props.formRef}
-        >
-            {({ values, handleChange, setFieldValue, handleBlur }) => {
-                useEffect(() => {
-                    fillInitialValues(setFieldValue);
-                }, []);
+  /* ===============================
+     Render
+  =============================== */
+  return (
+    <Formik
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      enableReinitialize
+      innerRef={props.formRef}
+    >
+      {({ values, setFieldValue, handleChange, handleBlur }) => {
+        useEffect(() => {
+          fillInitialValues(setFieldValue);
+        }, []);
 
-                return (
-                    <Form>
-                        <Row>
-                            <div className="col-md-12" >
-                                <div className="row justify-content-center">
-                                    <div className="mt-4">
-                                        <Table striped bordered responsive hover>
-                                            <thead>
-                                                <tr>
-                                                    <th>Owner</th>
-                                                    <th>Contributions To Fund</th>
-                                                    <th>Year</th>
-                                                    <th>Amount</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <DynamicTableRow
-                                                    rowConfig={rowConfig}
-                                                    values={values}
-                                                    setFieldValue={setFieldValue}
-                                                    handleChange={handleChange}
-                                                    handleBlur={handleBlur}
-                                                />
-                                            </tbody>
-                                        </Table>
-                                    </div>
-                                </div>
-                            </div>
-                        </Row>
-                    </Form>
-                );
-            }}
-        </Formik>
-    )
-}
+        const tableData = [
+          {
+            key: "lumpsumRow",
+            owner: RenderName(props.modalObject.stakeHolder.replace(".", "")),
+            ...values,
+          },
+        ];
 
-export default LumpsumNonConcessionalNonConcessional
+        return (
+          <Form>
+            <Row>
+              <div className="col-md-12 mt-4 All_Client reportSection">
+                <AntdTable
+                  columns={columns}
+                  data={tableData}
+                  values={values}
+                  setFieldValue={setFieldValue}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  handleInnerModal={() => {}} // no inner modal for now
+                  isEditing={props?.isEditing}
+                  setIsEditing={props?.setIsEditing}
+                />
+              </div>
+            </Row>
+          </Form>
+        );
+      }}
+    </Formik>
+  );
+};
+
+export default LumpsumNonConcessionalNonConcessional;
