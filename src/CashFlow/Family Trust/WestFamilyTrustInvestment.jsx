@@ -1,8 +1,8 @@
 import { Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
-import { CreatableMultiSelectField } from "../../Components/Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
-import DynamicTableRow from "../../Components/Assets/Dynamic/DynamicTableRow";
-import { Row, Table } from "react-bootstrap";
+import React, { useEffect, useMemo, useState } from "react";
+import { Row } from "react-bootstrap";
+import { useRecoilState, useRecoilValue } from "recoil";
+
 import {
   CashFlowData,
   CashFlowDownloading,
@@ -11,8 +11,6 @@ import {
   defaultUrl,
   QuestionDetail,
 } from "../../Store/Store";
-import { useRecoilState, useRecoilValue } from "recoil";
-import InnerModal from "../../Components/Questions/FinancialInvestments/QuestionsDetail/InnerModal";
 
 import {
   openNotificationSuccess,
@@ -24,21 +22,27 @@ import {
   toPercentage,
 } from "../../Components/Assets/Api/Api";
 
+import { AntdCreatableMultiSelect } from "../../Components/Questions/FinancialInvestments/QuestionsDetail/CreatableMultiSelectField";
+import DynamicTableForInputsSection from "../../Components/Assets/Table/DynamicTableForInputsSection";
+
+const AntdTable = DynamicTableForInputsSection("antd");
+
 const WestFamilyTrustInvestment = (props) => {
-  let questionDetail = useRecoilValue(QuestionDetail);
-  let [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
-  let CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const questionDetail = useRecoilValue(QuestionDetail);
+  const [cashFlowData, setCashFlowData] = useRecoilState(CashFlowData);
+  const CashFlowScenarioDataObj = useRecoilValue(CashFlowScenarioData);
+  const DefaultUrl = useRecoilValue(defaultUrl);
 
-  let [UserStatus] = useState(localStorage.getItem("UserStatus"));
-  let [objAndAPIKey, setObjAndAPIKey] = useState(props.modalObject.key || "");
+  const [, setCashFlowReCalculateLoading] = useRecoilState(
+    CashFlowReCalculateLoading
+  );
+  const [, setCashFlowDownloading] = useRecoilState(CashFlowDownloading);
 
-  let DefaultUrl = useRecoilValue(defaultUrl);
-  let [cashFlowReCalculateLoading, setCashFlowReCalculateLoading] =
-    useRecoilState(CashFlowReCalculateLoading);
-  let [cashFlowDownloading, setCashFlowDownloading] =
-    useRecoilState(CashFlowDownloading);
+  const [UserStatus] = useState(localStorage.getItem("UserStatus"));
+  const objKey = props.modalObject.key;
 
-  let initialValues = {
+  /* ---------------- Initial Values ---------------- */
+  const initialValues = {
     owner: [],
     client: {
       percentOfBeneficiaryAccounts: "",
@@ -56,159 +60,247 @@ const WestFamilyTrustInvestment = (props) => {
     },
   };
 
+  /* ---------------- Fill Initial Values ---------------- */
   const fillInitialValues = (setFieldValue) => {
-    try {
-      setObjAndAPIKey(props.modalObject.key);
+    const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+    const data = CashFlowScenarioDataObj?.[objKey] || cashFlowData?.[objKey];
 
-      const scenarioObj = JSON.parse(localStorage.getItem("ScenarioObj"));
+    const updateFields = (dataObj, stake) => {
+      if (!dataObj || Object.keys(dataObj).length === 0) return;
 
-      const updateFields = (data, prefix) => {
-        if (!data || !Object.keys(data).length) return;
-
-        const fields = {
-          percentOfBeneficiaryAccounts: data.percentOfBeneficiaryAccounts || "",
-          totalOfBeneficiaryAccounts: data.totalOfBeneficiaryAccounts || "",
-          distributionOfIncomeCGT: data.distributionOfIncomeCGT || "",
-          distributionTakenAsCash: data.distributionTakenAsCash || "No",
-          distributionTakenAsCashFromYear:
-            data.distributionTakenAsCashFromYear || "No",
-        };
-
-        Object.entries(fields).forEach(([key, value]) => {
-          setFieldValue(`${prefix}.${key}`, value);
-        });
+      const fields = {
+        percentOfBeneficiaryAccounts:
+          dataObj.percentOfBeneficiaryAccounts || "",
+        totalOfBeneficiaryAccounts: dataObj.totalOfBeneficiaryAccounts || "",
+        distributionOfIncomeCGT: dataObj.distributionOfIncomeCGT || "",
+        distributionTakenAsCash: dataObj.distributionTakenAsCash || "No",
+        distributionTakenAsCashFromYear:
+          dataObj.distributionTakenAsCashFromYear || "No",
       };
 
+      Object.entries(fields).forEach(([key, value]) => {
+        setFieldValue(`${stake}.${key}`, value);
+      });
+    };
+
+    if (
+      scenarioObj?.selectedSource === "discoveryForm" &&
+      questionDetail?._id
+    ) {
+      if (questionDetail?.client?.length > 0) {
+        const clientObj = {
+          totalOfBeneficiaryAccounts:
+            questionDetail.clienttotalOfBeneficiaryAccounts || "",
+        };
+        updateFields(clientObj, "client");
+      }
+
+      if (UserStatus === "Married" && questionDetail?.partner?.length > 0) {
+        const partnerObj = {
+          totalOfBeneficiaryAccounts:
+            questionDetail.partnertotalOfBeneficiaryAccounts || "",
+        };
+        updateFields(partnerObj, "partner");
+      }
+
+      // Set owner based on data availability
+      const owners = [];
+      if (questionDetail?.client?.length > 0) owners.push("client");
+      if (UserStatus === "Married" && questionDetail?.partner?.length > 0)
+        owners.push("partner");
+      setFieldValue("owner", owners);
+    } else if (data && Object.keys(data).length > 0) {
+      setFieldValue("owner", data.owner || []);
+
+      if (data.owner?.includes("client") && data.client) {
+        updateFields(data.client, "client");
+      }
+
       if (
-        scenarioObj?.selectedSource === "discoveryForm" &&
-        questionDetail &&
-        questionDetail._id
+        UserStatus === "Married" &&
+        data.owner?.includes("partner") &&
+        data.partner
       ) {
-        if (questionDetail?.client.length > 0) {
-          let Obj = {
-            totalOfBeneficiaryAccounts:
-              questionDetail.clienttotalOfBeneficiaryAccounts,
-          };
-          updateFields(Obj, "client");
-        }
-
-        if (UserStatus === "Married" && questionDetail?.partner.length > 0) {
-          let Obj = {
-            totalOfBeneficiaryAccounts:
-              questionDetail.partnertotalOfBeneficiaryAccounts,
-          };
-          updateFields(Obj, "partner");
-        }
-      } else {
-        const cashFlowDetails = CashFlowScenarioDataObj?.[objAndAPIKey];
-        if (cashFlowDetails) {
-          setFieldValue(`owner`, cashFlowDetails.owner || "");
-          if (cashFlowDetails.owner.includes("client")) {
-            updateFields(cashFlowDetails.client, "client");
-          }
-
-          if (
-            UserStatus === "Married" &&
-            cashFlowDetails.owner.includes("partner")
-          ) {
-            updateFields(cashFlowDetails.partner, "partner");
-          }
-        }
+        updateFields(data.partner, "partner");
       }
-
-      if (cashFlowData?.[objAndAPIKey]?._id) {
-        const cashFlowDataDetails = cashFlowData[objAndAPIKey];
-        setFieldValue(`owner`, cashFlowDataDetails.owner || "");
-
-        if (cashFlowDataDetails.owner.includes("client")) {
-          updateFields(cashFlowDataDetails.client, "client");
-        }
-
-        if (
-          UserStatus === "Married" &&
-          cashFlowDataDetails.owner.includes("partner")
-        ) {
-          updateFields(cashFlowDataDetails.partner, "partner");
-        }
-      }
-    } catch (error) {
-      console.error("Error in fillInitialValues:", error);
     }
   };
 
-  let onSubmit = async (values) => {
-    console.log(JSON.stringify(values));
-    let obj = values;
-
-    obj.scenarioFK = JSON.parse(localStorage.getItem("ScenarioObj"))._id;
+  /* ---------------- Submit ---------------- */
+  const onSubmit = async (values) => {
+    const obj = {
+      ...values,
+      scenarioFK: JSON.parse(localStorage.getItem("ScenarioObj"))._id,
+    };
 
     if (values.owner.includes("client")) {
-      obj.clientTotal = values.client.percentOfBeneficiaryAccounts || "$0";
+      obj.clientTotal = values.client.percentOfBeneficiaryAccounts || "";
     } else {
       obj.clientTotal = "";
     }
 
     if (values.owner.includes("partner")) {
-      obj.partnerTotal = values.partner.percentOfBeneficiaryAccounts || "$0";
+      obj.partnerTotal = values.partner.percentOfBeneficiaryAccounts || "";
     } else {
       obj.partnerTotal = "";
     }
 
-    const bankAccountArray = cashFlowData?.[objAndAPIKey]?._id || "";
-
-    console.log(obj, "final obj");
-
     try {
-      let res;
-      if (!bankAccountArray) {
-        res = await PostAxios(`${DefaultUrl}/api/CF/${objAndAPIKey}/Add`, obj);
-      } else {
-        res = await PatchAxios(
-          `${DefaultUrl}/api/CF/${objAndAPIKey}/Update`,
-          obj
-        );
-      }
+      const exists = cashFlowData?.[objKey]?._id;
+      const res = exists
+        ? await PatchAxios(`${DefaultUrl}/api/CF/${objKey}/Update`, obj)
+        : await PostAxios(`${DefaultUrl}/api/CF/${objKey}/Add`, obj);
 
       if (res) {
-        console.log(res);
-        const updatedData = {
+        setCashFlowData({
           ...cashFlowData,
-          [objAndAPIKey]: res,
-        };
-        setCashFlowData(updatedData);
+          [objKey]: res,
+        });
       }
 
       openNotificationSuccess(
         "success",
         "topRight",
-        "Success Notification",
-        'Data of "' + props.modalObject.title + '" is Saved'
+        "Success",
+        `Data of "${props.modalObject.title}" is saved`
       );
 
-      if (props.flagState) {
-        props.setFlagState(false);
-      }
-    } catch (error) {
-      console.error("Error occurred while making API call:", error);
+      props.setFlagState?.(false);
+      props?.setIsEditing?.(false);
+    } catch (err) {
+      console.error(err);
       openNotificationSuccess(
         "error",
         "topRight",
-        "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
+        "Error",
+        `Data of "${props.modalObject.title}" not saved`
       );
     }
   };
 
-  const loanTermOptions = Array.from({ length: 31 }, (_, i) => {
-    return {
-      value: i.toString(),
-      label: ("Year " + i).toString(),
-    };
-  });
+  /* ---------------- Helper Functions ---------------- */
+  const handleChildButtonClick = async (values, setFieldValue) => {
+    try {
+      setCashFlowReCalculateLoading(true);
+      const obj = JSON.parse(JSON.stringify(cashFlowData));
+      obj[objKey] = values;
 
-  const options =
+      const res = await PostAxios(
+        `${DefaultUrl}/api/cal/investmentsTrust/INPUTS_TRUST_Investments`,
+        obj
+      );
+
+      if (res) {
+        const Data = res.data[objKey];
+
+        if (values.owner.includes("client")) {
+          setFieldValue(
+            "client.totalOfBeneficiaryAccounts",
+            Data.totalOfBeneficiaryAccounts || ""
+          );
+        }
+
+        if (values.owner.includes("partner")) {
+          setFieldValue(
+            "partner.totalOfBeneficiaryAccounts",
+            Data.totalOfBeneficiaryAccountsPartner || ""
+          );
+        }
+
+        if (values.client?.percentOfBeneficiaryAccounts) {
+          const clientPercent = parseFloat(
+            values.client.percentOfBeneficiaryAccounts.replace(
+              /[^0-9.-]+/g,
+              ""
+            ) || 0
+          );
+          const partnerPercent = 100 - clientPercent;
+
+          setFieldValue(
+            "partner.percentOfBeneficiaryAccounts",
+            toPercentage(partnerPercent)
+          );
+        }
+
+        if (values.client?.distributionOfIncomeCGT) {
+          const clientDistribution = parseFloat(
+            values.client.distributionOfIncomeCGT.replace(/[^0-9.-]+/g, "") || 0
+          );
+          const partnerDistribution = 100 - clientDistribution;
+
+          setFieldValue(
+            "partner.distributionOfIncomeCGT",
+            toPercentage(partnerDistribution)
+          );
+        }
+
+        openNotificationSuccess(
+          "success",
+          "topRight",
+          "Success",
+          `Data of "${props.modalObject.title}" is calculated`
+        );
+      }
+    } catch (error) {
+      console.error("Error in calculation:", error);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Error",
+        `Failed to calculate "${props.modalObject.title}"`
+      );
+    } finally {
+      setCashFlowReCalculateLoading(false);
+    }
+  };
+
+  const handleChildButtonDownloadClick = async (values) => {
+    try {
+      setCashFlowDownloading(true);
+      const obj = JSON.parse(JSON.stringify(cashFlowData));
+      obj[objKey] = values;
+
+      const response = await PostAxiosBlob(
+        `${DefaultUrl}/api/cal/workBookDownload`,
+        obj
+      );
+
+      const fileName = `UpdatedWorkbook_of_${RenderName("client")}.xlsx`;
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+
+      openNotificationSuccess(
+        "success",
+        "topRight",
+        "Success",
+        `Excel file "${fileName}" downloaded successfully`
+      );
+    } catch (error) {
+      console.error("Download error:", error);
+      openNotificationSuccess(
+        "error",
+        "topRight",
+        "Download Failed",
+        "Failed to download Excel file"
+      );
+    } finally {
+      setCashFlowDownloading(false);
+    }
+  };
+
+  /* ---------------- Options ---------------- */
+  const loanTermOptions = Array.from({ length: 31 }, (_, i) => ({
+    value: i.toString(),
+    label: ("Year " + i).toString(),
+  }));
+
+  const ownerOptions =
     UserStatus !== "Single"
       ? [
           { value: "client", label: RenderName("client") },
@@ -216,160 +308,46 @@ const WestFamilyTrustInvestment = (props) => {
         ]
       : [{ value: "client", label: RenderName("client") }];
 
-  const rowConfig = [
+  /* ---------------- Table Columns ---------------- */
+  const columns = [
+    { title: "Owner", dataIndex: "owner", type: "label", justText: true },
     {
-      name: "percentOfBeneficiaryAccounts",
-      type: "number-toPercent",
+      title: "% of Beneficiary Accounts",
       placeholder: "% of Beneficiary Accounts",
+      dataIndex: "percentOfBeneficiaryAccounts",
+      type: "number-toPercent",
     },
     {
-      name: "totalOfBeneficiaryAccounts",
-      type: "number-toComma",
+      title: "Total of Beneficiary Accounts",
       placeholder: "Total of Beneficiary Accounts",
+      dataIndex: "totalOfBeneficiaryAccounts",
+      type: "number-toComma",
       disabled: true,
     },
     {
-      name: "distributionOfIncomeCGT",
-      type: "number-toPercent",
+      title: "Distribution of Income/CGT",
       placeholder: "Distribution of Income/CGT",
+      dataIndex: "distributionOfIncomeCGT",
+      type: "number-toPercent",
     },
     {
-      name: "distributionTakenAsCash",
-      type: "yesno", width: 100,
+      title: "Distribution Taken as Cash",
       placeholder: "Distribution Taken as Cash",
+      dataIndex: "distributionTakenAsCash",
+      type: "yesno",
+      width: 100,
     },
     {
-      name: "distributionTakenAsCashFromYear",
-      type: "select",
+      title: "Distribution Taken as Cash From Year",
       placeholder: "Distribution Taken as Cash From Year",
+      dataIndex: "distributionTakenAsCashFromYear",
+      type: "select",
+      selectedOptionValue: true,
       options: loanTermOptions,
     },
   ];
 
-  let handleChildButtonClick = async (values, setFieldValue) => {
-    try {
-      let obj = JSON.parse(JSON.stringify(cashFlowData));
-
-      obj[props.modalObject.key] = values;
-
-      let res = await PostAxios(
-        `${DefaultUrl}/api/cal/investmentsTrust/INPUTS_TRUST_Investments`,
-        obj
-      );
-
-      if (res) {
-        // console.log(res);
-        let Data = res.data[props.modalObject.key];
-
-        if (values.owner.includes("client")) {
-          setFieldValue(
-            "client.totalOfBeneficiaryAccounts",
-            Data.totalOfBeneficiaryAccounts
-          );
-        }
-        if (values.owner.includes("partner")) {
-          setFieldValue(
-            "partner.totalOfBeneficiaryAccounts",
-            Data.totalOfBeneficiaryAccountsPartner
-          );
-        }
-        let { client } = values;
-
-        let partnerpercentOfBeneficiaryAccounts =
-          100 -
-          parseFloat(
-            client.percentOfBeneficiaryAccounts.replace(/[^0-9.-]+/g, "")
-          );
-
-        let distributionOfIncomeCGT =
-          100 -
-          parseFloat(client.distributionOfIncomeCGT.replace(/[^0-9.-]+/g, ""));
-
-        setFieldValue(
-          "partner.percentOfBeneficiaryAccounts",
-          toPercentage(partnerpercentOfBeneficiaryAccounts)
-        );
-        setFieldValue(
-          "partner.distributionOfIncomeCGT",
-          toPercentage(distributionOfIncomeCGT)
-        );
-
-        setCashFlowReCalculateLoading(false);
-        openNotificationSuccess(
-          "success",
-          "topRight",
-          "Success Notification",
-          'Data of "' + props.modalObject.title + '" is Saved'
-        );
-      }
-    } catch (error) {
-      console.error("Error occurred while making API call:", error);
-      openNotificationSuccess(
-        "error",
-        "topRight",
-        "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
-      );
-      setCashFlowReCalculateLoading(false);
-    }
-  };
-
-  let handleChildButtonDownloadClick = async (values, setFieldValue) => {
-    try {
-      let obj = JSON.parse(JSON.stringify(cashFlowData));
-
-      obj[props.modalObject.key] = values;
-
-      try {
-        const response = await PostAxiosBlob(
-          `${DefaultUrl}/api/cal/workBookDownload`,
-          obj
-        );
-
-        const fileName = `UpdatedWorkbook_of_${RenderName("client")}.xlsx`;
-
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
-
-        openNotificationSuccess(
-          "success",
-          "topRight",
-          "Success Notification",
-          `Excel file "${fileName}" is downloaded.`
-        );
-      } catch (error) {
-        console.error("Download Error:", error);
-        openNotificationSuccess(
-          "error",
-          "topRight",
-          "Download Failed",
-          "Something went wrong while downloading the Excel file."
-        );
-      } finally {
-        setCashFlowDownloading(false); // Always hide loading spinner
-      }
-    } catch (error) {
-      console.error("Error occurred while making API call:", error);
-      openNotificationSuccess(
-        "error",
-        "topRight",
-        "Error Notification",
-        'Data of "' +
-          props.modalObject.title +
-          '" is not Saved Please! try again'
-      );
-      setCashFlowReCalculateLoading(false);
-    }
-  };
-
+  /* ---------------- Render ---------------- */
   return (
     <Formik
       initialValues={initialValues}
@@ -382,90 +360,84 @@ const WestFamilyTrustInvestment = (props) => {
           fillInitialValues(setFieldValue);
         }, []);
 
+        const rows = useMemo(() => {
+          const rowsArray = [];
+
+          if (values.owner?.includes("client") && values.client) {
+            rowsArray.push({
+              key: "client",
+              owner: RenderName("client"),
+              stakeHolder: "client",
+              ...values.client,
+            });
+          }
+
+          if (
+            values.owner?.includes("partner") &&
+            UserStatus === "Married" &&
+            values.partner
+          ) {
+            // For partner row, some fields should be disabled
+            const partnerData = { ...values.partner };
+
+            rowsArray.push({
+              key: "partner",
+              owner: RenderName("partner"),
+              stakeHolder: "partner",
+              ...partnerData,
+              _disabledFields: [
+                "percentOfBeneficiaryAccounts",
+                "distributionOfIncomeCGT",
+              ],
+            });
+          }
+
+          return rowsArray;
+        }, [values, UserStatus]);
+
+        // Set up hidden buttons
+        useEffect(() => {
+          if (props.childButtonRef?.current) {
+            props.childButtonRef.current.onclick = () =>
+              handleChildButtonClick(values, setFieldValue);
+          }
+
+          if (props.childButtonDownloadRef?.current) {
+            props.childButtonDownloadRef.current.onclick = () =>
+              handleChildButtonDownloadClick(values);
+          }
+        }, [values, setFieldValue]);
+
         return (
           <Form>
             <Row>
               <div className="col-md-12">
-                <div className="d-flex justify-content-center align-items-center gap-4">
-                  <label htmlFor="" className="text-end ">
-                    Owner
-                  </label>
-
-                  <div style={{ minWidth: "25%" }}>
+                <div className="d-flex justify-content-center align-items-center gap-2">
+                  <label className="mb-0">Owner</label>
+                  <div style={{ minWidth: 220 }}>
                     <Field
-                      name={`owner`}
-                      component={CreatableMultiSelectField}
-                      label="Multi Select Field"
-                      options={options}
+                      name="owner"
+                      component={AntdCreatableMultiSelect}
+                      options={ownerOptions}
                     />
                   </div>
                 </div>
               </div>
-              {values.owner.length > 0 && (
-                <div className="mt-4">
-                  <Table striped bordered responsive hover>
-                    <thead>
-                      <tr>
-                        <th>Owner</th>
-                        <th>% of Beneficiary Accounts</th>
-                        <th>Total of Beneficiary Accounts</th>
-                        <th>Distribution of Income/CGT</th>
-                        <th>Distribution Taken as Cash</th>
-                        <th>Distribution Taken as Cash From Year</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {values.owner.includes("client") && (
-                        <DynamicTableRow
-                          rowConfig={rowConfig}
-                          values={values}
-                          setFieldValue={setFieldValue}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                          stakeHolder="client."
-                        />
-                      )}
 
-                      {values.owner.includes("partner") &&
-                        UserStatus === "Married" && (
-                          <DynamicTableRow
-                            rowConfig={rowConfig.map((field) =>
-                              [
-                                "percentOfBeneficiaryAccounts",
-                                "distributionOfIncomeCGT",
-                              ].includes(field.name)
-                                ? { ...field, disabled: true }
-                                : field
-                            )}
-                            values={values}
-                            setFieldValue={setFieldValue}
-                            handleChange={handleChange}
-                            handleBlur={handleBlur}
-                            stakeHolder="partner."
-                          />
-                        )}
-                    </tbody>
-                  </Table>
-                  <button
-                    ref={props.childButtonRef}
-                    onClick={() => {
-                      handleChildButtonClick(values, setFieldValue);
-                    }}
-                    style={{ display: "none" }} // Hidden button
-                    type="button"
-                  >
-                    Hidden Child Button
-                  </button>
-                  <button
-                    ref={props.childButtonDownloadRef}
-                    onClick={() => {
-                      handleChildButtonDownloadClick(values, setFieldValue);
-                    }}
-                    style={{ display: "none" }} // Hidden button
-                    type="button"
-                  >
-                    Hidden Child Button Download
-                  </button>
+              {values?.owner?.length > 0 && (
+                <div className="mt-4 All_Client reportSection">
+                  <AntdTable
+                    columns={columns}
+                    data={rows}
+                    values={values}
+                    setFieldValue={setFieldValue}
+                    handleChange={handleChange}
+                    handleBlur={handleBlur}
+                    handleSubmit={props?.handleOk}
+                    isEditing={props?.isEditing}
+                    setIsEditing={props?.setIsEditing}
+                    customDisabledFields={(row) => row._disabledFields || []}
+                  />
                 </div>
               )}
             </Row>

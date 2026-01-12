@@ -55,7 +55,7 @@ const SMSFPensionAccountDetails = (props) => {
         ? questionDetail.SMSFPensionPhase
         : { client: [], partner: [], joint: [] };
 
-    const data = CashFlowScenarioDataObj?.[objKey] || cashFlowData?.[objKey];
+    const data = cashFlowData?.[objKey] || CashFlowScenarioDataObj?.[objKey];
 
     const updateFields = (dataObj, stake) => {
       if (!dataObj || Object.keys(dataObj).length === 0) return;
@@ -77,7 +77,10 @@ const SMSFPensionAccountDetails = (props) => {
       });
     };
 
-    if (scenarioObj?.selectedSource === "discoveryForm") {
+    if (
+      scenarioObj?.selectedSource === "discoveryForm" &&
+      !cashFlowData?.[objKey]?._id
+    ) {
       // Set owner based on data availability
       const owners = [];
       if (SMSFPensionPhase?.client?.length > 0) owners.push("client");
@@ -137,7 +140,28 @@ const SMSFPensionAccountDetails = (props) => {
 
         updateFields(partnerObj, "partner");
       }
-    } else if (data && Object.keys(data).length > 0) {
+    } else if (
+      CashFlowScenarioDataObj?.[objKey] &&
+      Object.keys(CashFlowScenarioDataObj?.[objKey]).length > 0
+    ) {
+      // Handle cash flow data scenario
+      setFieldValue("owner", data.owner || []);
+
+      if (data.owner?.includes("client") && data.client) {
+        updateFields(data.client, "client");
+      }
+
+      if (
+        UserStatus === "Married" &&
+        data.owner?.includes("partner") &&
+        data.partner
+      ) {
+        updateFields(data.partner, "partner");
+      }
+    } else if (
+      cashFlowData?.[objKey] &&
+      Object.keys(cashFlowData?.[objKey]).length > 0
+    ) {
       // Handle cash flow data scenario
       setFieldValue("owner", data.owner || []);
 

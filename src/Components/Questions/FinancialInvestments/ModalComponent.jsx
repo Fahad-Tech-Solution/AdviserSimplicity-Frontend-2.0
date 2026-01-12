@@ -247,6 +247,7 @@ const ModalComponent = (props) => {
     "Platform Investment",
     "Other Investments",
     "Annuities",
+    "West Family Trust Investment",
   ];
 
   let xlKey = [

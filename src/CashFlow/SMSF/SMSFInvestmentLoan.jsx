@@ -90,8 +90,8 @@ const SMSFInvestmentLoan = (props) => {
 
       if (scenarioObj?.selectedSource === "discoveryForm") {
         const SMSFInvestmentLoan =
-          Object.keys(questionDetail[props.modalObject.sourceKey] || {}).length >
-          0
+          Object.keys(questionDetail[props.modalObject.sourceKey] || {})
+            .length > 0
             ? questionDetail[props.modalObject.sourceKey]
             : { client: [] };
 
@@ -118,7 +118,7 @@ const SMSFInvestmentLoan = (props) => {
 
   /* ---------------- Submit ---------------- */
   const onSubmit = async (values) => {
-    console.log(values)
+    console.log(values);
     const obj = {
       ...values,
       scenarioFK: JSON.parse(localStorage.getItem("ScenarioObj"))._id,
@@ -215,50 +215,54 @@ const SMSFInvestmentLoan = (props) => {
       title: "Year of Loan",
       dataIndex: "yearOfLoan",
       type: "select",
+      selectedOptionValue: true,
       options: loanTermOptionsWithExisting,
     },
     {
       title: "Current Loan Balance",
       dataIndex: "currentLoanBalance",
       type: "number-toComma",
-      placeholder:"Current Loan Balance",
+      placeholder: "Current Loan Balance",
     },
     {
       title: "Loan Type",
       dataIndex: "loanType",
       type: "select",
       options: loanTypeOptions,
+      selectedOptionValue: true,
     },
     {
       title: "Loan Term",
       dataIndex: "loanTerm",
       type: "select",
       options: loanTermOptions,
+      selectedOptionValue: true,
     },
     {
       title: "Interest Only Period",
       dataIndex: "interestOnlyPeriod",
       type: "select",
       options: loanTermOptions,
+      selectedOptionValue: true,
     },
     {
       title: "Initial Interest Rate (p.a.)",
       dataIndex: "initialInterestRate",
       type: "number-toPercent",
-      placeholder:"Initial Interest Rate (p.a.)",
+      placeholder: "Initial Interest Rate (p.a.)",
     },
     {
       title: "Deductible interest",
       dataIndex: "deductibleInterest",
       type: "number-toPercent",
-      placeholder:"Deductible interest",
+      placeholder: "Deductible interest",
     },
     {
       title: "Minimum Repayments (p.a)",
       dataIndex: "minimumRepayments",
       type: "number-toComma",
       disabled: true,
-      placeholder:"Minimum Repayments (p.a)",
+      placeholder: "Minimum Repayments (p.a)",
     },
     {
       title: "Apply Minimum Repayments OR",
@@ -269,13 +273,14 @@ const SMSFInvestmentLoan = (props) => {
       title: "Actual Annual Repayments",
       dataIndex: "actualAnnualRepayments",
       type: "number-toComma",
-      placeholder:"Annual Repayments",
+      placeholder: "Annual Repayments",
     },
     {
       title: "Repay Loan in Year",
       dataIndex: "repayLoanYear",
       type: "select",
       options: loanTermOptionsWithNo,
+      selectedOptionValue: true,
     },
   ];
 

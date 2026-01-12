@@ -159,7 +159,10 @@ const SMSFAccumulationDetails = (props) => {
 
     const data = CashFlowScenarioDataObj?.[objKey] || cashFlowData?.[objKey];
 
-    if (scenarioObj?.selectedSource === "discoveryForm") {
+    if (
+      scenarioObj?.selectedSource === "discoveryForm" &&
+      !cashFlowData?.[objKey]?._id
+    ) {
       setFieldValue("owner", SMSFAccumulationDetails.member || []);
 
       const updateFieldsFromDiscovery = (stake, totalField) => {
@@ -185,7 +188,43 @@ const SMSFAccumulationDetails = (props) => {
       if (UserStatus === "Married") {
         updateFieldsFromDiscovery("partner", "partnerTotal");
       }
-    } else if (data && Object.keys(data).length > 0) {
+    } else if (
+      CashFlowScenarioDataObj?.[objKey] &&
+      Object.keys(CashFlowScenarioDataObj?.[objKey]).length > 0
+    ) {
+      setFieldValue("owner", data.owner || []);
+
+      const updateFieldsFromCashFlow = (stake) => {
+        if (data.owner?.includes(stake) && data[stake]) {
+          const fields = [
+            "accumulationDetails",
+            "accumulationDetailsObj",
+            "insurancePremiums",
+            "insurancePremiumsObj",
+            "concessionalContributions",
+            "concessionalContributionsObj",
+            "nonConcessionalContributions",
+            "nonConcessionalContributionsObj",
+            "withdrawals",
+            "withdrawalsObj",
+          ];
+
+          fields.forEach((field) => {
+            if (data[stake][field] !== undefined) {
+              setFieldValue(`${stake}.${field}`, data[stake][field]);
+            }
+          });
+        }
+      };
+
+      updateFieldsFromCashFlow("client");
+      if (UserStatus === "Married") {
+        updateFieldsFromCashFlow("partner");
+      }
+    } else if (
+      cashFlowData?.[objKey] &&
+      Object.keys(cashFlowData?.[objKey]).length > 0
+    ) {
       setFieldValue("owner", data.owner || []);
 
       const updateFieldsFromCashFlow = (stake) => {
