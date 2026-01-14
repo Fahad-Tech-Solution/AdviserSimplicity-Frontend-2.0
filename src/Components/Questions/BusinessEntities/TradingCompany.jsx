@@ -99,7 +99,11 @@ const TradingCompany = (props) => {
 
   const onSubmit = async (values) => {
     const DataOf = props.modalObject.Input;
-    const companyData = values.tradingCompanies || [];
+
+    const companyData = (values.tradingCompanies || []).slice(
+      0,
+      values.NumberOfMap
+    );
 
     // Calculate total equity position
     const totalEquity = companyData.reduce(
@@ -145,13 +149,6 @@ const TradingCompany = (props) => {
       width: 200,
     },
     {
-      title: "Postcode/Suburb",
-      dataIndex: "postcodeSuburb",
-      type: "postcode-antd",
-      key: "postcodeSuburb",
-      width: 230,
-    },
-    {
       title: "ABN/ACN",
       dataIndex: "aBNACN",
       key: "aBNACN",
@@ -165,6 +162,13 @@ const TradingCompany = (props) => {
       type: "textarea",
       placeholder: "Business Address",
       width: 200,
+    },
+    {
+      title: "Postcode/Suburb",
+      dataIndex: "postcodeSuburb",
+      type: "postcode-antd",
+      key: "postcodeSuburb",
+      width: 230,
     },
     {
       title: "Number of Directors",
@@ -322,6 +326,7 @@ const TradingCompany = (props) => {
                     className="w-100 h-100"
                     placeholder="Select"
                     size="large"
+                    disabled={!props?.isEditing}
                     value={values.NumberOfMap || undefined}
                     onChange={(value) => {
                       setFieldValue("NumberOfMap", value);
@@ -350,6 +355,7 @@ const TradingCompany = (props) => {
                   handleBlur={handleBlur}
                   isEditing={props?.isEditing}
                   setIsEditing={props?.setIsEditing}
+                  deleteButton={true}
                 />
               </div>
             )}

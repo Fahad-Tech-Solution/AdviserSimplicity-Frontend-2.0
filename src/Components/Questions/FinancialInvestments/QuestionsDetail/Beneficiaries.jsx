@@ -10,16 +10,7 @@ const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
 
 const Beneficiaries = (props) => {
-  const [title, setTitle] = useState(() => {
-    let currentTitle = props.modalObject?.ParentModalObject?.title || "";
-    if (currentTitle.includes("_")) {
-      currentTitle = currentTitle.split("_")[1];
-    }
-    return currentTitle;
-  });
-
   const [RelationshipOptions, setRelationshipOptions] = useState([]);
-  const DefaultUrl = useRecoilValue(defaultUrl);
 
   const initialValues = {
     BeneficiariesDetails: [],
@@ -78,9 +69,11 @@ const Beneficiaries = (props) => {
   const onSubmit = async (values) => {
     try {
       console.log(values);
-      const payload = {
-        [`${props.modalObject.key}Array`]: values.BeneficiariesDetails || [],
 
+      const payload = {
+        [`${props.modalObject.key}Array`]: (
+          values.BeneficiariesDetails || []
+        ).slice(0, values.NumberOfMap),
         nominationType: values.nominationType || "",
         NumberOfMap: values.NumberOfMap || "",
       };
@@ -272,6 +265,7 @@ const Beneficiaries = (props) => {
                           id="nominationType"
                           name="nominationType"
                           className="w-100 h-100"
+                          disabled={!props?.isEditing}
                           placeholder="Select"
                           size="large"
                           value={values.nominationType || undefined}
@@ -333,6 +327,7 @@ const Beneficiaries = (props) => {
                           className="w-100 h-100"
                           placeholder="Select"
                           size="large"
+                          disabled={!props?.isEditing}
                           value={values.NumberOfMap || undefined}
                           onChange={(value) => {
                             setFieldValue("NumberOfMap", value);
@@ -373,6 +368,7 @@ const Beneficiaries = (props) => {
                         pagination={true} // 🚫 pagination removed
                         isEditing={props?.isEditing}
                         setIsEditing={props?.setIsEditing}
+                        deleteButton={true}
                       />
                     </div>
                   )}

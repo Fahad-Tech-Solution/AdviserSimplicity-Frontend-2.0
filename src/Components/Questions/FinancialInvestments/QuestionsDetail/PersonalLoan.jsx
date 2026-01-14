@@ -339,6 +339,7 @@ const PersonalLoan = (props) => {
                     className="w-100 h-100"
                     placeholder="Select"
                     size="large"
+                    disabled={!props?.isEditing}
                     value={values.NumberOfMap || undefined}
                     onChange={(value) => {
                       setFieldValue("NumberOfMap", value);
@@ -371,6 +372,7 @@ const PersonalLoan = (props) => {
                   handleSubmit={props?.handleOk}
                   isEditing={props?.isEditing}
                   setIsEditing={props?.setIsEditing}
+                  deleteButton={true}
                 />
               </div>
             )}

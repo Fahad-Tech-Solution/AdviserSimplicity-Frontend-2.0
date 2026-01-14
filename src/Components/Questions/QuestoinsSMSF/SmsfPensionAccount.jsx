@@ -1,24 +1,14 @@
-import { Field, Form, Formik } from "formik";
+import { Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
-import { Button, Row } from "react-bootstrap";
-import { useRecoilValue } from "recoil";
-import { defaultUrl, QuestionDetail } from "../../../Store/Store";
-import {
-  openNotificationSuccess,
-  PatchAxios,
-  PostAxios,
-  RenderName,
-  toCommaAndDollar,
-} from "../../Assets/Api/Api";
+import { Row } from "react-bootstrap";
+import { toCommaAndDollar } from "../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
 import InnerModal from "../FinancialInvestments/QuestionsDetail/InnerModal";
 import DynamicYesNo from "../FinancialInvestments/QuestionsDetail/DynamicYesNo";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 import PensionBenefits from "./PensionBenefits";
 import Beneficiaries from "../FinancialInvestments/QuestionsDetail/Beneficiaries";
-import { ConfigProvider, Select, Input, InputNumber } from "antd";
-import { Grid } from "antd";
+import { Select, Grid } from "antd";
+
 const { useBreakpoint } = Grid;
 const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
@@ -47,6 +37,7 @@ const SmsfPensionAccount = (props) => {
   let index = parseFloat(
     props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
   );
+  
   let BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
 
   // Get existing data safely
@@ -364,6 +355,7 @@ const SmsfPensionAccount = (props) => {
                         onChange={(e) => handleInput(e, setFieldValue, values)}
                         onBlur={handleBlur}
                         value={values.NumberOfMap || ""}
+                        disabled={!props?.isEditing}
                       >
                         <option value="">Select</option>
                         <option value="1">1</option>
@@ -386,6 +378,7 @@ const SmsfPensionAccount = (props) => {
                         setIsEditing={props?.setIsEditing}
                         showError={ShowError}
                         setShowError={setShowError}
+                        deleteButton={true}
                       />
                     </div>
                   )}

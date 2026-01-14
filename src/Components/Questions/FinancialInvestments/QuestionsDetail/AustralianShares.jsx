@@ -40,10 +40,6 @@ const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
 
 const AustralianShares = (props) => {
-  const questionDetail = useRecoilValue(QuestionDetail);
-  const [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
-  const DefaultUrl = useRecoilValue(defaultUrl);
-
   // 🏷️ Clean title
   const [title] = useState(() => {
     let currentTitle = props.modalObject.title;
@@ -51,22 +47,6 @@ const AustralianShares = (props) => {
       currentTitle = currentTitle.split("_").slice(1).join("_");
     }
     return currentTitle;
-  });
-
-  // 👤 Set name based on Input type
-  const [nameSet] = useState(() => {
-    if (props.modalObject.Input === "client") {
-      return localStorage.getItem("UserName");
-    } else if (props.modalObject.Input === "partner") {
-      return localStorage.getItem("PartnerName");
-    } else if (props.modalObject.Input === "joint") {
-      return (
-        localStorage.getItem("UserName") +
-        " & " +
-        localStorage.getItem("PartnerName")
-      );
-    }
-    return "";
   });
 
   const existingData =
@@ -93,26 +73,6 @@ const AustralianShares = (props) => {
     } else {
       props.setIsEditing(true);
     }
-  };
-
-  const handleInput = (e, setFieldValue) => {
-    const value = e.target.value > 50 ? 50 : e.target.value;
-    setFieldValue("NumberOfMap", value);
-    setDynamicFields(Array(Number(value)).fill(""));
-    setFieldValue(
-      "shares",
-      Array(Number(value))
-        .fill()
-        .map((_, i) => ({
-          ASXCode: "",
-          companyName: "",
-          sharePrice: "",
-          shares: "",
-          costBase: "",
-          currentBalance: "",
-          ...(initialValues.shares[i] || {}),
-        }))
-    );
   };
 
   const handleASXCodeChange = async (
@@ -210,8 +170,16 @@ const AustralianShares = (props) => {
   };
 
   const onSubmit = async (values) => {
+    const count =
+      Number(values.NumberOfMap) || values.bankAccounts?.length || 0;
+
+    const shares = Array.isArray(values.shares)
+      ? values.shares.slice(0, count)
+      : [];
+
     const DataOf = props.modalObject.Input;
-    const newEntries = values.shares.map((entry) => ({ ...entry }));
+
+    const newEntries = shares.map((entry) => ({ ...entry }));
 
     const total = newEntries.reduce(
       (t, e) =>
@@ -377,6 +345,7 @@ const AustralianShares = (props) => {
                     className="w-100 h-100"
                     placeholder="Select"
                     size="large"
+                    disabled={!props?.isEditing}
                     value={values.NumberOfMap || undefined}
                     onChange={(value) => {
                       setFieldValue("NumberOfMap", value);
@@ -407,6 +376,7 @@ const AustralianShares = (props) => {
                   handleSubmit={props?.handleOk}
                   isEditing={props?.isEditing}
                   setIsEditing={props?.setIsEditing}
+                  deleteButton={true}
                 />
               </div>
             )}

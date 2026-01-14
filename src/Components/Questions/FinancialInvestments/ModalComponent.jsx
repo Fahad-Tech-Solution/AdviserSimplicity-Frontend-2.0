@@ -234,7 +234,6 @@ const ModalComponent = (props) => {
     "Credit Card",
     "Personal Loan",
     // "Wills",
-    "Account Based Pension",
     "Investment Properties",
     "Family Trust Investment Properties",
     RenderName("client") + "_Pension Benefits",
@@ -246,7 +245,6 @@ const ModalComponent = (props) => {
     "SMSF Australian Shares",
     "Platform Investment",
     "Other Investments",
-    "Annuities",
     "West Family Trust Investment",
   ];
 
@@ -284,7 +282,7 @@ const ModalComponent = (props) => {
     "Super and Retirement",
     "Estate Planning & Professional Adviser",
     "Personal Income and Expenses",
-    "Business Entities & Tax Structures",
+    "Business Entities",
     "Self Manged Super Fund",
     "Family Trust",
     "Goals and Objectives",

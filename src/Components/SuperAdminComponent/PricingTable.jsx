@@ -17,6 +17,8 @@ export default function PricingTable() {
   const [pricingPlans, setPricingPlans] = useState([]);
   const [loading, setLoading] = useRecoilState(Loading);
   const [isYearly, setIsYearly] = useState(false);
+  const [hasPurchasedSubscription, setHasPurchasedSubscription] =
+    useState(false);
   let DefaultUrl = useRecoilValue(defaultUrl);
   let location = useLocation();
 
@@ -35,6 +37,7 @@ export default function PricingTable() {
       }
 
       setPricingPlans(res.products);
+      setHasPurchasedSubscription(res.hasPurchasedSubscription);
     } catch (error) {
       console.error("❌ Failed to fetch pricing plans:", error.message);
       openNotificationSuccess(
@@ -65,7 +68,9 @@ export default function PricingTable() {
         return;
       }
 
-      const successUrl = `${window.location.origin}/stripe-redirect?status=success`;
+      const successUrl = `${window.location.origin}/stripe-redirect?status=${
+        hasPurchasedSubscription ? "renew" : "success"
+      }`;
       const cancelUrl = `${window.location.origin}/stripe-redirect?status=cancel`;
 
       const payload = { priceId, email, successUrl, cancelUrl };

@@ -286,45 +286,6 @@ const questionConfig = {
       component: <AssetInfo />,
       Labels: ["Joint"],
     },
-    // {
-    //   title: "Other Assets",
-    //   keyName: "otherAssets",
-    //   api: "/personalAssets",
-    //   img: settingMoneySvg,
-    //   variant: "case2",
-    //   component: <AssetInfo />,
-    //   Labels: [
-    //     {
-    //       label: "Other Assets",
-    //       value: (questionDetail) =>
-    //         questionDetail?.otherAssets?.clientTotal ?? "",
-    //       component: <AssetInfo />,
-    //       key: "otherAssets",
-    //     },
-    //   ],
-    // },
-    // {
-    //   title: "Personal Debt",
-    //   keyName: "personalLoans",
-    //   img: moneyGivingPng,
-    //   variant: "case2",
-    //   Labels: [
-    //     {
-    //       label: "Credit Card",
-    //       value: (questionDetail) =>
-    //         questionDetail?.creditCards?.clientTotal ?? "",
-    //       component: <CreditCard />,
-    //       key: "creditCards",
-    //     },
-    //     {
-    //       label: "Personal Loan",
-    //       value: (questionDetail) =>
-    //         questionDetail?.personalLoans?.clientTotal ?? "",
-    //       component: <PersonalLoan />,
-    //       key: "personalLoans",
-    //     },
-    //   ],
-    // },
     {
       title: "Credit Card",
       keyName: "creditCards",
@@ -607,13 +568,13 @@ const questionConfig = {
   ],
   "/user/business-entities": [
     {
-      title: "Business as Company Structure",
+      title: "Trading Company",
       keyName: "BusinessAsCompanyStructure",
       img: Business_building,
       component: <MiddleWare />,
     },
     {
-      title: "Business as Trusts Structure",
+      title: "Business Trust",
       keyName: "BusinessAsTrusts",
       img: businessIncomePng,
       component: <MiddleWare />,

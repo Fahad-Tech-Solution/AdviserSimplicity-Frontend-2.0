@@ -44,22 +44,22 @@ const ImportantQuestion = (props) => {
       key: "personalInsuranceTab",
     },
     {
-      title: "A Company (Pty Ltd) structure to run a business",
+      title: "Trading Company",
       img: Business_building,
       key: "BusinessAsCompanyStructure",
     },
     {
-      title: "A Trust structure to run a business",
+      title: "Business Trust",
       img: Business_TeamHandshake,
       key: "BusinessAsTrusts",
     },
     {
-      title: "A Self-Managed Super Fund",
+      title: "Self-Managed Super Fund",
       img: Business_SMSF,
       key: "SMSFManagedFundsTab",
     },
     {
-      title: "An Investment Family Trust ",
+      title: "Investment Trust",
       img: Questions_People,
       key: "businessAsInvestmentTab",
     },

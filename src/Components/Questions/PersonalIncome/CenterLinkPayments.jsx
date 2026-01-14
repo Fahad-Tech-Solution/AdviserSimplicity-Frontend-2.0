@@ -296,6 +296,7 @@ const CenterLinkPayments = (props) => {
                       name="owner"
                       component={AntdCreatableMultiSelect}
                       options={ownerOptions()}
+                      disabled={!props?.isEditing}
                     />
                   </div>
                 </div>

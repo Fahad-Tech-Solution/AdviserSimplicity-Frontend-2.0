@@ -8,25 +8,7 @@ import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInpu
 const AntDTableHOC = DynamicTableForInputsSection("antd");
 
 const InnerBareTrust = (props) => {
-  const bankDetailObj = useRecoilValue(BankDetail);
-  const [dynamicFields, setDynamicFields] = useState([]);
   const [SwitchFlag, setSwitchFlag] = useState(false);
-  const DefaultUrl = useRecoilValue(defaultUrl);
-
-  // 🧠 Set name display for header context
-  const [nameSet] = useState(() => {
-    if (props.modalObject.Input === "client") {
-      return localStorage.getItem("UserName");
-    } else if (props.modalObject.Input === "partner") {
-      return localStorage.getItem("PartnerName");
-    } else if (props.modalObject.Input === "joint") {
-      return (
-        localStorage.getItem("UserName") +
-        " & " +
-        localStorage.getItem("PartnerName")
-      );
-    }
-  });
 
   // 🧠 Handle select input
   const handleInput = (e, setFieldValue) => {
@@ -180,6 +162,7 @@ const InnerBareTrust = (props) => {
                     <div style={{ minWidth: "10%" }}>
                       <select
                         id="NumberOfMap"
+                        disabled={!props?.isEditing}
                         name="NumberOfMap"
                         className="form-select inputDesignDoubleInput"
                         onChange={(e) => handleInput(e, setFieldValue)}

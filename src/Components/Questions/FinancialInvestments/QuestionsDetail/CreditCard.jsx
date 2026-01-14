@@ -341,6 +341,7 @@ const CreditCard = (props) => {
                     }}
                     onBlur={handleBlur}
                     getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                    disabled={!props?.isEditing}
                   >
                     <Option key={"Select"} value={""}>
                       Select
@@ -368,6 +369,7 @@ const CreditCard = (props) => {
                   handleSubmit={props?.handleOk}
                   isEditing={props?.isEditing}
                   setIsEditing={props?.setIsEditing}
+                  deleteButton={true}
                 />
               </div>
             )}

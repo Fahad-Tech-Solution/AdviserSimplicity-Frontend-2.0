@@ -64,7 +64,12 @@ const PortfolioValue = (props) => {
   };
 
   const onSubmit = async (values) => {
-    const newEntries = values.investments;
+    const count = Number(values.NumberOfMap) || values.investments?.length || 0;
+
+    const newEntries = Array.isArray(values.investments)
+      ? values.investments.slice(0, count)
+      : [];
+
     const total = newEntries.reduce(
       (total, entry) =>
         total +
@@ -148,8 +153,7 @@ const PortfolioValue = (props) => {
                 <div className="row justify-content-center">
                   <div className="d-flex flex-row justify-content-center align-items-center gap-2">
                     <p className="text-end mt-3">
-                      {props?.modalObject?.question ||
-                        "Number of Platforms :"}
+                      {props?.modalObject?.question || "Number of Platforms :"}
                     </p>
                     <div style={{ minWidth: "10%" }}>
                       <ConfigProvider
@@ -166,6 +170,7 @@ const PortfolioValue = (props) => {
                           name="NumberOfMap"
                           className="w-100 h-100"
                           placeholder="Select"
+                          disabled={!props?.isEditing}
                           size="large"
                           value={values.NumberOfMap || undefined}
                           onChange={(value) => {
@@ -199,6 +204,7 @@ const PortfolioValue = (props) => {
                         handleSubmit={props?.handleOk}
                         isEditing={props?.isEditing}
                         setIsEditing={props?.setIsEditing}
+                        deleteButton={true}
                       />
                     </div>
                   )}

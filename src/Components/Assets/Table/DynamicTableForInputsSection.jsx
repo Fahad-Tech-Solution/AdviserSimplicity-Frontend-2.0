@@ -1,9 +1,11 @@
 import React, { useMemo } from "react";
 import { Table as BootstrapTable, Button } from "react-bootstrap";
-import { Table as AntTable, Typography } from "antd";
+import { Table as AntTable, Modal, Typography } from "antd";
 import DynamicFormField from "../Dynamic/DynamicFormField";
 import { ConvertDate } from "../Api/Api";
 import { Grid } from "antd";
+import { FaDeleteLeft } from "react-icons/fa6";
+import { FaRegTrashAlt } from "react-icons/fa";
 const { useBreakpoint } = Grid;
 
 // Move helper outside to prevent recreation
@@ -18,6 +20,7 @@ const getNestedValue = (obj, path) => {
 };
 
 const DynamicTableForInputsSection = (type = "bootstrap") => {
+  const { confirm } = Modal;
   return function TableHOC({
     columns,
     data,
@@ -29,6 +32,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
     handleSubmit = () => {},
     isEditing = false,
     setIsEditing = () => {},
+    deleteButton = false,
   }) {
     // Helper function to get nested value from form values
     const getNestedValue = (obj, path) => {
@@ -252,28 +256,43 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
       width: 120,
       fixed: "right",
       align: "center",
-      render: (_, record, index) =>
-        index === 0 ? (
-          <Typography.Link
+      render: (_, record, index) => {
+        return (
+          <FaRegTrashAlt
             onClick={() => {
-              isEditing && handleSubmit();
-              setIsEditing((prev) => !prev);
+              confirm({
+                title: "Remove data?",
+                content:
+                  "This action will permanently discard your data. Do you want to continue?",
+                okText: "Remove",
+                okType: "danger",
+                cancelText: "Cancel",
+                centered: true,
+                onOk: async () => {
+                  let BaseKey = record?.stakeHolder.replace(/[^a-zA-Z]+/g, "");
+
+                  setIsEditing(true);
+                  setFieldValue(
+                    "NumberOfMap",
+                    values.NumberOfMap == "1"
+                      ? ""
+                      : parseFloat(values.NumberOfMap) - 1
+                  );
+
+                  let arr = values?.[BaseKey].filter((_, i) => i !== index);
+
+                  setFieldValue(BaseKey, arr);
+                },
+              });
             }}
-            style={{
-              display: "block",
-              height: "100%",
-            }}
-          >
-            {isEditing ? "Save All" : "Edit All"}
-          </Typography.Link>
-        ) : (
-          // ⬇️ Empty cell for other rows - FIXED: Return proper object
-          { children: null, props: { colSpan: 0 } }
-        ),
+            style={{ color: "red" }}
+          />
+        );
+      },
     };
 
     // const allColumns = [...columns, actionColumn];
-    const allColumns = [...columns];
+    const allColumns = deleteButton ? [...columns, actionColumn] : [...columns];
 
     const screens = useBreakpoint();
 
@@ -287,8 +306,6 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
               return {
                 ...col,
                 width: isEditing ? col.width || 150 : undefined,
-                onCell: (_, index) =>
-                  index === 0 ? { rowSpan: data.length } : { rowSpan: 0 },
               };
             } else if (col.key === "owner" || col?.justText) {
               return {

@@ -358,6 +358,7 @@ const Partnership = (props) => {
                           name="owner"
                           component={AntdCreatableMultiSelect}
                           options={optionsForOwner()}
+                      disabled={!props?.isEditing}
                         />
                       </div>
                     </div>

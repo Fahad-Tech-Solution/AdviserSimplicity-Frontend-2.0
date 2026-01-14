@@ -22,6 +22,7 @@ import Beneficiaries from "./Beneficiaries";
 import { ConfigProvider, Select } from "antd";
 import ServiceFee from "./ServiceFee";
 import { Grid } from "antd";
+
 const { useBreakpoint } = Grid;
 const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
@@ -133,41 +134,6 @@ const SuperFunds = (props) => {
     });
     setFlagState(true);
   };
-
-  // const CheckInputValue = (
-  //   values,
-  //   setFieldValue,
-  //   currentInput,
-  //   stakeHolder
-  // ) => {
-  //   const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
-  //   const BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
-
-  //   const portfolioArray = values?.[BaseKey]?.[index]?.portfolioArray || [];
-  //   const ExpectedSum = portfolioArray.reduce(
-  //     (total, entry) =>
-  //       total +
-  //       parseFloat(entry.investmentValue?.replace(/[^0-9.-]+/g, "") || 0),
-  //     0
-  //   );
-
-  //   const data = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, ""));
-  //   if (ExpectedSum !== data) {
-  //     setShowError((prev) => ({
-  //       ...prev,
-  //       [`portfolioValue${index}Error`]: true,
-  //       [`portfolioValue${index}Message`]:
-  //         "Total must equal the sum of all investment values in the popup. The sum is " +
-  //         toCommaAndDollar(ExpectedSum),
-  //     }));
-  //   } else {
-  //     setShowError((prev) => ({
-  //       ...prev,
-  //       [`portfolioValue${index}Error`]: false,
-  //       [`portfolioValue${index}Message`]: "",
-  //     }));
-  //   }
-  // };
 
   const onSubmit = async (values) => {
     const DataOf = props.modalObject.Input;
@@ -418,6 +384,7 @@ const SuperFunds = (props) => {
                     className="w-100 h-100"
                     placeholder="Select"
                     size="large"
+                    disabled={!props?.isEditing}
                     value={values.NumberOfMap || undefined}
                     onChange={(value) => {
                       setFieldValue("NumberOfMap", value);
@@ -446,6 +413,7 @@ const SuperFunds = (props) => {
                   handleBlur={handleBlur}
                   isEditing={props?.isEditing}
                   setIsEditing={props?.setIsEditing}
+                  deleteButton={true}
                 />
               </div>
             )}

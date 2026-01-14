@@ -208,12 +208,12 @@ const BusinessEntities = (props) => {
 
   let QuestionArray = [
     {
-      title: "Are you Running a business  a Company Structure (Pty Ltd)?",
+      title: "Trading Company",
       img: Business_building,
       key: "BusinessAsCompanyStructure",
     },
     {
-      title: "Are you Running a business via a Trusts?",
+      title: "Business Trust",
       img: Business_TeamHandshake,
       key: "BusinessAsTrusts",
     },

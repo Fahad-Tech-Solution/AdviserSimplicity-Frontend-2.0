@@ -219,6 +219,7 @@ const EstatePlanningProfessionalAdviser = (props) => {
                     name="professionalAdvisersTypes"
                     mode="multiple"
                     allowClear
+                    disabled={!props?.isEditing}
                     className="w-100"
                     placeholder="Select Adviser Types"
                     size="large"

@@ -45,14 +45,21 @@ const GroupCoverDetails = (props) => {
         "tpd",
         existingData?.groupInsuranceDetails?.TPDCover || "$0"
       );
-      setFieldValue(
-        "ip",
-        (existingData?.groupInsuranceDetails?.monthlyIncome || "$0") +
-          "/" +
-          (existingData?.groupInsuranceDetails?.waitingPeriod || "30") +
-          " Days/" +
-          (existingData?.groupInsuranceDetails?.BenefitPeriod || "2 Years")
+      console.log(
+        "ip value is :",
+        existingData?.groupInsuranceDetails?.monthlyIncome
       );
+      let ip =
+        existingData?.groupInsuranceDetails?.monthlyIncome &&
+        existingData?.groupInsuranceDetails?.monthlyIncome !== "$0"
+          ? (existingData?.groupInsuranceDetails?.monthlyIncome || "$0") +
+            "/" +
+            (existingData?.groupInsuranceDetails?.waitingPeriod || "30") +
+            " Days/" +
+            (existingData?.groupInsuranceDetails?.BenefitPeriod || "2 Years")
+          : "$0";
+
+      setFieldValue("ip", ip || "$0");
       setFieldValue("groupOwner", "Super Trustee");
       setFieldValue("loadingExclusion", "No");
 

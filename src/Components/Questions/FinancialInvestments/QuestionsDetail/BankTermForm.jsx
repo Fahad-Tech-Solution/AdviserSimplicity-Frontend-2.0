@@ -76,7 +76,13 @@ const BankTermForm = (props) => {
   };
 
   const onSubmit = async (values) => {
-    const bankData = values.bankAccounts;
+    const count =
+      Number(values.NumberOfMap) || values.bankAccounts?.length || 0;
+      
+    const bankData = Array.isArray(values.bankAccounts)
+      ? values.bankAccounts.slice(0, count)
+      : [];
+
     const DataOf = props.modalObject.Input;
 
     // Compute total balance
@@ -202,6 +208,7 @@ const BankTermForm = (props) => {
                         placeholder="Select"
                         size="large"
                         value={field.value || undefined}
+                        disabled={!props?.isEditing}
                         onChange={(value) =>
                           form.setFieldValue(field.name, value)
                         }
@@ -237,6 +244,7 @@ const BankTermForm = (props) => {
                   handleSubmit={props?.handleOk}
                   isEditing={props?.isEditing}
                   setIsEditing={props?.setIsEditing}
+                  deleteButton={true}
                 />
               </div>
             )}

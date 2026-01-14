@@ -460,7 +460,7 @@ const EmploymentIncome = (props) => {
                       name={`owner`}
                       component={AntdCreatableMultiSelect}
                       options={options}
-                      onChangefun={() => {}}
+                      disabled={!props?.isEditing}
                     />
                   </div>
                 </div>

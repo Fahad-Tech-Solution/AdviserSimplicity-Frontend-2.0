@@ -780,6 +780,7 @@ const InvestmentLoan = (props) => {
                           component={AntdCreatableMultiSelect}
                           options={options}
                           onChangefun={() => {}}
+                          disabled={!props?.isEditing}
                         />
                       </div>
                     </div>

@@ -400,6 +400,7 @@ const SmsfAccumulationDetails = (props) => {
                     id="selectedMembers"
                     name="selectedMembers"
                     className="w-100 h-100"
+                    disabled={!props?.isEditing}
                     placeholder="Select Members"
                     size="large"
                     mode="multiple"

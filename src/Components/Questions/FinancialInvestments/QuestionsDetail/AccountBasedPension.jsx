@@ -30,30 +30,12 @@ const { Option } = Select;
 
 const AccountBasedPension = (props) => {
   const bankDetailObj = useRecoilValue(BankDetail);
-  const questionDetail = useRecoilValue(QuestionDetail);
-  const DefaultUrl = useRecoilValue(defaultUrl);
 
   const [ShowError, setShowError] = useState({});
   const [flagState, setFlagState] = useState(false);
   const [modalObject, setModalObject] = useState({});
 
   const screens = useBreakpoint();
-
-  // determine display name
-  const [nameSet] = useState(() => {
-    if (props.modalObject.Input === "client") {
-      return localStorage.getItem("UserName") || "";
-    } else if (props.modalObject.Input === "partner") {
-      return localStorage.getItem("PartnerName") || "";
-    } else if (props.modalObject.Input === "joint") {
-      return (
-        (localStorage.getItem("UserName") || "") +
-        " & " +
-        (localStorage.getItem("PartnerName") || "")
-      );
-    }
-    return "";
-  });
 
   // load existing data for this modal input (client/partner/joint)
   const existingData =
@@ -74,34 +56,6 @@ const AccountBasedPension = (props) => {
     } else {
       props.setIsEditing(true);
     }
-  };
-
-  // handle NumberOfMap changes
-  const handleInput = (e, setFieldValue) => {
-    const raw = e?.target?.value ?? e; // handle both Select onChange and event
-    const value = raw > 10 ? 10 : raw;
-    setFieldValue("NumberOfMap", value);
-
-    // create placeholder array for form-managed items
-    const arrLength = Number(value) || 0;
-    const newArray = Array(arrLength)
-      .fill()
-      .map((_, i) => ({
-        platformName: "",
-        memberNumber: "",
-        portfolioArray: [],
-        portfolioValue: "",
-        balanceBenefitDetails: "",
-        balanceBenefitDetailsArray: [],
-        pensionPayment: "",
-        annualPensionPaymentArray: [],
-        nominatedBeneficiaries: "",
-        beneficiariesArray: [],
-        annualAdvice: "",
-        ...(initialValues.accountBasedPensions[i] || {}),
-      }));
-
-    setFieldValue("accountBasedPensions", newArray);
   };
 
   // open inner modal
@@ -211,6 +165,7 @@ const AccountBasedPension = (props) => {
   // onSubmit: collect entries and set parent fields
   const onSubmit = async (values) => {
     const DataOf = props.modalObject.Input;
+
     const newEntries = (values.accountBasedPensions || []).slice(
       0,
       values.NumberOfMap
@@ -449,6 +404,7 @@ const AccountBasedPension = (props) => {
                     name="NumberOfMap"
                     className="w-100 h-100"
                     placeholder="Select"
+                    disabled={!props?.isEditing}
                     size="large"
                     value={values.NumberOfMap || undefined}
                     onChange={(value) => {
@@ -479,6 +435,7 @@ const AccountBasedPension = (props) => {
                   CheckInputValue={CheckInputValue}
                   isEditing={props?.isEditing}
                   setIsEditing={props?.setIsEditing}
+                  deleteButton={true}
                 />
               </div>
             )}

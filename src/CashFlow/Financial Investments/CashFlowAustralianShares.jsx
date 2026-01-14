@@ -61,7 +61,7 @@ const CashFlowAustralianShares = (props) => {
     "SMSF",
     "Family Trust Australian Shares",
     "Family Trust Platform Investment",
-    "Family Trust",
+    "Family Trust Details",
   ];
 
   const layoutSwitchSMSFArray = [
@@ -70,7 +70,7 @@ const CashFlowAustralianShares = (props) => {
     "SMSF",
     "Family Trust Australian Shares",
     "Family Trust Platform Investment",
-    "Family Trust",
+    "Family Trust Details",
   ];
 
   const layoutSwitchFlag = layoutSwitchArray.includes(props.modalObject.title);
@@ -254,10 +254,16 @@ const CashFlowAustralianShares = (props) => {
     { title: "Owner", dataIndex: "owner", type: "label", justText: true },
     {
       title: layoutSwitchSMSFFlag ? "Opening Balance" : "Current Balance",
+      placeholder: layoutSwitchSMSFFlag ? "Opening Balance" : "Current Balance",
       dataIndex: "currentBalance",
       type: "number-toComma",
     },
-    { title: "Cost Base", dataIndex: "costBase", type: "number-toComma" },
+    {
+      title: "Cost Base",
+      placeholder: "Cost Base",
+      dataIndex: "costBase",
+      type: "number-toComma",
+    },
     {
       title: "Investment Returns",
       dataIndex: "investmentReturns",
@@ -269,7 +275,7 @@ const CashFlowAustralianShares = (props) => {
       options: investmentReturnsOptions,
       func: handleInnerModal,
     },
-    { title: "Reinvest Income", dataIndex: "reinvestIncome", type: "yesno" },
+    { title: "Reinvest Income",placeholder: "Reinvest Income", dataIndex: "reinvestIncome", type: "yesno" },
     {
       title: "Reinvest Up Until",
       dataIndex: "reinvestUpUntil",
@@ -300,6 +306,7 @@ const CashFlowAustralianShares = (props) => {
       ? [
           {
             title: "Investment Fees",
+            placeholder: "Investment Fees",
             dataIndex: "investmentFees",
             type: "number-toPercent",
           },

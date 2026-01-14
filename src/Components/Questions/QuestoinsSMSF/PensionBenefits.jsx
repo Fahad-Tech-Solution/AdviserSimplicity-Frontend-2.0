@@ -1,24 +1,12 @@
 import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { Row } from "react-bootstrap";
-import { useRecoilValue } from "recoil";
-import { defaultUrl } from "../../../Store/Store";
-import {
-  handleInputBlur,
-  handleInputChange,
-  handleInputFocus,
-  handleInputKeyDown,
-  toCommaAndDollar,
-  toPercentage,
-} from "../../Assets/Api/Api";
+import { toCommaAndDollar } from "../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
-import { ConfigProvider, Input } from "antd";
 
 const AntdTable = DynamicTableForInputsSection("antd");
 
 const PensionBenefits = (props) => {
-  const [dynamicFields, setDynamicFields] = useState([]);
-
   // Safely access modalObject from props with fallbacks
   const modalObject = props.modalObject || {};
   const index = parseFloat(
@@ -319,6 +307,7 @@ const PensionBenefits = (props) => {
                       className="form-select inputDesignDoubleInput w-100"
                       onChange={(e) => handleInput(e, setFieldValue, values)}
                       onBlur={handleBlur}
+                      disabled={!props?.isEditing}
                       value={values.NumberOfMap || ""}
                     >
                       <option value="">Select</option>
@@ -341,6 +330,7 @@ const PensionBenefits = (props) => {
                       handleBlur={handleBlur}
                       isEditing={props?.isEditing}
                       setIsEditing={props?.setIsEditing}
+                      deleteButton={true}
                     />
                   </div>
                 )}

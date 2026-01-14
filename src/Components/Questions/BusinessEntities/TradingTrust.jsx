@@ -22,24 +22,7 @@ const { Option } = Select;
 
 const TradingTrust = (props) => {
   const [flagState, setFlagState] = useState(false);
-  const [innerFlagState, setInnerFlagState] = useState(false);
   const [modalObject, setModalObject] = useState({});
-
-  const [nameSet] = useState(() => {
-    const input = props.modalObject.Input;
-    if (input === "client") {
-      return localStorage.getItem("UserName");
-    } else if (input === "partner") {
-      return localStorage.getItem("PartnerName");
-    } else if (input === "joint") {
-      return (
-        localStorage.getItem("UserName") +
-        " & " +
-        localStorage.getItem("PartnerName")
-      );
-    }
-    return "";
-  });
 
   const [title] = useState(() => {
     let currentTitle = props.modalObject.title;
@@ -150,13 +133,6 @@ const TradingTrust = (props) => {
       placeholder: "Business Name",
     },
     {
-      title: "Postcode/Suburb",
-      dataIndex: "postcodeSuburb",
-      type: "postcode-antd",
-      key: "postcodeSuburb",
-      width: 230,
-    },
-    {
       title: "ABN",
       dataIndex: "aBN",
       key: "aBN",
@@ -170,6 +146,13 @@ const TradingTrust = (props) => {
       type: "text",
       placeholder: "Business Address",
       width: 200,
+    },
+    {
+      title: "Postcode/Suburb",
+      dataIndex: "postcodeSuburb",
+      type: "postcode-antd",
+      key: "postcodeSuburb",
+      width: 230,
     },
     {
       title: "Trustee Type",
@@ -189,6 +172,15 @@ const TradingTrust = (props) => {
       key: "trusteeName",
       type: "text",
       placeholder: "Trustee Name",
+      disabled: (values, stakeHolder) => {
+        let BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
+        let index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
+
+        if (values?.[BaseKey]?.[index]?.trusteeType == "Individual") {
+          return true;
+        }
+        return false;
+      },
     },
     {
       title: "ACN",
@@ -196,15 +188,24 @@ const TradingTrust = (props) => {
       key: "aNC",
       type: "number",
       placeholder: "ACN",
+      disabled: (values, stakeHolder) => {
+        let BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
+        let index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
+
+        if (values?.[BaseKey]?.[index]?.trusteeType == "Individual") {
+          return true;
+        }
+        return false;
+      },
     },
-    {
-      title: "Business Ownership",
-      dataIndex: "businessOwnership",
-      key: "businessOwnership",
-      type: "number-toPercent",
-      placeholder: "Business Ownership",
-      width: 200,
-    },
+    // {
+    //   title: "Business Ownership",
+    //   dataIndex: "businessOwnership",
+    //   key: "businessOwnership",
+    //   type: "number-toPercent",
+    //   placeholder: "Business Ownership",
+    //   width: 200,
+    // },
     {
       title: "Distribution Received",
       dataIndex: "distributionReceived",
@@ -249,8 +250,8 @@ const TradingTrust = (props) => {
               trusteeType: values.tradingTrusts?.[i]?.trusteeType || "",
               trusteeName: values.tradingTrusts?.[i]?.trusteeName || "",
               aNC: values.tradingTrusts?.[i]?.aNC || "",
-              businessOwnership:
-                values.tradingTrusts?.[i]?.businessOwnership || "",
+              // businessOwnership:
+              //   values.tradingTrusts?.[i]?.businessOwnership || "",
               distributionReceived:
                 values.tradingTrusts?.[i]?.distributionReceived || "",
               businessValuation:
@@ -300,6 +301,7 @@ const TradingTrust = (props) => {
                     className="w-100 h-100"
                     placeholder="Select"
                     size="large"
+                    disabled={!props?.isEditing}
                     value={values.NumberOfMap || undefined}
                     onChange={(value) => {
                       setFieldValue("NumberOfMap", value);
@@ -328,6 +330,7 @@ const TradingTrust = (props) => {
                   handleBlur={handleBlur}
                   isEditing={props?.isEditing}
                   setIsEditing={props?.setIsEditing}
+                  deleteButton={true}
                 />
               </div>
             )}

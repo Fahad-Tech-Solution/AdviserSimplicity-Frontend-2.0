@@ -8,20 +8,6 @@ const AntDTableHOC = DynamicTableForInputsSection("antd");
 const { Option } = Select;
 
 const InnerDirectors = (props) => {
-  const [nameSet] = useState(() => {
-    if (props.modalObject.Input === "client") {
-      return localStorage.getItem("UserName");
-    } else if (props.modalObject.Input === "partner") {
-      return localStorage.getItem("PartnerName");
-    } else if (props.modalObject.Input === "joint") {
-      return (
-        localStorage.getItem("UserName") +
-        " & " +
-        localStorage.getItem("PartnerName")
-      );
-    }
-  });
-
   let {
     title,
     question = "Number of Directors :",
@@ -164,6 +150,7 @@ const InnerDirectors = (props) => {
                           className="w-100 h-100"
                           placeholder="Select"
                           size="large"
+                          disabled={!props?.isEditing}
                           value={values.NumberOfMap || undefined}
                           onChange={(value) => {
                             setFieldValue("NumberOfMap", value);
@@ -196,6 +183,7 @@ const InnerDirectors = (props) => {
                         handleBlur={handleBlur}
                         isEditing={props?.isEditing}
                         setIsEditing={props?.setIsEditing}
+                        deleteButton={true}
                       />
                     </div>
                   )}

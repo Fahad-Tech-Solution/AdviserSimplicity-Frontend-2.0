@@ -131,7 +131,7 @@ const CashFlowCardSet = ({ Data }) => {
 
       "Family Trust Australian Shares": <CashFlowAustralianShares />,
       "Family Trust Platform Investment": <CashFlowAustralianShares />,
-      "Family Trust": <CashFlowAustralianShares />,
+      "Family Trust Details": <CashFlowAustralianShares />,
       "Family Trust Investment Loan": <SMSFInvestmentLoan />,
       "Family Trust Investment Properties": <SMSFInvestmentProperties />,
     }),

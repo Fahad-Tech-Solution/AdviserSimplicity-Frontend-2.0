@@ -10,24 +10,6 @@ const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
 
 const Executor = (props) => {
-  const questionDetail = useRecoilValue(QuestionDetail);
-  const [flagState, setFlagState] = useState(false);
-
-  // derive stakeholder name for question label
-  const [nameSet] = useState(() => {
-    if (props.modalObject?.Input === "client")
-      return localStorage.getItem("UserName") || "";
-    else if (props.modalObject?.Input === "partner")
-      return localStorage.getItem("PartnerName") || "";
-    else if (props.modalObject?.Input === "joint")
-      return (
-        (localStorage.getItem("UserName") || "") +
-        " & " +
-        (localStorage.getItem("PartnerName") || "")
-      );
-    return "";
-  });
-
   // existing data for this section
   const existingData =
     props.modalObject?.values?.[
@@ -46,26 +28,9 @@ const Executor = (props) => {
     }
   };
 
-  const handleInput = (e, setFieldValue) => {
-    const raw = e?.target?.value ?? e;
-    const value = raw > 5 ? 5 : raw; // limit to 5
-    setFieldValue("NumberOfMap", value);
-
-    const arrLength = Number(value) || 0;
-    const newArray = Array(arrLength)
-      .fill()
-      .map((_, i) => ({
-        name: "",
-        dob: "",
-        relationshipStatus: "",
-        ...(initialValues.executors[i] || {}),
-      }));
-    setFieldValue("executors", newArray);
-  };
-
   const onSubmit = async (values) => {
     const DataOf = props.modalObject?.key;
-    const newEntries = values.executors || [];
+    const newEntries = (values.executors || []).slice(0, values.NumberOfMap);
 
     // set in parent form
     props.setFieldValue(props.modalObject?.stackHolder + DataOf, newEntries);
@@ -173,6 +138,7 @@ const Executor = (props) => {
                     className="w-100 h-100"
                     placeholder="Select"
                     size="large"
+                    disabled={!props?.isEditing}
                     value={values.NumberOfMap || undefined}
                     onChange={(value) => {
                       setFieldValue("NumberOfMap", value);
@@ -201,6 +167,7 @@ const Executor = (props) => {
                   handleBlur={handleBlur}
                   isEditing={props?.isEditing}
                   setIsEditing={props?.setIsEditing}
+                  deleteButton={true}
                 />
               </div>
             )}

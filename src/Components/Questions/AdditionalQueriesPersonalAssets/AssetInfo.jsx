@@ -281,6 +281,7 @@ const AssetInfo = (props) => {
                         name="owner"
                         component={AntdCreatableMultiSelect}
                         options={options}
+                        disabled={!props?.isEditing}
                       />
                     </div>
                   </div>

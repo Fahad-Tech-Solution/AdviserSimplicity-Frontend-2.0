@@ -75,7 +75,7 @@ const PersonalInsuranceLife = (props) => {
   );
 
   const initialValues = {
-    numberOfPolicies: "",
+    NumberOfMap: "",
     [props.modalObject.Input]: [],
   };
 
@@ -113,14 +113,14 @@ const PersonalInsuranceLife = (props) => {
         const data = personalInsurance?.[type]?.PersonalInsurance || [];
         console.log(data);
 
-        setFieldValue("numberOfPolicies", data.length || "");
+        setFieldValue("NumberOfMap", data.length || "");
 
         setFieldValue(
           type,
           data.map((entry) => {
             const obj = {};
             fields.forEach((f) => {
-              if (["life", "TPD", "trauma"].includes(f)) {
+              if (["life", "TPD", "trauma", "IP"].includes(f)) {
                 obj[f] = entry?.[f] ? entry[f] : "$0";
               } else {
                 obj[f] = entry?.[f] || "";
@@ -202,7 +202,7 @@ const PersonalInsuranceLife = (props) => {
 
     let Data = values?.[props.modalObject.Input || "client"]?.slice(
       0,
-      Number(values.numberOfPolicies)
+      Number(values.NumberOfMap)
     );
 
     console.log("Data :", Data);
@@ -353,6 +353,7 @@ const PersonalInsuranceLife = (props) => {
         { value: "Company (Pty Ltd)", label: "Company (Pty Ltd)" },
         { value: "Family Trust", label: "Family Trust" },
       ],
+      selectedOptionValue: true,
       width: 180,
     },
     {
@@ -477,7 +478,7 @@ const PersonalInsuranceLife = (props) => {
           const clientDataRows = useMemo(() => {
             if (flagState) return prevClientRowsRef.current;
 
-            const num = Number(values.numberOfPolicies) || 0;
+            const num = Number(values.NumberOfMap) || 0;
 
             const rows =
               num > 0
@@ -500,6 +501,11 @@ const PersonalInsuranceLife = (props) => {
                       row.trauma || "$0"
                     ); // Ensure Formik state is updated
 
+                    setFieldValue(
+                      `${props.modalObject.Input}[${i}].IP`,
+                      row.IP || "$0"
+                    ); // Ensure Formik state is updated
+
                     return {
                       key: `${props.modalObject.Input}[${i}]`,
                       stakeHolder: `${props.modalObject.Input}[${i}]`,
@@ -507,13 +513,14 @@ const PersonalInsuranceLife = (props) => {
                       life: row.life || "$0",
                       TPD: row.TPD || "$0",
                       trauma: row.trauma || "$0",
+                      IP: row.IP || "$0",
                     };
                   })
                 : [];
 
             prevClientRowsRef.current = rows;
             return rows;
-          }, [values.numberOfPolicies]);
+          }, [values.NumberOfMap]);
 
           return (
             <Form>
@@ -548,15 +555,15 @@ const PersonalInsuranceLife = (props) => {
                     }}
                   >
                     <Select
-                      id="numberOfPolicies"
-                      name="numberOfPolicies"
+                      id="NumberOfMap"
+                      name="NumberOfMap"
                       className="w-100 h-100"
                       placeholder="Select"
                       size="large"
                       disabled={!props?.isEditing}
-                      value={values.numberOfPolicies || undefined}
+                      value={values.NumberOfMap || undefined}
                       onChange={(value) => {
-                        setFieldValue("numberOfPolicies", value);
+                        setFieldValue("NumberOfMap", value);
                       }}
                       onBlur={handleBlur}
                       getPopupContainer={(triggerNode) =>
@@ -592,7 +599,9 @@ const PersonalInsuranceLife = (props) => {
                           ?.groupInsuranceDetails
                       );
                       setModalObject({
-                        title: "Group Cover Details",
+                        title:
+                          RenderName(props.modalObject.Input) +
+                          "_Group Cover Details",
                         key: "groupCover",
                         values,
                         stakeHolder: props.modalObject.Input + ".",
@@ -611,9 +620,9 @@ const PersonalInsuranceLife = (props) => {
                 </div>
               </div>
 
-              <h4 onClick={() => console.log(values)}>
+              {/* <h4 onClick={() => console.log(values)}>
                 {RenderName(props.modalObject.Input)}
-              </h4>
+              </h4> */}
 
               <div className="mt-2 All_Client reportSection">
                 <AntdTable
@@ -625,6 +634,7 @@ const PersonalInsuranceLife = (props) => {
                   handleBlur={handleBlur}
                   isEditing={props?.isEditing}
                   setIsEditing={props?.setIsEditing}
+                  deleteButton={true}
                 />
               </div>
             </Form>

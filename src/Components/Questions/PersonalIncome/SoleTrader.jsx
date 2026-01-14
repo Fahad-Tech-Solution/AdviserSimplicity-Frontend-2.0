@@ -282,6 +282,7 @@ const SoleTrader = (props) => {
                           name={`owner`}
                           component={AntdCreatableMultiSelect}
                           options={optionsForOwner()}
+                      disabled={!props?.isEditing}
                         />
                       </div>
                     </div>

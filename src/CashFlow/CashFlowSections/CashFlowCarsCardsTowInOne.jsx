@@ -285,7 +285,7 @@ const CashFlowCarsCardsTowInOne = (props) => {
     ],
     cf_FamilyTrust: [
       {
-        title: "Family Trust",
+        title: "Family Trust Details",
         SubTitle: RenderName("client"),
         key: "cf_FamilyTrust",
         attribute: "clientTotal",

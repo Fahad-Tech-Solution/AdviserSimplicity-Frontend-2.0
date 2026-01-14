@@ -199,7 +199,7 @@ const QuestionsNew = (props) => {
       Title: "Personal Income and Expenses",
     },
     "/user/business-entities": {
-      Title: "Business Entities & Tax Structures",
+      Title: "Business Entities",
     },
     "/user/SMSF": {
       Title: "Self Manged Super Fund",

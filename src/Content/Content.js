@@ -629,7 +629,7 @@ export const content = {
           sourceKey: "familyMangedFunds",
         },
         {
-          title: "Family Trust",
+          title: "Family Trust Details",
           key: "cf_FamilyTrust",
           img: otherInvestment,
         },

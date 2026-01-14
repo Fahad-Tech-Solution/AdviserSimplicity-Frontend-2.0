@@ -363,6 +363,7 @@ const EstatePlanningWill = (props) => {
                       name="owner"
                       component={AntdCreatableMultiSelect}
                       options={options}
+                      disabled={!props?.isEditing}
                       onChangefun={(selection) => {
                         console.log("Selected owner:", selection);
                         const selectionArray = selection.target.value || [];

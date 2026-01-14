@@ -51,26 +51,62 @@ const InvestmentPropertyDetails = (props) => {
     }
   });
 
+  let FormulaSetting = (values, setFieldValue, currentInput, stakeHolder) => {
+    let index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
+    let BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
+
+    // Safely parse and set default to 0 if values are undefined or invalid
+    let ClientOwnership = values?.[BaseKey]?.[index]?.clientOwnership
+      ? parseFloat(
+          values?.[BaseKey]?.[index]?.clientOwnership.replace(/[^0-9.-]+/g, "")
+        )
+      : 0;
+
+    let PartnerOwnership = values?.[BaseKey]?.[index]?.partnerOwnership
+      ? parseFloat(
+          values?.[BaseKey]?.[index]?.partnerOwnership.replace(/[^0-9.-]+/g, "")
+        )
+      : 0;
+
+    // Update values based on the current input name
+    switch (currentInput.name) {
+      case `${stakeHolder}clientOwnership`:
+        ClientOwnership =
+          parseFloat((currentInput.value || 0).replace(/[^0-9.-]+/g, "")) || 0; // Default to 0 if invalid
+
+        PartnerOwnership =
+          100 - (ClientOwnership > 100 ? 100 : ClientOwnership);
+
+        setFieldValue(
+          `${stakeHolder}partnerOwnership`,
+          toPercentage(isNaN(PartnerOwnership) ? 0 : PartnerOwnership)
+        );
+
+        break;
+      case `${stakeHolder}partnerOwnership`:
+        PartnerOwnership =
+          parseFloat((currentInput.value || 0).replace(/[^0-9.-]+/g, "")) || 0; // Default to 0 if invalid
+
+        ClientOwnership =
+          100 - (PartnerOwnership > 100 ? 100 : PartnerOwnership);
+
+        setFieldValue(
+          `${stakeHolder}clientOwnership`,
+          toPercentage(isNaN(ClientOwnership) ? 0 : ClientOwnership)
+        );
+        break;
+      default:
+        console.log("No matching input found for the case");
+        break;
+    }
+  };
+
   let [SwitchFlag, setSwitchFlag] = useState(false);
 
   let [investmentPropertyDetails, setinvestmentPropertyDetails] = useState({
     client: [],
     partner: [],
     joint: [],
-  });
-
-  let [nameSet] = useState(() => {
-    if (props.modalObject.Input === "client") {
-      return localStorage.getItem("UserName");
-    } else if (props.modalObject.Input === "partner") {
-      return localStorage.getItem("PartnerName");
-    } else if (props.modalObject.Input === "joint") {
-      return (
-        localStorage.getItem("UserName") +
-        " & " +
-        localStorage.getItem("PartnerName")
-      );
-    }
   });
 
   let initialValues = { NumberOfMap: "" };
@@ -110,72 +146,8 @@ const InvestmentPropertyDetails = (props) => {
     // console.log(props.modalObject, data)
   }, [props.modalObject]);
 
-  // const fillInitialValues = (setFieldValue) => {
-  //   const dataSet = investmentPropertyDetails?.[client];
-  //   console.log(dataSet, "dataSet");
-
-  //   if (Array.isArray(dataSet) && dataSet.length > 0) {
-  //     // Set number of maps
-  //     console.log(dataSet.length, "dataSet.length");
-  //     setFieldValue("NumberOfMap", dataSet.length.toString());
-
-  //     // Loop through each entry and set form fields
-  //     dataSet.forEach((data, i) => {
-  //       setFieldValue(
-  //         `investmentProperties[${i}].PropertyAddress`,
-  //         data.PropertyAddress || ""
-  //       );
-  //       setFieldValue(
-  //         `investmentProperties[${i}].postcodeSuburb`,
-  //         data.postcodeSuburb || ""
-  //       );
-  //       setFieldValue(
-  //         `investmentProperties[${i}].CurrentValue`,
-  //         data.CurrentValue || ""
-  //       );
-  //       setFieldValue(
-  //         `investmentProperties[${i}].CostBase`,
-  //         data.CostBase || ""
-  //       );
-  //       setFieldValue(
-  //         `investmentProperties[${i}].ClientOwnership`,
-  //         data.ClientOwnership || ""
-  //       );
-  //       setFieldValue(
-  //         `investmentProperties[${i}].PartnerOwnership`,
-  //         data.PartnerOwnership || ""
-  //       );
-  //       setFieldValue(
-  //         `investmentProperties[${i}].propertyLoanDetails`,
-  //         data.propertyLoanDetails || ""
-  //       );
-  //       setFieldValue(
-  //         `investmentProperties[${i}].propertyLoanDetailsArray`,
-  //         data.propertyLoanDetailsArray || ""
-  //       );
-  //       setFieldValue(
-  //         `investmentProperties[${i}].weeklyRentalIncome`,
-  //         data.weeklyRentalIncome || ""
-  //       );
-  //       setFieldValue(
-  //         `investmentProperties[${i}].incomeExpenses`,
-  //         data.incomeExpenses || ""
-  //       );
-  //       setFieldValue(
-  //         `investmentProperties[${i}].incomeExpensesArray`,
-  //         data.expensesArray || ""
-  //       );
-  //     });
-  //   } else {
-  //     // If no data found, clear NumberOfMap
-  //     setFieldValue("NumberOfMap", "");
-  //     props.setIsEditing(true);
-  //   }
-  // };
-
   const fillInitialValues = (setFieldValue) => {
     const dataSet = investmentPropertyDetails?.[client];
-    console.log(dataSet, "dataSet");
 
     const hasData = Array.isArray(dataSet) && dataSet.length > 0;
 
@@ -205,6 +177,17 @@ const InvestmentPropertyDetails = (props) => {
         data.CurrentValue || ""
       );
       setFieldValue(`investmentProperties[${i}].CostBase`, data.CostBase || "");
+      if (props.modalObject.key == "investmentPropertyDetails") {
+        setFieldValue(
+          `investmentProperties[${i}].clientOwnership`,
+          data.clientOwnership || ""
+        );
+        setFieldValue(
+          `investmentProperties[${i}].partnerOwnership`,
+          data.partnerOwnership || ""
+        );
+      }
+
       setFieldValue(
         `investmentProperties[${i}].ClientOwnership`,
         data.ClientOwnership || ""
@@ -258,8 +241,8 @@ const InvestmentPropertyDetails = (props) => {
           postcodeSuburb: item.postcodeSuburb || "",
           CurrentValue: item.CurrentValue || "",
           CostBase: item.CostBase || "",
-          ClientOwnership: SwitchFlag ? item.ClientOwnership || "" : "",
-          PartnerOwnership: SwitchFlag ? item.PartnerOwnership || "" : "",
+          clientOwnership: SwitchFlag ? item.clientOwnership || "" : "",
+          partnerOwnership: SwitchFlag ? item.partnerOwnership || "" : "",
           propertyLoanDetails: item.propertyLoanDetails || "",
           propertyLoanDetailsArray: item.propertyLoanDetailsArray || "",
           weeklyRentalIncome: item.weeklyRentalIncome || "",
@@ -335,63 +318,6 @@ const InvestmentPropertyDetails = (props) => {
     }
   };
 
-  let FormulaSetting = (values, setFieldValue, currentInput, stakeHolder) => {
-    // Extract integer index from the input name
-    let index = currentInput.name.match(/\d+/);
-
-    if (index) {
-      index = index[0]; // Extract the first match from the array
-
-      // Safely parse and set default to 0 if values are undefined or invalid
-      let ClientOwnership = values["ClientOwnership" + index]
-        ? parseFloat(
-            values["ClientOwnership" + index].replace(/[^0-9.-]+/g, "")
-          )
-        : 0;
-      let PartnerOwnership = values["PartnerOwnership" + index]
-        ? parseFloat(
-            values["PartnerOwnership" + index].replace(/[^0-9.-]+/g, "")
-          )
-        : 0;
-
-      // Update values based on the current input name
-      switch (currentInput.name) {
-        case `ClientOwnership${index}`:
-          ClientOwnership =
-            parseFloat((currentInput.value || 0).replace(/[^0-9.-]+/g, "")) ||
-            0; // Default to 0 if invalid
-
-          PartnerOwnership =
-            100 - (ClientOwnership > 100 ? 100 : ClientOwnership);
-
-          setFieldValue(
-            `PartnerOwnership${index}`,
-            toPercentage(isNaN(PartnerOwnership) ? 0 : PartnerOwnership)
-          );
-
-          break;
-        case `PartnerOwnership${index}`:
-          PartnerOwnership =
-            parseFloat((currentInput.value || 0).replace(/[^0-9.-]+/g, "")) ||
-            0; // Default to 0 if invalid
-
-          ClientOwnership =
-            100 - (PartnerOwnership > 100 ? 100 : PartnerOwnership);
-
-          setFieldValue(
-            `ClientOwnership${index}`,
-            toPercentage(isNaN(ClientOwnership) ? 0 : ClientOwnership)
-          );
-          break;
-        default:
-          console.log("No matching input found for the case");
-          break;
-      }
-    } else {
-      console.error("No valid index found in currentInput.name");
-    }
-  };
-
   let handleInnerModal = (innerModalTitle, values, key, stakeHolder) => {
     console.log("handleInnerModal: ", innerModalTitle);
     let ParentModal = props.modalObject.title;
@@ -414,14 +340,6 @@ const InvestmentPropertyDetails = (props) => {
       render: (_, __, i) => i + 1,
       width: 60,
     },
-    // {
-    //   title: "Owner",
-    //   dataIndex: "owner",
-    //   key: "owner",
-    //   type: "text", // simple static text or could be DynamicFormField if editable
-    //   placeholder: "Enter Owner Name",
-    //   width: 150,
-    // },
     {
       title: "Property Address",
       dataIndex: "PropertyAddress",
@@ -453,6 +371,33 @@ const InvestmentPropertyDetails = (props) => {
       placeholder: "Cost Base",
       width: 200,
     },
+
+    // ✅ CONDITIONAL COLUMNS (FIXED)
+    ...(client === "client"
+      ? [
+          {
+            title: "Client Ownership",
+            placeholder: "Client Ownership",
+            dataIndex: "clientOwnership",
+            key: "clientOwnership",
+            type: "number-toPercent",
+            width: 200,
+            callBack: true,
+            func: FormulaSetting,
+          },
+          {
+            title: "Partner Ownership",
+            placeholder: "Partner Ownership",
+            dataIndex: "partnerOwnership",
+            key: "partnerOwnership",
+            type: "number-toPercent",
+            width: 200,
+            callBack: true,
+            func: FormulaSetting,
+          },
+        ]
+      : []),
+
     {
       title: "Loan Balance",
       dataIndex: "propertyLoanDetails",
@@ -465,11 +410,11 @@ const InvestmentPropertyDetails = (props) => {
       innerModalTitle: "Property Loan Details",
     },
     {
-      title: "Weekly Rental Income",
+      title: "Rent per Week",
       dataIndex: "weeklyRentalIncome",
       key: "weeklyRentalIncome",
       type: "number-toComma",
-      placeholder: "Weekly Rental Income",
+      placeholder: "Rent per Week",
       width: 200,
     },
     {
@@ -516,6 +461,10 @@ const InvestmentPropertyDetails = (props) => {
               CurrentValue:
                 values.investmentProperties?.[i]?.CurrentValue || "",
               CostBase: values.investmentProperties?.[i]?.CostBase || "",
+              clientOwnership:
+                values.investmentProperties?.[i]?.clientOwnership || "",
+              partnerOwnership:
+                values.investmentProperties?.[i]?.partnerOwnership || "",
               propertyLoanDetails:
                 values.investmentProperties?.[i]?.propertyLoanDetails || "$0",
               weeklyRentalIncome:
@@ -558,6 +507,7 @@ const InvestmentPropertyDetails = (props) => {
                           className="w-100 h-100"
                           placeholder="Select"
                           size="large"
+                          disabled={!props?.isEditing}
                           value={values.NumberOfMap || undefined}
                           onChange={(value) => {
                             setFieldValue("NumberOfMap", value);
@@ -599,6 +549,7 @@ const InvestmentPropertyDetails = (props) => {
                         columns={columns}
                         data={tableData}
                         values={values}
+                        deleteButton={true}
                         setFieldValue={setFieldValue}
                         handleChange={handleChange}
                         handleBlur={handleBlur}

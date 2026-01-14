@@ -391,7 +391,8 @@ const InvestedAnnuities = (props) => {
                     name="NumberOfMap"
                     className="w-100 h-100"
                     placeholder="Select"
-                    size="large"
+                    size="large"                        disabled={!props?.isEditing}
+
                     value={values.NumberOfMap || undefined}
                     onChange={(value) => {
                       setFieldValue("NumberOfMap", value);
@@ -420,6 +421,7 @@ const InvestedAnnuities = (props) => {
                   handleBlur={handleBlur}
                   isEditing={props?.isEditing}
                   setIsEditing={props?.setIsEditing}
+                  deleteButton={true}
                 />
               </div>
             )}

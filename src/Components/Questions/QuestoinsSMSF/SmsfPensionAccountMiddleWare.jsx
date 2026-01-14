@@ -64,6 +64,9 @@ const SmsfPensionAccountMiddleWare = (props) => {
         pensionBenefitsTotalArray: memberData.pensionBenefitsTotalArray || [],
       };
     });
+    if (!existingMembers.length > 0) {
+      props.setIsEditing(true);
+    }
 
     return {
       selectedMembers: members,
@@ -73,17 +76,18 @@ const SmsfPensionAccountMiddleWare = (props) => {
 
   const fillInitialValues = useCallback(
     (setFieldValue) => {
-      try {
-        if (initialValues?._id) {
-          setFieldValue("selectedMembers", initialValues.selectedMembers);
-          setFieldValue("pensionData", initialValues.pensionData);
-        } else {
-          props.setIsEditing(true);
-        }
-      } catch (error) {
-        console.error("Error initializing values:", error);
-        props.setIsEditing(true);
-      }
+      // try {
+      //   if (existingMembers?._id) {
+      //     console.log("data base ");
+      //     setFieldValue("selectedMembers", initialValues.selectedMembers);
+      //     setFieldValue("pensionData", initialValues.pensionData);
+      //   } else {
+      //     props.setIsEditing(true);
+      //   }
+      // } catch (error) {
+      //   console.error("Error initializing values:", error);
+      //   props.setIsEditing(true);
+      // }
     },
     [initialValues]
   );
@@ -425,6 +429,7 @@ const SmsfPensionAccountMiddleWare = (props) => {
                     }}
                     onBlur={handleBlur}
                     getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                    disabled={!props?.isEditing}
                   >
                     {memberOptions.map((option) => (
                       <Option key={option.value} value={option.value}>
