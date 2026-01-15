@@ -80,27 +80,6 @@ const ManagedFunds = (props) => {
     }
   };
 
-  const handleInput = (e, setFieldValue) => {
-    const value = e.target.value > 5 ? 5 : e.target.value;
-    setFieldValue("NumberOfMap", value);
-    setDynamicFields(Array(Number(value)).fill(""));
-    setFieldValue(
-      "managedFunds",
-      Array(Number(value))
-        .fill()
-        .map((_, i) => ({
-          platformName: "",
-          accountNumber: "",
-          portfolioValue: "",
-          portfolioArray: "",
-          totalPortfolioCost: "",
-          serviceFee: "",
-          serviceFeeType: "",
-          ...(initialValues.managedFunds[i] || {}),
-        }))
-    );
-  };
-
   const handleInnerModal = (innerModalTitle, values, key, stakeHolder) => {
     let index = stakeHolder.replace(/[^0-9-]+/g, "");
     let BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
@@ -142,7 +121,7 @@ const ManagedFunds = (props) => {
           values?.[BaseKey]?.[index]?.platformName,
           innerModalTitle
         ),
-      question: `Number of Platforms :`,
+      question: `Number of Investments :`,
       key,
       stakeHolder,
       editArray: values?.[BaseKey]?.[index]?.[key + "Array"] || [],

@@ -40,8 +40,8 @@ const CLIENT_PARTNER_ARRAY = [
   "Super Funds",
   "Account Based Pension",
   "Annuities",
-  "Business as Company Structure",
-  "Business as Trusts Structure",
+  "Trading Company",
+  "Business Trust",
 ];
 
 const LABEL_PORTFOLIO_VALUES = [

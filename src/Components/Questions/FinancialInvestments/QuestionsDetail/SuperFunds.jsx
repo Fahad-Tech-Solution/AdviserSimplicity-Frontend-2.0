@@ -192,7 +192,7 @@ const SuperFunds = (props) => {
       key: "memberNumber",
       type: "text",
       placeholder: "Member Number",
-      width: screens.xxl ? 90 : 150,
+      width: screens.xxl ? 90 : 180,
     },
     {
       title: "Balance and Details",
@@ -200,7 +200,7 @@ const SuperFunds = (props) => {
       key: "balanceBenefit",
       type: "number-toComma-Modal",
       disabled: true,
-      width: screens.xxl ? 70 : 150,
+      width: screens.xxl ? 70 : 180,
       innerModalTitle: "<CFE>_Balnace and Benefits",
       placeholder: "Balance Benefit",
       func: (innerModalTitle, values, key, stakeHolder) =>
@@ -221,7 +221,7 @@ const SuperFunds = (props) => {
       innerModalTitle: "<CFE>_Group Insurance",
       placeholder: "Group Insurance",
       callBack: true,
-      width: screens.xxl ? 40 : 100,
+      width: screens.xxl ? 42 : 80,
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
           innerModalTitle,
@@ -237,7 +237,7 @@ const SuperFunds = (props) => {
       dataIndex: "contributions",
       key: "contributions",
       type: "yesnoModal",
-      width: screens.xxl ? 40 : 100,
+      width: screens.xxl ? 42 : 80,
       innerModalTitle: "<CFE>_Contributions",
       placeholder: "Contributions",
       callBack: true,
@@ -256,7 +256,7 @@ const SuperFunds = (props) => {
       dataIndex: "nominatedBeneficiaries",
       key: "nominatedBeneficiaries",
       type: "yesnoModal",
-      width: screens.xxl ? 40 : 100,
+      width: screens.xxl ? 42 : 80,
       innerModalTitle: "<CFE>_Beneficiaries",
       placeholder: "Beneficiaries",
       callBack: true,
@@ -289,7 +289,7 @@ const SuperFunds = (props) => {
         ),
       errorHandler: ShowError,
       disabled: true,
-      width: screens.xxl ? 70 : 150,
+      width: screens.xxl ? 70 : 180,
     },
   ];
 

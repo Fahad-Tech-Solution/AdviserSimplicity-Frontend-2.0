@@ -209,13 +209,14 @@ const AccountBasedPension = (props) => {
       title: "No#",
       dataIndex: "owner",
       key: "owner",
-      width: 60,
+      width: screens.xxl ? 30 : 60,
     },
     {
       title: "Fund Name",
       dataIndex: "platformName",
       key: "platformName",
       type: "select",
+      width: screens.xxl ? 62 : 200,
       options:
         bankDetailObj?.AccountBasedPensions?.map((elem) => ({
           value: elem._id,
@@ -230,11 +231,13 @@ const AccountBasedPension = (props) => {
       key: "memberNumber",
       type: "text",
       placeholder: "Member Number",
+      width: screens.xxl ? 62 : 180,
     },
     {
       title: "Balance and Details",
       dataIndex: "balanceBenefit",
       key: "balanceBenefit",
+      width: screens.xxl ? 62 : 180,
       disabled: true,
       type: "number-toComma-Modal",
       innerModalTitle: "_<CFE>_Balance & Benefit Details",
@@ -257,6 +260,7 @@ const AccountBasedPension = (props) => {
       type: "number-toComma-Modal",
       innerModalTitle: "_<CFE>_Annual Pension Payment",
       placeholder: "Pension Payment",
+      width: screens.xxl ? 62 : 200,
       disabled: true,
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
@@ -273,7 +277,7 @@ const AccountBasedPension = (props) => {
       dataIndex: "nominatedBeneficiaries",
       key: "nominatedBeneficiaries",
       type: "yesnoModal",
-      width: screens.xxl ? 62 : 100,
+      width: screens.xxl ? 28.2 : 100,
       innerModalTitle: "_<CFE>_Beneficiaries",
       placeholder: "Beneficiaries",
       callBack: true,
@@ -296,6 +300,7 @@ const AccountBasedPension = (props) => {
       placeholder: "Ongoing Advice Fee",
       innerModalTitle: "_<CFE>_Ongoing Annual Fee",
       callBack: true,
+      width: screens.xxl ? 62 : 190,
       func: (innerModalTitle, values, key, stakeHolder) =>
         handleInnerModal(
           innerModalTitle,

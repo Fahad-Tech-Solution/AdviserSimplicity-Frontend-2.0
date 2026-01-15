@@ -34,6 +34,8 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
     setIsEditing = () => {},
     deleteButton = false,
   }) {
+    const screens = useBreakpoint();
+
     // Helper function to get nested value from form values
     const getNestedValue = (obj, path) => {
       if (!obj || !path) return undefined;
@@ -253,7 +255,8 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
     const actionColumn = {
       title: "Action",
       key: "action",
-      width: 120,
+      // width: 120,
+      width: screens.xxl ? 30 : 120,
       fixed: "right",
       align: "center",
       render: (_, record, index) => {
@@ -263,8 +266,8 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
               confirm({
                 title: "Remove data?",
                 content:
-                  "This action will permanently discard your data. Do you want to continue?",
-                okText: "Remove",
+                  "This action will permanently delete your data. This action can not be undone. Do you want to proceed ?",
+                okText: "Proceed",
                 okType: "danger",
                 cancelText: "Cancel",
                 centered: true,
@@ -293,8 +296,6 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
 
     // const allColumns = [...columns, actionColumn];
     const allColumns = deleteButton ? [...columns, actionColumn] : [...columns];
-
-    const screens = useBreakpoint();
 
     // ✅ ANT DESIGN TABLE
     if (type === "antd") {

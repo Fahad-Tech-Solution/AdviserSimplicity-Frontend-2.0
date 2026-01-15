@@ -232,11 +232,7 @@ const Beneficiaries = (props) => {
             beneficiaryName:
               values.BeneficiariesDetails?.[i]?.beneficiaryName || "",
             DOB: values.BeneficiariesDetails?.[i]?.DOB || "",
-            shareBenefit:
-              values.BeneficiariesDetails?.[i]?.shareBenefit ||
-              values?.nominationType === "Reversionary Beneficiary"
-                ? "100.00%"
-                : "",
+            shareBenefit: values.BeneficiariesDetails?.[i]?.shareBenefit,
           }));
         }, [
           values.NumberOfMap,

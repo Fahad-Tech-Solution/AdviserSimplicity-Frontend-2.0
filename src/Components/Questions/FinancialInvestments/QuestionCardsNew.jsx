@@ -624,8 +624,8 @@ const questionConfig = {
               // ✔ ASSET SECTIONS
               // -----------------------------
               const assetKeys = [
-                "SMSFAccumulationDetails",
-                "SMSFPensionPhase",
+                // "SMSFAccumulationDetails",
+                // "SMSFPensionPhase",
                 "SMSFBank",
                 "SMSFTermDeposits",
                 "SMSFAustralianShares",
@@ -648,15 +648,15 @@ const questionConfig = {
               const assetsSum =
                 assetKeys.reduce((acc, key) => {
                   return acc + pickTotal(questionDetail?.[key]);
-                }, 0) +
-                ["SMSFAccumulationDetails", "SMSFPensionPhase"].reduce(
-                  (acc, key) => {
-                    return (
-                      acc + pickTotal(questionDetail?.[key], ["partnerTotal"])
-                    );
-                  },
-                  0
-                );
+                }, 0) 
+                // ["SMSFAccumulationDetails", "SMSFPensionPhase"].reduce(
+                //   (acc, key) => {
+                //     return (
+                //       acc + pickTotal(questionDetail?.[key], ["partnerTotal"])
+                //     );
+                  // },
+                  // 0
+                // );
 
               // -----------------------------
               // SUM ALL LIABILITIES
