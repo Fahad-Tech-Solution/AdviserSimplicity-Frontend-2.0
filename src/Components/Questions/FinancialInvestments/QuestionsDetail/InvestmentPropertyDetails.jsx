@@ -31,6 +31,16 @@ const { Option } = Select;
 const InvestmentPropertyDetails = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+  let PageLimit =
+    props.modalObject.title === "SMSF_Investment Properties" ? 5 : 10;
+
+  const [title] = useState(() => {
+    let currentTitle = props.modalObject.title;
+    if (currentTitle.includes("_")) {
+      currentTitle = currentTitle.split("_").slice(1).join("_");
+    }
+    return currentTitle;
+  });
 
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
@@ -407,7 +417,10 @@ const InvestmentPropertyDetails = (props) => {
       placeholder: "Loan Balance",
       width: 200,
       func: handleInnerModal,
-      innerModalTitle: "Property Loan Details",
+      innerModalTitle:
+        props.modalObject.title == "SMSF_Investment Properties"
+          ? "SMSF_Property Loan Details"
+          : "Property Loan Details",
     },
     {
       title: "Rent per Week",
@@ -488,7 +501,7 @@ const InvestmentPropertyDetails = (props) => {
                         console.log(values);
                       }}
                     >
-                      Number of {props.modalObject.title} :
+                      Number of {title} :
                     </p>
 
                     <div style={{ minWidth: "10%" }}>
@@ -517,7 +530,7 @@ const InvestmentPropertyDetails = (props) => {
                             triggerNode.parentNode
                           }
                         >
-                          {Array.from({ length: 10 }, (_, i) => (
+                          {Array.from({ length: PageLimit || 10 }, (_, i) => (
                             <Option key={i} value={i + 1}>
                               {i + 1}
                             </Option>

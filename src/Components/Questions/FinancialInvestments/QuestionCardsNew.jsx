@@ -590,7 +590,7 @@ const questionConfig = {
       Labels: [
         {
           label: "Details",
-          value: (questionDetail) => {
+          value: (questionDetail, CRObject) => {
             try {
               const parseNum = (val) =>
                 val && typeof val === "string"
@@ -645,18 +645,14 @@ const questionConfig = {
               // -----------------------------
               // SUM ALL ASSETS
               // -----------------------------
-              const assetsSum =
-                assetKeys.reduce((acc, key) => {
-                  return acc + pickTotal(questionDetail?.[key]);
-                }, 0) 
-                // ["SMSFAccumulationDetails", "SMSFPensionPhase"].reduce(
-                //   (acc, key) => {
-                //     return (
-                //       acc + pickTotal(questionDetail?.[key], ["partnerTotal"])
-                //     );
-                  // },
-                  // 0
-                // );
+              const assetsSum = assetKeys.reduce((acc, key) => {
+                return (
+                  acc +
+                  pickTotal(
+                    CRObject?.[key] === "Yes" ? questionDetail?.[key] : "$0"
+                  )
+                );
+              }, 0);
 
               // -----------------------------
               // SUM ALL LIABILITIES
@@ -664,11 +660,10 @@ const questionConfig = {
               const liabilitiesSum = liabilityKeys.reduce((acc, key) => {
                 return (
                   acc +
-                  pickTotal(questionDetail?.[key], [
-                    "totalDebt",
-                    "SMSFTotal",
-                    "propertyPortfolio",
-                  ])
+                  pickTotal(
+                    CRObject?.[key] === "Yes" ? questionDetail?.[key] : "$0",
+                    ["totalDebt", "SMSFTotal", "propertyPortfolio"]
+                  )
                 );
               }, 0);
 
@@ -779,6 +774,7 @@ const questionConfig = {
           component: <InvestmentLoan />,
           key: "SMSFInvestmentLoan",
           maintitle: true,
+          customTitle: "SMSF_Investment Loan",
         },
       ],
     },
@@ -798,6 +794,7 @@ const questionConfig = {
           key: "SMSFInvestmentProperties",
           maintitle: true,
           onTop: true,
+          customTitle: "SMSF_Investment Properties",
         },
         {
           label: "Total Debt",
@@ -824,6 +821,7 @@ const questionConfig = {
           component: <OtherInvestmentsDynamic />,
           key: "SMSFOtherInvestment",
           maintitle: true,
+          customTitle: "SMSF_Other Investments",
         },
       ],
     },
@@ -837,8 +835,8 @@ const questionConfig = {
       variant: "case2",
       Labels: [
         {
-          label: "client",
-          value: (questionDetail) => {
+          label: "Details",
+          value: (questionDetail, CRObject) => {
             {
               try {
                 const parseNum = (val) =>
@@ -887,18 +885,22 @@ const questionConfig = {
 
                 // sum assets
                 const assetsSum = assetKeys.reduce((acc, key) => {
-                  return acc + pickTotal(questionDetail?.[key]);
+                  return (
+                    acc +
+                    pickTotal(
+                      CRObject?.[key] === "Yes" ? questionDetail?.[key] : "$0"
+                    )
+                  );
                 }, 0);
 
                 // sum liabilities
                 const liabilitiesSum = liabilityKeys.reduce((acc, key) => {
                   return (
                     acc +
-                    pickTotal(questionDetail?.[key], [
-                      "totalDebt",
-                      "trustTotal",
-                      "propertyPortfolio",
-                    ])
+                    pickTotal(
+                      CRObject?.[key] === "Yes" ? questionDetail?.[key] : "$0",
+                      ["totalDebt", "trustTotal", "propertyPortfolio"]
+                    )
                   );
                 }, 0);
 
@@ -1042,6 +1044,7 @@ const questionConfig = {
           component: <OtherInvestmentsDynamic />,
           key: "familyOtherInvestment",
           maintitle: true,
+          customTitle: "Trust_Other Investments",
         },
       ],
     },
@@ -1078,6 +1081,7 @@ const QuestionCard = (props) => {
     Labels.length > 0
       ? Labels[0]
       : personalDetailObj.client?.clientPreferredName || "Client";
+
   const partnerName =
     Labels.length > 1
       ? Labels[1]
@@ -1107,6 +1111,7 @@ const QuestionCard = (props) => {
         ? BaceKeys.partner
         : "partnerTotal"
     ] ?? (DefaultYesNo.includes(keyName) ? "No" : "$0");
+
   const jointValue =
     questionDetail?.[sourceKey]?.[
       BaceKeys && Object.keys(BaceKeys).length > 0
@@ -1210,13 +1215,13 @@ const QuestionCard = (props) => {
   }) => {
     const { modalButton = true, onTop = false } = lbl || {};
     const handleOpen = () => {
+      let head = lbl?.customTitle
+        ? lbl.customTitle
+        : lbl?.maintitle
+        ? title
+        : lbl.label;
       // Pass the specific label's data to the modal
-      onOpen(
-        lbl?.maintitle ? title : lbl.label,
-        lbl.key,
-        lbl.component,
-        lbl.label
-      );
+      onOpen(head, lbl.key, lbl.component, lbl.label);
     };
 
     if (["partner", "joint"].includes(lbl.label) && isSingle) {
@@ -1251,7 +1256,7 @@ const QuestionCard = (props) => {
               "form-control inputDesign text-center" +
               (!collapsed && " burgerCollapsed")
             }
-            value={lbl.value?.(questionDetail) || "$0"}
+            value={lbl.value?.(questionDetail, props.CRObject) || "$0"}
             readOnly
             placeholder={title}
           />
@@ -1464,7 +1469,7 @@ const QuestionCardsDemo = ({
 
   const specialVisibilityRules = {
     "/user/SMSF": (q, index, questionDetail) => {
-      if (index <= 1) return true;
+      if (index <= 3) return true;
       return !!questionDetail?.SMSFDetails?.SMSFOwner?.fundName?.trim();
     },
     // add more keys here later if needed
@@ -1476,7 +1481,7 @@ const QuestionCardsDemo = ({
       const rule = specialVisibilityRules[questionKey];
       return rule ? baseVisible && rule(q, index, questionDetail) : baseVisible;
     });
-  }, [CRObject, setCRObject, questions]);
+  }, [CRObject, setCRObject, questions, questionKey]);
 
   const numberOfCards = visibleQuestions.length;
 
@@ -1510,6 +1515,11 @@ const QuestionCardsDemo = ({
     if (data.keyName === "SMSFDetails") {
       return questionDetail?.SMSFDetails?.SMSFOwner?.fundName || data.title;
     }
+    if (data.keyName === "familyDetails") {
+      return (
+        questionDetail?.familyDetails?.familyTrustOwner?.trustName || data.title
+      );
+    }
     return data.title;
   };
 
@@ -1538,6 +1548,7 @@ const QuestionCardsDemo = ({
               PopoverContent={PopoverContent}
               evenClass={evenClass}
               collapsed={collapsed}
+              CRObject={CRObject}
             />
           );
         })}

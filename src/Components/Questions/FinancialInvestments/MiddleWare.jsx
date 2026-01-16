@@ -90,7 +90,9 @@ const COMPONENT_MAPPING = {
 
 const PAGE_LIMITS = {
   bankAccountFinance: 10,
+  SMSFBank: 3,
   termDepositsFinance: 10,
+  SMSFTermDeposits: 5,
   australianShareMarket: 50,
 };
 
@@ -336,7 +338,6 @@ const MiddleWare = (props) => {
             }));
 
             setCRObject(response.questionDetails);
-            
           } else {
             setQuestionDetail((prev) => ({
               ...prev,

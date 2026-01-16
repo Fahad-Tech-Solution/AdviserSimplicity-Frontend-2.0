@@ -39,7 +39,7 @@ const SmsfDetails = (props) => {
 
   const fillInitialValues = (setFieldValue) => {
     let data = SMSFDetails.SMSFOwner || {};
-    console.log(SMSFDetails, "data of SMSFDetails");
+    // console.log(SMSFDetails, "data of SMSFDetails");
 
     if (Object.keys(data).length > 0) {
       Object.keys(data).forEach((key) => {
@@ -52,14 +52,27 @@ const SmsfDetails = (props) => {
 
   let handleInnerModal = (innerModalTitle, values, key, stakeHolder) => {
     let ParentModal = props.modalObject.title;
+
+    console.log(values);
+    let question =
+      values.trusteeType == "Corporate"
+        ? "Number of Directors :"
+        : "Number of Trustees :";
+
     setModalObject({
-      title: innerModalTitle,
+      title:
+        innerModalTitle == "Trustee Name"
+          ? values.trusteeType == "Corporate"
+            ? "Company Directors"
+            : innerModalTitle
+          : innerModalTitle,
       innerModalTitle,
       values,
       key,
       stakeHolder,
       ParentModal,
       directorLimit: 6,
+      question,
     });
     setFlagState(true);
   };
@@ -214,8 +227,6 @@ const SmsfDetails = (props) => {
     }
   };
 
-  const options = ["Corporate", "Individual"];
-
   return (
     <Formik
       initialValues={initialValues}
@@ -233,13 +244,14 @@ const SmsfDetails = (props) => {
             return columns; // show all columns
           } else {
             // hide "Trustee Name" when not Corporate
-            return columns.filter((col) => col.key !== "trusteeName");
+            return columns.filter(
+              (col) => col.key !== "trusteeName" && col.key !== "ACN"
+            );
           }
         }, [values.trusteeType]);
 
         const tableData = useMemo(() => {
           const rows = [];
-          console.log(values, "values of SMSFDetails");
 
           rows.push({
             key: "client",

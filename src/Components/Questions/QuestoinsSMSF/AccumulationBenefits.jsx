@@ -10,8 +10,6 @@ const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
 
 const AccumulationBenefits = (props) => {
-  const DefaultUrl = useRecoilValue(defaultUrl);
-  const questionDetail = useRecoilValue(QuestionDetail);
   const [dynamicFields, setDynamicFields] = useState([]);
 
   // ---------------- INITIAL VALUES ----------------
@@ -77,8 +75,7 @@ const AccumulationBenefits = (props) => {
 
     const totalTaxFreeComponent = filteredEntries.reduce(
       (sum, entry) =>
-        sum +
-        parseFloat(entry.taxFreeComponent?.replace(/[^0-9.-]+/g, "") || 0),
+        sum + parseFloat(entry.currentBalance?.replace(/[^0-9.-]+/g, "") || 0),
       0
     );
 
@@ -173,6 +170,16 @@ const AccumulationBenefits = (props) => {
       width: 60,
     },
     {
+      title: "Current Balance",
+      dataIndex: "currentBalance",
+      key: "currentBalance",
+      type: "number-toComma",
+      placeholder: "Current Balance",
+      callBack: true,
+      func: CalculateBenefits,
+      width: 150,
+    },
+    {
       title: "Commencement Date",
       dataIndex: "commencementDate",
       key: "commencementDate",
@@ -194,16 +201,6 @@ const AccumulationBenefits = (props) => {
       placeholder: "Tax Free Component",
       func: CalculateBenefits,
       callBack: true,
-      width: 150,
-    },
-    {
-      title: "Current Balance",
-      dataIndex: "currentBalance",
-      key: "currentBalance",
-      type: "number-toComma",
-      placeholder: "Current Balance",
-      callBack: true,
-      func: CalculateBenefits,
       width: 150,
     },
     {

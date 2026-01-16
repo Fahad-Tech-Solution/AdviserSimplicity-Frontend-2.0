@@ -4,15 +4,12 @@ import { useRecoilValue } from "recoil";
 import { BankDetail, defaultUrl } from "../../../Store/Store";
 import { toCommaAndDollar, toPercentage } from "../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../Assets/Table/DynamicTableForInputsSection";
-import InnerModal from "./QuestionsDetail/InnerModal";
-import PortfolioValue from "./QuestionsDetail/PortfolioValue";
-import DatePicker from "react-datepicker";
 import { ConfigProvider, Select } from "antd";
 
 const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
 
-const AccountBasedBalance = (props) => {
+const SmsfPensionAccount = (props) => {
   const bankDetailObj = useRecoilValue(BankDetail);
   const [flagState, setFlagState] = useState(false);
   const [modalObject, setModalObject] = useState({});
@@ -165,14 +162,10 @@ const AccountBasedBalance = (props) => {
       title: "Portfolio Value",
       dataIndex: "portfolioValue",
       key: "portfolioValue",
-      type: "number-toComma-Modal",
-      disabled: true,
+      type: "number-toComma",
       placeholder: "Portfolio Value",
       callBack: true,
-      inputChangeFunc: Calculate,
-      innerModalTitle: "_Portfolio Value",
-      func: (innerModalTitle, values, key, stakeHolder) =>
-        handleInnerModal(innerModalTitle, values, key, stakeHolder),
+      func: Calculate,
     },
     {
       title: "Commencement Date",
@@ -267,9 +260,8 @@ const AccountBasedBalance = (props) => {
               owner: 1,
               fundType: values?.fundType || "",
               portfolioValue: values?.portfolioValue || "",
-              commencementDate: values?.commencementDate || "",
               eligibleServiceDate: values?.eligibleServiceDate || "",
-              purchasePrice: values?.purchasePrice || "",
+              commencementDate: values?.commencementDate || "",
               taxFree: values?.taxFree || "",
               taxFreeComponent: values?.taxFreeComponent || "",
               taxableComponent: values?.taxableComponent || "",
@@ -282,16 +274,6 @@ const AccountBasedBalance = (props) => {
 
         return (
           <Form>
-            <InnerModal
-              modalObject={modalObject}
-              setFieldValue={setFieldValue}
-              setFlagState={setFlagState}
-              flagState={flagState}
-              setIsEditing={props.setIsEditing}
-            >
-              <PortfolioValue />
-            </InnerModal>
-
             <div className="mt-4 All_Client reportSection">
               <AntdTable
                 columns={columns}
@@ -315,4 +297,4 @@ const AccountBasedBalance = (props) => {
   );
 };
 
-export default AccountBasedBalance;
+export default SmsfPensionAccount;

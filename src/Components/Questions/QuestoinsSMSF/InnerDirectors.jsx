@@ -8,6 +8,7 @@ const AntDTableHOC = DynamicTableForInputsSection("antd");
 const { Option } = Select;
 
 const InnerDirectors = (props) => {
+  
   let {
     title,
     question = "Number of Directors :",

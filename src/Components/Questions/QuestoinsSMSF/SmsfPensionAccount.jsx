@@ -37,7 +37,7 @@ const SmsfPensionAccount = (props) => {
   let index = parseFloat(
     props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
   );
-  
+
   let BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
 
   // Get existing data safely
@@ -60,6 +60,7 @@ const SmsfPensionAccount = (props) => {
       props.setIsEditing(true);
     }
   };
+
   const handleInnerModal = (
     innerModalTitle,
     key,
@@ -109,8 +110,8 @@ const SmsfPensionAccount = (props) => {
     for (let i = 0; i < numberOfMaps; i++) {
       const newEntry = {
         pensionBenefits: values.pensionAccounts[i]?.pensionBenefits || "",
-        pensionBenefitsArray:
-          values.pensionAccounts[i]?.pensionBenefitsArray || [],
+        pensionBenefitsDetails:
+          values.pensionAccounts[i]?.pensionBenefitsDetails || [],
         pensionPayment: values.pensionAccounts[i]?.pensionPayment || "",
         pensionType: values.pensionAccounts[i]?.pensionType || "",
         nominatedBeneficiaries:
@@ -121,10 +122,10 @@ const SmsfPensionAccount = (props) => {
       newEntries.push(newEntry);
     }
 
-    console.log(
-      `${props.modalObject.stakeHolder}${props.modalObject.key}Array`,
-      newEntries
-    );
+    // console.log(
+    //   `${props.modalObject.stakeHolder}${props.modalObject.key}Array`,
+    //   newEntries
+    // );
 
     const Total = newEntries.reduce(
       (total, entry) =>
@@ -139,6 +140,7 @@ const SmsfPensionAccount = (props) => {
       `${props.modalObject.stakeHolder}${props.modalObject.key}`,
       toCommaAndDollar(Total)
     );
+
     props.setFieldValue(
       `${props.modalObject.stakeHolder}${props.modalObject.key}Array`,
       newEntries
@@ -250,12 +252,12 @@ const SmsfPensionAccount = (props) => {
       checkInput: CheckInputValue,
     },
     {
-      title: "Pension Payment",
+      title: "Annual Pension Payment",
       dataIndex: "pensionPayment",
       key: "pensionPayment",
       type: "number-toComma",
       width: screens.xxl ? 120 : 180,
-      placeholder: "Pension Payment",
+      placeholder: "Annual Pension Payment",
     },
     {
       title: "Pension Type",

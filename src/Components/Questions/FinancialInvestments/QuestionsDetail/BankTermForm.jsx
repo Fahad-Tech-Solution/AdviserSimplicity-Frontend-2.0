@@ -14,12 +14,16 @@ import {
 } from "../../../Assets/Api/Api";
 import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
 import { ConfigProvider, Select } from "antd";
+import InnerModal from "./InnerModal";
+import ServiceFee from "./ServiceFee";
 
 const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
 
 const BankTermForm = (props) => {
   const bankDetailObj = useRecoilValue(BankDetail);
+  const [flagState, setFlagState] = useState(false);
+  const [modalObject, setModalObject] = useState({});
 
   const [nameSet] = useState(() => {
     if (props.modalObject.Input === "client") {
@@ -78,7 +82,7 @@ const BankTermForm = (props) => {
   const onSubmit = async (values) => {
     const count =
       Number(values.NumberOfMap) || values.bankAccounts?.length || 0;
-      
+
     const bankData = Array.isArray(values.bankAccounts)
       ? values.bankAccounts.slice(0, count)
       : [];
@@ -119,13 +123,28 @@ const BankTermForm = (props) => {
     }
   };
 
+  const handleInnerModal = (innerModalTitle, values, key, stakeHolder) => {
+    let index = stakeHolder.replace(/[^0-9-]+/g, "");
+    let BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
+
+    setModalObject({
+      title: innerModalTitle,
+      question: `Number of Investments :`,
+      key,
+      stakeHolder,
+      editArray: values?.[BaseKey]?.[index]?.[key + "Array"] || [],
+      values,
+    });
+    setFlagState(true);
+  };
+
   // Define table columns
   const columns = [
     {
       title: "No#",
       dataIndex: "owner",
       key: "owner",
-      width: 60,
+      width: 40,
     },
     {
       title: "Name of Institution",
@@ -135,6 +154,7 @@ const BankTermForm = (props) => {
       options: institutionOptions,
       placeholder: "Select Institution",
       selectedOptionValue: true,
+      width: 180,
     },
     {
       title: "Account Number",
@@ -150,6 +170,26 @@ const BankTermForm = (props) => {
       type: "number-toComma",
       placeholder: "Current Balance",
     },
+    // ✅ CONDITIONAL COLUMNS (FIXED)
+    ...(props.modalObject.title === "SMSF_Bank Accounts"
+      ? [
+          {
+            title: "Ongoing Advice Fee",
+            dataIndex: "serviceFee",
+            key: "serviceFee",
+            type: "number-toComma-Modal",
+            placeholder: "Ongoing Advice Fee",
+            innerModalTitle:
+              props.modalObject.title === "SMSF_Bank Accounts"
+                ? "SMSF_Ongoing Annual Fee"
+                : "_Ongoing Annual Fee",
+            callBack: true,
+            func: handleInnerModal,
+            disabled: true,
+            width: 180,
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -174,6 +214,10 @@ const BankTermForm = (props) => {
               Institution: values.bankAccounts?.[i]?.Institution || "",
               accountNumber: values.bankAccounts?.[i]?.accountNumber || "",
               currentBalance: values.bankAccounts?.[i]?.currentBalance || "",
+              // ✅ CONDITIONAL ATTRIBUTE
+              ...(props?.modalObject?.title === "SMSF_Bank Accounts" && {
+                serviceFee: values.bankAccounts?.[i]?.serviceFee || "", // or any attribute you need
+              }),
             }));
           }
           return [];
@@ -181,11 +225,21 @@ const BankTermForm = (props) => {
 
         return (
           <Form>
+            <InnerModal
+              modalObject={modalObject}
+              setFieldValue={setFieldValue}
+              setFlagState={setFlagState}
+              flagState={flagState}
+              setIsEditing={props.setIsEditing}
+            >
+              {modalObject.key === "serviceFee" ? <ServiceFee /> : ""}
+            </InnerModal>
+
             <div className="d-flex justify-content-center align-items-center gap-4">
               <p
                 className="text-end mt-1 pt-2"
                 onClick={() => {
-                  console.log(props.modalObject.values);
+                  console.log(props.modalObject.values, values);
                 }}
               >
                 Number of {title}:
