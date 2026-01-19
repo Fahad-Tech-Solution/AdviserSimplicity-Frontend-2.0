@@ -274,7 +274,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
                 onOk: async () => {
                   let BaseKey = record?.stakeHolder.replace(/[^a-zA-Z]+/g, "");
 
-                  setIsEditing(true);
+                  // setIsEditing(true);
                   setFieldValue(
                     "NumberOfMap",
                     values.NumberOfMap == "1"
@@ -295,7 +295,8 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
     };
 
     // const allColumns = [...columns, actionColumn];
-    const allColumns = deleteButton ? [...columns, actionColumn] : [...columns];
+    const allColumns =
+      deleteButton && isEditing ? [...columns, actionColumn] : [...columns];
 
     // ✅ ANT DESIGN TABLE
     if (type === "antd") {

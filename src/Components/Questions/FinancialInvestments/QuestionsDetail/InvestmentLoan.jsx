@@ -28,13 +28,13 @@ const InvestmentLoan = (props) => {
 
   let bankDetailObj = useRecoilValue(BankDetail);
 
-    const [title] = useState(() => {
-      let currentTitle = props.modalObject.title;
-      if (currentTitle.includes("_")) {
-        currentTitle = currentTitle.split("_").slice(1).join("_");
-      }
-      return currentTitle;
-    });
+  const [title] = useState(() => {
+    let currentTitle = props.modalObject.title;
+    if (currentTitle.includes("_")) {
+      currentTitle = currentTitle.split("_").slice(1).join("_");
+    }
+    return currentTitle;
+  });
 
   let [lenderOption, setLenderOption] = useState(() => {
     if (!bankDetailObj?.FinancialInstitutions) return [];
@@ -565,7 +565,7 @@ const InvestmentLoan = (props) => {
     console.log(repaymentsAmount, frequency);
     setFieldValue(
       `${stackHolder}annualRepayments`,
-      toCommaAndDollar(annualRepayments || 0)
+      toCommaAndDollar(loanBalance || 0)
     );
   };
 
@@ -658,6 +658,7 @@ const InvestmentLoan = (props) => {
       key: "loanTerm",
       type: "select",
       options: loanTermOptions,
+      selectedOptionValue: true,
       width: 150,
     },
     {
@@ -666,6 +667,7 @@ const InvestmentLoan = (props) => {
       key: "loanTermRemaining",
       type: "select",
       options: loanTermOptions,
+      selectedOptionValue: true,
       width: 150,
     },
     {

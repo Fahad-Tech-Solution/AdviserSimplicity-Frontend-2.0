@@ -89,6 +89,7 @@ const FamilyDetails = (props) => {
 
       if (props.flagState) {
         props.setFlagState(false);
+        props.setIsEditing(!props.isEditing);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
@@ -106,12 +107,29 @@ const FamilyDetails = (props) => {
   const trustTypeOptions = ["Discretionary", "Other"];
 
   let handleInnerModal = (title, values, key, stackHolder) => {
+    let question =
+      values.trusteeType == "Corporate"
+        ? "Number of Directors :"
+        : "Number of Trustees :";
+
+    // innerModalTitle == "Trustee Name"
+    //           ? values.trusteeType == "Corporate"
+    //             ? "Company Directors"
+    //             : innerModalTitle
+    //           : innerModalTitle,
+
     setModalObject({
-      title,
+      title:
+        title == "Trustee Name"
+          ? values.trusteeType == "Corporate"
+            ? "Company Directors"
+            : title
+          : title,
       key,
       stackHolder,
       values,
       directorLimit: 4,
+      question,
     });
     setFlagState(true);
   };

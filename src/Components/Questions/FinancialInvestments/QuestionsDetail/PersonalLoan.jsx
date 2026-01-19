@@ -70,10 +70,13 @@ const PersonalLoan = (props) => {
   }, [personalLoans["client"]]);
 
   const fillInitialValues = (setFieldValue) => {
-    if (personalLoans["client"] && personalLoans["client"].length) {
+    if (personalLoans["client"] && personalLoans["client"].length > 0) {
       setFieldValue("personalLoans", personalLoans["client"]);
     } else {
-      props.setIsEditing(!props.isEditing);
+      // ✅ Explicitly enable edit mode (NO TOGGLE)
+      if (!props.isEditing) {
+        props.setIsEditing(true);
+      }
     }
   };
 
@@ -291,7 +294,8 @@ const PersonalLoan = (props) => {
       {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
-        }, [personalLoans["client"]]);
+          // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [personalLoans["client"]?.length]);
 
         const dataRows = useMemo(() => {
           const num = Number(values.NumberOfMap) || 0;

@@ -91,8 +91,10 @@ const COMPONENT_MAPPING = {
 const PAGE_LIMITS = {
   bankAccountFinance: 10,
   SMSFBank: 3,
+  familyBank: 3,
   termDepositsFinance: 10,
   SMSFTermDeposits: 5,
+  familyTermDeposit: 5,
   australianShareMarket: 50,
 };
 

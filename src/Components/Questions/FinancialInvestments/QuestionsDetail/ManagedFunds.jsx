@@ -257,6 +257,14 @@ const ManagedFunds = (props) => {
       options: getPlatformOptions(),
       placeholder: "Select Platform",
       selectedOptionValue: true,
+      // ✅ CONDITIONAL ATTRIBUTE for sorting
+      ...(!props?.isEditing && {
+        sorter: (a, b) => {
+          const valA = (a.platformName || "").toString().toUpperCase();
+          const valB = (b.platformName || "").toString().toUpperCase();
+          return valA.localeCompare(valB);
+        },
+      }),
     },
     {
       title: "Account Number",

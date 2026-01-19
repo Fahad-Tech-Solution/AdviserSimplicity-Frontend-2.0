@@ -108,6 +108,14 @@ const PortfolioValue = (props) => {
       selectedOptionValue: true,
       options: generateOptions(),
       func: OnInvestmentOptionSelect,
+      // ✅ CONDITIONAL ATTRIBUTE for sorting
+      ...(!props?.isEditing && {
+        sorter: (a, b) => {
+          const valA = (a.investmentOption || "").toString().toUpperCase();
+          const valB = (b.investmentOption || "").toString().toUpperCase();
+          return valA.localeCompare(valB);
+        },
+      }),
     },
     {
       title: "Investment Code",

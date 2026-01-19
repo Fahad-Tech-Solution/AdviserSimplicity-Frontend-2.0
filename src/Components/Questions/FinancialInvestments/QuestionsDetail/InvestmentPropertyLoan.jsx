@@ -306,6 +306,7 @@ const InvestmentPropertyLoan = (props) => {
       key: "LoanType",
       type: "select", // simple static text or could be DynamicFormField if editable
       options: optionsLender,
+      selectedOptionValue: true,
       width: 150,
     },
     {
@@ -352,6 +353,7 @@ const InvestmentPropertyLoan = (props) => {
       key: "LoanTerm",
       type: "select", // simple static text or could be DynamicFormField if editable
       options: loanTermOptions,
+      selectedOptionValue: true,
       width: 150,
     },
     {
@@ -360,6 +362,7 @@ const InvestmentPropertyLoan = (props) => {
       key: "LoanTermRemaining",
       type: "select", // simple static text or could be DynamicFormField if editable
       options: loanTermOptions,
+      selectedOptionValue: true,
       width: 150,
     },
     {

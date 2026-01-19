@@ -15,7 +15,7 @@ import { FaInfoCircle } from "react-icons/fa";
 import * as Yup from "yup";
 
 const ShareSchema = Yup.object().shape({
-  NumberOfMap: Yup.number().required("Required"),
+  NumberOfMap: Yup.number().nullable(),
   shares: Yup.array().of(
     Yup.object().shape({
       ASXCode: Yup.string()
@@ -170,8 +170,10 @@ const AustralianShares = (props) => {
   };
 
   const onSubmit = async (values) => {
+    console.log("Submitted Values:", values);
+
     const count =
-      Number(values.NumberOfMap) || values.bankAccounts?.length || 0;
+      Number(values.NumberOfMap || 0) || values.bankAccounts?.length || 0;
 
     const shares = Array.isArray(values.shares)
       ? values.shares.slice(0, count)
@@ -193,7 +195,7 @@ const AustralianShares = (props) => {
 
     props.setFieldValue(
       props.modalObject.stakeHolder + DataOf + "Array",
-      newEntries
+      newEntries || []
     );
 
     props.setFieldValue(
@@ -245,6 +247,14 @@ const AustralianShares = (props) => {
       callBack: true,
       CheckError: true,
       func: handleASXCodeChange,
+      // ✅ CONDITIONAL ATTRIBUTE for sorting
+      ...(!props?.isEditing && {
+        sorter: (a, b) => {
+          const valA = (a.ASXCode || "").toString().toUpperCase();
+          const valB = (b.ASXCode || "").toString().toUpperCase();
+          return valA.localeCompare(valB);
+        },
+      }),
     },
     {
       title: "Company Name",
@@ -253,6 +263,14 @@ const AustralianShares = (props) => {
       type: "text",
       placeholder: "Company Name",
       disabled: true,
+      // ✅ CONDITIONAL ATTRIBUTE for sorting
+      ...(!props?.isEditing && {
+        sorter: (a, b) => {
+          const valA = (a.companyName || "").toString().toUpperCase();
+          const valB = (b.companyName || "").toString().toUpperCase();
+          return valA.localeCompare(valB);
+        },
+      }),
     },
     {
       title: "Share Price",
@@ -294,6 +312,15 @@ const AustralianShares = (props) => {
       key: "currentBalance",
       type: "number-toComma",
       disabled: true,
+      // ✅ CONDITIONAL ATTRIBUTE for sorting
+      ...(!props?.isEditing && {
+        sorter: (a, b) => {
+          const parse = (val) =>
+            parseFloat(String(val || "0").replace(/[^0-9.-]+/g, "")) || 0;
+
+          return parse(a.currentBalance) - parse(b.currentBalance);
+        },
+      }),
     },
   ];
 
@@ -328,7 +355,14 @@ const AustralianShares = (props) => {
         return (
           <Form>
             <div className="d-flex justify-content-center align-items-center gap-4">
-              <p className="text-end mt-1 pt-2">Number of {title} :</p>
+              <p
+                className="text-end mt-1 pt-2"
+                onClick={() => {
+                  console.log(values);
+                }}
+              >
+                Number of {title} :
+              </p>
               <div style={{ minWidth: "10%" }}>
                 <ConfigProvider
                   theme={{

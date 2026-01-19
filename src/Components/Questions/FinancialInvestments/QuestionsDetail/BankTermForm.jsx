@@ -50,6 +50,11 @@ const BankTermForm = (props) => {
   });
 
   // Extract previous data (if any)
+  const InnerModalFlag =
+    props.modalObject.title === "SMSF_Bank Accounts" ||
+    props.modalObject.title === "Trust_Bank Accounts";
+
+  // Extract previous data (if any)
   const existingData =
     props.modalObject.values?.[
       props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "")
@@ -155,6 +160,15 @@ const BankTermForm = (props) => {
       placeholder: "Select Institution",
       selectedOptionValue: true,
       width: 180,
+
+      // ✅ CONDITIONAL ATTRIBUTE for sorting
+      ...(!props?.isEditing && {
+        sorter: (a, b) => {
+          const valA = (a.Institution || "").toString().toUpperCase();
+          const valB = (b.Institution || "").toString().toUpperCase();
+          return valA.localeCompare(valB);
+        },
+      }),
     },
     {
       title: "Account Number",
@@ -169,9 +183,18 @@ const BankTermForm = (props) => {
       key: "currentBalance",
       type: "number-toComma",
       placeholder: "Current Balance",
+      // ✅ CONDITIONAL ATTRIBUTE for sorting
+      ...(!props?.isEditing && {
+        sorter: (a, b) => {
+          const parse = (val) =>
+            parseFloat(String(val || "0").replace(/[^0-9.-]+/g, "")) || 0;
+
+          return parse(a.currentBalance) - parse(b.currentBalance);
+        },
+      }),
     },
     // ✅ CONDITIONAL COLUMNS (FIXED)
-    ...(props.modalObject.title === "SMSF_Bank Accounts"
+    ...(InnerModalFlag
       ? [
           {
             title: "Ongoing Advice Fee",
@@ -182,7 +205,7 @@ const BankTermForm = (props) => {
             innerModalTitle:
               props.modalObject.title === "SMSF_Bank Accounts"
                 ? "SMSF_Ongoing Annual Fee"
-                : "_Ongoing Annual Fee",
+                : "Trust_Ongoing Annual Fee",
             callBack: true,
             func: handleInnerModal,
             disabled: true,
@@ -215,7 +238,7 @@ const BankTermForm = (props) => {
               accountNumber: values.bankAccounts?.[i]?.accountNumber || "",
               currentBalance: values.bankAccounts?.[i]?.currentBalance || "",
               // ✅ CONDITIONAL ATTRIBUTE
-              ...(props?.modalObject?.title === "SMSF_Bank Accounts" && {
+              ...(InnerModalFlag && {
                 serviceFee: values.bankAccounts?.[i]?.serviceFee || "", // or any attribute you need
               }),
             }));

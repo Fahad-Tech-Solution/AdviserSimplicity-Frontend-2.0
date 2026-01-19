@@ -1000,6 +1000,7 @@ const questionConfig = {
           component: <InvestmentLoan />,
           key: "familyInvestmentHomeLoan",
           maintitle: true,
+          customTitle: "Trust_Investment Loan",
         },
       ],
     },
@@ -1018,6 +1019,7 @@ const questionConfig = {
           key: "familyInvestmentProperties",
           maintitle: true,
           onTop: true,
+          customTitle: "Trust_Investment Property",
         },
         {
           label: "Total Debt",

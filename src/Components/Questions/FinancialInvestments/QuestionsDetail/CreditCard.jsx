@@ -67,7 +67,9 @@ const CreditCard = (props) => {
     if (creditCards["client"] && creditCards["client"].length) {
       setFieldValue("creditCards", creditCards["client"]);
     } else {
-      props.setIsEditing(!props.isEditing);
+      if (!props.isEditing) {
+        props.setIsEditing(true);
+      }
     }
   };
 
@@ -284,7 +286,7 @@ const CreditCard = (props) => {
       {({ values, setFieldValue, handleChange, handleBlur }) => {
         useEffect(() => {
           fillInitialValues(setFieldValue);
-        }, [creditCards["client"]]);
+        }, [creditCards["client"].length]);
 
         const dataRows = useMemo(() => {
           const num = Number(values.NumberOfMap) || 0;

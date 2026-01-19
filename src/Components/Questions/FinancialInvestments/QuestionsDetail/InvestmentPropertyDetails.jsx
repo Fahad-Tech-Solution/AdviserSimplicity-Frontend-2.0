@@ -31,6 +31,7 @@ const { Option } = Select;
 const InvestmentPropertyDetails = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+
   let PageLimit =
     props.modalObject.title === "SMSF_Investment Properties" ? 5 : 10;
 
@@ -420,6 +421,8 @@ const InvestmentPropertyDetails = (props) => {
       innerModalTitle:
         props.modalObject.title == "SMSF_Investment Properties"
           ? "SMSF_Property Loan Details"
+          : props.modalObject.title == "Trust_Investment Property"
+          ? "Trust_Property Loan Details"
           : "Property Loan Details",
     },
     {
