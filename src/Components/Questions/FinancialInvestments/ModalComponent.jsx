@@ -247,6 +247,7 @@ const ModalComponent = (props) => {
     "Other Investments",
     "West Family Trust Investment",
     "SMSF_Investment Loan",
+    "Trust_Investment Loan",
     "SMSF_Investment Properties",
     "Trust_Investment Property",
   ];

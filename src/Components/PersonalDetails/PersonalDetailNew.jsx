@@ -321,6 +321,7 @@ const PersonalDetailNew = () => {
     client: {},
     partner: {},
     haveAnyChildren: "Yes",
+    numberOfChildren: 0,
   };
 
   const personalFields = [

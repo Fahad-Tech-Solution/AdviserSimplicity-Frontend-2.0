@@ -726,112 +726,32 @@ const InvestmentLoan = (props) => {
           );
         }, [values, props.modalObject.key]);
 
-        useEffect(() => {
-          if (props.modalObject.key === "SMSFInvestmentLoan") {
-            ensureDeductibleAmount(
-              "SMSF.deductibleLoanAmount",
-              values.SMSF?.deductibleLoanAmount
-            );
-            return;
-          }
-
-          if (props.modalObject.key === "familyInvestmentHomeLoan") {
-            ensureDeductibleAmount(
-              "trust.deductibleLoanAmount",
-              values.trust?.deductibleLoanAmount
-            );
-            return;
-          }
-
-          (values.owner || []).forEach((ownerKey) => {
-            ensureDeductibleAmount(
-              `${ownerKey}.deductibleLoanAmount`,
-              values[ownerKey]?.deductibleLoanAmount
-            );
-          });
-        }, [values, props.modalObject.key]);
-
-        // const tableData = useMemo(() => {
-        //   const rows = [];
-        //   const ownerArray = values.owner || [];
-
-        //   // For SMSFInvestmentLoan, only show SMSF row
+        // useEffect(() => {
         //   if (props.modalObject.key === "SMSFInvestmentLoan") {
-        //     rows.push({
-        //       key: "SMSF",
-        //       stakeHolder: "SMSF",
-        //       owner: "SMSF",
-        //       ...(values.SMSF || {}),
-        //     });
-        //     setFieldValue(
+        //     ensureDeductibleAmount(
         //       "SMSF.deductibleLoanAmount",
-        //       values.SMSF?.deductibleLoanAmount || "100.00%"
+        //       values.SMSF?.deductibleLoanAmount
         //     );
+        //     return;
         //   }
-        //   // For familyInvestmentHomeLoan, only show trust row
-        //   else if (props.modalObject.key === "familyInvestmentHomeLoan") {
-        //     rows.push({
-        //       key: "trust",
-        //       stakeHolder: "trust",
-        //       owner: "Trust",
-        //       ...(values.trust || {}),
-        //     });
-        //     setFieldValue(
+
+        //   if (props.modalObject.key === "familyInvestmentHomeLoan") {
+        //     ensureDeductibleAmount(
         //       "trust.deductibleLoanAmount",
-        //       values.trust?.deductibleLoanAmount || "100.00%"
+        //       values.trust?.deductibleLoanAmount
         //     );
-        //   }
-        //   // For regular investment loans, show based on owner selection
-        //   else {
-        //     if (ownerArray.includes("client")) {
-        //       rows.push({
-        //         key: "client",
-        //         stakeHolder: "client",
-        //         owner: RenderName("client"),
-        //         ...(values.client || {}),
-        //         deductibleLoanAmount:
-        //           values.client?.deductibleLoanAmount || "100.00%",
-        //       });
-        //       setFieldValue(
-        //         "client.deductibleLoanAmount",
-        //         values.client?.deductibleLoanAmount || "100.00%"
-        //       );
-        //     }
-
-        //     if (ownerArray.includes("partner")) {
-        //       rows.push({
-        //         key: "partner",
-        //         stakeHolder: "partner",
-        //         owner: RenderName("partner"),
-        //         ...(values.partner || {}),
-        //         deductibleLoanAmount:
-        //           values.partner?.deductibleLoanAmount || "100.00%",
-        //       });
-        //       setFieldValue(
-        //         "partner.deductibleLoanAmount",
-        //         values.partner?.deductibleLoanAmount || "100.00%"
-        //       );
-        //     }
-
-        //     if (ownerArray.includes("joint")) {
-        //       rows.push({
-        //         key: "joint",
-        //         stakeHolder: "joint",
-        //         owner: RenderName("joint"),
-        //         ...(values.joint || {}),
-        //         deductibleLoanAmount:
-        //           values.joint?.deductibleLoanAmount || "100.00%",
-        //       });
-        //       setFieldValue(
-        //         "joint.deductibleLoanAmount",
-        //         values.joint?.deductibleLoanAmount || "100.00%"
-        //       );
-        //     }
+        //     return;
         //   }
 
-        //   return rows;
+        //   (values.owner || []).forEach((ownerKey) => {
+        //     ensureDeductibleAmount(
+        //       `${ownerKey}.deductibleLoanAmount`,
+        //       values[ownerKey]?.deductibleLoanAmount
+        //     );
+        //   });
         // }, [values, props.modalObject.key]);
 
+      
         return (
           <Form>
             <Row>
