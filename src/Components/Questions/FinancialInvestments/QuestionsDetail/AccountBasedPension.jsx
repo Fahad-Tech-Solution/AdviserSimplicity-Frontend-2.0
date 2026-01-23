@@ -66,7 +66,7 @@ const AccountBasedPension = (props) => {
     values,
     type,
     question,
-    Platform
+    Platform,
   ) => {
     const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
     const BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
@@ -82,27 +82,27 @@ const AccountBasedPension = (props) => {
         "error",
         "topRight",
         "Error Notification",
-        "Please! Select Platform Name First"
+        "Please! Select Platform Name First",
       );
       return false;
     }
 
     const PlatformObj =
       bankDetailObj?.AccountBasedPensions?.find(
-        (elem) => elem._id === selectedPlatformId
+        (elem) => elem._id === selectedPlatformId,
       ) ||
       Platform ||
       {};
 
     let title = `${RenderName(
-      props.modalObject.stakeHolder.replace(".", "")
+      props.modalObject.stakeHolder.replace(".", ""),
     )}${replacePlaceholderWithLabel(
       bankDetailObj?.AccountBasedPensions?.map((elem) => ({
         value: elem._id,
         label: elem.platformName,
       })),
       values?.[BaseKey]?.[index].platformName,
-      innerModalTitle
+      innerModalTitle,
     )}`;
 
     setModalObject({
@@ -127,7 +127,7 @@ const AccountBasedPension = (props) => {
     values,
     setFieldValue,
     currentInput,
-    stakeHolder
+    stakeHolder,
   ) => {
     const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
     const BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
@@ -137,9 +137,9 @@ const AccountBasedPension = (props) => {
       (total, entry) =>
         total +
         parseFloat(
-          (entry?.investmentValue || "0").replace(/[^0-9.-]+/g, "") || 0
+          (entry?.investmentValue || "0").replace(/[^0-9.-]+/g, "") || 0,
         ),
-      0
+      0,
     );
 
     const data =
@@ -168,14 +168,14 @@ const AccountBasedPension = (props) => {
 
     const newEntries = (values.accountBasedPensions || []).slice(
       0,
-      values.NumberOfMap
+      values.NumberOfMap,
     );
 
     // compute total pensionPayment
     const total = newEntries.reduce((totalAcc, entry) => {
       const val =
         parseFloat(
-          (entry?.balanceBenefit || "0").toString().replace(/[^0-9.-]+/g, "")
+          (entry?.balanceBenefit || "0").toString().replace(/[^0-9.-]+/g, ""),
         ) || 0;
       return totalAcc + val;
     }, 0);
@@ -183,12 +183,12 @@ const AccountBasedPension = (props) => {
     // set parent's field with the array
     props.setFieldValue(
       props.modalObject.stakeHolder + DataOf + "Array",
-      newEntries
+      newEntries,
     );
 
     props.setFieldValue(
       props.modalObject.stakeHolder + "currentBalance",
-      toCommaAndDollar(total)
+      toCommaAndDollar(total),
     );
 
     props.modalObject.setShowError?.((prev) => ({
@@ -249,9 +249,18 @@ const AccountBasedPension = (props) => {
           stakeHolder,
           values,
           "Balance Benefit Details",
-          `Number of Balance & Benefit Details:`
+          `Number of Balance & Benefit Details:`,
         ),
       errorHandler: ShowError,
+      // ✅ CONDITIONAL ATTRIBUTE for sorting
+      ...(!props?.isEditing && {
+        sorter: (a, b) => {
+          const parse = (val) =>
+            parseFloat(String(val || "0").replace(/[^0-9.-]+/g, "")) || 0;
+
+          return parse(a.balanceBenefit) - parse(b.balanceBenefit);
+        },
+      }),
     },
     {
       title: "Annual Pension Payment",
@@ -269,7 +278,7 @@ const AccountBasedPension = (props) => {
           stakeHolder,
           values,
           "Annual Pension Payment",
-          ""
+          "",
         ),
     },
     {
@@ -288,7 +297,7 @@ const AccountBasedPension = (props) => {
           stakeHolder,
           values,
           "Beneficiaries",
-          `Number of Beneficiaries:`
+          `Number of Beneficiaries:`,
         ),
     },
 
@@ -308,7 +317,7 @@ const AccountBasedPension = (props) => {
           stakeHolder,
           values,
           "Beneficiaries",
-          `Number of Beneficiaries:`
+          `Number of Beneficiaries:`,
         ),
       errorHandler: ShowError,
       disabled: true,
@@ -345,7 +354,7 @@ const AccountBasedPension = (props) => {
             Array.from({ length: num }, (_, i) => {
               setFieldValue(
                 `accountBasedPensions[${i}].` + "annualAdvice",
-                values.accountBasedPensions?.[i]?.annualAdvice || "$0"
+                values.accountBasedPensions?.[i]?.annualAdvice || "$0",
               );
             });
 

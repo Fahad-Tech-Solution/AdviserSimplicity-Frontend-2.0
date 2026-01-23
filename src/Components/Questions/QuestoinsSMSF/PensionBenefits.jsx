@@ -130,11 +130,11 @@ const PensionBenefits = (props) => {
       placeholder: "Select Pension Type",
     },
     {
-      title: "Portfolio Value",
+      title: "Account Balance",
       dataIndex: "portfolioValue",
       key: "portfolioValue",
       type: "number-toComma",
-      placeholder: "Portfolio Value",
+      placeholder: "Account Balance",
       callBack: true,
       func: Calculate,
     },

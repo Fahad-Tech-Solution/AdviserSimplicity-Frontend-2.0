@@ -4,7 +4,7 @@ import { Row } from "react-bootstrap";
 import { useRecoilValue } from "recoil";
 import { defaultUrl } from "../../../../Store/Store";
 import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
-import { ConfigProvider, Select } from "antd";
+import { ConfigProvider, Modal, Select } from "antd";
 
 const AntdTable = DynamicTableForInputsSection("antd");
 const { Option } = Select;
@@ -20,7 +20,7 @@ const Beneficiaries = (props) => {
   const fillInitialValues = (setFieldValue) => {
     try {
       const index = parseFloat(
-        props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
+        props.modalObject.stakeHolder.replace(/[^0-9-]+/g, ""),
       );
       const BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
 
@@ -32,12 +32,12 @@ const Beneficiaries = (props) => {
       if (data?.[`${props.modalObject.key}Array`].length > 0) {
         setFieldValue(
           "NumberOfMap",
-          data?.[`${props.modalObject.key}Array`].length || 1
+          data?.[`${props.modalObject.key}Array`].length || 1,
         );
 
         setFieldValue(
           "BeneficiariesDetails",
-          data?.[`${props.modalObject.key}Array`] || []
+          data?.[`${props.modalObject.key}Array`] || [],
         );
         setFieldValue("nominationType", data.nominationType || "");
       } else {
@@ -70,6 +70,27 @@ const Beneficiaries = (props) => {
     try {
       console.log(values);
 
+      const beneficiaries =
+        (values.BeneficiariesDetails || []).slice(0, values.NumberOfMap) || [];
+
+      // calculate total share
+      const totalShare = beneficiaries.reduce(
+        (sum, item) =>
+          sum +
+          Number(item.shareBenefit.toString().replace(/[^0-9.-]+/g, "") || 0),
+        0,
+      );
+
+      if (totalShare !== 100) {
+        Modal.confirm({
+          title: "Share percentage error",
+          content: `The total Share of Benefit should equate to 100% Please adjust`,
+          okText: "OK",
+          cancelButtonProps: { style: { display: "none" } },
+        });
+        return;
+      }
+
       const payload = {
         [`${props.modalObject.key}Array`]: (
           values.BeneficiariesDetails || []
@@ -78,12 +99,12 @@ const Beneficiaries = (props) => {
         NumberOfMap: values.NumberOfMap || "",
       };
 
-      console.log(payload);
+      console.log(payload?.[`${props.modalObject.key}Array`]);
 
       // Update parent form
       props.setFieldValue(
         `${props.modalObject.stakeHolder}${props.modalObject.key}Details`,
-        payload
+        payload,
       );
 
       // Close modal
@@ -137,7 +158,7 @@ const Beneficiaries = (props) => {
                 ) {
                   setFieldvalue(
                     `${BaseKey}[${index}].beneficiaryName`,
-                    "Your Estate"
+                    "Your Estate",
                   );
                 }
               },
@@ -204,7 +225,7 @@ const Beneficiaries = (props) => {
                 // set formatted value (e.g. "50.00%")
                 setFieldValue(
                   `BeneficiariesDetails[${index}].shareBenefit`,
-                  `${finalValue.toFixed(2)}%`
+                  `${finalValue.toFixed(2)}%`,
                 );
               },
             },
@@ -215,7 +236,7 @@ const Beneficiaries = (props) => {
 
         const dataRows = useMemo(() => {
           setRelationshipOptions(
-            getRelationshipOptions(values?.nominationType)
+            getRelationshipOptions(values?.nominationType),
           );
           const num = Number(values.NumberOfMap) || 0;
 
@@ -293,8 +314,8 @@ const Beneficiaries = (props) => {
                           </Option>
                           {extraValue.includes(
                             props?.modalObject?.ParentModalObject?.title.split(
-                              "_"
-                            )[1]
+                              "_",
+                            )[1],
                           ) && (
                             <Option key={"Reversionary Beneficiary"}>
                               Reversionary Beneficiary
@@ -345,7 +366,7 @@ const Beneficiaries = (props) => {
                               <Option key={i} value={i + 1}>
                                 {i + 1}
                               </Option>
-                            )
+                            ),
                           )}
                         </Select>
                       </ConfigProvider>

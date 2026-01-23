@@ -33,6 +33,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
     isEditing = false,
     setIsEditing = () => {},
     deleteButton = false,
+    loading = false,
   }) {
     const screens = useBreakpoint();
 
@@ -82,33 +83,33 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
                 checkfunc: (values, setFieldValue, thisInput, stakeHolder) => {
                   const clientHomeAddress = getNestedValue(
                     values,
-                    "client.contact.homeAddress"
+                    "client.contact.homeAddress",
                   );
                   const clientPostcode = getNestedValue(
                     values,
-                    "client.contact.postcodeSuburb"
+                    "client.contact.postcodeSuburb",
                   );
 
                   if (thisInput.checked) {
                     // Set partner address same as client
                     setFieldValue(
                       "partner.contact.homeAddress",
-                      clientHomeAddress || ""
+                      clientHomeAddress || "",
                     );
                     setFieldValue(
                       "partner.contact.postcodeSuburb",
-                      clientPostcode || ""
+                      clientPostcode || "",
                     );
 
                     // Also trigger postal address if SameAsAbove is checked
                     if (getNestedValue(values, "partner.contact.SameAsAbove")) {
                       setFieldValue(
                         "partner.contact.postalAddress",
-                        clientHomeAddress || ""
+                        clientHomeAddress || "",
                       );
                       setFieldValue(
                         "partner.contact.postalPostCode",
-                        clientPostcode || ""
+                        clientPostcode || "",
                       );
                     }
                   }
@@ -198,7 +199,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
       }
       if (col?.selectedOptionValue) {
         const selectedOption = col?.options?.find(
-          (item) => item.value == value
+          (item) => item.value == value,
         );
         return selectedOption ? selectedOption.label : value || "--";
       }
@@ -210,7 +211,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
       ) {
         const clientHomeAddress = getNestedValue(
           values,
-          "client.contact.homeAddress"
+          "client.contact.homeAddress",
         );
         const isSameAsClient = value === clientHomeAddress;
 
@@ -256,7 +257,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
       title: "Action",
       key: "action",
       // width: 120,
-      width: screens.xxl ? 30 : 120,
+      width: screens.xxl ? 100 : 120,
       fixed: "right",
       align: "center",
       render: (_, record, index) => {
@@ -279,7 +280,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
                     "NumberOfMap",
                     values.NumberOfMap == "1"
                       ? ""
-                      : parseFloat(values.NumberOfMap) - 1
+                      : parseFloat(values.NumberOfMap) - 1,
                   );
 
                   let arr = values?.[BaseKey].filter((_, i) => i !== index);
@@ -337,6 +338,7 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
                 : "max-content"
               : "max-content",
           }}
+          loading={loading}
         />
       );
     }

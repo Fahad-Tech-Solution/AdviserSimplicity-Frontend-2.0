@@ -202,6 +202,7 @@ const ModalComponent = (props) => {
     "Sole Trader Income",
     "Partnership Income",
     "Lifetime Benefits",
+    "Business Entities",
   ]; // Add other  /ntitles that should use "xl" here
 
   let fullTitles = [
@@ -270,13 +271,13 @@ const ModalComponent = (props) => {
   const size = smallModal
     ? ""
     : fullTitles.includes(props.modalObject?.title) ||
-      fullkeys.includes(props.modalObject?.key)
-    ? "xxl"
-    : xlTitles.includes(props.modalObject?.title)
-    ? "xl"
-    : xlKey.includes(props.modalObject?.key)
-    ? "xl"
-    : "lg";
+        fullkeys.includes(props.modalObject?.key)
+      ? "xxl"
+      : xlTitles.includes(props.modalObject?.title)
+        ? "xl"
+        : xlKey.includes(props.modalObject?.key)
+          ? "xl"
+          : "lg";
 
   let QuestionSections = [
     "Financial Investments",
@@ -344,13 +345,13 @@ const ModalComponent = (props) => {
             {props.modalObject?.title === "Regular Living Expenses"
               ? props.modalObject?.title2 || props.modalObject?.title
               : props.modalObject?.title === "Professional Advisers"
-              ? props.modalObject?.title +
-                " for " +
-                RenderName(props.modalObject?.Input)
-              : props.modalObject?.key === "personalInsurance"
-              ? RenderName(props.modalObject?.Input) +
-                "_Insurance Cover (Retail)"
-              : props.modalObject?.title}
+                ? props.modalObject?.title +
+                  " for " +
+                  RenderName(props.modalObject?.Input)
+                : props.modalObject?.key === "personalInsurance"
+                  ? RenderName(props.modalObject?.Input) +
+                    "_Insurance Cover (Retail)"
+                  : props.modalObject?.title}
           </Modal.Title>
         </Modal.Header>
         {progress !== 0 && <CustomLoadingBar progress={progress} />}

@@ -8,7 +8,6 @@ const AntDTableHOC = DynamicTableForInputsSection("antd");
 const { Option } = Select;
 
 const InnerDirectors = (props) => {
-  
   let {
     title,
     question = "Number of Directors :",
@@ -32,7 +31,7 @@ const InnerDirectors = (props) => {
 
     if (props.modalObject.stakeHolder) {
       let index = parseFloat(
-        props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
+        props.modalObject.stakeHolder.replace(/[^0-9-]+/g, ""),
       );
       let BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
       console.log(index, BaseKey, "index, BaseKey");
@@ -73,7 +72,7 @@ const InnerDirectors = (props) => {
     if (props?.modalObject?.stakeHolder) {
       props.setFieldValue(
         props.modalObject.stakeHolder + "directorsOfCorporateTrustee",
-        newEntries
+        newEntries,
       );
     } else {
       props.setFieldValue("directorsOfCorporateTrustee", newEntries);
@@ -101,7 +100,7 @@ const InnerDirectors = (props) => {
       dataIndex: "directorName",
       key: "directorName",
       type: "text",
-      placeholder: "Director Name",
+      placeholder: columnHead,
       width: 200,
     },
   ];
@@ -165,7 +164,7 @@ const InnerDirectors = (props) => {
                               <Option key={i} value={i + 1}>
                                 {i + 1}
                               </Option>
-                            )
+                            ),
                           )}
                         </Select>
                       </ConfigProvider>

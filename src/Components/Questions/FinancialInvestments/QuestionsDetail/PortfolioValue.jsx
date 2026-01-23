@@ -131,6 +131,15 @@ const PortfolioValue = (props) => {
       key: "investmentValue",
       type: "number-toComma",
       placeholder: "Investment Value",
+        // ✅ CONDITIONAL ATTRIBUTE for sorting
+      ...(!props?.isEditing && {
+        sorter: (a, b) => {
+          const parse = (val) =>
+            parseFloat(String(val || "0").replace(/[^0-9.-]+/g, "")) || 0;
+
+          return parse(a.investmentValue) - parse(b.investmentValue);
+        },
+      }),
     },
   ];
 

@@ -112,11 +112,8 @@ const FamilyDetails = (props) => {
         ? "Number of Directors :"
         : "Number of Trustees :";
 
-    // innerModalTitle == "Trustee Name"
-    //           ? values.trusteeType == "Corporate"
-    //             ? "Company Directors"
-    //             : innerModalTitle
-    //           : innerModalTitle,
+    let columnHead =
+      values.trusteeType == "Corporate" ? "Directors Names" : "Trustee Names";
 
     setModalObject({
       title:
@@ -130,6 +127,7 @@ const FamilyDetails = (props) => {
       values,
       directorLimit: 4,
       question,
+      columnHead
     });
     setFlagState(true);
   };

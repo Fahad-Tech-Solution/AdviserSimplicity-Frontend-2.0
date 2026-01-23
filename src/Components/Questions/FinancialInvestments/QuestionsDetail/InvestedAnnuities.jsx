@@ -75,7 +75,7 @@ const InvestedAnnuities = (props) => {
     stakeHolder,
     values,
     type,
-    question
+    question,
   ) => {
     const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
     const BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
@@ -91,21 +91,21 @@ const InvestedAnnuities = (props) => {
         "error",
         "topRight",
         "Error Notification",
-        "Please! Select Provider Name First"
+        "Please! Select Provider Name First",
       );
       return false;
     }
 
     setModalObject({
       title: `${RenderName(
-        props.modalObject.stakeHolder.replace(".", "")
+        props.modalObject.stakeHolder.replace(".", ""),
       )}${replacePlaceholderWithLabel(
         bankDetailObj?.Annuities?.map((elem) => ({
           value: elem._id,
           label: elem.platformName,
         })),
         values?.[BaseKey]?.[index]?.productProvider,
-        innerModalTitle
+        innerModalTitle,
       )}`,
       question,
       key,
@@ -124,12 +124,12 @@ const InvestedAnnuities = (props) => {
     const DataOf = props.modalObject.Input;
     const newEntries = (values.investedAnnuities || []).slice(
       0,
-      values.NumberOfMap
+      values.NumberOfMap,
     );
 
     const total = newEntries.reduce((sum, entry) => {
       const val = parseFloat(
-        (entry.originalInvestmentAmount || "0").replace(/[^0-9.-]+/g, "")
+        (entry.originalInvestmentAmount || "0").replace(/[^0-9.-]+/g, ""),
       );
       return sum + val;
     }, 0);
@@ -137,12 +137,12 @@ const InvestedAnnuities = (props) => {
     // set parent's field with the array
     props.setFieldValue(
       props.modalObject.stakeHolder + DataOf + "Array",
-      newEntries
+      newEntries,
     );
 
     props.setFieldValue(
       props.modalObject.stakeHolder + "currentBalance",
-      toCommaAndDollar(total)
+      toCommaAndDollar(total),
     );
 
     props.modalObject.setShowError?.((prev) => ({
@@ -201,11 +201,23 @@ const InvestedAnnuities = (props) => {
       placeholder: "Select Source",
     },
     {
-      title: "Original Investment Amount",
+      title: "Initial Investment",
       dataIndex: "originalInvestmentAmount",
       key: "originalInvestmentAmount",
       type: "number-toComma",
-      placeholder: "Investment Amount",
+      placeholder: "Initial Investment",
+      // ✅ CONDITIONAL ATTRIBUTE for sorting
+      ...(!props?.isEditing && {
+        sorter: (a, b) => {
+          const parse = (val) =>
+            parseFloat(String(val || "0").replace(/[^0-9.-]+/g, "")) || 0;
+
+          return (
+            parse(a.originalInvestmentAmount) -
+            parse(b.originalInvestmentAmount)
+          );
+        },
+      }),
     },
     {
       title: "Return of Capital Value",
@@ -213,6 +225,7 @@ const InvestedAnnuities = (props) => {
       key: "returnCapitalValue",
       type: "number-toComma",
       placeholder: "Return of Capital",
+      
     },
     {
       title: "Annual Annuity Payment",
@@ -227,7 +240,7 @@ const InvestedAnnuities = (props) => {
           key,
           stakeHolder,
           values,
-          "Annual Pension Payment"
+          "Annual Pension Payment",
         ),
     },
     {
@@ -277,7 +290,7 @@ const InvestedAnnuities = (props) => {
           stakeHolder,
           values,
           "Beneficiaries",
-          `Number of Beneficiaries:`
+          `Number of Beneficiaries:`,
         ),
     },
     {
@@ -295,7 +308,7 @@ const InvestedAnnuities = (props) => {
           stakeHolder,
           values,
           "Beneficiaries",
-          `Number of Beneficiaries:`
+          `Number of Beneficiaries:`,
         ),
       disabled: true,
     },
@@ -327,7 +340,7 @@ const InvestedAnnuities = (props) => {
             Array.from({ length: num }, (_, i) => {
               setFieldValue(
                 `investedAnnuities[${i}].` + "annualAdvice",
-                values.investedAnnuities?.[i]?.annualAdvice || "$0"
+                values.investedAnnuities?.[i]?.annualAdvice || "$0",
               );
             });
             return Array.from({ length: num }, (_, i) => ({
@@ -391,8 +404,8 @@ const InvestedAnnuities = (props) => {
                     name="NumberOfMap"
                     className="w-100 h-100"
                     placeholder="Select"
-                    size="large"                        disabled={!props?.isEditing}
-
+                    size="large"
+                    disabled={!props?.isEditing}
                     value={values.NumberOfMap || undefined}
                     onChange={(value) => {
                       setFieldValue("NumberOfMap", value);

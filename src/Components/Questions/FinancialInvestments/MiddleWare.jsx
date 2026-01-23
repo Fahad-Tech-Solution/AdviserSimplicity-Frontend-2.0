@@ -119,6 +119,7 @@ const MiddleWare = (props) => {
 
   // Backend data
   const backendData = questionDetail[propModalObj.key];
+  
   const bankAccountFinance =
     backendData && Object.keys(backendData).length > 0
       ? backendData

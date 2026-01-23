@@ -8,6 +8,7 @@ import analytics from "../svgs/analytics.png";
 import people from "../svgs/Questions_People.png";
 import property from "../svgs/property-value.svg";
 import investmentCircle from "../svgs/investmentCircle.png";
+import piggybank2 from "../svgs/piggy-bank-new.svg";
 
 import { useRecoilState, useRecoilValue } from "recoil";
 import { QuestionShift, CRState, defaultUrl } from "../../../Store/Store";
@@ -29,7 +30,7 @@ const QuestionsSMSF = (props) => {
   const FetchQuestions = async () => {
     try {
       const res = await GetAxios(
-        `${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`
+        `${DefaultUrl}/api/questions/${localStorage.getItem("UserID")}`,
       );
       if (res) {
         setCRObject(res);
@@ -159,7 +160,7 @@ const QuestionsSMSF = (props) => {
       if (!flagState) {
         const PostRes = await PostAxios(
           `${DefaultUrl}/api/questions/Add`,
-          values
+          values,
         );
         if (PostRes) {
           if (props.flagState) {
@@ -170,9 +171,9 @@ const QuestionsSMSF = (props) => {
       } else {
         const PatchRes = await PatchAxios(
           `${DefaultUrl}/api/questions/Update/${localStorage.getItem(
-            "UserID"
+            "UserID",
           )}`,
-          values
+          values,
         );
         if (PatchRes) {
           if (props.flagState) {
@@ -185,7 +186,7 @@ const QuestionsSMSF = (props) => {
         "success",
         "topRight",
         "Success Notification",
-        'Data of "' + props.modalObject.title + '" is Saved'
+        'Data of "' + props.modalObject.title + '" is Saved',
       );
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -195,7 +196,7 @@ const QuestionsSMSF = (props) => {
         "Error Notification",
         'Data of "' +
           props.modalObject.title +
-          '" is not Saved Please! try again'
+          '" is not Saved Please! try again',
       );
     }
   };
@@ -228,7 +229,7 @@ const QuestionsSMSF = (props) => {
     },
     {
       title: "Account Based Pensions",
-      img: people,
+      img: piggybank2,
       key: "SMSFPensionPhase",
     },
     {

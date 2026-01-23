@@ -8,6 +8,7 @@ import DynamicYesNo from "../FinancialInvestments/QuestionsDetail/DynamicYesNo";
 import PensionBenefits from "./PensionBenefits";
 import Beneficiaries from "../FinancialInvestments/QuestionsDetail/Beneficiaries";
 import { Select, Grid } from "antd";
+import AnnualPensionPaymentInnerModal from "../FinancialInvestments/QuestionsDetail/AnnualPensionPaymentInnerModal";
 
 const { useBreakpoint } = Grid;
 const AntdTable = DynamicTableForInputsSection("antd");
@@ -35,7 +36,7 @@ const SmsfPensionAccount = (props) => {
   const [ShowError, setShowError] = useState({});
 
   let index = parseFloat(
-    props.modalObject.stakeHolder.replace(/[^0-9-]+/g, "")
+    props.modalObject.stakeHolder.replace(/[^0-9-]+/g, ""),
   );
 
   let BaseKey = props.modalObject.stakeHolder.replace(/[^a-zA-Z]+/g, "");
@@ -67,7 +68,7 @@ const SmsfPensionAccount = (props) => {
     stakeHolder,
     values,
     type,
-    question
+    question,
   ) => {
     const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
     const BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
@@ -131,19 +132,19 @@ const SmsfPensionAccount = (props) => {
       (total, entry) =>
         total +
         parseFloat(
-          (entry.pensionBenefits || "0").replace(/[^0-9.-]+/g, "") || 0
+          (entry.pensionBenefits || "0").replace(/[^0-9.-]+/g, "") || 0,
         ),
-      0
+      0,
     );
 
     props.setFieldValue(
       `${props.modalObject.stakeHolder}${props.modalObject.key}`,
-      toCommaAndDollar(Total)
+      toCommaAndDollar(Total),
     );
 
     props.setFieldValue(
       `${props.modalObject.stakeHolder}${props.modalObject.key}Array`,
-      newEntries
+      newEntries,
     );
 
     if (props.flagState) {
@@ -155,7 +156,7 @@ const SmsfPensionAccount = (props) => {
     values,
     setFieldValue,
     currentInput,
-    stakeHolder
+    stakeHolder,
   ) => {
     const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
     const pensionBenefitsArray =
@@ -168,10 +169,10 @@ const SmsfPensionAccount = (props) => {
         (total, entry) =>
           total +
           parseFloat(
-            (entry.taxableComponent || "0").replace(/[^0-9.-]+/g, "") || 0
+            (entry.taxableComponent || "0").replace(/[^0-9.-]+/g, "") || 0,
           ),
-        0
-      )
+        0,
+      ),
     );
     const data = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, "") || 0);
 
@@ -247,7 +248,7 @@ const SmsfPensionAccount = (props) => {
           stakeHolder,
           values,
           "Pension Benefits",
-          `How many Pension Benefits do ${nameSet} have?`
+          `How many Pension Benefits do ${nameSet} have?`,
         ),
       checkInput: CheckInputValue,
     },
@@ -255,22 +256,33 @@ const SmsfPensionAccount = (props) => {
       title: "Annual Pension Payment",
       dataIndex: "pensionPayment",
       key: "pensionPayment",
-      type: "number-toComma",
-      width: screens.xxl ? 120 : 180,
+      type: "number-toComma-Modal",
+      width: screens.xxl ? 120 : 200,
       placeholder: "Annual Pension Payment",
+      innerModalTitle: "_Trust_Annual Pension Payment",
+      disabled: true,
+      func: (innerModalTitle, values, key, stakeHolder) =>
+        handleInnerModal(
+          innerModalTitle,
+          key,
+          stakeHolder,
+          values,
+          "Annual Pension Payment",
+          "",
+        ),
     },
-    {
-      title: "Pension Type",
-      dataIndex: "pensionType",
-      key: "pensionType",
-      type: "select",
-      placeholder: "Pension Type",
-      width: screens.xxl ? 120 : 230,
-      options: [
-        { value: "accountbasepension", label: "Account Base Pension" },
-        { value: "TTR", label: "TTR" },
-      ],
-    },
+    // {
+    //   title: "Pension Type",
+    //   dataIndex: "pensionType",
+    //   key: "pensionType",
+    //   type: "select",
+    //   placeholder: "Pension Type",
+    //   width: screens.xxl ? 120 : 230,
+    //   options: [
+    //     { value: "accountbasepension", label: "Account Base Pension" },
+    //     { value: "TTR", label: "TTR" },
+    //   ],
+    // },
     {
       title: "Beneficiaries",
       dataIndex: "nominatedBeneficiaries",
@@ -287,7 +299,7 @@ const SmsfPensionAccount = (props) => {
           stakeHolder,
           values,
           "Beneficiaries",
-          `How many beneficiaries do ${nameSet} have?`
+          `How many beneficiaries do ${nameSet} have?`,
         ),
       customComponent: DynamicYesNo,
     },
@@ -298,6 +310,8 @@ const SmsfPensionAccount = (props) => {
       return <PensionBenefits />;
     } else if (obj.key === "nominatedBeneficiaries") {
       return <Beneficiaries />;
+    } else if (obj.key === "pensionPayment") {
+      return <AnnualPensionPaymentInnerModal />;
     }
     return null;
   };

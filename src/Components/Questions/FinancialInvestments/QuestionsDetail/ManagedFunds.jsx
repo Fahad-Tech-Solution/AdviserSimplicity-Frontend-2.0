@@ -90,7 +90,7 @@ const ManagedFunds = (props) => {
         "error",
         "topRight",
         "Error Notification",
-        `Please! select platform name first`
+        `Please! select platform name first`,
       );
       return false;
     }
@@ -108,7 +108,7 @@ const ManagedFunds = (props) => {
     console.log(Platform);
 
     let titlePrefix = ["client", "partner", "joint"].includes(
-      props.modalObject.stakeHolder.replace(".", "")
+      props.modalObject.stakeHolder.replace(".", ""),
     )
       ? RenderName(props.modalObject.stakeHolder.replace(".", ""))
       : props.modalObject.stakeHolder.replace(".", "");
@@ -119,7 +119,7 @@ const ManagedFunds = (props) => {
         replacePlaceholderWithLabel(
           getPlatformOptions(),
           values?.[BaseKey]?.[index]?.platformName,
-          innerModalTitle
+          innerModalTitle,
         ),
       question: `Number of Investments :`,
       key,
@@ -141,7 +141,7 @@ const ManagedFunds = (props) => {
     values,
     setFieldValue,
     currentInput,
-    stakeHolder
+    stakeHolder,
   ) => {
     if (!stakeHolder) {
       return false;
@@ -155,7 +155,7 @@ const ManagedFunds = (props) => {
       (total, entry) =>
         total +
         parseFloat(entry.investmentValue?.replace(/[^0-9.-]+/g, "") || 0),
-      0
+      0,
     );
     const data = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, ""));
     if (ExpectedSum !== data) {
@@ -185,30 +185,30 @@ const ManagedFunds = (props) => {
     const totalFee = fundData.reduce(
       (sum, entry) =>
         sum + parseFloat(entry.portfolioValue?.replace(/[^0-9.-]+/g, "") || 0),
-      0
+      0,
     );
 
     const totalCostBase = fundData.reduce(
       (sum, entry) =>
         sum +
         parseFloat(entry.totalPortfolioCost?.replace(/[^0-9.-]+/g, "") || 0),
-      0
+      0,
     );
 
     // 🧾 Save computed values into Formik state
     props.setFieldValue(
       props.modalObject.stakeHolder + DataOf + "Array",
-      fundData
+      fundData,
     );
 
     props.setFieldValue(
       props.modalObject.stakeHolder + "currentBalance",
-      toCommaAndDollar(totalFee)
+      toCommaAndDollar(totalFee),
     );
 
     props.setFieldValue(
       props.modalObject.stakeHolder + "costBase",
-      toCommaAndDollar(totalCostBase)
+      toCommaAndDollar(totalCostBase),
     );
 
     // 🚫 Clear related validation errors (if any)
@@ -285,6 +285,14 @@ const ManagedFunds = (props) => {
       func: handleInnerModal,
       errorHandler: ShowError,
       disabled: true,
+      // ✅ CONDITIONAL ATTRIBUTE for sorting
+      ...(!props?.isEditing && {
+        sorter: (a, b) => {
+          const valA = (a.portfolioValue || "").toString().toUpperCase();
+          const valB = (b.portfolioValue || "").toString().toUpperCase();
+          return valA.localeCompare(valB);
+        },
+      }),
     },
     {
       title: "Total Costbase",
@@ -326,7 +334,7 @@ const ManagedFunds = (props) => {
             Array.from({ length: num }, (_, i) => {
               setFieldValue(
                 `managedFunds[${i}].` + "serviceFee",
-                values.managedFunds?.[i]?.serviceFee || "$0"
+                values.managedFunds?.[i]?.serviceFee || "$0",
               );
             });
             return Array.from({ length: num }, (_, i) => ({

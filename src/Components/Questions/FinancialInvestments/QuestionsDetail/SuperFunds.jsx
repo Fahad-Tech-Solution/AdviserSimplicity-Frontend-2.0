@@ -86,7 +86,7 @@ const SuperFunds = (props) => {
     stakeHolder,
     values,
     type,
-    question
+    question,
   ) => {
     const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
     const BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
@@ -98,25 +98,25 @@ const SuperFunds = (props) => {
         "error",
         "topRight",
         "Error Notification",
-        "Please! Select Platform Name First"
+        "Please! Select Platform Name First",
       );
       return false;
     }
 
     const Platform =
       bankDetailObj?.SuperannuationFunds?.find(
-        (elem) => elem._id === selectedPlatformId
+        (elem) => elem._id === selectedPlatformId,
       ) || [];
 
     let title = `${RenderName(
-      props.modalObject.stakeHolder.replace(".", "")
+      props.modalObject.stakeHolder.replace(".", ""),
     )}_${replacePlaceholderWithLabel(
       bankDetailObj?.SuperannuationFunds?.map((elem) => ({
         value: elem._id,
         label: elem.platformName,
       })),
       values?.[BaseKey]?.[index].platformName,
-      innerModalTitle
+      innerModalTitle,
     )}`;
 
     setModalObject({
@@ -142,16 +142,16 @@ const SuperFunds = (props) => {
     const totalAdvice = fundData.reduce(
       (sum, entry) =>
         sum + parseFloat(entry.balanceBenefit?.replace(/[^0-9.-]+/g, "") || 0),
-      0
+      0,
     );
 
     props.setFieldValue(
       props.modalObject.stakeHolder + DataOf + "Array",
-      fundData
+      fundData,
     );
     props.setFieldValue(
       props.modalObject.stakeHolder + "currentBalance",
-      toCommaAndDollar(totalAdvice)
+      toCommaAndDollar(totalAdvice),
     );
 
     props.modalObject.setShowError?.((prev) => ({
@@ -210,8 +210,17 @@ const SuperFunds = (props) => {
           stakeHolder,
           values,
           "Balance Benefit Details",
-          `How many Benefit Details and Components do ${nameSet} have ?`
+          `How many Benefit Details and Components do ${nameSet} have ?`,
         ),
+      // ✅ CONDITIONAL ATTRIBUTE for sorting
+      ...(!props?.isEditing && {
+        sorter: (a, b) => {
+          const parse = (val) =>
+            parseFloat(String(val || "0").replace(/[^0-9.-]+/g, "")) || 0;
+
+          return parse(a.balanceBenefit) - parse(b.balanceBenefit);
+        },
+      }),
     },
     {
       title: "Insurance",
@@ -229,7 +238,7 @@ const SuperFunds = (props) => {
           stakeHolder,
           values,
           "Group Insurance",
-          `How many Group Insurance ${nameSet} have :`
+          `How many Group Insurance ${nameSet} have :`,
         ),
     },
     {
@@ -248,7 +257,7 @@ const SuperFunds = (props) => {
           stakeHolder,
           values,
           "<CFE>_Contributions",
-          `Financial year Start Date:`
+          `Financial year Start Date:`,
         ),
     },
     {
@@ -267,7 +276,7 @@ const SuperFunds = (props) => {
           stakeHolder,
           values,
           "Beneficiaries",
-          `Number of Beneficiaries:`
+          `Number of Beneficiaries:`,
         ),
     },
     {
@@ -285,7 +294,7 @@ const SuperFunds = (props) => {
           stakeHolder,
           values,
           "Beneficiaries",
-          `Number of Beneficiaries:`
+          `Number of Beneficiaries:`,
         ),
       errorHandler: ShowError,
       disabled: true,
@@ -324,7 +333,7 @@ const SuperFunds = (props) => {
             Array.from({ length: num }, (_, i) => {
               setFieldValue(
                 `superFunds[${i}].` + "annualAdvice",
-                values.superFunds?.[i]?.annualAdvice || "$0"
+                values.superFunds?.[i]?.annualAdvice || "$0",
               );
             });
             return Array.from({ length: num }, (_, i) => ({

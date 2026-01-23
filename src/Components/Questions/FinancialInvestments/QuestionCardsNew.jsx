@@ -140,7 +140,7 @@ const questionConfig = {
         questionDetail,
         setQuestionDetail,
         DefaultUrl,
-        personalDetailObj
+        personalDetailObj,
       ) => {
         try {
           if (!values?.retirementLivingExpense) {
@@ -148,7 +148,7 @@ const questionConfig = {
               "error",
               "topRight",
               "Validation Error",
-              "Please enter a valid retirement living expense value."
+              "Please enter a valid retirement living expense value.",
             );
             return;
           }
@@ -181,7 +181,7 @@ const questionConfig = {
             "Success",
             `Retirement Living Expense ${
               isUpdate ? "updated" : "added"
-            } successfully!`
+            } successfully!`,
           );
         } catch (err) {
           console.error(err);
@@ -189,7 +189,7 @@ const questionConfig = {
             "error",
             "topRight",
             "Error",
-            "Failed to save retirement living data."
+            "Failed to save retirement living data.",
           );
         }
       },
@@ -596,8 +596,8 @@ const questionConfig = {
                 val && typeof val === "string"
                   ? parseFloat(val.replace(/[^0-9.-]+/g, "")) || 0
                   : typeof val === "number"
-                  ? val
-                  : 0;
+                    ? val
+                    : 0;
 
               // Generic extractor: SMSFTotal → propertyPortfolio → totalDebt → client/partner/joint totals
               const pickTotal = (
@@ -609,7 +609,7 @@ const questionConfig = {
                   "clientTotal",
                   "partnerTotal",
                   "jointTotal",
-                ]
+                ],
               ) => {
                 if (!obj) return 0;
                 for (const field of prefer) {
@@ -649,7 +649,7 @@ const questionConfig = {
                 return (
                   acc +
                   pickTotal(
-                    CRObject?.[key] === "Yes" ? questionDetail?.[key] : "$0"
+                    CRObject?.[key] === "Yes" ? questionDetail?.[key] : "$0",
                   )
                 );
               }, 0);
@@ -662,7 +662,7 @@ const questionConfig = {
                   acc +
                   pickTotal(
                     CRObject?.[key] === "Yes" ? questionDetail?.[key] : "$0",
-                    ["totalDebt", "SMSFTotal", "propertyPortfolio"]
+                    ["totalDebt", "SMSFTotal", "propertyPortfolio"],
                   )
                 );
               }, 0);
@@ -843,8 +843,8 @@ const questionConfig = {
                   val && typeof val === "string"
                     ? parseFloat(val.replace(/[^0-9.-]+/g, "")) || 0
                     : typeof val === "number"
-                    ? val
-                    : 0;
+                      ? val
+                      : 0;
 
                 // helper: picks trustTotal → propertyPortfolio → totalDebt → clientTotal → partnerTotal → jointTotal
                 const pickTotal = (
@@ -856,7 +856,7 @@ const questionConfig = {
                     "clientTotal",
                     "partnerTotal",
                     "jointTotal",
-                  ]
+                  ],
                 ) => {
                   if (!obj) return 0;
                   for (const field of prefer) {
@@ -888,7 +888,7 @@ const questionConfig = {
                   return (
                     acc +
                     pickTotal(
-                      CRObject?.[key] === "Yes" ? questionDetail?.[key] : "$0"
+                      CRObject?.[key] === "Yes" ? questionDetail?.[key] : "$0",
                     )
                   );
                 }, 0);
@@ -899,7 +899,7 @@ const questionConfig = {
                     acc +
                     pickTotal(
                       CRObject?.[key] === "Yes" ? questionDetail?.[key] : "$0",
-                      ["totalDebt", "trustTotal", "propertyPortfolio"]
+                      ["totalDebt", "trustTotal", "propertyPortfolio"],
                     )
                   );
                 }, 0);
@@ -1094,7 +1094,7 @@ const QuestionCard = (props) => {
       personalDetailObj.partner?.partnerPreferredName || "joint";
 
   const isSingle = ["Single", "Widowed"].includes(
-    personalDetailObj.client?.clientMaritalStatus
+    personalDetailObj.client?.clientMaritalStatus,
   );
 
   const sourceKey = dataKey || keyName;
@@ -1220,8 +1220,8 @@ const QuestionCard = (props) => {
       let head = lbl?.customTitle
         ? lbl.customTitle
         : lbl?.maintitle
-        ? title
-        : lbl.label;
+          ? title
+          : lbl.label;
       // Pass the specific label's data to the modal
       onOpen(head, lbl.key, lbl.component, lbl.label);
     };
@@ -1326,7 +1326,7 @@ const QuestionCard = (props) => {
             questionDetail,
             props.setQuestionDetail,
             props.DefaultUrl,
-            personalDetailObj
+            personalDetailObj,
           )
         }
         enableReinitialize
@@ -1346,7 +1346,7 @@ const QuestionCard = (props) => {
                 onChange={(e) =>
                   setFieldValue(
                     e.target.name,
-                    toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, ""))
+                    toCommaAndDollar(e.target.value.replace(/[^0-9.-]+/g, "")),
                   )
                 }
               />
@@ -1386,7 +1386,7 @@ const QuestionCard = (props) => {
                 keyName,
                 component,
                 isJointOnly ? "joint" : undefined,
-                props.api
+                props.api,
               )
             }
             style={{ width: 28, height: 28, padding: 0 }}
@@ -1460,10 +1460,17 @@ const QuestionCardsDemo = ({
   const [flagState, setFlagState] = useState(false);
 
   const handleOpen = (title, keyName, component, Input) => {
-    // console.log(title, keyName);
+    console.log(title, keyName);
     let small = ["Contents", "Boat", "Caravan"].includes(title);
 
-    setModalInfo({ title, key: keyName, component, Input, small });
+    if (keyName === "SMSFAccumulationDetails") {
+      let smsfName =
+        questionDetail?.SMSFDetails?.SMSFOwner?.fundName +
+        "_Accumulation Account";
+      setModalInfo({ title: smsfName, key: keyName, component, Input, small });
+    } else {
+      setModalInfo({ title, key: keyName, component, Input, small });
+    }
     setFlagState(true);
   };
 
@@ -1480,7 +1487,8 @@ const QuestionCardsDemo = ({
   const visibleQuestions = React.useMemo(() => {
     return questions.filter((q, index) => {
       const baseVisible = !CRObject || CRObject[q.keyName] === "Yes";
-      const rule = specialVisibilityRules[questionKey];
+      // const rule = specialVisibilityRules[questionKey];
+      const rule = false;
       return rule ? baseVisible && rule(q, index, questionDetail) : baseVisible;
     });
   }, [CRObject, setCRObject, questions, questionKey]);

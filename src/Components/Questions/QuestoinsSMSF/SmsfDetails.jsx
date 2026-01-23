@@ -59,6 +59,9 @@ const SmsfDetails = (props) => {
         ? "Number of Directors :"
         : "Number of Trustees :";
 
+    let columnHead =
+      values.trusteeType == "Corporate" ? "Directors Names" : "Trustee Names";
+
     setModalObject({
       title:
         innerModalTitle == "Trustee Name"
@@ -73,6 +76,7 @@ const SmsfDetails = (props) => {
       ParentModal,
       directorLimit: 6,
       question,
+      columnHead,
     });
     setFlagState(true);
   };
@@ -206,7 +210,7 @@ const SmsfDetails = (props) => {
         "success",
         "topRight",
         "Success Notification",
-        'Data of "' + props.modalObject.title + '" is Saved'
+        'Data of "' + props.modalObject.title + '" is Saved',
       );
 
       // Reset the flag state if necessary
@@ -222,7 +226,7 @@ const SmsfDetails = (props) => {
         "Error Notification",
         'Data of "' +
           props.modalObject.title +
-          '" is not Saved Please! try again'
+          '" is not Saved Please! try again',
       );
     }
   };
@@ -245,7 +249,7 @@ const SmsfDetails = (props) => {
           } else {
             // hide "Trustee Name" when not Corporate
             return columns.filter(
-              (col) => col.key !== "trusteeName" && col.key !== "ACN"
+              (col) => col.key !== "trusteeName" && col.key !== "ACN",
             );
           }
         }, [values.trusteeType]);

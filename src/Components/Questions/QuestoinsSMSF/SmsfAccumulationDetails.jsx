@@ -107,7 +107,7 @@ const SmsfAccumulationDetails = (props) => {
     stakeHolder,
     values,
     type,
-    question
+    question,
   ) => {
     const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
     const BaseKey = stakeHolder.replace(/[^a-zA-Z]+/g, "");
@@ -128,7 +128,7 @@ const SmsfAccumulationDetails = (props) => {
     values,
     setFieldValue,
     currentInput,
-    stakeHolder
+    stakeHolder,
   ) => {
     const index = parseFloat(stakeHolder.replace(/[^0-9-]+/g, ""));
     const accumulationBenefitsarray =
@@ -137,7 +137,8 @@ const SmsfAccumulationDetails = (props) => {
     if (!accumulationBenefitsarray) return;
 
     const ExpectedSum = parseFloat(
-      accumulationBenefitsarray.taxFreeComponent?.replace(/[^0-9.-]+/g, "") || 0
+      accumulationBenefitsarray.taxFreeComponent?.replace(/[^0-9.-]+/g, "") ||
+        0,
     );
     const data = parseFloat(currentInput.value.replace(/[^0-9.-]+/g, ""));
 
@@ -203,12 +204,12 @@ const SmsfAccumulationDetails = (props) => {
       if (!bankAccountArray) {
         res = await PostAxios(
           `${DefaultUrl}/api/SMSFAccumulationDetails/Add`,
-          obj
+          obj,
         );
       } else {
         res = await PatchAxios(
           `${DefaultUrl}/api/SMSFAccumulationDetails/Update`,
-          obj
+          obj,
         );
       }
 
@@ -221,11 +222,12 @@ const SmsfAccumulationDetails = (props) => {
         "success",
         "topRight",
         "Success Notification",
-        `Data of "${props.modalObject.title}" is Saved`
+        `Data of "${props.modalObject.title}" is Saved`,
       );
 
       if (props.flagState) {
         props.setFlagState(false);
+        props.setIsEditing(!props.isEditing);
       }
     } catch (error) {
       console.error("Error occurred while making API call:", error);
@@ -233,7 +235,7 @@ const SmsfAccumulationDetails = (props) => {
         "error",
         "topRight",
         "Error Notification",
-        `Data of "${props.modalObject.title}" is not Saved Please! try again`
+        `Data of "${props.modalObject.title}" is not Saved Please! try again`,
       );
     }
   };
@@ -277,7 +279,7 @@ const SmsfAccumulationDetails = (props) => {
           stakeHolder,
           values,
           "Accumulation Benefits",
-          `How many Accumulation Benefits do ${nameSet} have?`
+          `How many Accumulation Benefits do ${nameSet} have?`,
         ),
       checkInput: CheckInputValue,
     },
@@ -297,7 +299,7 @@ const SmsfAccumulationDetails = (props) => {
           stakeHolder,
           values,
           "Contributions",
-          `Number of contributions `
+          `Number of contributions `,
         ),
       customComponent: DynamicYesNo,
     },
@@ -317,7 +319,7 @@ const SmsfAccumulationDetails = (props) => {
           stakeHolder,
           values,
           "Beneficiaries",
-          `Number of beneficiaries`
+          `Number of beneficiaries`,
         ),
       customComponent: DynamicYesNo,
     },

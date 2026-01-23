@@ -8,23 +8,38 @@ import {
   QuestionDetail,
 } from "../../../../Store/Store";
 import {
+  DeleteAxios,
   openNotificationSuccess,
   PatchAxios,
   PostAxios,
   RenderName,
   toCommaAndDollar,
 } from "../../../Assets/Api/Api";
-import axios from "axios";
-import DynamicTableRow from "../../../Assets/Dynamic/DynamicTableRow";
-import {
-  AntdCreatableMultiSelect,
-  CreatableMultiSelectField,
-} from "./CreatableMultiSelectField";
+import { AntdCreatableMultiSelect } from "./CreatableMultiSelectField";
 import DynamicTableForInputsSection from "../../../Assets/Table/DynamicTableForInputsSection";
+import { Grid, Modal } from "antd";
+import { FaRegTrashAlt } from "react-icons/fa";
+const { useBreakpoint } = Grid;
+const DEFAULT_DEDUCTIBLE = "100.00%";
+
+const LOAN_FIELDS = [
+  "lender",
+  "loanBalance",
+  "loanType",
+  "repaymentsAmount",
+  "frequency",
+  "annualRepayments",
+  "serviceFeeType",
+  "interestRate",
+  "loanTerm",
+  "loanTermRemaining",
+  "deductibleLoanAmount",
+];
 
 const InvestmentLoan = (props) => {
   let questionDetail = useRecoilValue(QuestionDetail);
   let [questionDetailObj, setQuestionDetail] = useRecoilState(QuestionDetail);
+  const screens = useBreakpoint();
 
   let bankDetailObj = useRecoilValue(BankDetail);
 
@@ -62,263 +77,320 @@ const InvestmentLoan = (props) => {
   // Empty initial values
   let initialValues = {};
 
-  const fillInitialValues = (setFieldValue) => {
-    console.log(managedFundsLOC);
+  // const fillInitialValues = (setFieldValue) => {
+  //   console.log(managedFundsLOC);
 
-    // Force set owner based on modal type
-    if (props.modalObject.key === "SMSFInvestmentLoan") {
-      setFieldValue("owner", ["SMSF"]);
-    } else if (props.modalObject.key === "familyInvestmentHomeLoan") {
-      setFieldValue("owner", ["trust"]);
+  //   // Force set owner based on modal type
+  //   if (props.modalObject.key === "SMSFInvestmentLoan") {
+  //     setFieldValue("owner", ["SMSF"]);
+  //   } else if (props.modalObject.key === "familyInvestmentHomeLoan") {
+  //     setFieldValue("owner", ["trust"]);
+  //   }
+
+  //   if (managedFundsLOC && managedFundsLOC?._id) {
+  //     // For SMSFInvestmentLoan, only set SMSF data
+  //     if (props.modalObject.key === "SMSFInvestmentLoan") {
+  //       if (
+  //         managedFundsLOC?.SMSF &&
+  //         Object.keys(managedFundsLOC?.SMSF).length
+  //       ) {
+  //         setFieldValue(`SMSF.lender`, managedFundsLOC.SMSF.lender || "");
+  //         setFieldValue(
+  //           `SMSF.loanBalance`,
+  //           managedFundsLOC.SMSF.loanBalance || ""
+  //         );
+  //         setFieldValue(`SMSF.loanType`, managedFundsLOC.SMSF.loanType || "");
+  //         setFieldValue(
+  //           `SMSF.repaymentsAmount`,
+  //           managedFundsLOC.SMSF.repaymentsAmount || ""
+  //         );
+  //         setFieldValue(`SMSF.frequency`, managedFundsLOC.SMSF.frequency || "");
+  //         setFieldValue(
+  //           `SMSF.annualRepayments`,
+  //           managedFundsLOC.SMSF.annualRepayments || ""
+  //         );
+  //         setFieldValue(
+  //           `SMSF.serviceFeeType`,
+  //           managedFundsLOC.SMSF.serviceFeeType || ""
+  //         );
+  //         setFieldValue(
+  //           `SMSF.interestRate`,
+  //           managedFundsLOC.SMSF.interestRate || ""
+  //         );
+  //         setFieldValue(`SMSF.loanTerm`, managedFundsLOC.SMSF.loanTerm || "");
+  //         setFieldValue(
+  //           `SMSF.loanTermRemaining`,
+  //           managedFundsLOC.SMSF.loanTermRemaining || ""
+  //         );
+  //         setFieldValue(
+  //           `SMSF.deductibleLoanAmount`,
+  //           managedFundsLOC.SMSF.deductibleLoanAmount || "100.00%"
+  //         );
+  //       }
+  //     }
+  //     // For familyInvestmentHomeLoan, only set trust data
+  //     else if (props.modalObject.key === "familyInvestmentHomeLoan") {
+  //       if (
+  //         managedFundsLOC?.trust &&
+  //         Object.keys(managedFundsLOC?.trust).length
+  //       ) {
+  //         setFieldValue(`trust.lender`, managedFundsLOC.trust.lender || "");
+  //         setFieldValue(
+  //           `trust.loanBalance`,
+  //           managedFundsLOC.trust.loanBalance || ""
+  //         );
+  //         setFieldValue(`trust.loanType`, managedFundsLOC.trust.loanType || "");
+  //         setFieldValue(
+  //           `trust.repaymentsAmount`,
+  //           managedFundsLOC.trust.repaymentsAmount || ""
+  //         );
+  //         setFieldValue(
+  //           `trust.frequency`,
+  //           managedFundsLOC.trust.frequency || ""
+  //         );
+  //         setFieldValue(
+  //           `trust.annualRepayments`,
+  //           managedFundsLOC.trust.annualRepayments || ""
+  //         );
+  //         setFieldValue(
+  //           `trust.serviceFeeType`,
+  //           managedFundsLOC.trust.serviceFeeType || ""
+  //         );
+  //         setFieldValue(
+  //           `trust.interestRate`,
+  //           managedFundsLOC.trust.interestRate || ""
+  //         );
+  //         setFieldValue(`trust.loanTerm`, managedFundsLOC.trust.loanTerm || "");
+  //         setFieldValue(
+  //           `trust.loanTermRemaining`,
+  //           managedFundsLOC.trust.loanTermRemaining || ""
+  //         );
+  //         setFieldValue(
+  //           `trust.deductibleLoanAmount`,
+  //           managedFundsLOC.trust.deductibleLoanAmount || "100.00%"
+  //         );
+  //       }
+  //     }
+  //     // For regular investment loans, set data based on owner selection
+  //     else {
+  //       // Set the owner field
+  //       setFieldValue(`owner`, managedFundsLOC.owner || []);
+
+  //       // For client-related fields if "client" is included in the owner array
+  //       if (managedFundsLOC.owner.includes("client")) {
+  //         if (
+  //           managedFundsLOC?.client &&
+  //           Object.keys(managedFundsLOC?.client).length
+  //         ) {
+  //           setFieldValue(`client.lender`, managedFundsLOC.client.lender || "");
+  //           setFieldValue(
+  //             `client.loanBalance`,
+  //             managedFundsLOC.client.loanBalance || ""
+  //           );
+  //           setFieldValue(
+  //             `client.loanType`,
+  //             managedFundsLOC.client.loanType || ""
+  //           );
+  //           setFieldValue(
+  //             `client.repaymentsAmount`,
+  //             managedFundsLOC.client.repaymentsAmount || ""
+  //           );
+  //           setFieldValue(
+  //             `client.frequency`,
+  //             managedFundsLOC.client.frequency || ""
+  //           );
+  //           setFieldValue(
+  //             `client.annualRepayments`,
+  //             managedFundsLOC.client.annualRepayments || ""
+  //           );
+  //           setFieldValue(
+  //             `client.serviceFeeType`,
+  //             managedFundsLOC.client.serviceFeeType || ""
+  //           );
+  //           setFieldValue(
+  //             `client.interestRate`,
+  //             managedFundsLOC.client.interestRate || ""
+  //           );
+  //           setFieldValue(
+  //             `client.loanTerm`,
+  //             managedFundsLOC.client.loanTerm || ""
+  //           );
+  //           setFieldValue(
+  //             `client.loanTermRemaining`,
+  //             managedFundsLOC.client.loanTermRemaining || ""
+  //           );
+  //           setFieldValue(
+  //             `client.deductibleLoanAmount`,
+  //             managedFundsLOC.client.deductibleLoanAmount || "100.00%"
+  //           );
+  //         }
+  //       }
+
+  //       // For partner-related fields
+  //       if (
+  //         UserStatus === "Married" &&
+  //         managedFundsLOC.owner.includes("partner")
+  //       ) {
+  //         if (
+  //           managedFundsLOC?.partner &&
+  //           Object.keys(managedFundsLOC?.partner).length
+  //         ) {
+  //           setFieldValue(
+  //             `partner.lender`,
+  //             managedFundsLOC.partner.lender || ""
+  //           );
+  //           setFieldValue(
+  //             `partner.loanBalance`,
+  //             managedFundsLOC.partner.loanBalance || ""
+  //           );
+  //           setFieldValue(
+  //             `partner.loanType`,
+  //             managedFundsLOC.partner.loanType || ""
+  //           );
+  //           setFieldValue(
+  //             `partner.repaymentsAmount`,
+  //             managedFundsLOC.partner.repaymentsAmount || ""
+  //           );
+  //           setFieldValue(
+  //             `partner.frequency`,
+  //             managedFundsLOC.partner.frequency || ""
+  //           );
+  //           setFieldValue(
+  //             `partner.annualRepayments`,
+  //             managedFundsLOC.partner.annualRepayments || ""
+  //           );
+  //           setFieldValue(
+  //             `partner.serviceFeeType`,
+  //             managedFundsLOC.partner.serviceFeeType || ""
+  //           );
+  //           setFieldValue(
+  //             `partner.interestRate`,
+  //             managedFundsLOC.partner.interestRate || ""
+  //           );
+  //           setFieldValue(
+  //             `partner.loanTerm`,
+  //             managedFundsLOC.partner.loanTerm || ""
+  //           );
+  //           setFieldValue(
+  //             `partner.loanTermRemaining`,
+  //             managedFundsLOC.partner.loanTermRemaining || ""
+  //           );
+  //           setFieldValue(
+  //             `partner.deductibleLoanAmount`,
+  //             managedFundsLOC.partner.deductibleLoanAmount || "100.00%"
+  //           );
+  //         }
+  //       }
+
+  //       // For joint-related fields
+  //       if (managedFundsLOC.owner.includes("joint")) {
+  //         if (
+  //           managedFundsLOC?.joint &&
+  //           Object.keys(managedFundsLOC?.joint).length
+  //         ) {
+  //           setFieldValue(`joint.lender`, managedFundsLOC.joint.lender || "");
+  //           setFieldValue(
+  //             `joint.loanBalance`,
+  //             managedFundsLOC.joint.loanBalance || ""
+  //           );
+  //           setFieldValue(
+  //             `joint.loanType`,
+  //             managedFundsLOC.joint.loanType || ""
+  //           );
+  //           setFieldValue(
+  //             `joint.repaymentsAmount`,
+  //             managedFundsLOC.joint.repaymentsAmount || ""
+  //           );
+  //           setFieldValue(
+  //             `joint.frequency`,
+  //             managedFundsLOC.joint.frequency || ""
+  //           );
+  //           setFieldValue(
+  //             `joint.annualRepayments`,
+  //             managedFundsLOC.joint.annualRepayments || ""
+  //           );
+  //           setFieldValue(
+  //             `joint.serviceFeeType`,
+  //             managedFundsLOC.joint.serviceFeeType || ""
+  //           );
+  //           setFieldValue(
+  //             `joint.interestRate`,
+  //             managedFundsLOC.joint.interestRate || ""
+  //           );
+  //           setFieldValue(
+  //             `joint.loanTerm`,
+  //             managedFundsLOC.joint.loanTerm || ""
+  //           );
+  //           setFieldValue(
+  //             `joint.loanTermRemaining`,
+  //             managedFundsLOC.joint.loanTermRemaining || ""
+  //           );
+  //           setFieldValue(
+  //             `joint.deductibleLoanAmount`,
+  //             managedFundsLOC.joint.deductibleLoanAmount || "100.00%"
+  //           );
+  //         }
+  //       }
+  //     }
+  //   } else {
+  //     props.setIsEditing(true);
+  //   }
+  // };
+
+  const setLoanValues = (setFieldValue, prefix, data = {}) => {
+    LOAN_FIELDS.forEach((field) => {
+      setFieldValue(
+        `${prefix}.${field}`,
+        data[field] ??
+          (field === "deductibleLoanAmount" ? DEFAULT_DEDUCTIBLE : ''),
+      );
+    });
+  };
+
+  const fillInitialValues = (setFieldValue) => {
+    const modalKey = props.modalObject.key;
+
+    if (!managedFundsLOC?._id) {
+      if (modalKey === "SMSFInvestmentLoan") {
+        setFieldValue("owner", ["SMSF"]);
+        return;
+      }
+
+      if (modalKey === "familyInvestmentHomeLoan") {
+        setFieldValue("owner", ["trust"]);
+        return;
+      }
+      props.setIsEditing(true);
+      return;
     }
 
-    if (managedFundsLOC && managedFundsLOC?._id) {
-      // For SMSFInvestmentLoan, only set SMSF data
-      if (props.modalObject.key === "SMSFInvestmentLoan") {
-        if (
-          managedFundsLOC?.SMSF &&
-          Object.keys(managedFundsLOC?.SMSF).length
-        ) {
-          setFieldValue(`SMSF.lender`, managedFundsLOC.SMSF.lender || "");
-          setFieldValue(
-            `SMSF.loanBalance`,
-            managedFundsLOC.SMSF.loanBalance || ""
-          );
-          setFieldValue(`SMSF.loanType`, managedFundsLOC.SMSF.loanType || "");
-          setFieldValue(
-            `SMSF.repaymentsAmount`,
-            managedFundsLOC.SMSF.repaymentsAmount || ""
-          );
-          setFieldValue(`SMSF.frequency`, managedFundsLOC.SMSF.frequency || "");
-          setFieldValue(
-            `SMSF.annualRepayments`,
-            managedFundsLOC.SMSF.annualRepayments || ""
-          );
-          setFieldValue(
-            `SMSF.serviceFeeType`,
-            managedFundsLOC.SMSF.serviceFeeType || ""
-          );
-          setFieldValue(
-            `SMSF.interestRate`,
-            managedFundsLOC.SMSF.interestRate || ""
-          );
-          setFieldValue(`SMSF.loanTerm`, managedFundsLOC.SMSF.loanTerm || "");
-          setFieldValue(
-            `SMSF.loanTermRemaining`,
-            managedFundsLOC.SMSF.loanTermRemaining || ""
-          );
-          setFieldValue(
-            `SMSF.deductibleLoanAmount`,
-            managedFundsLOC.SMSF.deductibleLoanAmount || "100.00%"
-          );
-        }
-      }
-      // For familyInvestmentHomeLoan, only set trust data
-      else if (props.modalObject.key === "familyInvestmentHomeLoan") {
-        if (
-          managedFundsLOC?.trust &&
-          Object.keys(managedFundsLOC?.trust).length
-        ) {
-          setFieldValue(`trust.lender`, managedFundsLOC.trust.lender || "");
-          setFieldValue(
-            `trust.loanBalance`,
-            managedFundsLOC.trust.loanBalance || ""
-          );
-          setFieldValue(`trust.loanType`, managedFundsLOC.trust.loanType || "");
-          setFieldValue(
-            `trust.repaymentsAmount`,
-            managedFundsLOC.trust.repaymentsAmount || ""
-          );
-          setFieldValue(
-            `trust.frequency`,
-            managedFundsLOC.trust.frequency || ""
-          );
-          setFieldValue(
-            `trust.annualRepayments`,
-            managedFundsLOC.trust.annualRepayments || ""
-          );
-          setFieldValue(
-            `trust.serviceFeeType`,
-            managedFundsLOC.trust.serviceFeeType || ""
-          );
-          setFieldValue(
-            `trust.interestRate`,
-            managedFundsLOC.trust.interestRate || ""
-          );
-          setFieldValue(`trust.loanTerm`, managedFundsLOC.trust.loanTerm || "");
-          setFieldValue(
-            `trust.loanTermRemaining`,
-            managedFundsLOC.trust.loanTermRemaining || ""
-          );
-          setFieldValue(
-            `trust.deductibleLoanAmount`,
-            managedFundsLOC.trust.deductibleLoanAmount || "100.00%"
-          );
-        }
-      }
-      // For regular investment loans, set data based on owner selection
-      else {
-        // Set the owner field
-        setFieldValue(`owner`, managedFundsLOC.owner || []);
+    /** 🔹 Forced owner cases */
+    if (modalKey === "SMSFInvestmentLoan") {
+      setFieldValue("owner", ["SMSF"]);
+      setLoanValues(setFieldValue, "SMSF", managedFundsLOC.SMSF);
+      return;
+    }
 
-        // For client-related fields if "client" is included in the owner array
-        if (managedFundsLOC.owner.includes("client")) {
-          if (
-            managedFundsLOC?.client &&
-            Object.keys(managedFundsLOC?.client).length
-          ) {
-            setFieldValue(`client.lender`, managedFundsLOC.client.lender || "");
-            setFieldValue(
-              `client.loanBalance`,
-              managedFundsLOC.client.loanBalance || ""
-            );
-            setFieldValue(
-              `client.loanType`,
-              managedFundsLOC.client.loanType || ""
-            );
-            setFieldValue(
-              `client.repaymentsAmount`,
-              managedFundsLOC.client.repaymentsAmount || ""
-            );
-            setFieldValue(
-              `client.frequency`,
-              managedFundsLOC.client.frequency || ""
-            );
-            setFieldValue(
-              `client.annualRepayments`,
-              managedFundsLOC.client.annualRepayments || ""
-            );
-            setFieldValue(
-              `client.serviceFeeType`,
-              managedFundsLOC.client.serviceFeeType || ""
-            );
-            setFieldValue(
-              `client.interestRate`,
-              managedFundsLOC.client.interestRate || ""
-            );
-            setFieldValue(
-              `client.loanTerm`,
-              managedFundsLOC.client.loanTerm || ""
-            );
-            setFieldValue(
-              `client.loanTermRemaining`,
-              managedFundsLOC.client.loanTermRemaining || ""
-            );
-            setFieldValue(
-              `client.deductibleLoanAmount`,
-              managedFundsLOC.client.deductibleLoanAmount || "100.00%"
-            );
-          }
-        }
+    if (modalKey === "familyInvestmentHomeLoan") {
+      setFieldValue("owner", ["trust"]);
+      setLoanValues(setFieldValue, "trust", managedFundsLOC.trust);
+      return;
+    }
 
-        // For partner-related fields
-        if (
-          UserStatus === "Married" &&
-          managedFundsLOC.owner.includes("partner")
-        ) {
-          if (
-            managedFundsLOC?.partner &&
-            Object.keys(managedFundsLOC?.partner).length
-          ) {
-            setFieldValue(
-              `partner.lender`,
-              managedFundsLOC.partner.lender || ""
-            );
-            setFieldValue(
-              `partner.loanBalance`,
-              managedFundsLOC.partner.loanBalance || ""
-            );
-            setFieldValue(
-              `partner.loanType`,
-              managedFundsLOC.partner.loanType || ""
-            );
-            setFieldValue(
-              `partner.repaymentsAmount`,
-              managedFundsLOC.partner.repaymentsAmount || ""
-            );
-            setFieldValue(
-              `partner.frequency`,
-              managedFundsLOC.partner.frequency || ""
-            );
-            setFieldValue(
-              `partner.annualRepayments`,
-              managedFundsLOC.partner.annualRepayments || ""
-            );
-            setFieldValue(
-              `partner.serviceFeeType`,
-              managedFundsLOC.partner.serviceFeeType || ""
-            );
-            setFieldValue(
-              `partner.interestRate`,
-              managedFundsLOC.partner.interestRate || ""
-            );
-            setFieldValue(
-              `partner.loanTerm`,
-              managedFundsLOC.partner.loanTerm || ""
-            );
-            setFieldValue(
-              `partner.loanTermRemaining`,
-              managedFundsLOC.partner.loanTermRemaining || ""
-            );
-            setFieldValue(
-              `partner.deductibleLoanAmount`,
-              managedFundsLOC.partner.deductibleLoanAmount || "100.00%"
-            );
-          }
-        }
+    /** 🔹 Regular investment loans */
+    const owners = managedFundsLOC.owner || [];
+    setFieldValue("owner", owners);
 
-        // For joint-related fields
-        if (managedFundsLOC.owner.includes("joint")) {
-          if (
-            managedFundsLOC?.joint &&
-            Object.keys(managedFundsLOC?.joint).length
-          ) {
-            setFieldValue(`joint.lender`, managedFundsLOC.joint.lender || "");
-            setFieldValue(
-              `joint.loanBalance`,
-              managedFundsLOC.joint.loanBalance || ""
-            );
-            setFieldValue(
-              `joint.loanType`,
-              managedFundsLOC.joint.loanType || ""
-            );
-            setFieldValue(
-              `joint.repaymentsAmount`,
-              managedFundsLOC.joint.repaymentsAmount || ""
-            );
-            setFieldValue(
-              `joint.frequency`,
-              managedFundsLOC.joint.frequency || ""
-            );
-            setFieldValue(
-              `joint.annualRepayments`,
-              managedFundsLOC.joint.annualRepayments || ""
-            );
-            setFieldValue(
-              `joint.serviceFeeType`,
-              managedFundsLOC.joint.serviceFeeType || ""
-            );
-            setFieldValue(
-              `joint.interestRate`,
-              managedFundsLOC.joint.interestRate || ""
-            );
-            setFieldValue(
-              `joint.loanTerm`,
-              managedFundsLOC.joint.loanTerm || ""
-            );
-            setFieldValue(
-              `joint.loanTermRemaining`,
-              managedFundsLOC.joint.loanTermRemaining || ""
-            );
-            setFieldValue(
-              `joint.deductibleLoanAmount`,
-              managedFundsLOC.joint.deductibleLoanAmount || "100.00%"
-            );
-          }
-        }
-      }
-    } else {
-      props.setIsEditing(true);
+    if (owners.includes("client")) {
+      setLoanValues(setFieldValue, "client", managedFundsLOC.client);
+    }
+
+    if (UserStatus === "Married" && owners.includes("partner")) {
+      setLoanValues(setFieldValue, "partner", managedFundsLOC.partner);
+    }
+
+    if (owners.includes("joint")) {
+      setLoanValues(setFieldValue, "joint", managedFundsLOC.joint);
     }
   };
 
@@ -347,7 +419,7 @@ const InvestmentLoan = (props) => {
     if (ownerArray.includes("joint") && obj.joint?.loanBalance) {
       try {
         let loanBalance = parseFloat(
-          (obj.joint.loanBalance || "0").replace(/[^0-9.-]+/g, "")
+          (obj.joint.loanBalance || "0").replace(/[^0-9.-]+/g, ""),
         );
         fiftyPercent = isNaN(loanBalance) ? 0 : loanBalance / 2;
       } catch (error) {
@@ -359,7 +431,7 @@ const InvestmentLoan = (props) => {
     // Calculate client total (only for regular investment loans)
     if (ownerArray.includes("client") && obj.client?.loanBalance) {
       let clientLoanBalance = parseFloat(
-        obj.client.loanBalance.replace(/[^0-9.-]+/g, "")
+        obj.client.loanBalance.replace(/[^0-9.-]+/g, ""),
       );
       obj.clientTotal = toCommaAndDollar(clientLoanBalance + fiftyPercent);
     } else if (ownerArray.includes("joint")) {
@@ -373,7 +445,7 @@ const InvestmentLoan = (props) => {
       obj.partner?.loanBalance
     ) {
       let PartnerLoanBalance = parseFloat(
-        obj.partner.loanBalance.replace(/[^0-9.-]+/g, "")
+        obj.partner.loanBalance.replace(/[^0-9.-]+/g, ""),
       );
       obj.partnerTotal = toCommaAndDollar(PartnerLoanBalance + fiftyPercent);
     } else if (ownerArray.includes("joint") && UserStatus === "Married") {
@@ -384,7 +456,7 @@ const InvestmentLoan = (props) => {
     if (ownerArray.includes("SMSF") && obj.SMSF?.loanBalance) {
       try {
         let smsfAnnual = parseFloat(
-          obj.SMSF.loanBalance.replace(/[^0-9.-]+/g, "")
+          obj.SMSF.loanBalance.replace(/[^0-9.-]+/g, ""),
         );
         obj.SMSFTotal = toCommaAndDollar(smsfAnnual);
         console.log("SMSF Total calculated:", obj.SMSFTotal);
@@ -398,7 +470,7 @@ const InvestmentLoan = (props) => {
     if (ownerArray.includes("trust") && obj.trust?.loanBalance) {
       try {
         let trustAnnual = parseFloat(
-          obj.trust.loanBalance.replace(/[^0-9.-]+/g, "")
+          obj.trust.loanBalance.replace(/[^0-9.-]+/g, ""),
         );
         obj.trustTotal = toCommaAndDollar(trustAnnual);
       } catch (error) {
@@ -466,30 +538,32 @@ const InvestmentLoan = (props) => {
       if (!recordExists) {
         res = await PostAxios(
           `${DefaultUrl}/api/${props.modalObject.key}/Add`,
-          obj
+          obj,
         );
       } else {
         // For PATCH, include the ID
         obj._id = managedFundsLOC._id;
         res = await PatchAxios(
           `${DefaultUrl}/api/${props.modalObject.key}/Update`,
-          obj
+          obj,
         );
       }
 
       if (res) {
         console.log("API Response:", res);
+
         const updatedData = {
           ...questionDetail,
           [props.modalObject.key]: res,
         };
+
         setQuestionDetail(updatedData);
 
         openNotificationSuccess(
           "success",
           "topRight",
           "Success Notification",
-          `Data of "${props.modalObject.title}" is Saved`
+          `Data of "${props.modalObject.title}" is Saved`,
         );
 
         if (props.flagState) {
@@ -505,7 +579,7 @@ const InvestmentLoan = (props) => {
         "error",
         "topRight",
         "Error Notification",
-        `Data of "${props.modalObject.title}" is not saved. Please try again!`
+        `Data of "${props.modalObject.title}" is not saved. Please try again!`,
       );
     }
   };
@@ -531,7 +605,7 @@ const InvestmentLoan = (props) => {
     values,
     setFieldValue,
     thisInput,
-    stackHolder
+    stackHolder,
   ) => {
     const cleanNumber = (val) => {
       if (val === undefined || val === null) return 0;
@@ -542,10 +616,10 @@ const InvestmentLoan = (props) => {
     };
 
     let repaymentsAmount = cleanNumber(
-      values?.[stackHolder.replace(".", "")]?.repaymentsAmount
+      values?.[stackHolder.replace(".", "")]?.repaymentsAmount,
     );
     let frequency = cleanNumber(
-      values?.[stackHolder.replace(".", "")]?.frequency
+      values?.[stackHolder.replace(".", "")]?.frequency,
     );
 
     // Handle real-time updates from current input
@@ -565,7 +639,7 @@ const InvestmentLoan = (props) => {
     console.log(repaymentsAmount, frequency);
     setFieldValue(
       `${stackHolder}annualRepayments`,
-      toCommaAndDollar(loanBalance || 0)
+      toCommaAndDollar(loanBalance || 0),
     );
   };
 
@@ -678,6 +752,72 @@ const InvestmentLoan = (props) => {
       placeholder: "Deductible Loan Amount",
       width: 200,
     },
+    // ✅ CONDITIONAL COLUMN (FIXED)
+    ...(props?.isEditing && props.modalObject.key === "SMSFInvestmentLoan"
+      ? [
+          {
+            title: "Action",
+            key: "action",
+            width: screens.xxl ? 100 : 120,
+            fixed: "right",
+            align: "center",
+            render: (_, record) => (
+              <FaRegTrashAlt
+                onClick={() => {
+                  Modal.confirm({
+                    title: "Remove data?",
+                    content:
+                      "This action will permanently delete your data. This action cannot be undone. Do you want to proceed?",
+                    okText: "Proceed",
+                    okType: "danger",
+                    cancelText: "Cancel",
+                    centered: true,
+                    onOk: async () => {
+                      try {
+                        if (managedFundsLOC._id) {
+                          // 🔥 Perform DELETE API call
+                          let res = await DeleteAxios(
+                            `${DefaultUrl}/api/${props.modalObject.key}/Delete/${managedFundsLOC._id}`,
+                          );
+                          if (res.deleted) {
+                            // 🔥 Update Recoil state to remove deleted data
+                            let updatedQuestionDetail = {
+                              ...questionDetailObj,
+                              [props.modalObject.key]: {},
+                            };
+                            setQuestionDetail(updatedQuestionDetail);
+                            if (props.flagState) {
+                              props.setFlagState(false);
+                              props.setIsEditing(!props.isEditing);
+                            }
+                          }
+                        }
+                        // ✅ Reset entire Formik form
+                        props.formRef.current?.resetForm({
+                          values: {
+                            owner: ["SMSF"], // ✅ force owner
+                            SMSF: {
+                              ...LOAN_FIELDS.reduce((acc, field) => {
+                                acc[field] = "";
+                                return acc;
+                              }, {}),
+                              deductibleLoanAmount: DEFAULT_DEDUCTIBLE, // reset to default
+                            },
+                          },
+                        });
+                      } catch (error) {
+                        console.error("Error deleting data:", error);
+                      }
+                      // 🔥 perform delete logic here
+                    },
+                  });
+                }}
+                style={{ color: "red", cursor: "pointer" }}
+              />
+            ),
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -692,19 +832,13 @@ const InvestmentLoan = (props) => {
           fillInitialValues(setFieldValue);
         }, []);
 
-        const DEFAULT_PERCENT = "100.00%";
-
-        const ensureDeductibleAmount = (path, value) => {
-          setFieldValue(path, value || DEFAULT_PERCENT);
-        };
-
         const createRow = (key, ownerLabel, valuesObj) => ({
           key,
           stakeHolder: key,
           owner: ownerLabel,
           ...valuesObj,
           deductibleLoanAmount:
-            valuesObj?.deductibleLoanAmount || DEFAULT_PERCENT,
+            valuesObj?.deductibleLoanAmount || DEFAULT_DEDUCTIBLE,
         });
 
         const tableData = useMemo(() => {
@@ -722,36 +856,25 @@ const InvestmentLoan = (props) => {
 
           // Regular Investment Loans
           return ownerArray.map((ownerKey) =>
-            createRow(ownerKey, RenderName(ownerKey), values[ownerKey] || {})
+            createRow(ownerKey, RenderName(ownerKey), values[ownerKey] || {}),
           );
         }, [values, props.modalObject.key]);
 
-        // useEffect(() => {
-        //   if (props.modalObject.key === "SMSFInvestmentLoan") {
-        //     ensureDeductibleAmount(
-        //       "SMSF.deductibleLoanAmount",
-        //       values.SMSF?.deductibleLoanAmount
-        //     );
-        //     return;
-        //   }
+        useEffect(() => {
+          if (
+            values?.owner?.length > 0
+            // && props.modalObject.key === "managedFundsLOC"
+          ) {
+            const ownerArray = values.owner || [];
+            ownerArray.map((ownerKey) =>
+              setFieldValue(
+                ownerKey + ".deductibleLoanAmount",
+                values[ownerKey]?.["deductibleLoanAmount"] || "100.00%",
+              ),
+            );
+          }
+        }, [values.owner]);
 
-        //   if (props.modalObject.key === "familyInvestmentHomeLoan") {
-        //     ensureDeductibleAmount(
-        //       "trust.deductibleLoanAmount",
-        //       values.trust?.deductibleLoanAmount
-        //     );
-        //     return;
-        //   }
-
-        //   (values.owner || []).forEach((ownerKey) => {
-        //     ensureDeductibleAmount(
-        //       `${ownerKey}.deductibleLoanAmount`,
-        //       values[ownerKey]?.deductibleLoanAmount
-        //     );
-        //   });
-        // }, [values, props.modalObject.key]);
-
-      
         return (
           <Form>
             <Row>

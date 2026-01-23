@@ -1,91 +1,31 @@
 {
-  "owner": [
-    "client"
-  ],
-  "client": {
-    "insurancePremiums": "Yes",
-    "rolloverFunds": "Yes",
-    "concessionalContributions": "Yes",
-    "nonConcessionalContributions": "Yes",
-    "withdrawals": "Yes",
-    "rolloverFundsObj": {
-      "rolloverBenefitFund": "SMSF",
-      "rolloverBenefitsYear": "1",
-      "rolloverBenefitFund1": "N/A",
-      "rolloverBenefitsYear1": "9"
+  "clientFK": "68b181be06503cdb237c9eff",
+  "client": [
+    {
+      "ASXCode": "BML.AX",
+      "companyName": "Boab Metals Limited",
+      "sharePrice": "$0.405",
+      "shares": 2312,
+      "costBase": "$223",
+      "currentBalance": "$937"
     },
-    "insurancePremiumsObj": {
-      "insurancePremiums": "$123",
-      "yearsInclude": "3",
-      "indexationPremiums": "1.00%"
-    },
-    "balanceComponents": "$123",
-    "balanceComponentsObj": {
-      "currentBalance": "$123",
-      "taxFreeComponent": "$123",
-      "pensionRollback": "$123",
-      "taxFreeComponentPension": "$123"
-    },
-    "riskProfile": "Balanced",
-    "investmentReturns": "input Override",
-    "investmentReturnsObj": {
-      "incomeYield": "22.00%",
-      "growthRate": "33.00%",
-      "franking": "44.00%"
-    },
-    "investmentFees": "12.00%",
-    "adviserServiceFee": "$23",
-    "concessionalContributionsObj": {
-      "employerSGContributions": "Capped at Max",
-      "personalSalarySacrifice": "Other",
-      "personalSalarySacrificeObj": {
-        "otherPercentageAmount": "100.00%"
-      },
-      "affordabilityOtherAmount": "$24",
-      "indexationOfOtherAmount": "4.50%",
-      "contributionsFund": "1",
-      "yearCommence": "8",
-      "yearsInclude": "11",
-      "catchUpContribution": "$23",
-      "contributionsToFund": "SMSF",
-      "contributionSplitting": "Yes",
-      "contributionSplittingObj": {
-        "contributionSplitting": "100.00%",
-        "yearToCommence": "9",
-        "yearsToInclude": "9",
-        "contributionsToFund": "2",
-        "previousLumpsumWithdrawals": "$213"
-      }
-    },
-    "nonConcessionalContributionsObj": {
-      "lumpsumNonConcessionalYearOne": "$12",
-      "contributionsToFund": "1",
-      "lumpsumNonConcessional": "Yes",
-      "lumpsumNonConcessionalObj": {
-        "contributionsToFund": "2",
-        "year": "3",
-        "amount": "$123"
-      },
-      "regularNonConcessional": "$12",
-      "yearCommence": "9",
-      "yearsInclude": "10",
-      "contributionsFund": "1",
-      "governmentCoContribution": "2",
-      "downSizerContribution": "Yes",
-      "downSizerContributionObj": {
-        "downSizerContribution": "$12",
-        "contributionsToFund": "2"
-      },
-      "applySpouseContribution": "Yes",
-      "applySpouseContributionObj": {
-        "yearToCommence": "3",
-        "yearsToInclude": "0"
-      }
-    },
-    "withdrawalsObj": {
-      "contributionsToFund": "2",
-      "year": "5",
-      "amount": "$122"
+    {
+      "ASXCode": "BBC.AX",
+      "companyName": "BNK Banking Corporation Limited",
+      "sharePrice": "$0.29",
+      "shares": 877,
+      "costBase": "$7,888",
+      "currentBalance": "$255"
     }
-  }
+  ],
+  "partner": [],
+  "joint": [],
+  "clientCurrentBalance": "$1,192",
+  "partnerCurrentBalance": "$2,000",
+  "jointCurrentBalance": "$0",
+  "clientCostBaseTemp": "$8,111",
+  "partnerCostBaseTemp": "$78",
+  "jointCostBaseTemp": "$78",
+  "clientTotal": "$1,192",
+  "partnerTotal": "$2,000"
 }
