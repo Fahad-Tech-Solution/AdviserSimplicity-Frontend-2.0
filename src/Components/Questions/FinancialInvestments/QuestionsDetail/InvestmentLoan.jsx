@@ -342,7 +342,7 @@ const InvestmentLoan = (props) => {
       setFieldValue(
         `${prefix}.${field}`,
         data[field] ??
-          (field === "deductibleLoanAmount" ? DEFAULT_DEDUCTIBLE : ''),
+          (field === "deductibleLoanAmount" ? DEFAULT_DEDUCTIBLE : ""),
       );
     });
   };
@@ -753,7 +753,9 @@ const InvestmentLoan = (props) => {
       width: 200,
     },
     // ✅ CONDITIONAL COLUMN (FIXED)
-    ...(props?.isEditing && props.modalObject.key === "SMSFInvestmentLoan"
+    ...(props?.isEditing &&
+    (props.modalObject.key === "SMSFInvestmentLoan" ||
+      props.modalObject.key === "familyInvestmentHomeLoan")
       ? [
           {
             title: "Action",
@@ -792,11 +794,17 @@ const InvestmentLoan = (props) => {
                             }
                           }
                         }
+
+                        let keysPare = {
+                          SMSFInvestmentLoan: "SMSF",
+                          familyInvestmentHomeLoan: "trust",
+                        }
+
                         // ✅ Reset entire Formik form
                         props.formRef.current?.resetForm({
                           values: {
-                            owner: ["SMSF"], // ✅ force owner
-                            SMSF: {
+                            owner: [keysPare?.[props.modalObject.key]], // ✅ force owner
+                            [keysPare?.[props.modalObject.key]]: {
                               ...LOAN_FIELDS.reduce((acc, field) => {
                                 acc[field] = "";
                                 return acc;
