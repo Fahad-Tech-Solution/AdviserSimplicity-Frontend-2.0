@@ -6,7 +6,15 @@ import { FaInfoCircle } from "react-icons/fa";
 import dayjs from "dayjs";
 
 import SVGCoin from "../../../CashFlow/CashFlowAssets/Cast_Flow/SVG/SVG-Doller-Coin.svg";
-import { getJwtToken, getUserDetail } from "../../../Store/recoilUtils";
+import {
+  getJwtToken,
+  getUserDetail,
+  getQuestionDetail,
+  getGoalsDetail,
+  getDefaultUrl,
+  getLoggedInUserData,
+} from "../../../Store/recoilUtils";
+import { content } from "../../../Content/Content";
 
 const getAuthHeaders = () => {
   const token = getJwtToken();
@@ -188,7 +196,7 @@ const handleInputChange = (
   setFieldValue,
   FormulaSetting,
   values,
-  stakeHolder
+  stakeHolder,
 ) => {
   let value = parseFloat(e.target.value.replace(/[^0-9.]+/g, "")); // Remove all non-numeric characters except '.'
 
@@ -243,7 +251,7 @@ const handleInputBlur = (
   toPercentage,
   FormulaSetting,
   values,
-  stakeHolder
+  stakeHolder,
 ) => {
   let value = e.target.value.replace(/[^0-9.]+/g, "");
   let numericValue = parseFloat(value);
@@ -370,7 +378,7 @@ const generateYearData = (source, yearCount = 31) => {
       acc[`year${year}`] = source?.[`year${year}`] || "$0";
       return acc;
     },
-    {}
+    {},
   );
 };
 
@@ -417,7 +425,7 @@ const removeZeroRows = (data) =>
         (typeof val === "number" && val !== 0) ||
         (typeof val === "string" && !isNaN(num) && num !== 0)
       );
-    })
+    }),
   );
 
 const transformInflows = (inflows = [], formatAsCurrency = true) =>
@@ -428,7 +436,7 @@ const transformInflows = (inflows = [], formatAsCurrency = true) =>
       if (formatAsCurrency) {
         if (val < 0) {
           formatted[`year${i + 1}`] = `(${toCommaAndDollar(
-            Math.abs(isNaN(val) ? 0 : val)
+            Math.abs(isNaN(val) ? 0 : val),
           )})`;
         } else {
           formatted[`year${i + 1}`] = toCommaAndDollar(isNaN(val) ? 0 : val);
@@ -648,7 +656,7 @@ const updateCardByTitle = ({
   filterTypes = [],
 }) => {
   const matchingEntries = DataSource.filter((item) =>
-    filterTypes.includes(item.type)
+    filterTypes.includes(item.type),
   );
 
   const totalAmount = matchingEntries.reduce((sum, entry) => {
@@ -665,8 +673,8 @@ const updateCardByTitle = ({
       ? `(${toCommaAndDollar(Math.abs(totalAmount))})`
       : `${toCommaAndDollar(totalAmount)}`
     : totalAmount < 0
-    ? `($${Math.abs(totalAmount).toLocaleString()})`
-    : `$${totalAmount.toLocaleString()}`;
+      ? `($${Math.abs(totalAmount).toLocaleString()})`
+      : `$${totalAmount.toLocaleString()}`;
 
   updateState((previousIncomeList) =>
     previousIncomeList.map((card) =>
@@ -676,8 +684,8 @@ const updateCardByTitle = ({
             amount: formattedAmount,
             popupArray: matchingEntries,
           }
-        : card
-    )
+        : card,
+    ),
   );
 };
 
@@ -703,8 +711,8 @@ const updateCardBySingleEntry = ({
             ...card,
             amount: rawValue,
           }
-        : card
-    )
+        : card,
+    ),
   );
 };
 
@@ -739,7 +747,7 @@ const touchFields = async (
   setFieldTouched,
   fieldNames,
   values,
-  validateForm
+  validateForm,
 ) => {
   let isValid = true;
   let firstInvalidMessage = null;
@@ -772,7 +780,7 @@ const touchFields = async (
       "error",
       "topRight",
       "Validation Error",
-      firstInvalidMessage
+      firstInvalidMessage,
     );
   }
 
@@ -839,7 +847,7 @@ const calculateExpectedTotal = (
   modalTitle = "",
   dataArray = [],
   currentInput = "",
-  checkState = ""
+  checkState = "",
 ) => {
   if (!dataArray || dataArray.length === 0) return 0;
 
@@ -915,9 +923,235 @@ const parseDateInput = (value) => {
   const fallback = dayjs(
     value,
     ["DD/MM/YYYY", "D/M/YYYY", "DD-MM-YYYY", "D-M-YYYY"],
-    true
+    true,
   );
   return fallback.isValid() ? fallback : null;
+};
+
+/**
+ * generateDocumentFromTemplate: Generates and downloads a Word document from a template
+ *
+ * @param {Object} payload - Data object to render in the template
+ * @param {string} templateFileName - Name of the template file in public/assets (e.g., 'template.docx')
+ * @param {string} downloadFileName - Name for the downloaded file (default: 'document.docx')
+ * @returns {Promise<Blob>} - The generated document blob
+ */
+const generateDocumentFromTemplate = async (
+  payload = {},
+  templateFileName = "template.docx",
+  downloadFileName = "document.docx",
+) => {
+  try {
+    if (!payload || Object.keys(payload).length === 0) {
+      throw new Error("Payload is required and cannot be empty");
+    }
+
+    // Construct template URL from public assets
+    const templateUrl = `${import.meta.env.BASE_URL}assets/${templateFileName}`;
+    console.log("Template URL:", templateUrl);
+    // Fetch template with error handling
+    let arrayBuffer = null;
+    try {
+      const response = await fetch(templateUrl);
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch template: ${response.status} ${response.statusText}`,
+        );
+      }
+      arrayBuffer = await response.arrayBuffer();
+    } catch (fetchError) {
+      console.error("Template fetch failed:", fetchError);
+      throw new Error(
+        `Cannot access template at ${templateUrl}. Ensure the file exists in public/assets folder.`,
+      );
+    }
+
+    // Dynamically import required libraries
+    const { default: PizZip } = await import("pizzip");
+    const { default: Docxtemplater } = await import("docxtemplater");
+
+    // Initialize document template
+    const zip = new PizZip(arrayBuffer);
+    const doc = new Docxtemplater(zip, {
+      paragraphLoop: true,
+      linebreaks: true,
+      delimiters: { start: "{{", end: "}}" },
+    });
+
+    // Render document with payload data
+    doc.render(payload);
+
+    // Generate blob from modified document
+    const generatedBlob = doc.getZip().generate({
+      type: "blob",
+      mimeType:
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    });
+
+    // Trigger download
+    const url = URL.createObjectURL(generatedBlob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = downloadFileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    console.log(
+      "Document generated and downloaded successfully:",
+      downloadFileName,
+    );
+    return generatedBlob;
+  } catch (error) {
+    console.error("Document generation failed:", error.message);
+    openNotificationSuccess(
+      "error",
+      "topRight",
+      "Document Generation Error",
+      error.message || "Failed to generate document",
+    );
+    throw error;
+  }
+};
+
+const isEmptyObject = (obj) => !obj || Object.keys(obj).length === 0;
+
+const GeneraDocument = async (id) => {
+  try {
+    console.log("Document generation started for ID:", id);
+
+    const defaultUrl = getDefaultUrl();
+
+    let personalDetails = getUserDetail();
+    let allQuestions = getQuestionDetail();
+    let goalsAndObjective = getGoalsDetail();
+    let LoggedInUser = getLoggedInUserData();
+
+    console.log(
+      "Recoil values →",
+      "PersonalDetail:",
+      personalDetails,
+      "Questions:",
+      allQuestions,
+      "Goals:",
+      goalsAndObjective,
+    );
+
+    const requests = [];
+
+    // Personal Details
+    if (isEmptyObject(personalDetails) || personalDetails?._id !== id) {
+      requests.push(
+        GetAxios(`${defaultUrl}/api/personalDetails/getUserById/${id}`).then(
+          (res) => {
+            if (!isEmptyObject(res)) personalDetails = res;
+          },
+        ),
+      );
+    }
+
+    // Questions
+    if (
+      isEmptyObject(allQuestions) ||
+      Object.values(allQuestions).some(
+        (q) => q && Object.keys(q).length > 0 && q.clientFK === id,
+      )
+    ) {
+      requests.push(
+        GetAxios(`${defaultUrl}/api/questions/${id}`).then((res) => {
+          if (!isEmptyObject(res)) allQuestions = res;
+        }),
+      );
+    }
+
+    // Goals & Objectives
+    if (
+      isEmptyObject(goalsAndObjective) ||
+      Object.values(goalsAndObjective).some(
+        (q) => q && Object.keys(q).length > 0 && q.clientFK === id,
+      )
+    ) {
+      requests.push(
+        GetAxios(`${defaultUrl}/api/CombinedGoalsAndObjectives/${id}`).then(
+          (res) => {
+            if (!isEmptyObject(res)) goalsAndObjective = res;
+          },
+        ),
+      );
+    }
+
+    // Run missing API calls in parallel
+    await Promise.all(requests);
+
+    console.log("Final Data →", {
+      personalDetails,
+      allQuestions,
+      goalsAndObjective,
+      contect: content.GoalsAndObjectives,
+    });
+
+    let adviserName =
+      LoggedInUser &&
+      typeof LoggedInUser === "object" &&
+      Object.keys(LoggedInUser).length > 0
+        ? `${toSentenceCase(LoggedInUser.firstName || "")} ${toSentenceCase(
+            LoggedInUser.lastName || "",
+          )}`.trim()
+        : "Guest";
+
+    // 🔽 Continue document generation here
+    let payload = {
+      clientName: personalDetails?.client?.clientGivenName || "",
+      adviserName: adviserName || "",
+      downloadDate: new Date().toLocaleDateString("en-AU", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      }),
+      items: Object.values(content.GoalsAndObjectives)
+        .flat()
+        .map((item) => ({
+          goalName: item?.title || "",
+          scopeOfAdvice:
+            goalsAndObjective?.[item.key]?.scopeOfAdvice ||
+            item?.scopeOfAdvice ||
+            "",
+          description: goalsAndObjective?.[item.key]?.description || "",
+          when: goalsAndObjective?.[item.key]?.when || item?.whenScopeIs || "",
+          estimatedValue: goalsAndObjective?.[item.key]?.estimatedValue || "",
+        })),
+      clientTitle: personalDetails?.client?.clientTitle || "",
+      clientFirstName: personalDetails?.client?.clientGivenName || "",
+      clientMiddleName: personalDetails?.client?.clientMiddleName || "",
+      clientLastName: personalDetails?.client?.clientLastName || "",
+      clientPreferred: personalDetails?.client?.clientPreferredName || "",
+
+      partnerTitle: personalDetails?.partner?.partnerTitle || "",
+      partnerFirstName: personalDetails?.partner?.partnerGivenName || "",
+      partnerMiddleName: personalDetails?.partner?.partnerMiddleName || "",
+      partnerLastName: personalDetails?.partner?.partnerLastName || "",
+      partnerPreferred: personalDetails?.partner?.partnerPreferredName || "",
+    };
+
+    console.log("Document Payload:", payload);
+
+    await generateDocumentFromTemplate(
+      payload,
+      "template.docx",
+      `Goals_and_Objectives_${personalDetails?.client?.GivenName || "Client"}.docx`,
+    );
+    // generateDoc({ personalDetails, allQuestions, goalsAndObjective });
+  } catch (error) {
+    console.error("Document generation failed:", error);
+
+    openNotificationSuccess(
+      "error",
+      "topRight",
+      "Document Generation Error",
+      error?.message || "Failed to generate document",
+    );
+  }
 };
 
 export {
@@ -963,4 +1197,6 @@ export {
   calculateExpectedTotal,
   replacePlaceholderWithLabel,
   parseDateInput,
+  generateDocumentFromTemplate,
+  GeneraDocument,
 };

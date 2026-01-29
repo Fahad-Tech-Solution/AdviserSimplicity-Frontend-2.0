@@ -297,10 +297,11 @@ const AustralianShares = (props) => {
                     0,
                   ),
               ) +
-                parseFloat(
-                  Data.jointCurrentBalance.replace(/[^0-9.-]+/g, "") || 0,
-                ) /
-                  2,
+                (props.modalObject.key == "australianShareMarket"
+                  ? parseFloat(
+                      Data.jointCurrentBalance.replace(/[^0-9.-]+/g, "") || 0,
+                    ) / 2
+                  : 0),
             ),
         };
 

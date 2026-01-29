@@ -13,6 +13,7 @@ import {
 } from "../../Store/Store";
 import {
   ConvertDate,
+  GeneraDocument,
   GetAxios,
   getNestedValue,
   openNotificationSuccess,
@@ -30,6 +31,7 @@ import ModalComponent from "../Questions/FinancialInvestments/ModalComponent";
 import { differenceInYears } from "date-fns";
 import { Grid } from "antd";
 import { FaCaretRight } from "react-icons/fa6";
+import { FaDownload } from "react-icons/fa";
 const { useBreakpoint } = Grid;
 
 const childSchema = Yup.object({
@@ -58,16 +60,16 @@ const contactSchema = Yup.object({
   mobile: Yup.string()
     .matches(
       ausPhoneRegex,
-      "Valid Australian Mobile Phone number Format: 0X XXXX XXXX"
+      "Valid Australian Mobile Phone number Format: 0X XXXX XXXX",
     )
     .required("Mobile Phone is required"),
   homePhone: Yup.string().matches(
     ausPhoneRegex,
-    "Valid Australian Home Phone number Format: 0X XXXX XXXX"
+    "Valid Australian Home Phone number Format: 0X XXXX XXXX",
   ),
   workPhone: Yup.string().matches(
     ausPhoneRegex,
-    "Valid Australian Work Phone number Format: 0X XXXX XXXX"
+    "Valid Australian Work Phone number Format: 0X XXXX XXXX",
   ),
   email: Yup.string().email("Invalid email").required("Email is required"),
 });
@@ -262,7 +264,7 @@ const SectionErrorAlert = ({
     const matchesBase =
       !BaseKey ||
       baseKeys.some(
-        (key) => key && (field === key || field.startsWith(`${key}.`))
+        (key) => key && (field === key || field.startsWith(`${key}.`)),
       );
 
     // ✅ Match column field
@@ -300,6 +302,7 @@ const PersonalDetailNew = () => {
   const [errorShow, setErrorShow] = useState(false);
   const [userData, setUserData] = useState({});
   const [loading, setLeading] = useState(false);
+  const [downLoadLeading, setDownLoadLeading] = useState(false);
   let [flagState, setFlagState] = useState(false);
   let [modalObject, setModalObject] = useState({});
   const [isEditing, setIsEditing] = useState(false);
@@ -309,7 +312,7 @@ const PersonalDetailNew = () => {
   let [stepsStatus, setStepsStatus] = useRecoilState(StepsStatus);
   let [questionDetail, setQuestionDetail] = useRecoilState(QuestionDetail);
   let [selectedClientDetails, setSelectedClientDetails] = useRecoilState(
-    SelectedClientDetails
+    SelectedClientDetails,
   );
   const defaultUrlValue = useRecoilValue(defaultUrl);
   const location = useLocation();
@@ -531,7 +534,7 @@ const PersonalDetailNew = () => {
         const homeAddress = getNestedValue(values, `${stakeHolder}homeAddress`);
         const postcodeSuburb = getNestedValue(
           values,
-          `${stakeHolder}postcodeSuburb`
+          `${stakeHolder}postcodeSuburb`,
         );
 
         // console.log("stakeHolder:", stakeHolder);
@@ -667,7 +670,7 @@ const PersonalDetailNew = () => {
     setPersonalDetailObj({});
     try {
       const res = await GetAxios(
-        `${defaultUrlValue}/api/personalDetails/getUserById/${id}`
+        `${defaultUrlValue}/api/personalDetails/getUserById/${id}`,
       );
       if (res) {
         console.log(res, "GET aPI rESPONCE");
@@ -680,7 +683,7 @@ const PersonalDetailNew = () => {
           "UserStatus",
           ["Single", "Widowed"].includes(res.client.clientMaritalStatus)
             ? "Single"
-            : "Married"
+            : "Married",
         );
         if (res.partner?.partnerPreferredName) {
           localStorage.setItem("PartnerName", res.partner.partnerPreferredName);
@@ -702,14 +705,14 @@ const PersonalDetailNew = () => {
 
       setFieldValue(
         "client",
-        mapPersonFromBackend(personalDetailObj.client, "client")
+        mapPersonFromBackend(personalDetailObj.client, "client"),
       );
 
       const marital = personalDetailObj.client?.clientMaritalStatus;
       if (marital && !["Single", "Widowed"].includes(marital)) {
         setFieldValue(
           "partner",
-          mapPersonFromBackend(personalDetailObj.partner, "partner")
+          mapPersonFromBackend(personalDetailObj.partner, "partner"),
         );
       }
 
@@ -724,7 +727,7 @@ const PersonalDetailNew = () => {
         personalDetailObj.children?.arrayOfChildren
       ) {
         const children = mapChildrenFromBackend(
-          personalDetailObj.children.arrayOfChildren
+          personalDetailObj.children.arrayOfChildren,
         );
         setFieldValue("children", children);
         setFieldValue("numberOfChildren", children.length);
@@ -765,7 +768,7 @@ const PersonalDetailNew = () => {
           })
         : await PostAxios(
             `${defaultUrlValue}/api/personalDetails/Add`,
-            payload
+            payload,
           );
 
       if (res) {
@@ -777,7 +780,7 @@ const PersonalDetailNew = () => {
           "UserStatus",
           ["Single", "Widowed"].includes(res.client?.marital)
             ? "Single"
-            : "Married"
+            : "Married",
         );
         if (res.partner?.preferred) {
           localStorage.setItem("PartnerName", res.partner.preferred);
@@ -896,7 +899,7 @@ const PersonalDetailNew = () => {
           "success",
           "topRight",
           "Notification",
-          "User Data Successfully Saved!"
+          "User Data Successfully Saved!",
         );
       }
     } catch (error) {
@@ -1037,7 +1040,7 @@ const PersonalDetailNew = () => {
   async function getQuestionsDetails(id) {
     try {
       const res = await GetAxios(
-        `${defaultUrlValue}/api/dataOfAllSection/${id}`
+        `${defaultUrlValue}/api/dataOfAllSection/${id}`,
       );
       if (res) {
         setQuestionDetail(res);
@@ -1352,7 +1355,7 @@ const PersonalDetailNew = () => {
                         <ProfileCard owner="client" Data={values.client} />
                       </div>
                       {!["Single", "Widowed", ""].includes(
-                        values.client.marital
+                        values.client.marital,
                       ) && (
                         <div className="col-md-3 mt-4">
                           <ProfileCard owner="partner" Data={values.partner} />
@@ -1374,20 +1377,28 @@ const PersonalDetailNew = () => {
                         </Button>
                       </div>
                       <div className="col-md-2 mt-4">
-                        {/* <Button
+                        <Button
                           htmlType="button"
                           color="default"
                           variant="filled"
                           className="w-100"
-                          onClick={() => {
-                            setModalObject({
-                              title: "Add Section",
-                            });
-                            setFlagState(true);
+                          onClick={async () => {
+                            try {
+                              setDownLoadLeading(true);
+                              await GeneraDocument(
+                                location.hash.replace("#", ""),
+                              );
+                            } catch (err) {
+                              console.error("Document Download Error:", err);
+                            } finally {
+                              setDownLoadLeading(false);
+                            }
                           }}
+                          disabled={downLoadLeading}
+                          loading={downLoadLeading}
                         >
-                          Add Section
-                        </Button> */}
+                          Download Doc <FaDownload />
+                        </Button>
                       </div>
                       <div className="col-md-2 mt-4">
                         <Button

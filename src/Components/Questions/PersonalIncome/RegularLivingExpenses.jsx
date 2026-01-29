@@ -27,6 +27,7 @@ const RegularLivingExpenses = (props) => {
     Object.keys(questionDetail["generalLivingExpenses"] || {}).length > 0
       ? questionDetail["generalLivingExpenses"]
       : {};
+
   const expenseTypes = [
     { name: "Rent", id: "houseHoldRent" },
     { name: "Gas", id: "houseHoldGas" },
@@ -38,6 +39,7 @@ const RegularLivingExpenses = (props) => {
     { name: "Internet", id: "houseHoldInternet" },
     { name: "Other", id: "houseHoldOthers" },
   ];
+
   const personalExpenses = [
     { name: "Clothing", id: "personalClothing" },
     { name: "Cigarettes", id: "personalCigarettes" },
@@ -50,6 +52,7 @@ const RegularLivingExpenses = (props) => {
     { name: "Medical Expenses", id: "personalMedicalExpenses" },
     { name: "Other", id: "personalOthers" },
   ];
+
   const transportExpenses = [
     { name: "Petrol", id: "transportPetrol" },
     { name: "Car Maintenance", id: "transportCarRepair" },
@@ -57,6 +60,7 @@ const RegularLivingExpenses = (props) => {
     { name: "Public Transport", id: "publicTransport" },
     { name: "Other", id: "transportOthers" },
   ];
+  
   const insuranceExpenses = [
     { name: "Home And Contents", id: "insuranceHomeContents" },
     { name: "Car", id: "insuranceCar" },
