@@ -283,26 +283,28 @@ const AustralianShares = (props) => {
                   0,
                 ),
             ),
-          [props.modalObject.stakeHolder.replace(".", "") + "Total"]:
-            toCommaAndDollar(
-              parseFloat(
-                updatedShares
-                  .slice(0, values.NumberOfMap)
-                  .reduce(
-                    (t, e) =>
-                      t +
-                      parseFloat(
-                        (e.currentBalance || "$0").replace(/[^0-9.-]+/g, ""),
-                      ),
-                    0,
-                  ),
-              ) +
-                (props.modalObject.key == "australianShareMarket"
-                  ? parseFloat(
-                      Data.jointCurrentBalance.replace(/[^0-9.-]+/g, "") || 0,
-                    ) / 2
-                  : 0),
-            ),
+          ...(props.modalObject.stakeHolder.replace(".", "") !== "joint" && {
+            [props.modalObject.stakeHolder.replace(".", "") + "Total"]:
+              toCommaAndDollar(
+                parseFloat(
+                  updatedShares
+                    .slice(0, values.NumberOfMap)
+                    .reduce(
+                      (t, e) =>
+                        t +
+                        parseFloat(
+                          (e.currentBalance || "$0").replace(/[^0-9.-]+/g, ""),
+                        ),
+                      0,
+                    ),
+                ) +
+                  (props.modalObject.key == "australianShareMarket"
+                    ? parseFloat(
+                        Data.jointCurrentBalance.replace(/[^0-9.-]+/g, "") || 0,
+                      ) / 2
+                    : 0),
+              ),
+          }),
         };
 
         // return false;
