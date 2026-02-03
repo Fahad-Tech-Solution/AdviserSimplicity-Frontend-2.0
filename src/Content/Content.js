@@ -163,6 +163,13 @@ export const content = {
       route: "/user/family-trust",
       condition: (CRObject) => CRObject?.businessAsInvestmentTab === "Yes",
     },
+    {
+      subTitle: "Download Document",
+      statusStep: 80,
+      icon: "FaDownload",
+      route: "/user/download-document",
+      condition: (CRObject) => true,
+    },
   ],
   itemsQuestion: [
     {

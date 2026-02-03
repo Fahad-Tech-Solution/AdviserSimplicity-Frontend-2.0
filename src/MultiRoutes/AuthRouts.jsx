@@ -31,6 +31,7 @@ import { BankDetail, defaultUrl, Employees, Roles } from "../Store/Store";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { GetAxios } from "../Components/Assets/Api/Api";
 import PersonalInsuranceQuestions from "../Components/Questions/PersonalInsurance/PersonalInsuranceQuestions";
+import DownloadSection from "../Components/Questions/DownloadSection/DownloadSection";
 
 const { Sider, Content } = Layout;
 
@@ -142,6 +143,10 @@ function AuthRouts() {
           <QuestionsFamily />
         </QuestionsNew>
       ),
+    },
+    {
+      path: "/download-document",
+      element: (collapsed) => <DownloadSection />,
     },
     {
       path: "/goals-and-objectives",

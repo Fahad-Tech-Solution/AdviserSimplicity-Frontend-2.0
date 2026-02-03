@@ -27,6 +27,7 @@ import {
   FaRegHandshake,
 } from "react-icons/fa6";
 import {
+  FaDownload,
   FaEdit,
   FaHome,
   FaPowerOff,
@@ -96,6 +97,7 @@ const iconMap = {
   FaPiggyBank,
   FaRegHandshake,
   HiOutlineViewGridAdd,
+  FaDownload,
 };
 
 function Options(props) {
@@ -147,7 +149,8 @@ function Options(props) {
       "/user/business-entities": 56,
       "/user/SMSF": 64,
       "/user/family-trust": 72,
-      "Goals-And-Objectives": 80,
+      "/user/download-document": 80,
+      "Goals-And-Objectives": 88,
       "/user/risk-profile/Q1": 10,
       "/user/risk-profile/Q2": 20,
       "/user/risk-profile/Q3": 30,
@@ -195,8 +198,8 @@ function Options(props) {
           stepComplete < item.statusStep
             ? "wait"
             : stepComplete > item.statusStep
-            ? "finish"
-            : "process";
+              ? "finish"
+              : "process";
 
         return {
           ...item,
@@ -206,16 +209,16 @@ function Options(props) {
                 isCurrentStep
                   ? "bgColorIncomeBlack"
                   : riskGoalWarning.includes(item.route)
-                  ? "bgColorIncomeGray"
-                  : "bgColorIncome2"
+                    ? "bgColorIncomeGray"
+                    : "bgColorIncome2"
               }`}
               role="button"
               onClick={() => {
                 const path = Risk
                   ? `/user/risk-profile${item.route}`
                   : isPersonalDetails
-                  ? `/user/personal-detail#${currentEmail}`
-                  : item.route;
+                    ? `/user/personal-detail#${currentEmail}`
+                    : item.route;
                 if (!stepsStatus) navigate(path);
                 // console.log(path);
               }}
@@ -348,7 +351,7 @@ function Options(props) {
                       .split("/")
                       .filter(Boolean)
                       .pop()
-                      .replaceAll("-", " ")
+                      .replaceAll("-", " "),
                   )}
                 </Breadcrumb.Item>
               </Breadcrumb>
@@ -358,7 +361,7 @@ function Options(props) {
                     .split("/")
                     .filter(Boolean)
                     .pop()
-                    .replaceAll("-", " ")
+                    .replaceAll("-", " "),
                 )}
               </h5>
             </div>

@@ -16,12 +16,14 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import {
   ConvertDate,
   deepCloneWithKeys,
+  GeneraDocument,
   GetAxios,
   openNotificationSuccess,
   PatchAxios,
   PostAxios,
 } from "../Api/Api";
 import {
+  FaDownload,
   FaRegEdit,
   FaRegFileAlt,
   FaTrashAlt,
@@ -53,7 +55,7 @@ const NewAllClients = (props) => {
 
   let [stepsStatus, setStepsStatus] = useRecoilState(StepsStatus);
   let [selectedClientDetails, setSelectedClientDetails] = useRecoilState(
-    SelectedClientDetails
+    SelectedClientDetails,
   );
   const [expanded, setExpanded] = useState(false);
   const [selectedValue, setSelectedValue] = useState(null);
@@ -157,6 +159,23 @@ const NewAllClients = (props) => {
         onClick: (heading, row) => CallBack(heading, row, "Edit"),
       },
       {
+        action: "downloadReport",
+        label: (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              marginLeft: 13,
+            }}
+            className="fw-bold"
+          >
+            <FaDownload /> Download Report
+          </div>
+        ),
+        onClick: (heading, row) => CallBack(heading, row, "Download-Report"),
+      },
+      {
         action: "Push-to-Adviser-link",
         label: (
           <div
@@ -234,7 +253,7 @@ const NewAllClients = (props) => {
     ) {
       // Find the "assign" menu item
       const assignIndex = menuItems.findIndex(
-        (item) => item.action === "assign"
+        (item) => item.action === "assign",
       );
 
       if (assignIndex !== -1) {
@@ -264,7 +283,7 @@ const NewAllClients = (props) => {
       loggedUser?.roleID?.permissions.includes("fact find")
     ) {
       const assignIndex = menuItems.findIndex(
-        (item) => item.action === "assign" || item.action === "unAssign"
+        (item) => item.action === "assign" || item.action === "unAssign",
       );
       if (assignIndex !== -1) {
         // console.log(row.isRiskProfileCompleted, "row.isRiskProfileCompleted");
@@ -521,8 +540,8 @@ const NewAllClients = (props) => {
 
   let Navigate = useNavigate();
 
-  let OpenModel = (text, row, index) => {
-    // console.log(text, row, index, "Open Modal log");
+  let OpenModel = async (text, row, index) => {
+    console.log(text, row, index, "Open Modal log");
 
     switch (index) {
       case "View":
@@ -589,6 +608,11 @@ const NewAllClients = (props) => {
       case "delete":
         DeleteData(text, row, index);
         break;
+      case "Download-Report":
+      case "downloadReport":
+        console.log("Download-Report");
+        await GeneraDocument(row._id);
+        break;
 
       default:
         break;
@@ -609,7 +633,7 @@ const NewAllClients = (props) => {
         try {
           setLoading(true); // ✅ if you have a loading state
           let res = await PatchAxios(
-            DefaultUrl + "/api/personalDetails/softDelete/" + row._id
+            DefaultUrl + "/api/personalDetails/softDelete/" + row._id,
           );
 
           if (res) {
@@ -619,7 +643,7 @@ const NewAllClients = (props) => {
               "success",
               "topRight",
               "Deleted Successfully",
-              "Record deleted successfully"
+              "Record deleted successfully",
             );
           }
         } catch (error) {
@@ -628,7 +652,7 @@ const NewAllClients = (props) => {
             "error",
             "topRight",
             "Delete Failed",
-            "An error occurred while deleting the record."
+            "An error occurred while deleting the record.",
           );
         } finally {
           setLoading(false);
@@ -655,13 +679,13 @@ const NewAllClients = (props) => {
           if (res) {
             res.clients.children = null;
             setPersonalDetail((prev) =>
-              prev.map((user) => (user._id === row._id ? res.clients : user))
+              prev.map((user) => (user._id === row._id ? res.clients : user)),
             );
             openNotificationSuccess(
               "success",
               "topRight",
               "Client Unassigned",
-              "Client has been unassigned successfully"
+              "Client has been unassigned successfully",
             );
           }
         } catch (error) {
@@ -670,7 +694,7 @@ const NewAllClients = (props) => {
             "error",
             "topRight",
             "Unassign Failed",
-            "An error occurred while unassigning the client."
+            "An error occurred while unassigning the client.",
           );
         } finally {
           setLoading(false);
@@ -681,7 +705,7 @@ const NewAllClients = (props) => {
 
   const removeItemById = (idToRemove) => {
     setPersonalDetail((prevData) =>
-      prevData.filter((item) => item._id !== idToRemove)
+      prevData.filter((item) => item._id !== idToRemove),
     );
   };
 
@@ -813,7 +837,7 @@ const NewAllClients = (props) => {
         dataSource={
           selectedValue
             ? PerosnalDetail.filter(
-                (item) => item.client.Email === selectedValue
+                (item) => item.client.Email === selectedValue,
               )
             : PerosnalDetail
         }

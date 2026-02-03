@@ -1,0 +1,63 @@
+svg#freepik_stories-download:not(.DownloadAnimated) .animable {
+  opacity: 0;
+}
+svg#freepik_stories-download.DownloadAnimated #freepik--background-complete--inject-27 {
+  animation: 1s 1 forwards cubic-bezier(0.36, -0.01, 0.5, 1.38) slideUp;
+  animation-delay: 0s;
+}
+svg#freepik_stories-download.DownloadAnimated #freepik--speech-bubble--inject-27 {
+  animation: 1s 1 forwards cubic-bezier(0.36, -0.01, 0.5, 1.38) zoomIn;
+  animation-delay: 0s;
+}
+svg#freepik_stories-download.DownloadAnimated #freepik--cloud-2--inject-27 {
+  animation: 1s 1 forwards cubic-bezier(0.36, -0.01, 0.5, 1.38) zoomOut;
+  animation-delay: 0s;
+}
+svg#freepik_stories-download.DownloadAnimated #freepik--cloud-1--inject-27 {
+  animation: 1s 1 forwards cubic-bezier(0.36, -0.01, 0.5, 1.38) zoomOut;
+  animation-delay: 0s;
+}
+svg#freepik_stories-download.DownloadAnimated #freepik--Character--inject-27 {
+  animation: 1s 1 forwards cubic-bezier(0.36, -0.01, 0.5, 1.38) slideDown;
+  animation-delay: 0s;
+}
+@keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: inherit;
+  }
+}
+@keyframes zoomIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes zoomOut {
+  0% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

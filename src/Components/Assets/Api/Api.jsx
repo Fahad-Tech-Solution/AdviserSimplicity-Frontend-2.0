@@ -4,6 +4,9 @@ import { Image } from "react-bootstrap";
 import { FaInfoCircle } from "react-icons/fa";
 
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
 
 import SVGCoin from "../../../CashFlow/CashFlowAssets/Cast_Flow/SVG/SVG-Doller-Coin.svg";
 import {
@@ -13,6 +16,7 @@ import {
   getGoalsDetail,
   getDefaultUrl,
   getLoggedInUserData,
+  getGQState,
 } from "../../../Store/recoilUtils";
 import { content } from "../../../Content/Content";
 
@@ -294,6 +298,11 @@ let ConvertDate2 = (date) => {
     month: "2-digit",
     year: "numeric",
   });
+};
+
+const convertDateAUWithDayJS = (date) => {
+  if (!date) return "";
+  return dayjs.utc(date).format("DD/MM/YYYY");
 };
 
 const createStructuredEntries = (values, schemaType, numberOfProperties) => {
@@ -1027,6 +1036,7 @@ const GeneraDocument = async (id) => {
     let allQuestions = getQuestionDetail();
     let goalsAndObjective = getGoalsDetail();
     let LoggedInUser = getLoggedInUserData();
+    let GQState = getGQState();
 
     console.log(
       "Recoil values →",
@@ -1036,6 +1046,8 @@ const GeneraDocument = async (id) => {
       allQuestions,
       "Goals:",
       goalsAndObjective,
+      "GQState:",
+      GQState.clientFK,
     );
 
     const requests = [];
@@ -1081,6 +1093,19 @@ const GeneraDocument = async (id) => {
       );
     }
 
+    console.log(isEmptyObject(GQState), GQState.clientFK === id);
+
+    // Goals & Objectives
+    if (isEmptyObject(GQState) || GQState.clientFK !== id) {
+      requests.push(
+        GetAxios(`${defaultUrl}/api/goalsQuestions/getByClient/${id}`).then(
+          (res) => {
+            if (!isEmptyObject(res)) GQState = res;
+          },
+        ),
+      );
+    }
+
     // Run missing API calls in parallel
     await Promise.all(requests);
 
@@ -1088,6 +1113,7 @@ const GeneraDocument = async (id) => {
       personalDetails,
       allQuestions,
       goalsAndObjective,
+      GQState,
       contect: content.GoalsAndObjectives,
       RegularLiving: allQuestions?.generalLivingExpenses || {},
     });
@@ -1152,8 +1178,22 @@ const GeneraDocument = async (id) => {
         month: "2-digit",
         year: "numeric",
       }),
+      // items: Object.values(content.GoalsAndObjectives)
+      //   .flat()
+      //   .map((item) => ({
+      //     goalName: item?.title || "",
+      //     scopeOfAdvice:
+      //       goalsAndObjective?.[item.key]?.scopeOfAdvice ||
+      //       item?.scopeOfAdvice ||
+      //       "",
+      //     description: goalsAndObjective?.[item.key]?.description || "",
+      //     when: goalsAndObjective?.[item.key]?.when || item?.whenScopeIs || "",
+      //     estimatedValue: goalsAndObjective?.[item.key]?.estimatedValue || "",
+      //   })),
+
       items: Object.values(content.GoalsAndObjectives)
         .flat()
+        .filter((item) => GQState?.[item.key] === "Yes")
         .map((item) => ({
           goalName: item?.title || "",
           scopeOfAdvice:
@@ -1169,12 +1209,7 @@ const GeneraDocument = async (id) => {
         personalDetails?.children?.arrayOfChildren?.map((child) => ({
           childFirstName: child?.firstName || "",
           childLastName: child?.lastName || "",
-          childDob:
-            new Date(child?.dob).toLocaleDateString("en-AU", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-            }) || "",
+          childDob: child?.dob ? convertDateAUWithDayJS(child?.dob) : "",
           childAge: child?.age || "",
           childGender: child?.gender || "",
           childRelationship: child?.relationship || "",
@@ -1188,15 +1223,9 @@ const GeneraDocument = async (id) => {
       clientLastName: personalDetails?.client?.clientLastName || "",
       clientPreferred: personalDetails?.client?.clientPreferredName || "",
       clientGender: personalDetails?.client?.clientGender || "",
-      clientDob:
-        new Date(personalDetails?.client?.clientDOB).toLocaleDateString(
-          "en-AU",
-          {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          },
-        ) || "",
+      clientDob: personalDetails?.client?.clientDOB
+        ? convertDateAUWithDayJS(personalDetails?.client?.clientDOB)
+        : "",
       clientAge: personalDetails?.client?.clientAge || "",
       clientMarital: personalDetails?.client?.clientMaritalStatus || "",
       clientEmployment: personalDetails?.client?.clientEmploymentStatus || "",
@@ -1222,14 +1251,11 @@ const GeneraDocument = async (id) => {
         allQuestions?.incomeFromOwnBusiness?.client?.employmentStatus || "",
       clientNameOfCompany:
         allQuestions?.incomeFromOwnBusiness?.client?.nameOfCompany || "",
-      clientStartDate:
-        new Date(
-          allQuestions?.incomeFromOwnBusiness?.client?.startDate,
-        ).toLocaleDateString("en-AU", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        }) || "",
+      clientStartDate: allQuestions?.incomeFromOwnBusiness?.client?.startDate
+        ? convertDateAUWithDayJS(
+            allQuestions?.incomeFromOwnBusiness?.client?.startDate,
+          )
+        : "",
       clientHoursWorked:
         allQuestions?.incomeFromOwnBusiness?.client?.hoursWorked || "",
       clientGrossSalary:
@@ -1294,124 +1320,182 @@ const GeneraDocument = async (id) => {
 
       ...(!["Single", "Widowed", ""].includes(
         personalDetails?.client?.clientMaritalStatus || "",
-      ) && {
-        //partner Data
-        partnerTitle: personalDetails?.partner?.partnerTitle || "",
-        partnerFirstName: personalDetails?.partner?.partnerGivenName || "",
-        partnerMiddleName: personalDetails?.partner?.partnerMiddleName || "",
-        partnerLastName: personalDetails?.partner?.partnerLastName || "",
-        partnerPreferred: personalDetails?.partner?.partnerPreferredName || "",
-        partnerGender: personalDetails?.partner?.partnerGender || "",
-        partnerDob:
-          new Date(personalDetails?.partner?.partnerDOB).toLocaleDateString(
-            "en-AU",
-            {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-            },
-          ) || "",
-        partnerAge: personalDetails?.partner?.partnerAge || "",
-        partnerMarital: personalDetails?.partner?.partnerMaritalStatus || "",
-        partnerEmployment:
-          personalDetails?.partner?.partnerEmploymentStatus || "",
-        partnerRetAge:
-          personalDetails?.partner?.partnerPlannedRetirementAge || "",
-        partnerHealth: personalDetails?.partner?.partnerHealth || "",
-        partnerSmoker: personalDetails?.partner?.partnerSmoker || "",
-        partnerTaxRes: personalDetails?.partner?.partnerTaxResidentRadio || "",
-        partnerHealthCover:
-          personalDetails?.partner?.partnerPrivateHealthCoverRadio || "",
-        partnerHelpDebt: personalDetails?.partner?.partnerHELPSDebtRadio || "",
-        //contect details
-        partnerHomeAddress: personalDetails?.partner?.partnerHomeAddress || "",
-        partnerPostalAddress:
-          personalDetails?.partner?.partnerPostalAddress || "",
-        partnerMobile: personalDetails?.partner?.partnerMobile || "",
-        partnerHomePhone: personalDetails?.partner?.partnerHomePhone || "",
-        partnerWorkPhone: personalDetails?.partner?.partnerWorkPhone || "",
-        partnerEmail: personalDetails?.partner?.partnerEmail || "", // for Partner its partnerEmail
+      )
+        ? {
+            //partner Data
+            partnerTitle: personalDetails?.partner?.partnerTitle || "",
+            partnerFirstName: personalDetails?.partner?.partnerGivenName || "",
+            partnerMiddleName:
+              personalDetails?.partner?.partnerMiddleName || "",
+            partnerLastName: personalDetails?.partner?.partnerLastName || "",
+            partnerPreferred:
+              personalDetails?.partner?.partnerPreferredName || "",
+            partnerGender: personalDetails?.partner?.partnerGender || "",
+            partnerDob: personalDetails?.partner?.partnerDOB
+              ? convertDateAUWithDayJS(personalDetails?.partner?.partnerDOB)
+              : "",
+            partnerAge: personalDetails?.partner?.partnerAge || "",
+            partnerMarital:
+              personalDetails?.partner?.partnerMaritalStatus || "",
+            partnerEmployment:
+              personalDetails?.partner?.partnerEmploymentStatus || "",
+            partnerRetAge:
+              personalDetails?.partner?.partnerPlannedRetirementAge || "",
+            partnerHealth: personalDetails?.partner?.partnerHealth || "",
+            partnerSmoker: personalDetails?.partner?.partnerSmoker || "",
+            partnerTaxRes:
+              personalDetails?.partner?.partnerTaxResidentRadio || "",
+            partnerHealthCover:
+              personalDetails?.partner?.partnerPrivateHealthCoverRadio || "",
+            partnerHelpDebt:
+              personalDetails?.partner?.partnerHELPSDebtRadio || "",
+            //contect details
+            partnerHomeAddress:
+              personalDetails?.partner?.partnerHomeAddress || "",
+            partnerPostalAddress:
+              personalDetails?.partner?.partnerPostalAddress || "",
+            partnerMobile: personalDetails?.partner?.partnerMobile || "",
+            partnerHomePhone: personalDetails?.partner?.partnerHomePhone || "",
+            partnerWorkPhone: personalDetails?.partner?.partnerWorkPhone || "",
+            partnerEmail: personalDetails?.partner?.partnerEmail || "", // for Partner its partnerEmail
 
-        //Employment Details
-        partnerOccupation:
-          allQuestions?.incomeFromOwnBusiness?.partner?.occupation || "",
-        partnerEmploymentStatus:
-          allQuestions?.incomeFromOwnBusiness?.partner?.employmentStatus || "",
-        partnerNameOfCompany:
-          allQuestions?.incomeFromOwnBusiness?.partner?.nameOfCompany || "",
-        partnerStartDate:
-          new Date(
-            allQuestions?.incomeFromOwnBusiness?.partner?.startDate,
-          ).toLocaleDateString("en-AU", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          }) || "",
-        partnerHoursWorked:
-          allQuestions?.incomeFromOwnBusiness?.partner?.hoursWorked || "",
-        partnerGrossSalary:
-          allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackageModal
-            ?.grossSalary || "",
-        partnerSGC:
-          allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackageModal
-            ?.SGC || "",
-        partnerSalarySacrificeContributions:
-          allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackageModal
-            ?.salarySacrificeContributions || "",
-        partnerAfterTaxContributions:
-          allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackageModal
-            ?.afterTaxContributions || "",
-        partnerChoiceOfFund:
-          allQuestions?.incomeFromOwnBusiness?.partner?.choiceOfFund || "",
-        //Salary Packaging Details
-        partnerEmployerFBTStatus:
-          allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackagingModal
-            ?.employerFBTStatus || "",
-        partnerCreditCardMortgageRepayments:
-          allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackagingModal
-            ?.creditCardMortgageRepayments || "",
-        partnerCostBaseOfCar:
-          allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackagingModal
-            ?.costBaseOfCar || "",
-        partnerFBTPaidByEmployer:
-          allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackagingModal
-            ?.FBTPaidByEmployer || "",
-        partnerRunningCostsOfCar:
-          allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackagingModal
-            ?.runningCostsOfCar || "",
-        //Leave Entitlements
-        partnerAnnual:
-          (allQuestions?.incomeFromOwnBusiness?.partner?.LeaveEntitlementsModal
-            ?.annualLeaveAmount || "") +
-          (allQuestions?.incomeFromOwnBusiness?.partner?.LeaveEntitlementsModal
-            ?.annualLeaveTime || ""),
-        partnerSick:
-          (allQuestions?.incomeFromOwnBusiness?.partner?.LeaveEntitlementsModal
-            ?.sickLeaveAmount || "") +
-          (allQuestions?.incomeFromOwnBusiness?.partner?.LeaveEntitlementsModal
-            ?.sickLeaveTime || ""),
-        partnerLongService:
-          (allQuestions?.incomeFromOwnBusiness?.partner?.LeaveEntitlementsModal
-            ?.longServiceLeaveAmount || "") +
-          (allQuestions?.incomeFromOwnBusiness?.partner?.LeaveEntitlementsModal
-            ?.longServiceLeaveTime || ""),
+            //Employment Details
+            partnerOccupation:
+              allQuestions?.incomeFromOwnBusiness?.partner?.occupation || "",
+            partnerEmploymentStatus:
+              allQuestions?.incomeFromOwnBusiness?.partner?.employmentStatus ||
+              "",
+            partnerNameOfCompany:
+              allQuestions?.incomeFromOwnBusiness?.partner?.nameOfCompany || "",
+            partnerStartDate: allQuestions?.incomeFromOwnBusiness?.partner
+              ?.startDate
+              ? convertDateAUWithDayJS(
+                  allQuestions?.incomeFromOwnBusiness?.partner?.startDate,
+                )
+              : "",
+            partnerHoursWorked:
+              allQuestions?.incomeFromOwnBusiness?.partner?.hoursWorked || "",
+            partnerGrossSalary:
+              allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackageModal
+                ?.grossSalary || "",
+            partnerSGC:
+              allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackageModal
+                ?.SGC || "",
+            partnerSalarySacrificeContributions:
+              allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackageModal
+                ?.salarySacrificeContributions || "",
+            partnerAfterTaxContributions:
+              allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackageModal
+                ?.afterTaxContributions || "",
+            partnerChoiceOfFund:
+              allQuestions?.incomeFromOwnBusiness?.partner?.choiceOfFund || "",
+            //Salary Packaging Details
+            partnerEmployerFBTStatus:
+              allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackagingModal
+                ?.employerFBTStatus || "",
+            partnerCreditCardMortgageRepayments:
+              allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackagingModal
+                ?.creditCardMortgageRepayments || "",
+            partnerCostBaseOfCar:
+              allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackagingModal
+                ?.costBaseOfCar || "",
+            partnerFBTPaidByEmployer:
+              allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackagingModal
+                ?.FBTPaidByEmployer || "",
+            partnerRunningCostsOfCar:
+              allQuestions?.incomeFromOwnBusiness?.partner?.SalaryPackagingModal
+                ?.runningCostsOfCar || "",
+            //Leave Entitlements
+            partnerAnnual:
+              (allQuestions?.incomeFromOwnBusiness?.partner
+                ?.LeaveEntitlementsModal?.annualLeaveAmount || "") +
+              (allQuestions?.incomeFromOwnBusiness?.partner
+                ?.LeaveEntitlementsModal?.annualLeaveTime || ""),
+            partnerSick:
+              (allQuestions?.incomeFromOwnBusiness?.partner
+                ?.LeaveEntitlementsModal?.sickLeaveAmount || "") +
+              (allQuestions?.incomeFromOwnBusiness?.partner
+                ?.LeaveEntitlementsModal?.sickLeaveTime || ""),
+            partnerLongService:
+              (allQuestions?.incomeFromOwnBusiness?.partner
+                ?.LeaveEntitlementsModal?.longServiceLeaveAmount || "") +
+              (allQuestions?.incomeFromOwnBusiness?.partner
+                ?.LeaveEntitlementsModal?.longServiceLeaveTime || ""),
 
-        //Centerlink Details
-        partnerCRN: allQuestions?.incomeFromCentrelink?.partner?.CRN || "",
-        partnerPaymentType: (
-          allQuestions?.incomeFromCentrelink?.partner?.paymentType || [""]
-        ).join(", "),
-        partnerFortnightlyPayment:
-          allQuestions?.incomeFromCentrelink?.partner?.fortnightlyPayment || "",
-        partnerAnnualPaymentAmount:
-          allQuestions?.incomeFromCentrelink?.partner?.annualPaymentAmount ||
-          "",
-        partnerCentrelinkCardsHeld: (
-          allQuestions?.incomeFromCentrelink?.partner?.centrelinkCardsHeld || [
-            "",
-          ]
-        ).join(","),
-      }),
+            //Centerlink Details
+            partnerCRN: allQuestions?.incomeFromCentrelink?.partner?.CRN || "",
+            partnerPaymentType: (
+              allQuestions?.incomeFromCentrelink?.partner?.paymentType || [""]
+            ).join(", "),
+            partnerFortnightlyPayment:
+              allQuestions?.incomeFromCentrelink?.partner?.fortnightlyPayment ||
+              "",
+            partnerAnnualPaymentAmount:
+              allQuestions?.incomeFromCentrelink?.partner
+                ?.annualPaymentAmount || "",
+            partnerCentrelinkCardsHeld: (
+              allQuestions?.incomeFromCentrelink?.partner
+                ?.centrelinkCardsHeld || [""]
+            ).join(","),
+          }
+        : {
+            // Partner Data
+            partnerTitle: "",
+            partnerFirstName: "",
+            partnerMiddleName: "",
+            partnerLastName: "",
+            partnerPreferred: "",
+            partnerGender: "",
+            partnerDob: "",
+            partnerAge: "",
+            partnerMarital: "",
+            partnerEmployment: "",
+            partnerRetAge: "",
+            partnerHealth: "",
+            partnerSmoker: "",
+            partnerTaxRes: "",
+            partnerHealthCover: "",
+            partnerHelpDebt: "",
+
+            // Contact Details
+            partnerHomeAddress: "",
+            partnerPostalAddress: "",
+            partnerMobile: "",
+            partnerHomePhone: "",
+            partnerWorkPhone: "",
+            partnerEmail: "",
+
+            // Employment Details
+            partnerOccupation: "",
+            partnerEmploymentStatus: "",
+            partnerNameOfCompany: "",
+            partnerStartDate: "",
+            partnerHoursWorked: "",
+            partnerGrossSalary: "",
+            partnerSGC: "",
+            partnerSalarySacrificeContributions: "",
+            partnerAfterTaxContributions: "",
+            partnerChoiceOfFund: "",
+
+            // Salary Packaging Details
+            partnerEmployerFBTStatus: "",
+            partnerCreditCardMortgageRepayments: "",
+            partnerCostBaseOfCar: "",
+            partnerFBTPaidByEmployer: "",
+            partnerRunningCostsOfCar: "",
+
+            // Leave Entitlements
+            partnerAnnual: "",
+            partnerSick: "",
+            partnerLongService: "",
+
+            // Centrelink Details
+            partnerCRN: "",
+            partnerPaymentType: "",
+            partnerFortnightlyPayment: "",
+            partnerAnnualPaymentAmount: "",
+            partnerCentrelinkCardsHeld: "",
+          }),
       TotalLivingExpenses:
         allQuestions?.generalLivingExpenses?.generalLivingExpensesTotal || "",
 
@@ -1422,7 +1506,7 @@ const GeneraDocument = async (id) => {
           const amount = allQuestions?.generalLivingExpenses?.[id] || "0";
 
           const frequency =
-            allQuestions?.generalLivingExpenses?.[`${id}Type`] || "1";
+            allQuestions?.generalLivingExpenses?.[`${id}Type`] || "";
 
           const numericAmount =
             parseFloat(amount.replace(/[^0-9.-]+/g, "")) || 0;
@@ -1454,7 +1538,7 @@ const GeneraDocument = async (id) => {
           const amount = allQuestions?.generalLivingExpenses?.[id] || "0";
 
           const frequency =
-            allQuestions?.generalLivingExpenses?.[`${id}Type`] || "1";
+            allQuestions?.generalLivingExpenses?.[`${id}Type`] || "";
 
           const numericAmount =
             parseFloat(amount.replace(/[^0-9.-]+/g, "")) || 0;
@@ -1486,7 +1570,7 @@ const GeneraDocument = async (id) => {
           const amount = allQuestions?.generalLivingExpenses?.[id] || "0";
 
           const frequency =
-            allQuestions?.generalLivingExpenses?.[`${id}Type`] || "1";
+            allQuestions?.generalLivingExpenses?.[`${id}Type`] || "";
 
           const numericAmount =
             parseFloat(amount.replace(/[^0-9.-]+/g, "")) || 0;
@@ -1518,7 +1602,7 @@ const GeneraDocument = async (id) => {
           const amount = allQuestions?.generalLivingExpenses?.[id] || "0";
 
           const frequency =
-            allQuestions?.generalLivingExpenses?.[`${id}Type`] || "1";
+            allQuestions?.generalLivingExpenses?.[`${id}Type`] || "";
 
           const numericAmount =
             parseFloat(amount.replace(/[^0-9.-]+/g, "")) || 0;
@@ -1583,6 +1667,7 @@ export {
   validateName,
   ConvertDate,
   ConvertDate2,
+  convertDateAUWithDayJS,
   createStructuredEntries,
   generateYearData,
   buildReportTree,
