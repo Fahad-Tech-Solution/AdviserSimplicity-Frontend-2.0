@@ -32,8 +32,10 @@ import { differenceInYears } from "date-fns";
 import { Grid } from "antd";
 import { FaCaretRight } from "react-icons/fa6";
 import { FaDownload } from "react-icons/fa";
+import utc from "dayjs/plugin/utc";
 const { useBreakpoint } = Grid;
 
+dayjs.extend(utc);
 const childSchema = Yup.object({
   depenantChild: Yup.string()
     .oneOf(["Yes", "No"])
@@ -139,6 +141,9 @@ const AntdDynamicTable = DynamicTableForInputsSection("antd");
 const formatDate = (date) =>
   date ? dayjs(date, ["DD/MM/YYYY", "YYYY-MM-DD"]).toISOString() : null;
 
+const formatDateJustForShow = (date) =>
+  date ? dayjs.utc(date).format("DD/MM/YYYY") : null;
+
 const mapContactFromBackend = (contact, prefix = "client") => ({
   homeAddress: contact?.[`${prefix}HomeAddress`] || "",
   postcodeSuburb: contact?.[`${prefix}Postcode`] || "",
@@ -165,7 +170,7 @@ const mapPersonFromBackend = (person, type) => {
     lastName: person?.[`${prefix}LastName`] || "",
     preferred: person?.[`${prefix}PreferredName`] || "",
     gender: person?.[`${prefix}Gender`] || "",
-    dob: person?.[`${prefix}DOB`] ? formatDate(person[`${prefix}DOB`]) : "",
+    dob: person?.[`${prefix}DOB`] ? (person[`${prefix}DOB`]) : "",
     age: person?.[`${prefix}Age`] || "",
     marital: person?.[`${prefix}MaritalStatus`] || "",
     employment: person?.[`${prefix}EmploymentStatus`] || "",
@@ -189,7 +194,7 @@ const mapChildrenFromBackend = (children = []) =>
     lastName: child?.lastName || "",
     gender: child?.gender || "",
     relationship: child?.relationship || "",
-    dob: child?.dob ? formatDate(child.dob) : "",
+    dob: child?.dob ? (child.dob) : "",
     age: child?.age || "",
   }));
 
@@ -702,7 +707,6 @@ const PersonalDetailNew = () => {
   const storeData = (setFieldValue) => {
     try {
       if (!personalDetailObj?._id) return;
-
       setFieldValue(
         "client",
         mapPersonFromBackend(personalDetailObj.client, "client"),
@@ -726,9 +730,13 @@ const PersonalDetailNew = () => {
         personalDetailObj.haveAnyChildren === "Yes" &&
         personalDetailObj.children?.arrayOfChildren
       ) {
+        console.log(mapChildrenFromBackend(
+          personalDetailObj.children.arrayOfChildren,
+        ))
         const children = mapChildrenFromBackend(
           personalDetailObj.children.arrayOfChildren,
         );
+
         setFieldValue("children", children);
         setFieldValue("numberOfChildren", children.length);
       } else {
@@ -1074,6 +1082,7 @@ const PersonalDetailNew = () => {
               taxRes: values.client.taxRes,
               healthCover: values.client.healthCover,
               helpDebt: values.client.helpDebt,
+              dob: formatDateJustForShow(values.client.dob),
               ...values.client,
             },
           ];
@@ -1087,6 +1096,7 @@ const PersonalDetailNew = () => {
               taxRes: values.partner.taxRes,
               healthCover: values.partner.healthCover,
               helpDebt: values.partner.helpDebt,
+              dob: formatDateJustForShow(values.partner.dob),
               ...values.partner,
             });
           }
@@ -1122,6 +1132,7 @@ const PersonalDetailNew = () => {
               key: `children.${i}`,
               stakeHolder: `children.${i}`,
               ...(values.children?.[i] || {}),
+              dob: (values.children?.[i]?.dob),
             }));
           }
           return [];

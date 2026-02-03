@@ -150,7 +150,7 @@ const DynamicFormField = ({
                     values,
                     setFieldValue,
                     e.target,
-                    stakeHolder
+                    stakeHolder,
                   );
                 }
               }}
@@ -217,7 +217,7 @@ const DynamicFormField = ({
                         values,
                         setFieldValue,
                         e.target,
-                        stakeHolder
+                        stakeHolder,
                       );
                     }
                   }}
@@ -342,7 +342,7 @@ const DynamicFormField = ({
                         values,
                         setFieldValue,
                         { name: field.name, value: e.target.value },
-                        stakeHolder
+                        stakeHolder,
                       );
                     }
                   }}
@@ -422,7 +422,7 @@ const DynamicFormField = ({
                         values,
                         setFieldValue,
                         e.target,
-                        stakeHolder
+                        stakeHolder,
                       );
                     }
                   }}
@@ -457,7 +457,7 @@ const DynamicFormField = ({
                 setFieldValue,
                 FormulaSetting,
                 values,
-                stakeHolder
+                stakeHolder,
               )
             }
             onFocus={(e) => handleInputFocus(e, setFieldValue)}
@@ -469,7 +469,7 @@ const DynamicFormField = ({
                 toPercentage,
                 FormulaSetting,
                 values,
-                stakeHolder
+                stakeHolder,
               )
             }
             disabled={
@@ -501,7 +501,7 @@ const DynamicFormField = ({
               const value = e.target.value.replace(/[^0-9.-]+/g, "");
               setFieldValue(
                 stakeHolder ? stakeHolder + name : name,
-                toCommaAndDollar(value)
+                toCommaAndDollar(value),
               );
 
               if (all.callBack) {
@@ -539,7 +539,7 @@ const DynamicFormField = ({
                 const value = e.target.value.replace(/[^0-9.-]+/g, "");
                 setFieldValue(
                   stakeHolder ? stakeHolder + name : name,
-                  toCommaAndDollar(value)
+                  toCommaAndDollar(value),
                 );
 
                 if (all.callBack) {
@@ -547,7 +547,7 @@ const DynamicFormField = ({
                     values,
                     setFieldValue,
                     e.target,
-                    stakeHolder
+                    stakeHolder,
                   );
                 }
               }}
@@ -597,7 +597,7 @@ const DynamicFormField = ({
                 const value = e.target.value.replace(/[^0-9.-]+/g, "");
                 setFieldValue(
                   stakeHolder ? stakeHolder + name : name,
-                  toCommaAndDollar(value)
+                  toCommaAndDollar(value),
                 );
 
                 if (all.callBack) {
@@ -605,7 +605,7 @@ const DynamicFormField = ({
                     values,
                     setFieldValue,
                     e.target,
-                    stakeHolder
+                    stakeHolder,
                   );
                 }
               }}
@@ -712,7 +712,7 @@ const DynamicFormField = ({
             .split(".")
             .reduce(
               (acc, key) => (acc && acc[key] !== undefined ? acc[key] : null),
-              obj
+              obj,
             );
         } catch {
           return null;
@@ -728,7 +728,7 @@ const DynamicFormField = ({
             value={(() => {
               const fieldName = buildFieldName(stakeHolder, name);
               const rawValue = getValueByPath(values, fieldName);
-              return rawValue ? dayjs(rawValue) : null;
+              return rawValue ? dayjs(rawValue.substring(0, 10)) : null;
             })()}
             onChange={(date) => {
               const fieldName = buildFieldName(stakeHolder, name);
@@ -743,7 +743,7 @@ const DynamicFormField = ({
                   values,
                   setFieldValue,
                   { name: fieldName, value: isoValue },
-                  stakeHolder
+                  stakeHolder,
                 );
               }
             }}
@@ -751,9 +751,10 @@ const DynamicFormField = ({
               if (e.target.value) {
                 const fieldName = buildFieldName(stakeHolder, name);
                 const parsedDate = parseDateInput(e.target.value);
+                console.log(parsedDate, parsedDate.format("YYYY-MM-DD"));
 
                 if (parsedDate) {
-                  setFieldValue(fieldName, parsedDate.toISOString());
+                  setFieldValue(fieldName, parsedDate.format("YYYY-MM-DD"));
                 } else {
                   setFieldValue(fieldName, "");
                 }
@@ -766,9 +767,9 @@ const DynamicFormField = ({
                     setFieldValue,
                     {
                       name: fieldName,
-                      value: parsedDate ? parsedDate.toISOString() : "",
+                      value: parsedDate ? parsedDate.format("YYYY-MM-DD") : "",
                     },
-                    stakeHolder
+                    stakeHolder,
                   );
                 }
               }
@@ -793,7 +794,7 @@ const DynamicFormField = ({
                 const parsedDate = parseDateInput(e.target.value);
 
                 if (parsedDate) {
-                  setFieldValue(fieldName, parsedDate.toISOString());
+                  setFieldValue(fieldName, parsedDate.format("YYYY-MM-DD"));
                 } else {
                   setFieldValue(fieldName, "");
                 }
@@ -806,9 +807,9 @@ const DynamicFormField = ({
                     setFieldValue,
                     {
                       name: fieldName,
-                      value: parsedDate ? parsedDate.toISOString() : "",
+                      value: parsedDate ? parsedDate.format("YYYY-MM-DD") : "",
                     },
-                    stakeHolder
+                    stakeHolder,
                   );
                 }
 
@@ -846,7 +847,7 @@ const DynamicFormField = ({
                 const value = e.target.value.replace(/[^0-9.-]+/g, "");
                 setFieldValue(
                   stakeHolder ? stakeHolder + name : name,
-                  toCommaAndDollar(value)
+                  toCommaAndDollar(value),
                 );
 
                 if (all.callBack) {
@@ -970,7 +971,7 @@ const DynamicFormField = ({
                     all.innerModalTitle || "Details", // modal title
                     values, // form values
                     all.key || name, // field key
-                    stakeHolder // stakeholder context
+                    stakeHolder, // stakeholder context
                   )
                 }
               >
@@ -1103,7 +1104,7 @@ const DynamicFormField = ({
                         values,
                         setFieldValue,
                         { name: field.name, value },
-                        stakeHolder
+                        stakeHolder,
                       );
                     }
                   }}
@@ -1145,8 +1146,8 @@ const DynamicFormField = ({
                 try {
                   const res = await axios.get(
                     `https://secure.geonames.org/postalCodeSearchJSON?placename=${encodeURIComponent(
-                      query
-                    )}&country=AU&maxRows=10&username=${USERNAME}`
+                      query,
+                    )}&country=AU&maxRows=10&username=${USERNAME}`,
                   );
 
                   const mapped = (res.data.postalCodes || []).map((place) => ({

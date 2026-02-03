@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { Table as BootstrapTable, Button } from "react-bootstrap";
 import { Table as AntTable, Modal, Typography } from "antd";
 import DynamicFormField from "../Dynamic/DynamicFormField";
-import { ConvertDate } from "../Api/Api";
+import { ConvertDate, convertDateAUWithDayJS } from "../Api/Api";
 import { Grid } from "antd";
 import { FaDeleteLeft } from "react-icons/fa6";
 import { FaRegTrashAlt } from "react-icons/fa";
@@ -149,14 +149,16 @@ const DynamicTableForInputsSection = (type = "bootstrap") => {
           />
         );
       }
-
       // ✅ When not editing → format value for display
-      if (col?.type === "antdate") return value ? ConvertDate(value) : "--";
+      if (col?.type === "antdate") {
+        console.log(value, record.key);
+        return value ? convertDateAUWithDayJS(value) : "--";
+      }
       if (col?.type === "checkbox") return value ? "Checked" : "Un-Checked";
       if (col?.type === "select-multi-antd")
         if (col?.type === "antdate")
           // ✅ When not editing → format value for display
-          return value ? ConvertDate(value) : "--";
+          return value ? convertDateAUWithDayJS(value) : "--";
       if (col?.type === "checkbox") return value ? "Checked" : "Un-Checked";
       if (col?.type === "select-multi-antd")
         return Array.isArray(value) ? value.join(", ") : value || "";

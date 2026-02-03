@@ -1178,18 +1178,6 @@ const GeneraDocument = async (id) => {
         month: "2-digit",
         year: "numeric",
       }),
-      // items: Object.values(content.GoalsAndObjectives)
-      //   .flat()
-      //   .map((item) => ({
-      //     goalName: item?.title || "",
-      //     scopeOfAdvice:
-      //       goalsAndObjective?.[item.key]?.scopeOfAdvice ||
-      //       item?.scopeOfAdvice ||
-      //       "",
-      //     description: goalsAndObjective?.[item.key]?.description || "",
-      //     when: goalsAndObjective?.[item.key]?.when || item?.whenScopeIs || "",
-      //     estimatedValue: goalsAndObjective?.[item.key]?.estimatedValue || "",
-      //   })),
 
       items: Object.values(content.GoalsAndObjectives)
         .flat()
