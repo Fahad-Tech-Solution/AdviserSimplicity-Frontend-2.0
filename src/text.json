@@ -62,6 +62,59 @@
     "clientFortnightlyPayment": "",
     "clientAnnualPaymentAmount": "",
     "clientCentrelinkCardsHeld": "",
+    //!Estate Planning
+    //Will
+    "clientWill": "",
+    "clientWillYearSetUp": "",
+    "clientWillsCurrent": "",
+    "clientExecutorItems": [
+      {
+        "executorName": "",
+        "executerRelationship": ""
+      }
+    ],
+
+    "clientEnduringGuardianship": "",
+    // we might need it
+    // "clientTestamentaryTrust": "",
+    // "clientEstatePlanningRadio": "",
+
+    //POA
+    "clientPOAType": "",
+    "clientPOAYearSetUp": "",
+    "clientPOANameItems": [
+      {
+        "executorName": "",
+        "executerRelationship": ""
+      }
+    ],
+    
+    "clientEstatePlanningRadio": "",
+    "clientdescription": "",
+    
+    // ProFessional Adviser
+    "clientProfessionalAdviseritems":[
+      {
+        "POAType":"",
+        "adviserName":"",
+        "company":"",
+        "phone":"",
+        "email":""
+      }
+    ],
+    
+    "clientEmploymentIncome": "",
+    "clientNetBusinessIncome": "",
+    "clientSuperPensionPayment": "",
+    "clientLifeTimePensionPayment": "",
+    "clientOverseasPensionPayment": "",
+    "clientCenterlinkPension": "",
+    "clientRentalIncome": "",
+    "clientInterest": "",
+    "clientDividendIncome": "",
+    "clientAnnutiesIncome": ""
+
+
   },
   "partner": {
     "partnerTitle": "",
@@ -114,6 +167,29 @@
     "partnerFortnightlyPayment": "",
     "partnerAnnualPaymentAmount": "",
     "partnerCentrelinkCardsHeld": "",
+    //!Estate Planning
+    "partnerWill": "",
+    "partnerWillYearSetUp": "",
+    "partnerWillsCurrent": "",
+    "partnerExecutorItems": [
+      {
+        "executorName": "",
+        "executerRelationship": ""
+      }
+    ],
+    "partnerEnduringGuardianship": "",
+    // we might need it
+    // "partnerTestamentaryTrust": "",
+    // "partnerEstatePlanningRadio": ""
+    //POA
+    "partnerPOAType": "",
+    "partnerPOAYearSetUp": "",
+    "partnerPOANameItems": [
+      {
+        "executorName": "",
+        "executerRelationship": ""
+      }
+    ]
   },
   "childrenitems": [
     {

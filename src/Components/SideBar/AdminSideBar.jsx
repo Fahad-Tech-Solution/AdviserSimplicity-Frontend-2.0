@@ -90,7 +90,6 @@ const AdminSideBar = (props) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-
   const menuItems = (
     <Menu
       mode="inline"
@@ -206,21 +205,21 @@ const AdminSideBar = (props) => {
           >
             <SubMenu
               key="/user/personal-detail"
-              icon={<MdOutlineAccountBalance style={{ color: "#36b446" }} />}
+              icon={<MdOutlineAccountBalance />}
               title={
                 <span
-                  style={{ fontWeight: "600", color: "#36b446" }}
+                  style={{ fontWeight: "600" }}
                   onClick={(e) => {
                     e.stopPropagation(); // Prevent submenu toggle
                     if (selectedClientDetails?._id) {
                       localStorage.setItem("UserID", selectedClientDetails._id);
                       localStorage.setItem(
                         "selected client",
-                        JSON.stringify([selectedClientDetails.key])
+                        JSON.stringify([selectedClientDetails.key]),
                       );
                       localStorage.setItem(
                         "Email",
-                        selectedClientDetails.client.Email
+                        selectedClientDetails.client.Email,
                       );
                       setQuestionDetail({});
                       setStepsStatus(false);
@@ -230,7 +229,7 @@ const AdminSideBar = (props) => {
                         "warning",
                         "topRight",
                         "No Client Selected",
-                        "Please select a client before proceeding."
+                        "Please select a client before proceeding.",
                       );
                     }
                   }}
@@ -246,7 +245,7 @@ const AdminSideBar = (props) => {
                   setFlagState(true);
                 }}
                 icon={<MdInbox />}
-                style={{ fontWeight: "600", color: "#36b446" }}
+                style={{ fontWeight: "600" }}
               >
                 Add Section
               </Menu.Item>
@@ -258,7 +257,7 @@ const AdminSideBar = (props) => {
                   key="/user/goals-and-objectives"
                   onClick={() => nav("/user/goals-and-objectives")}
                   icon={<MdOutlineTrackChanges />}
-                  style={{ fontWeight: "600", color: "#36b446" }}
+                  style={{ fontWeight: "600" }}
                 >
                   Goals and Objectives
                 </Menu.Item>
@@ -266,9 +265,9 @@ const AdminSideBar = (props) => {
                   key="/user/risk-profile"
                   onClick={() => nav("/user/risk-profile")}
                   icon={<MdOutlineSecurity />}
-                  style={{ fontWeight: "600", color: "#36b446" }}
+                  style={{ fontWeight: "600" }}
                 >
-                  View Risk Profile
+                  Risk Profile
                 </Menu.Item>
               </>
             )}

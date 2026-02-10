@@ -2,6 +2,7 @@
 
 import { getRecoil } from "recoil-nexus";
 import {
+  CRState,
   defaultUrl,
   GoalsDetail,
   GQState,
@@ -14,6 +15,7 @@ import {
 export const getJwtToken = () => getRecoil(LoggedInUserTokenJwt);
 export const getUserDetail = () => getRecoil(PersonalDetailsData);
 export const getQuestionDetail = () => getRecoil(QuestionDetail);
+export const getCRState = () => getRecoil(CRState);
 export const getGoalsDetail = () => getRecoil(GoalsDetail);
 export const getDefaultUrl = () => getRecoil(defaultUrl);
 export const getLoggedInUserData = () => getRecoil(LoggedInUserData);
