@@ -16,7 +16,6 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import {
   ConvertDate,
   deepCloneWithKeys,
-  GeneraDocument,
   GetAxios,
   openNotificationSuccess,
   PatchAxios,
@@ -44,6 +43,7 @@ import { Modal, notification, Spin, ConfigProvider, Tooltip } from "antd";
 import PushtoAdviserlink from "../../PushtoAdviserlink/PushtoAdviserlink";
 import { FaArrowRotateRight } from "react-icons/fa6";
 import ReusableHeader from "../Dynamic/ReusableHeader";
+import { GeneraDocument } from "../Api/GenerateDocument";
 
 const NewAllClients = (props) => {
   const [loggedUser, setLoggedInUserData] = useRecoilState(LoggedInUserData);

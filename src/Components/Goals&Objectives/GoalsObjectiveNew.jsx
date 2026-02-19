@@ -3,54 +3,6 @@ import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { Card, InputGroup } from "react-bootstrap";
 
-//images or SVGs import for Goals
-
-// // import BankImg from "../Questions/svgs/bank.svg";
-// import nursingcare from "../Questions/svgs/nursingcare.svg";
-import Tax_Rate from "../Questions/svgs/Tax_Rate.png";
-import lumpsum from "../Questions/svgs/lumpsum.png";
-import CareforAgeingFamilyMember from "../Questions/svgs/CareforAgeingFamilyMember.png";
-import bill from "../Questions/svgs/bill.png";
-import credit from "../Questions/svgs/credit-card-refund-svgrepo-com.svg";
-import FamilyProtection from "../Questions/svgs/WhatsApp Image 2023-08-11 at 19.13.12.jpg";
-import beachChair from "../Questions/svgs/beach-chair.png";
-import jeepCar from "../Questions/svgs/jeep-car-svgrepo-com.svg";
-import briefcase from "../Questions/svgs/briefcase.png";
-import clipboard from "../Questions/svgs/clipboard.png";
-import home from "../Questions/svgs/home-svgrepo-com.svg";
-import boat from "../Questions/svgs/boat.svg";
-import caravan from "../Questions/svgs/trailer-caravan.svg";
-import upgradeHome from "../Questions/svgs/upgradeHome.png";
-import paintHome from "../Questions/svgs/paintHome.png";
-import shiftHome from "../Questions/svgs/shift.png";
-import investment from "../Questions/svgs/investment.png";
-import loan from "../Questions/svgs/loan.svg";
-import BuildingSmall from "../Questions/svgs/building-small-svgrepo-com.svg";
-import graduationMortarboard from "../Questions/svgs/graduation-mortarboard.svg";
-import timeMoney from "../Questions/svgs/time-is-money.svg";
-import familySilhouette from "../Questions/svgs/family-silhouette.svg";
-import inheritance from "../Questions/svgs/inheritance.png";
-import shareholders from "../Questions/svgs/shareholders.png";
-import gearsGear from "../Questions/svgs/gears-gear-svgrepo-com.svg";
-import Questions_People from "../Questions/svgs/Questions_People.png";
-import moneyBagSvgRepo from "../Questions/svgs/money-bag-svgrepo-com.svg";
-import marriageRings from "../Questions/svgs/marriage-rings.svg";
-import will from "../Questions/svgs/page-with-curl-svgrepo-com.svg";
-import portfolio from "../Questions/svgs/portfolio copy.svg";
-import investmentChart from "../Questions/svgs/investmentChart.png";
-import taxCutting from "../Questions/svgs/taxCutting.png";
-import piggyBank from "../Questions/svgs/piggy-bank.svg";
-import piggyBankNew from "../Questions/svgs/piggy-bank-new.svg";
-import businessPersonConsultant from "../Questions/svgs/business-Person-consultant.svg";
-import piggyBankPNG from "../Questions/svgs/piggy-bank.png";
-import piggyBankFull from "../Questions/svgs/piggy-bank-Full.png";
-import insurance from "../Questions/svgs/insurance.png";
-import insuranceProtection from "../Questions/svgs/insuranceProtection.png";
-import insuranceSecurity from "../Questions/svgs/insurance Security.png";
-import socialInsurance from "../Questions/svgs/social-insurance.png";
-import savingMoney from "../Questions/svgs/saving-money.png";
-import calendar from "../Questions/svgs/calendar.png";
-
 //Goals and Objective Questions
 import Add from "../Questions/svgs/add-circle-solid-svgrepo-com.svg";
 

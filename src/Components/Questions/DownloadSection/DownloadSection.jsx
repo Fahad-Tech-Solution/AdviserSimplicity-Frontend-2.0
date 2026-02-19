@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { Button, Card, Grid } from "antd";
 import { FaDownload } from "react-icons/fa";
 import DownloadSVG from "../svgs/DownloadSVG";
-import { GeneraDocument } from "../../Assets/Api/Api";
 import { useRecoilState } from "recoil";
 import { SelectedClientDetails } from "../../../Store/Store";
+import { GeneraDocument } from "../../Assets/Api/GenerateDocument";
 const { useBreakpoint } = Grid;
 const DownloadSection = () => {
   const [downLoadLeading, setDownLoadLeading] = useState(false);

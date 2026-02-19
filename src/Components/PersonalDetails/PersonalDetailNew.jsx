@@ -13,7 +13,6 @@ import {
 } from "../../Store/Store";
 import {
   ConvertDate,
-  GeneraDocument,
   GetAxios,
   getNestedValue,
   openNotificationSuccess,
@@ -33,6 +32,7 @@ import { Grid } from "antd";
 import { FaCaretRight } from "react-icons/fa6";
 import { FaDownload } from "react-icons/fa";
 import utc from "dayjs/plugin/utc";
+import { GeneraDocument } from "../Assets/Api/GenerateDocument";
 const { useBreakpoint } = Grid;
 
 dayjs.extend(utc);

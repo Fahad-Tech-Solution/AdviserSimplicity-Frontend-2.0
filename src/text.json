@@ -73,12 +73,10 @@
         "executerRelationship": ""
       }
     ],
-
     "clientEnduringGuardianship": "",
     // we might need it
     // "clientTestamentaryTrust": "",
     // "clientEstatePlanningRadio": "",
-
     //POA
     "clientPOAType": "",
     "clientPOAYearSetUp": "",
@@ -88,21 +86,18 @@
         "executerRelationship": ""
       }
     ],
-    
     "clientEstatePlanningRadio": "",
     "clientdescription": "",
-    
     // ProFessional Adviser
-    "clientProfessionalAdviseritems":[
+    "clientProfessionalAdviseritems": [
       {
-        "POAType":"",
-        "adviserName":"",
-        "company":"",
-        "phone":"",
-        "email":""
+        "POAType": "",
+        "adviserName": "",
+        "company": "",
+        "phone": "",
+        "email": ""
       }
     ],
-    
     "clientEmploymentIncome": "",
     "clientNetBusinessIncome": "",
     "clientSuperPensionPayment": "",
@@ -112,9 +107,251 @@
     "clientRentalIncome": "",
     "clientInterest": "",
     "clientDividendIncome": "",
-    "clientAnnutiesIncome": ""
+    "clientAnnutiesIncome": "",
+    //Following is just for client
+    "clientGeneralLivingExpensesTotal": "",
+    "clientFamilyHome": "",
+    "clientInvestmentProperty": "",
+    "clientInvestmentPropertyLoan": "",
+    "clientPersonalLoan": "",
+    "clientCreditCards": "",
+    "clientInvestmentLoan": "",
+    "clientSuperContributions": "",
+    "clientLessEstimatedTax": "",
+    //Summary of Networth
+    //lifeStyle Assets
+    "clientCarCurrentValue": "",
+    "clientContentsCurrentValue": "",
+    "clientBoatCurrentValue": "",
+    "clientCaravanCurrentValue": "",
+    "clientOtherAssetsCurrentValue": "",
+    //investment Assets
+    "clientBankAccountCurrentBalance": "",
+    "clientTermDepositsCurrentBalance": "",
+    "clientAustralianSharesCurrentBalance": "",
+    "clientPlatformInvestmentsCurrentBalance": "",
+    "clientInvestmentBondsCurrentBalance": "",
+    "clientSuperannuationCurrentBalance": "",
+    "clientAccountBasedPensionsCurrentBalance": "",
+    "clientAnnuitiesCurrentBalance": "",
+    "clientInvestmentPropertyCurrentBalance1": "",
+    "clientInvestmentPropertyCurrentBalance2": "",
+    "clientInvestmentPropertyCurrentBalance3": "",
+    "clientInvestmentPropertyCurrentBalance4": "",
+    "clientInvestmentPropertyCurrentBalance5": "",
+    "clientInvestmentPropertyCurrentBalance6": "",
+    "clientInvestmentPropertyCurrentBalance7": "",
+    "clientInvestmentPropertyCurrentBalance8": "",
+    "clientInvestmentPropertyCurrentBalance9": "",
+    "clientInvestmentPropertyCurrentBalance10": "",
+    // Business
+    "clientTradingCompanyCurrentBalance": "",
+    "clientBusinessTrustCurrentBalance": "",
+    "clientSMSFCurrentBalance": "",
+    "clientInvestmentTrustCurrentBalance": "",
+    //liability Section 
+    "clientCreditCards": "",
+    "clientPersonalLoans": "",
+    "clientAccumulationBalanceCurrentBalance": "",
+    "clientAccumulationBalanceEligibleServiceDate": "",
+    "clientAccumulationBalanceCommencementDate": "",
+    "clientAccumulationBalanceTaxfreeComponent": "",
+    "clientAccumulationBalanceTaxableComponent": "",
+    "clientAccumulationBalanceRestrictedNonPreserved": "",
+    "clientAccumulationBalanceUnrestrictedNonPreserved": "",
+    "clientAccumulationBalancePreservedAmount": "",
+    "clientPlatFromInvestment": [
+      {
+        "platformName": "",
+        "owner": "",
+        "accountNumber": "",
+        "portfolioValue": "",
+        "totalPortfolioCost": "",
+        "serviceFee": "",
+        "portfolioValueArray": [
+          {
+            "investmentOption": "",
+            "investmentCode": "",
+            "investmentValue": ""
+          }
+        ]
+      }
+    ],
+    "clientSuperFund": [
+      {
+        "memberName": "",
+        "memberNumber": "",
+        "fundType": "",
+        "commencementDate": "",
+        "eligibleServiceDate": "",
+        "portfolioValue": "",
+        "taxFreeComponent": "",
+        "taxableComponent": "",
+        "preservedAmount": "",
+        "restrictedNonPreserved": "",
+        "unrestrictedNonPreserved": "",
+        "annualAdvice": "",
+        "portfolioValueArray": [
+          {
+            "investmentOption": "",
+            "investmentCode": "",
+            "investmentValue": ""
+          }
+        ],
+        "contributionsArrayNonConcessional": [
+          {
+            "year": "",
+            "nonConcessionalContributions": ""
+          }
+        ],
+        "contributionsArrayConcessional": [
+          {
+            "year": "",
+            "totalConcessional": ""
+          }
+        ],
+        "coverType": "",
+        "coverType2": "",
+        "lifeCover": "",
+        "TPDCover": "",
+        "monthlyIncome": "",
+        "waitingPeriod": "",
+        "BenefitPeriod": "",
+        "TotalInsuranceCost": "",
+        "nominationType": "",
+        "nominatedBeneficiariesArray": [
+          {
+            "relationshipStatus": "",
+            "shareBenefit": ""
+          }
+        ]
+      }
+    ],
+    "clientSumOfNCCSuperAndSMSF1": "",
+    "clientSumOfNCCSuperAndSMSF2": "",
+    "clientSumOfNCCSuperAndSMSF3": "",
+    
+    "clientSumOfCCSuperAndSMSF1": "",
+    "clientSumOfCCSuperAndSMSF2": "",
+    "clientSumOfCCSuperAndSMSF3": "",
+    "clientSumOfCCSuperAndSMSF4": "",
+    "clientSumOfCCSuperAndSMSF5": "",
+    "clientSumOfCCSuperAndSMSF6": "",
+   
 
 
+    "clientAccountBasedPensions": [
+      {
+        "memberName": "",
+        "memberNumber": "",
+        "fundType": "",
+        "commencementDate": "",
+        "eligibleServiceDate": "",
+        "portfolioValue": "",
+        "taxFreeComponent": "",
+        "taxableComponent": "",
+        "unrestrictedNonPreserved": "",
+        "restrictedNonPreserved": "",
+        "preservedAmount": "",
+        "purchasePrice": "",
+        "pensionPayment": "",
+        "annualAdvice": "",
+        "portfolioValueArray": [
+          {
+            "investmentOption": "",
+            "investmentCode": "",
+            "investmentValue": ""
+          }
+        ],
+        "nominationType": "",
+        "nominatedBeneficiariesArray": [
+          {
+            "relationshipStatus": "",
+            "shareBenefit": ""
+          }
+        ]
+      }
+    ],
+    "clientAnnuties": [
+      {
+        "memberName": "",
+        "accountNumber": "",
+        "sourceFunds": "",
+        "annuityType": "",
+        "term": "",
+        "yearsMaturity": "",
+        "originalInvestmentAmount": "",
+        "returnCapitalValue": "",
+        "annualAnnuityPayment": "",
+        "annualAdvice": "",
+        "nominationType": "",
+        "nominatedBeneficiariesArray": [
+          {
+            "relationshipStatus": "",
+            "shareBenefit": ""
+          }
+        ]
+      }
+    ],
+
+    //SMSF
+    "SMSFfundname": "",
+    "SMSFABN": "",
+    "SMSFRegisterOffice": "",
+    "SMSFBusinessPlace": "",
+    "SMSFEstablishmentdate": "",
+    "SMSFTrusteeType": "",
+    "SMSFTrusteeName": "",
+    "SMSFACN": "",
+    "isSMSFTrusteeTypeIsCorporateTrustee": "",
+    "SMSFBankCurrentBalance": "",
+    "SMSFTermCurrentBalance": "",
+    "SMSFAustralianCurrentBalance": "",
+    "SMSFPlatfromCurrentBalance": "",
+    "SMSFOtherCurrentBalance": "",
+    "SMSFInvestmentCurrentBalance1": "",
+    "SMSFInvestmentCurrentBalance2": "",
+    "SMSFInvestmentCurrentBalance3": "",
+    "SMSFInvestmentCurrentBalance4": "",
+    "SMSFInvestmentCurrentBalance5": "",
+    "SMSFAssetsTotal": "",
+    "SMSFInvestmentpropertyloan1": "",
+    "SMSFInvestmentpropertyloan2": "",
+    "SMSFInvestmentpropertyloan3": "",
+    "SMSFInvestmentpropertyloan4": "",
+    "SMSFInvestmentpropertyloan5": "",
+    "SMSFInvestmentloan": "",
+    // Family Trust
+    "FamilyTrustTrustName": "",
+    "FamilyTrustABN": "",
+    "FamilyTrustRegisteredOffice": "",
+    "FamilyTrustPlaceOfBusiness": "",
+    "FamilyTrustEstablishmentDate": "",
+    "FamilyTrustTrusteeType": "",
+    "FamilyTrustDirectorNamesList": "",
+    "FamilyTrustACN": "",
+    "FamilyTrustTrusteeName": "",
+    "isFamilyTrustTrusteeTypeCorporate": "",
+    "FamilyTrustNameOfAccountant": "",
+    "FamilyTrustBankCurrentBalance": "",
+    "FamilyTrustTermCurrentBalance": "",
+    "FamilyTrustAustralianCurrentBalance": "",
+    "FamilyTrustPlatfromCurrentBalance": "",
+    "FamilyTrustOtherCurrentBalance": "",
+    "FamilyTrustInvestmentCurrentBalance1": "",
+    "FamilyTrustInvestmentCurrentBalance2": "",
+    "FamilyTrustInvestmentCurrentBalance3": "",
+    "FamilyTrustInvestmentCurrentBalance4": "",
+    "FamilyTrustInvestmentCurrentBalance5": "",
+    "FamilyTrustAssetTotal": "",
+    "FamilyTrustInvestmentpropertyloan1": "",
+    "FamilyTrustInvestmentpropertyloan2": "",
+    "FamilyTrustInvestmentpropertyloan3": "",
+    "FamilyTrustInvestmentpropertyloan4": "",
+    "FamilyTrustInvestmentpropertyloan5": "",
+    "FamilyTrustInvestmentloan": "",
+    "FamilyTrustLibilities": "",
+    "FamilyTrustNetWorth": ""
   },
   "partner": {
     "partnerTitle": "",
@@ -254,5 +491,24 @@
         "InsuranceTotal"+(index+1)
       ]: "",
     }))
+  ],
+  "motorVahicleYear": "",
+  "motorVahicleAmount": "",
+  "boatYear": "",
+  "boatAmount": "",
+  "caravanYear": "",
+  "caravanAmount": "",
+  "otherYear": "",
+  "otherAmount": "",
+  "homeRenovationsYear": "",
+  "homeRenovationsAmount": "",
+  "holidayYear": "",
+  "holidayAmount": "",
+  "orders": [
+    {
+        dogs: {
+          order: []
+      }
+    }
   ],
 }

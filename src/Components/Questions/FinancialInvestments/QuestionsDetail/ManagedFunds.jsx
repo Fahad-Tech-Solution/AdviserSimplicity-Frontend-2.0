@@ -96,9 +96,9 @@ const ManagedFunds = (props) => {
     }
 
     const platforms =
-      title === "Platform Investments Detail" ||
-      title == "SMSF Platform Investments Detail" ||
-      title == "Family Trust Platform Investments Detail"
+      title === "Platform Investments" ||
+      title == "SMSF Platform Investments" ||
+      title == "Family Trust Platform Investments"
         ? bankDetailObj?.InvestmentPlatforms
         : bankDetailObj?.InvestmentBonds;
 
@@ -132,9 +132,9 @@ const ManagedFunds = (props) => {
   };
 
   const InvestmentPlatformsBanks = [
-    "Platform Investments Detail",
-    "Family Trust Platform Investments Detail",
-    "SMSF Platform Investments Detail",
+    "Platform Investments",
+    "Family Trust Platform Investments",
+    "SMSF Platform Investments",
   ];
 
   const CheckInputValue = (

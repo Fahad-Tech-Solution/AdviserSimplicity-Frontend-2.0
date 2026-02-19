@@ -10,6 +10,7 @@ import {
   LoggedInUserTokenJwt,
   PersonalDetailsData,
   QuestionDetail,
+  BankDetail,
 } from "./Store";
 
 export const getJwtToken = () => getRecoil(LoggedInUserTokenJwt);
@@ -20,3 +21,4 @@ export const getGoalsDetail = () => getRecoil(GoalsDetail);
 export const getDefaultUrl = () => getRecoil(defaultUrl);
 export const getLoggedInUserData = () => getRecoil(LoggedInUserData);
 export const getGQState = () => getRecoil(GQState);
+export const getBankDetail = () => getRecoil(BankDetail);
